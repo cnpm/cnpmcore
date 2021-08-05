@@ -1,0 +1,53 @@
+{
+  "name": "npmcore",
+  "version": "0.0.2",
+  "description": "npm core",
+  "main": "index.js",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "dev": "egg-bin dev",
+    "debug": "egg-bin debug",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "test": "npm run lint && npm run test-local",
+    "test-local": "egg-bin test -r tsconfig-paths/register",
+    "cov": "egg-bin cov -r tsconfig-paths/register",
+    "ci": "npm run lint && npm run cov",
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:prod": "rm -rf dist && tsc -p ./tsconfig.prod.json",
+    "prepublishOnly": "npm run tsc:prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cnpm/npmcore.git"
+  },
+  "egg": {
+    "typescript": true
+  },
+  "keywords": [
+    "npm"
+  ],
+  "dependencies": {
+    "@eggjs/tegg": "^0.1.1",
+    "@eggjs/tegg-config": "^0.1.0",
+    "@eggjs/tegg-controller-plugin": "^0.1.1",
+    "@eggjs/tegg-plugin": "^0.1.1",
+    "@eggjs/tsconfig": "^1.0.0",
+    "egg": "^2.29.4",
+    "eslint": "^7.32.0",
+    "eslint-config-egg": "^9.0.0"
+  },
+  "devDependencies": {
+    "egg-bin": "^4.16.4",
+    "typescript": "^4.3.5"
+  },
+  "author": "killagu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cnpm/npmcore/issues"
+  },
+  "homepage": "https://github.com/cnpm/npmcore#readme"
+}
