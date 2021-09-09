@@ -13,6 +13,17 @@ const plugin: EggPlugin = {
     enable: true,
     package: '@eggjs/tegg-controller-plugin',
   },
+  teggOrm: {
+    enable: true,
+    package: '@eggjs/tegg-orm-plugin',
+  },
+  eventbusModule: {
+    enable: true,
+    package: '@eggjs/tegg-eventbus-plugin',
+  },
+  view: {
+    enable: false,
+  },
 };
 
 export default plugin;

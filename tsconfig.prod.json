@@ -2,8 +2,14 @@
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
     "outDir": "dist",
+    "declaration": false,
+    "resolveJsonModule": true,
     "baseUrl": "."
   },
+  "exclude": [
+    "node_modules",
+    "test"
+  ],
   "include": [
     "app/**/*.ts",
     "app/**/*.json",
