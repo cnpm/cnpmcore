@@ -2,7 +2,7 @@ import { AccessLevel, ContextProto, EventBus, Inject } from '@eggjs/tegg';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
-import { PACKAGE_PUBLISHED } from '../events';
+import { PACKAGE_PUBLISHED } from '../event';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
