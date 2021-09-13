@@ -1,0 +1,7 @@
+app/proxy*
+**/*.d.ts
+node_modules/
+dist/
+coverage/
+mocks/
+.react_entries/

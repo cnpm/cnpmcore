@@ -1,0 +1,6 @@
+{
+  "name": "cnpmcore-port",
+  "eggModule": {
+    "name": "cnpmcorePort"
+  }
+}

@@ -6,5 +6,13 @@ export default (appInfo: EggAppConfig) => {
   // override config from framework / plugin
   config.keys = appInfo.name + '123456';
 
+  config.orm = {
+    client: 'mysql',
+    database: 'cnpmcore',
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+  };
+
   return config;
 };
