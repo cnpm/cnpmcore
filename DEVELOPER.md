@@ -4,7 +4,14 @@
 
 假设大家使用 macOS 开发，Linux 和 Windows 环境自行参考
 
-### MySQL
+### MySQL 5.7
+
+```bash
+brew install mysql@5.7
+brew services start mysql
+```
+
+### MySQL 8
 
 ```bash
 brew install mysql
