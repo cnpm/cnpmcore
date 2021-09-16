@@ -36,7 +36,7 @@ export class TestUtil {
     connection.connect();
     const sqls = await this.getTableSqls();
     await this.query(connection, 'DROP DATABASE IF EXISTS cnpmcore;');
-    await this.query(connection, 'CREATE DATABASE IF NOT EXISTS cnpmcore;');
+    await this.query(connection, 'CREATE DATABASE IF NOT EXISTS cnpmcore CHARACTER SET utf8mb4;');
     await this.query(connection, 'USE cnpmcore;');
     await this.query(connection, sqls);
     connection.destroy();

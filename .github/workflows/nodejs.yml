@@ -5,9 +5,13 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - main
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - main
+      - master
   schedule:
     - cron: '0 2 * * *'
 
@@ -20,7 +24,7 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_DATABASE: cnpmjs_test
+          MYSQL_DATABASE: cnpmcore
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
