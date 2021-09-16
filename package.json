@@ -64,5 +64,8 @@
   "bugs": {
     "url": "https://github.com/cnpm/npmcore/issues"
   },
-  "homepage": "https://github.com/cnpm/npmcore#readme"
+  "homepage": "https://github.com/cnpm/npmcore#readme",
+  "engines": {
+    "node": ">= 14.0.0"
+  }
 }
