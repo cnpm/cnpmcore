@@ -54,3 +54,15 @@ CREATE TABLE IF NOT EXISTS `dists` (
   UNIQUE KEY `uk_dist_id` (`dist_id`),
   UNIQUE KEY `uk_path` (`path`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='dist info';
+
+CREATE TABLE IF NOT EXISTS `upstream_changes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` datetime NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime NOT NULL COMMENT 'modified time',
+  `upstream_change_id` varchar(24) NOT NULL COMMENT 'upstream change id',
+  `name` varchar(214) NOT NULL COMMENT 'module name',
+  `seq` bigint(20) unsigned NOT NULL COMMENT 'seq id',
+  `changes` text COMMENT 'changes json data',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_upstream_change_id` (`upstream_change_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='upstream change info';

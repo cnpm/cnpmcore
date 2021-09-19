@@ -36,14 +36,14 @@ export class PackageRepository {
     });
   }
 
-  async findPackageVersion(scope: string | null, name: string, version: string): Promise<PackageVersionEntity | undefined> {
+  async findPackageVersion(scope: string | null, name: string, version: string): Promise<PackageVersionEntity | null> {
     const pkg = await PackageModel.findOne({ scope, name }) as PackageModel;
-    if (!pkg) return;
+    if (!pkg) return null;
     const pkgVersionModel = await PackageVersionModel.findOne({
       packageId: pkg.packageId,
       version,
     }) as PackageVersionModel;
-    if (!pkgVersionModel) return;
+    if (!pkgVersionModel) return null;
     const [
       tarDistModel,
       readmeDistModel,

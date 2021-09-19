@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
+    "start-upstream-syncer": "",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "npm run lint && npm run test-local",

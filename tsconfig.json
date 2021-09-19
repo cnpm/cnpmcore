@@ -1,6 +1,7 @@
 {
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
+    "experimentalDecorators": true,
     "declaration": false,
     "resolveJsonModule": true,
     "baseUrl": "."
