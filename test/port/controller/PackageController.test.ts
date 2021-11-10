@@ -24,7 +24,7 @@ describe('test/controller/PackageController.test.ts', () => {
     ]);
   });
 
-  describe('/:name/:test', () => {
+  describe('showVersion()', () => {
     beforeEach(async () => {
       await packageManagerService.publish({
         dist: Buffer.alloc(0),
@@ -42,6 +42,93 @@ describe('test/controller/PackageController.test.ts', () => {
         .expect(res => {
           assert(res.body);
         });
+    });
+  });
+
+  describe('addVersion()', () => {
+    it('should add new version success', async () => {
+      const res = await app.httpRequest()
+        .put('/foo')
+        .send({
+          name: 'foo',
+          versions: {
+            '1.0.0': {
+              name: 'foo',
+              version: '1.0.0',
+            },
+          },
+        });
+      assert(res.status === 201);
+      assert(res.body.ok === true);
+      assert(/^\d+$/.test(res.body.rev));
+    });
+
+    it('should 422 _attachments is empty', async () => {
+      let res = await app.httpRequest()
+        .put('/foo')
+        .send({
+          name: 'foo',
+          versions: {
+            '1.0.0': {
+              name: 'foo',
+              version: '1.0.0',
+            },
+          },
+          _attachments: {},
+        });
+      assert(res.status === 422);
+      assert(res.body.error === '[invalid_param] _attachments is empty');
+
+      res = await app.httpRequest()
+        .put('/foo')
+        .send({
+          name: 'foo',
+          versions: {
+            '1.0.0': {
+              name: 'foo',
+              version: '1.0.0',
+            },
+          },
+        });
+      assert(res.status === 422);
+      assert(res.body.error === '[invalid_param] _attachments is empty');
+
+      res = await app.httpRequest()
+        .put('/foo')
+        .send({
+          name: 'foo',
+          versions: {
+            '1.0.0': {
+              name: 'foo',
+              version: '1.0.0',
+            },
+          },
+          _attachments: null,
+        });
+      assert(res.status === 422);
+      assert(res.body.error === '[invalid_param] _attachments is empty');
+    });
+
+    it('should 422 versions is empty', async () => {
+      let res = await app.httpRequest()
+        .put('/foo')
+        .send({
+          name: 'foo',
+          versions: {},
+          _attachments: {},
+        });
+      assert(res.status === 422);
+      assert(res.body.error === '[invalid_param] versions is empty');
+
+      res = await app.httpRequest()
+        .put('/foo')
+        .send({
+          name: 'foo',
+          versions: [],
+          _attachments: {},
+        });
+      assert(res.status === 422);
+      assert(res.body.error === '[invalid_param] versions is empty');
     });
   });
 });

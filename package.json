@@ -40,11 +40,13 @@
     "@eggjs/tegg-orm-plugin": "^0.1.5",
     "@eggjs/tegg-plugin": "^0.1.1",
     "@eggjs/tsconfig": "^1.0.0",
+    "bson-objectid": "^2.0.1",
     "egg": "^2.29.4",
+    "egg-validate": "^2.0.2",
     "leoric": "^1.9.0",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.0",
-    "bson-objectid": "^2.0.1"
+    "type-fest": "^2.5.3"
   },
   "devDependencies": {
     "@types/mocha": "^9.0.0",
