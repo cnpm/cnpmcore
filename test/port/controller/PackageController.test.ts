@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'assert';
 import { Context } from 'egg';
 import { app } from 'egg-mock/bootstrap';
 import { PackageManagerService } from '../../../app/core/service/PackageManagerService';
@@ -57,8 +57,8 @@ describe('test/controller/PackageController.test.ts', () => {
               version: '1.0.0',
             },
           },
-        });
-      assert(res.status === 201);
+        })
+        .expect(201);
       assert(res.body.ok === true);
       assert(/^\d+$/.test(res.body.rev));
     });
@@ -75,8 +75,8 @@ describe('test/controller/PackageController.test.ts', () => {
             },
           },
           _attachments: {},
-        });
-      assert(res.status === 422);
+        })
+        .expect(422);
       assert(res.body.error === '[invalid_param] _attachments is empty');
 
       res = await app.httpRequest()
@@ -89,8 +89,8 @@ describe('test/controller/PackageController.test.ts', () => {
               version: '1.0.0',
             },
           },
-        });
-      assert(res.status === 422);
+        })
+        .expect(422);
       assert(res.body.error === '[invalid_param] _attachments is empty');
 
       res = await app.httpRequest()
@@ -104,8 +104,8 @@ describe('test/controller/PackageController.test.ts', () => {
             },
           },
           _attachments: null,
-        });
-      assert(res.status === 422);
+        })
+        .expect(422);
       assert(res.body.error === '[invalid_param] _attachments is empty');
     });
 
@@ -116,8 +116,8 @@ describe('test/controller/PackageController.test.ts', () => {
           name: 'foo',
           versions: {},
           _attachments: {},
-        });
-      assert(res.status === 422);
+        })
+        .expect(422);
       assert(res.body.error === '[invalid_param] versions is empty');
 
       res = await app.httpRequest()
@@ -126,9 +126,44 @@ describe('test/controller/PackageController.test.ts', () => {
           name: 'foo',
           versions: [],
           _attachments: {},
-        });
-      assert(res.status === 422);
+        })
+        .expect(422);
       assert(res.body.error === '[invalid_param] versions is empty');
+    });
+
+    it('should 422 dist-tags is empty', async () => {
+      let res = await app.httpRequest()
+        .put('/foo')
+        .send({
+          name: 'foo',
+          versions: {
+            name: 'foo',
+            version: '1.0.0',
+          },
+          _attachments: {
+            name: 'foo',
+            version: '1.0.0',
+          },
+        })
+        .expect(422);
+      assert(res.body.error === '[invalid_param] dist-tags is empty');
+
+      res = await app.httpRequest()
+        .put('/foo')
+        .send({
+          name: 'foo',
+          'dist-tags': {},
+          versions: {
+            name: 'foo',
+            version: '1.0.0',
+          },
+          _attachments: {
+            name: 'foo',
+            version: '1.0.0',
+          },
+        })
+        .expect(422);
+      assert(res.body.error === '[invalid_param] dist-tags is empty');
     });
   });
 });

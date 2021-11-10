@@ -1,3 +1,5 @@
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { EggAppConfig, PowerPartial } from 'egg';
 
 export default (appInfo: EggAppConfig) => {
@@ -5,6 +7,7 @@ export default (appInfo: EggAppConfig) => {
 
   // override config from framework / plugin
   config.keys = appInfo.name + '123456';
+  config.dataDir = join(process.env.HOME || tmpdir(), '.cnpmcore');
 
   config.orm = {
     client: 'mysql',
@@ -18,6 +21,11 @@ export default (appInfo: EggAppConfig) => {
     csrf: {
       enable: false,
     },
+  };
+
+  config.nfs = {
+    client: null,
+    dir: join(config.dataDir, 'nfs'),
   };
 
   return config;
