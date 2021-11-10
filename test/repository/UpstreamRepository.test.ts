@@ -32,7 +32,32 @@ describe('test/repository/UpstreamRepository.test.ts', () => {
       assert(change.seq === 1000010);
       assert(change.name === 'foo');
       assert(change.upstreamChangeId);
-      console.log('change', change);
     });
   });
+
+  describe('find the last change', () => {
+    it('should work', async () => {
+      const expectChange0 = await upstreamRepository.findLastUpstreamChange();
+      assert(expectChange0 === null);
+
+      const change1 = await upstreamRepository.createUpstreamChange(UpstreamChangeEntity.create({
+        name: 'foo1',
+        seq: 1000011,
+        changes: '[]',
+      }));
+      const expectChange1 = await upstreamRepository.findLastUpstreamChange();
+      assert(expectChange1!.id === change1.id);
+      assert(expectChange1!.seq === change1.seq);
+
+      const change2 = await upstreamRepository.createUpstreamChange(UpstreamChangeEntity.create({
+        name: 'foo2',
+        seq: 1000012,
+        changes: '[]',
+      }));
+      const expectChange2 = await upstreamRepository.findLastUpstreamChange();
+      assert.strictEqual(expectChange2!.id, change2.id);
+      assert.strictEqual(expectChange2!.seq, change2.seq);
+    });
+  });
+  
 });
