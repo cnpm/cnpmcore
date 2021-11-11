@@ -15,7 +15,7 @@ import {
 import * as ssri from 'ssri';
 import { BaseController } from '../type/BaseController';
 import { PackageRepository } from '../../repository/PackageRepository';
-import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
+import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   deprecated?: 'string';
@@ -61,10 +61,8 @@ type FullPackage = {
 export class PackageController extends BaseController {
   @Inject()
   private logger: EggLogger;
-
   @Inject()
   private packageRepository: PackageRepository;
-
   @Inject()
   private nfsAdapter: NFSAdapter;
 
@@ -82,7 +80,6 @@ export class PackageController extends BaseController {
     method: HTTPMethodEnum.PUT,
   })
   async saveVersion(@Context() ctx: EggContext, @HTTPBody() pkg: FullPackage) {
-    console.log(this.nfsAdapter);
     ctx.validate(FullPackageRule, pkg);
     const versions = Object.values(pkg.versions);
     if (versions.length === 0) {
@@ -159,12 +156,11 @@ export class PackageController extends BaseController {
     }
 
     const options = {
-      // key: this.nfsAdapter.getCDNKey(pkg.name, attachmentFilename),
+      key: this.nfsAdapter.getStoreKey(pkg.name, attachmentFilename),
       shasum,
       integrity,
     };
     const uploadResult = await this.nfsAdapter.uploadBuffer(tarballBuffer, options);
-    this.logger.debug('upload %j, options: %j', uploadResult, options);
     const dist = {
       ...originDist,
       key: undefined,
@@ -173,15 +169,15 @@ export class PackageController extends BaseController {
       shasum,
       size: attachment.length,
     };
-    ctx.logger.debug(dist);
 
     // if nfs upload return a key, record it
-    // if (uploadResult.url) {
-    //   dist.tarball = uploadResult.url;
-    // } else if (uploadResult.key) {
-    //   dist.key = uploadResult.key;
-    //   dist.tarball = uploadResult.key;
-    // }
+    if (uploadResult.url) {
+      dist.tarball = uploadResult.url;
+    } else if (uploadResult.key) {
+      dist.key = uploadResult.key;
+      dist.tarball = uploadResult.key;
+    }
+    this.logger.info('[package:version:save:dist] %s@%s, dist: %j', version.name, version.version, dist);
 
     // make sure the latest version exists
 

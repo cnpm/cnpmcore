@@ -5,6 +5,7 @@ import { PackageManagerService } from '../../../app/core/service/PackageManagerS
 import { Package } from '../../../app/repository/model/Package';
 import { PackageVersion } from '../../../app/repository/model/PackageVersion';
 import { Dist } from '../../../app/repository/model/Dist';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/controller/PackageController.test.ts', () => {
   let ctx: Context;
@@ -47,17 +48,10 @@ describe('test/controller/PackageController.test.ts', () => {
 
   describe('addVersion()', () => {
     it('should add new version success', async () => {
+      const pkg = await TestUtil.getFullPackage();
       const res = await app.httpRequest()
         .put('/foo')
-        .send({
-          name: 'foo',
-          versions: {
-            '1.0.0': {
-              name: 'foo',
-              version: '1.0.0',
-            },
-          },
-        })
+        .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
       assert(/^\d+$/.test(res.body.rev));

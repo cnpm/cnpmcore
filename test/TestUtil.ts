@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import mysql from 'mysql';
 import path from 'path';
+import { JsonObject } from 'type-fest';
 
 export class TestUtil {
   static async getMySqlConfig(): Promise<object> {
@@ -40,5 +41,14 @@ export class TestUtil {
     await this.query(connection, 'USE cnpmcore;');
     await this.query(connection, sqls);
     connection.destroy();
+  }
+
+  static getFixtures(name?: string): string {
+    return path.join(__dirname, 'fixtures', name ?? '');
+  }
+
+  static async getFullPackage(): Promise<JsonObject> {
+    const fullJSONFile = this.getFixtures('exampleFullPackage.json');
+    return JSON.parse((await fs.readFile(fullJSONFile)).toString());
   }
 }
