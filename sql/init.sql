@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `packages` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-  `gmt_create` datetime NOT NULL COMMENT 'create time',
-  `gmt_modified` datetime NOT NULL COMMENT 'modified time',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
   `package_id` varchar(24) NOT NULL COMMENT 'package id',
   `is_private` tinyint NOT NULL DEFAULT 0 COMMENT 'private pkg or not, 1: true, other: false',
   `name` varchar(214) NOT NULL COMMENT 'module name',
@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS `packages` (
 
 CREATE TABLE IF NOT EXISTS `package_versions` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-  `gmt_create` datetime NOT NULL COMMENT 'create time',
-  `gmt_modified` datetime NOT NULL COMMENT 'modified time',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
   `package_id` varchar(24) NOT NULL COMMENT 'package id',
   `package_version_id` varchar(24) NOT NULL COMMENT 'package version id',
   `abbreviated` longtext NOT NULL COMMENT 'abbreviated version object json',
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `package_versions` (
   `manifest_dist_id` varchar(24) NOT NULL COMMENT 'manifest dist id',
   `tar_dist_id` varchar(24) NOT NULL COMMENT 'tar dist id',
   `readme_dist_id` varchar(24) NOT NULL COMMENT 'readme dist id',
-  `publish_time` datetime NOT NULL COMMENT 'publish time',
+  `publish_time` datetime(3) NOT NULL COMMENT 'publish time',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_package_version_id` (`package_version_id`),
   UNIQUE KEY `uk_package_id_version` (`package_id`, `version`)
@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS `package_versions` (
 
 CREATE TABLE IF NOT EXISTS `package_tags` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-  `gmt_create` datetime NOT NULL COMMENT 'create time',
-  `gmt_modified` datetime NOT NULL COMMENT 'modified time',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
   `package_id` varchar(24) NOT NULL COMMENT 'package id',
   `package_tag_id` varchar(24) NOT NULL COMMENT 'package tag id',
   `tag` varchar(214) NOT NULL COMMENT 'package tag',
@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS `package_tags` (
 
 CREATE TABLE IF NOT EXISTS `package_deps` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-  `gmt_create` datetime NOT NULL COMMENT 'create time',
-  `gmt_modified` datetime NOT NULL COMMENT 'modified time',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
   `package_version_id` varchar(24) NOT NULL COMMENT 'package version id',
   `package_dep_id` varchar(24) NOT NULL COMMENT 'package dep id',
   `scope` varchar(214) NOT NULL COMMENT 'package scope',
@@ -57,8 +57,8 @@ CREATE TABLE IF NOT EXISTS `package_deps` (
 
 CREATE TABLE IF NOT EXISTS `dists` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-  `gmt_create` datetime NOT NULL COMMENT 'create time',
-  `gmt_modified` datetime NOT NULL COMMENT 'modified time',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
   `dist_id` varchar(24) NOT NULL COMMENT 'dist id',
   `name` varchar(100) NOT NULL COMMENT 'dist name',
   `path` varchar(512) NOT NULL COMMENT 'access path',

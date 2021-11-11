@@ -1,5 +1,5 @@
 import { PackageJson, Simplify } from 'type-fest';
-import { UnprocessableEntityError } from 'egg-errors';
+import { UnprocessableEntityError, NotFoundError } from 'egg-errors';
 import {
   HTTPController,
   HTTPMethod,
@@ -16,7 +16,7 @@ import {
 import * as ssri from 'ssri';
 import { BaseController } from '../type/BaseController';
 import { PackageRepository } from 'app/repository/PackageRepository';
-import { getScope } from 'app/common/PackageUtil';
+import { formatTarball, getScope } from 'app/common/PackageUtil';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
@@ -50,8 +50,8 @@ type FullPackage = {
   // maintainers: JsonObject[],
   _attachments?: {
     [key: string]: {
-      content_type: 'string';
-      data: 'string';
+      content_type: string;
+      data: string;
       length: number;
     };
   },
@@ -76,17 +76,47 @@ export class PackageController extends BaseController {
   private packageManagerService: PackageManagerService;
 
   @HTTPMethod({
+    path: PACKAGE_NAME_PATH,
+    method: HTTPMethodEnum.GET,
+  })
+  async showPackage(@Context() _ctx: EggContext, @HTTPParam() name: string) {
+    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
+    const pkg = await this.packageRepository.findPackage(getScope(name), name);
+    if (!pkg) {
+      throw new NotFoundError(`${name} not found`);
+    }
+    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md
+    // Abbreviated metadata format
+    return {
+      name,
+      modified: null,
+      'dist-tags': {},
+      versions: {},
+    };
+  }
+
+  @HTTPMethod({
     path: PACKAGE_NAME_WITH_VERSION_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async showVersion(@Context() _ctx: EggContext, @HTTPParam() name: string, @HTTPParam() version: string) {
-    // let needAbbreviatedMeta = false;
-    // const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
-    // if (ctx.accepts([ 'json', abbreviatedMetaType ]) === abbreviatedMetaType) {
-    //   needAbbreviatedMeta = true;
-    // }
-    // if (needAbbreviatedMeta) {}
-    return await this.packageRepository.findPackageVersion(getScope(name), name, version);
+  async showVersion(@Context() ctx: EggContext, @HTTPParam() name: string, @HTTPParam() version: string) {
+    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
+    const packageVersion = await this.packageRepository.findPackageVersion(getScope(name), name, version);
+    if (!packageVersion) {
+      throw new NotFoundError(`${name}@${version} not found`);
+    }
+    const tarDist = packageVersion.tarDist;
+    const bytes = await this.packageManagerService.readDistBytes(packageVersion.manifestDist);
+    const packageJson = JSON.parse(Buffer.from(bytes).toString('utf8'));
+    packageJson.dist = {
+      ...JSON.parse(tarDist.meta),
+      tarball: formatTarball(ctx.origin, name, version),
+      shasum: tarDist.shasum,
+      integrity: tarDist.integrity,
+      size: tarDist.size,
+    };
+    packageJson._cnpmcore_publish_time = packageVersion.publishTime;
+    return packageJson;
   }
 
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#publish-a-new-package

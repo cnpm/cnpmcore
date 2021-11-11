@@ -4,6 +4,7 @@ import { app } from 'egg-mock/bootstrap';
 import { PackageManagerService } from '../../../app/core/service/PackageManagerService';
 import { Package } from '../../../app/repository/model/Package';
 import { PackageVersion } from '../../../app/repository/model/PackageVersion';
+import { PackageTag } from '../../../app/repository/model/PackageTag';
 import { Dist } from '../../../app/repository/model/Dist';
 import { TestUtil } from 'test/TestUtil';
 
@@ -20,32 +21,35 @@ describe('test/controller/PackageController.test.ts', () => {
     app.destroyModuleContext(ctx);
     await Promise.all([
       Package.truncate(),
+      PackageTag.truncate(),
       PackageVersion.truncate(),
       Dist.truncate(),
     ]);
   });
 
   describe('showVersion()', () => {
-    beforeEach(async () => {
+    it('should work', async () => {
       await packageManagerService.publish({
         dist: {
-          content: Buffer.alloc(0),
+          content: Buffer.alloc(100),
         },
         tag: '',
         name: 'foo',
-        packageJson: {},
+        packageJson: { name: 'foo', test: 'test' },
         readme: '',
         version: '1.0.0',
       });
-    });
-
-    it('should work', async () => {
-      await app.httpRequest()
+      const res = await app.httpRequest()
         .get('/foo/1.0.0')
         .expect(200)
-        .expect(res => {
-          assert(res.body);
-        });
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert.equal(res.body.name, 'foo');
+      assert.equal(res.body.test, 'test');
+      assert.match(res.body.dist.tarball, /^http:\/\//);
+      assert(res.body.dist.tarball.endsWith('/foo/-/foo-1.0.0.tgz'));
+      assert.equal(res.body.dist.shasum, 'ed4a77d1b56a118938788fc53037759b6c501e3d');
+      assert.equal(res.body.dist.integrity, 'sha512-8gb08O8JuQg38dFaB8bPS9KR2BdmP5+FoPxDQewZkQcZrVcbYQKjZq6EjNDxh9Da75EuBYmLgsNSE81JpF7o4A==');
+      assert.equal(res.body.dist.size, 100);
     });
 
     it('should work with scoped package', async () => {

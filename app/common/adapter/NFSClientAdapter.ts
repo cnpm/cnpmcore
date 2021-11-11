@@ -24,6 +24,7 @@ export class NFSClientAdapter implements EggObjectLifecycle {
   private _client: any;
 
   async init() {
+    // NFS interface https://github.com/cnpm/cnpmjs.org/wiki/NFS-Guide
     if (this.config.nfs.client) {
       this._client = this.config.nfs.client;
       return;

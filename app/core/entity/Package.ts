@@ -13,7 +13,6 @@ export interface PackageData extends EntityData {
 export enum DIST_NAMES {
   MANIFEST = 'package.json',
   README = 'readme.md',
-  TAR = 'tar.gz',
 }
 
 interface FileInfo {
@@ -69,6 +68,6 @@ export class Package extends Entity {
   }
 
   createTar(version: string, info: FileInfo) {
-    return this.createDist(version, `${this.name}-${version}.${DIST_NAMES.TAR}`, info);
+    return this.createDist(version, `${this.name}-${version}.tgz`, info);
   }
 }

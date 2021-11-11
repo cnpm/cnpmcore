@@ -7,6 +7,7 @@ import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
 import { PackageTag } from '../entity/PackageTag';
 import { PACKAGE_PUBLISHED } from '../event';
+import { Dist } from '../entity/Dist';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
@@ -120,5 +121,9 @@ export class PackageManagerService {
       await this.packageRepository.savePackageTag(tag);
     }
     return pkgVersion.packageVersionId;
+  }
+
+  async readDistBytes(dist: Dist): Promise<Uint8Array> {
+    return await this.nfsAdapter.getBytes(dist.path);
   }
 }
