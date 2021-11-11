@@ -47,8 +47,42 @@ export class TestUtil {
     return path.join(__dirname, 'fixtures', name ?? '');
   }
 
-  static async getFullPackage(): Promise<JsonObject> {
+  static async getFullPackage(options?: {
+    name?: string;
+    version?: string;
+    attachment?: object;
+    dist?: object;
+  }): Promise<JsonObject> {
     const fullJSONFile = this.getFixtures('exampleFullPackage.json');
-    return JSON.parse((await fs.readFile(fullJSONFile)).toString());
+    const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
+    if (options) {
+      const attachs = pkg._attachments || {};
+      const firstFilename = Object.keys(attachs)[0];
+      const attach = attachs[firstFilename];
+      const versions = pkg.versions || {};
+      const firstVersion = Object.keys(versions)[0];
+      const version = versions[firstVersion];
+      let updateAttach = false;
+      if (options.name) {
+        pkg.name = options.name;
+        version.name = options.name;
+        updateAttach = true;
+      }
+      if (options.version) {
+        version.version = options.version;
+        updateAttach = true;
+      }
+      if (options.attachment) {
+        Object.assign(attach, options.attachment);
+      }
+      if (options.dist) {
+        Object.assign(version.dist, options.dist);
+      }
+      if (updateAttach) {
+        attachs[`${version.name}-${version.version}.tgz`] = attach;
+        delete attachs[firstFilename];
+      }
+    }
+    return pkg;
   }
 }

@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS `package_versions` (
   `gmt_modified` datetime NOT NULL COMMENT 'modified time',
   `package_id` varchar(24) NOT NULL COMMENT 'package id',
   `package_version_id` varchar(24) NOT NULL COMMENT 'package version id',
-  `version` varchar(30) NOT NULL COMMENT 'package version',
+  `abbreviated` longtext NOT NULL COMMENT 'abbreviated version object json',
+  `version` varchar(256) NOT NULL COMMENT 'package version',
   `manifest_dist_id` varchar(24) NOT NULL COMMENT 'manifest dist id',
   `tar_dist_id` varchar(24) NOT NULL COMMENT 'tar dist id',
   `readme_dist_id` varchar(24) NOT NULL COMMENT 'readme dist id',
@@ -26,6 +27,19 @@ CREATE TABLE IF NOT EXISTS `package_versions` (
   UNIQUE KEY `uk_package_version_id` (`package_version_id`),
   UNIQUE KEY `uk_package_id_version` (`package_id`, `version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='package version info';
+
+CREATE TABLE IF NOT EXISTS `package_tags` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` datetime NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime NOT NULL COMMENT 'modified time',
+  `package_id` varchar(24) NOT NULL COMMENT 'package id',
+  `package_tag_id` varchar(24) NOT NULL COMMENT 'package tag id',
+  `tag` varchar(214) NOT NULL COMMENT 'package tag',
+  `version` varchar(256) NOT NULL COMMENT 'package version',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_package_tag_id` (`package_tag_id`),
+  UNIQUE KEY `uk_package_tag` (`package_id`, `tag`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='package tag info';
 
 CREATE TABLE IF NOT EXISTS `package_deps` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
@@ -50,6 +64,8 @@ CREATE TABLE IF NOT EXISTS `dists` (
   `path` varchar(512) NOT NULL COMMENT 'access path',
   `size` int(10) unsigned NOT NULL COMMENT 'file size',
   `shasum` varchar(512) NOT NULL COMMENT 'dist shasum',
+  `integrity` varchar(512) NOT NULL COMMENT 'dist integrity',
+  `meta` varchar(10240) NOT NULL COMMENT 'dist meta json',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_dist_id` (`dist_id`),
   UNIQUE KEY `uk_path` (`path`)

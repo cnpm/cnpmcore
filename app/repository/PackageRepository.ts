@@ -6,6 +6,10 @@ import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVe
 import { PackageVersion as PackageVersionModel } from './model/PackageVersion';
 import { Dist as DistModel } from './model/Dist';
 import { Dist as DistEntity } from '../core/entity/Dist';
+import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag';
+import { PackageTag as PackageTagModel } from './model/PackageTag';
+
+type Scope = string | null | undefined;
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -36,7 +40,25 @@ export class PackageRepository {
     });
   }
 
-  async findPackageVersion(scope: string | null, name: string, version: string): Promise<PackageVersionEntity | undefined> {
+  async savePackageTag(packageTagEntity: PackageTagEntity) {
+    let packageTagModel = await PackageTagModel.findOne({ packageId: packageTagEntity.packageId, tag: packageTagEntity.tag }) as PackageTagModel;
+    if (packageTagModel) {
+      packageTagModel.version = packageTagEntity.version;
+      packageTagModel.gmtCreate = packageTagEntity.gmtModified;
+    } else {
+      packageTagModel = await ModelConvertor.convertEntityToModel(packageTagEntity, PackageTagModel);
+    }
+    await packageTagModel.save();
+  }
+
+  async findPackage(scope: Scope, name: string): Promise<PackageEntity | undefined> {
+    const model = await PackageModel.findOne({ scope, name }) as PackageModel;
+    if (!model) return;
+    const entity = ModelConvertor.convertModelToEntity(model, PackageEntity);
+    return entity;
+  }
+
+  async findPackageVersion(scope: Scope, name: string, version: string): Promise<PackageVersionEntity | undefined> {
     const pkg = await PackageModel.findOne({ scope, name }) as PackageModel;
     if (!pkg) return;
     const pkgVersionModel = await PackageVersionModel.findOne({
@@ -60,5 +82,15 @@ export class PackageRepository {
     };
     const pkgVersionEntity = ModelConvertor.convertModelToEntity(pkgVersionModel, PackageVersionEntity, data);
     return pkgVersionEntity;
+  }
+
+  async findPackageTag(scope: Scope, name: string, tag: string): Promise<PackageTagEntity | undefined> {
+    const pkgModel = await PackageModel.findOne({ scope, name }) as PackageModel;
+    if (!pkgModel) return;
+
+    const tagModel = await PackageTagModel.findOne({ packageId: pkgModel.packageId, tag }) as PackageTagModel;
+    if (!tagModel) return;
+    const tagEntity = ModelConvertor.convertModelToEntity(tagModel, PackageTagEntity);
+    return tagEntity;
   }
 }

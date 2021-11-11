@@ -1,4 +1,5 @@
 import { PackageJson, Simplify } from 'type-fest';
+import { UnprocessableEntityError } from 'egg-errors';
 import {
   HTTPController,
   HTTPMethod,
@@ -14,11 +15,15 @@ import {
 } from 'egg';
 import * as ssri from 'ssri';
 import { BaseController } from '../type/BaseController';
-import { PackageRepository } from '../../repository/PackageRepository';
-import { NFSAdapter } from '../../common/adapter/NFSAdapter';
+import { PackageRepository } from 'app/repository/PackageRepository';
+import { getScope } from 'app/common/PackageUtil';
+import { PackageManagerService } from 'app/core/service/PackageManagerService';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
+  name: 'string';
+  version: 'string';
   deprecated?: 'string';
+  readme?: 'string';
   dist?: {
     shasum: string;
     integrity: string;
@@ -57,6 +62,10 @@ type FullPackage = {
   readme?: string;
 };
 
+// https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
+const PACKAGE_NAME_PATH = '/:name(@[^/]+\/[^/]+|[^/]+)';
+const PACKAGE_NAME_WITH_VERSION_PATH = `${PACKAGE_NAME_PATH}/:version`;
+
 @HTTPController()
 export class PackageController extends BaseController {
   @Inject()
@@ -64,28 +73,36 @@ export class PackageController extends BaseController {
   @Inject()
   private packageRepository: PackageRepository;
   @Inject()
-  private nfsAdapter: NFSAdapter;
+  private packageManagerService: PackageManagerService;
 
   @HTTPMethod({
-    path: '/:name/:version',
+    path: PACKAGE_NAME_WITH_VERSION_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async showVersion(@HTTPParam() name: string, @HTTPParam() version: string) {
-    return this.packageRepository.findPackageVersion(null, name, version);
+  async showVersion(@Context() _ctx: EggContext, @HTTPParam() name: string, @HTTPParam() version: string) {
+    // let needAbbreviatedMeta = false;
+    // const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
+    // if (ctx.accepts([ 'json', abbreviatedMetaType ]) === abbreviatedMetaType) {
+    //   needAbbreviatedMeta = true;
+    // }
+    // if (needAbbreviatedMeta) {}
+    return await this.packageRepository.findPackageVersion(getScope(name), name, version);
   }
 
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#publish-a-new-package
   @HTTPMethod({
-    path: '/:name',
+    // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
+    path: PACKAGE_NAME_PATH,
     method: HTTPMethodEnum.PUT,
   })
-  async saveVersion(@Context() ctx: EggContext, @HTTPBody() pkg: FullPackage) {
+  async saveVersion(@Context() ctx: EggContext, @HTTPParam() name: string, @HTTPBody() pkg: FullPackage) {
     ctx.validate(FullPackageRule, pkg);
+    if (name !== pkg.name) {
+      throw new UnprocessableEntityError(`name(${name}) not match package.name(${pkg.name})`);
+    }
     const versions = Object.values(pkg.versions);
     if (versions.length === 0) {
-      ctx.throw(422, 'versions is empty', {
-        code: 'invalid_param',
-      });
+      throw new UnprocessableEntityError('versions is empty');
     }
 
     // auth maintainter
@@ -100,91 +117,70 @@ export class PackageController extends BaseController {
       }
 
       // invalid attachments
-      ctx.throw(422, '_attachments is empty', {
-        code: 'invalid_param',
-      });
+      throw new UnprocessableEntityError('_attachments is empty');
     }
 
     // handle add new version
     const version = versions[0];
     const attachment = attachments[attachmentFilename];
     const distTags = pkg['dist-tags'] ?? {};
-    const distTagsNames = Object.keys(distTags);
-    if (distTagsNames.length === 0) {
-      ctx.throw(422, 'dist-tags is empty', {
-        code: 'invalid_param',
-      });
+    const tag = Object.keys(distTags)[0];
+    if (!tag) {
+      throw new UnprocessableEntityError('dist-tags is empty');
     }
 
     // make sure publisher in maintainers
     const tarballBuffer = Buffer.from(attachment.data, 'base64');
     if (tarballBuffer.length !== attachment.length) {
-      ctx.throw(422, `attachment size ${attachment.length} not match download size ${tarballBuffer.length}`, {
-        code: 'invalid_param',
-      });
+      throw new UnprocessableEntityError(`attachment size ${attachment.length} not match download size ${tarballBuffer.length}`);
     }
 
     // check integrity or shasum
     const originDist = version.dist;
-    let shasum: string;
-    let integrity = originDist?.integrity as string;
+    // remove dist
+    version.dist = undefined;
+    const integrity = originDist?.integrity as string;
     // for content security reason
     // check integrity
     if (integrity) {
       const algorithm = ssri.checkData(tarballBuffer, integrity);
       if (!algorithm) {
-        ctx.throw(422, 'dist.integrity invalid', {
-          code: 'invalid_param',
-        });
+        throw new UnprocessableEntityError('dist.integrity invalid');
       }
+    } else {
       const integrityObj = ssri.fromData(tarballBuffer, {
         algorithms: [ 'sha1' ],
       });
-      shasum = integrityObj.sha1[0].hexDigest();
-    } else {
-      const integrityObj = ssri.fromData(tarballBuffer, {
-        algorithms: [ 'sha512', 'sha1' ],
-      });
-      integrity = integrityObj.sha512[0].toString();
-      shasum = integrityObj.sha1[0].hexDigest();
+      const shasum = integrityObj.sha1[0].hexDigest();
       if (originDist?.shasum && originDist?.shasum !== shasum) {
         // if integrity not exists, check shasum
-        ctx.throw(422, 'dist.shasum invalid', {
-          code: 'invalid_param',
-        });
+        throw new UnprocessableEntityError('dist.shasum invalid');
       }
     }
 
-    const options = {
-      key: this.nfsAdapter.getStoreKey(pkg.name, attachmentFilename),
-      shasum,
-      integrity,
-    };
-    const uploadResult = await this.nfsAdapter.uploadBuffer(tarballBuffer, options);
-    const dist = {
-      ...originDist,
-      key: undefined,
-      tarball: undefined,
-      integrity,
-      shasum,
-      size: attachment.length,
-    };
-
-    // if nfs upload return a key, record it
-    if (uploadResult.url) {
-      dist.tarball = uploadResult.url;
-    } else if (uploadResult.key) {
-      dist.key = uploadResult.key;
-      dist.tarball = uploadResult.key;
-    }
-    this.logger.info('[package:version:save:dist] %s@%s, dist: %j', version.name, version.version, dist);
+    const readme = version.readme ?? '';
+    // remove readme
+    version.readme = undefined;
+    const id = await this.packageManagerService.publish({
+      scope: getScope(version.name),
+      name: version.name,
+      version: version.version,
+      packageJson: version,
+      readme,
+      dist: {
+        content: tarballBuffer,
+        meta: originDist,
+      },
+      tag,
+    });
+    this.logger.info('[package:version:save:dist] %s@%s, id: %s, tag: %s',
+      version.name, version.version, id, tag);
 
     // make sure the latest version exists
-
     ctx.status = 201;
     return {
       ok: true,
-      rev: '1',
+      rev: id,
     };
   }
 
