@@ -29,17 +29,19 @@ describe('test/core/service/PackageManagerService.test.ts', () => {
 
   describe('create package', () => {
     it('should work', async () => {
-      await packageManagerService.publish({
+      const { packageId } = await packageManagerService.publish({
         dist: {
           content: Buffer.alloc(0),
         },
         tag: '',
         name: 'foo',
+        description: 'foo description',
         packageJson: {},
         readme: '',
         version: '1.0.0',
+        isPrivate: true,
       });
-      let pkgVersion = await packageRepository.findPackageVersion(null, 'foo', '1.0.0');
+      let pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
       assert(pkgVersion);
       assert(pkgVersion.version === '1.0.0');
       // another version
@@ -49,11 +51,13 @@ describe('test/core/service/PackageManagerService.test.ts', () => {
         },
         tag: '',
         name: 'foo',
+        description: 'foo description new',
         packageJson: {},
         readme: '',
         version: '1.0.1',
+        isPrivate: true,
       });
-      pkgVersion = await packageRepository.findPackageVersion(null, 'foo', '1.0.1');
+      pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.1');
       assert(pkgVersion);
       assert(pkgVersion.version === '1.0.1');
     });

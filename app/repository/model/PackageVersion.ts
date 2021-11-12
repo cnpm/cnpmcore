@@ -29,8 +29,9 @@ export class PackageVersion extends Bone {
   @Attribute(DataTypes.STRING(256))
   version: string;
 
-  @Attribute(DataTypes.TEXT('long'))
-  abbreviated: string;
+  @EntityProperty('abbreviatedDist.distId')
+  @Attribute(DataTypes.STRING(24))
+  abbreviatedDistId: string;
 
   @EntityProperty('manifestDist.distId')
   @Attribute(DataTypes.STRING(24))

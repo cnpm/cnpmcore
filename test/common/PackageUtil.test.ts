@@ -1,5 +1,5 @@
 import { strict as assert } from 'assert';
-import { formatTarball } from 'app/common/PackageUtil';
+import { formatTarball } from '../../app/common/PackageUtil';
 
 describe('test/common/PackageUtil.test.ts', () => {
   describe('formatTarball()', () => {

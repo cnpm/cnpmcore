@@ -1,12 +1,16 @@
 import { AccessLevel, ContextProto, EventBus, Inject } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
-import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
-import { calculateIntegrity } from 'app/common/PackageUtil';
-import { PackageRepository } from 'app/repository/PackageRepository';
+import { NFSAdapter } from '../../common/adapter/NFSAdapter';
+import { calculateIntegrity } from '../../common/PackageUtil';
+import { PackageRepository } from '../../repository/PackageRepository';
 import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
 import { PackageTag } from '../entity/PackageTag';
-import { PACKAGE_PUBLISHED } from '../event';
+import {
+  PACKAGE_PUBLISHED,
+  PACKAGE_TAG_CHANGED,
+  PACKAGE_TAG_ADDED,
+} from '../event';
 import { Dist } from '../entity/Dist';
 
 export interface PublishPackageCmd {
@@ -14,6 +18,7 @@ export interface PublishPackageCmd {
   scope?: string;
   name: string;
   version: string;
+  description: string;
   packageJson: any;
   readme: string;
   dist: {
@@ -21,6 +26,7 @@ export interface PublishPackageCmd {
     meta?: object;
   };
   tag?: string;
+  isPrivate: boolean;
 }
 
 @ContextProto({
@@ -40,12 +46,22 @@ export class PackageManagerService {
       pkg = Package.create({
         scope: cmd.scope,
         name: cmd.name,
-        isPrivate: true,
+        isPrivate: cmd.isPrivate,
+        description: cmd.description,
       });
       await this.packageRepository.createPackage(pkg);
+    } else {
+      // update description
+      // will read database twice to update description by model to entity and entity to model
+      if (pkg.description !== cmd.description) {
+        pkg.description = cmd.description;
+        await this.packageRepository.savePackage(pkg);
+      }
     }
-    if (!pkg.isPrivate) {
-      throw new ForbiddenError('npm public package can\'t be publish');
+
+    let pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, cmd.version);
+    if (pkgVersion) {
+      throw new ForbiddenError(`cannot modify pre-existing version: ${pkgVersion.version}`);
     }
 
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
@@ -76,14 +92,15 @@ export class PackageManagerService {
       _hasShrinkwrap: cmd.packageJson._hasShrinkwrap,
       hasInstallScript,
     });
-
+    const abbreviatedDistBytes = Buffer.from(abbreviated);
+    const abbreviatedDistIntegrity = calculateIntegrity(abbreviatedDistBytes);
     const tarDistBytes = cmd.dist.content;
     const tarDistIntegrity = calculateIntegrity(tarDistBytes);
     const readmeDistBytes = Buffer.from(cmd.readme);
     const readmeDistIntegrity = calculateIntegrity(readmeDistBytes);
     const manifestDistBytes = Buffer.from(JSON.stringify(cmd.packageJson));
     const manifestDistIntegrity = calculateIntegrity(manifestDistBytes);
-    const pkgVersion = PackageVersion.create({
+    pkgVersion = PackageVersion.create({
       packageId: pkg.packageId,
       publishTime: new Date(),
       manifestDist: pkg.createManifest(cmd.version, {
@@ -102,9 +119,14 @@ export class PackageManagerService {
         integrity: tarDistIntegrity.integrity,
       }),
       version: cmd.version,
-      abbreviated,
+      abbreviatedDist: pkg.createAbbreviated(cmd.version, {
+        size: abbreviatedDistBytes.length,
+        shasum: abbreviatedDistIntegrity.shasum,
+        integrity: abbreviatedDistIntegrity.integrity,
+      }),
     });
     await Promise.all([
+      this.nfsAdapter.uploadBytes(pkgVersion.abbreviatedDist.path, abbreviatedDistBytes),
       this.nfsAdapter.uploadBytes(pkgVersion.manifestDist.path, manifestDistBytes),
       this.nfsAdapter.uploadBytes(pkgVersion.readmeDist.path, readmeDistBytes),
       this.nfsAdapter.uploadBytes(pkgVersion.tarDist.path, tarDistBytes),
@@ -112,15 +134,58 @@ export class PackageManagerService {
     await this.packageRepository.createPackageVersion(pkgVersion);
     this.eventBus.emit(PACKAGE_PUBLISHED, pkgVersion.packageVersionId);
     if (cmd.tag) {
-      // TODO: change package tag
-      const tag = PackageTag.create({
-        packageId: pkg.packageId,
-        tag: cmd.tag,
-        version: cmd.version,
-      });
-      await this.packageRepository.savePackageTag(tag);
+      await this.savePackageTag(pkg.packageId, cmd.tag, cmd.version);
     }
-    return pkgVersion.packageVersionId;
+    return pkgVersion;
+  }
+
+  private async savePackageTag(packageId: string, tag: string, version: string) {
+    let tagEntity = await this.packageRepository.findPackageTag(packageId, tag);
+    if (!tagEntity) {
+      tagEntity = PackageTag.create({
+        packageId,
+        tag,
+        version,
+      });
+      this.eventBus.emit(PACKAGE_TAG_ADDED, tagEntity.packageTagId);
+      return;
+    }
+    if (tagEntity.version !== version) {
+      tagEntity.version = version;
+      await this.packageRepository.savePackageTag(tagEntity);
+      this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
+      return;
+    }
+  }
+
+  async listPackageManifests(scope: string, name: string) {
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) return null;
+    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
+    return {
+      _attachments: {},
+      _id: `${pkg.name}`,
+      _rev: `${pkg.id}-${pkg.packageId}`,
+      author: {},
+      description: '',
+      'dist-tags': {},
+      license: '',
+      maintainers: [],
+      name: pkg.name,
+      readme: '',
+      readmeFilename: '',
+      time: {
+        '1.0.0': '',
+        created: pkg.gmtCreate,
+        modified: pkg.gmtModified,
+      },
+      versions: {},
+    };
+  }
+
+  async readDistBytesToJSON(dist: Dist): Promise<object> {
+    const bytes = await this.readDistBytes(dist);
+    return JSON.parse(Buffer.from(bytes).toString('utf8'));
   }
 
   async readDistBytes(dist: Dist): Promise<Uint8Array> {

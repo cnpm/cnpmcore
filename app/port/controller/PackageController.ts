@@ -16,7 +16,7 @@ import {
 import * as ssri from 'ssri';
 import { BaseController } from '../type/BaseController';
 import { PackageRepository } from 'app/repository/PackageRepository';
-import { formatTarball, getScope } from 'app/common/PackageUtil';
+import { formatTarball, getScope } from '../../common/PackageUtil';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
@@ -80,6 +80,8 @@ export class PackageController extends BaseController {
     method: HTTPMethodEnum.GET,
   })
   async showPackage(@Context() _ctx: EggContext, @HTTPParam() name: string) {
+    // FIXME: validate name
+    // https://github.com/npm/validate-npm-package-name
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const pkg = await this.packageRepository.findPackage(getScope(name), name);
     if (!pkg) {
@@ -101,7 +103,11 @@ export class PackageController extends BaseController {
   })
   async showVersion(@Context() ctx: EggContext, @HTTPParam() name: string, @HTTPParam() version: string) {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const packageVersion = await this.packageRepository.findPackageVersion(getScope(name), name, version);
+    const pkg = await this.packageRepository.findPackage(getScope(name), name);
+    if (!pkg) {
+      throw new NotFoundError(`${name} not found`);
+    }
+    const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
     if (!packageVersion) {
       throw new NotFoundError(`${name}@${version} not found`);
     }
@@ -191,10 +197,11 @@ export class PackageController extends BaseController {
     const readme = version.readme ?? '';
     // remove readme
     version.readme = undefined;
-    const id = await this.packageManagerService.publish({
+    const packageVersionEntity = await this.packageManagerService.publish({
       scope: getScope(version.name),
       name: version.name,
       version: version.version,
+      description: version.description || '',
       packageJson: version,
       readme,
       dist: {
@@ -202,15 +209,16 @@ export class PackageController extends BaseController {
         meta: originDist,
       },
       tag,
+      isPrivate: true,
     });
-    this.logger.info('[package:version:save:dist] %s@%s, id: %s, tag: %s',
-      version.name, version.version, id, tag);
+    this.logger.info('[package:version:save:dist] %s@%s, packageVersionId: %s, tag: %s',
+      version.name, version.version, packageVersionEntity.packageVersionId, tag);
 
     // make sure the latest version exists
     ctx.status = 201;
     return {
       ok: true,
-      rev: id,
+      rev: `${packageVersionEntity.id}-${packageVersionEntity.packageVersionId}`,
     };
   }
 

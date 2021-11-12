@@ -28,16 +28,19 @@ describe('test/controller/PackageController.test.ts', () => {
   });
 
   describe('showVersion()', () => {
-    it('should work', async () => {
+    it('should show one package version', async () => {
       await packageManagerService.publish({
         dist: {
           content: Buffer.alloc(100),
         },
         tag: '',
         name: 'foo',
-        packageJson: { name: 'foo', test: 'test' },
+        description: 'foo description',
+        // https://mathiasbynens.be/notes/mysql-utf8mb4
+        packageJson: { name: 'foo', test: 'test', description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻' },
         readme: '',
         version: '1.0.0',
+        isPrivate: true,
       });
       const res = await app.httpRequest()
         .get('/foo/1.0.0')
@@ -50,6 +53,7 @@ describe('test/controller/PackageController.test.ts', () => {
       assert.equal(res.body.dist.shasum, 'ed4a77d1b56a118938788fc53037759b6c501e3d');
       assert.equal(res.body.dist.integrity, 'sha512-8gb08O8JuQg38dFaB8bPS9KR2BdmP5+FoPxDQewZkQcZrVcbYQKjZq6EjNDxh9Da75EuBYmLgsNSE81JpF7o4A==');
       assert.equal(res.body.dist.size, 100);
+      assert.equal(res.body.description, 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻');
     });
 
     it('should work with scoped package', async () => {
@@ -58,11 +62,13 @@ describe('test/controller/PackageController.test.ts', () => {
           content: Buffer.alloc(0),
         },
         tag: '',
+        description: 'foo description',
         scope: '@cnpm',
         name: '@cnpm/foo',
         readme: '',
         packageJson: {},
         version: '1.0.0',
+        isPrivate: true,
       });
 
       await app.httpRequest()
@@ -82,7 +88,7 @@ describe('test/controller/PackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
-      assert.match(res.body.rev, /^\w{24}$/);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -96,7 +102,29 @@ describe('test/controller/PackageController.test.ts', () => {
         .send(pkg2)
         .expect(201);
       assert(res.body.ok === true);
-      assert.match(res.body.rev, /^\w{24}$/);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    });
+
+    it('should add same version throw error', async () => {
+      const pkg = await TestUtil.getFullPackage({ version: '99.0.0' });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/99.0.0`)
+        .expect(200);
+      assert.equal(res.body.version, '99.0.0');
+
+      // add other version
+      const pkg2 = await TestUtil.getFullPackage({ version: '99.0.0' });
+      res = await app.httpRequest()
+        .put(`/${pkg2.name}`)
+        .send(pkg2)
+        .expect(403);
+      assert.equal(res.body.error, '[FORBIDDEN] cannot modify pre-existing version: 99.0.0');
     });
 
     it('should 422 when attachment size not match', async () => {

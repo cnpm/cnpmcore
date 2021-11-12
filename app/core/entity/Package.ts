@@ -8,9 +8,11 @@ export interface PackageData extends EntityData {
   name: string;
   packageId: string;
   isPrivate: boolean;
+  description: string;
 }
 
 export enum DIST_NAMES {
+  ABBREVIATED = 'abbreviated.json',
   MANIFEST = 'package.json',
   README = 'readme.md',
 }
@@ -27,6 +29,8 @@ export class Package extends Entity {
   readonly name: string;
   readonly packageId: string;
   readonly isPrivate: boolean;
+  // allow to update
+  description: string;
 
   constructor(data: PackageData) {
     super(data);
@@ -34,6 +38,7 @@ export class Package extends Entity {
     this.name = data.name;
     this.packageId = data.packageId;
     this.isPrivate = data.isPrivate;
+    this.description = data.description;
   }
 
   static create(data: EasyData<PackageData, 'packageId'>): Package {
@@ -57,6 +62,10 @@ export class Package extends Entity {
       path: path.join(this.distDir(version), name),
       meta: JSON.stringify(info.meta ?? {}),
     });
+  }
+
+  createAbbreviated(version: string, info: FileInfo) {
+    return this.createDist(version, DIST_NAMES.ABBREVIATED, info);
   }
 
   createManifest(version: string, info: FileInfo) {
