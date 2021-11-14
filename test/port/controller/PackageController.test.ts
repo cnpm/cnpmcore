@@ -114,6 +114,20 @@ describe('test/controller/PackageController.test.ts', () => {
         .expect(200);
     });
 
+    it('should download non-scope package tar success', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: 'testmodule-download-version-tar222', version: '1.0.0' });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+
+      await app.httpRequest()
+        .get(`/${pkg.name}/-/${pkg.name}-1.0.0.tgz`)
+        .expect('content-type', 'application/octet-stream')
+        .expect('content-disposition', 'attachment; filename="testmodule-download-version-tar222-1.0.0.tgz"')
+        .expect(200);
+    });
+
     it('should 422 when version is empty string', async () => {
       await app.httpRequest()
         .get(`/${name}/-/testmodule-download-version-tar-.tgz`)
