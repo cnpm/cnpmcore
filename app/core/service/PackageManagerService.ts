@@ -150,12 +150,13 @@ export class PackageManagerService {
       this.eventBus.emit(PACKAGE_TAG_ADDED, tagEntity.packageTagId);
       return;
     }
-    if (tagEntity.version !== version) {
-      tagEntity.version = version;
-      await this.packageRepository.savePackageTag(tagEntity);
-      this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
+    if (tagEntity.version === version) {
+      // nothing change
       return;
     }
+    tagEntity.version = version;
+    await this.packageRepository.savePackageTag(tagEntity);
+    this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
   }
 
   async listPackageManifests(scope: string, name: string) {
