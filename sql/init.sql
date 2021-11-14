@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `packages` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_package_id` (`package_id`),
   UNIQUE KEY `uk_scope_name` (`scope`,`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='package info';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='package info';
 
 CREATE TABLE IF NOT EXISTS `package_versions` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `package_versions` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_package_version_id` (`package_version_id`),
   UNIQUE KEY `uk_package_id_version` (`package_id`, `version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='package version info';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='package version info';
 
 CREATE TABLE IF NOT EXISTS `package_tags` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `package_tags` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_package_tag_id` (`package_tag_id`),
   UNIQUE KEY `uk_package_tag` (`package_id`, `tag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='package tag info';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='package tag info';
 
 CREATE TABLE IF NOT EXISTS `package_deps` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `package_deps` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_package_dep_id` (`package_dep_id`),
   UNIQUE KEY `uk_package_version_id_scope_name` (`package_version_id`, `scope`, `name`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='package dependency info';
 
 CREATE TABLE IF NOT EXISTS `dists` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
@@ -70,4 +70,4 @@ CREATE TABLE IF NOT EXISTS `dists` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_dist_id` (`dist_id`),
   UNIQUE KEY `uk_path` (`path`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='dist info';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='dist info';
