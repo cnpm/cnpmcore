@@ -127,6 +127,63 @@ describe('test/controller/PackageController.test.ts', () => {
       assert.equal(res.body.error, '[FORBIDDEN] cannot modify pre-existing version: 99.0.0');
     });
 
+    it('should 422 when version format error', async () => {
+      const pkg = await TestUtil.getFullPackage({
+        version: '1.0.woring-version',
+      });
+      const res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] version(1.0.woring-version) format invalid');
+    });
+
+    it('should 422 when attachment data format invalid', async () => {
+      let pkg = await TestUtil.getFullPackage({
+        attachment: {
+          data: null,
+        },
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
+
+      pkg = await TestUtil.getFullPackage({
+        attachment: {
+          data: 'xyz.ddd!',
+        },
+      });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
+
+      pkg = await TestUtil.getFullPackage({
+        attachment: {
+          data: '',
+        },
+      });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
+
+      pkg = await TestUtil.getFullPackage({
+        attachment: {
+          data: 'H4sIAAAAAAAAA+2SsWrDMBCGPfspDg2Zine123OyEgeylg6Zau2YR8rVRHEtGkkOg5N0jWaFdujVQAv6W4/7/',
+        },
+      });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
+    });
+
     it('should 422 when attachment size not match', async () => {
       const pkg = await TestUtil.getFullPackage({
         attachment: {
@@ -250,8 +307,10 @@ describe('test/controller/PackageController.test.ts', () => {
         .send({
           name: 'foo',
           versions: {
-            name: 'foo',
-            version: '1.0.0',
+            '1.0.0': {
+              name: 'foo',
+              version: '1.0.0',
+            },
           },
           _attachments: {
             name: 'foo',
@@ -259,7 +318,7 @@ describe('test/controller/PackageController.test.ts', () => {
           },
         })
         .expect(422);
-      assert(res.body.error === '[UNPROCESSABLE_ENTITY] dist-tags is empty');
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist-tags is empty');
 
       res = await app.httpRequest()
         .put('/foo')
@@ -267,8 +326,10 @@ describe('test/controller/PackageController.test.ts', () => {
           name: 'foo',
           'dist-tags': {},
           versions: {
-            name: 'foo',
-            version: '1.0.0',
+            '1.0.0': {
+              name: 'foo',
+              version: '1.0.0',
+            },
           },
           _attachments: {
             name: 'foo',

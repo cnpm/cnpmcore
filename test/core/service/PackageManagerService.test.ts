@@ -6,6 +6,7 @@ import { PackageRepository } from '../../../app/repository/PackageRepository';
 import { Package } from '../../../app/repository/model/Package';
 import { PackageVersion } from '../../../app/repository/model/PackageVersion';
 import { Dist } from '../../../app/repository/model/Dist';
+import { TestUtil } from '../../TestUtil';
 
 describe('test/core/service/PackageManagerService.test.ts', () => {
   let ctx: Context;
@@ -27,8 +28,8 @@ describe('test/core/service/PackageManagerService.test.ts', () => {
     ]);
   });
 
-  describe('create package', () => {
-    it('should work', async () => {
+  describe('publish()', () => {
+    it('should work with dist.content', async () => {
       const { packageId } = await packageManagerService.publish({
         dist: {
           content: Buffer.alloc(0),
@@ -43,7 +44,7 @@ describe('test/core/service/PackageManagerService.test.ts', () => {
       });
       let pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
       assert(pkgVersion);
-      assert(pkgVersion.version === '1.0.0');
+      assert.equal(pkgVersion.version, '1.0.0');
       // another version
       await packageManagerService.publish({
         dist: {
@@ -59,7 +60,26 @@ describe('test/core/service/PackageManagerService.test.ts', () => {
       });
       pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.1');
       assert(pkgVersion);
-      assert(pkgVersion.version === '1.0.1');
+      assert.equal(pkgVersion.version, '1.0.1');
+    });
+
+    it('should work with dist.localFile', async () => {
+      const { packageId } = await packageManagerService.publish({
+        dist: {
+          localFile: TestUtil.getFixtures('pedding-1.1.0.tgz'),
+        },
+        tag: '',
+        name: 'pedding',
+        description: 'pedding description',
+        packageJson: {},
+        readme: '',
+        version: '1.1.0',
+        isPrivate: false,
+      });
+      const pkgVersion = await packageRepository.findPackageVersion(packageId, '1.1.0');
+      assert(pkgVersion);
+      assert.equal(pkgVersion.version, '1.1.0');
+      assert.equal(pkgVersion.tarDist.size, 2672);
     });
   });
 });

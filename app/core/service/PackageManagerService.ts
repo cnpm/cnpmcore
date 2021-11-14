@@ -1,5 +1,7 @@
+import { stat } from 'node:fs/promises';
 import { AccessLevel, ContextProto, EventBus, Inject } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
+import { RequireAtLeastOne } from 'type-fest';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { calculateIntegrity } from '../../common/PackageUtil';
 import { PackageRepository } from '../../repository/PackageRepository';
@@ -21,10 +23,14 @@ export interface PublishPackageCmd {
   description: string;
   packageJson: any;
   readme: string;
-  dist: {
-    content: Uint8Array;
+  // require content or localFile field
+  dist: RequireAtLeastOne<{
+    // package controller will use content field
+    content?: Uint8Array;
+    // sync worker will use localFile field
+    localFile?: string;
     meta?: object;
-  };
+  }, 'content' | 'localFile'>;
   tag?: string;
   isPrivate: boolean;
 }
@@ -40,6 +46,7 @@ export class PackageManagerService {
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
 
+  // support user publish private package and sync worker publish public package
   async publish(cmd: PublishPackageCmd) {
     let pkg = await this.packageRepository.findPackage(cmd.scope, cmd.name);
     if (!pkg) {
@@ -93,15 +100,38 @@ export class PackageManagerService {
       hasInstallScript,
     });
     const abbreviatedDistBytes = Buffer.from(abbreviated);
-    const abbreviatedDistIntegrity = calculateIntegrity(abbreviatedDistBytes);
-    const tarDistBytes = cmd.dist.content;
-    const tarDistIntegrity = calculateIntegrity(tarDistBytes);
+    const abbreviatedDistIntegrity = await calculateIntegrity(abbreviatedDistBytes);
     const readmeDistBytes = Buffer.from(cmd.readme);
-    const readmeDistIntegrity = calculateIntegrity(readmeDistBytes);
+    const readmeDistIntegrity = await calculateIntegrity(readmeDistBytes);
     const manifestDistBytes = Buffer.from(JSON.stringify(cmd.packageJson));
-    const manifestDistIntegrity = calculateIntegrity(manifestDistBytes);
+    const manifestDistIntegrity = await calculateIntegrity(manifestDistBytes);
+
+    let tarDistIntegrity: any;
+    let tarDistSize = 0;
+    if (cmd.dist.content) {
+      const tarDistBytes = cmd.dist.content;
+      tarDistIntegrity = await calculateIntegrity(tarDistBytes);
+      tarDistSize = tarDistBytes.length;
+    } else if (cmd.dist.localFile) {
+      const localFile = cmd.dist.localFile;
+      const fileStat = await stat(localFile);
+      tarDistIntegrity = await calculateIntegrity(localFile);
+      tarDistSize = fileStat.size;
+    }
+    const tarDist = pkg.createTar(cmd.version, {
+      size: tarDistSize,
+      shasum: tarDistIntegrity.shasum,
+      integrity: tarDistIntegrity.integrity,
+    });
+    if (cmd.dist.content) {
+      await this.nfsAdapter.uploadBytes(tarDist.path, cmd.dist.content);
+    } else if (cmd.dist.localFile) {
+      await this.nfsAdapter.uploadFile(tarDist.path, cmd.dist.localFile);
+    }
+
     pkgVersion = PackageVersion.create({
       packageId: pkg.packageId,
+      version: cmd.version,
       publishTime: new Date(),
       manifestDist: pkg.createManifest(cmd.version, {
         size: manifestDistBytes.length,
@@ -113,23 +143,17 @@ export class PackageManagerService {
         shasum: readmeDistIntegrity.shasum,
         integrity: readmeDistIntegrity.integrity,
       }),
-      tarDist: pkg.createTar(cmd.version, {
-        size: tarDistBytes.length,
-        shasum: tarDistIntegrity.shasum,
-        integrity: tarDistIntegrity.integrity,
-      }),
-      version: cmd.version,
       abbreviatedDist: pkg.createAbbreviated(cmd.version, {
         size: abbreviatedDistBytes.length,
         shasum: abbreviatedDistIntegrity.shasum,
         integrity: abbreviatedDistIntegrity.integrity,
       }),
+      tarDist,
     });
     await Promise.all([
       this.nfsAdapter.uploadBytes(pkgVersion.abbreviatedDist.path, abbreviatedDistBytes),
       this.nfsAdapter.uploadBytes(pkgVersion.manifestDist.path, manifestDistBytes),
       this.nfsAdapter.uploadBytes(pkgVersion.readmeDist.path, readmeDistBytes),
-      this.nfsAdapter.uploadBytes(pkgVersion.tarDist.path, tarDistBytes),
     ]);
     await this.packageRepository.createPackageVersion(pkgVersion);
     this.eventBus.emit(PACKAGE_PUBLISHED, pkgVersion.packageVersionId);

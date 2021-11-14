@@ -19,6 +19,10 @@ export class NFSAdapter {
     await this.nfsClientAdapter.client.uploadBuffer(bytes, { key: storeKey });
   }
 
+  async uploadFile(storeKey: string, file: string) {
+    await this.nfsClientAdapter.client.upload(file, { key: storeKey });
+  }
+
   async getStream(storeKey: string): Promise<Readable> {
     return await this.nfsClientAdapter.client.createDownloadStream(storeKey);
   }

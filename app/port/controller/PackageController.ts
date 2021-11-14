@@ -14,6 +14,7 @@ import {
   EggLogger,
 } from 'egg';
 import * as ssri from 'ssri';
+import * as semver from 'semver';
 import { BaseController } from '../type/BaseController';
 import { PackageRepository } from 'app/repository/PackageRepository';
 import { formatTarball, getScope } from '../../common/PackageUtil';
@@ -65,6 +66,8 @@ type FullPackage = {
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
 const PACKAGE_NAME_PATH = '/:name(@[^/]+\/[^/]+|[^/]+)';
 const PACKAGE_NAME_WITH_VERSION_PATH = `${PACKAGE_NAME_PATH}/:version`;
+// base64 regex https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data/475217#475217
+const PACKAGE_ATTACH_DATA_RE = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
 
 @HTTPController()
 export class PackageController extends BaseController {
@@ -157,7 +160,12 @@ export class PackageController extends BaseController {
     }
 
     // handle add new version
-    const version = versions[0];
+    const packageVersion = versions[0];
+    // check version format
+    if (!semver.valid(packageVersion.version)) {
+      throw new UnprocessableEntityError(`version(${packageVersion.version}) format invalid`);
+    }
+
     const attachment = attachments[attachmentFilename];
     const distTags = pkg['dist-tags'] ?? {};
     const tag = Object.keys(distTags)[0];
@@ -165,26 +173,31 @@ export class PackageController extends BaseController {
       throw new UnprocessableEntityError('dist-tags is empty');
     }
 
-    // make sure publisher in maintainers
-    const tarballBuffer = Buffer.from(attachment.data, 'base64');
-    if (tarballBuffer.length !== attachment.length) {
-      throw new UnprocessableEntityError(`attachment size ${attachment.length} not match download size ${tarballBuffer.length}`);
+    // FIXME: make sure publisher in maintainers
+
+    // check attachment data format and size
+    if (!attachment.data || typeof attachment.data !== 'string' || !PACKAGE_ATTACH_DATA_RE.test(attachment.data)) {
+      throw new UnprocessableEntityError('attachment.data format invalid');
+    }
+    const tarballBytes = Buffer.from(attachment.data, 'base64');
+    if (tarballBytes.length !== attachment.length) {
+      throw new UnprocessableEntityError(`attachment size ${attachment.length} not match download size ${tarballBytes.length}`);
     }
 
     // check integrity or shasum
-    const originDist = version.dist;
+    const originDist = packageVersion.dist;
     // remove dist
-    version.dist = undefined;
+    packageVersion.dist = undefined;
     const integrity = originDist?.integrity as string;
     // for content security reason
     // check integrity
     if (integrity) {
-      const algorithm = ssri.checkData(tarballBuffer, integrity);
+      const algorithm = ssri.checkData(tarballBytes, integrity);
       if (!algorithm) {
         throw new UnprocessableEntityError('dist.integrity invalid');
       }
     } else {
-      const integrityObj = ssri.fromData(tarballBuffer, {
+      const integrityObj = ssri.fromData(tarballBytes, {
         algorithms: [ 'sha1' ],
       });
       const shasum = integrityObj.sha1[0].hexDigest();
@@ -194,25 +207,25 @@ export class PackageController extends BaseController {
       }
     }
 
-    const readme = version.readme ?? '';
+    const readme = packageVersion.readme ?? '';
     // remove readme
-    version.readme = undefined;
+    packageVersion.readme = undefined;
     const packageVersionEntity = await this.packageManagerService.publish({
-      scope: getScope(version.name),
-      name: version.name,
-      version: version.version,
-      description: version.description || '',
-      packageJson: version,
+      scope: getScope(packageVersion.name),
+      name: packageVersion.name,
+      version: packageVersion.version,
+      description: packageVersion.description || '',
+      packageJson: packageVersion,
       readme,
       dist: {
-        content: tarballBuffer,
+        content: tarballBytes,
         meta: originDist,
       },
       tag,
       isPrivate: true,
     });
-    this.logger.info('[package:version:save:dist] %s@%s, packageVersionId: %s, tag: %s',
-      version.name, version.version, packageVersionEntity.packageVersionId, tag);
+    this.logger.info('[package:version:add] %s@%s, packageVersionId: %s, tag: %s',
+      packageVersion.name, packageVersion.version, packageVersionEntity.packageVersionId, tag);
 
     // make sure the latest version exists
     ctx.status = 201;
