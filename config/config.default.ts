@@ -21,6 +21,14 @@ export default (appInfo: EggAppConfig) => {
     port: 3306,
     user: 'root',
   };
+  if (process.env.DEBUG_LOCAL_SQL) {
+    config.orm.logger = {
+      // TODO: try to save SQL log into ctx logger or app logger
+      logQuery(sql: string, duration: number) {
+        console.log('[%sms] %s', duration, sql);
+      },
+    };
+  }
 
   config.security = {
     csrf: {

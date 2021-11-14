@@ -1,4 +1,5 @@
-import { promises as fs } from 'fs';
+import * as fs from 'fs/promises';
+import { setTimeout as sleep } from 'timers/promises';
 import mysql from 'mysql';
 import path from 'path';
 import { JsonObject } from 'type-fest';
@@ -40,6 +41,7 @@ export class TestUtil {
     if (!process.env.CI) {
       await this.query(connection, 'DROP DATABASE IF EXISTS cnpmcore;');
       await this.query(connection, 'CREATE DATABASE IF NOT EXISTS cnpmcore CHARACTER SET utf8;');
+      await sleep(10);
     }
     await this.query(connection, 'USE cnpmcore;');
     await this.query(connection, sqls);
