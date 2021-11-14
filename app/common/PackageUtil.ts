@@ -7,6 +7,13 @@ export function getScope(name: string): string | undefined {
   }
 }
 
+// get filename from package name
+// @foo/bar == filename: bar
+// bar == filename: bar
+export function getFilename(name: string) {
+  return name.startsWith('@') ? name.split('/', 2)[1] : name;
+}
+
 export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
   let integrityObj;
   if (typeof contentOrFile === 'string') {

@@ -1,4 +1,5 @@
 import { stat } from 'node:fs/promises';
+import { Readable } from 'node:stream';
 import { AccessLevel, ContextProto, EventBus, Inject } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
@@ -207,6 +208,10 @@ export class PackageManagerService {
       },
       versions: {},
     };
+  }
+
+  async downloadDist(dist: Dist): Promise<string | Readable> {
+    return await this.nfsAdapter.getDownloadUrlOrStream(dist.path);
   }
 
   async readDistBytesToJSON(dist: Dist): Promise<object> {

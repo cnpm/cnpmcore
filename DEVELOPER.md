@@ -1,4 +1,4 @@
-# 如何共享 cnpmcore
+# 如何贡献 cnpmcore
 
 ## 安装数据库
 

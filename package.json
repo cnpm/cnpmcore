@@ -18,7 +18,8 @@
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "rm -rf dist && tsc -p ./tsconfig.prod.json",
-    "prepublishOnly": "npm run tsc:prod"
+    "prepublishOnly": "npm run tsc:prod",
+    "contributor": "git-contributor"
   },
   "repository": {
     "type": "git",
@@ -58,6 +59,7 @@
     "egg-mock": "^3.26.0",
     "eslint": "^7.32.0",
     "eslint-config-egg": "^9.0.0",
+    "git-contributor": "^1.0.10",
     "typescript": "^4.3.5"
   },
   "author": "killagu",

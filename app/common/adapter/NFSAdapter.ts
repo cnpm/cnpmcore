@@ -44,4 +44,11 @@ export class NFSAdapter {
     );
     return Buffer.concat(chunks, size);
   }
+
+  async getDownloadUrlOrStream(storeKey: string): Promise<string | Readable> {
+    if (typeof this.nfsClientAdapter.client.url === 'function') {
+      return this.nfsClientAdapter.client.url(storeKey) as string;
+    }
+    return await this.getStream(storeKey);
+  }
 }

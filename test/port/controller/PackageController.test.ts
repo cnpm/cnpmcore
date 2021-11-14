@@ -1,24 +1,28 @@
 import { strict as assert } from 'assert';
 import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { PackageManagerService } from '../../../app/core/service/PackageManagerService';
 import { Package } from '../../../app/repository/model/Package';
 import { PackageVersion } from '../../../app/repository/model/PackageVersion';
 import { PackageTag } from '../../../app/repository/model/PackageTag';
 import { Dist } from '../../../app/repository/model/Dist';
 import { TestUtil } from 'test/TestUtil';
+import { NFSClientAdapter } from '../../../app/common/adapter/NFSClientAdapter';
 
 describe('test/controller/PackageController.test.ts', () => {
   let ctx: Context;
   let packageManagerService: PackageManagerService;
+  let nfsClientAdapter: NFSClientAdapter;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     packageManagerService = await ctx.getEggObject(PackageManagerService);
+    nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
   });
 
   afterEach(async () => {
     app.destroyModuleContext(ctx);
+    mock.restore();
     await Promise.all([
       Package.truncate(),
       PackageTag.truncate(),
@@ -80,6 +84,46 @@ describe('test/controller/PackageController.test.ts', () => {
     });
   });
 
+  describe('downloadVersionTar()', () => {
+    const name = '@cnpm/testmodule-download-version-tar';
+    beforeEach(async () => {
+      const pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
+      const res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    });
+
+    it('should download a version tar redirect to mock cdn success', async () => {
+      mock(nfsClientAdapter.client, 'url', (storeKey: string) => {
+        return `https://cdn.mock.com${storeKey}`;
+      });
+      await app.httpRequest()
+        .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`)
+        .expect('location', 'https://cdn.mock.com/packages/@cnpm/@cnpm/testmodule-download-version-tar/1.0.0/@cnpm/testmodule-download-version-tar-1.0.0.tgz')
+        .expect(302);
+    });
+
+    it('should download a version tar with streaming success', async () => {
+      await app.httpRequest()
+        .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`)
+        .expect('content-type', 'application/octet-stream')
+        .expect('content-disposition', 'attachment; filename="testmodule-download-version-tar-1.0.0.tgz"')
+        .expect(200);
+    });
+
+    it('should 422 when version is empty string', async () => {
+      await app.httpRequest()
+        .get(`/${name}/-/testmodule-download-version-tar-.tgz`)
+        .expect(422)
+        .expect({
+          error: '[UNPROCESSABLE_ENTITY] version("") format invalid',
+        });
+    });
+  });
+
   describe('addVersion()', () => {
     it('should add new version success', async () => {
       const pkg = await TestUtil.getFullPackage({ version: '0.0.0' });
@@ -135,7 +179,7 @@ describe('test/controller/PackageController.test.ts', () => {
         .put(`/${pkg.name}`)
         .send(pkg)
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] version(1.0.woring-version) format invalid');
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] version("1.0.woring-version") format invalid');
     });
 
     it('should 422 when attachment data format invalid', async () => {
