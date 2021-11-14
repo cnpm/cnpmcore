@@ -1,5 +1,5 @@
-import { Transform, Readable } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
+import { Transform, Readable } from 'stream';
+import { pipeline } from 'stream/promises';
 import {
   ContextProto,
   AccessLevel,

@@ -1,5 +1,5 @@
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
+import { join } from 'path';
+import { tmpdir } from 'os';
 import { EggAppConfig, PowerPartial } from 'egg';
 
 export default (appInfo: EggAppConfig) => {

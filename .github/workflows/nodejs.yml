@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [14]
+        node-version: [16]
         os: [ubuntu-latest]
 
     steps:

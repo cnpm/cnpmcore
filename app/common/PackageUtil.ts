@@ -1,4 +1,4 @@
-import { createReadStream } from 'node:fs';
+import { createReadStream } from 'fs';
 import * as ssri from 'ssri';
 
 export function getScope(name: string): string | undefined {

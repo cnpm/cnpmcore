@@ -1,5 +1,5 @@
-import { stat } from 'node:fs/promises';
-import { Readable } from 'node:stream';
+import { stat } from 'fs/promises';
+import { Readable } from 'stream';
 import { AccessLevel, ContextProto, EventBus, Inject } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
