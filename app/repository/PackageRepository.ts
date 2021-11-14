@@ -6,14 +6,30 @@ import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVe
 import { PackageVersion as PackageVersionModel } from './model/PackageVersion';
 import { Dist as DistModel } from './model/Dist';
 import { Dist as DistEntity } from '../core/entity/Dist';
+import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag';
+import { PackageTag as PackageTagModel } from './model/PackageTag';
+
+type Scope = string | null | undefined;
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class PackageRepository {
   async createPackage(pkgEntity: PackageEntity) {
-    const pkgModel = await ModelConvertor.convertEntityToModel(pkgEntity, PackageModel);
-    await pkgModel.save();
+    await ModelConvertor.convertEntityToModel(pkgEntity, PackageModel);
+  }
+
+  async savePackage(pkgEntity: PackageEntity) {
+    if (pkgEntity.id) {
+      const model = await PackageModel.findOne({ id: pkgEntity.id });
+      if (!model) return;
+      model.description = pkgEntity.description;
+      model.gmtModified = new Date();
+      await model.save();
+    } else {
+      const model = await ModelConvertor.convertEntityToModel(pkgEntity, PackageModel);
+      pkgEntity.id = model.id;
+    }
   }
 
   async createPackageVersion(pkgVersionEntity: PackageVersionEntity) {
@@ -23,42 +39,69 @@ export class PackageRepository {
         manifestDistModel,
         tarDistModel,
         readmeDistModel,
+        abbreviatedDistModel,
       ] = await Promise.all([
         ModelConvertor.convertEntityToModel(pkgVersionEntity, PackageVersionModel, transaction),
         ModelConvertor.convertEntityToModel(pkgVersionEntity.manifestDist, DistModel, transaction),
         ModelConvertor.convertEntityToModel(pkgVersionEntity.tarDist, DistModel, transaction),
         ModelConvertor.convertEntityToModel(pkgVersionEntity.readmeDist, DistModel, transaction),
+        ModelConvertor.convertEntityToModel(pkgVersionEntity.abbreviatedDist, DistModel, transaction),
       ]);
       pkgVersionEntity.id = pkgVersionModel.id;
       pkgVersionEntity.tarDist.id = tarDistModel.id;
       pkgVersionEntity.manifestDist.id = manifestDistModel.id;
       pkgVersionEntity.readmeDist.id = readmeDistModel.id;
+      pkgVersionEntity.abbreviatedDist.id = abbreviatedDistModel.id;
     });
   }
 
-  async findPackageVersion(scope: string | null, name: string, version: string): Promise<PackageVersionEntity | undefined> {
-    const pkg = await PackageModel.findOne({ scope, name }) as PackageModel;
-    if (!pkg) return;
-    const pkgVersionModel = await PackageVersionModel.findOne({
-      packageId: pkg.packageId,
-      version,
-    }) as PackageVersionModel;
-    if (!pkgVersionModel) return;
+  async findPackage(scope: Scope, name: string): Promise<PackageEntity | null> {
+    const model = await PackageModel.findOne({ scope, name });
+    if (!model) return null;
+    const entity = ModelConvertor.convertModelToEntity(model, PackageEntity);
+    return entity;
+  }
+
+  async findPackageVersion(packageId: string, version: string): Promise<PackageVersionEntity | null> {
+    const pkgVersionModel = await PackageVersionModel.findOne({ packageId, version });
+    if (!pkgVersionModel) return null;
     const [
       tarDistModel,
       readmeDistModel,
       manifestDistModel,
+      abbreviatedDistModel,
     ] = await Promise.all([
       DistModel.findOne({ distId: pkgVersionModel.tarDistId }),
       DistModel.findOne({ distId: pkgVersionModel.readmeDistId }),
       DistModel.findOne({ distId: pkgVersionModel.manifestDistId }),
+      DistModel.findOne({ distId: pkgVersionModel.abbreviatedDistId }),
     ]);
     const data = {
       tarDist: ModelConvertor.convertModelToEntity(tarDistModel!, DistEntity),
       readmeDist: ModelConvertor.convertModelToEntity(readmeDistModel!, DistEntity),
       manifestDist: ModelConvertor.convertModelToEntity(manifestDistModel!, DistEntity),
+      abbreviatedDist: ModelConvertor.convertModelToEntity(abbreviatedDistModel!, DistEntity),
     };
     const pkgVersionEntity = ModelConvertor.convertModelToEntity(pkgVersionModel, PackageVersionEntity, data);
     return pkgVersionEntity;
+  }
+
+  async findPackageTag(packageId: string, tag: string): Promise<PackageTagEntity | null> {
+    const model = await PackageTagModel.findOne({ packageId, tag });
+    if (!model) return null;
+    const entity = ModelConvertor.convertModelToEntity(model, PackageTagEntity);
+    return entity;
+  }
+
+  async savePackageTag(packageTagEntity: PackageTagEntity) {
+    if (packageTagEntity.id) {
+      const packageTagModel = await PackageTagModel.findOne({ id: packageTagEntity.id });
+      if (!packageTagModel) return;
+      packageTagModel.version = packageTagEntity.version;
+      packageTagModel.gmtModified = packageTagEntity.gmtModified;
+      await packageTagModel.save();
+    } else {
+      await ModelConvertor.convertEntityToModel(packageTagEntity, PackageTagModel);
+    }
   }
 }

@@ -7,6 +7,8 @@ export interface DistData extends EntityData {
   path: string;
   size: number;
   shasum: string;
+  integrity: string;
+  meta: string;
 }
 
 export class Dist extends Entity {
@@ -15,6 +17,8 @@ export class Dist extends Entity {
   readonly path: string;
   readonly size: number;
   readonly shasum: string;
+  readonly integrity: string;
+  readonly meta: string;
 
   constructor(data: DistData) {
     super(data);
@@ -23,6 +27,8 @@ export class Dist extends Entity {
     this.path = data.path;
     this.size = data.size;
     this.shasum = data.shasum;
+    this.integrity = data.integrity;
+    this.meta = data.meta;
   }
 
   static create(data: EasyData<DistData, 'distId'>): Dist {

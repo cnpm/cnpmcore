@@ -18,7 +18,8 @@
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "rm -rf dist && tsc -p ./tsconfig.prod.json",
-    "prepublishOnly": "npm run tsc:prod"
+    "prepublishOnly": "npm run tsc:prod",
+    "contributor": "git-contributor"
   },
   "repository": {
     "type": "git",
@@ -40,11 +41,17 @@
     "@eggjs/tegg-orm-plugin": "^0.1.5",
     "@eggjs/tegg-plugin": "^0.1.1",
     "@eggjs/tsconfig": "^1.0.0",
+    "bson-objectid": "^2.0.1",
     "egg": "^2.29.4",
+    "egg-errors": "^2.3.0",
+    "egg-validate": "^2.0.2",
+    "fs-cnpm": "^2.2.0",
     "leoric": "^1.9.0",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.0",
-    "bson-objectid": "^2.0.1"
+    "semver": "^7.3.5",
+    "ssri": "^8.0.1",
+    "type-fest": "^2.5.3"
   },
   "devDependencies": {
     "@types/mocha": "^9.0.0",
@@ -52,6 +59,7 @@
     "egg-mock": "^3.26.0",
     "eslint": "^7.32.0",
     "eslint-config-egg": "^9.0.0",
+    "git-contributor": "^1.0.10",
     "typescript": "^4.3.5"
   },
   "author": "killagu",
@@ -61,6 +69,6 @@
   },
   "homepage": "https://github.com/cnpm/npmcore#readme",
   "engines": {
-    "node": ">= 14.0.0"
+    "node": ">= 16.13.0"
   }
 }

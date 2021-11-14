@@ -6,6 +6,7 @@ export interface PackageVersionData extends EntityData {
   packageId: string;
   packageVersionId: string;
   version: string;
+  abbreviatedDist: Dist;
   manifestDist: Dist;
   tarDist: Dist;
   readmeDist: Dist;
@@ -16,6 +17,7 @@ export class PackageVersion extends Entity {
   packageId: string;
   packageVersionId: string;
   version: string;
+  abbreviatedDist: Dist;
   manifestDist: Dist;
   tarDist: Dist;
   readmeDist: Dist;
@@ -26,6 +28,7 @@ export class PackageVersion extends Entity {
     this.packageId = data.packageId;
     this.packageVersionId = data.packageVersionId;
     this.version = data.version;
+    this.abbreviatedDist = data.abbreviatedDist;
     this.manifestDist = data.manifestDist;
     this.tarDist = data.tarDist;
     this.readmeDist = data.readmeDist;

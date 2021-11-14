@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import mysql from 'mysql';
 import path from 'path';
+import { JsonObject } from 'type-fest';
 
 export class TestUtil {
   static async getMySqlConfig(): Promise<object> {
@@ -35,10 +36,56 @@ export class TestUtil {
     const connection = mysql.createConnection(config);
     connection.connect();
     const sqls = await this.getTableSqls();
-    await this.query(connection, 'DROP DATABASE IF EXISTS cnpmcore;');
-    await this.query(connection, 'CREATE DATABASE IF NOT EXISTS cnpmcore CHARACTER SET utf8mb4;');
+    // no need to create database on GitHub Action CI env
+    if (!process.env.CI) {
+      await this.query(connection, 'DROP DATABASE IF EXISTS cnpmcore;');
+      await this.query(connection, 'CREATE DATABASE IF NOT EXISTS cnpmcore CHARACTER SET utf8;');
+    }
     await this.query(connection, 'USE cnpmcore;');
     await this.query(connection, sqls);
     connection.destroy();
+  }
+
+  static getFixtures(name?: string): string {
+    return path.join(__dirname, 'fixtures', name ?? '');
+  }
+
+  static async getFullPackage(options?: {
+    name?: string;
+    version?: string;
+    attachment?: object;
+    dist?: object;
+  }): Promise<JsonObject> {
+    const fullJSONFile = this.getFixtures('exampleFullPackage.json');
+    const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
+    if (options) {
+      const attachs = pkg._attachments || {};
+      const firstFilename = Object.keys(attachs)[0];
+      const attach = attachs[firstFilename];
+      const versions = pkg.versions || {};
+      const firstVersion = Object.keys(versions)[0];
+      const version = versions[firstVersion];
+      let updateAttach = false;
+      if (options.name) {
+        pkg.name = options.name;
+        version.name = options.name;
+        updateAttach = true;
+      }
+      if (options.version) {
+        version.version = options.version;
+        updateAttach = true;
+      }
+      if (options.attachment) {
+        Object.assign(attach, options.attachment);
+      }
+      if (options.dist) {
+        Object.assign(version.dist, options.dist);
+      }
+      if (updateAttach) {
+        attachs[`${version.name}-${version.version}.tgz`] = attach;
+        delete attachs[firstFilename];
+      }
+    }
+    return pkg;
   }
 }

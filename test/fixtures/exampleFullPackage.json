@@ -1,0 +1,42 @@
+{
+  "_id": "@cnpm/testmodule",
+  "name": "@cnpm/testmodule",
+  "description": "",
+  "dist-tags": {
+    "latest": "0.0.1"
+  },
+  "versions": {
+    "0.0.1": {
+      "name": "@cnpm/testmodule",
+      "version": "0.0.1",
+      "description": "",
+      "main": "index.js",
+      "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+      },
+      "author": "",
+      "license": "ISC",
+      "readme": "ERROR: No README data found!",
+      "_id": "@cnpm/testmodule@0.0.1",
+      "dist": {
+        "shasum": "fa475605f88bab9b1127833633ca3ae0a477224c",
+        "integrity":"sha512-n+4CQg0Rp1Qo0p9a0R5E5io67T9iD3Lcgg6exmpmt0s8kd4XcOoHu2kiu6U7xd69cGq0efkNGWUBP229ObfRSA==",
+        "tarball": "http://127.0.0.1:7001/@cnpm/testmodule/-/testmodule-0.0.1.tgz"
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "fengmk2",
+        "email": "fengmk2@gmail.com"
+      }
+    }
+  },
+  "readme": "ERROR: No README data found!",
+  "_attachments": {
+    "@cnpm/testmodule-0.0.1.tgz": {
+      "content_type": "application/octet-stream",
+      "data": "H4sIAAAAAAAAA+2SsWrDMBCGPfspDg2ZinOyEgeylg6Zu2YR8rVRHEtGkkOg5N0jWaFdujVQAv6W4/7/dHcSGqTq5Ccthxyro7emeDCI2KxWkOKmaaaIdc4TouZQ8FqgwI3AdVMgF8ijho9e5DdGH6SLq/y1T74LfMcn4asEYEb2xLbA+q4O5ENv2/FE7CVZZ3JeW5NcrLDiWW3JK6eHcHey2Es9Zdq0dIkfKau50EcjjYpCmpDKSB0s7Nmbc9ZtwVhIBviBlP7Q1O4ZLBZAFx2As3jyOnWTYzhY9zPzpBUZPy2/e39l5bX87wedmZmZeRJuheTX2wAIAAA=",
+      "length": 251
+    }
+  }
+}

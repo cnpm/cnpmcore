@@ -31,4 +31,11 @@ export class Dist extends Bone {
 
   @Attribute(DataTypes.STRING(512))
   shasum: string;
+
+  @Attribute(DataTypes.STRING(512))
+  integrity: string;
+
+  // meta data, 10kb, 10240
+  @Attribute(DataTypes.STRING(10240))
+  meta: string;
 }

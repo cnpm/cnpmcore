@@ -1,4 +1,4 @@
-# 如何共享 cnpmcore
+# 如何贡献 cnpmcore
 
 ## 安装数据库
 
@@ -81,7 +81,7 @@ port：
 
 ### 为什么有了 Model 之后还需要一层 Entity 的封装
 
-TBD，蓝诀正在写一个 DDD 知识库，等他写好就链接过来。
+请先阅读「[领域驱动设计](https://www.yuque.com/liberty/rf322x)」
 
 ### 修改一个 Model
 
