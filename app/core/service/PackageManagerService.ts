@@ -147,6 +147,7 @@ export class PackageManagerService {
         tag,
         version,
       });
+      await this.packageRepository.savePackageTag(tagEntity);
       this.eventBus.emit(PACKAGE_TAG_ADDED, tagEntity.packageTagId);
       return;
     }
