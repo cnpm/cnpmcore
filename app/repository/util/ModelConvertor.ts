@@ -4,6 +4,9 @@ import { EggProtoImplClass } from '@eggjs/tegg';
 import _ from 'lodash';
 import { ModelConvertorUtil } from './ModelConvertorUtil';
 
+const GMT_MODIFIED = 'gmtModified';
+const ID = 'id';
+
 export class ModelConvertor {
   static async convertEntityToModel<T extends Bone>(entity: object, ModelClazz: EggProtoImplClass<T>, options?): Promise<T> {
     const metadata = ModelMetadataUtil.getControllerMetadata(ModelClazz);
@@ -19,7 +22,7 @@ export class ModelConvertor {
     }
     const model = await (ModelClazz as unknown as typeof Bone).create(attributes, options);
     // auto set entity id to model id
-    Reflect.set(entity, 'id', Reflect.get(model, 'id'));
+    entity[ID] = model[ID];
     return model as T;
   }
 
@@ -35,14 +38,12 @@ export class ModelConvertor {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
       const entityAttributeValue = _.get(entity, entityPropertyName);
-      Reflect.set(model, modelPropertyName, entityAttributeValue);
+      model[modelPropertyName] = entityAttributeValue;
     }
     if (!model.changed()) {
       return false;
     }
-    const now = new Date();
-    Reflect.set(entity, 'gmtModified', now);
-    Reflect.set(model, 'gmtModified', now);
+    entity[GMT_MODIFIED] = model[GMT_MODIFIED] = new Date();
     await model.save(options);
     return true;
   }
