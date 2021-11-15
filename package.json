@@ -15,7 +15,7 @@
     "test-local": "egg-bin test -r tsconfig-paths/register",
     "cov": "egg-bin cov -r tsconfig-paths/register",
     "ci": "npm run lint && npm run cov",
-    "clean": "tsc -b --clean",
+    "clean": "tsc -b --clean && rm -rf dist",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "rm -rf dist && tsc -p ./tsconfig.prod.json",
     "prepublishOnly": "npm run tsc:prod",

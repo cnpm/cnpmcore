@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import * as fs from 'fs/promises';
 import mysql from 'mysql';
 import path from 'path';
 import { JsonObject } from 'type-fest';

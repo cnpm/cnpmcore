@@ -23,12 +23,9 @@ export class PackageRepository {
     if (pkgEntity.id) {
       const model = await PackageModel.findOne({ id: pkgEntity.id });
       if (!model) return;
-      model.description = pkgEntity.description;
-      model.gmtModified = new Date();
-      await model.save();
+      await ModelConvertor.saveEntityToModel(pkgEntity, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(pkgEntity, PackageModel);
-      pkgEntity.id = model.id;
+      await ModelConvertor.convertEntityToModel(pkgEntity, PackageModel);
     }
   }
 
@@ -97,9 +94,7 @@ export class PackageRepository {
     if (packageTagEntity.id) {
       const packageTagModel = await PackageTagModel.findOne({ id: packageTagEntity.id });
       if (!packageTagModel) return;
-      packageTagModel.version = packageTagEntity.version;
-      packageTagModel.gmtModified = packageTagEntity.gmtModified;
-      await packageTagModel.save();
+      await ModelConvertor.saveEntityToModel(packageTagEntity, packageTagModel);
     } else {
       await ModelConvertor.convertEntityToModel(packageTagEntity, PackageTagModel);
     }
