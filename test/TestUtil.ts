@@ -1,5 +1,4 @@
 import * as fs from 'fs/promises';
-import { setTimeout as sleep } from 'timers/promises';
 import mysql from 'mysql';
 import path from 'path';
 import { JsonObject } from 'type-fest';
