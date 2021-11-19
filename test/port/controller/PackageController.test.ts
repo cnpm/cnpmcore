@@ -31,6 +31,41 @@ describe('test/controller/PackageController.test.ts', () => {
     ]);
   });
 
+  describe('showPackage()', () => {
+    const name = 'testmodule-show-package';
+    beforeEach(async () => {
+      let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    });
+
+    it('should show one package', async () => {
+      const res = await app.httpRequest()
+        .get(`/${name}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const pkg = res.body;
+      assert.equal(name, name);
+      assert.equal(Object.keys(pkg.versions).length, 2);
+      console.log(JSON.stringify(pkg, null, 2));
+      const versionOne = pkg.versions['1.0.0'];
+      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert(versionOne._cnpmcore_publish_time);
+    });
+  });
+
   describe('showVersion()', () => {
     it('should show one package version', async () => {
       await packageManagerService.publish({
@@ -41,7 +76,7 @@ describe('test/controller/PackageController.test.ts', () => {
         name: 'foo',
         description: 'foo description',
         // https://mathiasbynens.be/notes/mysql-utf8mb4
-        packageJson: { name: 'foo', test: 'test', description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻' },
+        packageJson: { name: 'foo', test: 'test', version: '1.0.0', description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻' },
         readme: '',
         version: '1.0.0',
         isPrivate: true,
@@ -70,7 +105,7 @@ describe('test/controller/PackageController.test.ts', () => {
         scope: '@cnpm',
         name: '@cnpm/foo',
         readme: '',
-        packageJson: {},
+        packageJson: { name: 'foo', test: 'test', version: '1.0.0' },
         version: '1.0.0',
         isPrivate: true,
       });

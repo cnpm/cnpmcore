@@ -17,7 +17,7 @@ import * as ssri from 'ssri';
 import * as semver from 'semver';
 import { BaseController } from '../type/BaseController';
 import { PackageRepository } from 'app/repository/PackageRepository';
-import { formatTarball, getScope, getFilename } from '../../common/PackageUtil';
+import { getScope, getFilename } from '../../common/PackageUtil';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
@@ -84,20 +84,15 @@ export class PackageController extends BaseController {
     path: PACKAGE_NAME_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async showPackage(@Context() _ctx: EggContext, @HTTPParam() name: string) {
+  async showPackage(@HTTPParam() name: string) {
+    console.log(name);
     // FIXME: validate name
     // https://github.com/npm/validate-npm-package-name
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const pkg = await this.getPackageEntity(name);
+    const data = await this.packageManagerService.listPackageManifests(getScope(name), name);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md
     // Abbreviated metadata format
-    return {
-      pkg,
-      name,
-      modified: null,
-      'dist-tags': {},
-      versions: {},
-    };
+    return data;
   }
 
   @HTTPMethod({
@@ -105,22 +100,11 @@ export class PackageController extends BaseController {
     path: PACKAGE_NAME_WITH_VERSION_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async showVersion(@Context() ctx: EggContext, @HTTPParam() name: string, @HTTPParam() version: string) {
+  async showVersion(@HTTPParam() name: string, @HTTPParam() version: string) {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const pkg = await this.getPackageEntity(name);
     const packageVersion = await this.getPackageVersionEntity(pkg.packageId, version);
-    const tarDist = packageVersion.tarDist;
-    const bytes = await this.packageManagerService.readDistBytes(packageVersion.manifestDist);
-    const packageJson = JSON.parse(Buffer.from(bytes).toString('utf8'));
-    packageJson.dist = {
-      ...JSON.parse(tarDist.meta),
-      tarball: formatTarball(ctx.origin, name, version),
-      shasum: tarDist.shasum,
-      integrity: tarDist.integrity,
-      size: tarDist.size,
-    };
-    packageJson._cnpmcore_publish_time = packageVersion.publishTime;
-    return packageJson;
+    return await this.packageManagerService.readDistBytesToJSON(packageVersion.manifestDist);
   }
 
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#publish-a-new-package
@@ -179,10 +163,7 @@ export class PackageController extends BaseController {
     }
 
     // check integrity or shasum
-    const originDist = packageVersion.dist;
-    // remove dist
-    packageVersion.dist = undefined;
-    const integrity = originDist?.integrity as string;
+    const integrity = packageVersion.dist?.integrity as string;
     // for content security reason
     // check integrity
     if (integrity) {
@@ -195,7 +176,7 @@ export class PackageController extends BaseController {
         algorithms: [ 'sha1' ],
       });
       const shasum = integrityObj.sha1[0].hexDigest();
-      if (originDist?.shasum && originDist?.shasum !== shasum) {
+      if (packageVersion.dist?.shasum && packageVersion.dist?.shasum !== shasum) {
         // if integrity not exists, check shasum
         throw new UnprocessableEntityError('dist.shasum invalid');
       }
@@ -213,7 +194,6 @@ export class PackageController extends BaseController {
       readme,
       dist: {
         content: tarballBytes,
-        meta: originDist,
       },
       tag,
       isPrivate: true,

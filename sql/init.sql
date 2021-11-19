@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS `packages` (
   `name` varchar(214) NOT NULL COMMENT 'package name',
   `scope` varchar(214) NULL COMMENT 'package name',
   `description` varchar(10240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'package description',
+  `abbreviateds_dist_id` varchar(24) NULL COMMENT 'all abbreviated manifests dist id',
+  `manifests_dist_id` varchar(24) NULL COMMENT 'all full manifests dist id',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_package_id` (`package_id`),
   UNIQUE KEY `uk_scope_name` (`scope`,`name`)
@@ -19,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `package_versions` (
   `package_id` varchar(24) NOT NULL COMMENT 'package id',
   `package_version_id` varchar(24) NOT NULL COMMENT 'package version id',
   `version` varchar(256) NOT NULL COMMENT 'package version',
-  `abbreviated_dist_id` longtext NOT NULL COMMENT 'abbreviated manifest dist id',
+  `abbreviated_dist_id` varchar(24) NOT NULL COMMENT 'abbreviated manifest dist id',
   `manifest_dist_id` varchar(24) NOT NULL COMMENT 'manifest dist id',
   `tar_dist_id` varchar(24) NOT NULL COMMENT 'tar dist id',
   `readme_dist_id` varchar(24) NOT NULL COMMENT 'readme dist id',
@@ -66,7 +68,6 @@ CREATE TABLE IF NOT EXISTS `dists` (
   `size` int(10) unsigned NOT NULL COMMENT 'file size',
   `shasum` varchar(512) NOT NULL COMMENT 'dist shasum',
   `integrity` varchar(512) NOT NULL COMMENT 'dist integrity',
-  `meta` varchar(10240) NOT NULL COMMENT 'dist meta json',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_dist_id` (`dist_id`),
   UNIQUE KEY `uk_path` (`path`)
