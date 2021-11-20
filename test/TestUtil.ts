@@ -34,6 +34,9 @@ export class TestUtil {
   static async createDatabase() {
     // TODO use leoric sync
     const config = await this.getMySqlConfig();
+    if (process.env.CI) {
+      console.log('[TestUtil] connection to mysql: %j', config);
+    }
     const connection = mysql.createConnection(config);
     connection.connect();
     const sqls = await this.getTableSqls();
