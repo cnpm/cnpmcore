@@ -1,9 +1,10 @@
 import * as fs from 'fs/promises';
 import mysql from 'mysql';
 import path from 'path';
+import { app } from 'egg-mock/bootstrap';
 
 export class TestUtil {
-  static async getMySqlConfig(): Promise<object> {
+  static async getMySqlConfig(): Promise<any> {
     // TODO use env
     return {
       host: '127.0.0.1',
@@ -11,6 +12,7 @@ export class TestUtil {
       password: '',
       user: 'root',
       multipleStatements: true,
+      ...app.config.orm,
     };
   }
 
@@ -37,10 +39,10 @@ export class TestUtil {
     const sqls = await this.getTableSqls();
     // no need to create database on GitHub Action CI env
     if (!process.env.CI) {
-      await this.query(connection, 'DROP DATABASE IF EXISTS cnpmcore;');
-      await this.query(connection, 'CREATE DATABASE IF NOT EXISTS cnpmcore CHARACTER SET utf8;');
+      await this.query(connection, `DROP DATABASE IF EXISTS ${config.database};`);
+      await this.query(connection, `CREATE DATABASE IF NOT EXISTS ${config.database} CHARACTER SET utf8;`);
     }
-    await this.query(connection, 'USE cnpmcore;');
+    await this.query(connection, `USE ${config.database};`);
     await this.query(connection, sqls);
     connection.destroy();
   }

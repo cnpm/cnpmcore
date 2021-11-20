@@ -55,14 +55,16 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 
-  test-mysql80:
+  test-mysql8x:
     runs-on: ${{ matrix.os }}
 
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:8
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: cnpmcore
         ports:
           - 3306:3306
