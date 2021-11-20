@@ -34,7 +34,7 @@ describe('test/controller/PackageController.test.ts', () => {
     ]);
   });
 
-  describe('showPackage()', () => {
+  describe('[GET /:fullname] showPackage()', () => {
     const name = 'testmodule-show-package';
     const scopedName = '@cnpm/testmodule-show-package';
     beforeEach(async () => {
@@ -117,6 +117,13 @@ describe('test/controller/PackageController.test.ts', () => {
         .set('if-none-match', res.headers.etag.replace('"', '"change'))
         .expect(200);
       assert(resNew.text);
+
+      // HEAD work
+      const resHead = await app.httpRequest()
+        .head(`/${name}`)
+        .expect(200);
+      assert(!resHead.text);
+      assert.match(resHead.headers.etag, /^W\/"\w{40}"$/);
     });
 
     it('should show one scoped package with full manifests', async () => {
@@ -384,7 +391,7 @@ describe('test/controller/PackageController.test.ts', () => {
     });
   });
 
-  describe('showVersion()', () => {
+  describe('[GET /:fullname/:version] showVersion()', () => {
     it('should show one package version', async () => {
       await packageManagerService.publish({
         dist: {
@@ -466,7 +473,7 @@ describe('test/controller/PackageController.test.ts', () => {
     });
   });
 
-  describe('downloadVersionTar()', () => {
+  describe('[GET /:fullname/-/:name-:version.tgz] downloadVersionTar()', () => {
     const scopedName = '@cnpm/testmodule-download-version-tar';
     const name = 'testmodule-download-version-tar';
     beforeEach(async () => {
@@ -571,7 +578,7 @@ describe('test/controller/PackageController.test.ts', () => {
     });
   });
 
-  describe('addVersion()', () => {
+  describe('[PUT /:fullname] addVersion()', () => {
     it('should add new version success on scoped package', async () => {
       const name = '@cnpm/publish-package-test';
       const pkg = await TestUtil.getFullPackage({ name, version: '0.0.0' });
