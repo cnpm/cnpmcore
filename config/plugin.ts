@@ -28,6 +28,10 @@ const plugin: EggPlugin = {
     enable: true,
     package: 'egg-validate',
   },
+  opentracing: {
+    enable: true,
+    package: 'egg-opentracing',
+  },
 };
 
 export default plugin;

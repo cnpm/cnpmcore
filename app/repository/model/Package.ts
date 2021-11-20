@@ -3,6 +3,7 @@ import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { DataTypes, Bone } from 'leoric';
+import { EntityProperty } from '../util/EntityProperty';
 
 @Model()
 export class Package extends Bone {
@@ -35,4 +36,14 @@ export class Package extends Bone {
 
   @Attribute(DataTypes.STRING(10240))
   description: string;
+
+  // store all abbreviated manifests into Dist store
+  @EntityProperty('abbreviatedsDist.distId')
+  @Attribute(DataTypes.STRING(24), { allowNull: true })
+  abbreviatedsDistId: string;
+
+  // store all full manifests into Dist store
+  @EntityProperty('manifestsDist.distId')
+  @Attribute(DataTypes.STRING(24), { allowNull: true })
+  manifestsDistId: string;
 }

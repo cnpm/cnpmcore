@@ -17,8 +17,9 @@ import * as ssri from 'ssri';
 import * as semver from 'semver';
 import { BaseController } from '../type/BaseController';
 import { PackageRepository } from 'app/repository/PackageRepository';
-import { formatTarball, getScope, getFilename } from '../../common/PackageUtil';
+import { getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
+import { Package } from 'app/core/entity/Package';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -64,7 +65,7 @@ type FullPackage = {
 };
 
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
-const PACKAGE_NAME_PATH = '/:name(@[^/]+\/[^/]+|[^/]+)';
+const PACKAGE_NAME_PATH = '/:fullname(@[^/]+\/[^/]+|[^@/]+)';
 const PACKAGE_NAME_WITH_VERSION_PATH = `${PACKAGE_NAME_PATH}/:version`;
 const PACKAGE_TAR_DOWNLOAD_PATH = `${PACKAGE_NAME_PATH}/-/:filenameWithVersion.tgz`;
 // base64 regex https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data/475217#475217
@@ -80,60 +81,69 @@ export class PackageController extends BaseController {
   private packageManagerService: PackageManagerService;
 
   @HTTPMethod({
-    // GET /:name
+    // GET /:fullname
     path: PACKAGE_NAME_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async showPackage(@Context() _ctx: EggContext, @HTTPParam() name: string) {
+  async showPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
     // FIXME: validate name
     // https://github.com/npm/validate-npm-package-name
-    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const pkg = await this.getPackageEntity(name);
-    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md
-    // Abbreviated metadata format
-    return {
-      pkg,
-      name,
-      modified: null,
-      'dist-tags': {},
-      versions: {},
-    };
+    const requestEtag = ctx.request.headers['if-none-match'];
+    const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
+    const [ scope, name ] = getScopeAndName(fullname);
+    let result: { etag: string; data: any };
+    if (ctx.accepts([ 'json', abbreviatedMetaType ]) === abbreviatedMetaType) {
+      result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, requestEtag);
+    } else {
+      result = await this.packageManagerService.listPackageFullManifests(scope, name, requestEtag);
+    }
+    const { etag, data } = result;
+    // 404, no data
+    if (!etag) {
+      throw new NotFoundError(`${fullname} not found`);
+    }
+
+    if (data) {
+      // set etag
+      // https://forum.nginx.org/read.php?2,240120,240120#msg-240120
+      // should set weak etag avoid nginx remove it
+      ctx.set('etag', `W/${etag}`);
+    } else {
+      // match etag, set status 304
+      ctx.status = 304;
+    }
+    return data;
   }
 
   @HTTPMethod({
-    // GET /:name/:version
+    // GET /:fullname/:version
     path: PACKAGE_NAME_WITH_VERSION_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async showVersion(@Context() ctx: EggContext, @HTTPParam() name: string, @HTTPParam() version: string) {
+  async showVersion(@HTTPParam() fullname: string, @HTTPParam() version: string) {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const pkg = await this.getPackageEntity(name);
-    const packageVersion = await this.getPackageVersionEntity(pkg.packageId, version);
-    const tarDist = packageVersion.tarDist;
-    const bytes = await this.packageManagerService.readDistBytes(packageVersion.manifestDist);
-    const packageJson = JSON.parse(Buffer.from(bytes).toString('utf8'));
-    packageJson.dist = {
-      ...JSON.parse(tarDist.meta),
-      tarball: formatTarball(ctx.origin, name, version),
-      shasum: tarDist.shasum,
-      integrity: tarDist.integrity,
-      size: tarDist.size,
-    };
-    packageJson._cnpmcore_publish_time = packageVersion.publishTime;
-    return packageJson;
+    const [ scope, name ] = getScopeAndName(fullname);
+    const pkg = await this.getPackageEntity(scope, name);
+    const packageVersion = await this.getPackageVersionEntity(pkg, version);
+    const [ packageVersionJson, readme ] = await Promise.all([
+      this.packageManagerService.readDistBytesToJSON(packageVersion.manifestDist),
+      this.packageManagerService.readDistBytesToString(packageVersion.readmeDist),
+    ]);
+    packageVersionJson.readme = readme;
+    return packageVersionJson;
   }
 
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#publish-a-new-package
   @HTTPMethod({
-    // PUT /:name
+    // PUT /:fullname
     path: PACKAGE_NAME_PATH,
     method: HTTPMethodEnum.PUT,
   })
-  async saveVersion(@Context() ctx: EggContext, @HTTPParam() name: string, @HTTPBody() pkg: FullPackage) {
+  async saveVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     // TODO: using https://github.com/npm/validate-npm-package-name to validate package name
     ctx.validate(FullPackageRule, pkg);
-    if (name !== pkg.name) {
-      throw new UnprocessableEntityError(`name(${name}) not match package.name(${pkg.name})`);
+    if (fullname !== pkg.name) {
+      throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
     }
     const versions = Object.values(pkg.versions);
     if (versions.length === 0) {
@@ -179,10 +189,7 @@ export class PackageController extends BaseController {
     }
 
     // check integrity or shasum
-    const originDist = packageVersion.dist;
-    // remove dist
-    packageVersion.dist = undefined;
-    const integrity = originDist?.integrity as string;
+    const integrity = packageVersion.dist?.integrity;
     // for content security reason
     // check integrity
     if (integrity) {
@@ -195,25 +202,30 @@ export class PackageController extends BaseController {
         algorithms: [ 'sha1' ],
       });
       const shasum = integrityObj.sha1[0].hexDigest();
-      if (originDist?.shasum && originDist?.shasum !== shasum) {
+      if (packageVersion.dist?.shasum && packageVersion.dist.shasum !== shasum) {
         // if integrity not exists, check shasum
         throw new UnprocessableEntityError('dist.shasum invalid');
       }
     }
 
-    const readme = packageVersion.readme ?? '';
+    // make sure readme is string
+    const readme = typeof packageVersion.readme === 'string' ? packageVersion.readme : '';
     // remove readme
     packageVersion.readme = undefined;
+    // make sure description is string
+    if (typeof packageVersion.description !== 'string') {
+      packageVersion.description = '';
+    }
+    const [ scope, name ] = getScopeAndName(fullname);
     const packageVersionEntity = await this.packageManagerService.publish({
-      scope: getScope(packageVersion.name),
-      name: packageVersion.name,
+      scope,
+      name,
       version: packageVersion.version,
-      description: packageVersion.description || '',
+      description: packageVersion.description,
       packageJson: packageVersion,
       readme,
       dist: {
         content: tarballBytes,
-        meta: originDist,
       },
       tag,
       isPrivate: true,
@@ -230,21 +242,21 @@ export class PackageController extends BaseController {
   }
 
   @HTTPMethod({
-    // GET /:name/-/:filenameWithVersion.tgz
+    // GET /:fullname/-/:filenameWithVersion.tgz
     path: PACKAGE_TAR_DOWNLOAD_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async downloadVersionTar(@Context() ctx: EggContext, @HTTPParam() name: string, @HTTPParam() filenameWithVersion: string) {
-    const filename = getFilename(name);
+  async downloadVersionTar(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+    const [ scope, name ] = getScopeAndName(fullname);
     // @foo/bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
     // bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
-    const version = filenameWithVersion.substring(filename.length + 1);
+    const version = filenameWithVersion.substring(name.length + 1);
     // check version format
     this.checkPackageVersionFormat(version);
-    const pkg = await this.getPackageEntity(name);
-    const packageVersion = await this.getPackageVersionEntity(pkg.packageId, version);
+    const pkg = await this.getPackageEntity(scope, name);
+    const packageVersion = await this.getPackageVersionEntity(pkg, version);
     ctx.logger.info('[package:version:download-tar] %s@%s, packageVersionId: %s',
-      name, version, packageVersion.packageVersionId);
+      pkg.fullname, version, packageVersion.packageVersionId);
     const urlOrStream = await this.packageManagerService.downloadDist(packageVersion.tarDist);
     if (typeof urlOrStream === 'string') {
       ctx.redirect(urlOrStream);
@@ -255,18 +267,19 @@ export class PackageController extends BaseController {
   }
 
   // try to get package entity, throw NotFoundError when package not exists
-  private async getPackageEntity(name: string) {
-    const packageEntity = await this.packageRepository.findPackage(getScope(name), name);
+  private async getPackageEntity(scope: string, name: string) {
+    const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (!packageEntity) {
-      throw new NotFoundError(`${name} not found`);
+      const fullname = getFullname(scope, name);
+      throw new NotFoundError(`${fullname} not found`);
     }
     return packageEntity;
   }
 
-  private async getPackageVersionEntity(packageId: string, version: string) {
-    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
+  private async getPackageVersionEntity(pkg: Package, version: string) {
+    const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
     if (!packageVersion) {
-      throw new NotFoundError(`${name}@${version} not found`);
+      throw new NotFoundError(`${pkg.fullname}@${version} not found`);
     }
     return packageVersion;
   }

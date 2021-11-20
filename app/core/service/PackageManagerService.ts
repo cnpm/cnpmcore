@@ -1,10 +1,19 @@
 import { stat } from 'fs/promises';
 import { Readable } from 'stream';
-import { AccessLevel, ContextProto, EventBus, Inject } from '@eggjs/tegg';
+import {
+  AccessLevel,
+  ContextProto,
+  EventBus,
+  Inject,
+} from '@eggjs/tegg';
+import {
+  EggAppConfig,
+} from 'egg';
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
+import fresh from 'fresh';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
-import { calculateIntegrity } from '../../common/PackageUtil';
+import { calculateIntegrity, formatTarball } from '../../common/PackageUtil';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
@@ -18,7 +27,8 @@ import { Dist } from '../entity/Dist';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
-  scope?: string;
+  scope: string;
+  // name don't include scope
   name: string;
   version: string;
   description: string;
@@ -46,6 +56,8 @@ export class PackageManagerService {
   private readonly packageRepository: PackageRepository;
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
+  @Inject()
+  private readonly config: EggAppConfig;
 
   // support user publish private package and sync worker publish public package
   async publish(cmd: PublishPackageCmd) {
@@ -72,6 +84,11 @@ export class PackageManagerService {
       throw new ForbiddenError(`cannot modify pre-existing version: ${pkgVersion.version}`);
     }
 
+    // add _cnpmcore_publish_time field to cmd.packageJson
+    if (!cmd.packageJson._cnpmcore_publish_time) {
+      cmd.packageJson._cnpmcore_publish_time = new Date();
+    }
+
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
     let hasInstallScript;
     const scripts = cmd.packageJson.scripts;
@@ -81,31 +98,6 @@ export class PackageManagerService {
         hasInstallScript = true;
       }
     }
-    const abbreviated = JSON.stringify({
-      name: cmd.packageJson.name,
-      version: cmd.packageJson.version,
-      deprecated: cmd.packageJson.deprecated,
-      dependencies: cmd.packageJson.dependencies,
-      optionalDependencies: cmd.packageJson.optionalDependencies,
-      devDependencies: cmd.packageJson.devDependencies,
-      bundleDependencies: cmd.packageJson.bundleDependencies,
-      peerDependencies: cmd.packageJson.peerDependencies,
-      bin: cmd.packageJson.bin,
-      os: cmd.packageJson.os,
-      cpu: cmd.packageJson.cpu,
-      workspaces: cmd.packageJson.workspaces,
-      directories: cmd.packageJson.directories,
-      dict: cmd.packageJson.bin,
-      engines: cmd.packageJson.engines,
-      _hasShrinkwrap: cmd.packageJson._hasShrinkwrap,
-      hasInstallScript,
-    });
-    const abbreviatedDistBytes = Buffer.from(abbreviated);
-    const abbreviatedDistIntegrity = await calculateIntegrity(abbreviatedDistBytes);
-    const readmeDistBytes = Buffer.from(cmd.readme);
-    const readmeDistIntegrity = await calculateIntegrity(readmeDistBytes);
-    const manifestDistBytes = Buffer.from(JSON.stringify(cmd.packageJson));
-    const manifestDistIntegrity = await calculateIntegrity(manifestDistBytes);
 
     let tarDistIntegrity: any;
     let tarDistSize = 0;
@@ -129,6 +121,40 @@ export class PackageManagerService {
     } else if (cmd.dist.localFile) {
       await this.nfsAdapter.uploadFile(tarDist.path, cmd.dist.localFile);
     }
+
+    cmd.packageJson.dist = {
+      ...cmd.packageJson.dist,
+      tarball: formatTarball(this.config.cnpmcore.registry, pkg.scope, pkg.name, cmd.version),
+      size: tarDistSize,
+      shasum: tarDistIntegrity.shasum,
+      integrity: tarDistIntegrity.integrity,
+    };
+
+    const abbreviated = JSON.stringify({
+      name: cmd.packageJson.name,
+      version: cmd.packageJson.version,
+      deprecated: cmd.packageJson.deprecated,
+      dependencies: cmd.packageJson.dependencies,
+      optionalDependencies: cmd.packageJson.optionalDependencies,
+      devDependencies: cmd.packageJson.devDependencies,
+      bundleDependencies: cmd.packageJson.bundleDependencies,
+      peerDependencies: cmd.packageJson.peerDependencies,
+      bin: cmd.packageJson.bin,
+      os: cmd.packageJson.os,
+      cpu: cmd.packageJson.cpu,
+      workspaces: cmd.packageJson.workspaces,
+      directories: cmd.packageJson.directories,
+      dist: cmd.packageJson.dist,
+      engines: cmd.packageJson.engines,
+      _hasShrinkwrap: cmd.packageJson._hasShrinkwrap,
+      hasInstallScript,
+    });
+    const abbreviatedDistBytes = Buffer.from(abbreviated);
+    const abbreviatedDistIntegrity = await calculateIntegrity(abbreviatedDistBytes);
+    const readmeDistBytes = Buffer.from(cmd.readme);
+    const readmeDistIntegrity = await calculateIntegrity(readmeDistBytes);
+    const manifestDistBytes = Buffer.from(JSON.stringify(cmd.packageJson));
+    const manifestDistIntegrity = await calculateIntegrity(manifestDistBytes);
 
     pkgVersion = PackageVersion.create({
       packageId: pkg.packageId,
@@ -157,11 +183,55 @@ export class PackageManagerService {
       this.nfsAdapter.uploadBytes(pkgVersion.readmeDist.path, readmeDistBytes),
     ]);
     await this.packageRepository.createPackageVersion(pkgVersion);
-    this.eventBus.emit(PACKAGE_PUBLISHED, pkgVersion.packageVersionId);
     if (cmd.tag) {
       await this.savePackageTag(pkg.packageId, cmd.tag, cmd.version);
     }
+
+    const [
+      fullManifests,
+      abbreviatedManifests,
+    ] = await Promise.all([
+      await this._listPackageFullManifests(pkg),
+      await this._listPackageAbbreviatedManifests(pkg),
+    ]);
+    await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+    this.eventBus.emit(PACKAGE_PUBLISHED, pkgVersion.packageVersionId);
     return pkgVersion;
+  }
+
+  async listPackageFullManifests(scope: string, name: string, expectEtag: string | undefined) {
+    return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, true);
+  }
+
+  async listPackageAbbreviatedManifests(scope: string, name: string, expectEtag: string | undefined) {
+    return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, false);
+  }
+
+  async downloadDist(dist: Dist): Promise<string | Readable> {
+    return await this.nfsAdapter.getDownloadUrlOrStream(dist.path);
+  }
+
+  async readDistBytesToJSON(dist: Dist): Promise<any> {
+    const str = await this.readDistBytesToString(dist);
+    return JSON.parse(str);
+  }
+
+  async readDistBytesToString(dist: Dist): Promise<any> {
+    const bytes = await this.readDistBytes(dist);
+    return Buffer.from(bytes).toString('utf8');
+  }
+
+  async readDistBytes(dist: Dist): Promise<Uint8Array> {
+    return await this.nfsAdapter.getBytes(dist.path);
+  }
+
+  /** private methods */
+
+  private isFresh(expectEtag: string | undefined, currentEtag: string): boolean {
+    if (!expectEtag) return false;
+    const reqHeaders = { 'if-none-match': expectEtag };
+    const resHeaders = { etag: currentEtag };
+    return fresh(reqHeaders, resHeaders);
   }
 
   private async savePackageTag(packageId: string, tag: string, version: string) {
@@ -185,41 +255,158 @@ export class PackageManagerService {
     this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
   }
 
-  async listPackageManifests(scope: string, name: string) {
+  private async updatePackageManifestsToDists(pkg: Package, fullManifests: object | null, abbreviatedManifests: object | null): Promise<void> {
+    if (fullManifests) {
+      // same to dist
+      const fullManifestsDistBytes = Buffer.from(JSON.stringify(fullManifests));
+      const fullManifestsDistIntegrity = await calculateIntegrity(fullManifestsDistBytes);
+      if (pkg.manifestsDist?.distId) {
+        pkg.manifestsDist.size = fullManifestsDistBytes.length;
+        pkg.manifestsDist.shasum = fullManifestsDistIntegrity.shasum;
+        pkg.manifestsDist.integrity = fullManifestsDistIntegrity.integrity;
+      } else {
+        pkg.manifestsDist = pkg.createFullManifests({
+          size: fullManifestsDistBytes.length,
+          shasum: fullManifestsDistIntegrity.shasum,
+          integrity: fullManifestsDistIntegrity.integrity,
+        });
+      }
+      await this.nfsAdapter.uploadBytes(pkg.manifestsDist.path, fullManifestsDistBytes);
+      await this.packageRepository.savePackageDist(pkg, true);
+    }
+    if (abbreviatedManifests) {
+      const abbreviatedManifestsDistBytes = Buffer.from(JSON.stringify(abbreviatedManifests));
+      const abbreviatedManifestsDistIntegrity = await calculateIntegrity(abbreviatedManifestsDistBytes);
+      if (pkg.abbreviatedsDist?.distId) {
+        pkg.abbreviatedsDist.size = abbreviatedManifestsDistBytes.length;
+        pkg.abbreviatedsDist.shasum = abbreviatedManifestsDistIntegrity.shasum;
+        pkg.abbreviatedsDist.integrity = abbreviatedManifestsDistIntegrity.integrity;
+      } else {
+        pkg.abbreviatedsDist = pkg.createAbbreviatedManifests({
+          size: abbreviatedManifestsDistBytes.length,
+          shasum: abbreviatedManifestsDistIntegrity.shasum,
+          integrity: abbreviatedManifestsDistIntegrity.integrity,
+        });
+      }
+      await this.nfsAdapter.uploadBytes(pkg.abbreviatedsDist.path, abbreviatedManifestsDistBytes);
+      await this.packageRepository.savePackageDist(pkg, false);
+    }
+  }
+
+  private async _listPacakgeFullOrAbbreviatedManifests(scope: string, name: string, expectEtag: string | undefined, isFullManifests: boolean) {
+    let etag = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return null;
-    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
-    return {
+    if (!pkg) return { etag, data: null };
+    let dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
+    // read from dist
+    if (dist?.distId) {
+      etag = `"${dist.shasum}"`;
+      if (this.isFresh(expectEtag, etag)) {
+        return { etag, data: null };
+      }
+      const data = await this.readDistBytesToJSON(dist);
+      return { etag, data };
+    }
+
+    // read from database
+    const fullManifests = isFullManifests ? await this._listPackageFullManifests(pkg) : null;
+    const abbreviatedManifests = isFullManifests ? null : await this._listPackageAbbreviatedManifests(pkg);
+    if (!fullManifests && !abbreviatedManifests) {
+      // not exists
+      return { etag, data: null };
+    }
+    await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+    dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
+    etag = `"${dist?.shasum}"`;
+    return { etag, data: fullManifests || abbreviatedManifests };
+  }
+
+  private async _listPackageFullManifests(pkg: Package): Promise<object | null> {
+    // read all verions from db
+    const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
+    if (packageVersions.length === 0) return null;
+
+    const data = {
       _attachments: {},
-      _id: `${pkg.name}`,
+      _id: `${pkg.fullname}`,
       _rev: `${pkg.id}-${pkg.packageId}`,
       author: {},
-      description: '',
-      'dist-tags': {},
-      license: '',
-      maintainers: [],
-      name: pkg.name,
+      description: pkg.description,
+      'dist-tags': {
+        // latest: '1.0.0',
+      },
+      license: undefined,
+      maintainers: [
+        // { name, email },
+      ],
+      name: pkg.fullname,
       readme: '',
-      readmeFilename: '',
+      readmeFilename: undefined,
       time: {
-        '1.0.0': '',
+        // '1.0.0': '2012-09-18T14:46:08.346Z',
         created: pkg.gmtCreate,
         modified: pkg.gmtModified,
       },
       versions: {},
     };
+    // FIXME: get all tags
+    let lastestTagVersion = '';
+    const tags = await this.packageRepository.listPackageTags(pkg.packageId);
+    for (const tag of tags) {
+      data['dist-tags'][tag.tag] = tag.version;
+      if (tag.tag === 'latest') {
+        lastestTagVersion = tag.version;
+      }
+    }
+
+    let latestManifest: any;
+    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
+    for (const packageVersion of packageVersions) {
+      const manifest = await this.readDistBytesToJSON(packageVersion.manifestDist);
+      data.versions[packageVersion.version] = manifest;
+      if (lastestTagVersion && packageVersion.version === lastestTagVersion) {
+        latestManifest = manifest;
+        // set readme
+        data.readme = Buffer.from(await this.readDistBytes(packageVersion.readmeDist)).toString('utf8');
+      }
+      data.time[packageVersion.version] = manifest._cnpmcore_publish_time;
+    }
+    if (!latestManifest) {
+      latestManifest = data.versions[packageVersions[0].version];
+      data.readme = Buffer.from(await this.readDistBytes(packageVersions[0].readmeDist)).toString('utf8');
+    }
+    if (latestManifest) {
+      data.license = latestManifest.license;
+      data.author = latestManifest.author;
+      data.readmeFilename = latestManifest.readmeFilename;
+    }
+    return data;
   }
 
-  async downloadDist(dist: Dist): Promise<string | Readable> {
-    return await this.nfsAdapter.getDownloadUrlOrStream(dist.path);
-  }
+  private async _listPackageAbbreviatedManifests(pkg: Package): Promise<object | null> {
+    // read all verions from db
+    const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
+    if (packageVersions.length === 0) return null;
 
-  async readDistBytesToJSON(dist: Dist): Promise<object> {
-    const bytes = await this.readDistBytes(dist);
-    return JSON.parse(Buffer.from(bytes).toString('utf8'));
-  }
+    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
+    // tiny-tarball is a small package with only one version and no dependencies.
+    const data = {
+      'dist-tags': {
+        // latest: '1.0.0',
+      },
+      modified: pkg.gmtModified,
+      name: pkg.fullname,
+      versions: {},
+    };
+    const tags = await this.packageRepository.listPackageTags(pkg.packageId);
+    for (const tag of tags) {
+      data['dist-tags'][tag.tag] = tag.version;
+    }
 
-  async readDistBytes(dist: Dist): Promise<Uint8Array> {
-    return await this.nfsAdapter.getBytes(dist.path);
+    for (const packageVersion of packageVersions) {
+      const manifest = await this.readDistBytesToJSON(packageVersion.abbreviatedDist);
+      data.versions[packageVersion.version] = manifest;
+    }
+    return data;
   }
 }

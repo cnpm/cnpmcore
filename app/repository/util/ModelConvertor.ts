@@ -37,8 +37,8 @@ export class ModelConvertor {
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
-      const entityAttributeValue = _.get(entity, entityPropertyName);
-      model[modelPropertyName] = entityAttributeValue;
+      const attributeValue = _.get(entity, entityPropertyName);
+      model[modelPropertyName] = attributeValue;
     }
     if (!model.changed()) {
       return false;

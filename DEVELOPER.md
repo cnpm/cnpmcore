@@ -77,6 +77,26 @@ repository：
 port：
 - controller：HTTP controller
 
+## 本地开发
+
+### 安装依赖
+
+```bash
+npm install
+```
+
+### 开发运行
+
+```bash
+DEBUG_LOCAL_SQL=true npm run dev
+```
+
+### 运行单元测试
+
+```bash
+npm run test
+```
+
 ## DDD 常见问题答疑
 
 ### 为什么有了 Model 之后还需要一层 Entity 的封装
