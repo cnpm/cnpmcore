@@ -33,13 +33,15 @@ describe('test/controller/PackageController.test.ts', () => {
 
   describe('showPackage()', () => {
     const name = 'testmodule-show-package';
+    const scopedName = '@cnpm/testmodule-show-package';
     beforeEach(async () => {
+      mock(app.config.cnpmcore, 'registry', 'https://registry.example.com');
       let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
 
       pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
@@ -47,22 +49,102 @@ describe('test/controller/PackageController.test.ts', () => {
         .put(`/${pkg.name}`)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      pkg = await TestUtil.getFullPackage({ name: scopedName, version: '2.0.0' });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
     });
 
-    it('should show one package', async () => {
+    it('should show one package with full manifests', async () => {
       const res = await app.httpRequest()
         .get(`/${name}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const pkg = res.body;
-      assert.equal(name, name);
+      assert.equal(pkg.name, name);
       assert.equal(Object.keys(pkg.versions).length, 2);
-      console.log(JSON.stringify(pkg, null, 2));
+      // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['1.0.0'];
       assert.equal(versionOne.dist.unpackedSize, 6497043);
       assert(versionOne._cnpmcore_publish_time);
+      assert.equal(pkg._id, name);
+      assert(pkg._rev);
+      assert(versionOne._id);
+      assert.equal(versionOne.dist.tarball,
+        `https://registry.example.com/${name}/-/${name}-1.0.0.tgz`);
+    });
+
+    it('should show one scoped package with full manifests', async () => {
+      const res = await app.httpRequest()
+        .get(`/${scopedName}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const pkg = res.body;
+      assert.equal(pkg.name, scopedName);
+      assert.equal(Object.keys(pkg.versions).length, 2);
+      // console.log(JSON.stringify(pkg, null, 2));
+      const versionOne = pkg.versions['1.0.0'];
+      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert(versionOne._cnpmcore_publish_time);
+      assert.equal(pkg._id, scopedName);
+      assert(pkg._rev);
+      assert(versionOne._id);
+      assert.equal(versionOne.dist.tarball,
+        `https://registry.example.com/${scopedName}/-/${name}-1.0.0.tgz`);
+    });
+
+    it('should show one package with abbreviated manifests', async () => {
+      const res = await app.httpRequest()
+        .get(`/${name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const pkg = res.body;
+      assert.equal(pkg.name, name);
+      assert.equal(Object.keys(pkg.versions).length, 2);
+      // console.log(JSON.stringify(pkg, null, 2));
+      const versionOne = pkg.versions['2.0.0'];
+      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert(!versionOne._cnpmcore_publish_time);
+      assert(!pkg._rev);
+      assert(!pkg._id);
+      assert(!versionOne._id);
+      assert.equal(versionOne.dist.tarball,
+        `https://registry.example.com/${name}/-/${name}-2.0.0.tgz`);
+    });
+
+    it('should show one scoped package with abbreviated manifests', async () => {
+      const res = await app.httpRequest()
+        .get(`/${scopedName}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const pkg = res.body;
+      assert.equal(pkg.name, scopedName);
+      assert.equal(Object.keys(pkg.versions).length, 2);
+      // console.log(JSON.stringify(pkg, null, 2));
+      const versionOne = pkg.versions['2.0.0'];
+      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert(!versionOne._cnpmcore_publish_time);
+      assert(!pkg._rev);
+      assert(!pkg._id);
+      assert(!versionOne._id);
+      assert.equal(versionOne.dist.tarball,
+        `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
     });
   });
 
@@ -174,6 +256,30 @@ describe('test/controller/PackageController.test.ts', () => {
   });
 
   describe('addVersion()', () => {
+    it('should add new version success on scoped package', async () => {
+      const name = '@cnpm/publish-package-test';
+      const pkg = await TestUtil.getFullPackage({ name, version: '0.0.0' });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/0.0.0`)
+        .expect(200);
+      assert.equal(res.body.version, '0.0.0');
+
+      // add other version
+      const pkg2 = await TestUtil.getFullPackage({ name, version: '1.0.0' });
+      res = await app.httpRequest()
+        .put(`/${pkg2.name}`)
+        .send(pkg2)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    });
+
     it('should add new version success', async () => {
       const pkg = await TestUtil.getFullPackage({ version: '0.0.0' });
       let res = await app.httpRequest()

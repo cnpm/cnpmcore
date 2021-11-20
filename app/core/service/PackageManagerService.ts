@@ -183,12 +183,64 @@ export class PackageManagerService {
       this.nfsAdapter.uploadBytes(pkgVersion.readmeDist.path, readmeDistBytes),
     ]);
     await this.packageRepository.createPackageVersion(pkgVersion);
-    this.eventBus.emit(PACKAGE_PUBLISHED, pkgVersion.packageVersionId);
     if (cmd.tag) {
       await this.savePackageTag(pkg.packageId, cmd.tag, cmd.version);
     }
+
+    const [
+      fullManifests,
+      abbreviatedManifests,
+    ] = await Promise.all([
+      await this._listPackageFullManifests(pkg),
+      await this._listPackageAbbreviatedManifests(pkg),
+    ]);
+    await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+    this.eventBus.emit(PACKAGE_PUBLISHED, pkgVersion.packageVersionId);
     return pkgVersion;
   }
+
+  async listPackageFullManifests(scope: Scope, name: string): Promise<any> {
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) return null;
+    // read from dist
+    if (pkg.manifestsDist?.distId) {
+      return await this.readDistBytesToJSON(pkg.manifestsDist);
+    }
+
+    // read from database
+    const data = await this._listPackageFullManifests(pkg);
+    await this.updatePackageManifestsToDists(pkg, data);
+    return data;
+  }
+
+  async listPackageAbbreviatedManifests(scope: Scope, name: string): Promise<any> {
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) return null;
+    // read from dist
+    if (pkg.abbreviatedsDist?.distId) {
+      return await this.readDistBytesToJSON(pkg.abbreviatedsDist);
+    }
+
+    // read from database
+    const data = await this._listPackageAbbreviatedManifests(pkg);
+    await this.updatePackageManifestsToDists(pkg, undefined, data);
+    return data;
+  }
+
+  async downloadDist(dist: Dist): Promise<string | Readable> {
+    return await this.nfsAdapter.getDownloadUrlOrStream(dist.path);
+  }
+
+  async readDistBytesToJSON(dist: Dist): Promise<any> {
+    const bytes = await this.readDistBytes(dist);
+    return JSON.parse(Buffer.from(bytes).toString('utf8'));
+  }
+
+  async readDistBytes(dist: Dist): Promise<Uint8Array> {
+    return await this.nfsAdapter.getBytes(dist.path);
+  }
+
+  /** private methods */
 
   private async savePackageTag(packageId: string, tag: string, version: string) {
     let tagEntity = await this.packageRepository.findPackageTag(packageId, tag);
@@ -211,21 +263,47 @@ export class PackageManagerService {
     this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
   }
 
-  async listPackageManifests(scope: Scope, name: string): Promise<any> {
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return null;
-    // read from dist
-    if (pkg.manifestsDist?.distId) {
-      return await this.readDistBytesToJSON(pkg.manifestsDist);
+  private async updatePackageManifestsToDists(pkg: Package, fullManifests?: object, abbreviatedManifests?: object): Promise<void> {
+    if (fullManifests) {
+      // same to dist
+      const fullManifestsDistBytes = Buffer.from(JSON.stringify(fullManifests));
+      const fullManifestsDistIntegrity = await calculateIntegrity(fullManifestsDistBytes);
+      if (pkg.manifestsDist?.distId) {
+        pkg.manifestsDist.size = fullManifestsDistBytes.length;
+        pkg.manifestsDist.shasum = fullManifestsDistIntegrity.shasum;
+        pkg.manifestsDist.integrity = fullManifestsDistIntegrity.integrity;
+      } else {
+        pkg.manifestsDist = pkg.createFullManifests({
+          size: fullManifestsDistBytes.length,
+          shasum: fullManifestsDistIntegrity.shasum,
+          integrity: fullManifestsDistIntegrity.integrity,
+        });
+      }
+      await this.nfsAdapter.uploadBytes(pkg.manifestsDist.path, fullManifestsDistBytes);
+      await this.packageRepository.saveDist(pkg.manifestsDist);
+      await this.packageRepository.savePackage(pkg);
     }
-
-    // read from database
-    const data = await this._listPackageManifests(pkg);
-    // set etag header and store to cache
-    return data;
+    if (abbreviatedManifests) {
+      const abbreviatedManifestsDistBytes = Buffer.from(JSON.stringify(abbreviatedManifests));
+      const abbreviatedManifestsDistIntegrity = await calculateIntegrity(abbreviatedManifestsDistBytes);
+      if (pkg.abbreviatedsDist?.distId) {
+        pkg.abbreviatedsDist.size = abbreviatedManifestsDistBytes.length;
+        pkg.abbreviatedsDist.shasum = abbreviatedManifestsDistIntegrity.shasum;
+        pkg.abbreviatedsDist.integrity = abbreviatedManifestsDistIntegrity.integrity;
+      } else {
+        pkg.abbreviatedsDist = pkg.createAbbreviatedManifests({
+          size: abbreviatedManifestsDistBytes.length,
+          shasum: abbreviatedManifestsDistIntegrity.shasum,
+          integrity: abbreviatedManifestsDistIntegrity.integrity,
+        });
+      }
+      await this.nfsAdapter.uploadBytes(pkg.abbreviatedsDist.path, abbreviatedManifestsDistBytes);
+      await this.packageRepository.saveDist(pkg.abbreviatedsDist);
+      await this.packageRepository.savePackage(pkg);
+    }
   }
 
-  async _listPackageManifests(pkg: Package): Promise<any> {
+  private async _listPackageFullManifests(pkg: Package): Promise<any> {
     const data = {
       _attachments: {},
       _id: `${pkg.name}`,
@@ -263,7 +341,7 @@ export class PackageManagerService {
     const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     if (packageVersions.length === 0) return null;
 
-    let latestManifest;
+    let latestManifest: any;
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
       const manifest = await this.readDistBytesToJSON(packageVersion.manifestDist);
@@ -284,36 +362,33 @@ export class PackageManagerService {
       data.author = latestManifest.author;
       data.readmeFilename = latestManifest.readmeFilename;
     }
-
-    // same to dist
-    const fullManifestsDistBytes = Buffer.from(JSON.stringify(data));
-    const fullManifestsDistIntegrity = await calculateIntegrity(fullManifestsDistBytes);
-    if (pkg.manifestsDist?.distId) {
-      pkg.manifestsDist.size = fullManifestsDistBytes.length;
-      pkg.manifestsDist.shasum = fullManifestsDistIntegrity.shasum;
-      pkg.manifestsDist.integrity = fullManifestsDistIntegrity.integrity;
-    } else {
-      pkg.manifestsDist = pkg.createFullManifests({
-        size: fullManifestsDistBytes.length,
-        shasum: fullManifestsDistIntegrity.shasum,
-        integrity: fullManifestsDistIntegrity.integrity,
-      });
-    }
-    await this.nfsAdapter.uploadBytes(pkg.manifestsDist.path, fullManifestsDistBytes);
-    await this.packageRepository.saveDist(pkg.manifestsDist);
     return data;
   }
 
-  async downloadDist(dist: Dist): Promise<string | Readable> {
-    return await this.nfsAdapter.getDownloadUrlOrStream(dist.path);
-  }
+  private async _listPackageAbbreviatedManifests(pkg: Package): Promise<any> {
+    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
+    // tiny-tarball is a small package with only one version and no dependencies.
+    const data = {
+      'dist-tags': {
+        // latest: '1.0.0',
+      },
+      modified: pkg.gmtModified,
+      name: pkg.name,
+      versions: {},
+    };
+    const tags = await this.packageRepository.listPackageTags(pkg.packageId);
+    for (const tag of tags) {
+      data['dist-tags'][tag.tag] = tag.version;
+    }
 
-  async readDistBytesToJSON(dist: Dist): Promise<any> {
-    const bytes = await this.readDistBytes(dist);
-    return JSON.parse(Buffer.from(bytes).toString('utf8'));
-  }
+    // read all manifests from db
+    const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
+    if (packageVersions.length === 0) return null;
 
-  async readDistBytes(dist: Dist): Promise<Uint8Array> {
-    return await this.nfsAdapter.getBytes(dist.path);
+    for (const packageVersion of packageVersions) {
+      const manifest = await this.readDistBytesToJSON(packageVersion.abbreviatedDist);
+      data.versions[packageVersion.version] = manifest;
+    }
+    return data;
   }
 }

@@ -12,7 +12,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "npm run lint && npm run test-local",
-    "test-local": "egg-bin test -r tsconfig-paths/register",
+    "test-local": "egg-bin test -r tsconfig-paths/register --full-trace",
     "cov": "egg-bin cov -r tsconfig-paths/register",
     "ci": "npm run lint && npm run cov",
     "clean": "tsc -b --clean && rm -rf dist",

@@ -64,7 +64,7 @@ type FullPackage = {
 };
 
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
-const PACKAGE_NAME_PATH = '/:name(@[^/]+\/[^/]+|[^/]+)';
+const PACKAGE_NAME_PATH = '/:name(@[^/]+\/[^/]+|[^@/]+)';
 const PACKAGE_NAME_WITH_VERSION_PATH = `${PACKAGE_NAME_PATH}/:version`;
 const PACKAGE_TAR_DOWNLOAD_PATH = `${PACKAGE_NAME_PATH}/-/:filenameWithVersion.tgz`;
 // base64 regex https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data/475217#475217
@@ -84,12 +84,19 @@ export class PackageController extends BaseController {
     path: PACKAGE_NAME_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async showPackage(@HTTPParam() name: string) {
-    console.log(name);
+  async showPackage(@Context() ctx: EggContext, @HTTPParam() name: string) {
+    const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
+    const scope = getScope(name);
+    if (ctx.accepts([ 'json', abbreviatedMetaType ]) === abbreviatedMetaType) {
+      const data = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name);
+      return data;
+    }
+
     // FIXME: validate name
     // https://github.com/npm/validate-npm-package-name
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const data = await this.packageManagerService.listPackageManifests(getScope(name), name);
+    const data = await this.packageManagerService.listPackageFullManifests(scope, name);
+    // FIXME: set etag header and store to cache
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md
     // Abbreviated metadata format
     return data;
