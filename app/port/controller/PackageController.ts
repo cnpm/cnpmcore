@@ -127,7 +127,7 @@ export class PackageController extends BaseController {
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     const [ packageVersionJson, readme ] = await Promise.all([
       this.packageManagerService.readDistBytesToJSON(packageVersion.manifestDist),
-      this.packageManagerService.readDistBytesToString(packageVersion.readmeDist)
+      this.packageManagerService.readDistBytesToString(packageVersion.readmeDist),
     ]);
     packageVersionJson.readme = readme;
     return packageVersionJson;

@@ -52,6 +52,7 @@ export class TestUtil {
   static async getFullPackage(options?: {
     name?: string;
     version?: string;
+    versionObject?: object;
     attachment?: object;
     dist?: object;
     readme?: string | null;
@@ -74,6 +75,9 @@ export class TestUtil {
       if (options.version) {
         version.version = options.version;
         updateAttach = true;
+      }
+      if (options.versionObject) {
+        Object.assign(version, options.versionObject);
       }
       if (options.attachment) {
         Object.assign(attach, options.attachment);

@@ -8,16 +8,19 @@ import { PackageTag } from '../../../app/repository/model/PackageTag';
 import { Dist } from '../../../app/repository/model/Dist';
 import { TestUtil } from 'test/TestUtil';
 import { NFSClientAdapter } from '../../../app/common/adapter/NFSClientAdapter';
+import { PackageRepository } from '../../../app/repository/PackageRepository';
 
 describe('test/controller/PackageController.test.ts', () => {
   let ctx: Context;
   let packageManagerService: PackageManagerService;
   let nfsClientAdapter: NFSClientAdapter;
+  let packageRepository: PackageRepository;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     packageManagerService = await ctx.getEggObject(PackageManagerService);
     nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
+    packageRepository = await ctx.getEggObject(PackageRepository);
   });
 
   afterEach(async () => {
@@ -175,7 +178,7 @@ describe('test/controller/PackageController.test.ts', () => {
         `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
     });
 
-    it('should 404 when package not exists', async () => {
+    it('should 404 when package not exists on abbreviated manifest', async () => {
       const res = await app.httpRequest()
         .get(`/${scopedName}-not-exists`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
@@ -183,6 +186,201 @@ describe('test/controller/PackageController.test.ts', () => {
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
       assert.equal(data.error, '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+    });
+
+    it('should 404 when package not exists full manifest', async () => {
+      const res = await app.httpRequest()
+        .get(`/${scopedName}-not-exists`)
+        .set('Accept', 'application/json')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const data = res.body;
+      assert.equal(data.error, '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+    });
+
+    it('should abbreviated manifests work with install scripts', async () => {
+      let pkg = await TestUtil.getFullPackage({
+        name: 'test-module-install-scripts',
+        version: '1.0.0',
+        versionObject: {
+          scripts: {
+            install: 'echo hi',
+          },
+        },
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      pkg = res.body;
+      let versionOne = pkg.versions[Object.keys(pkg.versions)[0]];
+      assert.equal(versionOne.hasInstallScript, true);
+
+      pkg = await TestUtil.getFullPackage({
+        name: 'test-module-preinstall-scripts',
+        version: '1.0.0',
+        versionObject: {
+          scripts: {
+            preinstall: 'echo hi',
+          },
+        },
+      });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      pkg = res.body;
+      versionOne = pkg.versions[Object.keys(pkg.versions)[0]];
+      assert.equal(versionOne.hasInstallScript, true);
+
+      pkg = await TestUtil.getFullPackage({
+        name: 'test-module-postinstall-scripts',
+        version: '1.0.0',
+        versionObject: {
+          scripts: {
+            postinstall: 'echo hi',
+          },
+        },
+      });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      pkg = res.body;
+      versionOne = pkg.versions[Object.keys(pkg.versions)[0]];
+      assert.equal(versionOne.hasInstallScript, true);
+    });
+
+    it('should abbreviated manifests work when dist not exists', async () => {
+      let pkg = await TestUtil.getFullPackage({
+        name: 'test-module-mock-dist-not-exists',
+        version: '1.0.0',
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      const pkgModel = await packageRepository.findPackage('', pkg.name);
+      if (pkgModel) {
+        await packageRepository.removePacakgeDist(pkgModel, false);
+      }
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      pkg = res.body;
+      const versionOne = pkg.versions[Object.keys(pkg.versions)[0]];
+      assert(!versionOne.hasInstallScript);
+      assert.equal(versionOne.version, '1.0.0');
+    });
+
+    it('should full manifests work when dist not exists', async () => {
+      let pkg = await TestUtil.getFullPackage({
+        name: 'test-module-mock-dist-not-exists-full-manifests',
+        version: '1.0.0',
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      const pkgModel = await packageRepository.findPackage('', pkg.name);
+      if (pkgModel) {
+        await packageRepository.removePacakgeDist(pkgModel, true);
+      }
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      pkg = res.body;
+      const versionOne = pkg.versions[Object.keys(pkg.versions)[0]];
+      assert(!versionOne.hasInstallScript);
+      assert.equal(versionOne.version, '1.0.0');
+    });
+
+    it('should full manifests work when all versions not exists', async () => {
+      const pkg = await TestUtil.getFullPackage({
+        name: 'test-module-mock-dist-not-exists-full-manifests-no-verions',
+        version: '1.0.0',
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      const pkgEntity = await packageRepository.findPackage('', pkg.name);
+      if (pkgEntity) {
+        await packageRepository.removePacakgeDist(pkgEntity, true);
+        await packageRepository.removePackageVersions(pkgEntity.packageId);
+      }
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .set('Accept', 'application/json')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert.equal(res.body.error, '[NOT_FOUND] test-module-mock-dist-not-exists-full-manifests-no-verions not found');
+    });
+
+    it('should abbreviated manifests work when all versions not exists', async () => {
+      const pkg = await TestUtil.getFullPackage({
+        name: 'test-module-mock-dist-not-exists-abbreviated-manifests-no-verions',
+        version: '1.0.0',
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      const pkgEntity = await packageRepository.findPackage('', pkg.name);
+      if (pkgEntity) {
+        await packageRepository.removePacakgeDist(pkgEntity, false);
+        await packageRepository.removePackageVersions(pkgEntity.packageId);
+      }
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert.equal(res.body.error, '[NOT_FOUND] test-module-mock-dist-not-exists-abbreviated-manifests-no-verions not found');
     });
   });
 
@@ -410,7 +608,7 @@ describe('test/controller/PackageController.test.ts', () => {
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
       assert.equal(res.body.version, '0.0.0');
-      console.log(res.body);
+      // console.log(res.body);
 
       // add other version
       const pkg2 = await TestUtil.getFullPackage({ version: '1.0.0' });

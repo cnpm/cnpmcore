@@ -199,48 +199,12 @@ export class PackageManagerService {
     return pkgVersion;
   }
 
-  async listPackageFullManifests(scope: string, name: string, expectEtag: string | undefined):
-  Promise<{ etag: string; data: any}> {
-    let etag = '';
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return { etag, data: null };
-    // read from dist
-    if (pkg.manifestsDist?.distId) {
-      etag = `"${pkg.manifestsDist.shasum}"`;
-      if (this.isFresh(expectEtag, etag)) {
-        return { etag, data: null };
-      }
-      const data = await this.readDistBytesToJSON(pkg.manifestsDist);
-      return { etag, data };
-    }
-
-    // read from database
-    const data = await this._listPackageFullManifests(pkg);
-    await this.updatePackageManifestsToDists(pkg, data);
-    etag = `"${pkg.manifestsDist?.shasum}"`;
-    return { etag, data };
+  async listPackageFullManifests(scope: string, name: string, expectEtag: string | undefined) {
+    return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, true);
   }
 
-  async listPackageAbbreviatedManifests(scope: string, name: string, expectEtag: string | undefined):
-  Promise<{ etag: string; data: any}> {
-    let etag = '';
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return { etag, data: null };
-    // read from dist
-    if (pkg.abbreviatedsDist?.distId) {
-      etag = `"${pkg.abbreviatedsDist.shasum}"`;
-      if (this.isFresh(expectEtag, etag)) {
-        return { etag, data: null };
-      }
-      const data = await this.readDistBytesToJSON(pkg.abbreviatedsDist);
-      return { etag, data };
-    }
-
-    // read from database
-    const data = await this._listPackageAbbreviatedManifests(pkg);
-    await this.updatePackageManifestsToDists(pkg, undefined, data);
-    etag = `"${pkg.abbreviatedsDist?.shasum}"`;
-    return { etag, data };
+  async listPackageAbbreviatedManifests(scope: string, name: string, expectEtag: string | undefined) {
+    return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, false);
   }
 
   async downloadDist(dist: Dist): Promise<string | Readable> {
@@ -291,7 +255,7 @@ export class PackageManagerService {
     this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
   }
 
-  private async updatePackageManifestsToDists(pkg: Package, fullManifests?: object, abbreviatedManifests?: object): Promise<void> {
+  private async updatePackageManifestsToDists(pkg: Package, fullManifests: object | null, abbreviatedManifests: object | null): Promise<void> {
     if (fullManifests) {
       // same to dist
       const fullManifestsDistBytes = Buffer.from(JSON.stringify(fullManifests));
@@ -308,8 +272,7 @@ export class PackageManagerService {
         });
       }
       await this.nfsAdapter.uploadBytes(pkg.manifestsDist.path, fullManifestsDistBytes);
-      await this.packageRepository.saveDist(pkg.manifestsDist);
-      await this.packageRepository.savePackage(pkg);
+      await this.packageRepository.savePackageDist(pkg, true);
     }
     if (abbreviatedManifests) {
       const abbreviatedManifestsDistBytes = Buffer.from(JSON.stringify(abbreviatedManifests));
@@ -326,12 +289,43 @@ export class PackageManagerService {
         });
       }
       await this.nfsAdapter.uploadBytes(pkg.abbreviatedsDist.path, abbreviatedManifestsDistBytes);
-      await this.packageRepository.saveDist(pkg.abbreviatedsDist);
-      await this.packageRepository.savePackage(pkg);
+      await this.packageRepository.savePackageDist(pkg, false);
     }
   }
 
-  private async _listPackageFullManifests(pkg: Package): Promise<any> {
+  private async _listPacakgeFullOrAbbreviatedManifests(scope: string, name: string, expectEtag: string | undefined, isFullManifests: boolean) {
+    let etag = '';
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) return { etag, data: null };
+    let dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
+    // read from dist
+    if (dist?.distId) {
+      etag = `"${dist.shasum}"`;
+      if (this.isFresh(expectEtag, etag)) {
+        return { etag, data: null };
+      }
+      const data = await this.readDistBytesToJSON(dist);
+      return { etag, data };
+    }
+
+    // read from database
+    const fullManifests = isFullManifests ? await this._listPackageFullManifests(pkg) : null;
+    const abbreviatedManifests = isFullManifests ? null : await this._listPackageAbbreviatedManifests(pkg);
+    if (!fullManifests && !abbreviatedManifests) {
+      // not exists
+      return { etag, data: null };
+    }
+    await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+    dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
+    etag = `"${dist?.shasum}"`;
+    return { etag, data: fullManifests || abbreviatedManifests };
+  }
+
+  private async _listPackageFullManifests(pkg: Package): Promise<object | null> {
+    // read all verions from db
+    const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
+    if (packageVersions.length === 0) return null;
+
     const data = {
       _attachments: {},
       _id: `${pkg.fullname}`,
@@ -365,10 +359,6 @@ export class PackageManagerService {
       }
     }
 
-    // read all manifests from db
-    const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
-    if (packageVersions.length === 0) return null;
-
     let latestManifest: any;
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
@@ -393,7 +383,11 @@ export class PackageManagerService {
     return data;
   }
 
-  private async _listPackageAbbreviatedManifests(pkg: Package): Promise<any> {
+  private async _listPackageAbbreviatedManifests(pkg: Package): Promise<object | null> {
+    // read all verions from db
+    const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
+    if (packageVersions.length === 0) return null;
+
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     // tiny-tarball is a small package with only one version and no dependencies.
     const data = {
@@ -408,10 +402,6 @@ export class PackageManagerService {
     for (const tag of tags) {
       data['dist-tags'][tag.tag] = tag.version;
     }
-
-    // read all manifests from db
-    const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
-    if (packageVersions.length === 0) return null;
 
     for (const packageVersion of packageVersions) {
       const manifest = await this.readDistBytesToJSON(packageVersion.abbreviatedDist);

@@ -27,7 +27,9 @@ export class PackageRepository {
     }
   }
 
-  async saveDist(dist: DistEntity) {
+  async savePackageDist(pkgEntity: PackageEntity, isFullManifests: boolean) {
+    const dist = isFullManifests ? pkgEntity.manifestsDist : pkgEntity.abbreviatedsDist;
+    if (!dist) return;
     if (dist.id) {
       const model = await DistModel.findOne({ id: dist.id });
       if (!model) return;
@@ -35,6 +37,17 @@ export class PackageRepository {
     } else {
       await ModelConvertor.convertEntityToModel(dist, DistModel);
     }
+    await this.savePackage(pkgEntity);
+  }
+
+  async removePacakgeDist(pkgEntity: PackageEntity, isFullManifests: boolean) {
+    const dist = isFullManifests ? pkgEntity.manifestsDist : pkgEntity.abbreviatedsDist;
+    if (!dist) return;
+    const model = await DistModel.findOne({ id: dist.id });
+    if (!model) return;
+    await model.remove();
+    Reflect.set(dist, 'distId', null);
+    await this.savePackage(pkgEntity);
   }
 
   async createPackageVersion(pkgVersionEntity: PackageVersionEntity) {
@@ -76,6 +89,10 @@ export class PackageRepository {
       entities.push(await this.fillPackageVersionEntitiyData(model));
     }
     return entities;
+  }
+
+  async removePackageVersions(packageId: string) {
+    await PackageVersionModel.remove({ packageId });
   }
 
   private async fillPackageVersionEntitiyData(model: PackageVersionModel): Promise<PackageVersionEntity> {
