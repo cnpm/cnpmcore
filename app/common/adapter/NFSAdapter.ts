@@ -5,21 +5,32 @@ import {
   AccessLevel,
   Inject,
 } from '@eggjs/tegg';
+import { EggLogger } from 'egg';
 import { NFSClientAdapter } from './NFSClientAdapter';
+import { AsyncTimer } from '../decorator/AsyncTimer';
+
+const INSTANCE_NAME = 'nfsAdapter';
 
 @ContextProto({
-  name: 'nfsAdapter',
+  name: INSTANCE_NAME,
   accessLevel: AccessLevel.PUBLIC,
 })
 export class NFSAdapter {
   @Inject()
-  private nfsClientAdapter: NFSClientAdapter;
+  private readonly nfsClientAdapter: NFSClientAdapter;
 
+  @Inject()
+  private readonly logger: EggLogger;
+
+  @AsyncTimer(INSTANCE_NAME)
   async uploadBytes(storeKey: string, bytes: Uint8Array) {
+    this.logger.info('[%s:uploadBytes] key: %s, bytes: %d', INSTANCE_NAME, storeKey, bytes.length);
     await this.nfsClientAdapter.client.uploadBuffer(bytes, { key: storeKey });
   }
 
+  @AsyncTimer(INSTANCE_NAME)
   async uploadFile(storeKey: string, file: string) {
+    this.logger.info('[%s:uploadFile] key: %s, file: %s', INSTANCE_NAME, storeKey, file);
     await this.nfsClientAdapter.client.upload(file, { key: storeKey });
   }
 
@@ -27,6 +38,7 @@ export class NFSAdapter {
     return await this.nfsClientAdapter.client.createDownloadStream(storeKey);
   }
 
+  @AsyncTimer(INSTANCE_NAME)
   async getBytes(storeKey: string): Promise<Uint8Array> {
     const stream = await this.getStream(storeKey);
     const chunks: Uint8Array[] = [];
@@ -42,6 +54,8 @@ export class NFSAdapter {
         },
       }),
     );
+    this.logger.info('[%s:getBytes] key: %s, bytes: %d',
+      INSTANCE_NAME, storeKey, size);
     return Buffer.concat(chunks, size);
   }
 
