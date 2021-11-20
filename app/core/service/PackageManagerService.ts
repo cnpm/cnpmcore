@@ -11,6 +11,7 @@ import {
 } from 'egg';
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
+import fresh from 'fresh';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { calculateIntegrity, formatTarball } from '../../common/PackageUtil';
 import { PackageRepository } from '../../repository/PackageRepository';
@@ -198,32 +199,48 @@ export class PackageManagerService {
     return pkgVersion;
   }
 
-  async listPackageFullManifests(scope: string, name: string): Promise<any> {
+  async listPackageFullManifests(scope: string, name: string, expectEtag: string | undefined):
+  Promise<{ etag: string; data: any}> {
+    let etag = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return null;
+    if (!pkg) return { etag, data: null };
     // read from dist
     if (pkg.manifestsDist?.distId) {
-      return await this.readDistBytesToJSON(pkg.manifestsDist);
+      etag = `"${pkg.manifestsDist.shasum}"`;
+      if (this.isFresh(expectEtag, etag)) {
+        return { etag, data: null };
+      }
+      const data = await this.readDistBytesToJSON(pkg.manifestsDist);
+      return { etag, data };
     }
 
     // read from database
     const data = await this._listPackageFullManifests(pkg);
     await this.updatePackageManifestsToDists(pkg, data);
-    return data;
+    etag = `"${pkg.manifestsDist?.shasum}"`;
+    return { etag, data };
   }
 
-  async listPackageAbbreviatedManifests(scope: string, name: string): Promise<any> {
+  async listPackageAbbreviatedManifests(scope: string, name: string, expectEtag: string | undefined):
+  Promise<{ etag: string; data: any}> {
+    let etag = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return null;
+    if (!pkg) return { etag, data: null };
     // read from dist
     if (pkg.abbreviatedsDist?.distId) {
-      return await this.readDistBytesToJSON(pkg.abbreviatedsDist);
+      etag = `"${pkg.abbreviatedsDist.shasum}"`;
+      if (this.isFresh(expectEtag, etag)) {
+        return { etag, data: null };
+      }
+      const data = await this.readDistBytesToJSON(pkg.abbreviatedsDist);
+      return { etag, data };
     }
 
     // read from database
     const data = await this._listPackageAbbreviatedManifests(pkg);
     await this.updatePackageManifestsToDists(pkg, undefined, data);
-    return data;
+    etag = `"${pkg.abbreviatedsDist?.shasum}"`;
+    return { etag, data };
   }
 
   async downloadDist(dist: Dist): Promise<string | Readable> {
@@ -240,6 +257,13 @@ export class PackageManagerService {
   }
 
   /** private methods */
+
+  private isFresh(expectEtag: string | undefined, currentEtag: string): boolean {
+    if (!expectEtag) return false;
+    const reqHeaders = { 'if-none-match': expectEtag };
+    const resHeaders = { etag: currentEtag };
+    return fresh(reqHeaders, resHeaders);
+  }
 
   private async savePackageTag(packageId: string, tag: string, version: string) {
     let tagEntity = await this.packageRepository.findPackageTag(packageId, tag);

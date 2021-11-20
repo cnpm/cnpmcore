@@ -85,20 +85,29 @@ export class PackageController extends BaseController {
     method: HTTPMethodEnum.GET,
   })
   async showPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
-    const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
-    const [ scope, name ] = getScopeAndName(fullname);
-    if (ctx.accepts([ 'json', abbreviatedMetaType ]) === abbreviatedMetaType) {
-      const data = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name);
-      return data;
-    }
-
     // FIXME: validate name
     // https://github.com/npm/validate-npm-package-name
-    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const data = await this.packageManagerService.listPackageFullManifests(scope, name);
-    // FIXME: set etag header and store to cache
-    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md
-    // Abbreviated metadata format
+    const requestEtag = ctx.request.headers['if-none-match'];
+    const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
+    const [ scope, name ] = getScopeAndName(fullname);
+    let result: { etag: string; data: any };
+    if (ctx.accepts([ 'json', abbreviatedMetaType ]) === abbreviatedMetaType) {
+      result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, requestEtag);
+    } else {
+      result = await this.packageManagerService.listPackageFullManifests(scope, name, requestEtag);
+    }
+    const { etag, data } = result;
+    if (etag) {
+      if (data) {
+        // set etag
+        // https://forum.nginx.org/read.php?2,240120,240120#msg-240120
+        // should set weak etag avoid nginx remove it
+        ctx.set('etag', `W/${etag}`);
+      } else {
+        // match etag, set status 304
+        ctx.status = 304;
+      }
+    }
     return data;
   }
 

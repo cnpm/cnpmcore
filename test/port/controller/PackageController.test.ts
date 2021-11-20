@@ -86,6 +86,32 @@ describe('test/controller/PackageController.test.ts', () => {
       assert(versionOne._id);
       assert.equal(versionOne.dist.tarball,
         `https://registry.example.com/${name}/-/${name}-1.0.0.tgz`);
+      // should has etag
+      assert.match(res.headers.etag, /^W\/"\w{40}"$/);
+
+      const res2 = await app.httpRequest()
+        .get(`/${name}`)
+        .expect(200);
+      // etag is same
+      assert.equal(res2.headers.etag, res.headers.etag);
+
+      // request with etag
+      await app.httpRequest()
+        .get(`/${name}`)
+        .set('If-None-Match', res.headers.etag)
+        .expect(304);
+
+      // remove W/ still work
+      await app.httpRequest()
+        .get(`/${name}`)
+        .set('if-none-match', res.headers.etag.replace('W/', ''))
+        .expect(304);
+
+      // etag not match
+      await app.httpRequest()
+        .get(`/${name}`)
+        .set('if-none-match', res.headers.etag.replace('"', '"change'))
+        .expect(200);
     });
 
     it('should show one scoped package with full manifests', async () => {
