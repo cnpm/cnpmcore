@@ -102,16 +102,18 @@ describe('test/controller/PackageController.test.ts', () => {
         .expect(304);
 
       // remove W/ still work
-      await app.httpRequest()
+      const resEmpty = await app.httpRequest()
         .get(`/${name}`)
         .set('if-none-match', res.headers.etag.replace('W/', ''))
         .expect(304);
+      assert.equal(resEmpty.text, '');
 
       // etag not match
-      await app.httpRequest()
+      const resNew = await app.httpRequest()
         .get(`/${name}`)
         .set('if-none-match', res.headers.etag.replace('"', '"change'))
         .expect(200);
+      assert(resNew.text);
     });
 
     it('should show one scoped package with full manifests', async () => {
@@ -172,6 +174,16 @@ describe('test/controller/PackageController.test.ts', () => {
       assert.equal(versionOne.dist.tarball,
         `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
     });
+
+    it('should 404 when package not exists', async () => {
+      const res = await app.httpRequest()
+        .get(`/${scopedName}-not-exists`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const data = res.body;
+      assert.equal(data.error, '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+    });
   });
 
   describe('showVersion()', () => {
@@ -225,6 +237,34 @@ describe('test/controller/PackageController.test.ts', () => {
         .expect(res => {
           assert(res.body);
         });
+    });
+
+    it('should 404 when version not exists', async () => {
+      await packageManagerService.publish({
+        dist: {
+          content: Buffer.alloc(0),
+        },
+        tag: '',
+        description: 'foo description',
+        scope: '@cnpm',
+        name: 'foo',
+        readme: '',
+        packageJson: { name: 'foo', test: 'test', version: '1.0.0' },
+        version: '1.0.0',
+        isPrivate: true,
+      });
+
+      const res = await app.httpRequest()
+        .get('/@cnpm/foo/1.0.40000404')
+        .expect(404);
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foo@1.0.40000404 not found');
+    });
+
+    it('should 404 when package not exists', async () => {
+      const res = await app.httpRequest()
+        .get('/@cnpm/foonot-exists/1.0.40000404')
+        .expect(404);
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
   });
 
@@ -299,6 +339,38 @@ describe('test/controller/PackageController.test.ts', () => {
           error: '[UNPROCESSABLE_ENTITY] version("") format invalid',
         });
     });
+
+    it('should 404 when package not exists', async () => {
+      await app.httpRequest()
+        .get('/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz')
+        .expect(404)
+        .expect({
+          error: '[NOT_FOUND] testmodule-download-version-tar-not-exists not found',
+        });
+
+      await app.httpRequest()
+        .get('/@cnpm/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz')
+        .expect(404)
+        .expect({
+          error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar-not-exists not found',
+        });
+    });
+
+    it('should 404 when package version not exists', async () => {
+      await app.httpRequest()
+        .get(`/${name}/-/${name}-1.0.404404.tgz`)
+        .expect(404)
+        .expect({
+          error: '[NOT_FOUND] testmodule-download-version-tar@1.0.404404 not found',
+        });
+
+      await app.httpRequest()
+        .get(`/${scopedName}/-/${name}-1.0.404404.tgz`)
+        .expect(404)
+        .expect({
+          error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
+        });
+    });
   });
 
   describe('addVersion()', () => {
@@ -348,6 +420,72 @@ describe('test/controller/PackageController.test.ts', () => {
         .expect(201);
       assert(res.body.ok === true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    });
+
+    it('should add new version without dist success', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: 'without-dist', version: '0.0.0' });
+      const version = Object.keys(pkg.versions)[0];
+      pkg.versions[version].dist = undefined;
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/0.0.0`)
+        .expect(200);
+      assert.equal(res.body.version, '0.0.0');
+      assert.equal(res.body.readme, 'ERROR: No README data found!');
+    });
+
+    it('should add new version without readme success', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: 'without-readme', version: '0.0.0', readme: null });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/0.0.0`)
+        .expect(200);
+      assert.equal(res.body.version, '0.0.0');
+      assert.equal(res.body.readme, '');
+    });
+
+    it('should add new version without readme(object type) success', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: 'with-readme-object', version: '0.0.0' });
+      const version = Object.keys(pkg.versions)[0];
+      pkg.versions[version].readme = { foo: 'bar' };
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/0.0.0`)
+        .expect(200);
+      assert.equal(res.body.version, '0.0.0');
+      assert.equal(res.body.readme, '');
+    });
+
+    it('should add new version without description(object type) success', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: 'with-description-object', version: '0.0.0' });
+      const version = Object.keys(pkg.versions)[0];
+      pkg.versions[version].description = { foo: 'bar' };
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/0.0.0`)
+        .expect(200);
+      assert.equal(res.body.version, '0.0.0');
+      assert.equal(res.body.description, '');
     });
 
     it('should add same version throw error', async () => {

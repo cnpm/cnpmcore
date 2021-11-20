@@ -1,6 +1,7 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 import { Dist } from './Dist';
+import { getFullname } from '../../common/PackageUtil';
 
 export interface PackageData extends EntityData {
   scope: string;
@@ -53,7 +54,7 @@ export class Package extends Entity {
   }
 
   get fullname() {
-    return this.scope ? `${this.scope}/${this.name}` : this.name;
+    return getFullname(this.scope, this.name);
   }
 
   createAbbreviated(version: string, info: FileInfo) {
@@ -81,11 +82,10 @@ export class Package extends Entity {
   }
 
   private distDir(filename: string, version?: string) {
-    const name = this.scope ? `${this.scope}/${this.name}` : this.name;
     if (version) {
-      return `/packages/${name}/${version}/${filename}`;
+      return `/packages/${this.fullname}/${version}/${filename}`;
     }
-    return `/packages/${name}/${filename}`;
+    return `/packages/${this.fullname}/${filename}`;
   }
 
   private createDist(name: string, info: FileInfo, version?: string) {

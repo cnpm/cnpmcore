@@ -1,7 +1,7 @@
 {
   "_id": "@cnpm/testmodule",
   "name": "@cnpm/testmodule",
-  "description": "",
+  "description": "this is a module description",
   "dist-tags": {
     "latest": "0.0.1"
   },
@@ -9,7 +9,7 @@
     "0.0.1": {
       "name": "@cnpm/testmodule",
       "version": "0.0.1",
-      "description": "",
+      "description": "this is a module description",
       "main": "index.js",
       "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"

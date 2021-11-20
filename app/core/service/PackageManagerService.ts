@@ -248,8 +248,13 @@ export class PackageManagerService {
   }
 
   async readDistBytesToJSON(dist: Dist): Promise<any> {
+    const str = await this.readDistBytesToString(dist);
+    return JSON.parse(str);
+  }
+
+  async readDistBytesToString(dist: Dist): Promise<any> {
     const bytes = await this.readDistBytes(dist);
-    return JSON.parse(Buffer.from(bytes).toString('utf8'));
+    return Buffer.from(bytes).toString('utf8');
   }
 
   async readDistBytes(dist: Dist): Promise<Uint8Array> {

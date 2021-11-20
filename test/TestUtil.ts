@@ -1,7 +1,6 @@
 import * as fs from 'fs/promises';
 import mysql from 'mysql';
 import path from 'path';
-import { JsonObject } from 'type-fest';
 
 export class TestUtil {
   static async getMySqlConfig(): Promise<object> {
@@ -55,7 +54,8 @@ export class TestUtil {
     version?: string;
     attachment?: object;
     dist?: object;
-  }): Promise<JsonObject> {
+    readme?: string | null;
+  }): Promise<any> {
     const fullJSONFile = this.getFixtures('exampleFullPackage.json');
     const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
     if (options) {
@@ -84,6 +84,10 @@ export class TestUtil {
       if (updateAttach) {
         attachs[`${version.name}-${version.version}.tgz`] = attach;
         delete attachs[firstFilename];
+      }
+      if (options.readme === null) {
+        delete pkg.readme;
+        delete version.readme;
       }
     }
     return pkg;

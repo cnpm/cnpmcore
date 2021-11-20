@@ -8,6 +8,10 @@ export function getScopeAndName(fullname: string): string[] {
   return [ '', fullname ];
 }
 
+export function getFullname(scope: string, name: string): string {
+  return scope ? `${scope}/${name}` : name;
+}
+
 export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
   let integrityObj;
   if (typeof contentOrFile === 'string') {
@@ -25,6 +29,6 @@ export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
 }
 
 export function formatTarball(registry: string, scope: string, name: string, version: string) {
-  const fullname = scope ? `${scope}/${name}` : name;
+  const fullname = getFullname(scope, name);
   return `${registry}/${fullname}/-/${name}-${version}.tgz`;
 }

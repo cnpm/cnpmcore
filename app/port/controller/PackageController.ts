@@ -17,8 +17,9 @@ import * as ssri from 'ssri';
 import * as semver from 'semver';
 import { BaseController } from '../type/BaseController';
 import { PackageRepository } from 'app/repository/PackageRepository';
-import { getScopeAndName } from '../../common/PackageUtil';
+import { getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
+import { Package } from 'app/core/entity/Package';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -97,16 +98,19 @@ export class PackageController extends BaseController {
       result = await this.packageManagerService.listPackageFullManifests(scope, name, requestEtag);
     }
     const { etag, data } = result;
-    if (etag) {
-      if (data) {
-        // set etag
-        // https://forum.nginx.org/read.php?2,240120,240120#msg-240120
-        // should set weak etag avoid nginx remove it
-        ctx.set('etag', `W/${etag}`);
-      } else {
-        // match etag, set status 304
-        ctx.status = 304;
-      }
+    // 404, no data
+    if (!etag) {
+      throw new NotFoundError(`${fullname} not found`);
+    }
+
+    if (data) {
+      // set etag
+      // https://forum.nginx.org/read.php?2,240120,240120#msg-240120
+      // should set weak etag avoid nginx remove it
+      ctx.set('etag', `W/${etag}`);
+    } else {
+      // match etag, set status 304
+      ctx.status = 304;
     }
     return data;
   }
@@ -120,8 +124,13 @@ export class PackageController extends BaseController {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const [ scope, name ] = getScopeAndName(fullname);
     const pkg = await this.getPackageEntity(scope, name);
-    const packageVersion = await this.getPackageVersionEntity(pkg.packageId, version);
-    return await this.packageManagerService.readDistBytesToJSON(packageVersion.manifestDist);
+    const packageVersion = await this.getPackageVersionEntity(pkg, version);
+    const [ packageVersionJson, readme ] = await Promise.all([
+      this.packageManagerService.readDistBytesToJSON(packageVersion.manifestDist),
+      this.packageManagerService.readDistBytesToString(packageVersion.readmeDist)
+    ]);
+    packageVersionJson.readme = readme;
+    return packageVersionJson;
   }
 
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#publish-a-new-package
@@ -180,7 +189,7 @@ export class PackageController extends BaseController {
     }
 
     // check integrity or shasum
-    const integrity = packageVersion.dist?.integrity as string;
+    const integrity = packageVersion.dist?.integrity;
     // for content security reason
     // check integrity
     if (integrity) {
@@ -193,21 +202,26 @@ export class PackageController extends BaseController {
         algorithms: [ 'sha1' ],
       });
       const shasum = integrityObj.sha1[0].hexDigest();
-      if (packageVersion.dist?.shasum && packageVersion.dist?.shasum !== shasum) {
+      if (packageVersion.dist?.shasum && packageVersion.dist.shasum !== shasum) {
         // if integrity not exists, check shasum
         throw new UnprocessableEntityError('dist.shasum invalid');
       }
     }
 
-    const readme = packageVersion.readme ?? '';
+    // make sure readme is string
+    const readme = typeof packageVersion.readme === 'string' ? packageVersion.readme : '';
     // remove readme
     packageVersion.readme = undefined;
+    // make sure description is string
+    if (typeof packageVersion.description !== 'string') {
+      packageVersion.description = '';
+    }
     const [ scope, name ] = getScopeAndName(fullname);
     const packageVersionEntity = await this.packageManagerService.publish({
       scope,
       name,
       version: packageVersion.version,
-      description: packageVersion.description || '',
+      description: packageVersion.description,
       packageJson: packageVersion,
       readme,
       dist: {
@@ -240,9 +254,9 @@ export class PackageController extends BaseController {
     // check version format
     this.checkPackageVersionFormat(version);
     const pkg = await this.getPackageEntity(scope, name);
-    const packageVersion = await this.getPackageVersionEntity(pkg.packageId, version);
+    const packageVersion = await this.getPackageVersionEntity(pkg, version);
     ctx.logger.info('[package:version:download-tar] %s@%s, packageVersionId: %s',
-      fullname, version, packageVersion.packageVersionId);
+      pkg.fullname, version, packageVersion.packageVersionId);
     const urlOrStream = await this.packageManagerService.downloadDist(packageVersion.tarDist);
     if (typeof urlOrStream === 'string') {
       ctx.redirect(urlOrStream);
@@ -256,15 +270,16 @@ export class PackageController extends BaseController {
   private async getPackageEntity(scope: string, name: string) {
     const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (!packageEntity) {
-      throw new NotFoundError(`${name} not found`);
+      const fullname = getFullname(scope, name);
+      throw new NotFoundError(`${fullname} not found`);
     }
     return packageEntity;
   }
 
-  private async getPackageVersionEntity(packageId: string, version: string) {
-    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
+  private async getPackageVersionEntity(pkg: Package, version: string) {
+    const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
     if (!packageVersion) {
-      throw new NotFoundError(`${name}@${version} not found`);
+      throw new NotFoundError(`${pkg.fullname}@${version} not found`);
     }
     return packageVersion;
   }
