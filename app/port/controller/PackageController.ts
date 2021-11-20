@@ -17,7 +17,7 @@ import * as ssri from 'ssri';
 import * as semver from 'semver';
 import { BaseController } from '../type/BaseController';
 import { PackageRepository } from 'app/repository/PackageRepository';
-import { getScope, getFilename } from '../../common/PackageUtil';
+import { getScopeAndName } from '../../common/PackageUtil';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
@@ -64,7 +64,7 @@ type FullPackage = {
 };
 
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
-const PACKAGE_NAME_PATH = '/:name(@[^/]+\/[^/]+|[^@/]+)';
+const PACKAGE_NAME_PATH = '/:fullname(@[^/]+\/[^/]+|[^@/]+)';
 const PACKAGE_NAME_WITH_VERSION_PATH = `${PACKAGE_NAME_PATH}/:version`;
 const PACKAGE_TAR_DOWNLOAD_PATH = `${PACKAGE_NAME_PATH}/-/:filenameWithVersion.tgz`;
 // base64 regex https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data/475217#475217
@@ -80,13 +80,13 @@ export class PackageController extends BaseController {
   private packageManagerService: PackageManagerService;
 
   @HTTPMethod({
-    // GET /:name
+    // GET /:fullname
     path: PACKAGE_NAME_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async showPackage(@Context() ctx: EggContext, @HTTPParam() name: string) {
+  async showPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
     const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
-    const scope = getScope(name);
+    const [ scope, name ] = getScopeAndName(fullname);
     if (ctx.accepts([ 'json', abbreviatedMetaType ]) === abbreviatedMetaType) {
       const data = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name);
       return data;
@@ -103,28 +103,29 @@ export class PackageController extends BaseController {
   }
 
   @HTTPMethod({
-    // GET /:name/:version
+    // GET /:fullname/:version
     path: PACKAGE_NAME_WITH_VERSION_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async showVersion(@HTTPParam() name: string, @HTTPParam() version: string) {
+  async showVersion(@HTTPParam() fullname: string, @HTTPParam() version: string) {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const pkg = await this.getPackageEntity(name);
+    const [ scope, name ] = getScopeAndName(fullname);
+    const pkg = await this.getPackageEntity(scope, name);
     const packageVersion = await this.getPackageVersionEntity(pkg.packageId, version);
     return await this.packageManagerService.readDistBytesToJSON(packageVersion.manifestDist);
   }
 
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#publish-a-new-package
   @HTTPMethod({
-    // PUT /:name
+    // PUT /:fullname
     path: PACKAGE_NAME_PATH,
     method: HTTPMethodEnum.PUT,
   })
-  async saveVersion(@Context() ctx: EggContext, @HTTPParam() name: string, @HTTPBody() pkg: FullPackage) {
+  async saveVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     // TODO: using https://github.com/npm/validate-npm-package-name to validate package name
     ctx.validate(FullPackageRule, pkg);
-    if (name !== pkg.name) {
-      throw new UnprocessableEntityError(`name(${name}) not match package.name(${pkg.name})`);
+    if (fullname !== pkg.name) {
+      throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
     }
     const versions = Object.values(pkg.versions);
     if (versions.length === 0) {
@@ -192,9 +193,10 @@ export class PackageController extends BaseController {
     const readme = packageVersion.readme ?? '';
     // remove readme
     packageVersion.readme = undefined;
+    const [ scope, name ] = getScopeAndName(fullname);
     const packageVersionEntity = await this.packageManagerService.publish({
-      scope: getScope(packageVersion.name),
-      name: packageVersion.name,
+      scope,
+      name,
       version: packageVersion.version,
       description: packageVersion.description || '',
       packageJson: packageVersion,
@@ -217,21 +219,21 @@ export class PackageController extends BaseController {
   }
 
   @HTTPMethod({
-    // GET /:name/-/:filenameWithVersion.tgz
+    // GET /:fullname/-/:filenameWithVersion.tgz
     path: PACKAGE_TAR_DOWNLOAD_PATH,
     method: HTTPMethodEnum.GET,
   })
-  async downloadVersionTar(@Context() ctx: EggContext, @HTTPParam() name: string, @HTTPParam() filenameWithVersion: string) {
-    const filename = getFilename(name);
+  async downloadVersionTar(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+    const [ scope, name ] = getScopeAndName(fullname);
     // @foo/bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
     // bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
-    const version = filenameWithVersion.substring(filename.length + 1);
+    const version = filenameWithVersion.substring(name.length + 1);
     // check version format
     this.checkPackageVersionFormat(version);
-    const pkg = await this.getPackageEntity(name);
+    const pkg = await this.getPackageEntity(scope, name);
     const packageVersion = await this.getPackageVersionEntity(pkg.packageId, version);
     ctx.logger.info('[package:version:download-tar] %s@%s, packageVersionId: %s',
-      name, version, packageVersion.packageVersionId);
+      fullname, version, packageVersion.packageVersionId);
     const urlOrStream = await this.packageManagerService.downloadDist(packageVersion.tarDist);
     if (typeof urlOrStream === 'string') {
       ctx.redirect(urlOrStream);
@@ -242,8 +244,8 @@ export class PackageController extends BaseController {
   }
 
   // try to get package entity, throw NotFoundError when package not exists
-  private async getPackageEntity(name: string) {
-    const packageEntity = await this.packageRepository.findPackage(getScope(name), name);
+  private async getPackageEntity(scope: string, name: string) {
+    const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (!packageEntity) {
       throw new NotFoundError(`${name} not found`);
     }

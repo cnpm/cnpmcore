@@ -3,7 +3,7 @@ import { EasyData, EntityUtil } from '../util/EntityUtil';
 import { Dist } from './Dist';
 
 export interface PackageData extends EntityData {
-  scope?: string;
+  scope: string;
   name: string;
   packageId: string;
   isPrivate: boolean;
@@ -27,7 +27,7 @@ interface FileInfo {
 }
 
 export class Package extends Entity {
-  readonly scope?: string;
+  readonly scope: string;
   readonly name: string;
   readonly packageId: string;
   readonly isPrivate: boolean;
@@ -52,22 +52,8 @@ export class Package extends Entity {
     return new Package(newData);
   }
 
-  private distDir(filename: string, version?: string) {
-    const name = this.scope ? `${this.scope}/${this.name}` : this.name;
-    if (version) {
-      return `/packages/${name}/${version}/${filename}`;
-    }
-    return `/packages/${name}/${filename}`;
-  }
-
-  private createDist(name: string, info: FileInfo, version?: string) {
-    return Dist.create({
-      name,
-      size: info.size,
-      shasum: info.shasum,
-      integrity: info.integrity,
-      path: this.distDir(name, version),
-    });
+  get fullname() {
+    return this.scope ? `${this.scope}/${this.name}` : this.name;
   }
 
   createAbbreviated(version: string, info: FileInfo) {
@@ -92,5 +78,23 @@ export class Package extends Entity {
 
   createAbbreviatedManifests(info: FileInfo) {
     return this.createDist(DIST_NAMES.ABBREVIATED_MANIFESTS, info);
+  }
+
+  private distDir(filename: string, version?: string) {
+    const name = this.scope ? `${this.scope}/${this.name}` : this.name;
+    if (version) {
+      return `/packages/${name}/${version}/${filename}`;
+    }
+    return `/packages/${name}/${filename}`;
+  }
+
+  private createDist(name: string, info: FileInfo, version?: string) {
+    return Dist.create({
+      name,
+      size: info.size,
+      shasum: info.shasum,
+      integrity: info.integrity,
+      path: this.distDir(name, version),
+    });
   }
 }

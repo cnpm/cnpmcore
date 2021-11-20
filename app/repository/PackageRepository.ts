@@ -9,8 +9,6 @@ import { Dist as DistEntity } from '../core/entity/Dist';
 import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag';
 import { PackageTag as PackageTagModel } from './model/PackageTag';
 
-type Scope = string | null | undefined;
-
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
 })
@@ -51,7 +49,7 @@ export class PackageRepository {
     });
   }
 
-  async findPackage(scope: Scope, name: string): Promise<PackageEntity | null> {
+  async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
     const model = await PackageModel.findOne({ scope, name });
     if (!model) return null;
     const manifestsDistModel = model.manifestsDistId ? await DistModel.findOne({ distId: model.manifestsDistId }) : null;

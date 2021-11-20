@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `packages` (
   `package_id` varchar(24) NOT NULL COMMENT 'package id',
   `is_private` tinyint NOT NULL DEFAULT 0 COMMENT 'private pkg or not, 1: true, other: false',
   `name` varchar(214) NOT NULL COMMENT 'package name',
-  `scope` varchar(214) NULL COMMENT 'package name',
+  `scope` varchar(214) NOT NULL COMMENT 'package name, empty string meaning no scope',
   `description` varchar(10240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'package description',
   `abbreviateds_dist_id` varchar(24) NULL COMMENT 'all abbreviated manifests dist id',
   `manifests_dist_id` varchar(24) NULL COMMENT 'all full manifests dist id',

@@ -155,6 +155,7 @@ describe('test/controller/PackageController.test.ts', () => {
           content: Buffer.alloc(100),
         },
         tag: '',
+        scope: '',
         name: 'foo',
         description: 'foo description',
         // https://mathiasbynens.be/notes/mysql-utf8mb4
@@ -185,7 +186,7 @@ describe('test/controller/PackageController.test.ts', () => {
         tag: '',
         description: 'foo description',
         scope: '@cnpm',
-        name: '@cnpm/foo',
+        name: 'foo',
         readme: '',
         packageJson: { name: 'foo', test: 'test', version: '1.0.0' },
         version: '1.0.0',
@@ -202,10 +203,19 @@ describe('test/controller/PackageController.test.ts', () => {
   });
 
   describe('downloadVersionTar()', () => {
-    const name = '@cnpm/testmodule-download-version-tar';
+    const scopedName = '@cnpm/testmodule-download-version-tar';
+    const name = 'testmodule-download-version-tar';
     beforeEach(async () => {
-      const pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
-      const res = await app.httpRequest()
+      let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
+      res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .send(pkg)
         .expect(201);
@@ -219,13 +229,23 @@ describe('test/controller/PackageController.test.ts', () => {
       });
       await app.httpRequest()
         .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`)
-        .expect('location', 'https://cdn.mock.com/packages/@cnpm/@cnpm/testmodule-download-version-tar/1.0.0/@cnpm/testmodule-download-version-tar-1.0.0.tgz')
+        .expect('location', `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`)
+        .expect(302);
+      await app.httpRequest()
+        .get(`/${scopedName}/-/testmodule-download-version-tar-1.0.0.tgz`)
+        .expect('location', `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`)
         .expect(302);
     });
 
     it('should download a version tar with streaming success', async () => {
       await app.httpRequest()
         .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`)
+        .expect('content-type', 'application/octet-stream')
+        .expect('content-disposition', 'attachment; filename="testmodule-download-version-tar-1.0.0.tgz"')
+        .expect(200);
+
+      await app.httpRequest()
+        .get(`/${scopedName}/-/testmodule-download-version-tar-1.0.0.tgz`)
         .expect('content-type', 'application/octet-stream')
         .expect('content-disposition', 'attachment; filename="testmodule-download-version-tar-1.0.0.tgz"')
         .expect(200);
@@ -429,7 +449,7 @@ describe('test/controller/PackageController.test.ts', () => {
         .put('/foo')
         .send(pkg)
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] name(foo) not match package.name(@cnpm/testmodule)');
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] fullname(foo) not match package.name(@cnpm/testmodule)');
     });
 
     it('should 422 _attachments is empty', async () => {

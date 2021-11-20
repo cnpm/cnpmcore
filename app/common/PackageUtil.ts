@@ -1,17 +1,11 @@
 import { createReadStream } from 'fs';
 import * as ssri from 'ssri';
 
-export function getScope(name: string): string | undefined {
-  if (name.startsWith('@')) {
-    return name.split('/', 1)[0];
+export function getScopeAndName(fullname: string): string[] {
+  if (fullname.startsWith('@')) {
+    return fullname.split('/', 2);
   }
-}
-
-// get filename from package name
-// @foo/bar == filename: bar
-// bar == filename: bar
-export function getFilename(name: string) {
-  return name.startsWith('@') ? name.split('/', 2)[1] : name;
+  return [ '', fullname ];
 }
 
 export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
@@ -30,7 +24,7 @@ export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
   return { integrity, shasum };
 }
 
-export function formatTarball(registry: string, name: string, version: string) {
-  const filename = name.startsWith('@') ? name.split('/', 2)[1] : name;
-  return `${registry}/${name}/-/${filename}-${version}.tgz`;
+export function formatTarball(registry: string, scope: string, name: string, version: string) {
+  const fullname = scope ? `${scope}/${name}` : name;
+  return `${registry}/${fullname}/-/${name}-${version}.tgz`;
 }

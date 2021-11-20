@@ -26,7 +26,8 @@ import { Dist } from '../entity/Dist';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
-  scope?: string;
+  scope: string;
+  // name don't include scope
   name: string;
   version: string;
   description: string;
@@ -43,8 +44,6 @@ export interface PublishPackageCmd {
   tag?: string;
   isPrivate: boolean;
 }
-
-type Scope = string | null | undefined;
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -124,7 +123,7 @@ export class PackageManagerService {
 
     cmd.packageJson.dist = {
       ...cmd.packageJson.dist,
-      tarball: formatTarball(this.config.cnpmcore.registry, cmd.name, cmd.version),
+      tarball: formatTarball(this.config.cnpmcore.registry, pkg.scope, pkg.name, cmd.version),
       size: tarDistSize,
       shasum: tarDistIntegrity.shasum,
       integrity: tarDistIntegrity.integrity,
@@ -199,7 +198,7 @@ export class PackageManagerService {
     return pkgVersion;
   }
 
-  async listPackageFullManifests(scope: Scope, name: string): Promise<any> {
+  async listPackageFullManifests(scope: string, name: string): Promise<any> {
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return null;
     // read from dist
@@ -213,7 +212,7 @@ export class PackageManagerService {
     return data;
   }
 
-  async listPackageAbbreviatedManifests(scope: Scope, name: string): Promise<any> {
+  async listPackageAbbreviatedManifests(scope: string, name: string): Promise<any> {
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return null;
     // read from dist
@@ -306,7 +305,7 @@ export class PackageManagerService {
   private async _listPackageFullManifests(pkg: Package): Promise<any> {
     const data = {
       _attachments: {},
-      _id: `${pkg.name}`,
+      _id: `${pkg.fullname}`,
       _rev: `${pkg.id}-${pkg.packageId}`,
       author: {},
       description: pkg.description,
@@ -317,7 +316,7 @@ export class PackageManagerService {
       maintainers: [
         // { name, email },
       ],
-      name: pkg.name,
+      name: pkg.fullname,
       readme: '',
       readmeFilename: undefined,
       time: {
@@ -373,7 +372,7 @@ export class PackageManagerService {
         // latest: '1.0.0',
       },
       modified: pkg.gmtModified,
-      name: pkg.name,
+      name: pkg.fullname,
       versions: {},
     };
     const tags = await this.packageRepository.listPackageTags(pkg.packageId);
