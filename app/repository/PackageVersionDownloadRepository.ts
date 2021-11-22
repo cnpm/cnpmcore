@@ -21,6 +21,7 @@ export class PackageVersionDownloadRepository {
         packageId,
         version,
         yearMonth,
+        createdAt: new Date(),
       };
       model = await PackageVersionDownloadModel.create(attributes);
     }

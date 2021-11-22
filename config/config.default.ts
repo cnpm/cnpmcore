@@ -22,7 +22,7 @@ export default (appInfo: EggAppConfig) => {
     user: process.env.MYSQL_USER || 'root',
     password: process.env.MYSQL_PASSWORD,
   };
-  if (process.env.DEBUG_LOCAL_SQL) {
+  if (process.env.DEBUG_LOCAL_SQL || process.env.CI) {
     config.orm.logger = {
       // TODO: try to save SQL log into ctx logger or app logger
       logQuery(sql: string, duration: number) {
