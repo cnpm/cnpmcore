@@ -17,7 +17,7 @@ import * as ssri from 'ssri';
 import * as semver from 'semver';
 import { BaseController } from '../type/BaseController';
 import { PackageRepository } from 'app/repository/PackageRepository';
-import { getFullname, getScopeAndName } from '../../common/PackageUtil';
+import { getFullname, getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
 import { Package } from 'app/core/entity/Package';
 
@@ -65,7 +65,7 @@ type FullPackage = {
 };
 
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
-const PACKAGE_NAME_PATH = '/:fullname(@[^/]+\/[^/]+|[^@/]+)';
+const PACKAGE_NAME_PATH = `/:fullname(${FULLNAME_REG_STRING})`;
 const PACKAGE_NAME_WITH_VERSION_PATH = `${PACKAGE_NAME_PATH}/:version`;
 const PACKAGE_TAR_DOWNLOAD_PATH = `${PACKAGE_NAME_PATH}/-/:filenameWithVersion.tgz`;
 // base64 regex https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data/475217#475217
@@ -257,7 +257,7 @@ export class PackageController extends BaseController {
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     ctx.logger.info('[package:version:download-tar] %s@%s, packageVersionId: %s',
       pkg.fullname, version, packageVersion.packageVersionId);
-    const urlOrStream = await this.packageManagerService.downloadDist(packageVersion.tarDist);
+    const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(packageVersion);
     if (typeof urlOrStream === 'string') {
       ctx.redirect(urlOrStream);
       return;

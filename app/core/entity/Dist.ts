@@ -1,7 +1,7 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 
-export interface DistData extends EntityData {
+interface DistData extends EntityData {
   distId: string;
   name: string;
   path: string;

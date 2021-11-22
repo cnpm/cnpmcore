@@ -1,7 +1,7 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 
-export interface PackageTagData extends EntityData {
+interface PackageTagData extends EntityData {
   packageId: string;
   packageTagId: string;
   tag: string;

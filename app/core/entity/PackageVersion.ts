@@ -2,7 +2,7 @@ import { Dist } from './Dist';
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 
-export interface PackageVersionData extends EntityData {
+interface PackageVersionData extends EntityData {
   packageId: string;
   packageVersionId: string;
   version: string;

@@ -4,6 +4,9 @@ import path from 'path';
 import { app } from 'egg-mock/bootstrap';
 
 export class TestUtil {
+  private static connection;
+  private static tables;
+
   static async getMySqlConfig(): Promise<any> {
     // TODO use env
     return {
@@ -20,13 +23,13 @@ export class TestUtil {
     return await fs.readFile(path.join(__dirname, '../sql/init.sql'), 'utf8');
   }
 
-  static async query(conn, sql) {
+  static async query(conn, sql): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      conn.query(sql, (err, res) => {
+      conn.query(sql, (err, rows) => {
         if (err) {
           return reject(err);
         }
-        return resolve(res);
+        return resolve(rows);
       });
     });
   }
@@ -37,17 +40,30 @@ export class TestUtil {
     if (process.env.CI) {
       console.log('[TestUtil] connection to mysql: %j', config);
     }
-    const connection = mysql.createConnection(config);
-    connection.connect();
+    if (!this.connection) {
+      this.connection = mysql.createConnection(config);
+      this.connection.connect();
+    }
     const sqls = await this.getTableSqls();
     // no need to create database on GitHub Action CI env
     if (!process.env.CI) {
-      await this.query(connection, `DROP DATABASE IF EXISTS ${config.database};`);
-      await this.query(connection, `CREATE DATABASE IF NOT EXISTS ${config.database} CHARACTER SET utf8;`);
+      await this.query(this.connection, `DROP DATABASE IF EXISTS ${config.database};`);
+      await this.query(this.connection, `CREATE DATABASE IF NOT EXISTS ${config.database} CHARACTER SET utf8;`);
     }
-    await this.query(connection, `USE ${config.database};`);
-    await this.query(connection, sqls);
-    connection.destroy();
+    await this.query(this.connection, `USE ${config.database};`);
+    await this.query(this.connection, sqls);
+    // connection.destroy();
+  }
+
+  static async truncateDatabase() {
+    if (!this.tables) {
+      const config = await this.getMySqlConfig();
+      const sql = `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${config.database}';`;
+      const rows = await this.query(this.connection, sql);
+      this.tables = rows.map(row => row.TABLE_NAME);
+    }
+
+    await Promise.all(this.tables.map(table => this.query(this.connection, `TRUNCATE TABLE ${table};`)));
   }
 
   static getFixtures(name?: string): string {

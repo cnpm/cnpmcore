@@ -13,8 +13,17 @@ import { PackageTag as PackageTagModel } from './model/PackageTag';
   accessLevel: AccessLevel.PUBLIC,
 })
 export class PackageRepository {
-  async createPackage(pkgEntity: PackageEntity) {
-    await ModelConvertor.convertEntityToModel(pkgEntity, PackageModel);
+  async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
+    const model = await PackageModel.findOne({ scope, name });
+    if (!model) return null;
+    const manifestsDistModel = model.manifestsDistId ? await DistModel.findOne({ distId: model.manifestsDistId }) : null;
+    const abbreviatedsDistModel = model.abbreviatedsDistId ? await DistModel.findOne({ distId: model.abbreviatedsDistId }) : null;
+    const data = {
+      manifestsDist: manifestsDistModel && ModelConvertor.convertModelToEntity(manifestsDistModel, DistEntity),
+      abbreviatedsDist: abbreviatedsDistModel && ModelConvertor.convertModelToEntity(abbreviatedsDistModel, DistEntity),
+    };
+    const entity = ModelConvertor.convertModelToEntity(model, PackageEntity, data);
+    return entity;
   }
 
   async savePackage(pkgEntity: PackageEntity) {
@@ -60,19 +69,6 @@ export class PackageRepository {
         ModelConvertor.convertEntityToModel(pkgVersionEntity.abbreviatedDist, DistModel, transaction),
       ]);
     });
-  }
-
-  async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
-    const model = await PackageModel.findOne({ scope, name });
-    if (!model) return null;
-    const manifestsDistModel = model.manifestsDistId ? await DistModel.findOne({ distId: model.manifestsDistId }) : null;
-    const abbreviatedsDistModel = model.abbreviatedsDistId ? await DistModel.findOne({ distId: model.abbreviatedsDistId }) : null;
-    const data = {
-      manifestsDist: manifestsDistModel && ModelConvertor.convertModelToEntity(manifestsDistModel, DistEntity),
-      abbreviatedsDist: abbreviatedsDistModel && ModelConvertor.convertModelToEntity(abbreviatedsDistModel, DistEntity),
-    };
-    const entity = ModelConvertor.convertModelToEntity(model, PackageEntity, data);
-    return entity;
   }
 
   async findPackageVersion(packageId: string, version: string): Promise<PackageVersionEntity | null> {

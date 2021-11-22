@@ -8,6 +8,7 @@ import {
 } from '@eggjs/tegg';
 import {
   EggAppConfig,
+  EggLogger,
 } from 'egg';
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
@@ -15,6 +16,7 @@ import fresh from 'fresh';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { calculateIntegrity, formatTarball } from '../../common/PackageUtil';
 import { PackageRepository } from '../../repository/PackageRepository';
+import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
 import { PackageTag } from '../entity/PackageTag';
@@ -55,9 +57,15 @@ export class PackageManagerService {
   @Inject()
   private readonly packageRepository: PackageRepository;
   @Inject()
+  private readonly packageVersionDownloadRepository: PackageVersionDownloadRepository;
+  @Inject()
   private readonly nfsAdapter: NFSAdapter;
   @Inject()
   private readonly config: EggAppConfig;
+  @Inject()
+  private readonly logger: EggLogger;
+
+  private static downloadCounters = {};
 
   // support user publish private package and sync worker publish public package
   async publish(cmd: PublishPackageCmd) {
@@ -69,15 +77,14 @@ export class PackageManagerService {
         isPrivate: cmd.isPrivate,
         description: cmd.description,
       });
-      await this.packageRepository.createPackage(pkg);
     } else {
       // update description
       // will read database twice to update description by model to entity and entity to model
       if (pkg.description !== cmd.description) {
         pkg.description = cmd.description;
-        await this.packageRepository.savePackage(pkg);
       }
     }
+    await this.packageRepository.savePackage(pkg);
 
     let pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, cmd.version);
     if (pkgVersion) {
@@ -207,8 +214,9 @@ export class PackageManagerService {
     return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, false);
   }
 
-  async downloadDist(dist: Dist): Promise<string | Readable> {
-    return await this.nfsAdapter.getDownloadUrlOrStream(dist.path);
+  async downloadPackageVersionTar(packageVersion: PackageVersion): Promise<string | Readable> {
+    this.plusPackageVersionCounter(packageVersion);
+    return await this.nfsAdapter.getDownloadUrlOrStream(packageVersion.tarDist.path);
   }
 
   async readDistBytesToJSON(dist: Dist): Promise<any> {
@@ -225,7 +233,37 @@ export class PackageManagerService {
     return await this.nfsAdapter.getBytes(dist.path);
   }
 
+  // will be call by schedule/SavePackageVersionDownloadCounter.ts
+  async savePackageVersionCounters() {
+    // { [packageId]: { [version]: number } }
+    const counters = PackageManagerService.downloadCounters;
+    const packageIds = Object.keys(counters);
+    if (packageIds.length === 0) return;
+
+    PackageManagerService.downloadCounters = {};
+    this.logger.info('[packageManagerService.savePackageVersionCounters:saving] %d packageIds', packageIds.length);
+
+    let total = 0;
+    for (const packageId in counters) {
+      const versions = counters[packageId];
+      for (const version in versions) {
+        const counter = versions[version];
+        await this.packageVersionDownloadRepository.plus(packageId, version, counter);
+        total += counter;
+      }
+    }
+    this.logger.info('[packageManagerService.savePackageVersionCounters:saved] %d total', total);
+  }
+
   /** private methods */
+
+  private plusPackageVersionCounter(packageVersion: PackageVersion) {
+    // set counter + 1, schedule will store them into database
+    const counters = PackageManagerService.downloadCounters;
+    if (!counters[packageVersion.packageId]) counters[packageVersion.packageId] = {};
+    counters[packageVersion.packageId][packageVersion.version] =
+      (counters[packageVersion.packageId][packageVersion.version] || 0) + 1;
+  }
 
   private isFresh(expectEtag: string | undefined, currentEtag: string): boolean {
     if (!expectEtag) return false;
@@ -344,8 +382,8 @@ export class PackageManagerService {
       readmeFilename: undefined,
       time: {
         // '1.0.0': '2012-09-18T14:46:08.346Z',
-        created: pkg.gmtCreate,
-        modified: pkg.gmtModified,
+        created: pkg.createdAt,
+        modified: pkg.updatedAt,
       },
       versions: {},
     };
@@ -394,7 +432,7 @@ export class PackageManagerService {
       'dist-tags': {
         // latest: '1.0.0',
       },
-      modified: pkg.gmtModified,
+      modified: pkg.updatedAt,
       name: pkg.fullname,
       versions: {},
     };
