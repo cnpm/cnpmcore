@@ -6,7 +6,7 @@ import { TestUtil } from 'test/TestUtil';
 import { NFSClientAdapter } from '../../../app/common/adapter/NFSClientAdapter';
 import { PackageRepository } from '../../../app/repository/PackageRepository';
 
-describe('test/controller/PackageController.test.ts', () => {
+describe('test/port/controller/PackageController.test.ts', () => {
   let ctx: Context;
   let packageManagerService: PackageManagerService;
   let nfsClientAdapter: NFSClientAdapter;

@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageManagerService } from '../../../app/core/service/PackageManagerService';
 import { PackageRepository } from '../../../app/repository/PackageRepository';
