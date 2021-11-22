@@ -17,11 +17,13 @@ export class PackageVersionDownloadRepository {
     });
     if (!model) {
       // create a record
+      const now = new Date();
       const attributes = {
         packageId,
         version,
         yearMonth,
-        createdAt: new Date(),
+        createdAt: now,
+        updatedAt: now,
       };
       model = await PackageVersionDownloadModel.create(attributes);
     }

@@ -4,7 +4,7 @@ import { app, mock } from 'egg-mock/bootstrap';
 import dayjs from '../../../app/common/dayjs';
 import { TestUtil } from 'test/TestUtil';
 
-describe.only('test/port/controller/DownloadController.test.ts', () => {
+describe('test/port/controller/DownloadController.test.ts', () => {
   let ctx: Context;
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
