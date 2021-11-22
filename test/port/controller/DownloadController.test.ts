@@ -98,6 +98,8 @@ describe('test/controller/DownloadController.test.ts', () => {
         .send(pkg)
         .expect(201);
 
+      await app.runSchedule('SavePackageVersionDownloadCounter');
+
       const start = dayjs().format('YYYY-MM-DD');
       const end = dayjs().format('YYYY-MM-DD');
       const res = await app.httpRequest()
