@@ -17,7 +17,7 @@ describe('test/port/controller/DownloadController.test.ts', () => {
   });
 
   describe('[GET /downloads/range/:range/:fullname] showDownloads()', () => {
-    it('should get package download infos', async () => {
+    it.only('should get package download infos', async () => {
       let pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
       await app.httpRequest()
         .put(`/${pkg.name}`)

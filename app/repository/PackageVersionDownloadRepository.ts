@@ -25,6 +25,8 @@ export class PackageVersionDownloadRepository {
         createdAt: now,
         updatedAt: now,
       };
+      const timestamps = 'timestamps';
+      console.log('Model.timestamps', PackageVersionDownloadModel[timestamps]);
       model = await PackageVersionDownloadModel.create(attributes);
     }
     await PackageVersionDownloadModel
