@@ -1,6 +1,7 @@
+import { mock } from 'egg-mock/bootstrap';
 import { TestUtil } from './TestUtil';
 
-before(async () => {
-  await TestUtil.createDatabase();
-  console.log('create table done!!!');
+afterEach(async () => {
+  mock.restore();
+  await TestUtil.truncateDatabase();
 });

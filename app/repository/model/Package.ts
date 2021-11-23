@@ -1,7 +1,4 @@
 import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
-// TODO leoric typing add DataTypes
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { DataTypes, Bone } from 'leoric';
 import { EntityProperty } from '../util/EntityProperty';
 
@@ -9,16 +6,19 @@ import { EntityProperty } from '../util/EntityProperty';
 export class Package extends Bone {
   @Attribute(DataTypes.BIGINT, {
     primary: true,
+    autoIncrement: true,
   })
   id: bigint;
 
-  @Attribute(DataTypes.DATE)
-  gmtCreate: Date;
+  @Attribute(DataTypes.DATE, { name: 'gmt_create' })
+  createdAt: Date;
 
-  @Attribute(DataTypes.DATE)
-  gmtModified: Date;
+  @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
+  updatedAt: Date;
 
-  @Attribute(DataTypes.STRING(24))
+  @Attribute(DataTypes.STRING(24), {
+    unique: true,
+  })
   packageId: string;
 
   @Attribute(DataTypes.STRING(214))

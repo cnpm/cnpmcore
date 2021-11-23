@@ -43,9 +43,6 @@ export class HomeController extends BaseController {
       // only for cnpmcore
       doc_version_count: 0,
       sync_model: '',
-      last_sync_time: 0,
-      last_exist_sync_time: 0,
-      last_sync_module: 0,
       download: {
         today: 0,
         thisweek: 0,

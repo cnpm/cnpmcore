@@ -2,15 +2,11 @@ import { strict as assert } from 'assert';
 import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { PackageManagerService } from '../../../app/core/service/PackageManagerService';
-import { Package } from '../../../app/repository/model/Package';
-import { PackageVersion } from '../../../app/repository/model/PackageVersion';
-import { PackageTag } from '../../../app/repository/model/PackageTag';
-import { Dist } from '../../../app/repository/model/Dist';
 import { TestUtil } from 'test/TestUtil';
 import { NFSClientAdapter } from '../../../app/common/adapter/NFSClientAdapter';
 import { PackageRepository } from '../../../app/repository/PackageRepository';
 
-describe('test/controller/PackageController.test.ts', () => {
+describe('test/port/controller/PackageController.test.ts', () => {
   let ctx: Context;
   let packageManagerService: PackageManagerService;
   let nfsClientAdapter: NFSClientAdapter;
@@ -23,15 +19,8 @@ describe('test/controller/PackageController.test.ts', () => {
     packageRepository = await ctx.getEggObject(PackageRepository);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     app.destroyModuleContext(ctx);
-    mock.restore();
-    await Promise.all([
-      Package.truncate(),
-      PackageTag.truncate(),
-      PackageVersion.truncate(),
-      Dist.truncate(),
-    ]);
   });
 
   describe('[GET /:fullname] showPackage()', () => {
@@ -154,6 +143,7 @@ describe('test/controller/PackageController.test.ts', () => {
       const pkg = res.body;
       assert.equal(pkg.name, name);
       assert.equal(Object.keys(pkg.versions).length, 2);
+      assert.match(pkg.modified, /^202\d/);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['2.0.0'];
       assert.equal(versionOne.dist.unpackedSize, 6497043);

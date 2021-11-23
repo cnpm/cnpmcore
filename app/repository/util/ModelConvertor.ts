@@ -4,7 +4,8 @@ import { EggProtoImplClass } from '@eggjs/tegg';
 import _ from 'lodash';
 import { ModelConvertorUtil } from './ModelConvertorUtil';
 
-const GMT_MODIFIED = 'gmtModified';
+const CREATED_AT = 'createdAt';
+const UPDATED_AT = 'updatedAt';
 const ID = 'id';
 
 export class ModelConvertor {
@@ -17,17 +18,21 @@ export class ModelConvertor {
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
+      if (entityPropertyName === 'UPDATED_AT' || entityPropertyName === 'CREATED_AT') continue;
       const attributeValue = _.get(entity, entityPropertyName);
       attributes[modelPropertyName] = attributeValue;
     }
     const model = await (ModelClazz as unknown as typeof Bone).create(attributes, options);
     // auto set entity id to model id
     entity[ID] = model[ID];
+    // use model dates
+    entity[UPDATED_AT] = model[UPDATED_AT];
+    entity[CREATED_AT] = model[CREATED_AT];
     return model as T;
   }
 
   // TODO: options is QueryOptions, should let leoric export it to use
-  // Find out which attributes changed and set `gmtModified` to now
+  // Find out which attributes changed and set `updatedAt` to now
   static async saveEntityToModel<T extends Bone>(entity: object, model: T, options?): Promise<boolean> {
     const ModelClazz = model.constructor as EggProtoImplClass<T>;
     const metadata = ModelMetadataUtil.getControllerMetadata(ModelClazz);
@@ -37,14 +42,15 @@ export class ModelConvertor {
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
+      if (entityPropertyName === 'UPDATED_AT' || entityPropertyName === 'CREATED_AT') continue;
       const attributeValue = _.get(entity, entityPropertyName);
       model[modelPropertyName] = attributeValue;
     }
     if (!model.changed()) {
       return false;
     }
-    entity[GMT_MODIFIED] = model[GMT_MODIFIED] = new Date();
     await model.save(options);
+    entity[UPDATED_AT] = model[UPDATED_AT];
     return true;
   }
 

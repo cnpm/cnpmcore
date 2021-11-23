@@ -1,11 +1,8 @@
 import assert from 'assert';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageManagerService } from '../../../app/core/service/PackageManagerService';
 import { PackageRepository } from '../../../app/repository/PackageRepository';
-import { Package } from '../../../app/repository/model/Package';
-import { PackageVersion } from '../../../app/repository/model/PackageVersion';
-import { Dist } from '../../../app/repository/model/Dist';
 import { TestUtil } from '../../TestUtil';
 
 describe('test/core/service/PackageManagerService.test.ts', () => {
@@ -21,11 +18,8 @@ describe('test/core/service/PackageManagerService.test.ts', () => {
 
   afterEach(async () => {
     app.destroyModuleContext(ctx);
-    await Promise.all([
-      Package.truncate(),
-      PackageVersion.truncate(),
-      Dist.truncate(),
-    ]);
+    mock.restore();
+    await TestUtil.truncateDatabase();
   });
 
   describe('publish()', () => {

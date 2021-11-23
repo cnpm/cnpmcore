@@ -1,5 +1,7 @@
 # Private NPM Registry for Enterprise
 
+[![Node.js CI](https://github.com/cnpm/cnpmcore/actions/workflows/nodejs.yml/badge.svg)](https://github.com/cnpm/cnpmcore/actions/workflows/nodejs.yml)
+
 Reimplementation based on [cnpmjs.org](https://github.com/cnpm/cnpmjs.org) with TypeScript.
 
 ## Registry HTTP API

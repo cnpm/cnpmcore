@@ -3,7 +3,7 @@ import { EasyData, EntityUtil } from '../util/EntityUtil';
 import { Dist } from './Dist';
 import { getFullname } from '../../common/PackageUtil';
 
-export interface PackageData extends EntityData {
+interface PackageData extends EntityData {
   scope: string;
   name: string;
   packageId: string;

@@ -1,6 +1,8 @@
 import { createReadStream } from 'fs';
 import * as ssri from 'ssri';
 
+export const FULLNAME_REG_STRING = '@[^/]+\/[^/]+|[^@/]+';
+
 export function getScopeAndName(fullname: string): string[] {
   if (fullname.startsWith('@')) {
     return fullname.split('/', 2);

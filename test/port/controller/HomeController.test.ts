@@ -1,16 +1,15 @@
 import { strict as assert } from 'assert';
 import { Context } from 'egg';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app } from 'egg-mock/bootstrap';
 
-describe('test/controller/PackageController.test.ts', () => {
+describe('test/port/controller/PackageController.test.ts', () => {
   let ctx: Context;
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     app.destroyModuleContext(ctx);
-    mock.restore();
   });
 
   describe('[GET /] showTotal()', () => {
