@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 import { Context } from 'egg';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app } from 'egg-mock/bootstrap';
 import dayjs from '../../../app/common/dayjs';
 import { TestUtil } from 'test/TestUtil';
 
@@ -10,14 +10,12 @@ describe('test/port/controller/DownloadController.test.ts', () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     app.destroyModuleContext(ctx);
-    mock.restore();
-    await TestUtil.truncateDatabase();
   });
 
   describe('[GET /downloads/range/:range/:fullname] showDownloads()', () => {
-    it.only('should get package download infos', async () => {
+    it('should get package download infos', async () => {
       let pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
       await app.httpRequest()
         .put(`/${pkg.name}`)

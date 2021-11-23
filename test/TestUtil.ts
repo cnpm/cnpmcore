@@ -1,29 +1,31 @@
 import * as fs from 'fs/promises';
 import mysql from 'mysql';
 import path from 'path';
-import { app } from 'egg-mock/bootstrap';
 
 export class TestUtil {
   private static connection;
   private static tables;
 
-  static async getMySqlConfig(): Promise<any> {
-    // TODO use env
+  static getMySqlConfig() {
     return {
-      host: '127.0.0.1',
-      port: 3306,
-      password: '',
-      user: 'root',
+      host: process.env.MYSQL_HOST || 'localhost',
+      port: process.env.MYSQL_PORT || 3306,
+      user: process.env.MYSQL_USER || 'root',
+      password: process.env.MYSQL_PASSWORD,
       multipleStatements: true,
-      ...app.config.orm,
     };
+  }
+
+  static getDatabase() {
+    return process.env.MYSQL_DATABASE || 'cnpmcore_unittest';
   }
 
   static async getTableSqls(): Promise<string> {
     return await fs.readFile(path.join(__dirname, '../sql/init.sql'), 'utf8');
   }
 
-  static async query(conn, sql): Promise<any[]> {
+  static async query(sql): Promise<any[]> {
+    const conn = this.getConnection();
     return new Promise((resolve, reject) => {
       conn.query(sql, (err, rows) => {
         if (err) {
@@ -34,36 +36,48 @@ export class TestUtil {
     });
   }
 
-  static async createDatabase() {
-    // TODO use leoric sync
-    const config = await this.getMySqlConfig();
-    if (process.env.CI) {
-      console.log('[TestUtil] connection to mysql: %j', config);
-    }
+  static getConnection() {
     if (!this.connection) {
+      const config = this.getMySqlConfig();
+      if (process.env.CI) {
+        console.log('[TestUtil] connection to mysql: %j', config);
+      }
       this.connection = mysql.createConnection(config);
       this.connection.connect();
     }
+    return this.connection;
+  }
+
+  static destroyConnection() {
+    if (this.connection) {
+      this.connection.destroy();
+      this.connection = null;
+    }
+  }
+
+  static async createDatabase() {
+    // TODO use leoric sync
+    const database = this.getDatabase();
     const sqls = await this.getTableSqls();
     // no need to create database on GitHub Action CI env
     if (!process.env.CI) {
-      await this.query(this.connection, `DROP DATABASE IF EXISTS ${config.database};`);
-      await this.query(this.connection, `CREATE DATABASE IF NOT EXISTS ${config.database} CHARACTER SET utf8;`);
+      await this.query(`DROP DATABASE IF EXISTS ${database};`);
+      await this.query(`CREATE DATABASE IF NOT EXISTS ${database} CHARACTER SET utf8;`);
+      console.log('[TestUtil] CREATE DATABASE: %s', database);
     }
-    await this.query(this.connection, `USE ${config.database};`);
-    await this.query(this.connection, sqls);
-    // connection.destroy();
+    await this.query(`USE ${database};`);
+    await this.query(sqls);
+    this.destroyConnection();
   }
 
   static async truncateDatabase() {
+    const database = this.getDatabase();
     if (!this.tables) {
-      const config = await this.getMySqlConfig();
-      const sql = `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${config.database}';`;
-      const rows = await this.query(this.connection, sql);
+      const sql = `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${database}';`;
+      const rows = await this.query(sql);
       this.tables = rows.map(row => row.TABLE_NAME);
     }
-
-    await Promise.all(this.tables.map(table => this.query(this.connection, `TRUNCATE TABLE ${table};`)));
+    await Promise.all(this.tables.map(table => this.query(`TRUNCATE TABLE ${database}.${table};`)));
   }
 
   static getFixtures(name?: string): string {

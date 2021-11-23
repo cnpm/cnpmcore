@@ -4,6 +4,7 @@ import { EggProtoImplClass } from '@eggjs/tegg';
 import _ from 'lodash';
 import { ModelConvertorUtil } from './ModelConvertorUtil';
 
+const CREATED_AT = 'createdAt';
 const UPDATED_AT = 'updatedAt';
 const ID = 'id';
 
@@ -17,7 +18,7 @@ export class ModelConvertor {
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
-      if (entityPropertyName === 'UPDATED_AT') continue;
+      if (entityPropertyName === 'UPDATED_AT' || entityPropertyName === 'CREATED_AT') continue;
       const attributeValue = _.get(entity, entityPropertyName);
       attributes[modelPropertyName] = attributeValue;
     }
@@ -26,6 +27,7 @@ export class ModelConvertor {
     entity[ID] = model[ID];
     // use model dates
     entity[UPDATED_AT] = model[UPDATED_AT];
+    entity[CREATED_AT] = model[CREATED_AT];
     return model as T;
   }
 
@@ -40,7 +42,7 @@ export class ModelConvertor {
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
-      if (entityPropertyName === 'UPDATED_AT') continue;
+      if (entityPropertyName === 'UPDATED_AT' || entityPropertyName === 'CREATED_AT') continue;
       const attributeValue = _.get(entity, entityPropertyName);
       model[modelPropertyName] = attributeValue;
     }

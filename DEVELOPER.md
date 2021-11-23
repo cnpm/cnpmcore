@@ -87,8 +87,22 @@ npm install
 
 ### 开发运行
 
+初始化数据库：
+
+```bash
+MYSQL_DATABASE=cnpm npm run prepare-database
+```
+
+启动 web 服务：
+
 ```bash
 DEBUG_LOCAL_SQL=true npm run dev
+```
+
+访问：
+
+```bash
+curl -v http://127.0.0.1:7001
 ```
 
 ### 运行单元测试
