@@ -133,3 +133,14 @@ CREATE TABLE IF NOT EXISTS `total` (
  PRIMARY KEY (`id`),
  UNIQUE KEY `uk_total_id` (`total_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='total info';
+
+CREATE TABLE IF NOT EXISTS `blocklist_package_versions` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
+  `package_id` varchar(24) NOT NULL COMMENT 'package id',
+  `version` varchar(256) NOT NULL COMMENT 'package version, "*" meaning all versions',
+  `reason` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'block reason',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_name_version` (`package_id`, `version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='blocklist package versions';

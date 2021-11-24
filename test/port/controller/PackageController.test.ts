@@ -716,6 +716,35 @@ describe('test/port/controller/PackageController.test.ts', () => {
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] version("1.0.woring-version") format invalid');
     });
 
+    it('should 422 when name format error', async () => {
+      let pkg = await TestUtil.getFullPackage({
+        name: 'excited!',
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain special characters ("~\'!()*")');
+
+      pkg = await TestUtil.getFullPackage({
+        name: ' leading-space:and:weirdchars',
+      });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name cannot contain leading or trailing spaces, name can only contain URL-friendly characters');
+
+      pkg = await TestUtil.getFullPackage({
+        name: 'eLaBorAtE-paCkAgE-with-mixed-case-and-more-than-214-characters-----------------------------------------------------------------------------------------------------------------------------------------------------------',
+      });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters, name can no longer contain capital letters');
+    });
+
     it('should 422 when attachment data format invalid', async () => {
       let pkg = await TestUtil.getFullPackage({
         attachment: {

@@ -57,7 +57,8 @@
     "mysql2": "^2.3.0",
     "semver": "^7.3.5",
     "ssri": "^8.0.1",
-    "type-fest": "^2.5.3"
+    "type-fest": "^2.5.3",
+    "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^9.0.0",
