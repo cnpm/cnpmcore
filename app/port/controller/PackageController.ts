@@ -15,6 +15,7 @@ import {
 } from 'egg';
 import * as ssri from 'ssri';
 import * as semver from 'semver';
+import validateNpmPackageName from 'validate-npm-package-name';
 import { BaseController } from '../type/BaseController';
 import { PackageRepository } from 'app/repository/PackageRepository';
 import { getFullname, getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil';
@@ -78,8 +79,6 @@ export class PackageController extends BaseController {
     method: HTTPMethodEnum.GET,
   })
   async showPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
-    // FIXME: validate name
-    // https://github.com/npm/validate-npm-package-name
     const requestEtag = ctx.request.headers['if-none-match'];
     const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
     const [ scope, name ] = getScopeAndName(fullname);
@@ -132,10 +131,15 @@ export class PackageController extends BaseController {
     method: HTTPMethodEnum.PUT,
   })
   async saveVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
-    // TODO: using https://github.com/npm/validate-npm-package-name to validate package name
-    ctx.tValidate(FullPackageRule, pkg);
+    ctx.validate(FullPackageRule, pkg);
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
+    }
+    // Using https://github.com/npm/validate-npm-package-name to validate package name
+    const validateResult = validateNpmPackageName(pkg.name);
+    if (!validateResult.validForNewPackages) {
+      const errors = (validateResult.errors || validateResult.warnings).join(', ');
+      throw new UnprocessableEntityError(`package.name invalid, errors: ${errors}`);
     }
     const versions = Object.values(pkg.versions);
     if (versions.length === 0) {
