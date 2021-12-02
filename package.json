@@ -47,6 +47,7 @@
     "egg": "^2.29.4",
     "egg-errors": "^2.3.0",
     "egg-opentracing": "^1.1.1",
+    "egg-typebox-validate": "^1.1.0",
     "egg-validate": "^2.0.2",
     "fresh": "^0.5.2",
     "fs-cnpm": "^2.2.0",

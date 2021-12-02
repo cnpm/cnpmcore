@@ -20,6 +20,7 @@ import { PackageRepository } from 'app/repository/PackageRepository';
 import { getFullname, getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
 import { Package } from 'app/core/entity/Package';
+import { Static, Type } from '@sinclair/typebox';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -33,36 +34,24 @@ type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   },
 }>;
 
-const FullPackageRule = {
-  name: 'string',
-  // should has at least one version
-  versions: 'object',
-  // deprecated request can only has versions
-  _attachments: 'object?',
-  description: 'string?',
-  'dist-tags': 'object?',
-  readme: 'string?',
-};
+const FullPackageRule = Type.Object({
+  name: Type.String(),
+  // Since we don't validate versions previous, here we use Type.Any() just for object validate
+  versions: Type.Record(Type.String(), Type.Any()),
+  _attachments: Type.Optional(Type.Record(
+    Type.String(),
+    Type.Object({
+      content_type: Type.String(),
+      data: Type.String(),
+      length: Type.Number(),
+    }))),
+  description: Type.Optional(Type.String()),
+  'dist-tags': Type.Optional(Type.Record(Type.String(), Type.String())),
+  readme: Type.Optional(Type.String()),
+});
 
-type FullPackage = {
-  name: string;
-  versions: {
-    [key: string]: PackageVersion;
-  },
-  // maintainers: JsonObject[],
-  _attachments?: {
-    [key: string]: {
-      content_type: string;
-      data: string;
-      length: number;
-    };
-  },
-  description?: string;
-  'dist-tags'?: {
-    [key: string]: string;
-  };
-  readme?: string;
-};
+// overwrite versions
+type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions'> & { versions: { [key: string]: PackageVersion } };
 
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
 const PACKAGE_NAME_PATH = `/:fullname(${FULLNAME_REG_STRING})`;
@@ -141,7 +130,7 @@ export class PackageController extends BaseController {
   })
   async saveVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     // TODO: using https://github.com/npm/validate-npm-package-name to validate package name
-    ctx.validate(FullPackageRule, pkg);
+    ctx.tValidate(FullPackageRule, pkg);
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
     }
