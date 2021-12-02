@@ -36,22 +36,25 @@ type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
 
 const FullPackageRule = Type.Object({
   name: Type.String(),
-  // Since we don't validate versions previous, here we use Type.Any() just for object validate
+  // Since we don't validate versions & _attachments previous, here we use Type.Any() just for object validate
   versions: Type.Record(Type.String(), Type.Any()),
-  _attachments: Type.Optional(Type.Record(
-    Type.String(),
-    Type.Object({
-      content_type: Type.String(),
-      data: Type.String(),
-      length: Type.Number(),
-    }))),
+  _attachments: Type.Record(Type.String(), Type.Any()),
   description: Type.Optional(Type.String()),
   'dist-tags': Type.Optional(Type.Record(Type.String(), Type.String())),
   readme: Type.Optional(Type.String()),
 });
 
-// overwrite versions
-type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions'> & { versions: { [key: string]: PackageVersion } };
+// overwrite versions & _attachments
+type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions' | '_attachments'> &
+{ versions: { [key: string]: PackageVersion } } &
+{ _attachments: {
+  [key: string]: {
+    content_type: string;
+    data: string;
+    length: number;
+  };
+}};
+
 
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
 const PACKAGE_NAME_PATH = `/:fullname(${FULLNAME_REG_STRING})`;
