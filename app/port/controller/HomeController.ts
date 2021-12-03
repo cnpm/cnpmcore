@@ -6,10 +6,10 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { BaseController } from '../type/BaseController';
+import { AbstractController } from './AbstractController';
 
 @HTTPController()
-export class HomeController extends BaseController {
+export class HomeController extends AbstractController {
   @HTTPMethod({
     // GET /
     // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#schema
