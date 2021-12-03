@@ -6,18 +6,15 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { UnprocessableEntityError, NotFoundError } from 'egg-errors';
-import { BaseController } from '../type/BaseController';
+import { AbstractController } from './AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil';
 import dayjs from '../../common/dayjs';
-import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 @HTTPController()
-export class DownloadController extends BaseController {
-  @Inject()
-  private packageRepository: PackageRepository;
+export class DownloadController extends AbstractController {
   @Inject()
   private packageVersionDownloadRepository: PackageVersionDownloadRepository;
 

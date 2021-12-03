@@ -10,18 +10,12 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import {
-  EggLogger,
-} from 'egg';
 import * as ssri from 'ssri';
-import * as semver from 'semver';
 import validateNpmPackageName from 'validate-npm-package-name';
-import { BaseController } from '../type/BaseController';
-import { PackageRepository } from 'app/repository/PackageRepository';
-import { getFullname, getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil';
-import { PackageManagerService } from 'app/core/service/PackageManagerService';
-import { Package } from 'app/core/entity/Package';
 import { Static, Type } from '@sinclair/typebox';
+import { AbstractController } from './AbstractController';
+import { getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil';
+import { PackageManagerService } from '../../core/service/PackageManagerService';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -65,11 +59,7 @@ const PACKAGE_TAR_DOWNLOAD_PATH = `${PACKAGE_NAME_PATH}/-/:filenameWithVersion.t
 const PACKAGE_ATTACH_DATA_RE = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
 
 @HTTPController()
-export class PackageController extends BaseController {
-  @Inject()
-  private logger: EggLogger;
-  @Inject()
-  private packageRepository: PackageRepository;
+export class PackageController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
 
@@ -131,7 +121,7 @@ export class PackageController extends BaseController {
     method: HTTPMethodEnum.PUT,
   })
   async saveVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
-    ctx.validate(FullPackageRule, pkg);
+    ctx.tValidate(FullPackageRule, pkg);
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
     }
@@ -237,6 +227,16 @@ export class PackageController extends BaseController {
     };
   }
 
+  // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#update-a-packages-tag
+  @HTTPMethod({
+    // PUT /:fullname/:tag
+    path: `${PACKAGE_NAME_PATH}/:tag`,
+    method: HTTPMethodEnum.PUT,
+  })
+  async updateTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() version: string) {
+    console.log(fullname, version, ctx.headers, ctx.href);
+  }
+
   @HTTPMethod({
     // GET /:fullname/-/:filenameWithVersion.tgz
     path: PACKAGE_TAR_DOWNLOAD_PATH,
@@ -262,32 +262,8 @@ export class PackageController extends BaseController {
     return urlOrStream;
   }
 
-  // try to get package entity, throw NotFoundError when package not exists
-  private async getPackageEntity(scope: string, name: string) {
-    const packageEntity = await this.packageRepository.findPackage(scope, name);
-    if (!packageEntity) {
-      const fullname = getFullname(scope, name);
-      throw new NotFoundError(`${fullname} not found`);
-    }
-    return packageEntity;
-  }
-
-  private async getPackageVersionEntity(pkg: Package, version: string) {
-    const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
-    if (!packageVersion) {
-      throw new NotFoundError(`${pkg.fullname}@${version} not found`);
-    }
-    return packageVersion;
-  }
-
   // https://github.com/cnpm/cnpmjs.org/issues/415
   private async saveDeprecatedVersions(name: string, versions: PackageVersion[]) {
     console.log(name, versions);
-  }
-
-  private checkPackageVersionFormat(version: string) {
-    if (!semver.valid(version)) {
-      throw new UnprocessableEntityError(`version(${JSON.stringify(version)}) format invalid`);
-    }
   }
 }
