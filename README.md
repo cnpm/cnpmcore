@@ -15,14 +15,7 @@ See [DEVELOPER.md](DEVELOPER.md)
 ## License
 
 [MIT](LICENSE)
-<!-- GITCONTRIBUTOR_START -->
 
 ## Contributors
 
-|[<img src="https://avatars.githubusercontent.com/u/6897780?v=4" width="100px;"/><br/><sub><b>killagu</b></sub>](https://github.com/killagu)<br/>|[<img src="https://avatars.githubusercontent.com/u/156269?v=4" width="100px;"/><br/><sub><b>fengmk2</b></sub>](https://github.com/fengmk2)<br/>|
-| :---: | :---: |
-
-
-This project follows the git-contributor [spec](https://github.com/xudafeng/git-contributor), auto updated at `Sun Nov 14 2021 22:29:30 GMT+0800`.
-
-<!-- GITCONTRIBUTOR_END -->
+[![](https://badges.implements.io/api/contributors?org=cnpm&repo=cnpmcore&width=1250&size=96&padding=6)](https://github.com/cnpm/cnpmcore/graphs/contributors)
