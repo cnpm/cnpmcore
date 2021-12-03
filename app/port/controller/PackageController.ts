@@ -37,8 +37,8 @@ type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
 const FullPackageRule = Type.Object({
   name: Type.String(),
   // Since we don't validate versions & _attachments previous, here we use Type.Any() just for object validate
-  versions: Type.Record(Type.String(), Type.Any()),
-  _attachments: Type.Record(Type.String(), Type.Any()),
+  versions: Type.Optional(Type.Any()),
+  _attachments: Type.Optional(Type.Any()),
   description: Type.Optional(Type.String()),
   'dist-tags': Type.Optional(Type.Record(Type.String(), Type.String())),
   readme: Type.Optional(Type.String()),
