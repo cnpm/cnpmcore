@@ -32,6 +32,10 @@ const plugin: EggPlugin = {
     enable: true,
     package: 'egg-opentracing',
   },
+  typeboxValidate: {
+    enable: true,
+    package: 'egg-typebox-validate',
+  },
 };
 
 export default plugin;
