@@ -50,7 +50,6 @@ type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions' | '_attachmen
   };
 }};
 
-
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
 const PACKAGE_NAME_PATH = `/:fullname(${FULLNAME_REG_STRING})`;
 const PACKAGE_NAME_WITH_VERSION_PATH = `${PACKAGE_NAME_PATH}/:version`;
@@ -121,6 +120,7 @@ export class PackageController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async saveVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
+    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
     ctx.tValidate(FullPackageRule, pkg);
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
@@ -215,9 +215,9 @@ export class PackageController extends AbstractController {
       },
       tag,
       isPrivate: true,
-    });
-    this.logger.info('[package:version:add] %s@%s, packageVersionId: %s, tag: %s',
-      packageVersion.name, packageVersion.version, packageVersionEntity.packageVersionId, tag);
+    }, authorizedUser);
+    this.logger.info('[package:version:add] %s@%s, packageVersionId: %s, tag: %s, userId: %s',
+      packageVersion.name, packageVersion.version, packageVersionEntity.packageVersionId, tag, authorizedUser.userId);
 
     // make sure the latest version exists
     ctx.status = 201;
@@ -235,6 +235,8 @@ export class PackageController extends AbstractController {
   })
   async updateTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() version: string) {
     console.log(fullname, version, ctx.headers, ctx.href);
+    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
+    console.log(authorizedUser);
   }
 
   @HTTPMethod({

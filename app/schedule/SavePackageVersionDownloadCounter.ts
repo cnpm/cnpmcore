@@ -14,7 +14,7 @@ export default class SavePackageVersionDownloadCounter extends Subscription {
   async subscribe() {
     const { ctx } = this;
     await ctx.beginModuleScope(async () => {
-      const packageManagerService = ctx.module[cnpmcoreCore].packageManagerService as PackageManagerService;
+      const packageManagerService: PackageManagerService = ctx.module[cnpmcoreCore].packageManagerService;
       await packageManagerService.savePackageVersionCounters();
     });
   }

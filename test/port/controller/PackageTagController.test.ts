@@ -4,8 +4,10 @@ import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/PackageTagController.test.ts', () => {
+  let publisher;
   let ctx: Context;
   beforeEach(async () => {
+    publisher = await TestUtil.createUser();
     ctx = await app.mockModuleContext();
   });
 
@@ -25,6 +27,7 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
       await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
 

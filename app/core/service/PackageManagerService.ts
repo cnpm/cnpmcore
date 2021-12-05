@@ -6,10 +6,6 @@ import {
   EventBus,
   Inject,
 } from '@eggjs/tegg';
-import {
-  EggAppConfig,
-  EggLogger,
-} from 'egg';
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import fresh from 'fresh';
@@ -20,12 +16,14 @@ import { PackageVersionDownloadRepository } from '../../repository/PackageVersio
 import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
 import { PackageTag } from '../entity/PackageTag';
+import { User } from '../entity/User';
 import {
   PACKAGE_PUBLISHED,
   PACKAGE_TAG_CHANGED,
   PACKAGE_TAG_ADDED,
 } from '../event';
 import { Dist } from '../entity/Dist';
+import { AbstractService } from './AbstractService';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
@@ -51,7 +49,7 @@ export interface PublishPackageCmd {
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
 })
-export class PackageManagerService {
+export class PackageManagerService extends AbstractService {
   @Inject()
   private readonly eventBus: EventBus;
   @Inject()
@@ -60,16 +58,13 @@ export class PackageManagerService {
   private readonly packageVersionDownloadRepository: PackageVersionDownloadRepository;
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
-  @Inject()
-  private readonly config: EggAppConfig;
-  @Inject()
-  private readonly logger: EggLogger;
 
   private static downloadCounters = {};
 
   // support user publish private package and sync worker publish public package
-  async publish(cmd: PublishPackageCmd) {
+  async publish(cmd: PublishPackageCmd, publisher: User) {
     let pkg = await this.packageRepository.findPackage(cmd.scope, cmd.name);
+    let isFirstPackage = false;
     if (!pkg) {
       pkg = Package.create({
         scope: cmd.scope,
@@ -77,7 +72,15 @@ export class PackageManagerService {
         isPrivate: cmd.isPrivate,
         description: cmd.description,
       });
+      isFirstPackage = true;
     } else {
+      // required publisherId is maintainer
+      const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
+      const maintainer = maintainers.find(user => user.userId === publisher.userId);
+      if (!maintainer) {
+        const names = maintainers.map(m => m.name).join(', ');
+        throw new ForbiddenError(`${publisher.name} not authorized to modify ${pkg.name}, please contact maintainers: ${names}`);
+      }
       // update description
       // will read database twice to update description by model to entity and entity to model
       if (pkg.description !== cmd.description) {
@@ -85,6 +88,10 @@ export class PackageManagerService {
       }
     }
     await this.packageRepository.savePackage(pkg);
+    if (isFirstPackage) {
+      // create maintainer
+      await this.packageRepository.savePackageMaintainer(pkg.packageId, publisher.userId);
+    }
 
     let pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, cmd.version);
     if (pkgVersion) {
