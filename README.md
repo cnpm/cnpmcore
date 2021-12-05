@@ -18,4 +18,4 @@ See [DEVELOPER.md](DEVELOPER.md)
 
 ## Contributors
 
-[![](https://badges.implements.io/api/contributors?org=cnpm&repo=cnpmcore&width=1250&size=96&padding=6)](https://github.com/cnpm/cnpmcore/graphs/contributors)
+[![](https://ergatejs.implements.io/badges/contributors/cnpm/cnpmcore.svg?width=1250&size=96&padding=6)](https://github.com/cnpm/cnpmcore/graphs/contributors)
