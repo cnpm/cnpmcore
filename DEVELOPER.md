@@ -90,7 +90,7 @@ npm install
 初始化数据库：
 
 ```bash
-MYSQL_DATABASE=cnpm npm run prepare-database
+MYSQL_DATABASE=cnpmcore npm run prepare-database
 ```
 
 启动 web 服务：
@@ -153,12 +153,24 @@ npm run test
   }
 ```
 
+还会封装请求用户相关的接口，如获取当前登录用户 `const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx)`，
+大多数情况下，直接使用 `requiredAuthorizedUser(ctx)` 接口获取当前登录用户会更合适，它会对未登录的请求抛出 UnauthorizedError 异常。
+
 ### 请求参数校验
 
 使用 [egg-typebox-validate](https://github.com/xiekw2010/egg-typebox-validate) 来做请求参数校验，只需要定义一次参数类型和规则，就能同时拥有参数校验和类型定义。
 详细使用方式可以参考 [PR#12](https://github.com/cnpm/cnpmcore/pull/12)。
 
 ## Service 开发指南
+
+## Repository 开发指南
+
+### Repository 类方法命名规则
+
+- `findSomething` 查询一个模型数据
+- `saveSomething` 保存一个模型数据，包含新增、更新逻辑，尽量不单独区分
+- `removeSomething` 移除一个模型数据
+- `listSomethings` 查询一批模型数据
 
 ## DDD 常见问题答疑
 

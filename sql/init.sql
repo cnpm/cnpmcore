@@ -144,3 +144,48 @@ CREATE TABLE IF NOT EXISTS `blocklist_package_versions` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_name_version` (`package_id`, `version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='blocklist package versions';
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
+  `user_id` varchar(24) NOT NULL COMMENT 'user id',
+  `name` varchar(100) NOT NULL COMMENT 'user name',
+  `email` varchar(400) NOT NULL COMMENT 'user email',
+  `password_salt` varchar(100) NOT NULL COMMENT 'password salt',
+  `password_integrity` varchar(512) NOT NULL COMMENT 'password integrity',
+  `ip` varchar(100) NOT NULL COMMENT 'user login request ip',
+  `is_private` tinyint NOT NULL DEFAULT 1 COMMENT 'private user or not, 1: true, other: false',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_id` (`user_id`),
+  UNIQUE KEY `uk_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='user info';
+
+CREATE TABLE IF NOT EXISTS `tokens` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
+  `token_id` varchar(24) NOT NULL COMMENT 'token id',
+  `token_mark` varchar(20) NOT NULL COMMENT 'token mark value',
+  `token_key` varchar(200) NOT NULL COMMENT 'token value sha512 hex',
+  `is_readonly` tinyint NOT NULL DEFAULT 0 COMMENT 'readonly token or not, 1: true, other: false',
+  `is_automation` tinyint NOT NULL DEFAULT 0 COMMENT 'automation token or not, 1: true, other: false',
+  `cidr_whitelist` json NOT NULL COMMENT 'ip list, ["127.0.0.1"]',
+  `user_id` varchar(24) NOT NULL COMMENT 'user id',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_token_id` (`token_id`),
+  UNIQUE KEY `uk_token_key` (`token_key`),
+  KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='token info';
+
+CREATE TABLE IF NOT EXISTS `maintainers` (
+ `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+ `gmt_create` datetime NOT NULL COMMENT 'create time',
+ `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
+ `package_id` varchar(24) NOT NULL COMMENT 'package id',
+ `user_id` varchar(24) NOT NULL COMMENT 'user id',
+ PRIMARY KEY (`id`),
+ UNIQUE KEY `uk_package_id_user_id` (`package_id`,`user_id`),
+ KEY `idx_package_id` (`package_id`),
+ KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='package maintainers';

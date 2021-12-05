@@ -6,6 +6,7 @@ export default (appInfo: EggAppConfig) => {
   const config = {} as PowerPartial<EggAppConfig>;
 
   config.cnpmcore = {
+    name: 'cnpm',
     sourceRegistry: 'https://registry.npmjs.com',
     registry: 'http://localhost:7001',
   };
@@ -40,6 +41,10 @@ export default (appInfo: EggAppConfig) => {
   config.nfs = {
     client: null,
     dir: join(config.dataDir, 'nfs'),
+  };
+
+  config.logger = {
+    enablePerformanceTimer: true,
   };
 
   return config;

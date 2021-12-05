@@ -8,11 +8,15 @@ import { Dist as DistModel } from './model/Dist';
 import { Dist as DistEntity } from '../core/entity/Dist';
 import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag';
 import { PackageTag as PackageTagModel } from './model/PackageTag';
+import { Maintainer as MaintainerModel } from './model/Maintainer';
+import { User as UserModel } from './model/User';
+import { User as UserEntity } from '../core/entity/User';
+import { AbstractRepository } from './AbstractRepository';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
 })
-export class PackageRepository {
+export class PackageRepository extends AbstractRepository {
   async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
     const model = await PackageModel.findOne({ scope, name });
     if (!model) return null;
@@ -26,17 +30,18 @@ export class PackageRepository {
     return entity;
   }
 
-  async savePackage(pkgEntity: PackageEntity) {
+  async savePackage(pkgEntity: PackageEntity): Promise<void> {
     if (pkgEntity.id) {
       const model = await PackageModel.findOne({ id: pkgEntity.id });
       if (!model) return;
       await ModelConvertor.saveEntityToModel(pkgEntity, model);
     } else {
-      await ModelConvertor.convertEntityToModel(pkgEntity, PackageModel);
+      const model = await ModelConvertor.convertEntityToModel(pkgEntity, PackageModel);
+      this.logger.info('[PackageRepository:savePackage:new] id: %s, packageId: %s', model.id, model.packageId);
     }
   }
 
-  async savePackageDist(pkgEntity: PackageEntity, isFullManifests: boolean) {
+  async savePackageDist(pkgEntity: PackageEntity, isFullManifests: boolean): Promise<void> {
     const dist = isFullManifests ? pkgEntity.manifestsDist : pkgEntity.abbreviatedsDist;
     if (!dist) return;
     if (dist.id) {
@@ -44,19 +49,46 @@ export class PackageRepository {
       if (!model) return;
       await ModelConvertor.saveEntityToModel(dist, model);
     } else {
-      await ModelConvertor.convertEntityToModel(dist, DistModel);
+      const model = await ModelConvertor.convertEntityToModel(dist, DistModel);
+      this.logger.info('[PackageRepository:savePackageDist:new] id: %s, distId: %s, packageId: %s',
+        model.id, model.distId, pkgEntity.packageId);
     }
     await this.savePackage(pkgEntity);
   }
 
-  async removePacakgeDist(pkgEntity: PackageEntity, isFullManifests: boolean) {
+  async removePacakgeDist(pkgEntity: PackageEntity, isFullManifests: boolean): Promise<void> {
     const dist = isFullManifests ? pkgEntity.manifestsDist : pkgEntity.abbreviatedsDist;
     if (!dist) return;
     const model = await DistModel.findOne({ id: dist.id });
     if (!model) return;
     await model.remove();
+    this.logger.info('[PackageRepository:removePacakgeDist:remove] id: %s, distId: %s, packageId: %s',
+      model.id, model.distId, pkgEntity.packageId);
     Reflect.set(dist, 'distId', null);
     await this.savePackage(pkgEntity);
+  }
+
+  // Package Maintainers
+  async savePackageMaintainer(packageId: string, userId: string): Promise<void> {
+    let model = await MaintainerModel.findOne({ packageId, userId });
+    if (!model) {
+      model = await MaintainerModel.create({ packageId, userId });
+      this.logger.info('[PackageRepository:addPackageMaintainer:new] id: %s, packageId: %s, userId: %s',
+        model.id, model.packageId, model.userId);
+    }
+  }
+
+  async listPackageMaintainers(packageId: string): Promise<UserEntity[]> {
+    const models = await MaintainerModel.find({ packageId });
+    const userModels = await UserModel.find({ userId: models.map(m => m.userId) });
+    return userModels.map(user => ModelConvertor.convertModelToEntity(user, UserEntity));
+  }
+
+  // TODO: support paging
+  async listPackagesByUserId(userId: string): Promise<PackageEntity[]> {
+    const models = await MaintainerModel.find({ userId });
+    const packageModels = await PackageModel.find({ packageId: models.map(m => m.packageId) });
+    return packageModels.map(pkg => ModelConvertor.convertModelToEntity(pkg, PackageEntity));
   }
 
   async createPackageVersion(pkgVersionEntity: PackageVersionEntity) {
@@ -87,8 +119,10 @@ export class PackageRepository {
     return entities;
   }
 
-  async removePackageVersions(packageId: string) {
-    await PackageVersionModel.remove({ packageId });
+  async removePackageVersions(packageId: string): Promise<void> {
+    const removeCount = await PackageVersionModel.remove({ packageId });
+    this.logger.info('[PackageRepository:removePackageVersions:remove] %d rows, packageId: %s',
+      removeCount, packageId);
   }
 
   private async fillPackageVersionEntitiyData(model: PackageVersionModel): Promise<PackageVersionEntity> {
@@ -121,11 +155,13 @@ export class PackageRepository {
 
   async savePackageTag(packageTagEntity: PackageTagEntity) {
     if (packageTagEntity.id) {
-      const packageTagModel = await PackageTagModel.findOne({ id: packageTagEntity.id });
-      if (!packageTagModel) return;
-      await ModelConvertor.saveEntityToModel(packageTagEntity, packageTagModel);
+      const model = await PackageTagModel.findOne({ id: packageTagEntity.id });
+      if (!model) return;
+      await ModelConvertor.saveEntityToModel(packageTagEntity, model);
     } else {
-      await ModelConvertor.convertEntityToModel(packageTagEntity, PackageTagModel);
+      const model = await ModelConvertor.convertEntityToModel(packageTagEntity, PackageTagModel);
+      this.logger.info('[PackageRepository:savePackageTag:new] id: %s, packageTagId: %s',
+        model.id, model.packageTagId);
     }
   }
 

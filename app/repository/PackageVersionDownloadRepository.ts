@@ -1,10 +1,11 @@
 import { AccessLevel, ContextProto } from '@eggjs/tegg';
+import { AbstractRepository } from './AbstractRepository';
 import { PackageVersionDownload as PackageVersionDownloadModel } from './model/PackageVersionDownload';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
 })
-export class PackageVersionDownloadRepository {
+export class PackageVersionDownloadRepository extends AbstractRepository {
   async plus(packageId: string, version: string, counter: number): Promise<void> {
     const now = new Date();
     const yearMonth = now.getFullYear() * 100 + now.getMonth() + 1;
@@ -23,10 +24,14 @@ export class PackageVersionDownloadRepository {
         yearMonth,
       };
       model = await PackageVersionDownloadModel.create(attributes);
+      this.logger.info('[PackageVersionDownloadRepository:plus:new] id: %s, packageId: %s, version: %s, yearMonth: %s',
+        model.id, model.packageId, model.version, model.yearMonth);
     }
     await PackageVersionDownloadModel
       .where({ id: model.id })
       .increment(field, counter);
+    this.logger.info('[PackageVersionDownloadRepository:plus:increment] id: %s, packageId: %s, version: %s, field: %s%s, plus: %d',
+      model.id, model.packageId, model.version, model.yearMonth, field, counter);
   }
 
   async query(packageId: string, start: Date, end: Date) {

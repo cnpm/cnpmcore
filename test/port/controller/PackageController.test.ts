@@ -1,20 +1,18 @@
 import { strict as assert } from 'assert';
 import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
-import { PackageManagerService } from '../../../app/core/service/PackageManagerService';
 import { TestUtil } from 'test/TestUtil';
 import { NFSClientAdapter } from '../../../app/common/adapter/NFSClientAdapter';
 import { PackageRepository } from '../../../app/repository/PackageRepository';
 
 describe('test/port/controller/PackageController.test.ts', () => {
   let ctx: Context;
-  let packageManagerService: PackageManagerService;
   let nfsClientAdapter: NFSClientAdapter;
   let packageRepository: PackageRepository;
-
+  let publisher;
   beforeEach(async () => {
+    publisher = await TestUtil.createUser();
     ctx = await app.mockModuleContext();
-    packageManagerService = await ctx.getEggObject(PackageManagerService);
     nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
     packageRepository = await ctx.getEggObject(PackageRepository);
   });
@@ -31,6 +29,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -39,6 +38,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -47,6 +47,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -55,6 +56,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       pkg = await TestUtil.getFullPackage({ name: scopedName, version: '2.0.0' });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -207,6 +209,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -232,6 +235,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -257,6 +261,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -279,6 +284,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -307,6 +313,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -335,6 +342,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -361,6 +369,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -383,20 +392,18 @@ describe('test/port/controller/PackageController.test.ts', () => {
 
   describe('[GET /:fullname/:version] showVersion()', () => {
     it('should show one package version', async () => {
-      await packageManagerService.publish({
-        dist: {
-          content: Buffer.alloc(100),
-        },
-        tag: '',
-        scope: '',
+      const pkg = await TestUtil.getFullPackage({
         name: 'foo',
-        description: 'foo description',
-        // https://mathiasbynens.be/notes/mysql-utf8mb4
-        packageJson: { name: 'foo', test: 'test', version: '1.0.0', description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻' },
-        readme: '',
         version: '1.0.0',
-        isPrivate: true,
+        versionObject: {
+          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+        },
       });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(201);
       const res = await app.httpRequest()
         .get('/foo/1.0.0')
         .expect(200)
@@ -412,19 +419,18 @@ describe('test/port/controller/PackageController.test.ts', () => {
     });
 
     it('should work with scoped package', async () => {
-      await packageManagerService.publish({
-        dist: {
-          content: Buffer.alloc(0),
-        },
-        tag: '',
-        description: 'foo description',
-        scope: '@cnpm',
-        name: 'foo',
-        readme: '',
-        packageJson: { name: 'foo', test: 'test', version: '1.0.0' },
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/foo',
         version: '1.0.0',
-        isPrivate: true,
+        versionObject: {
+          description: 'foo description',
+        },
       });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(201);
 
       await app.httpRequest()
         .get('/@cnpm/foo/1.0.0')
@@ -435,19 +441,18 @@ describe('test/port/controller/PackageController.test.ts', () => {
     });
 
     it('should 404 when version not exists', async () => {
-      await packageManagerService.publish({
-        dist: {
-          content: Buffer.alloc(0),
-        },
-        tag: '',
-        description: 'foo description',
-        scope: '@cnpm',
-        name: 'foo',
-        readme: '',
-        packageJson: { name: 'foo', test: 'test', version: '1.0.0' },
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/foo',
         version: '1.0.0',
-        isPrivate: true,
+        versionObject: {
+          description: 'foo description',
+        },
       });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(201);
 
       const res = await app.httpRequest()
         .get('/@cnpm/foo/1.0.40000404')
@@ -470,6 +475,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
@@ -478,6 +484,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
@@ -516,6 +523,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       const pkg = await TestUtil.getFullPackage({ name: 'testmodule-download-version-tar222', version: '1.0.0' });
       await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
 
@@ -574,6 +582,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       const pkg = await TestUtil.getFullPackage({ name, version: '0.0.0' });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
@@ -587,6 +596,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       const pkg2 = await TestUtil.getFullPackage({ name, version: '1.0.0' });
       res = await app.httpRequest()
         .put(`/${pkg2.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg2)
         .expect(201);
       assert(res.body.ok === true);
@@ -597,6 +607,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       const pkg = await TestUtil.getFullPackage({ version: '0.0.0' });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
@@ -611,6 +622,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       const pkg2 = await TestUtil.getFullPackage({ version: '1.0.0' });
       res = await app.httpRequest()
         .put(`/${pkg2.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg2)
         .expect(201);
       assert(res.body.ok === true);
@@ -623,6 +635,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       pkg.versions[version].dist = undefined;
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
@@ -638,6 +651,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       const pkg = await TestUtil.getFullPackage({ name: 'without-readme', version: '0.0.0', readme: null });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
@@ -655,6 +669,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       pkg.versions[version].readme = { foo: 'bar' };
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
@@ -672,6 +687,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       pkg.versions[version].description = { foo: 'bar' };
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
@@ -687,6 +703,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       const pkg = await TestUtil.getFullPackage({ version: '99.0.0' });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
@@ -700,6 +717,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       const pkg2 = await TestUtil.getFullPackage({ version: '99.0.0' });
       res = await app.httpRequest()
         .put(`/${pkg2.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg2)
         .expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] cannot modify pre-existing version: 99.0.0');
@@ -711,6 +729,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] version("1.0.woring-version") format invalid');
@@ -722,6 +741,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain special characters ("~\'!()*")');
@@ -731,6 +751,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name cannot contain leading or trailing spaces, name can only contain URL-friendly characters');
@@ -740,6 +761,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters, name can no longer contain capital letters');
@@ -753,6 +775,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
@@ -764,6 +787,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
@@ -775,6 +799,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
@@ -786,6 +811,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
@@ -799,6 +825,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment size 3 not match download size 251');
@@ -812,6 +839,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist.integrity invalid');
@@ -826,6 +854,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       });
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist.shasum invalid');
@@ -835,6 +864,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
       const pkg = await TestUtil.getFullPackage();
       const res = await app.httpRequest()
         .put('/foo')
+        .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] fullname(foo) not match package.name(@cnpm/testmodule)');
@@ -843,6 +873,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
     it('should 422 _attachments is empty', async () => {
       let res = await app.httpRequest()
         .put('/foo')
+        .set('authorization', publisher.authorization)
         .send({
           name: 'foo',
           versions: {
@@ -858,6 +889,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
 
       res = await app.httpRequest()
         .put('/foo')
+        .set('authorization', publisher.authorization)
         .send({
           name: 'foo',
           versions: {
@@ -872,6 +904,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
 
       res = await app.httpRequest()
         .put('/foo')
+        .set('authorization', publisher.authorization)
         .send({
           name: 'foo',
           versions: {
@@ -889,6 +922,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
     it('should 422 versions is empty', async () => {
       let res = await app.httpRequest()
         .put('/foo')
+        .set('authorization', publisher.authorization)
         .send({
           name: 'foo',
           versions: {},
@@ -899,6 +933,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
 
       res = await app.httpRequest()
         .put('/foo')
+        .set('authorization', publisher.authorization)
         .send({
           name: 'foo',
           versions: [],
@@ -911,6 +946,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
     it('should 422 dist-tags is empty', async () => {
       let res = await app.httpRequest()
         .put('/foo')
+        .set('authorization', publisher.authorization)
         .send({
           name: 'foo',
           versions: {
@@ -929,6 +965,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
 
       res = await app.httpRequest()
         .put('/foo')
+        .set('authorization', publisher.authorization)
         .send({
           name: 'foo',
           'dist-tags': {},

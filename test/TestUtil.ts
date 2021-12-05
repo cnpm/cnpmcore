@@ -5,6 +5,7 @@ import path from 'path';
 export class TestUtil {
   private static connection;
   private static tables;
+  private static _app;
 
   static getMySqlConfig() {
     return {
@@ -70,14 +71,20 @@ export class TestUtil {
     this.destroyConnection();
   }
 
-  static async truncateDatabase() {
-    const database = this.getDatabase();
+  static async getTableNames() {
     if (!this.tables) {
+      const database = this.getDatabase();
       const sql = `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${database}';`;
       const rows = await this.query(sql);
       this.tables = rows.map(row => row.TABLE_NAME);
     }
-    await Promise.all(this.tables.map(table => this.query(`TRUNCATE TABLE ${database}.${table};`)));
+    return this.tables;
+  }
+
+  static async truncateDatabase() {
+    const database = this.getDatabase();
+    const tables = await this.getTableNames();
+    await Promise.all(tables.map(table => this.query(`TRUNCATE TABLE ${database}.${table};`)));
   }
 
   static getFixtures(name?: string): string {
@@ -130,5 +137,45 @@ export class TestUtil {
       }
     }
     return pkg;
+  }
+
+  static get app() {
+    if (!this._app) {
+      /* eslint @typescript-eslint/no-var-requires: "off" */
+      const bootstrap = require('egg-mock/bootstrap');
+      this._app = bootstrap.app;
+    }
+    return this._app;
+  }
+
+  static async createUser(user?: {
+    name?: string;
+    password?: string;
+    email?: string;
+  }): Promise<{
+      name: string;
+      token: string;
+      authorization: string;
+    }> {
+    if (!user) {
+      user = {};
+    }
+    if (!user.name) {
+      user.name = 'testuser';
+    }
+    const res = await this.app.httpRequest()
+      .put(`/-/user/org.couchdb.user:${user.name}`)
+      .send({
+        name: user.name,
+        password: user.password ?? 'password-is-here',
+        type: 'user',
+        email: user.email ?? `${user.name}@example.com`,
+      })
+      .expect(200);
+    return {
+      name: user.name,
+      token: res.body.token,
+      authorization: `Bearer ${res.body.token}`,
+    };
   }
 }

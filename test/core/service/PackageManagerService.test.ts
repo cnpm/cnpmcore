@@ -2,18 +2,30 @@ import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageManagerService } from '../../../app/core/service/PackageManagerService';
+import { UserService } from '../../../app/core/service/UserService';
 import { PackageRepository } from '../../../app/repository/PackageRepository';
 import { TestUtil } from '../../TestUtil';
 
 describe('test/core/service/PackageManagerService.test.ts', () => {
   let ctx: Context;
   let packageManagerService: PackageManagerService;
+  let userService: UserService;
   let packageRepository: PackageRepository;
+  let publisher;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
+    userService = await ctx.getEggObject(UserService);
     packageManagerService = await ctx.getEggObject(PackageManagerService);
     packageRepository = await ctx.getEggObject(PackageRepository);
+
+    const { user } = await userService.create({
+      name: 'test-user',
+      password: 'this-is-password',
+      email: 'hello@example.com',
+      ip: '127.0.0.1',
+    });
+    publisher = user;
   });
 
   afterEach(async () => {
@@ -36,7 +48,7 @@ describe('test/core/service/PackageManagerService.test.ts', () => {
         readme: '',
         version: '1.0.0',
         isPrivate: true,
-      });
+      }, publisher);
       let pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
       assert(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.0');
@@ -53,7 +65,7 @@ describe('test/core/service/PackageManagerService.test.ts', () => {
         readme: '',
         version: '1.0.1',
         isPrivate: true,
-      });
+      }, publisher);
       pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.1');
       assert(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.1');
@@ -72,7 +84,7 @@ describe('test/core/service/PackageManagerService.test.ts', () => {
         readme: '',
         version: '1.1.0',
         isPrivate: false,
-      });
+      }, publisher);
       const pkgVersion = await packageRepository.findPackageVersion(packageId, '1.1.0');
       assert(pkgVersion);
       assert.equal(pkgVersion.version, '1.1.0');
