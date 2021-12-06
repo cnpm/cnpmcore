@@ -22,6 +22,7 @@ export default (appInfo: EggAppConfig) => {
     port: process.env.MYSQL_PORT || 3306,
     user: process.env.MYSQL_USER || 'root',
     password: process.env.MYSQL_PASSWORD,
+    charset: 'utf8mb4',
   };
   if (process.env.DEBUG_LOCAL_SQL) {
     config.orm.logger = {
