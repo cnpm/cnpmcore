@@ -16,6 +16,7 @@ import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil';
 import { PackageManagerService } from '../../core/service/PackageManagerService';
+import { User as UserEntity } from '../../core/entity/User';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -34,11 +35,10 @@ const FullPackageRule = Type.Object({
   // Since we don't validate versions & _attachments previous, here we use Type.Any() just for object validate
   versions: Type.Optional(Type.Any()),
   _attachments: Type.Optional(Type.Any()),
-  description: Type.Optional(Type.String()),
+  description: Type.Optional(Type.String({ maxLength: 10240 })),
   'dist-tags': Type.Optional(Type.Record(Type.String(), Type.String())),
   readme: Type.Optional(Type.String()),
 });
-
 // overwrite versions & _attachments
 type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions' | '_attachments'> &
 { versions: { [key: string]: PackageVersion } } &
@@ -49,6 +49,16 @@ type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions' | '_attachmen
     length: number;
   };
 }};
+
+const UpdatePacakgeDataRule = Type.Object({
+  _id: Type.String({ minLength: 1, maxLength: 100 }),
+  _rev: Type.String({ minLength: 1, maxLength: 100 }),
+  maintainers: Type.Array(Type.Object({
+    name: Type.String({ minLength: 1, maxLength: 100 }),
+    email: Type.String({ format: 'email', maxLength: 400 }),
+  }), { minItems: 1 }),
+});
+type UpdatePacakgeData = Static<typeof UpdatePacakgeDataRule>;
 
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
 const PACKAGE_NAME_PATH = `/:fullname(${FULLNAME_REG_STRING})`;
@@ -237,6 +247,30 @@ export class PackageController extends AbstractController {
     console.log(fullname, version, ctx.headers, ctx.href);
     const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
     console.log(authorizedUser);
+  }
+
+  // https://github.com/npm/cli/blob/latest/lib/commands/owner.js#L191
+  @HTTPMethod({
+    // PUT /:fullname/-rev/:rev
+    path: `${PACKAGE_NAME_PATH}/-rev/:rev`,
+    method: HTTPMethodEnum.PUT,
+  })
+  async updatePackage(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: UpdatePacakgeData) {
+    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
+    ctx.tValidate(UpdatePacakgeDataRule, data);
+    const pkg = await this.getPackageEntityByFullname(fullname);
+    await this.requiredPackageMaintainer(pkg, authorizedUser);
+    // make sure all maintainers exists
+    const users: UserEntity[] = [];
+    for (const maintainer of data.maintainers) {
+      const user = await this.userRepository.findUserByName(maintainer.name);
+      if (!user) {
+        throw new UnprocessableEntityError(`Maintainer '${maintainer.name}' not exists`);
+      }
+      users.push(user);
+    }
+    await this.packageManagerService.replacePackageMaintainers(pkg, users);
+    return { ok: true };
   }
 
   @HTTPMethod({

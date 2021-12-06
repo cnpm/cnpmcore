@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import mysql from 'mysql';
 import path from 'path';
+import crypto from 'crypto';
 
 export class TestUtil {
   private static connection;
@@ -152,30 +153,53 @@ export class TestUtil {
     name?: string;
     password?: string;
     email?: string;
+    tokenOptions?: {
+      automation?: boolean;
+      readonly?: boolean;
+      cidr_whitelist?: string[];
+    };
   }): Promise<{
       name: string;
       token: string;
       authorization: string;
+      password: string;
+      email: string;
     }> {
     if (!user) {
       user = {};
     }
     if (!user.name) {
-      user.name = 'testuser';
+      user.name = `testuser-${crypto.randomBytes(20).toString('hex')}`;
     }
-    const res = await this.app.httpRequest()
+    const password = user.password ?? 'password-is-here';
+    const email = user.email ?? `${user.name}@example.com`;
+    let res = await this.app.httpRequest()
       .put(`/-/user/org.couchdb.user:${user.name}`)
       .send({
         name: user.name,
-        password: user.password ?? 'password-is-here',
+        password,
         type: 'user',
-        email: user.email ?? `${user.name}@example.com`,
+        email,
       })
       .expect(200);
+    let token = res.body.token;
+    if (user.tokenOptions) {
+      res = await this.app.httpRequest()
+        .post('/-/npm/v1/tokens')
+        .set('authorization', `Bearer ${token}`)
+        .send({
+          password,
+          ...user.tokenOptions,
+        })
+        .expect(200);
+      token = res.body.token;
+    }
     return {
       name: user.name,
-      token: res.body.token,
-      authorization: `Bearer ${res.body.token}`,
+      token,
+      authorization: `Bearer ${token}`,
+      password,
+      email,
     };
   }
 }
