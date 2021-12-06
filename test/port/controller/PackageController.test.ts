@@ -409,12 +409,11 @@ describe('test/port/controller/PackageController.test.ts', () => {
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       assert.equal(res.body.name, 'foo');
-      assert.equal(res.body.test, 'test');
       assert.match(res.body.dist.tarball, /^http:\/\//);
       assert(res.body.dist.tarball.endsWith('/foo/-/foo-1.0.0.tgz'));
-      assert.equal(res.body.dist.shasum, 'ed4a77d1b56a118938788fc53037759b6c501e3d');
-      assert.equal(res.body.dist.integrity, 'sha512-8gb08O8JuQg38dFaB8bPS9KR2BdmP5+FoPxDQewZkQcZrVcbYQKjZq6EjNDxh9Da75EuBYmLgsNSE81JpF7o4A==');
-      assert.equal(res.body.dist.size, 100);
+      assert.equal(res.body.dist.shasum, 'fa475605f88bab9b1127833633ca3ae0a477224c');
+      assert.equal(res.body.dist.integrity, 'sha512-n+4CQg0Rp1Qo0p9a0R5E5io67T9iD3Lcgg6exmpmt0s8kd4XcOoHu2kiu6U7xd69cGq0efkNGWUBP229ObfRSA==');
+      assert.equal(res.body.dist.size, 251);
       assert.equal(res.body.description, 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻');
     });
 
