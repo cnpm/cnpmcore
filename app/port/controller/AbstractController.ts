@@ -1,4 +1,9 @@
-import { UnprocessableEntityError, NotFoundError, UnauthorizedError } from 'egg-errors';
+import {
+  UnprocessableEntityError,
+  NotFoundError,
+  UnauthorizedError,
+  ForbiddenError,
+} from 'egg-errors';
 import {
   Inject,
   EggContext,
@@ -15,6 +20,7 @@ import { getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { sha512 } from '../../common/UserUtil';
 import { Package as PackageEntity } from '../../core/entity/Package';
 import { PackageVersion as PackageVersionEntity } from '../../core/entity/PackageVersion';
+import { User as UserEntity } from '../../core/entity/User';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 type Role = 'read' | 'publish' | 'setting';
@@ -72,6 +78,15 @@ export abstract class AbstractController extends BaseController {
       }
     }
     return user;
+  }
+
+  protected async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
+    const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
+    const maintainer = maintainers.find(m => m.userId === user.userId);
+    if (!maintainer) {
+      const names = maintainers.map(m => m.name).join(', ');
+      throw new ForbiddenError(`'${user.name}' not authorized to modify ${pkg.fullname}, please contact maintainers: '${names}'`);
+    }
   }
 
   protected async getPackageEntityByFullname(fullname: string): Promise<PackageEntity> {

@@ -105,6 +105,24 @@ export class UserController extends AbstractController {
     };
   }
 
+  // https://github.com/npm/cli/blob/latest/lib/commands/owner.js#L154
+  @HTTPMethod({
+    path: '/-/user/org.couchdb.user::username',
+    method: HTTPMethodEnum.GET,
+  })
+  async showUser(@Context() ctx: EggContext, @HTTPParam() username: string) {
+    const authorized = await this.getAuthorizedUserAndToken(ctx);
+    if (!authorized) {
+      return { ok: false };
+    }
+    const user = await this.userRepository.findUserByName(username);
+    return user ? {
+      _id: `org.couchdb.user:${user.name}`,
+      name: user.name,
+      email: user.email,
+    } : { ok: false };
+  }
+
   // https://github.com/npm/cli/blob/latest/lib/utils/get-identity.js#L20
   @HTTPMethod({
     path: '/-/whoami',

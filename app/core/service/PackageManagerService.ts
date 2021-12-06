@@ -21,6 +21,7 @@ import {
   PACKAGE_PUBLISHED,
   PACKAGE_TAG_CHANGED,
   PACKAGE_TAG_ADDED,
+  PACKAGE_MAINTAINER_CHANGED,
 } from '../event';
 import { Dist } from '../entity/Dist';
 import { AbstractService } from './AbstractService';
@@ -79,7 +80,7 @@ export class PackageManagerService extends AbstractService {
       const maintainer = maintainers.find(user => user.userId === publisher.userId);
       if (!maintainer) {
         const names = maintainers.map(m => m.name).join(', ');
-        throw new ForbiddenError(`${publisher.name} not authorized to modify ${pkg.name}, please contact maintainers: ${names}`);
+        throw new ForbiddenError(`${publisher.name} not authorized to modify ${pkg.fullname}, please contact maintainers: ${names}`);
       }
       // update description
       // will read database twice to update description by model to entity and entity to model
@@ -201,16 +202,15 @@ export class PackageManagerService extends AbstractService {
       await this.savePackageTag(pkg.packageId, cmd.tag, cmd.version);
     }
 
-    const [
-      fullManifests,
-      abbreviatedManifests,
-    ] = await Promise.all([
-      await this._listPackageFullManifests(pkg),
-      await this._listPackageAbbreviatedManifests(pkg),
-    ]);
-    await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+    await this.refreshPackageManifestsToDists(pkg);
     this.eventBus.emit(PACKAGE_PUBLISHED, pkgVersion.packageVersionId);
     return pkgVersion;
+  }
+
+  async replacePackageMaintainers(pkg: Package, maintainers: User[]) {
+    await this.packageRepository.replacePackageMaintainers(pkg.packageId, maintainers.map(m => m.userId));
+    await this.refreshPackageManifestsToDists(pkg);
+    this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
   }
 
   async listPackageFullManifests(scope: string, name: string, expectEtag: string | undefined) {
@@ -300,6 +300,17 @@ export class PackageManagerService extends AbstractService {
     this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
   }
 
+  private async refreshPackageManifestsToDists(pkg: Package) {
+    const [
+      fullManifests,
+      abbreviatedManifests,
+    ] = await Promise.all([
+      await this._listPackageFullManifests(pkg),
+      await this._listPackageAbbreviatedManifests(pkg),
+    ]);
+    await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+  }
+
   private async updatePackageManifestsToDists(pkg: Package, fullManifests: object | null, abbreviatedManifests: object | null): Promise<void> {
     if (fullManifests) {
       // same to dist
@@ -371,6 +382,7 @@ export class PackageManagerService extends AbstractService {
     const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     if (packageVersions.length === 0) return null;
 
+    const maintainers: { name: string; email: string; }[] = [];
     const data = {
       _attachments: {},
       _id: `${pkg.fullname}`,
@@ -381,9 +393,7 @@ export class PackageManagerService extends AbstractService {
         // latest: '1.0.0',
       },
       license: undefined,
-      maintainers: [
-        // { name, email },
-      ],
+      maintainers,
       name: pkg.fullname,
       readme: '',
       readmeFilename: undefined,
@@ -424,6 +434,12 @@ export class PackageManagerService extends AbstractService {
       data.license = latestManifest.license;
       data.author = latestManifest.author;
       data.readmeFilename = latestManifest.readmeFilename;
+    }
+
+    // add maintainers
+    const users = await this.packageRepository.listPackageMaintainers(pkg.packageId);
+    for (const user of users) {
+      maintainers.push({ name: user.name, email: user.email });
     }
     return data;
   }
