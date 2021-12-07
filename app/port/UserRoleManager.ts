@@ -103,6 +103,9 @@ export class UserRoleManager {
     const cnpmcoreConfig = this.config.cnpmcore;
     if (!cnpmcoreConfig.allowPublishNonScopePackage) {
       const allowScopes = user.scopes ?? cnpmcoreConfig.allowScopes;
+      if (!scope) {
+        throw new ForbiddenError(`Package scope required, legal scopes: "${allowScopes.join(', ')}"`);
+      }
       if (!allowScopes.includes(scope)) {
         throw new ForbiddenError(`Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`);
       }

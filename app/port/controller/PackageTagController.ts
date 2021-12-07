@@ -8,12 +8,11 @@ import {
   EggContext,
   Inject,
 } from '@eggjs/tegg';
-import { Type } from '@sinclair/typebox';
+import { UnprocessableEntityError } from 'egg-errors';
+import semver from 'semver';
 import { AbstractController } from './AbstractController';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil';
 import { PackageManagerService } from '../../core/service/PackageManagerService';
-
-const TagRule = Type.RegEx(/^[a-zA-Z]/);
 
 @HTTPController()
 export class PackageTagController extends AbstractController {
@@ -46,12 +45,37 @@ export class PackageTagController extends AbstractController {
   })
   async saveTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string, @HTTPBody() version: string) {
     this.checkPackageVersionFormat(version);
-    ctx.tValidate(TagRule, tag);
+    this.checkPackageTagFormat(tag);
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
     const pkg = await this.getPackageEntityByFullname(fullname);
     await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     await this.packageManagerService.savePackageTag(pkg, tag, packageVersion.version);
     return { ok: true };
+  }
+
+  // https://github.com/npm/cli/blob/latest/lib/commands/dist-tag.js#L134
+  @HTTPMethod({
+    // DELETE /-/package/:fullname/dist-tags/:tag
+    path: `/-/package/:fullname(${FULLNAME_REG_STRING})/dist-tags/:tag`,
+    method: HTTPMethodEnum.DELETE,
+  })
+  async removeTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string) {
+    this.checkPackageTagFormat(tag);
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
+    const pkg = await this.getPackageEntityByFullname(fullname);
+    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+    await this.packageManagerService.removePackageTag(pkg, tag);
+    return { ok: true };
+  }
+
+  private checkPackageTagFormat(tag: string) {
+    // https://github.com/npm/cli/blob/4dbeb007d0d6350284c7b1edbf4d5b0030c67c66/lib/commands/dist-tag.js#L93
+    if (semver.validRange(tag)) {
+      throw new UnprocessableEntityError(`Tag name must not be a valid SemVer range: "${tag}"`);
+    }
+    if (tag === 'latest') {
+      throw new UnprocessableEntityError('Can\'t remove the "latest" tag');
+    }
   }
 }

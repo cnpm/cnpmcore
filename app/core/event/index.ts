@@ -4,6 +4,7 @@ export const PACKAGE_PUBLISHED = 'PACKAGE_PUBLISHED';
 export const PACKAGE_MAINTAINER_CHANGED = 'PACKAGE_MAINTAINER_CHANGED';
 export const PACKAGE_TAG_ADDED = 'PACKAGE_TAG_ADDED';
 export const PACKAGE_TAG_CHANGED = 'PACKAGE_TAG_CHANGED';
+export const PACKAGE_TAG_REMOVED = 'PACKAGE_TAG_REMOVED';
 
 declare module '@eggjs/tegg' {
   interface Events {
@@ -11,5 +12,6 @@ declare module '@eggjs/tegg' {
     [PACKAGE_MAINTAINER_CHANGED]: (packageId: string) => Promise<void>;
     [PACKAGE_TAG_ADDED]: (packageTagId: string) => Promise<void>;
     [PACKAGE_TAG_CHANGED]: (packageTagId: string) => Promise<void>;
+    [PACKAGE_TAG_REMOVED]: (packageId: string) => Promise<void>;
   }
 }

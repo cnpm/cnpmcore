@@ -22,6 +22,7 @@ import {
   PACKAGE_TAG_CHANGED,
   PACKAGE_TAG_ADDED,
   PACKAGE_MAINTAINER_CHANGED,
+  PACKAGE_TAG_REMOVED,
 } from '../event';
 import { Dist } from '../entity/Dist';
 import { AbstractService } from './AbstractService';
@@ -272,6 +273,14 @@ export class PackageManagerService extends AbstractService {
     await this.packageRepository.savePackageTag(tagEntity);
     await this.refreshPackageManifestsToDists(pkg);
     this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
+  }
+
+  public async removePackageTag(pkg: Package, tag: string) {
+    const tagEntity = await this.packageRepository.findPackageTag(pkg.packageId, tag);
+    if (!tagEntity) return;
+    await this.packageRepository.removePackageTag(tagEntity);
+    await this.refreshPackageManifestsToDists(pkg);
+    this.eventBus.emit(PACKAGE_TAG_REMOVED, pkg.packageId);
   }
 
   /** private methods */
