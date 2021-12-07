@@ -1,5 +1,8 @@
 import { PackageJson, Simplify } from 'type-fest';
-import { UnprocessableEntityError, NotFoundError } from 'egg-errors';
+import {
+  UnprocessableEntityError,
+  NotFoundError,
+} from 'egg-errors';
 import {
   HTTPController,
   HTTPMethod,
@@ -131,20 +134,6 @@ export class PackageController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async saveVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
-    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
-    // FIXME: maybe better code style?
-    let existsPackage: PackageEntity | null = null;
-    try {
-      existsPackage = await this.getPackageEntityByFullname(fullname);
-    } catch (err) {
-      if (err instanceof NotFoundError) {
-        existsPackage = null;
-      }
-    }
-    if (existsPackage) {
-      await this.roleManager.requiredPackageMaintainer(existsPackage, authorizedUser);
-    }
-
     ctx.tValidate(FullPackageRule, pkg);
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
@@ -218,6 +207,24 @@ export class PackageController extends AbstractController {
       }
     }
 
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
+    const [ scope, name ] = getScopeAndName(fullname);
+    // check scope white list
+    await this.userRoleManager.requiredPackageScope(scope, authorizedUser);
+
+    // FIXME: maybe better code style?
+    let existsPackage: PackageEntity | null = null;
+    try {
+      existsPackage = await this.getPackageEntityByFullname(fullname);
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        existsPackage = null;
+      }
+    }
+    if (existsPackage) {
+      await this.userRoleManager.requiredPackageMaintainer(existsPackage, authorizedUser);
+    }
+
     // make sure readme is string
     const readme = typeof packageVersion.readme === 'string' ? packageVersion.readme : '';
     // remove readme
@@ -226,7 +233,6 @@ export class PackageController extends AbstractController {
     if (typeof packageVersion.description !== 'string') {
       packageVersion.description = '';
     }
-    const [ scope, name ] = getScopeAndName(fullname);
     const packageVersionEntity = await this.packageManagerService.publish({
       scope,
       name,
@@ -259,7 +265,7 @@ export class PackageController extends AbstractController {
   })
   async updateTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() version: string) {
     console.log(fullname, version, ctx.headers, ctx.href);
-    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
     console.log(authorizedUser);
   }
 
@@ -271,9 +277,9 @@ export class PackageController extends AbstractController {
   })
   async updatePackage(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: UpdatePacakgeData) {
     ctx.tValidate(UpdatePacakgeDataRule, data);
-    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
     const pkg = await this.getPackageEntityByFullname(fullname);
-    await this.roleManager.requiredPackageMaintainer(pkg, authorizedUser);
+    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
     // make sure all maintainers exists
     const users: UserEntity[] = [];
     for (const maintainer of data.maintainers) {

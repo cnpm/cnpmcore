@@ -4,17 +4,20 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { NFSClientAdapter } from '../../../app/common/adapter/NFSClientAdapter';
 import { PackageRepository } from '../../../app/repository/PackageRepository';
+import { UserRepository } from '../../../app/repository/UserRepository';
 
 describe('test/port/controller/PackageController.test.ts', () => {
   let ctx: Context;
   let nfsClientAdapter: NFSClientAdapter;
   let packageRepository: PackageRepository;
+  let userRepository: UserRepository;
   let publisher;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     ctx = await app.mockModuleContext();
     nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
     packageRepository = await ctx.getEggObject(PackageRepository);
+    userRepository = await ctx.getEggObject(UserRepository);
   });
 
   afterEach(() => {
@@ -25,6 +28,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
     const name = 'testmodule-show-package';
     const scopedName = '@cnpm/testmodule-show-package';
     beforeEach(async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       mock(app.config.cnpmcore, 'registry', 'https://registry.example.com');
       let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
       let res = await app.httpRequest()
@@ -400,6 +404,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
 
   describe('[GET /:fullname/:version] showVersion()', () => {
     it('should show one package version', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkg = await TestUtil.getFullPackage({
         name: 'foo',
         version: '1.0.0',
@@ -479,6 +484,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
     const scopedName = '@cnpm/testmodule-download-version-tar';
     const name = 'testmodule-download-version-tar';
     beforeEach(async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
@@ -583,7 +589,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
     });
   });
 
-  describe('[PUT /:fullname] addVersion()', () => {
+  describe('[PUT /:fullname] saveVersion()', () => {
     it('should add new version success on scoped package', async () => {
       const name = '@cnpm/publish-package-test';
       const pkg = await TestUtil.getFullPackage({ name, version: '0.0.0' });
@@ -605,6 +611,34 @@ describe('test/port/controller/PackageController.test.ts', () => {
         .put(`/${pkg2.name}`)
         .set('authorization', publisher.authorization)
         .send(pkg2)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    });
+
+    it('should 403 on not allow scoped package', async () => {
+      const name = '@somescope/publish-package-test';
+      const pkg = await TestUtil.getFullPackage({ name });
+      const res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(403);
+      assert.equal(res.body.error, '[FORBIDDEN] Scope \'@somescope\' not match legal scopes: \'@cnpm, @example\'');
+    });
+
+    it('should publish on user custom scopes', async () => {
+      // add user.scopes
+      const user = await userRepository.findUserByName(publisher.name);
+      assert(user);
+      user.scopes = [ '@somescope' ];
+      await userRepository.saveUser(user);
+      const name = '@somescope/publish-package-test';
+      const pkg = await TestUtil.getFullPackage({ name });
+      const res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
         .expect(201);
       assert(res.body.ok === true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
@@ -637,7 +671,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
     });
 
     it('should add new version without dist success', async () => {
-      const pkg = await TestUtil.getFullPackage({ name: 'without-dist', version: '0.0.0' });
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/without-dist', version: '0.0.0' });
       const version = Object.keys(pkg.versions)[0];
       pkg.versions[version].dist = undefined;
       let res = await app.httpRequest()
@@ -655,7 +689,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
     });
 
     it('should add new version without readme success', async () => {
-      const pkg = await TestUtil.getFullPackage({ name: 'without-readme', version: '0.0.0', readme: null });
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/without-readme', version: '0.0.0', readme: null });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
@@ -671,7 +705,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
     });
 
     it('should add new version without readme(object type) success', async () => {
-      const pkg = await TestUtil.getFullPackage({ name: 'with-readme-object', version: '0.0.0' });
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/with-readme-object', version: '0.0.0' });
       const version = Object.keys(pkg.versions)[0];
       pkg.versions[version].readme = { foo: 'bar' };
       let res = await app.httpRequest()
@@ -689,7 +723,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
     });
 
     it('should add new version without description(object type) success', async () => {
-      const pkg = await TestUtil.getFullPackage({ name: 'with-description-object', version: '0.0.0' });
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/with-description-object', version: '0.0.0' });
       const version = Object.keys(pkg.versions)[0];
       pkg.versions[version].description = { foo: 'bar' };
       let res = await app.httpRequest()

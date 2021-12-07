@@ -168,8 +168,17 @@ npm run test
 
 #### 2、用户登录和 Token 权限校验
 
-AbstractController 会封装请求用户相关的接口，如获取当前登录用户 `const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx)`，
-大多数情况下，直接使用 `requiredAuthorizedUser(ctx, tokenRole)` 接口获取当前登录用户会更合适，它会对未登录的请求抛出 UnauthorizedError 异常。
+UserRoleManager 会封装请求用户相关的接口，已经入注到 AbstractController 下，如获取当前登录用户
+
+```ts
+const authorizedUserAndToken = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+```
+
+大多数情况下，直接使用 `userRoleManager.requiredAuthorizedUser(ctx, tokenRole)` 接口获取当前登录用户会更合适，它会对未登录的请求抛出 UnauthorizedError 异常。
+
+```ts
+const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
+```
 
 `tokenRole` 默认有以下权限：
 
@@ -179,15 +188,15 @@ AbstractController 会封装请求用户相关的接口，如获取当前登录�
 
 #### 3、资源操作权限校验
 
-通过 RoleManager 来收敛所有资源操作的权限校验，已经入注到 AbstractController 下。
+通过 UserRoleManager 来收敛所有资源操作的权限校验，已经入注到 AbstractController 下。
 我们约定所有用户权限验证都在 Controller 层完全，Service 和 Repository 不做权限校验。
 
 如判断当前请求用户是否是包维护者：
 
 ```ts
-const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
+const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
 const pkg = await this.getPackageEntityByFullname(fullname);
-await this.roleManager.requiredPackageMaintainer(pkg, authorizedUser);
+await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
 ```
 
 ## Service 开发指南

@@ -156,6 +156,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password_integrity` varchar(512) NOT NULL COMMENT 'password integrity',
   `ip` varchar(100) NOT NULL COMMENT 'user login request ip',
   `is_private` tinyint NOT NULL DEFAULT 1 COMMENT 'private user or not, 1: true, other: false',
+  `scopes` json NULL COMMENT 'white scope list, ["@cnpm", "@foo"]',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_user_id` (`user_id`),
   UNIQUE KEY `uk_name` (`name`)

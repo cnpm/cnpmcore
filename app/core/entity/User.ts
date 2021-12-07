@@ -9,6 +9,7 @@ interface UserData extends EntityData {
   passwordIntegrity: string;
   ip: string;
   isPrivate: boolean;
+  scopes?: string[];
 }
 
 export class User extends Entity {
@@ -19,6 +20,7 @@ export class User extends Entity {
   passwordIntegrity: string;
   ip: string;
   isPrivate: boolean;
+  scopes?: string[];
 
   constructor(data: UserData) {
     super(data);
@@ -29,6 +31,7 @@ export class User extends Entity {
     this.passwordIntegrity = data.passwordIntegrity;
     this.ip = data.ip;
     this.isPrivate = data.isPrivate;
+    this.scopes = data.scopes;
   }
 
   static create(data: EasyData<UserData, 'userId'>): User {

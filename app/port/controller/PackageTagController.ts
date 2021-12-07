@@ -37,7 +37,7 @@ export class PackageTagController extends AbstractController {
   })
   async updateTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() version: string) {
     console.log(fullname, version, ctx.headers, ctx.href);
-    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
     console.log(authorizedUser);
   }
 }
