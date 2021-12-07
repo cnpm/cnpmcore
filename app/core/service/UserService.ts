@@ -4,7 +4,7 @@ import {
   ContextProto,
   Inject,
 } from '@eggjs/tegg';
-import { NotFoundError, UnauthorizedError } from 'egg-errors';
+import { NotFoundError, ForbiddenError } from 'egg-errors';
 import { UserRepository } from '../../repository/UserRepository';
 import { User as UserEntity } from '../entity/User';
 import { Token as TokenEntity } from '../entity/Token';
@@ -99,7 +99,7 @@ export class UserService extends AbstractService {
       throw new NotFoundError(`Token "${tokenKeyOrTokenValue}" not exists`);
     }
     if (token.userId !== userId) {
-      throw new UnauthorizedError(`Not authorized to remove token "${tokenKeyOrTokenValue}"`);
+      throw new ForbiddenError(`Not authorized to remove token "${tokenKeyOrTokenValue}"`);
     }
     await this.userRepository.removeToken(token.tokenId);
   }
