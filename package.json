@@ -14,6 +14,7 @@
     "test": "npm run lint:fix && npm run test-local",
     "prepare-database": "ts-node test/prepare.ts",
     "test-local": "npm run prepare-database && egg-bin test -r tsconfig-paths/register --full-trace",
+    "t": "npm run prepare-database && egg-bin test --changed -r tsconfig-paths/register --full-trace",
     "cov": "npm run prepare-database && egg-bin cov -r tsconfig-paths/register --full-trace",
     "ci": "npm run lint && npm run cov",
     "clean": "tsc -b --clean && rm -rf dist",

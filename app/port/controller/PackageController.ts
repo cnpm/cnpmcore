@@ -154,10 +154,13 @@ export class PackageController extends AbstractController {
     const attachmentFilename = Object.keys(attachments)[0];
 
     if (!attachmentFilename) {
-      const isDeprecatedRequest = versions.some(version => !!version.deprecated);
+      // `deprecated: ''` meaning remove deprecated message
+      const isDeprecatedRequest = versions.some(version => 'deprecated' in version);
       // handle deprecated request
+      // PUT /:fullname?write=true
+      // https://github.com/npm/cli/blob/latest/lib/commands/deprecate.js#L48
       if (isDeprecatedRequest) {
-        return await this.saveDeprecatedVersions(pkg.name, versions);
+        return await this.saveDeprecatedVersions(ctx, pkg.name, versions);
       }
 
       // invalid attachments
@@ -319,7 +322,14 @@ export class PackageController extends AbstractController {
   }
 
   // https://github.com/cnpm/cnpmjs.org/issues/415
-  private async saveDeprecatedVersions(name: string, versions: PackageVersion[]) {
-    console.log(name, versions);
+  private async saveDeprecatedVersions(ctx: EggContext, fullname: string, versions: PackageVersion[]) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
+    const pkg = await this.getPackageEntityByFullname(fullname);
+    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+
+    await this.packageManagerService.saveDeprecatedVersions(pkg, versions.map(v => {
+      return { version: v.version, deprecated: v.deprecated! };
+    }));
+    return { ok: true };
   }
 }

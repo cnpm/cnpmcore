@@ -293,7 +293,13 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
     });
 
     it('should 200', async () => {
-      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      let pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(201);
+      pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '2.0.0' });
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
@@ -310,9 +316,26 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
         .get(`/${pkg.name}`)
         .expect(200);
       assert.deepEqual(res.body['dist-tags'], {
-        latest: '1.0.0',
+        latest: '2.0.0',
         beta: '1.0.0',
       });
+
+      res = await app.httpRequest()
+        .put(`/-/package/${pkg.name}/dist-tags/${encodeURIComponent(' beta2 ')}`)
+        .set('authorization', publisher.authorization)
+        .set('content-type', 'application/json')
+        .send(JSON.stringify('2.0.0'))
+        .expect(200);
+      assert.equal(res.body.ok, true);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .expect(200);
+      assert.deepEqual(res.body['dist-tags'], {
+        latest: '2.0.0',
+        beta: '1.0.0',
+        beta2: '2.0.0',
+      });
+
       res = await app.httpRequest()
         .delete(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', publisher.authorization)
@@ -322,7 +345,8 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
         .get(`/${pkg.name}`)
         .expect(200);
       assert.deepEqual(res.body['dist-tags'], {
-        latest: '1.0.0',
+        latest: '2.0.0',
+        beta2: '2.0.0',
       });
     });
   });
