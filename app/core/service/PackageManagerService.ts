@@ -22,6 +22,7 @@ import {
   PACKAGE_TAG_CHANGED,
   PACKAGE_TAG_ADDED,
   PACKAGE_MAINTAINER_CHANGED,
+  PACKAGE_TAG_REMOVED,
 } from '../event';
 import { Dist } from '../entity/Dist';
 import { AbstractService } from './AbstractService';
@@ -188,7 +189,7 @@ export class PackageManagerService extends AbstractService {
     ]);
     await this.packageRepository.createPackageVersion(pkgVersion);
     if (cmd.tag) {
-      await this.savePackageTag(pkg.packageId, cmd.tag, cmd.version);
+      await this.savePackageTag(pkg, cmd.tag, cmd.version);
     }
 
     await this.refreshPackageManifestsToDists(pkg);
@@ -251,6 +252,37 @@ export class PackageManagerService extends AbstractService {
     this.logger.info('[packageManagerService.savePackageVersionCounters:saved] %d total', total);
   }
 
+  public async savePackageTag(pkg: Package, tag: string, version: string) {
+    let tagEntity = await this.packageRepository.findPackageTag(pkg.packageId, tag);
+    if (!tagEntity) {
+      tagEntity = PackageTag.create({
+        packageId: pkg.packageId,
+        tag,
+        version,
+      });
+      await this.packageRepository.savePackageTag(tagEntity);
+      await this.refreshPackageManifestsToDists(pkg);
+      this.eventBus.emit(PACKAGE_TAG_ADDED, tagEntity.packageTagId);
+      return;
+    }
+    if (tagEntity.version === version) {
+      // nothing change
+      return;
+    }
+    tagEntity.version = version;
+    await this.packageRepository.savePackageTag(tagEntity);
+    await this.refreshPackageManifestsToDists(pkg);
+    this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
+  }
+
+  public async removePackageTag(pkg: Package, tag: string) {
+    const tagEntity = await this.packageRepository.findPackageTag(pkg.packageId, tag);
+    if (!tagEntity) return;
+    await this.packageRepository.removePackageTag(tagEntity);
+    await this.refreshPackageManifestsToDists(pkg);
+    this.eventBus.emit(PACKAGE_TAG_REMOVED, pkg.packageId);
+  }
+
   /** private methods */
 
   private plusPackageVersionCounter(packageVersion: PackageVersion) {
@@ -266,27 +298,6 @@ export class PackageManagerService extends AbstractService {
     const reqHeaders = { 'if-none-match': expectEtag };
     const resHeaders = { etag: currentEtag };
     return fresh(reqHeaders, resHeaders);
-  }
-
-  private async savePackageTag(packageId: string, tag: string, version: string) {
-    let tagEntity = await this.packageRepository.findPackageTag(packageId, tag);
-    if (!tagEntity) {
-      tagEntity = PackageTag.create({
-        packageId,
-        tag,
-        version,
-      });
-      await this.packageRepository.savePackageTag(tagEntity);
-      this.eventBus.emit(PACKAGE_TAG_ADDED, tagEntity.packageTagId);
-      return;
-    }
-    if (tagEntity.version === version) {
-      // nothing change
-      return;
-    }
-    tagEntity.version = version;
-    await this.packageRepository.savePackageTag(tagEntity);
-    this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
   }
 
   private async refreshPackageManifestsToDists(pkg: Package) {

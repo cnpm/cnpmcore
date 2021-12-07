@@ -121,18 +121,20 @@ npm run test
 | PackageController.ts |   | PackageTagController |   | XxxController |
 +---------------+------+   +---+------------------+   +--+------------+
                 |              |                         |
-                | extends      |                         |
+                | extends      | extends                 | extends
                 v              v                         v
             +-----------------------------------------------+
-            |                AbstractController             | 
+            |               AbstractController              | 
             +-----------------------+-----------------------+
                                     |
                                     | extends
                                     v
-                          +-------------------+
-                          |  BaseController   |
-                          +-------------------+
+                          +------------------------+
+                          |  MiddlewareController  |
+                          +------------------------+
 ```
+
+- MiddlewareController 里面核心的功能就是编排中间件的加载顺序。 
 
 ### AbstractController
 

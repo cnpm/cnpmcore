@@ -614,17 +614,33 @@ describe('test/port/controller/PackageController.test.ts', () => {
         .expect(201);
       assert(res.body.ok === true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      const pkg3 = await TestUtil.getFullPackage({ name, version: '2.0.0' });
+      res = await app.httpRequest()
+        .put(`/${encodeURIComponent(pkg3.name)}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg3)
+        .expect(201);
+      assert(res.body.ok === true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
     });
 
     it('should 403 on not allow scoped package', async () => {
       const name = '@somescope/publish-package-test';
-      const pkg = await TestUtil.getFullPackage({ name });
-      const res = await app.httpRequest()
+      let pkg = await TestUtil.getFullPackage({ name });
+      let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(403);
-      assert.equal(res.body.error, '[FORBIDDEN] Scope \'@somescope\' not match legal scopes: \'@cnpm, @example\'');
+      assert.equal(res.body.error, '[FORBIDDEN] Scope "@somescope" not match legal scopes: "@cnpm, @example"');
+      pkg = await TestUtil.getFullPackage({ name: 'foo' });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(403);
+      assert.equal(res.body.error, '[FORBIDDEN] Package scope required, legal scopes: "@cnpm, @example"');
     });
 
     it('should publish on user custom scopes', async () => {
@@ -1070,7 +1086,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
           ],
         })
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] Maintainer \'foo\' not exists');
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] Maintainer "foo" not exists');
     });
 
     it('should 403 request user is not maintainer', async () => {
@@ -1086,7 +1102,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
           ],
         })
         .expect(403);
-      assert.equal(res.body.error, `[FORBIDDEN] \'${user.name}\' not authorized to modify ${scopedName}, please contact maintainers: \'${publisher.name}\'`);
+      assert.equal(res.body.error, `[FORBIDDEN] "${user.name}" not authorized to modify ${scopedName}, please contact maintainers: "${publisher.name}"`);
     });
 
     it('should 200 and get latest maintainers', async () => {
@@ -1146,7 +1162,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
           ],
         })
         .expect(403);
-      assert.equal(res.body.error, `[FORBIDDEN] \'${publisher.name}\' not authorized to modify ${scopedName}, please contact maintainers: \'${user.name}, ${user2.name}\'`);
+      assert.equal(res.body.error, `[FORBIDDEN] \"${publisher.name}\" not authorized to modify ${scopedName}, please contact maintainers: \"${user.name}, ${user2.name}\"`);
     });
   });
 });

@@ -182,6 +182,14 @@ export class PackageRepository extends AbstractRepository {
     }
   }
 
+  async removePackageTag(packageTagEntity: PackageTagEntity) {
+    const model = await PackageTagModel.findOne({ id: packageTagEntity.id });
+    if (!model) return;
+    await model.remove();
+    this.logger.info('[PackageRepository:removePackageTag:remove] id: %s, packageTagId: %s, packageId: %s',
+      model.id, model.packageTagId, model.packageId);
+  }
+
   async listPackageTags(packageId: string): Promise<PackageTagEntity[]> {
     const models = await PackageTagModel.find({ packageId });
     const entities: PackageTagEntity[] = [];

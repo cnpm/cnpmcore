@@ -285,7 +285,7 @@ export class PackageController extends AbstractController {
     for (const maintainer of data.maintainers) {
       const user = await this.userRepository.findUserByName(maintainer.name);
       if (!user) {
-        throw new UnprocessableEntityError(`Maintainer '${maintainer.name}' not exists`);
+        throw new UnprocessableEntityError(`Maintainer "${maintainer.name}" not exists`);
       }
       users.push(user);
     }
