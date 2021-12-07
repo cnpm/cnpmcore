@@ -686,6 +686,133 @@ describe('test/port/controller/PackageController.test.ts', () => {
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
     });
 
+    it('should 404 save deprecated message when package not exists', async () => {
+      const pkg = await TestUtil.getFullPackage({ version: '0.0.0' });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+
+      const notExistsName = `${pkg.name}-not-exists`;
+      res = await app.httpRequest()
+        .put(`/${notExistsName}`)
+        .set('authorization', publisher.authorization)
+        .send({
+          name: notExistsName,
+          versions: {
+            '0.0.0': {
+              version: '0.0.0',
+              name: notExistsName,
+              deprecated: 'is deprecated, 模块被抛弃, work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            },
+          },
+        })
+        .expect(404);
+      console.log(res.body);
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/testmodule-not-exists not found');
+    });
+
+    it('should 403 save deprecated message when other user request', async () => {
+      const pkg = await TestUtil.getFullPackage({ version: '0.0.0' });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+
+      const other = await TestUtil.createUser();
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', other.authorization)
+        .send({
+          name: pkg.name,
+          versions: {
+            '0.0.0': {
+              version: '0.0.0',
+              name: pkg.name,
+              deprecated: 'is deprecated, 模块被抛弃, work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            },
+          },
+        })
+        .expect(403);
+      assert.match(res.body.error, /not authorized to modify @cnpm\/testmodule, please contact maintainers/);
+    });
+
+    it('should save package version deprecated message', async () => {
+      const pkg = await TestUtil.getFullPackage({ version: '0.0.0' });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(201);
+      assert(res.body.ok === true);
+
+      const deprecated = 'is deprecated, 模块被抛弃, work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻';
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send({
+          name: pkg.name,
+          versions: {
+            '0.0.0': {
+              version: '0.0.0',
+              name: pkg.name,
+              deprecated,
+            },
+            '1.0.0': {
+              version: '1.0.0',
+              name: pkg.name,
+              deprecated,
+            },
+          },
+        })
+        .expect(200);
+      assert.equal(res.body.ok, true);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/0.0.0`)
+        .expect(200);
+      assert.equal(res.body.deprecated, deprecated);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .expect(200);
+      assert.equal(res.body.versions['0.0.0'].deprecated, deprecated);
+      assert(!res.body.versions['1.0.0']);
+
+      // remove deprecated message
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send({
+          name: pkg.name,
+          versions: {
+            '0.0.0': {
+              version: '0.0.0',
+              name: pkg.name,
+              deprecated: '',
+            },
+            '1.0.0': {
+              version: '1.0.0',
+              name: pkg.name,
+              deprecated: '',
+            },
+          },
+        })
+        .expect(200);
+      assert.equal(res.body.ok, true);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/0.0.0`)
+        .expect(200);
+      assert.equal(res.body.deprecated, undefined);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .expect(200);
+      assert.equal(res.body.versions['0.0.0'].deprecated, undefined);
+      assert(!res.body.versions['1.0.0']);
+    });
+
     it('should add new version without dist success', async () => {
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/without-dist', version: '0.0.0' });
       const version = Object.keys(pkg.versions)[0];

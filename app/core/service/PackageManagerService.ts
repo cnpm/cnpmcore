@@ -252,6 +252,18 @@ export class PackageManagerService extends AbstractService {
     this.logger.info('[packageManagerService.savePackageVersionCounters:saved] %d total', total);
   }
 
+  public async saveDeprecatedVersions(pkg: Package, deprecateds: { version: string; deprecated: string }[]) {
+    for (const { version, deprecated } of deprecateds) {
+      const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+      if (!pkgVersion) continue;
+      const message = deprecated === '' ? undefined : deprecated;
+      await this.mergeManifestDist(pkgVersion.manifestDist, { deprecated: message });
+      await this.mergeManifestDist(pkgVersion.abbreviatedDist, { deprecated: message });
+      await this.packageRepository.savePackageVersion(pkgVersion);
+    }
+    await this.refreshPackageManifestsToDists(pkg);
+  }
+
   public async savePackageTag(pkg: Package, tag: string, version: string) {
     let tagEntity = await this.packageRepository.findPackageTag(pkg.packageId, tag);
     if (!tagEntity) {
@@ -284,6 +296,17 @@ export class PackageManagerService extends AbstractService {
   }
 
   /** private methods */
+
+  private async mergeManifestDist(manifestDist: Dist, data: { deprecated?: string }) {
+    const manifest = await this.readDistBytesToJSON(manifestDist);
+    Object.assign(manifest, data);
+    const manifestBytes = Buffer.from(JSON.stringify(manifest));
+    const manifestIntegrity = await calculateIntegrity(manifestBytes);
+    manifestDist.size = manifestBytes.length;
+    manifestDist.shasum = manifestIntegrity.shasum;
+    manifestDist.integrity = manifestIntegrity.integrity;
+    await this.nfsAdapter.uploadBytes(manifestDist.path, manifestBytes);
+  }
 
   private plusPackageVersionCounter(packageVersion: PackageVersion) {
     // set counter + 1, schedule will store them into database

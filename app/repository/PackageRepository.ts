@@ -120,6 +120,18 @@ export class PackageRepository extends AbstractRepository {
     });
   }
 
+  async savePackageVersion(pkgVersionEntity: PackageVersionEntity) {
+    // only abbreviatedDist and manifestDist allow to change, like `deprecated` message
+    let model = await DistModel.findOne({ id: pkgVersionEntity.manifestDist.id });
+    if (model) {
+      await ModelConvertor.saveEntityToModel(pkgVersionEntity.manifestDist, model);
+    }
+    model = await DistModel.findOne({ id: pkgVersionEntity.abbreviatedDist.id });
+    if (model) {
+      await ModelConvertor.saveEntityToModel(pkgVersionEntity.abbreviatedDist, model);
+    }
+  }
+
   async findPackageVersion(packageId: string, version: string): Promise<PackageVersionEntity | null> {
     const pkgVersionModel = await PackageVersionModel.findOne({ packageId, version });
     if (!pkgVersionModel) return null;
