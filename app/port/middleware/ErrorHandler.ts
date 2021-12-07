@@ -2,7 +2,7 @@ import { EggContext, Next } from '@eggjs/tegg';
 
 const DEFAULT_SERVER_ERROR_STATUS = 500;
 
-export async function errorHandler(ctx: EggContext, next: Next) {
+export async function ErrorHandler(ctx: EggContext, next: Next) {
   try {
     await next();
   } catch (err: any) {
