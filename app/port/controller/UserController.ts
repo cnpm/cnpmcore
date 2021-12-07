@@ -111,7 +111,7 @@ export class UserController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showUser(@Context() ctx: EggContext, @HTTPParam() username: string) {
-    const authorized = await this.getAuthorizedUserAndToken(ctx);
+    const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     if (!authorized) {
       return { ok: false };
     }
@@ -129,7 +129,7 @@ export class UserController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async whoami(@Context() ctx: EggContext) {
-    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'read');
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     return {
       username: authorizedUser.name,
     };

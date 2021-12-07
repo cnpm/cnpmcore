@@ -2,17 +2,26 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { EggAppConfig, PowerPartial } from 'egg';
 
-export default (appInfo: EggAppConfig) => {
+export default (/* appInfo: EggAppConfig */) => {
   const config = {} as PowerPartial<EggAppConfig>;
 
   config.cnpmcore = {
     name: 'cnpm',
     sourceRegistry: 'https://registry.npmjs.com',
     registry: 'http://localhost:7001',
+    // https://docs.npmjs.com/cli/v6/using-npm/config#always-auth npm <= 6
+    // if `alwaysAuth=true`, all api request required access token
+    alwaysAuth: false,
+    // white scope list
+    allowScopes: [
+      '@cnpm',
+      '@example',
+    ],
+    // allow publish non-scope package, disable by default
+    allowPublishNonScopePackage: false,
   };
 
   // override config from framework / plugin
-  config.keys = appInfo.name + '123456';
   config.dataDir = join(process.env.HOME || tmpdir(), '.cnpmcore');
 
   config.orm = {

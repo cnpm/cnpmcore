@@ -65,7 +65,6 @@ export class PackageManagerService extends AbstractService {
   // support user publish private package and sync worker publish public package
   async publish(cmd: PublishPackageCmd, publisher: User) {
     let pkg = await this.packageRepository.findPackage(cmd.scope, cmd.name);
-    let isFirstPackage = false;
     if (!pkg) {
       pkg = Package.create({
         scope: cmd.scope,
@@ -73,15 +72,7 @@ export class PackageManagerService extends AbstractService {
         isPrivate: cmd.isPrivate,
         description: cmd.description,
       });
-      isFirstPackage = true;
     } else {
-      // required publisherId is maintainer
-      const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
-      const maintainer = maintainers.find(user => user.userId === publisher.userId);
-      if (!maintainer) {
-        const names = maintainers.map(m => m.name).join(', ');
-        throw new ForbiddenError(`${publisher.name} not authorized to modify ${pkg.fullname}, please contact maintainers: ${names}`);
-      }
       // update description
       // will read database twice to update description by model to entity and entity to model
       if (pkg.description !== cmd.description) {
@@ -89,10 +80,8 @@ export class PackageManagerService extends AbstractService {
       }
     }
     await this.packageRepository.savePackage(pkg);
-    if (isFirstPackage) {
-      // create maintainer
-      await this.packageRepository.savePackageMaintainer(pkg.packageId, publisher.userId);
-    }
+    // create maintainer
+    await this.packageRepository.savePackageMaintainer(pkg.packageId, publisher.userId);
 
     let pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, cmd.version);
     if (pkgVersion) {

@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../TestUtil';
 
 describe('test/port/controller/UserController.test.ts', () => {
@@ -47,6 +47,50 @@ describe('test/port/controller/UserController.test.ts', () => {
     });
 
     it('should create new user, with email', async () => {
+      let res = await app.httpRequest()
+        .put('/-/user/org.couchdb.user:leo')
+        .send({
+          name: 'leo',
+          password: 'password-is-here',
+          type: 'user',
+          email: 'leo@example.com',
+        })
+        .expect(200);
+      assert.equal(res.body.ok, true);
+      assert.equal(res.body.id, 'org.couchdb.user:leo');
+      assert(res.body.rev);
+      assert.match(res.body.token, /^cnpm_\w+/);
+      const lastToken = res.body.token;
+
+      // login success
+      res = await app.httpRequest()
+        .put('/-/user/org.couchdb.user:leo')
+        .send({
+          name: 'leo',
+          password: 'password-is-here',
+          type: 'user',
+        })
+        .expect(200);
+      assert.equal(res.body.ok, true);
+      assert.equal(res.body.id, 'org.couchdb.user:leo');
+      assert(res.body.rev);
+      assert.match(res.body.token, /^cnpm_\w+/);
+      assert.notEqual(res.body.token, lastToken);
+
+      // login fail
+      res = await app.httpRequest()
+        .put('/-/user/org.couchdb.user:leo')
+        .send({
+          name: 'leo',
+          password: 'password-is-here-wrong',
+          type: 'user',
+        })
+        .expect(401);
+      assert.equal(res.body.error, '[UNAUTHORIZED] Please check your login name and password');
+    });
+
+    it('should create new user, with email when config.cnpmcore.alwaysAuth = true', async () => {
+      mock(app.config.cnpmcore, 'alwaysAuth', true);
       let res = await app.httpRequest()
         .put('/-/user/org.couchdb.user:leo')
         .send({

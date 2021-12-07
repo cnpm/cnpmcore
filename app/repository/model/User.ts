@@ -38,4 +38,7 @@ export class User extends Bone {
   // cnpm private user or not, `false` meaning is the npm public registry user
   @Attribute(DataTypes.BOOLEAN)
   isPrivate: boolean;
+
+  @Attribute(DataTypes.JSONB, { allowNull: true })
+  scopes: string[];
 }

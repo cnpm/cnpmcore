@@ -31,7 +31,7 @@ export class TokenController extends AbstractController {
     method: HTTPMethodEnum.POST,
   })
   async createToken(@Context() ctx: EggContext, @HTTPBody() tokenOptions: TokenOptions) {
-    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'setting');
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     ctx.tValidate(TokenOptionsRule, tokenOptions);
 
     if (!this.userService.checkPassword(authorizedUser, tokenOptions.password)) {
@@ -60,7 +60,7 @@ export class TokenController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   async removeToken(@Context() ctx: EggContext, @HTTPParam() tokenKey: string) {
-    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'setting');
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     await this.userService.removeToken(authorizedUser.userId, tokenKey);
     return { ok: true };
   }
@@ -80,7 +80,7 @@ export class TokenController extends AbstractController {
     //   host: 'localhost:7001',
     //   connection: 'keep-alive'
     // }
-    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'setting');
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     const tokens = await this.userRepository.listTokens(authorizedUser.userId);
     // {
     //   "objects": [
