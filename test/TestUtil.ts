@@ -158,13 +158,7 @@ export class TestUtil {
       readonly?: boolean;
       cidr_whitelist?: string[];
     };
-  }): Promise<{
-      name: string;
-      token: string;
-      authorization: string;
-      password: string;
-      email: string;
-    }> {
+  }) {
     if (!user) {
       user = {};
     }
@@ -200,6 +194,25 @@ export class TestUtil {
       authorization: `Bearer ${token}`,
       password,
       email,
+    };
+  }
+
+  static async createTokenByUser(user: {
+    password: string;
+    token: string;
+    readonly?: true;
+    automation?: true;
+    cidr_whitelist?: string[];
+  }) {
+    const res = await this.app.httpRequest()
+      .post('/-/npm/v1/tokens')
+      .set('authorization', `Bearer ${user.token}`)
+      .send(user)
+      .expect(200);
+    const token = res.body.token;
+    return {
+      token,
+      authorization: `Bearer ${token}`,
     };
   }
 }

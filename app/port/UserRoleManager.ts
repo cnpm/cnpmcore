@@ -76,15 +76,15 @@ export class UserRoleManager {
     const { user, token } = authorizedUserAndToken;
     if (role === 'publish') {
       if (token.isReadonly) {
-        throw new UnauthorizedError(`Read-only Token '${token.tokenMark}' can't publish`);
+        throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't publish`);
       }
     }
     if (role === 'setting') {
       if (token.isReadonly) {
-        throw new UnauthorizedError(`Read-only Token '${token.tokenMark}' can't setting`);
+        throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't setting`);
       }
       if (token.isAutomation) {
-        throw new UnauthorizedError(`Automation Token '${token.tokenMark}' can't setting`);
+        throw new ForbiddenError(`Automation Token "${token.tokenMark}" can't setting`);
       }
     }
     return user;
@@ -95,7 +95,7 @@ export class UserRoleManager {
     const maintainer = maintainers.find(m => m.userId === user.userId);
     if (!maintainer) {
       const names = maintainers.map(m => m.name).join(', ');
-      throw new ForbiddenError(`'${user.name}' not authorized to modify ${pkg.fullname}, please contact maintainers: '${names}'`);
+      throw new ForbiddenError(`"${user.name}" not authorized to modify ${pkg.fullname}, please contact maintainers: "${names}"`);
     }
   }
 
@@ -104,7 +104,7 @@ export class UserRoleManager {
     if (!cnpmcoreConfig.allowPublishNonScopePackage) {
       const allowScopes = user.scopes ?? cnpmcoreConfig.allowScopes;
       if (!allowScopes.includes(scope)) {
-        throw new ForbiddenError(`Scope '${scope}' not match legal scopes: '${allowScopes.join(', ')}'`);
+        throw new ForbiddenError(`Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`);
       }
     }
   }

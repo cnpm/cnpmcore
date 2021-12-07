@@ -624,7 +624,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(403);
-      assert.equal(res.body.error, '[FORBIDDEN] Scope \'@somescope\' not match legal scopes: \'@cnpm, @example\'');
+      assert.equal(res.body.error, '[FORBIDDEN] Scope "@somescope" not match legal scopes: "@cnpm, @example"');
     });
 
     it('should publish on user custom scopes', async () => {
@@ -1070,7 +1070,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
           ],
         })
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] Maintainer \'foo\' not exists');
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] Maintainer "foo" not exists');
     });
 
     it('should 403 request user is not maintainer', async () => {
@@ -1086,7 +1086,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
           ],
         })
         .expect(403);
-      assert.equal(res.body.error, `[FORBIDDEN] \'${user.name}\' not authorized to modify ${scopedName}, please contact maintainers: \'${publisher.name}\'`);
+      assert.equal(res.body.error, `[FORBIDDEN] "${user.name}" not authorized to modify ${scopedName}, please contact maintainers: "${publisher.name}"`);
     });
 
     it('should 200 and get latest maintainers', async () => {
@@ -1146,7 +1146,7 @@ describe('test/port/controller/PackageController.test.ts', () => {
           ],
         })
         .expect(403);
-      assert.equal(res.body.error, `[FORBIDDEN] \'${publisher.name}\' not authorized to modify ${scopedName}, please contact maintainers: \'${user.name}, ${user2.name}\'`);
+      assert.equal(res.body.error, `[FORBIDDEN] \"${publisher.name}\" not authorized to modify ${scopedName}, please contact maintainers: \"${user.name}, ${user2.name}\"`);
     });
   });
 });

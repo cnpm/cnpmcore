@@ -47,8 +47,8 @@ describe('test/port/controller/TokenController.test.ts', () => {
       const res = await app.httpRequest()
         .get('/-/npm/v1/tokens')
         .set('authorization', authorization)
-        .expect(401);
-      assert.match(res.body.error, /\[UNAUTHORIZED\] Read-only Token \'cnpm_\w+\' can\'t setting/);
+        .expect(403);
+      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token \"cnpm_\w+\" can\'t setting/);
     });
   });
 
@@ -83,13 +83,13 @@ describe('test/port/controller/TokenController.test.ts', () => {
       assert.equal(tokens.length, 1);
     });
 
-    it('should 401 when readonly token access', async () => {
+    it('should 403 when readonly token access', async () => {
       const { authorization, token } = await TestUtil.createUser({ tokenOptions: { readonly: true } });
       const res = await app.httpRequest()
         .delete(`/-/npm/v1/tokens/token/${token}`)
         .set('authorization', authorization)
-        .expect(401);
-      assert.match(res.body.error, /\[UNAUTHORIZED\] Read-only Token \'cnpm_\w+\' can\'t setting/);
+        .expect(403);
+      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token \"cnpm_\w+\" can\'t setting/);
     });
   });
 
@@ -180,8 +180,8 @@ describe('test/port/controller/TokenController.test.ts', () => {
         .post('/-/npm/v1/tokens')
         .set('authorization', authorization)
         .send({ password })
-        .expect(401);
-      assert.match(res.body.error, /\[UNAUTHORIZED\] Read-only Token \'cnpm_\w+\' can\'t setting/);
+        .expect(403);
+      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token \"cnpm_\w+\" can\'t setting/);
     });
   });
 });

@@ -57,5 +57,10 @@ export default (/* appInfo: EggAppConfig */) => {
     enablePerformanceTimer: true,
   };
 
+  config.bodyParser = {
+    // saveTag will send version string in JSON format
+    strict: false,
+  };
+
   return config;
 };
