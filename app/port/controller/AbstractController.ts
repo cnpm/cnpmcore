@@ -2,7 +2,6 @@ import {
   UnprocessableEntityError,
   NotFoundError,
   UnauthorizedError,
-  ForbiddenError,
 } from 'egg-errors';
 import {
   Inject,
@@ -12,7 +11,8 @@ import {
   EggLogger,
 } from 'egg';
 import * as semver from 'semver';
-import { BaseController } from '../type/BaseController';
+import { MiddlewareController } from '../middleware';
+import { RoleManager } from '../RoleManager';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { UserRepository } from '../../repository/UserRepository';
 import { UserService } from '../../core/service/UserService';
@@ -20,14 +20,15 @@ import { getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { sha512 } from '../../common/UserUtil';
 import { Package as PackageEntity } from '../../core/entity/Package';
 import { PackageVersion as PackageVersionEntity } from '../../core/entity/PackageVersion';
-import { User as UserEntity } from '../../core/entity/User';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
-type Role = 'read' | 'publish' | 'setting';
+type TokenRole = 'read' | 'publish' | 'setting';
 
-export abstract class AbstractController extends BaseController {
+export abstract class AbstractController extends MiddlewareController {
   @Inject()
   protected logger: EggLogger;
+  @Inject()
+  protected roleManager: RoleManager;
   @Inject()
   protected packageRepository: PackageRepository;
   @Inject()
@@ -56,7 +57,7 @@ export abstract class AbstractController extends BaseController {
     return await this.userRepository.findUserAndTokenByTokenKey(tokenKey);
   }
 
-  protected async requiredAuthorizedUser(ctx: EggContext, role: Role) {
+  protected async requiredAuthorizedUser(ctx: EggContext, role: TokenRole) {
     const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) {
       const authorization = ctx.get('authorization');
@@ -78,15 +79,6 @@ export abstract class AbstractController extends BaseController {
       }
     }
     return user;
-  }
-
-  protected async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
-    const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
-    const maintainer = maintainers.find(m => m.userId === user.userId);
-    if (!maintainer) {
-      const names = maintainers.map(m => m.name).join(', ');
-      throw new ForbiddenError(`'${user.name}' not authorized to modify ${pkg.fullname}, please contact maintainers: '${names}'`);
-    }
   }
 
   protected async getPackageEntityByFullname(fullname: string): Promise<PackageEntity> {

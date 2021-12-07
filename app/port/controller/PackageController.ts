@@ -15,8 +15,9 @@ import validateNpmPackageName from 'validate-npm-package-name';
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil';
-import { PackageManagerService } from '../../core/service/PackageManagerService';
 import { User as UserEntity } from '../../core/entity/User';
+import { Package as PackageEntity } from '../../core/entity/Package';
+import { PackageManagerService } from '../../core/service/PackageManagerService';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -131,6 +132,19 @@ export class PackageController extends AbstractController {
   })
   async saveVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
+    // FIXME: maybe better code style?
+    let existsPackage: PackageEntity | null = null;
+    try {
+      existsPackage = await this.getPackageEntityByFullname(fullname);
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        existsPackage = null;
+      }
+    }
+    if (existsPackage) {
+      await this.roleManager.requiredPackageMaintainer(existsPackage, authorizedUser);
+    }
+
     ctx.tValidate(FullPackageRule, pkg);
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
@@ -256,10 +270,10 @@ export class PackageController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async updatePackage(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: UpdatePacakgeData) {
-    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
     ctx.tValidate(UpdatePacakgeDataRule, data);
+    const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
     const pkg = await this.getPackageEntityByFullname(fullname);
-    await this.requiredPackageMaintainer(pkg, authorizedUser);
+    await this.roleManager.requiredPackageMaintainer(pkg, authorizedUser);
     // make sure all maintainers exists
     const users: UserEntity[] = [];
     for (const maintainer of data.maintainers) {

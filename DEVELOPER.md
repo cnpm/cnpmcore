@@ -153,13 +153,42 @@ npm run test
   }
 ```
 
-还会封装请求用户相关的接口，如获取当前登录用户 `const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx)`，
-大多数情况下，直接使用 `requiredAuthorizedUser(ctx)` 接口获取当前登录用户会更合适，它会对未登录的请求抛出 UnauthorizedError 异常。
+### 请求合法性校验三部曲
 
-### 请求参数校验
+我们约定按以下顺序进行请求合法性校验：
+
+- 请求参数校验：必须先对请求参数合法性进行强制校验，降低后续所有潜在的安全、伪造等合法性问题发生的概率
+- 用户认证：用户登录和 Token 权限校验，确保当前用户的被认证授权的身份，特别是全站管理员权限，一定要谨慎使用
+- 资源操作权限校验：这是我们规避水平权限安全漏洞的唯一防御手段，一旦忘记实现，这里肯定会出现安全漏洞
+
+#### 1、请求参数校验
 
 使用 [egg-typebox-validate](https://github.com/xiekw2010/egg-typebox-validate) 来做请求参数校验，只需要定义一次参数类型和规则，就能同时拥有参数校验和类型定义。
 详细使用方式可以参考 [PR#12](https://github.com/cnpm/cnpmcore/pull/12)。
+
+#### 2、用户登录和 Token 权限校验
+
+AbstractController 会封装请求用户相关的接口，如获取当前登录用户 `const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx)`，
+大多数情况下，直接使用 `requiredAuthorizedUser(ctx, tokenRole)` 接口获取当前登录用户会更合适，它会对未登录的请求抛出 UnauthorizedError 异常。
+
+`tokenRole` 默认有以下权限：
+
+- `read`：读权限，代表 token 是 readonly 授权的
+- `publish`：写权限，代表 token 是 automation 或者 setting 授权的
+- `setting`：管理权限，代表 token 是用户完全授权的
+
+#### 3、资源操作权限校验
+
+通过 RoleManager 来收敛所有资源操作的权限校验，已经入注到 AbstractController 下。
+我们约定所有用户权限验证都在 Controller 层完全，Service 和 Repository 不做权限校验。
+
+如判断当前请求用户是否是包维护者：
+
+```ts
+const authorizedUser = await this.requiredAuthorizedUser(ctx, 'publish');
+const pkg = await this.getPackageEntityByFullname(fullname);
+await this.roleManager.requiredPackageMaintainer(pkg, authorizedUser);
+```
 
 ## Service 开发指南
 
