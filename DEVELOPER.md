@@ -201,6 +201,12 @@ const pkg = await this.getPackageEntityByFullname(fullname);
 await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
 ```
 
+当然，大部分对包进行写操作的请求下，我们在 AbstractController 里面抽取了一个更加简便的方法，一次性将数据获取和权限校验包含在一起：
+
+```ts
+const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
+```
+
 ## Service 开发指南
 
 ## Repository 开发指南

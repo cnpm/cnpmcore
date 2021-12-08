@@ -130,6 +130,12 @@ export class PackageRepository extends AbstractRepository {
     if (model) {
       await ModelConvertor.saveEntityToModel(pkgVersionEntity.abbreviatedDist, model);
     }
+    if (pkgVersionEntity.id) {
+      const model = await PackageVersionModel.findOne({ id: pkgVersionEntity.id });
+      if (model) {
+        await ModelConvertor.saveEntityToModel(pkgVersionEntity, model);
+      }
+    }
   }
 
   async findPackageVersion(packageId: string, version: string): Promise<PackageVersionEntity | null> {
@@ -148,10 +154,30 @@ export class PackageRepository extends AbstractRepository {
     return entities;
   }
 
+  async listPackageVersionNames(packageId: string): Promise<string[]> {
+    const rows = await PackageVersionModel.find({ packageId }).select('version').order('id desc');
+    return rows.map(row => row.version);
+  }
+
+  // only for unittest now
   async removePackageVersions(packageId: string): Promise<void> {
     const removeCount = await PackageVersionModel.remove({ packageId });
     this.logger.info('[PackageRepository:removePackageVersions:remove] %d rows, packageId: %s',
       removeCount, packageId);
+  }
+
+  async removePackageVersion(pkgVersion: PackageVersionEntity): Promise<void> {
+    const distRemoveCount = await DistModel.remove({
+      distId: [
+        pkgVersion.abbreviatedDist.distId,
+        pkgVersion.manifestDist.distId,
+        pkgVersion.readmeDist.distId,
+        pkgVersion.tarDist.distId,
+      ],
+    });
+    const removeCount = await PackageVersionModel.remove({ packageVersionId: pkgVersion.packageVersionId });
+    this.logger.info('[PackageRepository:removePackageVersion:remove] %d dist rows, %d rows, packageVersionId: %s',
+      distRemoveCount, removeCount, pkgVersion.packageVersionId);
   }
 
   private async fillPackageVersionEntitiyData(model: PackageVersionModel): Promise<PackageVersionEntity> {
