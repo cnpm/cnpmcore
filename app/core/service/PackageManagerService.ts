@@ -9,6 +9,7 @@ import {
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import fresh from 'fresh';
+import semver from 'semver';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { calculateIntegrity, formatTarball } from '../../common/PackageUtil';
 import { PackageRepository } from '../../repository/PackageRepository';
@@ -18,10 +19,11 @@ import { PackageVersion } from '../entity/PackageVersion';
 import { PackageTag } from '../entity/PackageTag';
 import { User } from '../entity/User';
 import {
-  PACKAGE_PUBLISHED,
-  PACKAGE_TAG_CHANGED,
-  PACKAGE_TAG_ADDED,
   PACKAGE_MAINTAINER_CHANGED,
+  PACKAGE_VERSION_ADDED,
+  PACKAGE_VERSION_REMOVED,
+  PACKAGE_TAG_ADDED,
+  PACKAGE_TAG_CHANGED,
   PACKAGE_TAG_REMOVED,
 } from '../event';
 import { Dist } from '../entity/Dist';
@@ -193,7 +195,7 @@ export class PackageManagerService extends AbstractService {
     }
 
     await this.refreshPackageManifestsToDists(pkg);
-    this.eventBus.emit(PACKAGE_PUBLISHED, pkgVersion.packageVersionId);
+    this.eventBus.emit(PACKAGE_VERSION_ADDED, pkgVersion.packageId, pkgVersion.packageVersionId, pkgVersion.version);
     return pkgVersion;
   }
 
@@ -264,6 +266,49 @@ export class PackageManagerService extends AbstractService {
     await this.refreshPackageManifestsToDists(pkg);
   }
 
+  public async removePackageVersion(pkg: Package, pkgVersion: PackageVersion) {
+    // remove nfs dists
+    await Promise.all([
+      this.nfsAdapter.remove(pkgVersion.abbreviatedDist.path),
+      this.nfsAdapter.remove(pkgVersion.manifestDist.path),
+      this.nfsAdapter.remove(pkgVersion.readmeDist.path),
+      this.nfsAdapter.remove(pkgVersion.tarDist.path),
+    ]);
+    // remove from repository
+    await this.packageRepository.removePackageVersion(pkgVersion);
+    // all versions removed
+    const versions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
+    if (versions.length > 0) {
+      // make sure latest tag exists
+      const tags = await this.packageRepository.listPackageTags(pkg.packageId);
+      const latestTag = tags.find(t => t.tag === 'latest');
+      if (latestTag && latestTag.version === pkgVersion.version) {
+        // change latest version
+        // https://github.com/npm/libnpmpublish/blob/main/unpublish.js#L62
+        const latestVersion = versions.sort(semver.compareLoose).pop();
+        if (latestVersion) {
+          latestTag.version = latestVersion;
+          await this.packageRepository.savePackageTag(latestTag);
+        }
+      }
+    } else {
+      // set unpublished dist to package's manifestDist and abbreviatedDist
+      const unpublishedInfo = {
+        _id: pkg.fullname,
+        name: pkg.fullname,
+        time: {
+          modified: pkg.updatedAt,
+          unpublished: new Date(),
+        },
+      };
+      await this.mergeManifestDist(pkg.manifestsDist!, undefined, unpublishedInfo);
+      await this.mergeManifestDist(pkg.abbreviatedsDist!, undefined, unpublishedInfo);
+    }
+    // refresh manifest dist
+    await this.refreshPackageManifestsToDists(pkg);
+    this.eventBus.emit(PACKAGE_VERSION_REMOVED, pkg.packageId, pkgVersion.packageVersionId, pkgVersion.version);
+  }
+
   public async savePackageTag(pkg: Package, tag: string, version: string) {
     let tagEntity = await this.packageRepository.findPackageTag(pkg.packageId, tag);
     if (!tagEntity) {
@@ -274,7 +319,7 @@ export class PackageManagerService extends AbstractService {
       });
       await this.packageRepository.savePackageTag(tagEntity);
       await this.refreshPackageManifestsToDists(pkg);
-      this.eventBus.emit(PACKAGE_TAG_ADDED, tagEntity.packageTagId);
+      this.eventBus.emit(PACKAGE_TAG_ADDED, tagEntity.packageId, tagEntity.packageTagId, tagEntity.tag);
       return;
     }
     if (tagEntity.version === version) {
@@ -284,7 +329,7 @@ export class PackageManagerService extends AbstractService {
     tagEntity.version = version;
     await this.packageRepository.savePackageTag(tagEntity);
     await this.refreshPackageManifestsToDists(pkg);
-    this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageTagId);
+    this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageId, tagEntity.packageTagId, tagEntity.tag);
   }
 
   public async removePackageTag(pkg: Package, tag: string) {
@@ -292,14 +337,19 @@ export class PackageManagerService extends AbstractService {
     if (!tagEntity) return;
     await this.packageRepository.removePackageTag(tagEntity);
     await this.refreshPackageManifestsToDists(pkg);
-    this.eventBus.emit(PACKAGE_TAG_REMOVED, pkg.packageId);
+    this.eventBus.emit(PACKAGE_TAG_REMOVED, pkg.packageId, tagEntity.packageTagId, tagEntity.tag);
   }
 
   /** private methods */
 
-  private async mergeManifestDist(manifestDist: Dist, data: { deprecated?: string }) {
-    const manifest = await this.readDistBytesToJSON(manifestDist);
-    Object.assign(manifest, data);
+  private async mergeManifestDist(manifestDist: Dist, mergeData?: any, replaceData?: any) {
+    let manifest = await this.readDistBytesToJSON(manifestDist);
+    if (mergeData) {
+      Object.assign(manifest, mergeData);
+    }
+    if (replaceData) {
+      manifest = replaceData;
+    }
     const manifestBytes = Buffer.from(JSON.stringify(manifest));
     const manifestIntegrity = await calculateIntegrity(manifestBytes);
     manifestDist.size = manifestBytes.length;

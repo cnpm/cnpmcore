@@ -4,6 +4,7 @@ import {
 } from 'egg-errors';
 import {
   Inject,
+  EggContext,
 } from '@eggjs/tegg';
 import {
   EggLogger,
@@ -33,6 +34,17 @@ export abstract class AbstractController extends MiddlewareController {
   protected async getPackageEntityByFullname(fullname: string): Promise<PackageEntity> {
     const [ scope, name ] = getScopeAndName(fullname);
     return await this.getPackageEntity(scope, name);
+  }
+
+  // 1. get package
+  // 2. check current user is maintainer
+  // 3. make sure current token can publish
+  protected async getPackageEntityAndRequiredMaintainer(ctx: EggContext, fullname: string): Promise<PackageEntity> {
+    const [ scope, name ] = getScopeAndName(fullname);
+    const pkg = await this.getPackageEntity(scope, name);
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
+    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+    return pkg;
   }
 
   // try to get package entity, throw NotFoundError when package not exists

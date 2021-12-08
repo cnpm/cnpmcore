@@ -34,6 +34,12 @@ export class NFSAdapter {
     await this.nfsClientAdapter.client.upload(file, { key: storeKey });
   }
 
+  @AsyncTimer(INSTANCE_NAME)
+  async remove(storeKey: string) {
+    this.logger.info('[%s:remove] key: %s, file: %s', INSTANCE_NAME, storeKey);
+    await this.nfsClientAdapter.client.remove(storeKey);
+  }
+
   async getStream(storeKey: string): Promise<Readable> {
     return await this.nfsClientAdapter.client.createDownloadStream(storeKey);
   }

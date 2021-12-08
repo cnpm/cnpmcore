@@ -2,6 +2,8 @@ import { PackageJson, Simplify } from 'type-fest';
 import {
   UnprocessableEntityError,
   NotFoundError,
+  BadRequestError,
+  ForbiddenError,
 } from 'egg-errors';
 import {
   HTTPController,
@@ -263,26 +265,12 @@ export class PackageController extends AbstractController {
 
   // https://github.com/cnpm/cnpmjs.org/issues/415
   private async saveDeprecatedVersions(ctx: EggContext, fullname: string, versions: PackageVersion[]) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
 
     await this.packageManagerService.saveDeprecatedVersions(pkg, versions.map(v => {
       return { version: v.version, deprecated: v.deprecated! };
     }));
     return { ok: true };
-  }
-
-  // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#update-a-packages-tag
-  @HTTPMethod({
-    // PUT /:fullname/:tag
-    path: `${PACKAGE_NAME_PATH}/:tag`,
-    method: HTTPMethodEnum.PUT,
-  })
-  async updateTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() version: string) {
-    console.log(fullname, version, ctx.headers, ctx.href);
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
-    console.log(authorizedUser);
   }
 
   // https://github.com/npm/cli/blob/latest/lib/commands/owner.js#L191
@@ -292,10 +280,13 @@ export class PackageController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async updatePackage(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: UpdatePacakgeData) {
+    const npmCommand = ctx.get('npm-command');
+    if (npmCommand === 'unpublish') {
+      // ignore it
+      return { ok: false };
+    }
     ctx.tValidate(UpdatePacakgeDataRule, data);
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
     // make sure all maintainers exists
     const users: UserEntity[] = [];
     for (const maintainer of data.maintainers) {
@@ -315,15 +306,10 @@ export class PackageController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async downloadVersionTar(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
-    const [ scope, name ] = getScopeAndName(fullname);
-    // @foo/bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
-    // bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
-    const version = filenameWithVersion.substring(name.length + 1);
-    // check version format
-    this.checkPackageVersionFormat(version);
-    const pkg = await this.getPackageEntity(scope, name);
+    const version = this.getAndCheckVersionFromFilename(fullname, filenameWithVersion);
+    const pkg = await this.getPackageEntityByFullname(fullname);
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
-    ctx.logger.info('[package:version:download-tar] %s@%s, packageVersionId: %s',
+    ctx.logger.info('[PackageController:downloadVersionTar] %s@%s, packageVersionId: %s',
       pkg.fullname, version, packageVersion.packageVersionId);
     const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(packageVersion);
     if (typeof urlOrStream === 'string') {
@@ -336,12 +322,39 @@ export class PackageController extends AbstractController {
 
   // https://github.com/npm/cli/blob/latest/lib/commands/unpublish.js#L101
   // https://github.com/npm/libnpmpublish/blob/main/unpublish.js#L43
-  // @HTTPMethod({
-  //   // GET /:fullname/-/:filenameWithVersion.tgz
-  //   path: PACKAGE_TAR_DOWNLOAD_PATH,
-  //   method: HTTPMethodEnum.GET,
-  // })
-  // async removeVersion(@Context() ctx: EggContext) {
+  @HTTPMethod({
+    // DELETE /@cnpm/foo/-/foo-4.0.0.tgz/-rev/61af62d6295fcbd9f8f1c08f
+    // DELETE /:fullname/-/:filenameWithVersion.tgz/-rev/:rev
+    path: `${PACKAGE_TAR_DOWNLOAD_PATH}/-rev/:rev`,
+    method: HTTPMethodEnum.DELETE,
+  })
+  async removeVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+    const npmCommand = ctx.get('npm-command');
+    if (npmCommand !== 'unpublish') {
+      throw new BadRequestError('Only allow "unpublish" npm-command');
+    }
+    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
+    const version = this.getAndCheckVersionFromFilename(fullname, filenameWithVersion);
+    const packageVersion = await this.getPackageVersionEntity(pkg, version);
+    // https://docs.npmjs.com/policies/unpublish
+    // can unpublish anytime within the first 72 hours after publishing
+    if (Date.now() - packageVersion.publishTime.getTime() >= 3600000 * 72) {
+      throw new ForbiddenError(`${pkg.fullname}@${version} unpublish is not allowed after 72 hours of released`);
+    }
+    ctx.logger.info('[PackageController:removeVersion] %s@%s, packageVersionId: %s',
+      pkg.fullname, version, packageVersion.packageVersionId);
+    await this.packageManagerService.removePackageVersion(pkg, packageVersion);
+    return { ok: true };
+  }
 
-  // }
+  private getAndCheckVersionFromFilename(fullname: string, filenameWithVersion: string) {
+    const scopeAndName = getScopeAndName(fullname);
+    const name = scopeAndName[1];
+    // @foo/bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
+    // bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
+    const version = filenameWithVersion.substring(name.length + 1);
+    // check version format
+    this.checkPackageVersionFormat(version);
+    return version;
+  }
 }

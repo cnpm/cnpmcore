@@ -49,9 +49,7 @@ export class PackageTagController extends AbstractController {
     ctx.tValidate(TagWithVersionRule, data);
     this.checkPackageVersionFormat(data.version);
     this.checkPackageTagFormat(data.tag);
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
     const packageVersion = await this.getPackageVersionEntity(pkg, data.version);
     await this.packageManagerService.savePackageTag(pkg, data.tag, packageVersion.version);
     return { ok: true };
@@ -67,9 +65,7 @@ export class PackageTagController extends AbstractController {
     const data = { tag };
     ctx.tValidate(TagRule, data);
     this.checkPackageTagFormat(data.tag);
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
     await this.packageManagerService.removePackageTag(pkg, data.tag);
     return { ok: true };
   }
