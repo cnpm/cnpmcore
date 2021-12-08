@@ -128,6 +128,7 @@ export class PackageController extends AbstractController {
   }
 
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#publish-a-new-package
+  // https://github.com/npm/libnpmpublish/blob/main/publish.js#L43
   @HTTPMethod({
     // PUT /:fullname
     path: PACKAGE_NAME_PATH,
@@ -260,6 +261,18 @@ export class PackageController extends AbstractController {
     };
   }
 
+  // https://github.com/cnpm/cnpmjs.org/issues/415
+  private async saveDeprecatedVersions(ctx: EggContext, fullname: string, versions: PackageVersion[]) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
+    const pkg = await this.getPackageEntityByFullname(fullname);
+    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+
+    await this.packageManagerService.saveDeprecatedVersions(pkg, versions.map(v => {
+      return { version: v.version, deprecated: v.deprecated! };
+    }));
+    return { ok: true };
+  }
+
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#update-a-packages-tag
   @HTTPMethod({
     // PUT /:fullname/:tag
@@ -321,15 +334,14 @@ export class PackageController extends AbstractController {
     return urlOrStream;
   }
 
-  // https://github.com/cnpm/cnpmjs.org/issues/415
-  private async saveDeprecatedVersions(ctx: EggContext, fullname: string, versions: PackageVersion[]) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+  // https://github.com/npm/cli/blob/latest/lib/commands/unpublish.js#L101
+  // https://github.com/npm/libnpmpublish/blob/main/unpublish.js#L43
+  // @HTTPMethod({
+  //   // GET /:fullname/-/:filenameWithVersion.tgz
+  //   path: PACKAGE_TAR_DOWNLOAD_PATH,
+  //   method: HTTPMethodEnum.GET,
+  // })
+  // async removeVersion(@Context() ctx: EggContext) {
 
-    await this.packageManagerService.saveDeprecatedVersions(pkg, versions.map(v => {
-      return { version: v.version, deprecated: v.deprecated! };
-    }));
-    return { ok: true };
-  }
+  // }
 }

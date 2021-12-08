@@ -13,6 +13,7 @@ import semver from 'semver';
 import { AbstractController } from './AbstractController';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil';
 import { PackageManagerService } from '../../core/service/PackageManagerService';
+import { TagRule, TagWithVersionRule } from '../typebox';
 
 @HTTPController()
 export class PackageTagController extends AbstractController {
@@ -44,13 +45,15 @@ export class PackageTagController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async saveTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string, @HTTPBody() version: string) {
-    this.checkPackageVersionFormat(version);
-    this.checkPackageTagFormat(tag);
+    const data = { tag, version };
+    ctx.tValidate(TagWithVersionRule, data);
+    this.checkPackageVersionFormat(data.version);
+    this.checkPackageTagFormat(data.tag);
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
     const pkg = await this.getPackageEntityByFullname(fullname);
     await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
-    const packageVersion = await this.getPackageVersionEntity(pkg, version);
-    await this.packageManagerService.savePackageTag(pkg, tag, packageVersion.version);
+    const packageVersion = await this.getPackageVersionEntity(pkg, data.version);
+    await this.packageManagerService.savePackageTag(pkg, data.tag, packageVersion.version);
     return { ok: true };
   }
 
@@ -61,11 +64,13 @@ export class PackageTagController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   async removeTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string) {
-    this.checkPackageTagFormat(tag);
+    const data = { tag };
+    ctx.tValidate(TagRule, data);
+    this.checkPackageTagFormat(data.tag);
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
     const pkg = await this.getPackageEntityByFullname(fullname);
     await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
-    await this.packageManagerService.removePackageTag(pkg, tag);
+    await this.packageManagerService.removePackageTag(pkg, data.tag);
     return { ok: true };
   }
 
