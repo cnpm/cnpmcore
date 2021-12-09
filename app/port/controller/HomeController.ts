@@ -59,4 +59,18 @@ export class HomeController extends AbstractController {
     };
     return data;
   }
+
+  // https://github.com/npm/cli/blob/latest/lib/utils/ping.js#L5
+  // https://registry.npmjs.org/-/ping?write=true
+  @HTTPMethod({
+    // GET /-/ping
+    path: '/-/ping',
+    method: HTTPMethodEnum.GET,
+  })
+  async ping(@Context() ctx: EggContext) {
+    return {
+      pong: true,
+      use: performance.now() - ctx.performanceStarttime!,
+    };
+  }
 }
