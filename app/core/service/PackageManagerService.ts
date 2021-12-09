@@ -218,7 +218,7 @@ export class PackageManagerService extends AbstractService {
     return await this.nfsAdapter.getDownloadUrlOrStream(packageVersion.tarDist.path);
   }
 
-  async readDistBytesToJSON(dist: Dist): Promise<object | undefined> {
+  async readDistBytesToJSON(dist: Dist) {
     const str = await this.readDistBytesToString(dist);
     if (str) {
       return JSON.parse(str);

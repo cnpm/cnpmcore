@@ -131,7 +131,7 @@ export class PackageController extends AbstractController {
       this.packageManagerService.readDistBytesToJSON(packageVersion.manifestDist),
       this.packageManagerService.readDistBytesToString(packageVersion.readmeDist),
     ]);
-    packageVersionJson!['readme'] = readme;
+    packageVersionJson.readme = readme;
     return packageVersionJson;
   }
 
