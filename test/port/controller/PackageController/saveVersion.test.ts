@@ -382,7 +382,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg2)
         .expect(403);
-      assert.equal(res.body.error, '[FORBIDDEN] cannot modify pre-existing version: 99.0.0');
+      assert.equal(res.body.error, '[FORBIDDEN] Can\'t modify pre-existing version: 99.0.0');
     });
 
     it('should 422 when version format error', async () => {

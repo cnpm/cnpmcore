@@ -323,6 +323,9 @@ export class PackageController extends AbstractController {
     ctx.logger.info('[PackageController:downloadVersionTar] %s@%s, packageVersionId: %s',
       pkg.fullname, version, packageVersion.packageVersionId);
     const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(packageVersion);
+    if (!urlOrStream) {
+      throw new NotFoundError(`"${filenameWithVersion}" not exists`);
+    }
     if (typeof urlOrStream === 'string') {
       ctx.redirect(urlOrStream);
       return;

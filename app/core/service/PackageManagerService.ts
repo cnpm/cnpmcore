@@ -88,7 +88,7 @@ export class PackageManagerService extends AbstractService {
 
     let pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, cmd.version);
     if (pkgVersion) {
-      throw new ForbiddenError(`cannot modify pre-existing version: ${pkgVersion.version}`);
+      throw new ForbiddenError(`Can't modify pre-existing version: ${pkgVersion.version}`);
     }
 
     // add _cnpmcore_publish_time field to cmd.packageJson
@@ -213,22 +213,25 @@ export class PackageManagerService extends AbstractService {
     return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, false);
   }
 
-  async downloadPackageVersionTar(packageVersion: PackageVersion): Promise<string | Readable> {
+  async downloadPackageVersionTar(packageVersion: PackageVersion): Promise<string | Readable | undefined> {
     this.plusPackageVersionCounter(packageVersion);
     return await this.nfsAdapter.getDownloadUrlOrStream(packageVersion.tarDist.path);
   }
 
-  async readDistBytesToJSON(dist: Dist): Promise<any> {
+  async readDistBytesToJSON(dist: Dist): Promise<object | undefined> {
     const str = await this.readDistBytesToString(dist);
-    return JSON.parse(str);
+    if (str) {
+      return JSON.parse(str);
+    }
   }
 
-  async readDistBytesToString(dist: Dist): Promise<any> {
+  async readDistBytesToString(dist: Dist): Promise<string> {
     const bytes = await this.readDistBytes(dist);
+    if (!bytes) return '';
     return Buffer.from(bytes).toString('utf8');
   }
 
-  async readDistBytes(dist: Dist): Promise<Uint8Array> {
+  async readDistBytes(dist: Dist): Promise<Uint8Array | undefined> {
     return await this.nfsAdapter.getBytes(dist.path);
   }
 
@@ -491,17 +494,19 @@ export class PackageManagerService extends AbstractService {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
       const manifest = await this.readDistBytesToJSON(packageVersion.manifestDist);
-      data.versions[packageVersion.version] = manifest;
+      if (!manifest) continue;
       if (lastestTagVersion && packageVersion.version === lastestTagVersion) {
         latestManifest = manifest;
         // set readme
-        data.readme = Buffer.from(await this.readDistBytes(packageVersion.readmeDist)).toString('utf8');
+        data.readme = await this.readDistBytesToString(packageVersion.readmeDist);
       }
-      data.time[packageVersion.version] = manifest._cnpmcore_publish_time;
+      data.versions[packageVersion.version] = manifest;
+      data.time[packageVersion.version] = packageVersion.publishTime;
     }
     if (!latestManifest) {
       latestManifest = data.versions[packageVersions[0].version];
-      data.readme = Buffer.from(await this.readDistBytes(packageVersions[0].readmeDist)).toString('utf8');
+      const firstPkgVersion = packageVersions[0];
+      data.readme = await this.readDistBytesToString(firstPkgVersion.readmeDist);
     }
     if (latestManifest) {
       data.license = latestManifest.license;

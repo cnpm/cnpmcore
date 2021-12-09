@@ -1,5 +1,4 @@
-import { Transform, Readable } from 'stream';
-import { pipeline } from 'stream/promises';
+import { Readable } from 'stream';
 import {
   ContextProto,
   AccessLevel,
@@ -40,32 +39,17 @@ export class NFSAdapter {
     await this.nfsClientAdapter.client.remove(storeKey);
   }
 
-  async getStream(storeKey: string): Promise<Readable> {
+  @AsyncTimer(INSTANCE_NAME)
+  async getStream(storeKey: string): Promise<Readable | undefined> {
     return await this.nfsClientAdapter.client.createDownloadStream(storeKey);
   }
 
   @AsyncTimer(INSTANCE_NAME)
-  async getBytes(storeKey: string): Promise<Uint8Array> {
-    const stream = await this.getStream(storeKey);
-    const chunks: Uint8Array[] = [];
-    let size = 0;
-    await pipeline(
-      stream,
-      new Transform({
-        objectMode: false,
-        transform: (chunk: Uint8Array, _, done) => {
-          chunks.push(chunk);
-          size += chunk.length;
-          done();
-        },
-      }),
-    );
-    this.logger.info('[%s:getBytes] key: %s, bytes: %d',
-      INSTANCE_NAME, storeKey, size);
-    return Buffer.concat(chunks, size);
+  async getBytes(storeKey: string): Promise<Uint8Array | undefined> {
+    return await this.nfsClientAdapter.client.readBytes(storeKey);
   }
 
-  async getDownloadUrlOrStream(storeKey: string): Promise<string | Readable> {
+  async getDownloadUrlOrStream(storeKey: string): Promise<string | Readable | undefined> {
     if (typeof this.nfsClientAdapter.client.url === 'function') {
       return this.nfsClientAdapter.client.url(storeKey) as string;
     }
