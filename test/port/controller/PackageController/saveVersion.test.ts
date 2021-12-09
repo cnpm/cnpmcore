@@ -27,7 +27,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
@@ -41,7 +41,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg2)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
 
       const pkg3 = await TestUtil.getFullPackage({ name, version: '2.0.0' });
@@ -50,7 +50,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg3)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
     });
 
@@ -85,7 +85,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
     });
 
@@ -96,14 +96,12 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
       assert.equal(res.body.version, '0.0.0');
-      // console.log(res.body);
-
       // add other version
       const pkg2 = await TestUtil.getFullPackage({ version: '1.0.0' });
       res = await app.httpRequest()
@@ -111,8 +109,60 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg2)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    });
+
+    it('should 422 when dist-tags version not match', async () => {
+      const pkg = await TestUtil.getFullPackage({
+        version: '0.0.0',
+        distTags: {
+          beta: '0.1.0',
+        },
+      });
+      const res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist-tags version "0.1.0" not match package version "0.0.0"');
+    });
+
+    it('should 422 when dist-tags format error', async () => {
+      let pkg = await TestUtil.getFullPackage({
+        version: '0.0.0',
+        distTags: {},
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist-tags is empty');
+
+      pkg = await TestUtil.getFullPackage({
+        version: '0.0.0',
+        distTags: null,
+      });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[INVALID_PARAM] dist-tags: must be object');
+
+      pkg = await TestUtil.getFullPackage({
+        version: '0.0.0',
+        distTags: {
+          '0.0': '0.0.0',
+        },
+      });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[INVALID_PARAM] tag: must match format "semver-tag"');
     });
 
     it('should 404 save deprecated message when package not exists', async () => {
@@ -122,7 +172,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
 
       const notExistsName = `${pkg.name}-not-exists`;
       res = await app.httpRequest()
@@ -139,7 +189,6 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
           },
         })
         .expect(404);
-      console.log(res.body);
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/testmodule-not-exists not found');
     });
 
@@ -150,7 +199,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
 
       const other = await TestUtil.createUser();
       res = await app.httpRequest()
@@ -177,7 +226,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
 
       const deprecated = 'is deprecated, 模块被抛弃, work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻';
       res = await app.httpRequest()
@@ -251,7 +300,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
@@ -267,7 +316,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
@@ -285,7 +334,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
@@ -303,7 +352,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
@@ -319,7 +368,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/99.0.0`)
@@ -345,7 +394,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] version("1.0.woring-version") format invalid');
+      assert.equal(res.body.error, '[INVALID_PARAM] version: must match format "semver-version"');
     });
 
     it('should 422 when version empty error', async () => {
@@ -357,8 +406,9 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] version("    ") format invalid');
+      assert.equal(res.body.error, '[INVALID_PARAM] version: must NOT have fewer than 5 characters');
 
+      // auto fix trim empty string
       pkg = await TestUtil.getFullPackage({
         version: ' 1.0.0   ',
       });
@@ -366,8 +416,8 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .send(pkg)
-        .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] version(" 1.0.0   ") format invalid');
+        .expect(201);
+      assert.equal(res.body.ok, true);
     });
 
     it('should 422 when name format error', async () => {
@@ -389,7 +439,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name cannot contain leading or trailing spaces, name can only contain URL-friendly characters');
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can only contain URL-friendly characters');
 
       pkg = await TestUtil.getFullPackage({
         name: 'eLaBorAtE-paCkAgE-with-mixed-case-and-more-than-214-characters-----------------------------------------------------------------------------------------------------------------------------------------------------------',
@@ -562,9 +612,10 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
           name: 'foo',
           versions: {},
           _attachments: {},
+          'dist-tags': {},
         })
         .expect(422);
-      assert(res.body.error === '[UNPROCESSABLE_ENTITY] versions is empty');
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] versions is empty');
 
       res = await app.httpRequest()
         .put('/foo')
@@ -573,9 +624,10 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
           name: 'foo',
           versions: [],
           _attachments: {},
+          'dist-tags': {},
         })
         .expect(422);
-      assert(res.body.error === '[UNPROCESSABLE_ENTITY] versions is empty');
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] versions is empty');
     });
 
     it('should 422 dist-tags is empty', async () => {

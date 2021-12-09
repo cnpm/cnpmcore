@@ -66,16 +66,17 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
 
     it('should 422 when tag invalid', async () => {
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
-      await app.httpRequest()
+      let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      const res = await app.httpRequest()
+      assert.equal(res.body.ok, true);
+      res = await app.httpRequest()
         .delete(`/-/package/${pkg.name}/dist-tags/1.0`)
         .set('authorization', publisher.authorization)
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] Tag name must not be a valid SemVer range: "1.0"');
+      assert.equal(res.body.error, '[INVALID_PARAM] tag: must match format "semver-tag"');
     });
 
     it('should 422 when tag is latest', async () => {
@@ -88,8 +89,8 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       const res = await app.httpRequest()
         .delete(`/-/package/${pkg.name}/dist-tags/latest`)
         .set('authorization', publisher.authorization)
-        .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] Can\'t remove the "latest" tag');
+        .expect(403);
+      assert.equal(res.body.error, '[FORBIDDEN] Can\'t remove the "latest" tag');
     });
 
     it('should 200', async () => {

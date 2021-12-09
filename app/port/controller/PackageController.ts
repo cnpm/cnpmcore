@@ -23,6 +23,12 @@ import { getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil';
 import { User as UserEntity } from '../../core/entity/User';
 import { Package as PackageEntity } from '../../core/entity/Package';
 import { PackageManagerService } from '../../core/service/PackageManagerService';
+import {
+  VersionRule,
+  TagWithVersionRule,
+  Name as NameType,
+  Description as DescriptionType,
+} from '../typebox';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -37,13 +43,13 @@ type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
 }>;
 
 const FullPackageRule = Type.Object({
-  name: Type.String(),
+  name: NameType,
   // Since we don't validate versions & _attachments previous, here we use Type.Any() just for object validate
   versions: Type.Optional(Type.Any()),
   _attachments: Type.Optional(Type.Any()),
-  description: Type.Optional(Type.String({ maxLength: 10240 })),
+  description: Type.Optional(DescriptionType),
   'dist-tags': Type.Optional(Type.Record(Type.String(), Type.String())),
-  readme: Type.Optional(Type.String()),
+  readme: Type.Optional(Type.String({ transform: [ 'trim' ] })),
 });
 // overwrite versions & _attachments
 type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions' | '_attachments'> &
@@ -138,6 +144,7 @@ export class PackageController extends AbstractController {
   })
   async saveVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     ctx.tValidate(FullPackageRule, pkg);
+    fullname = fullname.trim();
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
     }
@@ -173,13 +180,18 @@ export class PackageController extends AbstractController {
     // handle add new version
     const packageVersion = versions[0];
     // check version format
-    this.checkPackageVersionFormat(packageVersion.version);
+    ctx.tValidate(VersionRule, packageVersion);
 
     const attachment = attachments[attachmentFilename];
     const distTags = pkg['dist-tags'] ?? {};
-    const tag = Object.keys(distTags)[0];
-    if (!tag) {
+    const tagName = Object.keys(distTags)[0];
+    if (!tagName) {
       throw new UnprocessableEntityError('dist-tags is empty');
+    }
+    const tagWithVersion = { tag: tagName, version: distTags[tagName] };
+    ctx.tValidate(TagWithVersionRule, tagWithVersion);
+    if (tagWithVersion.version !== packageVersion.version) {
+      throw new UnprocessableEntityError(`dist-tags version "${tagWithVersion.version}" not match package version "${packageVersion.version}"`);
     }
 
     // FIXME: make sure publisher in maintainers
@@ -249,13 +261,12 @@ export class PackageController extends AbstractController {
       dist: {
         content: tarballBytes,
       },
-      tag,
+      tag: tagWithVersion.tag,
       isPrivate: true,
     }, authorizedUser);
     this.logger.info('[package:version:add] %s@%s, packageVersionId: %s, tag: %s, userId: %s',
-      packageVersion.name, packageVersion.version, packageVersionEntity.packageVersionId, tag, authorizedUser.userId);
-
-    // make sure the latest version exists
+      packageVersion.name, packageVersion.version, packageVersionEntity.packageVersionId,
+      tagWithVersion.tag, authorizedUser.userId);
     ctx.status = 201;
     return {
       ok: true,
@@ -306,7 +317,7 @@ export class PackageController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async downloadVersionTar(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
-    const version = this.getAndCheckVersionFromFilename(fullname, filenameWithVersion);
+    const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const pkg = await this.getPackageEntityByFullname(fullname);
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     ctx.logger.info('[PackageController:downloadVersionTar] %s@%s, packageVersionId: %s',
@@ -334,7 +345,7 @@ export class PackageController extends AbstractController {
       throw new BadRequestError('Only allow "unpublish" npm-command');
     }
     const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
-    const version = this.getAndCheckVersionFromFilename(fullname, filenameWithVersion);
+    const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     // https://docs.npmjs.com/policies/unpublish
     // can unpublish anytime within the first 72 hours after publishing
@@ -347,14 +358,15 @@ export class PackageController extends AbstractController {
     return { ok: true };
   }
 
-  private getAndCheckVersionFromFilename(fullname: string, filenameWithVersion: string) {
+  private getAndCheckVersionFromFilename(ctx: EggContext, fullname: string, filenameWithVersion: string) {
     const scopeAndName = getScopeAndName(fullname);
     const name = scopeAndName[1];
     // @foo/bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
     // bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
     const version = filenameWithVersion.substring(name.length + 1);
     // check version format
-    this.checkPackageVersionFormat(version);
-    return version;
+    const data = { version };
+    ctx.tValidate(VersionRule, data);
+    return data.version;
   }
 }

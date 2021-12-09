@@ -97,7 +97,7 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
         .set('content-type', 'application/json')
         .send(JSON.stringify('wrong.ver.1'))
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] version("wrong.ver.1") format invalid');
+      assert.equal(res.body.error, '[INVALID_PARAM] version: must match format "semver-version"');
     });
 
     it('should 422 when tag invalid', async () => {
@@ -113,7 +113,7 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] Tag name must not be a valid SemVer range: "111"');
+      assert.equal(res.body.error, '[INVALID_PARAM] tag: must match format "semver-tag"');
     });
 
     it('should 200', async () => {
@@ -140,6 +140,14 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       // save tag and version ignore
       res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
+        .set('authorization', publisher.authorization)
+        .set('content-type', 'application/json')
+        .send(JSON.stringify('1.0.0'))
+        .expect(200);
+      assert.equal(res.body.ok, true);
+      // support latest tag
+      res = await app.httpRequest()
+        .put(`/-/package/${pkg.name}/dist-tags/latest`)
         .set('authorization', publisher.authorization)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))

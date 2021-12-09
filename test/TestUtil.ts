@@ -99,6 +99,7 @@ export class TestUtil {
     attachment?: object;
     dist?: object;
     readme?: string | null;
+    distTags?: object | null;
   }): Promise<any> {
     const fullJSONFile = this.getFixtures('exampleFullPackage.json');
     const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
@@ -135,6 +136,11 @@ export class TestUtil {
       if (options.readme === null) {
         delete pkg.readme;
         delete version.readme;
+      }
+      if ('distTags' in options) {
+        pkg['dist-tags'] = options.distTags;
+      } else {
+        pkg['dist-tags'].latest = version.version;
       }
     }
     return pkg;
