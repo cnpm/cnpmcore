@@ -16,7 +16,7 @@ describe('test/port/controller/PackageController/ping.test.ts', () => {
     it('should 200', async () => {
       const res = await app.httpRequest()
         .get('/-/ping')
-        .expect(200)
+        .expect(200);
       assert.equal(res.body.pong, true);
       console.log(res.body, res.headers['x-readtime']);
     });
