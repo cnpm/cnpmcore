@@ -27,6 +27,15 @@ describe('test/port/controller/UserController/showUser.test.ts', () => {
       });
     });
 
+    it('should 404 when user not exists', async () => {
+      const { authorization, name } = await TestUtil.createUser();
+      const res = await app.httpRequest()
+        .get(`/-/user/org.couchdb.user:${name}-not-exists`)
+        .set('authorization', authorization)
+        .expect(404);
+      assert.equal(res.body.error, `[NOT_FOUND] User "${name}-not-exists" not found`);
+    });
+
     it('should 200 {ok: false} when user unauthorized', async () => {
       const { name } = await TestUtil.createUser();
       const res = await app.httpRequest()
