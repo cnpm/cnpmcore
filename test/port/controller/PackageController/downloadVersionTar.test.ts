@@ -29,7 +29,7 @@ describe('test/port/controller/PackageController/downloadVersionTar.test.ts', ()
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
 
       pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
@@ -38,7 +38,7 @@ describe('test/port/controller/PackageController/downloadVersionTar.test.ts', ()
         .set('authorization', publisher.authorization)
         .send(pkg)
         .expect(201);
-      assert(res.body.ok === true);
+      assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
     });
 
@@ -90,7 +90,7 @@ describe('test/port/controller/PackageController/downloadVersionTar.test.ts', ()
         .get(`/${name}/-/testmodule-download-version-tar-.tgz`)
         .expect(422)
         .expect({
-          error: '[UNPROCESSABLE_ENTITY] version("") format invalid',
+          error: '[INVALID_PARAM] version: must NOT have fewer than 5 characters',
         });
     });
 

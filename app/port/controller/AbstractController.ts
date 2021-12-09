@@ -1,5 +1,4 @@
 import {
-  UnprocessableEntityError,
   NotFoundError,
 } from 'egg-errors';
 import {
@@ -9,7 +8,6 @@ import {
 import {
   EggLogger,
 } from 'egg';
-import * as semver from 'semver';
 import { MiddlewareController } from '../middleware';
 import { UserRoleManager } from '../UserRoleManager';
 import { PackageRepository } from '../../repository/PackageRepository';
@@ -63,11 +61,5 @@ export abstract class AbstractController extends MiddlewareController {
       throw new NotFoundError(`${pkg.fullname}@${version} not found`);
     }
     return packageVersion;
-  }
-
-  protected checkPackageVersionFormat(version: string) {
-    if (!semver.valid(version)) {
-      throw new UnprocessableEntityError(`version(${JSON.stringify(version)}) format invalid`);
-    }
   }
 }

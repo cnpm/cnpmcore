@@ -24,10 +24,6 @@ const plugin: EggPlugin = {
   view: {
     enable: false,
   },
-  validate: {
-    enable: true,
-    package: 'egg-validate',
-  },
   opentracing: {
     enable: true,
     package: 'egg-opentracing',

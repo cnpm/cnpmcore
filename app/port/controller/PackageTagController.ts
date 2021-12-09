@@ -8,8 +8,7 @@ import {
   EggContext,
   Inject,
 } from '@eggjs/tegg';
-import { UnprocessableEntityError } from 'egg-errors';
-import semver from 'semver';
+import { ForbiddenError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil';
 import { PackageManagerService } from '../../core/service/PackageManagerService';
@@ -47,8 +46,6 @@ export class PackageTagController extends AbstractController {
   async saveTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string, @HTTPBody() version: string) {
     const data = { tag, version };
     ctx.tValidate(TagWithVersionRule, data);
-    this.checkPackageVersionFormat(data.version);
-    this.checkPackageTagFormat(data.tag);
     const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
     const packageVersion = await this.getPackageVersionEntity(pkg, data.version);
     await this.packageManagerService.savePackageTag(pkg, data.tag, packageVersion.version);
@@ -64,19 +61,11 @@ export class PackageTagController extends AbstractController {
   async removeTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string) {
     const data = { tag };
     ctx.tValidate(TagRule, data);
-    this.checkPackageTagFormat(data.tag);
+    if (tag === 'latest') {
+      throw new ForbiddenError('Can\'t remove the "latest" tag');
+    }
     const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
     await this.packageManagerService.removePackageTag(pkg, data.tag);
     return { ok: true };
-  }
-
-  private checkPackageTagFormat(tag: string) {
-    // https://github.com/npm/cli/blob/4dbeb007d0d6350284c7b1edbf4d5b0030c67c66/lib/commands/dist-tag.js#L93
-    if (semver.validRange(tag)) {
-      throw new UnprocessableEntityError(`Tag name must not be a valid SemVer range: "${tag}"`);
-    }
-    if (tag === 'latest') {
-      throw new UnprocessableEntityError('Can\'t remove the "latest" tag');
-    }
   }
 }
