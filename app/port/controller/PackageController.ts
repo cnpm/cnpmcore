@@ -62,15 +62,13 @@ type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions' | '_attachmen
   };
 }};
 
-const UpdatePacakgeDataRule = Type.Object({
-  _id: Type.String({ minLength: 1, maxLength: 100 }),
-  _rev: Type.String({ minLength: 1, maxLength: 100 }),
+const UpdatePacakgeMaintainerDataRule = Type.Object({
   maintainers: Type.Array(Type.Object({
     name: Type.String({ minLength: 1, maxLength: 100 }),
     email: Type.String({ format: 'email', maxLength: 400 }),
   }), { minItems: 1 }),
 });
-type UpdatePacakgeData = Static<typeof UpdatePacakgeDataRule>;
+type UpdatePacakgeMaintainerData = Static<typeof UpdatePacakgeMaintainerDataRule>;
 
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
 const PACKAGE_NAME_PATH = `/:fullname(${FULLNAME_REG_STRING})`;
@@ -290,13 +288,17 @@ export class PackageController extends AbstractController {
     path: `${PACKAGE_NAME_PATH}/-rev/:rev`,
     method: HTTPMethodEnum.PUT,
   })
-  async updatePackage(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: UpdatePacakgeData) {
+  async updatePackage(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: UpdatePacakgeMaintainerData) {
     const npmCommand = ctx.get('npm-command');
     if (npmCommand === 'unpublish') {
       // ignore it
       return { ok: false };
     }
-    ctx.tValidate(UpdatePacakgeDataRule, data);
+    // only support update maintainer
+    if (npmCommand !== 'owner') {
+      throw new BadRequestError(`header: npm-command expected "owner", but got "${npmCommand}"`);
+    }
+    ctx.tValidate(UpdatePacakgeMaintainerDataRule, data);
     const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
     // make sure all maintainers exists
     const users: UserEntity[] = [];

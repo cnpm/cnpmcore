@@ -1,10 +1,10 @@
 import { strict as assert } from 'assert';
 import { Context } from 'egg';
 import { app } from 'egg-mock/bootstrap';
-import dayjs from '../../../app/common/dayjs';
+import dayjs from '../../../../app/common/dayjs';
 import { TestUtil } from 'test/TestUtil';
 
-describe('test/port/controller/DownloadController.test.ts', () => {
+describe('test/port/controller/DownloadController/showDownloads.test.ts', () => {
   let ctx: Context;
   let publisher;
   beforeEach(async () => {
@@ -22,12 +22,14 @@ describe('test/port/controller/DownloadController.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '2.0.0' });
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       await app.httpRequest()
@@ -70,6 +72,7 @@ describe('test/port/controller/DownloadController.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       await app.httpRequest()
@@ -99,6 +102,7 @@ describe('test/port/controller/DownloadController.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
 

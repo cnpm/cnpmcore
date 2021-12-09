@@ -7,6 +7,7 @@ export class TestUtil {
   private static connection;
   private static tables;
   private static _app;
+  private static ua = 'npm/7.0.0 cnpmcore-unittest/1.0.0';
 
   static getMySqlConfig() {
     return {
@@ -200,6 +201,7 @@ export class TestUtil {
       authorization: `Bearer ${token}`,
       password,
       email,
+      ua: this.ua,
     };
   }
 
@@ -213,6 +215,7 @@ export class TestUtil {
     const res = await this.app.httpRequest()
       .post('/-/npm/v1/tokens')
       .set('authorization', `Bearer ${user.token}`)
+      .set('user-agent', this.ua)
       .send(user)
       .expect(200);
     const token = res.body.token;

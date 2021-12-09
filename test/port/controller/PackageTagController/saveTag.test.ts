@@ -21,6 +21,7 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       const userReadonly = await TestUtil.createTokenByUser({
@@ -31,6 +32,7 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', userReadonly.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
         .expect(403);
@@ -42,12 +44,14 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       const other = await TestUtil.createUser();
       const res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', other.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
         .expect(403);
@@ -59,11 +63,13 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       const res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('199.0.0'))
         .expect(404);
@@ -75,11 +81,13 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       let res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('     '))
         .expect(422);
@@ -87,6 +95,7 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify(''))
         .expect(422);
@@ -94,6 +103,7 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('wrong.ver.1'))
         .expect(422);
@@ -105,11 +115,13 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       const res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/111`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
         .expect(422);
@@ -121,11 +133,13 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       let res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
         .expect(200);
@@ -141,6 +155,7 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
         .expect(200);
@@ -149,6 +164,7 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/latest`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
         .expect(200);
@@ -167,6 +183,8 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       const userAutomation = await TestUtil.createTokenByUser({
@@ -177,6 +195,8 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/automation`)
         .set('authorization', userAutomation.authorization)
+        .set('user-agent', publisher.ua)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
         .expect(200);
@@ -191,6 +211,8 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/latest-3`)
         .set('authorization', userAutomation.authorization)
+        .set('user-agent', publisher.ua)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
         .expect(200);

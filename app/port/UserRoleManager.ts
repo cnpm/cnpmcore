@@ -78,6 +78,16 @@ export class UserRoleManager {
       if (token.isReadonly) {
         throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't publish`);
       }
+      // only support npm >= 7.0.0 allow publish action
+      // user-agent: "npm/6.14.12 node/v10.24.1 darwin x64"
+      const m = /npm\/(\w{1,1000}\.)/.exec(ctx.get('user-agent'));
+      if (!m) {
+        throw new ForbiddenError('Only allow npm client to access');
+      }
+      const major = parseInt(m[1]);
+      if (major < 7) {
+        throw new ForbiddenError('Only allow npm@>=7.0.0 client to access');
+      }
     }
     if (role === 'setting') {
       if (token.isReadonly) {

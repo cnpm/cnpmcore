@@ -27,6 +27,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       let res = await app.httpRequest()
@@ -44,6 +45,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
 
@@ -51,6 +53,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
         .delete(`${tarballUrl}/-rev/${pkgVersion._rev}`)
         .set('authorization', publisher.authorization)
         .set('npm-command', 'unpublish')
+        .set('user-agent', publisher.ua)
         .expect(200);
       assert.equal(res.body.ok, true);
       res = await app.httpRequest()
@@ -70,6 +73,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
         .delete(`${tarballUrl.replace('1.0.0', '2.0.0')}/-rev/${pkgVersion._rev}`)
         .set('authorization', publisher.authorization)
         .set('npm-command', 'unpublish')
+        .set('user-agent', publisher.ua)
         .expect(200);
       assert.equal(res.body.ok, true);
       res = await app.httpRequest()
@@ -89,6 +93,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       let res = await app.httpRequest()
@@ -100,6 +105,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
       res = await app.httpRequest()
         .delete(`${tarballUrl}/-rev/${pkg._rev}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('npm-command', 'unpublish')
         .expect(404);
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foo@2.0.0 not found');
@@ -109,6 +115,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
       const res = await app.httpRequest()
         .delete('/@cnpm/foo/-/foo-4.0.0.tgz/-rev/1-61af62d6295fcbd9f8f1c08f')
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('npm-command', 'unpublish')
         .expect(404);
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foo not found');
@@ -118,6 +125,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
       const res = await app.httpRequest()
         .delete('/@cnpm/foo/-/foo-4.0.0.tgz/-rev/1-61af62d6295fcbd9f8f1c08f')
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .expect(400);
       assert.equal(res.body.error, '[BAD_REQUEST] Only allow "unpublish" npm-command');
     });
@@ -130,6 +138,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       let res = await app.httpRequest()
@@ -148,6 +157,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
       res = await app.httpRequest()
         .delete(`${tarballUrl}/-rev/${pkg._rev}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('npm-command', 'unpublish')
         .expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] @cnpm/foo@1.0.0 unpublish is not allowed after 72 hours of released');

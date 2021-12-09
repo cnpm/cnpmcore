@@ -21,6 +21,7 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       const userReadonly = await TestUtil.createTokenByUser({
@@ -31,6 +32,7 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       const res = await app.httpRequest()
         .delete(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', userReadonly.authorization)
+        .set('user-agent', publisher.ua)
         .expect(403);
       assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token/);
     });
@@ -40,12 +42,14 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       const other = await TestUtil.createUser();
       const res = await app.httpRequest()
         .delete(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', other.authorization)
+        .set('user-agent', publisher.ua)
         .expect(403);
       assert.equal(res.body.error, `[FORBIDDEN] "${other.name}" not authorized to modify @cnpm/koa, please contact maintainers: "${publisher.name}"`);
     });
@@ -55,11 +59,13 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       const res = await app.httpRequest()
         .delete(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .expect(200);
       assert.equal(res.body.ok, true);
     });
@@ -69,12 +75,14 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
       res = await app.httpRequest()
         .delete(`/-/package/${pkg.name}/dist-tags/1.0`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .expect(422);
       assert.equal(res.body.error, '[INVALID_PARAM] tag: must match format "semver-tag"');
     });
@@ -84,11 +92,13 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       const res = await app.httpRequest()
         .delete(`/-/package/${pkg.name}/dist-tags/latest`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] Can\'t remove the "latest" tag');
     });
@@ -98,17 +108,20 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '2.0.0' });
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       let res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
         .expect(200);
@@ -124,6 +137,7 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/${encodeURIComponent(' beta2 ')}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('2.0.0'))
         .expect(200);
@@ -140,6 +154,7 @@ describe('test/port/controller/PackageTagController.test.ts', () => {
       res = await app.httpRequest()
         .delete(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .expect(200);
       assert.equal(res.body.ok, true);
       res = await app.httpRequest()
