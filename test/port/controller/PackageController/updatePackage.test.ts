@@ -24,6 +24,7 @@ describe('test/port/controller/PackageController/updatePackage.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -35,6 +36,8 @@ describe('test/port/controller/PackageController/updatePackage.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'owner')
         .send({
           _id: rev,
           _rev: rev,
@@ -48,6 +51,8 @@ describe('test/port/controller/PackageController/updatePackage.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'owner')
         .send({
           _id: rev,
           _rev: rev,
@@ -67,6 +72,8 @@ describe('test/port/controller/PackageController/updatePackage.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
         .set('authorization', user.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'owner')
         .send({
           _id: rev,
           _rev: rev,
@@ -76,6 +83,69 @@ describe('test/port/controller/PackageController/updatePackage.test.ts', () => {
         })
         .expect(403);
       assert.equal(res.body.error, `[FORBIDDEN] "${user.name}" not authorized to modify ${scopedName}, please contact maintainers: "${publisher.name}"`);
+    });
+
+    it('should 400 when npm-command invalid', async () => {
+      const user = await TestUtil.createUser();
+      let res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', publisher.ua)
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(400);
+      assert.equal(res.body.error, '[BAD_REQUEST] header: npm-command expected "owner", but got ""');
+      res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'adduser')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(400);
+      assert.equal(res.body.error, '[BAD_REQUEST] header: npm-command expected "owner", but got "adduser"');
+    });
+
+    it('should 403 when npm client invalid', async () => {
+      const user = await TestUtil.createUser();
+      let res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', '')
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(403);
+      assert.equal(res.body.error, '[FORBIDDEN] Only allow npm client to access');
+      res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', 'npm/6.3.1')
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(403);
+      assert.equal(res.body.error, '[FORBIDDEN] Only allow npm@>=7.0.0 client to access');
     });
 
     it('should 200 and get latest maintainers', async () => {
@@ -89,6 +159,8 @@ describe('test/port/controller/PackageController/updatePackage.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'owner')
         .send({
           _id: rev,
           _rev: rev,
@@ -108,6 +180,8 @@ describe('test/port/controller/PackageController/updatePackage.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'owner')
         .send({
           _id: rev,
           _rev: rev,
@@ -127,6 +201,8 @@ describe('test/port/controller/PackageController/updatePackage.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'owner')
         .send({
           _id: rev,
           _rev: rev,

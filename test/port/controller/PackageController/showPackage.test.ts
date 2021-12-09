@@ -28,6 +28,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -37,6 +38,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -46,6 +48,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -55,6 +58,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -216,6 +220,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -242,6 +247,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -268,6 +274,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -291,6 +298,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -320,6 +328,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -349,6 +358,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -376,6 +386,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);

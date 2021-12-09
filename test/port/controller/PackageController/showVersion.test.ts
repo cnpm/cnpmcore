@@ -28,6 +28,7 @@ describe('test/port/controller/PackageController/showVersion.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       const res = await app.httpRequest()
@@ -54,6 +55,7 @@ describe('test/port/controller/PackageController/showVersion.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
 
@@ -76,6 +78,7 @@ describe('test/port/controller/PackageController/showVersion.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
 

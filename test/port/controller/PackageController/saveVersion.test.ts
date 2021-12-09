@@ -25,6 +25,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -39,6 +40,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg2.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg2)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -48,6 +50,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${encodeURIComponent(pkg3.name)}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg3)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -60,6 +63,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] Scope "@somescope" not match legal scopes: "@cnpm, @example"');
@@ -67,6 +71,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] Package scope required, legal scopes: "@cnpm, @example"');
@@ -83,6 +88,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -94,6 +100,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -107,6 +114,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg2.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg2)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -123,6 +131,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist-tags version "0.1.0" not match package version "0.0.0"');
@@ -136,6 +145,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist-tags is empty');
@@ -147,6 +157,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[INVALID_PARAM] dist-tags: must be object');
@@ -160,6 +171,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[INVALID_PARAM] tag: must match format "semver-tag"');
@@ -170,6 +182,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -178,6 +191,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${notExistsName}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: notExistsName,
           versions: {
@@ -197,6 +211,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -205,6 +220,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', other.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: pkg.name,
           versions: {
@@ -224,6 +240,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -232,6 +249,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: pkg.name,
           versions: {
@@ -263,6 +281,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: pkg.name,
           versions: {
@@ -298,6 +317,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -314,6 +334,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -332,6 +353,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -350,6 +372,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -366,6 +389,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -380,6 +404,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg2.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg2)
         .expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] Can\'t modify pre-existing version: 99.0.0');
@@ -392,6 +417,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[INVALID_PARAM] version: must match format "semver-version"');
@@ -404,6 +430,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[INVALID_PARAM] version: must NOT have fewer than 5 characters');
@@ -415,6 +442,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -427,6 +455,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain special characters ("~\'!()*")');
@@ -437,6 +466,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can only contain URL-friendly characters');
@@ -447,6 +477,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters, name can no longer contain capital letters');
@@ -461,6 +492,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
@@ -473,6 +505,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
@@ -485,6 +518,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
@@ -497,6 +531,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
@@ -511,6 +546,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment size 3 not match download size 251');
@@ -525,6 +561,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist.integrity invalid');
@@ -540,6 +577,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       const res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist.shasum invalid');
@@ -550,6 +588,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       const res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] fullname(foo) not match package.name(@cnpm/testmodule)');
@@ -559,6 +598,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: 'foo',
           versions: {
@@ -575,6 +615,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: 'foo',
           versions: {
@@ -590,6 +631,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: 'foo',
           versions: {
@@ -608,6 +650,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: 'foo',
           versions: {},
@@ -620,6 +663,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: 'foo',
           versions: [],
@@ -634,6 +678,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       let res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: 'foo',
           versions: {
@@ -653,6 +698,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send({
           name: 'foo',
           'dist-tags': {},

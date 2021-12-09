@@ -28,6 +28,7 @@ describe('test/port/controller/PackageTagController/showTags.test.ts', () => {
       await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
 

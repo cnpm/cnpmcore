@@ -116,11 +116,14 @@ export class UserController extends AbstractController {
       return { ok: false };
     }
     const user = await this.userRepository.findUserByName(username);
-    return user ? {
+    if (!user) {
+      throw new NotFoundError(`User "${username}" not found`);
+    }
+    return {
       _id: `org.couchdb.user:${user.name}`,
       name: user.name,
       email: user.email,
-    } : { ok: false };
+    };
   }
 
   // https://github.com/npm/cli/blob/latest/lib/utils/get-identity.js#L20
