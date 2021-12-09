@@ -52,7 +52,7 @@
     "egg-opentracing": "^1.1.1",
     "egg-typebox-validate": "^2.0.0",
     "fresh": "^0.5.2",
-    "fs-cnpm": "^2.2.0",
+    "fs-cnpm": "^2.3.0",
     "leoric": "^1.15.0",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.0",
