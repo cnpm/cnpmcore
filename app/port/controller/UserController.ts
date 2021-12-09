@@ -7,10 +7,15 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { UnprocessableEntityError, NotFoundError, UnauthorizedError } from 'egg-errors';
+import {
+  UnprocessableEntityError,
+  NotFoundError,
+  UnauthorizedError,
+} from 'egg-errors';
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
 import { LoginResultCode } from '../../common/enum/User';
+import { sha512 } from '../../common/UserUtil';
 
 // body: {
 //   _id: 'org.couchdb.user:dddd',
@@ -103,6 +108,21 @@ export class UserController extends AbstractController {
       rev: userEntity.userId,
       token: token.token,
     };
+  }
+
+  // https://github.com/npm/cli/blob/latest/lib/commands/logout.js#L24
+  @HTTPMethod({
+    path: '/-/user/token/:token',
+    method: HTTPMethodEnum.DELETE,
+  })
+  async logout(@Context() ctx: EggContext, @HTTPParam() token: string) {
+    const authorizedUserAndToken = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    if (!authorizedUserAndToken) return { ok: false };
+    if (authorizedUserAndToken.token.tokenKey !== sha512(token)) {
+      throw new UnprocessableEntityError('invalid token');
+    }
+    await this.userService.removeToken(authorizedUserAndToken.user.userId, token);
+    return { ok: true };
   }
 
   // https://github.com/npm/cli/blob/latest/lib/commands/owner.js#L154
