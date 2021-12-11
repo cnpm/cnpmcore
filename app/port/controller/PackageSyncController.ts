@@ -27,7 +27,7 @@ export class PackageSyncController extends AbstractController {
     const [ scope, name ] = getScopeAndName(fullname);
     const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (packageEntity?.isPrivate) {
-      throw new ForbiddenError(`Can\'t sync private package "${fullname}"`); 
+      throw new ForbiddenError(`Can\'t sync private package "${fullname}"`);
     }
     const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     const task = await this.packageManagerService.createSyncPackageTask(fullname, ctx.ip, authorized?.user.userId ?? '');
@@ -73,7 +73,7 @@ export class PackageSyncController extends AbstractController {
     const task = await this.packageManagerService.findTask(taskId);
     if (!task) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" not found`);
     if (task.state === TaskState.Waiting) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" log not found`);
-    
+
     const logUrlOrStream = await this.packageManagerService.findTaskLog(task);
     if (!logUrlOrStream) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" log not found`);
     if (typeof logUrlOrStream === 'string') {

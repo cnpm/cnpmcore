@@ -38,14 +38,14 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
 
     it('should 404 when task not exists', async () => {
       const res = await app.httpRequest()
-        .get(`/-/package/koa/syncs/mock-task-id`)
+        .get('/-/package/koa/syncs/mock-task-id')
         .expect(404);
       assert.equal(res.body.error, '[NOT_FOUND] Package "koa" sync task "mock-task-id" not found');
     });
 
     it('should 200', async () => {
       let res = await app.httpRequest()
-        .put(`/-/package/koa/syncs`)
+        .put('/-/package/koa/syncs')
         .expect(201);
       assert(res.body.id);
       const task = await taskRepository.findTask(res.body.id);

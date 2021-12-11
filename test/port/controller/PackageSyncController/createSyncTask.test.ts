@@ -19,7 +19,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
     it('should 401 if user not login when alwaysAuth = true', async () => {
       mock(app.config.cnpmcore, 'alwaysAuth', true);
       const res = await app.httpRequest()
-        .put(`/-/package/koa/syncs`)
+        .put('/-/package/koa/syncs')
         .expect(401);
       assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
     });
@@ -41,7 +41,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
     it('should 201 if user login when alwaysAuth = true', async () => {
       mock(app.config.cnpmcore, 'alwaysAuth', true);
       const res = await app.httpRequest()
-        .put(`/-/package/koa/syncs`)
+        .put('/-/package/koa/syncs')
         .set('authorization', publisher.authorization)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -53,7 +53,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
     it('should 201 if user login when alwaysAuth = false', async () => {
       mock(app.config.cnpmcore, 'alwaysAuth', false);
       const res = await app.httpRequest()
-        .put(`/-/package/koa/syncs`)
+        .put('/-/package/koa/syncs')
         .set('authorization', publisher.authorization)
         .expect(201);
       assert.equal(res.body.ok, true);
@@ -63,7 +63,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
 
     it('should 201 if user not login when alwaysAuth = false', async () => {
       const res = await app.httpRequest()
-        .put(`/-/package/koa/syncs`)
+        .put('/-/package/koa/syncs')
         .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.state, 'waiting');

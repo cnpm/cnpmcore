@@ -41,14 +41,14 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
 
     it('should 404 when task not exists', async () => {
       const res = await app.httpRequest()
-        .get(`/-/package/koa/syncs/mock-task-id/log`)
+        .get('/-/package/koa/syncs/mock-task-id/log')
         .expect(404);
       assert.equal(res.body.error, '[NOT_FOUND] Package "koa" sync task "mock-task-id" not found');
     });
 
     it('should 200 and 302', async () => {
       let res = await app.httpRequest()
-        .put(`/-/package/koa/syncs`)
+        .put('/-/package/koa/syncs')
         .expect(201);
       assert(res.body.id);
       const task = await taskRepository.findTask(res.body.id);
@@ -57,7 +57,7 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
         .get(`/-/package/koa/syncs/${task!.taskId}/log`)
         .expect(404);
       assert.equal(res.body.error, `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`);
-      
+
       task!.state = TaskState.Processing;
       await taskRepository.saveTask(task!);
 
@@ -74,7 +74,7 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
         .expect('content-type', 'text/plain; charset=utf-8')
         .expect(200);
       assert.equal(res.text, 'hello log file 😄\nsencod line here');
-      
+
       // mock redirect
       mock.data(nfsAdapter.constructor.prototype, 'getDownloadUrlOrStream', 'http://mock.com/some.log');
       res = await app.httpRequest()

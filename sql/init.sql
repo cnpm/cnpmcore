@@ -205,7 +205,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `attempts` int unsigned DEFAULT 0 COMMENT 'task execute attempts times',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_task_id` (`task_id`),
-  KEY `idx_type_state_gmt_modified_attempts` (`type`, `state`, `gmt_modified`, `attempts`),
+  KEY `idx_type_state_gmt_modified` (`type`, `state`, `gmt_modified`),
   KEY `idx_gmt_modified` (`gmt_modified`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='task info';
 
