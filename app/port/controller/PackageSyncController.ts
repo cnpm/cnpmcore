@@ -10,13 +10,13 @@ import {
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil';
-import { PackageManagerService } from '../../core/service/PackageManagerService';
+import { PackageSyncerService } from '../../core/service/PackageSyncerService';
 import { TaskState } from '../../common/enum/Task';
 
 @HTTPController()
 export class PackageSyncController extends AbstractController {
   @Inject()
-  private packageManagerService: PackageManagerService;
+  private packageSyncerService: PackageSyncerService;
 
   @HTTPMethod({
     // PUT /-/package/:fullname/syncs
@@ -30,7 +30,7 @@ export class PackageSyncController extends AbstractController {
       throw new ForbiddenError(`Can\'t sync private package "${fullname}"`);
     }
     const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
-    const task = await this.packageManagerService.createSyncPackageTask(fullname, ctx.ip, authorized?.user.userId ?? '');
+    const task = await this.packageSyncerService.createTask(fullname, ctx.ip, authorized?.user.userId ?? '');
     ctx.status = 201;
     return {
       ok: true,
@@ -47,7 +47,7 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() taskId: string) {
-    const task = await this.packageManagerService.findTask(taskId);
+    const task = await this.packageSyncerService.findTask(taskId);
     if (!task) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" not found`);
     let logUrl: URL | undefined;
     if (task.state !== TaskState.Waiting) {
@@ -70,11 +70,11 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showSyncTaskLog(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() taskId: string) {
-    const task = await this.packageManagerService.findTask(taskId);
+    const task = await this.packageSyncerService.findTask(taskId);
     if (!task) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" not found`);
     if (task.state === TaskState.Waiting) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" log not found`);
 
-    const logUrlOrStream = await this.packageManagerService.findTaskLog(task);
+    const logUrlOrStream = await this.packageSyncerService.findTaskLog(task);
     if (!logUrlOrStream) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" log not found`);
     if (typeof logUrlOrStream === 'string') {
       ctx.redirect(logUrlOrStream);

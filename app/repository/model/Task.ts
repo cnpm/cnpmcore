@@ -1,5 +1,6 @@
 import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
 import { DataTypes, Bone } from 'leoric';
+import { TaskState, TaskType } from '../../common/enum/Task';
 
 @Model()
 export class Task extends Bone {
@@ -21,10 +22,10 @@ export class Task extends Bone {
   taskId: string;
 
   @Attribute(DataTypes.STRING(20))
-  type: string;
+  type: TaskType;
 
   @Attribute(DataTypes.STRING(20))
-  state: string;
+  state: TaskState;
 
   @Attribute(DataTypes.STRING(24))
   authorId: string;

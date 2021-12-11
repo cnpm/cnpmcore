@@ -28,7 +28,7 @@ export class TaskRepository extends AbstractRepository {
     if (history) {
       await ModelConvertor.saveEntityToModel(task, history);
     } else {
-      const history = await ModelConvertor.convertEntityToModel(task, TaskModel);
+      const history = await ModelConvertor.convertEntityToModel(task, HistoryTaskModel);
       this.logger.info('[TaskRepository:saveTaskToHistory:new] id: %s, taskId: %s', history.id, history.taskId);
     }
     const removeCount = await model.remove();

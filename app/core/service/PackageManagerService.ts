@@ -12,15 +12,12 @@ import fresh from 'fresh';
 import semver from 'semver';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { calculateIntegrity, formatTarball } from '../../common/PackageUtil';
-import { TaskType } from '../../common/enum/Task';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
-import { TaskRepository } from '../../repository/TaskRepository';
 import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
 import { PackageTag } from '../entity/PackageTag';
 import { User } from '../entity/User';
-import { Task } from '../entity/Task';
 import { Dist } from '../entity/Dist';
 import {
   PACKAGE_MAINTAINER_CHANGED,
@@ -63,8 +60,6 @@ export class PackageManagerService extends AbstractService {
   private readonly packageRepository: PackageRepository;
   @Inject()
   private readonly packageVersionDownloadRepository: PackageVersionDownloadRepository;
-  @Inject()
-  private readonly taskRepository: TaskRepository;
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
 
@@ -346,25 +341,6 @@ export class PackageManagerService extends AbstractService {
     await this.packageRepository.removePackageTag(tagEntity);
     await this.refreshPackageManifestsToDists(pkg);
     this.eventBus.emit(PACKAGE_TAG_REMOVED, pkg.packageId, tagEntity.packageTagId, tagEntity.tag);
-  }
-
-  public async createSyncPackageTask(fullname: string, ip: string, userId: string) {
-    const task = Task.createSyncPackage(fullname, { authorId: userId, authorIp: ip });
-    await this.taskRepository.saveTask(task);
-    return task;
-  }
-
-  public async findTask(taskId: string) {
-    const task = await this.taskRepository.findTask(taskId);
-    return task;
-  }
-
-  public async findTaskLog(task: Task) {
-    return await this.nfsAdapter.getDownloadUrlOrStream(task.logPath);
-  }
-
-  public async executeSyncPackageTask() {
-    return await this.taskRepository.executeWaitingTask(TaskType.SyncPackage);
   }
 
   /** private methods */
