@@ -63,7 +63,7 @@ export class PackageSyncerService extends AbstractService {
     return task;
   }
 
-  public async executeTask(task: Task) {
+  public async executeTask(task: Task, syncDependencies = true) {
     const { fullname } = task.data as SyncPackageParams;
     const { url, status, headers, data, res } = await this.npmRegistry.getFullManifests(fullname);
     const readme: string = data.readme;
@@ -98,6 +98,8 @@ export class PackageSyncerService extends AbstractService {
       await this.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
+
+    const dependenciesSet = new Set<string>();
 
     const [ scope, name ] = getScopeAndName(fullname);
     const { data: existsData } = await this.packageManagerService.listPackageFullManifests(scope, name, undefined);
@@ -162,6 +164,12 @@ export class PackageSyncerService extends AbstractService {
       await this.appendTaskLog(task, logs.join('\n'));
       logs = [];
       await rm(localFile, { force: true });
+      if (syncDependencies) {
+        const dependencies = item.dependencies || {};
+        for (const dependencyName in dependencies) {
+          dependenciesSet.add(dependencyName);
+        }
+      }
       // 2.1 save deprecated
     }
     logs.push(`[${isoNow()}] Synced ${syncVersionCount} versions`);
@@ -182,6 +190,12 @@ export class PackageSyncerService extends AbstractService {
     for (const user of users) {
       await this.packageManagerService.savePackageMaintainer(pkg!, user);
     }
+
+    // 5. add deps sync task
+    for (const dependencyName of dependenciesSet) {
+      const dependencyTask = await this.createTask(dependencyName, task.authorId, task.authorIp);
+      logs.push(`[${isoNow()}] Add dependency ${dependencyName} sync task: ${dependencyTask.taskId}, db id: ${dependencyTask.id}`);
+    }
     logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
     await this.finishTask(task, TaskState.Success, logs.join('\n'));
   }
@@ -197,6 +211,6 @@ export class PackageSyncerService extends AbstractService {
     console.log(appendLog);
     await this.nfsAdapter.appendBytes(task.logPath, Buffer.from(appendLog + '\n'));
     task.state = taskState;
-    await this.taskRepository.saveTask(task);
+    await this.taskRepository.saveTaskToHistory(task);
   }
 }

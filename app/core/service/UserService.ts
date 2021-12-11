@@ -78,7 +78,7 @@ export class UserService extends AbstractService {
       const passwordIntegrity = integrity(passwordSalt);
       user = UserEntity.create({
         name: storeName,
-        email: email,
+        email,
         ip: '',
         passwordSalt,
         passwordIntegrity,

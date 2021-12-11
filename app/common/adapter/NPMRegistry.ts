@@ -40,7 +40,7 @@ export class NPMRegistry implements EggObjectLifecycle {
   @AsyncTimer(INSTANCE_NAME)
   public async getFullManifests(fullname: string) {
     const url = `${this.registry}/${encodeURIComponent(fullname)}`;
-    return await this.request('GET', url)
+    return await this.request('GET', url);
   }
 
   @AsyncTimer(INSTANCE_NAME)
