@@ -190,3 +190,37 @@ CREATE TABLE IF NOT EXISTS `maintainers` (
  KEY `idx_package_id` (`package_id`),
  KEY `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='package maintainers';
+
+CREATE TABLE IF NOT EXISTS `tasks` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
+  `task_id` varchar(24) NOT NULL COMMENT 'task id',
+  `type` varchar(20) NOT NULL COMMENT 'task type',
+  `state` varchar(20) NOT NULL COMMENT 'task state',
+  `author_id` varchar(24) NOT NULL COMMENT 'create task user id',
+  `author_ip` varchar(100) NOT NULL COMMENT 'create task user request ip',
+  `data` json NULL COMMENT 'task params',
+  `log_path` varchar(512) NOT NULL COMMENT 'access path',
+  `attempts` int unsigned DEFAULT 0 COMMENT 'task execute attempts times',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_task_id` (`task_id`),
+  KEY `idx_type_state_gmt_modified_attempts` (`type`, `state`, `gmt_modified`, `attempts`),
+  KEY `idx_gmt_modified` (`gmt_modified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='task info';
+
+CREATE TABLE IF NOT EXISTS `history_tasks` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
+  `task_id` varchar(24) NOT NULL COMMENT 'task id',
+  `type` varchar(20) NOT NULL COMMENT 'task type',
+  `state` varchar(20) NOT NULL COMMENT 'task state',
+  `author_id` varchar(24) NOT NULL COMMENT 'create task user id',
+  `author_ip` varchar(100) NOT NULL COMMENT 'create task user request ip',
+  `data` json NULL COMMENT 'task params',
+  `log_path` varchar(512) NOT NULL COMMENT 'access path',
+  `attempts` int unsigned DEFAULT 0 COMMENT 'task execute attempts times',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_task_id` (`task_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='history task info';

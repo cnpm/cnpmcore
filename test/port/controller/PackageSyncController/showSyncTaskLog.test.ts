@@ -1,0 +1,86 @@
+import { strict as assert } from 'assert';
+import { Context } from 'egg';
+import { app, mock } from 'egg-mock/bootstrap';
+import { TestUtil } from 'test/TestUtil';
+import { TaskRepository } from 'app/repository/TaskRepository';
+import { TaskState } from 'app/common/enum/Task';
+import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
+
+describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', () => {
+  let publisher;
+  let ctx: Context;
+  let taskRepository: TaskRepository;
+  let nfsAdapter: NFSAdapter;
+  beforeEach(async () => {
+    publisher = await TestUtil.createUser();
+    ctx = await app.mockModuleContext();
+    taskRepository = await ctx.getEggObject(TaskRepository);
+    nfsAdapter = await ctx.getEggObject(NFSAdapter);
+  });
+
+  afterEach(() => {
+    app.destroyModuleContext(ctx);
+  });
+
+  describe('[GET /-/package/:fullname/syncs/:taskId/log] showSyncTaskLog()', () => {
+    it('should 401 if user not login when alwaysAuth = true', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa' });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      mock(app.config.cnpmcore, 'alwaysAuth', true);
+      const res = await app.httpRequest()
+        .get(`/-/package/${pkg.name}/syncs/mock-task-id/log`)
+        .expect(401);
+      assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
+    });
+
+    it('should 404 when task not exists', async () => {
+      const res = await app.httpRequest()
+        .get(`/-/package/koa/syncs/mock-task-id/log`)
+        .expect(404);
+      assert.equal(res.body.error, '[NOT_FOUND] Package "koa" sync task "mock-task-id" not found');
+    });
+
+    it('should 200 and 302', async () => {
+      let res = await app.httpRequest()
+        .put(`/-/package/koa/syncs`)
+        .expect(201);
+      assert(res.body.id);
+      const task = await taskRepository.findTask(res.body.id);
+      // waiting state logUrl is not exists
+      res = await app.httpRequest()
+        .get(`/-/package/koa/syncs/${task!.taskId}/log`)
+        .expect(404);
+      assert.equal(res.body.error, `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`);
+      
+      task!.state = TaskState.Processing;
+      await taskRepository.saveTask(task!);
+
+      // log file not exists
+      res = await app.httpRequest()
+        .get(`/-/package/koa/syncs/${task!.taskId}/log`)
+        .expect(404);
+      assert.equal(res.body.error, `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`);
+
+      // save log file
+      await nfsAdapter.uploadBytes(task!.logPath, Buffer.from('hello log file 😄\nsencod line here'));
+      res = await app.httpRequest()
+        .get(`/-/package/koa/syncs/${task!.taskId}/log`)
+        .expect('content-type', 'text/plain; charset=utf-8')
+        .expect(200);
+      assert.equal(res.text, 'hello log file 😄\nsencod line here');
+      
+      // mock redirect
+      mock.data(nfsAdapter.constructor.prototype, 'getDownloadUrlOrStream', 'http://mock.com/some.log');
+      res = await app.httpRequest()
+        .get(`/-/package/koa/syncs/${task!.taskId}/log`)
+        .expect('location', 'http://mock.com/some.log')
+        .expect(302);
+    });
+  });
+});
