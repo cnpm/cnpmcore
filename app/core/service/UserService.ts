@@ -71,7 +71,7 @@ export class UserService extends AbstractService {
   }
 
   async savePublicUser(name: string, email: string) {
-    const storeName = `npm:${name}`;
+    const storeName = name.startsWith('name:') ? name : `npm:${name}`;
     let user = await this.userRepository.findUserByName(storeName);
     if (!user) {
       const passwordSalt = crypto.randomBytes(20).toString('hex');

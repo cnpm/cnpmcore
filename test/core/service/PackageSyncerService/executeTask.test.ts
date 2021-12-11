@@ -4,6 +4,7 @@ import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
+import { Package as PackageModel } from 'app/repository/model/Package';
 import { Task as TaskModel } from 'app/repository/model/Task';
 import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
 
@@ -35,6 +36,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       for await (const chunk of stream) {
         process.stdout.write(chunk);
       }
+      const model = await PackageModel.findOne({ scope: '', name: 'foo' });
+      assert.equal(model!.isPrivate, false);
 
       // sync again
       await packageSyncerService.createTask('foo', '', '');

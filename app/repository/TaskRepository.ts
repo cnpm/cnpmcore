@@ -16,8 +16,7 @@ export class TaskRepository extends AbstractRepository {
       if (!model) return;
       await ModelConvertor.saveEntityToModel(task, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(task, TaskModel);
-      this.logger.info('[TaskRepository:saveTask:new] id: %s, taskId: %s', model.id, model.taskId);
+      await ModelConvertor.convertEntityToModel(task, TaskModel);
     }
   }
 
@@ -28,12 +27,9 @@ export class TaskRepository extends AbstractRepository {
     if (history) {
       await ModelConvertor.saveEntityToModel(task, history);
     } else {
-      const history = await ModelConvertor.convertEntityToModel(task, HistoryTaskModel);
-      this.logger.info('[TaskRepository:saveTaskToHistory:new] id: %s, taskId: %s', history.id, history.taskId);
+      await ModelConvertor.convertEntityToModel(task, HistoryTaskModel);
     }
-    const removeCount = await model.remove();
-    this.logger.info('[TaskRepository:saveTaskToHistory:removeTask] %d rows, id: %s, taskId: %s',
-      removeCount, model.id, model.taskId);
+    await model.remove();
   }
 
   async findTask(taskId: string) {
@@ -55,9 +51,9 @@ export class TaskRepository extends AbstractRepository {
 WHERE type=? AND state=? ORDER BY gmt_modified ASC LIMIT 1`;
     let result = await TaskModel.driver.query(GET_WAITING_TASK_SQL,
       [ TaskState.Processing, taskType, TaskState.Waiting ]);
-    this.logger.info('[TaskRepository:executeWaitingTask:waiting] type: %s, result: %j', taskType, result);
     // if has task, affectedRows > 0 and insertId > 0
     if (result.affectedRows && result.affectedRows > 0 && result.insertId && result.insertId > 0) {
+      this.logger.info('[TaskRepository:executeWaitingTask:waiting] type: %s, result: %j', taskType, result);
       return await TaskModel.findOne({ id: result.insertId });
     }
 
@@ -68,10 +64,10 @@ WHERE type=? AND state=? ORDER BY gmt_modified ASC LIMIT 1`;
 WHERE type=? AND state=? AND gmt_modified<? ORDER BY gmt_modified ASC LIMIT 1`;
     result = await TaskModel.driver.query(GET_TIMEOUT_TASK_SQL,
       [ TaskState.Processing, taskType, TaskState.Processing, timeoutDate ]);
-    this.logger.info('[TaskRepository:executeWaitingTask:timeout] type: %s, result: %j, timeout: %j',
-      taskType, result, timeoutDate);
     // if has task, affectedRows > 0 and insertId > 0
     if (result.affectedRows && result.affectedRows > 0 && result.insertId && result.insertId > 0) {
+      this.logger.info('[TaskRepository:executeWaitingTask:timeout] type: %s, result: %j, timeout: %j',
+        taskType, result, timeoutDate);
       return await TaskModel.findOne({ id: result.insertId });
     }
     return null;

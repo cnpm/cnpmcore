@@ -65,13 +65,28 @@ export class PackageSyncerService extends AbstractService {
 
   public async executeTask(task: Task, syncDependencies = true) {
     const { fullname } = task.data as SyncPackageParams;
-    const { url, status, headers, data, res } = await this.npmRegistry.getFullManifests(fullname);
+    let logs: string[] = [];
+    if (this.config.cnpmcore.sourceRegistryIsCNpm) {
+      logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Waiting upstream sync "${fullname}" task on ${this.npmRegistry.registry} 🚧🚧🚧🚧🚧`);
+      // create sync task on sourceRegistry
+      const upstreamTaskLogUrl = '';
+      logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${upstreamTaskLogUrl} 🟢🟢🟢🟢🟢`);
+    }
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync "${fullname}" from ${this.npmRegistry.registry} 🚧🚧🚧🚧🚧`);
+    let result;
+    try {
+      result = await this.npmRegistry.getFullManifests(fullname);
+    } catch (err: any) {
+      const status = err.status || 'unknow';
+      logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, request manifests error: ${err}, status: ${status}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+      await this.finishTask(task, TaskState.Fail, logs.join('\n'));
+      return;
+    }
+    const { url, data, headers, res, status } = result;
     const readme: string = data.readme;
     const failEnd = `❌❌❌❌❌ ${url} ❌❌❌❌❌`;
-    let logs = [
-      `[${isoNow()}] 🚧🚧🚧🚧🚧 ${url} 🚧🚧🚧🚧🚧`,
-      `[${isoNow()}] HTTP [${status}] content-length: ${headers['content-length']}, timing: ${JSON.stringify(res.timing)}`,
-    ];
+    logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${headers['content-length']}, timing: ${JSON.stringify(res.timing)}`);
 
     // 1. save maintainers
     // maintainers: [

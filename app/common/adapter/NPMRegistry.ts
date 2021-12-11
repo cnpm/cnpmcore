@@ -14,7 +14,6 @@ import {
   EggAppConfig,
 } from 'egg';
 import { HttpMethod } from 'urllib';
-import { AsyncTimer } from '../decorator/AsyncTimer';
 import dayjs from '../dayjs';
 
 const INSTANCE_NAME = 'npmRegistry';
@@ -30,20 +29,18 @@ export class NPMRegistry implements EggObjectLifecycle {
   private readonly httpclient: EggContextHttpClient;
   @Inject()
   private config: EggAppConfig;
-  private registry: string;
+  public registry: string;
   private timeout: 10000;
 
   async init() {
     this.registry = this.config.cnpmcore.sourceRegistry;
   }
 
-  @AsyncTimer(INSTANCE_NAME)
   public async getFullManifests(fullname: string) {
     const url = `${this.registry}/${encodeURIComponent(fullname)}`;
     return await this.request('GET', url);
   }
 
-  @AsyncTimer(INSTANCE_NAME)
   public async downloadTarball(tarball: string) {
     const uri = new URL(tarball);
     const tmpfile = path.join(this.config.dataDir, 'downloads', dayjs().format('YYYY/MM/DD'),
