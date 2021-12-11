@@ -3,6 +3,7 @@ import {
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
+  HTTPBody,
   Context,
   EggContext,
   Inject,
@@ -12,6 +13,7 @@ import { AbstractController } from './AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil';
 import { PackageSyncerService } from '../../core/service/PackageSyncerService';
 import { TaskState } from '../../common/enum/Task';
+import { SyncPackageTaskRule, SyncPackageTaskType } from '../typebox';
 
 @HTTPController()
 export class PackageSyncController extends AbstractController {
@@ -23,14 +25,20 @@ export class PackageSyncController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/syncs`,
     method: HTTPMethodEnum.PUT,
   })
-  async createSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
-    const [ scope, name ] = getScopeAndName(fullname);
+  async createSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: SyncPackageTaskType) {
+    const params = { fullname, tips: data.tips || '', skipDependencies: !!data.skipDependencies };
+    ctx.tValidate(SyncPackageTaskRule, params);
+    const [ scope, name ] = getScopeAndName(params.fullname);
     const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (packageEntity?.isPrivate) {
-      throw new ForbiddenError(`Can\'t sync private package "${fullname}"`);
+      throw new ForbiddenError(`Can\'t sync private package "${params.fullname}"`);
     }
     const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
-    const task = await this.packageSyncerService.createTask(fullname, ctx.ip, authorized?.user.userId ?? '');
+    const task = await this.packageSyncerService.createTask(params.fullname, {
+      authorIp: ctx.ip,
+      authorId: authorized?.user.userId,
+      tips: params.tips,
+    });
     ctx.status = 201;
     return {
       ok: true,

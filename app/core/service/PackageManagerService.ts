@@ -47,6 +47,8 @@ export interface PublishPackageCmd {
   }, 'content' | 'localFile'>;
   tag?: string;
   isPrivate: boolean;
+  // only use on sync package
+  publishTime?: Date;
 }
 
 @ContextProto({
@@ -145,6 +147,7 @@ export class PackageManagerService extends AbstractService {
       devDependencies: cmd.packageJson.devDependencies,
       bundleDependencies: cmd.packageJson.bundleDependencies,
       peerDependencies: cmd.packageJson.peerDependencies,
+      peerDependenciesMeta: cmd.packageJson.peerDependenciesMeta,
       bin: cmd.packageJson.bin,
       os: cmd.packageJson.os,
       cpu: cmd.packageJson.cpu,
@@ -165,7 +168,7 @@ export class PackageManagerService extends AbstractService {
     pkgVersion = PackageVersion.create({
       packageId: pkg.packageId,
       version: cmd.version,
-      publishTime: new Date(),
+      publishTime: cmd.publishTime || new Date(),
       manifestDist: pkg.createManifest(cmd.version, {
         size: manifestDistBytes.length,
         shasum: manifestDistIntegrity.shasum,
@@ -273,6 +276,12 @@ export class PackageManagerService extends AbstractService {
       await this.mergeManifestDist(pkgVersion.abbreviatedDist, { deprecated: message });
       await this.packageRepository.savePackageVersion(pkgVersion);
     }
+    await this.refreshPackageManifestsToDists(pkg);
+  }
+
+  public async savePackageVersionManifest(pkg: Package, pkgVersion: PackageVersion, mergeManifest: object, mergeAbbreviated: object) {
+    await this.mergeManifestDist(pkgVersion.manifestDist, mergeManifest);
+    await this.mergeManifestDist(pkgVersion.abbreviatedDist, mergeAbbreviated);
     await this.refreshPackageManifestsToDists(pkg);
   }
 

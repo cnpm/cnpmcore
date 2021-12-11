@@ -198,6 +198,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `task_id` varchar(24) NOT NULL COMMENT 'task id',
   `type` varchar(20) NOT NULL COMMENT 'task type',
   `state` varchar(20) NOT NULL COMMENT 'task state',
+  `target_name` varchar(214) NOT NULL COMMENT 'target name, like package name / user name',
   `author_id` varchar(24) NOT NULL COMMENT 'create task user id',
   `author_ip` varchar(100) NOT NULL COMMENT 'create task user request ip',
   `data` json NULL COMMENT 'task params',
@@ -205,6 +206,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `attempts` int unsigned DEFAULT 0 COMMENT 'task execute attempts times',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_task_id` (`task_id`),
+  KEY `idx_type_state_target_name` (`target_name`, `type`, `state`),
   KEY `idx_type_state_gmt_modified` (`type`, `state`, `gmt_modified`),
   KEY `idx_gmt_modified` (`gmt_modified`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='task info';
@@ -216,6 +218,7 @@ CREATE TABLE IF NOT EXISTS `history_tasks` (
   `task_id` varchar(24) NOT NULL COMMENT 'task id',
   `type` varchar(20) NOT NULL COMMENT 'task type',
   `state` varchar(20) NOT NULL COMMENT 'task state',
+  `target_name` varchar(214) NOT NULL COMMENT 'target name, like package name / user name',
   `author_id` varchar(24) NOT NULL COMMENT 'create task user id',
   `author_ip` varchar(100) NOT NULL COMMENT 'create task user request ip',
   `data` json NULL COMMENT 'task params',

@@ -58,7 +58,7 @@ describe('test/port/controller/DownloadController/showDownloads.test.ts', () => 
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
-      console.log(data);
+      // console.log(data);
       assert.equal(data.start, start);
       assert.equal(data.end, end);
       assert.equal(data.package, '@cnpm/koa');

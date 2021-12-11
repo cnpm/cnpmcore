@@ -81,6 +81,8 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       // waiting state logUrl is not exists
       assert(!res.body.logUrl);
       await app.runSchedule('SyncPackageWorker');
+      // again should work
+      await app.runSchedule('SyncPackageWorker');
 
       res = await app.httpRequest()
         .get(`/-/package/${name}/syncs/${taskId}`)
@@ -91,7 +93,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       res = await app.httpRequest()
         .get(`/-/package/${name}/syncs/${taskId}/log`)
         .expect(200);
-      console.log(res.text);
+      // console.log(res.text);
       assert.match(res.text, /🟢🟢🟢🟢🟢/);
 
       // check hasInstallScript

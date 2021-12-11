@@ -14,10 +14,10 @@ export default class SyncPackageWorker extends Subscription {
 
   async subscribe() {
     if (executing) return;
-    executing = true;
     const { ctx } = this;
     await ctx.beginModuleScope(async () => {
       const packageSyncerService: PackageSyncerService = ctx.module[cnpmcoreCore].packageSyncerService;
+      executing = true;
       try {
         const task = await packageSyncerService.findExecuteTask();
         if (!task) {

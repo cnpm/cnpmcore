@@ -23,9 +23,9 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       let task = await packageSyncerService.findExecuteTask();
       assert(!task);
 
-      await packageSyncerService.createTask('foo', '', '');
-      await packageSyncerService.createTask('foo', '', '');
-      await packageSyncerService.createTask('foo', '', '');
+      await packageSyncerService.createTask('foo');
+      await packageSyncerService.createTask('foo');
+      await packageSyncerService.createTask('foo');
       const task1 = await packageSyncerService.findExecuteTask();
       assert(task1);
       assert.equal(task1.state, 'processing');

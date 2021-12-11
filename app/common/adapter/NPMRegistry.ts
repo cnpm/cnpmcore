@@ -6,7 +6,6 @@ import {
   ContextProto,
   AccessLevel,
   Inject,
-  EggObjectLifecycle,
 } from '@eggjs/tegg';
 import {
   EggLogger,
@@ -22,18 +21,17 @@ const INSTANCE_NAME = 'npmRegistry';
   name: INSTANCE_NAME,
   accessLevel: AccessLevel.PUBLIC,
 })
-export class NPMRegistry implements EggObjectLifecycle {
+export class NPMRegistry {
   @Inject()
   private readonly logger: EggLogger;
   @Inject()
   private readonly httpclient: EggContextHttpClient;
   @Inject()
   private config: EggAppConfig;
-  public registry: string;
-  private timeout: 10000;
+  private timeout = 10000;
 
-  async init() {
-    this.registry = this.config.cnpmcore.sourceRegistry;
+  get registry(): string {
+    return this.config.cnpmcore.sourceRegistry;
   }
 
   public async getFullManifests(fullname: string) {
@@ -52,6 +50,23 @@ export class NPMRegistry implements EggObjectLifecycle {
       ...result,
       tmpfile,
     };
+  }
+
+  // app.put('/:name/sync', sync.sync);
+  public async createSyncTask(fullname: string) {
+    const url = `${this.registry}/${encodeURIComponent(fullname)}/sync?sync_upstream=true&nodeps=true`;
+    // {
+    //   ok: true,
+    //   logId: logId
+    // };
+    return await this.request('PUT', url);
+  }
+
+  // app.get('/:name/sync/log/:id', sync.getSyncLog);
+  public async getSyncTask(fullname: string, id: string, offset: number) {
+    const url = `${this.registry}/${encodeURIComponent(fullname)}/sync/log/${id}?offset=${offset}`;
+    // { ok: true, syncDone: syncDone, log: log }
+    return await this.request('GET', url);
   }
 
   private async request(method: HttpMethod, url: string, params?: object, options?: object) {

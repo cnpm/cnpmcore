@@ -44,6 +44,10 @@ export class TaskRepository extends AbstractRepository {
     }
   }
 
+  async findTaskByTargetName(targetName: string, type: TaskType, state: TaskState) {
+    return await TaskModel.findOne({ targetName, type, state });
+  }
+
   async executeWaitingTask(taskType: TaskType) {
     // https://zhuanlan.zhihu.com/p/20293493?refer=alsotang
     // Task list impl from MySQL

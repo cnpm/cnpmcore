@@ -27,6 +27,9 @@ export class HistoryTask extends Bone {
   @Attribute(DataTypes.STRING(20))
   state: TaskState;
 
+  @Attribute(DataTypes.STRING(214))
+  targetName: string;
+
   @Attribute(DataTypes.STRING(24))
   authorId: string;
 
