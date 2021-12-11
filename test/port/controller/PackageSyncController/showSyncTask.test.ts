@@ -67,5 +67,47 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       assert.match(res.body.logUrl, /^http:\/\//);
       assert.match(res.body.logUrl, /\/log$/);
     });
+
+    it('should get sucess task after schedule run', async () => {
+      const name = 'mk2test-module-cnpmsync-issue-1667';
+      let res = await app.httpRequest()
+        .put(`/-/package/${name}/syncs`)
+        .expect(201);
+      const taskId = res.body.id;
+      assert(taskId);
+      res = await app.httpRequest()
+        .get(`/-/package/${name}/syncs/${taskId}`)
+        .expect(200);
+      // waiting state logUrl is not exists
+      assert(!res.body.logUrl);
+      await app.runSchedule('SyncPackageWorker');
+
+      res = await app.httpRequest()
+        .get(`/-/package/${name}/syncs/${taskId}`)
+        .expect(200);
+      assert.equal(res.body.state, TaskState.Success);
+      assert(res.body.logUrl);
+
+      res = await app.httpRequest()
+        .get(`/-/package/${name}/syncs/${taskId}/log`)
+        .expect(200);
+      console.log(res.text);
+      assert.match(res.text, /🟢🟢🟢🟢🟢/);
+
+      // check hasInstallScript
+      res = await app.httpRequest()
+        .get(`/${name}`)
+        .expect(200);
+      let pkg = res.body.versions['3.0.0'];
+      assert(!('hasInstallScript' in pkg));
+      assert(pkg.scripts);
+      res = await app.httpRequest()
+        .get(`/${name}`)
+        .set('accept', 'application/vnd.npm.install-v1+json')
+        .expect(200);
+      pkg = res.body.versions['3.0.0'];
+      assert.equal(pkg.hasInstallScript, true);
+      assert(!pkg.scripts);
+    });
   });
 });

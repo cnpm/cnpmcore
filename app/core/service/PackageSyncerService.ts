@@ -187,7 +187,7 @@ export class PackageSyncerService extends AbstractService {
       }
       // 2.1 save deprecated
     }
-    logs.push(`[${isoNow()}] Synced ${syncVersionCount} versions`);
+    logs.push(`[${isoNow()}] 🟢 Synced ${syncVersionCount} versions`);
 
     // 3. update tags
     // "dist-tags": {
