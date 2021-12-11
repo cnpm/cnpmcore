@@ -201,14 +201,14 @@ export class PackageSyncerService extends AbstractService {
   }
 
   private async appendTaskLog(task: Task, appendLog: string) {
-    console.log(appendLog);
+    // console.log(appendLog);
     await this.nfsAdapter.appendBytes(task.logPath, Buffer.from(appendLog + '\n'));
     task.updatedAt = new Date();
     await this.taskRepository.saveTask(task);
   }
 
   private async finishTask(task: Task, taskState: TaskState, appendLog: string) {
-    console.log(appendLog);
+    // console.log(appendLog);
     await this.nfsAdapter.appendBytes(task.logPath, Buffer.from(appendLog + '\n'));
     task.state = taskState;
     await this.taskRepository.saveTaskToHistory(task);

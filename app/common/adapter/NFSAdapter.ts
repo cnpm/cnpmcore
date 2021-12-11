@@ -29,7 +29,7 @@ export class NFSAdapter {
 
   async appendBytes(storeKey: string, bytes: Uint8Array) {
     this.logger.info('[%s:appendBytes] key: %s, bytes: %d', INSTANCE_NAME, storeKey, bytes.length);
-    await this.nfsClientAdapter.client.uploadBuffer(bytes, { key: storeKey });
+    await this.nfsClientAdapter.client.appendBuffer(bytes, { key: storeKey });
   }
 
   @AsyncTimer(INSTANCE_NAME)

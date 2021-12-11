@@ -1,4 +1,5 @@
 import assert from 'assert';
+import { Readable } from 'stream';
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
@@ -29,12 +30,22 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task, false);
       assert(!await TaskModel.findOne({ taskId: task.taskId }));
       assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+      let stream = await packageSyncerService.findTaskLog(task) as Readable;
+      assert(stream);
+      for await (const chunk of stream) {
+        process.stdout.write(chunk);
+      }
 
       // sync again
       await packageSyncerService.createTask('foo', '', '');
       task = await packageSyncerService.findExecuteTask();
       assert(task);
       await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task) as Readable;
+      assert(stream);
+      for await (const chunk of stream) {
+        process.stdout.write(chunk);
+      }
 
       const manifests = await packageManagerService.listPackageFullManifests('', 'foo', undefined);
       // console.log(JSON.stringify(manifests, null, 2));
@@ -52,6 +63,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       assert(!await TaskModel.findOne({ taskId: task.taskId }));
       assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+      const stream = await packageSyncerService.findTaskLog(task) as Readable;
+      assert(stream);
+      for await (const chunk of stream) {
+        process.stdout.write(chunk);
+      }
 
       const manifests = await packageManagerService.listPackageFullManifests('@node-rs', 'xxhash', undefined);
       // console.log(JSON.stringify(manifests, null, 2));
