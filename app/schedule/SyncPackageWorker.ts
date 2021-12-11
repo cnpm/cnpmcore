@@ -27,7 +27,7 @@ export default class SyncPackageWorker extends Subscription {
           task.taskId, task.data);
         await packageSyncerService.executeTask(task);
       } finally {
-        executing = false; 
+        executing = false;
       }
     });
   }
