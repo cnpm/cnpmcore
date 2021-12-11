@@ -19,6 +19,18 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
   });
 
   describe('[PUT /:fullname] saveVersion()', () => {
+    it('should 403 when package is public', async () => {
+      const { pkg, user } = await TestUtil.createPackage({ isPrivate: false, version: '1.0.0' });
+      const pkg2 = await TestUtil.getFullPackage({ name: pkg.name, version: '2.0.0' });
+      const res = await app.httpRequest()
+        .put(`/${pkg2.name}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .send(pkg2)
+        .expect(403);
+      assert.equal(res.body.error, `[FORBIDDEN] Can\'t modify npm public package "${pkg2.name}"`);
+    });
+
     it('should add new version success on scoped package', async () => {
       const name = '@cnpm/publish-package-test';
       const pkg = await TestUtil.getFullPackage({ name, version: '0.0.0' });

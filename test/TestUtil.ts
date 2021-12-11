@@ -2,6 +2,18 @@ import * as fs from 'fs/promises';
 import mysql from 'mysql';
 import path from 'path';
 import crypto from 'crypto';
+import { getScopeAndName } from '../app/common/PackageUtil';
+
+type PackageOptions = {
+  name?: string;
+  version?: string;
+  versionObject?: object;
+  attachment?: object;
+  dist?: object;
+  readme?: string | null;
+  distTags?: object | null;
+  isPrivate?: boolean;
+};
 
 export class TestUtil {
   private static connection;
@@ -89,19 +101,20 @@ export class TestUtil {
     await Promise.all(tables.map(table => this.query(`TRUNCATE TABLE ${database}.${table};`)));
   }
 
+  static get app() {
+    if (!this._app) {
+      /* eslint @typescript-eslint/no-var-requires: "off" */
+      const bootstrap = require('egg-mock/bootstrap');
+      this._app = bootstrap.app;
+    }
+    return this._app;
+  }
+
   static getFixtures(name?: string): string {
     return path.join(__dirname, 'fixtures', name ?? '');
   }
 
-  static async getFullPackage(options?: {
-    name?: string;
-    version?: string;
-    versionObject?: object;
-    attachment?: object;
-    dist?: object;
-    readme?: string | null;
-    distTags?: object | null;
-  }): Promise<any> {
+  static async getFullPackage(options?: PackageOptions): Promise<any> {
     const fullJSONFile = this.getFixtures('exampleFullPackage.json');
     const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
     if (options) {
@@ -147,13 +160,21 @@ export class TestUtil {
     return pkg;
   }
 
-  static get app() {
-    if (!this._app) {
-      /* eslint @typescript-eslint/no-var-requires: "off" */
-      const bootstrap = require('egg-mock/bootstrap');
-      this._app = bootstrap.app;
+  static async createPackage(options?: PackageOptions) {
+    const pkg = await this.getFullPackage(options);
+    const user = await this.createUser();
+    await this.app.httpRequest()
+      .put(`/${pkg.name}`)
+      .set('authorization', user.authorization)
+      .set('user-agent', user.ua)
+      .send(pkg)
+      .expect(201);
+    if (options?.isPrivate === false) {
+      const [ scope, name ] = getScopeAndName(pkg.name);
+      const { Package: PackageModel } = require('../app/repository/model/Package');
+      await PackageModel.update({ scope, name }, { isPrivate: false });
     }
-    return this._app;
+    return { user, pkg };
   }
 
   static async createUser(user?: {
