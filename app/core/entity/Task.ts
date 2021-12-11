@@ -9,9 +9,13 @@ interface TaskData extends EntityData {
   state: TaskState;
   authorId: string;
   authorIp: string;
-  data: object;
+  data: unknown;
   logPath?: string;
 }
+
+export type SyncPackageParams = {
+  fullname: string;
+};
 
 export class Task extends Entity {
   taskId: string;
@@ -19,7 +23,7 @@ export class Task extends Entity {
   state: TaskState;
   authorId: string;
   authorIp: string;
-  data: object;
+  data: unknown;
   logPath: string;
 
   constructor(data: TaskData) {
@@ -43,7 +47,7 @@ export class Task extends Entity {
       ...options,
       type: TaskType.SyncPackage,
       state: TaskState.Waiting,
-      data: { fullname },
+      data: { fullname } as SyncPackageParams,
     };
     const task = this.create(data);
     task.logPath = `/packages/${fullname}/syncs/${dayjs().format('YYYY/MM/DDHHMM')}-${task.taskId}.log`;

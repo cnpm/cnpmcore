@@ -27,6 +27,11 @@ export class NFSAdapter {
     await this.nfsClientAdapter.client.uploadBuffer(bytes, { key: storeKey });
   }
 
+  async appendBytes(storeKey: string, bytes: Uint8Array) {
+    this.logger.info('[%s:appendBytes] key: %s, bytes: %d', INSTANCE_NAME, storeKey, bytes.length);
+    await this.nfsClientAdapter.client.uploadBuffer(bytes, { key: storeKey });
+  }
+
   @AsyncTimer(INSTANCE_NAME)
   async uploadFile(storeKey: string, file: string) {
     this.logger.info('[%s:uploadFile] key: %s, file: %s', INSTANCE_NAME, storeKey, file);

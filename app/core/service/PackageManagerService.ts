@@ -44,7 +44,6 @@ export interface PublishPackageCmd {
     content?: Uint8Array;
     // sync worker will use localFile field
     localFile?: string;
-    meta?: object;
   }, 'content' | 'localFile'>;
   tag?: string;
   isPrivate: boolean;
@@ -203,6 +202,14 @@ export class PackageManagerService extends AbstractService {
     await this.packageRepository.replacePackageMaintainers(pkg.packageId, maintainers.map(m => m.userId));
     await this.refreshPackageManifestsToDists(pkg);
     this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
+  }
+
+  async savePackageMaintainer(pkg: Package, maintainer: User) {
+    const newRecord = await this.packageRepository.savePackageMaintainer(pkg.packageId, maintainer.userId);
+    if (newRecord) {
+      await this.refreshPackageManifestsToDists(pkg);
+      this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
+    }
   }
 
   async listPackageFullManifests(scope: string, name: string, expectEtag: string | undefined) {

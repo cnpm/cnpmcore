@@ -62,6 +62,7 @@ export class UserRoleManager {
     if (authorizedUserAndToken) {
       this.currentAuthorizedToken = authorizedUserAndToken.token;
       this.currentAuthorizedUser = authorizedUserAndToken.user;
+      ctx.userId = authorizedUserAndToken.user.userId;
     }
     return authorizedUserAndToken;
   }

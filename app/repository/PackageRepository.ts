@@ -69,12 +69,14 @@ export class PackageRepository extends AbstractRepository {
   }
 
   // Package Maintainers
-  async savePackageMaintainer(packageId: string, userId: string): Promise<void> {
+  // return true meaning create new record
+  async savePackageMaintainer(packageId: string, userId: string): Promise<undefined | true> {
     let model = await MaintainerModel.findOne({ packageId, userId });
     if (!model) {
       model = await MaintainerModel.create({ packageId, userId });
       this.logger.info('[PackageRepository:addPackageMaintainer:new] id: %s, packageId: %s, userId: %s',
         model.id, model.packageId, model.userId);
+      return true;
     }
   }
 
@@ -111,6 +113,7 @@ export class PackageRepository extends AbstractRepository {
   async createPackageVersion(pkgVersionEntity: PackageVersionEntity) {
     await PackageVersionModel.transaction(async function(transaction) {
       await Promise.all([
+        // FIXME: transaction is not the options
         ModelConvertor.convertEntityToModel(pkgVersionEntity, PackageVersionModel, transaction),
         ModelConvertor.convertEntityToModel(pkgVersionEntity.manifestDist, DistModel, transaction),
         ModelConvertor.convertEntityToModel(pkgVersionEntity.tarDist, DistModel, transaction),

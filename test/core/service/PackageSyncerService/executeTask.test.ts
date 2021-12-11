@@ -2,16 +2,17 @@ import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
-import { Task as TaskModel } from 'app/repository/model/Task';
-import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
+import { PackageManagerService } from 'app/core/service/PackageManagerService';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let ctx: Context;
   let packageSyncerService: PackageSyncerService;
+  let packageManagerService: PackageManagerService;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     packageSyncerService = await ctx.getEggObject(PackageSyncerService);
+    packageManagerService = await ctx.getEggObject(PackageManagerService);
   });
 
   afterEach(async () => {
@@ -19,63 +20,46 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   });
 
   describe('executeTask()', () => {
-    it('should get a task to execute', async () => {
-      let task = await packageSyncerService.executeTask();
-      assert(!task);
-
+    it('should execute foo task', async () => {
       await packageSyncerService.createTask('foo', '', '');
-      await packageSyncerService.createTask('foo', '', '');
-      await packageSyncerService.createTask('foo', '', '');
-      const task1 = await packageSyncerService.executeTask();
-      assert(task1);
-      assert.equal(task1.state, 'processing');
-      assert(task1.updatedAt > task1.createdAt);
-      assert.equal(task1.attempts, 1);
-      // console.log(task1, task1.updatedAt.getTime() - task1.createdAt.getTime());
-      const task2 = await packageSyncerService.executeTask();
-      assert(task2);
-      assert.equal(task2.state, 'processing');
-      assert(task2.updatedAt > task2.createdAt);
-      assert.equal(task1.attempts, 1);
-      // console.log(task2, task2.updatedAt.getTime() - task2.createdAt.getTime());
-      const task3 = await packageSyncerService.executeTask();
-      assert(task3);
-      assert.equal(task3.state, 'processing');
-      assert(task3.updatedAt > task3.createdAt);
-      assert.equal(task1.attempts, 1);
-      // console.log(task3, task3.updatedAt.getTime() - task3.createdAt.getTime());
-      assert(task3.id > task2.id);
-      assert(task2.id > task1.id);
-
-      // again will empty
-      task = await packageSyncerService.executeTask();
-      assert(!task);
-
-      // mock timeout
-      await TaskModel.update({ id: task3.id }, { updatedAt: new Date(task3.updatedAt.getTime() - 60000 * 5 - 1) });
-      task = await packageSyncerService.executeTask();
+      let task = await packageSyncerService.findExecuteTask();
       assert(task);
-      assert.equal(task.id, task3.id);
-      assert(task.updatedAt > task3.updatedAt);
-      assert.equal(task.attempts, 2);
+      await packageSyncerService.executeTask(task);
 
-      // again will empty
-      task = await packageSyncerService.executeTask();
-      assert(!task);
-
-      // attempts > 3 will be set to timeout task and save to history
-      await TaskModel.update({ id: task3.id }, { updatedAt: new Date(task3.updatedAt.getTime() - 60000 * 5 - 1) });
-      task = await packageSyncerService.executeTask();
+      // sync again
+      await packageSyncerService.createTask('foo', '', '');
+      task = await packageSyncerService.findExecuteTask();
       assert(task);
-      assert.equal(task.attempts, 3);
-      await TaskModel.update({ id: task3.id }, { updatedAt: new Date(task3.updatedAt.getTime() - 60000 * 5 - 1) });
-      task = await packageSyncerService.executeTask();
-      assert(!task);
-      const history = await HistoryTaskModel.findOne({ taskId: task3.taskId });
-      assert(history);
-      assert.equal(history.state, 'timeout');
-      assert.equal(history.attempts, 3);
-      assert(!await TaskModel.findOne({ id: task3.id }));
+      await packageSyncerService.executeTask(task);
+
+      const manifests = await packageManagerService.listPackageFullManifests('', 'foo', undefined);
+      // console.log(JSON.stringify(manifests, null, 2));
+      // should have 2 maintainers
+      assert.equal(manifests.data.maintainers.length, 2);
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', 'foo', undefined);
+      // console.log(JSON.stringify(abbreviatedManifests, null, 2));
+      assert.equal(abbreviatedManifests.data.name, manifests.data.name);
+    });
+
+    it('should execute @node-rs/xxhash task, contains optionalDependencies', async () => {
+      await packageSyncerService.createTask('@node-rs/xxhash', '', '');
+      let task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+
+      // sync again
+      await packageSyncerService.createTask('@node-rs/xxhash', '', '');
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+
+      const manifests = await packageManagerService.listPackageFullManifests('@node-rs', 'xxhash', undefined);
+      // console.log(JSON.stringify(manifests, null, 2));
+      // assert.equal(manifests.data.maintainers.length, 2);
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('@node-rs', 'xxhash', undefined);
+      // console.log(JSON.stringify(abbreviatedManifests, null, 2));
+      assert.equal(abbreviatedManifests.data.name, manifests.data.name);
+      assert(abbreviatedManifests.data.versions['1.0.1'].optionalDependencies);
     });
   });
 });
