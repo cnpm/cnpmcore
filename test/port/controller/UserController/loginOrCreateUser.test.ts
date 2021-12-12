@@ -45,6 +45,37 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
       assert.equal(res.body.error, '[NOT_FOUND] User leo not exists');
     });
 
+    it('should registration forbidden when allowPublicRegistration = false', async () => {
+      mock(app.config.cnpmcore, 'allowPublicRegistration', false);
+      const res = await app.httpRequest()
+        .put('/-/user/org.couchdb.user:leo')
+        .send({
+          name: 'leo',
+          password: 'password-is-here',
+          type: 'user',
+          email: 'leo@example.com',
+        })
+        .expect(403);
+      assert.equal(res.body.error, '[FORBIDDEN] Public registration is not allowed');
+    });
+
+    it('should admin registration success when allowPublicRegistration = false', async () => {
+      mock(app.config.cnpmcore, 'allowPublicRegistration', false);
+      const res = await app.httpRequest()
+        .put('/-/user/org.couchdb.user:cnpmcore_admin')
+        .send({
+          name: 'cnpmcore_admin',
+          password: 'password-is-here',
+          type: 'user',
+          email: 'cnpmcore_admin@example.com',
+        })
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.equal(res.body.id, 'org.couchdb.user:cnpmcore_admin');
+      assert(res.body.rev);
+      assert.match(res.body.token, /^cnpm_\w+/);
+    });
+
     it('should create new user, with email', async () => {
       let res = await app.httpRequest()
         .put('/-/user/org.couchdb.user:leo')

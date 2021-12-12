@@ -7,6 +7,7 @@ import {
 } from '@eggjs/tegg';
 import {
   EggLogger,
+  EggAppConfig,
 } from 'egg';
 import { MiddlewareController } from '../middleware';
 import { UserRoleManager } from '../UserRoleManager';
@@ -20,6 +21,8 @@ import { UserService } from '../../core/service/UserService';
 export abstract class AbstractController extends MiddlewareController {
   @Inject()
   protected logger: EggLogger;
+  @Inject()
+  protected config: EggAppConfig;
   @Inject()
   protected userRoleManager: UserRoleManager;
   @Inject()
