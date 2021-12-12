@@ -91,10 +91,15 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       assert(res.body.logUrl);
 
       res = await app.httpRequest()
-        .get(`/-/package/${name}/syncs/${taskId}/log`)
-        .expect(200);
-      // console.log(res.text);
-      assert.match(res.text, /🟢🟢🟢🟢🟢/);
+        .get(`/-/package/${name}/syncs/${taskId}/log`);
+      let log = '';
+      if (res.status === 200) {
+        log = res.text;
+      } else {
+        assert.equal(res.status, 302);
+        log = await TestUtil.readStreamToLog(res.headers.location);
+      }
+      assert.match(log, /🟢🟢🟢🟢🟢/);
 
       // check hasInstallScript
       res = await app.httpRequest()

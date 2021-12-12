@@ -9,5 +9,9 @@ export default () => {
   config.orm = {
     database: process.env.MYSQL_DATABASE || 'cnpmcore_unittest',
   };
+
+  config.nfs = {
+    dir: join(config.dataDir, 'nfs'),
+  };
   return config;
 };

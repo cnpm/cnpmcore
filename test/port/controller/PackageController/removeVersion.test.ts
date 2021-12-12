@@ -35,9 +35,10 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
         .expect(200);
       const pkgVersion = res.body;
       const tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
-      await app.httpRequest()
-        .get(`${tarballUrl}`)
-        .expect(200);
+      res = await app.httpRequest()
+        .get(`${tarballUrl}`);
+      assert(res.status === 200 || res.status === 302);
+
       pkg = await TestUtil.getFullPackage({
         name: '@cnpm/foo',
         version: '2.0.0',
@@ -57,9 +58,15 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
         .expect(200);
       assert.equal(res.body.ok, true);
       res = await app.httpRequest()
-        .get(`${tarballUrl}`)
-        .expect(404);
-      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foo@1.0.0 not found');
+        .get(`${tarballUrl}`);
+      if (res.status === 404) {
+        assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foo@1.0.0 not found');
+      } else {
+        // 302
+        assert.equal(res.status, 302);
+        const { status } = await app.curl(res.headers.location);
+        assert.equal(status, 404);
+      }
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -79,7 +86,6 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
         .expect(200);
-      // console.log(res.body);
       assert(!res.body.versions);
       assert.equal(res.body.name, pkg.name);
       assert(res.body.time.unpublished);

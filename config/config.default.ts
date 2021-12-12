@@ -1,6 +1,8 @@
+import assert from 'assert';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { EggAppConfig, PowerPartial } from 'egg';
+import OSSClient from 'oss-cnpm';
 import { patchAjv } from '../app/port/typebox';
 
 export default (/* appInfo: EggAppConfig */) => {
@@ -58,6 +60,22 @@ export default (/* appInfo: EggAppConfig */) => {
     client: null,
     dir: join(config.dataDir, 'nfs'),
   };
+  // enable oss nfs store by env values
+  if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
+    assert(process.env.CNPMCORE_NFS_OSS_BUCKET, 'require env CNPMCORE_NFS_OSS_BUCKET');
+    assert(process.env.CNPMCORE_NFS_OSS_ENDPOINT, 'require env CNPMCORE_NFS_OSS_ENDPOINT');
+    assert(process.env.CNPMCORE_NFS_OSS_ID, 'require env CNPMCORE_NFS_OSS_ID');
+    assert(process.env.CNPMCORE_NFS_OSS_SECRET, 'require env CNPMCORE_NFS_OSS_SECRET');
+    config.nfs.client = new OSSClient({
+      bucket: process.env.CNPMCORE_NFS_OSS_BUCKET,
+      endpoint: process.env.CNPMCORE_NFS_OSS_ENDPOINT,
+      accessKeyId: process.env.CNPMCORE_NFS_OSS_ID,
+      accessKeySecret: process.env.CNPMCORE_NFS_OSS_SECRET,
+      defaultHeaders: {
+        'Cache-Control': 'max-age=0, s-maxage=60',
+      },
+    });
+  }
 
   config.logger = {
     enablePerformanceTimer: true,
