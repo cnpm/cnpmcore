@@ -18,7 +18,7 @@ describe('test/port/controller/PackageController/ping.test.ts', () => {
         .get('/-/ping')
         .expect(200);
       assert.equal(res.body.pong, true);
-      console.log(res.body, res.headers['x-readtime']);
+      // console.log(res.body, res.headers['x-readtime']);
     });
   });
 });

@@ -62,6 +62,7 @@ export class UserRoleManager {
     if (authorizedUserAndToken) {
       this.currentAuthorizedToken = authorizedUserAndToken.token;
       this.currentAuthorizedUser = authorizedUserAndToken.user;
+      ctx.userId = authorizedUserAndToken.user.userId;
     }
     return authorizedUserAndToken;
   }
@@ -101,6 +102,10 @@ export class UserRoleManager {
   }
 
   public async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
+    // should be private package
+    if (!pkg.isPrivate) {
+      throw new ForbiddenError(`Can\'t modify npm public package "${pkg.fullname}"`);
+    }
     const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
     const maintainer = maintainers.find(m => m.userId === user.userId);
     if (!maintainer) {

@@ -22,7 +22,7 @@ export class Package extends Bone {
   packageId: string;
 
   @Attribute(DataTypes.STRING(214))
-  scope?: string;
+  scope: string;
 
   // https://github.com/npm/npm/issues/8077#issuecomment-97258418
   // https://docs.npmjs.com/cli/v7/configuring-npm/package-json#name

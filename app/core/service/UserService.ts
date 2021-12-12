@@ -70,6 +70,27 @@ export class UserService extends AbstractService {
     return { user: userEntity, token };
   }
 
+  async savePublicUser(name: string, email: string) {
+    const storeName = name.startsWith('name:') ? name : `npm:${name}`;
+    let user = await this.userRepository.findUserByName(storeName);
+    if (!user) {
+      const passwordSalt = crypto.randomBytes(20).toString('hex');
+      const passwordIntegrity = integrity(passwordSalt);
+      user = UserEntity.create({
+        name: storeName,
+        email,
+        ip: '',
+        passwordSalt,
+        passwordIntegrity,
+        isPrivate: false,
+      });
+    } else {
+      user.email = email;
+    }
+    await this.userRepository.saveUser(user);
+    return user;
+  }
+
   async createToken(userId: string, options: CreateTokenOptions = {}) {
     // https://github.blog/2021-09-23-announcing-npms-new-access-token-format/
     // https://github.blog/2021-04-05-behind-githubs-new-authentication-token-formats/

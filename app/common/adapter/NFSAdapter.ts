@@ -21,13 +21,15 @@ export class NFSAdapter {
   @Inject()
   private readonly logger: EggLogger;
 
-  @AsyncTimer(INSTANCE_NAME)
   async uploadBytes(storeKey: string, bytes: Uint8Array) {
     this.logger.info('[%s:uploadBytes] key: %s, bytes: %d', INSTANCE_NAME, storeKey, bytes.length);
     await this.nfsClientAdapter.client.uploadBuffer(bytes, { key: storeKey });
   }
 
-  @AsyncTimer(INSTANCE_NAME)
+  async appendBytes(storeKey: string, bytes: Uint8Array) {
+    await this.nfsClientAdapter.client.appendBuffer(bytes, { key: storeKey });
+  }
+
   async uploadFile(storeKey: string, file: string) {
     this.logger.info('[%s:uploadFile] key: %s, file: %s', INSTANCE_NAME, storeKey, file);
     await this.nfsClientAdapter.client.upload(file, { key: storeKey });
@@ -39,12 +41,10 @@ export class NFSAdapter {
     await this.nfsClientAdapter.client.remove(storeKey);
   }
 
-  @AsyncTimer(INSTANCE_NAME)
   async getStream(storeKey: string): Promise<Readable | undefined> {
     return await this.nfsClientAdapter.client.createDownloadStream(storeKey);
   }
 
-  @AsyncTimer(INSTANCE_NAME)
   async getBytes(storeKey: string): Promise<Uint8Array | undefined> {
     return await this.nfsClientAdapter.client.readBytes(storeKey);
   }

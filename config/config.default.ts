@@ -9,6 +9,11 @@ export default (/* appInfo: EggAppConfig */) => {
   config.cnpmcore = {
     name: 'cnpm',
     sourceRegistry: 'https://registry.npmjs.com',
+    // upstream registry is base on cnpm/cnpmjs.org or not
+    // if your upstream is official npm registry, please turn it off
+    sourceRegistryIsCNpm: false,
+    // 3 mins
+    sourceRegistrySyncTimeout: 180000,
     registry: 'http://localhost:7001',
     // https://docs.npmjs.com/cli/v6/using-npm/config#always-auth npm <= 6
     // if `alwaysAuth=true`, all api request required access token

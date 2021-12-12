@@ -18,6 +18,7 @@ import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
 import { PackageTag } from '../entity/PackageTag';
 import { User } from '../entity/User';
+import { Dist } from '../entity/Dist';
 import {
   PACKAGE_MAINTAINER_CHANGED,
   PACKAGE_VERSION_ADDED,
@@ -26,7 +27,6 @@ import {
   PACKAGE_TAG_CHANGED,
   PACKAGE_TAG_REMOVED,
 } from '../event';
-import { Dist } from '../entity/Dist';
 import { AbstractService } from './AbstractService';
 
 export interface PublishPackageCmd {
@@ -44,10 +44,11 @@ export interface PublishPackageCmd {
     content?: Uint8Array;
     // sync worker will use localFile field
     localFile?: string;
-    meta?: object;
   }, 'content' | 'localFile'>;
   tag?: string;
   isPrivate: boolean;
+  // only use on sync package
+  publishTime?: Date;
 }
 
 @ContextProto({
@@ -146,6 +147,7 @@ export class PackageManagerService extends AbstractService {
       devDependencies: cmd.packageJson.devDependencies,
       bundleDependencies: cmd.packageJson.bundleDependencies,
       peerDependencies: cmd.packageJson.peerDependencies,
+      peerDependenciesMeta: cmd.packageJson.peerDependenciesMeta,
       bin: cmd.packageJson.bin,
       os: cmd.packageJson.os,
       cpu: cmd.packageJson.cpu,
@@ -166,7 +168,7 @@ export class PackageManagerService extends AbstractService {
     pkgVersion = PackageVersion.create({
       packageId: pkg.packageId,
       version: cmd.version,
-      publishTime: new Date(),
+      publishTime: cmd.publishTime || new Date(),
       manifestDist: pkg.createManifest(cmd.version, {
         size: manifestDistBytes.length,
         shasum: manifestDistIntegrity.shasum,
@@ -203,6 +205,14 @@ export class PackageManagerService extends AbstractService {
     await this.packageRepository.replacePackageMaintainers(pkg.packageId, maintainers.map(m => m.userId));
     await this.refreshPackageManifestsToDists(pkg);
     this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
+  }
+
+  async savePackageMaintainer(pkg: Package, maintainer: User) {
+    const newRecord = await this.packageRepository.savePackageMaintainer(pkg.packageId, maintainer.userId);
+    if (newRecord) {
+      await this.refreshPackageManifestsToDists(pkg);
+      this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
+    }
   }
 
   async listPackageFullManifests(scope: string, name: string, expectEtag: string | undefined) {
@@ -266,6 +276,12 @@ export class PackageManagerService extends AbstractService {
       await this.mergeManifestDist(pkgVersion.abbreviatedDist, { deprecated: message });
       await this.packageRepository.savePackageVersion(pkgVersion);
     }
+    await this.refreshPackageManifestsToDists(pkg);
+  }
+
+  public async savePackageVersionManifest(pkg: Package, pkgVersion: PackageVersion, mergeManifest: object, mergeAbbreviated: object) {
+    await this.mergeManifestDist(pkgVersion.manifestDist, mergeManifest);
+    await this.mergeManifestDist(pkgVersion.abbreviatedDist, mergeAbbreviated);
     await this.refreshPackageManifestsToDists(pkg);
   }
 

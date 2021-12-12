@@ -1,12 +1,12 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
-import { PackageManagerService } from '../../../app/core/service/PackageManagerService';
-import { UserService } from '../../../app/core/service/UserService';
-import { PackageRepository } from '../../../app/repository/PackageRepository';
-import { TestUtil } from '../../TestUtil';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
+import { UserService } from '../../../../app/core/service/UserService';
+import { PackageRepository } from '../../../../app/repository/PackageRepository';
+import { TestUtil } from '../../../TestUtil';
 
-describe('test/core/service/PackageManagerService.test.ts', () => {
+describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   let ctx: Context;
   let packageManagerService: PackageManagerService;
   let userService: UserService;
