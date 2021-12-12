@@ -54,7 +54,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
           type: 'user',
           email: 'leo@example.com',
         })
-        .expect(200);
+        .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.id, 'org.couchdb.user:leo');
       assert(res.body.rev);
@@ -69,7 +69,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
           password: 'password-is-here',
           type: 'user',
         })
-        .expect(200);
+        .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.id, 'org.couchdb.user:leo');
       assert(res.body.rev);
@@ -98,7 +98,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
           type: 'user',
           email: 'leo@example.com',
         })
-        .expect(200);
+        .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.id, 'org.couchdb.user:leo');
       assert(res.body.rev);
@@ -113,7 +113,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
           password: 'password-is-here',
           type: 'user',
         })
-        .expect(200);
+        .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.id, 'org.couchdb.user:leo');
       assert(res.body.rev);

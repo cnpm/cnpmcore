@@ -1,4 +1,6 @@
-import * as fs from 'fs/promises';
+import fs from 'fs/promises';
+import { tmpdir } from 'os';
+import { rmSync, mkdtempSync } from 'fs';
 import { Readable } from 'stream';
 import mysql from 'mysql';
 import path from 'path';
@@ -111,6 +113,14 @@ export class TestUtil {
     return this._app;
   }
 
+  static rm(filepath) {
+    rmSync(filepath, { recursive: true, force: true });
+  }
+
+  static mkdtemp() {
+    return mkdtempSync(path.join(tmpdir(), 'cnpmcore-unittest-'));
+  }
+
   static getFixtures(name?: string): string {
     return path.join(__dirname, 'fixtures', name ?? '');
   }
@@ -204,7 +214,7 @@ export class TestUtil {
         type: 'user',
         email,
       })
-      .expect(200);
+      .expect(201);
     let token = res.body.token;
     if (user.tokenOptions) {
       res = await this.app.httpRequest()
