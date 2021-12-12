@@ -27,6 +27,13 @@ export default (/* appInfo: EggAppConfig */) => {
     ],
     // allow publish non-scope package, disable by default
     allowPublishNonScopePackage: false,
+    // Public registration is allowed, otherwise only admins can login
+    allowPublicRegistration: true,
+    // default system admins
+    admins: {
+      // name: email
+      cnpmcore_admin: 'admin@cnpmjs.org',
+    },
   };
 
   // override config from framework / plugin
