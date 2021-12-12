@@ -42,6 +42,9 @@ export class Task extends Bone {
   @Attribute(DataTypes.STRING(512))
   logPath: string;
 
+  @Attribute(DataTypes.STRING(10))
+  logStorePosition: string;
+
   @Attribute(DataTypes.INTEGER)
   attempts: number;
 }

@@ -32,22 +32,37 @@ describe('test/port/controller/DownloadController/showDownloads.test.ts', () => 
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
-      await app.httpRequest()
-        .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
-        .expect('content-type', 'application/octet-stream')
-        .expect(200);
-      await app.httpRequest()
-        .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
-        .expect('content-type', 'application/octet-stream')
-        .expect(200);
-      await app.httpRequest()
-        .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
-        .expect('content-type', 'application/octet-stream')
-        .expect(200);
-      await app.httpRequest()
-        .get(`/${pkg.name}/-/koa-2.0.0.tgz`)
-        .expect('content-type', 'application/octet-stream')
-        .expect(200);
+      if (app.config.nfs.client) {
+        await app.httpRequest()
+          .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
+          .expect(302);
+        await app.httpRequest()
+          .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
+          .expect(302);
+        await app.httpRequest()
+          .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
+          .expect(302);
+        await app.httpRequest()
+          .get(`/${pkg.name}/-/koa-2.0.0.tgz`)
+          .expect(302);
+      } else {
+        await app.httpRequest()
+          .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
+          .expect('content-type', 'application/octet-stream')
+          .expect(200);
+        await app.httpRequest()
+          .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
+          .expect('content-type', 'application/octet-stream')
+          .expect(200);
+        await app.httpRequest()
+          .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
+          .expect('content-type', 'application/octet-stream')
+          .expect(200);
+        await app.httpRequest()
+          .get(`/${pkg.name}/-/koa-2.0.0.tgz`)
+          .expect('content-type', 'application/octet-stream')
+          .expect(200);
+      }
 
       await app.runSchedule('SavePackageVersionDownloadCounter');
 
@@ -75,10 +90,16 @@ describe('test/port/controller/DownloadController/showDownloads.test.ts', () => 
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
-      await app.httpRequest()
-        .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
-        .expect('content-type', 'application/octet-stream')
-        .expect(200);
+      if (app.config.nfs.client) {
+        await app.httpRequest()
+          .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
+          .expect(302);
+      } else {
+        await app.httpRequest()
+          .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
+          .expect('content-type', 'application/octet-stream')
+          .expect(200);
+      }
 
       await app.runSchedule('SavePackageVersionDownloadCounter');
 

@@ -16,7 +16,7 @@ on:
     - cron: '0 2 * * *'
 
 jobs:
-  test-mysql57:
+  test-mysql57-fs-nfs:
     runs-on: ${{ matrix.os }}
 
     services:
@@ -49,6 +49,50 @@ jobs:
 
     - name: Continuous Integration
       run: npm run ci
+
+    - name: Code Coverage
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+  test-mysql57-oss-nfs:
+    runs-on: ${{ matrix.os }}
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_DATABASE: cnpmcore_unittest
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16]
+        os: [ubuntu-latest]
+
+    steps:
+    - name: Checkout Git Source
+      uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Dependencies
+      run: npm i -g npminstall && npminstall
+
+    - name: Continuous Integration
+      run: npm run ci
+      env:
+        CNPMCORE_NFS_TYPE: oss
+        CNPMCORE_NFS_OSS_BUCKET: cnpmcore-unittest-github
+        CNPMCORE_NFS_OSS_ENDPOINT: https://oss-us-west-1.aliyuncs.com
+        CNPMCORE_NFS_OSS_ID: ${{ secrets.CNPMCORE_NFS_OSS_ID }}
+        CNPMCORE_NFS_OSS_SECRET: ${{ secrets.CNPMCORE_NFS_OSS_SECRET }}
 
     - name: Code Coverage
       uses: codecov/codecov-action@v1

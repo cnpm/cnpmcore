@@ -35,11 +35,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
       const stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      const chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const log = Buffer.concat(chunks).toString();
+      const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       const model = await PackageModel.findOne({ scope: '', name: 'foo' });
       assert.equal(model!.isPrivate, false);
@@ -50,12 +46,6 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       task = await packageSyncerService.findExecuteTask();
       assert(task);
       await packageSyncerService.executeTask(task);
-      // stream = await packageSyncerService.findTaskLog(task) as Readable;
-      // assert(stream);
-      // for await (const chunk of stream) {
-      //   process.stdout.write(chunk);
-      // }
-
       const manifests = await packageManagerService.listPackageFullManifests('', 'foo', undefined);
       // console.log(JSON.stringify(manifests, null, 2));
       // should have 2 maintainers
@@ -115,11 +105,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      let chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      let log = Buffer.concat(chunks).toString();
+      let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('] Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
 
@@ -132,11 +118,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      chunks = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      log = Buffer.concat(chunks).toString();
+      log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('Sync cause by "cnpmcore-test-sync-dependencies" dependencies, parent task: '));
     });
@@ -152,11 +134,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      const chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const log = Buffer.concat(chunks).toString();
+      const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('] Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
       assert(log.includes('][UP] 🚧🚧🚧🚧🚧 Waiting sync "cnpmcore-test-sync-dependencies" task on https://r.cnpmjs.org 🚧'));
@@ -175,11 +153,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      const chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const log = Buffer.concat(chunks).toString();
+      const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
       assert(log.includes(`][UP] ❌ Sync ${name} fail, create sync task error:`));
@@ -197,11 +171,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      const chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const log = Buffer.concat(chunks).toString();
+      const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
       assert(log.includes(`][UP] ❌ Sync ${name} fail, missing logId`));
@@ -225,13 +195,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
-      const stream = await packageSyncerService.findTaskLog(task) as Readable;
+      const stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
-      const chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const log = Buffer.concat(chunks).toString();
+      const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
       assert(log.includes('][UP] 🚧 HTTP [200]'));
@@ -250,11 +216,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      const chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const log = Buffer.concat(chunks).toString();
+      const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
       assert(log.includes(`][UP] ❌ Sync ${name} fail, timeout`));
@@ -270,11 +232,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      const chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const log = Buffer.concat(chunks).toString();
+      const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
       assert(log.includes(`❌ Synced ${name} fail, request manifests error`));
@@ -296,11 +254,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      const chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const log = Buffer.concat(chunks).toString();
+      const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
       assert(log.includes('❌ Invalid maintainers: '));
@@ -333,11 +287,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      const chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const log = Buffer.concat(chunks).toString();
+      const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
       assert(log.includes('❌ Synced version 1.0.0 fail, missing tarball, dist: '));
@@ -373,11 +323,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      const chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const log = Buffer.concat(chunks).toString();
+      const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
       assert(log.includes('❌ All versions sync fail, package not exists'));
@@ -394,11 +340,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      let chunks: any[] = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      let log = Buffer.concat(chunks).toString();
+      let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('🟢 Synced version 2.0.0 success, different meta: {"peerDependenciesMeta":{"bufferutil":{"optional":true},"utf-8-validate":{"optional":true}},"os":["linux"],"cpu":["x64"]}'));
       assert(log.includes('Z] 👉👉👉👉👉 Tips: sync test tips here 👈👈👈👈👈'));
@@ -422,11 +364,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task) as Readable;
       assert(stream);
-      chunks = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      log = Buffer.concat(chunks).toString();
+      log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(!log.includes('🟢 Synced version 2.0.0 success, different meta:'));
     });

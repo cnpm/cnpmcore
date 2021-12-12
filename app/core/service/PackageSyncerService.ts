@@ -337,14 +337,33 @@ export class PackageSyncerService extends AbstractService {
   }
 
   private async appendTaskLog(task: Task, appendLog: string) {
-    await this.nfsAdapter.appendBytes(task.logPath, Buffer.from(appendLog + '\n'));
+    const nextPosition = await this.nfsAdapter.appendBytes(
+      task.logPath,
+      Buffer.from(appendLog + '\n'),
+      task.logStorePosition,
+      {
+        'Content-Type': 'text/plain; charset=utf-8',
+      },
+    );
+    if (nextPosition) {
+      task.logStorePosition = nextPosition;
+    }
     task.updatedAt = new Date();
     await this.taskRepository.saveTask(task);
   }
 
   private async finishTask(task: Task, taskState: TaskState, appendLog: string) {
-    // console.log(appendLog);
-    await this.nfsAdapter.appendBytes(task.logPath, Buffer.from(appendLog + '\n'));
+    const nextPosition = await this.nfsAdapter.appendBytes(
+      task.logPath,
+      Buffer.from(appendLog + '\n'),
+      task.logStorePosition,
+      {
+        'Content-Type': 'text/plain; charset=utf-8',
+      },
+    );
+    if (nextPosition) {
+      task.logStorePosition = nextPosition;
+    }
     task.state = taskState;
     await this.taskRepository.saveTaskToHistory(task);
   }

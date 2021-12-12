@@ -203,6 +203,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `author_ip` varchar(100) NOT NULL COMMENT 'create task user request ip',
   `data` json NULL COMMENT 'task params',
   `log_path` varchar(512) NOT NULL COMMENT 'access path',
+  `log_store_position` varchar(10) NOT NULL COMMENT 'cloud store disk position',
   `attempts` int unsigned DEFAULT 0 COMMENT 'task execute attempts times',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_task_id` (`task_id`),
@@ -223,6 +224,7 @@ CREATE TABLE IF NOT EXISTS `history_tasks` (
   `author_ip` varchar(100) NOT NULL COMMENT 'create task user request ip',
   `data` json NULL COMMENT 'task params',
   `log_path` varchar(512) NOT NULL COMMENT 'access path',
+  `log_store_position` varchar(10) NOT NULL COMMENT 'cloud store disk position',
   `attempts` int unsigned DEFAULT 0 COMMENT 'task execute attempts times',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_task_id` (`task_id`)

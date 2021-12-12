@@ -1,4 +1,5 @@
 import * as fs from 'fs/promises';
+import { Readable } from 'stream';
 import mysql from 'mysql';
 import path from 'path';
 import crypto from 'crypto';
@@ -244,5 +245,20 @@ export class TestUtil {
       token,
       authorization: `Bearer ${token}`,
     };
+  }
+
+  static async readStreamToLog(urlOrStream) {
+    let stream: Readable;
+    if (typeof urlOrStream === 'string') {
+      const { res } = await this.app.curl(urlOrStream, { streaming: true });
+      stream = res;
+    } else {
+      stream = urlOrStream;
+    }
+    const chunks: any[] = [];
+    for await (const chunk of stream) {
+      chunks.push(chunk);
+    }
+    return Buffer.concat(chunks).toString();
   }
 }

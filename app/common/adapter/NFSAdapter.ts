@@ -23,11 +23,28 @@ export class NFSAdapter {
 
   async uploadBytes(storeKey: string, bytes: Uint8Array) {
     this.logger.info('[%s:uploadBytes] key: %s, bytes: %d', INSTANCE_NAME, storeKey, bytes.length);
+    if (this.nfsClientAdapter.client.uploadBytes) {
+      return await this.nfsClientAdapter.client.uploadBytes(bytes, { key: storeKey });
+    }
     await this.nfsClientAdapter.client.uploadBuffer(bytes, { key: storeKey });
   }
 
-  async appendBytes(storeKey: string, bytes: Uint8Array) {
-    await this.nfsClientAdapter.client.appendBuffer(bytes, { key: storeKey });
+  // will return next store position
+  async appendBytes(storeKey: string, bytes: Uint8Array, position?: string, headers?: object) {
+    let result;
+    // make sure position is undefined by the first time
+    if (!position) position = undefined;
+    const options = {
+      key: storeKey,
+      position,
+      headers,
+    };
+    if (this.nfsClientAdapter.client.appendBytes) {
+      result = await this.nfsClientAdapter.client.appendBytes(bytes, options);
+    } else {
+      result = await this.nfsClientAdapter.client.appendBuffer(bytes, options);
+    }
+    if (result?.nextAppendPosition) return String(result.nextAppendPosition);
   }
 
   async uploadFile(storeKey: string, file: string) {

@@ -12,6 +12,7 @@ interface TaskData extends EntityData {
   authorIp: string;
   data: unknown;
   logPath?: string;
+  logStorePosition?: string;
 }
 
 export type SyncPackageTaskOptions = {
@@ -30,6 +31,7 @@ export class Task extends Entity {
   authorIp: string;
   data: unknown;
   logPath: string;
+  logStorePosition: string;
 
   constructor(data: TaskData) {
     super(data);
@@ -41,6 +43,7 @@ export class Task extends Entity {
     this.authorIp = data.authorIp;
     this.data = data.data;
     this.logPath = data.logPath ?? '';
+    this.logStorePosition = data.logStorePosition ?? '';
   }
 
   private static create(data: EasyData<TaskData, 'taskId'>): Task {

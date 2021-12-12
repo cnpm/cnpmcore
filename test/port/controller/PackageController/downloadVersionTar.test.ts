@@ -59,6 +59,7 @@ describe('test/port/controller/PackageController/downloadVersionTar.test.ts', ()
     });
 
     it('should download a version tar with streaming success', async () => {
+      mock(nfsClientAdapter.client, 'url', 'not-function');
       await app.httpRequest()
         .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`)
         .expect('content-type', 'application/octet-stream')
@@ -81,6 +82,7 @@ describe('test/port/controller/PackageController/downloadVersionTar.test.ts', ()
         .send(pkg)
         .expect(201);
 
+      mock(nfsClientAdapter.client, 'url', 'not-function');
       await app.httpRequest()
         .get(`/${pkg.name}/-/${pkg.name}-1.0.0.tgz`)
         .expect('content-type', 'application/octet-stream')

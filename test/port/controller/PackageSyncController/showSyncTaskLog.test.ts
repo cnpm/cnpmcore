@@ -54,26 +54,42 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
       const task = await taskRepository.findTask(res.body.id);
       // waiting state logUrl is not exists
       res = await app.httpRequest()
-        .get(`/-/package/koa/syncs/${task!.taskId}/log`)
-        .expect(404);
-      assert.equal(res.body.error, `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`);
+        .get(`/-/package/koa/syncs/${task!.taskId}/log`);
+      if (res.status === 404) {
+        assert.equal(res.body.error, `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`);
+      } else {
+        assert.equal(res.status, 302);
+        const { status } = await app.curl(res.headers.location);
+        assert.equal(status, 404);
+      }
 
       task!.state = TaskState.Processing;
       await taskRepository.saveTask(task!);
 
       // log file not exists
       res = await app.httpRequest()
-        .get(`/-/package/koa/syncs/${task!.taskId}/log`)
-        .expect(404);
-      assert.equal(res.body.error, `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`);
+        .get(`/-/package/koa/syncs/${task!.taskId}/log`);
+      if (res.status === 404) {
+        assert.equal(res.body.error, `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`);
+      } else {
+        assert.equal(res.status, 302);
+        const { status } = await app.curl(res.headers.location);
+        assert.equal(status, 404);
+      }
 
       // save log file
       await nfsAdapter.uploadBytes(task!.logPath, Buffer.from('hello log file 😄\nsencod line here'));
       res = await app.httpRequest()
-        .get(`/-/package/koa/syncs/${task!.taskId}/log`)
-        .expect('content-type', 'text/plain; charset=utf-8')
-        .expect(200);
-      assert.equal(res.text, 'hello log file 😄\nsencod line here');
+        .get(`/-/package/koa/syncs/${task!.taskId}/log`);
+      if (res.status === 200) {
+        assert.equal(res.text, 'hello log file 😄\nsencod line here');
+        assert.equal(res.headers['content-type'], 'text/plain; charset=utf-8');
+      } else {
+        assert.equal(res.status, 302);
+        assert(res.headers.location);
+        const log = await TestUtil.readStreamToLog(res.headers.location);
+        assert.equal(log, 'hello log file 😄\nsencod line here');
+      }
 
       // mock redirect
       mock.data(nfsAdapter.constructor.prototype, 'getDownloadUrlOrStream', 'http://mock.com/some.log');
