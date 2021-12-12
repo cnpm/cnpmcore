@@ -1,0 +1,11 @@
+{
+  "name": "@cnpm/foo",
+  "version": "1.0.0",
+  "description": "cnpmcore local test package",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"hello\""
+  },
+  "author": "",
+  "license": "MIT"
+}

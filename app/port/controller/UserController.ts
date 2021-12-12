@@ -80,6 +80,7 @@ export class UserController extends AbstractController {
     if (result.code === LoginResultCode.Success) {
       // login success
       // TODO: 2FA feature
+      ctx.status = 201;
       return {
         ok: true,
         id: `org.couchdb.user:${result.user?.name}`,
@@ -102,6 +103,7 @@ export class UserController extends AbstractController {
       email: user.email,
       ip: ctx.ip,
     });
+    ctx.status = 201;
     return {
       ok: true,
       id: `org.couchdb.user:${userEntity.name}`,
