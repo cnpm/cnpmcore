@@ -49,6 +49,8 @@ export interface PublishPackageCmd {
   isPrivate: boolean;
   // only use on sync package
   publishTime?: Date;
+  // only use on sync package for speed up https://github.com/cnpm/cnpmcore/issues/28
+  skipRefreshPackageManifests?: boolean;
 }
 
 @ContextProto({
@@ -196,7 +198,9 @@ export class PackageManagerService extends AbstractService {
       await this.savePackageTag(pkg, cmd.tag, cmd.version);
     }
 
-    await this.refreshPackageManifestsToDists(pkg);
+    if (cmd.skipRefreshPackageManifests !== true) {
+      await this.refreshPackageManifestsToDists(pkg);
+    }
     this.eventBus.emit(PACKAGE_VERSION_ADDED, pkgVersion.packageId, pkgVersion.packageVersionId, pkgVersion.version);
     return pkgVersion;
   }
@@ -207,9 +211,15 @@ export class PackageManagerService extends AbstractService {
     this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
   }
 
-  async savePackageMaintainer(pkg: Package, maintainer: User) {
-    const newRecord = await this.packageRepository.savePackageMaintainer(pkg.packageId, maintainer.userId);
-    if (newRecord) {
+  async savePackageMaintainers(pkg: Package, maintainers: User[]) {
+    let hasNewRecord = false;
+    for (const maintainer of maintainers) {
+      const newRecord = await this.packageRepository.savePackageMaintainer(pkg.packageId, maintainer.userId);
+      if (newRecord) {
+        hasNewRecord = true;
+      }
+    }
+    if (hasNewRecord) {
       await this.refreshPackageManifestsToDists(pkg);
       this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
     }
@@ -279,10 +289,9 @@ export class PackageManagerService extends AbstractService {
     await this.refreshPackageManifestsToDists(pkg);
   }
 
-  public async savePackageVersionManifest(pkg: Package, pkgVersion: PackageVersion, mergeManifest: object, mergeAbbreviated: object) {
+  public async savePackageVersionManifest(pkgVersion: PackageVersion, mergeManifest: object, mergeAbbreviated: object) {
     await this.mergeManifestDist(pkgVersion.manifestDist, mergeManifest);
     await this.mergeManifestDist(pkgVersion.abbreviatedDist, mergeAbbreviated);
-    await this.refreshPackageManifestsToDists(pkg);
   }
 
   public async removePackageVersion(pkg: Package, pkgVersion: PackageVersion) {
@@ -359,6 +368,18 @@ export class PackageManagerService extends AbstractService {
     this.eventBus.emit(PACKAGE_TAG_REMOVED, pkg.packageId, tagEntity.packageTagId, tagEntity.tag);
   }
 
+  // refresh package full manifests and abbreviated manifests to NFS
+  public async refreshPackageManifestsToDists(pkg: Package) {
+    const [
+      fullManifests,
+      abbreviatedManifests,
+    ] = await Promise.all([
+      await this._listPackageFullManifests(pkg),
+      await this._listPackageAbbreviatedManifests(pkg),
+    ]);
+    await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+  }
+
   /** private methods */
 
   private async mergeManifestDist(manifestDist: Dist, mergeData?: any, replaceData?: any) {
@@ -390,17 +411,6 @@ export class PackageManagerService extends AbstractService {
     const reqHeaders = { 'if-none-match': expectEtag };
     const resHeaders = { etag: currentEtag };
     return fresh(reqHeaders, resHeaders);
-  }
-
-  private async refreshPackageManifestsToDists(pkg: Package) {
-    const [
-      fullManifests,
-      abbreviatedManifests,
-    ] = await Promise.all([
-      await this._listPackageFullManifests(pkg),
-      await this._listPackageAbbreviatedManifests(pkg),
-    ]);
-    await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
   }
 
   private async updatePackageManifestsToDists(pkg: Package, fullManifests: object | null, abbreviatedManifests: object | null): Promise<void> {

@@ -266,6 +266,7 @@ export class PackageSyncerService extends AbstractService {
         },
         isPrivate: false,
         publishTime,
+        skipRefreshPackageManifests: true,
       }, users[0]);
       syncVersionCount++;
       logs.push(`[${isoNow()}] 🟢 Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
@@ -291,12 +292,13 @@ export class PackageSyncerService extends AbstractService {
     // 2.1 save differentMetas
     for (const [ existsItem, diffMeta ] of differentMetas) {
       const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsItem.version);
-      await this.packageManagerService.savePackageVersionManifest(pkg, pkgVersion!, diffMeta, diffMeta);
+      await this.packageManagerService.savePackageVersionManifest(pkgVersion!, diffMeta, diffMeta);
       syncVersionCount++;
       logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${JSON.stringify(diffMeta)}`);
     }
 
     if (syncVersionCount > 0) {
+      await this.packageManagerService.refreshPackageManifestsToDists(pkg);
       logs.push(`[${isoNow()}] 🟢 Synced ${syncVersionCount} versions`);
     }
 
@@ -312,9 +314,7 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}] 🟢 Synced tags: ${JSON.stringify(distTags)}`);
 
     // 4. add package maintainers
-    for (const user of users) {
-      await this.packageManagerService.savePackageMaintainer(pkg!, user);
-    }
+    await this.packageManagerService.savePackageMaintainers(pkg, users);
 
     // 5. add deps sync task
     for (const dependencyName of dependenciesSet) {
