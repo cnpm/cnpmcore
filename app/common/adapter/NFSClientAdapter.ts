@@ -29,6 +29,10 @@ export class NFSClientAdapter implements EggObjectLifecycle {
       this._client = this.config.nfs.client;
       return;
     }
+    if (this.config.env === 'prod') {
+      throw new Error('[NFSAdapter] Can\'t use local fs NFS on production env');
+    }
+
     // try to use fs-cnpm, don't use it on production env
     this.logger.warn('[NFSAdapter] Don\'t use local fs NFS on production env, store on %s', this.config.nfs.dir);
     this._client = new FSClient({ dir: this.config.nfs.dir });
