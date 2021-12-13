@@ -20,7 +20,9 @@
     "clean": "tsc -b --clean && rm -rf dist",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "rm -rf dist && tsc -p ./tsconfig.prod.json",
-    "prepublishOnly": "npm run tsc:prod"
+    "prepublishOnly": "npm run tsc:prod",
+    "start": "eggctl start --daemon",
+    "stop": "eggctl stop"
   },
   "repository": {
     "type": "git",
@@ -50,6 +52,7 @@
     "egg": "^2.29.4",
     "egg-errors": "^2.3.0",
     "egg-opentracing": "^1.1.1",
+    "egg-scripts": "^2.15.2",
     "egg-typebox-validate": "^2.0.0",
     "fresh": "^0.5.2",
     "fs-cnpm": "^2.4.0",
