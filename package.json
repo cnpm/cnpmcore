@@ -18,8 +18,8 @@
     "cov": "npm run prepare-database && egg-bin cov -r tsconfig-paths/register --full-trace",
     "ci": "npm run lint && npm run cov",
     "clean": "tsc -b --clean && rm -rf dist",
-    "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:prod": "rm -rf dist && tsc -p ./tsconfig.prod.json",
+    "tsc": "npm run clean && ets && tsc -p ./tsconfig.json",
+    "tsc:prod": "rm -rf dist && ets && tsc -p ./tsconfig.prod.json",
     "prepublishOnly": "npm run tsc:prod",
     "start": "eggctl start --daemon",
     "stop": "eggctl stop"
