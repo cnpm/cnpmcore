@@ -73,15 +73,9 @@ export default (/* appInfo: EggAppConfig */) => {
     assert(process.env.CNPMCORE_NFS_OSS_ENDPOINT, 'require env CNPMCORE_NFS_OSS_ENDPOINT');
     assert(process.env.CNPMCORE_NFS_OSS_ID, 'require env CNPMCORE_NFS_OSS_ID');
     assert(process.env.CNPMCORE_NFS_OSS_SECRET, 'require env CNPMCORE_NFS_OSS_SECRET');
-    const endpoint = process.env.CNPMCORE_NFS_OSS_ENDPOINT;
-    let cdnBaseUrl = process.env.CNPMCORE_NFS_OSS_CDN;
-    if (!cdnBaseUrl) {
-      // get from endpoint, https://region-name-internal.aliyuncs.com => https://region-name.aliyuncs.com
-      cdnBaseUrl = endpoint.replace('-internal.', '.');
-    }
     config.nfs.client = new OSSClient({
-      cdnBaseUrl,
-      endpoint,
+      cdnBaseUrl: process.env.CNPMCORE_NFS_OSS_CDN,
+      endpoint: process.env.CNPMCORE_NFS_OSS_ENDPOINT,
       bucket: process.env.CNPMCORE_NFS_OSS_BUCKET,
       accessKeyId: process.env.CNPMCORE_NFS_OSS_ID,
       accessKeySecret: process.env.CNPMCORE_NFS_OSS_SECRET,
