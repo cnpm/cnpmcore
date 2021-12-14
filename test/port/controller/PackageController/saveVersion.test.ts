@@ -107,6 +107,54 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
     });
 
+    it('should publish 102 chars length version', async () => {
+      // https://github.com/cnpm/cnpmcore/issues/36
+      const user = await userRepository.findUserByName(publisher.name);
+      assert(user);
+      user.scopes = [ '@inrupt' ];
+      await userRepository.saveUser(user);
+      const name = '@inrupt/solid-client';
+      const version = '0.0.2-dependabotnpmandyarnwebsitedocusauruspreset-classic-200-alpha61-192892303-618.0';
+      const pkg = await TestUtil.getFullPackage({ name, version });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .expect(200);
+      assert.equal(res.body.versions[version].version, version);
+    });
+
+    it('should publish 100+ chars length name', async () => {
+      // https://github.com/cnpm/cnpmcore/issues/36
+      const user = await userRepository.findUserByName(publisher.name);
+      assert(user);
+      user.scopes = [ '@inrupt' ];
+      await userRepository.saveUser(user);
+      const name = '@inrupt/solid-client-0.0.2-dependabotnpmandyarnwebsitedocusauruspreset-classic-200-alpha61-192892303-618.0';
+      const version = '0.0.2-200-alpha61-192892303-618.0';
+      const pkg = await TestUtil.getFullPackage({ name, version });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .expect(200);
+      assert.equal(res.body.versions[version].version, version);
+    });
+
     it('should add new version success', async () => {
       const pkg = await TestUtil.getFullPackage({ version: '0.0.0' });
       let res = await app.httpRequest()
