@@ -125,11 +125,7 @@ export class PackageController extends AbstractController {
     const [ scope, name ] = getScopeAndName(fullname);
     const pkg = await this.getPackageEntity(scope, name);
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
-    const [ packageVersionJson, readme ] = await Promise.all([
-      this.packageManagerService.readDistBytesToJSON(packageVersion.manifestDist),
-      this.packageManagerService.readDistBytesToString(packageVersion.readmeDist),
-    ]);
-    packageVersionJson.readme = readme;
+    const packageVersionJson = await this.packageManagerService.findPackageVersionManifest(packageVersion.packageId, version);
     return packageVersionJson;
   }
 

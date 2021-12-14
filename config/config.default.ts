@@ -10,7 +10,7 @@ export default (/* appInfo: EggAppConfig */) => {
 
   config.cnpmcore = {
     name: 'cnpm',
-    sourceRegistry: 'https://registry.npmjs.com',
+    sourceRegistry: 'https://registry.npmjs.org',
     // upstream registry is base on cnpm/cnpmjs.org or not
     // if your upstream is official npm registry, please turn it off
     sourceRegistryIsCNpm: false,
@@ -23,6 +23,7 @@ export default (/* appInfo: EggAppConfig */) => {
     // white scope list
     allowScopes: [
       '@cnpm',
+      '@cnpmcore',
       '@example',
     ],
     // allow publish non-scope package, disable by default

@@ -73,7 +73,7 @@ export class PackageSyncerService extends AbstractService {
     const failEnd = `❌❌❌❌❌ Sync ${registry}/${fullname} 🚮 give up 🚮 ❌❌❌❌❌`;
     try {
       const { data, status, res } = await this.npmRegistry.createSyncTask(fullname);
-      logs.push(`[${isoNow()}][UP] HTTP [${status}] timing: ${JSON.stringify(res.timing)}, data: ${JSON.stringify(data)}`);
+      logs.push(`[${isoNow()}][UP] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, data: ${JSON.stringify(data)}`);
       logId = data.logId;
     } catch (err: any) {
       const status = err.status || 'unknow';
@@ -167,12 +167,12 @@ export class PackageSyncerService extends AbstractService {
     const maintainers = data.maintainers;
     const users: User[] = [];
     if (Array.isArray(maintainers) && maintainers.length > 0) {
-      logs.push(`[${isoNow()}] Syncing maintainers: ${JSON.stringify(maintainers)}`);
+      logs.push(`[${isoNow()}] 🚧 Syncing maintainers: ${JSON.stringify(maintainers)}`);
       for (const maintainer of maintainers) {
         if (maintainer.name && maintainer.email) {
           const user = await this.userService.savePublicUser(maintainer.name, maintainer.email);
           users.push(user);
-          logs.push(`[${isoNow()}] Synced ${maintainer.name} => ${user.name}(${user.userId})`);
+          logs.push(`[${isoNow()}] 🚧 Synced ${maintainer.name} => ${user.name}(${user.userId})`);
         }
       }
     }
@@ -188,18 +188,23 @@ export class PackageSyncerService extends AbstractService {
     const dependenciesSet = new Set<string>();
 
     const [ scope, name ] = getScopeAndName(fullname);
-    const { data: existsData } = await this.packageManagerService.listPackageFullManifests(scope, name, undefined);
+    let pkg = await this.packageRepository.findPackage(scope, name);
+    const { data: existsData } = await this.packageManagerService.listPackageFullManifests(scope, name);
     const existsVersionMap = existsData && existsData.versions || {};
     const existsVersionCount = Object.keys(existsVersionMap).length;
     // 2. save versions
     const versions = Object.values<any>(data.versions || {});
-    logs.push(`[${isoNow()}] Syncing versions ${existsVersionCount} => ${versions.length}`);
+    logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     let syncVersionCount = 0;
     const differentMetas: any[] = [];
-    for (const item of versions) {
+    for (const [ index, item ] of versions.entries()) {
       const version: string = item.version;
       if (!version) continue;
-      const existsItem = existsVersionMap[version];
+      let existsItem = existsVersionMap[version];
+      if (!existsItem && pkg) {
+        // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called
+        existsItem = await this.packageManagerService.findPackageVersionManifest(pkg.packageId, version);
+      }
       if (existsItem) {
         // check metaDataKeys, if different value, override exists one
         // https://github.com/cnpm/cnpmjs.org/issues/1667
@@ -224,7 +229,7 @@ export class PackageSyncerService extends AbstractService {
       const dist = item.dist;
       const tarball: string = dist && dist.tarball;
       if (!tarball) {
-        logs.push(`[${isoNow()}] ❌ Synced version ${version} fail, missing tarball, dist: ${JSON.stringify(dist)}`);
+        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, missing tarball, dist: ${JSON.stringify(dist)}`);
         await this.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
@@ -232,14 +237,14 @@ export class PackageSyncerService extends AbstractService {
       const publishTimeISO = timeMap[version];
       const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
       const delay = Date.now() - publishTime.getTime();
-      logs.push(`[${isoNow()}] 🚧 Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
+      logs.push(`[${isoNow()}] 🚧 [${index}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
       let localFile: string;
       try {
         const { tmpfile, status, headers, res } = await this.npmRegistry.downloadTarball(tarball);
         localFile = tmpfile;
-        logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${headers['content-length']}, timing: ${JSON.stringify(res.timing)} => ${localFile}`);
+        logs.push(`[${isoNow()}] 🚧 [${index}] HTTP [${status}] content-length: ${headers['content-length']}, timing: ${JSON.stringify(res.timing)} => ${localFile}`);
         if (status !== 200) {
-          logs.push(`[${isoNow()}] ❌ Synced version ${version} fail, download tarball status error: ${status}`);
+          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, download tarball status error: ${status}`);
           await this.appendTaskLog(task, logs.join('\n'));
           logs = [];
           if (localFile) {
@@ -249,12 +254,12 @@ export class PackageSyncerService extends AbstractService {
         }
       } catch (err: any) {
         const status = err.status || 'unknow';
-        logs.push(`[${isoNow()}] ❌ Synced version ${version} fail, download tarball error: ${err}, status: ${status}`);
+        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, download tarball error: ${err}, status: ${status}`);
         await this.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
       }
-      const pkgVersion = await this.packageManagerService.publish({
+      const publishCmd = {
         scope,
         name,
         version,
@@ -267,9 +272,10 @@ export class PackageSyncerService extends AbstractService {
         isPrivate: false,
         publishTime,
         skipRefreshPackageManifests: true,
-      }, users[0]);
+      };
+      const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
       syncVersionCount++;
-      logs.push(`[${isoNow()}] 🟢 Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
+      logs.push(`[${isoNow()}] 🟢 [${index}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
       await this.appendTaskLog(task, logs.join('\n'));
       logs = [];
       await rm(localFile, { force: true });
@@ -280,7 +286,10 @@ export class PackageSyncerService extends AbstractService {
         }
       }
     }
-    const pkg = await this.packageRepository.findPackage(scope, name);
+    // try to read package entity again after first sync
+    if (!pkg) {
+      pkg = await this.packageRepository.findPackage(scope, name);
+    }
     if (!pkg) {
       // sync all versions fail in the first time
       logs.push(`[${isoNow()}] ❌ All versions sync fail, package not exists, log: ${logUrl}`);
@@ -320,7 +329,7 @@ export class PackageSyncerService extends AbstractService {
     for (const dependencyName of dependenciesSet) {
       const existsTask = await this.taskRepository.findTaskByTargetName(fullname, TaskType.SyncPackage, TaskState.Waiting);
       if (existsTask) {
-        logs.push(`[${isoNow()}] Has dependency "${dependencyName}" sync task: ${existsTask.taskId}, db id: ${existsTask.id}`);
+        logs.push(`[${isoNow()}] 📖 Has dependency "${dependencyName}" sync task: ${existsTask.taskId}, db id: ${existsTask.id}`);
         continue;
       }
       const tips = `Sync cause by "${fullname}" dependencies, parent task: ${task.taskId}`;
@@ -329,9 +338,9 @@ export class PackageSyncerService extends AbstractService {
         authorIp: task.authorIp,
         tips,
       });
-      logs.push(`[${isoNow()}] Add dependency "${dependencyName}" sync task: ${dependencyTask.taskId}, db id: ${dependencyTask.id}`);
+      logs.push(`[${isoNow()}] 📦 Add dependency "${dependencyName}" sync task: ${dependencyTask.taskId}, db id: ${dependencyTask.id}`);
     }
-    logs.push(`[${isoNow()}] log: ${logUrl}`);
+    logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
     logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
     await this.finishTask(task, TaskState.Success, logs.join('\n'));
   }

@@ -78,7 +78,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(403);
-      assert.equal(res.body.error, '[FORBIDDEN] Scope "@somescope" not match legal scopes: "@cnpm, @example"');
+      assert.equal(res.body.error, '[FORBIDDEN] Scope "@somescope" not match legal scopes: "@cnpm, @cnpmcore, @example"');
       pkg = await TestUtil.getFullPackage({ name: 'foo' });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
@@ -86,7 +86,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(403);
-      assert.equal(res.body.error, '[FORBIDDEN] Package scope required, legal scopes: "@cnpm, @example"');
+      assert.equal(res.body.error, '[FORBIDDEN] Package scope required, legal scopes: "@cnpm, @cnpmcore, @example"');
     });
 
     it('should publish on user custom scopes', async () => {

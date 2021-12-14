@@ -225,12 +225,24 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  async listPackageFullManifests(scope: string, name: string, expectEtag: string | undefined) {
+  async listPackageFullManifests(scope: string, name: string, expectEtag?: string) {
     return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, true);
   }
 
-  async listPackageAbbreviatedManifests(scope: string, name: string, expectEtag: string | undefined) {
+  async listPackageAbbreviatedManifests(scope: string, name: string, expectEtag?: string) {
     return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, false);
+  }
+
+  async findPackageVersionManifest(packageId: string, version: string) {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
+    if (packageVersion) {
+      const [ packageVersionJson, readme ] = await Promise.all([
+        this.readDistBytesToJSON(packageVersion.manifestDist),
+        this.readDistBytesToString(packageVersion.readmeDist),
+      ]);
+      packageVersionJson.readme = readme;
+      return packageVersionJson;
+    }
   }
 
   async downloadPackageVersionTar(packageVersion: PackageVersion): Promise<string | Readable | undefined> {

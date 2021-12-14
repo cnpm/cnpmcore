@@ -21,7 +21,7 @@ export class PackageTagController extends AbstractController {
 
   @HTTPMethod({
     // GET /-/package/:fullname/dist-tags
-    // e.g.: https://registry.npmjs.com/-/package/koa/dist-tags
+    // e.g.: https://registry.npmjs.org/-/package/koa/dist-tags
     // {"latest":"2.13.4","next":"2.9.0","v1":"1.7.0","latest-0":"0.21.1"}
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/dist-tags`,
     method: HTTPMethodEnum.GET,
