@@ -119,6 +119,12 @@ describe('test/port/controller/PackageController/showVersion.test.ts', () => {
         .get(`/${pkg.name}/beta`)
         .expect(200);
       assert.equal(res.body.version, '2.0.0');
+
+      // 404 when tag not exists
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/beta-not-exists`)
+        .expect(404);
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`);
     });
 
     it('should 404 when version not exists', async () => {
@@ -137,9 +143,9 @@ describe('test/port/controller/PackageController/showVersion.test.ts', () => {
         .expect(201);
 
       const res = await app.httpRequest()
-        .get('/@cnpm/foo/1.0.40000404')
+        .get(`/${pkg.name}/1.0.40000404`)
         .expect(404);
-      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foo@1.0.40000404 not found');
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
     });
 
     it('should 404 when package not exists', async () => {
