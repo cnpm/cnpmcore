@@ -15,7 +15,7 @@ describe('test/port/controller/PackageController/showVersion.test.ts', () => {
     app.destroyModuleContext(ctx);
   });
 
-  describe('[GET /:fullname/:version] showVersion()', () => {
+  describe('[GET /:fullname/:versionOrTag] showVersion()', () => {
     it('should show one package version', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkg = await TestUtil.getFullPackage({
@@ -67,6 +67,66 @@ describe('test/port/controller/PackageController/showVersion.test.ts', () => {
         });
     });
 
+    it('should latest tag with scoped package', async () => {
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/foo-tag-latest',
+        version: '1.0.0',
+        versionObject: {
+          description: 'foo latest description',
+        },
+      });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      const res = await app.httpRequest()
+        .get(`/${pkg.name}/latest`)
+        .expect(200);
+      assert.equal(res.body.version, '1.0.0');
+    });
+
+    it('should latest tag with not scoped package', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const pkg = await TestUtil.getFullPackage({
+        name: 'foo-tag-latest',
+        version: '2.0.0',
+        versionObject: {
+          description: 'foo latest description',
+        },
+      });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      let res = await app.httpRequest()
+        .get(`/${pkg.name}/latest`)
+        .expect(200);
+      assert.equal(res.body.version, '2.0.0');
+
+      // new beta tag
+      res = await app.httpRequest()
+        .put(`/-/package/${pkg.name}/dist-tags/beta`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('content-type', 'application/json')
+        .send(JSON.stringify('2.0.0'))
+        .expect(200);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/beta`)
+        .expect(200);
+      assert.equal(res.body.version, '2.0.0');
+
+      // 404 when tag not exists
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/beta-not-exists`)
+        .expect(404);
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`);
+    });
+
     it('should 404 when version not exists', async () => {
       const pkg = await TestUtil.getFullPackage({
         name: '@cnpm/foo',
@@ -83,9 +143,9 @@ describe('test/port/controller/PackageController/showVersion.test.ts', () => {
         .expect(201);
 
       const res = await app.httpRequest()
-        .get('/@cnpm/foo/1.0.40000404')
+        .get(`/${pkg.name}/1.0.40000404`)
         .expect(404);
-      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foo@1.0.40000404 not found');
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
     });
 
     it('should 404 when package not exists', async () => {

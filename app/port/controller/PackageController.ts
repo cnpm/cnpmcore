@@ -16,6 +16,7 @@ import {
   EggContext,
 } from '@eggjs/tegg';
 import * as ssri from 'ssri';
+import semver from 'semver';
 import validateNpmPackageName from 'validate-npm-package-name';
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
@@ -72,7 +73,6 @@ type UpdatePacakgeMaintainerData = Static<typeof UpdatePacakgeMaintainerDataRule
 
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
 const PACKAGE_NAME_PATH = `/:fullname(${FULLNAME_REG_STRING})`;
-const PACKAGE_NAME_WITH_VERSION_PATH = `${PACKAGE_NAME_PATH}/:version`;
 const PACKAGE_TAR_DOWNLOAD_PATH = `${PACKAGE_NAME_PATH}/-/:filenameWithVersion.tgz`;
 // base64 regex https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data/475217#475217
 const PACKAGE_ATTACH_DATA_RE = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
@@ -116,14 +116,22 @@ export class PackageController extends AbstractController {
   }
 
   @HTTPMethod({
-    // GET /:fullname/:version
-    path: PACKAGE_NAME_WITH_VERSION_PATH,
+    // GET /:fullname/:versionOrTag
+    path: `${PACKAGE_NAME_PATH}/:versionOrTag`,
     method: HTTPMethodEnum.GET,
   })
-  async showVersion(@HTTPParam() fullname: string, @HTTPParam() version: string) {
+  async showVersion(@HTTPParam() fullname: string, @HTTPParam() versionOrTag: string) {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const [ scope, name ] = getScopeAndName(fullname);
     const pkg = await this.getPackageEntity(scope, name);
+    let version = versionOrTag;
+    if (!semver.valid(versionOrTag)) {
+      // invalid version, versionOrTag is a tag
+      const packageTag = await this.packageRepository.findPackageTag(pkg.packageId, versionOrTag);
+      if (packageTag) {
+        version = packageTag.version;
+      }
+    }
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     const packageVersionJson = await this.packageManagerService.findPackageVersionManifest(packageVersion.packageId, version);
     return packageVersionJson;
