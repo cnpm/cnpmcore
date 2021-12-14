@@ -150,7 +150,10 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
     const { url, data, headers, res, status } = result;
-    const readme: string = data.readme;
+    let readme = data.readme || '';
+    if (typeof readme !== 'string') {
+      readme = JSON.stringify(readme);
+    }
     // "time": {
     //   "created": "2021-03-27T12:30:23.891Z",
     //   "0.0.2": "2021-03-27T12:30:24.349Z",

@@ -15,11 +15,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let ctx: Context;
   let packageSyncerService: PackageSyncerService;
   let packageManagerService: PackageManagerService;
+  let npmRegistry: NPMRegistry;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     packageSyncerService = await ctx.getEggObject(PackageSyncerService);
     packageManagerService = await ctx.getEggObject(PackageManagerService);
+    npmRegistry = await ctx.getEggObject(NPMRegistry);
   });
 
   afterEach(async () => {
@@ -158,6 +160,42 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(!log.includes('] 🟢 Synced 1 versions'));
       assert(log.includes('] 🚧 Syncing versions 1 => 2'));
+    });
+
+    it('should work on mock package.readme is undefined', async () => {
+      const name = 'cnpmcore-test-sync-dependencies';
+      const result = await npmRegistry.getFullManifests(name);
+      delete result.data.readme;
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
+      const data = await packageManagerService.listPackageFullManifests('', name);
+      assert.equal(data.data.readme, '');
+    });
+
+    it('should work on mock package.readme is object', async () => {
+      const name = 'cnpmcore-test-sync-dependencies';
+      const result = await npmRegistry.getFullManifests(name);
+      result.data.readme = { foo: 'mock readme is object' };
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
+      const data = await packageManagerService.listPackageFullManifests('', name);
+      assert.equal(data.data.readme, '{"foo":"mock readme is object"}');
     });
 
     it('should sync sourceRegistryIsCNpm = true', async () => {
