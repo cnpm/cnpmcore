@@ -21,7 +21,7 @@ import { sha512 } from '../../common/UserUtil';
 // body: {
 //   _id: 'org.couchdb.user:dddd',
 //   name: 'dddd',
-//   password: '123123',
+//   password: '***',
 //   type: 'user',
 //   roles: [],
 //   date: '2021-12-03T13:14:21.712Z'
@@ -30,7 +30,7 @@ import { sha512 } from '../../common/UserUtil';
 // {
 //   _id: 'org.couchdb.user:awldj',
 //   name: 'awldj',
-//   password: 'awdlawjdawldj',
+//   password: '***',
 //   email: 'ddd@dawd.com',
 //   type: 'user',
 //   roles: [],
