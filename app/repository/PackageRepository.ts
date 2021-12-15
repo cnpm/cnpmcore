@@ -103,6 +103,17 @@ export class PackageRepository extends AbstractRepository {
     });
   }
 
+  async removePackageMaintainer(packageId: string, userId: string) {
+    const model = await MaintainerModel.findOne({ packageId, userId });
+    if (model) {
+      await model.remove();
+      this.logger.info('[PackageRepository:removePackageMaintainer:remove] id: %s, packageId: %s, userId: %s',
+        model.id, model.packageId, model.userId);
+      return true;
+    }
+    return false;
+  }
+
   // TODO: support paging
   async listPackagesByUserId(userId: string): Promise<PackageEntity[]> {
     const models = await MaintainerModel.find({ userId });
@@ -218,8 +229,8 @@ export class PackageRepository extends AbstractRepository {
       await ModelConvertor.saveEntityToModel(packageTagEntity, model);
     } else {
       const model = await ModelConvertor.convertEntityToModel(packageTagEntity, PackageTagModel);
-      this.logger.info('[PackageRepository:savePackageTag:new] id: %s, packageTagId: %s',
-        model.id, model.packageTagId);
+      this.logger.info('[PackageRepository:savePackageTag:new] id: %s, packageTagId: %s, tags: %s => %s',
+        model.id, model.packageTagId, model.tag, model.version);
     }
   }
 

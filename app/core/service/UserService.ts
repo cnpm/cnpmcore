@@ -70,7 +70,7 @@ export class UserService extends AbstractService {
     return { user: userEntity, token };
   }
 
-  async savePublicUser(name: string, email: string) {
+  async savePublicUser(name: string, email: string): Promise<{ changed: boolean, user: UserEntity }> {
     const storeName = name.startsWith('name:') ? name : `npm:${name}`;
     let user = await this.userRepository.findUserByName(storeName);
     if (!user) {
@@ -84,11 +84,16 @@ export class UserService extends AbstractService {
         passwordIntegrity,
         isPrivate: false,
       });
-    } else {
-      user.email = email;
+      await this.userRepository.saveUser(user);
+      return { changed: true, user };
     }
+    if (user.email === email) {
+      // skip
+      return { changed: false, user };
+    }
+    user.email = email;
     await this.userRepository.saveUser(user);
-    return user;
+    return { changed: true, user };
   }
 
   async createToken(userId: string, options: CreateTokenOptions = {}) {

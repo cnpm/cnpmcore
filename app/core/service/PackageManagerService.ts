@@ -21,6 +21,7 @@ import { User } from '../entity/User';
 import { Dist } from '../entity/Dist';
 import {
   PACKAGE_MAINTAINER_CHANGED,
+  PACKAGE_MAINTAINER_REMOVED,
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
   PACKAGE_TAG_ADDED,
@@ -194,12 +195,11 @@ export class PackageManagerService extends AbstractService {
       this.nfsAdapter.uploadBytes(pkgVersion.readmeDist.path, readmeDistBytes),
     ]);
     await this.packageRepository.createPackageVersion(pkgVersion);
-    if (cmd.tag) {
-      await this.savePackageTag(pkg, cmd.tag, cmd.version);
-    }
-
     if (cmd.skipRefreshPackageManifests !== true) {
       await this.refreshPackageManifestsToDists(pkg);
+    }
+    if (cmd.tag) {
+      await this.savePackageTag(pkg, cmd.tag, cmd.version);
     }
     this.eventBus.emit(PACKAGE_VERSION_ADDED, pkgVersion.packageId, pkgVersion.packageVersionId, pkgVersion.version);
     return pkgVersion;
@@ -207,7 +207,7 @@ export class PackageManagerService extends AbstractService {
 
   async replacePackageMaintainers(pkg: Package, maintainers: User[]) {
     await this.packageRepository.replacePackageMaintainers(pkg.packageId, maintainers.map(m => m.userId));
-    await this.refreshPackageManifestsToDists(pkg);
+    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
     this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
   }
 
@@ -220,9 +220,15 @@ export class PackageManagerService extends AbstractService {
       }
     }
     if (hasNewRecord) {
-      await this.refreshPackageManifestsToDists(pkg);
+      await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
       this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
     }
+  }
+
+  async removePackageMaintainer(pkg: Package, maintainer: User) {
+    await this.packageRepository.removePackageMaintainer(pkg.packageId, maintainer.userId);
+    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
+    this.eventBus.emit(PACKAGE_MAINTAINER_REMOVED, pkg.packageId);
   }
 
   async listPackageFullManifests(scope: string, name: string, expectEtag?: string) {
@@ -358,26 +364,28 @@ export class PackageManagerService extends AbstractService {
         version,
       });
       await this.packageRepository.savePackageTag(tagEntity);
-      await this.refreshPackageManifestsToDists(pkg);
+      await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
       this.eventBus.emit(PACKAGE_TAG_ADDED, tagEntity.packageId, tagEntity.packageTagId, tagEntity.tag);
-      return;
+      return true;
     }
     if (tagEntity.version === version) {
       // nothing change
-      return;
+      return false;
     }
     tagEntity.version = version;
     await this.packageRepository.savePackageTag(tagEntity);
-    await this.refreshPackageManifestsToDists(pkg);
+    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
     this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageId, tagEntity.packageTagId, tagEntity.tag);
+    return true;
   }
 
   public async removePackageTag(pkg: Package, tag: string) {
     const tagEntity = await this.packageRepository.findPackageTag(pkg.packageId, tag);
-    if (!tagEntity) return;
+    if (!tagEntity) return false;
     await this.packageRepository.removePackageTag(tagEntity);
-    await this.refreshPackageManifestsToDists(pkg);
+    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
     this.eventBus.emit(PACKAGE_TAG_REMOVED, pkg.packageId, tagEntity.packageTagId, tagEntity.tag);
+    return true;
   }
 
   // refresh package full manifests and abbreviated manifests to NFS
@@ -392,7 +400,26 @@ export class PackageManagerService extends AbstractService {
     await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
   }
 
-  /** private methods */
+  // only refresh root attributes only, e.g.: dist-tags, maitainers
+  private async _refreshPackageManifestRootAttributeOnlyToDists(pkg: Package, refreshAttr: 'dist-tags' | 'maintainers') {
+    if (refreshAttr === 'maintainers') {
+      const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist!);
+      const maintainers = await this._listPackageMaintainers(pkg);
+      fullManifests.maintainers = maintainers;
+      await this.updatePackageManifestsToDists(pkg, fullManifests, null);
+    } else if (refreshAttr === 'dist-tags') {
+      const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist!);
+      const abbreviatedManifests = await this.readDistBytesToJSON(pkg.abbreviatedsDist!);
+      const tags = await this.packageRepository.listPackageTags(pkg.packageId);
+      const distTags: { [key: string]: string} = {};
+      for (const tag of tags) {
+        distTags[tag.tag] = tag.version;
+      }
+      fullManifests['dist-tags'] = distTags;
+      abbreviatedManifests['dist-tags'] = distTags;
+      await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+    }
+  }
 
   private async mergeManifestDist(manifestDist: Dist, mergeData?: any, replaceData?: any) {
     let manifest = await this.readDistBytesToJSON(manifestDist);
@@ -491,12 +518,21 @@ export class PackageManagerService extends AbstractService {
     return { etag, data: fullManifests || abbreviatedManifests };
   }
 
+  private async _listPackageMaintainers(pkg: Package) {
+    const maintainers: { name: string; email: string; }[] = [];
+    const users = await this.packageRepository.listPackageMaintainers(pkg.packageId);
+    for (const user of users) {
+      maintainers.push({ name: user.name, email: user.email });
+    }
+    return maintainers;
+  }
+
   private async _listPackageFullManifests(pkg: Package): Promise<object | null> {
     // read all verions from db
     const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     if (packageVersions.length === 0) return null;
 
-    const maintainers: { name: string; email: string; }[] = [];
+    const maintainers = await this._listPackageMaintainers(pkg);
     const data = {
       _attachments: {},
       _id: `${pkg.fullname}`,
@@ -550,12 +586,6 @@ export class PackageManagerService extends AbstractService {
       data.license = latestManifest.license;
       data.author = latestManifest.author;
       data.readmeFilename = latestManifest.readmeFilename;
-    }
-
-    // add maintainers
-    const users = await this.packageRepository.listPackageMaintainers(pkg.packageId);
-    for (const user of users) {
-      maintainers.push({ name: user.name, email: user.email });
     }
     return data;
   }
