@@ -24,8 +24,9 @@ export default class SyncPackageWorker extends Subscription {
         if (!task) {
           return;
         }
-        ctx.logger.info('[SyncPackageWorker:subscribe:executeTask] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms',
-          task.taskId, task.targetName, task.attempts, task.data, task.updatedAt, Date.now() - task.updatedAt.getTime());
+        ctx.logger.info('[SyncPackageWorker:subscribe:executeTask][%s] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms',
+          executingCount, task.taskId, task.targetName, task.attempts, task.data, task.updatedAt,
+          Date.now() - task.updatedAt.getTime());
         await packageSyncerService.executeTask(task);
       } finally {
         executingCount--;
