@@ -152,6 +152,7 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, request manifests error: ${err}, status: ${status}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
       await this.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, request manifests error: %s, status: $%s', task.taskId, task.targetName, err, status);
       return;
     }
     const { url, data, headers, res, status } = result;
@@ -196,6 +197,8 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] ❌ Invalid maintainers: ${JSON.stringify(maintainers)}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
       await this.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid maintainers',
+        task.taskId, task.targetName);
       return;
     }
 
@@ -309,6 +312,8 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] ❌ All versions sync fail, package not exists, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
       await this.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package not exists',
+        task.taskId, task.targetName);
       return;
     }
 
@@ -385,6 +390,8 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
     logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
     await this.finishTask(task, TaskState.Success, logs.join('\n'));
+    this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
+      task.taskId, task.targetName);
   }
 
   private async appendTaskLog(task: Task, appendLog: string) {

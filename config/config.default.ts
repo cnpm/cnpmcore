@@ -16,6 +16,7 @@ export default (/* appInfo: EggAppConfig */) => {
     sourceRegistryIsCNpm: false,
     // 3 mins
     sourceRegistrySyncTimeout: 180000,
+    syncPackageWorkerMaxConcurrentTasks: 10,
     registry: 'http://localhost:7001',
     // https://docs.npmjs.com/cli/v6/using-npm/config#always-auth npm <= 6
     // if `alwaysAuth=true`, all api request required access token

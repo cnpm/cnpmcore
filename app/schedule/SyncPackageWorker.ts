@@ -3,7 +3,7 @@ import { Subscription } from 'egg';
 
 const cnpmcoreCore = 'cnpmcoreCore';
 
-let executing = false;
+let executingCount = 0;
 export default class SyncPackageWorker extends Subscription {
   static get schedule() {
     return {
@@ -13,21 +13,23 @@ export default class SyncPackageWorker extends Subscription {
   }
 
   async subscribe() {
-    if (executing) return;
-    const { ctx } = this;
+    const { ctx, app } = this;
+    if (executingCount >= app.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks) return;
+
     await ctx.beginModuleScope(async () => {
       const packageSyncerService: PackageSyncerService = ctx.module[cnpmcoreCore].packageSyncerService;
-      executing = true;
+      executingCount++;
       try {
         const task = await packageSyncerService.findExecuteTask();
         if (!task) {
           return;
         }
-        ctx.logger.info('[SyncPackageWorker:subscribe:executeTask] taskId: %s, params: %j',
-          task.taskId, task.data);
+        ctx.logger.info('[SyncPackageWorker:subscribe:executeTask][%s] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms',
+          executingCount, task.taskId, task.targetName, task.attempts, task.data, task.updatedAt,
+          Date.now() - task.updatedAt.getTime());
         await packageSyncerService.executeTask(task);
       } finally {
-        executing = false;
+        executingCount--;
       }
     });
   }
