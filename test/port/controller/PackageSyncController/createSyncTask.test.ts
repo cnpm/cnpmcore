@@ -69,5 +69,22 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert.equal(res.body.state, 'waiting');
       assert(res.body.id);
     });
+
+    it('should dont create exists waiting task', async () => {
+      let res = await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.equal(res.body.state, 'waiting');
+      assert(res.body.id);
+      const firstTaskId = res.body.id;
+      // again dont create
+      res = await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.equal(res.body.state, 'waiting');
+      assert.equal(res.body.id, firstTaskId);
+    });
   });
 });

@@ -42,6 +42,7 @@ export class TaskRepository extends AbstractRepository {
     if (history) {
       return ModelConvertor.convertModelToEntity(history, TaskEntity);
     }
+    return null;
   }
 
   async findTaskByTargetName(targetName: string, type: TaskType, state: TaskState) {
@@ -58,7 +59,10 @@ WHERE type=? AND state=? ORDER BY gmt_modified ASC LIMIT 1`;
     // if has task, affectedRows > 0 and insertId > 0
     if (result.affectedRows && result.affectedRows > 0 && result.insertId && result.insertId > 0) {
       this.logger.info('[TaskRepository:executeWaitingTask:waiting] type: %s, result: %j', taskType, result);
-      return await TaskModel.findOne({ id: result.insertId });
+      const task = await TaskModel.findOne({ id: result.insertId });
+      if (task) {
+        return ModelConvertor.convertModelToEntity(task, TaskEntity);
+      }
     }
 
     // try to find timeout task, 5 mins
@@ -72,7 +76,10 @@ WHERE type=? AND state=? AND gmt_modified<? ORDER BY gmt_modified ASC LIMIT 1`;
     if (result.affectedRows && result.affectedRows > 0 && result.insertId && result.insertId > 0) {
       this.logger.info('[TaskRepository:executeWaitingTask:timeout] type: %s, result: %j, timeout: %j',
         taskType, result, timeoutDate);
-      return await TaskModel.findOne({ id: result.insertId });
+      const task = await TaskModel.findOne({ id: result.insertId });
+      if (task) {
+        return ModelConvertor.convertModelToEntity(task, TaskEntity);
+      }
     }
     return null;
   }
