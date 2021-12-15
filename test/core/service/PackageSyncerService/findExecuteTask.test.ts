@@ -24,8 +24,8 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       assert(!task);
 
       await packageSyncerService.createTask('foo');
-      await packageSyncerService.createTask('foo');
-      await packageSyncerService.createTask('foo');
+      await packageSyncerService.createTask('bar');
+      await packageSyncerService.createTask('ok');
       const task1 = await packageSyncerService.findExecuteTask();
       assert(task1);
       assert.equal(task1.state, 'processing');
@@ -44,6 +44,9 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       assert(task3.updatedAt > task3.createdAt);
       assert.equal(task1.attempts, 1);
       // console.log(task3, task3.updatedAt.getTime() - task3.createdAt.getTime());
+      assert(task3.id);
+      assert(task2.id);
+      assert(task1.id);
       assert(task3.id > task2.id);
       assert(task2.id > task1.id);
 

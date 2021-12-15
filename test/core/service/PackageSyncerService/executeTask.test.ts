@@ -126,6 +126,24 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('Sync cause by "cnpmcore-test-sync-dependencies" dependencies, parent task: '));
     });
 
+    it('should sync cnpmcore-test-sync-dependencies => cnpmcore-test-sync-deprecated', async () => {
+      let name = 'cnpmcore-test-sync-deprecated';
+      await packageSyncerService.createTask(name);
+
+      name = 'cnpmcore-test-sync-dependencies';
+      // don't add cnpmcore-test-sync-deprecated task if cnpmcore-test-sync-deprecated already exists
+      const task = await packageSyncerService.createTask(name);
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(!log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
+      assert(log.includes('] 📖 Has dependency "cnpmcore-test-sync-deprecated" sync task: '));
+    });
+
     it('should sync 2 versions package: @cnpmcore/test-sync-package-has-two-versions', async () => {
       // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
       const name = '@cnpmcore/test-sync-package-has-two-versions';
