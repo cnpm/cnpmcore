@@ -3,7 +3,7 @@ import { Context } from 'egg';
 import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
-describe('test/port/controller/PackageTagController.test.ts', () => {
+describe('test/port/controller/PackageTagController/removeTag.test.ts', () => {
   let publisher;
   let ctx: Context;
   beforeEach(async () => {

@@ -137,7 +137,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       let stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
       let log = await TestUtil.readStreamToLog(stream);
-      console.log(log);
+      // console.log(log);
       assert(log.includes('] 🟢 Synced 2 versions'));
       assert(log.includes('] 🚧 Syncing versions 0 => 2'));
 
@@ -196,6 +196,140 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
       const data = await packageManagerService.listPackageFullManifests('', name);
       assert.equal(data.data.readme, '{"foo":"mock readme is object"}');
+    });
+
+    it('should sync dist-tags change', async () => {
+      const name = 'cnpmcore-test-sync-deprecated';
+      const result = await npmRegistry.getFullManifests(name);
+      const remotePkg = JSON.parse(JSON.stringify(result.data));
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+
+      await packageSyncerService.createTask(name);
+      let task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      let stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      let log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('[0] Synced version 0.0.0 success'));
+      assert(log.includes('🟢 Synced 1 tags: [{"action":"change","tag":"latest","version":"0.0.0"}]'));
+      let data = await packageManagerService.listPackageFullManifests('', name);
+      assert.deepEqual(data.data['dist-tags'], remotePkg['dist-tags']);
+
+      // update tags, add beta tag
+      remotePkg['dist-tags'].beta = remotePkg['dist-tags'].latest;
+      result.data = remotePkg;
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(!log.includes('[0] Synced version 0.0.0 success'));
+      assert(log.includes('🟢 Synced 1 tags: [{"action":"change","tag":"beta","version":"0.0.0"}]'));
+      data = await packageManagerService.listPackageFullManifests('', name);
+      assert.deepEqual(data.data['dist-tags'], remotePkg['dist-tags']);
+
+      // all tags exists
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(!log.includes('[0] Synced version 0.0.0 success'));
+      assert(!log.includes('🟢 Synced 1 tags: '));
+      data = await packageManagerService.listPackageFullManifests('', name);
+      assert.deepEqual(data.data['dist-tags'], remotePkg['dist-tags']);
+
+      // sync remove beta tags
+      delete remotePkg['dist-tags'].beta;
+      result.data = remotePkg;
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(!log.includes('[0] Synced version 0.0.0 success'));
+      assert(log.includes('Synced 1 tags: [{"action":"remove","tag":"beta"}]'));
+      data = await packageManagerService.listPackageFullManifests('', name);
+      assert.deepEqual(data.data['dist-tags'], remotePkg['dist-tags']);
+    });
+
+    it('should sync maintainers change', async () => {
+      const name = 'cnpmcore-test-sync-deprecated';
+      const result = await npmRegistry.getFullManifests(name);
+      const remotePkg = JSON.parse(JSON.stringify(result.data));
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+
+      await packageSyncerService.createTask(name);
+      let task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      let stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      let log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('[1] Synced fengmk2 => npm:fengmk2('));
+      let data = await packageManagerService.listPackageFullManifests('', name);
+      assert.equal(data.data.maintainers.length, 1);
+      assert.deepEqual(data.data.maintainers[0].name, 'npm:fengmk2');
+
+      // add new maintainer
+      remotePkg.maintainers.push({ name: 'foouser', email: 'foouser@ggg.com' });
+      remotePkg.maintainers.push({ name: 'baruser', email: 'baruser@ggg.com' });
+      result.data = remotePkg;
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(!log.includes('[1] Synced fengmk2 => npm:fengmk2('));
+      assert(log.includes('[1] Synced foouser => npm:foouser('));
+      assert(log.includes('[2] Synced baruser => npm:baruser('));
+      data = await packageManagerService.listPackageFullManifests('', name);
+      assert.equal(data.data.maintainers.length, 3);
+      assert.deepEqual(data.data.maintainers[0].name, 'npm:fengmk2');
+      assert.deepEqual(data.data.maintainers[1].name, 'npm:foouser');
+      assert.deepEqual(data.data.maintainers[2].name, 'npm:baruser');
+
+      // remove maintainer
+      remotePkg.maintainers.push({ name: 'baruser', email: 'baruser@ggg.com' });
+      remotePkg.maintainers = remotePkg.maintainers.slice(0, 2);
+      result.data = remotePkg;
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(!log.includes('Synced fengmk2 => npm:fengmk2('));
+      assert(!log.includes('Synced foouser => npm:foouser('));
+      assert(log.includes('Removed 1 maintainers: [{"name":"npm:baruser","email":"baruser@ggg.com"}]'));
+      data = await packageManagerService.listPackageFullManifests('', name);
+      assert.equal(data.data.maintainers.length, 2);
+      assert.deepEqual(data.data.maintainers[0].name, 'npm:fengmk2');
+      assert.deepEqual(data.data.maintainers[1].name, 'npm:foouser');
     });
 
     it('should sync sourceRegistryIsCNpm = true', async () => {

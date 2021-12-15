@@ -11,6 +11,7 @@ import { getScopeAndName } from '../../common/PackageUtil';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { PackageRepository } from '../../repository/PackageRepository';
+import { UserRepository } from '../../repository/UserRepository';
 import { Task, SyncPackageTaskOptions } from '../entity/Task';
 import { AbstractService } from './AbstractService';
 import { UserService } from './UserService';
@@ -29,6 +30,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly taskRepository: TaskRepository;
   @Inject()
   private readonly packageRepository: PackageRepository;
+  @Inject()
+  private readonly userRepository: UserRepository;
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
   @Inject()
@@ -168,14 +171,20 @@ export class PackageSyncerService extends AbstractService {
     //   { name: 'jasonlaster11', email: 'jason.laster.11@gmail.com' }
     // ],
     const maintainers = data.maintainers;
+    const maintainersMap = {};
     const users: User[] = [];
+    let changedUserCount = 0;
     if (Array.isArray(maintainers) && maintainers.length > 0) {
       logs.push(`[${isoNow()}] 🚧 Syncing maintainers: ${JSON.stringify(maintainers)}`);
       for (const maintainer of maintainers) {
         if (maintainer.name && maintainer.email) {
-          const user = await this.userService.savePublicUser(maintainer.name, maintainer.email);
+          maintainersMap[maintainer.name] = maintainer;
+          const { changed, user } = await this.userService.savePublicUser(maintainer.name, maintainer.email);
           users.push(user);
-          logs.push(`[${isoNow()}] 🚧 Synced ${maintainer.name} => ${user.name}(${user.userId})`);
+          if (changed) {
+            changedUserCount++;
+            logs.push(`[${isoNow()}] 🟢 [${changedUserCount}] Synced ${maintainer.name} => ${user.name}(${user.userId})`);
+          }
         }
       }
     }
@@ -318,15 +327,43 @@ export class PackageSyncerService extends AbstractService {
     // "dist-tags": {
     //   "latest": "0.0.7"
     // },
+    const changedTags: { tag: string, version?: string, action: string }[] = [];
     const distTags = data['dist-tags'] || {};
     for (const tag in distTags) {
       const version = distTags[tag];
-      await this.packageManagerService.savePackageTag(pkg, tag, version);
+      const changed = await this.packageManagerService.savePackageTag(pkg, tag, version);
+      if (changed) changedTags.push({ action: 'change', tag, version });
     }
-    logs.push(`[${isoNow()}] 🟢 Synced tags: ${JSON.stringify(distTags)}`);
+    // 3.1 find out remove tags
+    const existsDistTags = existsData && existsData['dist-tags'] || {};
+    for (const tag in existsDistTags) {
+      if (!(tag in distTags)) {
+        const changed = await this.packageManagerService.removePackageTag(pkg, tag);
+        if (changed) changedTags.push({ action: 'remove', tag });
+      }
+    }
+    if (changedTags.length > 0) {
+      logs.push(`[${isoNow()}] 🟢 Synced ${changedTags.length} tags: ${JSON.stringify(changedTags)}`);
+    }
 
     // 4. add package maintainers
     await this.packageManagerService.savePackageMaintainers(pkg, users);
+    // 4.1 find out remove maintainers
+    const removedMaintainers: unknown[] = [];
+    const existsMaintainers = existsData && existsData.maintainers || [];
+    for (const maintainer of existsMaintainers) {
+      const npmUserName = maintainer.name.replace('npm:', '');
+      if (!(npmUserName in maintainersMap)) {
+        const user = await this.userRepository.findUserByName(maintainer.name);
+        if (user) {
+          await this.packageManagerService.removePackageMaintainer(pkg, user);
+          removedMaintainers.push(maintainer);
+        }
+      }
+    }
+    if (removedMaintainers.length > 0) {
+      logs.push(`[${isoNow()}] 🟢 Removed ${removedMaintainers.length} maintainers: ${JSON.stringify(removedMaintainers)}`);
+    }
 
     // 5. add deps sync task
     for (const dependencyName of dependenciesSet) {
