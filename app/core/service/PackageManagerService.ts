@@ -400,7 +400,7 @@ export class PackageManagerService extends AbstractService {
     await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
   }
 
-  // only refresh root attributes only, e.g.: dist-tags, maitainers
+  // only refresh root attributes only, e.g.: dist-tags, maintainers
   private async _refreshPackageManifestRootAttributeOnlyToDists(pkg: Package, refreshAttr: 'dist-tags' | 'maintainers') {
     if (refreshAttr === 'maintainers') {
       const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist!);
