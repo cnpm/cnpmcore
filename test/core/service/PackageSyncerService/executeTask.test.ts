@@ -144,6 +144,39 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 📖 Has dependency "cnpmcore-test-sync-deprecated" sync task: '));
     });
 
+    it('should ignore publish error on sync task', async () => {
+      const name = 'cnpmcore-test-sync-deprecated';
+      mock.error(packageManagerService.constructor.prototype, 'publish');
+      const task = await packageSyncerService.createTask(name);
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('❌ [0] Synced version 0.0.0 error, MockError: mm mock error'));
+      assert(log.includes('❌ All versions sync fail, package not exists'));
+    });
+
+    it('should ignore download error error on sync task', async () => {
+      const name = 'cnpmcore-test-sync-deprecated';
+      const result = await npmRegistry.getFullManifests(name);
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+
+      mock.error(npmRegistry.constructor.prototype, 'request');
+      const task = await packageSyncerService.createTask(name);
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      console.log(log);
+      assert(log.includes('❌ [0] Synced version 0.0.0 fail, download tarball error: MockError: mm mock error, status: unknow'));
+      assert(log.includes('❌ All versions sync fail, package not exists'));
+    });
+
     it('should sync 2 versions package: @cnpmcore/test-sync-package-has-two-versions', async () => {
       // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
       const name = '@cnpmcore/test-sync-package-has-two-versions';
