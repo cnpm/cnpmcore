@@ -1,5 +1,6 @@
-import { PackageSyncerService } from '../core/service/PackageSyncerService';
 import { Subscription } from 'egg';
+import { PackageSyncerService } from '../core/service/PackageSyncerService';
+import { Task } from '../core/entity/Task';
 
 const cnpmcoreCore = 'cnpmcoreCore';
 
@@ -19,15 +20,22 @@ export default class SyncPackageWorker extends Subscription {
     await ctx.beginModuleScope(async () => {
       const packageSyncerService: PackageSyncerService = ctx.module[cnpmcoreCore].packageSyncerService;
       executingCount++;
+      let task: Task | null = null;
       try {
-        const task = await packageSyncerService.findExecuteTask();
+        task = await packageSyncerService.findExecuteTask();
         if (!task) {
           return;
         }
-        ctx.logger.info('[SyncPackageWorker:subscribe:executeTask][%s] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms',
+        const startTime = Date.now();
+        ctx.logger.info('[SyncPackageWorker:subscribe:executeTask:start][%s] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms',
           executingCount, task.taskId, task.targetName, task.attempts, task.data, task.updatedAt,
-          Date.now() - task.updatedAt.getTime());
+          startTime - task.updatedAt.getTime());
         await packageSyncerService.executeTask(task);
+        ctx.logger.info('[SyncPackageWorker:subscribe:executeTask:success][%s] taskId: %s, targetName: %s, use %sms',
+          executingCount, task.taskId, task.targetName, Date.now() - startTime);
+      } catch (err) {
+        ctx.logger.info('[SyncPackageWorker:subscribe:executeTask:error][%s] taskId: %s, targetName: %s, %s',
+          executingCount, task && task.taskId, task && task.targetName, err);
       } finally {
         executingCount--;
       }

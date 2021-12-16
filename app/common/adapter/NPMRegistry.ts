@@ -1,5 +1,5 @@
 import { createWriteStream } from 'fs';
-import { mkdir } from 'fs/promises';
+import { mkdir, rm } from 'fs/promises';
 import path from 'path';
 import { randomBytes } from 'crypto';
 import {
@@ -41,15 +41,23 @@ export class NPMRegistry {
 
   public async downloadTarball(tarball: string) {
     const uri = new URL(tarball);
+    // will auto clean on CleanTempDir Schedule
     const tmpfile = path.join(this.config.dataDir, 'downloads', dayjs().format('YYYY/MM/DD'),
       `${randomBytes(10).toString('hex')}-${path.basename(uri.pathname)}`);
     await mkdir(path.dirname(tmpfile), { recursive: true });
     const writeStream = createWriteStream(tmpfile);
-    const result = await this.request('GET', tarball, undefined, { timeout: 120000, writeStream });
-    return {
-      ...result,
-      tmpfile,
-    };
+    try {
+      // max 10 mins to download
+      // FIXME: should show download progress
+      const result = await this.request('GET', tarball, undefined, { timeout: 60000 * 10, writeStream });
+      return {
+        ...result,
+        tmpfile,
+      };
+    } catch (err) {
+      await rm(tmpfile, { force: true });
+      throw err;
+    }
   }
 
   // app.put('/:name/sync', sync.sync);

@@ -290,9 +290,14 @@ export class PackageSyncerService extends AbstractService {
         publishTime,
         skipRefreshPackageManifests: true,
       };
-      const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
-      syncVersionCount++;
-      logs.push(`[${isoNow()}] 🟢 [${index}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
+      try {
+        const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
+        syncVersionCount++;
+        logs.push(`[${isoNow()}] 🟢 [${index}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
+      } catch (err) {
+        this.logger.error(err);
+        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} error, ${err}`);
+      }
       await this.appendTaskLog(task, logs.join('\n'));
       logs = [];
       await rm(localFile, { force: true });
@@ -395,6 +400,7 @@ export class PackageSyncerService extends AbstractService {
   }
 
   private async appendTaskLog(task: Task, appendLog: string) {
+    // console.log(appendLog);
     const nextPosition = await this.nfsAdapter.appendBytes(
       task.logPath,
       Buffer.from(appendLog + '\n'),

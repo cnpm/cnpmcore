@@ -92,7 +92,7 @@ export class PackageManagerService extends AbstractService {
 
     let pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, cmd.version);
     if (pkgVersion) {
-      throw new ForbiddenError(`Can't modify pre-existing version: ${pkgVersion.version}`);
+      throw new ForbiddenError(`Can't modify pre-existing version: ${pkg.fullname}@${pkgVersion.version}`);
     }
 
     // add _cnpmcore_publish_time field to cmd.packageJson
