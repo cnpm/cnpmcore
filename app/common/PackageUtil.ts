@@ -2,9 +2,10 @@ import { createReadStream } from 'fs';
 import * as ssri from 'ssri';
 
 // /@cnpm%2ffoo
+// /@cnpm%2Ffoo
 // /@cnpm/foo
 // /foo
-export const FULLNAME_REG_STRING = '@[^/]+\/[^/]+|@[^%]+\%2f[^/]+|[^@/]+';
+export const FULLNAME_REG_STRING = '@[^/]+\/[^/]+|@[^%]+\%2[fF][^/]+|[^@/]+';
 
 export function getScopeAndName(fullname: string): string[] {
   if (fullname.startsWith('@')) {
