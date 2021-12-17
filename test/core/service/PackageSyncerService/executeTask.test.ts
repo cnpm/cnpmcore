@@ -86,11 +86,6 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const task = await packageSyncerService.findExecuteTask();
       assert(task);
       await packageSyncerService.executeTask(task);
-      // const stream = await packageSyncerService.findTaskLog(task) as Readable;
-      // assert(stream);
-      // for await (const chunk of stream) {
-      //   process.stdout.write(chunk);
-      // }
       const manifests = await packageManagerService.listPackageFullManifests('', name, undefined);
       assert.equal(manifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
@@ -157,6 +152,22 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(log.includes('❌ [0] Synced version 0.0.0 error, MockError: mm mock error'));
       assert(log.includes('❌ All versions sync fail, package not exists'));
+    });
+
+    it('should ignore publish ForbiddenError on sync task', async () => {
+      const name = 'cnpmcore-test-sync-deprecated';
+      const err = new Error('mock ForbiddenError');
+      err.name = 'ForbiddenError';
+      mock.error(packageManagerService.constructor.prototype, 'publish', err);
+      const task = await packageSyncerService.createTask(name);
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('🐛 [0] Synced version 0.0.0 already exists, skip publish error'));
     });
 
     it('should ignore download error error on sync task', async () => {

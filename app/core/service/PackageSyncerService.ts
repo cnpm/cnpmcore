@@ -276,6 +276,21 @@ export class PackageSyncerService extends AbstractService {
         logs = [];
         continue;
       }
+      if (!pkg) {
+        pkg = await this.packageRepository.findPackage(scope, name);
+      }
+      if (pkg) {
+        // check again, make sure prefix version not exists
+        const existsPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+        if (existsPkgVersion) {
+          logs.push(`[${isoNow()}] 🐛 [${index}] Synced version ${version} already exists, skip publish it`);
+          await this.appendTaskLog(task, logs.join('\n'));
+          logs = [];
+          await rm(localFile, { force: true });
+          continue;
+        }
+      }
+
       const publishCmd = {
         scope,
         name,
@@ -294,9 +309,13 @@ export class PackageSyncerService extends AbstractService {
         const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
         syncVersionCount++;
         logs.push(`[${isoNow()}] 🟢 [${index}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
-      } catch (err) {
-        this.logger.error(err);
-        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} error, ${err}`);
+      } catch (err: any) {
+        if (err.name === 'ForbiddenError') {
+          logs.push(`[${isoNow()}] 🐛 [${index}] Synced version ${version} already exists, skip publish error`);
+        } else {
+          this.logger.error(err);
+          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} error, ${err}`);
+        }
       }
       await this.appendTaskLog(task, logs.join('\n'));
       logs = [];
