@@ -331,7 +331,7 @@ export class PackageSyncerService extends AbstractService {
     if (!pkg) {
       pkg = await this.packageRepository.findPackage(scope, name);
     }
-    if (!pkg) {
+    if (!pkg || !pkg.id) {
       // sync all versions fail in the first time
       logs.push(`[${isoNow()}] ❌ All versions sync fail, package not exists, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);

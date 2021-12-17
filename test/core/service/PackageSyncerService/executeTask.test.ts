@@ -10,6 +10,7 @@ import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTas
 import { TestUtil } from 'test/TestUtil';
 import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
 import { getScopeAndName } from 'app/common/PackageUtil';
+import { PackageRepository } from 'app/repository/PackageRepository';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let ctx: Context;
@@ -168,6 +169,35 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('🐛 [0] Synced version 0.0.0 already exists, skip publish error'));
+    });
+
+    it('should ignore publish exists version', async () => {
+      const name = 'cnpmcore-test-sync-deprecated';
+      const findPackage = PackageRepository.prototype.findPackage;
+      mock(PackageRepository.prototype, 'findPackage', async () => {
+        PackageRepository.prototype.findPackage = findPackage;
+        return {
+          packageId: 'mock packageId',
+        };
+      });
+      mock.data(PackageRepository.prototype, 'findPackageVersion', {
+        packageId: 'mock packageId',
+      });
+      const findPackageVersionManifest = PackageManagerService.prototype.findPackageVersionManifest;
+      mock(PackageManagerService.prototype, 'findPackageVersionManifest', async () => {
+        PackageManagerService.prototype.findPackageVersionManifest = findPackageVersionManifest;
+        mock.data(PackageRepository.prototype, 'findPackage', null);
+        return null;
+      });
+      const task = await packageSyncerService.createTask(name);
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('🐛 [0] Synced version 0.0.0 already exists, skip publish it'));
     });
 
     it('should ignore download error error on sync task', async () => {
