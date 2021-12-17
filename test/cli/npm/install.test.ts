@@ -1,5 +1,5 @@
 import path from 'path';
-import { app } from 'egg-mock/bootstrap';
+import { app, assert } from 'egg-mock/bootstrap';
 import coffee from 'coffee';
 import { TestUtil } from 'test/TestUtil';
 import { npmLogin } from '../CliUtil';
@@ -33,11 +33,8 @@ describe('test/cli/npm/install.test.ts', () => {
     server && server.close();
   });
 
-  before(async () => {
-    await npmLogin(registry, userconfig);
-  });
-
   beforeEach(async () => {
+    await npmLogin(registry, userconfig);
     await coffee
       .spawn('npm', [
         'publish',
@@ -53,6 +50,22 @@ describe('test/cli/npm/install.test.ts', () => {
   });
 
   describe('npm install', () => {
+    it('should support /@eggjs%2Ffoo router path', async () => {
+      let res = await app.httpclient.request(`${registry}/@eggjs%2Ffoo`, { dataType: 'json' });
+      assert.equal(res.status, 404);
+      assert.equal(res.data.error, '[NOT_FOUND] @eggjs/foo not found');
+      res = await app.httpclient.request(`${registry}/@eggjs%2fbar`, { dataType: 'json' });
+      assert.equal(res.status, 404);
+      assert.equal(res.data.error, '[NOT_FOUND] @eggjs/bar not found');
+
+      res = await app.httpclient.request(`${registry}/@cnpm%2ffoo`, { dataType: 'json' });
+      assert.equal(res.status, 200);
+      assert.equal(res.data.name, '@cnpm/foo');
+      res = await app.httpclient.request(`${registry}/@cnpm%2Ffoo`, { dataType: 'json' });
+      assert.equal(res.status, 200);
+      assert.equal(res.data.name, '@cnpm/foo');
+    });
+
     it('should work', async () => {
       await coffee
         .spawn('npm', [
