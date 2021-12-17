@@ -144,7 +144,7 @@ export class PackageSyncerService extends AbstractService {
     }
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync "${fullname}" from ${registry}, skipDependencies: ${!!skipDependencies} 🚧🚧🚧🚧🚧`);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
-    let result;
+    let result: any;
     try {
       result = await this.npmRegistry.getFullManifests(fullname);
     } catch (err: any) {
@@ -261,12 +261,12 @@ export class PackageSyncerService extends AbstractService {
         localFile = tmpfile;
         logs.push(`[${isoNow()}] 🚧 [${index}] HTTP [${status}] content-length: ${headers['content-length']}, timing: ${JSON.stringify(res.timing)} => ${localFile}`);
         if (status !== 200) {
-          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, download tarball status error: ${status}`);
-          await this.appendTaskLog(task, logs.join('\n'));
-          logs = [];
           if (localFile) {
             await rm(localFile, { force: true });
           }
+          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, download tarball status error: ${status}`);
+          await this.appendTaskLog(task, logs.join('\n'));
+          logs = [];
           continue;
         }
       } catch (err: any) {
@@ -283,10 +283,10 @@ export class PackageSyncerService extends AbstractService {
         // check again, make sure prefix version not exists
         const existsPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
         if (existsPkgVersion) {
+          await rm(localFile, { force: true });
           logs.push(`[${isoNow()}] 🐛 [${index}] Synced version ${version} already exists, skip publish it`);
           await this.appendTaskLog(task, logs.join('\n'));
           logs = [];
-          await rm(localFile, { force: true });
           continue;
         }
       }
@@ -313,6 +313,7 @@ export class PackageSyncerService extends AbstractService {
         if (err.name === 'ForbiddenError') {
           logs.push(`[${isoNow()}] 🐛 [${index}] Synced version ${version} already exists, skip publish error`);
         } else {
+          err.taskId = task.taskId;
           this.logger.error(err);
           logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} error, ${err}`);
         }
