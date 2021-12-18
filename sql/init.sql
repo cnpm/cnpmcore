@@ -112,8 +112,7 @@ CREATE TABLE IF NOT EXISTS `dists` (
   `shasum` varchar(512) NOT NULL COMMENT 'dist shasum',
   `integrity` varchar(512) NOT NULL COMMENT 'dist integrity',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_dist_id` (`dist_id`),
-  UNIQUE KEY `uk_path` (`path`)
+  UNIQUE KEY `uk_dist_id` (`dist_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='dist info';
 
 CREATE TABLE IF NOT EXISTS `total` (
