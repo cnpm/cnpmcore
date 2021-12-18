@@ -46,7 +46,7 @@ export abstract class AbstractController extends MiddlewareController {
   }
 
   protected isPrivateScope(scope: string) {
-    return this.config.cnpmcore.allowScopes.includes(scope);
+    return scope && this.config.cnpmcore.allowScopes.includes(scope);
   }
 
   protected createPackageNotFoundError(fullname: string, version?: string) {

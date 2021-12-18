@@ -409,6 +409,11 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
     it('should redirect to source registry if package not exists when syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
       await app.httpRequest()
+        .get('/123')
+        .expect('location', 'https://registry.npmjs.org/123')
+        .expect(302);
+
+      await app.httpRequest()
         .get('/cnpmcore')
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect('location', 'https://registry.npmjs.org/cnpmcore')
@@ -419,6 +424,13 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .query({ t: '0123123', foo: 'bar' })
         .set('Accept', 'application/json')
         .expect('location', 'https://registry.npmjs.org/cnpmcore?t=0123123&foo=bar')
+        .expect(302);
+
+      await app.httpRequest()
+        .get('/@eggjs/cnpmcore')
+        .query({ t: '0123123', foo: 'bar' })
+        .set('Accept', 'application/json')
+        .expect('location', 'https://registry.npmjs.org/@eggjs/cnpmcore?t=0123123&foo=bar')
         .expect(302);
     });
 
