@@ -11,9 +11,12 @@ export async function Tracing(ctx: EggContext, next: Next) {
   //   host: 'localhost:7001',
   //   connection: 'keep-alive'
   // }
-  ctx.logger.info('[Tracing] auth: %s, npm-command: %s, user-agent: %j',
-    ctx.get('authorization') ? 1 : 0,
-    ctx.get('npm-command') || '-',
-    ctx.get('user-agent'));
+  ctx.set('request-id', ctx.tracer.traceId);
+  if (ctx.method !== 'HEAD') {
+    ctx.logger.info('[Tracing] auth: %s, npm-command: %s, user-agent: %j',
+      ctx.get('authorization') ? 1 : 0,
+      ctx.get('npm-command') || '-',
+      ctx.get('user-agent'));
+  }
   await next();
 }
