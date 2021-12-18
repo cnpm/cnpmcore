@@ -4,7 +4,7 @@ import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { PackageRepository } from '../../../../app/repository/PackageRepository';
 
-describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
+describe('test/port/controller/package/RemovePackageVersionController.test.ts', () => {
   let ctx: Context;
   let packageRepository: PackageRepository;
   let publisher;
@@ -18,7 +18,7 @@ describe('test/port/controller/PackageController/removeVersion.test.ts', () => {
     app.destroyModuleContext(ctx);
   });
 
-  describe('[DELETE /:fullname/-/:filenameWithVersion.tgz/-rev/:rev] removeVersion()', () => {
+  describe('[DELETE /:fullname/-/:filenameWithVersion.tgz/-rev/:rev] remove()', () => {
     it('should remove the latest version', async () => {
       let pkg = await TestUtil.getFullPackage({
         name: '@cnpm/foo',

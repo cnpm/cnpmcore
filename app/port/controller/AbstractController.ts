@@ -17,6 +17,11 @@ import { getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { Package as PackageEntity } from '../../core/entity/Package';
 import { PackageVersion as PackageVersionEntity } from '../../core/entity/PackageVersion';
 import { UserService } from '../../core/service/UserService';
+import {
+  VersionRule,
+} from '../typebox';
+
+class PackageNotFoundError extends NotFoundError {}
 
 export abstract class AbstractController extends MiddlewareController {
   @Inject()
@@ -31,6 +36,33 @@ export abstract class AbstractController extends MiddlewareController {
   protected userRepository: UserRepository;
   @Inject()
   protected userService: UserService;
+
+  protected get sourceRegistry(): string {
+    return this.config.cnpmcore.sourceRegistry;
+  }
+
+  protected get enableSyncAll() {
+    return this.config.cnpmcore.syncMode === 'all';
+  }
+
+  protected isPrivateScope(scope: string) {
+    return this.config.cnpmcore.allowScopes.includes(scope);
+  }
+
+  protected createPackageNotFoundError(fullname: string, version?: string) {
+    const message = version ? `${fullname}@${version} not found` : `${fullname} not found`;
+    const err = new PackageNotFoundError(message);
+    const [ scope ] = getScopeAndName(fullname);
+    // dont sync private scope
+    if (this.enableSyncAll && !this.isPrivateScope(scope)) {
+      // ErrorHandler will use syncPackage to create sync task
+      err.syncPackage = {
+        fullname,
+        sourceRegistry: this.sourceRegistry,
+      };
+    }
+    return err;
+  }
 
   protected async getPackageEntityByFullname(fullname: string): Promise<PackageEntity> {
     const [ scope, name ] = getScopeAndName(fullname);
@@ -53,7 +85,7 @@ export abstract class AbstractController extends MiddlewareController {
     const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (!packageEntity) {
       const fullname = getFullname(scope, name);
-      throw new NotFoundError(`${fullname} not found`);
+      throw this.createPackageNotFoundError(fullname);
     }
     return packageEntity;
   }
@@ -64,5 +96,17 @@ export abstract class AbstractController extends MiddlewareController {
       throw new NotFoundError(`${pkg.fullname}@${version} not found`);
     }
     return packageVersion;
+  }
+
+  protected getAndCheckVersionFromFilename(ctx: EggContext, fullname: string, filenameWithVersion: string) {
+    const scopeAndName = getScopeAndName(fullname);
+    const name = scopeAndName[1];
+    // @foo/bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
+    // bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
+    const version = filenameWithVersion.substring(name.length + 1);
+    // check version format
+    const data = { version };
+    ctx.tValidate(VersionRule, data);
+    return data.version;
   }
 }

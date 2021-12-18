@@ -4,7 +4,7 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { PackageRepository } from '../../../../app/repository/PackageRepository';
 
-describe('test/port/controller/PackageController/showPackage.test.ts', () => {
+describe('test/port/controller/package/ShowPackageController.test.ts', () => {
   let ctx: Context;
   let packageRepository: PackageRepository;
   let publisher;
@@ -18,7 +18,7 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
     app.destroyModuleContext(ctx);
   });
 
-  describe('[GET /:fullname] showPackage()', () => {
+  describe('[GET /:fullname] show()', () => {
     const name = 'testmodule-show-package';
     const scopedName = '@cnpm/testmodule-show-package';
     beforeEach(async () => {
@@ -404,6 +404,40 @@ describe('test/port/controller/PackageController/showPackage.test.ts', () => {
         .expect(404)
         .expect('content-type', 'application/json; charset=utf-8');
       assert.equal(res.body.error, '[NOT_FOUND] test-module-mock-dist-not-exists-abbreviated-manifests-no-verions not found');
+    });
+
+    it('should redirect to source registry if package not exists when syncMode=all', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'all');
+      await app.httpRequest()
+        .get('/cnpmcore')
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect('location', 'https://registry.npmjs.org/cnpmcore')
+        .expect(302);
+
+      await app.httpRequest()
+        .get('/cnpmcore')
+        .query({ t: '0123123', foo: 'bar' })
+        .set('Accept', 'application/json')
+        .expect('location', 'https://registry.npmjs.org/cnpmcore?t=0123123&foo=bar')
+        .expect(302);
+    });
+
+    it('should not redirect private scope pacakge to source registry if package not exists when syncMode=all', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'all');
+      let res = await app.httpRequest()
+        .get('/@cnpm/cnpmcore')
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/cnpmcore not found');
+
+      res = await app.httpRequest()
+        .get('/@cnpm/cnpmcore')
+        .query({ t: '0123123', foo: 'bar' })
+        .set('Accept', 'application/json')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/cnpmcore not found');
     });
   });
 });

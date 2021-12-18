@@ -4,7 +4,7 @@ import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { UserRepository } from '../../../../app/repository/UserRepository';
 
-describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
+describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let ctx: Context;
   let userRepository: UserRepository;
   let publisher;
@@ -18,7 +18,7 @@ describe('test/port/controller/PackageController/saveVersion.test.ts', () => {
     app.destroyModuleContext(ctx);
   });
 
-  describe('[PUT /:fullname] saveVersion()', () => {
+  describe('[PUT /:fullname] save()', () => {
     it('should 403 when package is public', async () => {
       const { pkg, user } = await TestUtil.createPackage({ isPrivate: false, version: '1.0.0' });
       const pkg2 = await TestUtil.getFullPackage({ name: pkg.name, version: '2.0.0' });

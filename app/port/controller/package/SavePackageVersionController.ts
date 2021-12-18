@@ -2,8 +2,6 @@ import { PackageJson, Simplify } from 'type-fest';
 import {
   UnprocessableEntityError,
   NotFoundError,
-  BadRequestError,
-  ForbiddenError,
 } from 'egg-errors';
 import {
   HTTPController,
@@ -16,20 +14,18 @@ import {
   EggContext,
 } from '@eggjs/tegg';
 import * as ssri from 'ssri';
-import semver from 'semver';
 import validateNpmPackageName from 'validate-npm-package-name';
 import { Static, Type } from '@sinclair/typebox';
-import { AbstractController } from './AbstractController';
-import { getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil';
-import { User as UserEntity } from '../../core/entity/User';
-import { Package as PackageEntity } from '../../core/entity/Package';
-import { PackageManagerService } from '../../core/service/PackageManagerService';
+import { AbstractController } from '../AbstractController';
+import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
+import { Package as PackageEntity } from '../../../core/entity/Package';
+import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import {
   VersionRule,
   TagWithVersionRule,
   Name as NameType,
   Description as DescriptionType,
-} from '../typebox';
+} from '../../typebox';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -63,79 +59,15 @@ type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions' | '_attachmen
   };
 }};
 
-const UpdatePacakgeMaintainerDataRule = Type.Object({
-  maintainers: Type.Array(Type.Object({
-    name: Type.String({ minLength: 1, maxLength: 100 }),
-    email: Type.String({ format: 'email', maxLength: 400 }),
-  }), { minItems: 1 }),
-});
-type UpdatePacakgeMaintainerData = Static<typeof UpdatePacakgeMaintainerDataRule>;
-
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
 const PACKAGE_NAME_PATH = `/:fullname(${FULLNAME_REG_STRING})`;
-const PACKAGE_TAR_DOWNLOAD_PATH = `${PACKAGE_NAME_PATH}/-/:filenameWithVersion.tgz`;
 // base64 regex https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data/475217#475217
 const PACKAGE_ATTACH_DATA_RE = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
 
 @HTTPController()
-export class PackageController extends AbstractController {
+export class SavePackageVersionController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
-
-  @HTTPMethod({
-    // GET /:fullname
-    path: PACKAGE_NAME_PATH,
-    method: HTTPMethodEnum.GET,
-  })
-  async showPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
-    const requestEtag = ctx.request.headers['if-none-match'];
-    const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
-    const [ scope, name ] = getScopeAndName(fullname);
-    let result: { etag: string; data: any };
-    if (ctx.accepts([ 'json', abbreviatedMetaType ]) === abbreviatedMetaType) {
-      result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, requestEtag);
-    } else {
-      result = await this.packageManagerService.listPackageFullManifests(scope, name, requestEtag);
-    }
-    const { etag, data } = result;
-    // 404, no data
-    if (!etag) {
-      throw new NotFoundError(`${fullname} not found`);
-    }
-
-    if (data) {
-      // set etag
-      // https://forum.nginx.org/read.php?2,240120,240120#msg-240120
-      // should set weak etag avoid nginx remove it
-      ctx.set('etag', `W/${etag}`);
-    } else {
-      // match etag, set status 304
-      ctx.status = 304;
-    }
-    return data;
-  }
-
-  @HTTPMethod({
-    // GET /:fullname/:versionOrTag
-    path: `${PACKAGE_NAME_PATH}/:versionOrTag`,
-    method: HTTPMethodEnum.GET,
-  })
-  async showVersion(@HTTPParam() fullname: string, @HTTPParam() versionOrTag: string) {
-    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const [ scope, name ] = getScopeAndName(fullname);
-    const pkg = await this.getPackageEntity(scope, name);
-    let version = versionOrTag;
-    if (!semver.valid(versionOrTag)) {
-      // invalid version, versionOrTag is a tag
-      const packageTag = await this.packageRepository.findPackageTag(pkg.packageId, versionOrTag);
-      if (packageTag) {
-        version = packageTag.version;
-      }
-    }
-    const packageVersion = await this.getPackageVersionEntity(pkg, version);
-    const packageVersionJson = await this.packageManagerService.findPackageVersionManifest(packageVersion.packageId, version);
-    return packageVersionJson;
-  }
 
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#publish-a-new-package
   // https://github.com/npm/libnpmpublish/blob/main/publish.js#L43
@@ -144,7 +76,7 @@ export class PackageController extends AbstractController {
     path: PACKAGE_NAME_PATH,
     method: HTTPMethodEnum.PUT,
   })
-  async saveVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
+  async save(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     ctx.tValidate(FullPackageRule, pkg);
     fullname = fullname.trim();
     if (fullname !== pkg.name) {
@@ -284,98 +216,5 @@ export class PackageController extends AbstractController {
       return { version: v.version, deprecated: v.deprecated! };
     }));
     return { ok: true };
-  }
-
-  // https://github.com/npm/cli/blob/latest/lib/commands/owner.js#L191
-  @HTTPMethod({
-    // PUT /:fullname/-rev/:rev
-    path: `${PACKAGE_NAME_PATH}/-rev/:rev`,
-    method: HTTPMethodEnum.PUT,
-  })
-  async updatePackage(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: UpdatePacakgeMaintainerData) {
-    const npmCommand = ctx.get('npm-command');
-    if (npmCommand === 'unpublish') {
-      // ignore it
-      return { ok: false };
-    }
-    // only support update maintainer
-    if (npmCommand !== 'owner') {
-      throw new BadRequestError(`header: npm-command expected "owner", but got "${npmCommand}"`);
-    }
-    ctx.tValidate(UpdatePacakgeMaintainerDataRule, data);
-    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
-    // make sure all maintainers exists
-    const users: UserEntity[] = [];
-    for (const maintainer of data.maintainers) {
-      const user = await this.userRepository.findUserByName(maintainer.name);
-      if (!user) {
-        throw new UnprocessableEntityError(`Maintainer "${maintainer.name}" not exists`);
-      }
-      users.push(user);
-    }
-    await this.packageManagerService.replacePackageMaintainers(pkg, users);
-    return { ok: true };
-  }
-
-  @HTTPMethod({
-    // GET /:fullname/-/:filenameWithVersion.tgz
-    path: PACKAGE_TAR_DOWNLOAD_PATH,
-    method: HTTPMethodEnum.GET,
-  })
-  async downloadVersionTar(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
-    const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    const packageVersion = await this.getPackageVersionEntity(pkg, version);
-    ctx.logger.info('[PackageController:downloadVersionTar] %s@%s, packageVersionId: %s',
-      pkg.fullname, version, packageVersion.packageVersionId);
-    const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(packageVersion);
-    if (!urlOrStream) {
-      throw new NotFoundError(`"${filenameWithVersion}" not exists`);
-    }
-    if (typeof urlOrStream === 'string') {
-      ctx.redirect(urlOrStream);
-      return;
-    }
-    ctx.attachment(`${filenameWithVersion}.tgz`);
-    return urlOrStream;
-  }
-
-  // https://github.com/npm/cli/blob/latest/lib/commands/unpublish.js#L101
-  // https://github.com/npm/libnpmpublish/blob/main/unpublish.js#L43
-  @HTTPMethod({
-    // DELETE /@cnpm/foo/-/foo-4.0.0.tgz/-rev/61af62d6295fcbd9f8f1c08f
-    // DELETE /:fullname/-/:filenameWithVersion.tgz/-rev/:rev
-    path: `${PACKAGE_TAR_DOWNLOAD_PATH}/-rev/:rev`,
-    method: HTTPMethodEnum.DELETE,
-  })
-  async removeVersion(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
-    const npmCommand = ctx.get('npm-command');
-    if (npmCommand !== 'unpublish') {
-      throw new BadRequestError('Only allow "unpublish" npm-command');
-    }
-    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
-    const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
-    const packageVersion = await this.getPackageVersionEntity(pkg, version);
-    // https://docs.npmjs.com/policies/unpublish
-    // can unpublish anytime within the first 72 hours after publishing
-    if (Date.now() - packageVersion.publishTime.getTime() >= 3600000 * 72) {
-      throw new ForbiddenError(`${pkg.fullname}@${version} unpublish is not allowed after 72 hours of released`);
-    }
-    ctx.logger.info('[PackageController:removeVersion] %s@%s, packageVersionId: %s',
-      pkg.fullname, version, packageVersion.packageVersionId);
-    await this.packageManagerService.removePackageVersion(pkg, packageVersion);
-    return { ok: true };
-  }
-
-  private getAndCheckVersionFromFilename(ctx: EggContext, fullname: string, filenameWithVersion: string) {
-    const scopeAndName = getScopeAndName(fullname);
-    const name = scopeAndName[1];
-    // @foo/bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
-    // bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
-    const version = filenameWithVersion.substring(name.length + 1);
-    // check version format
-    const data = { version };
-    ctx.tValidate(VersionRule, data);
-    return data.version;
   }
 }

@@ -4,7 +4,7 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { NFSClientAdapter } from '../../../../app/common/adapter/NFSClientAdapter';
 
-describe('test/port/controller/PackageController/downloadVersionTar.test.ts', () => {
+describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let ctx: Context;
   let nfsClientAdapter: NFSClientAdapter;
   let publisher;
@@ -18,7 +18,7 @@ describe('test/port/controller/PackageController/downloadVersionTar.test.ts', ()
     app.destroyModuleContext(ctx);
   });
 
-  describe('[GET /:fullname/-/:name-:version.tgz] downloadVersionTar()', () => {
+  describe('[GET /:fullname/-/:name-:version.tgz] download()', () => {
     const scopedName = '@cnpm/testmodule-download-version-tar';
     const name = 'testmodule-download-version-tar';
     beforeEach(async () => {
@@ -123,6 +123,33 @@ describe('test/port/controller/PackageController/downloadVersionTar.test.ts', ()
           error: '[NOT_FOUND] testmodule-download-version-tar@1.0.404404 not found',
         });
 
+      await app.httpRequest()
+        .get(`/${scopedName}/-/${name}-1.0.404404.tgz`)
+        .expect(404)
+        .expect({
+          error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
+        });
+    });
+
+    it('should redirect to source registry when syncMode=all', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'all');
+      await app.httpRequest()
+        .get('/foo/-/foo-1.0.404404.tgz')
+        .expect(302)
+        .expect('location', 'https://registry.npmjs.org/foo/-/foo-1.0.404404.tgz');
+
+      await app.httpRequest()
+        .get('/foo/-/foo-1.0.404404.tgz?t=123')
+        .expect(302)
+        .expect('location', 'https://registry.npmjs.org/foo/-/foo-1.0.404404.tgz?t=123');
+
+      // not redirect when package exists
+      await app.httpRequest()
+        .get(`/${name}/-/${name}-1.0.404404.tgz`)
+        .expect(404)
+        .expect({
+          error: '[NOT_FOUND] testmodule-download-version-tar@1.0.404404 not found',
+        });
       await app.httpRequest()
         .get(`/${scopedName}/-/${name}-1.0.404404.tgz`)
         .expect(404)

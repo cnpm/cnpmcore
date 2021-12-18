@@ -3,7 +3,7 @@ import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
-describe('test/port/controller/PackageController/showVersion.test.ts', () => {
+describe('test/port/controller/package/ShowPackageVersionController.test.ts', () => {
   let ctx: Context;
   let publisher;
   beforeEach(async () => {
@@ -15,7 +15,7 @@ describe('test/port/controller/PackageController/showVersion.test.ts', () => {
     app.destroyModuleContext(ctx);
   });
 
-  describe('[GET /:fullname/:versionOrTag] showVersion()', () => {
+  describe('[GET /:fullname/:versionOrTag] show()', () => {
     it('should show one package version', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkg = await TestUtil.getFullPackage({
@@ -149,6 +149,27 @@ describe('test/port/controller/PackageController/showVersion.test.ts', () => {
     });
 
     it('should 404 when package not exists', async () => {
+      const res = await app.httpRequest()
+        .get('/@cnpm/foonot-exists/1.0.40000404')
+        .expect(404);
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
+    });
+
+    it('should redirect to source registry when syncMode=all', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'all');
+      await app.httpRequest()
+        .get('/foonot-exists/1.0.40000404')
+        .expect('location', 'https://registry.npmjs.org/foonot-exists/1.0.40000404')
+        .expect(302);
+
+      await app.httpRequest()
+        .get('/foonot-exists/1.0.40000404?t=123')
+        .expect('location', 'https://registry.npmjs.org/foonot-exists/1.0.40000404?t=123')
+        .expect(302);
+    });
+
+    it('should redirect private scope package to source registry when syncMode=all', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'all');
       const res = await app.httpRequest()
         .get('/@cnpm/foonot-exists/1.0.40000404')
         .expect(404);
