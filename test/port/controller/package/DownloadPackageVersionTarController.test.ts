@@ -45,7 +45,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     });
 
     it('should download a version tar redirect to mock cdn success', async () => {
-      mock(nfsClientAdapter.client, 'url', (storeKey: string) => {
+      mock(nfsClientAdapter.client.constructor.prototype, 'url', async (storeKey: string) => {
         return `https://cdn.mock.com${storeKey}`;
       });
       await app.httpRequest()
@@ -59,7 +59,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     });
 
     it('should download a version tar with streaming success', async () => {
-      mock(nfsClientAdapter.client, 'url', 'not-function');
+      mock(nfsClientAdapter.client.constructor.prototype, 'url', 'not-function');
       await app.httpRequest()
         .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`)
         .expect('content-type', 'application/octet-stream')
