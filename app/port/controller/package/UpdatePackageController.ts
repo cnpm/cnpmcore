@@ -18,13 +18,13 @@ import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { User as UserEntity } from '../../../core/entity/User';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 
-const UpdatePacakgeMaintainerDataRule = Type.Object({
+const MaintainerDataRule = Type.Object({
   maintainers: Type.Array(Type.Object({
     name: Type.String({ minLength: 1, maxLength: 100 }),
     email: Type.String({ format: 'email', maxLength: 400 }),
   }), { minItems: 1 }),
 });
-type UpdatePacakgeMaintainerData = Static<typeof UpdatePacakgeMaintainerDataRule>;
+type Maintainer = Static<typeof MaintainerDataRule>;
 
 @HTTPController()
 export class UpdatePackageController extends AbstractController {
@@ -37,7 +37,7 @@ export class UpdatePackageController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-rev/:rev`,
     method: HTTPMethodEnum.PUT,
   })
-  async update(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: UpdatePacakgeMaintainerData) {
+  async update(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: Maintainer) {
     const npmCommand = ctx.get('npm-command');
     if (npmCommand === 'unpublish') {
       // ignore it
@@ -47,7 +47,7 @@ export class UpdatePackageController extends AbstractController {
     if (npmCommand !== 'owner') {
       throw new BadRequestError(`header: npm-command expected "owner", but got "${npmCommand}"`);
     }
-    ctx.tValidate(UpdatePacakgeMaintainerDataRule, data);
+    ctx.tValidate(MaintainerDataRule, data);
     const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
     // make sure all maintainers exists
     const users: UserEntity[] = [];

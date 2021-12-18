@@ -13,6 +13,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
     publisher = await TestUtil.createUser();
     ctx = await app.mockModuleContext();
     taskRepository = await ctx.getEggObject(TaskRepository);
+    mock(app.config.cnpmcore, 'syncMode', 'all');
   });
 
   afterEach(() => {

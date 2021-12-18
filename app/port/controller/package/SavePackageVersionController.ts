@@ -59,8 +59,6 @@ type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions' | '_attachmen
   };
 }};
 
-// https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
-const PACKAGE_NAME_PATH = `/:fullname(${FULLNAME_REG_STRING})`;
 // base64 regex https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data/475217#475217
 const PACKAGE_ATTACH_DATA_RE = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
 
@@ -73,7 +71,8 @@ export class SavePackageVersionController extends AbstractController {
   // https://github.com/npm/libnpmpublish/blob/main/publish.js#L43
   @HTTPMethod({
     // PUT /:fullname
-    path: PACKAGE_NAME_PATH,
+    // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
+    path: `/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.PUT,
   })
   async save(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
@@ -127,8 +126,6 @@ export class SavePackageVersionController extends AbstractController {
     if (tagWithVersion.version !== packageVersion.version) {
       throw new UnprocessableEntityError(`dist-tags version "${tagWithVersion.version}" not match package version "${packageVersion.version}"`);
     }
-
-    // FIXME: make sure publisher in maintainers
 
     // check attachment data format and size
     if (!attachment.data || typeof attachment.data !== 'string' || !PACKAGE_ATTACH_DATA_RE.test(attachment.data)) {
