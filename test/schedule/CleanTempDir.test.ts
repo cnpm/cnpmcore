@@ -15,10 +15,10 @@ describe('test/schedule/CleanTempDir.test.ts', () => {
     for (const dir of oldDirs) {
       await mkdir(dir, { recursive: true });
     }
-    Reflect.apply(Reflect.get(app, 'mockLog'), app, []);
+    app.mockLog();
     await app.runSchedule('CleanTempDir');
-    Reflect.apply(Reflect.get(app, 'expectLog'), app, [ 'exists: true' ]);
-    Reflect.apply(Reflect.get(app, 'expectLog'), app, [ '[CleanTempDir.subscribe] remove dir "' ]);
+    app.expectLog('exists: true');
+    app.expectLog('[CleanTempDir.subscribe] remove dir "');
     // again should work
     await app.runSchedule('CleanTempDir');
   });

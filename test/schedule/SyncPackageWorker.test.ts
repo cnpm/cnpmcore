@@ -12,10 +12,10 @@ describe('test/schedule/SyncPackageWorker.test.ts', () => {
       .put(`/-/package/${name}/syncs`)
       .expect(201);
 
-    Reflect.apply(Reflect.get(app, 'mockLog'), app, []);
+    app.mockLog();
     await app.runSchedule('SyncPackageWorker');
-    Reflect.apply(Reflect.get(app, 'expectLog'), app, [ '[SyncPackageWorker:subscribe:executeTask:start]' ]);
-    Reflect.apply(Reflect.get(app, 'expectLog'), app, [ '[SyncPackageWorker:subscribe:executeTask:success]' ]);
+    app.expectLog('[SyncPackageWorker:subscribe:executeTask:start]');
+    app.expectLog('[SyncPackageWorker:subscribe:executeTask:success]');
     // again should work
     await app.runSchedule('SyncPackageWorker');
   });
@@ -27,9 +27,9 @@ describe('test/schedule/SyncPackageWorker.test.ts', () => {
       .expect(201);
 
     mock.error(PackageSyncerService.prototype, 'executeTask');
-    Reflect.apply(Reflect.get(app, 'mockLog'), app, []);
+    app.mockLog();
     await app.runSchedule('SyncPackageWorker');
-    Reflect.apply(Reflect.get(app, 'expectLog'), app, [ '[SyncPackageWorker:subscribe:executeTask:start]' ]);
-    Reflect.apply(Reflect.get(app, 'expectLog'), app, [ '[SyncPackageWorker:subscribe:executeTask:error]' ]);
+    app.expectLog('[SyncPackageWorker:subscribe:executeTask:start]');
+    app.expectLog('[SyncPackageWorker:subscribe:executeTask:error]');
   });
 });

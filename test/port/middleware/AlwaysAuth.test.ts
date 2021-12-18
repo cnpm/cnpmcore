@@ -1,18 +1,8 @@
 import { strict as assert } from 'assert';
-import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../TestUtil';
 
 describe('test/port/middleware/AlwaysAuth.test.ts', () => {
-  let ctx: Context;
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
-  });
-
   it('should 401 when config.cnpmcore.alwaysAuth = true', async () => {
     mock(app.config.cnpmcore, 'alwaysAuth', true);
     const res = await app.httpRequest()
