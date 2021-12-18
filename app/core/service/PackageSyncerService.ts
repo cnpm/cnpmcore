@@ -42,8 +42,13 @@ export class PackageSyncerService extends AbstractService {
   private readonly packageManagerService: PackageManagerService;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
-    const existsTask = await this.taskRepository.findTaskByTargetName(fullname, TaskType.SyncPackage, TaskState.Waiting);
+    let existsTask = await this.taskRepository.findTaskByTargetName(fullname, TaskType.SyncPackage, TaskState.Waiting);
     if (existsTask) return existsTask;
+    // find processing task and update less than 1 min
+    existsTask = await this.taskRepository.findTaskByTargetName(fullname, TaskType.SyncPackage, TaskState.Processing);
+    if (existsTask && (Date.now() - existsTask.updatedAt.getTime() < 60000)) {
+      return existsTask;
+    }
     const task = Task.createSyncPackage(fullname, options);
     await this.taskRepository.saveTask(task);
     return task;

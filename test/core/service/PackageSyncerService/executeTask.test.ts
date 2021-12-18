@@ -213,7 +213,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      console.log(log);
+      // console.log(log);
       assert(log.includes('❌ [0] Synced version 0.0.0 fail, download tarball error: MockError: mm mock error, status: unknow'));
       assert(log.includes('❌ All versions sync fail, package not exists'));
     });
