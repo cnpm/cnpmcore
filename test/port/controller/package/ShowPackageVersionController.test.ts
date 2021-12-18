@@ -142,7 +142,14 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
 
-      const res = await app.httpRequest()
+      let res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.40000404`)
+        .expect(404);
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
+
+      // should 404 on syncMode=all when package exists
+      mock(app.config.cnpmcore, 'syncMode', 'all');
+      res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.40000404`)
         .expect(404);
       assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
