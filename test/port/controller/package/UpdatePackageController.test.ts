@@ -3,7 +3,7 @@ import { Context } from 'egg';
 import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
-describe('test/port/controller/PackageController/updatePackage.test.ts', () => {
+describe('test/port/controller/pacakge/UpdatePackageController.test.ts', () => {
   let ctx: Context;
   let publisher;
   beforeEach(async () => {
@@ -15,7 +15,7 @@ describe('test/port/controller/PackageController/updatePackage.test.ts', () => {
     app.destroyModuleContext(ctx);
   });
 
-  describe('[PUT /:fullname/-rev/:rev] updatePackage', () => {
+  describe('[PUT /:fullname/-rev/:rev] update()', () => {
     const scopedName = '@cnpm/testmodule-update-package';
     let rev = '';
 

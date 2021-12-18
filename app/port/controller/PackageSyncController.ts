@@ -26,6 +26,9 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async createSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: SyncPackageTaskType) {
+    if (!this.enableSyncAll) {
+      throw new ForbiddenError('Not allow to sync package');
+    }
     const params = { fullname, tips: data.tips || '', skipDependencies: !!data.skipDependencies };
     ctx.tValidate(SyncPackageTaskRule, params);
     const [ scope, name ] = getScopeAndName(params.fullname);

@@ -16,6 +16,7 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
     ctx = await app.mockModuleContext();
     taskRepository = await ctx.getEggObject(TaskRepository);
     nfsAdapter = await ctx.getEggObject(NFSAdapter);
+    mock(app.config.cnpmcore, 'syncMode', 'all');
   });
 
   afterEach(() => {

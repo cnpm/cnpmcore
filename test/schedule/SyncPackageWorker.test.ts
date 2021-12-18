@@ -2,6 +2,10 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 
 describe('test/schedule/SyncPackageWorker.test.ts', () => {
+  beforeEach(async () => {
+    mock(app.config.cnpmcore, 'syncMode', 'all');
+  });
+
   it('should sync worker success', async () => {
     const name = 'mk2test-module-cnpmsync-issue-1667';
     await app.httpRequest()

@@ -1,11 +1,10 @@
 import assert from 'assert';
 import { join } from 'path';
-import { tmpdir } from 'os';
 import { EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
 import { patchAjv } from '../app/port/typebox';
 
-export default (/* appInfo: EggAppConfig */) => {
+export default (appInfo: EggAppConfig) => {
   const config = {} as PowerPartial<EggAppConfig>;
 
   config.cnpmcore = {
@@ -16,6 +15,10 @@ export default (/* appInfo: EggAppConfig */) => {
     sourceRegistryIsCNpm: false,
     // 3 mins
     sourceRegistrySyncTimeout: 180000,
+    // sync mode
+    //  - none: don't sync npm package, just redirect it to sourceRegistry
+    //  - all: sync all npm packages
+    syncMode: process.env.CNPMCORE_SYNC_MODE || 'none',
     syncPackageWorkerMaxConcurrentTasks: 10,
     registry: 'http://localhost:7001',
     // https://docs.npmjs.com/cli/v6/using-npm/config#always-auth npm <= 6
@@ -39,7 +42,7 @@ export default (/* appInfo: EggAppConfig */) => {
   };
 
   // override config from framework / plugin
-  config.dataDir = join(process.env.HOME || tmpdir(), '.cnpmcore');
+  config.dataDir = join(appInfo.root, '.cnpmcore');
 
   config.orm = {
     client: 'mysql',

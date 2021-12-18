@@ -10,6 +10,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     ctx = await app.mockModuleContext();
+    mock(app.config.cnpmcore, 'syncMode', 'all');
   });
 
   afterEach(() => {
@@ -17,6 +18,14 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
   });
 
   describe('[PUT /-/package/:fullname/syncs] createSyncTask()', () => {
+    it('should 403 when syncMode = none', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      const res = await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .expect(403);
+      assert.equal(res.body.error, '[FORBIDDEN] Not allow to sync package');
+    });
+
     it('should 401 if user not login when alwaysAuth = true', async () => {
       mock(app.config.cnpmcore, 'alwaysAuth', true);
       const res = await app.httpRequest()
