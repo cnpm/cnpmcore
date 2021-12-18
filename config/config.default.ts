@@ -18,7 +18,7 @@ export default (appInfo: EggAppConfig) => {
     // sync mode
     //  - none: don't sync npm package, just redirect it to sourceRegistry
     //  - all: sync all npm packages
-    syncMode: process.env.CNPMCORE_SYNC_MODE || 'none',
+    syncMode: 'none',
     syncPackageWorkerMaxConcurrentTasks: 10,
     registry: 'http://localhost:7001',
     // https://docs.npmjs.com/cli/v6/using-npm/config#always-auth npm <= 6

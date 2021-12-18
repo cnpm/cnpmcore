@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 
 describe('test/port/controller/PackageController/showTotal.test.ts', () => {
   let ctx: Context;
@@ -25,6 +25,17 @@ describe('test/port/controller/PackageController/showTotal.test.ts', () => {
       assert(data.instance_start_time > 0);
       // microseconds
       assert.equal(String(data.instance_start_time).length, 16);
+      assert.equal(data.sync_model, 'none');
+    });
+
+    it('should show sync mode = all', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'all');
+      const res = await app.httpRequest()
+        .get('/')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const data = res.body;
+      assert.equal(data.sync_model, 'all');
     });
   });
 });
