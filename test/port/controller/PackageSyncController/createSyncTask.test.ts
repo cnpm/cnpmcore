@@ -2,6 +2,7 @@ import { strict as assert } from 'assert';
 import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
+import { Task as TaskModel } from 'app/repository/model/Task';
 
 describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', () => {
   let publisher;
@@ -85,6 +86,34 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert.equal(res.body.ok, true);
       assert.equal(res.body.state, 'waiting');
       assert.equal(res.body.id, firstTaskId);
+    });
+
+    it('should dont create exists processing task update less than 1 min', async () => {
+      let res = await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.equal(res.body.state, 'waiting');
+      assert(res.body.id);
+      const firstTaskId = res.body.id;
+
+      await TaskModel.update({ taskId: firstTaskId }, { state: 'processing' });
+      // again dont create
+      res = await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.equal(res.body.state, 'processing');
+      assert.equal(res.body.id, firstTaskId);
+
+      // update bigger than 1 min
+      await TaskModel.update({ taskId: firstTaskId }, { updatedAt: new Date(Date.now() - 60001) });
+      res = await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.equal(res.body.state, 'waiting');
+      assert.notEqual(res.body.id, firstTaskId);
     });
   });
 });
