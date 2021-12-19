@@ -220,7 +220,8 @@ export class PackageSyncerService extends AbstractService {
     const existsVersionMap = existsData && existsData.versions || {};
     const existsVersionCount = Object.keys(existsVersionMap).length;
     // 2. save versions
-    const versions = Object.values<any>(data.versions || {});
+    const versionMap = data.versions || {};
+    const versions = Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     let syncVersionCount = 0;
     const differentMetas: any[] = [];
@@ -360,9 +361,23 @@ export class PackageSyncerService extends AbstractService {
     // 2.1 save differentMetas
     for (const [ existsItem, diffMeta ] of differentMetas) {
       const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsItem.version);
-      await this.packageManagerService.savePackageVersionManifest(pkgVersion!, diffMeta, diffMeta);
+      if (pkgVersion) {
+        await this.packageManagerService.savePackageVersionManifest(pkgVersion, diffMeta, diffMeta);
+      }
       syncVersionCount++;
       logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${JSON.stringify(diffMeta)}`);
+    }
+
+    // 2.3 find out remove versions
+    for (const existsVersion in existsVersionMap) {
+      if (!(existsVersion in versionMap)) {
+        const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsVersion);
+        if (pkgVersion) {
+          await this.packageManagerService.removePackageVersion(pkg, pkgVersion);
+        }
+        syncVersionCount++;
+        logs.push(`[${isoNow()}] 🟢 Removed version ${existsVersion} success`);
+      }
     }
 
     if (syncVersionCount > 0) {
