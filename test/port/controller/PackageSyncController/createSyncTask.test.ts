@@ -125,4 +125,28 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert.notEqual(res.body.id, firstTaskId);
     });
   });
+
+  describe('[PUT /:fullname/sync] deprecatedCreateSyncTask()', () => {
+    it('should 403 when syncMode = none', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      const res = await app.httpRequest()
+        .put('/koa/sync')
+        .expect(403);
+      assert.equal(res.body.error, '[FORBIDDEN] Not allow to sync package');
+    });
+
+    it('should 201', async () => {
+      let res = await app.httpRequest()
+        .put('/koa/sync')
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert(res.body.logId);
+
+      res = await app.httpRequest()
+        .put('/koa/sync?nodeps=true')
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert(res.body.logId);
+    });
+  });
 });
