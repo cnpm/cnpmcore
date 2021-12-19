@@ -30,7 +30,8 @@ export class PackageSyncController extends AbstractController {
     if (!this.enableSyncAll) {
       throw new ForbiddenError('Not allow to sync package');
     }
-    const params = { fullname, tips: data.tips || '', skipDependencies: !!data.skipDependencies };
+    const tips = data.tips || `parent traceId: ${ctx.tracer.traceId}`;
+    const params = { fullname, tips, skipDependencies: !!data.skipDependencies };
     ctx.tValidate(SyncPackageTaskRule, params);
     const [ scope, name ] = getScopeAndName(params.fullname);
     const packageEntity = await this.packageRepository.findPackage(scope, name);
@@ -43,6 +44,8 @@ export class PackageSyncController extends AbstractController {
       authorId: authorized?.user.userId,
       tips: params.tips,
     });
+    ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
+      task.taskId, fullname);
     ctx.status = 201;
     return {
       ok: true,
