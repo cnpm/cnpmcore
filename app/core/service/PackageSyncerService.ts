@@ -51,6 +51,8 @@ export class PackageSyncerService extends AbstractService {
     }
     const task = Task.createSyncPackage(fullname, options);
     await this.taskRepository.saveTask(task);
+    this.logger.info('[PackageSyncerService.createTask:new] fullname: %s, taskId: %s',
+      fullname, task.taskId);
     return task;
   }
 

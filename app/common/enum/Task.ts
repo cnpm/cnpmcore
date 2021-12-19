@@ -1,5 +1,6 @@
 export enum TaskType {
   SyncPackage = 'sync_package',
+  ChangesStream = 'changes_stream',
 }
 
 export enum TaskState {

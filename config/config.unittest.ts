@@ -12,5 +12,9 @@ export default (appInfo: EggAppConfig) => {
   config.nfs = {
     dir: join(config.dataDir, 'nfs'),
   };
+
+  config.cnpmcore = {
+    checkChangesStreamInterval: 10,
+  };
   return config;
 };
