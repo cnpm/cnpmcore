@@ -95,6 +95,7 @@ export class ChangesStreamService extends AbstractService {
       // 😄",\n{\"seq\":7138745,\"id\":\"ccxt\",\"changes\":[{\"rev\":\"10205-25367c525a0a3bd61be3a72223ce212c\"}]}"😄
       const matchs = text.matchAll(/"seq":(\d+),"id":"([^"]+)"/gm);
       let count = 0;
+      let lastPackage = '';
       for (const match of matchs) {
         const seq = match[1];
         const fullname = match[2];
@@ -107,15 +108,19 @@ export class ChangesStreamService extends AbstractService {
           });
           count++;
           lastSince = seq;
+          lastPackage = fullname;
         }
       }
-      task.data = {
-        ...task.data,
-        since: lastSince,
-        task_count: (task.data.task_count || 0) + count,
-      };
-      await this.taskRepository.saveTask(task);
-      taskCount += count;
+      if (count > 0) {
+        taskCount += count;
+        task.data = {
+          ...task.data,
+          since: lastSince,
+          last_package: lastPackage,
+          task_count: (task.data.task_count || 0) + count,
+        };
+        await this.taskRepository.saveTask(task);
+      }
     }
     if (taskCount === 0) {
       // keep update task, make sure updatedAt changed
