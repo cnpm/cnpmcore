@@ -128,7 +128,7 @@ export class PackageSyncController extends AbstractController {
     const task = await this.showSyncTask(fullname, taskId);
     const syncDone = task.state !== TaskState.Waiting && task.state !== TaskState.Processing;
     const stateMessage = syncDone ? '[done]' : '[processing]';
-    const log = `[${new Date().toISOString()}] ${stateMessage} Sync data: ${JSON.stringify(task)}\n`;
+    const log = `[${new Date().toISOString()}] ${stateMessage} Sync data: ${JSON.stringify(task)}`;
     return {
       ok: true,
       syncDone,
