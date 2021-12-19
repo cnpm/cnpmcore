@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert = require('assert');
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { ChangesStreamService } from 'app/core/service/ChangesStreamService';

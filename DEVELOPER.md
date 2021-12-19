@@ -111,6 +111,16 @@ curl -v http://127.0.0.1:7001
 npm run test
 ```
 
+#### assert 断言库必须使用 require 引入
+
+```ts
+import assert = require('assert');
+```
+
+CAUTION: don't use `import assert from 'assert'`
+Just use old style import assert = require('assert') for assert module. This is limitation.
+See https://github.com/power-assert-js/espower-typescript#caution-dont-use-import-assert-from-assert
+
 ## Controller 开发指南
 
 目前只支持 HTTP 协议的 Controller，代码在 `app/port/controller` 目录下。

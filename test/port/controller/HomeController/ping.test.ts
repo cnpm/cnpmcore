@@ -1,4 +1,4 @@
-import { strict as assert } from 'assert';
+import assert = require('assert');
 import { Context } from 'egg';
 import { app } from 'egg-mock/bootstrap';
 

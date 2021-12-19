@@ -1,5 +1,6 @@
+import assert = require('assert');
 import path from 'path';
-import { app, assert } from 'egg-mock/bootstrap';
+import { app } from 'egg-mock/bootstrap';
 import coffee from 'coffee';
 import { TestUtil } from 'test/TestUtil';
 import { npmLogin } from '../CliUtil';
