@@ -58,13 +58,12 @@ export class PackageSyncController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/syncs/:taskId`,
     method: HTTPMethodEnum.GET,
   })
-  async showSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() taskId: string) {
+  async showSyncTask(@HTTPParam() fullname: string, @HTTPParam() taskId: string) {
     const task = await this.packageSyncerService.findTask(taskId);
     if (!task) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" not found`);
-    let logUrl: URL | undefined;
+    let logUrl: string | undefined;
     if (task.state !== TaskState.Waiting) {
-      logUrl = new URL(ctx.href);
-      logUrl.pathname = `${logUrl.pathname}/log`;
+      logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${taskId}/log`;
     }
     return {
       ok: true,
@@ -122,8 +121,8 @@ export class PackageSyncController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/sync/log/:taskId`,
     method: HTTPMethodEnum.GET,
   })
-  async deprecatedShowSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() taskId: string) {
-    const task = await this.showSyncTask(ctx, fullname, taskId);
+  async deprecatedShowSyncTask(@HTTPParam() fullname: string, @HTTPParam() taskId: string) {
+    const task = await this.showSyncTask(fullname, taskId);
     const syncDone = task.state !== TaskState.Waiting && task.state !== TaskState.Processing;
     const stateMessage = syncDone ? '[done]' : '[processing]';
     const log = `[${new Date().toISOString()}] ${stateMessage} Sync data: ${JSON.stringify(task)}\n`;

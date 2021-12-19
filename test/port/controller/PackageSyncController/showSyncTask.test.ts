@@ -65,7 +65,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
         .expect(200);
       assert(res.body.id);
       assert(res.body.logUrl);
-      assert.match(res.body.logUrl, /^http:\/\//);
+      assert.match(res.body.logUrl, /^http:\/\/localhost:7001\/-\/package\//);
       assert.match(res.body.logUrl, /\/log$/);
     });
 
@@ -148,10 +148,10 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       await taskRepository.saveTask(task!);
 
       res = await app.httpRequest()
-        .get(`/koa/sync/log/${task.taskId}`)
+        .get(`/koa/sync/log/${task.taskId}?t=123`)
         .expect(200);
       assert(res.body.logUrl);
-      assert.match(res.body.logUrl, /^http:\/\//);
+      assert.match(res.body.logUrl, /^http:\/\/localhost:7001\/-\/package\//);
       assert.match(res.body.logUrl, /\/log$/);
       assert.equal(res.body.syncDone, false);
       assert(res.body.log);
@@ -161,7 +161,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       await taskRepository.saveTask(task!);
 
       res = await app.httpRequest()
-        .get(`/koa/sync/log/${task!.taskId}`)
+        .get(`/koa/sync/log/${task.taskId}`)
         .expect(200);
       assert(res.body.logUrl);
       assert.match(res.body.logUrl, /^http:\/\//);
