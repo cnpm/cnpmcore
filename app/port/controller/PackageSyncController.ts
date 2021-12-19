@@ -7,6 +7,7 @@ import {
   Context,
   EggContext,
   Inject,
+  HTTPQuery,
 } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
@@ -93,5 +94,44 @@ export class PackageSyncController extends AbstractController {
     }
     ctx.type = 'log';
     return logUrlOrStream;
+  }
+
+  // deprecate create sync task api for cnpmjs.org
+  // https://github.com/cnpm/cnpmjs.org/blob/master/controllers/sync.js
+  @HTTPMethod({
+    // PUT /:fullname/sync
+    path: `/:fullname(${FULLNAME_REG_STRING})/sync`,
+    method: HTTPMethodEnum.PUT,
+  })
+  async deprecatedCreateSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPQuery() nodeps: string) {
+    const options: SyncPackageTaskType = {
+      fullname,
+      tips: `Sync cause by "${ctx.href}"`,
+      skipDependencies: nodeps === 'true',
+    };
+    const task = await this.createSyncTask(ctx, fullname, options);
+    return {
+      ok: true,
+      logId: task.id,
+    };
+  }
+
+  // https://github.com/cnpm/cnpmjs.org/blob/master/controllers/sync.js#L55
+  @HTTPMethod({
+    // GET /:fullname/sync/log/:taskId
+    path: `/:fullname(${FULLNAME_REG_STRING})/sync/log/:taskId`,
+    method: HTTPMethodEnum.GET,
+  })
+  async deprecatedShowSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() taskId: string) {
+    const task = await this.showSyncTask(ctx, fullname, taskId);
+    const syncDone = task.state !== TaskState.Waiting && task.state !== TaskState.Processing;
+    const stateMessage = syncDone ? '[done]' : '[processing]';
+    const log = `[${new Date().toISOString()}] ${stateMessage} Sync data: ${JSON.stringify(task)}\n`;
+    return {
+      ok: true,
+      syncDone,
+      log,
+      logUrl: task.logUrl,
+    };
   }
 }

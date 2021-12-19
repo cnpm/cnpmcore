@@ -118,4 +118,56 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       assert(!pkg.scripts);
     });
   });
+
+  describe('[GET /:fullname/sync/log/:taskId] deprecatedShowSyncTask()', () => {
+    it('should 404 when task not exists', async () => {
+      const res = await app.httpRequest()
+        .get('/koa/sync/log/mock-task-id')
+        .expect(404);
+      assert.equal(res.body.error, '[NOT_FOUND] Package "koa" sync task "mock-task-id" not found');
+    });
+
+    it('should 200', async () => {
+      let res = await app.httpRequest()
+        .put('/koa/sync')
+        .expect(201);
+      assert(res.body.logId);
+      const task = await taskRepository.findTask(res.body.logId);
+      assert(task);
+
+      res = await app.httpRequest()
+        .get(`/koa/sync/log/${task.taskId}`)
+        .expect(200);
+      assert(res.body.ok);
+      // waiting state logUrl is not exists
+      assert(!res.body.logUrl);
+      assert.equal(res.body.syncDone, false);
+      assert(res.body.log);
+
+      task!.state = TaskState.Processing;
+      await taskRepository.saveTask(task!);
+
+      res = await app.httpRequest()
+        .get(`/koa/sync/log/${task.taskId}`)
+        .expect(200);
+      assert(res.body.logUrl);
+      assert.match(res.body.logUrl, /^http:\/\//);
+      assert.match(res.body.logUrl, /\/log$/);
+      assert.equal(res.body.syncDone, false);
+      assert(res.body.log);
+
+      // finish
+      task.state = TaskState.Success;
+      await taskRepository.saveTask(task!);
+
+      res = await app.httpRequest()
+        .get(`/koa/sync/log/${task!.taskId}`)
+        .expect(200);
+      assert(res.body.logUrl);
+      assert.match(res.body.logUrl, /^http:\/\//);
+      assert.match(res.body.logUrl, /\/log$/);
+      assert.equal(res.body.syncDone, true);
+      assert.match(res.body.log, /\[done\] Sync/);
+    });
+  });
 });
