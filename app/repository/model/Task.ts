@@ -37,7 +37,7 @@ export class Task extends Bone {
   authorIp: string;
 
   @Attribute(DataTypes.JSONB)
-  data: object;
+  data: any;
 
   @Attribute(DataTypes.STRING(512))
   logPath: string;

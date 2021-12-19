@@ -45,15 +45,19 @@ export class TaskRepository extends AbstractRepository {
     return null;
   }
 
-  async findTaskByTargetName(targetName: string, type: TaskType, state: TaskState) {
-    const task = await TaskModel.findOne({ targetName, type, state });
+  async findTaskByTargetName(targetName: string, type: TaskType, state?: TaskState) {
+    const where: any = { targetName, type };
+    if (state) {
+      where.state = state;
+    }
+    const task = await TaskModel.findOne(where);
     if (task) {
       return ModelConvertor.convertModelToEntity(task, TaskEntity);
     }
     return null;
   }
 
-  async executeWaitingTask(taskType: TaskType) {
+  async executeWaitingTask(taskType: TaskType, timeout?: number) {
     // https://zhuanlan.zhihu.com/p/20293493?refer=alsotang
     // Task list impl from MySQL
     const GET_WAITING_TASK_SQL = `UPDATE tasks SET gmt_modified=now(3), state=?, attempts=attempts+1, id=LAST_INSERT_ID(id)
@@ -69,9 +73,10 @@ WHERE type=? AND state=? ORDER BY gmt_modified ASC LIMIT 1`;
       }
     }
 
-    // try to find timeout task, 5 mins
+    // try to find timeout task, default is 5 mins
+    timeout = timeout ?? 60000 * 5;
     const timeoutDate = new Date();
-    timeoutDate.setTime(timeoutDate.getTime() - 60000 * 5);
+    timeoutDate.setTime(timeoutDate.getTime() - timeout);
     const GET_TIMEOUT_TASK_SQL = `UPDATE tasks SET gmt_modified=now(3), state=?, attempts=attempts+1, id=LAST_INSERT_ID(id)
 WHERE type=? AND state=? AND gmt_modified<? ORDER BY gmt_modified ASC LIMIT 1`;
     result = await TaskModel.driver.query(GET_TIMEOUT_TASK_SQL,

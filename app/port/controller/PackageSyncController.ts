@@ -30,7 +30,7 @@ export class PackageSyncController extends AbstractController {
     if (!this.enableSyncAll) {
       throw new ForbiddenError('Not allow to sync package');
     }
-    const tips = data.tips || `parent traceId: ${ctx.tracer.traceId}`;
+    const tips = data.tips || `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
     const params = { fullname, tips, skipDependencies: !!data.skipDependencies };
     ctx.tValidate(SyncPackageTaskRule, params);
     const [ scope, name ] = getScopeAndName(params.fullname);
@@ -43,6 +43,7 @@ export class PackageSyncController extends AbstractController {
       authorIp: ctx.ip,
       authorId: authorized?.user.userId,
       tips: params.tips,
+      skipDependencies: params.skipDependencies,
     });
     ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
       task.taskId, fullname);
@@ -110,7 +111,7 @@ export class PackageSyncController extends AbstractController {
   async deprecatedCreateSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPQuery() nodeps: string) {
     const options: SyncPackageTaskType = {
       fullname,
-      tips: `Sync cause by "${ctx.href}"`,
+      tips: `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`,
       skipDependencies: nodeps === 'true',
     };
     const task = await this.createSyncTask(ctx, fullname, options);

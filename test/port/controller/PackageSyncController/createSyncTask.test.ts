@@ -72,12 +72,27 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
     });
 
     it('should 201 if user not login when alwaysAuth = false', async () => {
-      const res = await app.httpRequest()
+      let res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.state, 'waiting');
       assert(res.body.id);
+      let task = await TaskModel.findOne({ taskId: res.body.id });
+      assert(task, 'task should exists');
+      assert.equal(task.data.skipDependencies, false, 'skipDependencies should be false');
+
+      res = await app.httpRequest()
+        .put('/-/package/ob/syncs')
+        .send({ skipDependencies: true, tips: 'foo bar' })
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.equal(res.body.state, 'waiting');
+      assert(res.body.id);
+      task = await TaskModel.findOne({ taskId: res.body.id });
+      assert(task, 'task should exists');
+      assert.equal(task.data.skipDependencies, true, 'skipDependencies should be true');
+      assert.equal(task.data.tips, 'foo bar');
     });
 
     it('should dont create exists waiting task', async () => {
@@ -141,12 +156,25 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .expect(201);
       assert.equal(res.body.ok, true);
       assert(res.body.logId);
+      let task = await TaskModel.findOne({ taskId: res.body.logId });
+      assert(task, 'task should exists');
+      assert.equal(task.data.skipDependencies, false, 'skipDependencies should be false');
 
       res = await app.httpRequest()
         .put('/koa/sync?nodeps=true')
         .expect(201);
       assert.equal(res.body.ok, true);
       assert(res.body.logId);
+
+      res = await app.httpRequest()
+        .put('/ob/sync?nodeps=true')
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert(res.body.logId);
+      // skipDependencies should be true
+      task = await TaskModel.findOne({ taskId: res.body.logId });
+      assert(task, 'task should exists');
+      assert.equal(task.data.skipDependencies, true, 'skipDependencies should be true');
     });
   });
 });

@@ -1,3 +1,4 @@
+import os from 'os';
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 import { TaskType, TaskState } from '../../common/enum/Task';
@@ -10,7 +11,7 @@ interface TaskData extends EntityData {
   targetName: string;
   authorId: string;
   authorIp: string;
-  data: unknown;
+  data: any;
   logPath?: string;
   logStorePosition?: string;
   attempts?: number;
@@ -31,7 +32,7 @@ export class Task extends Entity {
   targetName: string;
   authorId: string;
   authorIp: string;
-  data: unknown;
+  data: any;
   logPath: string;
   logStorePosition: string;
   attempts: number;
@@ -69,5 +70,17 @@ export class Task extends Entity {
     const task = this.create(data);
     task.logPath = `/packages/${fullname}/syncs/${dayjs().format('YYYY/MM/DDHHMM')}-${task.taskId}.log`;
     return task;
+  }
+
+  public static createChangesStream(targetName: string): Task {
+    const data = {
+      type: TaskType.ChangesStream,
+      state: TaskState.Waiting,
+      targetName,
+      authorId: `pid_${process.pid}`,
+      authorIp: os.hostname(),
+      data: { since: '' },
+    };
+    return this.create(data);
   }
 }
