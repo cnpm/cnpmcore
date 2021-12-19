@@ -30,7 +30,8 @@ export class PackageSyncController extends AbstractController {
     if (!this.enableSyncAll) {
       throw new ForbiddenError('Not allow to sync package');
     }
-    const params = { fullname, tips: data.tips || '', skipDependencies: !!data.skipDependencies };
+    const tips = data.tips || `parent traceId: ${ctx.tracer.traceId}`;
+    const params = { fullname, tips, skipDependencies: !!data.skipDependencies };
     ctx.tValidate(SyncPackageTaskRule, params);
     const [ scope, name ] = getScopeAndName(params.fullname);
     const packageEntity = await this.packageRepository.findPackage(scope, name);
@@ -43,6 +44,8 @@ export class PackageSyncController extends AbstractController {
       authorId: authorized?.user.userId,
       tips: params.tips,
     });
+    ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
+      task.taskId, fullname);
     ctx.status = 201;
     return {
       ok: true,
@@ -58,13 +61,12 @@ export class PackageSyncController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/syncs/:taskId`,
     method: HTTPMethodEnum.GET,
   })
-  async showSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() taskId: string) {
+  async showSyncTask(@HTTPParam() fullname: string, @HTTPParam() taskId: string) {
     const task = await this.packageSyncerService.findTask(taskId);
     if (!task) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" not found`);
-    let logUrl: URL | undefined;
+    let logUrl: string | undefined;
     if (task.state !== TaskState.Waiting) {
-      logUrl = new URL(ctx.href);
-      logUrl.pathname = `${logUrl.pathname}/log`;
+      logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${taskId}/log`;
     }
     return {
       ok: true,
@@ -122,11 +124,11 @@ export class PackageSyncController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/sync/log/:taskId`,
     method: HTTPMethodEnum.GET,
   })
-  async deprecatedShowSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() taskId: string) {
-    const task = await this.showSyncTask(ctx, fullname, taskId);
+  async deprecatedShowSyncTask(@HTTPParam() fullname: string, @HTTPParam() taskId: string) {
+    const task = await this.showSyncTask(fullname, taskId);
     const syncDone = task.state !== TaskState.Waiting && task.state !== TaskState.Processing;
     const stateMessage = syncDone ? '[done]' : '[processing]';
-    const log = `[${new Date().toISOString()}] ${stateMessage} Sync data: ${JSON.stringify(task)}\n`;
+    const log = `[${new Date().toISOString()}] ${stateMessage} Sync data: ${JSON.stringify(task)}`;
     return {
       ok: true,
       syncDone,
