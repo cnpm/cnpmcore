@@ -14,7 +14,7 @@ export default (appInfo: EggAppConfig) => {
   };
 
   config.cnpmcore = {
-    checkChangesStreamInterval: 200,
+    checkChangesStreamInterval: 10,
   };
   return config;
 };
