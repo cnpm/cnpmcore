@@ -1,4 +1,4 @@
-import { strict as assert } from 'assert';
+import assert = require('assert');
 import { formatTarball } from '../../app/common/PackageUtil';
 
 describe('test/common/PackageUtil.test.ts', () => {

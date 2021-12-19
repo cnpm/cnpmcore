@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert = require('assert');
 import { Readable } from 'stream';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
