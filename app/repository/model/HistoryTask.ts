@@ -47,4 +47,7 @@ export class HistoryTask extends Bone {
 
   @Attribute(DataTypes.INTEGER)
   attempts: number;
+
+  @Attribute(DataTypes.TEXT('long'))
+  error: string;
 }

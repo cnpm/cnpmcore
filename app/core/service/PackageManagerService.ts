@@ -522,7 +522,8 @@ export class PackageManagerService extends AbstractService {
     const maintainers: { name: string; email: string; }[] = [];
     const users = await this.packageRepository.listPackageMaintainers(pkg.packageId);
     for (const user of users) {
-      maintainers.push({ name: user.name, email: user.email });
+      const name = user.name.startsWith('npm:') ? user.name.replace('npm:', '') : user.name;
+      maintainers.push({ name, email: user.email });
     }
     return maintainers;
   }

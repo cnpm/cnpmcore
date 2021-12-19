@@ -204,6 +204,7 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `log_path` varchar(512) NOT NULL COMMENT 'access path',
   `log_store_position` varchar(10) NOT NULL COMMENT 'cloud store disk position',
   `attempts` int unsigned DEFAULT 0 COMMENT 'task execute attempts times',
+  `error` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'error description',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_task_id` (`task_id`),
   KEY `idx_type_state_target_name` (`target_name`, `type`, `state`),
@@ -225,6 +226,7 @@ CREATE TABLE IF NOT EXISTS `history_tasks` (
   `log_path` varchar(512) NOT NULL COMMENT 'access path',
   `log_store_position` varchar(10) NOT NULL COMMENT 'cloud store disk position',
   `attempts` int unsigned DEFAULT 0 COMMENT 'task execute attempts times',
+  `error` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'error description',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_task_id` (`task_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='history task info';
