@@ -260,6 +260,39 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 🚧 Syncing versions 1 => 2'));
     });
 
+    it('should sync removed versions', async () => {
+      const name = '@cnpmcore/test-sync-package-has-two-versions';
+      await packageSyncerService.createTask(name);
+      let task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      let stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      let log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 🟢 Synced 2 versions'));
+
+      const result = await npmRegistry.getFullManifests(name);
+      const removeVersion = Object.keys(result.data.versions)[0];
+      delete result.data.versions[removeVersion];
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 🟢 Synced 1 versions'));
+      assert(log.includes(`] 🟢 Removed version ${removeVersion} success`));
+      const { data } = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
+      assert.equal(Object.keys(data.versions).length, 1);
+      assert(!data.versions[removeVersion], `${removeVersion} should not exists`);
+    });
+
     it('should work on mock package.readme is undefined', async () => {
       const name = 'cnpmcore-test-sync-dependencies';
       const result = await npmRegistry.getFullManifests(name);
@@ -274,8 +307,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
-      const data = await packageManagerService.listPackageFullManifests('', name);
-      assert.equal(data.data.readme, '');
+      const { data } = await packageManagerService.listPackageFullManifests('', name);
+      assert.equal(data.readme, '');
     });
 
     it('should work on mock package.readme is object', async () => {
