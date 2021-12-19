@@ -151,8 +151,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('❌ [0] Synced version 0.0.0 error, MockError: mm mock error'));
+      assert(log.includes('❌ [0] Synced version 0.0.0 error, publish error: MockError: mm mock error'));
       assert(log.includes('❌ All versions sync fail, package not exists'));
+
+      const res = await app.httpRequest()
+        .get(`/-/package/${name}/syncs/${task.taskId}`)
+        .expect(200);
+      assert.equal(res.body.state, 'fail');
+      assert.equal(res.body.error, 'publish error: MockError: mm mock error');
     });
 
     it('should ignore publish ForbiddenError on sync task', async () => {
@@ -376,7 +382,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('[1] Synced fengmk2 => npm:fengmk2('));
       let data = await packageManagerService.listPackageFullManifests('', name);
       assert.equal(data.data.maintainers.length, 1);
-      assert.deepEqual(data.data.maintainers[0].name, 'npm:fengmk2');
+      assert.deepEqual(data.data.maintainers[0].name, 'fengmk2');
 
       // add new maintainer
       remotePkg.maintainers.push({ name: 'foouser', email: 'foouser@ggg.com' });
@@ -397,9 +403,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('[2] Synced baruser => npm:baruser('));
       data = await packageManagerService.listPackageFullManifests('', name);
       assert.equal(data.data.maintainers.length, 3);
-      assert.deepEqual(data.data.maintainers[0].name, 'npm:fengmk2');
-      assert.deepEqual(data.data.maintainers[1].name, 'npm:foouser');
-      assert.deepEqual(data.data.maintainers[2].name, 'npm:baruser');
+      assert.deepEqual(data.data.maintainers[0].name, 'fengmk2');
+      assert.deepEqual(data.data.maintainers[1].name, 'foouser');
+      assert.deepEqual(data.data.maintainers[2].name, 'baruser');
 
       // remove maintainer
       remotePkg.maintainers.push({ name: 'baruser', email: 'baruser@ggg.com' });
@@ -417,11 +423,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(!log.includes('Synced fengmk2 => npm:fengmk2('));
       assert(!log.includes('Synced foouser => npm:foouser('));
-      assert(log.includes('Removed 1 maintainers: [{"name":"npm:baruser","email":"baruser@ggg.com"}]'));
+      assert(log.includes('Removed 1 maintainers: [{"name":"baruser","email":"baruser@ggg.com"}]'));
       data = await packageManagerService.listPackageFullManifests('', name);
       assert.equal(data.data.maintainers.length, 2);
-      assert.deepEqual(data.data.maintainers[0].name, 'npm:fengmk2');
-      assert.deepEqual(data.data.maintainers[1].name, 'npm:foouser');
+      assert.deepEqual(data.data.maintainers[0].name, 'fengmk2');
+      assert.deepEqual(data.data.maintainers[1].name, 'foouser');
     });
 
     it('should sync sourceRegistryIsCNpm = true', async () => {
@@ -539,7 +545,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes(`❌ Synced ${name} fail, request manifests error`));
     });
 
-    it('should mock getFullManifests Invalid maintainers error', async () => {
+    it('should mock getFullManifests invalid maintainers error', async () => {
       mock.data(NPMRegistry.prototype, 'getFullManifests', {
         data: {
           maintainers: [{ name: 'foo' }],
@@ -558,7 +564,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert(log.includes('❌ Invalid maintainers: '));
+      assert(log.includes('❌ invalid maintainers: '));
     });
 
     it('should mock getFullManifests missing tarball error and downloadTarball error', async () => {

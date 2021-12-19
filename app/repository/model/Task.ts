@@ -47,4 +47,7 @@ export class Task extends Bone {
 
   @Attribute(DataTypes.INTEGER)
   attempts: number;
+
+  @Attribute(DataTypes.TEXT('long'))
+  error: string;
 }

@@ -154,10 +154,12 @@ export class PackageSyncerService extends AbstractService {
       result = await this.npmRegistry.getFullManifests(fullname);
     } catch (err: any) {
       const status = err.status || 'unknow';
-      logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, request manifests error: ${err}, status: ${status}, log: ${logUrl}`);
+      task.error = `request manifests error: ${err}, status: ${status}`;
+      logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
       await this.finishTask(task, TaskState.Fail, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, request manifests error: %s, status: $%s', task.taskId, task.targetName, err, status);
       return;
     }
     const { url, data, headers, res, status } = result;
@@ -199,16 +201,17 @@ export class PackageSyncerService extends AbstractService {
 
     if (users.length === 0) {
       // invalid maintainers, sync fail
-      logs.push(`[${isoNow()}] ❌ Invalid maintainers: ${JSON.stringify(maintainers)}, log: ${logUrl}`);
+      task.error = `invalid maintainers: ${JSON.stringify(maintainers)}`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
       await this.finishTask(task, TaskState.Fail, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid maintainers',
-        task.taskId, task.targetName);
+      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
       return;
     }
 
+    let lastErrorMessage = '';
     const dependenciesSet = new Set<string>();
-
     const [ scope, name ] = getScopeAndName(fullname);
     let pkg = await this.packageRepository.findPackage(scope, name);
     const { data: existsData } = await this.packageManagerService.listPackageFullManifests(scope, name);
@@ -251,7 +254,8 @@ export class PackageSyncerService extends AbstractService {
       const dist = item.dist;
       const tarball: string = dist && dist.tarball;
       if (!tarball) {
-        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, missing tarball, dist: ${JSON.stringify(dist)}`);
+        lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
+        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, ${lastErrorMessage}`);
         await this.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
@@ -269,14 +273,16 @@ export class PackageSyncerService extends AbstractService {
           if (localFile) {
             await rm(localFile, { force: true });
           }
-          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, download tarball status error: ${status}`);
+          lastErrorMessage = `download tarball status error: ${status}`;
+          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, ${lastErrorMessage}`);
           await this.appendTaskLog(task, logs.join('\n'));
           logs = [];
           continue;
         }
       } catch (err: any) {
         const status = err.status || 'unknow';
-        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, download tarball error: ${err}, status: ${status}`);
+        lastErrorMessage = `download tarball error: ${err}, status: ${status}`;
+        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, ${lastErrorMessage}`);
         await this.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
@@ -320,7 +326,8 @@ export class PackageSyncerService extends AbstractService {
         } else {
           err.taskId = task.taskId;
           this.logger.error(err);
-          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} error, ${err}`);
+          lastErrorMessage = `publish error: ${err}`;
+          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} error, ${lastErrorMessage}`);
         }
       }
       await this.appendTaskLog(task, logs.join('\n'));
@@ -341,6 +348,7 @@ export class PackageSyncerService extends AbstractService {
       // sync all versions fail in the first time
       logs.push(`[${isoNow()}] ❌ All versions sync fail, package not exists, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
+      task.error = lastErrorMessage;
       await this.finishTask(task, TaskState.Fail, logs.join('\n'));
       this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package not exists',
         task.taskId, task.targetName);
@@ -389,9 +397,9 @@ export class PackageSyncerService extends AbstractService {
     const removedMaintainers: unknown[] = [];
     const existsMaintainers = existsData && existsData.maintainers || [];
     for (const maintainer of existsMaintainers) {
-      const npmUserName = maintainer.name.replace('npm:', '');
+      const npmUserName = maintainer.name;
       if (!(npmUserName in maintainersMap)) {
-        const user = await this.userRepository.findUserByName(maintainer.name);
+        const user = await this.userRepository.findUserByName(`npm:${npmUserName}`);
         if (user) {
           await this.packageManagerService.removePackageMaintainer(pkg, user);
           removedMaintainers.push(maintainer);
@@ -419,6 +427,7 @@ export class PackageSyncerService extends AbstractService {
     }
     logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
     logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
+    task.error = lastErrorMessage;
     await this.finishTask(task, TaskState.Success, logs.join('\n'));
     this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
       task.taskId, task.targetName);

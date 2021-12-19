@@ -68,12 +68,14 @@ export class PackageSyncController extends AbstractController {
     if (task.state !== TaskState.Waiting) {
       logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${taskId}/log`;
     }
+    const error = task.error || undefined;
     return {
       ok: true,
       id: task.taskId,
       type: task.type,
       state: task.state,
-      logUrl: logUrl?.toString(),
+      logUrl,
+      error,
     };
   }
 
@@ -134,6 +136,7 @@ export class PackageSyncController extends AbstractController {
       syncDone,
       log,
       logUrl: task.logUrl,
+      error: task.error,
     };
   }
 }
