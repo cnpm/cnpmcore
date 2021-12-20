@@ -7,7 +7,7 @@ import * as ssri from 'ssri';
 // /foo
 // name max length is 214 chars
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
-export const FULLNAME_REG_STRING = '@[^/]{1,214}\/[^/]{1,214}|@[^%]+\%2[fF][^/]{1,214}|[^@/]{1,214}';
+export const FULLNAME_REG_STRING = '@[^/]{1,220}\/[^/]{1,220}|@[^%]+\%2[fF][^/]{1,220}|[^@/]{1,220}';
 
 export function getScopeAndName(fullname: string): string[] {
   if (fullname.startsWith('@')) {
