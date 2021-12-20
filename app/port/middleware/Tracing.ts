@@ -13,9 +13,10 @@ export async function Tracing(ctx: EggContext, next: Next) {
   // }
   ctx.set('request-id', ctx.tracer.traceId);
   if (ctx.method !== 'HEAD') {
-    ctx.logger.info('[Tracing] auth: %s, npm-command: %s, user-agent: %j',
+    ctx.logger.info('[Tracing] auth: %s, npm-command: %s, referer: %s, user-agent: %j',
       ctx.get('authorization') ? 1 : 0,
       ctx.get('npm-command') || '-',
+      ctx.get('referer') || '-',
       ctx.get('user-agent'));
   }
   await next();

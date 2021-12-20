@@ -162,4 +162,13 @@ export class UserController extends AbstractController {
       username: authorizedUser.name,
     };
   }
+
+  // https://github.com/cnpm/cnpmcore/issues/64
+  @HTTPMethod({
+    path: '/-/_view/starredByUser',
+    method: HTTPMethodEnum.GET,
+  })
+  async starredByUser() {
+    throw new ForbiddenError('npm stars is not allowed');
+  }
 }
