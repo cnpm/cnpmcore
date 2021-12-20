@@ -18,32 +18,33 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     app.destroyModuleContext(ctx);
   });
 
+  const scopedName = '@cnpm/testmodule-download-version-tar';
+  const name = 'testmodule-download-version-tar';
+  beforeEach(async () => {
+    mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+    let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
+    let res = await app.httpRequest()
+      .put(`/${pkg.name}`)
+      .set('authorization', publisher.authorization)
+      .set('user-agent', publisher.ua)
+      .send(pkg)
+      .expect(201);
+    assert(res.status === 201);
+    assert(res.body.ok === true);
+    assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+    pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
+    res = await app.httpRequest()
+      .put(`/${pkg.name}`)
+      .set('authorization', publisher.authorization)
+      .set('user-agent', publisher.ua)
+      .send(pkg);
+    assert(res.status === 201);
+    assert(res.body.ok === true);
+    assert.match(res.body.rev, /^\d+\-\w{24}$/);
+  });
+
   describe('[GET /:fullname/-/:name-:version.tgz] download()', () => {
-    const scopedName = '@cnpm/testmodule-download-version-tar';
-    const name = 'testmodule-download-version-tar';
-    beforeEach(async () => {
-      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
-      let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
-      let res = await app.httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
-
-      pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
-      res = await app.httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
-    });
-
     it('should download a version tar redirect to mock cdn success', async () => {
       mock(nfsClientAdapter.client.constructor.prototype, 'url', async (storeKey: string) => {
         return `https://cdn.mock.com${storeKey}`;
@@ -156,6 +157,37 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .expect({
           error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
         });
+    });
+  });
+
+  describe('[GET /:fullname/download/:fullname-:version.tgz] deprecatedDownload()', () => {
+    it('should download a version tar redirect to mock cdn success', async () => {
+      mock(nfsClientAdapter.client.constructor.prototype, 'url', async (storeKey: string) => {
+        return `https://cdn.mock.com${storeKey}`;
+      });
+      let res = await app.httpRequest()
+        .get(`/${name}/download/${name}-1.0.0.tgz`);
+      assert(res.status === 302);
+      assert(res.headers.location === `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
+      res = await app.httpRequest()
+        .get(`/${scopedName}/download/${scopedName}-1.0.0.tgz`);
+      assert(res.status === 302);
+      assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
+    });
+
+    it('should download a version tar with streaming success', async () => {
+      mock(nfsClientAdapter.client.constructor.prototype, 'url', 'not-function');
+      const res = await app.httpRequest()
+        .get(`/${name}/download/${name}-1.0.0.tgz`);
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/octet-stream');
+      assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
+
+      await app.httpRequest()
+        .get(`/${scopedName}/download/${scopedName}-1.0.0.tgz`);
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/octet-stream');
+      assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
     });
   });
 });

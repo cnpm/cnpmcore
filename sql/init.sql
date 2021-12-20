@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `dists` (
   `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
   `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
   `dist_id` varchar(24) NOT NULL COMMENT 'dist id',
-  `name` varchar(220) NOT NULL COMMENT 'dist name',
+  `name` varchar(428) NOT NULL COMMENT 'dist name, 2x size of package name',
   `path` varchar(767) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL COMMENT 'access path',
   `size` int(10) unsigned NOT NULL COMMENT 'file size',
   `shasum` varchar(512) NOT NULL COMMENT 'dist shasum',

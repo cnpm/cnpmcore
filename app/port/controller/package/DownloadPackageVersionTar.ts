@@ -11,7 +11,7 @@ import {
   EggContext,
 } from '@eggjs/tegg';
 import { AbstractController } from '../AbstractController';
-import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
+import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 
 @HTTPController()
@@ -40,5 +40,15 @@ export class DonwloadPackageVersionTarController extends AbstractController {
     }
     ctx.attachment(`${filenameWithVersion}.tgz`);
     return urlOrStream;
+  }
+
+  @HTTPMethod({
+    // GET /:fullname/download/:fullnameWithVersion.tgz
+    path: `/:fullname(${FULLNAME_REG_STRING})/download/:fullnameWithVersion+.tgz`,
+    method: HTTPMethodEnum.GET,
+  })
+  async deprecatedDownload(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() fullnameWithVersion: string) {
+    const filenameWithVersion = getScopeAndName(fullnameWithVersion)[1];
+    return await this.download(ctx, fullname, filenameWithVersion);
   }
 }

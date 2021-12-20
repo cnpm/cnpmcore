@@ -27,6 +27,19 @@ describe('test/schedule/SyncPackageWorker.test.ts', () => {
     // make sure npm user name not contain 'npm:'
     assert.equal(res.body.maintainers[0].name, 'fengmk2');
   });
+  it('should sync long name from npm https://github.com/npm/npm/issues/8077', async () => {
+    const name = 'ifyouwanttogetthesumoftwonumberswherethosetwonumbersarechosenbyfindingthelargestoftwooutofthreenumbersandsquaringthemwhichismultiplyingthembyitselfthenyoushouldinputthreenumbersintothisfunctionanditwilldothatforyou';
+    await app.httpRequest()
+      .put(`/-/package/${name}/syncs`)
+      .expect(201);
+
+    await app.runSchedule('SyncPackageWorker');
+    const res = await app.httpRequest()
+      .get(`/${name}`)
+      .set('Accept', 'application/json');
+    assert(res.status === 200);
+    assert(res.body.name === name);
+  });
 
   it('should sync worker error', async () => {
     const name = 'mk2test-module-cnpmsync-issue-1667';
