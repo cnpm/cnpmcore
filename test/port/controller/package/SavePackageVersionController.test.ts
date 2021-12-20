@@ -776,5 +776,43 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .expect(422);
       assert(res.body.error === '[UNPROCESSABLE_ENTITY] dist-tags is empty');
     });
+
+    it('should 402 when star / unstar request', async () => {
+      let res = await app.httpRequest()
+        .put('/@cnpm/foo')
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'star')
+        .send({});
+      assert(res.status === 403);
+      assert(res.body.error === '[FORBIDDEN] npm star is not allowed');
+
+      res = await app.httpRequest()
+        .put('/@cnpm/foo')
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'unstar')
+        .send({});
+      assert(res.status === 403);
+      assert(res.body.error === '[FORBIDDEN] npm unstar is not allowed');
+
+      res = await app.httpRequest()
+        .put('/@cnpm/foo')
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('referer', 'star [REDACTED]')
+        .send({});
+      assert(res.status === 403);
+      assert(res.body.error === '[FORBIDDEN] npm star is not allowed');
+
+      res = await app.httpRequest()
+        .put('/@cnpm/foo')
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('referer', 'unstar [REDACTED]')
+        .send({});
+      assert(res.status === 403);
+      assert(res.body.error === '[FORBIDDEN] npm unstar is not allowed');
+    });
   });
 });

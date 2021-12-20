@@ -2,6 +2,7 @@ import { PackageJson, Simplify } from 'type-fest';
 import {
   UnprocessableEntityError,
   NotFoundError,
+  ForbiddenError,
 } from 'egg-errors';
 import {
   HTTPController,
@@ -76,6 +77,7 @@ export class SavePackageVersionController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async save(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
+    this.validateNpmCommand(ctx);
     ctx.tValidate(FullPackageRule, pkg);
     fullname = fullname.trim();
     if (fullname !== pkg.name) {
@@ -214,4 +216,18 @@ export class SavePackageVersionController extends AbstractController {
     }));
     return { ok: true };
   }
+
+  private validateNpmCommand(ctx: EggContext) {
+    // forbidden star/unstar request
+    // npm@6: referer: 'star [REDACTED]'
+    // npm@>=7: 'npm-command': 'star'
+    let command = ctx.get('npm-command');
+    if (!command) {
+      command = ctx.get('referer').split(' ', 1)[0];
+    }
+    if (command === 'star' || command === 'unstar') {
+      throw new ForbiddenError(`npm ${command} is not allowed`);
+    }
+  }
 }
+
