@@ -516,9 +516,9 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain special characters ("~\'!()*")');
+        .send(pkg);
+      assert(res.status === 422);
+      assert(res.body.error === '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain special characters ("~\'!()*")');
 
       pkg = await TestUtil.getFullPackage({
         name: ' leading-space:and:weirdchars',
@@ -527,9 +527,9 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can only contain URL-friendly characters');
+        .send(pkg);
+      assert(res.status === 422);
+      assert(res.body.error === '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can only contain URL-friendly characters');
 
       pkg = await TestUtil.getFullPackage({
         name: 'eLaBorAtE-paCkAgE-with-mixed-case-and-more-than-214-characters-----------------------------------------------------------------------------------------------------------------------------------------------------------',
@@ -538,9 +538,9 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters, name can no longer contain capital letters');
+        .send(pkg);
+      assert(res.status === 422);
+      assert(res.body.error === '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters, name can no longer contain capital letters');
     });
 
     it('should 422 when attachment data format invalid', async () => {
