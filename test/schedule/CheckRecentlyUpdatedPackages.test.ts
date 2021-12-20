@@ -25,7 +25,7 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
     mock(app.config.cnpmcore, 'syncMode', 'all');
     await app.runSchedule('CheckRecentlyUpdatedPackages');
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe][0] request');
-    app.expectLog('[CheckRecentlyUpdatedPackages.subscribe][0] parse 36 packages on');
+    app.expectLog('[CheckRecentlyUpdatedPackages.subscribe][0] parse');
     const task = await packageSyncerService.findExecuteTask();
     assert(task);
   });

@@ -46,27 +46,27 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
 
     it('should 200', async () => {
       let res = await app.httpRequest()
-        .put('/-/package/koa/syncs')
-        .expect(201);
+        .put('/-/package/koa/syncs');
+      assert(res.status === 201);
       assert(res.body.id);
       const task = await taskRepository.findTask(res.body.id);
+      assert(task);
       res = await app.httpRequest()
-        .get(`/-/package/koa/syncs/${task!.taskId}`)
-        .expect(200);
+        .get(`/-/package/koa/syncs/${task.taskId}`);
+      assert(res.status === 200);
       assert(res.body.id);
       // waiting state logUrl is not exists
       assert(!res.body.logUrl);
 
-      task!.state = TaskState.Processing;
+      task.state = TaskState.Processing;
       await taskRepository.saveTask(task!);
-
       res = await app.httpRequest()
-        .get(`/-/package/koa/syncs/${task!.taskId}`)
-        .expect(200);
+        .get(`/-/package/koa/syncs/${task.taskId}`);
+      assert(res.status === 200);
       assert(res.body.id);
       assert(res.body.logUrl);
-      assert.match(res.body.logUrl, /^http:\/\/localhost:7001\/-\/package\//);
-      assert.match(res.body.logUrl, /\/log$/);
+      assert(res.body.logUrl.startsWith('http://localhost:7001/-/package/'));
+      assert(res.body.logUrl.endsWith('/log'));
     });
 
     it('should get sucess task after schedule run', async () => {
