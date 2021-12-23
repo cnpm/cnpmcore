@@ -117,6 +117,7 @@ export class ChangesStreamService extends AbstractService {
           ...task.data,
           since: lastSince,
           last_package: lastPackage,
+          last_package_created: new Date(),
           task_count: (task.data.task_count || 0) + count,
         };
         await this.taskRepository.saveTask(task);

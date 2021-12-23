@@ -175,12 +175,46 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .expect(302);
     });
 
-    it('should redirect private scope package to source registry when syncMode=all', async () => {
+    it('should not redirect private scope package to source registry when syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
       const res = await app.httpRequest()
         .get('/@cnpm/foonot-exists/1.0.40000404')
         .expect(404);
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
+    });
+
+    it('should not redirect private scope package to source registry when syncMode=none', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      const res = await app.httpRequest()
+        .get('/@cnpm/foonot-exists/1.0.40000404')
+        .expect(404);
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
+    });
+
+    it('should redirect public scope package to source registry when syncMode=none', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      await app.httpRequest()
+        .get('/@egg/foonot-exists/1.0.40000404')
+        .expect('location', 'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404')
+        .expect(302);
+
+      await app.httpRequest()
+        .get('/@egg/foonot-exists/1.0.40000404?t=123')
+        .expect('location', 'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404?t=123')
+        .expect(302);
+    });
+
+    it('should redirect public non scope package to source registry when syncMode=none', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      await app.httpRequest()
+        .get('/foonot-exists/1.0.40000404')
+        .expect('location', 'https://registry.npmjs.org/foonot-exists/1.0.40000404')
+        .expect(302);
+
+      await app.httpRequest()
+        .get('/foonot-exists/1.0.40000404?t=123')
+        .expect('location', 'https://registry.npmjs.org/foonot-exists/1.0.40000404?t=123')
+        .expect(302);
     });
   });
 });

@@ -5,8 +5,12 @@ import { TestUtil } from '../../TestUtil';
 describe('test/port/middleware/AlwaysAuth.test.ts', () => {
   it('should 401 when config.cnpmcore.alwaysAuth = true', async () => {
     mock(app.config.cnpmcore, 'alwaysAuth', true);
-    const res = await app.httpRequest()
+    let res = await app.httpRequest()
       .get('/foo')
+      .expect(401);
+    assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
+    res = await app.httpRequest()
+      .get('/@cnpm/foo')
       .expect(401);
     assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
   });
@@ -23,9 +27,9 @@ describe('test/port/middleware/AlwaysAuth.test.ts', () => {
 
   it('should pass when config.cnpmcore.alwaysAuth = false', async () => {
     const res = await app.httpRequest()
-      .get('/foo')
+      .get('/@cnpm/foo')
       .expect(404);
-    assert.equal(res.body.error, '[NOT_FOUND] foo not found');
+    assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foo not found');
   });
 
   it('should ignore alwaysAuth on login request', async () => {

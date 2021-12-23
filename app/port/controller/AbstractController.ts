@@ -54,9 +54,10 @@ export abstract class AbstractController extends MiddlewareController {
     const err = new PackageNotFoundError(message);
     const [ scope ] = getScopeAndName(fullname);
     // dont sync private scope
-    if (this.enableSyncAll && !this.isPrivateScope(scope)) {
+    if (!this.isPrivateScope(scope)) {
       // ErrorHandler will use syncPackage to create sync task
       err.syncPackage = {
+        enableSync: this.enableSyncAll,
         fullname,
         sourceRegistry: this.sourceRegistry,
       };

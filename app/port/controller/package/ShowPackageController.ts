@@ -23,9 +23,9 @@ export class ShowPackageController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async show(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
+    const [ scope, name ] = getScopeAndName(fullname);
     const requestEtag = ctx.request.headers['if-none-match'];
     const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
-    const [ scope, name ] = getScopeAndName(fullname);
     let result: { etag: string; data: any };
     if (ctx.accepts([ 'json', abbreviatedMetaType ]) === abbreviatedMetaType) {
       result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, requestEtag);

@@ -102,18 +102,16 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
 
     it('should 404 when package not exists', async () => {
       await app.httpRequest()
-        .get('/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz')
-        .expect(404)
-        .expect({
-          error: '[NOT_FOUND] testmodule-download-version-tar-not-exists not found',
-        });
-
-      await app.httpRequest()
         .get('/@cnpm/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz')
         .expect(404)
         .expect({
           error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar-not-exists not found',
         });
+
+      const res = await app.httpRequest()
+        .get('/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz');
+      assert(res.status === 302);
+      assert(res.headers.location === 'https://registry.npmjs.org/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz');
     });
 
     it('should 404 when package version not exists', async () => {
