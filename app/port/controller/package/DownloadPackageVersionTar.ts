@@ -30,7 +30,7 @@ export class DonwloadPackageVersionTarController extends AbstractController {
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     ctx.logger.info('[PackageController:downloadVersionTar] %s@%s, packageVersionId: %s',
       pkg.fullname, version, packageVersion.packageVersionId);
-    const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(packageVersion);
+    const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(pkg, packageVersion);
     if (!urlOrStream) {
       throw new NotFoundError(`"${filenameWithVersion}" not found`);
     }

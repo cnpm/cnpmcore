@@ -1,5 +1,4 @@
 import { stat } from 'fs/promises';
-import { Readable } from 'stream';
 import {
   AccessLevel,
   ContextProto,
@@ -251,8 +250,8 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  async downloadPackageVersionTar(packageVersion: PackageVersion): Promise<string | Readable | undefined> {
-    this.plusPackageVersionCounter(packageVersion);
+  async downloadPackageVersionTar(pkg: Package, packageVersion: PackageVersion) {
+    this.plusPackageVersionCounter(pkg, packageVersion);
     return await this.nfsAdapter.getDownloadUrlOrStream(packageVersion.tarDist.path);
   }
 
@@ -437,12 +436,22 @@ export class PackageManagerService extends AbstractService {
     await this.nfsAdapter.uploadBytes(manifestDist.path, manifestBytes);
   }
 
-  private plusPackageVersionCounter(packageVersion: PackageVersion) {
+  private plusPackageVersionCounter(pkg: Package, packageVersion: PackageVersion) {
     // set counter + 1, schedule will store them into database
     const counters = PackageManagerService.downloadCounters;
     if (!counters[packageVersion.packageId]) counters[packageVersion.packageId] = {};
     counters[packageVersion.packageId][packageVersion.version] =
       (counters[packageVersion.packageId][packageVersion.version] || 0) + 1;
+    // Total
+    const TOTAL = 'total';
+    const ALL = '*';
+    if (!counters[TOTAL]) counters[TOTAL] = {};
+    counters[TOTAL][ALL] = (counters[TOTAL][ALL] || 0) + 1;
+    // scope total
+    if (pkg.scope) {
+      if (!counters[pkg.scope]) counters[pkg.scope] = {};
+      counters[pkg.scope][ALL] = (counters[pkg.scope][ALL] || 0) + 1;
+    }
   }
 
   private isFresh(expectEtag: string | undefined, currentEtag: string): boolean {
