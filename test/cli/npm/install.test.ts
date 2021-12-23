@@ -51,13 +51,13 @@ describe('test/cli/npm/install.test.ts', () => {
   });
 
   describe('npm install', () => {
-    it('should support /@eggjs%2Ffoo router path', async () => {
-      let res = await app.httpclient.request(`${registry}/@eggjs%2Ffoo`, { dataType: 'json' });
+    it('should support /@cnpm%2Ffoo1 router path', async () => {
+      let res = await app.httpclient.request(`${registry}/@cnpm%2Ffoo1`, { dataType: 'json' });
       assert.equal(res.status, 404);
-      assert.equal(res.data.error, '[NOT_FOUND] @eggjs/foo not found');
-      res = await app.httpclient.request(`${registry}/@eggjs%2fbar`, { dataType: 'json' });
+      assert.equal(res.data.error, '[NOT_FOUND] @cnpm/foo1 not found');
+      res = await app.httpclient.request(`${registry}/@cnpm%2fbar`, { dataType: 'json' });
       assert.equal(res.status, 404);
-      assert.equal(res.data.error, '[NOT_FOUND] @eggjs/bar not found');
+      assert.equal(res.data.error, '[NOT_FOUND] @cnpm/bar not found');
 
       res = await app.httpclient.request(`${registry}/@cnpm%2ffoo`, { dataType: 'json' });
       assert.equal(res.status, 200);
