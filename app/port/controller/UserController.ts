@@ -171,4 +171,38 @@ export class UserController extends AbstractController {
   async starredByUser() {
     throw new ForbiddenError('npm stars is not allowed');
   }
+
+  // https://github.com/cnpm/cnpmcore/issues/64
+  @HTTPMethod({
+    path: '/-/npm/v1/user',
+    method: HTTPMethodEnum.GET,
+  })
+  async showProfile(@Context() ctx: EggContext) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+    return {
+      // "tfa": {
+      //   "pending": false,
+      //   "mode": "auth-only"
+      // },
+      name: authorizedUser.name,
+      email: authorizedUser.email,
+      email_verified: false,
+      created: authorizedUser.createdAt,
+      updated: authorizedUser.updatedAt,
+      // fullname: authorizedUser.name,
+      // twitter: '',
+      // github: '',
+    };
+  }
+
+  // https://github.com/cnpm/cnpmcore/issues/64
+  @HTTPMethod({
+    path: '/-/npm/v1/user',
+    method: HTTPMethodEnum.POST,
+  })
+  async saveProfile() {
+    // Valid properties are: email, password, fullname, homepage, freenode, twitter, github
+    // { email: 'admin@cnpmjs.org', homepage: 'fengmk2' }
+    throw new ForbiddenError('npm profile set is not allowed');
+  }
 }
