@@ -2,7 +2,7 @@ import assert = require('assert');
 import { Context } from 'egg';
 import { app } from 'egg-mock/bootstrap';
 
-describe('test/port/controller/PackageController/ping.test.ts', () => {
+describe('test/port/controller/HomeController/ping.test.ts', () => {
   let ctx: Context;
   beforeEach(async () => {
     ctx = await app.mockModuleContext();

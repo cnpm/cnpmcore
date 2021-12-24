@@ -8,6 +8,8 @@ import {
 } from '@eggjs/tegg';
 import { AbstractController } from './AbstractController';
 
+const startTime = new Date();
+
 @HTTPController()
 export class HomeController extends AbstractController {
   @HTTPMethod({
@@ -23,23 +25,9 @@ export class HomeController extends AbstractController {
       doc_count: 0,
       doc_del_count: 0,
       update_seq: 0,
-      purge_seq: 0,
-      compact_running: false,
-      sizes: {
-        active: 0,
-        external: 0,
-        file: 0,
-      },
       disk_size: 0,
       data_size: 0,
-      other: {
-        data_size: 0,
-      },
-      instance_start_time: Math.floor((Date.now() - performance.now()) * 1000),
-      disk_format_version: 0,
-      committed_update_seq: 0,
-      compacted_seq: 0,
-      uuid: '',
+      instance_start_time: startTime,
       // only for cnpmcore
       doc_version_count: 0,
       sync_model: this.config.cnpmcore.syncMode,
@@ -55,7 +43,7 @@ export class HomeController extends AbstractController {
       node_version: process.version,
       app_version: this.config.pkg.version,
       // donate: 'https://github.com/cnpm/cnpmcore',
-      cache_time: 0,
+      // cache_time: 0,
     };
     return data;
   }

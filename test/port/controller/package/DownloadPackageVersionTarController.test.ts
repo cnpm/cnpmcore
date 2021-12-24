@@ -2,7 +2,8 @@ import assert = require('assert');
 import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
-import { NFSClientAdapter } from '../../../../app/common/adapter/NFSClientAdapter';
+import { NFSClientAdapter } from 'app/common/adapter/NFSClientAdapter';
+import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let ctx: Context;
@@ -89,6 +90,25 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .expect('content-type', 'application/octet-stream')
         .expect('content-disposition', 'attachment; filename="testmodule-download-version-tar222-1.0.0.tgz"')
         .expect(200);
+    });
+
+    it('should mock getDownloadUrlOrStream return undefined', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: 'testmodule-download-version-tar222', version: '1.0.0' });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      mock(NFSAdapter.prototype, 'getDownloadUrlOrStream', async () => {
+        return undefined;
+      });
+      const res = await app.httpRequest()
+        .get(`/${pkg.name}/-/${pkg.name}-1.0.0.tgz`);
+      assert(res.status === 404);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      assert(res.body.error === '[NOT_FOUND] "testmodule-download-version-tar222-1.0.0.tgz" not found');
     });
 
     it('should 422 when version is empty string', async () => {
@@ -186,6 +206,17 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/octet-stream');
       assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
+    });
+
+    it('should mock getDownloadUrlOrStream return undefined', async () => {
+      mock(NFSAdapter.prototype, 'getDownloadUrlOrStream', async () => {
+        return undefined;
+      });
+      const res = await app.httpRequest()
+        .get(`/${name}/download/${name}-1.0.0.tgz`);
+      assert(res.status === 404);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      assert(res.body.error === `[NOT_FOUND] "${name}-1.0.0.tgz" not found`);
     });
   });
 });
