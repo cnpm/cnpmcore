@@ -2,7 +2,7 @@ import assert = require('assert');
 import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 
-describe('test/port/controller/PackageController/showTotal.test.ts', () => {
+describe('test/port/controller/HomeController/showTotal.test.ts', () => {
   let ctx: Context;
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
@@ -19,13 +19,10 @@ describe('test/port/controller/PackageController/showTotal.test.ts', () => {
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
-      // console.log(data);
-      assert.equal(data.engine, app.config.orm.client);
-      assert.equal(data.node_version, process.version);
-      assert(data.instance_start_time > 0);
-      // microseconds
-      assert.equal(String(data.instance_start_time).length, 16);
-      assert.equal(data.sync_model, 'none');
+      assert(data.engine === app.config.orm.client);
+      assert(data.node_version === process.version);
+      assert(data.instance_start_time);
+      assert(data.sync_model === 'none');
     });
 
     it('should show sync mode = all', async () => {
@@ -35,7 +32,7 @@ describe('test/port/controller/PackageController/showTotal.test.ts', () => {
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
-      assert.equal(data.sync_model, 'all');
+      assert(data.sync_model === 'all');
     });
   });
 });
