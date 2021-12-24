@@ -32,7 +32,7 @@ export class DonwloadPackageVersionTarController extends AbstractController {
       pkg.fullname, version, packageVersion.packageVersionId);
     const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(pkg, packageVersion);
     if (!urlOrStream) {
-      throw new NotFoundError(`"${filenameWithVersion}" not found`);
+      throw new NotFoundError(`"${filenameWithVersion}.tgz" not found`);
     }
     if (typeof urlOrStream === 'string') {
       ctx.redirect(urlOrStream);
