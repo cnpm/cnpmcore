@@ -37,7 +37,10 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
   async query(packageId: string, start: Date, end: Date) {
     const startYearMonth = start.getFullYear() * 100 + start.getMonth() + 1;
     const endYearMonth = end.getFullYear() * 100 + end.getMonth() + 1;
-    const models = await PackageVersionDownloadModel.find({ packageId, yearMonth: { $gte: startYearMonth, $lte: endYearMonth } });
+    const models = await PackageVersionDownloadModel.find({
+      packageId,
+      yearMonth: { $gte: startYearMonth, $lte: endYearMonth },
+    });
     return models;
   }
 }

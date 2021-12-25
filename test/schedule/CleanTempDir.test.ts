@@ -1,7 +1,7 @@
 import { mkdir } from 'fs/promises';
 import path from 'path';
 import { app } from 'egg-mock/bootstrap';
-import dayjs from '../../app/common/dayjs';
+import dayjs from 'app/common/dayjs';
 
 describe('test/schedule/CleanTempDir.test.ts', () => {
   it('should clean dir success', async () => {

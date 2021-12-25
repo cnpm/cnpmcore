@@ -194,6 +194,36 @@ export class PackageRepository extends AbstractRepository {
       distRemoveCount, removeCount, pkgVersion.packageVersionId);
   }
 
+  public async queryTotal() {
+    const lastPkg = await PackageModel.findOne().order('id', 'desc');
+    const lastVersion = await PackageVersionModel.findOne().order('id', 'desc');
+    let packageCount = 0;
+    let packageVersionCount = 0;
+    let lastPackage = '';
+    let lastPackageVersion = '';
+
+    if (lastPkg) {
+      lastPackage = lastPkg.scope ? `${lastPkg.scope}/${lastPkg.name}` : lastPkg.name;
+      // FIXME: id will be out of range number
+      packageCount = Number(lastPkg.id);
+    }
+
+    if (lastVersion) {
+      const pkg = await PackageModel.findOne({ packageId: lastVersion.packageId });
+      if (pkg) {
+        const fullname = pkg.scope ? `${pkg.scope}/${pkg.name}` : pkg.name;
+        lastPackageVersion = `${fullname}@${lastVersion.version}`;
+      }
+      packageVersionCount = Number(lastVersion.id);
+    }
+    return {
+      packageCount,
+      packageVersionCount,
+      lastPackage,
+      lastPackageVersion,
+    };
+  }
+
   private async fillPackageVersionEntitiyData(model: PackageVersionModel): Promise<PackageVersionEntity> {
     const [
       tarDistModel,
