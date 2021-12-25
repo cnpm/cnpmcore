@@ -18,30 +18,21 @@ export class HomeController extends AbstractController {
     path: '/',
     method: HTTPMethodEnum.GET,
   })
-  async showTotal() {
+  async showTotal(@Context() ctx: EggContext) {
+    const totalData = ctx.app.totalData;
     const data = {
-      db_name: 'registry',
-      engine: this.config.orm.client,
-      doc_count: 0,
-      doc_del_count: 0,
+      last_pacakge: totalData.lastPackage,
+      last_pacakge_version: totalData.lastPackageVersion,
+      doc_count: totalData.packageCount,
+      doc_version_count: totalData.packageVersionCount,
+      download: totalData.download,
       update_seq: 0,
-      disk_size: 0,
-      data_size: 0,
-      instance_start_time: startTime,
-      // only for cnpmcore
-      doc_version_count: 0,
       sync_model: this.config.cnpmcore.syncMode,
-      download: {
-        today: 0,
-        thisweek: 0,
-        thismonth: 0,
-        lastday: 0,
-        lastweek: 0,
-        lastmonth: 0,
-        total: 0,
-      },
+      sync_changes_steam: totalData.changesStream,
+      instance_start_time: startTime,
       node_version: process.version,
       app_version: this.config.pkg.version,
+      engine: this.config.orm.client,
       // donate: 'https://github.com/cnpm/cnpmcore',
       // cache_time: 0,
     };
