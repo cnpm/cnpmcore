@@ -2,7 +2,6 @@ import assert = require('assert');
 import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
-import { NFSClientAdapter } from 'app/common/adapter/NFSClientAdapter';
 import { PackageVersionDownload } from 'app/repository/model/PackageVersionDownload';
 import dayjs from 'app/common/dayjs';
 
@@ -57,19 +56,12 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         .expect(201)
         .send(pkg);
 
-      mock(NFSClientAdapter.prototype, 'url', 'not-function');
       await app.httpRequest()
-        .get('/@cnpm/home1/-/home1-1.0.0.tgz')
-        .expect('content-type', 'application/octet-stream')
-        .expect(200);
+        .get('/@cnpm/home1/-/home1-1.0.0.tgz');
       await app.httpRequest()
-        .get('/@cnpm/home1/-/home1-1.0.1.tgz')
-        .expect('content-type', 'application/octet-stream')
-        .expect(200);
+        .get('/@cnpm/home1/-/home1-1.0.1.tgz');
       await app.httpRequest()
-        .get('/@cnpm/home2/-/home2-2.0.0.tgz')
-        .expect('content-type', 'application/octet-stream')
-        .expect(200);
+        .get('/@cnpm/home2/-/home2-2.0.0.tgz');
       await app.runSchedule('SavePackageVersionDownloadCounter');
       await app.runSchedule('UpdateTotalData');
 
