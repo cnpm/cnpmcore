@@ -230,3 +230,15 @@ CREATE TABLE IF NOT EXISTS `history_tasks` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_task_id` (`task_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='history task info';
+
+CREATE TABLE IF NOT EXISTS `changes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
+  `change_id` varchar(24) NOT NULL COMMENT 'change id',
+  `type` varchar(50) NOT NULL COMMENT 'change type',
+  `target_name` varchar(214) NOT NULL COMMENT 'target name, like package name / user name',
+  `data` json NULL COMMENT 'change params',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_change_id` (`change_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='change info';

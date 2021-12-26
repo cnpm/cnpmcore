@@ -26,6 +26,7 @@ import {
   PACKAGE_TAG_ADDED,
   PACKAGE_TAG_CHANGED,
   PACKAGE_TAG_REMOVED,
+  PACKAGE_META_CHANGED,
 } from '../event';
 import { AbstractService } from './AbstractService';
 
@@ -198,16 +199,16 @@ export class PackageManagerService extends AbstractService {
       await this.refreshPackageManifestsToDists(pkg);
     }
     if (cmd.tag) {
-      await this.savePackageTag(pkg, cmd.tag, cmd.version);
+      await this.savePackageTag(pkg, cmd.tag, cmd.version, true);
     }
-    this.eventBus.emit(PACKAGE_VERSION_ADDED, pkgVersion.packageId, pkgVersion.packageVersionId, pkgVersion.version);
+    this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version);
     return pkgVersion;
   }
 
   async replacePackageMaintainers(pkg: Package, maintainers: User[]) {
     await this.packageRepository.replacePackageMaintainers(pkg.packageId, maintainers.map(m => m.userId));
     await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
-    this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
+    this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname);
   }
 
   async savePackageMaintainers(pkg: Package, maintainers: User[]) {
@@ -220,14 +221,14 @@ export class PackageManagerService extends AbstractService {
     }
     if (hasNewRecord) {
       await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
-      this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.packageId);
+      this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname);
     }
   }
 
   async removePackageMaintainer(pkg: Package, maintainer: User) {
     await this.packageRepository.removePackageMaintainer(pkg.packageId, maintainer.userId);
     await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
-    this.eventBus.emit(PACKAGE_MAINTAINER_REMOVED, pkg.packageId);
+    this.eventBus.emit(PACKAGE_MAINTAINER_REMOVED, pkg.fullname, maintainer.name);
   }
 
   async listPackageFullManifests(scope: string, name: string, expectEtag?: string) {
@@ -304,6 +305,7 @@ export class PackageManagerService extends AbstractService {
       await this.packageRepository.savePackageVersion(pkgVersion);
     }
     await this.refreshPackageManifestsToDists(pkg);
+    this.eventBus.emit(PACKAGE_META_CHANGED, pkg.fullname, { deprecateds });
   }
 
   public async savePackageVersionManifest(pkgVersion: PackageVersion, mergeManifest: object, mergeAbbreviated: object) {
@@ -351,10 +353,10 @@ export class PackageManagerService extends AbstractService {
     }
     // refresh manifest dist
     await this.refreshPackageManifestsToDists(pkg);
-    this.eventBus.emit(PACKAGE_VERSION_REMOVED, pkg.packageId, pkgVersion.packageVersionId, pkgVersion.version);
+    this.eventBus.emit(PACKAGE_VERSION_REMOVED, pkg.fullname, pkgVersion.version);
   }
 
-  public async savePackageTag(pkg: Package, tag: string, version: string) {
+  public async savePackageTag(pkg: Package, tag: string, version: string, skipEvent = false) {
     let tagEntity = await this.packageRepository.findPackageTag(pkg.packageId, tag);
     if (!tagEntity) {
       tagEntity = PackageTag.create({
@@ -364,7 +366,9 @@ export class PackageManagerService extends AbstractService {
       });
       await this.packageRepository.savePackageTag(tagEntity);
       await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
-      this.eventBus.emit(PACKAGE_TAG_ADDED, tagEntity.packageId, tagEntity.packageTagId, tagEntity.tag);
+      if (!skipEvent) {
+        this.eventBus.emit(PACKAGE_TAG_ADDED, pkg.fullname, tagEntity.tag);
+      }
       return true;
     }
     if (tagEntity.version === version) {
@@ -374,7 +378,9 @@ export class PackageManagerService extends AbstractService {
     tagEntity.version = version;
     await this.packageRepository.savePackageTag(tagEntity);
     await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
-    this.eventBus.emit(PACKAGE_TAG_CHANGED, tagEntity.packageId, tagEntity.packageTagId, tagEntity.tag);
+    if (!skipEvent) {
+      this.eventBus.emit(PACKAGE_TAG_CHANGED, pkg.fullname, tagEntity.tag);
+    }
     return true;
   }
 
@@ -383,7 +389,7 @@ export class PackageManagerService extends AbstractService {
     if (!tagEntity) return false;
     await this.packageRepository.removePackageTag(tagEntity);
     await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
-    this.eventBus.emit(PACKAGE_TAG_REMOVED, pkg.packageId, tagEntity.packageTagId, tagEntity.tag);
+    this.eventBus.emit(PACKAGE_TAG_REMOVED, pkg.fullname, tagEntity.tag);
     return true;
   }
 

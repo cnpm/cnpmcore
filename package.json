@@ -39,7 +39,7 @@
     "@eggjs/tegg": "^0.1.1",
     "@eggjs/tegg-config": "^0.1.0",
     "@eggjs/tegg-controller-plugin": "^0.1.1",
-    "@eggjs/tegg-eventbus-plugin": "^0.1.5",
+    "@eggjs/tegg-eventbus-plugin": "^0.1.17",
     "@eggjs/tegg-orm-decorator": "^0.1.5",
     "@eggjs/tegg-orm-plugin": "^0.1.5",
     "@eggjs/tegg-plugin": "^0.1.1",
