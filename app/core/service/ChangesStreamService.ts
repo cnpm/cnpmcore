@@ -78,7 +78,7 @@ export class ChangesStreamService extends AbstractService {
   }
 
   private async handleChanges(since: string, task: Task) {
-    const db = `https://replicate.npmjs.com/_changes?since=${since}`;
+    const db = `${this.config.cnpmcore.changesStreamRegistry}/_changes?since=${since}`;
     const { res } = await this.httpclient.request(db, {
       streaming: true,
       timeout: 10000,

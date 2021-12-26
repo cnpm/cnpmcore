@@ -22,7 +22,8 @@ export default (appInfo: EggAppConfig) => {
     syncPackageWorkerMaxConcurrentTasks: 10,
     // https://github.com/npm/registry-follower-tutorial
     enableChangesStream: false,
-    checkChangesStreamInterval: 2000,
+    checkChangesStreamInterval: 500,
+    changesStreamRegistry: 'https://replicate.npmjs.com',
     registry: 'http://localhost:7001',
     // https://docs.npmjs.com/cli/v6/using-npm/config#always-auth npm <= 6
     // if `alwaysAuth=true`, all api request required access token
