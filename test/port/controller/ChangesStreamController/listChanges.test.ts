@@ -25,11 +25,11 @@ describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () 
       let res = await app.httpRequest()
         .get('/_changes');
       assert(res.status === 200);
-      assert(res.body.length === 0);
+      assert(res.body.results.length === 0);
       res = await app.httpRequest()
         .get('/_changes?since=100');
       assert(res.status === 200);
-      assert(res.body.length === 0);
+      assert(res.body.results.length === 0);
 
       const { pkg } = await TestUtil.createPackage();
       const eventWaiter = await app.getEventWaiter();
@@ -37,18 +37,18 @@ describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () 
       res = await app.httpRequest()
         .get('/_changes');
       assert(res.status === 200);
-      assert(res.body.length === 1);
-      assert(res.body[0].type === 'PACKAGE_VERSION_ADDED');
-      assert(res.body[0].id === pkg.name);
-      assert(res.body[0].seq);
-      assert(res.body[0].changes.length === 1);
+      assert(res.body.results.length === 1);
+      assert(res.body.results[0].type === 'PACKAGE_VERSION_ADDED');
+      assert(res.body.results[0].id === pkg.name);
+      assert(res.body.results[0].seq);
+      assert(res.body.results[0].changes.length === 1);
 
-      const since = res.body[0].seq;
+      const since = res.body.results[0].seq;
       res = await app.httpRequest()
         .get('/_changes')
         .query({ since });
       assert(res.status === 200);
-      assert(res.body.length === 0);
+      assert(res.body.results.length === 0);
 
       await TestUtil.createPackage({ name: '@cnpm/other-package' });
       await eventWaiter.await('PACKAGE_VERSION_ADDED');
@@ -56,13 +56,13 @@ describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () 
         .get('/_changes')
         .query({ since });
       assert(res.status === 200);
-      assert(res.body.length === 1);
-      assert(res.body[0].type === 'PACKAGE_VERSION_ADDED');
+      assert(res.body.results.length === 1);
+      assert(res.body.results[0].type === 'PACKAGE_VERSION_ADDED');
 
       res = await app.httpRequest()
         .get('/_changes');
       assert(res.status === 200);
-      assert(res.body.length === 2);
+      assert(res.body.results.length === 2);
     });
   });
 });

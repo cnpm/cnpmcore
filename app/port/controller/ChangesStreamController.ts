@@ -31,7 +31,7 @@ export class ChangesStreamController extends AbstractController {
     ctx.tValidate(ChangeRule, params);
     const limit = 1000;
     const changes = await this.changeRepository.query(params.since, limit);
-    return changes.reverse().map(change => {
+    const results = changes.reverse().map(change => {
       return {
         seq: change.id,
         type: change.type,
@@ -39,6 +39,7 @@ export class ChangesStreamController extends AbstractController {
         changes: [ change.data ],
       };
     });
+    return { results };
   }
 }
 
