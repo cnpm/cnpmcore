@@ -4,14 +4,14 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
-import { Package, Package as PackageModel } from 'app/repository/model/Package';
+import { Package as PackageModel } from 'app/repository/model/Package';
+import { PackageVersion as PackageVersionModel } from 'app/repository/model/PackageVersion';
 import { Task as TaskModel } from 'app/repository/model/Task';
 import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
 import { TestUtil } from 'test/TestUtil';
 import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
 import { getScopeAndName } from 'app/common/PackageUtil';
 import { PackageRepository } from 'app/repository/PackageRepository';
-import { PackageVersion } from 'app/repository/model/PackageVersion';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let ctx: Context;
@@ -295,9 +295,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(Object.keys(r.data.versions).length === 2);
 
       // remove less than 7 days
-      const pkg = await Package.findOne({ scope: '@cnpmcore', name: 'test-sync-package-has-two-versions' });
+      const pkg = await PackageModel.findOne({ scope: '@cnpmcore', name: 'test-sync-package-has-two-versions' });
       assert(pkg);
-      const pkgVersion = await PackageVersion.findOne({ packageId: pkg.packageId, version: removeVersion });
+      const pkgVersion = await PackageVersionModel.findOne({ packageId: pkg.packageId, version: removeVersion });
       assert(pkgVersion);
       pkgVersion.publishTime = new Date();
       await pkgVersion.save();
