@@ -1,7 +1,7 @@
 import { Application } from 'egg';
 
 declare module 'egg' {
-  export interface Application {
+  interface Application {
     totalData: {
       packageCount: number;
       packageVersionCount: number;
