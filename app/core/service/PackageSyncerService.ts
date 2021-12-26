@@ -22,6 +22,8 @@ function isoNow() {
   return new Date().toISOString();
 }
 
+const SEVEN_DAYS_MS = 3600000 * 24 * 7;
+
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
 })
@@ -373,6 +375,12 @@ export class PackageSyncerService extends AbstractService {
       if (!(existsVersion in versionMap)) {
         const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsVersion);
         if (pkgVersion) {
+          // https://docs.npmjs.com/policies/unpublish
+          // don't remove published after 7 days
+          if (Date.now() - pkgVersion.publishTime.getTime() > SEVEN_DAYS_MS) {
+            logs.push(`[${isoNow()}] 📖 Skip remove version ${existsVersion}, because it was published(${pkgVersion.publishTime.toISOString()}) more than 7 days`);
+            continue;
+          }
           await this.packageManagerService.removePackageVersion(pkg, pkgVersion);
         }
         syncVersionCount++;

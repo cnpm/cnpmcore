@@ -22,8 +22,6 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
       let data = res.body;
-      assert(data.last_pacakge === '');
-      assert(data.last_pacakge_version === '');
       assert(data.doc_count === 0);
       assert(data.doc_version_count === 0);
       assert(data.download.today === 0);
