@@ -98,6 +98,11 @@ export default (appInfo: EggAppConfig) => {
     enablePerformanceTimer: true,
   };
 
+  config.logrotator = {
+    // only keep 3 days log files
+    maxDays: 3,
+  };
+
   config.bodyParser = {
     // saveTag will send version string in JSON format
     strict: false,
