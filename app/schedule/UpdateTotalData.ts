@@ -10,7 +10,8 @@ const cnpmcoreRepository = 'cnpmcoreRepository';
 export default class UpdateTotalData extends Subscription {
   static get schedule() {
     return {
-      immediate: true,
+      // immediate = false on unittest env
+      immediate: process.env.NODE_ENV !== 'test',
       interval: 60000,
       type: 'worker',
     };
