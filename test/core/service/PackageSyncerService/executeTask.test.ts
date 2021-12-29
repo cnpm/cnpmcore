@@ -487,6 +487,19 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(data.data.maintainers.length, 2);
       assert.deepEqual(data.data.maintainers[0].name, 'fengmk2');
       assert.deepEqual(data.data.maintainers[1].name, 'foouser');
+
+      // fixed maintainer name
+      data.data.maintainers[0].name = 'npm:fengmk2';
+      mock.data(PackageManagerService.prototype, 'listPackageFullManifests', data);
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('🟢 Refresh maintainers'));
     });
 
     it('should sync sourceRegistryIsCNpm = true', async () => {
