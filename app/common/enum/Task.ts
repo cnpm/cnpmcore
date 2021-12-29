@@ -1,6 +1,7 @@
 export enum TaskType {
   SyncPackage = 'sync_package',
   ChangesStream = 'changes_stream',
+  SyncBinary = 'sync_binary',
 }
 
 export enum TaskState {
@@ -8,5 +9,5 @@ export enum TaskState {
   Processing = 'processing',
   Success = 'success',
   Fail = 'fail',
-  Timeout = 'timeout'
+  Timeout = 'timeout',
 }

@@ -83,4 +83,16 @@ export class Task extends Entity {
     };
     return this.create(data);
   }
+
+  public static createSyncBinary(targetName: string, lastData: any): Task {
+    const data = {
+      type: TaskType.SyncBinary,
+      state: TaskState.Waiting,
+      targetName,
+      authorId: `pid_${process.pid}`,
+      authorIp: os.hostname(),
+      data: lastData ? { ...lastData } : {},
+    };
+    return this.create(data);
+  }
 }
