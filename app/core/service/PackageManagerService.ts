@@ -231,6 +231,10 @@ export class PackageManagerService extends AbstractService {
     this.eventBus.emit(PACKAGE_MAINTAINER_REMOVED, pkg.fullname, maintainer.name);
   }
 
+  async refreshPackageMaintainersToDists(pkg: Package) {
+    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
+  }
+
   async listPackageFullManifests(scope: string, name: string, expectEtag?: string) {
     return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, true);
   }

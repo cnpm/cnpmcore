@@ -421,8 +421,14 @@ export class PackageSyncerService extends AbstractService {
     // 4.1 find out remove maintainers
     const removedMaintainers: unknown[] = [];
     const existsMaintainers = existsData && existsData.maintainers || [];
+    let shouldRefreshMaintainers = false;
     for (const maintainer of existsMaintainers) {
-      const npmUserName = maintainer.name;
+      let npmUserName = maintainer.name;
+      if (npmUserName.startsWith('npm:')) {
+        // fix cache npm user name
+        npmUserName = npmUserName.replace('npm:', '');
+        shouldRefreshMaintainers = true;
+      }
       if (!(npmUserName in maintainersMap)) {
         const user = await this.userRepository.findUserByName(`npm:${npmUserName}`);
         if (user) {
@@ -433,6 +439,9 @@ export class PackageSyncerService extends AbstractService {
     }
     if (removedMaintainers.length > 0) {
       logs.push(`[${isoNow()}] 🟢 Removed ${removedMaintainers.length} maintainers: ${JSON.stringify(removedMaintainers)}`);
+    } else if (shouldRefreshMaintainers) {
+      await this.packageManagerService.refreshPackageMaintainersToDists(pkg);
+      logs.push(`[${isoNow()}] 🟢 Refresh maintainers`);
     }
 
     // 5. add deps sync task
