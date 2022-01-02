@@ -206,10 +206,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const result = await npmRegistry.getFullManifests(name);
       mock.data(NPMRegistry.prototype, 'getFullManifests', result);
 
-      app.mockHttpclient(/\//, 'GET', () => {
+      app.mockHttpclient(/^https:\/\/registry\./, 'GET', () => {
         throw new Error('mock request error');
       });
-      mock.error(npmRegistry.constructor.prototype, 'request');
+      mock.error(NPMRegistry.prototype, 'request');
       const task = await packageSyncerService.createTask(name);
       assert(task);
       assert.equal(task.targetName, name);
@@ -672,7 +672,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     });
 
     it('should mock downloadTarball status !== 200', async () => {
-      app.mockHttpclient(/\//, 'GET', () => {
+      app.mockHttpclient(/^http:\/\/foo\.com\//, 'GET', () => {
         throw new Error('mock request error');
       });
       mock.data(NPMRegistry.prototype, 'getFullManifests', {

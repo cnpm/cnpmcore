@@ -4,7 +4,7 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
 
 describe('test/schedule/SyncBinaryWorker.test.ts', () => {
-  it('should ignore when enableBinarySync=false', async () => {
+  it('should ignore when enableSyncBinary=false', async () => {
     await app.runSchedule('CreateSyncBinaryTask');
     app.mockLog();
     await app.runSchedule('SyncBinaryWorker');
@@ -13,7 +13,7 @@ describe('test/schedule/SyncBinaryWorker.test.ts', () => {
   });
 
   it('should sync worker success', async () => {
-    mock(app.config.cnpmcore, 'enableBinarySync', true);
+    mock(app.config.cnpmcore, 'enableSyncBinary', true);
     // create task
     await app.runSchedule('CreateSyncBinaryTask');
     mock(NodeBinary.prototype, 'fetch', async (dir: string) => {
@@ -52,7 +52,7 @@ describe('test/schedule/SyncBinaryWorker.test.ts', () => {
   });
 
   it('should mock sync error', async () => {
-    mock(app.config.cnpmcore, 'enableBinarySync', true);
+    mock(app.config.cnpmcore, 'enableSyncBinary', true);
     // create task
     await app.runSchedule('CreateSyncBinaryTask');
     mock.error(NodeBinary.prototype, 'fetch');

@@ -13,7 +13,7 @@ export default class SyncBinaryWorker extends Subscription {
 
   async subscribe() {
     const { ctx, app } = this;
-    if (!app.config.cnpmcore.enableBinarySync) return;
+    if (!app.config.cnpmcore.enableSyncBinary) return;
 
     await ctx.beginModuleScope(async () => {
       const binarySyncerService: BinarySyncerService = ctx.module[cnpmcoreCore].binarySyncerService;

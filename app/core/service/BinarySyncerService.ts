@@ -8,6 +8,7 @@ import {
 } from 'egg';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
+import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskRepository } from '../../repository/TaskRepository';
@@ -192,6 +193,10 @@ export class BinarySyncerService extends AbstractService {
   }
 
   private createBinaryInstance(binaryName: string): AbstractBinary | undefined {
+    const config = this.config.cnpmcore;
+    if (config.sourceRegistryIsCNpm) {
+      return new ApiBinary(this.httpclient, this.logger, binaryName, config.sourceRegistry);
+    }
     if (binaryName === 'node') return new NodeBinary(this.httpclient, this.logger);
   }
 }

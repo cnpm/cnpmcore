@@ -10,7 +10,7 @@ export type BinaryItem = {
 
 export type FetchResult = {
   items: BinaryItem[];
-  nextParams: any;
+  nextParams?: any;
 };
 
 export abstract class AbstractBinary {
