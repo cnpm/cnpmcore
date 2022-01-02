@@ -53,7 +53,7 @@ export class BinarySyncerService extends AbstractService {
     return await this.nfsAdapter.getDownloadUrlOrStream(binary.storePath);
   }
 
-  public async createTask(binaryName: string, lastData: any) {
+  public async createTask(binaryName: string, lastData?: any) {
     const existsTask = await this.taskRepository.findTaskByTargetName(binaryName, TaskType.SyncBinary);
     if (existsTask) return existsTask;
 

@@ -206,6 +206,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const result = await npmRegistry.getFullManifests(name);
       mock.data(NPMRegistry.prototype, 'getFullManifests', result);
 
+      app.mockHttpclient(/\//, 'GET', () => {
+        throw new Error('mock request error');
+      });
       mock.error(npmRegistry.constructor.prototype, 'request');
       const task = await packageSyncerService.createTask(name);
       assert(task);
@@ -215,7 +218,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('❌ [0] Synced version 0.0.0 fail, download tarball error: MockError: mm mock error, status: unknow'));
+      assert(log.includes('❌ [0] Synced version 0.0.0 fail, download tarball error: Error: mock request error'));
       assert(log.includes('❌ All versions sync fail, package not exists'));
     });
 
@@ -669,11 +672,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     });
 
     it('should mock downloadTarball status !== 200', async () => {
-      mock.data(NPMRegistry.prototype, 'downloadTarball', {
-        status: 404,
-        res: {},
-        headers: {},
-        localFile: __filename + '__not_exists',
+      app.mockHttpclient(/\//, 'GET', () => {
+        throw new Error('mock request error');
       });
       mock.data(NPMRegistry.prototype, 'getFullManifests', {
         data: {
@@ -700,7 +700,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
       assert(log.includes('❌ All versions sync fail, package not exists'));
-      assert(log.includes('Synced version 2.0.0 fail, download tarball status error'));
+      assert(log.includes('Synced version 2.0.0 fail, download tarball error: Error: mock request error'));
     });
 
     it('should sync mk2test-module-cnpmsync with different metas', async () => {
