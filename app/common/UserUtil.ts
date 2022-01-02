@@ -11,7 +11,6 @@ export function randomToken(prefix: string): string {
   const bytes = crypto.randomBytes(24);
   const crc = crc32(bytes);
   crc32Buffer.writeUInt32BE(crc);
-  // console.log(crc, crc32Buffer, base62.encode(crc32Buffer), base62.encode(bytes).length, bytes.length, bytes);
   return `${prefix}_${base62.encode(bytes)}_${base62.encode(crc32Buffer)}`;
 }
 

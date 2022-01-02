@@ -81,9 +81,12 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       res = await app.httpRequest()
         .get('/-/binary/node/latest/docs/apilinks.json');
-      assert(res.status === 200);
-      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
-      assert(res.headers['content-disposition'] === 'attachment; filename="apilinks.json"');
+      if (res.status === 200) {
+        assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+        assert(res.headers['content-disposition'] === 'attachment; filename="apilinks.json"');
+      } else {
+        assert(res.status === 302);
+      }
 
       res = await app.httpRequest()
         .get('/-/binary/node/foo/');

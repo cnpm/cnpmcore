@@ -648,7 +648,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
             },
             '2.0.0': {
               version: '2.0.0',
-              dist: { tarball: 'https://foo.com/a.tgz' },
+              dist: { tarball: 'http://foo.com/a.tgz' },
             },
           },
         },
@@ -681,7 +681,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           versions: {
             '2.0.0': {
               version: '2.0.0',
-              dist: { tarball: 'https://foo.com/a.tgz' },
+              dist: { tarball: 'http://foo.com/a.tgz' },
             },
           },
         },

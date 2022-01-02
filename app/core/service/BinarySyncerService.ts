@@ -86,21 +86,31 @@ export class BinarySyncerService extends AbstractService {
       task.error = 'unknow binaryName';
       logs.push(`[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ "${binaryName}" ❌❌❌❌❌`);
-      this.logger.info('[BinarySyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
+      this.logger.error('[BinarySyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
+
     await this.taskService.appendTaskLog(task, logs.join('\n'));
     logs = [];
     this.logger.info('[BinarySyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
       task.taskId, task.targetName, logUrl);
-    await this.syncDir(binaryInstance, task, '/');
-    logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
-    logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 "${binaryName}" 🟢🟢🟢🟢🟢`);
-    await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-    this.logger.info('[BinarySyncerService.executeTask:success] taskId: %s, targetName: %s, log: %s',
-      task.taskId, task.targetName, logUrl);
+    try {
+      await this.syncDir(binaryInstance, task, '/');
+      logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
+      logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 "${binaryName}" 🟢🟢🟢🟢🟢`);
+      await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+      this.logger.info('[BinarySyncerService.executeTask:success] taskId: %s, targetName: %s, log: %s',
+        task.taskId, task.targetName, logUrl);
+    } catch (err: any) {
+      task.error = err.message;
+      logs.push(`[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ "${binaryName}" ❌❌❌❌❌`);
+      this.logger.error('[BinarySyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+    }
   }
 
   private async syncDir(binaryInstance: AbstractBinary, task: Task, dir: string, parentIndex = '') {

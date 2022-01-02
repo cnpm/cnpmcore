@@ -39,7 +39,7 @@ export class TaskService extends AbstractService {
   }
 
   public async appendTaskLog(task: Task, appendLog: string) {
-    console.log(appendLog);
+    // console.log(appendLog);
     const nextPosition = await this.nfsAdapter.appendBytes(
       task.logPath,
       Buffer.from(appendLog + '\n'),
