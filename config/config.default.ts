@@ -20,6 +20,8 @@ export default (appInfo: EggAppConfig) => {
     //  - all: sync all npm packages
     syncMode: 'none',
     syncPackageWorkerMaxConcurrentTasks: 10,
+    // mirror binary, default is false
+    enableBinarySync: false,
     // https://github.com/npm/registry-follower-tutorial
     enableChangesStream: false,
     checkChangesStreamInterval: 500,

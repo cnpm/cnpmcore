@@ -93,6 +93,8 @@ export class Task extends Entity {
       authorIp: os.hostname(),
       data: lastData ? { ...lastData } : {},
     };
-    return this.create(data);
+    const task = this.create(data);
+    task.logPath = `/binaries/${targetName}/syncs/${dayjs().format('YYYY/MM/DDHHMM')}-${task.taskId}.log`;
+    return task;
   }
 }

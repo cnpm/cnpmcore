@@ -3,11 +3,14 @@ import {
   ContextProto,
   Inject,
 } from '@eggjs/tegg';
+import {
+  EggContextHttpClient,
+} from 'egg';
 import { setTimeout } from 'timers/promises';
 import { rm } from 'fs/promises';
-import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { NPMRegistry } from '../../common/adapter/NPMRegistry';
 import { getScopeAndName } from '../../common/PackageUtil';
+import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { PackageRepository } from '../../repository/PackageRepository';
@@ -15,6 +18,7 @@ import { UserRepository } from '../../repository/UserRepository';
 import { Task, SyncPackageTaskOptions } from '../entity/Task';
 import { AbstractService } from './AbstractService';
 import { UserService } from './UserService';
+import { TaskService } from './TaskService';
 import { PackageManagerService } from './PackageManagerService';
 import { User } from '../entity/User';
 
@@ -35,13 +39,15 @@ export class PackageSyncerService extends AbstractService {
   @Inject()
   private readonly userRepository: UserRepository;
   @Inject()
-  private readonly nfsAdapter: NFSAdapter;
-  @Inject()
   private readonly npmRegistry: NPMRegistry;
   @Inject()
   private readonly userService: UserService;
   @Inject()
+  private readonly taskService: TaskService;
+  @Inject()
   private readonly packageManagerService: PackageManagerService;
+  @Inject()
+  private readonly httpclient: EggContextHttpClient;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
     let existsTask = await this.taskRepository.findTaskByTargetName(fullname, TaskType.SyncPackage, TaskState.Waiting);
@@ -53,29 +59,21 @@ export class PackageSyncerService extends AbstractService {
     }
     const task = Task.createSyncPackage(fullname, options);
     await this.taskRepository.saveTask(task);
-    this.logger.info('[PackageSyncerService.createTask:new] fullname: %s, taskId: %s',
-      fullname, task.taskId);
+    this.logger.info('[PackageSyncerService.createTask:new] targetName: %s, taskId: %s',
+      task.targetName, task.taskId);
     return task;
   }
 
   public async findTask(taskId: string) {
-    const task = await this.taskRepository.findTask(taskId);
-    return task;
+    return await this.taskService.findTask(taskId);
   }
 
   public async findTaskLog(task: Task) {
-    return await this.nfsAdapter.getDownloadUrlOrStream(task.logPath);
+    return await this.taskService.findTaskLog(task);
   }
 
   public async findExecuteTask() {
-    const task = await this.taskRepository.executeWaitingTask(TaskType.SyncPackage);
-    if (task && task.attempts > 3) {
-      task.state = TaskState.Timeout;
-      task.attempts -= 1;
-      await this.taskRepository.saveTaskToHistory(task);
-      return null;
-    }
-    return task;
+    return await this.taskService.findExecuteTask(TaskType.SyncPackage);
   }
 
   private async syncUpstream(task: Task) {
@@ -93,13 +91,13 @@ export class PackageSyncerService extends AbstractService {
       const status = err.status || 'unknow';
       logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, create sync task error: ${err}, status: ${status}`);
       logs.push(`[${isoNow()}][UP] ${failEnd}`);
-      await this.appendTaskLog(task, logs.join('\n'));
+      await this.taskService.appendTaskLog(task, logs.join('\n'));
       return;
     }
     if (!logId) {
       logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, missing logId`);
       logs.push(`[${isoNow()}][UP] ${failEnd}`);
-      await this.appendTaskLog(task, logs.join('\n'));
+      await this.taskService.appendTaskLog(task, logs.join('\n'));
       return;
     }
     const startTime = Date.now();
@@ -121,11 +119,11 @@ export class PackageSyncerService extends AbstractService {
         if (data && data.syncDone) {
           logs.push(`[${isoNow()}][UP] 🟢 Sync ${fullname} success [${useTime}ms], log: ${logUrl}, offset: ${offset}`);
           logs.push(`[${isoNow()}][UP] 🟢🟢🟢🟢🟢 ${registry}/${fullname} 🟢🟢🟢🟢🟢`);
-          await this.appendTaskLog(task, logs.join('\n'));
+          await this.taskService.appendTaskLog(task, logs.join('\n'));
           return;
         }
         logs.push(`[${isoNow()}][UP] 🚧 HTTP [${status}] [${useTime}ms], offset: ${offset}`);
-        await this.appendTaskLog(task, logs.join('\n'));
+        await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
       } catch (err: any) {
         useTime = Date.now() - startTime;
@@ -136,7 +134,7 @@ export class PackageSyncerService extends AbstractService {
     // timeout
     logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, timeout, log: ${logUrl}, offset: ${offset}`);
     logs.push(`[${isoNow()}][UP] ${failEnd}`);
-    await this.appendTaskLog(task, logs.join('\n'));
+    await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
   public async executeTask(task: Task) {
@@ -153,6 +151,8 @@ export class PackageSyncerService extends AbstractService {
     }
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync "${fullname}" from ${registry}, skipDependencies: ${!!skipDependencies} 🚧🚧🚧🚧🚧`);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
+    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
+      task.taskId, task.targetName, logUrl);
     let result: any;
     try {
       result = await this.npmRegistry.getFullManifests(fullname);
@@ -163,7 +163,7 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
       this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);
-      await this.finishTask(task, TaskState.Fail, logs.join('\n'));
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
     const { url, data, headers, res, status } = result;
@@ -208,7 +208,7 @@ export class PackageSyncerService extends AbstractService {
       task.error = `invalid maintainers: ${JSON.stringify(maintainers)}`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
-      await this.finishTask(task, TaskState.Fail, logs.join('\n'));
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);
       return;
@@ -261,7 +261,7 @@ export class PackageSyncerService extends AbstractService {
       if (!tarball) {
         lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
         logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, ${lastErrorMessage}`);
-        await this.appendTaskLog(task, logs.join('\n'));
+        await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
       }
@@ -271,24 +271,15 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] 🚧 [${index}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
       let localFile: string;
       try {
-        const { tmpfile, status, headers, res } = await this.npmRegistry.downloadTarball(tarball);
+        const { tmpfile, headers, timing } =
+          await downloadToTempfile(this.httpclient, this.config.dataDir, tarball);
         localFile = tmpfile;
-        logs.push(`[${isoNow()}] 🚧 [${index}] HTTP [${status}] content-length: ${headers['content-length']}, timing: ${JSON.stringify(res.timing)} => ${localFile}`);
-        if (status !== 200) {
-          if (localFile) {
-            await rm(localFile, { force: true });
-          }
-          lastErrorMessage = `download tarball status error: ${status}`;
-          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, ${lastErrorMessage}`);
-          await this.appendTaskLog(task, logs.join('\n'));
-          logs = [];
-          continue;
-        }
+        logs.push(`[${isoNow()}] 🚧 [${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
       } catch (err: any) {
-        const status = err.status || 'unknow';
-        lastErrorMessage = `download tarball error: ${err}, status: ${status}`;
+        this.logger.error('Download tarball %s error: %s', tarball, err);
+        lastErrorMessage = `download tarball error: ${err}`;
         logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, ${lastErrorMessage}`);
-        await this.appendTaskLog(task, logs.join('\n'));
+        await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
       }
@@ -301,7 +292,7 @@ export class PackageSyncerService extends AbstractService {
         if (existsPkgVersion) {
           await rm(localFile, { force: true });
           logs.push(`[${isoNow()}] 🐛 [${index}] Synced version ${version} already exists, skip publish it`);
-          await this.appendTaskLog(task, logs.join('\n'));
+          await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
           continue;
         }
@@ -335,7 +326,7 @@ export class PackageSyncerService extends AbstractService {
           logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} error, ${lastErrorMessage}`);
         }
       }
-      await this.appendTaskLog(task, logs.join('\n'));
+      await this.taskService.appendTaskLog(task, logs.join('\n'));
       logs = [];
       await rm(localFile, { force: true });
       if (!skipDependencies) {
@@ -354,7 +345,7 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] ❌ All versions sync fail, package not exists, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
       task.error = lastErrorMessage;
-      await this.finishTask(task, TaskState.Fail, logs.join('\n'));
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package not exists',
         task.taskId, task.targetName);
       return;
@@ -462,41 +453,8 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
     logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
     task.error = lastErrorMessage;
-    await this.finishTask(task, TaskState.Success, logs.join('\n'));
+    await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
     this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
       task.taskId, task.targetName);
-  }
-
-  private async appendTaskLog(task: Task, appendLog: string) {
-    // console.log(appendLog);
-    const nextPosition = await this.nfsAdapter.appendBytes(
-      task.logPath,
-      Buffer.from(appendLog + '\n'),
-      task.logStorePosition,
-      {
-        'Content-Type': 'text/plain; charset=utf-8',
-      },
-    );
-    if (nextPosition) {
-      task.logStorePosition = nextPosition;
-    }
-    task.updatedAt = new Date();
-    await this.taskRepository.saveTask(task);
-  }
-
-  private async finishTask(task: Task, taskState: TaskState, appendLog: string) {
-    const nextPosition = await this.nfsAdapter.appendBytes(
-      task.logPath,
-      Buffer.from(appendLog + '\n'),
-      task.logStorePosition,
-      {
-        'Content-Type': 'text/plain; charset=utf-8',
-      },
-    );
-    if (nextPosition) {
-      task.logStorePosition = nextPosition;
-    }
-    task.state = taskState;
-    await this.taskRepository.saveTaskToHistory(task);
   }
 }

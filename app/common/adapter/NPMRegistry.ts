@@ -1,7 +1,3 @@
-import { createWriteStream } from 'fs';
-import { mkdir, rm } from 'fs/promises';
-import path from 'path';
-import { randomBytes } from 'crypto';
 import {
   ContextProto,
   AccessLevel,
@@ -13,7 +9,6 @@ import {
   EggAppConfig,
 } from 'egg';
 import { HttpMethod } from 'urllib';
-import dayjs from '../dayjs';
 
 const INSTANCE_NAME = 'npmRegistry';
 
@@ -37,27 +32,6 @@ export class NPMRegistry {
   public async getFullManifests(fullname: string) {
     const url = `${this.registry}/${encodeURIComponent(fullname)}`;
     return await this.request('GET', url);
-  }
-
-  public async downloadTarball(tarball: string) {
-    const uri = new URL(tarball);
-    // will auto clean on CleanTempDir Schedule
-    const tmpfile = path.join(this.config.dataDir, 'downloads', dayjs().format('YYYY/MM/DD'),
-      `${randomBytes(10).toString('hex')}-${path.basename(uri.pathname)}`);
-    await mkdir(path.dirname(tmpfile), { recursive: true });
-    const writeStream = createWriteStream(tmpfile);
-    try {
-      // max 10 mins to download
-      // FIXME: should show download progress
-      const result = await this.request('GET', tarball, undefined, { timeout: 60000 * 10, writeStream });
-      return {
-        ...result,
-        tmpfile,
-      };
-    } catch (err) {
-      await rm(tmpfile, { force: true });
-      throw err;
-    }
   }
 
   // app.put('/:name/sync', sync.sync);
