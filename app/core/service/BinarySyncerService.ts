@@ -122,7 +122,7 @@ export class BinarySyncerService extends AbstractService {
     if (result && result.items.length > 0) {
       let logs: string[] = [];
       const newItems = await this.diff(binaryName, dir, result.items);
-      logs.push(`[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}`);
+      logs.push(`[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryInstance.constructor.name}`);
       for (const [ index, item ] of newItems.entries()) {
         if (item.isDir) {
           logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Start sync dir ${JSON.stringify(item)}`);
@@ -133,7 +133,7 @@ export class BinarySyncerService extends AbstractService {
             hasDownloadError = true;
           } else {
             // if any file download error, let dir sync again next time
-            await this.saveBinaryItem(binaryName, dir, item);
+            await this.saveBinaryItem(item);
           }
         } else {
           // download to nfs
@@ -142,16 +142,16 @@ export class BinarySyncerService extends AbstractService {
           logs = [];
           try {
             const { tmpfile, headers, timing } =
-              await downloadToTempfile(this.httpclient, this.config.dataDir, item.url);
-            logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)}, ${item.url} => ${tmpfile}`);
-            const binary = await this.saveBinaryItem(binaryName, dir, item, tmpfile);
+              await downloadToTempfile(this.httpclient, this.config.dataDir, item.sourceUrl!);
+            logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)}, ${item.sourceUrl} => ${tmpfile}`);
+            const binary = await this.saveBinaryItem(item, tmpfile);
             logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] Synced file success, binaryId: ${binary.binaryId}`);
             await this.taskService.appendTaskLog(task, logs.join('\n'));
             logs = [];
           } catch (err) {
-            this.logger.error('Download binary %s %s', item.url, err);
+            this.logger.error('Download binary %s %s', item.sourceUrl, err);
             hasDownloadError = true;
-            logs.push(`[${isoNow()}][${dir}] ❌ [${parentIndex}${index}] Download ${item.url} error: ${err}`);
+            logs.push(`[${isoNow()}][${dir}] ❌ [${parentIndex}${index}] Download ${item.sourceUrl} error: ${err}`);
             await this.taskService.appendTaskLog(task, logs.join('\n'));
             logs = [];
           }
@@ -169,21 +169,32 @@ export class BinarySyncerService extends AbstractService {
 
   private async diff(binaryName: string, dir: string, fetchItems: BinaryItem[]) {
     const existsItems = await this.binaryRepository.listBinaries(binaryName, dir);
-    const existsSet = new Set<string>(existsItems.map(item => item.name));
-    return fetchItems.filter(item => {
-      return !existsSet.has(item.name);
-    });
+    const existsMap = new Map<string, Binary>();
+    for (const item of existsItems) {
+      existsMap.set(item.name, item);
+    }
+    const diffItems: Binary[] = [];
+    for (const item of fetchItems) {
+      const existsItem = existsMap.get(item.name);
+      if (!existsItem) {
+        diffItems.push(Binary.create({
+          category: binaryName,
+          parent: dir,
+          name: item.name,
+          isDir: item.isDir,
+          size: 0,
+          date: item.date,
+          sourceUrl: item.url,
+        }));
+      } else if (existsItem.date !== item.date) {
+        existsItem.sourceUrl = item.url;
+        diffItems.push(existsItem);
+      }
+    }
+    return diffItems;
   }
 
-  private async saveBinaryItem(binaryName: string, dir: string, item: BinaryItem, tmpfile?: string) {
-    const binary = Binary.create({
-      category: binaryName,
-      parent: dir,
-      name: item.name,
-      isDir: item.isDir,
-      size: 0,
-      date: item.date,
-    });
+  private async saveBinaryItem(binary: Binary, tmpfile?: string) {
     if (tmpfile) {
       const stat = await fs.stat(tmpfile);
       binary.size = stat.size;

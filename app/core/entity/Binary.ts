@@ -9,6 +9,7 @@ interface BinaryData extends EntityData {
   isDir: boolean;
   size: number;
   date: string;
+  sourceUrl?: string;
 }
 
 export class Binary extends Entity {
@@ -19,6 +20,7 @@ export class Binary extends Entity {
   isDir: boolean;
   size: number;
   date: string;
+  sourceUrl?: string;
 
   constructor(data: BinaryData) {
     super(data);
@@ -29,6 +31,7 @@ export class Binary extends Entity {
     this.isDir = data.isDir;
     this.size = data.size;
     this.date = data.date;
+    this.sourceUrl = data.sourceUrl || '';
   }
 
   get storePath() {
