@@ -55,13 +55,14 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       assert(!task);
 
       // mock timeout
-      await TaskModel.update({ id: task3.id }, { updatedAt: new Date(task3.updatedAt.getTime() - 60000 * 5 - 1) });
+      await TaskModel.update({ id: task3.id }, { updatedAt: new Date(task3.updatedAt.getTime() - 60000 * 5 - 1), logStorePosition: '123' });
       task = await packageSyncerService.findExecuteTask();
       assert(task);
       assert(task.id === task3.id);
       assert(task.updatedAt > task3.updatedAt);
       assert(task.attempts === 2);
       assert(task.logPath.endsWith('-2.log'));
+      assert(task.logStorePosition === '');
 
       // again will empty
       task = await packageSyncerService.findExecuteTask();
