@@ -1,16 +1,25 @@
-const binaries = [
+type BinaryTaskConfig = {
+  category: string;
+  syncer: string;
+  repo: string;
+};
+
+const binaries: BinaryTaskConfig[] = [
   {
-    type: 'node',
+    category: 'node',
     syncer: 'NodeBinary',
+    repo: 'nodejs/node',
   },
-  // {
-  //   type: 'electron',
-  //   syncer: 'GithubBinary',
-  // },
-  // {
-  //   type: 'sass',
-  //   syncer: 'GithubBinary',
-  // },
+  {
+    category: 'electron',
+    syncer: 'GithubBinary',
+    repo: 'electron/electron',
+  },
+  {
+    category: 'node-sass',
+    syncer: 'GithubBinary',
+    repo: 'sass/node-sass',
+  },
 ];
 
 export default binaries;

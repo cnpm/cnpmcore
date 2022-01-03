@@ -125,6 +125,11 @@ export class TestUtil {
     return path.join(__dirname, 'fixtures', name ?? '');
   }
 
+  static async readJSONFile(filepath: string) {
+    const bytes = await fs.readFile(filepath);
+    return JSON.parse(bytes.toString());
+  }
+
   static async getFullPackage(options?: PackageOptions): Promise<any> {
     const fullJSONFile = this.getFixtures('exampleFullPackage.json');
     const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());

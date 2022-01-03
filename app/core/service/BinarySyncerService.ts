@@ -9,6 +9,7 @@ import {
 import fs from 'fs/promises';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
+import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
 import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -19,6 +20,7 @@ import { Binary } from '../entity/Binary';
 import { AbstractService } from './AbstractService';
 import { TaskService } from './TaskService';
 import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
+import binaries from '../../../config/binaries';
 
 function isoNow() {
   return new Date().toISOString();
@@ -212,6 +214,15 @@ export class BinarySyncerService extends AbstractService {
       const syncBinaryFromAPISource = config.syncBinaryFromAPISource || `${config.sourceRegistry}/-/binary`;
       return new ApiBinary(this.httpclient, this.logger, binaryName, syncBinaryFromAPISource);
     }
-    if (binaryName === 'node') return new NodeBinary(this.httpclient, this.logger);
+    for (const binaryConfig of binaries) {
+      if (binaryConfig.category === binaryName) {
+        if (binaryConfig.syncer === 'NodeBinary') {
+          return new NodeBinary(this.httpclient, this.logger);
+        }
+        if (binaryConfig.syncer === 'GithubBinary') {
+          return new GithubBinary(this.httpclient, this.logger, binaryConfig.repo);
+        }
+      }
+    }
   }
 }

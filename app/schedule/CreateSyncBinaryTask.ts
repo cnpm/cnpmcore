@@ -20,7 +20,7 @@ export default class CreateSyncBinaryTask extends Subscription {
     await ctx.beginModuleScope(async () => {
       const binarySyncerService: BinarySyncerService = ctx.module[cnpmcoreCore].binarySyncerService;
       for (const binary of binaries) {
-        await binarySyncerService.createTask(binary.type);
+        await binarySyncerService.createTask(binary.category);
       }
     });
   }
