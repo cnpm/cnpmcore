@@ -19,6 +19,12 @@ const binaries: BinaryTaskConfig[] = [
     repo: 'nodejs/unofficial-builds',
     distUrl: 'https://unofficial-builds.nodejs.org/download/release',
   },
+  {
+    category: 'alinode',
+    syncer: 'NodeBinary',
+    repo: '',
+    distUrl: 'http://alinode.aliyun.com/dist/new-alinode',
+  },
   // GithubBinary
   {
     category: 'xprofiler',
