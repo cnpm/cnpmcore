@@ -55,7 +55,7 @@ export class Task extends Entity {
   }
 
   public resetLogPath() {
-    this.logPath = `${path.dirname(this.logPath)}/${dayjs().format('YYYY/MM/DDHHMM')}-${this.taskId}-${this.attempts}.log`;
+    this.logPath = `${path.dirname(this.logPath)}/${dayjs().format('DDHHMM')}-${this.taskId}-${this.attempts}.log`;
   }
 
   private static create(data: EasyData<TaskData, 'taskId'>): Task {
