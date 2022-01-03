@@ -29,6 +29,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       assert(data.node_version === process.version);
       assert(data.instance_start_time);
       assert(data.sync_model === 'none');
+      assert(data.sync_binary === false);
 
       // downloads count
       const publisher = await TestUtil.createUser();
@@ -162,6 +163,16 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
       assert(data.sync_model === 'all');
+    });
+
+    it('should show sync enableSyncBinary = true', async () => {
+      mock(app.config.cnpmcore, 'enableSyncBinary', true);
+      const res = await app.httpRequest()
+        .get('/')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const data = res.body;
+      assert(data.sync_binary === true);
     });
   });
 });

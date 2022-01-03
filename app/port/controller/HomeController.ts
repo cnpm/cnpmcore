@@ -29,6 +29,7 @@ export class HomeController extends AbstractController {
       update_seq: 0,
       sync_model: this.config.cnpmcore.syncMode,
       sync_changes_steam: totalData.changesStream,
+      sync_binary: this.config.cnpmcore.enableSyncBinary,
       instance_start_time: startTime,
       node_version: process.version,
       app_version: this.config.pkg.version,
