@@ -242,3 +242,20 @@ CREATE TABLE IF NOT EXISTS `changes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_change_id` (`change_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='change info';
+
+CREATE TABLE IF NOT EXISTS `binaries` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
+  `binary_id` varchar(24) NOT NULL COMMENT 'binary id',
+  `category` varchar(50) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL COMMENT 'binary category, e.g.: node, sass',
+  `parent` varchar(500) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL COMMENT 'binary parent name, e.g.: /, /v1.0.0/, /v1.0.0/docs/',
+  `name` varchar(200) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL COMMENT 'binary name, dir should ends with /',
+  `is_dir` tinyint NOT NULL DEFAULT 0 COMMENT 'is dir or not, 1: true, other: false',
+  `size` int unsigned NOT NULL COMMENT 'file size',
+  `date` varchar(100) NOT NULL COMMENT 'date display string',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_binary_id` (`binary_id`),
+  UNIQUE KEY `uk_category_parent_name` (`category`, `parent`, `name`),
+  KEY `idx_category_parent` (`category`, `parent`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='binary info';

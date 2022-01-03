@@ -83,4 +83,18 @@ export class Task extends Entity {
     };
     return this.create(data);
   }
+
+  public static createSyncBinary(targetName: string, lastData: any): Task {
+    const data = {
+      type: TaskType.SyncBinary,
+      state: TaskState.Waiting,
+      targetName,
+      authorId: `pid_${process.pid}`,
+      authorIp: os.hostname(),
+      data: lastData ? { ...lastData } : {},
+    };
+    const task = this.create(data);
+    task.logPath = `/binaries/${targetName}/syncs/${dayjs().format('YYYY/MM/DDHHMM')}-${task.taskId}.log`;
+    return task;
+  }
 }

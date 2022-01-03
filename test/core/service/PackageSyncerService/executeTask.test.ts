@@ -1,5 +1,4 @@
 import assert = require('assert');
-import { Readable } from 'stream';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
@@ -38,7 +37,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       assert(!await TaskModel.findOne({ taskId: task.taskId }));
       assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
-      const stream = await packageSyncerService.findTaskLog(task) as Readable;
+      const stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
@@ -67,11 +66,6 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       assert(!await TaskModel.findOne({ taskId: task.taskId }));
       assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
-      // const stream = await packageSyncerService.findTaskLog(task) as Readable;
-      // assert(stream);
-      // for await (const chunk of stream) {
-      //   process.stdout.write(chunk);
-      // }
 
       const manifests = await packageManagerService.listPackageFullManifests('@node-rs', 'xxhash', undefined);
       // console.log(JSON.stringify(manifests, null, 2));
@@ -212,7 +206,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const result = await npmRegistry.getFullManifests(name);
       mock.data(NPMRegistry.prototype, 'getFullManifests', result);
 
-      mock.error(npmRegistry.constructor.prototype, 'request');
+      app.mockHttpclient(/^https:\/\/registry\./, 'GET', () => {
+        throw new Error('mock request error');
+      });
+      mock.error(NPMRegistry.prototype, 'request');
       const task = await packageSyncerService.createTask(name);
       assert(task);
       assert.equal(task.targetName, name);
@@ -221,7 +218,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('❌ [0] Synced version 0.0.0 fail, download tarball error: MockError: mm mock error, status: unknow'));
+      assert(log.includes('❌ [0] Synced version 0.0.0 fail, download tarball error: Error: mock request error'));
       assert(log.includes('❌ All versions sync fail, package not exists'));
     });
 
@@ -651,7 +648,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
             },
             '2.0.0': {
               version: '2.0.0',
-              dist: { tarball: 'https://foo.com/a.tgz' },
+              dist: { tarball: 'http://foo.com/a.tgz' },
             },
           },
         },
@@ -675,11 +672,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     });
 
     it('should mock downloadTarball status !== 200', async () => {
-      mock.data(NPMRegistry.prototype, 'downloadTarball', {
-        status: 404,
-        res: {},
-        headers: {},
-        localFile: __filename + '__not_exists',
+      app.mockHttpclient(/^http:\/\/foo\.com\//, 'GET', () => {
+        throw new Error('mock request error');
       });
       mock.data(NPMRegistry.prototype, 'getFullManifests', {
         data: {
@@ -687,7 +681,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           versions: {
             '2.0.0': {
               version: '2.0.0',
-              dist: { tarball: 'https://foo.com/a.tgz' },
+              dist: { tarball: 'http://foo.com/a.tgz' },
             },
           },
         },
@@ -706,7 +700,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
       assert(log.includes('❌ All versions sync fail, package not exists'));
-      assert(log.includes('Synced version 2.0.0 fail, download tarball status error'));
+      assert(log.includes('Synced version 2.0.0 fail, download tarball error: Error: mock request error'));
     });
 
     it('should sync mk2test-module-cnpmsync with different metas', async () => {

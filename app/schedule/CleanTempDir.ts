@@ -6,7 +6,7 @@ import dayjs from '../common/dayjs';
 export default class CleanTempDir extends Subscription {
   static get schedule() {
     return {
-      cron: '0 1 * * *', // run every day at 01:00
+      cron: '0 2 * * *', // run every day at 02:00
       type: 'worker',
     };
   }
@@ -15,6 +15,7 @@ export default class CleanTempDir extends Subscription {
     const { ctx, app } = this;
     const downloadDir = path.join(app.config.dataDir, 'downloads');
     const oldDirs = [
+      path.join(downloadDir, dayjs().subtract(1, 'day').format('YYYY/MM/DD')),
       path.join(downloadDir, dayjs().subtract(2, 'day').format('YYYY/MM/DD')),
       path.join(downloadDir, dayjs().subtract(3, 'day').format('YYYY/MM/DD')),
       path.join(downloadDir, dayjs().subtract(4, 'day').format('YYYY/MM/DD')),

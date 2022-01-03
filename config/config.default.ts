@@ -10,7 +10,7 @@ export default (appInfo: EggAppConfig) => {
   config.cnpmcore = {
     name: 'cnpm',
     sourceRegistry: 'https://registry.npmjs.org',
-    // upstream registry is base on cnpm/cnpmjs.org or not
+    // upstream registry is base on `cnpmcore` or not
     // if your upstream is official npm registry, please turn it off
     sourceRegistryIsCNpm: false,
     // 3 mins
@@ -20,6 +20,11 @@ export default (appInfo: EggAppConfig) => {
     //  - all: sync all npm packages
     syncMode: 'none',
     syncPackageWorkerMaxConcurrentTasks: 10,
+    // mirror binary, default is false
+    enableSyncBinary: false,
+    // old cnpm mirror: https://cnpmjs.org/mirrors/apis
+    // new cnpmcore api: https://r.cnpmjs.org/-/binary
+    syncBinaryFromAPISource: '',
     // https://github.com/npm/registry-follower-tutorial
     enableChangesStream: false,
     checkChangesStreamInterval: 500,

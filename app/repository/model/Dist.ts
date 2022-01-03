@@ -26,7 +26,7 @@ export class Dist extends Bone {
   @Attribute(DataTypes.STRING(512))
   path: string;
 
-  @Attribute(DataTypes.INTEGER(10))
+  @Attribute(DataTypes.INTEGER(11).UNSIGNED)
   size: number;
 
   @Attribute(DataTypes.STRING(512))

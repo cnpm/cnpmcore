@@ -24,9 +24,9 @@ const plugin: EggPlugin = {
   view: {
     enable: false,
   },
-  opentracing: {
+  tracer: {
     enable: true,
-    package: 'egg-opentracing',
+    package: 'egg-tracer',
   },
   typeboxValidate: {
     enable: true,
