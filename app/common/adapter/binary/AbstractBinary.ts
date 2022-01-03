@@ -4,7 +4,7 @@ export type BinaryItem = {
   name: string;
   isDir: boolean;
   url: string;
-  size: string;
+  size: string | number;
   date: string;
 };
 

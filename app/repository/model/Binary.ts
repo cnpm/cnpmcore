@@ -21,7 +21,7 @@ export class Binary extends Bone {
   binaryId: string;
 
   @Attribute(DataTypes.STRING(50))
-  type: string;
+  category: string;
 
   @Attribute(DataTypes.STRING(700))
   parent: string;
@@ -32,8 +32,8 @@ export class Binary extends Bone {
   @Attribute(DataTypes.BOOLEAN)
   isDir: boolean;
 
-  @Attribute(DataTypes.STRING(100))
-  size: string;
+  @Attribute(DataTypes.INTEGER(11).UNSIGNED)
+  size: number;
 
   @Attribute(DataTypes.STRING(100))
   date: string;

@@ -6,6 +6,7 @@ import {
 import {
   EggContextHttpClient,
 } from 'egg';
+import fs from 'fs/promises';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
 import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
@@ -43,7 +44,7 @@ export class BinarySyncerService extends AbstractService {
   }
 
   public async listDirBinaries(binary: Binary) {
-    return await this.binaryRepository.listBinaries(binary.type, `${binary.parent}${binary.name}`);
+    return await this.binaryRepository.listBinaries(binary.category, `${binary.parent}${binary.name}`);
   }
 
   public async listRootBinaries(binaryName: string) {
@@ -176,17 +177,19 @@ export class BinarySyncerService extends AbstractService {
 
   private async saveBinaryItem(binaryName: string, dir: string, item: BinaryItem, tmpfile?: string) {
     const binary = Binary.create({
-      type: binaryName,
+      category: binaryName,
       parent: dir,
       name: item.name,
       isDir: item.isDir,
-      size: item.size,
+      size: 0,
       date: item.date,
     });
     if (tmpfile) {
+      const stat = await fs.stat(tmpfile);
+      binary.size = stat.size;
       await this.nfsAdapter.uploadFile(binary.storePath, tmpfile);
-      this.logger.info('[BinarySyncerService.saveBinaryItem:uploadFile] binaryId: %s, %s => %s',
-        binary.binaryId, tmpfile, binary.storePath);
+      this.logger.info('[BinarySyncerService.saveBinaryItem:uploadFile] binaryId: %s, size: %d, %s => %s',
+        binary.binaryId, stat.size, tmpfile, binary.storePath);
     }
     await this.binaryRepository.saveBinary(binary);
     return binary;
@@ -195,7 +198,8 @@ export class BinarySyncerService extends AbstractService {
   private createBinaryInstance(binaryName: string): AbstractBinary | undefined {
     const config = this.config.cnpmcore;
     if (config.sourceRegistryIsCNpm) {
-      return new ApiBinary(this.httpclient, this.logger, binaryName, config.sourceRegistry);
+      const syncBinaryFromAPISource = config.syncBinaryFromAPISource || `${config.sourceRegistry}/-/binary`;
+      return new ApiBinary(this.httpclient, this.logger, binaryName, syncBinaryFromAPISource);
     }
     if (binaryName === 'node') return new NodeBinary(this.httpclient, this.logger);
   }

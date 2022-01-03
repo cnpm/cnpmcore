@@ -1,9 +1,9 @@
 import assert = require('assert');
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
-import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
+import { ApiBinary } from 'app/common/adapter/binary/ApiBinary';
 
-describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
+describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
   let ctx: Context;
 
   beforeEach(async () => {
@@ -16,7 +16,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      const binary = new NodeBinary(ctx.httpclient, ctx.logger);
+      const binary = new ApiBinary(ctx.httpclient, ctx.logger, 'node', 'https://cnpmjs.org/mirrors/apis');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -32,13 +32,13 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
         if (item.name === 'node-v0.1.100.tar.gz') {
           assert(item.date === '26-Aug-2011 16:21');
           assert(item.isDir === false);
-          assert(item.size === '3813493');
-          assert(item.url === 'https://nodejs.org/dist/node-v0.1.100.tar.gz');
+          assert(item.size === 3813493);
+          assert(item.url === 'https://cnpmjs.org/mirrors/node/node-v0.1.100.tar.gz');
           matchFile = true;
         }
         if (!item.isDir) {
-          assert(typeof item.size === 'string');
-          assert(item.size.length > 2);
+          assert(typeof item.size === 'number');
+          assert(item.size > 0);
         }
       }
       assert(matchDir);
@@ -46,7 +46,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v16.13.1/ work', async () => {
-      const binary = new NodeBinary(ctx.httpclient, ctx.logger);
+      const binary = new ApiBinary(ctx.httpclient, ctx.logger, 'node', 'https://cnpmjs.org/mirrors/apis');
       const result = await binary.fetch('/v16.13.1/');
       assert(result);
       assert(result.items.length > 0);
@@ -62,13 +62,13 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
         if (item.name === 'SHASUMS256.txt') {
           assert(item.date === '01-Dec-2021 16:13');
           assert(item.isDir === false);
-          assert(item.size === '3153');
-          assert(item.url === 'https://nodejs.org/dist/v16.13.1/SHASUMS256.txt');
+          assert(item.size === 3153);
+          assert(item.url === 'https://cnpmjs.org/mirrors/node/v16.13.1/SHASUMS256.txt');
           matchFile = true;
         }
         if (!item.isDir) {
-          assert(typeof item.size === 'string');
-          assert(item.size.length > 2);
+          assert(typeof item.size === 'number');
+          assert(item.size > 0);
         }
       }
       assert(matchDir);

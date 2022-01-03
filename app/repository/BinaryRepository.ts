@@ -19,14 +19,14 @@ export class BinaryRepository extends AbstractRepository {
     }
   }
 
-  async findBinary(type: string, parent: string, name: string) {
-    const model = await BinaryModel.findOne({ type, parent, name });
+  async findBinary(category: string, parent: string, name: string) {
+    const model = await BinaryModel.findOne({ category, parent, name });
     if (model) return ModelConvertor.convertModelToEntity(model, BinaryEntity);
     return null;
   }
 
-  async listBinaries(type: string, parent: string): Promise<BinaryEntity[]> {
-    const models = await BinaryModel.find({ type, parent });
+  async listBinaries(category: string, parent: string): Promise<BinaryEntity[]> {
+    const models = await BinaryModel.find({ category, parent });
     return models.map(model => ModelConvertor.convertModelToEntity(model, BinaryEntity));
   }
 }

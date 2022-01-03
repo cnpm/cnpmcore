@@ -22,6 +22,9 @@ export default (appInfo: EggAppConfig) => {
     syncPackageWorkerMaxConcurrentTasks: 10,
     // mirror binary, default is false
     enableSyncBinary: false,
+    // old cnpm mirror: https://cnpmjs.org/mirrors/apis
+    // new cnpmcore api: https://r.cnpmjs.org/-/binary
+    syncBinaryFromAPISource: '',
     // https://github.com/npm/registry-follower-tutorial
     enableChangesStream: false,
     checkChangesStreamInterval: 500,

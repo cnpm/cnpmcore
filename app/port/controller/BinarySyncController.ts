@@ -11,6 +11,7 @@ import path from 'path';
 import { NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { BinarySyncerService } from '../../core/service/BinarySyncerService';
+import { Binary } from '../../core/entity/Binary';
 
 @HTTPController()
 export class BinarySyncController extends AbstractController {
@@ -25,7 +26,7 @@ export class BinarySyncController extends AbstractController {
     subpath = subpath || '/';
     if (subpath === '/') {
       const items = await this.binarySyncerService.listRootBinaries(binaryName);
-      return { items };
+      return this.formatItems(items);
     }
     subpath = `/${subpath}`;
     const parsed = path.parse(subpath);
@@ -37,7 +38,7 @@ export class BinarySyncController extends AbstractController {
     }
     if (binary.isDir) {
       const items = await this.binarySyncerService.listDirBinaries(binary);
-      return { items };
+      return this.formatItems(items);
     }
 
     // download file
@@ -59,5 +60,20 @@ export class BinarySyncController extends AbstractController {
   })
   async showBinaryIndex(@Context() ctx: EggContext, @HTTPParam() binary: string) {
     return await this.showBinary(ctx, binary, '/');
+  }
+
+  private formatItems(items: Binary[]) {
+    return items.map(item => {
+      return {
+        id: item.binaryId,
+        category: item.category,
+        name: item.name,
+        date: item.date,
+        type: item.isDir ? 'dir' : 'file',
+        size: item.isDir ? undefined : item.size,
+        url: `${this.config.cnpmcore.registry}/-/binary/${item.category}${item.parent}${item.name}`,
+        modified: item.updatedAt,
+      };
+    });
   }
 }
