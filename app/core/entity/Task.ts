@@ -1,4 +1,5 @@
 import os from 'os';
+import path from 'path';
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 import { TaskType, TaskState } from '../../common/enum/Task';
@@ -51,6 +52,10 @@ export class Task extends Entity {
     this.logStorePosition = data.logStorePosition ?? '';
     this.attempts = data.attempts ?? 0;
     this.error = data.error ?? '';
+  }
+
+  public resetLogPath() {
+    this.logPath = `${path.dirname(this.logPath)}/${dayjs().format('YYYY/MM/DDHHMM')}-${this.taskId}-${this.attempts}.log`;
   }
 
   private static create(data: EasyData<TaskData, 'taskId'>): Task {

@@ -29,11 +29,17 @@ export class TaskService extends AbstractService {
 
   public async findExecuteTask(taskType: TaskType) {
     const task = await this.taskRepository.executeWaitingTask(taskType);
-    if (task && task.attempts > 3) {
-      task.state = TaskState.Timeout;
-      task.attempts -= 1;
-      await this.taskRepository.saveTaskToHistory(task);
-      return null;
+    if (task) {
+      if (task.attempts > 3) {
+        task.state = TaskState.Timeout;
+        task.attempts -= 1;
+        await this.taskRepository.saveTaskToHistory(task);
+        return null;
+      }
+      if (task.attempts > 1) {
+        // reset logPath
+        task.resetLogPath();
+      }
     }
     return task;
   }
