@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `package_version_downloads` (
   `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
   `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
   `year_month` int unsigned NOT NULL COMMENT 'YYYYMM format',
-  `package_id` varchar(24) NOT NULL COMMENT 'package id',
+  `package_id` varchar(214) NOT NULL COMMENT 'package id, maybe scope name',
   `version` varchar(256) NOT NULL COMMENT 'package version',
   `d01` int unsigned NOT NULL DEFAULT 0 COMMENT '01 download count',
   `d02` int unsigned NOT NULL DEFAULT 0 COMMENT '02 download count',

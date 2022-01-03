@@ -40,6 +40,17 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         .set('user-agent', publisher.ua)
         .send(pkg2)
         .expect(201);
+
+      const pkg3 = await TestUtil.getFullPackage({
+        name: '@malware-test-cloth-diner-bosks-zante/foo',
+        version: '1.0.0',
+      });
+      await app.httpRequest()
+        .put(`/${pkg3.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg3)
+        .expect(201);
       if (app.config.nfs.client) {
         await app.httpRequest()
           .get(`/${pkg.name}/-/koa-1.0.0.tgz`)
@@ -55,6 +66,9 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
           .expect(302);
         await app.httpRequest()
           .get(`/${pkg2.name}/-/foo-1.0.0.tgz`)
+          .expect(302);
+        await app.httpRequest()
+          .get(`/${pkg3.name}/-/foo-1.0.0.tgz`)
           .expect(302);
       } else {
         await app.httpRequest()
@@ -75,6 +89,10 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
           .expect(200);
         await app.httpRequest()
           .get(`/${pkg2.name}/-/foo-1.0.0.tgz`)
+          .expect('content-type', 'application/octet-stream')
+          .expect(200);
+        await app.httpRequest()
+          .get(`/${pkg3.name}/-/foo-1.0.0.tgz`)
           .expect('content-type', 'application/octet-stream')
           .expect(200);
       }
@@ -111,7 +129,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       data = res.body;
       // console.log(data);
       assert(data.downloads.length > 0);
-      assert.equal(data.downloads[0].downloads, 5);
+      assert.equal(data.downloads[0].downloads, 6);
       assert(!data.versions);
 
       // scope
@@ -123,6 +141,16 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       // console.log(data);
       assert(data.downloads.length > 0);
       assert.equal(data.downloads[0].downloads, 4);
+      assert(!data.versions);
+
+      res = await app.httpRequest()
+        .get(`/downloads/@malware-test-cloth-diner-bosks-zante/${start}:${end}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      data = res.body;
+      // console.log(data);
+      assert(data.downloads.length > 0);
+      assert.equal(data.downloads[0].downloads, 1);
       assert(!data.versions);
     });
 
