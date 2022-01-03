@@ -1,3 +1,4 @@
+import { rm } from 'fs/promises';
 import {
   AccessLevel,
   ContextProto,
@@ -142,10 +143,12 @@ export class BinarySyncerService extends AbstractService {
           logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Downloading ${JSON.stringify(item)}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
+          let localFile = '';
           try {
             const { tmpfile, headers, timing } =
               await downloadToTempfile(this.httpclient, this.config.dataDir, item.sourceUrl!);
             logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)}, ${item.sourceUrl} => ${tmpfile}`);
+            localFile = tmpfile;
             const binary = await this.saveBinaryItem(item, tmpfile);
             logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] Synced file success, binaryId: ${binary.binaryId}`);
             await this.taskService.appendTaskLog(task, logs.join('\n'));
@@ -156,6 +159,10 @@ export class BinarySyncerService extends AbstractService {
             logs.push(`[${isoNow()}][${dir}] ❌ [${parentIndex}${index}] Download ${item.sourceUrl} error: ${err}`);
             await this.taskService.appendTaskLog(task, logs.join('\n'));
             logs = [];
+          } finally {
+            if (localFile) {
+              await rm(localFile, { force: true });
+            }
           }
         }
       }
