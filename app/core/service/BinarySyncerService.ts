@@ -217,7 +217,7 @@ export class BinarySyncerService extends AbstractService {
     for (const binaryConfig of binaries) {
       if (binaryConfig.category === binaryName) {
         if (binaryConfig.syncer === 'NodeBinary') {
-          return new NodeBinary(this.httpclient, this.logger);
+          return new NodeBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
         }
         if (binaryConfig.syncer === 'GithubBinary') {
           return new GithubBinary(this.httpclient, this.logger, binaryConfig.repo);

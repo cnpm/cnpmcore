@@ -16,7 +16,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      const binary = new NodeBinary(ctx.httpclient, ctx.logger);
+      const binary = new NodeBinary(ctx.httpclient, ctx.logger, 'https://nodejs.org/dist');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -46,7 +46,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v16.13.1/ work', async () => {
-      const binary = new NodeBinary(ctx.httpclient, ctx.logger);
+      const binary = new NodeBinary(ctx.httpclient, ctx.logger, 'https://nodejs.org/dist');
       const result = await binary.fetch('/v16.13.1/');
       assert(result);
       assert(result.items.length > 0);
