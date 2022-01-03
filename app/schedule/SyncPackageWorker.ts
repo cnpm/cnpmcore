@@ -20,7 +20,6 @@ export default class SyncPackageWorker extends Subscription {
     await ctx.beginModuleScope(async () => {
       const packageSyncerService: PackageSyncerService = ctx.module[cnpmcoreCore].packageSyncerService;
       executingCount++;
-      const span = ctx.tracer.startSpan('execute_task');
       try {
         let task = await packageSyncerService.findExecuteTask();
         while (task) {
@@ -39,7 +38,6 @@ export default class SyncPackageWorker extends Subscription {
         ctx.logger.error('[SyncPackageWorker:subscribe:executeTask:error][%s] %s', executingCount, err);
       } finally {
         executingCount--;
-        span.finish();
       }
     });
   }
