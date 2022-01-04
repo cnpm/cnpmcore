@@ -25,6 +25,13 @@ const binaries: BinaryTaskConfig[] = [
     repo: '',
     distUrl: 'http://alinode.aliyun.com/dist/new-alinode',
   },
+  // NwjsBinary
+  {
+    category: 'nwjs',
+    syncer: 'NwjsBinary',
+    repo: 'nwjs/nw.js',
+    distUrl: 'https://dl.nwjs.io',
+  },
   // GithubBinary
   {
     category: 'xprofiler',

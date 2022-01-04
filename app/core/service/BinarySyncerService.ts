@@ -10,6 +10,7 @@ import {
 import fs from 'fs/promises';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
+import { NwjsBinary } from '../../common/adapter/binary/NwjsBinary';
 import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
 import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
 import { TaskType, TaskState } from '../../common/enum/Task';
@@ -225,6 +226,9 @@ export class BinarySyncerService extends AbstractService {
       if (binaryConfig.category === binaryName) {
         if (binaryConfig.syncer === 'NodeBinary') {
           return new NodeBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
+        }
+        if (binaryConfig.syncer === 'NwjsBinary') {
+          return new NwjsBinary(this.httpclient, this.logger);
         }
         if (binaryConfig.syncer === 'GithubBinary') {
           return new GithubBinary(this.httpclient, this.logger, binaryConfig.repo);
