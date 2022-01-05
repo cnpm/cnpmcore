@@ -24,7 +24,7 @@ import { Binary } from '../entity/Binary';
 import { AbstractService } from './AbstractService';
 import { TaskService } from './TaskService';
 import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
-import binaries from '../../../config/binaries';
+import binaries, { SyncerClass } from '../../../config/binaries';
 
 function isoNow() {
   return new Date().toISOString();
@@ -231,19 +231,19 @@ export class BinarySyncerService extends AbstractService {
     }
     for (const binaryConfig of binaries) {
       if (binaryConfig.category === binaryName) {
-        if (binaryConfig.syncer === 'NodeBinary') {
+        if (binaryConfig.syncer === SyncerClass.NodeBinary) {
           return new NodeBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
         }
-        if (binaryConfig.syncer === 'NwjsBinary') {
+        if (binaryConfig.syncer === SyncerClass.NwjsBinary) {
           return new NwjsBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
         }
-        if (binaryConfig.syncer === 'BucketBinary') {
+        if (binaryConfig.syncer === SyncerClass.BucketBinary) {
           return new BucketBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
         }
-        if (binaryConfig.syncer === 'CypressBinary') {
+        if (binaryConfig.syncer === SyncerClass.CypressBinary) {
           return new CypressBinary(this.httpclient, this.logger);
         }
-        if (binaryConfig.syncer === 'GithubBinary') {
+        if (binaryConfig.syncer === SyncerClass.GithubBinary) {
           return new GithubBinary(this.httpclient, this.logger, binaryConfig.repo);
         }
       }

@@ -1,6 +1,14 @@
+export enum SyncerClass {
+  NwjsBinary = 'NwjsBinary',
+  NodeBinary = 'NodeBinary',
+  CypressBinary = 'CypressBinary',
+  BucketBinary = 'BucketBinary',
+  GithubBinary = 'GithubBinary',
+}
+
 type BinaryTaskConfig = {
   category: string;
-  syncer: string;
+  syncer: SyncerClass;
   repo: string;
   distUrl?: string;
 };
@@ -9,209 +17,209 @@ const binaries: BinaryTaskConfig[] = [
   // NwjsBinary
   {
     category: 'nwjs',
-    syncer: 'NwjsBinary',
+    syncer: SyncerClass.NwjsBinary,
     repo: 'nwjs/nw.js',
     distUrl: 'https://dl.nwjs.io/',
   },
   // NodeBinary
   {
     category: 'node',
-    syncer: 'NodeBinary',
+    syncer: SyncerClass.NodeBinary,
     repo: 'nodejs/node',
     distUrl: 'https://nodejs.org/dist',
   },
   {
     category: 'node-unofficial-builds',
-    syncer: 'NodeBinary',
+    syncer: SyncerClass.NodeBinary,
     repo: 'nodejs/unofficial-builds',
     distUrl: 'https://unofficial-builds.nodejs.org/download/release',
   },
   {
     category: 'alinode',
-    syncer: 'NodeBinary',
+    syncer: SyncerClass.NodeBinary,
     repo: '',
     distUrl: 'http://alinode.aliyun.com/dist/new-alinode',
   },
   // CypressBinary
   {
     category: 'cypress',
-    syncer: 'CypressBinary',
+    syncer: SyncerClass.CypressBinary,
     repo: 'cypress-io/cypress',
     distUrl: '',
   },
   // BucketBinary
   {
     category: 'chromedriver',
-    syncer: 'BucketBinary',
+    syncer: SyncerClass.BucketBinary,
     repo: '',
     distUrl: 'https://chromedriver.storage.googleapis.com/',
   },
   {
     category: 'selenium',
-    syncer: 'BucketBinary',
+    syncer: SyncerClass.BucketBinary,
     repo: '',
     distUrl: 'https://selenium-release.storage.googleapis.com/',
   },
   {
     category: 'node-inspector',
-    syncer: 'BucketBinary',
+    syncer: SyncerClass.BucketBinary,
     repo: '',
     distUrl: 'https://node-inspector.s3.amazonaws.com/',
   },
   {
     category: 'fsevents',
-    syncer: 'BucketBinary',
+    syncer: SyncerClass.BucketBinary,
     repo: '',
     distUrl: 'https://fsevents-binaries.s3-us-west-2.amazonaws.com/',
   },
   {
     category: 'tfjs-models',
-    syncer: 'BucketBinary',
+    syncer: SyncerClass.BucketBinary,
     repo: '',
     distUrl: 'https://tfjs-models.storage.googleapis.com/',
   },
   {
     category: 'tensorflow',
-    syncer: 'BucketBinary',
+    syncer: SyncerClass.BucketBinary,
     repo: '',
     distUrl: 'https://tensorflow.storage.googleapis.com/',
   },
   {
     category: 'tf-builds',
-    syncer: 'BucketBinary',
+    syncer: SyncerClass.BucketBinary,
     repo: '',
     distUrl: 'https://tf-builds.storage.googleapis.com/',
   },
   {
     category: 'prisma',
-    syncer: 'BucketBinary',
+    syncer: SyncerClass.BucketBinary,
     repo: '',
     distUrl: 'https://prisma-builds.s3-eu-west-1.amazonaws.com/',
   },
   // GithubBinary
   {
     category: 'xprofiler',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'X-Profiler/xprofiler',
   },
   {
     category: 'node-sass',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'sass/node-sass',
   },
   {
     category: 'electron',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'electron/electron',
   },
   {
     category: 'electron-builder-binaries',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'electron-userland/electron-builder-binaries',
   },
   {
     category: 'canvas',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'Automattic/node-canvas',
   },
   {
     category: 'nodejieba',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'yanyiwu/nodejieba',
   },
   {
     category: 'git-for-windows',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'git-for-windows/git',
   },
   {
     category: 'atom',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'atom/atom',
   },
   {
     category: 'operadriver',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'operasoftware/operachromiumdriver',
   },
   {
     category: 'geckodriver',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'mozilla/geckodriver',
   },
   {
     category: 'leveldown',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'Level/leveldown',
   },
   {
     category: 'couchbase',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'couchbase/couchnode',
   },
   {
     category: 'gl',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'stackgl/headless-gl',
   },
   {
     category: 'flow',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'facebook/flow',
   },
   {
     category: 'robotjs',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'octalmage/robotjs',
   },
   {
     category: 'poi',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'poooi/poi',
   },
   {
     category: 'utf-8-validate',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'websockets/utf-8-validate',
   },
   {
     category: 'minikube',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'kubernetes/minikube',
   },
   {
     category: 'sentry-cli',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'getsentry/sentry-cli',
   },
   {
     category: 'sharp-libvips',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'lovell/sharp-libvips',
   },
   {
     category: 'sharp',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'lovell/sharp',
   },
   {
     category: 'swc',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'swc-project/swc',
   },
   {
     category: 'argon2',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'ranisalt/node-argon2',
   },
   {
     category: 'iohook',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'wilix-team/iohook',
   },
   {
     category: 'saucectl',
-    syncer: 'GithubBinary',
+    syncer: SyncerClass.GithubBinary,
     repo: 'saucelabs/saucectl',
   },
 ];
