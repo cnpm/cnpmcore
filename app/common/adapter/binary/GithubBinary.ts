@@ -13,17 +13,9 @@ export class GithubBinary extends AbstractBinary {
     if (!this.releases) {
       // https://api.github.com/repos/electron/electron/releases
       const url = `https://api.github.com/repos/${this.repo}/releases`;
-      const { status, data, headers } = await this.httpclient.request(url, {
-        timeout: 20000,
-        dataType: 'json',
-        followRedirect: true,
-      });
-      if (status !== 200) {
-        this.logger.warn('[GithubBinary.fetch:non-200-status] status: %s, headers: %j', status, headers);
-        return;
-      }
+      const data = await this.requestJSON(url);
       if (!Array.isArray(data)) {
-        this.logger.warn('[GithubBinary.fetch:response-data-not-array] status: %s, headers: %j, data: %j', status, headers, data);
+        this.logger.warn('[GithubBinary.fetch:response-data-not-array] data: %j', data);
         return;
       }
       this.releases = data;

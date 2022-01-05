@@ -11,14 +11,7 @@ export class NodeBinary extends AbstractBinary {
 
   async fetch(dir: string): Promise<FetchResult | undefined> {
     const url = `${this.distUrl}${dir}`;
-    const { status, data, headers } = await this.httpclient.request(url, {
-      timeout: 10000,
-    });
-    const html = data.toString() as string;
-    if (status !== 200) {
-      this.logger.warn('[NodeBinary.fetch:non-200-status] status: %s, headers: %j, html: %j', status, headers, html);
-      return;
-    }
+    const html = await this.requestXml(url);
     // <a href="v9.8.0/">v9.8.0/</a>                                            08-Mar-2018 01:55                   -
     // <a href="v9.9.0/">v9.9.0/</a>                                            21-Mar-2018 15:47                   -
     // <a href="index.json">index.json</a>                                         17-Dec-2021 23:16              219862

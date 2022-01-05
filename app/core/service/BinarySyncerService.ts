@@ -12,6 +12,7 @@ import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
 import { NwjsBinary } from '../../common/adapter/binary/NwjsBinary';
 import { BucketBinary } from '../../common/adapter/binary/BucketBinary';
+import { CypressBinary } from '../../common/adapter/binary/CypressBinary';
 import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
 import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
 import { TaskType, TaskState } from '../../common/enum/Task';
@@ -23,7 +24,7 @@ import { Binary } from '../entity/Binary';
 import { AbstractService } from './AbstractService';
 import { TaskService } from './TaskService';
 import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
-import binaries from '../../../config/binaries';
+import binaries, { SyncerClass } from '../../../config/binaries';
 
 function isoNow() {
   return new Date().toISOString();
@@ -80,7 +81,7 @@ export class BinarySyncerService extends AbstractService {
   }
 
   public async findExecuteTask() {
-    return await this.taskService.findExecuteTask(TaskType.SyncBinary);
+    return await this.taskService.findExecuteTask(TaskType.SyncBinary, 60000 * 10);
   }
 
   public async executeTask(task: Task) {
@@ -124,7 +125,9 @@ export class BinarySyncerService extends AbstractService {
     const binaryName = task.targetName;
     const result = await binaryInstance.fetch(dir, task.data);
     let hasDownloadError = false;
+    let hasItems = false;
     if (result && result.items.length > 0) {
+      hasItems = true;
       let logs: string[] = [];
       const newItems = await this.diff(binaryName, dir, result.items);
       logs.push(`[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryInstance.constructor.name}`);
@@ -133,12 +136,15 @@ export class BinarySyncerService extends AbstractService {
           logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Start sync dir ${JSON.stringify(item)}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
-          const hasError = await this.syncDir(binaryInstance, task, `${dir}${item.name}`, `${parentIndex}${index}.`);
+          const [ hasError, hasSubItems ] = await this.syncDir(binaryInstance, task, `${dir}${item.name}`, `${parentIndex}${index}.`);
           if (hasError) {
             hasDownloadError = true;
           } else {
             // if any file download error, let dir sync again next time
-            await this.saveBinaryItem(item);
+            // if empty dir, don't save it
+            if (hasSubItems) {
+              await this.saveBinaryItem(item);
+            }
           }
         } else {
           // download to nfs
@@ -175,7 +181,7 @@ export class BinarySyncerService extends AbstractService {
       }
       await this.taskService.appendTaskLog(task, logs.join('\n'));
     }
-    return hasDownloadError;
+    return [ hasDownloadError, hasItems ];
   }
 
   private async diff(binaryName: string, dir: string, fetchItems: BinaryItem[]) {
@@ -225,16 +231,19 @@ export class BinarySyncerService extends AbstractService {
     }
     for (const binaryConfig of binaries) {
       if (binaryConfig.category === binaryName) {
-        if (binaryConfig.syncer === 'NodeBinary') {
+        if (binaryConfig.syncer === SyncerClass.NodeBinary) {
           return new NodeBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
         }
-        if (binaryConfig.syncer === 'NwjsBinary') {
+        if (binaryConfig.syncer === SyncerClass.NwjsBinary) {
           return new NwjsBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
         }
-        if (binaryConfig.syncer === 'BucketBinary') {
+        if (binaryConfig.syncer === SyncerClass.BucketBinary) {
           return new BucketBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
         }
-        if (binaryConfig.syncer === 'GithubBinary') {
+        if (binaryConfig.syncer === SyncerClass.CypressBinary) {
+          return new CypressBinary(this.httpclient, this.logger);
+        }
+        if (binaryConfig.syncer === SyncerClass.GithubBinary) {
           return new GithubBinary(this.httpclient, this.logger, binaryConfig.repo);
         }
       }
