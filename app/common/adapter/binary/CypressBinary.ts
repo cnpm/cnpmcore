@@ -49,7 +49,7 @@ export class CypressBinary extends AbstractBinary {
               name: 'cypress.zip',
               date,
               size: '-',
-              isDir: true,
+              isDir: false,
               url: `https://cdn.cypress.io/desktop/${version}/${platform}/cypress.zip`,
             },
           ];
