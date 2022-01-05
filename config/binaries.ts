@@ -6,6 +6,13 @@ type BinaryTaskConfig = {
 };
 
 const binaries: BinaryTaskConfig[] = [
+  // NwjsBinary
+  {
+    category: 'nwjs',
+    syncer: 'NwjsBinary',
+    repo: 'nwjs/nw.js',
+    distUrl: 'https://dl.nwjs.io/',
+  },
   // NodeBinary
   {
     category: 'node',
@@ -25,12 +32,54 @@ const binaries: BinaryTaskConfig[] = [
     repo: '',
     distUrl: 'http://alinode.aliyun.com/dist/new-alinode',
   },
-  // NwjsBinary
+  // BucketBinary
   {
-    category: 'nwjs',
-    syncer: 'NwjsBinary',
-    repo: 'nwjs/nw.js',
-    distUrl: 'https://dl.nwjs.io',
+    category: 'chromedriver',
+    syncer: 'BucketBinary',
+    repo: '',
+    distUrl: 'https://chromedriver.storage.googleapis.com/',
+  },
+  {
+    category: 'selenium',
+    syncer: 'BucketBinary',
+    repo: '',
+    distUrl: 'https://selenium-release.storage.googleapis.com/',
+  },
+  {
+    category: 'node-inspector',
+    syncer: 'BucketBinary',
+    repo: '',
+    distUrl: 'https://node-inspector.s3.amazonaws.com/',
+  },
+  {
+    category: 'fsevents',
+    syncer: 'BucketBinary',
+    repo: '',
+    distUrl: 'https://fsevents-binaries.s3-us-west-2.amazonaws.com/',
+  },
+  {
+    category: 'tfjs-models',
+    syncer: 'BucketBinary',
+    repo: '',
+    distUrl: 'https://tfjs-models.storage.googleapis.com/',
+  },
+  {
+    category: 'tensorflow',
+    syncer: 'BucketBinary',
+    repo: '',
+    distUrl: 'https://tensorflow.storage.googleapis.com/',
+  },
+  {
+    category: 'tf-builds',
+    syncer: 'BucketBinary',
+    repo: '',
+    distUrl: 'https://tf-builds.storage.googleapis.com/',
+  },
+  {
+    category: 'prisma',
+    syncer: 'BucketBinary',
+    repo: '',
+    distUrl: 'https://prisma-builds.s3-eu-west-1.amazonaws.com/',
   },
   // GithubBinary
   {

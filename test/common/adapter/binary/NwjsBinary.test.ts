@@ -16,7 +16,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      const binary = new NwjsBinary(ctx.httpclient, ctx.logger);
+      const binary = new NwjsBinary(ctx.httpclient, ctx.logger, 'https://dl.nwjs.io/');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -34,7 +34,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v0.59.0/, /v0.59.1/x64/ work', async () => {
-      const binary = new NwjsBinary(ctx.httpclient, ctx.logger);
+      const binary = new NwjsBinary(ctx.httpclient, ctx.logger, 'https://dl.nwjs.io/');
       let result = await binary.fetch('/v0.59.0/');
       assert(result);
       assert(result.items.length > 0);
