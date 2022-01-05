@@ -27,9 +27,9 @@ export class TaskService extends AbstractService {
     return await this.nfsAdapter.getDownloadUrlOrStream(task.logPath);
   }
 
-  public async findExecuteTask(taskType: TaskType) {
+  public async findExecuteTask(taskType: TaskType, timeout?: number) {
     // 10 mins timeout, binary file maybe 100MB need 10 mins to download it.
-    const task = await this.taskRepository.executeWaitingTask(taskType, 60000 * 10);
+    const task = await this.taskRepository.executeWaitingTask(taskType, timeout);
     if (task) {
       if (task.attempts > 3) {
         task.state = TaskState.Timeout;

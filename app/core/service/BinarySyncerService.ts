@@ -81,7 +81,7 @@ export class BinarySyncerService extends AbstractService {
   }
 
   public async findExecuteTask() {
-    return await this.taskService.findExecuteTask(TaskType.SyncBinary);
+    return await this.taskService.findExecuteTask(TaskType.SyncBinary, 60000 * 10);
   }
 
   public async executeTask(task: Task) {
