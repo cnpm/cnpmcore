@@ -6,6 +6,13 @@ type BinaryTaskConfig = {
 };
 
 const binaries: BinaryTaskConfig[] = [
+  // NwjsBinary
+  {
+    category: 'nwjs',
+    syncer: 'NwjsBinary',
+    repo: 'nwjs/nw.js',
+    distUrl: 'https://dl.nwjs.io/',
+  },
   // NodeBinary
   {
     category: 'node',
@@ -25,12 +32,12 @@ const binaries: BinaryTaskConfig[] = [
     repo: '',
     distUrl: 'http://alinode.aliyun.com/dist/new-alinode',
   },
-  // NwjsBinary
+  // BucketBinary
   {
-    category: 'nwjs',
-    syncer: 'NwjsBinary',
-    repo: 'nwjs/nw.js',
-    distUrl: 'https://dl.nwjs.io',
+    category: 'chromedriver',
+    syncer: 'BucketBinary',
+    repo: '',
+    distUrl: 'https://chromedriver.storage.googleapis.com/',
   },
   // GithubBinary
   {
