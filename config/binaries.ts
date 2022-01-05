@@ -4,6 +4,7 @@ export enum SyncerClass {
   CypressBinary = 'CypressBinary',
   BucketBinary = 'BucketBinary',
   GithubBinary = 'GithubBinary',
+  Sqlite3Binary = 'Sqlite3Binary',
 }
 
 type BinaryTaskConfig = {
@@ -45,6 +46,13 @@ const binaries: BinaryTaskConfig[] = [
     category: 'cypress',
     syncer: SyncerClass.CypressBinary,
     repo: 'cypress-io/cypress',
+    distUrl: '',
+  },
+  // Sqlite3Binary
+  {
+    category: 'sqlite3',
+    syncer: SyncerClass.Sqlite3Binary,
+    repo: 'mapbox/node-sqlite3',
     distUrl: '',
   },
   // BucketBinary

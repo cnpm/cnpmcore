@@ -13,7 +13,7 @@ export async function createTempfile(dataDir: string, filename: string) {
   return tmpfile;
 }
 
-export async function downloadToTempfile(httpclient: EggContextHttpClient, dataDir: string, url: string) {
+export async function downloadToTempfile(httpclient: EggContextHttpClient, dataDir: string, url: string, ignoreDownloadStatuses?: number[]) {
   const tmpfile = await createTempfile(dataDir, url);
   const writeStream = createWriteStream(tmpfile);
   try {
@@ -25,6 +25,11 @@ export async function downloadToTempfile(httpclient: EggContextHttpClient, dataD
       timing: true,
       followRedirect: true,
     });
+    if (status === 404 || (ignoreDownloadStatuses && ignoreDownloadStatuses.includes(status))) {
+      const err = new Error(`Not found, status(${status})`);
+      err.name = 'DownloadNotFoundError';
+      throw err;
+    }
     if (status !== 200) {
       const err = new Error(`Download ${url} status(${status}) invalid`);
       err.name = 'DownloadStatusInvalidError';

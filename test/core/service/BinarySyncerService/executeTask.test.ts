@@ -128,6 +128,12 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         }
         return { items: [] };
       });
+      app.mockHttpclient('https://nodejs.org/dist/index-not-exists.json', 'GET', () => {
+        throw new Error('mock error');
+      });
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks-not-exists.json', 'GET', () => {
+        throw new Error('mock error');
+      });
       await binarySyncerService.executeTask(task);
       assert(!await TaskModel.findOne({ taskId: task.taskId }));
       assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
@@ -141,6 +147,50 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert(log.includes('[/] ❌ Synced dir fail'));
       assert(log.includes('[/latest/] ❌ Synced dir fail'));
       assert(log.includes('[/latest/docs/] ❌ Synced dir fail'));
+    });
+
+    it('should mock download file not found', async () => {
+      await binarySyncerService.createTask('node', {});
+      const task = await binarySyncerService.findExecuteTask();
+      assert(task);
+      mock(NodeBinary.prototype, 'fetch', async (dir: string) => {
+        if (dir === '/') {
+          return {
+            items: [
+              { name: 'latest/', isDir: true, url: '', size: '-', date: '17-Dec-2021 23:17' },
+              { name: 'index.json', isDir: false, url: 'https://nodejs.org/dist/index-not-exists.json', size: '219862', date: '17-Dec-2021 23:16' },
+            ],
+          };
+        }
+        if (dir === '/latest/') {
+          return {
+            items: [
+              { name: 'docs/', isDir: true, url: '', size: '-', date: '17-Dec-2021 21:31' },
+            ],
+          };
+        }
+        if (dir === '/latest/docs/') {
+          return {
+            items: [
+              { name: 'apilinks.json', isDir: false, url: 'https://nodejs.org/dist/latest/docs/apilinks-not-exists.json', size: '61606', date: '17-Dec-2021 21:29' },
+            ],
+          };
+        }
+        return { items: [] };
+      });
+      await binarySyncerService.executeTask(task);
+      assert(!await TaskModel.findOne({ taskId: task.taskId }));
+      assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+      const stream = await binarySyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('Syncing diff: 2 => 2'));
+      assert(log.includes('🧪️ [0.0.0] Download https://nodejs.org/dist/latest/docs/apilinks-not-exists.json not found, skip it'));
+      assert(log.includes('🧪️ [1] Download https://nodejs.org/dist/index-not-exists.json not found, skip it'));
+      assert(log.includes('[/] 🟢 Synced dir success'));
+      assert(log.includes('[/latest/] 🟢 Synced dir success'));
+      assert(log.includes('[/latest/docs/] 🟢 Synced dir success'));
     });
 
     it('should execute "node" task with ApiBinary when sourceRegistryIsCNpm=true', async () => {

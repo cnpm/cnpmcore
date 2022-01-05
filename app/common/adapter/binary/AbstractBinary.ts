@@ -6,6 +6,7 @@ export type BinaryItem = {
   url: string;
   size: string | number;
   date: string;
+  ignoreDownloadStatuses?: number[];
 };
 
 export type FetchResult = {

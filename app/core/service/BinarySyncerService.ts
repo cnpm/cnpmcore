@@ -13,6 +13,7 @@ import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
 import { NwjsBinary } from '../../common/adapter/binary/NwjsBinary';
 import { BucketBinary } from '../../common/adapter/binary/BucketBinary';
 import { CypressBinary } from '../../common/adapter/binary/CypressBinary';
+import { Sqlite3Binary } from '../../common/adapter/binary/Sqlite3Binary';
 import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
 import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
 import { TaskType, TaskState } from '../../common/enum/Task';
@@ -155,17 +156,22 @@ export class BinarySyncerService extends AbstractService {
           let localFile = '';
           try {
             const { tmpfile, headers, timing } =
-              await downloadToTempfile(this.httpclient, this.config.dataDir, item.sourceUrl!);
+              await downloadToTempfile(this.httpclient, this.config.dataDir, item.sourceUrl!, item.ignoreDownloadStatuses);
             logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)}, ${item.sourceUrl} => ${tmpfile}`);
             localFile = tmpfile;
             const binary = await this.saveBinaryItem(item, tmpfile);
             logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] Synced file success, binaryId: ${binary.binaryId}`);
             await this.taskService.appendTaskLog(task, logs.join('\n'));
             logs = [];
-          } catch (err) {
-            this.logger.error('Download binary %s %s', item.sourceUrl, err);
-            hasDownloadError = true;
-            logs.push(`[${isoNow()}][${dir}] ❌ [${parentIndex}${index}] Download ${item.sourceUrl} error: ${err}`);
+          } catch (err: any) {
+            if (err.name === 'DownloadNotFoundError') {
+              this.logger.warn('Not found %s, skip it', item.sourceUrl);
+              logs.push(`[${isoNow()}][${dir}] 🧪️ [${parentIndex}${index}] Download ${item.sourceUrl} not found, skip it`);
+            } else {
+              this.logger.error('Download binary %s %s', item.sourceUrl, err);
+              hasDownloadError = true;
+              logs.push(`[${isoNow()}][${dir}] ❌ [${parentIndex}${index}] Download ${item.sourceUrl} error: ${err}`);
+            }
             await this.taskService.appendTaskLog(task, logs.join('\n'));
             logs = [];
           } finally {
@@ -203,9 +209,11 @@ export class BinarySyncerService extends AbstractService {
           size: 0,
           date: item.date,
           sourceUrl: item.url,
+          ignoreDownloadStatuses: item.ignoreDownloadStatuses,
         }));
       } else if (existsItem.date !== item.date) {
         existsItem.sourceUrl = item.url;
+        existsItem.ignoreDownloadStatuses = item.ignoreDownloadStatuses;
         diffItems.push(existsItem);
       }
     }
@@ -243,6 +251,9 @@ export class BinarySyncerService extends AbstractService {
         }
         if (binaryConfig.syncer === SyncerClass.CypressBinary) {
           return new CypressBinary(this.httpclient, this.logger);
+        }
+        if (binaryConfig.syncer === SyncerClass.Sqlite3Binary) {
+          return new Sqlite3Binary(this.httpclient, this.logger);
         }
         if (binaryConfig.syncer === SyncerClass.GithubBinary) {
           return new GithubBinary(this.httpclient, this.logger, binaryConfig.repo);
