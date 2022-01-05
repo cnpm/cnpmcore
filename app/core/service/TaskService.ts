@@ -28,7 +28,8 @@ export class TaskService extends AbstractService {
   }
 
   public async findExecuteTask(taskType: TaskType) {
-    const task = await this.taskRepository.executeWaitingTask(taskType);
+    // 10 mins timeout, binary fine maybe 100MB need 10 mins to download it.
+    const task = await this.taskRepository.executeWaitingTask(taskType, 60000 * 10);
     if (task) {
       if (task.attempts > 3) {
         task.state = TaskState.Timeout;

@@ -12,6 +12,7 @@ import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
 import { NwjsBinary } from '../../common/adapter/binary/NwjsBinary';
 import { BucketBinary } from '../../common/adapter/binary/BucketBinary';
+import { CypressBinary } from '../../common/adapter/binary/CypressBinary';
 import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
 import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
 import { TaskType, TaskState } from '../../common/enum/Task';
@@ -124,7 +125,9 @@ export class BinarySyncerService extends AbstractService {
     const binaryName = task.targetName;
     const result = await binaryInstance.fetch(dir, task.data);
     let hasDownloadError = false;
+    let hasItems = false;
     if (result && result.items.length > 0) {
+      hasItems = true;
       let logs: string[] = [];
       const newItems = await this.diff(binaryName, dir, result.items);
       logs.push(`[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryInstance.constructor.name}`);
@@ -133,12 +136,15 @@ export class BinarySyncerService extends AbstractService {
           logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Start sync dir ${JSON.stringify(item)}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
-          const hasError = await this.syncDir(binaryInstance, task, `${dir}${item.name}`, `${parentIndex}${index}.`);
+          const [ hasError, hasSubItems ] = await this.syncDir(binaryInstance, task, `${dir}${item.name}`, `${parentIndex}${index}.`);
           if (hasError) {
             hasDownloadError = true;
           } else {
             // if any file download error, let dir sync again next time
-            await this.saveBinaryItem(item);
+            // if empty dir, don't save it
+            if (hasSubItems) {
+              await this.saveBinaryItem(item);
+            }
           }
         } else {
           // download to nfs
@@ -175,7 +181,7 @@ export class BinarySyncerService extends AbstractService {
       }
       await this.taskService.appendTaskLog(task, logs.join('\n'));
     }
-    return hasDownloadError;
+    return [ hasDownloadError, hasItems ];
   }
 
   private async diff(binaryName: string, dir: string, fetchItems: BinaryItem[]) {
@@ -233,6 +239,9 @@ export class BinarySyncerService extends AbstractService {
         }
         if (binaryConfig.syncer === 'BucketBinary') {
           return new BucketBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
+        }
+        if (binaryConfig.syncer === 'CypressBinary') {
+          return new CypressBinary(this.httpclient, this.logger);
         }
         if (binaryConfig.syncer === 'GithubBinary') {
           return new GithubBinary(this.httpclient, this.logger, binaryConfig.repo);

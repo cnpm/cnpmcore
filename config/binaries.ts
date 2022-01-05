@@ -32,6 +32,13 @@ const binaries: BinaryTaskConfig[] = [
     repo: '',
     distUrl: 'http://alinode.aliyun.com/dist/new-alinode',
   },
+  // CypressBinary
+  {
+    category: 'cypress',
+    syncer: 'CypressBinary',
+    repo: 'cypress-io/cypress',
+    distUrl: '',
+  },
   // BucketBinary
   {
     category: 'chromedriver',

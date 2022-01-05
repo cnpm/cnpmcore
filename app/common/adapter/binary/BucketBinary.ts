@@ -18,18 +18,6 @@ export class BucketBinary extends AbstractBinary {
     return { items: this.parseItems(xml), nextParams: null };
   }
 
-  protected async requestXml(url: string) {
-    const { status, data, headers } = await this.httpclient.request(url, {
-      timeout: 20000,
-    });
-    const xml = data.toString() as string;
-    if (status !== 200) {
-      this.logger.warn('[NodeBinary.fetch:non-200-status] url: %s, status: %s, headers: %j, xml: %j', url, status, headers, xml);
-      return '';
-    }
-    return xml;
-  }
-
   protected parseItems(xml: string) {
     const items: BinaryItem[] = [];
     // https://nwjs2.s3.amazonaws.com/?prefix=v0.59.0%2Fx64%2F
