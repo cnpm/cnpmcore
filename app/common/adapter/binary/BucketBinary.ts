@@ -28,6 +28,15 @@ export class BucketBinary extends AbstractBinary {
     let matchs = xml.matchAll(fileRe);
     for (const m of matchs) {
       const fullname = m[1].trim();
+      // <Key>2.43/</Key>
+      // <Generation>1410297711522000</Generation>
+      // <MetaGeneration>1</MetaGeneration>
+      // <LastModified>2014-09-09T21:21:51.522Z</LastModified>
+      // <ETag>"d41d8cd98f00b204e9800998ecf8427e"</ETag>
+      // <Size>0</Size>
+      // ignore size = 0 dir
+      if (fullname.endsWith('/')) continue;
+
       const name = path.basename(fullname);
       const date = m[2].trim();
       const size = parseInt(m[3].trim());
@@ -43,8 +52,12 @@ export class BucketBinary extends AbstractBinary {
     const dirRe = /<CommonPrefixes><Prefix>([^<]+?)<\/Prefix><\/CommonPrefixes>/g;
     matchs = xml.matchAll(dirRe);
     for (const m of matchs) {
+      // <Prefix>AWSLogs/</Prefix>
+      // ignore AWSLogs
+      // Download https://node-inspector.s3.amazonaws.com/AWSLogs/077447786745/CloudTrail/us-west-2/2015/12/10/077447786745_CloudTrail_us-west-2_20151210T1015Z_JNWlbeBTILiSzPCq.json.gz status(403) invalid
       const fullname = m[1].trim();
       const name = `${path.basename(fullname)}/`;
+      if (name === 'AWSLogs/') continue;
       items.push({
         name,
         isDir: true,

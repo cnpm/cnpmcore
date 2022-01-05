@@ -60,5 +60,26 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
       }
       assert(matchFile);
     });
+
+    it('should ignore dir with size = 0', async () => {
+      // https://selenium-release.storage.googleapis.com/?delimiter=/&prefix=2.43/
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, 'https://selenium-release.storage.googleapis.com/');
+      const result = await binary.fetch('/2.43/');
+      assert(result);
+      assert(result.items.length > 0);
+      for (const item of result.items) {
+        assert(item.name !== '2.43');
+      }
+    });
+
+    it('should ignore AWSLogs/', async () => {
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, 'https://node-inspector.s3.amazonaws.com/');
+      const result = await binary.fetch('/');
+      assert(result);
+      assert(result.items.length > 0);
+      for (const item of result.items) {
+        assert(item.name !== 'AWSLogs/');
+      }
+    });
   });
 });
