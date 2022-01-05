@@ -79,7 +79,7 @@ const binaries: BinaryTaskConfig[] = [
     category: 'prisma',
     syncer: 'BucketBinary',
     repo: '',
-    distUrl: 'https://binaries.prisma.sh/',
+    distUrl: 'https://prisma-builds.s3-eu-west-1.amazonaws.com/',
   },
   // GithubBinary
   {
