@@ -10,6 +10,7 @@ interface BinaryData extends EntityData {
   size: number;
   date: string;
   sourceUrl?: string;
+  ignoreDownloadStatuses?: number[];
 }
 
 export class Binary extends Entity {
@@ -21,6 +22,7 @@ export class Binary extends Entity {
   size: number;
   date: string;
   sourceUrl?: string;
+  ignoreDownloadStatuses?: number[];
 
   constructor(data: BinaryData) {
     super(data);
@@ -32,6 +34,7 @@ export class Binary extends Entity {
     this.size = data.size;
     this.date = data.date;
     this.sourceUrl = data.sourceUrl || '';
+    this.ignoreDownloadStatuses = data.ignoreDownloadStatuses;
   }
 
   get storePath() {
