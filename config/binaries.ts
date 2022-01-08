@@ -5,6 +5,7 @@ export enum SyncerClass {
   BucketBinary = 'BucketBinary',
   GithubBinary = 'GithubBinary',
   Sqlite3Binary = 'Sqlite3Binary',
+  SqlcipherBinary = 'SqlcipherBinary',
 }
 
 type BinaryTaskConfig = {
@@ -53,6 +54,13 @@ const binaries: BinaryTaskConfig[] = [
     category: 'sqlite3',
     syncer: SyncerClass.Sqlite3Binary,
     repo: 'mapbox/node-sqlite3',
+    distUrl: '',
+  },
+  // SqlcipherBinary
+  {
+    category: 'sqlcipher',
+    syncer: SyncerClass.SqlcipherBinary,
+    repo: 'journeyapps/node-sqlcipher',
     distUrl: '',
   },
   // BucketBinary
