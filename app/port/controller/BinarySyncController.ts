@@ -19,7 +19,7 @@ export class BinarySyncController extends AbstractController {
   private binarySyncerService: BinarySyncerService;
 
   @HTTPMethod({
-    path: '/-/binary/:binaryName/:subpath(.*)',
+    path: '/-/binary/:binaryName(@[^/]{1,220}\/[^/]{1,220}|[^@/]{1,220})/:subpath(.*)',
     method: HTTPMethodEnum.GET,
   })
   async showBinary(@Context() ctx: EggContext, @HTTPParam() binaryName: string, @HTTPParam() subpath: string) {
@@ -55,11 +55,11 @@ export class BinarySyncController extends AbstractController {
   }
 
   @HTTPMethod({
-    path: '/-/binary/:binary',
+    path: '/-/binary/:binaryName(@[^/]{1,220}\/[^/]{1,220}|[^@/]{1,220})',
     method: HTTPMethodEnum.GET,
   })
-  async showBinaryIndex(@Context() ctx: EggContext, @HTTPParam() binary: string) {
-    return await this.showBinary(ctx, binary, '/');
+  async showBinaryIndex(@Context() ctx: EggContext, @HTTPParam() binaryName: string) {
+    return await this.showBinary(ctx, binaryName, '/');
   }
 
   private formatItems(items: Binary[]) {

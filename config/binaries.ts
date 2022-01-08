@@ -59,7 +59,7 @@ const binaries: BinaryTaskConfig[] = [
   },
   // SqlcipherBinary
   {
-    category: 'sqlcipher',
+    category: '@journeyapps/sqlcipher',
     syncer: SyncerClass.SqlcipherBinary,
     repo: 'journeyapps/node-sqlcipher',
     distUrl: '',
