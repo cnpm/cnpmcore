@@ -19,6 +19,20 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
   });
 
   describe('[GET /-/binary/:binary/(.*)] showBinary()', () => {
+    it('should show root dirs', async () => {
+      const res = await app.httpRequest()
+        .get('/-/binary/');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      const items = res.body;
+      assert(items.length > 0);
+      for (const item of items) {
+        assert(item.type === 'dir');
+        assert(item.name);
+        assert(item.url);
+      }
+    });
+
     it('should show node binaries', async () => {
       await binarySyncerService.createTask('node', {});
       const task = await binarySyncerService.findExecuteTask();
