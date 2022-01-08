@@ -38,6 +38,9 @@ export class SqlcipherBinary extends AbstractBinary {
         'win32-ia32',
       ];
       for (const version in data.versions) {
+        const major = parseInt(version.split('.', 1)[0]);
+        if (major < 5) continue;
+        // >= 5.0.0
         const pkgVersion = data.versions[version];
         const napiVersions = pkgVersion.binary && pkgVersion.binary.napi_versions || [];
         const date = data.time[version];
@@ -50,10 +53,7 @@ export class SqlcipherBinary extends AbstractBinary {
         });
         const versionDir = `/v${version}/`;
         this.dirItems[versionDir] = [];
-        const major = parseInt(version.split('.', 1)[0]);
         for (const nodePlatformAndArch of nodePlatformAndArchs) {
-          if (major < 5) continue;
-          // >= 5.0.0
           // napi
           for (const napiVersion of napiVersions) {
             // >= 5.0.0
