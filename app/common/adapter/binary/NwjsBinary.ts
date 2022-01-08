@@ -37,6 +37,6 @@ export class NwjsBinary extends BucketBinary {
       return { items, nextParams: null };
     }
 
-    return { items: this.parseItems(xml), nextParams: null };
+    return { items: this.parseItems(xml, dir), nextParams: null };
   }
 }

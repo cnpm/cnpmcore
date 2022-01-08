@@ -73,12 +73,24 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
     });
 
     it('should ignore AWSLogs/', async () => {
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger, 'https://node-inspector.s3.amazonaws.com/');
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger,
+        'https://node-inspector.s3.amazonaws.com/', [ '/AWSLogs/' ]);
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
       for (const item of result.items) {
         assert(item.name !== 'AWSLogs/');
+      }
+    });
+
+    it('should ignore all_commits/', async () => {
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger,
+        'https://prisma-builds.s3-eu-west-1.amazonaws.com/', [ '/all_commits/' ]);
+      const result = await binary.fetch('/');
+      assert(result);
+      assert(result.items.length > 0);
+      for (const item of result.items) {
+        assert(item.name !== 'all_commits/');
       }
     });
   });

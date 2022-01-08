@@ -13,6 +13,7 @@ type BinaryTaskConfig = {
   syncer: SyncerClass;
   repo: string;
   distUrl?: string;
+  ignoreDirs?: string[];
 };
 
 const binaries: BinaryTaskConfig[] = [
@@ -81,6 +82,9 @@ const binaries: BinaryTaskConfig[] = [
     syncer: SyncerClass.BucketBinary,
     repo: '',
     distUrl: 'https://node-inspector.s3.amazonaws.com/',
+    ignoreDirs: [
+      '/AWSLogs/',
+    ],
   },
   {
     category: 'fsevents',
@@ -111,6 +115,20 @@ const binaries: BinaryTaskConfig[] = [
     syncer: SyncerClass.BucketBinary,
     repo: '',
     distUrl: 'https://prisma-builds.s3-eu-west-1.amazonaws.com/',
+    ignoreDirs: [
+      // https://prisma-builds.s3-eu-west-1.amazonaws.com/?delimiter=/&prefix=
+      '/all_commits/',
+      '/build_testruns/',
+      '/bump_engineer/',
+      '/m1_builds/',
+      '/master/',
+      '/ci/',
+      '/unreverse/',
+      '/signature_test_run/',
+      '/sql-server-char-collation-fix/',
+      '/test-ldd-output-on-release/',
+      '/windows-mysql-ci/',
+    ],
   },
   // GithubBinary
   {

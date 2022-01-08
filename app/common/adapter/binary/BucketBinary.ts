@@ -4,10 +4,12 @@ import { AbstractBinary, FetchResult, BinaryItem } from './AbstractBinary';
 
 export class BucketBinary extends AbstractBinary {
   protected distUrl: string;
+  protected ignoreDirs?: string[];
 
-  constructor(httpclient: EggContextHttpClient, logger: EggLogger, distUrl: string) {
+  constructor(httpclient: EggContextHttpClient, logger: EggLogger, distUrl: string, ignoreDirs?: string[]) {
     super(httpclient, logger);
     this.distUrl = distUrl;
+    this.ignoreDirs = ignoreDirs;
   }
 
   async fetch(dir: string): Promise<FetchResult | undefined> {
@@ -15,10 +17,10 @@ export class BucketBinary extends AbstractBinary {
     const subDir = dir.substring(1);
     const url = `${this.distUrl}?delimiter=/&prefix=${encodeURIComponent(subDir)}`;
     const xml = await this.requestXml(url);
-    return { items: this.parseItems(xml), nextParams: null };
+    return { items: this.parseItems(xml, dir), nextParams: null };
   }
 
-  protected parseItems(xml: string) {
+  protected parseItems(xml: string, dir: string) {
     const items: BinaryItem[] = [];
     // https://nwjs2.s3.amazonaws.com/?prefix=v0.59.0%2Fx64%2F
     // https://chromedriver.storage.googleapis.com/?delimiter=/&prefix=
@@ -57,7 +59,8 @@ export class BucketBinary extends AbstractBinary {
       // Download https://node-inspector.s3.amazonaws.com/AWSLogs/077447786745/CloudTrail/us-west-2/2015/12/10/077447786745_CloudTrail_us-west-2_20151210T1015Z_JNWlbeBTILiSzPCq.json.gz status(403) invalid
       const fullname = m[1].trim();
       const name = `${path.basename(fullname)}/`;
-      if (name === 'AWSLogs/') continue;
+      const fullpath = `${dir}${name}`;
+      if (this.ignoreDirs?.includes(fullpath)) continue;
       items.push({
         name,
         isDir: true,
