@@ -12,11 +12,26 @@ import { NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { BinarySyncerService } from '../../core/service/BinarySyncerService';
 import { Binary } from '../../core/entity/Binary';
+import binaries from '../../../config/binaries';
 
 @HTTPController()
 export class BinarySyncController extends AbstractController {
   @Inject()
   private binarySyncerService: BinarySyncerService;
+
+  @HTTPMethod({
+    path: '/-/binary/',
+    method: HTTPMethodEnum.GET,
+  })
+  async listBinaries() {
+    return binaries.map(binaryConfig => {
+      return {
+        name: `${binaryConfig.category}/`,
+        type: 'dir',
+        url: `${this.config.cnpmcore.registry}/-/binary/${binaryConfig.category}/`,
+      };
+    });
+  }
 
   @HTTPMethod({
     path: '/-/binary/:binaryName(@[^/]{1,220}\/[^/]{1,220}|[^@/]{1,220})/:subpath(.*)',
