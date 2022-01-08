@@ -15,6 +15,7 @@ import { BucketBinary } from '../../common/adapter/binary/BucketBinary';
 import { CypressBinary } from '../../common/adapter/binary/CypressBinary';
 import { Sqlite3Binary } from '../../common/adapter/binary/Sqlite3Binary';
 import { SqlcipherBinary } from '../../common/adapter/binary/SqlcipherBinary';
+import { PuppeteerBinary } from '../../common/adapter/binary/PuppeteerBinary';
 import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
 import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
 import { TaskType, TaskState } from '../../common/enum/Task';
@@ -258,6 +259,9 @@ export class BinarySyncerService extends AbstractService {
         }
         if (binaryConfig.syncer === SyncerClass.SqlcipherBinary) {
           return new SqlcipherBinary(this.httpclient, this.logger);
+        }
+        if (binaryConfig.syncer === SyncerClass.PuppeteerBinary) {
+          return new PuppeteerBinary(this.httpclient, this.logger);
         }
         if (binaryConfig.syncer === SyncerClass.GithubBinary) {
           return new GithubBinary(this.httpclient, this.logger, binaryConfig.repo);
