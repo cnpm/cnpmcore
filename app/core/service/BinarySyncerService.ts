@@ -248,7 +248,7 @@ export class BinarySyncerService extends AbstractService {
           return new NwjsBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
         }
         if (binaryConfig.syncer === SyncerClass.BucketBinary) {
-          return new BucketBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
+          return new BucketBinary(this.httpclient, this.logger, binaryConfig.distUrl!, binaryConfig.ignoreDirs);
         }
         if (binaryConfig.syncer === SyncerClass.CypressBinary) {
           return new CypressBinary(this.httpclient, this.logger);

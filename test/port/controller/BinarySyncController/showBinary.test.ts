@@ -3,6 +3,7 @@ import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
+import { SqlcipherBinary } from 'app/common/adapter/binary/SqlcipherBinary';
 
 describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
   let ctx: Context;
@@ -122,6 +123,85 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
       data = res.body;
       assert(data.error === '[NOT_FOUND] Binary "node/latest/docs/apilinks-404.json" not found');
+    });
+
+    it('should show node binaries: /@journeyapps/sqlcipher', async () => {
+      await binarySyncerService.createTask('@journeyapps/sqlcipher', {});
+      const task = await binarySyncerService.findExecuteTask();
+      assert(task);
+      mock(SqlcipherBinary.prototype, 'fetch', async (dir: string) => {
+        if (dir === '/') {
+          return {
+            items: [
+              {
+                name: 'v5.3.1/',
+                date: '2021-12-14T13:12:31.587Z',
+                size: '-',
+                isDir: true,
+                url: '',
+              },
+            ],
+          };
+        }
+        if (dir === '/v5.3.1/') {
+          return {
+            items: [
+              {
+                name: 'napi-v6-win32-ia32.tar.gz',
+                date: '2021-12-14T13:12:31.587Z',
+                size: '-',
+                isDir: false,
+                url: 'https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher/v5.3.1/napi-v6-win32-ia32.tar.gz',
+                ignoreDownloadStatuses: [ 404, 403 ],
+              },
+            ],
+          };
+        }
+        return { items: [] };
+      });
+      await binarySyncerService.executeTask(task);
+
+      let res = await app.httpRequest()
+        .get('/-/binary/@journeyapps/sqlcipher/');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      let items = res.body;
+      assert(items.length === 1);
+
+      res = await app.httpRequest()
+        .get('/-/binary/@journeyapps/sqlcipher');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      items = res.body;
+      assert(items.length === 1);
+      assert(items[0].name === 'v5.3.1/');
+      assert(items[0].category === '@journeyapps/sqlcipher');
+      assert(items[0].type === 'dir');
+      assert(items[0].size === undefined);
+
+      res = await app.httpRequest()
+        .get('/-/binary/@journeyapps/sqlcipher/v5.3.1/');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      items = res.body;
+      assert(items.length === 1);
+      assert(items[0].name === 'napi-v6-win32-ia32.tar.gz');
+      assert(items[0].category === '@journeyapps/sqlcipher');
+      assert(items[0].type === 'file');
+      assert(items[0].size === 1856939);
+      assert(items[0].date === '2021-12-14T13:12:31.587Z');
+      assert(items[0].id);
+      assert(items[0].modified);
+      assert(items[0].url.startsWith('http://'));
+
+      res = await app.httpRequest()
+        .get('/-/binary/@journeyapps/sqlcipher/v5.3.1/napi-v6-win32-ia32.tar.gz');
+      if (res.status === 200) {
+        assert(res.headers['content-type'] === 'application/gzip');
+        assert(res.headers['content-disposition'] === 'attachment; filename="napi-v6-win32-ia32.tar.gz"');
+      } else {
+        assert(res.status === 302);
+      }
     });
   });
 });
