@@ -6,6 +6,7 @@ export enum SyncerClass {
   GithubBinary = 'GithubBinary',
   Sqlite3Binary = 'Sqlite3Binary',
   SqlcipherBinary = 'SqlcipherBinary',
+  PuppeteerBinary = 'PuppeteerBinary',
 }
 
 type BinaryTaskConfig = {
@@ -63,6 +64,13 @@ const binaries: BinaryTaskConfig[] = [
     syncer: SyncerClass.SqlcipherBinary,
     repo: 'journeyapps/node-sqlcipher',
     distUrl: '',
+  },
+  // PuppeteerBinary
+  {
+    category: 'chromium-browser-snapshots',
+    syncer: SyncerClass.PuppeteerBinary,
+    repo: 'puppeteer/puppeteer',
+    distUrl: 'https://chromium-browser-snapshots.storage.googleapis.com/?delimiter=/&prefix=',
   },
   // BucketBinary
   {
