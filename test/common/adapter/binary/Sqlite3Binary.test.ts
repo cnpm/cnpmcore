@@ -2,6 +2,7 @@ import assert = require('assert');
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { Sqlite3Binary } from 'app/common/adapter/binary/Sqlite3Binary';
+import binaries from 'config/binaries';
 
 describe('test/common/adapter/binary/Sqlite3Binary.test.ts', () => {
   let ctx: Context;
@@ -16,7 +17,7 @@ describe('test/common/adapter/binary/Sqlite3Binary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      const binary = new Sqlite3Binary(ctx.httpclient, ctx.logger);
+      const binary = new Sqlite3Binary(ctx.httpclient, ctx.logger, binaries.sqlite3);
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -41,7 +42,7 @@ describe('test/common/adapter/binary/Sqlite3Binary.test.ts', () => {
     });
 
     it('should fetch subdir: /v2.2.6/, /v5.0.2/ work', async () => {
-      const binary = new Sqlite3Binary(ctx.httpclient, ctx.logger);
+      const binary = new Sqlite3Binary(ctx.httpclient, ctx.logger, binaries.sqlite3);
       let result = await binary.fetch('/v2.2.6/');
       assert(result);
       assert(result.items.length >= 6);

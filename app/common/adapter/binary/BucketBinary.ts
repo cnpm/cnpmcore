@@ -1,21 +1,11 @@
 import path from 'path';
-import { EggContextHttpClient, EggLogger } from 'egg';
 import { AbstractBinary, FetchResult, BinaryItem } from './AbstractBinary';
 
 export class BucketBinary extends AbstractBinary {
-  protected distUrl: string;
-  protected ignoreDirs?: string[];
-
-  constructor(httpclient: EggContextHttpClient, logger: EggLogger, distUrl: string, ignoreDirs?: string[]) {
-    super(httpclient, logger);
-    this.distUrl = distUrl;
-    this.ignoreDirs = ignoreDirs;
-  }
-
   async fetch(dir: string): Promise<FetchResult | undefined> {
     // /foo/ => foo/
     const subDir = dir.substring(1);
-    const url = `${this.distUrl}?delimiter=/&prefix=${encodeURIComponent(subDir)}`;
+    const url = `${this.binaryConfig.distUrl}?delimiter=/&prefix=${encodeURIComponent(subDir)}`;
     const xml = await this.requestXml(url);
     return { items: this.parseItems(xml, dir), nextParams: null };
   }
@@ -45,7 +35,7 @@ export class BucketBinary extends AbstractBinary {
       items.push({
         name,
         isDir: false,
-        url: `${this.distUrl}${fullname}`,
+        url: `${this.binaryConfig.distUrl}${fullname}`,
         size,
         date,
       });
@@ -60,7 +50,7 @@ export class BucketBinary extends AbstractBinary {
       const fullname = m[1].trim();
       const name = `${path.basename(fullname)}/`;
       const fullpath = `${dir}${name}`;
-      if (this.ignoreDirs?.includes(fullpath)) continue;
+      if (this.binaryConfig.ignoreDirs?.includes(fullpath)) continue;
       items.push({
         name,
         isDir: true,

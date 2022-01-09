@@ -24,9 +24,12 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async listBinaries() {
-    return binaries.map(binaryConfig => {
+    return Object.values(binaries).map(binaryConfig => {
       return {
         name: `${binaryConfig.category}/`,
+        description: binaryConfig.description,
+        distUrl: binaryConfig.distUrl,
+        repoUrl: /^https?:\/\//.test(binaryConfig.repo) ? binaryConfig.repo : `https://github.com/${binaryConfig.repo}`,
         type: 'dir',
         url: `${this.config.cnpmcore.registry}/-/binary/${binaryConfig.category}/`,
       };

@@ -17,17 +17,11 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
 
   describe('[GET /] showTotal()', () => {
     it('should total information', async () => {
+      await TestUtil.truncateDatabase();
       let res = await app.httpRequest()
         .get('/');
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
-
-      // ignore on oss, it was unstable
-      // https://github.com/cnpm/cnpmcore/runs/4748567783?check_suite_focus=true#step:6:748
-      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
-        return;
-      }
-
       let data = res.body;
       assert(data.doc_count === 0);
       assert(data.doc_version_count === 0);

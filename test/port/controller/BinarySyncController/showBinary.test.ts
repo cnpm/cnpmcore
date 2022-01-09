@@ -30,6 +30,9 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         assert(item.type === 'dir');
         assert(item.name);
         assert(item.url);
+        assert(item.repoUrl);
+        assert(item.distUrl);
+        assert(item.description);
       }
     });
 

@@ -9,15 +9,6 @@ import {
 } from 'egg';
 import fs from 'fs/promises';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
-import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
-import { NwjsBinary } from '../../common/adapter/binary/NwjsBinary';
-import { BucketBinary } from '../../common/adapter/binary/BucketBinary';
-import { CypressBinary } from '../../common/adapter/binary/CypressBinary';
-import { Sqlite3Binary } from '../../common/adapter/binary/Sqlite3Binary';
-import { SqlcipherBinary } from '../../common/adapter/binary/SqlcipherBinary';
-import { PuppeteerBinary } from '../../common/adapter/binary/PuppeteerBinary';
-import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
-import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskRepository } from '../../repository/TaskRepository';
@@ -27,7 +18,27 @@ import { Binary } from '../entity/Binary';
 import { AbstractService } from './AbstractService';
 import { TaskService } from './TaskService';
 import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
+import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
 import binaries, { SyncerClass } from '../../../config/binaries';
+import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
+import { NwjsBinary } from '../../common/adapter/binary/NwjsBinary';
+import { BucketBinary } from '../../common/adapter/binary/BucketBinary';
+import { CypressBinary } from '../../common/adapter/binary/CypressBinary';
+import { Sqlite3Binary } from '../../common/adapter/binary/Sqlite3Binary';
+import { SqlcipherBinary } from '../../common/adapter/binary/SqlcipherBinary';
+import { PuppeteerBinary } from '../../common/adapter/binary/PuppeteerBinary';
+import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
+
+const BinaryClasses = {
+  [SyncerClass.NodeBinary]: NodeBinary,
+  [SyncerClass.NwjsBinary]: NwjsBinary,
+  [SyncerClass.BucketBinary]: BucketBinary,
+  [SyncerClass.CypressBinary]: CypressBinary,
+  [SyncerClass.Sqlite3Binary]: Sqlite3Binary,
+  [SyncerClass.SqlcipherBinary]: SqlcipherBinary,
+  [SyncerClass.PuppeteerBinary]: PuppeteerBinary,
+  [SyncerClass.GithubBinary]: GithubBinary,
+};
 
 function isoNow() {
   return new Date().toISOString();
@@ -237,35 +248,13 @@ export class BinarySyncerService extends AbstractService {
   private createBinaryInstance(binaryName: string): AbstractBinary | undefined {
     const config = this.config.cnpmcore;
     if (config.sourceRegistryIsCNpm) {
+      const binaryConfig = binaries[binaryName];
       const syncBinaryFromAPISource = config.syncBinaryFromAPISource || `${config.sourceRegistry}/-/binary`;
-      return new ApiBinary(this.httpclient, this.logger, binaryName, syncBinaryFromAPISource);
+      return new ApiBinary(this.httpclient, this.logger, binaryConfig, syncBinaryFromAPISource);
     }
-    for (const binaryConfig of binaries) {
+    for (const binaryConfig of Object.values(binaries)) {
       if (binaryConfig.category === binaryName) {
-        if (binaryConfig.syncer === SyncerClass.NodeBinary) {
-          return new NodeBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
-        }
-        if (binaryConfig.syncer === SyncerClass.NwjsBinary) {
-          return new NwjsBinary(this.httpclient, this.logger, binaryConfig.distUrl!);
-        }
-        if (binaryConfig.syncer === SyncerClass.BucketBinary) {
-          return new BucketBinary(this.httpclient, this.logger, binaryConfig.distUrl!, binaryConfig.ignoreDirs);
-        }
-        if (binaryConfig.syncer === SyncerClass.CypressBinary) {
-          return new CypressBinary(this.httpclient, this.logger);
-        }
-        if (binaryConfig.syncer === SyncerClass.Sqlite3Binary) {
-          return new Sqlite3Binary(this.httpclient, this.logger);
-        }
-        if (binaryConfig.syncer === SyncerClass.SqlcipherBinary) {
-          return new SqlcipherBinary(this.httpclient, this.logger);
-        }
-        if (binaryConfig.syncer === SyncerClass.PuppeteerBinary) {
-          return new PuppeteerBinary(this.httpclient, this.logger);
-        }
-        if (binaryConfig.syncer === SyncerClass.GithubBinary) {
-          return new GithubBinary(this.httpclient, this.logger, binaryConfig.repo);
-        }
+        return new BinaryClasses[binaryConfig.syncer](this.httpclient, this.logger, binaryConfig);
       }
     }
   }

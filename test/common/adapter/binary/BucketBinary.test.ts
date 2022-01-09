@@ -2,6 +2,7 @@ import assert = require('assert');
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { BucketBinary } from 'app/common/adapter/binary/BucketBinary';
+import binaries from 'config/binaries';
 
 describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
   let ctx: Context;
@@ -16,7 +17,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger, 'https://chromedriver.storage.googleapis.com/');
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.chromedriver);
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -41,7 +42,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /97.0.4692.71/ work', async () => {
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger, 'https://chromedriver.storage.googleapis.com/');
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.chromedriver);
       const result = await binary.fetch('/97.0.4692.71/');
       assert(result);
       assert(result.items.length > 0);
@@ -63,7 +64,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
 
     it('should ignore dir with size = 0', async () => {
       // https://selenium-release.storage.googleapis.com/?delimiter=/&prefix=2.43/
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger, 'https://selenium-release.storage.googleapis.com/');
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.selenium);
       const result = await binary.fetch('/2.43/');
       assert(result);
       assert(result.items.length > 0);
@@ -73,8 +74,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
     });
 
     it('should ignore AWSLogs/', async () => {
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger,
-        'https://node-inspector.s3.amazonaws.com/', [ '/AWSLogs/' ]);
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries['node-inspector']);
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -84,8 +84,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
     });
 
     it('should ignore all_commits/', async () => {
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger,
-        'https://prisma-builds.s3-eu-west-1.amazonaws.com/', [ '/all_commits/' ]);
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.prisma);
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);

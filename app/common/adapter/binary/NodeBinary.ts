@@ -1,16 +1,8 @@
-import { EggContextHttpClient, EggLogger } from 'egg';
 import { AbstractBinary, FetchResult, BinaryItem } from './AbstractBinary';
 
 export class NodeBinary extends AbstractBinary {
-  private distUrl: string;
-
-  constructor(httpclient: EggContextHttpClient, logger: EggLogger, distUrl: string) {
-    super(httpclient, logger);
-    this.distUrl = distUrl;
-  }
-
   async fetch(dir: string): Promise<FetchResult | undefined> {
-    const url = `${this.distUrl}${dir}`;
+    const url = `${this.binaryConfig.distUrl}${dir}`;
     const html = await this.requestXml(url);
     // <a href="v9.8.0/">v9.8.0/</a>                                            08-Mar-2018 01:55                   -
     // <a href="v9.9.0/">v9.9.0/</a>                                            21-Mar-2018 15:47                   -

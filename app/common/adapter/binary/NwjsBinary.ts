@@ -8,7 +8,7 @@ export class NwjsBinary extends BucketBinary {
     const isRootDir = dir === '/';
     // /foo/ => foo/
     const subDir = dir.substring(1);
-    const url = isRootDir ? this.distUrl : `${this.s3Url}${encodeURIComponent(subDir)}`;
+    const url = isRootDir ? this.binaryConfig.distUrl : `${this.s3Url}${encodeURIComponent(subDir)}`;
     const xml = await this.requestXml(url);
     if (!xml) return;
 
