@@ -7,6 +7,7 @@ export enum SyncerClass {
   Sqlite3Binary = 'Sqlite3Binary',
   SqlcipherBinary = 'SqlcipherBinary',
   PuppeteerBinary = 'PuppeteerBinary',
+  NodePreGypBinary = 'NodePreGypBinary',
 }
 
 export type BinaryTaskConfig = {
@@ -82,6 +83,21 @@ const binaries: {
     syncer: SyncerClass.PuppeteerBinary,
     repo: 'puppeteer/puppeteer',
     distUrl: 'https://chromium-browser-snapshots.storage.googleapis.com/?delimiter=/&prefix=',
+  },
+  // NodePreGypBinary
+  'grpc-tools': {
+    category: 'grpc-tools',
+    description: 'Tools for developing with gRPC on Node.js',
+    syncer: SyncerClass.NodePreGypBinary,
+    repo: 'https://github.com/grpc/grpc-node/blob/master/packages/grpc-tools/',
+    distUrl: 'https://node-precompiled-binaries.grpc.io',
+  },
+  grpc: {
+    category: 'grpc',
+    description: 'gRPC Library for Node',
+    syncer: SyncerClass.NodePreGypBinary,
+    repo: 'grpc/grpc-node',
+    distUrl: 'https://node-precompiled-binaries.grpc.io',
   },
   // BucketBinary
   chromedriver: {
