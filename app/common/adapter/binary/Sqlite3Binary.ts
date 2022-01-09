@@ -77,18 +77,4 @@ export class Sqlite3Binary extends AbstractBinary {
     }
     return { items: this.dirItems[dir] };
   }
-
-  private async listNodeABIVersions() {
-    const nodeABIVersions: number[] = [];
-    const versions = await this.requestJSON('https://nodejs.org/dist/index.json');
-    for (const version of versions) {
-      if (!version.modules) continue;
-      const modulesVersion = parseInt(version.modules);
-      // min version: node 0.10
-      if (modulesVersion >= 11 && !nodeABIVersions.includes(modulesVersion)) {
-        nodeABIVersions.push(modulesVersion);
-      }
-    }
-    return nodeABIVersions;
-  }
 }

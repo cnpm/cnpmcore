@@ -55,4 +55,42 @@ export abstract class AbstractBinary {
     }
     return data;
   }
+
+  // https://nodejs.org/api/n-api.html#n_api_node_api_version_matrix
+  protected async listNodeABIVersions() {
+    const nodeABIVersions: number[] = [];
+    const versions = await this.requestJSON('https://nodejs.org/dist/index.json');
+    for (const version of versions) {
+      if (!version.modules) continue;
+      const modulesVersion = parseInt(version.modules);
+      // node v6.0.0 moduels 48 min
+      if (modulesVersion >= 48 && !nodeABIVersions.includes(modulesVersion)) {
+        nodeABIVersions.push(modulesVersion);
+      }
+    }
+    return nodeABIVersions;
+  }
+
+  protected listNodePlatforms() {
+    // https://nodejs.org/api/os.html#osplatform
+    return [ 'darwin', 'linux', 'win32' ];
+  }
+
+  protected listNodeArchs() {
+    // https://nodejs.org/api/os.html#osarch
+    return {
+      linux: [ 'arm', 'arm64', 's390x', 'ia32', 'x64' ],
+      darwin: [ 'arm64', 'ia32', 'x64' ],
+      win32: [ 'ia32', 'x64' ],
+    };
+  }
+
+  protected listNodeLibcs() {
+    // https://github.com/lovell/detect-libc/blob/master/lib/detect-libc.js#L42
+    return {
+      linux: [ 'glibc', 'musl' ],
+      darwin: [ 'unknown' ],
+      win32: [ 'unknown' ],
+    };
+  }
 }

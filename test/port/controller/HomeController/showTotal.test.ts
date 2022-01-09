@@ -10,8 +10,23 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     // make sure cache counter data cleanup
-    await app.runSchedule('SavePackageVersionDownloadCounter');
-    await TestUtil.truncateDatabase();
+    app.totalData = {
+      packageCount: 0,
+      packageVersionCount: 0,
+      lastPackage: '',
+      lastPackageVersion: '',
+      download: {
+        today: 0,
+        thisweek: 0,
+        thismonth: 0,
+        thisyear: 0,
+        lastday: 0,
+        lastweek: 0,
+        lastmonth: 0,
+        lastyear: 0,
+      },
+      changesStream: {},
+    };
   });
 
   afterEach(() => {
