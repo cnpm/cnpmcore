@@ -2,6 +2,7 @@ import assert = require('assert');
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { ApiBinary } from 'app/common/adapter/binary/ApiBinary';
+import binaries from 'config/binaries';
 
 describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
   let ctx: Context;
@@ -16,7 +17,7 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      const binary = new ApiBinary(ctx.httpclient, ctx.logger, 'node', 'https://cnpmjs.org/mirrors/apis');
+      const binary = new ApiBinary(ctx.httpclient, ctx.logger, binaries.node, 'https://cnpmjs.org/mirrors/apis');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -46,7 +47,7 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v16.13.1/ work', async () => {
-      const binary = new ApiBinary(ctx.httpclient, ctx.logger, 'node', 'https://cnpmjs.org/mirrors/apis');
+      const binary = new ApiBinary(ctx.httpclient, ctx.logger, binaries.node, 'https://cnpmjs.org/mirrors/apis');
       const result = await binary.fetch('/v16.13.1/');
       assert(result);
       assert(result.items.length > 0);

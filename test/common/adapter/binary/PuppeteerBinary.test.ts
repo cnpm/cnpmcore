@@ -2,6 +2,7 @@ import assert = require('assert');
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PuppeteerBinary } from 'app/common/adapter/binary/PuppeteerBinary';
+import binaries from 'config/binaries';
 
 describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
   let ctx: Context;
@@ -16,7 +17,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch work', async () => {
-      const binary = new PuppeteerBinary(ctx.httpclient, ctx.logger);
+      const binary = new PuppeteerBinary(ctx.httpclient, ctx.logger, binaries['chromium-browser-snapshots']);
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length === 5);

@@ -1,4 +1,5 @@
 import { EggContextHttpClient, EggLogger } from 'egg';
+import { BinaryTaskConfig } from '../../../../config/binaries';
 
 export type BinaryItem = {
   name: string;
@@ -17,10 +18,12 @@ export type FetchResult = {
 export abstract class AbstractBinary {
   protected httpclient: EggContextHttpClient;
   protected logger: EggLogger;
+  protected binaryConfig: BinaryTaskConfig;
 
-  constructor(httpclient: EggContextHttpClient, logger: EggLogger) {
+  constructor(httpclient: EggContextHttpClient, logger: EggLogger, binaryConfig: BinaryTaskConfig) {
     this.httpclient = httpclient;
     this.logger = logger;
+    this.binaryConfig = binaryConfig;
   }
 
   abstract fetch(dir: string, params?: any): Promise<FetchResult | undefined>;

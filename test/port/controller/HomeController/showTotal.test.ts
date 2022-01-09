@@ -9,6 +9,9 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
   let ctx: Context;
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
+    // make sure cache counter data cleanup
+    await app.runSchedule('SavePackageVersionDownloadCounter');
+    await TestUtil.truncateDatabase();
   });
 
   afterEach(() => {
@@ -21,13 +24,6 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         .get('/');
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
-
-      // ignore on oss, it was unstable
-      // https://github.com/cnpm/cnpmcore/runs/4748567783?check_suite_focus=true#step:6:748
-      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
-        return;
-      }
-
       let data = res.body;
       assert(data.doc_count === 0);
       assert(data.doc_version_count === 0);

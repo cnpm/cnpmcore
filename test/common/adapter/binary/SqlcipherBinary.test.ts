@@ -2,6 +2,7 @@ import assert = require('assert');
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { SqlcipherBinary } from 'app/common/adapter/binary/SqlcipherBinary';
+import binaries from 'config/binaries';
 
 describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
   let ctx: Context;
@@ -16,7 +17,7 @@ describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      const binary = new SqlcipherBinary(ctx.httpclient, ctx.logger);
+      const binary = new SqlcipherBinary(ctx.httpclient, ctx.logger, binaries['@journeyapps/sqlcipher']);
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -41,7 +42,7 @@ describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v5.3.1/ work', async () => {
-      const binary = new SqlcipherBinary(ctx.httpclient, ctx.logger);
+      const binary = new SqlcipherBinary(ctx.httpclient, ctx.logger, binaries['@journeyapps/sqlcipher']);
       const result = await binary.fetch('/v5.3.1/');
       assert(result);
       assert(result.items.length > 0);

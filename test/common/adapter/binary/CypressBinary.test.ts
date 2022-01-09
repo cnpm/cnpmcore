@@ -2,6 +2,7 @@ import assert = require('assert');
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { CypressBinary } from 'app/common/adapter/binary/CypressBinary';
+import binaries from 'config/binaries';
 
 describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
   let ctx: Context;
@@ -16,7 +17,7 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      const binary = new CypressBinary(ctx.httpclient, ctx.logger);
+      const binary = new CypressBinary(ctx.httpclient, ctx.logger, binaries.cypress);
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -41,7 +42,7 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /4.0.0/, /4.0.0/linux-x64/ work', async () => {
-      const binary = new CypressBinary(ctx.httpclient, ctx.logger);
+      const binary = new CypressBinary(ctx.httpclient, ctx.logger, binaries.cypress);
       let result = await binary.fetch('/4.0.0/');
       assert(result);
       assert(result.items.length === 3);
