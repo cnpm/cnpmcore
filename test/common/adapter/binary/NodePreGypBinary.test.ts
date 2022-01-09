@@ -48,7 +48,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
         assert(item.isDir === false);
         assert(item.name);
         assert(item.date);
-        assert(item.url);
+        assert(item.url.includes('/v1.24.11/'));
         assert.deepEqual(item.ignoreDownloadStatuses, [ 404 ]);
       }
     });
@@ -86,9 +86,44 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
         assert(item.isDir === false);
         assert(item.name);
         assert(item.date);
-        assert(item.url);
+        assert(item.url.includes('/v1.11.2/'));
         assert.deepEqual(item.ignoreDownloadStatuses, [ 404 ]);
       }
+    });
+
+    it('should fetch nodegit', async () => {
+      const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries.nodegit);
+      const result = await binary.fetch('/');
+      assert(result);
+      assert(result.items.length > 0);
+      // console.log(JSON.stringify(result.items, null, 2));
+      let matchFile1 = false;
+      let matchFile2 = false;
+      let matchFile3 = false;
+      for (const item of result.items) {
+        assert(item.isDir === false);
+        if (item.name === 'nodegit-v0.27.0-node-v64-linux-x64.tar.gz') {
+          assert(item.date === '2020-07-28T19:27:28.363Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.27.0-node-v64-linux-x64.tar.gz');
+          matchFile1 = true;
+        }
+        if (item.name === 'nodegit-v0.25.0-node-v64-darwin-x64.tar.gz') {
+          assert(item.date === '2019-08-09T16:46:10.709Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.25.0-node-v64-darwin-x64.tar.gz');
+          matchFile2 = true;
+        }
+        if (item.name === 'nodegit-v0.26.0-node-v57-win32-x64.tar.gz') {
+          assert(item.date === '2019-09-11T15:47:20.192Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.26.0-node-v57-win32-x64.tar.gz');
+          matchFile3 = true;
+        }
+      }
+      assert(matchFile1);
+      assert(matchFile2);
+      assert(matchFile3);
     });
   });
 });

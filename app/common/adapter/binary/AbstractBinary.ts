@@ -56,6 +56,7 @@ export abstract class AbstractBinary {
     return data;
   }
 
+  // https://nodejs.org/api/n-api.html#n_api_node_api_version_matrix
   protected async listNodeABIVersions() {
     const nodeABIVersions: number[] = [];
     const versions = await this.requestJSON('https://nodejs.org/dist/index.json');

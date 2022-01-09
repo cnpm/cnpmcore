@@ -18,20 +18,33 @@ export class NodePreGypBinary extends AbstractBinary {
       const nodeArchs = this.listNodeArchs();
       const nodeLibcs = this.listNodeLibcs();
       for (const version in data.versions) {
-        const pkgVersion = data.versions[version];
-        const binaryFile = pkgVersion.binary?.package_name;
-        if (!binaryFile) continue;
-
         const date = data.time[version];
-        this.dirItems['/'].push({
-          name: `v${version}/`,
-          date,
-          size: '-',
-          isDir: true,
-          url: '',
-        });
-        const versionDir = `/v${version}/`;
-        this.dirItems[versionDir] = [];
+        const pkgVersion = data.versions[version];
+        if (!pkgVersion.binary) continue;
+        // https://github.com/mapbox/node-pre-gyp#package_name
+        // defaults to {module_name}-v{version}-{node_abi}-{platform}-{arch}.tar.gz
+        let binaryFile = pkgVersion.binary.package_name
+          || '{module_name}-v{version}-{node_abi}-{platform}-{arch}.tar.gz';
+        if (!binaryFile) continue;
+        const moduleName = pkgVersion.binary.module_name || pkgVersion.name;
+        binaryFile = binaryFile.replace('{version}', version)
+          .replace('{module_name}', moduleName);
+
+        let currentDir = this.dirItems['/'];
+        let versionPrefix = '';
+        const remotePath = pkgVersion.binary.remote_path;
+        if (remotePath?.includes('{version}')) {
+          const dirName = remotePath.includes('v{version}') ? `v${version}` : version;
+          versionPrefix = `/${dirName}`;
+          this.dirItems['/'].push({
+            name: `${dirName}/`,
+            date,
+            size: '-',
+            isDir: true,
+            url: '',
+          });
+          currentDir = this.dirItems[`/${dirName}/`] = [];
+        }
 
         // https://node-precompiled-binaries.grpc.io/?delimiter=/&prefix=grpc/v1.24.11/
         // https://github.com/grpc/grpc-node/blob/grpc%401.24.x/packages/grpc-native-core/package.json#L50
@@ -56,15 +69,36 @@ export class NodePreGypBinary extends AbstractBinary {
                     .replace('{platform}', platform)
                     .replace('{arch}', arch)
                     .replace('{libc}', libc);
-                  this.dirItems[versionDir].push({
+                  currentDir.push({
                     name,
                     date,
                     size: '-',
                     isDir: false,
-                    url: `${this.binaryConfig.distUrl}/${this.binaryConfig.category}/v${version}/${name}`,
+                    url: `${this.binaryConfig.distUrl}/${this.binaryConfig.category}${versionPrefix}/${name}`,
                     ignoreDownloadStatuses: [ 404 ],
                   });
                 }
+              }
+            }
+          }
+        } else if (binaryFile.includes('{node_abi}')
+            && binaryFile.includes('{platform}')
+            && binaryFile.includes('{arch}')) {
+          for (const nodeAbi of nodeABIVersions) {
+            for (const platform of nodePlatforms) {
+              const archs = nodeArchs[platform];
+              for (const arch of archs) {
+                const name = binaryFile.replace('{node_abi}', `node-v${nodeAbi}`)
+                  .replace('{platform}', platform)
+                  .replace('{arch}', arch);
+                currentDir.push({
+                  name,
+                  date,
+                  size: '-',
+                  isDir: false,
+                  url: `${this.binaryConfig.distUrl}/${this.binaryConfig.category}${versionPrefix}/${name}`,
+                  ignoreDownloadStatuses: [ 404 ],
+                });
               }
             }
           }
@@ -82,12 +116,12 @@ export class NodePreGypBinary extends AbstractBinary {
             for (const arch of archs) {
               const name = binaryFile.replace('{platform}', platform)
                 .replace('{arch}', arch);
-              this.dirItems[versionDir].push({
+              currentDir.push({
                 name,
                 date,
                 size: '-',
                 isDir: false,
-                url: `${this.binaryConfig.distUrl}/${this.binaryConfig.category}/v${version}/${name}`,
+                url: `${this.binaryConfig.distUrl}/${this.binaryConfig.category}${versionPrefix}/${name}`,
                 ignoreDownloadStatuses: [ 404 ],
               });
             }

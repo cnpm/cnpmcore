@@ -99,6 +99,13 @@ const binaries: {
     repo: 'grpc/grpc-node',
     distUrl: 'https://node-precompiled-binaries.grpc.io',
   },
+  nodegit: {
+    category: 'nodegit',
+    description: 'Native Node bindings to Git.',
+    syncer: SyncerClass.NodePreGypBinary,
+    repo: 'nodegit/nodegit',
+    distUrl: 'https://axonodegit.s3.amazonaws.com/nodegit',
+  },
   // BucketBinary
   chromedriver: {
     category: 'chromedriver',
