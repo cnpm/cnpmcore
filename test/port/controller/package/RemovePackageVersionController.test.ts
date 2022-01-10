@@ -46,6 +46,40 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       assert(res.status === 404);
     });
 
+    it('should remove public package version over 72 hours success on admin action', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const { pkg } = await TestUtil.createPackage({
+        name: 'foo',
+        version: '1.0.0',
+        isPrivate: false,
+      });
+      let res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`);
+      assert(res.status === 200);
+
+      const pkgEntity = await packageRepository.findPackage('', 'foo');
+      assert(pkgEntity);
+      const pkgVersionEntity = await packageRepository.findPackageVersion(pkgEntity.packageId, '1.0.0');
+      assert(pkgVersionEntity);
+      pkgVersionEntity.publishTime = new Date(Date.now() - 72 * 3600000 - 100);
+      await packageRepository.savePackageVersion(pkgVersionEntity!);
+
+      const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
+      const pkgVersion = res.body;
+      const tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
+      res = await app.httpRequest()
+        .delete(`${tarballUrl}/-rev/${pkgVersion._rev}`)
+        .set('authorization', adminUser.authorization)
+        .set('npm-command', 'unpublish')
+        .set('user-agent', adminUser.ua);
+      assert(res.status === 200);
+      assert(res.body.ok === true);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`);
+      assert(res.status === 404);
+    });
+
     it('should remove public package version fobidden on non-admin action', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const { pkg } = await TestUtil.createPackage({
