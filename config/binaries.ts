@@ -17,6 +17,12 @@ export type BinaryTaskConfig = {
   repo: string;
   distUrl: string;
   ignoreDirs?: string[];
+  options?: {
+    nodePlatforms?: string[],
+    nodeArchs?: {
+      [key: string]: string[],
+    },
+  },
 };
 
 const binaries: {
@@ -105,6 +111,14 @@ const binaries: {
     syncer: SyncerClass.NodePreGypBinary,
     repo: 'nodegit/nodegit',
     distUrl: 'https://axonodegit.s3.amazonaws.com/nodegit',
+    options: {
+      nodeArchs: {
+        linux: [ 'x64' ],
+        darwin: [ 'x64' ],
+        // https://github.com/nodegit/nodegit/blob/master/.github/workflows/tests.yml#L141
+        win32: [ 'x64', 'ia32' ],
+      },
+    },
   },
   // BucketBinary
   chromedriver: {

@@ -120,6 +120,9 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert(item.url === 'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.26.0-node-v57-win32-x64.tar.gz');
           matchFile3 = true;
         }
+        if (item.name === 'nodegit-v0.27.0-node-v64-linux-ia32.tar.gz') {
+          throw new Error('should not run this');
+        }
       }
       assert(matchFile1);
       assert(matchFile2);
