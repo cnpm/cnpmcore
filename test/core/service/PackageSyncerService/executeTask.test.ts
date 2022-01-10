@@ -636,6 +636,28 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('❌ invalid maintainers: '));
     });
 
+    it('should mock security holding package', async () => {
+      const securityPackage = await TestUtil.readJSONFile(TestUtil.getFixtures('security-holding-package.json'));
+      mock.data(NPMRegistry.prototype, 'getFullManifests', {
+        data: securityPackage,
+        res: {},
+        headers: {},
+      });
+      const name = 'cnpmcore-test-sync-security-holding-package';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('🟢🟢🟢🟢🟢'));
+      assert(log.includes('🟢 [0] Synced version 0.0.1-security success'));
+      assert(log.includes('Syncing maintainers: [{\"name\":\"npm\",\"email\":\"npm@npmjs.com\"}]'));
+    });
+
     it('should mock getFullManifests missing tarball error and downloadTarball error', async () => {
       mock.error(NPMRegistry.prototype, 'downloadTarball');
       mock.data(NPMRegistry.prototype, 'getFullManifests', {
