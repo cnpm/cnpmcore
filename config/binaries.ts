@@ -23,6 +23,7 @@ export type BinaryTaskConfig = {
       [key: string]: string[],
     },
   },
+  disable?: boolean;
 };
 
 const binaries: {
@@ -119,6 +120,8 @@ const binaries: {
         win32: [ 'x64', 'ia32' ],
       },
     },
+    // don't sync it for now
+    disable: true,
   },
   // BucketBinary
   chromedriver: {

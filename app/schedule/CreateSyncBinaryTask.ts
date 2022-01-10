@@ -21,6 +21,7 @@ export default class CreateSyncBinaryTask extends Subscription {
       const binarySyncerService: BinarySyncerService = ctx.module[cnpmcoreCore].binarySyncerService;
       for (const binary of Object.values(binaries)) {
         if (app.config.env === 'unittest' && binary.category !== 'node') continue;
+        if (binary.disable) continue;
         await binarySyncerService.createTask(binary.category);
       }
     });
