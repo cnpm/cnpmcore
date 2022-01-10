@@ -153,6 +153,16 @@ export class PackageSyncerService extends AbstractService {
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
       task.taskId, task.targetName, logUrl);
+    if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
+      task.error = `stop sync by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
+      return;
+    }
+
     let result: any;
     try {
       result = await this.npmRegistry.getFullManifests(fullname);

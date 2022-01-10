@@ -636,6 +636,22 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('❌ invalid maintainers: '));
     });
 
+    it('should stop sync by block list', async () => {
+      const name = 'cnpmcore-test-sync-blocklist';
+      mock(app.config.cnpmcore, 'syncPackageBlockList', [ name, 'foo' ]);
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      console.log(log);
+      assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
+      assert(log.includes('❌ stop sync by block list: [\"cnpmcore-test-sync-blocklist\",\"foo\"]'));
+    });
+
     it('should mock security holding package', async () => {
       const securityPackage = await TestUtil.readJSONFile(TestUtil.getFixtures('security-holding-package.json'));
       mock.data(NPMRegistry.prototype, 'getFullManifests', {

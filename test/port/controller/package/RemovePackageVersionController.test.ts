@@ -1,6 +1,6 @@
 import assert = require('assert');
 import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { PackageRepository } from '../../../../app/repository/PackageRepository';
 
@@ -19,6 +19,60 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
   });
 
   describe('[DELETE /:fullname/-/:filenameWithVersion.tgz/-rev/:rev] remove()', () => {
+    it('should remove public package version success on admin action', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const { pkg } = await TestUtil.createPackage({
+        name: 'foo',
+        version: '1.0.0',
+        isPrivate: false,
+      });
+      let res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`);
+      assert(res.status === 200);
+
+      const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
+      const pkgVersion = res.body;
+      const tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
+      res = await app.httpRequest()
+        .delete(`${tarballUrl}/-rev/${pkgVersion._rev}`)
+        .set('authorization', adminUser.authorization)
+        .set('npm-command', 'unpublish')
+        .set('user-agent', adminUser.ua);
+      assert(res.status === 200);
+      assert(res.body.ok === true);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`);
+      assert(res.status === 404);
+    });
+
+    it('should remove public package version fobidden on non-admin action', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const { pkg } = await TestUtil.createPackage({
+        name: 'foo',
+        version: '1.0.0',
+        isPrivate: false,
+      });
+      let res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`);
+      assert(res.status === 200);
+
+      const normalUser = await TestUtil.createUser();
+      const pkgVersion = res.body;
+      const tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
+      res = await app.httpRequest()
+        .delete(`${tarballUrl}/-rev/${pkgVersion._rev}`)
+        .set('authorization', normalUser.authorization)
+        .set('npm-command', 'unpublish')
+        .set('user-agent', normalUser.ua);
+      assert(res.status === 403);
+      assert(res.body.error === '[FORBIDDEN] Can\'t modify npm public package "foo"');
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`);
+      assert(res.status === 200);
+    });
+
     it('should remove the latest version', async () => {
       let pkg = await TestUtil.getFullPackage({
         name: '@cnpm/foo',
