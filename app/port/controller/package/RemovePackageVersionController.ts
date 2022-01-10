@@ -38,7 +38,7 @@ export class RemovePackageVersionController extends AbstractController {
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     // https://docs.npmjs.com/policies/unpublish
     // can unpublish anytime within the first 72 hours after publishing
-    if (Date.now() - packageVersion.publishTime.getTime() >= 3600000 * 72) {
+    if (pkg.isPrivate && Date.now() - packageVersion.publishTime.getTime() >= 3600000 * 72) {
       throw new ForbiddenError(`${pkg.fullname}@${version} unpublish is not allowed after 72 hours of released`);
     }
     ctx.logger.info('[PackageController:removeVersion] %s@%s, packageVersionId: %s',
