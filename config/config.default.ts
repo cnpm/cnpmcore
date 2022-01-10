@@ -20,6 +20,8 @@ export default (appInfo: EggAppConfig) => {
     //  - all: sync all npm packages
     syncMode: 'none',
     syncPackageWorkerMaxConcurrentTasks: 10,
+    // stop syncing these packages in future
+    syncPackageBlockList: [],
     // mirror binary, default is false
     enableSyncBinary: false,
     // old cnpm mirror: https://cnpmjs.org/mirrors/apis

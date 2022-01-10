@@ -4,7 +4,7 @@ import {
   Inject,
   EggContext,
 } from '@eggjs/tegg';
-import { EggAppConfig } from 'egg';
+import { EggAppConfig, EggLogger } from 'egg';
 import { UnauthorizedError, ForbiddenError } from 'egg-errors';
 import { UserRepository } from '../repository/UserRepository';
 import { PackageRepository } from '../repository/PackageRepository';
@@ -27,6 +27,9 @@ export class UserRoleManager {
   private readonly packageRepository: PackageRepository;
   @Inject()
   private readonly config: EggAppConfig;
+  @Inject()
+  protected logger: EggLogger;
+
   private handleAuthorized = false;
   private currentAuthorizedUser: UserEntity;
   private currentAuthorizedToken: TokenEntity;
@@ -104,6 +107,12 @@ export class UserRoleManager {
   public async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
     // should be private package
     if (!pkg.isPrivate) {
+      // admins can modified public package
+      if (this.config.cnpmcore.admins[user.name]) {
+        this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified public package "%s"',
+          user.name, pkg.fullname);
+        return;
+      }
       throw new ForbiddenError(`Can\'t modify npm public package "${pkg.fullname}"`);
     }
     const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
