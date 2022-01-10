@@ -184,10 +184,21 @@ export class PackageSyncerService extends AbstractService {
     //   { name: 'bomsy', email: 'b4bomsy@gmail.com' },
     //   { name: 'jasonlaster11', email: 'jason.laster.11@gmail.com' }
     // ],
-    const maintainers = data.maintainers;
+    let maintainers = data.maintainers;
     const maintainersMap = {};
     const users: User[] = [];
     let changedUserCount = 0;
+    if (!Array.isArray(maintainers) || maintainers.length === 0) {
+      // https://r.cnpmjs.org/webpack.js.org/sync/log/61dbc7c8ff747911a5701068
+      // https://registry.npmjs.org/webpack.js.org
+      // security holding package will not contains maintainers, auto set npm and npm@npmjs.com to maintainer
+      // "description": "security holding package",
+      // "repository": "npm/security-holder"
+      if (data.description === 'security holding package' || data.repository === 'npm/security-holder') {
+        maintainers = data.maintainers = [{ name: 'npm', email: 'npm@npmjs.com' }];
+      }
+    }
+
     if (Array.isArray(maintainers) && maintainers.length > 0) {
       logs.push(`[${isoNow()}] 🚧 Syncing maintainers: ${JSON.stringify(maintainers)}`);
       for (const maintainer of maintainers) {
