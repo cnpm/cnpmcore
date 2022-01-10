@@ -77,6 +77,7 @@ export abstract class AbstractBinary {
   }
 
   protected listNodeArchs() {
+    if (this.binaryConfig.options?.nodeArchs) return this.binaryConfig.options.nodeArchs;
     // https://nodejs.org/api/os.html#osarch
     return {
       linux: [ 'arm', 'arm64', 's390x', 'ia32', 'x64' ],
