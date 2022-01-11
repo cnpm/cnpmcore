@@ -373,6 +373,13 @@ const binaries: {
     repo: 'saucelabs/saucectl',
     distUrl: 'https://github.com/saucelabs/saucectl/releases',
   },
+  'node-gdal-async': {
+    category: 'node-gdal-async',
+    description: 'Node.js bindings for GDAL (Geospatial Data Abstraction Library) with full async support. https://mmomtchev.github.io/node-gdal-async/',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'mmomtchev/node-gdal-async',
+    distUrl: 'https://github.com/mmomtchev/node-gdal-async/releases',
+  },
 };
 
 export default binaries;
