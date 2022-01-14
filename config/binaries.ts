@@ -676,6 +676,13 @@ const binaries: {
     repo: 'swc-project/swc',
     distUrl: 'https://github.com/swc-project/swc/releases',
   },
+  'node-swc': {
+    category: 'node-swc',
+    description: 'Experimental repo to avoid spamming watchers, see https://github.com/swc-project/swc',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'swc-project/node-swc',
+    distUrl: 'https://github.com/swc-project/node-swc/releases',
+  },
   argon2: {
     category: 'argon2',
     description: 'Node.js bindings for Argon2 hashing algorithm',
