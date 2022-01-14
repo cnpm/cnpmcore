@@ -29,6 +29,7 @@ import { SqlcipherBinary } from '../../common/adapter/binary/SqlcipherBinary';
 import { PuppeteerBinary } from '../../common/adapter/binary/PuppeteerBinary';
 import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
 import { NodePreGypBinary } from '../../common/adapter/binary/NodePreGypBinary';
+import { ImageminBinary } from '../../common/adapter/binary/ImageminBinary';
 
 const BinaryClasses = {
   [SyncerClass.NodeBinary]: NodeBinary,
@@ -40,6 +41,7 @@ const BinaryClasses = {
   [SyncerClass.PuppeteerBinary]: PuppeteerBinary,
   [SyncerClass.GithubBinary]: GithubBinary,
   [SyncerClass.NodePreGypBinary]: NodePreGypBinary,
+  [SyncerClass.ImageminBinary]: ImageminBinary,
 };
 
 function isoNow() {
