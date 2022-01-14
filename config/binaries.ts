@@ -711,6 +711,13 @@ const binaries: {
     repo: 'mmomtchev/node-gdal-async',
     distUrl: 'https://github.com/mmomtchev/node-gdal-async/releases',
   },
+  'looksgood-s2': {
+    category: 'looksgood-s2',
+    description: 'Node.js JavaScript & TypeScript bindings for Google S2.',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'looksgood/s2',
+    distUrl: 'https://github.com/looksgood/s2/releases',
+  },
 };
 
 export default binaries;
