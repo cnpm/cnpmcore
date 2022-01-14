@@ -8,6 +8,7 @@ export enum SyncerClass {
   SqlcipherBinary = 'SqlcipherBinary',
   PuppeteerBinary = 'PuppeteerBinary',
   NodePreGypBinary = 'NodePreGypBinary',
+  ImageminBinary = 'ImageminBinary',
 }
 
 export type BinaryTaskConfig = {
@@ -20,6 +21,10 @@ export type BinaryTaskConfig = {
   options?: {
     nodePlatforms?: string[],
     nodeArchs?: {
+      [key: string]: string[],
+    },
+    // Imagemin binFiles
+    binFiles?: {
       [key: string]: string[],
     },
   },
@@ -196,6 +201,325 @@ const binaries: {
       '/test-ldd-output-on-release/',
       '/windows-mysql-ci/',
     ],
+  },
+  // ImageminBinary
+  'jpegtran-bin': {
+    category: 'jpegtran-bin',
+    description: 'jpegtran bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/jpegtran-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/jpegtran-bin/blob/v4.0.0/lib/index.js
+      nodePlatforms: [ 'macos', 'linux', 'freebsd', 'sunos', 'win' ],
+      nodeArchs: {
+        macos: [],
+        linux: [ 'x86', 'x64' ],
+        freebsd: [ 'x86', 'x64' ],
+        sunos: [ 'x86', 'x64' ],
+        win: [ 'x86', 'x64' ],
+      },
+      binFiles: {
+        macos: [ 'jpegtran' ],
+        linux: [ 'jpegtran' ],
+        freebsd: [ 'jpegtran' ],
+        sunos: [ 'jpegtran' ],
+        win: [ 'jpegtran.exe', 'libjpeg-62.dll' ],
+      },
+    },
+  },
+  'pngquant-bin': {
+    category: 'pngquant-bin',
+    description: 'pngquant bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/pngquant-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/pngquant-bin/blob/v4.0.0/lib/index.js
+      nodePlatforms: [ 'macos', 'linux', 'freebsd', 'win' ],
+      nodeArchs: {
+        macos: [],
+        linux: [ 'x86', 'x64' ],
+        freebsd: [ 'x64' ],
+        win: [],
+      },
+      binFiles: {
+        macos: [ 'pngquant' ],
+        linux: [ 'pngquant' ],
+        freebsd: [ 'pngquant' ],
+        win: [ 'pngquant.exe' ],
+      },
+    },
+  },
+  'mozjpeg-bin': {
+    category: 'mozjpeg-bin',
+    description: 'mozjpeg bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/mozjpeg-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/mozjpeg-bin/blob/v4.0.0/lib/index.js
+      // https://github.com/imagemin/mozjpeg-bin/blob/v5.0.0/lib/index.js
+      nodePlatforms: [ 'osx', 'macos', 'linux', 'win' ],
+      nodeArchs: {
+        osx: [],
+        macos: [],
+        linux: [],
+        win: [],
+      },
+      binFiles: {
+        osx: [ 'cjpeg' ],
+        macos: [ 'cjpeg' ],
+        linux: [ 'cjpeg' ],
+        win: [ 'cjpeg.exe' ],
+      },
+    },
+  },
+  'gifsicle-bin': {
+    category: 'gifsicle-bin',
+    description: 'gifsicle bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/gifsicle-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/gifsicle-bin/blob/v4.0.0/lib/index.js
+      // https://github.com/imagemin/gifsicle-bin/blob/v5.0.0/lib/index.js
+      nodePlatforms: [ 'macos', 'linux', 'freebsd', 'win' ],
+      nodeArchs: {
+        macos: [],
+        linux: [ 'x86', 'x64' ],
+        freebsd: [ 'x86', 'x64' ],
+        win: [ 'x86', 'x64' ],
+      },
+      binFiles: {
+        macos: [ 'gifsicle' ],
+        linux: [ 'gifsicle' ],
+        freebsd: [ 'gifsicle' ],
+        win: [ 'gifsicle.exe' ],
+      },
+    },
+  },
+  'optipng-bin': {
+    category: 'optipng-bin',
+    description: 'optipng bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/optipng-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/optipng-bin/blob/v4.0.0/lib/index.js
+      // https://github.com/imagemin/optipng-bin/blob/v5.0.0/lib/index.js
+      nodePlatforms: [ 'macos', 'linux', 'freebsd', 'sunos', 'win' ],
+      nodeArchs: {
+        macos: [],
+        linux: [ 'x86', 'x64' ],
+        freebsd: [ 'x86', 'x64' ],
+        sunos: [ 'x86', 'x64' ],
+        win: [],
+      },
+      binFiles: {
+        macos: [ 'optipng' ],
+        linux: [ 'optipng' ],
+        freebsd: [ 'optipng' ],
+        sunos: [ 'optipng' ],
+        win: [ 'optipng.exe' ],
+      },
+    },
+  },
+  'zopflipng-bin': {
+    category: 'zopflipng-bin',
+    description: 'zopflipng bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/zopflipng-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/zopflipng-bin/blob/v4.0.0/lib/index.js
+      // https://github.com/imagemin/zopflipng-bin/blob/v5.0.0/lib/index.js
+      nodePlatforms: [ 'osx', 'linux', 'win32' ],
+      nodeArchs: {
+        osx: [],
+        linux: [],
+        win32: [],
+      },
+      binFiles: {
+        osx: [ 'zopflipng' ],
+        linux: [ 'zopflipng' ],
+        win32: [ 'zopflipng.exe' ],
+      },
+    },
+  },
+  'jpegoptim-bin': {
+    category: 'jpegoptim-bin',
+    description: 'jpegoptim bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/jpegoptim-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/jpegoptim-bin/blob/v4.0.0/lib/index.js
+      // https://github.com/imagemin/jpegoptim-bin/blob/v5.0.0/lib/index.js
+      nodePlatforms: [ 'osx', 'linux', 'win32' ],
+      nodeArchs: {
+        osx: [],
+        linux: [],
+        win32: [],
+      },
+      binFiles: {
+        osx: [ 'jpegoptim' ],
+        linux: [ 'jpegoptim' ],
+        win32: [ 'jpegoptim.exe' ],
+      },
+    },
+  },
+  'jpeg-recompress-bin': {
+    category: 'jpeg-recompress-bin',
+    description: 'jpeg-recompress bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/jpeg-recompress-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/jpeg-recompress-bin/blob/v4.0.0/lib/index.js
+      // https://github.com/imagemin/jpeg-recompress-bin/blob/v5.0.0/lib/index.js
+      nodePlatforms: [ 'osx', 'linux', 'win' ],
+      nodeArchs: {
+        osx: [],
+        linux: [],
+        win: [],
+      },
+      binFiles: {
+        osx: [ 'jpeg-recompress' ],
+        linux: [ 'jpeg-recompress' ],
+        win: [ 'jpeg-recompress.exe' ],
+      },
+    },
+  },
+  'pngcrush-bin': {
+    category: 'pngcrush-bin',
+    description: 'pngcrush bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/pngcrush-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/pngcruss-bin/blob/v4.0.0/lib/index.js
+      // https://github.com/imagemin/pngcrush-bin/blob/v5.0.0/lib/index.js
+      nodePlatforms: [ 'osx', 'linux', 'win' ],
+      nodeArchs: {
+        osx: [],
+        linux: [],
+        win: [ 'x64', 'x86' ],
+      },
+      binFiles: {
+        osx: [ 'pngcrush' ],
+        linux: [ 'pngcrush' ],
+        win: [ 'pngcrush.exe' ],
+      },
+    },
+  },
+  'pngout-bin': {
+    category: 'pngout-bin',
+    description: 'pngout bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/pngout-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/pngout-bin/blob/v4.0.0/lib/index.js
+      // https://github.com/imagemin/pngout-bin/blob/v5.0.0/lib/index.js
+      nodePlatforms: [ 'osx', 'linux', 'freebsd', 'win32' ],
+      nodeArchs: {
+        osx: [],
+        linux: [ 'x64', 'x86' ],
+        freebsd: [ 'x64', 'x86' ],
+        win32: [ ],
+      },
+      binFiles: {
+        osx: [ 'pngcrush' ],
+        linux: [ 'pngcrush' ],
+        freebsd: [ 'pngout' ],
+        win32: [ 'pngcrush.exe' ],
+      },
+    },
+  },
+  'gif2webp-bin': {
+    category: 'gif2webp-bin',
+    description: 'gif2webp bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/gif2webp-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/gif2webp-bin/blob/v4.0.0/lib/index.js
+      nodePlatforms: [ 'macos', 'linux', 'win' ],
+      nodeArchs: {
+        macos: [],
+        linux: [ ],
+        win: [ ],
+      },
+      binFiles: {
+        macos: [ 'gif2webp' ],
+        linux: [ 'gif2webp' ],
+        win: [ 'gif2webp.exe' ],
+      },
+    },
+  },
+  'guetzli-bin': {
+    category: 'guetzli-bin',
+    description: 'guetzli bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/guetzli-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/guetzli-bin/blob/v4.0.0/lib/index.js
+      nodePlatforms: [ 'macos', 'linux', 'win' ],
+      nodeArchs: {
+        macos: [],
+        linux: [ ],
+        win: [ ],
+      },
+      binFiles: {
+        macos: [ 'guetzli' ],
+        linux: [ 'guetzli' ],
+        win: [ 'guetzli.exe' ],
+      },
+    },
+  },
+  'advpng-bin': {
+    category: 'advpng-bin',
+    description: 'advpng bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/advpng-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/advpng-bin/blob/v4.0.0/lib/index.js
+      nodePlatforms: [ 'osx', 'linux', 'win32' ],
+      nodeArchs: {
+        osx: [],
+        linux: [],
+        win32: [ ],
+      },
+      binFiles: {
+        osx: [ 'advpng' ],
+        linux: [ 'advpng' ],
+        win32: [ 'advpng.exe' ],
+      },
+    },
+  },
+  'cwebp-bin': {
+    category: 'cwebp-bin',
+    description: 'cwebp bin-wrapper that makes it seamlessly available as a local dependency',
+    syncer: SyncerClass.ImageminBinary,
+    repo: 'imagemin/cwebp-bin',
+    distUrl: 'https://raw.githubusercontent.com',
+    options: {
+      // https://github.com/imagemin/cwebp-bin/blob/v4.0.0/lib/index.js
+      nodePlatforms: [ 'osx', 'linux', 'win' ],
+      nodeArchs: {
+        osx: [],
+        linux: [ 'x86', 'x64' ],
+        win: [ 'x86', 'x64' ],
+      },
+      binFiles: {
+        osx: [ 'cwebp' ],
+        linux: [ 'cwebp' ],
+        win: [ 'cwebp.exe' ],
+      },
+    },
   },
   // GithubBinary
   xprofiler: {
