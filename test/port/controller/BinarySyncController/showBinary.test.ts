@@ -18,6 +18,16 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
     app.destroyModuleContext(ctx);
   });
 
+  describe('[GET /binary.html] showBinaryHTML()', () => {
+    it('should 200', async () => {
+      const res = await app.httpRequest()
+        .get('/binary.html');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'text/html; charset=utf-8');
+      assert(res.text.includes('<body>'));
+    });
+  });
+
   describe('[GET /-/binary/:binary/(.*)] showBinary()', () => {
     it('should show root dirs', async () => {
       const res = await app.httpRequest()

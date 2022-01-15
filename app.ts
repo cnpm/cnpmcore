@@ -1,3 +1,5 @@
+import path from 'path';
+import { readFile } from 'fs/promises';
 import { Application } from 'egg';
 
 declare module 'egg' {
@@ -19,6 +21,7 @@ declare module 'egg' {
       };
       changesStream: object,
     };
+    binaryHTML: string;
   }
 }
 
@@ -44,6 +47,7 @@ export default class CnpmcoreAppHook {
       },
       changesStream: {},
     };
+    this.app.binaryHTML = '';
   }
 
   // https://eggjs.org/zh-cn/basics/app-start.html
@@ -52,5 +56,9 @@ export default class CnpmcoreAppHook {
       this.app.totalData = data;
       this.app.logger.info('[total_data_change] %j', data);
     });
+    // ready binary.html and replace registry
+    const filepath = path.join(this.app.baseDir, 'app/port/binary.html');
+    const text = await readFile(filepath, 'utf-8');
+    this.app.binaryHTML = text.replace('{{registry}}', this.app.config.cnpmcore.registry);
   }
 }

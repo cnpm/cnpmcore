@@ -1,0 +1,231 @@
+<!DOCTYPE html> 
+<html> 
+  <head> 
+    <title>CNPM Binaries Mirror</title>
+  </head> 
+  <body> 
+    <script>
+      // Forked from https://chromedriver.storage.googleapis.com/index.html
+      // Split a string in 2 parts. The first is the leading number, if any,
+      // the second is the string following the numbers.
+      function splitNum(s) {
+        var results = new Array();
+        results[0] = 'None';
+        for (var i = 0; i < s.length; i++) {
+          var substr = s.substr(0, i+1)
+          if (isNaN(substr)) {
+            // Not a number anymore.
+            results[1] = s.substr(i)
+            break;
+          } else {
+            // This is a number. update the results.
+            results[0] = parseFloat(substr);
+          }
+        }
+        return results;
+      }
+
+      // Compare 2 strings using a custom alphanumerical algorithm.
+      // This is similar to a normal string sort, except that we sort
+      // first by leading digits, if any.
+      // For example:
+      //  100hello > 2goodbye
+      // Numbers anywhere else in the string are compared using the normal
+      // sort algorithm.
+      function alphanumCompare(a, b) {
+        var parsedA = splitNum(a);
+        var parsedB = splitNum(b);
+        var numA = parsedA[0];
+        var numB = parsedB[0];
+        var strA = parsedA[1];
+        var strB = parsedB[1];
+
+        if (isNaN(numA) == false && isNaN(numB) == false) {
+          // They both start with numbers.
+          if (numA < numB) return -1;
+          if (numA > numB) return 1;
+          // Identical. Fallback to string.
+          return (strA < strB) ? -1 : (strA > strB ? 1 : 0)
+        }
+
+        // If only one starts with a number, we start with that one as
+        // the lowest.
+        if (isNaN(numA) == false) return -1
+        if (isNaN(numB) == false) return 1
+       
+        // They are both strings. 
+        return (a < b) ? -1 : (a > b ? 1 : 0)
+      }
+ 
+      // Helper function to retrieve the value of a GET query parameter.
+      // Greatly inspired from http://alturl.com/8rj7a
+      function getParameter(parameterName) {
+        // Add '=' to the parameter name (i.e. parameterName=value)
+        var parameterName = parameterName + '=';
+        var queryString = window.location.search.substring(1);
+        if (queryString.length <= 0) {
+          return '';
+        }
+        
+        // Find the beginning of the string
+        begin = queryString.indexOf(parameterName);
+ 
+        // If the parameter name is not found, skip it, otherwise return the
+        // value.
+        if (begin == -1) {
+          return '';
+        }
+         
+        // Add the length (integer) to the beginning.
+        begin += parameterName.length;
+ 
+        // Multiple parameters are separated by the '&' sign.
+        end = queryString.indexOf ('&', begin);
+        
+        if (end == -1) {
+          end = queryString.length;
+        }
+        
+        // Return the string.
+        return escape(unescape(queryString.substring(begin, end)));
+      }
+
+      // Displays the directory listing given the XML and path.
+      function displayList(items, root, path) {
+        // Display the header
+        document.write('<h1>Index of /' + path + '</h1>');
+ 
+        // Start the table for the results.
+        document.write('<table style="border-spacing:15px 0px;">');
+
+        var sortOrder = getParameter('sort');
+        var sortLink = location.pathname + '?path=' + path;
+        if (sortOrder != 'desc') {
+          sortLink += '&sort=desc';
+        }
+ 
+        // Display the table header.
+        document.write('<tr><th><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*v6fRRLopV_0AAAAAAAAAAAAAARQnAQ" alt="[ICO]"></th>');
+        document.write('<th><a href="' + sortLink + '">Name</a></th>');
+        document.write('<th>Last modified</th>');
+        document.write('<th>Size</th>');
+        document.write('<tr><th colspan="5"><hr></th></tr>');
+ 
+        // Display the 'go back' button.
+        if (path != '') {
+          var backpath = location.pathname;
+ 
+          // If there is more than one section delimited by '/' in the current
+          // path we truncate the last section and append the rest to backpath.
+          var delimiter = path.lastIndexOf('/');
+          if (delimiter >= 0) {
+            delimiter = path.substr(0, delimiter).lastIndexOf('/');
+            if (delimiter >= 0) {
+              backpath += '?path=';
+              backpath += path.substr(0, delimiter+1);
+            }
+          }
+ 
+          document.write('<tr><td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*3QmJSqp2zpUAAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>');
+          document.write('<td><a href="');
+          document.write(backpath);
+          document.write('">Parent Directory</a></td>');
+          document.write('<td>&nbsp;</td>');
+          document.write('<td align="right">  - </td></tr>'); 
+        }
+ 
+        // Set up the variables.
+        var directories = new Array();
+        var files = new Array();
+
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (item.type === 'file') {
+            files.push(item);
+          } else {
+            directories.push(item);
+          }
+        }
+ 
+        files.sort(alphanumCompare);
+        directories.sort(alphanumCompare);
+
+        // Reverse the list for a descending sort.
+        if (sortOrder == 'desc') {
+          files.reverse();
+          directories.reverse();
+        }
+      
+        // Display the directories.
+        for (var i = 0; i < directories.length; i++) {
+          var lnk = location.pathname.substr(0, location.pathname.indexOf('?'));
+          var item = directories[i];
+          lnk += '?path=' + path + item.name;
+      
+          document.write('<tr>');
+          document.write('<td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*ct35SJLile8AAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>');
+          document.write('<td><a href="' + lnk + '">' +
+            item.name + '</a></td>');
+          document.write('<td align="right">' + (item.date || '-') + '</td>');
+          document.write('<td align="right">-</td>');
+          document.write('</tr>');
+        }
+      
+        // Display the files.
+        for (var i = 0; i < files.length; i++) {
+          var item = files[i];
+          var link = item.url;
+          var filename = item.name;
+          var size = item.size / 1024 / 1024;
+          var lastModified = item.date;          
+          // Remove the entries we don't want to show.
+          if (filename == '') {
+            continue;
+          }
+        
+          if (filename.indexOf('$folder$') >= 0) {
+            continue;
+          }
+        
+          // Display the row.
+          document.write('<tr>');
+          document.write('<td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*FKvWRo-vns4AAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>');
+          document.write('<td><a href="' + link + '">' + filename +
+                         '</a></td>');
+          document.write('<td align="right">' + lastModified + '</td>');
+          document.write('<td align="right">' + size.toFixed(2) + 'MB</td>');
+          document.write('</tr>');
+        }
+ 
+        // Close the table.
+        document.write('<tr><th colspan="5"><hr></th></tr>');
+        document.write('</table>');
+        document.title = 'CNPM Binaries Mirror';
+      }
+ 
+      function fetchAndDisplay() {
+        var path = getParameter('path');
+        var lastSlash = location.pathname.lastIndexOf("/");
+        var filename = location.pathname.substring(lastSlash + 1);
+        var root = '{{registry}}/-/binary/';
+
+        var http = new XMLHttpRequest();
+        http.open('GET', root + path, true);
+        http.onreadystatechange = useHttpResponse;
+        http.send(null);
+        function useHttpResponse() {
+          if (http.readyState == 4) {
+            var items = [];
+            try {
+              items = JSON.parse(http.responseText);
+            } catch (err) {
+              console.error(err, http.responseText);
+            }
+            displayList(items, root, path);
+          }
+        }
+      }
+      fetchAndDisplay();
+    </script> 
+  </body> 
+</html>
