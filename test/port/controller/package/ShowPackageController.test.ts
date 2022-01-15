@@ -377,10 +377,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
 
-      const pkgModel = await packageRepository.findPackage('', pkg.name);
-      if (pkgModel) {
-        await packageRepository.removePacakgeDist(pkgModel, false);
-      }
+      const pkgModel = await packageRepository.findPackage('@cnpm', 'test-module-mock-dist-not-exists');
+      await packageRepository.removePacakgeDist(pkgModel!, false);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -407,10 +405,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
 
-      const pkgModel = await packageRepository.findPackage('', pkg.name);
-      if (pkgModel) {
-        await packageRepository.removePacakgeDist(pkgModel, true);
-      }
+      const pkgModel = await packageRepository.findPackage('@cnpm', 'test-module-mock-dist-not-exists-full-manifests');
+      await packageRepository.removePacakgeDist(pkgModel!, true);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
