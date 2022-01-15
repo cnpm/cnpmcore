@@ -55,9 +55,6 @@ jobs:
 
     - name: Continuous Integration
       run: npm run ci
-      env:
-        # The hostname used to communicate with the Redis service container
-        REDIS_HOST: redis
 
     - name: Code Coverage
       uses: codecov/codecov-action@v1
@@ -109,8 +106,6 @@ jobs:
         CNPMCORE_NFS_OSS_ENDPOINT: https://oss-us-west-1.aliyuncs.com
         CNPMCORE_NFS_OSS_ID: ${{ secrets.CNPMCORE_NFS_OSS_ID }}
         CNPMCORE_NFS_OSS_SECRET: ${{ secrets.CNPMCORE_NFS_OSS_SECRET }}
-        # The hostname used to communicate with the Redis service container
-        REDIS_HOST: redis
 
     - name: Code Coverage
       uses: codecov/codecov-action@v1
