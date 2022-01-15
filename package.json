@@ -50,6 +50,7 @@
     "bson-objectid": "^2.0.1",
     "dayjs": "^1.10.7",
     "egg": "^2.29.4",
+    "egg-cors": "^2.2.3",
     "egg-errors": "^2.3.0",
     "egg-redis": "^2.4.0",
     "egg-scripts": "^2.15.2",
