@@ -44,6 +44,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
+    # https://github.com/marketplace/actions/redis-server-in-github-actions#usage
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.4.0
+      with:
+        redis-version: 6
+
     - name: Install Dependencies
       run: npm i -g npminstall && npminstall
 
@@ -54,6 +60,7 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+
   test-mysql57-oss-nfs:
     runs-on: ${{ matrix.os }}
 
@@ -81,6 +88,12 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
+    # https://github.com/marketplace/actions/redis-server-in-github-actions#usage
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.4.0
+      with:
+        redis-version: 6
 
     - name: Install Dependencies
       run: npm i -g npminstall && npminstall

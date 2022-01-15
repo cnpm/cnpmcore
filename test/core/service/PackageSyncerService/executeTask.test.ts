@@ -50,11 +50,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       task = await packageSyncerService.findExecuteTask();
       assert(task);
       await packageSyncerService.executeTask(task);
-      const manifests = await packageManagerService.listPackageFullManifests('', 'foo', undefined);
+      const manifests = await packageManagerService.listPackageFullManifests('', 'foo');
       // console.log(JSON.stringify(manifests, null, 2));
       // should have 2 maintainers
       assert.equal(manifests.data.maintainers.length, 2);
-      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', 'foo', undefined);
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', 'foo');
       // console.log(JSON.stringify(abbreviatedManifests, null, 2));
       assert.equal(abbreviatedManifests.data.name, manifests.data.name);
     });
@@ -67,10 +67,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(!await TaskModel.findOne({ taskId: task.taskId }));
       assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
 
-      const manifests = await packageManagerService.listPackageFullManifests('@node-rs', 'xxhash', undefined);
+      const manifests = await packageManagerService.listPackageFullManifests('@node-rs', 'xxhash');
       // console.log(JSON.stringify(manifests, null, 2));
       // assert.equal(manifests.data.maintainers.length, 2);
-      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('@node-rs', 'xxhash', undefined);
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('@node-rs', 'xxhash');
       // console.log(JSON.stringify(abbreviatedManifests, null, 2));
       assert.equal(abbreviatedManifests.data.name, manifests.data.name);
       assert(abbreviatedManifests.data.versions['1.0.1'].optionalDependencies);
@@ -82,10 +82,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const task = await packageSyncerService.findExecuteTask();
       assert(task);
       await packageSyncerService.executeTask(task);
-      const manifests = await packageManagerService.listPackageFullManifests('', name, undefined);
+      const manifests = await packageManagerService.listPackageFullManifests('', name);
       assert.equal(manifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
-      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name, undefined);
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
       assert.equal(abbreviatedManifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
       assert.equal(abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap, false);
     });
@@ -647,7 +647,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      console.log(log);
+      // console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
       assert(log.includes('❌ stop sync by block list: [\"cnpmcore-test-sync-blocklist\",\"foo\"]'));
     });
@@ -756,13 +756,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('🟢 Synced version 2.0.0 success, different meta: {"peerDependenciesMeta":{"bufferutil":{"optional":true},"utf-8-validate":{"optional":true}},"os":["linux"],"cpu":["x64"]}'));
       assert(log.includes('Z] 👉👉👉👉👉 Tips: sync test tips here 👈👈👈👈👈'));
       assert(log.includes(', skipDependencies: false'));
-      const manifests = await packageManagerService.listPackageFullManifests('', name, undefined);
+      const manifests = await packageManagerService.listPackageFullManifests('', name);
       assert.equal(manifests.data.versions['2.0.0'].peerDependenciesMeta.bufferutil.optional, true);
       assert.equal(manifests.data.versions['2.0.0'].os[0], 'linux');
       assert.equal(manifests.data.versions['2.0.0'].cpu[0], 'x64');
       // publishTime
       assert.equal(manifests.data.time['1.0.0'], '2021-09-27T08:10:48.747Z');
-      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name, undefined);
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
       // console.log(JSON.stringify(abbreviatedManifests.data, null, 2));
       assert.equal(abbreviatedManifests.data.versions['2.0.0'].peerDependenciesMeta.bufferutil.optional, true);
       assert.equal(abbreviatedManifests.data.versions['2.0.0'].os[0], 'linux');

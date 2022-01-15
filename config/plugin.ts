@@ -32,6 +32,10 @@ const plugin: EggPlugin = {
     enable: true,
     package: 'egg-typebox-validate',
   },
+  redis: {
+    enable: true,
+    package: 'egg-redis',
+  },
 };
 
 export default plugin;

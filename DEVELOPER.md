@@ -1,8 +1,8 @@
 # 如何贡献 cnpmcore
 
-## 安装数据库
-
 假设大家使用 macOS 开发，Linux 和 Windows 环境自行参考
+
+## 安装数据库
 
 ### MySQL 5.7
 
@@ -36,6 +36,13 @@ mysql -u root
 
 # 重启 MySQL
 brew services restart mysql
+```
+
+## 安装缓存服务 Redis
+
+```bash
+brew install redis
+brew services start redis
 ```
 
 ## 项目结构
