@@ -72,8 +72,9 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const pkg = res.body;
-      assert.equal(pkg.name, name);
-      assert.equal(Object.keys(pkg.versions).length, 2);
+      assert(pkg.name === name);
+      assert(pkg.readme);
+      assert(Object.keys(pkg.versions).length === 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['1.0.0'];
       assert.equal(versionOne.dist.unpackedSize, 6497043);
@@ -94,7 +95,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         },
       ]);
 
-      const res2 = await app.httpRequest()
+      let res2 = await app.httpRequest()
         .get(`/${name}`)
         .expect(200);
       // etag is same
@@ -105,6 +106,14 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .get(`/${name}`)
         .set('If-None-Match', res.headers.etag)
         .expect(304);
+
+      // application/vnd.npm.install-v1+json request should not same etag
+      res2 = await app.httpRequest()
+        .get(`/${name}`)
+        .set('If-None-Match', res.headers.etag)
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res2.status === 200);
+      assert(!res2.body.readme);
 
       // remove W/ still work
       const resEmpty = await app.httpRequest()
