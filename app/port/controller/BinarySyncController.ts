@@ -20,6 +20,15 @@ export class BinarySyncController extends AbstractController {
   private binarySyncerService: BinarySyncerService;
 
   @HTTPMethod({
+    path: '/binary.html',
+    method: HTTPMethodEnum.GET,
+  })
+  async showBinaryHTML(@Context() ctx: EggContext) {
+    ctx.type = 'html';
+    return ctx.app.binaryHTML;
+  }
+
+  @HTTPMethod({
     path: '/-/binary/',
     method: HTTPMethodEnum.GET,
   })
