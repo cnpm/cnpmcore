@@ -28,17 +28,6 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
-      # https://docs.github.com/en/actions/using-containerized-services/creating-redis-service-containers
-      # Label used to access the service container
-      redis:
-        # Docker Hub image
-        image: redis
-        # Set health checks to wait until redis has started
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     strategy:
       fail-fast: false
@@ -54,6 +43,12 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
+    # https://github.com/marketplace/actions/redis-server-in-github-actions#usage
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.4.0
+      with:
+        redis-version: 6
 
     - name: Install Dependencies
       run: npm i -g npminstall && npminstall
@@ -81,17 +76,6 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
-      # https://docs.github.com/en/actions/using-containerized-services/creating-redis-service-containers
-      # Label used to access the service container
-      redis:
-        # Docker Hub image
-        image: redis
-        # Set health checks to wait until redis has started
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     strategy:
       fail-fast: false
@@ -107,6 +91,12 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
+    # https://github.com/marketplace/actions/redis-server-in-github-actions#usage
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.4.0
+      with:
+        redis-version: 6
 
     - name: Install Dependencies
       run: npm i -g npminstall && npminstall
