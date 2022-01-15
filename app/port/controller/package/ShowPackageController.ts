@@ -32,8 +32,8 @@ export class ShowPackageController extends AbstractController {
     // handle cache
     const cacheEtag = await this.cacheService.getPackageEtag(fullname, isFullManifests);
     if (cacheEtag) {
-      let requestEtag = ctx.request.headers['if-none-match'];
-      if (requestEtag && requestEtag.startsWith('W/')) {
+      let requestEtag = ctx.request.get('if-none-match');
+      if (requestEtag.startsWith('W/')) {
         requestEtag = requestEtag.substring(2);
       }
       if (requestEtag === cacheEtag) {
