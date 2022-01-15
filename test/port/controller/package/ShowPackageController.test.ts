@@ -119,6 +119,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .set('if-none-match', res.headers.etag.replace('"', '"change'))
         .expect(200);
       assert(resNew.text);
+      assert(resNew.headers['content-type'] === 'application/json; charset=utf-8');
+      assert(resNew.body.name === name);
 
       // HEAD work
       const resHead = await app.httpRequest()
@@ -126,6 +128,19 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect(200);
       assert(!resHead.text);
       assert.match(resHead.headers.etag, /^W\/"\w{40}"$/);
+
+      // new version, cache should update
+      const pkgNew = await TestUtil.getFullPackage({ name, version: '101.0.1' });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkgNew)
+        .expect(201);
+      await app.httpRequest()
+        .get(`/${name}`)
+        .set('If-None-Match', res.headers.etag)
+        .expect(200);
     });
 
     it('should show one scoped package with full manifests', async () => {
@@ -167,6 +182,53 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(!versionOne._id);
       assert.equal(versionOne.dist.tarball,
         `https://registry.example.com/${name}/-/${name}-2.0.0.tgz`);
+
+      // request with etag
+      await app.httpRequest()
+        .get(`/${name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .set('If-None-Match', res.headers.etag)
+        .expect(304);
+
+      // remove W/ still work
+      const resEmpty = await app.httpRequest()
+        .get(`/${name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .set('if-none-match', res.headers.etag.replace('W/', ''))
+        .expect(304);
+      assert.equal(resEmpty.text, '');
+
+      // etag not match
+      const resNew = await app.httpRequest()
+        .get(`/${name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .set('if-none-match', res.headers.etag.replace('"', '"change'))
+        .expect(200);
+      assert(resNew.text);
+      assert(resNew.headers['content-type'] === 'application/json; charset=utf-8');
+      assert(resNew.body.name === name);
+
+      // HEAD work
+      const resHead = await app.httpRequest()
+        .head(`/${name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(200);
+      assert(!resHead.text);
+      assert.match(resHead.headers.etag, /^W\/"\w{40}"$/);
+
+      // new version, cache should update
+      const pkgNew = await TestUtil.getFullPackage({ name, version: '101.0.1' });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkgNew)
+        .expect(201);
+      await app.httpRequest()
+        .get(`/${name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .set('If-None-Match', res.headers.etag)
+        .expect(200);
     });
 
     it('should show one scoped package with abbreviated manifests', async () => {

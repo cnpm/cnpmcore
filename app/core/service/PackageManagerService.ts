@@ -7,7 +7,6 @@ import {
 } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
-import fresh from 'fresh';
 import semver from 'semver';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { calculateIntegrity, formatTarball } from '../../common/PackageUtil';
@@ -235,12 +234,12 @@ export class PackageManagerService extends AbstractService {
     await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
   }
 
-  async listPackageFullManifests(scope: string, name: string, expectEtag?: string) {
-    return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, true);
+  async listPackageFullManifests(scope: string, name: string) {
+    return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, true);
   }
 
-  async listPackageAbbreviatedManifests(scope: string, name: string, expectEtag?: string) {
-    return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, expectEtag, false);
+  async listPackageAbbreviatedManifests(scope: string, name: string) {
+    return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, false);
   }
 
   async findPackageVersionManifest(packageId: string, version: string) {
@@ -464,13 +463,6 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  private isFresh(expectEtag: string | undefined, currentEtag: string): boolean {
-    if (!expectEtag) return false;
-    const reqHeaders = { 'if-none-match': expectEtag };
-    const resHeaders = { etag: currentEtag };
-    return fresh(reqHeaders, resHeaders);
-  }
-
   private async updatePackageManifestsToDists(pkg: Package, fullManifests: object | null, abbreviatedManifests: object | null): Promise<void> {
     if (fullManifests) {
       // same to dist
@@ -509,7 +501,7 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  private async _listPacakgeFullOrAbbreviatedManifests(scope: string, name: string, expectEtag: string | undefined, isFullManifests: boolean) {
+  private async _listPacakgeFullOrAbbreviatedManifests(scope: string, name: string, isFullManifests: boolean) {
     let etag = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return { etag, data: null };
@@ -517,9 +509,6 @@ export class PackageManagerService extends AbstractService {
     // read from dist
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
-      if (this.isFresh(expectEtag, etag)) {
-        return { etag, data: null };
-      }
       const data = await this.readDistBytesToJSON(dist);
       return { etag, data };
     }
@@ -533,7 +522,7 @@ export class PackageManagerService extends AbstractService {
     }
     await this.updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
     dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
-    etag = `"${dist?.shasum}"`;
+    etag = `"${dist!.shasum}"`;
     return { etag, data: fullManifests || abbreviatedManifests };
   }
 

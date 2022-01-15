@@ -10,11 +10,14 @@ import {
 import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { CacheService } from '../../../core/service/CacheService';
 
 @HTTPController()
 export class ShowPackageController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
+  @Inject()
+  private cacheService: CacheService;
 
   @HTTPMethod({
     // GET /:fullname
@@ -24,13 +27,34 @@ export class ShowPackageController extends AbstractController {
   })
   async show(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
     const [ scope, name ] = getScopeAndName(fullname);
-    const requestEtag = ctx.request.headers['if-none-match'];
     const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
+    const isFullManifests = ctx.accepts([ 'json', abbreviatedMetaType ]) !== abbreviatedMetaType;
+    // handle cache
+    const cacheEtag = await this.cacheService.getPackageEtag(fullname, isFullManifests);
+    let requestEtag = ctx.request.headers['if-none-match'];
+    if (requestEtag && requestEtag.startsWith('W/')) {
+      requestEtag = requestEtag.substring(2);
+    }
+    if (cacheEtag) {
+      if (requestEtag && requestEtag === cacheEtag) {
+        ctx.status = 304;
+        return;
+      }
+      // get cache pkg data
+      const cacheBytes = await this.cacheService.getPackageManifests(fullname, isFullManifests);
+      if (cacheBytes && cacheBytes.length > 0) {
+        ctx.set('etag', `W/${cacheEtag}`);
+        ctx.type = 'json';
+        return cacheBytes;
+      }
+    }
+
+    // handle cache miss
     let result: { etag: string; data: any };
-    if (ctx.accepts([ 'json', abbreviatedMetaType ]) === abbreviatedMetaType) {
-      result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, requestEtag);
+    if (isFullManifests) {
+      result = await this.packageManagerService.listPackageFullManifests(scope, name);
     } else {
-      result = await this.packageManagerService.listPackageFullManifests(scope, name, requestEtag);
+      result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name);
     }
     const { etag, data } = result;
     // 404, no data
@@ -38,15 +62,15 @@ export class ShowPackageController extends AbstractController {
       throw this.createPackageNotFoundError(fullname);
     }
 
-    if (data) {
-      // set etag
-      // https://forum.nginx.org/read.php?2,240120,240120#msg-240120
-      // should set weak etag avoid nginx remove it
-      ctx.set('etag', `W/${etag}`);
-    } else {
-      // match etag, set status 304
-      ctx.status = 304;
-    }
-    return data;
+    // set cache
+    const cacheBytes = Buffer.from(JSON.stringify(data));
+    await this.cacheService.savePackageEtagAndManifests(fullname, isFullManifests, etag, cacheBytes);
+
+    // set etag
+    // https://forum.nginx.org/read.php?2,240120,240120#msg-240120
+    // should set weak etag avoid nginx remove it
+    ctx.set('etag', `W/${etag}`);
+    ctx.type = 'json';
+    return cacheBytes;
   }
 }
