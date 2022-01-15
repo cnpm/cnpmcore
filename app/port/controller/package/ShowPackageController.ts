@@ -31,12 +31,13 @@ export class ShowPackageController extends AbstractController {
     const isFullManifests = ctx.accepts([ 'json', abbreviatedMetaType ]) !== abbreviatedMetaType;
     // handle cache
     const cacheEtag = await this.cacheService.getPackageEtag(fullname, isFullManifests);
-    let requestEtag = ctx.request.headers['if-none-match'];
-    if (requestEtag && requestEtag.startsWith('W/')) {
-      requestEtag = requestEtag.substring(2);
-    }
     if (cacheEtag) {
-      if (requestEtag && requestEtag === cacheEtag) {
+      let requestEtag = ctx.request.headers['if-none-match'];
+      if (requestEtag && requestEtag.startsWith('W/')) {
+        requestEtag = requestEtag.substring(2);
+      }
+      if (requestEtag === cacheEtag) {
+        // match etag, set status 304
         ctx.status = 304;
         return;
       }
