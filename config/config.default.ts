@@ -88,6 +88,14 @@ export default (appInfo: EggAppConfig) => {
     },
   };
 
+  config.cors = {
+    // allow all domains
+    origin: (ctx): string => {
+      return ctx.get('Origin');
+    },
+    credentials: true,
+  };
+
   config.nfs = {
     client: null,
     dir: join(config.dataDir, 'nfs'),

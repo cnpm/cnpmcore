@@ -17,8 +17,9 @@ describe('test/port/controller/HomeController/ping.test.ts', () => {
       const res = await app.httpRequest()
         .get('/-/ping')
         .expect(200);
-      assert.equal(res.body.pong, true);
+      assert(res.body.pong === true);
       // console.log(res.body, res.headers['x-readtime']);
+      assert(res.headers['x-frame-options'] === 'SAMEORIGIN');
     });
   });
 });
