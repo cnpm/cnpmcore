@@ -64,6 +64,13 @@ const binaries: {
     repo: '',
     distUrl: 'http://alinode.aliyun.com/dist/new-alinode',
   },
+  python: {
+    category: 'python',
+    description: 'The Python programming language https://www.python.org/',
+    syncer: SyncerClass.NodeBinary,
+    repo: 'python/cpython',
+    distUrl: 'https://www.python.org/ftp/python',
+  },
   // CypressBinary
   cypress: {
     category: 'cypress',

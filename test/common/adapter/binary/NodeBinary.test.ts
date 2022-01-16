@@ -75,5 +75,79 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       assert(matchDir);
       assert(matchFile);
     });
+
+    it('should on python', async () => {
+      const binary = new NodeBinary(ctx.httpclient, ctx.logger, binaries.python);
+      let result = await binary.fetch('/');
+      assert(result);
+      assert(result.items.length > 0);
+      let matchDir1 = false;
+      let matchDir2 = false;
+      let matchFile = false;
+      for (const item of result.items) {
+        if (item.name === '2.7.18/') {
+          assert(item.date === '20-Apr-2020 13:48');
+          assert(item.isDir === true);
+          assert(item.size === '-');
+          matchDir1 = true;
+        }
+        if (item.name === '3.7.3/') {
+          assert(item.date === '25-Mar-2019 23:04');
+          assert(item.isDir === true);
+          assert(item.size === '-');
+          matchDir2 = true;
+        }
+        if (item.name === 'README.html') {
+          assert(item.date);
+          assert(item.isDir === false);
+          assert(item.size);
+          assert(item.url === 'https://www.python.org/ftp/python/README.html');
+          matchFile = true;
+        }
+        if (!item.isDir) {
+          assert(typeof item.size === 'string');
+          assert(item.size.length > 2);
+        }
+      }
+      assert(matchDir1);
+      assert(matchDir2);
+      assert(matchFile);
+
+      result = await binary.fetch('/3.7.3/');
+      assert(result);
+      assert(result.items.length > 0);
+
+      matchDir1 = false;
+      matchDir2 = false;
+      matchFile = false;
+      for (const item of result.items) {
+        if (item.name === 'win32/') {
+          assert(item.date === '25-Mar-2019 23:04');
+          assert(item.isDir === true);
+          assert(item.size === '-');
+          matchDir1 = true;
+        }
+        if (item.name === 'amd64/') {
+          assert(item.date === '25-Mar-2019 23:03');
+          assert(item.isDir === true);
+          assert(item.size === '-');
+          matchDir2 = true;
+        }
+        if (item.name === 'python-3.7.3.exe') {
+          assert(item.date === '25-Mar-2019 23:04');
+          assert(item.isDir === false);
+          assert(item.size === '25424128');
+          assert(item.url === 'https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe');
+          matchFile = true;
+        }
+        if (!item.isDir) {
+          assert(typeof item.size === 'string');
+          assert(item.size.length > 2);
+        }
+      }
+      assert(matchDir1);
+      assert(matchDir2);
+      assert(matchFile);
+    });
   });
 });
