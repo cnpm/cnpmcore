@@ -411,21 +411,35 @@ export class PackageSyncerService extends AbstractService {
     // },
     const changedTags: { tag: string, version?: string, action: string }[] = [];
     const distTags = data['dist-tags'] || {};
+    const existsDistTags = existsData && existsData['dist-tags'] || {};
+    let needRefreshPackageManifestsToDists = false;
     for (const tag in distTags) {
       const version = distTags[tag];
       const changed = await this.packageManagerService.savePackageTag(pkg, tag, version);
-      if (changed) changedTags.push({ action: 'change', tag, version });
+      if (changed) {
+        changedTags.push({ action: 'change', tag, version });
+        needRefreshPackageManifestsToDists = false;
+      } else if (version !== existsDistTags[tag]) {
+        needRefreshPackageManifestsToDists = true;
+        logs.push(`[${isoNow()}] 🚧 Remote tag(${tag}: ${version}) not exists in local dist-tags(${JSON.stringify(existsDistTags)})`);
+      }
     }
     // 3.1 find out remove tags
-    const existsDistTags = existsData && existsData['dist-tags'] || {};
     for (const tag in existsDistTags) {
       if (!(tag in distTags)) {
         const changed = await this.packageManagerService.removePackageTag(pkg, tag);
-        if (changed) changedTags.push({ action: 'remove', tag });
+        if (changed) {
+          changedTags.push({ action: 'remove', tag });
+          needRefreshPackageManifestsToDists = false;
+        }
       }
     }
     if (changedTags.length > 0) {
       logs.push(`[${isoNow()}] 🟢 Synced ${changedTags.length} tags: ${JSON.stringify(changedTags)}`);
+    }
+    if (needRefreshPackageManifestsToDists) {
+      await this.packageManagerService.refreshPackageManifestsToDists(pkg);
+      logs.push(`[${isoNow()}] 🟢 Refresh package manifests to dist`);
     }
 
     // 4. add package maintainers
