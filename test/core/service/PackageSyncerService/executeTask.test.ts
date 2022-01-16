@@ -243,7 +243,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const scopedAndName = getScopeAndName(name);
       const manifests = await packageManagerService.listPackageFullManifests(scopedAndName[0], scopedAndName[1]);
       delete manifests.data.versions['1.0.0'];
-      mock.data(packageManagerService.constructor.prototype, 'listPackageFullManifests', manifests);
+      mock.data(PackageManagerService.prototype, 'listPackageFullManifests', manifests);
 
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
@@ -256,6 +256,23 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(!log.includes('] 🟢 Synced 1 versions'));
       assert(log.includes('] 🚧 Syncing versions 1 => 2'));
+
+      // mock tag on database but not on manifest dist
+      // https://github.com/cnpm/cnpmcore/issues/97
+      const result = await npmRegistry.getFullManifests(name);
+      result.data['dist-tags'].foo = '2.0.0';
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+      mock.data(PackageManagerService.prototype, 'savePackageTag', null);
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 🚧 Remote tag(foo: 2.0.0) not exists in local dist-tags({"latest":"2.0.0","next":"2.0.0"})'));
+      assert(log.includes('] 🟢 Refresh package manifests to dist'));
     });
 
     it('should sync removed versions', async () => {
