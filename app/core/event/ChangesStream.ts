@@ -1,5 +1,6 @@
 import { Event, Inject } from '@eggjs/tegg';
 import {
+  PACKAGE_UNPUBLISHED,
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
   PACKAGE_TAG_ADDED,
@@ -22,6 +23,13 @@ class ChangesStreamEvent {
       targetName: fullname,
       data,
     }));
+  }
+}
+
+@Event(PACKAGE_UNPUBLISHED)
+export class PackageUnpublished extends ChangesStreamEvent {
+  async handle(fullname: string) {
+    await this.addChange(PACKAGE_UNPUBLISHED, fullname, {});
   }
 }
 

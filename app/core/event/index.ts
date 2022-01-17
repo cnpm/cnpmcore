@@ -1,5 +1,6 @@
 import '@eggjs/tegg';
 
+export const PACKAGE_UNPUBLISHED = 'PACKAGE_UNPUBLISHED';
 export const PACKAGE_VERSION_ADDED = 'PACKAGE_VERSION_ADDED';
 export const PACKAGE_VERSION_REMOVED = 'PACKAGE_VERSION_REMOVED';
 export const PACKAGE_TAG_ADDED = 'PACKAGE_TAG_ADDED';
@@ -11,6 +12,7 @@ export const PACKAGE_META_CHANGED = 'PACKAGE_META_CHANGED';
 
 declare module '@eggjs/tegg' {
   interface Events {
+    [PACKAGE_UNPUBLISHED]: (fullname: string) => Promise<void>;
     [PACKAGE_VERSION_ADDED]: (fullname: string, version: string) => Promise<void>;
     [PACKAGE_VERSION_REMOVED]: (fullname: string, version: string) => Promise<void>;
     [PACKAGE_TAG_ADDED]: (fullname: string, tag: string) => Promise<void>;
