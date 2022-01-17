@@ -18,6 +18,7 @@ import { PackageTag } from '../entity/PackageTag';
 import { User } from '../entity/User';
 import { Dist } from '../entity/Dist';
 import {
+  PACKAGE_UNPUBLISHED,
   PACKAGE_MAINTAINER_CHANGED,
   PACKAGE_MAINTAINER_REMOVED,
   PACKAGE_VERSION_ADDED,
@@ -303,8 +304,8 @@ export class PackageManagerService extends AbstractService {
       const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
       if (!pkgVersion) continue;
       const message = deprecated === '' ? undefined : deprecated;
-      await this.mergeManifestDist(pkgVersion.manifestDist, { deprecated: message });
-      await this.mergeManifestDist(pkgVersion.abbreviatedDist, { deprecated: message });
+      await this._mergeManifestDist(pkgVersion.manifestDist, { deprecated: message });
+      await this._mergeManifestDist(pkgVersion.abbreviatedDist, { deprecated: message });
       await this.packageRepository.savePackageVersion(pkgVersion);
     }
     await this.refreshPackageManifestsToDists(pkg);
@@ -312,11 +313,11 @@ export class PackageManagerService extends AbstractService {
   }
 
   public async savePackageVersionManifest(pkgVersion: PackageVersion, mergeManifest: object, mergeAbbreviated: object) {
-    await this.mergeManifestDist(pkgVersion.manifestDist, mergeManifest);
-    await this.mergeManifestDist(pkgVersion.abbreviatedDist, mergeAbbreviated);
+    await this._mergeManifestDist(pkgVersion.manifestDist, mergeManifest);
+    await this._mergeManifestDist(pkgVersion.abbreviatedDist, mergeAbbreviated);
   }
 
-  public async removePackageVersion(pkg: Package, pkgVersion: PackageVersion) {
+  private async _removePackageVersionAndDist(pkgVersion: PackageVersion) {
     // remove nfs dists
     await Promise.all([
       this.nfsAdapter.remove(pkgVersion.abbreviatedDist.path),
@@ -326,6 +327,33 @@ export class PackageManagerService extends AbstractService {
     ]);
     // remove from repository
     await this.packageRepository.removePackageVersion(pkgVersion);
+  }
+
+  public async unpublishPackage(pkg: Package) {
+    const pkgVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
+    for (const pkgVersion of pkgVersions) {
+      await this._removePackageVersionAndDist(pkgVersion);
+    }
+    // set unpublished dist to package's manifestDist and abbreviatedDist
+    const unpublishedInfo = {
+      _id: pkg.fullname,
+      name: pkg.fullname,
+      time: {
+        created: pkg.createdAt,
+        modified: pkg.updatedAt,
+        unpublished: new Date(),
+      },
+    };
+    await this._mergeManifestDist(pkg.manifestsDist!, undefined, unpublishedInfo);
+    await this._mergeManifestDist(pkg.abbreviatedsDist!, undefined, unpublishedInfo);
+
+    // refresh manifest dist
+    await this.refreshPackageManifestsToDists(pkg);
+    this.eventBus.emit(PACKAGE_UNPUBLISHED, pkg.fullname);
+  }
+
+  public async removePackageVersion(pkg: Package, pkgVersion: PackageVersion) {
+    await this._removePackageVersionAndDist(pkgVersion);
     // all versions removed
     const versions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
     if (versions.length > 0) {
@@ -341,22 +369,13 @@ export class PackageManagerService extends AbstractService {
           await this.packageRepository.savePackageTag(latestTag);
         }
       }
-    } else {
-      // set unpublished dist to package's manifestDist and abbreviatedDist
-      const unpublishedInfo = {
-        _id: pkg.fullname,
-        name: pkg.fullname,
-        time: {
-          modified: pkg.updatedAt,
-          unpublished: new Date(),
-        },
-      };
-      await this.mergeManifestDist(pkg.manifestsDist!, undefined, unpublishedInfo);
-      await this.mergeManifestDist(pkg.abbreviatedsDist!, undefined, unpublishedInfo);
+      // refresh manifest dist
+      await this.refreshPackageManifestsToDists(pkg);
+      this.eventBus.emit(PACKAGE_VERSION_REMOVED, pkg.fullname, pkgVersion.version);
+      return;
     }
-    // refresh manifest dist
-    await this.refreshPackageManifestsToDists(pkg);
-    this.eventBus.emit(PACKAGE_VERSION_REMOVED, pkg.fullname, pkgVersion.version);
+    // unpublish
+    await this.unpublishPackage(pkg);
   }
 
   public async savePackageTag(pkg: Package, tag: string, version: string, skipEvent = false) {
@@ -429,7 +448,7 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  private async mergeManifestDist(manifestDist: Dist, mergeData?: any, replaceData?: any) {
+  private async _mergeManifestDist(manifestDist: Dist, mergeData?: any, replaceData?: any) {
     let manifest = await this.readDistBytesToJSON(manifestDist);
     if (mergeData) {
       Object.assign(manifest, mergeData);

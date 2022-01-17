@@ -224,7 +224,41 @@ export class PackageSyncerService extends AbstractService {
       }
     }
 
+    const [ scope, name ] = getScopeAndName(fullname);
+    let pkg = await this.packageRepository.findPackage(scope, name);
+
     if (users.length === 0) {
+      // check unpublished
+      // https://r.cnpmjs.org/-/package/babel-plugin-autocss/syncs/61e4be46c7cbfac94d2ec597/log
+      // {
+      //   "name": "babel-plugin-autocss",
+      //   "time": {
+      //     "created": "2021-10-29T08:21:56.032Z",
+      //     "0.0.1": "2021-10-29T08:21:56.206Z",
+      //     "modified": "2022-01-14T12:34:23.941Z",
+      //     "unpublished": {
+      //       "time": "2022-01-14T12:34:23.941Z",
+      //       "versions": [
+      //         "0.0.1"
+      //       ]
+      //     }
+      //   }
+      // }
+      if (timeMap.unpublished) {
+        if (pkg) {
+          await this.packageManagerService.unpublishPackage(pkg);
+          logs.push(`[${isoNow()}] 🟢 Sync unpublished package: ${JSON.stringify(timeMap.unpublished)} success`);
+        } else {
+          logs.push(`[${isoNow()}] 📖 Ignore unpublished package: ${JSON.stringify(timeMap.unpublished)}`);
+        }
+        logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
+        logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
+        await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+        this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
+          task.taskId, task.targetName);
+        return;
+      }
+
       // invalid maintainers, sync fail
       task.error = `invalid maintainers: ${JSON.stringify(maintainers)}`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
@@ -237,8 +271,6 @@ export class PackageSyncerService extends AbstractService {
 
     let lastErrorMessage = '';
     const dependenciesSet = new Set<string>();
-    const [ scope, name ] = getScopeAndName(fullname);
-    let pkg = await this.packageRepository.findPackage(scope, name);
     const { data: existsData } = await this.packageManagerService.listPackageFullManifests(scope, name);
     const existsVersionMap = existsData && existsData.versions || {};
     const existsVersionCount = Object.keys(existsVersionMap).length;

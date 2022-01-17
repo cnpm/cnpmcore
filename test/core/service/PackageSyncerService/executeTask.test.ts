@@ -333,6 +333,69 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(!r.data.versions[removeVersion], `${removeVersion} should not exists`);
     });
 
+    it('should work on unpublished package', async () => {
+      let name = 'rollup-config-mbp';
+      // ignore unpublished when local package not exists
+      await packageSyncerService.createTask(name);
+      let task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      let stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      let log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 📖 Ignore unpublished package: {'));
+      let data = await packageManagerService.listPackageFullManifests('', name);
+      assert(data.data === null);
+
+      // sync unpublished
+      name = 'cnpmcore-test-sync-deprecated';
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 🟢 Synced '));
+      data = await packageManagerService.listPackageFullManifests('', name);
+      // console.log(data.data);
+      assert(!data.data.time.unpublished);
+      assert(data.data.maintainers);
+
+      const result = await npmRegistry.getFullManifests(name);
+      result.data = {
+        _id: name,
+        name,
+        time: {
+          created: '2020-09-25T09:18:36.405Z',
+          '0.0.1-alpha.1': '2020-09-25T09:18:36.552Z',
+          modified: '2022-01-14T12:34:32.620Z',
+          unpublished: {
+            time: '2022-01-14T12:34:32.620Z',
+            versions: [
+              '0.0.1-alpha.1',
+            ],
+          },
+        },
+      };
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 🟢 Sync unpublished package: {'));
+      data = await packageManagerService.listPackageFullManifests('', name);
+      // console.log(data.data);
+      assert(data.data.time.unpublished);
+      assert(!data.data.maintainers);
+    });
+
     it('should work on mock package.readme is undefined', async () => {
       const name = 'cnpmcore-test-sync-dependencies';
       const result = await npmRegistry.getFullManifests(name);

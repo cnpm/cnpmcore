@@ -1,5 +1,6 @@
 import { Event, Inject } from '@eggjs/tegg';
 import {
+  PACKAGE_UNPUBLISHED,
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
   PACKAGE_TAG_ADDED,
@@ -17,6 +18,13 @@ class CacheCleanerEvent {
 
   protected async removeCache(fullname: string) {
     await this.cacheService.removeCache(fullname);
+  }
+}
+
+@Event(PACKAGE_UNPUBLISHED)
+export class PackageUnpublished extends CacheCleanerEvent {
+  async handle(fullname: string) {
+    await this.removeCache(fullname);
   }
 }
 
