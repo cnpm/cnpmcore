@@ -343,6 +343,9 @@ export class PackageManagerService extends AbstractService {
         modified: pkg.updatedAt,
         unpublished: new Date(),
       },
+      // keep this property exists for forward compatibility
+      // https://github.com/cnpm/cnpmjs.org/blob/ad622d55e384743b48e79bb6aec574a7f354ee9f/controllers/sync_module_worker.js#L828
+      'dist-tags': {},
     };
     await this._mergeManifestDist(pkg.manifestsDist!, undefined, unpublishedInfo);
     await this._mergeManifestDist(pkg.abbreviatedsDist!, undefined, unpublishedInfo);

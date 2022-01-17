@@ -177,6 +177,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       assert(!res.body.versions);
       assert.equal(res.body.name, pkg.name);
       assert(res.body.time.unpublished);
+      assert.deepEqual(res.body['dist-tags'], {});
     });
 
     it('should 404 when version not exists', async () => {
