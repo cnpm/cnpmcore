@@ -210,7 +210,7 @@ const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'p
 #### 3、资源操作权限校验
 
 通过 UserRoleManager 来收敛所有资源操作的权限校验，已经入注到 AbstractController 下。
-我们约定所有用户权限验证都在 Controller 层完全，Service 和 Repository 不做权限校验。
+我们约定所有用户权限验证都在 Controller 层完成，Service 和 Repository 不做权限校验。
 
 如判断当前请求用户是否是包维护者：
 
