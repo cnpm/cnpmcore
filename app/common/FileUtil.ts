@@ -4,6 +4,11 @@ import path from 'path';
 import { randomBytes } from 'crypto';
 import { EggContextHttpClient } from 'egg';
 import dayjs from './dayjs';
+import ProgressBar from 'progress';
+import _ from 'lodash';
+
+let fileContentLen = 0;
+let fileChunkLen = 0;
 
 export async function createTempfile(dataDir: string, filename: string) {
   // will auto clean on CleanTempDir Schedule
@@ -18,13 +23,28 @@ export async function downloadToTempfile(httpclient: EggContextHttpClient, dataD
   const writeStream = createWriteStream(tmpfile);
   try {
     // max 10 mins to download
-    // FIXME: should show download progress
     const { status, headers, res } = await httpclient.request(url, {
       timeout: 60000 * 10,
       writeStream,
       timing: true,
       followRedirect: true,
+      streaming: true,
     });
+    // show download progress
+    const len = parseInt(_.get(headers, 'content-length', 0), 10);
+    fileContentLen += len;
+    const bar = new ProgressBar('  downloading [:bar] :rate/bps :percent :etas', {
+      complete: '=',
+      incomplete: ' ',
+      width: 50,
+      total: fileContentLen - fileChunkLen,
+      renderThrottle: 100,
+    });
+    res.on('data', chunk => {
+      fileChunkLen += chunk.length;
+      bar.tick(chunk.length);
+    });
+
     if (status === 404 || (ignoreDownloadStatuses && ignoreDownloadStatuses.includes(status))) {
       const err = new Error(`Not found, status(${status})`);
       err.name = 'DownloadNotFoundError';
