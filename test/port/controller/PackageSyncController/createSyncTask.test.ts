@@ -80,18 +80,20 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.id);
       let task = await TaskModel.findOne({ taskId: res.body.id });
       assert(task, 'task should exists');
-      assert.equal(task.data.skipDependencies, false, 'skipDependencies should be false');
+      assert(task.data.skipDependencies === false);
+      assert(task.data.syncDownloadData === false);
 
       res = await app.httpRequest()
         .put('/-/package/ob/syncs')
-        .send({ skipDependencies: true, tips: 'foo bar' })
+        .send({ skipDependencies: true, tips: 'foo bar', syncDownloadData: true })
         .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.state, 'waiting');
       assert(res.body.id);
       task = await TaskModel.findOne({ taskId: res.body.id });
       assert(task, 'task should exists');
-      assert.equal(task.data.skipDependencies, true, 'skipDependencies should be true');
+      assert(task.data.skipDependencies === true);
+      assert(task.data.syncDownloadData === true);
       assert.equal(task.data.tips, 'foo bar');
     });
 

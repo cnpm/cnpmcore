@@ -27,6 +27,11 @@ export default (appInfo: EggAppConfig) => {
     // old cnpm mirror: https://cnpmjs.org/mirrors/apis
     // new cnpmcore api: https://r.cnpmjs.org/-/binary
     syncBinaryFromAPISource: '',
+    // enable sync downloads data from source registry https://github.com/cnpm/cnpmcore/issues/108
+    // all three parameters must be configured at the same time to take effect
+    enableSyncDownloadData: false,
+    syncDownloadDataSourceRegistry: '',
+    syncDownloadDataMaxDate: '', // should be YYYY-MM-DD format
     // https://github.com/npm/registry-follower-tutorial
     enableChangesStream: false,
     checkChangesStreamInterval: 500,
