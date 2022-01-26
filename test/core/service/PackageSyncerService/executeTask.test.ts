@@ -867,23 +867,46 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
       const name = 'pedding'; // 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name, { syncDownloadData: true });
-      const task = await packageSyncerService.findExecuteTask();
+      let task = await packageSyncerService.findExecuteTask();
       assert(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
-      const stream = await packageSyncerService.findTaskLog(task);
+      let stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
-      const log = await TestUtil.readStreamToLog(stream);
+      let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('][DownloadData] 🟢 202111: 10 days'));
       assert(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
       assert(log.includes('] 🟢🟢🟢🟢🟢'));
 
-      const res = await app.httpRequest()
+      let res = await app.httpRequest()
         .get(`/downloads/range/2020-12-28:2021-12-28/${name}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
-      const data = res.body;
+      let data = res.body;
+      assert(data.downloads.length > 0);
+      assert(Object.keys(data.versions).length === 0);
+      // console.log('%j', data);
+
+      // again should sync download data only
+      await packageSyncerService.createTask(name, { syncDownloadData: true });
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('][DownloadData] 🟢 202111: 10 days'));
+      assert(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
+      assert(log.includes(`] 🟢🟢🟢🟢🟢 Sync "${name}" download data success 🟢🟢🟢🟢🟢`));
+
+      res = await app.httpRequest()
+        .get(`/downloads/range/2020-12-28:2021-12-28/${name}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      data = res.body;
       assert(data.downloads.length > 0);
       assert(Object.keys(data.versions).length === 0);
       // console.log('%j', data);
