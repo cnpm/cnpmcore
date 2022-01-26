@@ -80,15 +80,22 @@ export class PackageSyncerService extends AbstractService {
     return await this.taskService.findExecuteTask(TaskType.SyncPackage);
   }
 
-  private async syncDownloadData(task: Task, pkg: Package) {
+  public get allowSyncDownloadData() {
     const config = this.config.cnpmcore;
-    if (!config.enableSyncDownloadData || !config.syncDownloadDataSourceRegistry || !config.syncDownloadDataMaxDate) {
+    if (config.enableSyncDownloadData && config.syncDownloadDataSourceRegistry && config.syncDownloadDataMaxDate) {
+      return true;
+    }
+    return false;
+  }
+
+  private async syncDownloadData(task: Task, pkg: Package) {
+    if (!this.allowSyncDownloadData) {
       return;
     }
-    const registry = config.syncDownloadDataSourceRegistry;
     const fullname = pkg.fullname;
     const start = '2011-01-01';
-    const end = config.syncDownloadDataMaxDate;
+    const end = this.config.cnpmcore.syncDownloadDataMaxDate;
+    const registry = this.config.cnpmcore.syncDownloadDataSourceRegistry;
     const logs: string[] = [];
     let downloads: { day: string; downloads: number }[];
 

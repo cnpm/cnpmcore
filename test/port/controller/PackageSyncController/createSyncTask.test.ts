@@ -23,7 +23,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       const res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(403);
-      assert.equal(res.body.error, '[FORBIDDEN] Not allow to sync package');
+      assert(res.body.error === '[FORBIDDEN] Not allow to sync package');
     });
 
     it('should 401 if user not login when alwaysAuth = true', async () => {
@@ -31,7 +31,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       const res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(401);
-      assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
+      assert(res.body.error === '[UNAUTHORIZED] Login first');
     });
 
     it('should 403 if when sync private package', async () => {
@@ -45,7 +45,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       const res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/syncs`)
         .expect(403);
-      assert.equal(res.body.error, '[FORBIDDEN] Can\'t sync private package "@cnpm/koa"');
+      assert(res.body.error === '[FORBIDDEN] Can\'t sync private package "@cnpm/koa"');
     });
 
     it('should 201 if user login when alwaysAuth = true', async () => {
@@ -54,9 +54,9 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .put('/-/package/koa/syncs')
         .set('authorization', publisher.authorization)
         .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.equal(res.body.type, 'sync_package');
-      assert.equal(res.body.state, 'waiting');
+      assert(res.body.ok === true);
+      assert(res.body.type === 'sync_package');
+      assert(res.body.state === 'waiting');
       assert(res.body.id);
     });
 
@@ -66,8 +66,8 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .put('/-/package/koa/syncs')
         .set('authorization', publisher.authorization)
         .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.equal(res.body.state, 'waiting');
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
       assert(res.body.id);
     });
 
@@ -75,51 +75,93 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       let res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.equal(res.body.state, 'waiting');
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
       assert(res.body.id);
       let task = await TaskModel.findOne({ taskId: res.body.id });
-      assert(task, 'task should exists');
+      assert(task);
       assert(task.data.skipDependencies === false);
       assert(task.data.syncDownloadData === false);
 
       res = await app.httpRequest()
         .put('/-/package/ob/syncs')
-        .send({ skipDependencies: true, tips: 'foo bar', syncDownloadData: true })
+        .send({ skipDependencies: true, tips: 'foo bar' })
         .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.equal(res.body.state, 'waiting');
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
       assert(res.body.id);
       task = await TaskModel.findOne({ taskId: res.body.id });
-      assert(task, 'task should exists');
+      assert(task);
       assert(task.data.skipDependencies === true);
+      assert(task.data.syncDownloadData === false);
+      assert(task.data.tips === 'foo bar');
+    });
+
+    it('should 422 when enableSyncDownloadData = false', async () => {
+      let res = await app.httpRequest()
+        .put('/-/package/ob/syncs')
+        .send({ syncDownloadData: true });
+      assert(res.status === 403);
+      assert(res.body.error === '[FORBIDDEN] Not allow to sync package download data');
+
+      mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
+      mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
+      mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '');
+      res = await app.httpRequest()
+        .put('/-/package/ob/syncs')
+        .send({ syncDownloadData: true });
+      assert(res.status === 403);
+      assert(res.body.error === '[FORBIDDEN] Not allow to sync package download data');
+
+      mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', '');
+      mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
+      mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
+      res = await app.httpRequest()
+        .put('/-/package/ob/syncs')
+        .send({ syncDownloadData: true });
+      assert(res.status === 403);
+      assert(res.body.error === '[FORBIDDEN] Not allow to sync package download data');
+    });
+
+    it('should 201 when enableSyncDownloadData = true', async () => {
+      mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
+      mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
+      mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
+      const res = await app.httpRequest()
+        .put('/-/package/ob/syncs')
+        .send({ syncDownloadData: true });
+      assert(res.status === 201);
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
+      assert(res.body.id);
+      const task = await TaskModel.findOne({ taskId: res.body.id });
+      assert(task);
       assert(task.data.syncDownloadData === true);
-      assert.equal(task.data.tips, 'foo bar');
     });
 
     it('should dont create exists waiting task', async () => {
       let res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.equal(res.body.state, 'waiting');
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
       assert(res.body.id);
       const firstTaskId = res.body.id;
       // again dont create
       res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.equal(res.body.state, 'waiting');
-      assert.equal(res.body.id, firstTaskId);
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
+      assert(res.body.id === firstTaskId);
     });
 
     it('should dont create exists processing task update less than 1 min', async () => {
       let res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.equal(res.body.state, 'waiting');
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
       assert(res.body.id);
       const firstTaskId = res.body.id;
 
@@ -128,18 +170,18 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.equal(res.body.state, 'processing');
-      assert.equal(res.body.id, firstTaskId);
+      assert(res.body.ok === true);
+      assert(res.body.state === 'processing');
+      assert(res.body.id === firstTaskId);
 
       // update bigger than 1 min
       await TaskModel.update({ taskId: firstTaskId }, { updatedAt: new Date(Date.now() - 60001) });
       res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(201);
-      assert.equal(res.body.ok, true);
-      assert.equal(res.body.state, 'waiting');
-      assert.notEqual(res.body.id, firstTaskId);
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
+      assert(res.body.id !== firstTaskId);
     });
   });
 
@@ -149,34 +191,34 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       const res = await app.httpRequest()
         .put('/koa/sync')
         .expect(403);
-      assert.equal(res.body.error, '[FORBIDDEN] Not allow to sync package');
+      assert(res.body.error === '[FORBIDDEN] Not allow to sync package');
     });
 
     it('should 201', async () => {
       let res = await app.httpRequest()
         .put('/koa/sync')
         .expect(201);
-      assert.equal(res.body.ok, true);
+      assert(res.body.ok === true);
       assert(res.body.logId);
       let task = await TaskModel.findOne({ taskId: res.body.logId });
-      assert(task, 'task should exists');
-      assert.equal(task.data.skipDependencies, false, 'skipDependencies should be false');
+      assert(task);
+      assert(task.data.skipDependencies === false);
 
       res = await app.httpRequest()
         .put('/koa/sync?nodeps=true')
         .expect(201);
-      assert.equal(res.body.ok, true);
+      assert(res.body.ok === true);
       assert(res.body.logId);
 
       res = await app.httpRequest()
         .put('/ob/sync?nodeps=true')
         .expect(201);
-      assert.equal(res.body.ok, true);
+      assert(res.body.ok === true);
       assert(res.body.logId);
       // skipDependencies should be true
       task = await TaskModel.findOne({ taskId: res.body.logId });
-      assert(task, 'task should exists');
-      assert.equal(task.data.skipDependencies, true, 'skipDependencies should be true');
+      assert(task);
+      assert(task.data.skipDependencies === true);
     });
   });
 });
