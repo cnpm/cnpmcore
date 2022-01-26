@@ -200,10 +200,6 @@ export class PackageSyncerService extends AbstractService {
     const fullname = task.targetName;
     const { tips, skipDependencies, syncDownloadData } = task.data as SyncPackageTaskOptions;
     const registry = this.npmRegistry.registry;
-    if (this.config.cnpmcore.sourceRegistryIsCNpm) {
-      // create sync task on sourceRegistry and skipDependencies = true
-      await this.syncUpstream(task);
-    }
     let logs: string[] = [];
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
@@ -212,6 +208,26 @@ export class PackageSyncerService extends AbstractService {
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
       task.taskId, task.targetName, logUrl);
+
+    const [ scope, name ] = getScopeAndName(fullname);
+    let pkg = await this.packageRepository.findPackage(scope, name);
+
+    if (syncDownloadData && pkg) {
+      await this.syncDownloadData(task, pkg);
+      logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
+      logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 Sync "${fullname}" download data success 🟢🟢🟢🟢🟢`);
+      await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
+        task.taskId, task.targetName);
+      return;
+    }
+
+    if (this.config.cnpmcore.sourceRegistryIsCNpm) {
+      // create sync task on sourceRegistry and skipDependencies = true
+      await this.syncUpstream(task);
+    }
+
+
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
       task.error = `stop sync by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
@@ -282,9 +298,6 @@ export class PackageSyncerService extends AbstractService {
         }
       }
     }
-
-    const [ scope, name ] = getScopeAndName(fullname);
-    let pkg = await this.packageRepository.findPackage(scope, name);
 
     if (users.length === 0) {
       // check unpublished
