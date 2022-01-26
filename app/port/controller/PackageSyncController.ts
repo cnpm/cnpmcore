@@ -31,12 +31,15 @@ export class PackageSyncController extends AbstractController {
       throw new ForbiddenError('Not allow to sync package');
     }
     const tips = data.tips || `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
-    const params = { fullname, tips, skipDependencies: !!data.skipDependencies };
+    const params = { fullname, tips, skipDependencies: !!data.skipDependencies, syncDownloadData: !!data.syncDownloadData };
     ctx.tValidate(SyncPackageTaskRule, params);
     const [ scope, name ] = getScopeAndName(params.fullname);
     const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (packageEntity?.isPrivate) {
       throw new ForbiddenError(`Can\'t sync private package "${params.fullname}"`);
+    }
+    if (params.syncDownloadData && !this.packageSyncerService.allowSyncDownloadData) {
+      throw new ForbiddenError('Not allow to sync package download data');
     }
     const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     const task = await this.packageSyncerService.createTask(params.fullname, {
@@ -44,6 +47,7 @@ export class PackageSyncController extends AbstractController {
       authorId: authorized?.user.userId,
       tips: params.tips,
       skipDependencies: params.skipDependencies,
+      syncDownloadData: params.syncDownloadData,
     });
     ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
       task.taskId, fullname);
@@ -113,6 +117,7 @@ export class PackageSyncController extends AbstractController {
       fullname,
       tips: `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`,
       skipDependencies: nodeps === 'true',
+      syncDownloadData: false,
     };
     const task = await this.createSyncTask(ctx, fullname, options);
     return {

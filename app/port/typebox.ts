@@ -39,6 +39,7 @@ export const SyncPackageTaskRule = Type.Object({
     maxLength: 1024,
   }),
   skipDependencies: Type.Boolean(),
+  syncDownloadData: Type.Boolean(),
 });
 export type SyncPackageTaskType = Static<typeof SyncPackageTaskRule>;
 

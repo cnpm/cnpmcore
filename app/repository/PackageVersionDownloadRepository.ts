@@ -43,4 +43,27 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
     });
     return models;
   }
+
+  async saveSyncDataByMonth(packageId: string, yearMonth: number, counters: [string, number][]): Promise<void> {
+    const version = '*';
+    let model = await PackageVersionDownloadModel.findOne({
+      packageId,
+      version,
+      yearMonth,
+    });
+    if (!model) {
+      // create a record
+      const attributes = {
+        packageId,
+        version,
+        yearMonth,
+      };
+      model = await PackageVersionDownloadModel.create(attributes);
+    }
+    for (const [ date, counter ] of counters) {
+      const field = `d${date}`;
+      model[field] = counter;
+    }
+    await model.save();
+  }
 }

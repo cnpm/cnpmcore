@@ -40,6 +40,10 @@ export class DownloadController extends AbstractController {
         if (!counter) continue;
         const date = `${prefix}-${day}`;
         days[date] = (days[date] || 0) + counter;
+        if (entity.version === '*') {
+          // ignore sync data to versions
+          continue;
+        }
         if (!versions[entity.version]) versions[entity.version] = [];
         versions[entity.version].push({ day: date, downloads: counter });
       }

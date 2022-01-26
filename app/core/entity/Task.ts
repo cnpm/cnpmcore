@@ -24,6 +24,7 @@ export type SyncPackageTaskOptions = {
   authorIp?: string;
   tips?: string;
   skipDependencies?: boolean;
+  syncDownloadData?: boolean;
 };
 
 export class Task extends Entity {
@@ -71,7 +72,7 @@ export class Task extends Entity {
       targetName: fullname,
       authorId: options?.authorId ?? '',
       authorIp: options?.authorIp ?? '',
-      data: { tips: options?.tips, skipDependencies: options?.skipDependencies },
+      data: { tips: options?.tips, skipDependencies: options?.skipDependencies, syncDownloadData: options?.syncDownloadData },
     };
     const task = this.create(data);
     task.logPath = `/packages/${fullname}/syncs/${dayjs().format('YYYY/MM/DDHHMM')}-${task.taskId}.log`;

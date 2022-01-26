@@ -14,8 +14,10 @@ import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { PackageRepository } from '../../repository/PackageRepository';
+import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { UserRepository } from '../../repository/UserRepository';
 import { Task, SyncPackageTaskOptions } from '../entity/Task';
+import { Package } from '../entity/Package';
 import { AbstractService } from './AbstractService';
 import { UserService } from './UserService';
 import { TaskService } from './TaskService';
@@ -36,6 +38,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly taskRepository: TaskRepository;
   @Inject()
   private readonly packageRepository: PackageRepository;
+  @Inject()
+  private readonly packageVersionDownloadRepository: PackageVersionDownloadRepository;
   @Inject()
   private readonly userRepository: UserRepository;
   @Inject()
@@ -74,6 +78,61 @@ export class PackageSyncerService extends AbstractService {
 
   public async findExecuteTask() {
     return await this.taskService.findExecuteTask(TaskType.SyncPackage);
+  }
+
+  public get allowSyncDownloadData() {
+    const config = this.config.cnpmcore;
+    if (config.enableSyncDownloadData && config.syncDownloadDataSourceRegistry && config.syncDownloadDataMaxDate) {
+      return true;
+    }
+    return false;
+  }
+
+  private async syncDownloadData(task: Task, pkg: Package) {
+    if (!this.allowSyncDownloadData) {
+      return;
+    }
+    const fullname = pkg.fullname;
+    const start = '2011-01-01';
+    const end = this.config.cnpmcore.syncDownloadDataMaxDate;
+    const registry = this.config.cnpmcore.syncDownloadDataSourceRegistry;
+    const logs: string[] = [];
+    let downloads: { day: string; downloads: number }[];
+
+    logs.push(`[${isoNow()}][DownloadData] 🚧🚧🚧🚧🚧 Syncing "${fullname}" download data "${start}:${end}" on ${registry} 🚧🚧🚧🚧🚧`);
+    const failEnd = '❌❌❌❌❌ 🚮 give up 🚮 ❌❌❌❌❌';
+    try {
+      const { data, status, res } = await this.npmRegistry.getDownloadRanges(registry, fullname, start, end);
+      downloads = data.downloads || [];
+      logs.push(`[${isoNow()}][DownloadData] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, downloads: ${downloads.length}`);
+    } catch (err: any) {
+      const status = err.status || 'unknow';
+      logs.push(`[${isoNow()}][DownloadData] ❌ Get download data error: ${err}, status: ${status}`);
+      logs.push(`[${isoNow()}][DownloadData] ${failEnd}`);
+      await this.taskService.appendTaskLog(task, logs.join('\n'));
+      return;
+    }
+    const datas = new Map<number, [string, number][]>();
+    for (const item of downloads) {
+      // {
+      //   "day": "2021-09-21",
+      //   "downloads": 45
+      // },
+      const day = item.day;
+      const [ year, month, date ] = day.split('-');
+      const yearMonth = parseInt(`${year}${month}`);
+      if (!datas.has(yearMonth)) {
+        datas.set(yearMonth, []);
+      }
+      const counters = datas.get(yearMonth);
+      counters!.push([ date, item.downloads ]);
+    }
+    for (const [ yearMonth, counters ] of datas.entries()) {
+      await this.packageVersionDownloadRepository.saveSyncDataByMonth(pkg.packageId, yearMonth, counters);
+      logs.push(`[${isoNow()}][DownloadData] 🟢 ${yearMonth}: ${counters.length} days`);
+    }
+    logs.push(`[${isoNow()}][DownloadData] 🟢🟢🟢🟢🟢 ${registry}/${fullname} 🟢🟢🟢🟢🟢`);
+    await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
   private async syncUpstream(task: Task) {
@@ -139,7 +198,7 @@ export class PackageSyncerService extends AbstractService {
 
   public async executeTask(task: Task) {
     const fullname = task.targetName;
-    const { tips, skipDependencies } = task.data as SyncPackageTaskOptions;
+    const { tips, skipDependencies, syncDownloadData } = task.data as SyncPackageTaskOptions;
     const registry = this.npmRegistry.registry;
     if (this.config.cnpmcore.sourceRegistryIsCNpm) {
       // create sync task on sourceRegistry and skipDependencies = true
@@ -149,7 +208,7 @@ export class PackageSyncerService extends AbstractService {
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
     }
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync "${fullname}" from ${registry}, skipDependencies: ${!!skipDependencies} 🚧🚧🚧🚧🚧`);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync "${fullname}" from ${registry}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData} 🚧🚧🚧🚧🚧`);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
       task.taskId, task.targetName, logUrl);
@@ -517,6 +576,11 @@ export class PackageSyncerService extends AbstractService {
       });
       logs.push(`[${isoNow()}] 📦 Add dependency "${dependencyName}" sync task: ${dependencyTask.taskId}, db id: ${dependencyTask.id}`);
     }
+
+    if (syncDownloadData) {
+      await this.syncDownloadData(task, pkg);
+    }
+
     logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
     logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
     task.error = lastErrorMessage;

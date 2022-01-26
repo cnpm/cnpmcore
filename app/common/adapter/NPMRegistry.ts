@@ -51,6 +51,11 @@ export class NPMRegistry {
     return await this.request('GET', url);
   }
 
+  public async getDownloadRanges(registry: string, fullname: string, start: string, end: string) {
+    const url = `${registry}/downloads/range/${start}:${end}/${encodeURIComponent(fullname)}`;
+    return await this.request('GET', url);
+  }
+
   private async request(method: HttpMethod, url: string, params?: object, options?: object) {
     const res = await this.httpclient.request(url, {
       method,
