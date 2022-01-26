@@ -139,13 +139,13 @@ export class PackageSyncerService extends AbstractService {
     const registry = this.npmRegistry.registry;
     const fullname = task.targetName;
     let logs: string[] = [];
-    let logId = '';
+    let taskId = '';
     logs.push(`[${isoNow()}][UP] 🚧🚧🚧🚧🚧 Waiting sync "${fullname}" task on ${registry} 🚧🚧🚧🚧🚧`);
     const failEnd = `❌❌❌❌❌ Sync ${registry}/${fullname} 🚮 give up 🚮 ❌❌❌❌❌`;
     try {
       const { data, status, res } = await this.npmRegistry.createSyncTask(fullname);
       logs.push(`[${isoNow()}][UP] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, data: ${JSON.stringify(data)}`);
-      logId = data.logId;
+      taskId = data.id;
     } catch (err: any) {
       const status = err.status || 'unknow';
       logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, create sync task error: ${err}, status: ${status}`);
@@ -153,8 +153,8 @@ export class PackageSyncerService extends AbstractService {
       await this.taskService.appendTaskLog(task, logs.join('\n'));
       return;
     }
-    if (!logId) {
-      logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, missing logId`);
+    if (!taskId) {
+      logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, missing taskId`);
       logs.push(`[${isoNow()}][UP] ${failEnd}`);
       await this.taskService.appendTaskLog(task, logs.join('\n'));
       return;
@@ -162,26 +162,30 @@ export class PackageSyncerService extends AbstractService {
     const startTime = Date.now();
     const maxTimeout = this.config.cnpmcore.sourceRegistrySyncTimeout;
     let logUrl = '';
-    let offset = 0;
     let useTime = Date.now() - startTime;
     while (useTime < maxTimeout) {
       // sleep 1s ~ 6s in random
       await setTimeout(1000 + Math.random() * 5000);
       try {
-        const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset);
+        const { data, status } = await this.npmRegistry.getSyncTask(fullname, taskId);
         useTime = Date.now() - startTime;
-        if (!logUrl) {
-          logUrl = url;
+        if (!logUrl && data?.logUrl) {
+          logUrl = data.logUrl;
         }
-        const log = data && data.log || '';
-        offset += log.length;
-        if (data && data.syncDone) {
-          logs.push(`[${isoNow()}][UP] 🟢 Sync ${fullname} success [${useTime}ms], log: ${logUrl}, offset: ${offset}`);
+        const state = data?.state;
+        if (state === 'success') {
+          logs.push(`[${isoNow()}][UP] 🟢 Sync ${fullname} success [${useTime}ms], log: ${logUrl}`);
           logs.push(`[${isoNow()}][UP] 🟢🟢🟢🟢🟢 ${registry}/${fullname} 🟢🟢🟢🟢🟢`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           return;
         }
-        logs.push(`[${isoNow()}][UP] 🚧 HTTP [${status}] [${useTime}ms], offset: ${offset}`);
+        if (state === 'fail' || state === 'timeout') {
+          logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} ${state} [${useTime}ms], log: ${logUrl}`);
+          logs.push(`[${isoNow()}][UP] ${failEnd}`);
+          await this.taskService.appendTaskLog(task, logs.join('\n'));
+          return;
+        }
+        logs.push(`[${isoNow()}][UP] 🚧 HTTP [${status}] [${useTime}ms], state: ${state}, log: ${logUrl}`);
         await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
       } catch (err: any) {
@@ -191,7 +195,7 @@ export class PackageSyncerService extends AbstractService {
       }
     }
     // timeout
-    logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, timeout, log: ${logUrl}, offset: ${offset}`);
+    logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, timeout, log: ${logUrl}`);
     logs.push(`[${isoNow()}][UP] ${failEnd}`);
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
@@ -200,10 +204,6 @@ export class PackageSyncerService extends AbstractService {
     const fullname = task.targetName;
     const { tips, skipDependencies, syncDownloadData } = task.data as SyncPackageTaskOptions;
     const registry = this.npmRegistry.registry;
-    if (this.config.cnpmcore.sourceRegistryIsCNpm) {
-      // create sync task on sourceRegistry and skipDependencies = true
-      await this.syncUpstream(task);
-    }
     let logs: string[] = [];
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
@@ -212,6 +212,25 @@ export class PackageSyncerService extends AbstractService {
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
       task.taskId, task.targetName, logUrl);
+
+    const [ scope, name ] = getScopeAndName(fullname);
+    let pkg = await this.packageRepository.findPackage(scope, name);
+
+    if (syncDownloadData && pkg) {
+      await this.syncDownloadData(task, pkg);
+      logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
+      logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 Sync "${fullname}" download data success 🟢🟢🟢🟢🟢`);
+      await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
+        task.taskId, task.targetName);
+      return;
+    }
+
+    if (this.config.cnpmcore.sourceRegistryIsCNpm) {
+      // create sync task on sourceRegistry and skipDependencies = true
+      await this.syncUpstream(task);
+    }
+
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
       task.error = `stop sync by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
@@ -282,9 +301,6 @@ export class PackageSyncerService extends AbstractService {
         }
       }
     }
-
-    const [ scope, name ] = getScopeAndName(fullname);
-    let pkg = await this.packageRepository.findPackage(scope, name);
 
     if (users.length === 0) {
       // check unpublished

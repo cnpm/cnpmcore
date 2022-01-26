@@ -34,20 +34,22 @@ export class NPMRegistry {
     return await this.request('GET', url);
   }
 
-  // app.put('/:name/sync', sync.sync);
   public async createSyncTask(fullname: string) {
-    const url = `${this.registry}/${encodeURIComponent(fullname)}/sync?sync_upstream=true&nodeps=true`;
+    const url = `${this.registry}/-/package/${encodeURIComponent(fullname)}/syncs`;
     // {
     //   ok: true,
-    //   logId: logId
+    //   "id": "61f155c211e20438b3234187",
+    //   "type": "sync_package",
+    //   "state": "waiting"
     // };
-    return await this.request('PUT', url);
+    return await this.request('PUT', url, {
+      skipDependencies: true,
+    });
   }
 
-  // app.get('/:name/sync/log/:id', sync.getSyncLog);
-  public async getSyncTask(fullname: string, id: string, offset: number) {
-    const url = `${this.registry}/${encodeURIComponent(fullname)}/sync/log/${id}?offset=${offset}`;
-    // { ok: true, syncDone: syncDone, log: log }
+  public async getSyncTask(fullname: string, id: string) {
+    const url = `${this.registry}/-/package/${encodeURIComponent(fullname)}/syncs/${id}`;
+    // {"ok":true,"id":"61f155c211e20438b3234187","type":"sync_package","state":"success","logUrl":"https://r.cnpmjs.org/-/package/geckodriver/syncs/61f155c211e20438b3234187/log"}
     return await this.request('GET', url);
   }
 
@@ -59,6 +61,7 @@ export class NPMRegistry {
   private async request(method: HttpMethod, url: string, params?: object, options?: object) {
     const res = await this.httpclient.request(url, {
       method,
+      contentType: 'json',
       data: params,
       dataType: 'json',
       timing: true,
