@@ -859,34 +859,54 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(!log.includes('🟢 Synced version 2.0.0 success, different meta:'));
     });
-  });
 
-  it('should sync download data work', async () => {
-    mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
-    mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
-    mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
+    it('should sync download data work', async () => {
+      mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
+      mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
+      mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
 
-    const name = 'pedding'; // 'cnpmcore-test-sync-dependencies';
-    await packageSyncerService.createTask(name, { syncDownloadData: true });
-    const task = await packageSyncerService.findExecuteTask();
-    assert(task);
-    assert.equal(task.targetName, name);
-    await packageSyncerService.executeTask(task);
-    const stream = await packageSyncerService.findTaskLog(task);
-    assert(stream);
-    const log = await TestUtil.readStreamToLog(stream);
-    // console.log(log);
-    assert(log.includes('][DownloadData] 🟢 202111: 10 days'));
-    assert(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
-    assert(log.includes('] 🟢🟢🟢🟢🟢'));
+      const name = 'pedding'; // 'cnpmcore-test-sync-dependencies';
+      await packageSyncerService.createTask(name, { syncDownloadData: true });
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('][DownloadData] 🟢 202111: 10 days'));
+      assert(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
+      assert(log.includes('] 🟢🟢🟢🟢🟢'));
 
-    const res = await app.httpRequest()
-      .get(`/downloads/range/2020-12-28:2021-12-28/${name}`)
-      .expect(200)
-      .expect('content-type', 'application/json; charset=utf-8');
-    const data = res.body;
-    assert(data.downloads.length > 0);
-    assert(Object.keys(data.versions).length === 0);
-    // console.log('%j', data);
+      const res = await app.httpRequest()
+        .get(`/downloads/range/2020-12-28:2021-12-28/${name}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const data = res.body;
+      assert(data.downloads.length > 0);
+      assert(Object.keys(data.versions).length === 0);
+      // console.log('%j', data);
+    });
+
+    it('should sync download data and mock getDownloadRanges error', async () => {
+      mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
+      mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
+      mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
+      mock.error(NPMRegistry.prototype, 'getDownloadRanges');
+
+      const name = 'pedding';
+      await packageSyncerService.createTask(name, { syncDownloadData: true });
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('][DownloadData] ❌ Get download data error: '));
+      assert(log.includes('][DownloadData] ❌❌❌❌❌ 🚮 give up 🚮 ❌❌❌❌❌'));
+    });
   });
 });
