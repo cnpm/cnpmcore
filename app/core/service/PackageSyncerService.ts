@@ -351,6 +351,7 @@ export class PackageSyncerService extends AbstractService {
     const versions = Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     let syncVersionCount = 0;
+    let forceRefreshDists = false;
     const differentMetas: any[] = [];
     for (const [ index, item ] of versions.entries()) {
       const version: string = item.version;
@@ -359,6 +360,10 @@ export class PackageSyncerService extends AbstractService {
       if (!existsItem && pkg) {
         // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called
         existsItem = await this.packageManagerService.findPackageVersionManifest(pkg.packageId, version);
+        // version not exists on manifests, need to refresh
+        // bugfix: https://github.com/cnpm/cnpmcore/issues/115
+        forceRefreshDists = true;
+        logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
       }
       if (existsItem) {
         // check metaDataKeys, if different value, override exists one
@@ -504,7 +509,7 @@ export class PackageSyncerService extends AbstractService {
       }
     }
 
-    if (syncVersionCount > 0) {
+    if (syncVersionCount > 0 || forceRefreshDists) {
       await this.packageManagerService.refreshPackageManifestsToDists(pkg);
       logs.push(`[${isoNow()}] 🟢 Synced ${syncVersionCount} versions`);
     }
