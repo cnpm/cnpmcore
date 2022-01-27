@@ -579,9 +579,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('🟢 Refresh maintainers'));
     });
 
-    it('should sync sourceRegistryIsCNpm = true', async () => {
+    it('should sync sourceRegistryIsCNpm = true && syncUpstreamFirst = true', async () => {
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://rg.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
+      mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
       const name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
@@ -597,9 +598,28 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('][UP] 🟢🟢🟢🟢🟢 https://rg.cnpmjs.org/cnpmcore-test-sync-dependencies 🟢'));
     });
 
+    it('should sync sourceRegistryIsCNpm = true && syncUpstreamFirst = false', async () => {
+      mock(app.config.cnpmcore, 'sourceRegistry', 'https://rg.cnpmjs.org');
+      mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
+      mock(app.config.cnpmcore, 'syncUpstreamFirst', false);
+      const name = 'cnpmcore-test-sync-dependencies';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
+      assert(!log.includes('][UP] 🟢🟢🟢🟢🟢 https://rg.cnpmjs.org/cnpmcore-test-sync-dependencies 🟢'));
+    });
+
     it('should sync sourceRegistryIsCNpm = true and mock createSyncTask error', async () => {
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://rg.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
+      mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
       mock.error(NPMRegistry.prototype, 'createSyncTask');
       const name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
@@ -618,6 +638,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     it('should sync sourceRegistryIsCNpm = true and mock createSyncTask return missing logId', async () => {
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://rg.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
+      mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
       mock.data(NPMRegistry.prototype, 'createSyncTask', { data: { ok: true }, res: {} });
       const name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
@@ -636,6 +657,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     it('should sync sourceRegistryIsCNpm = true and mock getSyncTask syncDone = false', async () => {
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://rg.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
+      mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
       mock(app.config.cnpmcore, 'sourceRegistrySyncTimeout', 10000);
       let first = true;
       mock(NPMRegistry.prototype, 'getSyncTask', async () => {
@@ -663,6 +685,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     it('should sync sourceRegistryIsCNpm = true and mock sync upstream timeout', async () => {
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://rg.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
+      mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
       mock(app.config.cnpmcore, 'sourceRegistrySyncTimeout', -1);
       const name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);

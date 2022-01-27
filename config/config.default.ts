@@ -13,6 +13,7 @@ export default (appInfo: EggAppConfig) => {
     // upstream registry is base on `cnpmcore` or not
     // if your upstream is official npm registry, please turn it off
     sourceRegistryIsCNpm: false,
+    syncUpstreamFirst: false,
     // 3 mins
     sourceRegistrySyncTimeout: 180000,
     // sync mode
