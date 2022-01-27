@@ -222,7 +222,7 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    if (this.config.cnpmcore.sourceRegistryIsCNpm) {
+    if (this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst) {
       // create sync task on sourceRegistry and skipDependencies = true
       await this.syncUpstream(task);
     }
