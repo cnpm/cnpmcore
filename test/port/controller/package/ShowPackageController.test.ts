@@ -158,6 +158,27 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const pkg = res.body;
+      assert(pkg.name === scopedName);
+      assert(Object.keys(pkg.versions).length === 2);
+      // console.log(JSON.stringify(pkg, null, 2));
+      const versionOne = pkg.versions['1.0.0'];
+      assert(versionOne.dist.unpackedSize === 6497043);
+      assert(versionOne._cnpmcore_publish_time);
+      assert(pkg._id === scopedName);
+      assert(pkg._rev);
+      assert(versionOne._id);
+      assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-1.0.0.tgz`);
+      assert(!res.headers['cache-control']);
+      assert(res.headers.vary === 'Origin');
+    });
+
+    it('should show one scoped package with full manifests with CDN enable', async () => {
+      mock(app.config.cnpmcore, 'enableCDN', true);
+      const res = await app.httpRequest()
+        .get(`/${scopedName}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const pkg = res.body;
       assert.equal(pkg.name, scopedName);
       assert.equal(Object.keys(pkg.versions).length, 2);
       // console.log(JSON.stringify(pkg, null, 2));
@@ -167,8 +188,9 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(pkg._id, scopedName);
       assert(pkg._rev);
       assert(versionOne._id);
-      assert.equal(versionOne.dist.tarball,
-        `https://registry.example.com/${scopedName}/-/${name}-1.0.0.tgz`);
+      assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-1.0.0.tgz`);
+      assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
+      assert(res.headers.vary === 'Origin, Accept, Accept-Encoding');
     });
 
     it('should show one package with abbreviated manifests', async () => {
@@ -256,8 +278,31 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(!pkg._rev);
       assert(!pkg._id);
       assert(!versionOne._id);
-      assert.equal(versionOne.dist.tarball,
-        `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
+      assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
+      assert(!res.headers['cache-control']);
+      assert(res.headers.vary === 'Origin');
+    });
+
+    it('should show one scoped package with abbreviated manifests with CDN enable', async () => {
+      mock(app.config.cnpmcore, 'enableCDN', true);
+      const res = await app.httpRequest()
+        .get(`/${scopedName}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const pkg = res.body;
+      assert(pkg.name === scopedName);
+      assert(Object.keys(pkg.versions).length === 2);
+      // console.log(JSON.stringify(pkg, null, 2));
+      const versionOne = pkg.versions['2.0.0'];
+      assert(versionOne.dist.unpackedSize === 6497043);
+      assert(!versionOne._cnpmcore_publish_time);
+      assert(!pkg._rev);
+      assert(!pkg._id);
+      assert(!versionOne._id);
+      assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
+      assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
+      assert(res.headers.vary === 'Origin, Accept, Accept-Encoding');
     });
 
     it('should 404 when package not exists on abbreviated manifest', async () => {

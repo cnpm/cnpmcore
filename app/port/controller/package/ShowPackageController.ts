@@ -46,6 +46,7 @@ export class ShowPackageController extends AbstractController {
       if (cacheBytes && cacheBytes.length > 0) {
         ctx.set('etag', `W/${cacheEtag}`);
         ctx.type = 'json';
+        this.setCDNHeaders(ctx);
         return cacheBytes;
       }
     }
@@ -72,6 +73,7 @@ export class ShowPackageController extends AbstractController {
     // should set weak etag avoid nginx remove it
     ctx.set('etag', `W/${etag}`);
     ctx.type = 'json';
+    this.setCDNHeaders(ctx);
     return cacheBytes;
   }
 }

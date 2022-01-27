@@ -56,6 +56,13 @@ export default (appInfo: EggAppConfig) => {
       // name: email
       cnpmcore_admin: 'admin@cnpmjs.org',
     },
+    // http response cache control header
+    enableCDN: false,
+    // if you are using CDN, can set it to 'max-age=0, s-maxage=120, must-revalidate'
+    // it meaning cache 10s on CDN server and no cache on client side.
+    cdnCacheControlHeader: 'max-age=0, s-maxage=120, must-revalidate',
+    // if you are using CDN, can set it to 'Accept, Accept-Encoding'
+    cdnVaryHeader: 'Accept, Accept-Encoding',
   };
 
   // override config from framework / plugin
