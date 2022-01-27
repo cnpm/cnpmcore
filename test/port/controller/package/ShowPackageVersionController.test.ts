@@ -75,16 +75,26 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
           description: 'foo latest description',
         },
       });
-      await app.httpRequest()
+      let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(201);
-      const res = await app.httpRequest()
-        .get(`/${pkg.name}/latest`)
-        .expect(200);
-      assert.equal(res.body.version, '1.0.0');
+        .send(pkg);
+      assert(res.status === 201);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/latest`);
+      assert(res.status === 200);
+      assert(res.body.version === '1.0.0');
+      assert(!res.headers['cache-control']);
+      assert(res.headers.vary === 'Origin');
+
+      mock(app.config.cnpmcore, 'enableCDN', true);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/latest`);
+      assert(res.status === 200);
+      assert(res.body.version === '1.0.0');
+      assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
+      assert(res.headers.vary === 'Origin, Accept, Accept-Encoding');
     });
 
     it('should latest tag with not scoped package', async () => {

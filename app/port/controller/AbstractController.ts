@@ -110,4 +110,12 @@ export abstract class AbstractController extends MiddlewareController {
     ctx.tValidate(VersionRule, data);
     return data.version;
   }
+
+  protected setCDNHeaders(ctx: EggContext) {
+    const config = this.config.cnpmcore;
+    if (config.enableCDN) {
+      ctx.set('cache-control', config.cdnCacheControlHeader);
+      ctx.vary(config.cdnVaryHeader);
+    }
+  }
 }

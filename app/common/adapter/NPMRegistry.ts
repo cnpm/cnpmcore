@@ -30,7 +30,8 @@ export class NPMRegistry {
   }
 
   public async getFullManifests(fullname: string) {
-    const url = `${this.registry}/${encodeURIComponent(fullname)}`;
+    // set query t=timestamp, make sure CDN cache disable
+    const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}`;
     return await this.request('GET', url);
   }
 

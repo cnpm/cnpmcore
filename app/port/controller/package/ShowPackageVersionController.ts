@@ -4,6 +4,8 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   Inject,
+  Context,
+  EggContext,
 } from '@eggjs/tegg';
 import semver from 'semver';
 import { AbstractController } from '../AbstractController';
@@ -20,7 +22,7 @@ export class ShowPackageVersionController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/:versionOrTag`,
     method: HTTPMethodEnum.GET,
   })
-  async show(@HTTPParam() fullname: string, @HTTPParam() versionOrTag: string) {
+  async show(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() versionOrTag: string) {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const [ scope, name ] = getScopeAndName(fullname);
     const pkg = await this.getPackageEntity(scope, name);
@@ -34,6 +36,7 @@ export class ShowPackageVersionController extends AbstractController {
     }
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     const packageVersionJson = await this.packageManagerService.findPackageVersionManifest(packageVersion.packageId, version);
+    this.setCDNHeaders(ctx);
     return packageVersionJson;
   }
 }
