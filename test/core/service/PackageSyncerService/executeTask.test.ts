@@ -124,6 +124,26 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 🟢 Synced 1 versions'));
     });
 
+    it('should ignore ObjectNotAppendable error', async () => {
+      const err = {
+        name: 'ObjectNotAppendableError',
+        message: 'The object is not appendable',
+        code: 'ObjectNotAppendable',
+        status: '409',
+      };
+      mock.error(NFSAdapter.prototype, 'appendBytes', err);
+      const name = 'cnpmcore-test-sync-deprecated';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 🟢 Synced 1 versions'));
+    });
+
     it('should sync cnpmcore-test-sync-dependencies => cnpmcore-test-sync-deprecated', async () => {
       let name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
