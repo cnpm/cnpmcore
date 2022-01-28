@@ -1,5 +1,6 @@
 import { mkdir, rm } from 'fs/promises';
 import { createWriteStream } from 'fs';
+import { setTimeout } from 'timers/promises';
 import path from 'path';
 import { randomBytes } from 'crypto';
 import { EggContextHttpClient } from 'egg';
@@ -13,7 +14,27 @@ export async function createTempfile(dataDir: string, filename: string) {
   return tmpfile;
 }
 
-export async function downloadToTempfile(httpclient: EggContextHttpClient, dataDir: string, url: string, ignoreDownloadStatuses?: number[]) {
+export async function downloadToTempfile(httpclient: EggContextHttpClient,
+  dataDir: string, url: string, ignoreDownloadStatuses?: number[], retries = 3) {
+  let lastError: any;
+  while (retries > 0) {
+    try {
+      return await _downloadToTempfile(httpclient, dataDir, url, ignoreDownloadStatuses);
+    } catch (err: any) {
+      if (err.name === 'DownloadNotFoundError') throw err;
+      lastError = err;
+    }
+    retries--;
+    if (retries > 0) {
+      // sleep 1s ~ 4s in random
+      await setTimeout(1000 + Math.random() * 4000);
+    }
+  }
+  throw lastError;
+}
+
+async function _downloadToTempfile(httpclient: EggContextHttpClient,
+  dataDir: string, url: string, ignoreDownloadStatuses?: number[]) {
   const tmpfile = await createTempfile(dataDir, url);
   const writeStream = createWriteStream(tmpfile);
   try {
