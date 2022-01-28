@@ -1,3 +1,4 @@
+import { setTimeout } from 'timers/promises';
 import {
   ContextProto,
   AccessLevel,
@@ -29,12 +30,26 @@ export class NPMRegistry {
     return this.config.cnpmcore.sourceRegistry;
   }
 
-  public async getFullManifests(fullname: string) {
+  public async getFullManifests(fullname: string, retries = 3) {
     // set query t=timestamp, make sure CDN cache disable
     const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}`;
-    // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
-    // https://r.cnpmjs.org/intraactive-sdk-ui 44s
-    return await this.request('GET', url, undefined, { timeout: 90000 });
+    let lastError: any;
+    while (retries > 0) {
+      try {
+        // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
+        // https://r.cnpmjs.org/intraactive-sdk-ui 44s
+        return await this.request('GET', url, undefined, { timeout: 120000 });
+      } catch (err: any) {
+        if (err.name === 'ResponseTimeoutError') throw err;
+        lastError = err;
+      }
+      retries--;
+      if (retries > 0) {
+        // sleep 1s ~ 4s in random
+        await setTimeout(1000 + Math.random() * 4000);
+      }
+    }
+    throw lastError;
   }
 
   // app.put('/:name/sync', sync.sync);
