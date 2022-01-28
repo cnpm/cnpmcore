@@ -777,6 +777,22 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('❌ invalid maintainers: '));
     });
 
+    it('should try to use latest tag version maintainers instead', async () => {
+      // https://registry.npmjs.org/postman-jsdoc-theme
+      const name = 'postman-jsdoc-theme';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('📖 Use the latest version(0.0.3) maintainers instead'));
+      assert(log.includes('] 🟢🟢🟢🟢🟢 '));
+    });
+
     it('should stop sync by block list', async () => {
       const name = 'cnpmcore-test-sync-blocklist';
       mock(app.config.cnpmcore, 'syncPackageBlockList', [ name, 'foo' ]);
