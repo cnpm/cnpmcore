@@ -274,6 +274,9 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
+    const versionMap = data.versions || {};
+    const distTags = data['dist-tags'] || {};
+
     // 1. save maintainers
     // maintainers: [
     //   { name: 'bomsy', email: 'b4bomsy@gmail.com' },
@@ -291,6 +294,13 @@ export class PackageSyncerService extends AbstractService {
       // "repository": "npm/security-holder"
       if (data.description === 'security holding package' || data.repository === 'npm/security-holder') {
         maintainers = data.maintainers = [{ name: 'npm', email: 'npm@npmjs.com' }];
+      } else {
+        // try to use latest tag version's maintainers instead
+        const latestPackageVersion = distTags.latest && versionMap[distTags.latest];
+        if (latestPackageVersion && Array.isArray(latestPackageVersion.maintainers)) {
+          maintainers = latestPackageVersion.maintainers;
+          logs.push(`[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`);
+        }
       }
     }
 
@@ -357,7 +367,6 @@ export class PackageSyncerService extends AbstractService {
     const existsVersionMap = existsData && existsData.versions || {};
     const existsVersionCount = Object.keys(existsVersionMap).length;
     // 2. save versions
-    const versionMap = data.versions || {};
     const versions = Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     let syncVersionCount = 0;
@@ -529,7 +538,6 @@ export class PackageSyncerService extends AbstractService {
     //   "latest": "0.0.7"
     // },
     const changedTags: { tag: string, version?: string, action: string }[] = [];
-    const distTags = data['dist-tags'] || {};
     const existsDistTags = existsData && existsData['dist-tags'] || {};
     let needRefreshPackageManifestsToDists = false;
     for (const tag in distTags) {
