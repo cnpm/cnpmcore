@@ -78,7 +78,8 @@ export class TaskService extends AbstractService {
       }
     } catch (err: any) {
       // [PositionNotEqualToLengthError]: Position is not equal to file length, status: 409
-      if (err.code === 'PositionNotEqualToLength') {
+      // [ObjectNotAppendableError]: The object is not appendable
+      if (err.code === 'PositionNotEqualToLength' || err.code === 'ObjectNotAppendable') {
         // override exists log file
         await this.nfsAdapter.uploadBytes(
           task.logPath,
