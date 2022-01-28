@@ -33,7 +33,8 @@ export class NPMRegistry {
     // set query t=timestamp, make sure CDN cache disable
     const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}`;
     // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
-    return await this.request('GET', url, undefined, { timeout: 30000 });
+    // https://r.cnpmjs.org/intraactive-sdk-ui 44s
+    return await this.request('GET', url, undefined, { timeout: 90000 });
   }
 
   // app.put('/:name/sync', sync.sync);
