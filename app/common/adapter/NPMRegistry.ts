@@ -32,7 +32,8 @@ export class NPMRegistry {
   public async getFullManifests(fullname: string) {
     // set query t=timestamp, make sure CDN cache disable
     const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}`;
-    return await this.request('GET', url);
+    // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
+    return await this.request('GET', url, undefined, { timeout: 30000 });
   }
 
   // app.put('/:name/sync', sync.sync);
@@ -65,6 +66,7 @@ export class NPMRegistry {
       timing: true,
       timeout: this.timeout,
       followRedirect: true,
+      gzip: true,
       ...options,
     });
     this.logger.info('[NPMRegistry:request] %s %s, status: %s', method, url, res.status);
