@@ -9,7 +9,7 @@ import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import semver from 'semver';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
-import { calculateIntegrity, formatTarball } from '../../common/PackageUtil';
+import { calculateIntegrity, formatTarball, getScopeAndName } from '../../common/PackageUtil';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { Package } from '../entity/Package';
@@ -53,6 +53,9 @@ export interface PublishPackageCmd {
   // only use on sync package for speed up https://github.com/cnpm/cnpmcore/issues/28
   skipRefreshPackageManifests?: boolean;
 }
+
+const TOTAL = '@@TOTAL@@';
+const SCOPE_TOTAL_PREFIX = '@@SCOPE@@:';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -255,9 +258,26 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  async downloadPackageVersionTar(pkg: Package, packageVersion: PackageVersion) {
-    this.plusPackageVersionCounter(pkg, packageVersion);
+  async downloadPackageVersionTar(packageVersion: PackageVersion) {
     return await this.nfsAdapter.getDownloadUrlOrStream(packageVersion.tarDist.path);
+  }
+
+  public plusPackageVersionCounter(fullname: string, version: string) {
+    // set counter + 1, schedule will store them into database
+    const counters = PackageManagerService.downloadCounters;
+    if (!counters[fullname]) counters[fullname] = {};
+    counters[fullname][version] = (counters[fullname][version] || 0) + 1;
+    // Total
+    const ALL = '*';
+    if (!counters[TOTAL]) counters[TOTAL] = {};
+    counters[TOTAL][ALL] = (counters[TOTAL][ALL] || 0) + 1;
+    // scope total
+    const scope = getScopeAndName(fullname)[0];
+    if (scope) {
+      const scopeKey = `${SCOPE_TOTAL_PREFIX}${scope}`;
+      if (!counters[scopeKey]) counters[scopeKey] = {};
+      counters[scopeKey][ALL] = (counters[scopeKey][ALL] || 0) + 1;
+    }
   }
 
   async readDistBytesToJSON(dist: Dist) {
@@ -279,17 +299,29 @@ export class PackageManagerService extends AbstractService {
 
   // will be call by schedule/SavePackageVersionDownloadCounter.ts
   async savePackageVersionCounters() {
-    // { [packageId]: { [version]: number } }
+    // { [fullname]: { [version]: number } }
     const counters = PackageManagerService.downloadCounters;
-    const packageIds = Object.keys(counters);
-    if (packageIds.length === 0) return;
+    const fullnames = Object.keys(counters);
+    if (fullnames.length === 0) return;
 
     PackageManagerService.downloadCounters = {};
-    this.logger.info('[packageManagerService.savePackageVersionCounters:saving] %d packageIds', packageIds.length);
+    this.logger.info('[packageManagerService.savePackageVersionCounters:saving] %d fullnames', fullnames.length);
 
     let total = 0;
-    for (const packageId in counters) {
-      const versions = counters[packageId];
+    for (const fullname in counters) {
+      const versions = counters[fullname];
+      let packageId: string | null = null;
+      if (fullname === TOTAL) {
+        packageId = 'total';
+      } else if (fullname.startsWith(SCOPE_TOTAL_PREFIX)) {
+        packageId = fullname.replace(SCOPE_TOTAL_PREFIX, '');
+      } else {
+        // find packageId from fullname
+        const [ scope, name ] = getScopeAndName(fullname);
+        packageId = await this.packageRepository.findPackageId(scope, name);
+      }
+      if (!packageId) continue;
+
       for (const version in versions) {
         const counter = versions[version];
         await this.packageVersionDownloadRepository.plus(packageId, version, counter);
@@ -465,24 +497,6 @@ export class PackageManagerService extends AbstractService {
     manifestDist.shasum = manifestIntegrity.shasum;
     manifestDist.integrity = manifestIntegrity.integrity;
     await this.nfsAdapter.uploadBytes(manifestDist.path, manifestBytes);
-  }
-
-  private plusPackageVersionCounter(pkg: Package, packageVersion: PackageVersion) {
-    // set counter + 1, schedule will store them into database
-    const counters = PackageManagerService.downloadCounters;
-    if (!counters[packageVersion.packageId]) counters[packageVersion.packageId] = {};
-    counters[packageVersion.packageId][packageVersion.version] =
-      (counters[packageVersion.packageId][packageVersion.version] || 0) + 1;
-    // Total
-    const TOTAL = 'total';
-    const ALL = '*';
-    if (!counters[TOTAL]) counters[TOTAL] = {};
-    counters[TOTAL][ALL] = (counters[TOTAL][ALL] || 0) + 1;
-    // scope total
-    if (pkg.scope) {
-      if (!counters[pkg.scope]) counters[pkg.scope] = {};
-      counters[pkg.scope][ALL] = (counters[pkg.scope][ALL] || 0) + 1;
-    }
   }
 
   private async updatePackageManifestsToDists(pkg: Package, fullManifests: object | null, abbreviatedManifests: object | null): Promise<void> {
