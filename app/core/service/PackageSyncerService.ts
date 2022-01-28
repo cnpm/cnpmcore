@@ -204,10 +204,10 @@ export class PackageSyncerService extends AbstractService {
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
     }
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync "${fullname}" from ${registry}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData} 🚧🚧🚧🚧🚧`);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync "${fullname}" from ${registry}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts} 🚧🚧🚧🚧🚧`);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
-    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
-      task.taskId, task.targetName, logUrl);
+    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, log: %s',
+      task.taskId, task.targetName, task.attempts, logUrl);
 
     const [ scope, name ] = getScopeAndName(fullname);
     let pkg = await this.packageRepository.findPackage(scope, name);
@@ -227,13 +227,12 @@ export class PackageSyncerService extends AbstractService {
       await this.syncUpstream(task);
     }
 
-
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
       task.error = `stop sync by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
+      this.logger.info('[PackageSyncerService.executeTask:fail-block-list] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);
       return;
     }
@@ -246,11 +245,12 @@ export class PackageSyncerService extends AbstractService {
       task.error = `request manifests error: ${err}, status: ${status}`;
       logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
-      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
+      this.logger.info('[PackageSyncerService.executeTask:fail-request-error] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);
-      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      await this.taskService.retryTask(task, logs.join('\n'));
       return;
     }
+
     const { url, data, headers, res, status } = result;
     let readme = data.readme || '';
     if (typeof readme !== 'string') {
@@ -263,6 +263,16 @@ export class PackageSyncerService extends AbstractService {
     const timeMap = data.time || {};
     const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
     logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${headers['content-length']}, timing: ${JSON.stringify(res.timing)}`);
+
+    if (status === 404) {
+      task.error = `Package not exists, response data: ${JSON.stringify(data)}`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ${failEnd}`);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
+      return;
+    }
 
     // 1. save maintainers
     // maintainers: [
@@ -336,7 +346,7 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
+      this.logger.info('[PackageSyncerService.executeTask:fail-invalid-maintainers] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);
       return;
     }

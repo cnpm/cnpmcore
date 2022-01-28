@@ -46,35 +46,47 @@ export class TaskService extends AbstractService {
   }
 
   public async appendTaskLog(task: Task, appendLog: string) {
-    // console.log(appendLog);
-    const nextPosition = await this.nfsAdapter.appendBytes(
-      task.logPath,
-      Buffer.from(appendLog + '\n'),
-      task.logStorePosition,
-      {
-        'Content-Type': 'text/plain; charset=utf-8',
-      },
-    );
-    if (nextPosition) {
-      task.logStorePosition = nextPosition;
-    }
+    await this.appendLogToNFS(task, appendLog);
     task.updatedAt = new Date();
     await this.taskRepository.saveTask(task);
   }
 
   public async finishTask(task: Task, taskState: TaskState, appendLog: string) {
-    const nextPosition = await this.nfsAdapter.appendBytes(
-      task.logPath,
-      Buffer.from(appendLog + '\n'),
-      task.logStorePosition,
-      {
-        'Content-Type': 'text/plain; charset=utf-8',
-      },
-    );
-    if (nextPosition) {
-      task.logStorePosition = nextPosition;
-    }
+    await this.appendLogToNFS(task, appendLog);
     task.state = taskState;
     await this.taskRepository.saveTaskToHistory(task);
+  }
+
+  public async retryTask(task: Task, appendLog: string) {
+    await this.appendLogToNFS(task, appendLog);
+    task.state = TaskState.Waiting;
+    await this.taskRepository.saveTask(task);
+  }
+
+  private async appendLogToNFS(task: Task, appendLog: string) {
+    try {
+      const nextPosition = await this.nfsAdapter.appendBytes(
+        task.logPath,
+        Buffer.from(appendLog + '\n'),
+        task.logStorePosition,
+        {
+          'Content-Type': 'text/plain; charset=utf-8',
+        },
+      );
+      if (nextPosition) {
+        task.logStorePosition = nextPosition;
+      }
+    } catch (err: any) {
+      // [PositionNotEqualToLengthError]: Position is not equal to file length, status: 409
+      if (err.code === 'PositionNotEqualToLength') {
+        // override exists log file
+        await this.nfsAdapter.uploadBytes(
+          task.logPath,
+          Buffer.from(appendLog + '\n'),
+        );
+        return;
+      }
+      throw err;
+    }
   }
 }

@@ -90,6 +90,19 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap, false);
     });
 
+    it('should sync fail when package not exists', async () => {
+      const name = 'cnpmcore-test-sync-package-not-exists';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      console.log(log);
+      assert(log.includes('] ❌ Package not exists, response data: '));
+    });
+
     it('should sync cnpmcore-test-sync-dependencies => cnpmcore-test-sync-deprecated', async () => {
       let name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
@@ -712,9 +725,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      // console.log(log);
+      console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
       assert(log.includes(`❌ Synced ${name} fail, request manifests error`));
+      // retry task
+      const task2 = await packageSyncerService.findExecuteTask();
+      assert(task2);
+      assert(task2.id === task.id);
     });
 
     it('should mock getFullManifests invalid maintainers error', async () => {
