@@ -9,6 +9,7 @@ import { Task as TaskModel } from 'app/repository/model/Task';
 import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
 import { TestUtil } from 'test/TestUtil';
 import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
+import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
 import { getScopeAndName } from 'app/common/PackageUtil';
 import { PackageRepository } from 'app/repository/PackageRepository';
 
@@ -101,6 +102,26 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       console.log(log);
       assert(log.includes('] ❌ Package not exists, response data: '));
+    });
+
+    it('should ignore PositionNotEqualToLength error', async () => {
+      const err = {
+        name: 'PositionNotEqualToLengthError',
+        message: 'Position is not equal to file length',
+        code: 'PositionNotEqualToLength',
+        status: '409',
+      };
+      mock.error(NFSAdapter.prototype, 'appendBytes', err);
+      const name = 'cnpmcore-test-sync-deprecated';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      console.log(log);
+      assert(log.includes('] 🟢 Synced 1 versions'));
     });
 
     it('should sync cnpmcore-test-sync-dependencies => cnpmcore-test-sync-deprecated', async () => {
