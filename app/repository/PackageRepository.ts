@@ -30,6 +30,12 @@ export class PackageRepository extends AbstractRepository {
     return entity;
   }
 
+  async findPackageId(scope: string, name: string) {
+    const model = await PackageModel.findOne({ scope, name });
+    if (!model) return null;
+    return model.packageId;
+  }
+
   async savePackage(pkgEntity: PackageEntity): Promise<void> {
     if (pkgEntity.id) {
       const model = await PackageModel.findOne({ id: pkgEntity.id });

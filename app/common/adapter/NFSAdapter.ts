@@ -67,9 +67,16 @@ export class NFSAdapter {
   }
 
   async getDownloadUrlOrStream(storeKey: string): Promise<string | Readable | undefined> {
+    const downloadUrl = await this.getDownloadUrl(storeKey);
+    if (downloadUrl) {
+      return downloadUrl;
+    }
+    return await this.getStream(storeKey);
+  }
+
+  async getDownloadUrl(storeKey: string): Promise<string | undefined> {
     if (typeof this.nfsClientAdapter.client.url === 'function') {
       return this.nfsClientAdapter.client.url(storeKey) as string;
     }
-    return await this.getStream(storeKey);
   }
 }
