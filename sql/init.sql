@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `package_version_downloads` (
   `d31` int unsigned NOT NULL DEFAULT 0 COMMENT '31 download count',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_year_month_package_id_version` (`year_month`, `package_id`, `version`),
+  KEY `idx_packageid_yearmonth` (`package_id`, `year_month`),
   KEY `idx_year_month` (`year_month`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='package version download total info';
 
