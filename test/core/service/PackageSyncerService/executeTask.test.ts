@@ -77,18 +77,38 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(abbreviatedManifests.data.versions['1.0.1'].optionalDependencies);
     });
 
-    it('should sync cnpmcore-test-sync-deprecated', async () => {
+    it('should sync cnpmcore-test-sync-deprecated and mock 404', async () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
-      const task = await packageSyncerService.findExecuteTask();
+      let task = await packageSyncerService.findExecuteTask();
       assert(task);
       await packageSyncerService.executeTask(task);
-      const manifests = await packageManagerService.listPackageFullManifests('', name);
+      let manifests = await packageManagerService.listPackageFullManifests('', name);
       assert.equal(manifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
-      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      let abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
       assert.equal(abbreviatedManifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
       assert.equal(abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap, false);
+
+      // mock 404 and unpublished
+      const result = await npmRegistry.getFullManifests(name);
+      result.status = 404;
+      result.data = { error: 'Not found' };
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes(`] 🟢 Package "${name}" was unpublished caused by 404 response`));
+
+      manifests = await packageManagerService.listPackageFullManifests('', name);
+      assert(manifests.data.time.unpublished);
+      abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert(abbreviatedManifests.data.time.unpublished);
     });
 
     it('should sync fail when package not exists', async () => {

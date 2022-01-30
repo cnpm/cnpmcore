@@ -262,15 +262,26 @@ export class PackageSyncerService extends AbstractService {
     //   "modified": "2021-12-08T14:59:57.264Z",
     const timeMap = data.time || {};
     const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
-    logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${headers['content-length']}, timing: ${JSON.stringify(res.timing)}`);
+    const contentLength = headers['content-length'] || '-';
+    logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`);
 
     if (status === 404) {
-      task.error = `Package not exists, response data: ${JSON.stringify(data)}`;
-      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
-      logs.push(`[${isoNow()}] ${failEnd}`);
-      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
-        task.taskId, task.targetName, task.error);
+      if (pkg) {
+        await this.packageManagerService.unpublishPackage(pkg);
+        logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was unpublished caused by 404 response: ${JSON.stringify(data)}`);
+        logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
+        logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
+        await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+        this.logger.info('[PackageSyncerService.executeTask:remove-package] taskId: %s, targetName: %s',
+          task.taskId, task.targetName);
+      } else {
+        task.error = `Package not exists, response data: ${JSON.stringify(data)}`;
+        logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+        logs.push(`[${isoNow()}] ${failEnd}`);
+        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+        this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
+          task.taskId, task.targetName, task.error);
+      }
       return;
     }
 
