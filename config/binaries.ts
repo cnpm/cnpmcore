@@ -50,6 +50,20 @@ const binaries: {
     repo: 'nodejs/node',
     distUrl: 'https://nodejs.org/dist',
   },
+  'node-rc': {
+    category: 'node-rc',
+    description: 'Node.js Release Candidate',
+    syncer: SyncerClass.NodeBinary,
+    repo: 'nodejs/node',
+    distUrl: 'https://nodejs.org/download/rc',
+  },
+  'node-nightly': {
+    category: 'node-nightly',
+    description: 'Node.js Nightly Build',
+    syncer: SyncerClass.NodeBinary,
+    repo: 'nodejs/node',
+    distUrl: 'https://nodejs.org/download/nightly',
+  },
   'node-unofficial-builds': {
     category: 'node-unofficial-builds',
     description: 'Node.js unofficial-builds project https://unofficial-builds.nodejs.org/',
