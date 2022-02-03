@@ -15,4 +15,8 @@ export class ChangeRepository extends AbstractRepository {
   async query(since: number, limit: number) {
     return await ChangeModel.find({ id: { $gt: since } }).order('id', 'desc').limit(limit);
   }
+
+  async getLastChange() {
+    return await ChangeModel.findOne().order('id', 'desc').limit(1);
+  }
 }
