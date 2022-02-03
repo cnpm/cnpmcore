@@ -63,6 +63,12 @@ jobs:
 
   test-mysql57-oss-nfs:
     runs-on: ${{ matrix.os }}
+    if:
+      contains('
+        refs/heads/main
+        refs/heads/master
+        refs/heads/dev
+      ', github.ref)
 
     services:
       mysql:

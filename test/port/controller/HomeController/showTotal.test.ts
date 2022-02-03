@@ -30,7 +30,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       assert(data.instance_start_time);
       assert(data.sync_model === 'none');
       assert(data.sync_binary === false);
-      assert(data.cache_time === '');
+      assert(typeof data.cache_time === 'string');
 
       // downloads count
       const publisher = await TestUtil.createUser();
