@@ -9,24 +9,6 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
   let ctx: Context;
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
-    // make sure cache counter data cleanup
-    app.totalData = {
-      packageCount: 0,
-      packageVersionCount: 0,
-      lastPackage: '',
-      lastPackageVersion: '',
-      download: {
-        today: 0,
-        thisweek: 0,
-        thismonth: 0,
-        thisyear: 0,
-        lastday: 0,
-        lastweek: 0,
-        lastmonth: 0,
-        lastyear: 0,
-      },
-      changesStream: {},
-    };
   });
 
   afterEach(() => {
@@ -48,6 +30,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       assert(data.instance_start_time);
       assert(data.sync_model === 'none');
       assert(data.sync_binary === false);
+      assert(typeof data.cache_time === 'string');
 
       // downloads count
       const publisher = await TestUtil.createUser();
@@ -167,9 +150,12 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       assert(data.download.thisweek >= 3);
       assert(data.download.thismonth >= 3);
       assert(data.download.thisyear >= 3);
+      assert(data.download.samedayLastweek === 1);
       assert(data.download.lastweek >= 1);
       assert(data.download.lastmonth >= 1);
       assert(data.download.lastyear >= 1);
+      assert(data.cache_time);
+      assert(data.update_seq > 0);
       // console.log(data);
     });
 

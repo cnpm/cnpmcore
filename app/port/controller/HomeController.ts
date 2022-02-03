@@ -5,28 +5,33 @@ import {
   HTTPMethodEnum,
   Context,
   EggContext,
+  Inject,
 } from '@eggjs/tegg';
 import { AbstractController } from './AbstractController';
+import { CacheService } from '../../core/service/CacheService';
 
 const startTime = new Date();
 
 @HTTPController()
 export class HomeController extends AbstractController {
+  @Inject()
+  private readonly cacheService: CacheService;
+
   @HTTPMethod({
     // GET /
     // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#schema
     path: '/',
     method: HTTPMethodEnum.GET,
   })
-  async showTotal(@Context() ctx: EggContext) {
-    const totalData = ctx.app.totalData;
+  async showTotal() {
+    const totalData = await this.cacheService.getTotalData();
     const data = {
       last_pacakge: totalData.lastPackage,
       last_pacakge_version: totalData.lastPackageVersion,
       doc_count: totalData.packageCount,
       doc_version_count: totalData.packageVersionCount,
       download: totalData.download,
-      update_seq: 0,
+      update_seq: totalData.lastChangeId,
       sync_model: this.config.cnpmcore.syncMode,
       sync_changes_steam: totalData.changesStream,
       sync_binary: this.config.cnpmcore.enableSyncBinary,
@@ -34,8 +39,7 @@ export class HomeController extends AbstractController {
       node_version: process.version,
       app_version: this.config.pkg.version,
       engine: this.config.orm.client,
-      // donate: 'https://github.com/cnpm/cnpmcore',
-      // cache_time: 0,
+      cache_time: totalData.cacheTime,
     };
     return data;
   }
