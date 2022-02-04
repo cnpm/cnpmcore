@@ -489,6 +489,26 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(data.readme, '');
     });
 
+    it('should ignore package.version.readme exists', async () => {
+      const name = 'cnpmcore-test-sync-dependencies';
+      const result = await npmRegistry.getFullManifests(name);
+      result.data.readme = 'mock readme content';
+      result.data.versions['0.0.0'].readme = 'mock version readme content';
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
+      const { data } = await packageManagerService.listPackageFullManifests('', name);
+      assert(data.readme === 'mock readme content');
+      assert(data.versions['0.0.0'].readme === undefined);
+    });
+
     it('should work on mock package.readme is object', async () => {
       const name = 'cnpmcore-test-sync-dependencies';
       const result = await npmRegistry.getFullManifests(name);
