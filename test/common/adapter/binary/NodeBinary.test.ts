@@ -76,6 +76,45 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       assert(matchFile);
     });
 
+    it('should fetch subdir: /v14.0.0-nightly20200119b318926634/ work', async () => {
+      const binary = new NodeBinary(ctx.httpclient, ctx.logger, binaries['node-nightly']);
+      const result = await binary.fetch('/v14.0.0-nightly20200119b318926634/');
+      assert(result);
+      assert(result.items.length > 0);
+      let matchDir = false;
+      let matchFile1 = false;
+      let matchFile2 = false;
+      for (const item of result.items) {
+        if (item.name === 'docs/') {
+          assert(item.date === '19-Jan-2020 06:34');
+          assert(item.isDir === true);
+          assert(item.size === '-');
+          matchDir = true;
+        }
+        if (item.name === 'SHASUMS256.txt') {
+          assert(item.date === '19-Jan-2020 07:35');
+          assert(item.isDir === false);
+          assert(item.size === '3797');
+          assert(item.url === 'https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/SHASUMS256.txt');
+          matchFile1 = true;
+        }
+        if (item.name === 'node-v14.0.0-nightly20200119b318926634-linux-s390x.tar.xz') {
+          assert(item.date === '19-Jan-2020 06:03');
+          assert(item.isDir === false);
+          assert(item.size === '20416228');
+          assert(item.url === 'https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/node-v14.0.0-nightly20200119b318926634-linux-s390x.tar.xz');
+          matchFile2 = true;
+        }
+        if (!item.isDir) {
+          assert(typeof item.size === 'string');
+          assert(item.size.length > 2);
+        }
+      }
+      assert(matchDir);
+      assert(matchFile1);
+      assert(matchFile2);
+    });
+
     it('should on python', async () => {
       const binary = new NodeBinary(ctx.httpclient, ctx.logger, binaries.python);
       let result = await binary.fetch('/');
