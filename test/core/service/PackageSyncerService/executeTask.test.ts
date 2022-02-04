@@ -220,7 +220,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('❌ [0] Synced version 0.0.0 error, publish error: MockError: mm mock error'));
+      assert(log.includes('❌ [1] Synced version 0.0.0 error, publish error: MockError: mm mock error'));
       assert(log.includes('❌ All versions sync fail, package not exists'));
 
       const res = await app.httpRequest()
@@ -243,7 +243,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🐛 [0] Synced version 0.0.0 already exists, skip publish error'));
+      assert(log.includes('🐛 [1] Synced version 0.0.0 already exists, skip publish error'));
     });
 
     it('should ignore publish exists version', async () => {
@@ -272,7 +272,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🐛 [0] Synced version 0.0.0 already exists, skip publish it'));
+      assert(log.includes('🐛 [1] Synced version 0.0.0 already exists, skip publish it'));
     });
 
     it('should ignore download error error on sync task', async () => {
@@ -292,7 +292,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('❌ [0] Synced version 0.0.0 fail, download tarball error: Error: mock request error'));
+      assert(log.includes('❌ [1] Synced version 0.0.0 fail, download tarball error: Error: mock request error'));
       assert(log.includes('❌ All versions sync fail, package not exists'));
     });
 
@@ -520,7 +520,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('[0] Synced version 0.0.0 success'));
+      assert(log.includes('[1] Synced version 0.0.0 success'));
       assert(log.includes('🟢 Synced 1 tags: [{"action":"change","tag":"latest","version":"0.0.0"}]'));
       let data = await packageManagerService.listPackageFullManifests('', name);
       assert.deepEqual(data.data['dist-tags'], remotePkg['dist-tags']);
@@ -538,7 +538,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(!log.includes('[0] Synced version 0.0.0 success'));
+      assert(!log.includes('[1] Synced version 0.0.0 success'));
       assert(log.includes('🟢 Synced 1 tags: [{"action":"change","tag":"beta","version":"0.0.0"}]'));
       data = await packageManagerService.listPackageFullManifests('', name);
       assert.deepEqual(data.data['dist-tags'], remotePkg['dist-tags']);
@@ -552,7 +552,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(!log.includes('[0] Synced version 0.0.0 success'));
+      assert(!log.includes('[1] Synced version 0.0.0 success'));
       assert(!log.includes('🟢 Synced 1 tags: '));
       data = await packageManagerService.listPackageFullManifests('', name);
       assert.deepEqual(data.data['dist-tags'], remotePkg['dist-tags']);
@@ -569,7 +569,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(!log.includes('[0] Synced version 0.0.0 success'));
+      assert(!log.includes('[1] Synced version 0.0.0 success'));
       assert(log.includes('Synced 1 tags: [{"action":"remove","tag":"beta"}]'));
       data = await packageManagerService.listPackageFullManifests('', name);
       assert.deepEqual(data.data['dist-tags'], remotePkg['dist-tags']);
@@ -609,8 +609,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(!log.includes('[1] Synced fengmk2 => npm:fengmk2('));
-      assert(log.includes('[1] Synced foouser => npm:foouser('));
-      assert(log.includes('[2] Synced baruser => npm:baruser('));
+      assert(log.includes('[2] Synced foouser => npm:foouser('));
+      assert(log.includes('[3] Synced baruser => npm:baruser('));
       data = await packageManagerService.listPackageFullManifests('', name);
       assert.equal(data.data.maintainers.length, 3);
       assert.deepEqual(data.data.maintainers[0].name, 'fengmk2');
@@ -867,7 +867,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('🟢🟢🟢🟢🟢'));
-      assert(log.includes('🟢 [0] Synced version 0.0.1-security success'));
+      assert(log.includes('🟢 [1] Synced version 0.0.1-security success'));
       assert(log.includes('Syncing maintainers: [{\"name\":\"npm\",\"email\":\"npm@npmjs.com\"}]'));
     });
 
