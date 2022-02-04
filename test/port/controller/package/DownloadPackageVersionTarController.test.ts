@@ -182,7 +182,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         });
     });
 
-    it('should redirect to source registry when syncMode=all', async () => {
+    it('should not redirect public package to source registry when syncMode=all', async () => {
       if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
         mock(NFSAdapter.prototype, 'getDownloadUrl', async () => {
           return undefined;
@@ -190,6 +190,34 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       }
 
       mock(app.config.cnpmcore, 'syncMode', 'all');
+      const res = await app.httpRequest()
+        .get('/foo/-/foo-1.0.404404.tgz');
+      assert(res.status === 404);
+      assert(res.body.error === '[NOT_FOUND] foo not found');
+
+      // not redirect when package exists
+      await app.httpRequest()
+        .get(`/${name}/-/${name}-1.0.404404.tgz`)
+        .expect(404)
+        .expect({
+          error: '[NOT_FOUND] testmodule-download-version-tar@1.0.404404 not found',
+        });
+      await app.httpRequest()
+        .get(`/${scopedName}/-/${name}-1.0.404404.tgz`)
+        .expect(404)
+        .expect({
+          error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
+        });
+    });
+
+    it('should redirect public package to source registry when syncMode=none', async () => {
+      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
+        mock(NFSAdapter.prototype, 'getDownloadUrl', async () => {
+          return undefined;
+        });
+      }
+
+      mock(app.config.cnpmcore, 'syncMode', 'none');
       await app.httpRequest()
         .get('/foo/-/foo-1.0.404404.tgz')
         .expect(302)

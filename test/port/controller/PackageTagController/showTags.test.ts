@@ -23,8 +23,21 @@ describe('test/port/controller/PackageTagController/showTags.test.ts', () => {
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/not-exists not found');
     });
 
-    it('should 302 when package not exists on syncMode=all', async () => {
+    it('should 404 when package not exists on syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
+      let res = await app.httpRequest()
+        .get('/-/package/not-exists/dist-tags');
+      assert(res.status === 404);
+      assert(res.body.error === '[NOT_FOUND] not-exists not found');
+
+      res = await app.httpRequest()
+        .get('/-/package/@foo/not-exists/dist-tags');
+      assert(res.status === 404);
+      assert(res.body.error === '[NOT_FOUND] @foo/not-exists not found');
+    });
+
+    it('should 302 when package not exists on syncMode=none', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
       let res = await app.httpRequest()
         .get('/-/package/not-exists/dist-tags');
       assert(res.status === 302);
