@@ -150,9 +150,9 @@ export class BinarySyncerService extends AbstractService {
       let logs: string[] = [];
       const newItems = await this.diff(binaryName, dir, result.items);
       logs.push(`[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryInstance.constructor.name}`);
-      for (const [ index, item ] of newItems.entries()) {
+      for (const [ index, { item, reason }] of newItems.entries()) {
         if (item.isDir) {
-          logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Start sync dir ${JSON.stringify(item)}`);
+          logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Start sync dir ${JSON.stringify(item)}, reason: ${reason}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
           const [ hasError, hasSubItems ] = await this.syncDir(binaryInstance, task, `${dir}${item.name}`, `${parentIndex}${index}.`);
@@ -167,7 +167,7 @@ export class BinarySyncerService extends AbstractService {
           }
         } else {
           // download to nfs
-          logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Downloading ${JSON.stringify(item)}`);
+          logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Downloading ${JSON.stringify(item)}, reason: ${reason}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
           let localFile = '';
@@ -214,24 +214,31 @@ export class BinarySyncerService extends AbstractService {
     for (const item of existsItems) {
       existsMap.set(item.name, item);
     }
-    const diffItems: Binary[] = [];
+    const diffItems: { item: Binary; reason: string }[] = [];
     for (const item of fetchItems) {
       const existsItem = existsMap.get(item.name);
       if (!existsItem) {
-        diffItems.push(Binary.create({
-          category: binaryName,
-          parent: dir,
-          name: item.name,
-          isDir: item.isDir,
-          size: 0,
-          date: item.date,
-          sourceUrl: item.url,
-          ignoreDownloadStatuses: item.ignoreDownloadStatuses,
-        }));
+        diffItems.push({
+          item: Binary.create({
+            category: binaryName,
+            parent: dir,
+            name: item.name,
+            isDir: item.isDir,
+            size: 0,
+            date: item.date,
+            sourceUrl: item.url,
+            ignoreDownloadStatuses: item.ignoreDownloadStatuses,
+          }),
+          reason: 'new item',
+        });
       } else if (existsItem.date !== item.date) {
+        diffItems.push({
+          item: existsItem,
+          reason: `date diff, local: ${JSON.stringify(existsItem.date)}, remote: ${JSON.stringify(item.date)}`,
+        });
         existsItem.sourceUrl = item.url;
         existsItem.ignoreDownloadStatuses = item.ignoreDownloadStatuses;
-        diffItems.push(existsItem);
+        existsItem.date = item.date;
       }
     }
     return diffItems;
