@@ -55,12 +55,10 @@ export abstract class AbstractController extends MiddlewareController {
     const [ scope ] = getScopeAndName(fullname);
     // dont sync private scope
     if (!this.isPrivateScope(scope)) {
-      // ErrorHandler will use syncPackage to create sync task
-      err.syncPackage = {
-        enableSync: this.enableSyncAll,
-        fullname,
-        sourceRegistry: this.sourceRegistry,
-      };
+      // syncMode = none, redirect public package to source registry
+      if (!this.enableSyncAll) {
+        err.redirectToSourceRegistry = this.sourceRegistry;
+      }
     }
     return err;
   }

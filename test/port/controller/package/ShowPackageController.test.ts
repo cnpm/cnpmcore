@@ -520,8 +520,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(res.body.error === `[NOT_FOUND] @cnpm/${name} not found`);
     });
 
-    it('should redirect to source registry if package not exists when syncMode=all', async () => {
-      mock(app.config.cnpmcore, 'syncMode', 'all');
+    it('should redirect to source registry if public package not exists when syncMode=none', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
       await app.httpRequest()
         .get('/123')
         .expect('location', 'https://registry.npmjs.org/123')
@@ -548,14 +548,22 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect(302);
     });
 
+    it('should not redirect to source registry if public package not exists when syncMode=all', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'all');
+      const res = await app.httpRequest()
+        .get('/123');
+      assert(res.status === 404);
+      assert(res.body.error === '[NOT_FOUND] 123 not found');
+    });
+
     it('should not redirect private scope pacakge to source registry if package not exists when syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
       let res = await app.httpRequest()
         .get('/@cnpm/cnpmcore')
         .set('Accept', 'application/vnd.npm.install-v1+json')
-        .expect(404)
         .expect('content-type', 'application/json; charset=utf-8');
-      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/cnpmcore not found');
+      assert(res.status === 404);
+      assert(res.body.error === '[NOT_FOUND] @cnpm/cnpmcore not found');
 
       res = await app.httpRequest()
         .get('/@cnpm/cnpmcore')
@@ -563,7 +571,25 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .set('Accept', 'application/json')
         .expect(404)
         .expect('content-type', 'application/json; charset=utf-8');
-      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/cnpmcore not found');
+      assert(res.body.error === '[NOT_FOUND] @cnpm/cnpmcore not found');
+    });
+
+    it('should not redirect private scope pacakge to source registry if package not exists when syncMode=none', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      let res = await app.httpRequest()
+        .get('/@cnpm/cnpmcore')
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert(res.body.error === '[NOT_FOUND] @cnpm/cnpmcore not found');
+
+      res = await app.httpRequest()
+        .get('/@cnpm/cnpmcore')
+        .query({ t: '0123123', foo: 'bar' })
+        .set('Accept', 'application/json')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert(res.body.error === '[NOT_FOUND] @cnpm/cnpmcore not found');
     });
 
     it('should redirect public scope pacakge to source registry if package not exists when syncMode=none', async () => {
