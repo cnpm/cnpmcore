@@ -9,7 +9,8 @@ export class NodeBinary extends AbstractBinary {
     // <a href="index.json">index.json</a>                                         17-Dec-2021 23:16              219862
     // <a href="index.tab">index.tab</a>                                          17-Dec-2021 23:16              136319
     // <a href="node-0.0.1.tar.gz">node-0.0.1.tar.gz</a>                                  26-Aug-2011 16:22             2846972
-    const re = /<a [^>]+?>([^<]+?)<\/a>\s+?([\w\-]+? \w{2}\:\d{2})\s+?(\d+|\-)/ig;
+    // <a href="node-v14.0.0-nightly20200119b318926634-linux-armv7l.tar.xz">node-v14.0.0-nightly20200119b318926634-linux-ar..&gt;</a> 19-Jan-2020 06:07            18565976
+    const re = /<a href="([^\"]+?)"[^>]*?>[^<]+?<\/a>\s+?([\w\-]+? \w{2}\:\d{2})\s+?(\d+|\-)/ig;
     const matchs = html.matchAll(re);
     const items: BinaryItem[] = [];
     for (const m of matchs) {
