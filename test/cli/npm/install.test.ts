@@ -83,6 +83,24 @@ describe('test/cli/npm/install.test.ts', () => {
         .expect('stdout', /\/@cnpm\/foo\/\-\/foo-1.0.0.tgz/)
         .expect('code', 0)
         .end();
+
+      await coffee
+        .spawn('npm', [
+          'dist-tag',
+          'ls',
+          '@cnpm/foo',
+          `--registry=${registry}`,
+          `--userconfig=${userconfig}`,
+          `--cache=${cacheDir}`,
+          // '--json',
+        ], {
+          cwd: demoDir,
+        })
+        .debug()
+        .expect('stdout', /latest: 1\.0\.0/)
+        .expect('code', 0)
+        .end();
+
       await coffee
         .spawn('npm', [
           'install',
@@ -97,6 +115,23 @@ describe('test/cli/npm/install.test.ts', () => {
         })
         .debug()
         .expect('stdout', /added 1 package/)
+        .expect('code', 0)
+        .end();
+
+      await coffee
+        .spawn('npm', [
+          'unpublish',
+          '-f',
+          '@cnpm/foo',
+          `--registry=${registry}`,
+          `--userconfig=${userconfig}`,
+          `--cache=${cacheDir}`,
+          // '--json',
+        ], {
+          cwd: demoDir,
+        })
+        .debug()
+        .expect('stdout', /\- \@cnpm\/foo/)
         .expect('code', 0)
         .end();
     });
