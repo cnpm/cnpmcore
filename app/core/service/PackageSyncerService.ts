@@ -415,6 +415,11 @@ export class PackageSyncerService extends AbstractService {
             diffMeta[key] = item[key];
           }
         }
+        // should delete readme
+        if ('readme' in existsItem) {
+          if (!diffMeta) diffMeta = {};
+          diffMeta.readme = '';
+        }
         if (diffMeta) {
           differentMetas.push([ existsItem, diffMeta ]);
         }
