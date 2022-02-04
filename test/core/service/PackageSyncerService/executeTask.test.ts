@@ -141,7 +141,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢 Synced 1 versions'));
+      assert(log.includes('] 🟢🟢🟢🟢🟢'));
     });
 
     it('should ignore ObjectNotAppendable error', async () => {
@@ -161,7 +161,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢 Synced 1 versions'));
+      assert(log.includes('] 🟢🟢🟢🟢🟢'));
     });
 
     it('should sync cnpmcore-test-sync-dependencies => cnpmcore-test-sync-deprecated', async () => {
@@ -346,7 +346,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('] 🚧 Remote tag(foo: 2.0.0) not exists in local dist-tags({"latest":"2.0.0","next":"2.0.0"})'));
-      assert(log.includes('] 🟢 Refresh package manifests to dist'));
+      assert(log.includes('] 🚧 Refreshing manifests to dists ......'));
+      assert(log.includes('] 🟢 Refresh use'));
     });
 
     it('should sync removed versions', async () => {
