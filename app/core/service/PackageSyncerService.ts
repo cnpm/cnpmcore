@@ -1,3 +1,4 @@
+import os from 'os';
 import {
   AccessLevel,
   ContextProto,
@@ -204,7 +205,7 @@ export class PackageSyncerService extends AbstractService {
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
     }
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync "${fullname}" from ${registry}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts} 🚧🚧🚧🚧🚧`);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}" 🚧🚧🚧🚧🚧`);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, log: %s',
       task.taskId, task.targetName, task.attempts, logUrl);
@@ -383,17 +384,22 @@ export class PackageSyncerService extends AbstractService {
     let syncVersionCount = 0;
     let forceRefreshDists = false;
     const differentMetas: any[] = [];
-    for (const [ index, item ] of versions.entries()) {
+    let syncIndex = 0;
+    for (const item of versions) {
       const version: string = item.version;
       if (!version) continue;
       let existsItem = existsVersionMap[version];
       if (!existsItem && pkg) {
         // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called
         existsItem = await this.packageManagerService.findPackageVersionManifest(pkg.packageId, version);
-        // version not exists on manifests, need to refresh
-        // bugfix: https://github.com/cnpm/cnpmcore/issues/115
-        forceRefreshDists = true;
-        logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
+        // only allow existsItem on db to force refresh, to avoid big versions fresh
+        // see https://r.cnpmjs.org/-/package/@npm-torg/public-scoped-free-org-test-package-2/syncs/61fcc7e8c1646e26a845b674/log
+        if (existsItem) {
+          // version not exists on manifests, need to refresh
+          // bugfix: https://github.com/cnpm/cnpmcore/issues/115
+          forceRefreshDists = true;
+          logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
+        }
       }
       if (existsItem) {
         // check metaDataKeys, if different value, override exists one
@@ -411,6 +417,7 @@ export class PackageSyncerService extends AbstractService {
         }
         continue;
       }
+      syncIndex++;
       const description: string = item.description;
       // "dist": {
       //   "shasum": "943e0ec03df00ebeb6273a5b94b916ba54b47581",
@@ -420,7 +427,7 @@ export class PackageSyncerService extends AbstractService {
       const tarball: string = dist && dist.tarball;
       if (!tarball) {
         lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
-        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, ${lastErrorMessage}`);
+        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
         await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
@@ -428,17 +435,17 @@ export class PackageSyncerService extends AbstractService {
       const publishTimeISO = timeMap[version];
       const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
       const delay = Date.now() - publishTime.getTime();
-      logs.push(`[${isoNow()}] 🚧 [${index}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
+      logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
       let localFile: string;
       try {
         const { tmpfile, headers, timing } =
           await downloadToTempfile(this.httpclient, this.config.dataDir, tarball);
         localFile = tmpfile;
-        logs.push(`[${isoNow()}] 🚧 [${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
+        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
       } catch (err: any) {
         this.logger.error('Download tarball %s error: %s', tarball, err);
         lastErrorMessage = `download tarball error: ${err}`;
-        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, ${lastErrorMessage}`);
+        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
         await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
@@ -451,7 +458,7 @@ export class PackageSyncerService extends AbstractService {
         const existsPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
         if (existsPkgVersion) {
           await rm(localFile, { force: true });
-          logs.push(`[${isoNow()}] 🐛 [${index}] Synced version ${version} already exists, skip publish it`);
+          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish it`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
           continue;
@@ -475,15 +482,15 @@ export class PackageSyncerService extends AbstractService {
       try {
         const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
         syncVersionCount++;
-        logs.push(`[${isoNow()}] 🟢 [${index}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
+        logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
       } catch (err: any) {
         if (err.name === 'ForbiddenError') {
-          logs.push(`[${isoNow()}] 🐛 [${index}] Synced version ${version} already exists, skip publish error`);
+          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish error`);
         } else {
           err.taskId = task.taskId;
           this.logger.error(err);
           lastErrorMessage = `publish error: ${err}`;
-          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} error, ${lastErrorMessage}`);
+          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} error, ${lastErrorMessage}`);
         }
       }
       await this.taskService.appendTaskLog(task, logs.join('\n'));
