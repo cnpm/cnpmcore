@@ -392,6 +392,7 @@ export class PackageSyncerService extends AbstractService {
       const version: string = item.version;
       if (!version) continue;
       let existsItem = existsVersionMap[version];
+      const shouldDeleteReadme = existsItem && 'readme' in existsItem;
       if (!existsItem && pkg) {
         // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called
         existsItem = await this.packageManagerService.findPackageVersionManifest(pkg.packageId, version);
@@ -416,7 +417,7 @@ export class PackageSyncerService extends AbstractService {
           }
         }
         // should delete readme
-        if ('readme' in existsItem) {
+        if (shouldDeleteReadme) {
           if (!diffMeta) diffMeta = {};
           diffMeta.readme = undefined;
         }
