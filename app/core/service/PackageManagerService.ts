@@ -500,9 +500,6 @@ export class PackageManagerService extends AbstractService {
     if (replaceData) {
       manifest = replaceData;
     }
-    if ('readme' in manifest) {
-      delete manifest.readme;
-    }
     const manifestBytes = Buffer.from(JSON.stringify(manifest));
     const manifestIntegrity = await calculateIntegrity(manifestBytes);
     manifestDist.size = manifestBytes.length;

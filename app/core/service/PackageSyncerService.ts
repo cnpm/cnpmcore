@@ -418,7 +418,7 @@ export class PackageSyncerService extends AbstractService {
         // should delete readme
         if ('readme' in existsItem) {
           if (!diffMeta) diffMeta = {};
-          diffMeta.readme = '';
+          diffMeta.readme = undefined;
         }
         if (diffMeta) {
           differentMetas.push([ existsItem, diffMeta ]);
@@ -533,7 +533,11 @@ export class PackageSyncerService extends AbstractService {
         await this.packageManagerService.savePackageVersionManifest(pkgVersion, diffMeta, diffMeta);
       }
       syncVersionCount++;
-      logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${JSON.stringify(diffMeta)}`);
+      let diffMetaInfo = JSON.stringify(diffMeta);
+      if ('readme' in diffMeta) {
+        diffMetaInfo += ', delete exists readme';
+      }
+      logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${diffMetaInfo}`);
     }
 
     // 2.3 find out remove versions

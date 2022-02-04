@@ -1008,7 +1008,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🟢 Synced version 2.0.0 success, different meta: {"readme":""}'));
+      assert(log.includes('🟢 Synced version 2.0.0 success, different meta: {}, delete exists readme'));
       mock.restore();
       manifests = await packageManagerService.listPackageFullManifests('', name);
       assert(manifests.data.versions['2.0.0'].readme === undefined);
