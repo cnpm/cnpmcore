@@ -205,10 +205,11 @@ export class PackageSyncerService extends AbstractService {
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
     }
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}" 🚧🚧🚧🚧🚧`);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, log: %s',
       task.taskId, task.targetName, task.attempts, logUrl);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}" 🚧🚧🚧🚧🚧`);
+    logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
     const [ scope, name ] = getScopeAndName(fullname);
     let pkg = await this.packageRepository.findPackage(scope, name);
@@ -224,6 +225,8 @@ export class PackageSyncerService extends AbstractService {
     }
 
     if (this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst) {
+      await this.taskService.appendTaskLog(task, logs.join('\n'));
+      logs = [];
       // create sync task on sourceRegistry and skipDependencies = true
       await this.syncUpstream(task);
     }
