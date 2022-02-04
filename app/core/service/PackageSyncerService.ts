@@ -1,3 +1,4 @@
+import os from 'os';
 import {
   AccessLevel,
   ContextProto,
@@ -204,7 +205,7 @@ export class PackageSyncerService extends AbstractService {
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
     }
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync "${fullname}" from ${registry}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts} 🚧🚧🚧🚧🚧`);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}" 🚧🚧🚧🚧🚧`);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, log: %s',
       task.taskId, task.targetName, task.attempts, logUrl);
