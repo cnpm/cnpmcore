@@ -172,17 +172,19 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
 
-    it('should redirect to source registry when syncMode=all', async () => {
+    it('should not redirect public package version to source registry when syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
-      await app.httpRequest()
-        .get('/foonot-exists/1.0.40000404')
-        .expect('location', 'https://registry.npmjs.org/foonot-exists/1.0.40000404')
-        .expect(302);
+      let res = await app.httpRequest()
+        .get('/foonot-not-exists/1.0.40000404')
+        .expect(404);
+      assert(res.body.error === '[NOT_FOUND] foonot-not-exists not found');
 
-      await app.httpRequest()
-        .get('/foonot-exists/1.0.40000404?t=123')
-        .expect('location', 'https://registry.npmjs.org/foonot-exists/1.0.40000404?t=123')
-        .expect(302);
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      await TestUtil.createPackage({ name: 'foo-exists', isPrivate: false });
+      res = await app.httpRequest()
+        .get('/foo-exists/1.0.40000404?t=123')
+        .expect(404);
+      assert(res.body.error === '[NOT_FOUND] foo-exists@1.0.40000404 not found');
     });
 
     it('should not redirect private scope package to source registry when syncMode=all', async () => {
@@ -190,7 +192,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       const res = await app.httpRequest()
         .get('/@cnpm/foonot-exists/1.0.40000404')
         .expect(404);
-      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
+      assert(res.body.error === '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
 
     it('should not redirect private scope package to source registry when syncMode=none', async () => {
@@ -203,15 +205,15 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
 
     it('should redirect public scope package to source registry when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
-      await app.httpRequest()
-        .get('/@egg/foonot-exists/1.0.40000404')
-        .expect('location', 'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404')
-        .expect(302);
+      let res = await app.httpRequest()
+        .get('/@egg/foonot-exists/1.0.40000404');
+      assert(res.status === 302);
+      assert(res.headers.location === 'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404');
 
-      await app.httpRequest()
-        .get('/@egg/foonot-exists/1.0.40000404?t=123')
-        .expect('location', 'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404?t=123')
-        .expect(302);
+      res = await app.httpRequest()
+        .get('/@egg/foonot-exists/1.0.40000404?t=123');
+      assert(res.status === 302);
+      assert(res.headers.location === 'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404?t=123');
     });
 
     it('should redirect public non scope package to source registry when syncMode=none', async () => {

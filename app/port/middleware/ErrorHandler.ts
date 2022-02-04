@@ -1,5 +1,4 @@
 import { EggContext, Next } from '@eggjs/tegg';
-import { PackageSyncerService } from '../../core/service/PackageSyncerService';
 
 const DEFAULT_SERVER_ERROR_STATUS = 500;
 
@@ -7,19 +6,8 @@ export async function ErrorHandler(ctx: EggContext, next: Next) {
   try {
     await next();
   } catch (err: any) {
-    if (err.name === 'PackageNotFoundError' && err.syncPackage) {
-      const syncPacakge = err.syncPackage;
-      ctx.redirect(`${syncPacakge.sourceRegistry}${ctx.url}`);
-      if (syncPacakge.enableSync) {
-        const packageSyncerService = await ctx.getEggObject(PackageSyncerService);
-        const task = await packageSyncerService.createTask(syncPacakge.fullname, {
-          authorIp: ctx.ip,
-          authorId: ctx.userId,
-          tips: `Sync cause by "${syncPacakge.fullname}" missing, request URL "${ctx.href}"`,
-        });
-        ctx.logger.info('[middleware:ErrorHandler] create sync package "%s" task %s',
-          syncPacakge.fullname, task.taskId);
-      }
+    if (err.name === 'PackageNotFoundError' && err.redirectToSourceRegistry) {
+      ctx.redirect(`${err.redirectToSourceRegistry}${ctx.url}`);
       return;
     }
 
