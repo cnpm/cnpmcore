@@ -609,8 +609,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(!log.includes('[1] Synced fengmk2 => npm:fengmk2('));
-      assert(log.includes('[2] Synced foouser => npm:foouser('));
-      assert(log.includes('[3] Synced baruser => npm:baruser('));
+      assert(log.includes('[1] Synced foouser => npm:foouser('));
+      assert(log.includes('[2] Synced baruser => npm:baruser('));
       data = await packageManagerService.listPackageFullManifests('', name);
       assert.equal(data.data.maintainers.length, 3);
       assert.deepEqual(data.data.maintainers[0].name, 'fengmk2');
