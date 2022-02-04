@@ -98,6 +98,11 @@ export class PackageManagerService extends AbstractService {
       throw new ForbiddenError(`Can't modify pre-existing version: ${pkg.fullname}@${pkgVersion.version}`);
     }
 
+    // make sure cmd.packageJson.readme is deleted
+    if ('readme' in cmd.packageJson) {
+      delete cmd.packageJson.readme;
+    }
+
     // add _cnpmcore_publish_time field to cmd.packageJson
     if (!cmd.packageJson._cnpmcore_publish_time) {
       cmd.packageJson._cnpmcore_publish_time = new Date();
@@ -618,6 +623,9 @@ export class PackageManagerService extends AbstractService {
     for (const packageVersion of packageVersions) {
       const manifest = await this.readDistBytesToJSON(packageVersion.manifestDist);
       if (!manifest) continue;
+      if ('readme' in manifest) {
+        delete manifest.readme;
+      }
       if (lastestTagVersion && packageVersion.version === lastestTagVersion) {
         latestManifest = manifest;
         // set readme

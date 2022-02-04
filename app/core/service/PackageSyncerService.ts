@@ -392,6 +392,7 @@ export class PackageSyncerService extends AbstractService {
       const version: string = item.version;
       if (!version) continue;
       let existsItem = existsVersionMap[version];
+      const shouldDeleteReadme = existsItem && 'readme' in existsItem;
       if (!existsItem && pkg) {
         // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called
         existsItem = await this.packageManagerService.findPackageVersionManifest(pkg.packageId, version);
@@ -414,6 +415,11 @@ export class PackageSyncerService extends AbstractService {
             if (!diffMeta) diffMeta = {};
             diffMeta[key] = item[key];
           }
+        }
+        // should delete readme
+        if (shouldDeleteReadme) {
+          if (!diffMeta) diffMeta = {};
+          diffMeta.readme = undefined;
         }
         if (diffMeta) {
           differentMetas.push([ existsItem, diffMeta ]);
@@ -528,7 +534,11 @@ export class PackageSyncerService extends AbstractService {
         await this.packageManagerService.savePackageVersionManifest(pkgVersion, diffMeta, diffMeta);
       }
       syncVersionCount++;
-      logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${JSON.stringify(diffMeta)}`);
+      let diffMetaInfo = JSON.stringify(diffMeta);
+      if ('readme' in diffMeta) {
+        diffMetaInfo += ', delete exists readme';
+      }
+      logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${diffMetaInfo}`);
     }
 
     // 2.3 find out remove versions

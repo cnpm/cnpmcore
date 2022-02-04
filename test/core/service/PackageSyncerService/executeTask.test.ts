@@ -489,6 +489,26 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(data.readme, '');
     });
 
+    it('should ignore package.version.readme exists', async () => {
+      const name = 'cnpmcore-test-sync-dependencies';
+      const result = await npmRegistry.getFullManifests(name);
+      result.data.readme = 'mock readme content';
+      result.data.versions['0.0.0'].readme = 'mock version readme content';
+      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
+      const { data } = await packageManagerService.listPackageFullManifests('', name);
+      assert(data.readme === 'mock readme content');
+      assert(data.versions['0.0.0'].readme === undefined);
+    });
+
     it('should work on mock package.readme is object', async () => {
       const name = 'cnpmcore-test-sync-dependencies';
       const result = await npmRegistry.getFullManifests(name);
@@ -954,7 +974,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('🟢 Synced version 2.0.0 success, different meta: {"peerDependenciesMeta":{"bufferutil":{"optional":true},"utf-8-validate":{"optional":true}},"os":["linux"],"cpu":["x64"]}'));
       assert(log.includes('Z] 👉👉👉👉👉 Tips: sync test tips here 👈👈👈👈👈'));
       assert(log.includes(', skipDependencies: false'));
-      const manifests = await packageManagerService.listPackageFullManifests('', name);
+      let manifests = await packageManagerService.listPackageFullManifests('', name);
       assert.equal(manifests.data.versions['2.0.0'].peerDependenciesMeta.bufferutil.optional, true);
       assert.equal(manifests.data.versions['2.0.0'].os[0], 'linux');
       assert.equal(manifests.data.versions['2.0.0'].cpu[0], 'x64');
@@ -976,6 +996,22 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(!log.includes('🟢 Synced version 2.0.0 success, different meta:'));
+
+      // should delete readme
+      manifests.data.versions['2.0.0'].readme = 'mock version readme content';
+      mock.data(PackageManagerService.prototype, 'listPackageFullManifests', manifests);
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('🟢 Synced version 2.0.0 success, different meta: {}, delete exists readme'));
+      mock.restore();
+      manifests = await packageManagerService.listPackageFullManifests('', name);
+      assert(manifests.data.versions['2.0.0'].readme === undefined);
     });
 
     it('should sync download data work on enableSyncDownloadData = true', async () => {
