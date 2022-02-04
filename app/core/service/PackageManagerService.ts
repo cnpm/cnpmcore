@@ -238,6 +238,10 @@ export class PackageManagerService extends AbstractService {
     await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
   }
 
+  async refreshPackageDistTagsToDists(pkg: Package) {
+    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
+  }
+
   async listPackageFullManifests(scope: string, name: string) {
     return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, true);
   }

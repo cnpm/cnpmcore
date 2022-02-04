@@ -382,7 +382,7 @@ export class PackageSyncerService extends AbstractService {
     const versions = Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     let syncVersionCount = 0;
-    let forceRefreshDists = false;
+    let shouldRefreshDists = false;
     const differentMetas: any[] = [];
     let syncIndex = 0;
     for (const item of versions) {
@@ -397,7 +397,7 @@ export class PackageSyncerService extends AbstractService {
         if (existsItem) {
           // version not exists on manifests, need to refresh
           // bugfix: https://github.com/cnpm/cnpmcore/issues/115
-          forceRefreshDists = true;
+          shouldRefreshDists = true;
           logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
         }
       }
@@ -546,9 +546,18 @@ export class PackageSyncerService extends AbstractService {
       }
     }
 
-    if (syncVersionCount > 0 || forceRefreshDists) {
-      await this.packageManagerService.refreshPackageManifestsToDists(pkg);
+    if (syncVersionCount > 0) {
+      shouldRefreshDists = true;
       logs.push(`[${isoNow()}] 🟢 Synced ${syncVersionCount} versions`);
+    }
+
+    if (shouldRefreshDists) {
+      logs.push(`[${isoNow()}] 🚧 Refreshing manifests to dists ......`);
+      const start = Date.now();
+      await this.taskService.appendTaskLog(task, logs.join('\n'));
+      logs = [];
+      await this.packageManagerService.refreshPackageManifestsToDists(pkg);
+      logs.push(`[${isoNow()}] 🟢 Refresh use ${Date.now() - start}ms`);
     }
 
     // 3. update tags
@@ -557,15 +566,15 @@ export class PackageSyncerService extends AbstractService {
     // },
     const changedTags: { tag: string, version?: string, action: string }[] = [];
     const existsDistTags = existsData && existsData['dist-tags'] || {};
-    let needRefreshPackageManifestsToDists = false;
+    let shouldRefreshDistTags = false;
     for (const tag in distTags) {
       const version = distTags[tag];
       const changed = await this.packageManagerService.savePackageTag(pkg, tag, version);
       if (changed) {
         changedTags.push({ action: 'change', tag, version });
-        needRefreshPackageManifestsToDists = false;
+        shouldRefreshDistTags = false;
       } else if (version !== existsDistTags[tag]) {
-        needRefreshPackageManifestsToDists = true;
+        shouldRefreshDistTags = true;
         logs.push(`[${isoNow()}] 🚧 Remote tag(${tag}: ${version}) not exists in local dist-tags(${JSON.stringify(existsDistTags)})`);
       }
     }
@@ -575,16 +584,16 @@ export class PackageSyncerService extends AbstractService {
         const changed = await this.packageManagerService.removePackageTag(pkg, tag);
         if (changed) {
           changedTags.push({ action: 'remove', tag });
-          needRefreshPackageManifestsToDists = false;
+          shouldRefreshDistTags = false;
         }
       }
     }
     if (changedTags.length > 0) {
       logs.push(`[${isoNow()}] 🟢 Synced ${changedTags.length} tags: ${JSON.stringify(changedTags)}`);
     }
-    if (needRefreshPackageManifestsToDists) {
-      await this.packageManagerService.refreshPackageManifestsToDists(pkg);
-      logs.push(`[${isoNow()}] 🟢 Refresh package manifests to dist`);
+    if (shouldRefreshDistTags) {
+      await this.packageManagerService.refreshPackageDistTagsToDists(pkg);
+      logs.push(`[${isoNow()}] 🟢 Refresh dist-tags`);
     }
 
     // 4. add package maintainers
