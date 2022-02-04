@@ -232,13 +232,13 @@ export class BinarySyncerService extends AbstractService {
           reason: 'new item',
         });
       } else if (existsItem.date !== item.date) {
-        existsItem.sourceUrl = item.url;
-        existsItem.ignoreDownloadStatuses = item.ignoreDownloadStatuses;
-        existsItem.date = item.date;
         diffItems.push({
           item: existsItem,
           reason: `date diff, local: ${JSON.stringify(existsItem.date)}, remote: ${JSON.stringify(item.date)}`,
         });
+        existsItem.sourceUrl = item.url;
+        existsItem.ignoreDownloadStatuses = item.ignoreDownloadStatuses;
+        existsItem.date = item.date;
       }
     }
     return diffItems;
