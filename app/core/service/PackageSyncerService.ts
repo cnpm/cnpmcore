@@ -383,7 +383,8 @@ export class PackageSyncerService extends AbstractService {
     let syncVersionCount = 0;
     let forceRefreshDists = false;
     const differentMetas: any[] = [];
-    for (const [ index, item ] of versions.entries()) {
+    let syncIndex = 0;
+    for (const item of versions) {
       const version: string = item.version;
       if (!version) continue;
       let existsItem = existsVersionMap[version];
@@ -411,6 +412,7 @@ export class PackageSyncerService extends AbstractService {
         }
         continue;
       }
+      syncIndex++;
       const description: string = item.description;
       // "dist": {
       //   "shasum": "943e0ec03df00ebeb6273a5b94b916ba54b47581",
@@ -420,7 +422,7 @@ export class PackageSyncerService extends AbstractService {
       const tarball: string = dist && dist.tarball;
       if (!tarball) {
         lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
-        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, ${lastErrorMessage}`);
+        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
         await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
@@ -428,17 +430,17 @@ export class PackageSyncerService extends AbstractService {
       const publishTimeISO = timeMap[version];
       const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
       const delay = Date.now() - publishTime.getTime();
-      logs.push(`[${isoNow()}] 🚧 [${index}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
+      logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
       let localFile: string;
       try {
         const { tmpfile, headers, timing } =
           await downloadToTempfile(this.httpclient, this.config.dataDir, tarball);
         localFile = tmpfile;
-        logs.push(`[${isoNow()}] 🚧 [${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
+        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
       } catch (err: any) {
         this.logger.error('Download tarball %s error: %s', tarball, err);
         lastErrorMessage = `download tarball error: ${err}`;
-        logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} fail, ${lastErrorMessage}`);
+        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
         await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
@@ -451,7 +453,7 @@ export class PackageSyncerService extends AbstractService {
         const existsPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
         if (existsPkgVersion) {
           await rm(localFile, { force: true });
-          logs.push(`[${isoNow()}] 🐛 [${index}] Synced version ${version} already exists, skip publish it`);
+          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish it`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
           continue;
@@ -475,15 +477,15 @@ export class PackageSyncerService extends AbstractService {
       try {
         const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
         syncVersionCount++;
-        logs.push(`[${isoNow()}] 🟢 [${index}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
+        logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
       } catch (err: any) {
         if (err.name === 'ForbiddenError') {
-          logs.push(`[${isoNow()}] 🐛 [${index}] Synced version ${version} already exists, skip publish error`);
+          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish error`);
         } else {
           err.taskId = task.taskId;
           this.logger.error(err);
           lastErrorMessage = `publish error: ${err}`;
-          logs.push(`[${isoNow()}] ❌ [${index}] Synced version ${version} error, ${lastErrorMessage}`);
+          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} error, ${lastErrorMessage}`);
         }
       }
       await this.taskService.appendTaskLog(task, logs.join('\n'));
