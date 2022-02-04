@@ -150,7 +150,7 @@ export class BinarySyncerService extends AbstractService {
       let logs: string[] = [];
       const newItems = await this.diff(binaryName, dir, result.items);
       logs.push(`[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryInstance.constructor.name}`);
-      for (const [ index, { item, reason } ] of newItems.entries()) {
+      for (const [ index, { item, reason }] of newItems.entries()) {
         if (item.isDir) {
           logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Start sync dir ${JSON.stringify(item)}, reason: ${reason}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
