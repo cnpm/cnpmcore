@@ -22,9 +22,9 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
       let data = res.body;
-      assert(data.doc_count === 0);
-      assert(data.doc_version_count === 0);
-      assert(data.download.today === 0);
+      assert(typeof data.doc_count === 'number');
+      assert(typeof data.doc_version_count === 'number');
+      assert(typeof data.download.today === 'number');
       assert(data.engine === app.config.orm.client);
       assert(data.node_version === process.version);
       assert(data.instance_start_time);
