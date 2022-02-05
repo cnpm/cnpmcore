@@ -4,7 +4,6 @@ import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
 import { Package as PackageModel } from 'app/repository/model/Package';
-import { PackageVersion as PackageVersionModel } from 'app/repository/model/PackageVersion';
 import { Task as TaskModel } from 'app/repository/model/Task';
 import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
 import { TestUtil } from 'test/TestUtil';
@@ -367,29 +366,6 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const removeVersion = Object.keys(result.data.versions)[0];
       delete result.data.versions[removeVersion];
       mock.data(NPMRegistry.prototype, 'getFullManifests', result);
-      await packageSyncerService.createTask(name);
-      task = await packageSyncerService.findExecuteTask();
-      assert(task);
-      assert.equal(task.targetName, name);
-      await packageSyncerService.executeTask(task);
-      stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
-      log = await TestUtil.readStreamToLog(stream);
-      // console.log(log);
-      assert(!log.includes('] 🟢 Synced 1 versions'));
-      assert(!log.includes(`] 🟢 Removed version ${removeVersion} success`));
-      // dont remove over 7 days
-      assert(log.includes(`] 📖 Skip remove version ${removeVersion}`));
-      let r = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
-      assert(Object.keys(r.data.versions).length === 2);
-
-      // remove less than 7 days
-      const pkg = await PackageModel.findOne({ scope: '@cnpmcore', name: 'test-sync-package-has-two-versions' });
-      assert(pkg);
-      const pkgVersion = await PackageVersionModel.findOne({ packageId: pkg.packageId, version: removeVersion });
-      assert(pkgVersion);
-      pkgVersion.publishTime = new Date();
-      await pkgVersion.save();
 
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
@@ -401,9 +377,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('] 🟢 Synced 1 versions'));
-      // dont remove over 7 days
       assert(log.includes(`] 🟢 Removed version ${removeVersion} success`));
-      r = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
+      const r = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
       assert(Object.keys(r.data.versions).length === 1);
       assert(!r.data.versions[removeVersion], `${removeVersion} should not exists`);
     });
