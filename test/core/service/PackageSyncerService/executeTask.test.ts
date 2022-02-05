@@ -98,9 +98,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       task = await packageSyncerService.findExecuteTask();
       assert(task);
       await packageSyncerService.executeTask(task);
-      const stream = await packageSyncerService.findTaskLog(task);
+      let stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
-      const log = await TestUtil.readStreamToLog(stream);
+      let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes(`] 🟢 Package "${name}" was unpublished caused by 404 response`));
 
@@ -108,6 +108,25 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(manifests.data.time.unpublished);
       abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
       assert(abbreviatedManifests.data.time.unpublished);
+
+      // sync again
+      mock.restore();
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      manifests = await packageManagerService.listPackageFullManifests('', name);
+      assert(!manifests.data.time.unpublished);
+      assert.equal(manifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
+      assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
+      abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert(!abbreviatedManifests.data.time?.unpublished);
+      assert.equal(abbreviatedManifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
+      assert.equal(abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap, false);
     });
 
     it('should sync fail when package not exists', async () => {
@@ -307,7 +326,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢 Synced 2 versions'));
+      assert(log.includes('] 🟢 Synced updated 2 versions, removed 0 versions'));
       assert(log.includes('] 🚧 Syncing versions 0 => 2'));
 
       // mock listPackageFullManifests return only one version
@@ -327,7 +346,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(!log.includes('] 🟢 Synced 1 versions'));
+      assert(log.includes('] 🐛 Remote version 1.0.0 not exists on local manifests, need to refresh'));
+      assert(log.includes('] 🟢 Synced updated 1 versions'));
       assert(log.includes('] 🚧 Syncing versions 1 => 2'));
 
       // mock tag on database but not on manifest dist
@@ -344,7 +364,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🚧 Remote tag(foo: 2.0.0) not exists in local dist-tags({"latest":"2.0.0","next":"2.0.0"})'));
+      assert(log.includes('] 🚧 Remote tag(foo: 2.0.0) not exists in local dist-tags'));
       assert(log.includes('] 🚧 Refreshing manifests to dists ......'));
       assert(log.includes('] 🟢 Refresh use'));
     });
@@ -360,7 +380,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢 Synced 2 versions'));
+      assert(log.includes('] 🟢 Synced updated 2 versions'));
 
       const result = await npmRegistry.getFullManifests(name);
       const removeVersion = Object.keys(result.data.versions)[0];
@@ -376,7 +396,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢 Synced 1 versions'));
+      assert(log.includes('] 🟢 Synced updated 0 versions, removed 1 versions'));
       assert(log.includes(`] 🟢 Removed version ${removeVersion} success`));
       const r = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
       assert(Object.keys(r.data.versions).length === 1);

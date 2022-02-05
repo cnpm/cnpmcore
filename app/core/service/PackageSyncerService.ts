@@ -382,8 +382,7 @@ export class PackageSyncerService extends AbstractService {
     // 2. save versions
     const versions = Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
-    let syncVersionCount = 0;
-    let shouldRefreshDists = false;
+    const updateVersions: string[] = [];
     const differentMetas: any[] = [];
     let syncIndex = 0;
     for (const item of versions) {
@@ -399,7 +398,7 @@ export class PackageSyncerService extends AbstractService {
         if (existsItem) {
           // version not exists on manifests, need to refresh
           // bugfix: https://github.com/cnpm/cnpmcore/issues/115
-          shouldRefreshDists = true;
+          updateVersions.push(version);
           logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
         }
       }
@@ -488,7 +487,7 @@ export class PackageSyncerService extends AbstractService {
       };
       try {
         const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
-        syncVersionCount++;
+        updateVersions.push(pkgVersion.version);
         logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
       } catch (err: any) {
         if (err.name === 'ForbiddenError') {
@@ -530,38 +529,35 @@ export class PackageSyncerService extends AbstractService {
       const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsItem.version);
       if (pkgVersion) {
         await this.packageManagerService.savePackageVersionManifest(pkgVersion, diffMeta, diffMeta);
+        updateVersions.push(pkgVersion.version);
+        let diffMetaInfo = JSON.stringify(diffMeta);
+        if ('readme' in diffMeta) {
+          diffMetaInfo += ', delete exists readme';
+        }
+        logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${diffMetaInfo}`);
       }
-      syncVersionCount++;
-      let diffMetaInfo = JSON.stringify(diffMeta);
-      if ('readme' in diffMeta) {
-        diffMetaInfo += ', delete exists readme';
-      }
-      logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${diffMetaInfo}`);
     }
 
+    const removeVersions: string[] = [];
     // 2.3 find out remove versions
     for (const existsVersion in existsVersionMap) {
       if (!(existsVersion in versionMap)) {
         const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsVersion);
         if (pkgVersion) {
-          await this.packageManagerService.removePackageVersion(pkg, pkgVersion);
+          await this.packageManagerService.removePackageVersion(pkg, pkgVersion, true);
+          logs.push(`[${isoNow()}] 🟢 Removed version ${existsVersion} success`);
         }
-        syncVersionCount++;
-        logs.push(`[${isoNow()}] 🟢 Removed version ${existsVersion} success`);
+        removeVersions.push(existsVersion);
       }
     }
 
-    if (syncVersionCount > 0) {
-      shouldRefreshDists = true;
-      logs.push(`[${isoNow()}] 🟢 Synced ${syncVersionCount} versions`);
-    }
-
-    if (shouldRefreshDists) {
+    logs.push(`[${isoNow()}] 🟢 Synced updated ${updateVersions.length} versions, removed ${removeVersions.length} versions`);
+    if (updateVersions.length > 0 || removeVersions.length > 0) {
       logs.push(`[${isoNow()}] 🚧 Refreshing manifests to dists ......`);
       const start = Date.now();
       await this.taskService.appendTaskLog(task, logs.join('\n'));
       logs = [];
-      await this.packageManagerService.refreshPackageManifestsToDists(pkg);
+      await this.packageManagerService.refreshPackageChangeVersionsToDists(pkg, updateVersions, removeVersions);
       logs.push(`[${isoNow()}] 🟢 Refresh use ${Date.now() - start}ms`);
     }
 
@@ -580,7 +576,7 @@ export class PackageSyncerService extends AbstractService {
         shouldRefreshDistTags = false;
       } else if (version !== existsDistTags[tag]) {
         shouldRefreshDistTags = true;
-        logs.push(`[${isoNow()}] 🚧 Remote tag(${tag}: ${version}) not exists in local dist-tags(${JSON.stringify(existsDistTags)})`);
+        logs.push(`[${isoNow()}] 🚧 Remote tag(${tag}: ${version}) not exists in local dist-tags`);
       }
     }
     // 3.1 find out remove tags
