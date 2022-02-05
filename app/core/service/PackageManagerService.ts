@@ -463,6 +463,11 @@ export class PackageManagerService extends AbstractService {
     }
     const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist);
     const abbreviatedManifests = await this.readDistBytesToJSON(pkg.abbreviatedsDist);
+    if (!fullManifests.versions || !abbreviatedManifests.versions) {
+      // is unpublished, refresh all again
+      return await this._refreshPackageManifestsToDists(pkg);
+    }
+
     if (updateVersions) {
       for (const version of updateVersions) {
         const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
