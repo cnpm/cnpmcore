@@ -528,7 +528,7 @@ export class PackageManagerService extends AbstractService {
     } else if (refreshAttr === 'dist-tags') {
       const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist!);
       const abbreviatedManifests = await this.readDistBytesToJSON(pkg.abbreviatedsDist!);
-      await this._setPackageDistTagsAndLatestInfos(pkg, fullManifests, abbreviatedManifests)
+      await this._setPackageDistTagsAndLatestInfos(pkg, fullManifests, abbreviatedManifests);
       await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
     }
   }
@@ -671,7 +671,7 @@ export class PackageManagerService extends AbstractService {
       versions: {},
     };
 
-    let lastestTagVersion = '';    
+    let lastestTagVersion = '';
     if (distTags.latest) {
       lastestTagVersion = distTags.latest;
     }
