@@ -23,6 +23,7 @@ import { AbstractService } from './AbstractService';
 import { UserService } from './UserService';
 import { TaskService } from './TaskService';
 import { PackageManagerService } from './PackageManagerService';
+import { CacheService } from './CacheService';
 import { User } from '../entity/User';
 
 function isoNow() {
@@ -49,6 +50,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly taskService: TaskService;
   @Inject()
   private readonly packageManagerService: PackageManagerService;
+  @Inject()
+  private readonly cacheService: CacheService;
   @Inject()
   private readonly httpclient: EggContextHttpClient;
 
@@ -645,6 +648,9 @@ export class PackageSyncerService extends AbstractService {
       await this.syncDownloadData(task, pkg);
     }
 
+    // clean cache
+    await this.cacheService.removeCache(fullname);
+    logs.push(`[${isoNow()}] 🟢 Clean cache`);
     logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
     logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
     task.error = lastErrorMessage;
