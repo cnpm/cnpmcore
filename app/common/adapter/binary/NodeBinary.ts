@@ -19,6 +19,7 @@ export class NodeBinary extends AbstractBinary {
       const fileUrl = isDir ? '' : `${url}${name}`;
       const date = m[2];
       const size = m[3];
+      if (size === '0') continue;
       items.push({
         name,
         isDir,

@@ -115,6 +115,48 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       assert(matchFile2);
     });
 
+    it('should skip zero size file', async () => {
+      const binary = new NodeBinary(ctx.httpclient, ctx.logger, binaries['node-nightly']);
+      const result = await binary.fetch('/v14.0.0-nightly20200204ee9e689df2/');
+      assert(result);
+      assert(result.items.length > 0);
+      let matchDir = false;
+      let matchFile1 = false;
+      let matchFile2 = false;
+      let matchFile3 = false;
+      for (const item of result.items) {
+        if (item.name === 'docs/') {
+          matchDir = true;
+        }
+        if (item.name === 'SHASUMS256.txt') {
+          assert(item.date === '04-Feb-2020 06:15');
+          assert(item.isDir === false);
+          assert(item.size === '1364');
+          assert(item.url === 'https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/SHASUMS256.txt');
+          matchFile1 = true;
+        }
+        if (item.name === 'node-v14.0.0-nightly20200204ee9e689df2-linux-arm64.tar.gz') {
+          assert(item.date === '04-Feb-2020 06:02');
+          assert(item.isDir === false);
+          assert(item.size === '33496011');
+          assert(item.url === 'https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/node-v14.0.0-nightly20200204ee9e689df2-linux-arm64.tar.gz');
+          matchFile2 = true;
+        }
+        // skip 0 size file: https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/node-v14.0.0-nightly20200204ee9e689df2-win-x86.7z
+        if (item.name === 'node-v14.0.0-nightly20200204ee9e689df2-win-x86.7z') {
+          matchFile3 = true;
+        }
+        if (!item.isDir) {
+          assert(typeof item.size === 'string');
+          assert(item.size.length > 2);
+        }
+      }
+      assert(!matchDir);
+      assert(matchFile1);
+      assert(matchFile2);
+      assert(!matchFile3);
+    });
+
     it('should on python', async () => {
       const binary = new NodeBinary(ctx.httpclient, ctx.logger, binaries.python);
       let result = await binary.fetch('/');
