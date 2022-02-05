@@ -392,9 +392,6 @@ export class PackageManagerService extends AbstractService {
     };
     await this._mergeManifestDist(pkg.manifestsDist!, undefined, unpublishedInfo);
     await this._mergeManifestDist(pkg.abbreviatedsDist!, undefined, unpublishedInfo);
-
-    // refresh manifest dist
-    await this._refreshPackageManifestsToDists(pkg);
     this.eventBus.emit(PACKAGE_UNPUBLISHED, pkg.fullname);
   }
 
@@ -461,7 +458,7 @@ export class PackageManagerService extends AbstractService {
   }
 
   public async refreshPackageChangeVersionsToDists(pkg: Package, updateVersions?: string[], removeVersions?: string[]) {
-    if (!pkg.manifestsDist || !pkg.abbreviatedsDist) {
+    if (!pkg.manifestsDist?.distId || !pkg.abbreviatedsDist?.distId) {
       return await this._refreshPackageManifestsToDists(pkg);
     }
     const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist);
