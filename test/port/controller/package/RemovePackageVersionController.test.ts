@@ -133,8 +133,8 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       let res = await app.httpRequest()
         .get(`/${pkg.name}/2.0.0`)
         .expect(200);
-      const pkgVersion = res.body;
-      const tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
+      let pkgVersion = res.body;
+      let tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
       res = await app.httpRequest()
         .get(`${tarballUrl}`);
       assert(res.status === 200 || res.status === 302);
@@ -190,6 +190,32 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       assert.equal(res.body.name, pkg.name);
       assert(res.body.time.unpublished);
       assert.deepEqual(res.body['dist-tags'], {});
+
+      // publish again work
+      pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/foo',
+        version: '2.0.0',
+      });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/2.0.0`)
+        .expect(200);
+      pkgVersion = res.body;
+      tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
+      res = await app.httpRequest()
+        .get(`${tarballUrl}`);
+      assert(res.status === 200 || res.status === 302);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .expect(200);
+      assert(res.body['dist-tags'].latest === '2.0.0');
     });
 
     it('should 404 when version not exists', async () => {
