@@ -56,7 +56,7 @@ export class Task extends Entity {
   }
 
   public resetLogPath() {
-    this.logPath = `${path.dirname(this.logPath)}/${dayjs().format('DDHHMM')}-${this.taskId}-${this.attempts}.log`;
+    this.logPath = `${path.dirname(this.logPath)}/${dayjs().format('DDHHmm')}-${this.taskId}-${this.attempts}.log`;
     this.logStorePosition = '';
   }
 
@@ -75,7 +75,7 @@ export class Task extends Entity {
       data: { tips: options?.tips, skipDependencies: options?.skipDependencies, syncDownloadData: options?.syncDownloadData },
     };
     const task = this.create(data);
-    task.logPath = `/packages/${fullname}/syncs/${dayjs().format('YYYY/MM/DDHHMM')}-${task.taskId}.log`;
+    task.logPath = `/packages/${fullname}/syncs/${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
     return task;
   }
 
@@ -101,7 +101,7 @@ export class Task extends Entity {
       data: lastData ? { ...lastData } : {},
     };
     const task = this.create(data);
-    task.logPath = `/binaries/${targetName}/syncs/${dayjs().format('YYYY/MM/DDHHMM')}-${task.taskId}.log`;
+    task.logPath = `/binaries/${targetName}/syncs/${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
     return task;
   }
 }
