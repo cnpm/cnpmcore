@@ -79,7 +79,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     existsTask.updatedAt = new Date(existsTask.updatedAt.getTime() - 120001);
     await existsTask.save();
     // mock request https://r.cnpmjs.org/_changes error
-    app.mockHttpclient(/https:\/\/r.cnpmjs.org\/_changes/, () => {
+    app.mockHttpclient(/https:\/\/r\.cnpmjs\.org\/_changes/, () => {
       throw new Error('mock request replicate r.cnpmjs.org/_changes error');
     });
     await app.runSchedule('ChangesStreamWorker');
@@ -91,7 +91,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     app.mockLog();
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'enableChangesStream', true);
-    app.mockHttpclient(/https:\/\/replicate.npmjs.com\//, () => {
+    app.mockHttpclient(/https:\/\/replicate\.npmjs\.com\//, () => {
       throw new Error('mock request replicate error');
     });
     await app.runSchedule('ChangesStreamWorker');
