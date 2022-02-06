@@ -49,6 +49,7 @@ export class ChangesStreamService extends AbstractService {
       // get update_seq from ${changesStreamRegistry} on the first time
       if (!since) {
         const { status, data } = await this.httpclient.request(changesStreamRegistry, {
+          followRedirect: true,
           timeout: 10000,
           dataType: 'json',
         });
@@ -134,6 +135,7 @@ export class ChangesStreamService extends AbstractService {
         followRedirect: true,
         timeout: 30000,
         dataType: 'json',
+        gzip: true,
       });
       if (data.results?.length > 0) {
         let count = 0;
