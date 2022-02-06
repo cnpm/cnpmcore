@@ -148,7 +148,7 @@ export class ChangesStreamService extends AbstractService {
               authorIp: os.hostname(),
               authorId: 'ChangesStreamService',
               skipDependencies: true,
-              tips: `Sync cause by changes_stream(${changesStreamRegistry}) update seq: ${seq}`,
+              tips: `Sync cause by changes_stream(${changesStreamRegistry}) update seq: ${seq}, change: ${JSON.stringify(change)}`,
             });
             count++;
             lastSince = seq;
