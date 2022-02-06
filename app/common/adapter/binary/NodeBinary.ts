@@ -20,6 +20,8 @@ export class NodeBinary extends AbstractBinary {
       const date = m[2];
       const size = m[3];
       if (size === '0') continue;
+      if (this.binaryConfig.ignoreFiles?.includes(`${dir}${name}`)) continue;
+
       items.push({
         name,
         isDir,

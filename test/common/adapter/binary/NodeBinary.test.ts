@@ -229,6 +229,11 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       assert(matchDir1);
       assert(matchDir2);
       assert(matchFile);
+
+      result = await binary.fetch('/src/');
+      assert(result);
+      assert(result.items.length > 0);
+      assert(!result.items.find(item => item.name === 'Python-1.6.tar.gz'));
     });
   });
 });
