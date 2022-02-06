@@ -18,6 +18,7 @@ export type BinaryTaskConfig = {
   repo: string;
   distUrl: string;
   ignoreDirs?: string[];
+  ignoreFiles?: string[];
   options?: {
     nodePlatforms?: string[],
     nodeArchs?: {
@@ -84,6 +85,9 @@ const binaries: {
     syncer: SyncerClass.NodeBinary,
     repo: 'python/cpython',
     distUrl: 'https://www.python.org/ftp/python',
+    ignoreFiles: [
+      '/src/Python-1.6.tar.gz',
+    ],
   },
   // CypressBinary
   cypress: {

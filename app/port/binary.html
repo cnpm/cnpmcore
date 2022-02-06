@@ -176,7 +176,19 @@
           var item = files[i];
           var link = item.url;
           var filename = item.name;
-          var size = item.size / 1024 / 1024;
+          var sizeUnit = '';
+          var size = item.size;
+          if (size > 1024) {
+            sizeUnit = 'KB';
+            size = size / 1024;
+            if (size > 1024) {
+              sizeUnit = 'MB';
+              size = size / 1024;
+            }
+          }
+          if (sizeUnit !== '') {
+            size = size.toFixed(2) + sizeUnit;
+          }
           var lastModified = item.date;          
           // Remove the entries we don't want to show.
           if (filename == '') {
@@ -193,7 +205,7 @@
           document.write('<td><a href="' + link + '">' + filename +
                          '</a></td>');
           document.write('<td align="right">' + lastModified + '</td>');
-          document.write('<td align="right">' + size.toFixed(2) + 'MB</td>');
+          document.write('<td align="right">' + size + '</td>');
           document.write('</tr>');
         }
  
