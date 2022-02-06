@@ -37,6 +37,8 @@ export default (appInfo: EggAppConfig) => {
     enableChangesStream: false,
     checkChangesStreamInterval: 500,
     changesStreamRegistry: 'https://replicate.npmjs.com',
+    // handle _changes request mode, default is 'streaming', please set it to 'json' when on cnpmcore registry
+    changesStreamRegistryMode: 'streaming',
     registry: 'http://localhost:7001',
     // https://docs.npmjs.com/cli/v6/using-npm/config#always-auth npm <= 6
     // if `alwaysAuth=true`, all api request required access token

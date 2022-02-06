@@ -41,13 +41,14 @@ export class ChangesStreamService extends AbstractService {
     task.authorId = `pid_${process.pid}`;
     await this.taskRepository.saveTask(task);
 
+    const changesStreamRegistry: string = this.config.cnpmcore.changesStreamRegistry;
     // https://github.com/npm/registry-follower-tutorial
     // default "update_seq": 7138885,
     try {
       let since: string = task.data.since;
-      // get update_seq from https://replicate.npmjs.com/ on the first time
+      // get update_seq from ${changesStreamRegistry} on the first time
       if (!since) {
-        const { status, data } = await this.httpclient.request('https://replicate.npmjs.com', {
+        const { status, data } = await this.httpclient.request(changesStreamRegistry, {
           timeout: 10000,
           dataType: 'json',
         });
@@ -56,8 +57,8 @@ export class ChangesStreamService extends AbstractService {
         } else {
           since = '7139538';
         }
-        this.logger.warn('[ChangesStreamService.executeTask:firstSeq] status: %s, data: %j, since: %s',
-          status, data, since);
+        this.logger.warn('[ChangesStreamService.executeTask:firstSeq] GET %s status: %s, data: %j, since: %s',
+          changesStreamRegistry, status, data, since);
       }
       while (since) {
         const { lastSince, taskCount } = await this.handleChanges(since, task);
@@ -78,51 +79,94 @@ export class ChangesStreamService extends AbstractService {
   }
 
   private async handleChanges(since: string, task: Task) {
-    const db = `${this.config.cnpmcore.changesStreamRegistry}/_changes?since=${since}`;
-    const { res } = await this.httpclient.request(db, {
-      streaming: true,
-      timeout: 10000,
-    });
+    const changesStreamRegistry: string = this.config.cnpmcore.changesStreamRegistry;
+    const changesStreamRegistryMode: string = this.config.cnpmcore.changesStreamRegistryMode;
+    const db = `${changesStreamRegistry}/_changes?since=${since}`;
     let lastSince = since;
     let taskCount = 0;
-    for await (const chunk of res) {
-      const text: string = chunk.toString();
-      // {"seq":7138879,"id":"@danydodson/prettier-config","changes":[{"rev":"5-a56057032714af25400d93517773a82a"}]}
-      // console.log('😄%j😄', text);
-      // 😄"{\"seq\":7138738,\"id\":\"wargerm\",\"changes\":[{\"rev\":\"59-f0a0d326db4c62ed480987a04ba3bf8f\"}]}"😄
-      // 😄",\n{\"seq\":7138739,\"id\":\"@laffery/webpack-starter-kit\",\"changes\":[{\"rev\":\"4-84a8dc470a07872f4cdf85cf8ef892a1\"}]},\n{\"seq\":7138741,\"id\":\"venom-bot\",\"changes\":[{\"rev\":\"103-908654b1ad4b0e0fd40b468d75730674\"}]}"😄
-      // 😄",\n{\"seq\":7138743,\"id\":\"react-native-template-pytorch-live\",\"changes\":[{\"rev\":\"40-871c686b200312303ba7c4f7f93e0362\"}]}"😄
-      // 😄",\n{\"seq\":7138745,\"id\":\"ccxt\",\"changes\":[{\"rev\":\"10205-25367c525a0a3bd61be3a72223ce212c\"}]}"😄
-      const matchs = text.matchAll(/"seq":(\d+),"id":"([^"]+)"/gm);
-      let count = 0;
-      let lastPackage = '';
-      for (const match of matchs) {
-        const seq = match[1];
-        const fullname = match[2];
-        if (seq && fullname) {
-          await this.packageSyncerService.createTask(fullname, {
-            authorIp: os.hostname(),
-            authorId: 'ChangesStreamService',
-            skipDependencies: true,
-            tips: `Sync cause by changes_stream update seq: ${seq}`,
-          });
-          count++;
-          lastSince = seq;
-          lastPackage = fullname;
+    if (changesStreamRegistryMode === 'streaming') {
+      const { res } = await this.httpclient.request(db, {
+        streaming: true,
+        timeout: 10000,
+      });
+      for await (const chunk of res) {
+        const text: string = chunk.toString();
+        // {"seq":7138879,"id":"@danydodson/prettier-config","changes":[{"rev":"5-a56057032714af25400d93517773a82a"}]}
+        // console.log('😄%j😄', text);
+        // 😄"{\"seq\":7138738,\"id\":\"wargerm\",\"changes\":[{\"rev\":\"59-f0a0d326db4c62ed480987a04ba3bf8f\"}]}"😄
+        // 😄",\n{\"seq\":7138739,\"id\":\"@laffery/webpack-starter-kit\",\"changes\":[{\"rev\":\"4-84a8dc470a07872f4cdf85cf8ef892a1\"}]},\n{\"seq\":7138741,\"id\":\"venom-bot\",\"changes\":[{\"rev\":\"103-908654b1ad4b0e0fd40b468d75730674\"}]}"😄
+        // 😄",\n{\"seq\":7138743,\"id\":\"react-native-template-pytorch-live\",\"changes\":[{\"rev\":\"40-871c686b200312303ba7c4f7f93e0362\"}]}"😄
+        // 😄",\n{\"seq\":7138745,\"id\":\"ccxt\",\"changes\":[{\"rev\":\"10205-25367c525a0a3bd61be3a72223ce212c\"}]}"😄
+        const matchs = text.matchAll(/"seq":(\d+),"id":"([^"]+)"/gm);
+        let count = 0;
+        let lastPackage = '';
+        for (const match of matchs) {
+          const seq = match[1];
+          const fullname = match[2];
+          if (seq && fullname) {
+            await this.packageSyncerService.createTask(fullname, {
+              authorIp: os.hostname(),
+              authorId: 'ChangesStreamService',
+              skipDependencies: true,
+              tips: `Sync cause by changes_stream(${changesStreamRegistry}) update seq: ${seq}`,
+            });
+            count++;
+            lastSince = seq;
+            lastPackage = fullname;
+          }
+        }
+        if (count > 0) {
+          taskCount += count;
+          task.data = {
+            ...task.data,
+            since: lastSince,
+            last_package: lastPackage,
+            last_package_created: new Date(),
+            task_count: (task.data.task_count || 0) + count,
+          };
+          await this.taskRepository.saveTask(task);
         }
       }
-      if (count > 0) {
-        taskCount += count;
-        task.data = {
-          ...task.data,
-          since: lastSince,
-          last_package: lastPackage,
-          last_package_created: new Date(),
-          task_count: (task.data.task_count || 0) + count,
-        };
-        await this.taskRepository.saveTask(task);
+    } else {
+      // json mode
+      // {"results":[{"seq":1988653,"type":"PACKAGE_VERSION_ADDED","id":"dsr-package-mercy-magot-thorp-sward","changes":[{"version":"1.0.1"}]},
+      const { data } = await this.httpclient.request(db, {
+        followRedirect: true,
+        timeout: 30000,
+        dataType: 'json',
+      });
+      if (data.results?.length > 0) {
+        let count = 0;
+        let lastPackage = '';
+        for (const change of data.results) {
+          const seq = change.seq;
+          const fullname = change.id;
+          if (seq && fullname) {
+            await this.packageSyncerService.createTask(fullname, {
+              authorIp: os.hostname(),
+              authorId: 'ChangesStreamService',
+              skipDependencies: true,
+              tips: `Sync cause by changes_stream(${changesStreamRegistry}) update seq: ${seq}`,
+            });
+            count++;
+            lastSince = seq;
+            lastPackage = fullname;
+          }
+        }
+        if (count > 0) {
+          taskCount += count;
+          task.data = {
+            ...task.data,
+            since: lastSince,
+            last_package: lastPackage,
+            last_package_created: new Date(),
+            task_count: (task.data.task_count || 0) + count,
+          };
+          await this.taskRepository.saveTask(task);
+        }
       }
     }
+
     if (taskCount === 0) {
       // keep update task, make sure updatedAt changed
       task.updatedAt = new Date();
