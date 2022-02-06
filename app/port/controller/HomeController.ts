@@ -39,6 +39,8 @@ export class HomeController extends AbstractController {
       node_version: process.version,
       app_version: this.config.pkg.version,
       engine: this.config.orm.client,
+      source_registry: this.config.cnpmcore.sourceRegistry,
+      changes_stream_registry: this.config.cnpmcore.changesStreamRegistry,
       cache_time: totalData.cacheTime,
     };
     return data;

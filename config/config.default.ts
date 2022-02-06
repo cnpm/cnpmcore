@@ -23,10 +23,12 @@ export default (appInfo: EggAppConfig) => {
     syncPackageWorkerMaxConcurrentTasks: 10,
     // stop syncing these packages in future
     syncPackageBlockList: [],
+    // check recently from https://www.npmjs.com/browse/updated, if use set changesStreamRegistry to cnpmcore,
+    // maybe you should disable it
+    enableCheckRecentlyUpdated: true,
     // mirror binary, default is false
     enableSyncBinary: false,
-    // old cnpm mirror: https://cnpmjs.org/mirrors/apis
-    // new cnpmcore api: https://r.cnpmjs.org/-/binary
+    // cnpmcore api: https://r.cnpmjs.org/-/binary
     syncBinaryFromAPISource: '',
     // enable sync downloads data from source registry https://github.com/cnpm/cnpmcore/issues/108
     // all three parameters must be configured at the same time to take effect
@@ -37,6 +39,8 @@ export default (appInfo: EggAppConfig) => {
     enableChangesStream: false,
     checkChangesStreamInterval: 500,
     changesStreamRegistry: 'https://replicate.npmjs.com',
+    // handle _changes request mode, default is 'streaming', please set it to 'json' when on cnpmcore registry
+    changesStreamRegistryMode: 'streaming',
     registry: 'http://localhost:7001',
     // https://docs.npmjs.com/cli/v6/using-npm/config#always-auth npm <= 6
     // if `alwaysAuth=true`, all api request required access token
