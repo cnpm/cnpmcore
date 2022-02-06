@@ -15,7 +15,7 @@ export default class CheckRecentlyUpdatedPackages extends Subscription {
 
   async subscribe() {
     const { ctx, app } = this;
-    if (app.config.cnpmcore.syncMode !== 'all') return;
+    if (app.config.cnpmcore.syncMode !== 'all' || !app.config.cnpmcore.enableCheckRecentlyUpdated) return;
 
     await ctx.beginModuleScope(async () => {
       const packageSyncerService: PackageSyncerService = ctx.module[cnpmcoreCore].packageSyncerService;

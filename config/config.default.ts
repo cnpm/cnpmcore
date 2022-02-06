@@ -23,10 +23,12 @@ export default (appInfo: EggAppConfig) => {
     syncPackageWorkerMaxConcurrentTasks: 10,
     // stop syncing these packages in future
     syncPackageBlockList: [],
+    // check recently from https://www.npmjs.com/browse/updated, if use set changesStreamRegistry to cnpmcore,
+    // maybe you should disable it
+    enableCheckRecentlyUpdated: true,
     // mirror binary, default is false
     enableSyncBinary: false,
-    // old cnpm mirror: https://cnpmjs.org/mirrors/apis
-    // new cnpmcore api: https://r.cnpmjs.org/-/binary
+    // cnpmcore api: https://r.cnpmjs.org/-/binary
     syncBinaryFromAPISource: '',
     // enable sync downloads data from source registry https://github.com/cnpm/cnpmcore/issues/108
     // all three parameters must be configured at the same time to take effect
