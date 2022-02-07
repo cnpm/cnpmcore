@@ -131,4 +131,195 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     assert(result.items[0].url === 'https://raw.githubusercontent.com/imagemin/advpng-bin/v4.0.0/vendor/osx/advpng');
     assert(result.items[0].isDir === false);
   });
+
+  it('should fetch mozjpeg-bin', async () => {
+    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['mozjpeg-bin']);
+    let result = await binary.fetch('/');
+    assert(result);
+    // console.log(result.items);
+    assert(result.items.length > 0);
+    let matchDir1 = false;
+    let matchDir2 = false;
+    for (const item of result.items) {
+      if (item.name === 'v4.0.0/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir1 = true;
+      }
+      if (item.name === 'v6.0.1/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir2 = true;
+      }
+    }
+    assert(matchDir1);
+    assert(matchDir2);
+
+    // https://github.com/imagemin/mozjpeg-bin/blob/v4.0.0/lib/index.js
+    result = await binary.fetch('/v4.0.0/');
+    assert(result);
+    assert(result.items.length === 1);
+    assert(result.items[0].name === 'vendor/');
+    assert(result.items[0].isDir === true);
+
+    result = await binary.fetch('/v4.0.0/vendor/');
+    assert(result);
+    assert(result.items.length === 4);
+    assert(result.items[0].name === 'osx/');
+    assert(result.items[0].isDir === true);
+    assert(result.items[1].name === 'macos/');
+    assert(result.items[1].isDir === true);
+    assert(result.items[2].name === 'linux/');
+    assert(result.items[2].isDir === true);
+    assert(result.items[3].name === 'win/');
+    assert(result.items[3].isDir === true);
+
+    result = await binary.fetch('/v4.0.0/vendor/osx/');
+    assert(result);
+    // console.log(result.items);
+    assert(result.items.length === 1);
+    assert(result.items[0].name === 'cjpeg');
+    assert(result.items[0].url === 'https://raw.githubusercontent.com/imagemin/mozjpeg-bin/v4.0.0/vendor/osx/cjpeg');
+    assert(result.items[0].isDir === false);
+
+    result = await binary.fetch('/v8.0.0/vendor/macos/');
+    assert(result);
+    // console.log(result.items);
+    assert(result.items.length === 1);
+    assert(result.items[0].name === 'cjpeg');
+    assert(result.items[0].url === 'https://raw.githubusercontent.com/imagemin/mozjpeg-bin/v8.0.0/vendor/macos/cjpeg');
+    assert(result.items[0].isDir === false);
+  });
+
+  it('should fetch gifsicle-bin', async () => {
+    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['gifsicle-bin']);
+    const result = await binary.fetch('/');
+    assert(result);
+    // console.log(result.items);
+    assert(result.items.length > 0);
+    let matchDir1 = false;
+    let matchDir2 = false;
+    for (const item of result.items) {
+      if (item.name === 'v4.0.0/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir1 = true;
+      }
+      if (item.name === 'v6.0.1/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir2 = true;
+      }
+    }
+    assert(matchDir1);
+    assert(matchDir2);
+  });
+
+  it('should fetch optipng-bin', async () => {
+    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['optipng-bin']);
+    const result = await binary.fetch('/');
+    assert(result);
+    // console.log(result.items);
+    assert(result.items.length > 0);
+    let matchDir1 = false;
+    let matchDir2 = false;
+    for (const item of result.items) {
+      if (item.name === 'v4.0.0/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir1 = true;
+      }
+      if (item.name === 'v6.0.0/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir2 = true;
+      }
+    }
+    assert(matchDir1);
+    assert(matchDir2);
+  });
+
+  it('should fetch zopflipng-bin', async () => {
+    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['zopflipng-bin']);
+    const result = await binary.fetch('/');
+    assert(result);
+    // console.log(result.items);
+    assert(result.items.length > 0);
+    let matchDir1 = false;
+    let matchDir2 = false;
+    for (const item of result.items) {
+      if (item.name === 'v4.0.0/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir1 = true;
+      }
+      if (item.name === 'v6.0.1/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir2 = true;
+      }
+    }
+    assert(matchDir1);
+    assert(matchDir2);
+  });
+
+  it('should fetch jpegoptim-bin', async () => {
+    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['jpegoptim-bin']);
+    const result = await binary.fetch('/');
+    assert(result);
+    // console.log(result.items);
+    assert(result.items.length > 0);
+    let matchDir1 = false;
+    let matchDir2 = false;
+    for (const item of result.items) {
+      if (item.name === 'v4.0.0/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir1 = true;
+      }
+      if (item.name === 'v6.0.1/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir2 = true;
+      }
+    }
+    assert(matchDir1);
+    assert(matchDir2);
+  });
+
+  it('should fetch guetzli-bin', async () => {
+    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['guetzli-bin']);
+    const result = await binary.fetch('/');
+    assert(result);
+    // console.log(result.items);
+    assert(result.items.length > 0);
+    let matchDir1 = false;
+    let matchDir2 = false;
+    for (const item of result.items) {
+      if (item.name === 'v4.0.0/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir1 = true;
+      }
+      if (item.name === 'v4.0.2/') {
+        assert(item.date);
+        assert(item.isDir === true);
+        assert(item.size === '-');
+        matchDir2 = true;
+      }
+    }
+    assert(matchDir1);
+    assert(matchDir2);
+  });
 });
