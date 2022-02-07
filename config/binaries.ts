@@ -30,6 +30,8 @@ export type BinaryTaskConfig = {
     },
     // default is 1
     maxPage?: number;
+    // custom npm package name, for ImageminBinary
+    npmPacakgeName?: string;
   },
   disable?: boolean;
 };
@@ -285,6 +287,8 @@ const binaries: {
     repo: 'imagemin/mozjpeg-bin',
     distUrl: 'https://raw.githubusercontent.com',
     options: {
+      // should use https://www.npmjs.com/package/mozjpeg
+      npmPacakgeName: 'mozjpeg',
       // https://github.com/imagemin/mozjpeg-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/mozjpeg-bin/blob/v5.0.0/lib/index.js
       nodePlatforms: [ 'osx', 'macos', 'linux', 'win' ],
