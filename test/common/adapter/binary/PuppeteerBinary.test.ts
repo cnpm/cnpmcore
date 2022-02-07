@@ -101,6 +101,33 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert(result.items[0].isDir === false);
       assert(result.items[0].date);
       assert(result.items[0].url);
+
+      result = await binary.fetch('/Linux_x64/869685/');
+      assert(result);
+      assert(result.items?.length === 1);
+      // console.log(result.items);
+      assert(result.items[0].name === 'chrome-linux.zip');
+      assert(result.items[0].isDir === false);
+      assert(result.items[0].date);
+      assert(result.items[0].url);
+
+      result = await binary.fetch('/Linux_x64/884014/');
+      assert(result);
+      assert(result.items?.length === 1);
+      // console.log(result.items);
+      assert(result.items[0].name === 'chrome-linux.zip');
+      assert(result.items[0].isDir === false);
+      assert(result.items[0].date);
+      assert(result.items[0].url);
+
+      result = await binary.fetch('/Linux_x64/901912/');
+      assert(result);
+      assert(result.items?.length === 1);
+      // console.log(result.items);
+      assert(result.items[0].name === 'chrome-linux.zip');
+      assert(result.items[0].isDir === false);
+      assert(result.items[0].date);
+      assert(result.items[0].url);
     });
   });
 });
