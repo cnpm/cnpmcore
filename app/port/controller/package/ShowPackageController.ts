@@ -37,6 +37,7 @@ export class ShowPackageController extends AbstractController {
         requestEtag = requestEtag.substring(2);
       }
       if (requestEtag === cacheEtag) {
+        this.setCDNHeaders(ctx);
         // match etag, set status 304
         ctx.status = 304;
         return;
