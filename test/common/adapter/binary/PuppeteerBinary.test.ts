@@ -46,13 +46,13 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       for (const item of result.items) {
         assert(item.isDir === true);
         assert(item.date);
-        if (item.name === '950341/') {
+        if (item.name === '756035/') {
           matchDir = true;
         }
       }
       assert(matchDir);
 
-      result = await binary.fetch('/Linux_x64/950341/');
+      result = await binary.fetch('/Linux_x64/756035/');
       assert(result);
       assert(result.items.length === 1);
       // console.log(result.items);
@@ -60,7 +60,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert(result.items[0].isDir === false);
       assert(result.items[0].date);
       assert(result.items[0].url);
-      result = await binary.fetch('/Mac/950341/');
+      result = await binary.fetch('/Mac/756035/');
       assert(result);
       assert(result.items.length === 1);
       // console.log(result.items);
@@ -68,7 +68,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert(result.items[0].isDir === false);
       assert(result.items[0].date);
       assert(result.items[0].url);
-      result = await binary.fetch('/Mac_Arm/950341/');
+      result = await binary.fetch('/Mac_Arm/756035/');
       assert(result);
       assert(result.items.length === 1);
       // console.log(result.items);
@@ -76,7 +76,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert(result.items[0].isDir === false);
       assert(result.items[0].date);
       assert(result.items[0].url);
-      result = await binary.fetch('/Win/950341/');
+      result = await binary.fetch('/Win/756035/');
       assert(result);
       assert(result.items.length === 1);
       // console.log(result.items);
@@ -84,7 +84,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert(result.items[0].isDir === false);
       assert(result.items[0].date);
       assert(result.items[0].url);
-      result = await binary.fetch('/Win_x64/950341/');
+      result = await binary.fetch('/Win_x64/756035/');
       assert(result);
       assert(result.items.length === 1);
       // console.log(result.items);
