@@ -9,7 +9,8 @@ export class GithubBinary extends AbstractBinary {
       // https://api.github.com/repos/electron/electron/releases
       // https://api.github.com/repos/electron/electron/releases?per_page=100&page=3
       let releases: any[] = [];
-      for (let i = 0; i < 3; i++) {
+      const maxPage = this.binaryConfig.options?.maxPage || 1;
+      for (let i = 0; i < maxPage; i++) {
         const url = `https://api.github.com/repos/${this.binaryConfig.repo}/releases?per_page=100&page=${i + 1}`;
         const data = await this.requestJSON(url);
         if (!Array.isArray(data)) {
