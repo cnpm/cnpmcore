@@ -20,6 +20,7 @@ export class PuppeteerBinary extends AbstractBinary {
           chromiumRevisions.set(revision, data.time[version]);
         }
       }
+
       // https://unpkg.com/puppeteer@5.1.0/lib/cjs/revisions.js
       // https://unpkg.com/puppeteer@latest/lib/cjs/puppeteer/revisions.js
       // exports.PUPPETEER_REVISIONS = {
@@ -31,6 +32,13 @@ export class PuppeteerBinary extends AbstractBinary {
       const m = /chromium:\s+\'(\d+)\'\,/.exec(text);
       if (m && !chromiumRevisions.has(m[1])) {
         chromiumRevisions.set(m[1], new Date().toISOString());
+      }
+
+      // old versions
+      // https://github.com/puppeteer/puppeteer/blob/v8.0.0/src/revisions.ts#L23
+      if (!chromiumRevisions.has('856583')) {
+        // "8.0.0":"2021-02-26T08:36:50.107Z"
+        chromiumRevisions.set('856583', '2021-02-26T08:36:50.107Z');
       }
 
       const platforms = [ 'Linux_x64', 'Mac', 'Mac_Arm', 'Win', 'Win_x64' ];
