@@ -313,6 +313,8 @@ const binaries: {
     repo: 'imagemin/gifsicle-bin',
     distUrl: 'https://raw.githubusercontent.com',
     options: {
+      // should use https://www.npmjs.com/package/gifsicle
+      npmPacakgeName: 'gifsicle',
       // https://github.com/imagemin/gifsicle-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/gifsicle-bin/blob/v5.0.0/lib/index.js
       nodePlatforms: [ 'macos', 'linux', 'freebsd', 'win' ],
@@ -496,6 +498,8 @@ const binaries: {
     repo: 'imagemin/guetzli-bin',
     distUrl: 'https://raw.githubusercontent.com',
     options: {
+      // should use https://www.npmjs.com/package/guetzli
+      npmPacakgeName: 'guetzli',
       // https://github.com/imagemin/guetzli-bin/blob/v4.0.0/lib/index.js
       nodePlatforms: [ 'macos', 'linux', 'win' ],
       nodeArchs: {
