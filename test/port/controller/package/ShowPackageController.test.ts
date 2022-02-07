@@ -102,25 +102,55 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res2.headers.etag, res.headers.etag);
 
       // request with etag
+      mock(app.config.cnpmcore, 'enableCDN', false);
       await app.httpRequest()
         .get(`/${name}`)
         .set('If-None-Match', res.headers.etag)
+        .expect('vary', 'Origin')
+        .expect(304);
+
+      mock(app.config.cnpmcore, 'enableCDN', true);
+      await app.httpRequest()
+        .get(`/${name}`)
+        .set('If-None-Match', res.headers.etag)
+        .expect('vary', 'Origin, Accept, Accept-Encoding')
         .expect(304);
 
       // application/vnd.npm.install-v1+json request should not same etag
+      mock(app.config.cnpmcore, 'enableCDN', false);
       res2 = await app.httpRequest()
         .get(`/${name}`)
         .set('If-None-Match', res.headers.etag)
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res2.status === 200);
       assert(!res2.body.readme);
+      assert(res2.headers.vary === 'Origin');
+
+      mock(app.config.cnpmcore, 'enableCDN', true);
+      res2 = await app.httpRequest()
+        .get(`/${name}`)
+        .set('If-None-Match', res.headers.etag)
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res2.status === 200);
+      assert(!res2.body.readme);
+      assert(res2.headers.vary === 'Origin, Accept, Accept-Encoding');
 
       // remove W/ still work
-      const resEmpty = await app.httpRequest()
+      mock(app.config.cnpmcore, 'enableCDN', false);
+      let resEmpty = await app.httpRequest()
         .get(`/${name}`)
         .set('if-none-match', res.headers.etag.replace('W/', ''))
         .expect(304);
       assert.equal(resEmpty.text, '');
+      assert(resEmpty.headers.vary === 'Origin');
+
+      mock(app.config.cnpmcore, 'enableCDN', true);
+      resEmpty = await app.httpRequest()
+        .get(`/${name}`)
+        .set('if-none-match', res.headers.etag.replace('W/', ''))
+        .expect(304);
+      assert.equal(resEmpty.text, '');
+      assert(resEmpty.headers.vary === 'Origin, Accept, Accept-Encoding');
 
       // etag not match
       const resNew = await app.httpRequest()
