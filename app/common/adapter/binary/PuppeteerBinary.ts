@@ -20,6 +20,7 @@ export class PuppeteerBinary extends AbstractBinary {
           chromiumRevisions.set(revision, data.time[version]);
         }
       }
+
       // https://unpkg.com/puppeteer@5.1.0/lib/cjs/revisions.js
       // https://unpkg.com/puppeteer@latest/lib/cjs/puppeteer/revisions.js
       // exports.PUPPETEER_REVISIONS = {
@@ -32,6 +33,17 @@ export class PuppeteerBinary extends AbstractBinary {
       if (m && !chromiumRevisions.has(m[1])) {
         chromiumRevisions.set(m[1], new Date().toISOString());
       }
+
+      // old versions
+      // https://github.com/puppeteer/puppeteer/blob/v8.0.0/src/revisions.ts#L23
+      // "8.0.0":"2021-02-26T08:36:50.107Z"
+      chromiumRevisions.set('856583', '2021-02-26T08:36:50.107Z');
+      // "9.0.0":"2021-04-21T11:27:32.513Z"
+      chromiumRevisions.set('869685', '2021-04-21T11:27:32.513Z');
+      // "10.0.0":"2021-05-31T12:42:27.486Z"
+      chromiumRevisions.set('884014', '2021-05-31T12:42:27.486Z');
+      // "11.0.0":"2021-11-03T09:29:12.751Z"
+      chromiumRevisions.set('901912', '2021-11-03T09:29:12.751Z');
 
       const platforms = [ 'Linux_x64', 'Mac', 'Mac_Arm', 'Win', 'Win_x64' ];
       for (const platform of platforms) {

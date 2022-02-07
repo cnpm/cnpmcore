@@ -19,7 +19,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
   describe('fetch()', () => {
     it('should fetch root and subdir work', async () => {
       const response = await TestUtil.readJSONFile(TestUtil.getFixtures('electron-releases.json'));
-      app.mockHttpclient('https://api.github.com/repos/electron/electron/releases', 'GET', {
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/, 'GET', {
         data: response,
         status: 200,
       });
