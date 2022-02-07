@@ -28,6 +28,8 @@ export type BinaryTaskConfig = {
     binFiles?: {
       [key: string]: string[],
     },
+    // default is 1
+    maxPage?: number;
   },
   disable?: boolean;
 };
@@ -567,6 +569,10 @@ const binaries: {
     syncer: SyncerClass.GithubBinary,
     repo: 'electron/electron',
     distUrl: 'https://github.com/electron/electron/releases',
+    options: {
+      // for sync more old versions
+      maxPage: 3,
+    },
   },
   'electron-builder-binaries': {
     category: 'electron-builder-binaries',
