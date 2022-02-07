@@ -35,15 +35,31 @@ export class PuppeteerBinary extends AbstractBinary {
       }
 
       // old versions
+      // v5.0.0
+      chromiumRevisions.set('756035', data.time['5.0.0']);
+      // v5.2.0
+      chromiumRevisions.set('768783', data.time['5.2.0']);
+      // v5.2.1
+      chromiumRevisions.set('782078', data.time['5.2.1']);
+      // v5.3.0
+      chromiumRevisions.set('800071', data.time['5.3.0']);
+      // v5.4.0
+      chromiumRevisions.set('809590', data.time['5.4.0']);
+      // v5.5.0
+      chromiumRevisions.set('818858', data.time['5.5.0']);
+      // v6.0.0
+      chromiumRevisions.set('843427', data.time['6.0.0']);
+      // "7.0.0"
+      chromiumRevisions.set('848005', data.time['7.0.0']);
       // https://github.com/puppeteer/puppeteer/blob/v8.0.0/src/revisions.ts#L23
       // "8.0.0":"2021-02-26T08:36:50.107Z"
-      chromiumRevisions.set('856583', '2021-02-26T08:36:50.107Z');
+      chromiumRevisions.set('856583', data.time['8.0.0']);
       // "9.0.0":"2021-04-21T11:27:32.513Z"
-      chromiumRevisions.set('869685', '2021-04-21T11:27:32.513Z');
+      chromiumRevisions.set('869685', data.time['9.0.0']);
       // "10.0.0":"2021-05-31T12:42:27.486Z"
-      chromiumRevisions.set('884014', '2021-05-31T12:42:27.486Z');
+      chromiumRevisions.set('884014', data.time['10.0.0']);
       // "11.0.0":"2021-11-03T09:29:12.751Z"
-      chromiumRevisions.set('901912', '2021-11-03T09:29:12.751Z');
+      chromiumRevisions.set('901912', data.time['11.0.0']);
 
       const platforms = [ 'Linux_x64', 'Mac', 'Mac_Arm', 'Win', 'Win_x64' ];
       for (const platform of platforms) {
