@@ -34,6 +34,14 @@ export class PuppeteerBinary extends AbstractBinary {
         chromiumRevisions.set(m[1], new Date().toISOString());
       }
 
+      // download LAST_CHANGE
+      // https://github.com/chaopeng/chromium-downloader/blob/master/get-chromium#L28
+      const LAST_CHANGE_URL = 'https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2FLAST_CHANGE?alt=media';
+      const lastRevision = await this.requestXml(LAST_CHANGE_URL);
+      if (lastRevision) {
+        chromiumRevisions.set(lastRevision, new Date().toISOString());
+      }
+
       // old versions
       // v5.0.0
       chromiumRevisions.set('756035', data.time['5.0.0']);
