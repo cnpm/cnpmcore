@@ -575,6 +575,13 @@ const binaries: {
     repo: 'electron-userland/electron-builder-binaries',
     distUrl: 'https://github.com/electron-userland/electron-builder-binaries/releases',
   },
+  'ffmpeg-static': {
+    category: 'ffmpeg-static',
+    description: 'ffmpeg static binaries for Mac OSX and Linux and Windows',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'eugeneware/ffmpeg-static',
+    distUrl: 'https://github.com/eugeneware/ffmpeg-static/releases',
+  },
   canvas: {
     category: 'canvas',
     description: 'Node canvas is a Cairo backed Canvas implementation for NodeJS.',
