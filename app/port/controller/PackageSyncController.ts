@@ -136,7 +136,8 @@ export class PackageSyncController extends AbstractController {
     const task = await this.showSyncTask(fullname, taskId);
     const syncDone = task.state !== TaskState.Waiting && task.state !== TaskState.Processing;
     const stateMessage = syncDone ? '[done]' : '[processing]';
-    const log = `[${new Date().toISOString()}] ${stateMessage} Sync data: ${JSON.stringify(task)}`;
+    // https://github.com/cnpm/cnpm/blob/cadd3cd54c22b1a157810a43ab10febdb2410ca6/bin/cnpm-sync#L82
+    const log = `[${new Date().toISOString()}] ${stateMessage} Sync ${fullname} data: ${JSON.stringify(task)}`;
     return {
       ok: true,
       syncDone,
