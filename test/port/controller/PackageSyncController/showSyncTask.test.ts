@@ -167,7 +167,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       assert.match(res.body.logUrl, /^http:\/\//);
       assert.match(res.body.logUrl, /\/log$/);
       assert.equal(res.body.syncDone, true);
-      assert.match(res.body.log, /\[done\] Sync/);
+      assert.match(res.body.log, /\[done\] Sync koa data: {/);
       assert.equal(res.body.error, undefined);
     });
   });
