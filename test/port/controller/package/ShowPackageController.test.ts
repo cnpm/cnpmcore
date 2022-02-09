@@ -453,7 +453,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
 
       const pkgModel = await packageRepository.findPackage('@cnpm', 'test-module-mock-dist-not-exists');
-      await packageRepository.removePacakgeDist(pkgModel!, false);
+      await packageRepository.removePackageDist(pkgModel!, false);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -481,7 +481,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
 
       const pkgModel = await packageRepository.findPackage('@cnpm', 'test-module-mock-dist-not-exists-full-manifests');
-      await packageRepository.removePacakgeDist(pkgModel!, true);
+      await packageRepository.removePackageDist(pkgModel!, true);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -511,7 +511,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
 
       const pkgEntity = await packageRepository.findPackage('@cnpm', name);
       assert(pkgEntity);
-      await packageRepository.removePacakgeDist(pkgEntity, true);
+      await packageRepository.removePackageDist(pkgEntity, true);
       await packageRepository.removePackageVersions(pkgEntity.packageId);
 
       res = await app.httpRequest()
@@ -539,7 +539,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
 
       const pkgEntity = await packageRepository.findPackage('@cnpm', name);
       assert(pkgEntity);
-      await packageRepository.removePacakgeDist(pkgEntity, false);
+      await packageRepository.removePackageDist(pkgEntity, false);
       await packageRepository.removePackageVersions(pkgEntity.packageId);
 
       res = await app.httpRequest()
@@ -586,7 +586,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(res.body.error === '[NOT_FOUND] 123 not found');
     });
 
-    it('should not redirect private scope pacakge to source registry if package not exists when syncMode=all', async () => {
+    it('should not redirect private scope package to source registry if package not exists when syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
       let res = await app.httpRequest()
         .get('/@cnpm/cnpmcore')
@@ -604,7 +604,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(res.body.error === '[NOT_FOUND] @cnpm/cnpmcore not found');
     });
 
-    it('should not redirect private scope pacakge to source registry if package not exists when syncMode=none', async () => {
+    it('should not redirect private scope package to source registry if package not exists when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
       let res = await app.httpRequest()
         .get('/@cnpm/cnpmcore')
@@ -622,7 +622,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(res.body.error === '[NOT_FOUND] @cnpm/cnpmcore not found');
     });
 
-    it('should redirect public scope pacakge to source registry if package not exists when syncMode=none', async () => {
+    it('should redirect public scope package to source registry if package not exists when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
       let res = await app.httpRequest()
         .get('/@eggjs/tegg-metadata')
@@ -638,7 +638,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(res.headers.location === 'https://registry.npmjs.org/@eggjs/tegg-metadata?t=0123123&foo=bar');
     });
 
-    it('should redirect public non-scope pacakge to source registry if package not exists when syncMode=none', async () => {
+    it('should redirect public non-scope package to source registry if package not exists when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
       let res = await app.httpRequest()
         .get('/egg')

@@ -26,8 +26,8 @@ export class HomeController extends AbstractController {
   async showTotal() {
     const totalData = await this.cacheService.getTotalData();
     const data = {
-      last_pacakge: totalData.lastPackage,
-      last_pacakge_version: totalData.lastPackageVersion,
+      last_package: totalData.lastPackage,
+      last_package_version: totalData.lastPackageVersion,
       doc_count: totalData.packageCount,
       doc_version_count: totalData.packageVersionCount,
       download: totalData.download,

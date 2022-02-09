@@ -62,13 +62,13 @@ export class PackageRepository extends AbstractRepository {
     await this.savePackage(pkgEntity);
   }
 
-  async removePacakgeDist(pkgEntity: PackageEntity, isFullManifests: boolean): Promise<void> {
+  async removePackageDist(pkgEntity: PackageEntity, isFullManifests: boolean): Promise<void> {
     const dist = isFullManifests ? pkgEntity.manifestsDist : pkgEntity.abbreviatedsDist;
     if (!dist) return;
     const model = await DistModel.findOne({ id: dist.id });
     if (!model) return;
     await model.remove();
-    this.logger.info('[PackageRepository:removePacakgeDist:remove] id: %s, distId: %s, packageId: %s',
+    this.logger.info('[PackageRepository:removePackageDist:remove] id: %s, distId: %s, packageId: %s',
       model.id, model.distId, pkgEntity.packageId);
     Reflect.set(dist, 'distId', null);
     await this.savePackage(pkgEntity);
