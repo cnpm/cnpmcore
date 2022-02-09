@@ -19,6 +19,14 @@ See [DEVELOPER.md](DEVELOPER.md)
 
 [MIT](LICENSE)
 
+<!-- GITCONTRIBUTOR_START -->
+
 ## Contributors
 
-[![](https://ergatejs.implements.io/badges/contributors/cnpm/cnpmcore.svg?size=96)](https://github.com/cnpm/cnpmcore/graphs/contributors)
+|[<img src="https://avatars.githubusercontent.com/u/156269?v=4" width="100px;"/><br/><sub><b>fengmk2</b></sub>](https://github.com/fengmk2)<br/>|[<img src="https://avatars.githubusercontent.com/u/6897780?v=4" width="100px;"/><br/><sub><b>killagu</b></sub>](https://github.com/killagu)<br/>|[<img src="https://avatars.githubusercontent.com/u/26033663?v=4" width="100px;"/><br/><sub><b>yuanzhian</b></sub>](https://github.com/yuanzhian)<br/>|[<img src="https://avatars.githubusercontent.com/u/13284978?v=4" width="100px;"/><br/><sub><b>BeAce</b></sub>](https://github.com/BeAce)<br/>|[<img src="https://avatars.githubusercontent.com/u/1814071?v=4" width="100px;"/><br/><sub><b>xiekw2010</b></sub>](https://github.com/xiekw2010)<br/>|[<img src="https://avatars.githubusercontent.com/u/958063?v=4" width="100px;"/><br/><sub><b>thonatos</b></sub>](https://github.com/thonatos)<br/>|
+| :---: | :---: | :---: | :---: | :---: | :---: |
+[<img src="https://avatars.githubusercontent.com/u/11039003?v=4" width="100px;"/><br/><sub><b>chenpx976</b></sub>](https://github.com/chenpx976)<br/>
+
+This project follows the git-contributor [spec](https://github.com/xudafeng/git-contributor), auto updated at `Wed Feb 09 2022 22:05:46 GMT+0800`.
+
+<!-- GITCONTRIBUTOR_END -->

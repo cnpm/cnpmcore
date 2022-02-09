@@ -7,6 +7,7 @@
     "dist/**/*"
   ],
   "scripts": {
+    "contributor": "git-contributor",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "lint": "eslint . --ext .ts",
@@ -74,6 +75,7 @@
     "egg-mock": "^4.2.0",
     "eslint": "^7.32.0",
     "eslint-config-egg": "^9.0.0",
+    "git-contributor": "^1.0.10",
     "npm-cli-login": "^1.0.0",
     "ts-node": "^10.4.0",
     "typescript": "^4.3.5"
