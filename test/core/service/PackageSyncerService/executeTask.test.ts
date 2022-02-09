@@ -1013,6 +1013,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
       mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
       mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('downloads.json'));
+      app.mockHttpclient(/https:\/\/rold\.cnpmjs\.org\//, 'GET', {
+        data: response,
+        status: 200,
+      });
 
       const name = 'pedding'; // 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name, { syncDownloadData: true });
@@ -1024,7 +1029,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('][DownloadData] 🟢 202111: 10 days'));
+      assert(log.includes('][DownloadData] 🟢 202101: 31 days'));
       assert(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
       assert(log.includes('] 🟢🟢🟢🟢🟢'));
 
@@ -1047,7 +1052,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('][DownloadData] 🟢 202111: 10 days'));
+      assert(log.includes('][DownloadData] 🟢 202110: 31 days'));
       assert(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
       assert(log.includes(`] 🟢🟢🟢🟢🟢 Sync "${name}" download data success 🟢🟢🟢🟢🟢`));
 

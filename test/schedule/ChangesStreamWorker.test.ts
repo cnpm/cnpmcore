@@ -92,11 +92,11 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'enableChangesStream', true);
     app.mockHttpclient(/https:\/\/replicate\.npmjs\.com\//, () => {
-      throw new Error('mock request replicate error');
+      throw new Error('mock request replicate.npmjs.com error');
     });
     await app.runSchedule('ChangesStreamWorker');
     app.expectLog('[ChangesStreamWorker:start]');
     app.expectLog('[ChangesStreamService.executeTask:error]');
-    app.expectLog('mock request replicate error');
+    app.expectLog('mock request replicate.npmjs.com error');
   });
 });
