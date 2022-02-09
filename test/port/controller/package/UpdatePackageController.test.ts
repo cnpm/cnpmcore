@@ -3,7 +3,7 @@ import { Context } from 'egg';
 import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
-describe('test/port/controller/pacakge/UpdatePackageController.test.ts', () => {
+describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
   let ctx: Context;
   let publisher;
   beforeEach(async () => {

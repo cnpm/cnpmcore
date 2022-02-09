@@ -31,7 +31,7 @@ export type BinaryTaskConfig = {
     // default is 1
     maxPage?: number;
     // custom npm package name, for ImageminBinary
-    npmPacakgeName?: string;
+    npmPackageName?: string;
   },
   disable?: boolean;
 };
@@ -288,7 +288,7 @@ const binaries: {
     distUrl: 'https://raw.githubusercontent.com',
     options: {
       // should use https://www.npmjs.com/package/mozjpeg
-      npmPacakgeName: 'mozjpeg',
+      npmPackageName: 'mozjpeg',
       // https://github.com/imagemin/mozjpeg-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/mozjpeg-bin/blob/v5.0.0/lib/index.js
       nodePlatforms: [ 'osx', 'macos', 'linux', 'win' ],
@@ -314,7 +314,7 @@ const binaries: {
     distUrl: 'https://raw.githubusercontent.com',
     options: {
       // should use https://www.npmjs.com/package/gifsicle
-      npmPacakgeName: 'gifsicle',
+      npmPackageName: 'gifsicle',
       // https://github.com/imagemin/gifsicle-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/gifsicle-bin/blob/v5.0.0/lib/index.js
       nodePlatforms: [ 'macos', 'linux', 'freebsd', 'win' ],
@@ -499,7 +499,7 @@ const binaries: {
     distUrl: 'https://raw.githubusercontent.com',
     options: {
       // should use https://www.npmjs.com/package/guetzli
-      npmPacakgeName: 'guetzli',
+      npmPackageName: 'guetzli',
       // https://github.com/imagemin/guetzli-bin/blob/v4.0.0/lib/index.js
       nodePlatforms: [ 'macos', 'linux', 'win' ],
       nodeArchs: {

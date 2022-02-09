@@ -248,11 +248,11 @@ export class PackageManagerService extends AbstractService {
   }
 
   async listPackageFullManifests(scope: string, name: string) {
-    return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, true);
+    return await this._listPackageFullOrAbbreviatedManifests(scope, name, true);
   }
 
   async listPackageAbbreviatedManifests(scope: string, name: string) {
-    return await this._listPacakgeFullOrAbbreviatedManifests(scope, name, false);
+    return await this._listPackageFullOrAbbreviatedManifests(scope, name, false);
   }
 
   async findPackageVersionManifest(packageId: string, version: string) {
@@ -611,7 +611,7 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  private async _listPacakgeFullOrAbbreviatedManifests(scope: string, name: string, isFullManifests: boolean) {
+  private async _listPackageFullOrAbbreviatedManifests(scope: string, name: string, isFullManifests: boolean) {
     let etag = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return { etag, data: null };
