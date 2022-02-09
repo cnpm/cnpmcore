@@ -140,8 +140,8 @@ export default (appInfo: EggAppConfig) => {
   };
 
   config.logrotator = {
-    // only keep 3 days log files
-    maxDays: 3,
+    // only keep 1 days log files
+    maxDays: 1,
   };
 
   config.bodyParser = {
