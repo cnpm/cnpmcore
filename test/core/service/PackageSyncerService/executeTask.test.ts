@@ -351,6 +351,25 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 🐛 Remote version 1.0.0 not exists on local manifests, need to refresh'));
       assert(log.includes('] 🟢 Synced updated 1 versions'));
       assert(log.includes('] 🚧 Syncing versions 1 => 2'));
+      mock.restore();
+
+      const abbrs = await packageManagerService.listPackageAbbreviatedManifests(scopedAndName[0], scopedAndName[1]);
+      delete abbrs.data.versions['1.0.0'];
+      mock.data(PackageManagerService.prototype, 'listPackageAbbreviatedManifests', abbrs);
+
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 🐛 Remote version 1.0.0 not exists on local abbreviated manifests, need to refresh'));
+      assert(log.includes('] 🟢 Synced updated 1 versions'));
+      assert(log.includes('] 🚧 Syncing versions 2 => 2'));
+      mock.restore();
 
       // mock tag on database but not on manifest dist
       // https://github.com/cnpm/cnpmcore/issues/97
@@ -367,11 +386,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('] 🚧 Remote tag(foo: 2.0.0) not exists in local dist-tags'));
-      assert(log.includes('] 🚧 Refreshing manifests to dists ......'));
-      assert(log.includes('] 🟢 Refresh use'));
+      assert(!log.includes('] 🚧 Refreshing manifests to dists ......'));
     });
 
-    it('should sync missing versions in database', async () => {
+    it.skip('should sync missing versions in database', async () => {
       // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
       const name = '@cnpmcore/test-sync-package-has-two-versions';
       await packageSyncerService.createTask(name);

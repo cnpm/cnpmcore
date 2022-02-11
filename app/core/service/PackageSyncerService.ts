@@ -380,8 +380,10 @@ export class PackageSyncerService extends AbstractService {
     let lastErrorMessage = '';
     const dependenciesSet = new Set<string>();
     const { data: existsData } = await this.packageManagerService.listPackageFullManifests(scope, name);
+    const { data: abbreviatedManifests } = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name);
     const existsVersionMap = existsData && existsData.versions || {};
     const existsVersionCount = Object.keys(existsVersionMap).length;
+    const abbreviatedVersionMap = abbreviatedManifests && abbreviatedManifests.versions || {};
     // 2. save versions
     const versions = Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
@@ -395,10 +397,10 @@ export class PackageSyncerService extends AbstractService {
       const shouldDeleteReadme = existsItem && 'readme' in existsItem;
       if (pkg) {
         if (existsItem) {
-          // make sure data in db
-          existsItem = await this.packageManagerService.findPackageVersionManifest(pkg.packageId, version);
-          if (!existsItem) {
-            logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on database`);
+          // check item on AbbreviatedManifests
+          if (!abbreviatedVersionMap[version]) {
+            updateVersions.push(version);
+            logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local abbreviated manifests, need to refresh`);
           }
         } else {
           // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called

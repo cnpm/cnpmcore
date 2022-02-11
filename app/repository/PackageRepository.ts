@@ -31,7 +31,7 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async findPackageId(scope: string, name: string) {
-    const model = await PackageModel.findOne({ scope, name });
+    const model = await PackageModel.findOne({ scope, name }).select('packageId');
     if (!model) return null;
     return model.packageId;
   }
