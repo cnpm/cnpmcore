@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/cnpm/cnpmcore/branch/main/graph/badge.svg)](https://codecov.io/gh/cnpm/cnpmcore)
 [![CodeQL](https://github.com/cnpm/cnpmcore/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/cnpm/cnpmcore/actions/workflows/codeql-analysis.yml)
 [![emoji-log](https://cdn.rawgit.com/ahmadawais/stuff/ca97874/emoji-log/non-flat-round.svg)](https://github.com/ahmadawais/Emoji-Log/)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore?ref=badge_shield)
 
 Reimplementation based on [cnpmjs.org](https://github.com/cnpm/cnpmjs.org) with TypeScript.
 
@@ -20,6 +21,9 @@ See [DEVELOPER.md](DEVELOPER.md)
 [MIT](LICENSE)
 
 <!-- GITCONTRIBUTOR_START -->
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore?ref=badge_large)
 
 ## Contributors
 
