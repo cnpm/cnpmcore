@@ -146,4 +146,25 @@ export class PackageSyncController extends AbstractController {
       error: task.error,
     };
   }
+
+  // https://github.com/cnpm/cnpmjs.org/blob/master/controllers/registry/package/list_since.js#L8
+  @HTTPMethod({
+    // GET /-/all/since?stale=update_after&startkey={key}
+    path: '/-/all/since',
+    method: HTTPMethodEnum.GET,
+  })
+  async deprecatedListSince() {
+    return {
+      _updated: Date.now(),
+    };
+  }
+
+  // https://github.com/cnpm/cnpmjs.org/blob/master/controllers/registry/package/list_shorts.js#L6
+  @HTTPMethod({
+    path: '/-/short',
+    method: HTTPMethodEnum.GET,
+  })
+  async deprecatedListShort() {
+    return [];
+  }
 }
