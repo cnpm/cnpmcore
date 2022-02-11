@@ -16,12 +16,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let ctx: Context;
   let packageSyncerService: PackageSyncerService;
   let packageManagerService: PackageManagerService;
+  let packageRepository: PackageRepository;
   let npmRegistry: NPMRegistry;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     packageSyncerService = await ctx.getEggObject(PackageSyncerService);
     packageManagerService = await ctx.getEggObject(PackageManagerService);
+    packageRepository = await ctx.getEggObject(PackageRepository);
     npmRegistry = await ctx.getEggObject(NPMRegistry);
   });
 
@@ -367,6 +369,40 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 🚧 Remote tag(foo: 2.0.0) not exists in local dist-tags'));
       assert(log.includes('] 🚧 Refreshing manifests to dists ......'));
       assert(log.includes('] 🟢 Refresh use'));
+    });
+
+    it('should sync missing versions in database', async () => {
+      // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
+      const name = '@cnpmcore/test-sync-package-has-two-versions';
+      await packageSyncerService.createTask(name);
+      let task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      let stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      let log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 🟢 Synced updated 2 versions, removed 0 versions'));
+      assert(log.includes('] 🚧 Syncing versions 0 => 2'));
+
+      const pkg = await packageRepository.findPackage('@cnpmcore', 'test-sync-package-has-two-versions');
+      assert(pkg);
+      await packageRepository.removePackageVersions(pkg.packageId);
+
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(!log.includes('] 🟢 Synced updated 0 versions, removed 0 versions'));
+      assert(log.includes('] 🐛 Remote version 1.0.0 not exists on database'));
+      assert(log.includes('] 🐛 Remote version 2.0.0 not exists on database'));
+      assert(log.includes('] 🚧 Syncing versions 2 => 2'));
     });
 
     it('should sync removed versions', async () => {

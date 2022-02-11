@@ -393,18 +393,27 @@ export class PackageSyncerService extends AbstractService {
       if (!version) continue;
       let existsItem = existsVersionMap[version];
       const shouldDeleteReadme = existsItem && 'readme' in existsItem;
-      if (!existsItem && pkg) {
-        // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called
-        existsItem = await this.packageManagerService.findPackageVersionManifest(pkg.packageId, version);
-        // only allow existsItem on db to force refresh, to avoid big versions fresh
-        // see https://r.cnpmjs.org/-/package/@npm-torg/public-scoped-free-org-test-package-2/syncs/61fcc7e8c1646e26a845b674/log
+      if (pkg) {
         if (existsItem) {
-          // version not exists on manifests, need to refresh
-          // bugfix: https://github.com/cnpm/cnpmcore/issues/115
-          updateVersions.push(version);
-          logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
+          // make sure data in db
+          existsItem = await this.packageManagerService.findPackageVersionManifest(pkg.packageId, version);
+          if (!existsItem) {
+            logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on database`);
+          }
+        } else {
+          // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called
+          existsItem = await this.packageManagerService.findPackageVersionManifest(pkg.packageId, version);
+          // only allow existsItem on db to force refresh, to avoid big versions fresh
+          // see https://r.cnpmjs.org/-/package/@npm-torg/public-scoped-free-org-test-package-2/syncs/61fcc7e8c1646e26a845b674/log
+          if (existsItem) {
+            // version not exists on manifests, need to refresh
+            // bugfix: https://github.com/cnpm/cnpmcore/issues/115
+            updateVersions.push(version);
+            logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
+          }
         }
       }
+
       if (existsItem) {
         // check metaDataKeys, if different value, override exists one
         // https://github.com/cnpm/cnpmjs.org/issues/1667
