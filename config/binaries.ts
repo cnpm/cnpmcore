@@ -764,6 +764,13 @@ const binaries: {
     repo: 'looksgood/s2',
     distUrl: 'https://github.com/looksgood/s2/releases',
   },
+  'ali-zeromq': {
+    category: 'ali-zeromq',
+    description: 'Node.js bindings for zeromq',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'looksgood/zeromq.js',
+    distUrl: 'https://github.com/looksgood/zeromq.js/releases',
+  },
 };
 
 export default binaries;
