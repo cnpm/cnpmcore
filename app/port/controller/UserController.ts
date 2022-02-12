@@ -50,7 +50,7 @@ type User = Static<typeof UserRule>;
 
 @HTTPController()
 export class UserController extends AbstractController {
-  // https://github.com/npm/npm-profile/blob/main/index.js#L126
+  // https://github.com/npm/npm-profile/blob/main/lib/index.js#L127
   @HTTPMethod({
     path: '/-/user/org.couchdb.user::username',
     method: HTTPMethodEnum.PUT,
