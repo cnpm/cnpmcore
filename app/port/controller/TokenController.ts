@@ -25,7 +25,7 @@ type TokenOptions = Static<typeof TokenOptionsRule>;
 
 @HTTPController()
 export class TokenController extends AbstractController {
-  // https://github.com/npm/npm-profile/blob/main/index.js#L228
+  // https://github.com/npm/npm-profile/blob/main/lib/index.js#L233
   @HTTPMethod({
     path: '/-/npm/v1/tokens',
     method: HTTPMethodEnum.POST,
@@ -54,7 +54,7 @@ export class TokenController extends AbstractController {
     };
   }
 
-  // https://github.com/npm/npm-profile/blob/main/index.js#L219
+  // https://github.com/npm/npm-profile/blob/main/lib/index.js#L224
   @HTTPMethod({
     path: '/-/npm/v1/tokens/token/:tokenKey',
     method: HTTPMethodEnum.DELETE,
@@ -65,7 +65,7 @@ export class TokenController extends AbstractController {
     return { ok: true };
   }
 
-  // https://github.com/npm/npm-profile/blob/main/index.js#L215
+  // https://github.com/npm/npm-profile/blob/main/lib/index.js#L220
   @HTTPMethod({
     path: '/-/npm/v1/tokens',
     method: HTTPMethodEnum.GET,
