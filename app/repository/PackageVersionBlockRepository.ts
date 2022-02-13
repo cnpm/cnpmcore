@@ -9,7 +9,6 @@ import { AbstractRepository } from './AbstractRepository';
 })
 export class PackageVersionBlockRepository extends AbstractRepository {
   async savePackageVersionBlock(block: PackageVersionBlockEntity) {
-    await ModelConvertor.convertEntityToModel(block, PackageVersionBlockModel);
     if (block.id) {
       const model = await PackageVersionBlockModel.findOne({ id: block.id });
       if (!model) return;

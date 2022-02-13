@@ -45,6 +45,31 @@ describe('test/port/controller/PackageBlockController/unblockPackage.test.ts', (
         .get(`/-/package/${pkg.name}/blocks`);
       assert(res.status === 200);
       assert(res.body.data.length === 0);
+
+      // block again
+      res = await app.httpRequest()
+        .put(`/-/package/${pkg.name}/blocks`)
+        .set('authorization', adminUser.authorization)
+        .send({
+          reason: 'only for tests',
+        });
+      assert(res.status === 201);
+      assert(res.body.ok === true);
+      res = await app.httpRequest()
+        .get(`/-/package/${pkg.name}/blocks`);
+      assert(res.status === 200);
+      assert(res.body.data.length === 1);
+
+      // unblock gain
+      res = await app.httpRequest()
+        .delete(`/-/package/${pkg.name}/blocks`)
+        .set('authorization', adminUser.authorization);
+      assert(res.status === 200);
+      assert(res.body.ok === true);
+      res = await app.httpRequest()
+        .get(`/-/package/${pkg.name}/blocks`);
+      assert(res.status === 200);
+      assert(res.body.data.length === 0);
     });
 
     it('should 403 block private package', async () => {

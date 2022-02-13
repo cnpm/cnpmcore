@@ -220,11 +220,16 @@ export class PackageManagerService extends AbstractService {
   }
 
   async blockPackage(pkg: Package, reason: string) {
-    const block = PackageVersionBlock.create({
-      packageId: pkg.packageId,
-      version: '*',
-      reason,
-    });
+    let block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
+    if (block) {
+      block.reason = reason;
+    } else {
+      block = PackageVersionBlock.create({
+        packageId: pkg.packageId,
+        version: '*',
+        reason,
+      });
+    }
     await this.packageVersionBlockRepository.savePackageVersionBlock(block);
     if (pkg.manifestsDist && pkg.abbreviatedsDist) {
       const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist);
