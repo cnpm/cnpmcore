@@ -10,7 +10,7 @@ import { User as UserEntity } from '../entity/User';
 import { Token as TokenEntity } from '../entity/Token';
 import { LoginResultCode } from '../../common/enum/User';
 import { integrity, checkIntegrity, randomToken, sha512 } from '../../common/UserUtil';
-import { AbstractService } from './AbstractService';
+import { AbstractService } from '../../common/AbstractService';
 
 type CreateUser = {
   name: string;

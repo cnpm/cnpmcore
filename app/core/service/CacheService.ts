@@ -4,7 +4,7 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { CacheAdapter } from '../../common/adapter/CacheAdapter';
-import { AbstractService } from './AbstractService';
+import { AbstractService } from '../../common/AbstractService';
 
 type PackageCacheAttribe = 'etag' | 'manifests';
 
