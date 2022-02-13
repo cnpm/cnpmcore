@@ -5,9 +5,9 @@ import {
 } from '@eggjs/tegg';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { TaskState, TaskType } from '../../common/enum/Task';
+import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { Task } from '../entity/Task';
-import { AbstractService } from './AbstractService';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,

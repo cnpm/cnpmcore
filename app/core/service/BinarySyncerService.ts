@@ -8,6 +8,7 @@ import {
   EggContextHttpClient,
 } from 'egg';
 import fs from 'fs/promises';
+import binaries, { SyncerClass } from '../../../config/binaries';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -15,11 +16,10 @@ import { TaskRepository } from '../../repository/TaskRepository';
 import { BinaryRepository } from '../../repository/BinaryRepository';
 import { Task } from '../entity/Task';
 import { Binary } from '../entity/Binary';
-import { AbstractService } from './AbstractService';
 import { TaskService } from './TaskService';
 import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
 import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
-import binaries, { SyncerClass } from '../../../config/binaries';
+import { AbstractService } from '../../common/AbstractService';
 import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
 import { NwjsBinary } from '../../common/adapter/binary/NwjsBinary';
 import { BucketBinary } from '../../common/adapter/binary/BucketBinary';

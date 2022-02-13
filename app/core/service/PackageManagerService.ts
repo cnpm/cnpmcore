@@ -10,6 +10,7 @@ import { RequireAtLeastOne } from 'type-fest';
 import semver from 'semver';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { calculateIntegrity, formatTarball, getScopeAndName } from '../../common/PackageUtil';
+import { AbstractService } from '../../common/AbstractService';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
@@ -32,7 +33,6 @@ import {
   PACKAGE_TAG_REMOVED,
   PACKAGE_META_CHANGED,
 } from '../event';
-import { AbstractService } from './AbstractService';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;

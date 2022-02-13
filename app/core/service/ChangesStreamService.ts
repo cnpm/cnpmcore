@@ -9,9 +9,9 @@ import {
   EggContextHttpClient,
 } from 'egg';
 import { TaskType } from '../../common/enum/Task';
+import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { Task } from '../entity/Task';
-import { AbstractService } from './AbstractService';
 import { PackageSyncerService } from './PackageSyncerService';
 
 @ContextProto({
