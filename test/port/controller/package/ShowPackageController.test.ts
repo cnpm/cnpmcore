@@ -336,23 +336,51 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
     });
 
     it('should 404 when package not exists on abbreviated manifest', async () => {
-      const res = await app.httpRequest()
+      let res = await app.httpRequest()
         .get(`/${scopedName}-not-exists`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(404)
         .expect('content-type', 'application/json; charset=utf-8');
-      const data = res.body;
-      assert.equal(data.error, '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+      let data = res.body;
+      assert(!res.headers.etag);
+      assert(!res.headers['cache-control']);
+      assert(data.error === '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+
+      // should not set cdn cache header
+      mock(app.config.cnpmcore, 'enableCDN', true);
+      res = await app.httpRequest()
+        .get(`/${scopedName}-not-exists`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      data = res.body;
+      assert(!res.headers.etag);
+      assert(!res.headers['cache-control']);
+      assert(data.error === '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
     });
 
     it('should 404 when package not exists full manifest', async () => {
-      const res = await app.httpRequest()
+      let res = await app.httpRequest()
         .get(`/${scopedName}-not-exists`)
         .set('Accept', 'application/json')
         .expect(404)
         .expect('content-type', 'application/json; charset=utf-8');
-      const data = res.body;
-      assert.equal(data.error, '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+      let data = res.body;
+      assert(!res.headers.etag);
+      assert(!res.headers['cache-control']);
+      assert(data.error === '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+
+      // should not set cdn cache header
+      mock(app.config.cnpmcore, 'enableCDN', true);
+      res = await app.httpRequest()
+        .get(`/${scopedName}-not-exists`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      data = res.body;
+      assert(!res.headers.etag);
+      assert(!res.headers['cache-control']);
+      assert(data.error === '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
     });
 
     it('should abbreviated manifests work with install scripts', async () => {

@@ -43,6 +43,15 @@ export const SyncPackageTaskRule = Type.Object({
 });
 export type SyncPackageTaskType = Static<typeof SyncPackageTaskRule>;
 
+export const BlockPackageRule = Type.Object({
+  fullname: Name,
+  reason: Type.String({
+    transform: [ 'trim' ],
+    maxLength: 10240,
+  }),
+});
+export type BlockPackageType = Static<typeof BlockPackageRule>;
+
 // https://github.com/xiekw2010/egg-typebox-validate#%E5%A6%82%E4%BD%95%E5%86%99%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%A1%E9%AA%8C%E8%A7%84%E5%88%99
 // add custom validate to ajv
 export function patchAjv(ajv: any) {

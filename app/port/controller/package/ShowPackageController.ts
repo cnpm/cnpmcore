@@ -37,6 +37,7 @@ export class ShowPackageController extends AbstractController {
         requestEtag = requestEtag.substring(2);
       }
       if (requestEtag === cacheEtag) {
+        // make sure CDN cache header set here
         this.setCDNHeaders(ctx);
         // match etag, set status 304
         ctx.status = 304;
@@ -53,16 +54,21 @@ export class ShowPackageController extends AbstractController {
     }
 
     // handle cache miss
-    let result: { etag: string; data: any };
+    let result: { etag: string; data: any, blockReason: string };
     if (isFullManifests) {
       result = await this.packageManagerService.listPackageFullManifests(scope, name);
     } else {
       result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name);
     }
-    const { etag, data } = result;
+    const { etag, data, blockReason } = result;
     // 404, no data
     if (!etag) {
+      // don't set cdn header, no cdn cache for new package to sync as soon as possible
       throw this.createPackageNotFoundError(fullname);
+    }
+    if (blockReason) {
+      this.setCDNHeaders(ctx);
+      throw this.createPackageBlockError(blockReason, fullname);
     }
 
     // set cache

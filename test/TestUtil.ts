@@ -262,6 +262,13 @@ export class TestUtil {
     };
   }
 
+  static async createAdmin() {
+    const adminName = Object.keys(this.app.config.cnpmcore.admins)[0];
+    return await this.createUser({
+      name: adminName,
+    });
+  }
+
   static async readStreamToLog(urlOrStream) {
     let stream: Readable;
     if (typeof urlOrStream === 'string') {

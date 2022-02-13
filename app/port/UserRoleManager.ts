@@ -135,4 +135,12 @@ export class UserRoleManager {
       }
     }
   }
+
+  public async isAdmin(ctx: EggContext) {
+    const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
+    if (!authorizedUserAndToken) return false;
+    const { user, token } = authorizedUserAndToken;
+    if (token.isReadonly) return false;
+    return user.name in this.config.cnpmcore.admins;
+  }
 }
