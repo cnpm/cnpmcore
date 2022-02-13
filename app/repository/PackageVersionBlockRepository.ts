@@ -21,6 +21,10 @@ export class PackageVersionBlockRepository extends AbstractRepository {
     }
   }
 
+  async findPackageBlock(packageId: string) {
+    return await this.findPackageVersionBlock(packageId, '*');
+  }
+
   async findPackageVersionBlock(packageId: string, version: string) {
     const model = await PackageVersionBlockModel.findOne({ packageId, version });
     if (model) return ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity);

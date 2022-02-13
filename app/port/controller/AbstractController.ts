@@ -1,5 +1,6 @@
 import {
   NotFoundError,
+  UnavailableForLegalReasonsError,
 } from 'egg-errors';
 import {
   Inject,
@@ -61,6 +62,11 @@ export abstract class AbstractController extends MiddlewareController {
       }
     }
     return err;
+  }
+
+  protected createPackageBlockError(reason: string, fullname: string, version?: string) {
+    const message = version ? `${fullname}@${version} was blocked` : `${fullname} was blocked`;
+    return new UnavailableForLegalReasonsError(`${message}, reason: ${reason}`);
   }
 
   protected async getPackageEntityByFullname(fullname: string): Promise<PackageEntity> {

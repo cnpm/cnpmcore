@@ -1,6 +1,6 @@
 import assert = require('assert');
 import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () => {
@@ -39,6 +39,45 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
       assert(res.body.data[0].created);
       assert(res.body.data[0].modified);
       assert(res.body.data[0].reason.includes('only for tests (operator: cnpmcore_admin/'));
+
+      // request manifests will status 451
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`);
+      assert(res.status === 451);
+      assert(!res.headers.etag);
+      assert(!res.headers['cache-control']);
+      assert(res.body.error);
+      assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule was blocked, reason: '));
+      assert(res.body.error.includes('only for tests (operator: cnpmcore_admin/'));
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/latest`);
+      assert(res.status === 451);
+      assert(!res.headers.etag);
+      assert(!res.headers['cache-control']);
+      assert(res.body.error);
+      assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@latest was blocked, reason: '));
+      assert(res.body.error.includes('only for tests (operator: cnpmcore_admin/'));
+
+      // check cdn cache
+      mock(app.config.cnpmcore, 'enableCDN', true);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`);
+      assert(res.status === 451);
+      assert(!res.headers.etag);
+      assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
+      assert(res.body.error);
+      assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule was blocked, reason: '));
+      assert(res.body.error.includes('only for tests (operator: cnpmcore_admin/'));
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`);
+      assert(res.status === 451);
+      assert(!res.headers.etag);
+      assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
+      assert(res.body.error);
+      assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@1.0.0 was blocked, reason: '));
+      assert(res.body.error.includes('only for tests (operator: cnpmcore_admin/'));
     });
 
     it('should 403 block private package', async () => {

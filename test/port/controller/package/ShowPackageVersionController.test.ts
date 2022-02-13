@@ -134,7 +134,8 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       res = await app.httpRequest()
         .get(`/${pkg.name}/beta-not-exists`)
         .expect(404);
-      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`);
+      assert(!res.headers.etag);
+      assert(res.body.error === `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`);
     });
 
     it('should 404 when version not exists', async () => {
@@ -155,21 +156,24 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       let res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.40000404`)
         .expect(404);
-      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
+      assert(!res.headers.etag);
+      assert(res.body.error === `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
 
       // should 404 on syncMode=all when package exists
       mock(app.config.cnpmcore, 'syncMode', 'all');
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.40000404`)
         .expect(404);
-      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
+      assert(!res.headers.etag);
+      assert(res.body.error === `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
     });
 
     it('should 404 when package not exists', async () => {
       const res = await app.httpRequest()
         .get('/@cnpm/foonot-exists/1.0.40000404')
         .expect(404);
-      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
+      assert(!res.headers.etag);
+      assert(res.body.error === '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
 
     it('should not redirect public package version to source registry when syncMode=all', async () => {
@@ -208,11 +212,13 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       let res = await app.httpRequest()
         .get('/@egg/foonot-exists/1.0.40000404');
       assert(res.status === 302);
+      assert(!res.headers.etag);
       assert(res.headers.location === 'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404');
 
       res = await app.httpRequest()
         .get('/@egg/foonot-exists/1.0.40000404?t=123');
       assert(res.status === 302);
+      assert(!res.headers.etag);
       assert(res.headers.location === 'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404?t=123');
     });
 

@@ -664,14 +664,21 @@ export class PackageManagerService extends AbstractService {
 
   private async _listPackageFullOrAbbreviatedManifests(scope: string, name: string, isFullManifests: boolean) {
     let etag = '';
+    let blockReason = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return { etag, data: null };
+    if (!pkg) return { etag, data: null, blockReason };
+
+    const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
+    if (block) {
+      blockReason = block.reason;
+    }
+
     let dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
     // read from dist
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
       const data = await this.readDistBytesToJSON(dist);
-      return { etag, data };
+      return { etag, data, blockReason };
     }
 
     // read from database
@@ -679,12 +686,12 @@ export class PackageManagerService extends AbstractService {
     const abbreviatedManifests = isFullManifests ? null : await this._listPackageAbbreviatedManifests(pkg);
     if (!fullManifests && !abbreviatedManifests) {
       // not exists
-      return { etag, data: null };
+      return { etag, data: null, blockReason };
     }
     await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
     dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
     etag = `"${dist!.shasum}"`;
-    return { etag, data: fullManifests || abbreviatedManifests };
+    return { etag, data: fullManifests || abbreviatedManifests, blockReason };
   }
 
   private async _listPackageMaintainers(pkg: Package) {

@@ -28,7 +28,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', user.ua)
         .send(pkg2)
         .expect(403);
-      assert.equal(res.body.error, `[FORBIDDEN] Can\'t modify npm public package "${pkg2.name}"`);
+      assert(res.body.error === `[FORBIDDEN] Can\'t modify npm public package "${pkg2.name}"`);
     });
 
     it('should add new version success on scoped package', async () => {
