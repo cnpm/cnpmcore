@@ -22,7 +22,7 @@
     "tsc": "npm run clean && ets && tsc -p ./tsconfig.json",
     "tsc:prod": "rm -rf dist && ets && tsc -p ./tsconfig.prod.json",
     "prepublishOnly": "npm run tsc:prod",
-    "start": "eggctl start --daemon",
+    "start": "eggctl --node-options--max-semi-space-size=128 start --daemon",
     "stop": "eggctl stop"
   },
   "repository": {
