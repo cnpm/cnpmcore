@@ -4,6 +4,7 @@ export enum SyncerClass {
   CypressBinary = 'CypressBinary',
   BucketBinary = 'BucketBinary',
   GithubBinary = 'GithubBinary',
+  ElectronBinary = 'ElectronBinary',
   Sqlite3Binary = 'Sqlite3Binary',
   SqlcipherBinary = 'SqlcipherBinary',
   PuppeteerBinary = 'PuppeteerBinary',
@@ -574,7 +575,7 @@ const binaries: {
   electron: {
     category: 'electron',
     description: 'Build cross-platform desktop apps with JavaScript, HTML, and CSS',
-    syncer: SyncerClass.GithubBinary,
+    syncer: SyncerClass.ElectronBinary,
     repo: 'electron/electron',
     distUrl: 'https://github.com/electron/electron/releases',
     options: {

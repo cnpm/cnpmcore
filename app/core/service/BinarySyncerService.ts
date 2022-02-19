@@ -28,6 +28,7 @@ import { Sqlite3Binary } from '../../common/adapter/binary/Sqlite3Binary';
 import { SqlcipherBinary } from '../../common/adapter/binary/SqlcipherBinary';
 import { PuppeteerBinary } from '../../common/adapter/binary/PuppeteerBinary';
 import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
+import { ElectronBinary } from '../../common/adapter/binary/ElectronBinary';
 import { NodePreGypBinary } from '../../common/adapter/binary/NodePreGypBinary';
 import { ImageminBinary } from '../../common/adapter/binary/ImageminBinary';
 
@@ -40,6 +41,7 @@ const BinaryClasses = {
   [SyncerClass.SqlcipherBinary]: SqlcipherBinary,
   [SyncerClass.PuppeteerBinary]: PuppeteerBinary,
   [SyncerClass.GithubBinary]: GithubBinary,
+  [SyncerClass.ElectronBinary]: ElectronBinary,
   [SyncerClass.NodePreGypBinary]: NodePreGypBinary,
   [SyncerClass.ImageminBinary]: ImageminBinary,
 };
