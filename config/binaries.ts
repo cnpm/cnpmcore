@@ -558,6 +558,16 @@ const binaries: {
     },
   },
   // GithubBinary
+  npm: {
+    category: 'npm',
+    description: 'the package manager for JavaScript',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'npm/cli',
+    distUrl: 'https://github.com/npm/cli/releases',
+    options: {
+      maxPage: 3,
+    },
+  },
   xprofiler: {
     category: 'xprofiler',
     description: '🌀An addon for node.js, which supporting output performance log and real-time profiling through sampling.',
