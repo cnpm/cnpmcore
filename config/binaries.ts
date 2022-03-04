@@ -593,6 +593,16 @@ const binaries: {
       maxPage: 1,
     },
   },
+  'electron-nightly': {
+    category: 'electron-nightly',
+    description: 'Build cross-platform desktop apps with JavaScript, HTML, and CSS',
+    syncer: SyncerClass.ElectronBinary,
+    repo: 'electron/nightlies',
+    distUrl: 'https://github.com/electron/nightlies/releases',
+    options: {
+      maxPage: 3,
+    },
+  },
   'electron-builder-binaries': {
     category: 'electron-builder-binaries',
     description: 'electron-builder downloads required tools files on demand (e.g. to code sign windows application, to make AppX).',
