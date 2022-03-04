@@ -596,7 +596,7 @@ const binaries: {
   'electron-nightly': {
     category: 'electron-nightly',
     description: 'Build cross-platform desktop apps with JavaScript, HTML, and CSS',
-    syncer: SyncerClass.ElectronBinary,
+    syncer: SyncerClass.GithubBinary,
     repo: 'electron/nightlies',
     distUrl: 'https://github.com/electron/nightlies/releases',
     options: {
