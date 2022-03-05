@@ -792,6 +792,13 @@ const binaries: {
     repo: 'looksgood/zeromq.js',
     distUrl: 'https://github.com/looksgood/zeromq.js/releases',
   },
+  'node-re2': {
+    category: 'node-re2',
+    description: 'node.js bindings for RE2: fast, safe alternative to backtracking regular expression engines.',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'uhop/node-re2',
+    distUrl: 'https://github.com/uhop/node-re2/releases',
+  },
 };
 
 export default binaries;
