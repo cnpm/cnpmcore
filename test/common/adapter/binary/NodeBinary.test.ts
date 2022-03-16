@@ -34,7 +34,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           assert(item.date === '26-Aug-2011 16:21');
           assert(item.isDir === false);
           assert(item.size === '3813493');
-          assert(item.url === 'https://nodejs.org/dist/node-v0.1.100.tar.gz');
+          assert(item.url === 'https://nodejs.org/download/release/node-v0.1.100.tar.gz');
           matchFile = true;
         }
         if (!item.isDir) {
@@ -64,7 +64,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           assert(item.date === '01-Dec-2021 16:13');
           assert(item.isDir === false);
           assert(item.size === '3153');
-          assert(item.url === 'https://nodejs.org/dist/v16.13.1/SHASUMS256.txt');
+          assert(item.url === 'https://nodejs.org/download/release/v16.13.1/SHASUMS256.txt');
           matchFile = true;
         }
         if (!item.isDir) {
