@@ -53,7 +53,7 @@ const binaries: {
     description: 'Node.js® is a JavaScript runtime built on Chrome\'s V8 JavaScript engine.',
     syncer: SyncerClass.NodeBinary,
     repo: 'nodejs/node',
-    distUrl: 'https://nodejs.org/dist',
+    distUrl: 'https://nodejs.org/download/release',
   },
   'node-rc': {
     category: 'node-rc',
