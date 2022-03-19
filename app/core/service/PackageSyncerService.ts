@@ -431,7 +431,7 @@ export class PackageSyncerService extends AbstractService {
           if (remoteItemDiffValue !== JSON.stringify(existsItem[key])) {
             if (!diffMeta) diffMeta = {};
             diffMeta[key] = remoteItemValue;
-          } else if (remoteItemDiffValue !== JSON.stringify(existsAbbreviatedItem[key])) {
+          } else if (existsAbbreviatedItem && remoteItemDiffValue !== JSON.stringify(existsAbbreviatedItem[key])) {
             // should diff exists abbreviated item too
             if (!diffMeta) diffMeta = {};
             diffMeta[key] = remoteItemValue;
