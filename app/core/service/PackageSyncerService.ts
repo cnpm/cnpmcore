@@ -394,11 +394,12 @@ export class PackageSyncerService extends AbstractService {
       const version: string = item.version;
       if (!version) continue;
       let existsItem = existsVersionMap[version];
-      const shouldDeleteReadme = existsItem && 'readme' in existsItem;
+      const existsAbbreviatedItem = abbreviatedVersionMap[version];
+      const shouldDeleteReadme = !!(existsItem && 'readme' in existsItem);
       if (pkg) {
         if (existsItem) {
           // check item on AbbreviatedManifests
-          if (!abbreviatedVersionMap[version]) {
+          if (!existsAbbreviatedItem) {
             updateVersions.push(version);
             logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local abbreviated manifests, need to refresh`);
           }
@@ -423,11 +424,17 @@ export class PackageSyncerService extends AbstractService {
         const metaDataKeys = [
           'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated',
         ];
-        let diffMeta;
+        let diffMeta: any;
         for (const key of metaDataKeys) {
-          if (JSON.stringify(item[key]) !== JSON.stringify(existsItem[key])) {
+          const remoteItemValue = item[key];
+          const remoteItemDiffValue = JSON.stringify(remoteItemValue);
+          if (remoteItemDiffValue !== JSON.stringify(existsItem[key])) {
             if (!diffMeta) diffMeta = {};
-            diffMeta[key] = item[key];
+            diffMeta[key] = remoteItemValue;
+          } else if (existsAbbreviatedItem && remoteItemDiffValue !== JSON.stringify(existsAbbreviatedItem[key])) {
+            // should diff exists abbreviated item too
+            if (!diffMeta) diffMeta = {};
+            diffMeta[key] = remoteItemValue;
           }
         }
         // should delete readme
