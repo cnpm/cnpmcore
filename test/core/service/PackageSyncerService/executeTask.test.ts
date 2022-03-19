@@ -1029,7 +1029,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(manifests.data.versions['2.0.0'].cpu[0], 'x64');
       // publishTime
       assert.equal(manifests.data.time['1.0.0'], '2021-09-27T08:10:48.747Z');
-      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      let abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
       // console.log(JSON.stringify(abbreviatedManifests.data, null, 2));
       assert.equal(abbreviatedManifests.data.versions['2.0.0'].peerDependenciesMeta.bufferutil.optional, true);
       assert.equal(abbreviatedManifests.data.versions['2.0.0'].os[0], 'linux');
@@ -1061,6 +1061,29 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       mock.restore();
       manifests = await packageManagerService.listPackageFullManifests('', name);
       assert(manifests.data.versions['2.0.0'].readme === undefined);
+
+      // should sync missing cpu on abbreviated manifests
+      const pkg = await packageRepository.findPackage('', name);
+      const pkgVersion = await packageRepository.findPackageVersion(pkg!.packageId, '2.0.0');
+      assert(pkgVersion);
+      await packageManagerService.savePackageVersionManifest(pkgVersion, {}, { cpu: undefined, libc: [ 'glibc' ] });
+      await packageManagerService.refreshPackageChangeVersionsToDists(pkg!, [ '2.0.0' ]);
+      abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert(!abbreviatedManifests.data.versions['2.0.0'].cpu);
+      assert.deepStrictEqual(abbreviatedManifests.data.versions['2.0.0'].libc, [ 'glibc' ]);
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('🟢 Synced version 2.0.0 success, different meta: {"cpu":["x64"]}'));
+      mock.restore();
+      abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert.equal(abbreviatedManifests.data.versions['2.0.0'].cpu[0], 'x64');
+      assert(!abbreviatedManifests.data.versions['2.0.0'].libc);
     });
 
     it('should sync download data work on enableSyncDownloadData = true', async () => {
