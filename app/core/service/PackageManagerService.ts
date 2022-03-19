@@ -168,6 +168,7 @@ export class PackageManagerService extends AbstractService {
       bin: cmd.packageJson.bin,
       os: cmd.packageJson.os,
       cpu: cmd.packageJson.cpu,
+      libc: cmd.packageJson.libc,
       workspaces: cmd.packageJson.workspaces,
       directories: cmd.packageJson.directories,
       dist: cmd.packageJson.dist,

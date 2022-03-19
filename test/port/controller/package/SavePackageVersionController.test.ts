@@ -406,6 +406,28 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.equal(res.body.readme, '');
     });
 
+    it('should add new version with libc field success', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/without-readme', version: '0.0.0', libc: [ 'glibc' ] });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      assert.equal(res.body.ok, true);
+      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .expect(200);
+      assert.deepStrictEqual(res.body.versions['0.0.0'].libc, [ 'glibc' ]);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .set('accept', 'application/vnd.npm.install-v1+json')
+        .expect(200);
+      assert.deepStrictEqual(res.body.versions['0.0.0'].libc, [ 'glibc' ]);
+    });
+
     it('should add new version without readme(object type) success', async () => {
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/with-readme-object', version: '0.0.0' });
       const version = Object.keys(pkg.versions)[0];

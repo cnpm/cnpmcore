@@ -16,6 +16,7 @@ type PackageOptions = {
   readme?: string | null;
   distTags?: object | null;
   isPrivate?: boolean;
+  libc?: string[];
 };
 
 export class TestUtil {
@@ -149,6 +150,9 @@ export class TestUtil {
       if (options.version) {
         version.version = options.version;
         updateAttach = true;
+      }
+      if (options.libc) {
+        version.libc = options.libc;
       }
       if (options.versionObject) {
         Object.assign(version, options.versionObject);
