@@ -419,7 +419,10 @@ export class PackageSyncerService extends AbstractService {
       if (existsItem) {
         // check metaDataKeys, if different value, override exists one
         // https://github.com/cnpm/cnpmjs.org/issues/1667
-        const metaDataKeys = [ 'peerDependenciesMeta', 'os', 'cpu', 'workspaces', 'hasInstallScript', 'deprecated' ];
+        // need libc field https://github.com/cnpm/cnpmcore/issues/187
+        const metaDataKeys = [
+          'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated',
+        ];
         let diffMeta;
         for (const key of metaDataKeys) {
           if (JSON.stringify(item[key]) !== JSON.stringify(existsItem[key])) {
