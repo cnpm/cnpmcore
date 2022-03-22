@@ -205,7 +205,8 @@ export class PackageRepository extends AbstractRepository {
   async savePackageVersionManifest(manifestEntity: PackageVersionManifestEntity): Promise<void> {
     let model = await PackageVersionManifestModel.findOne({ packageVersionId: manifestEntity.packageVersionId });
     if (model) {
-      await ModelConvertor.saveEntityToModel(manifestEntity, model);
+      model.manifest = manifestEntity.manifest;
+      await model.save();
     } else {
       model = await ModelConvertor.convertEntityToModel(manifestEntity, PackageVersionManifestModel);
       this.logger.info('[PackageRepository:savePackageVersionManifest:new] id: %s, packageVersionId: %s',
