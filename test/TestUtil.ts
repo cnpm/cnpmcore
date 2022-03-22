@@ -19,6 +19,17 @@ type PackageOptions = {
   libc?: string[];
 };
 
+type UserOptions = {
+  name?: string;
+  password?: string;
+  email?: string;
+  tokenOptions?: {
+    automation?: boolean;
+    readonly?: boolean;
+    cidr_whitelist?: string[];
+  };
+};
+
 export class TestUtil {
   private static connection;
   private static tables;
@@ -170,6 +181,8 @@ export class TestUtil {
       if (options.readme === null) {
         delete pkg.readme;
         delete version.readme;
+      } else if (options.readme) {
+        version.readme = pkg.readme = options.readme;
       }
       if ('distTags' in options) {
         pkg['dist-tags'] = options.distTags;
@@ -180,9 +193,9 @@ export class TestUtil {
     return pkg;
   }
 
-  static async createPackage(options?: PackageOptions) {
+  static async createPackage(options?: PackageOptions, userOptions?: UserOptions) {
     const pkg = await this.getFullPackage(options);
-    const user = await this.createUser();
+    const user = await this.createUser(userOptions);
     await this.app.httpRequest()
       .put(`/${pkg.name}`)
       .set('authorization', user.authorization)
@@ -197,16 +210,7 @@ export class TestUtil {
     return { user, pkg };
   }
 
-  static async createUser(user?: {
-    name?: string;
-    password?: string;
-    email?: string;
-    tokenOptions?: {
-      automation?: boolean;
-      readonly?: boolean;
-      cidr_whitelist?: string[];
-    };
-  }) {
+  static async createUser(user?: UserOptions) {
     if (!user) {
       user = {};
     }

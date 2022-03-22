@@ -4,6 +4,8 @@ import { Package as PackageEntity } from '../core/entity/Package';
 import { ModelConvertor } from './util/ModelConvertor';
 import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVersion';
 import { PackageVersion as PackageVersionModel } from './model/PackageVersion';
+import { PackageVersionManifest as PackageVersionManifestEntity } from '../core/entity/PackageVersionManifest';
+import { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest';
 import { Dist as DistModel } from './model/Dist';
 import { Dist as DistEntity } from '../core/entity/Dist';
 import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag';
@@ -198,6 +200,23 @@ export class PackageRepository extends AbstractRepository {
     const removeCount = await PackageVersionModel.remove({ packageVersionId: pkgVersion.packageVersionId });
     this.logger.info('[PackageRepository:removePackageVersion:remove] %d dist rows, %d rows, packageVersionId: %s',
       distRemoveCount, removeCount, pkgVersion.packageVersionId);
+  }
+
+  async savePackageVersionManifest(manifestEntity: PackageVersionManifestEntity): Promise<void> {
+    let model = await PackageVersionManifestModel.findOne({ packageVersionId: manifestEntity.packageVersionId });
+    if (model) {
+      await ModelConvertor.saveEntityToModel(manifestEntity, model);
+    } else {
+      model = await ModelConvertor.convertEntityToModel(manifestEntity, PackageVersionManifestModel);
+      this.logger.info('[PackageRepository:savePackageVersionManifest:new] id: %s, packageVersionId: %s',
+        model.id, model.packageVersionId);
+    }
+  }
+
+  async findPackageVersionManifest(packageVersionId: string) {
+    const model = await PackageVersionManifestModel.findOne({ packageVersionId });
+    if (!model) return null;
+    return ModelConvertor.convertModelToEntity(model, PackageVersionManifestModel);
   }
 
   public async queryTotal() {

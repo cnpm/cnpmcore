@@ -31,6 +31,20 @@ CREATE TABLE IF NOT EXISTS `package_versions` (
   UNIQUE KEY `uk_package_id_version` (`package_id`, `version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='package version info';
 
+CREATE TABLE IF NOT EXISTS `package_version_manifests` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
+  `package_id` varchar(24) NOT NULL COMMENT 'package id',
+  `package_version_id` varchar(24) NOT NULL COMMENT 'package version id',
+  `package_version_manifest_id` varchar(24) NOT NULL COMMENT 'package version manifest id',
+  `manifest` json NOT NULL COMMENT 'manifest JSON, including README text',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_package_version_manifest_id` (`package_version_manifest_id`),
+  UNIQUE KEY `uk_package_version_id` (`package_version_id`),
+  KEY `idx_package_id` (`package_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='package version manifest';
+
 CREATE TABLE IF NOT EXISTS `package_version_downloads` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
   `gmt_create` datetime(3) NOT NULL COMMENT 'create time',

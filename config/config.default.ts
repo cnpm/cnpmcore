@@ -67,6 +67,8 @@ export default (appInfo: EggAppConfig) => {
     cdnCacheControlHeader: 'max-age=0, s-maxage=120, must-revalidate',
     // if you are using CDN, can set it to 'Accept, Accept-Encoding'
     cdnVaryHeader: 'Accept, Accept-Encoding',
+    // store full package version manifests data to database table(package_version_manifests), default is false
+    enableStoreFullPackageVersionManifestsToDatabase: false,
   };
 
   // override config from framework / plugin
