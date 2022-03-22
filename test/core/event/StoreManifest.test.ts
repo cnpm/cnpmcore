@@ -35,8 +35,8 @@ describe('test/core/event/StoreManifest.test.ts', () => {
 
     it('should store manifest when enableStoreFullPackageVersionManifestsToDatabase = true', async () => {
       mock(app.config.cnpmcore, 'enableStoreFullPackageVersionManifestsToDatabase', true);
-      const { pkg } = await TestUtil.createPackage({ version: '1.0.0', readme: 'test store manifest' });
-      const eventWaiter = await app.getEventWaiter();
+      const { pkg, user } = await TestUtil.createPackage({ version: '1.0.0', readme: 'test store manifest' });
+      let eventWaiter = await app.getEventWaiter();
       await eventWaiter.await('PACKAGE_VERSION_ADDED');
       const [ scope, name ] = getScopeAndName(pkg.name);
       const packageId = await packageRepository.findPackageId(scope, name);
@@ -49,6 +49,15 @@ describe('test/core/event/StoreManifest.test.ts', () => {
       assert(packageVersionManifest.manifest.readme === 'test store manifest');
       assert(packageVersionManifest.manifest.description);
       // console.log(packageVersionManifest.manifest);
+
+      await TestUtil.createPackage({ version: '2.0.0', readme: 'test store manifest' }, 
+        { name: user.name, password: user.password });
+      eventWaiter = await app.getEventWaiter();
+      await eventWaiter.await('PACKAGE_VERSION_ADDED');
+      const packageVersion2 = await packageRepository.findPackageVersion(packageId, '2.0.0');
+      assert(packageVersion2);
+      const packageVersionManifest2 = await packageRepository.findPackageVersionManifest(packageVersion2.packageVersionId);
+      assert(packageVersionManifest2);
     });
   });
 });
