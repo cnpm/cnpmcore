@@ -48,9 +48,10 @@ describe('test/core/event/StoreManifest.test.ts', () => {
       app.expectLog('[PackageRepository:savePackageVersionManifest:new] id: ');
       assert(packageVersionManifest.manifest.readme === 'test store manifest');
       assert(packageVersionManifest.manifest.description);
+      assert(packageVersionManifest.manifest.version === '1.0.0');
       // console.log(packageVersionManifest.manifest);
 
-      await TestUtil.createPackage({ version: '2.0.0', readme: 'test store manifest' }, 
+      await TestUtil.createPackage({ version: '2.0.0', readme: 'test store manifest' },
         { name: user.name, password: user.password });
       eventWaiter = await app.getEventWaiter();
       await eventWaiter.await('PACKAGE_VERSION_ADDED');
@@ -58,6 +59,8 @@ describe('test/core/event/StoreManifest.test.ts', () => {
       assert(packageVersion2);
       const packageVersionManifest2 = await packageRepository.findPackageVersionManifest(packageVersion2.packageVersionId);
       assert(packageVersionManifest2);
+      assert(packageVersionManifest2.manifest.version === '2.0.0');
+      // console.log(packageVersionManifest2.manifest);
     });
   });
 });
