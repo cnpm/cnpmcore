@@ -170,6 +170,8 @@ export class TestUtil {
       if (options.readme === null) {
         delete pkg.readme;
         delete version.readme;
+      } else if (options.readme) {
+        version.readme = pkg.readme = options.readme;
       }
       if ('distTags' in options) {
         pkg['dist-tags'] = options.distTags;
