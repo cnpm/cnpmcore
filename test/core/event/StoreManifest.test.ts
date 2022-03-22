@@ -61,6 +61,12 @@ describe('test/core/event/StoreManifest.test.ts', () => {
       assert(packageVersionManifest2);
       assert(packageVersionManifest2.manifest.version === '2.0.0');
       // console.log(packageVersionManifest2.manifest);
+
+      // should work same version
+      (await app.getEventbus()).emit('PACKAGE_VERSION_ADDED', pkg.name, '2.0.0');
+      eventWaiter = await app.getEventWaiter();
+      await eventWaiter.await('PACKAGE_VERSION_ADDED');
+      app.notExpectLog('[EventBus] process event PACKAGE_VERSION_ADDED failed: ER_DUP_ENTRY: Duplicate entry');
     });
   });
 });
