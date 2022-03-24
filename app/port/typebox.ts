@@ -1,8 +1,9 @@
 import { Type, Static } from '@sinclair/typebox';
 import semver from 'semver';
 
+// make sure package name is lower case
 export const Name = Type.String({
-  transform: [ 'trim' ],
+  transform: [ 'trim', 'toLowerCase' ],
 });
 
 export const Tag = Type.String({
