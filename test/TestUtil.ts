@@ -13,6 +13,7 @@ type PackageOptions = {
   versionObject?: object;
   attachment?: object;
   dist?: object;
+  config?: object;
   readme?: string | null;
   distTags?: object | null;
   isPrivate?: boolean;

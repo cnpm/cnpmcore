@@ -15,8 +15,8 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   const scopedName = '@cnpm/testmodule-download-version-tar';

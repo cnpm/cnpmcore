@@ -13,7 +13,7 @@ describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
   });
 
   afterEach(async () => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('fetch()', () => {

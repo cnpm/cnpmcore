@@ -12,8 +12,8 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /downloads/range/:range/:fullname] showPackageDownloads()', () => {

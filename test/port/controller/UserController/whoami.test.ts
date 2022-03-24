@@ -9,8 +9,8 @@ describe('test/port/controller/UserController/whoami.test.ts', () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /-/whoami] whoami()', () => {

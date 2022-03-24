@@ -6,7 +6,7 @@ import { PACKAGE_VERSION_ADDED } from './index';
 import { getScopeAndName } from '../../common/PackageUtil';
 import { PackageVersionManifest as PackageVersionManifestEntity } from '../entity/PackageVersionManifest';
 import { PackageRepository } from '../../repository/PackageRepository';
-import { PackageManagerService } from '../service/PackageManagerService';
+import { DistRepository } from '../../repository/DistRepository';
 
 class StoreManifestEvent {
   @Inject()
@@ -14,7 +14,7 @@ class StoreManifestEvent {
   @Inject()
   private readonly packageRepository: PackageRepository;
   @Inject()
-  private readonly packageManagerService: PackageManagerService;
+  private readonly distRepository: DistRepository;
 
   protected async savePackageVersionManifest(fullname: string, version: string) {
     if (!this.config.cnpmcore.enableStoreFullPackageVersionManifestsToDatabase) return;
@@ -24,7 +24,7 @@ class StoreManifestEvent {
     if (!packageId) return;
     const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (!packageVersion) return;
-    const manifest = await this.packageManagerService.findPackageVersionManifest(packageId, version);
+    const manifest = await this.distRepository.findPackageVersionManifest(packageId, version);
     if (!manifest) return;
     const entity = PackageVersionManifestEntity.create({
       packageId,

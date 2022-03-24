@@ -11,8 +11,8 @@ describe('test/port/controller/PackageTagController/removeTag.test.ts', () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[DELETE /-/package/:fullname/dist-tags/:tag] removeTag()', () => {

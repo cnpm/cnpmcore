@@ -9,8 +9,8 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[POST /-/npm/v1/tokens] createToken()', () => {

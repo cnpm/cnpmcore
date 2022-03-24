@@ -14,8 +14,8 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
     packageRepository = await ctx.getEggObject(PackageRepository);
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[DELETE /:fullname/-/:filenameWithVersion.tgz/-rev/:rev] remove()', () => {

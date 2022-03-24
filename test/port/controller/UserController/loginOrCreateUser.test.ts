@@ -8,8 +8,8 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[PUT /-/user/org.couchdb.user::username] loginOrCreateUser()', () => {

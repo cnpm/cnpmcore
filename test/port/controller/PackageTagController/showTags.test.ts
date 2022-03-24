@@ -11,8 +11,8 @@ describe('test/port/controller/PackageTagController/showTags.test.ts', () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /-/package/:fullname/dist-tags] showTags()', () => {

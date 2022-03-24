@@ -3,6 +3,7 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
+import { DistRepository } from 'app/repository/DistRepository';
 import { Package as PackageModel } from 'app/repository/model/Package';
 import { Task as TaskModel } from 'app/repository/model/Task';
 import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
@@ -28,7 +29,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   });
 
   afterEach(async () => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('executeTask()', () => {
@@ -278,9 +279,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       mock.data(PackageRepository.prototype, 'findPackageVersion', {
         packageId: 'mock packageId',
       });
-      const findPackageVersionManifest = PackageManagerService.prototype.findPackageVersionManifest;
-      mock(PackageManagerService.prototype, 'findPackageVersionManifest', async () => {
-        PackageManagerService.prototype.findPackageVersionManifest = findPackageVersionManifest;
+      const findPackageVersionManifest = DistRepository.prototype.findPackageVersionManifest;
+      mock(DistRepository.prototype, 'findPackageVersionManifest', async () => {
+        DistRepository.prototype.findPackageVersionManifest = findPackageVersionManifest;
         mock.data(PackageRepository.prototype, 'findPackage', null);
         return null;
       });

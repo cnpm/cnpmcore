@@ -13,8 +13,8 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
     mock(app.config.cnpmcore, 'syncMode', 'all');
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[PUT /-/package/:fullname/syncs] createSyncTask()', () => {

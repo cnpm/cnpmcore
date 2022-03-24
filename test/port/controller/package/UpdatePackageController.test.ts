@@ -11,8 +11,8 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[PUT /:fullname/-rev/:rev] update()', () => {

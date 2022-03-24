@@ -11,8 +11,8 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[PUT /-/package/:fullname/dist-tags/:tag] saveTag()', () => {

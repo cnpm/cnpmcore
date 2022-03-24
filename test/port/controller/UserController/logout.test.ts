@@ -9,8 +9,8 @@ describe('test/port/controller/UserController/logout.test.ts', () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[DELETE /-/user/token/:token] logout()', () => {

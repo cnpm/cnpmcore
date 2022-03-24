@@ -11,8 +11,8 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /:fullname/:versionOrTag] show()', () => {

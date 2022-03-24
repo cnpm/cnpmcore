@@ -9,8 +9,8 @@ describe('test/port/controller/UserController/showProfile.test.ts', () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
-    app.destroyModuleContext(ctx);
+  afterEach(async () => {
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /-/npm/v1/user] showProfile()', () => {

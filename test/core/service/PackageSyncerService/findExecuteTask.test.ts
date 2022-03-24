@@ -15,7 +15,7 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
   });
 
   afterEach(async () => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('findExecuteTask()', () => {

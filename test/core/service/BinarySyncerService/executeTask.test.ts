@@ -18,7 +18,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
   });
 
   afterEach(async () => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('executeTask()', () => {
