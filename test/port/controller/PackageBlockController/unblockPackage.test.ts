@@ -12,7 +12,7 @@ describe('test/port/controller/PackageBlockController/unblockPackage.test.ts', (
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[DELETE /-/package/:fullname/blocks] unblockPackage()', () => {

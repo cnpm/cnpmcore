@@ -12,7 +12,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[PUT /:fullname/-rev/:rev] update()', () => {

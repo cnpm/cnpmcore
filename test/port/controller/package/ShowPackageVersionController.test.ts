@@ -12,7 +12,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /:fullname/:versionOrTag] show()', () => {

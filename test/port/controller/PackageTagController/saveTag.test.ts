@@ -12,7 +12,7 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[PUT /-/package/:fullname/dist-tags/:tag] saveTag()', () => {

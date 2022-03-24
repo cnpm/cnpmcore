@@ -13,7 +13,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   });
 
   afterEach(async () => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   it('should work', async () => {

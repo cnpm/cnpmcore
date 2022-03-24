@@ -13,7 +13,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /downloads/range/:range/:fullname] showPackageDownloads()', () => {

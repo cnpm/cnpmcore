@@ -18,6 +18,7 @@ import { TaskRepository } from '../../repository/TaskRepository';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { UserRepository } from '../../repository/UserRepository';
+import { DistRepository } from '../../repository/DistRepository';
 import { Task, SyncPackageTaskOptions } from '../entity/Task';
 import { Package } from '../entity/Package';
 import { UserService } from './UserService';
@@ -54,6 +55,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly cacheService: CacheService;
   @Inject()
   private readonly httpclient: EggContextHttpClient;
+  @Inject()
+  private readonly distRepository: DistRepository;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
     let existsTask = await this.taskRepository.findTaskByTargetName(fullname, TaskType.SyncPackage, TaskState.Waiting);
@@ -406,7 +409,7 @@ export class PackageSyncerService extends AbstractService {
           }
         } else {
           // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called
-          existsItem = await this.packageManagerService.findPackageVersionManifest(pkg.packageId, version);
+          existsItem = await this.distRepository.findPackageVersionManifest(pkg.packageId, version);
           // only allow existsItem on db to force refresh, to avoid big versions fresh
           // see https://r.cnpmjs.org/-/package/@npm-torg/public-scoped-free-org-test-package-2/syncs/61fcc7e8c1646e26a845b674/log
           if (existsItem) {

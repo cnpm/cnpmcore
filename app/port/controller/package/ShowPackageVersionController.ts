@@ -12,6 +12,8 @@ import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import { PackageVersionBlockRepository } from '../../../repository/PackageVersionBlockRepository';
+import { DistRepository } from '../../../repository/DistRepository';
+import { BugVersionService } from '../../../core/service/BugVersionService';
 
 @HTTPController()
 export class ShowPackageVersionController extends AbstractController {
@@ -19,6 +21,10 @@ export class ShowPackageVersionController extends AbstractController {
   private packageManagerService: PackageManagerService;
   @Inject()
   private packageVersionBlockRepository: PackageVersionBlockRepository;
+  @Inject()
+  private bugVersionService: BugVersionService;
+  @Inject()
+  private distRepository: DistRepository;
 
   @HTTPMethod({
     // GET /:fullname/:versionOrTag
@@ -44,8 +50,10 @@ export class ShowPackageVersionController extends AbstractController {
       }
     }
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
-    const packageVersionJson = await this.packageManagerService.findPackageVersionManifest(packageVersion.packageId, version);
+    const packageVersionJson = await this.distRepository.findPackageVersionManifest(packageVersion.packageId, version);
+    const bugVersion = await this.packageManagerService.getBugVersion();
+    const fixedPackageVersion = await this.bugVersionService.fixPackageBugVersion(bugVersion, fullname, packageVersionJson);
     this.setCDNHeaders(ctx);
-    return packageVersionJson;
+    return fixedPackageVersion;
   }
 }

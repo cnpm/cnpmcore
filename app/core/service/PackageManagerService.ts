@@ -8,12 +8,14 @@ import {
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import semver from 'semver';
-import { NFSAdapter } from '../../common/adapter/NFSAdapter';
-import { calculateIntegrity, formatTarball, getScopeAndName } from '../../common/PackageUtil';
+import { calculateIntegrity, formatTarball, getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { AbstractService } from '../../common/AbstractService';
+import { BugVersionStore } from '../../common/adapter/BugVersionStore';
+import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
+import { DistRepository } from '../../repository/DistRepository';
 import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
 import { PackageVersionBlock } from '../entity/PackageVersionBlock';
@@ -33,6 +35,8 @@ import {
   PACKAGE_TAG_REMOVED,
   PACKAGE_META_CHANGED,
 } from '../event';
+import { BugVersionService } from './BugVersionService';
+import { BugVersion } from '../entity/BugVersion';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
@@ -74,7 +78,11 @@ export class PackageManagerService extends AbstractService {
   @Inject()
   private readonly packageVersionDownloadRepository: PackageVersionDownloadRepository;
   @Inject()
-  private readonly nfsAdapter: NFSAdapter;
+  private readonly bugVersionService: BugVersionService;
+  @Inject()
+  private readonly bugVersionStore: BugVersionStore;
+  @Inject()
+  private readonly distRepository: DistRepository;
 
   private static downloadCounters = {};
 
@@ -142,9 +150,9 @@ export class PackageManagerService extends AbstractService {
       integrity: tarDistIntegrity.integrity,
     });
     if (cmd.dist.content) {
-      await this.nfsAdapter.uploadBytes(tarDist.path, cmd.dist.content);
+      await this.distRepository.saveDist(tarDist, cmd.dist.content);
     } else if (cmd.dist.localFile) {
-      await this.nfsAdapter.uploadFile(tarDist.path, cmd.dist.localFile);
+      await this.distRepository.saveDist(tarDist, cmd.dist.localFile);
     }
 
     cmd.packageJson.dist = {
@@ -205,9 +213,9 @@ export class PackageManagerService extends AbstractService {
       tarDist,
     });
     await Promise.all([
-      this.nfsAdapter.uploadBytes(pkgVersion.abbreviatedDist.path, abbreviatedDistBytes),
-      this.nfsAdapter.uploadBytes(pkgVersion.manifestDist.path, manifestDistBytes),
-      this.nfsAdapter.uploadBytes(pkgVersion.readmeDist.path, readmeDistBytes),
+      this.distRepository.saveDist(pkgVersion.abbreviatedDist, abbreviatedDistBytes),
+      this.distRepository.saveDist(pkgVersion.manifestDist, manifestDistBytes),
+      this.distRepository.saveDist(pkgVersion.readmeDist, readmeDistBytes),
     ]);
     await this.packageRepository.createPackageVersion(pkgVersion);
     if (cmd.skipRefreshPackageManifests !== true) {
@@ -233,11 +241,11 @@ export class PackageManagerService extends AbstractService {
     }
     await this.packageVersionBlockRepository.savePackageVersionBlock(block);
     if (pkg.manifestsDist && pkg.abbreviatedsDist) {
-      const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist);
+      const fullManifests = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist);
       if (fullManifests) {
         fullManifests.block = reason;
       }
-      const abbreviatedManifests = await this.readDistBytesToJSON(pkg.abbreviatedsDist);
+      const abbreviatedManifests = await this.distRepository.readDistBytesToJSON(pkg.abbreviatedsDist);
       if (abbreviatedManifests) {
         abbreviatedManifests.block = reason;
       }
@@ -255,11 +263,11 @@ export class PackageManagerService extends AbstractService {
       await this.packageVersionBlockRepository.removePackageVersionBlock(block.packageVersionBlockId);
     }
     if (pkg.manifestsDist && pkg.abbreviatedsDist) {
-      const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist);
+      const fullManifests = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist);
       if (fullManifests) {
         fullManifests.block = undefined;
       }
-      const abbreviatedManifests = await this.readDistBytesToJSON(pkg.abbreviatedsDist);
+      const abbreviatedManifests = await this.distRepository.readDistBytesToJSON(pkg.abbreviatedsDist);
       if (abbreviatedManifests) {
         abbreviatedManifests.block = undefined;
       }
@@ -312,20 +320,8 @@ export class PackageManagerService extends AbstractService {
     return await this._listPackageFullOrAbbreviatedManifests(scope, name, false);
   }
 
-  async findPackageVersionManifest(packageId: string, version: string) {
-    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
-    if (packageVersion) {
-      const [ packageVersionJson, readme ] = await Promise.all([
-        this.readDistBytesToJSON(packageVersion.manifestDist),
-        this.readDistBytesToString(packageVersion.readmeDist),
-      ]);
-      packageVersionJson.readme = readme;
-      return packageVersionJson;
-    }
-  }
-
   async downloadPackageVersionTar(packageVersion: PackageVersion) {
-    return await this.nfsAdapter.getDownloadUrlOrStream(packageVersion.tarDist.path);
+    return this.distRepository.downloadDist(packageVersion.tarDist);
   }
 
   public plusPackageVersionCounter(fullname: string, version: string) {
@@ -344,23 +340,6 @@ export class PackageManagerService extends AbstractService {
       if (!counters[scopeKey]) counters[scopeKey] = {};
       counters[scopeKey][ALL] = (counters[scopeKey][ALL] || 0) + 1;
     }
-  }
-
-  async readDistBytesToJSON(dist: Dist) {
-    const str = await this.readDistBytesToString(dist);
-    if (str) {
-      return JSON.parse(str);
-    }
-  }
-
-  async readDistBytesToString(dist: Dist): Promise<string> {
-    const bytes = await this.readDistBytes(dist);
-    if (!bytes) return '';
-    return Buffer.from(bytes).toString('utf8');
-  }
-
-  async readDistBytes(dist: Dist): Promise<Uint8Array | undefined> {
-    return await this.nfsAdapter.getBytes(dist.path);
   }
 
   // will be call by schedule/SavePackageVersionDownloadCounter.ts
@@ -420,10 +399,10 @@ export class PackageManagerService extends AbstractService {
   private async _removePackageVersionAndDist(pkgVersion: PackageVersion) {
     // remove nfs dists
     await Promise.all([
-      this.nfsAdapter.remove(pkgVersion.abbreviatedDist.path),
-      this.nfsAdapter.remove(pkgVersion.manifestDist.path),
-      this.nfsAdapter.remove(pkgVersion.readmeDist.path),
-      this.nfsAdapter.remove(pkgVersion.tarDist.path),
+      this.distRepository.destroyDist(pkgVersion.abbreviatedDist),
+      this.distRepository.destroyDist(pkgVersion.manifestDist),
+      this.distRepository.destroyDist(pkgVersion.readmeDist),
+      this.distRepository.destroyDist(pkgVersion.tarDist),
     ]);
     // remove from repository
     await this.packageRepository.removePackageVersion(pkgVersion);
@@ -518,8 +497,8 @@ export class PackageManagerService extends AbstractService {
     if (!pkg.manifestsDist?.distId || !pkg.abbreviatedsDist?.distId) {
       return await this._refreshPackageManifestsToDists(pkg);
     }
-    const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist);
-    const abbreviatedManifests = await this.readDistBytesToJSON(pkg.abbreviatedsDist);
+    const fullManifests = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist);
+    const abbreviatedManifests = await this.distRepository.readDistBytesToJSON(pkg.abbreviatedsDist);
     if (!fullManifests.versions || !abbreviatedManifests.versions) {
       // is unpublished, refresh all again
       return await this._refreshPackageManifestsToDists(pkg);
@@ -529,7 +508,7 @@ export class PackageManagerService extends AbstractService {
       for (const version of updateVersions) {
         const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
         if (packageVersion) {
-          const manifest = await this.readDistBytesToJSON(packageVersion.manifestDist);
+          const manifest = await this.distRepository.readDistBytesToJSON(packageVersion.manifestDist);
           if (!manifest) continue;
           if ('readme' in manifest) {
             delete manifest.readme;
@@ -537,7 +516,7 @@ export class PackageManagerService extends AbstractService {
           fullManifests.versions[packageVersion.version] = manifest;
           fullManifests.time[packageVersion.version] = packageVersion.publishTime;
 
-          const abbreviatedManifest = await this.readDistBytesToJSON(packageVersion.abbreviatedDist);
+          const abbreviatedManifest = await this.distRepository.readDistBytesToJSON(packageVersion.abbreviatedDist);
           abbreviatedManifests.versions[packageVersion.version] = abbreviatedManifest;
         }
       }
@@ -554,6 +533,20 @@ export class PackageManagerService extends AbstractService {
     await this._setPackageDistTagsAndLatestInfos(pkg, fullManifests, abbreviatedManifests);
     // store to nfs dist
     await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+  }
+
+  async getBugVersion(): Promise<BugVersion> {
+    // TODO performance problem, cache bugVersion and update with schedule
+    const pkg = await this.packageRepository.findPackage('', BUG_VERSIONS);
+    const tag = await this.packageRepository.findPackageTag(pkg!.packageId, LATEST_TAG);
+    let bugVersion = this.bugVersionStore.getBugVersion(tag!.version);
+    if (!bugVersion) {
+      const packageVersionJson = await this.distRepository.findPackageVersionManifest(pkg!.packageId, tag!.version);
+      const data = packageVersionJson.config['bug-versions'];
+      bugVersion = new BugVersion(data);
+      this.bugVersionStore.setBugVersion(bugVersion, tag!.version);
+    }
+    return bugVersion;
   }
 
   private async _listPackageDistTags(pkg: Package) {
@@ -580,13 +573,13 @@ export class PackageManagerService extends AbstractService {
   // only refresh root attributes only, e.g.: dist-tags, maintainers
   private async _refreshPackageManifestRootAttributeOnlyToDists(pkg: Package, refreshAttr: 'dist-tags' | 'maintainers') {
     if (refreshAttr === 'maintainers') {
-      const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist!);
+      const fullManifests = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist!);
       const maintainers = await this._listPackageMaintainers(pkg);
       fullManifests.maintainers = maintainers;
       await this._updatePackageManifestsToDists(pkg, fullManifests, null);
     } else if (refreshAttr === 'dist-tags') {
-      const fullManifests = await this.readDistBytesToJSON(pkg.manifestsDist!);
-      const abbreviatedManifests = await this.readDistBytesToJSON(pkg.abbreviatedsDist!);
+      const fullManifests = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist!);
+      const abbreviatedManifests = await this.distRepository.readDistBytesToJSON(pkg.abbreviatedsDist!);
       await this._setPackageDistTagsAndLatestInfos(pkg, fullManifests, abbreviatedManifests);
       await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
     }
@@ -598,8 +591,8 @@ export class PackageManagerService extends AbstractService {
       const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, distTags.latest);
       if (packageVersion) {
         // set readme, license, author, readmeFilename
-        fullManifests.readme = await this.readDistBytesToString(packageVersion.readmeDist);
-        const latestManifest = await this.readDistBytesToJSON(packageVersion.manifestDist);
+        fullManifests.readme = await this.distRepository.readDistBytesToString(packageVersion.readmeDist);
+        const latestManifest = await this.distRepository.readDistBytesToJSON(packageVersion.manifestDist);
         if (latestManifest) {
           fullManifests.license = latestManifest.license;
           fullManifests.author = latestManifest.author;
@@ -612,7 +605,7 @@ export class PackageManagerService extends AbstractService {
   }
 
   private async _mergeManifestDist(manifestDist: Dist, mergeData?: any, replaceData?: any) {
-    let manifest = await this.readDistBytesToJSON(manifestDist);
+    let manifest = await this.distRepository.readDistBytesToJSON(manifestDist);
     if (mergeData) {
       Object.assign(manifest, mergeData);
     }
@@ -624,7 +617,7 @@ export class PackageManagerService extends AbstractService {
     manifestDist.size = manifestBytes.length;
     manifestDist.shasum = manifestIntegrity.shasum;
     manifestDist.integrity = manifestIntegrity.integrity;
-    await this.nfsAdapter.uploadBytes(manifestDist.path, manifestBytes);
+    await this.distRepository.saveDist(manifestDist, manifestBytes);
   }
 
   private async _updatePackageManifestsToDists(pkg: Package, fullManifests: any | null, abbreviatedManifests: any | null): Promise<void> {
@@ -645,7 +638,7 @@ export class PackageManagerService extends AbstractService {
           integrity: fullManifestsDistIntegrity.integrity,
         });
       }
-      await this.nfsAdapter.uploadBytes(pkg.manifestsDist.path, fullManifestsDistBytes);
+      await this.distRepository.saveDist(pkg.manifestsDist, fullManifestsDistBytes);
       await this.packageRepository.savePackageDist(pkg, true);
     }
     if (abbreviatedManifests) {
@@ -663,7 +656,7 @@ export class PackageManagerService extends AbstractService {
           integrity: abbreviatedManifestsDistIntegrity.integrity,
         });
       }
-      await this.nfsAdapter.uploadBytes(pkg.abbreviatedsDist.path, abbreviatedManifestsDistBytes);
+      await this.distRepository.saveDist(pkg.abbreviatedsDist, abbreviatedManifestsDistBytes);
       await this.packageRepository.savePackageDist(pkg, false);
     }
   }
@@ -683,7 +676,7 @@ export class PackageManagerService extends AbstractService {
     // read from dist
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
-      const data = await this.readDistBytesToJSON(dist);
+      const data = await this.distRepository.readDistBytesToJSON(dist);
       return { etag, data, blockReason };
     }
 
@@ -695,9 +688,13 @@ export class PackageManagerService extends AbstractService {
       return { etag, data: null, blockReason };
     }
     await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+    const manifests = (fullManifests || abbreviatedManifests)!;
+    const fullname = getFullname(scope, name);
+    const bugVersion = await this.getBugVersion();
+    await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, (manifests as any).versions);
     dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
     etag = `"${dist!.shasum}"`;
-    return { etag, data: fullManifests || abbreviatedManifests, blockReason };
+    return { etag, data: manifests, blockReason };
   }
 
   private async _listPackageMaintainers(pkg: Package) {
@@ -745,7 +742,7 @@ export class PackageManagerService extends AbstractService {
     let latestManifest: any;
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
-      const manifest = await this.readDistBytesToJSON(packageVersion.manifestDist);
+      const manifest = await this.distRepository.readDistBytesToJSON(packageVersion.manifestDist);
       if (!manifest) continue;
       if ('readme' in manifest) {
         delete manifest.readme;
@@ -753,7 +750,7 @@ export class PackageManagerService extends AbstractService {
       if (lastestTagVersion && packageVersion.version === lastestTagVersion) {
         latestManifest = manifest;
         // set readme
-        data.readme = await this.readDistBytesToString(packageVersion.readmeDist);
+        data.readme = await this.distRepository.readDistBytesToString(packageVersion.readmeDist);
       }
       data.versions[packageVersion.version] = manifest;
       data.time[packageVersion.version] = packageVersion.publishTime;
@@ -761,7 +758,7 @@ export class PackageManagerService extends AbstractService {
     if (!latestManifest) {
       latestManifest = data.versions[packageVersions[0].version];
       const firstPkgVersion = packageVersions[0];
-      data.readme = await this.readDistBytesToString(firstPkgVersion.readmeDist);
+      data.readme = await this.distRepository.readDistBytesToString(firstPkgVersion.readmeDist);
     }
     if (latestManifest) {
       data.license = latestManifest.license;
@@ -787,7 +784,7 @@ export class PackageManagerService extends AbstractService {
     };
 
     for (const packageVersion of packageVersions) {
-      const manifest = await this.readDistBytesToJSON(packageVersion.abbreviatedDist);
+      const manifest = await this.distRepository.readDistBytesToJSON(packageVersion.abbreviatedDist);
       data.versions[packageVersion.version] = manifest;
     }
     return data;

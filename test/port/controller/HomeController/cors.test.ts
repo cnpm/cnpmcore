@@ -9,7 +9,7 @@ describe('test/port/controller/HomeController/cors.test.ts', () => {
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('CORS', () => {

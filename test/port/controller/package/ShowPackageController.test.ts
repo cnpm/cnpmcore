@@ -15,7 +15,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /:fullname] show()', () => {

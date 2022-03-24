@@ -20,7 +20,7 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /-/package/:fullname/syncs/:taskId/log] showSyncTaskLog()', () => {

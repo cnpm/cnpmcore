@@ -13,7 +13,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
   });
 
   afterEach(async () => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('fetch()', () => {

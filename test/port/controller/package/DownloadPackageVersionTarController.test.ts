@@ -16,7 +16,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   const scopedName = '@cnpm/testmodule-download-version-tar';

@@ -29,7 +29,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   });
 
   afterEach(async () => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
     mock.restore();
     await TestUtil.truncateDatabase();
   });

@@ -10,7 +10,7 @@ describe('test/port/controller/UserController/starredByUser.test.ts', () => {
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /-/_view/starredByUser] starredByUser()', () => {

@@ -10,7 +10,7 @@ describe('test/port/controller/UserController/whoami.test.ts', () => {
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /-/whoami] whoami()', () => {

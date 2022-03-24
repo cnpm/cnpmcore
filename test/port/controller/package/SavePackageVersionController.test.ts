@@ -15,7 +15,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[PUT /:fullname] save()', () => {

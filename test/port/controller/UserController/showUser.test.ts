@@ -10,7 +10,7 @@ describe('test/port/controller/UserController/showUser.test.ts', () => {
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /-/user/org.couchdb.user::username] showUser()', () => {

@@ -10,7 +10,7 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[DELETE /-/npm/v1/tokens/token/:tokenKey] removeToken()', () => {

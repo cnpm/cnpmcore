@@ -17,7 +17,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /-/package/:fullname/syncs/:taskId] showSyncTask()', () => {

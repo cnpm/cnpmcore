@@ -10,7 +10,7 @@ describe('test/port/controller/UserController/showProfile.test.ts', () => {
   });
 
   afterEach(() => {
-    app.destroyModuleContext(ctx);
+    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /-/npm/v1/user] showProfile()', () => {
