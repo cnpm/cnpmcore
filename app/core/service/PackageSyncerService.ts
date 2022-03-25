@@ -199,17 +199,13 @@ export class PackageSyncerService extends AbstractService {
   }
 
   public async executeTask(task: Task) {
+    // make sure fullname is lower case
+    const fullname = task.targetName.toLowerCase();
     const { tips, skipDependencies, syncDownloadData } = task.data as SyncPackageTaskOptions;
     const registry = this.npmRegistry.registry;
     let logs: string[] = [];
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
-    }
-    // make sure fullname is lower case
-    let fullname = task.targetName.toLowerCase();
-    if (this.config.cnpmcore.upperCaseFullnames[fullname]) {
-      fullname = this.config.cnpmcore.upperCaseFullnames[fullname];
-      logs.push(`[${isoNow()}] 👉👉👉👉👉 Use upper case name: ${fullname} 👈👈👈👈👈`);
     }
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, log: %s',
