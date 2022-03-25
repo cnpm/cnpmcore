@@ -919,6 +919,51 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('❌ stop sync by block list: [\"cnpmcore-test-sync-blocklist\",\"foo\"]'));
     });
 
+    it('should sync upper case "D" success', async () => {
+      const name = 'D';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('🚧🚧🚧🚧🚧 Syncing from https://registry.npmjs.org/D, '));
+      assert(log.includes('🟢🟢🟢🟢🟢'));
+      const res = await app.httpRequest()
+        .get(`/${name}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const data = res.body;
+      assert(data.name === name);
+      // assert(data.dist === name);
+      assert(data.versions[data['dist-tags'].latest].dist.tarball.includes('/D/-/D-'));
+    });
+
+    it('should sync upper case "Buffer" success', async () => {
+      const name = 'Buffer';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('🚧🚧🚧🚧🚧 Syncing from https://registry.npmjs.org/Buffer, '));
+      assert(log.includes('🟢🟢🟢🟢🟢'));
+      const res = await app.httpRequest()
+        .get(`/${name}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const data = res.body;
+      assert(data.name === name);
+      assert(data.versions[data['dist-tags'].latest].dist.tarball.includes('/Buffer/-/Buffer-'));
+    });
+
     it('should mock security holding package', async () => {
       const securityPackage = await TestUtil.readJSONFile(TestUtil.getFixtures('security-holding-package.json'));
       mock.data(NPMRegistry.prototype, 'getFullManifests', {
