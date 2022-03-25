@@ -69,10 +69,6 @@ export default (appInfo: EggAppConfig) => {
     cdnVaryHeader: 'Accept, Accept-Encoding',
     // store full package version manifests data to database table(package_version_manifests), default is false
     enableStoreFullPackageVersionManifestsToDatabase: false,
-    // use upper case package names
-    upperCaseFullnames: {
-      jsv: 'JSV',
-    },
   };
 
   // override config from framework / plugin
