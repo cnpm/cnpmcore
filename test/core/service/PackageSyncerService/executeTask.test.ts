@@ -919,28 +919,6 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('❌ stop sync by block list: [\"cnpmcore-test-sync-blocklist\",\"foo\"]'));
     });
 
-    it('should sync upper case name to lower case', async () => {
-      const securityPackage = await TestUtil.readJSONFile(TestUtil.getFixtures('security-holding-package.json'));
-      mock.data(NPMRegistry.prototype, 'getFullManifests', {
-        data: securityPackage,
-        res: {},
-        headers: {},
-      });
-      const name = 'cnpmcore-test-sync-UPPER-CASE';
-      await packageSyncerService.createTask(name);
-      const task = await packageSyncerService.findExecuteTask();
-      assert(task);
-      assert.equal(task.targetName, name);
-      await packageSyncerService.executeTask(task);
-      const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
-      const log = await TestUtil.readStreamToLog(stream);
-      console.log(log);
-      assert(log.includes('🟢🟢🟢🟢🟢'));
-      assert(log.includes('🟢 [1] Synced version 0.0.1-security success'));
-      assert(log.includes('/package/cnpmcore-test-sync-upper-case/syncs/'));
-    });
-
     it('should mock security holding package', async () => {
       const securityPackage = await TestUtil.readJSONFile(TestUtil.getFixtures('security-holding-package.json'));
       mock.data(NPMRegistry.prototype, 'getFullManifests', {
