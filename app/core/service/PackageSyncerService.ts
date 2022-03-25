@@ -199,8 +199,7 @@ export class PackageSyncerService extends AbstractService {
   }
 
   public async executeTask(task: Task) {
-    // make sure fullname is lower case
-    const fullname = task.targetName.toLowerCase();
+    const fullname = task.targetName;
     const { tips, skipDependencies, syncDownloadData } = task.data as SyncPackageTaskOptions;
     const registry = this.npmRegistry.registry;
     let logs: string[] = [];

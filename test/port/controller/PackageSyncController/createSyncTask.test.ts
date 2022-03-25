@@ -97,20 +97,6 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(task.data.tips === 'foo bar');
     });
 
-    it('should 201 always convert name to lower case', async () => {
-      const res = await app.httpRequest()
-        .put('/-/package/MD5/syncs')
-        .expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
-      const task = await TaskModel.findOne({ taskId: res.body.id });
-      assert(task);
-      assert(task.data.skipDependencies === false);
-      assert(task.data.syncDownloadData === false);
-      assert(task.targetName === 'md5');
-    });
-
     it('should 422 when enableSyncDownloadData = false', async () => {
       let res = await app.httpRequest()
         .put('/-/package/ob/syncs')
@@ -233,18 +219,6 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       task = await TaskModel.findOne({ taskId: res.body.logId });
       assert(task);
       assert(task.data.skipDependencies === true);
-    });
-
-    it('should 201 and make sure name to lower case', async () => {
-      const res = await app.httpRequest()
-        .put('/MD5/sync')
-        .expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.logId);
-      const task = await TaskModel.findOne({ taskId: res.body.logId });
-      assert(task);
-      assert(task.data.skipDependencies === false);
-      assert(task.targetName === 'md5');
     });
   });
 });

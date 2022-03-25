@@ -562,18 +562,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg);
       assert(res.status === 422);
-      assert(res.body.error === '[UNPROCESSABLE_ENTITY] fullname(eLaBorAtE-paCkAgE-with-mixed-case-and-more-than-214-characters-----------------------------------------------------------------------------------------------------------------------------------------------------------) not match package.name(elaborate-package-with-mixed-case-and-more-than-214-characters-----------------------------------------------------------------------------------------------------------------------------------------------------------)');
-
-      pkg = await TestUtil.getFullPackage({
-        name: 'elaborate-package-with-mixed-case-and-more-than-214-characters-----------------------------------------------------------------------------------------------------------------------------------------------------------',
-      });
-      res = await app.httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg);
-      assert(res.status === 422);
-      assert(res.body.error === '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters');
+      assert(res.body.error === '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters, name can no longer contain capital letters');
     });
 
     it('should 422 when attachment data format invalid', async () => {
