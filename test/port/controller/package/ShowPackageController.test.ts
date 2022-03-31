@@ -14,7 +14,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
     packageRepository = await ctx.getEggObject(PackageRepository);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     await app.destroyModuleContext(ctx);
   });
 

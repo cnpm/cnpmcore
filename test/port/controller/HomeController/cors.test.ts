@@ -8,7 +8,7 @@ describe('test/port/controller/HomeController/cors.test.ts', () => {
     ctx = await app.mockModuleContext();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     await app.destroyModuleContext(ctx);
   });
 

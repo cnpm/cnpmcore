@@ -16,7 +16,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
     mock(app.config.cnpmcore, 'syncMode', 'all');
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     await app.destroyModuleContext(ctx);
   });
 

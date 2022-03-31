@@ -14,7 +14,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
     binarySyncerService = await ctx.getEggObject(BinarySyncerService);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     await app.destroyModuleContext(ctx);
   });
 

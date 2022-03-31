@@ -15,7 +15,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     await app.destroyModuleContext(ctx);
   });
 
