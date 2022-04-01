@@ -19,6 +19,7 @@ export class BugVersionFixHandler {
     if (fullname !== BUG_VERSIONS) return;
     try {
       const bugVersion = await this.packageManagerService.getBugVersion();
+      if (!bugVersion) return;
       await this.bugVersionService.cleanBugVersionPackageCaches(bugVersion);
     } catch (e) {
       e.message = '[BugVersionFixHandler] clean cache failed: ' + e.message;

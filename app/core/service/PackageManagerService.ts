@@ -321,7 +321,7 @@ export class PackageManagerService extends AbstractService {
   }
 
   async downloadPackageVersionTar(packageVersion: PackageVersion) {
-    return this.distRepository.downloadDist(packageVersion.tarDist);
+    return await this.distRepository.downloadDist(packageVersion.tarDist);
   }
 
   public plusPackageVersionCounter(fullname: string, version: string) {
@@ -535,13 +535,16 @@ export class PackageManagerService extends AbstractService {
     await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
   }
 
-  async getBugVersion(): Promise<BugVersion> {
+  async getBugVersion(): Promise<BugVersion | undefined> {
     // TODO performance problem, cache bugVersion and update with schedule
     const pkg = await this.packageRepository.findPackage('', BUG_VERSIONS);
+    if (!pkg) return;
     const tag = await this.packageRepository.findPackageTag(pkg!.packageId, LATEST_TAG);
+    if (!tag) return;
     let bugVersion = this.bugVersionStore.getBugVersion(tag!.version);
     if (!bugVersion) {
       const packageVersionJson = await this.distRepository.findPackageVersionManifest(pkg!.packageId, tag!.version);
+      if (!packageVersionJson) return;
       const data = packageVersionJson.config['bug-versions'];
       bugVersion = new BugVersion(data);
       this.bugVersionStore.setBugVersion(bugVersion, tag!.version);
@@ -691,7 +694,9 @@ export class PackageManagerService extends AbstractService {
     const manifests = (fullManifests || abbreviatedManifests)!;
     const fullname = getFullname(scope, name);
     const bugVersion = await this.getBugVersion();
-    await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, (manifests as any).versions);
+    if (bugVersion) {
+      await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, (manifests as any).versions);
+    }
     dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
     etag = `"${dist!.shasum}"`;
     return { etag, data: manifests, blockReason };

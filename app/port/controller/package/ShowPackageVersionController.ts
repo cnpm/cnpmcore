@@ -50,10 +50,12 @@ export class ShowPackageVersionController extends AbstractController {
       }
     }
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
-    const packageVersionJson = await this.distRepository.findPackageVersionManifest(packageVersion.packageId, version);
+    let packageVersionJson = await this.distRepository.findPackageVersionManifest(packageVersion.packageId, version);
     const bugVersion = await this.packageManagerService.getBugVersion();
-    const fixedPackageVersion = await this.bugVersionService.fixPackageBugVersion(bugVersion, fullname, packageVersionJson);
+    if (bugVersion) {
+      packageVersionJson = await this.bugVersionService.fixPackageBugVersion(bugVersion, fullname, packageVersionJson);
+    }
     this.setCDNHeaders(ctx);
-    return fixedPackageVersion;
+    return packageVersionJson;
   }
 }
