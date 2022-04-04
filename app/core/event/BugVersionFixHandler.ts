@@ -22,7 +22,7 @@ export class BugVersionFixHandler {
       if (!bugVersion) return;
       await this.bugVersionService.cleanBugVersionPackageCaches(bugVersion);
     } catch (e) {
-      e.message = '[BugVersionFixHandler] clean cache failed: ' + e.message;
+      e.message = `[BugVersionFixHandler] clean cache failed: ${e.message}`;
       this.logger.error(e);
     }
   }

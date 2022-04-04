@@ -3,6 +3,9 @@ import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { PackageRepository } from '../../../../app/repository/PackageRepository';
+import { BugVersion } from '../../../../app/core/entity/BugVersion';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
+import { CacheService } from '../../../../app/core/service/CacheService';
 
 describe('test/port/controller/package/ShowPackageController.test.ts', () => {
   let ctx: Context;
@@ -680,6 +683,30 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .set('Accept', 'application/json');
       assert(res.status === 302);
       assert(res.headers.location === 'https://registry.npmjs.org/egg?t=0123123&foo=bar');
+    });
+
+    it('should fix bug version', async () => {
+      const bugVersion = new BugVersion({
+        'testmodule-show-package': {
+          '2.0.0': {
+            version: '1.0.0',
+            reason: 'mock reason',
+          },
+        },
+      });
+      mock(PackageManagerService.prototype, 'getBugVersion', async () => {
+        return bugVersion;
+      });
+      mock(CacheService.prototype, 'getPackageEtag', async () => {
+        return null;
+      });
+      const res = await app.httpRequest()
+        .get(`/${name}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const shouldFixVersion = res.body.versions['2.0.0'];
+      assert(shouldFixVersion.dist.tarball === 'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz');
+      assert(shouldFixVersion.deprecated === '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
     });
   });
 });

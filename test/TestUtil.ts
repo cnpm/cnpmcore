@@ -13,6 +13,7 @@ type PackageOptions = {
   versionObject?: object;
   attachment?: object;
   dist?: object;
+  config?: object;
   readme?: string | null;
   distTags?: object | null;
   isPrivate?: boolean;
@@ -173,6 +174,9 @@ export class TestUtil {
       }
       if (options.dist) {
         Object.assign(version.dist, options.dist);
+      }
+      if (options.config) {
+        version.config = options.config;
       }
       if (updateAttach) {
         attachs[`${version.name}-${version.version}.tgz`] = attach;

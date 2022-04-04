@@ -675,11 +675,17 @@ export class PackageManagerService extends AbstractService {
       blockReason = block.reason;
     }
 
+    const bugVersion = await this.getBugVersion();
+    const fullname = getFullname(scope, name);
+
     let dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
     // read from dist
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
       const data = await this.distRepository.readDistBytesToJSON(dist);
+      if (bugVersion) {
+        await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
+      }
       return { etag, data, blockReason };
     }
 
@@ -692,8 +698,6 @@ export class PackageManagerService extends AbstractService {
     }
     await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
     const manifests = (fullManifests || abbreviatedManifests)!;
-    const fullname = getFullname(scope, name);
-    const bugVersion = await this.getBugVersion();
     if (bugVersion) {
       await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, (manifests as any).versions);
     }
