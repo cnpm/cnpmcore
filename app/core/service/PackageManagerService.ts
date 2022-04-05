@@ -675,7 +675,7 @@ export class PackageManagerService extends AbstractService {
       blockReason = block.reason;
     }
 
-    let bugVersion;
+    let bugVersion: BugVersion | undefined;
     // sync mode response no bug version fixed
     if (!isSync) {
       bugVersion = await this.getBugVersion();
