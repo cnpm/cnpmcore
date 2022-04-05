@@ -175,9 +175,6 @@ export class TestUtil {
       if (options.dist) {
         Object.assign(version.dist, options.dist);
       }
-      if (options.config) {
-        version.config = options.config;
-      }
       if (updateAttach) {
         attachs[`${version.name}-${version.version}.tgz`] = attach;
         delete attachs[firstFilename];

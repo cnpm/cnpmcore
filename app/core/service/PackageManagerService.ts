@@ -685,6 +685,9 @@ export class PackageManagerService extends AbstractService {
       const data = await this.distRepository.readDistBytesToJSON(dist);
       if (bugVersion) {
         await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
+        const distBytes = Buffer.from(JSON.stringify(data));
+        const distIntegrity = await calculateIntegrity(distBytes);
+        etag = `"${distIntegrity.shasum}"`;
       }
       return { etag, data, blockReason };
     }
@@ -700,9 +703,13 @@ export class PackageManagerService extends AbstractService {
     const manifests = (fullManifests || abbreviatedManifests)!;
     if (bugVersion) {
       await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, (manifests as any).versions);
+      const distBytes = Buffer.from(JSON.stringify(manifests));
+      const distIntegrity = await calculateIntegrity(distBytes);
+      etag = `"${distIntegrity.shasum}"`;
+    } else {
+      dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
+      etag = `"${dist!.shasum}"`;
     }
-    dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
-    etag = `"${dist!.shasum}"`;
     return { etag, data: manifests, blockReason };
   }
 
