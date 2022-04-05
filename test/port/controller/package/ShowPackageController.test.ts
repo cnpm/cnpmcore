@@ -700,13 +700,25 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       mock(CacheService.prototype, 'getPackageEtag', async () => {
         return null;
       });
-      const res = await app.httpRequest()
+      let res = await app.httpRequest()
         .get(`/${name}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const shouldFixVersion = res.body.versions['2.0.0'];
       assert(shouldFixVersion.dist.tarball === 'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz');
       assert(shouldFixVersion.deprecated === '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
+      // don't change version
+      assert(shouldFixVersion.version === '2.0.0');
+
+      // sync worker request should not effect
+      res = await app.httpRequest()
+        .get(`/${name}?cache=0`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const orginalVersion = res.body.versions['2.0.0'];
+      assert(orginalVersion.dist.tarball === 'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz');
+      assert(!orginalVersion.deprecated);
+      assert(orginalVersion.version === '2.0.0');
     });
   });
 });

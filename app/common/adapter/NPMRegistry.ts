@@ -32,7 +32,8 @@ export class NPMRegistry {
 
   public async getFullManifests(fullname: string, retries = 3) {
     // set query t=timestamp, make sure CDN cache disable
-    const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}`;
+    // cache=0 is sync worker request flag
+    const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
     let lastError: any;
     while (retries > 0) {
       try {
