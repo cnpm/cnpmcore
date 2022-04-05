@@ -312,11 +312,11 @@ export class PackageManagerService extends AbstractService {
     await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
   }
 
-  async listPackageFullManifests(scope: string, name: string, isSync: boolean) {
+  async listPackageFullManifests(scope: string, name: string, isSync = false) {
     return await this._listPackageFullOrAbbreviatedManifests(scope, name, true, isSync);
   }
 
-  async listPackageAbbreviatedManifests(scope: string, name: string, isSync: boolean) {
+  async listPackageAbbreviatedManifests(scope: string, name: string, isSync = false) {
     return await this._listPackageFullOrAbbreviatedManifests(scope, name, false, isSync);
   }
 
