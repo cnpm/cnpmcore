@@ -312,12 +312,12 @@ export class PackageManagerService extends AbstractService {
     await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
   }
 
-  async listPackageFullManifests(scope: string, name: string) {
-    return await this._listPackageFullOrAbbreviatedManifests(scope, name, true);
+  async listPackageFullManifests(scope: string, name: string, isSync: boolean) {
+    return await this._listPackageFullOrAbbreviatedManifests(scope, name, true, isSync);
   }
 
-  async listPackageAbbreviatedManifests(scope: string, name: string) {
-    return await this._listPackageFullOrAbbreviatedManifests(scope, name, false);
+  async listPackageAbbreviatedManifests(scope: string, name: string, isSync: boolean) {
+    return await this._listPackageFullOrAbbreviatedManifests(scope, name, false, isSync);
   }
 
   async downloadPackageVersionTar(packageVersion: PackageVersion) {
@@ -664,7 +664,7 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  private async _listPackageFullOrAbbreviatedManifests(scope: string, name: string, isFullManifests: boolean) {
+  private async _listPackageFullOrAbbreviatedManifests(scope: string, name: string, isFullManifests: boolean, isSync: boolean) {
     let etag = '';
     let blockReason = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
@@ -675,7 +675,11 @@ export class PackageManagerService extends AbstractService {
       blockReason = block.reason;
     }
 
-    const bugVersion = await this.getBugVersion();
+    let bugVersion;
+    // sync mode response no bug version fixed
+    if (!isSync) {
+      bugVersion = await this.getBugVersion();
+    }
     const fullname = getFullname(scope, name);
 
     let dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;

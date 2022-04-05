@@ -9,6 +9,7 @@ import {
 } from '@eggjs/tegg';
 import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
+import { isSyncWorkerRequest } from '../../../common/SyncUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import { CacheService } from '../../../core/service/CacheService';
 
@@ -27,6 +28,7 @@ export class ShowPackageController extends AbstractController {
   })
   async show(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
     const [ scope, name ] = getScopeAndName(fullname);
+    const isSync = isSyncWorkerRequest(ctx);
     const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
     const isFullManifests = ctx.accepts([ 'json', abbreviatedMetaType ]) !== abbreviatedMetaType;
     // handle cache
@@ -56,9 +58,9 @@ export class ShowPackageController extends AbstractController {
     // handle cache miss
     let result: { etag: string; data: any, blockReason: string };
     if (isFullManifests) {
-      result = await this.packageManagerService.listPackageFullManifests(scope, name);
+      result = await this.packageManagerService.listPackageFullManifests(scope, name, isSync);
     } else {
-      result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name);
+      result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, isSync);
     }
     const { etag, data, blockReason } = result;
     // 404, no data
@@ -71,9 +73,12 @@ export class ShowPackageController extends AbstractController {
       throw this.createPackageBlockError(blockReason, fullname);
     }
 
-    // set cache
     const cacheBytes = Buffer.from(JSON.stringify(data));
-    await this.cacheService.savePackageEtagAndManifests(fullname, isFullManifests, etag, cacheBytes);
+    // only set cache with normal request
+    // sync request response with no bug version fixed
+    if (!isSync) {
+      await this.cacheService.savePackageEtagAndManifests(fullname, isFullManifests, etag, cacheBytes);
+    }
 
     // set etag
     // https://forum.nginx.org/read.php?2,240120,240120#msg-240120
