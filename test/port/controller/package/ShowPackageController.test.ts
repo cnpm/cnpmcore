@@ -6,6 +6,7 @@ import { PackageRepository } from '../../../../app/repository/PackageRepository'
 import { BugVersion } from '../../../../app/core/entity/BugVersion';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
 import { CacheService } from '../../../../app/core/service/CacheService';
+import { DistRepository } from '../../../../app/repository/DistRepository';
 
 describe('test/port/controller/package/ShowPackageController.test.ts', () => {
   let ctx: Context;
@@ -719,6 +720,43 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(orginalVersion.dist.tarball === 'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz');
       assert(!orginalVersion.deprecated);
       assert(orginalVersion.version === '2.0.0');
+    });
+
+    it('should not throw error if no versions', async () => {
+      const bugVersion = new BugVersion({
+        'testmodule-show-package': {
+          '2.0.0': {
+            version: '1.0.0',
+            reason: 'mock reason',
+          },
+        },
+      });
+      mock(PackageManagerService.prototype, 'getBugVersion', async () => {
+        return bugVersion;
+      });
+      mock(CacheService.prototype, 'getPackageEtag', async () => {
+        return null;
+      });
+      mock(DistRepository.prototype, 'readDistBytesToJSON', async () => {
+        return {
+          _attachments: {},
+          _id: 'testmodule-show-package',
+          _rev: '1-624cf5666f33a300c1585d6b',
+          author: '',
+          description: 'this is a module description',
+          name: 'testmodule-show-package',
+          readme: 'ERROR: No README data found!',
+          time: {
+            created: '2022-04-06T02:05:26.539Z',
+            modified: '2022-04-06T02:05:26.696Z',
+            unpublished: '2022-03-28T06:23:55.136Z',
+          },
+        };
+      });
+      await app.httpRequest()
+        .get(`/${name}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
     });
   });
 });
