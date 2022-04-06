@@ -2,6 +2,8 @@ import assert = require('assert');
 import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
+import { BugVersion } from '../../../../app/core/entity/BugVersion';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
 
 describe('test/port/controller/package/ShowPackageVersionController.test.ts', () => {
   let ctx: Context;
@@ -42,6 +44,65 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.body.dist.integrity, 'sha512-n+4CQg0Rp1Qo0p9a0R5E5io67T9iD3Lcgg6exmpmt0s8kd4XcOoHu2kiu6U7xd69cGq0efkNGWUBP229ObfRSA==');
       assert.equal(res.body.dist.size, 251);
       assert.equal(res.body.description, 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻');
+    });
+
+    it('should fix bug version', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const pkgV1 = await TestUtil.getFullPackage({
+        name: 'foo',
+        version: '1.0.0',
+        versionObject: {
+          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+        },
+      });
+      const pkgV2 = await TestUtil.getFullPackage({
+        name: 'foo',
+        version: '2.0.0',
+        versionObject: {
+          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+        },
+      });
+      const bugVersion = new BugVersion({
+        foo: {
+          '2.0.0': {
+            version: '1.0.0',
+            reason: 'mock reason',
+          },
+        },
+      });
+      mock(PackageManagerService.prototype, 'getBugVersion', async () => {
+        return bugVersion;
+      });
+      await app.httpRequest()
+        .put(`/${pkgV1.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkgV1)
+        .expect(201);
+      await app.httpRequest()
+        .put(`/${pkgV2.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkgV2)
+        .expect(201);
+      let res = await app.httpRequest()
+        .get('/foo/2.0.0')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+
+      assert(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-1.0.0.tgz');
+      assert(res.body.deprecated === '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
+      // don't change version
+      assert(res.body.version === '2.0.0');
+
+      // sync worker request should not effect
+      res = await app.httpRequest()
+        .get(`/${pkgV1.name}/2.0.0?cache=0`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-2.0.0.tgz');
+      assert(!res.body.deprecated);
+      assert(res.body.version === '2.0.0');
     });
 
     it('should work with scoped package', async () => {
