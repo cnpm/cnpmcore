@@ -34,6 +34,8 @@ export class BugVersionService {
   }
 
   async fixPackageBugVersions(bugVersion: BugVersion, fullname: string, manifests: Record<string, any>) {
+    // If package all version unpublished(like pinyin-tool), versions is undefined
+    if (!manifests) return;
     for (const manifest of Object.values(manifests)) {
       this.fixPackageBugVersionWithAllVersions(fullname, bugVersion, manifest, manifests);
     }
