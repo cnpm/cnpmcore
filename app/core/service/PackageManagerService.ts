@@ -324,7 +324,8 @@ export class PackageManagerService extends AbstractService {
     let blockReason = '';
     let manifest;
     const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return { manifest: null, blockReason };
+    const pkgId = pkg?.packageId;
+    if (!pkg) return { manifest: null, blockReason, pkgId };
 
     const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
@@ -332,6 +333,7 @@ export class PackageManagerService extends AbstractService {
       return {
         blockReason,
         manifest,
+        pkgId,
       };
     }
     let version = versionOrTag;
@@ -343,7 +345,7 @@ export class PackageManagerService extends AbstractService {
       }
     }
     const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
-    if (!packageVersion) return { manifest: null, blockReason };
+    if (!packageVersion) return { manifest: null, blockReason, pkgId };
     manifest = await this.distRepository.findPackageVersionManifest(packageVersion.packageId, version);
     let bugVersion: BugVersion | undefined;
     // sync mode response no bug version fixed
@@ -354,7 +356,7 @@ export class PackageManagerService extends AbstractService {
       const fullname = getFullname(scope, name);
       manifest = await this.bugVersionService.fixPackageBugVersion(bugVersion, fullname, manifest);
     }
-    return { manifest, blockReason };
+    return { manifest, blockReason, pkgId };
 
   }
 
