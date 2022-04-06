@@ -18,7 +18,7 @@ export class ModelConvertor {
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
-      if (entityPropertyName === 'UPDATED_AT' || entityPropertyName === 'CREATED_AT') continue;
+      if (entityPropertyName === UPDATED_AT || entityPropertyName === CREATED_AT || entityPropertyName === ID) continue;
       const attributeValue = _.get(entity, entityPropertyName);
       attributes[modelPropertyName] = attributeValue;
     }
@@ -42,7 +42,7 @@ export class ModelConvertor {
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
-      if (entityPropertyName === 'CREATED_AT') continue;
+      if (entityPropertyName === CREATED_AT) continue;
       const attributeValue = _.get(entity, entityPropertyName);
       model[modelPropertyName] = attributeValue;
     }
