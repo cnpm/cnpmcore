@@ -62,11 +62,22 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
           description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
         },
       });
+      const pkgV3 = await TestUtil.getFullPackage({
+        name: 'foo',
+        version: '3.0.0',
+        versionObject: {
+          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+        },
+      });
       const bugVersion = new BugVersion({
         foo: {
           '2.0.0': {
             version: '1.0.0',
             reason: 'mock reason',
+          },
+          '3.0.0': {
+            version: '3.0.0',
+            reason: 'mock reason same version',
           },
         },
       });
@@ -85,6 +96,12 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkgV2)
         .expect(201);
+      await app.httpRequest()
+        .put(`/${pkgV3.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkgV3)
+        .expect(201);
       let res = await app.httpRequest()
         .get('/foo/2.0.0')
         .expect(200)
@@ -94,6 +111,16 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert(res.body.deprecated === '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
       // don't change version
       assert(res.body.version === '2.0.0');
+
+      // same version not fix bug version
+      res = await app.httpRequest()
+        .get('/foo/3.0.0')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+
+      assert(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-3.0.0.tgz');
+      assert(!res.body.deprecated);
+      assert(res.body.version === '3.0.0');
 
       // sync worker request should not effect
       res = await app.httpRequest()
