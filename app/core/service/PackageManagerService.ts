@@ -320,6 +320,46 @@ export class PackageManagerService extends AbstractService {
     return await this._listPackageFullOrAbbreviatedManifests(scope, name, false, isSync);
   }
 
+  async showPackageVersionManifest(scope: string, name: string, versionOrTag: string, isSync = false) {
+    let blockReason = '';
+    let manifest;
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    const pkgId = pkg?.packageId;
+    if (!pkg) return { manifest: null, blockReason, pkgId };
+
+    const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
+    if (block) {
+      blockReason = block.reason;
+      return {
+        blockReason,
+        manifest,
+        pkgId,
+      };
+    }
+    let version = versionOrTag;
+    if (!semver.valid(versionOrTag)) {
+      // invalid version, versionOrTag is a tag
+      const packageTag = await this.packageRepository.findPackageTag(pkg.packageId, versionOrTag);
+      if (packageTag) {
+        version = packageTag.version;
+      }
+    }
+    const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+    if (!packageVersion) return { manifest: null, blockReason, pkgId };
+    manifest = await this.distRepository.findPackageVersionManifest(packageVersion.packageId, version);
+    let bugVersion: BugVersion | undefined;
+    // sync mode response no bug version fixed
+    if (!isSync) {
+      bugVersion = await this.getBugVersion();
+    }
+    if (bugVersion) {
+      const fullname = getFullname(scope, name);
+      manifest = await this.bugVersionService.fixPackageBugVersion(bugVersion, fullname, manifest);
+    }
+    return { manifest, blockReason, pkgId };
+
+  }
+
   async downloadPackageVersionTar(packageVersion: PackageVersion) {
     return await this.distRepository.downloadDist(packageVersion.tarDist);
   }
