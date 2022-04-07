@@ -25,7 +25,9 @@ export class BugVersion {
   }
 
   fixVersion(pkgName: string, version: string): BugVersionAdvice | undefined {
-    return this.data[pkgName] && this.data[pkgName][version];
+    const advice = this.data[pkgName] && this.data[pkgName][version];
+    if (advice && advice.version === version) return undefined;
+    return advice;
   }
 
   // TODO manifest typing
