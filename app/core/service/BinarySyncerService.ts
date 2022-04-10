@@ -12,7 +12,6 @@ import binaries, { SyncerClass } from '../../../config/binaries';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
-import { TaskRepository } from '../../repository/TaskRepository';
 import { BinaryRepository } from '../../repository/BinaryRepository';
 import { Task } from '../entity/Task';
 import { Binary } from '../entity/Binary';
