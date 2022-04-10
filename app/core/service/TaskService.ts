@@ -78,9 +78,8 @@ export class TaskService extends AbstractService {
     const tasks = await this.taskRepository.findTimeoutTasks(TaskState.Processing, 60000 * 10);
     for (const task of tasks) {
       // ignore ChangesStream task, it won't timeout
-      if (task.attempts > 3 && task.type !== TaskType.ChangesStream) {
-        task.state = TaskState.Timeout;
-        await this.taskRepository.saveTaskToHistory(task);
+      if (task.attempts >= 3 && task.type !== TaskType.ChangesStream) {
+        await this.finishTask(task, TaskState.Timeout);
         this.logger.warn(
           '[TaskService.retryExecuteTimeoutTasks:timeout] taskType: %s, targetName: %s, taskId: %s, attempts %s set to fail',
           task.type, task.targetName, task.taskId, task.attempts);
@@ -115,8 +114,10 @@ export class TaskService extends AbstractService {
     await this.taskRepository.saveTask(task);
   }
 
-  public async finishTask(task: Task, taskState: TaskState, appendLog: string) {
-    await this.appendLogToNFS(task, appendLog);
+  public async finishTask(task: Task, taskState: TaskState, appendLog?: string) {
+    if (appendLog) {
+      await this.appendLogToNFS(task, appendLog);
+    }
     task.state = taskState;
     await this.taskRepository.saveTaskToHistory(task);
   }
