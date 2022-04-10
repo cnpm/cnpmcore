@@ -13,6 +13,7 @@ import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { Task } from '../entity/Task';
 import { PackageSyncerService } from './PackageSyncerService';
+import { TaskService } from './TaskService';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -24,16 +25,16 @@ export class ChangesStreamService extends AbstractService {
   private readonly httpclient: EggContextHttpClient;
   @Inject()
   private readonly packageSyncerService: PackageSyncerService;
+  @Inject()
+  private readonly taskService: TaskService;
 
   public async findExecuteTask() {
     const targetName = 'GLOBAL_WORKER';
     const existsTask = await this.taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
     if (!existsTask) {
-      const newTask = Task.createChangesStream(targetName);
-      await this.taskRepository.saveTask(newTask);
+      await this.taskService.createTask(Task.createChangesStream(targetName), false);
     }
-    // 2 mins timeout
-    return await this.taskRepository.executeWaitingTask(TaskType.ChangesStream, 120000);
+    return await this.taskService.findExecuteTask(TaskType.ChangesStream);
   }
 
   public async executeTask(task: Task) {
