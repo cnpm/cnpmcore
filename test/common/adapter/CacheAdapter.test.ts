@@ -55,5 +55,16 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
       ]);
       assert(locks.filter(lockId => !!lockId).length === 1);
     });
+
+    it('should mock lock timeout', async () => {
+      const lockId = await cache.lock('unittest', 10);
+      assert(lockId);
+      const lockId2 = await cache.lock('unittest', 10);
+      assert(!lockId2);
+      await cache.set('unittest', '123');
+      // lock timeout, use new lock
+      const lockId3 = await cache.lock('CNPMCORE_L_unittest', 10);
+      assert(lockId3);
+    });
   });
 });
