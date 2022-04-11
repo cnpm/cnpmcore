@@ -85,7 +85,7 @@ export class TaskService extends AbstractService {
           task.type, task.targetName, task.taskId, task.attempts);
         continue;
       }
-      if (task.attempts > 1) {
+      if (task.attempts >= 1) {
         // reset logPath
         task.resetLogPath();
       }

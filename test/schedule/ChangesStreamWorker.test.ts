@@ -2,14 +2,17 @@ import assert = require('assert');
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
+import { TaskService } from 'app/core/service/TaskService';
 import { Task } from 'app/repository/model/Task';
 
 describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   let ctx: Context;
   let changesStreamService: ChangesStreamService;
+  let taskService: TaskService;
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     changesStreamService = await ctx.getEggObject(ChangesStreamService);
+    taskService = await ctx.getEggObject(TaskService);
   });
 
   afterEach(async () => {
@@ -36,11 +39,14 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     const task = await changesStreamService.findExecuteTask();
     assert(!task, 'task should not exists');
 
-    // mock no changed after 2 mins
+    // mock no changed after 10 mins
     const existsTask = await Task.findOne({ type: 'changes_stream' });
     assert(existsTask);
-    existsTask.updatedAt = new Date(existsTask.updatedAt.getTime() - 120001);
+    existsTask.updatedAt = new Date(existsTask.updatedAt.getTime() - 60000 * 10 - 1);
     await existsTask.save();
+    const result = await taskService.retryExecuteTimeoutTasks();
+    assert(result.processing === 1);
+    assert(result.waiting === 0);
     // mock request https://replicate.npmjs.com/_changes error
     app.mockHttpclient(/https:\/\/replicate.npmjs.com\/_changes/, () => {
       throw new Error('mock request replicate _changes error');
@@ -73,11 +79,14 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     const task = await changesStreamService.findExecuteTask();
     assert(!task);
 
-    // mock no changed after 2 mins
+    // mock no changed after 10 mins
     const existsTask = await Task.findOne({ type: 'changes_stream' });
     assert(existsTask);
-    existsTask.updatedAt = new Date(existsTask.updatedAt.getTime() - 120001);
+    existsTask.updatedAt = new Date(existsTask.updatedAt.getTime() - 60000 * 10 - 1);
     await existsTask.save();
+    const result = await taskService.retryExecuteTimeoutTasks();
+    assert(result.processing === 1);
+    assert(result.waiting === 0);
     // mock request https://r.cnpmjs.org/_changes error
     app.mockHttpclient(/https:\/\/r\.cnpmjs\.org\/_changes/, () => {
       throw new Error('mock request replicate r.cnpmjs.org/_changes error');
