@@ -25,8 +25,9 @@ describe('test/schedule/SyncPackageWorker.test.ts', () => {
       .set('Accept', 'application/json')
       .expect(200);
     // make sure npm user name not contain 'npm:'
-    assert.equal(res.body.maintainers[0].name, 'fengmk2');
+    assert(res.body.maintainers[0].name === 'fengmk2');
   });
+
   it('should sync long name from npm https://github.com/npm/npm/issues/8077', async () => {
     const name = 'ifyouwanttogetthesumoftwonumberswherethosetwonumbersarechosenbyfindingthelargestoftwooutofthreenumbersandsquaringthemwhichismultiplyingthembyitselfthenyoushouldinputthreenumbersintothisfunctionanditwilldothatforyou';
     await app.httpRequest()
