@@ -60,6 +60,10 @@ export class Task extends Entity {
     this.logStorePosition = '';
   }
 
+  public setExecuteWorker() {
+    this.data.taskWorker = `${os.hostname()}:${process.pid}`;
+  }
+
   private static create(data: EasyData<TaskData, 'taskId'>): Task {
     const newData = EntityUtil.defaultData(data, 'taskId');
     return new Task(newData);
@@ -72,7 +76,13 @@ export class Task extends Entity {
       targetName: fullname,
       authorId: options?.authorId ?? '',
       authorIp: options?.authorIp ?? '',
-      data: { tips: options?.tips, skipDependencies: options?.skipDependencies, syncDownloadData: options?.syncDownloadData },
+      data: {
+        // task execute worker
+        taskWorker: '',
+        tips: options?.tips,
+        skipDependencies: options?.skipDependencies,
+        syncDownloadData: options?.syncDownloadData,
+      },
     };
     const task = this.create(data);
     task.logPath = `/packages/${fullname}/syncs/${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
@@ -86,7 +96,11 @@ export class Task extends Entity {
       targetName,
       authorId: `pid_${process.pid}`,
       authorIp: os.hostname(),
-      data: { since: '' },
+      data: {
+        // task execute worker
+        taskWorker: '',
+        since: '',
+      },
     };
     return this.create(data);
   }
@@ -98,7 +112,11 @@ export class Task extends Entity {
       targetName,
       authorId: `pid_${process.pid}`,
       authorIp: os.hostname(),
-      data: lastData ? { ...lastData } : {},
+      data: {
+        // task execute worker
+        taskWorker: '',
+        ...lastData,
+      },
     };
     const task = this.create(data);
     task.logPath = `/binaries/${targetName}/syncs/${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;

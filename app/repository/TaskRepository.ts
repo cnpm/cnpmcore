@@ -57,39 +57,15 @@ export class TaskRepository extends AbstractRepository {
     return null;
   }
 
-  async executeWaitingTask(taskType: TaskType, timeout?: number) {
-    // https://zhuanlan.zhihu.com/p/20293493?refer=alsotang
-    // Task list impl from MySQL
-    const GET_WAITING_TASK_SQL = `UPDATE tasks SET gmt_modified=now(3), state=?, attempts=attempts+1, id=LAST_INSERT_ID(id)
-WHERE type=? AND state=? ORDER BY gmt_modified ASC LIMIT 1`;
-    let result = await TaskModel.driver.query(GET_WAITING_TASK_SQL,
-      [ TaskState.Processing, taskType, TaskState.Waiting ]);
-    // if has task, affectedRows > 0 and insertId > 0
-    if (result.affectedRows && result.affectedRows > 0 && result.insertId && result.insertId > 0) {
-      this.logger.info('[TaskRepository:executeWaitingTask:waiting] type: %s, result: %j', taskType, result);
-      const task = await TaskModel.findOne({ id: result.insertId });
-      if (task) {
-        return ModelConvertor.convertModelToEntity(task, TaskEntity);
-      }
-    }
-
-    // try to find timeout task, default is 5 mins
-    timeout = timeout ?? 60000 * 5;
+  async findTimeoutTasks(taskState: TaskState, timeout: number) {
     const timeoutDate = new Date();
     timeoutDate.setTime(timeoutDate.getTime() - timeout);
-    const GET_TIMEOUT_TASK_SQL = `UPDATE tasks SET gmt_modified=now(3), state=?, attempts=attempts+1, id=LAST_INSERT_ID(id)
-WHERE type=? AND state=? AND gmt_modified<? ORDER BY gmt_modified ASC LIMIT 1`;
-    result = await TaskModel.driver.query(GET_TIMEOUT_TASK_SQL,
-      [ TaskState.Processing, taskType, TaskState.Processing, timeoutDate ]);
-    // if has task, affectedRows > 0 and insertId > 0
-    if (result.affectedRows && result.affectedRows > 0 && result.insertId && result.insertId > 0) {
-      this.logger.info('[TaskRepository:executeWaitingTask:timeout] type: %s, result: %j, timeout: %j',
-        taskType, result, timeoutDate);
-      const task = await TaskModel.findOne({ id: result.insertId });
-      if (task) {
-        return ModelConvertor.convertModelToEntity(task, TaskEntity);
-      }
-    }
-    return null;
+    const models = await TaskModel.find({
+      state: taskState,
+      updatedAt: {
+        $lt: timeoutDate,
+      },
+    }).limit(1000);
+    return models.map(model => ModelConvertor.convertModelToEntity(model, TaskEntity));
   }
 }

@@ -1,10 +1,10 @@
 import { mock } from 'egg-mock/bootstrap';
 import { TestUtil } from './TestUtil';
 
-before(async () => {
+beforeEach(async () => {
   // dont show console log on unittest by default
   TestUtil.app.loggers.disableConsole();
-  await TestUtil.app.redis.flushall();
+  await TestUtil.app.redis.flushdb('sync');
 });
 
 afterEach(async () => {

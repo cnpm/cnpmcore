@@ -114,7 +114,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
         .set('accept', 'application/vnd.npm.install-v1+json')
         .expect(200);
       pkg = res.body.versions['3.0.0'];
-      assert.equal(pkg.hasInstallScript, true);
+      assert(pkg.hasInstallScript === true);
       assert(!pkg.scripts);
     });
   });

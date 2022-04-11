@@ -12,7 +12,6 @@ import binaries, { SyncerClass } from '../../../config/binaries';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
-import { TaskRepository } from '../../repository/TaskRepository';
 import { BinaryRepository } from '../../repository/BinaryRepository';
 import { Task } from '../entity/Task';
 import { Binary } from '../entity/Binary';
@@ -55,8 +54,6 @@ function isoNow() {
 })
 export class BinarySyncerService extends AbstractService {
   @Inject()
-  private readonly taskRepository: TaskRepository;
-  @Inject()
   private readonly binaryRepository: BinaryRepository;
   @Inject()
   private readonly taskService: TaskService;
@@ -82,14 +79,7 @@ export class BinarySyncerService extends AbstractService {
   }
 
   public async createTask(binaryName: string, lastData?: any) {
-    const existsTask = await this.taskRepository.findTaskByTargetName(binaryName, TaskType.SyncBinary);
-    if (existsTask) return existsTask;
-
-    const task = Task.createSyncBinary(binaryName, lastData);
-    await this.taskRepository.saveTask(task);
-    this.logger.info('[BinarySyncerService.createTask:new] targetName: %s, taskId: %s',
-      task.targetName, task.taskId);
-    return task;
+    return await this.taskService.createTask(Task.createSyncBinary(binaryName, lastData), false);
   }
 
   public async findTask(taskId: string) {
@@ -101,7 +91,7 @@ export class BinarySyncerService extends AbstractService {
   }
 
   public async findExecuteTask() {
-    return await this.taskService.findExecuteTask(TaskType.SyncBinary, 60000 * 10);
+    return await this.taskService.findExecuteTask(TaskType.SyncBinary);
   }
 
   public async executeTask(task: Task) {

@@ -174,14 +174,14 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.state === 'processing');
       assert(res.body.id === firstTaskId);
 
-      // update bigger than 1 min
+      // update bigger than 1 min, same task return
       await TaskModel.update({ taskId: firstTaskId }, { updatedAt: new Date(Date.now() - 60001) });
       res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(201);
       assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id !== firstTaskId);
+      assert(res.body.state === 'processing');
+      assert(res.body.id === firstTaskId);
     });
   });
 

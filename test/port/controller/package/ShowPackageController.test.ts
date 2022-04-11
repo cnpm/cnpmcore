@@ -440,7 +440,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect('content-type', 'application/json; charset=utf-8');
       pkg = res.body;
       versionOne = pkg.versions[Object.keys(pkg.versions)[0]];
-      assert.equal(versionOne.hasInstallScript, true);
+      assert(versionOne.hasInstallScript === true);
 
       pkg = await TestUtil.getFullPackage({
         name: '@cnpm/test-module-postinstall-scripts',
@@ -467,7 +467,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect('content-type', 'application/json; charset=utf-8');
       pkg = res.body;
       versionOne = pkg.versions[Object.keys(pkg.versions)[0]];
-      assert.equal(versionOne.hasInstallScript, true);
+      assert(versionOne.hasInstallScript === true);
     });
 
     it('should abbreviated manifests work when dist not exists', async () => {
