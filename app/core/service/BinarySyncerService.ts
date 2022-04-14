@@ -23,7 +23,6 @@ import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
 import { NwjsBinary } from '../../common/adapter/binary/NwjsBinary';
 import { BucketBinary } from '../../common/adapter/binary/BucketBinary';
 import { CypressBinary } from '../../common/adapter/binary/CypressBinary';
-import { Sqlite3Binary } from '../../common/adapter/binary/Sqlite3Binary';
 import { SqlcipherBinary } from '../../common/adapter/binary/SqlcipherBinary';
 import { PuppeteerBinary } from '../../common/adapter/binary/PuppeteerBinary';
 import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
@@ -36,7 +35,6 @@ const BinaryClasses = {
   [SyncerClass.NwjsBinary]: NwjsBinary,
   [SyncerClass.BucketBinary]: BucketBinary,
   [SyncerClass.CypressBinary]: CypressBinary,
-  [SyncerClass.Sqlite3Binary]: Sqlite3Binary,
   [SyncerClass.SqlcipherBinary]: SqlcipherBinary,
   [SyncerClass.PuppeteerBinary]: PuppeteerBinary,
   [SyncerClass.GithubBinary]: GithubBinary,
