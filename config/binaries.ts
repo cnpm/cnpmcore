@@ -5,7 +5,6 @@ export enum SyncerClass {
   BucketBinary = 'BucketBinary',
   GithubBinary = 'GithubBinary',
   ElectronBinary = 'ElectronBinary',
-  Sqlite3Binary = 'Sqlite3Binary',
   SqlcipherBinary = 'SqlcipherBinary',
   PuppeteerBinary = 'PuppeteerBinary',
   NodePreGypBinary = 'NodePreGypBinary',
@@ -101,14 +100,6 @@ const binaries: {
     syncer: SyncerClass.CypressBinary,
     repo: 'cypress-io/cypress',
     distUrl: 'https://www.cypress.io/',
-  },
-  // Sqlite3Binary
-  sqlite3: {
-    category: 'sqlite3',
-    description: 'Asynchronous, non-blocking SQLite3 bindings for Node.js',
-    syncer: SyncerClass.Sqlite3Binary,
-    repo: 'mapbox/node-sqlite3',
-    distUrl: 'https://mapbox-node-binary.s3.amazonaws.com',
   },
   // SqlcipherBinary
   '@journeyapps/sqlcipher': {
@@ -798,6 +789,13 @@ const binaries: {
     syncer: SyncerClass.GithubBinary,
     repo: 'uhop/node-re2',
     distUrl: 'https://github.com/uhop/node-re2/releases',
+  },
+  sqlite3: {
+    category: 'sqlite3',
+    description: 'Asynchronous, non-blocking SQLite3 bindings for Node.js',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'TryGhost/node-sqlite3',
+    distUrl: 'https://github.com/TryGhost/node-sqlite3/releases',
   },
 };
 
