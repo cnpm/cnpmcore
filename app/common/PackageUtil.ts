@@ -40,3 +40,16 @@ export function formatTarball(registry: string, scope: string, name: string, ver
   const fullname = getFullname(scope, name);
   return `${registry}/${fullname}/-/${name}-${version}.tgz`;
 }
+
+export function detectInstallScript(manifest: any) {
+  // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
+  let hasInstallScript = false;
+  const scripts = manifest.scripts;
+  if (scripts) {
+    // https://www.npmjs.com/package/fix-has-install-script
+    if (scripts.install || scripts.preinstall || scripts.postinstall) {
+      hasInstallScript = true;
+    }
+  }
+  return hasInstallScript;
+}

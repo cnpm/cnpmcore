@@ -539,6 +539,41 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(data.readme, '');
     });
 
+    it('should auto sync missing hasInstallScript property', async () => {
+      // https://github.com/cnpm/cnpm/issues/374
+      const name = 'cnpmcore-test-sync-deprecated';
+      const result = await npmRegistry.getFullManifests(name);
+      result.data.versions[Object.keys(result.data.versions)[0]].scripts = {};
+      mock.data(NPMRegistry.prototype, 'getFullManifests', JSON.parse(JSON.stringify(result)));
+      await packageSyncerService.createTask(name);
+      let task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      let stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      let log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('🚧 Syncing versions 0 => 1'));
+      let res = await packageManagerService.listPackageFullManifests('', name);
+      assert(res.data.versions[res.data['dist-tags'].latest].hasInstallScript === undefined);
+
+      result.data.versions[Object.keys(result.data.versions)[0]].scripts = { install: 'echo "hello"' };
+      mock.data(NPMRegistry.prototype, 'getFullManifests', JSON.parse(JSON.stringify(result)));
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      console.log(log);
+      assert(log.includes('🚧 Syncing versions 1 => 1'));
+      res = await packageManagerService.listPackageFullManifests('', name);
+      assert(res.data.versions[res.data['dist-tags'].latest].hasInstallScript === true);
+      res = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert(res.data.versions[res.data['dist-tags'].latest].hasInstallScript === true);
+    });
+
     it('should ignore package.version.readme exists', async () => {
       const name = 'cnpmcore-test-sync-dependencies';
       const result = await npmRegistry.getFullManifests(name);

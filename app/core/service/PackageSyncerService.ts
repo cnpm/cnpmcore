@@ -10,7 +10,7 @@ import {
 import { setTimeout } from 'timers/promises';
 import { rm } from 'fs/promises';
 import { NPMRegistry } from '../../common/adapter/NPMRegistry';
-import { getScopeAndName } from '../../common/PackageUtil';
+import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
@@ -418,7 +418,13 @@ export class PackageSyncerService extends AbstractService {
         ];
         let diffMeta: any;
         for (const key of metaDataKeys) {
-          const remoteItemValue = item[key];
+          let remoteItemValue = item[key];
+          // make sure hasInstallScript exists
+          if (key === 'hasInstallScript' && remoteItemValue === undefined) {
+            if (detectInstallScript(item)) {
+              remoteItemValue = true;
+            }
+          }
           const remoteItemDiffValue = JSON.stringify(remoteItemValue);
           if (remoteItemDiffValue !== JSON.stringify(existsItem[key])) {
             if (!diffMeta) diffMeta = {};

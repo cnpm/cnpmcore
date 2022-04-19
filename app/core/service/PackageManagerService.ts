@@ -8,7 +8,7 @@ import {
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import semver from 'semver';
-import { calculateIntegrity, formatTarball, getFullname, getScopeAndName } from '../../common/PackageUtil';
+import { calculateIntegrity, detectInstallScript, formatTarball, getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { AbstractService } from '../../common/AbstractService';
 import { BugVersionStore } from '../../common/adapter/BugVersionStore';
 import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants';
@@ -123,15 +123,7 @@ export class PackageManagerService extends AbstractService {
     }
 
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
-    let hasInstallScript;
-    const scripts = cmd.packageJson.scripts;
-    if (scripts) {
-      // https://www.npmjs.com/package/fix-has-install-script
-      if (scripts.install || scripts.preinstall || scripts.postinstall) {
-        hasInstallScript = true;
-      }
-    }
-
+    const hasInstallScript = detectInstallScript(cmd.packageJson) ? true : undefined;
     let tarDistIntegrity: any;
     let tarDistSize = 0;
     if (cmd.dist.content) {
