@@ -90,6 +90,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
       assert(result.items.length > 0);
       for (const item of result.items) {
         assert(item.name !== 'build_testruns/');
+        assert(/^\d{4}\-\d{2}\-\d{2}T\d{2}$/.test(item.date));
       }
     });
   });

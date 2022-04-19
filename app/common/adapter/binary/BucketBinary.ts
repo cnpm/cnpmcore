@@ -51,12 +51,17 @@ export class BucketBinary extends AbstractBinary {
       const name = `${path.basename(fullname)}/`;
       const fullpath = `${dir}${name}`;
       if (this.binaryConfig.ignoreDirs?.includes(fullpath)) continue;
+      let date = '-';
+      // root dir children, should set date to '2022-04-19T01', sync per hour
+      if (dir === '/') {
+        date = new Date().toISOString().split(':', 1)[0];
+      }
       items.push({
         name,
         isDir: true,
         url: '',
         size: '-',
-        date: '-',
+        date,
       });
     }
     return items;
