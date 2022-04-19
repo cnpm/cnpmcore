@@ -785,6 +785,13 @@ const binaries: {
     repo: 'looksgood/zeromq.js',
     distUrl: 'https://github.com/looksgood/zeromq.js/releases',
   },
+  'ali-usb_ctl': {
+    category: 'ali-usb_ctl',
+    description: 'Node.js usb control module',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'looksgood/ali-usb_ctl',
+    distUrl: 'https://github.com/looksgood/ali-usb_ctl/releases',
+  },
   'node-re2': {
     category: 'node-re2',
     description: 'node.js bindings for RE2: fast, safe alternative to backtracking regular expression engines.',
