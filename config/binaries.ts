@@ -210,7 +210,9 @@ const binaries: {
     distUrl: 'https://prisma-builds.s3-eu-west-1.amazonaws.com/',
     ignoreDirs: [
       // https://prisma-builds.s3-eu-west-1.amazonaws.com/?delimiter=/&prefix=
-      '/all_commits/',
+      // https://github.com/cnpm/cnpmcore/issues/209
+      // need all_commits dir on 3.12.0
+      // '/all_commits/',
       '/build_testruns/',
       '/bump_engineer/',
       '/m1_builds/',
