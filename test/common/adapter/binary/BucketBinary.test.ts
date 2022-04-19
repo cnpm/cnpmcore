@@ -83,13 +83,13 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
       }
     });
 
-    it('should ignore all_commits/', async () => {
+    it('should ignore build_testruns/', async () => {
       const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.prisma);
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
       for (const item of result.items) {
-        assert(item.name !== 'all_commits/');
+        assert(item.name !== 'build_testruns/');
       }
     });
   });
