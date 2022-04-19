@@ -52,9 +52,9 @@ export class BucketBinary extends AbstractBinary {
       const fullpath = `${dir}${name}`;
       if (this.binaryConfig.ignoreDirs?.includes(fullpath)) continue;
       let date = '-';
-      // root dir children, should set date to '2022-04-19T01', sync per hour
+      // root dir children, should set date to '2022-04-19T01:00:00Z', sync per hour
       if (dir === '/') {
-        date = new Date().toISOString().split(':', 1)[0];
+        date = new Date().toISOString().split(':', 1)[0] + ':00:00Z';
       }
       items.push({
         name,
