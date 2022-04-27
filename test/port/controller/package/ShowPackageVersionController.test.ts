@@ -46,7 +46,136 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.body.description, 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻');
     });
 
-    it.only('should fix bug version', async () => {
+    describe.only('should fix bug version', () => {
+      beforeEach(() => {
+        mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      });
+
+      async function initPkg(pkgData, bugVersionData) {
+        const pkgList = [].concat(pkgData);
+        for (const item of pkgList) {
+          const pkg = await TestUtil.getFullPackage(item);
+          await app.httpRequest()
+            .put(`/${pkg.name}`)
+            .set('authorization', publisher.authorization)
+            .set('user-agent', publisher.ua)
+            .send(pkg)
+            .expect(201);
+        }
+
+        mock(PackageManagerService.prototype, 'getBugVersion', async () => {
+          return new BugVersion(bugVersionData);
+        });
+
+        return pkgList;
+      }
+
+      it('should change version', async () => {
+        const pkgData = [{
+          name: 'foo',
+          version: '1.0.0',
+        }, {
+          name: 'foo',
+          version: '2.0.0',
+        }];
+
+        const bugVersionData = {
+          foo: {
+            '2.0.0': {
+              version: '1.0.0',
+              reason: 'mock reason',
+            },
+          },
+        };
+
+        await initPkg(pkgData, bugVersionData);
+
+        let res = await app.httpRequest()
+          .get('/foo/2.0.0')
+          .expect(200);
+
+        assert(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-1.0.0.tgz');
+        assert(res.body.deprecated === '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
+        // don't change version
+        assert(res.body.version === '2.0.0');
+
+        // sync worker request should not effect
+        res = await app.httpRequest()
+          .get('/foo/2.0.0?cache=0')
+          .expect(200);
+        assert(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-2.0.0.tgz');
+        assert(!res.body.deprecated);
+        assert(res.body.version === '2.0.0');
+      });
+
+      it('should not change version due to same version', async () => {
+        const pkgData = {
+          name: 'foo',
+          version: '3.0.0',
+        };
+
+        const bugVersionData = {
+          foo: {
+            '3.0.0': {
+              version: '3.0.0',
+              reason: 'mock reason same version',
+            },
+          },
+        };
+
+        await initPkg(pkgData, bugVersionData);
+
+        const res = await app.httpRequest()
+          .get('/foo/3.0.0')
+          .expect(200);
+
+        assert(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-3.0.0.tgz');
+        assert(!res.body.deprecated);
+        assert(res.body.version === '3.0.0');
+      });
+
+      it.only('should override scripts', async () => {
+        const pkgData = [{
+          name: 'foo',
+          version: '4.0.0',
+        }, {
+          name: 'foo',
+          version: '4.1.0',
+          scripts: {
+            lint: 'echo "lint"',
+            postinstall: 'echo "postinstall"',
+          },
+        }];
+
+        const bugVersionData = {
+          foo: {
+            '4.1.0': {
+              version: '4.0.0',
+              reason: 'evil scripts',
+              scripts: {
+                postinstall: '',
+              },
+            },
+          },
+        };
+
+        const pkgData1 = await initPkg(pkgData, bugVersionData);
+        console.log(pkgData1)
+
+        const res = await app.httpRequest()
+          .get('/foo/4.1.0')
+          .expect(200);
+
+        assert(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-4.0.0.tgz');
+        assert(res.body.deprecated === '[WARNING] Override scripts [postinstall], reason: evil scripts');
+        assert(res.body.scripts.lint === 'echo "lint"');
+        assert(res.body.scripts.postinstall === '');
+        // don't change version
+        assert(res.body.version === '4.1.0');
+      });
+    });
+
+    it('should fix bug version', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkgV1 = await TestUtil.getFullPackage({
         name: 'foo',
