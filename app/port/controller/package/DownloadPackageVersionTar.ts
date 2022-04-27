@@ -16,7 +16,7 @@ import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 
 @HTTPController()
-export class DonwloadPackageVersionTarController extends AbstractController {
+export class DownloadPackageVersionTarController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
   @Inject()
