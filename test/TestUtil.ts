@@ -18,6 +18,7 @@ type PackageOptions = {
   distTags?: object | null;
   isPrivate?: boolean;
   libc?: string[];
+  scripts?: Record<string, string>;
 };
 
 type UserOptions = {
@@ -184,6 +185,9 @@ export class TestUtil {
         delete version.readme;
       } else if (options.readme) {
         version.readme = pkg.readme = options.readme;
+      }
+      if (options.scripts) {
+        pkg.scripts = Object.assign({}, pkg.scripts, options.scripts);
       }
       if ('distTags' in options) {
         pkg['dist-tags'] = options.distTags;

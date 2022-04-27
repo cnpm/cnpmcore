@@ -46,7 +46,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.body.description, 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻');
     });
 
-    it('should fix bug version', async () => {
+    it.only('should fix bug version', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkgV1 = await TestUtil.getFullPackage({
         name: 'foo',
@@ -69,6 +69,17 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
           description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
         },
       });
+      const pkgV4 = await TestUtil.getFullPackage({
+        name: 'foo',
+        version: '4.0.0',
+        versionObject: {
+          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+        },
+        scripts: {
+          test: 'echo "test"',
+          postinstall: 'echo "postinstall"',
+        },
+      });
       const bugVersion = new BugVersion({
         foo: {
           '2.0.0': {
@@ -78,6 +89,13 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
           '3.0.0': {
             version: '3.0.0',
             reason: 'mock reason same version',
+          },
+          '4.0.0': {
+            version: '4.0.0',
+            reason: 'evil scripts',
+            scripts: {
+              postinstall: '',
+            },
           },
         },
       });
@@ -102,6 +120,14 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkgV3)
         .expect(201);
+      await app.httpRequest()
+        .put(`/${pkgV4.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkgV4)
+        .expect(201);
+
+      console.log('checking /foo/2.0.0');
       let res = await app.httpRequest()
         .get('/foo/2.0.0')
         .expect(200)
@@ -113,6 +139,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert(res.body.version === '2.0.0');
 
       // same version not fix bug version
+      console.log('checking /foo/3.0.0');
       res = await app.httpRequest()
         .get('/foo/3.0.0')
         .expect(200)
@@ -121,6 +148,19 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-3.0.0.tgz');
       assert(!res.body.deprecated);
       assert(res.body.version === '3.0.0');
+
+      // same version fix bug version due to scripts
+      console.log('checking /foo/4.0.0');
+      res = await app.httpRequest()
+        .get('/foo/4.0.0')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+
+      assert(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-4.0.0.tgz');
+      assert(res.body.deprecated === '[WARNING] Override scripts [postinstall], reason: evil scripts');
+      assert(res.body.version === '4.0.0');
+      assert(res.body.scripts.test === 'echo "test"');
+      assert(res.body.scripts.postinstall === '');
 
       // sync worker request should not effect
       res = await app.httpRequest()

@@ -1,6 +1,7 @@
 export interface BugVersionAdvice {
   version: string;
   reason: string;
+  scripts?: Record<string, string>;
 }
 export type BugVersionPackage = Record<string, BugVersionAdvice>;
 export type BugVersionPackages = Record<string, BugVersionPackage>;
@@ -26,7 +27,7 @@ export class BugVersion {
 
   fixVersion(pkgName: string, version: string): BugVersionAdvice | undefined {
     const advice = this.data[pkgName] && this.data[pkgName][version];
-    if (advice && advice.version === version) return undefined;
+    if (advice && advice.version === version && Object.keys(advice.scripts || {}).length === 0) return undefined;
     return advice;
   }
 
@@ -41,10 +42,18 @@ export class BugVersion {
       return;
     }
     const newManifest = JSON.parse(JSON.stringify(fixVersionManifest));
-    const hotfixDeprecated = `[WARNING] Use ${advice.version} instead of ${bugVersionManifest.version}, reason: ${advice.reason}`;
-    newManifest.deprecated = bugVersionManifest.deprecated ? `${bugVersionManifest.deprecated} (${hotfixDeprecated})` : hotfixDeprecated;
+    let hotfixDeprecated;
     // don't change version
     newManifest.version = bugVersionManifest.version;
+    hotfixDeprecated = `[WARNING] Use ${advice.version} instead of ${bugVersionManifest.version}, reason: ${advice.reason}`;
+
+    // override scripts
+    if (newManifest.scripts && Object.keys(newManifest.scripts).length > 0 && advice.scripts && Object.keys(advice.scripts).length > 0) {
+      Object.assign(newManifest.scripts, advice.scripts);
+      if (advice.version !== bugVersionManifest.version) hotfixDeprecated = `[WARNING] Override scripts [${Object.keys(advice.scripts).join(',')}], reason: ${advice.reason}`;
+    }
+
+    newManifest.deprecated = bugVersionManifest.deprecated ? `${bugVersionManifest.deprecated} (${hotfixDeprecated})` : hotfixDeprecated;
     return newManifest;
   }
 }
