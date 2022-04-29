@@ -1,49 +1,61 @@
 # 如何贡献 cnpmcore
 
-假设大家使用 macOS 开发，Linux 和 Windows 环境自行参考
+## 环境初始化
 
-## 安装数据库
+本项目的外部服务依赖有：MySQL 数据服务、Redis 缓存服务。
 
-### MySQL 5.7
-
-```bash
-brew install mysql@5.7
-brew services start mysql
-```
-
-### MySQL 8
+可以通过 Docker 来快速启动本地开发环境：
 
 ```bash
-brew install mysql
-brew services start mysql
+# 启动本地依赖服务
+$ docker-compose up -d
+
+# 关闭本地依赖服务
+$ docker-compose down
 ```
 
-如果遇到以下异常
+> 手动初始化依赖服务参见[文档](./docs/setup.md)
 
-```log
-Uncaught Error: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client
-```
 
-需要先确认安装的 MySQL 版本，如果是 8.x，在执行时可能会报错不支持此种鉴权方式，需要改一下 MySQL 设置
+## 本地开发
+
+### 安装依赖
 
 ```bash
-# 登录数据库
-mysql -u root
-
-> use mysql;
-> update user set plugin='mysql_native_password' where user='root';
-> quit;
-
-# 重启 MySQL
-brew services restart mysql
+$ npm install
 ```
 
-## 安装缓存服务 Redis
+### 开发运行
 
 ```bash
-brew install redis
-brew services start redis
+# 初始化数据库
+$ MYSQL_DATABASE=cnpmcore npm run prepare-database
+
+# 启动 Web 服务
+$ DEBUG_LOCAL_SQL=true npm run dev
+
+# 访问
+curl -v http://127.0.0.1:7001
 ```
+
+### 单元测试
+
+```bash
+$ npm run test
+```
+
+编写单测规范：
+
+- assert 断言库必须使用 require 引入
+
+```ts
+import assert = require('assert');
+```
+
+> CAUTION: don't use `import assert from 'assert'`
+> Just use old style import assert = require('assert') for assert module. This is limitation.
+> See https://github.com/power-assert-js/espower-typescript#caution-dont-use-import-assert-from-assert
+
 
 ## 项目结构
 
@@ -84,49 +96,6 @@ repository：
 port：
 - controller：HTTP controller
 
-## 本地开发
-
-### 安装依赖
-
-```bash
-npm install
-```
-
-### 开发运行
-
-初始化数据库：
-
-```bash
-MYSQL_DATABASE=cnpmcore npm run prepare-database
-```
-
-启动 web 服务：
-
-```bash
-DEBUG_LOCAL_SQL=true npm run dev
-```
-
-访问：
-
-```bash
-curl -v http://127.0.0.1:7001
-```
-
-### 运行单元测试
-
-```bash
-npm run test
-```
-
-#### assert 断言库必须使用 require 引入
-
-```ts
-import assert = require('assert');
-```
-
-CAUTION: don't use `import assert from 'assert'`
-Just use old style import assert = require('assert') for assert module. This is limitation.
-See https://github.com/power-assert-js/espower-typescript#caution-dont-use-import-assert-from-assert
 
 ## Controller 开发指南
 
@@ -141,7 +110,7 @@ See https://github.com/power-assert-js/espower-typescript#caution-dont-use-impor
                 | extends      | extends                 | extends
                 v              v                         v
             +-----------------------------------------------+
-            |               AbstractController              | 
+            |               AbstractController              |
             +-----------------------+-----------------------+
                                     |
                                     | extends
@@ -151,7 +120,7 @@ See https://github.com/power-assert-js/espower-typescript#caution-dont-use-impor
                           +------------------------+
 ```
 
-- MiddlewareController 里面核心的功能就是编排中间件的加载顺序。 
+- MiddlewareController 里面核心的功能就是编排中间件的加载顺序。
 
 ### AbstractController
 

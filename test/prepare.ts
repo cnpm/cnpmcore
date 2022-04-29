@@ -5,4 +5,4 @@ async function main() {
   console.log('prepare database done, tables: %s', await TestUtil.getTableNames());
   TestUtil.destroyConnection();
 }
-main();
+main().catch(console.error);
