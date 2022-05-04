@@ -625,7 +625,7 @@ export class PackageManagerService extends AbstractService {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const fieldsFromLatestManifest = [
       'author', 'bugs', 'contributors', 'description', 'homepage', 'keywords', 'license',
-      'maintainers', 'readmeFilename', 'repository',
+      'readmeFilename', 'repository',
     ];
     // the latest version metas
     for (const field of fieldsFromLatestManifest) {
