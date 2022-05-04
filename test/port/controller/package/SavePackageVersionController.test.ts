@@ -33,7 +33,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
     it('should add new version success on scoped package', async () => {
       const name = '@cnpm/publish-package-test';
-      const pkg = await TestUtil.getFullPackage({ name, version: '0.0.0' });
+      const pkg = await TestUtil.getFullPackage({ name, version: '0.0.0', description: 'init description' });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
@@ -46,6 +46,12 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
       assert.equal(res.body.version, '0.0.0');
+      assert(res.body.description === 'init description');
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .expect(200);
+      assert(res.body['dist-tags'].latest === '0.0.0');
+      assert(res.body.description === 'init description');
 
       // add other version
       const pkg2 = await TestUtil.getFullPackage({ name, version: '1.0.0' });
@@ -58,7 +64,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
 
-      const pkg3 = await TestUtil.getFullPackage({ name, version: '2.0.0' });
+      const pkg3 = await TestUtil.getFullPackage({ name, version: '2.0.0', description: '2.0.0 description' });
       res = await app.httpRequest()
         .put(`/${encodeURIComponent(pkg3.name)}`)
         .set('authorization', publisher.authorization)
@@ -67,6 +73,17 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .expect(201);
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/2.0.0`)
+        .expect(200);
+      assert(res.body.version === '2.0.0');
+      assert(res.body.description === '2.0.0 description');
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .expect(200);
+      assert(res.body['dist-tags'].latest === '2.0.0');
+      assert(res.body.description === '2.0.0 description');
     });
 
     it('should 403 on not allow scoped package', async () => {

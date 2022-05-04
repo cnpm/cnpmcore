@@ -594,7 +594,7 @@ export class PackageManagerService extends AbstractService {
   }
 
   // refresh package full manifests and abbreviated manifests to NFS
-  public async _refreshPackageManifestsToDists(pkg: Package) {
+  private async _refreshPackageManifestsToDists(pkg: Package) {
     const [
       fullManifests,
       abbreviatedManifests,
@@ -620,19 +620,27 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
+  private _mergeLatestManifestFields(fullManifests: object, latestManifest: object) {
+    if (!latestManifest) return;
+    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
+    const fieldsFromLatestManifest = [
+      'author', 'bugs', 'contributors', 'description', 'homepage', 'keywords', 'license',
+      'maintainers', 'readmeFilename', 'repository',
+    ];
+    // the latest version metas
+    for (const field of fieldsFromLatestManifest) {
+      fullManifests[field] = latestManifest[field];
+    }
+  }
+
   private async _setPackageDistTagsAndLatestInfos(pkg: Package, fullManifests: any, abbreviatedManifests: any) {
     const distTags = await this._listPackageDistTags(pkg);
     if (distTags.latest) {
       const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, distTags.latest);
       if (packageVersion) {
-        // set readme, license, author, readmeFilename
         fullManifests.readme = await this.distRepository.readDistBytesToString(packageVersion.readmeDist);
         const latestManifest = await this.distRepository.readDistBytesToJSON(packageVersion.manifestDist);
-        if (latestManifest) {
-          fullManifests.license = latestManifest.license;
-          fullManifests.author = latestManifest.author;
-          fullManifests.readmeFilename = latestManifest.readmeFilename;
-        }
+        this._mergeLatestManifestFields(fullManifests, latestManifest);
       }
     }
     fullManifests['dist-tags'] = distTags;
@@ -766,24 +774,40 @@ export class PackageManagerService extends AbstractService {
 
     const distTags = await this._listPackageDistTags(pkg);
     const maintainers = await this._listPackageMaintainers(pkg);
+    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const data = {
-      _attachments: {},
       _id: `${pkg.fullname}`,
       _rev: `${pkg.id}-${pkg.packageId}`,
-      author: {},
-      description: pkg.description,
       'dist-tags': distTags,
-      license: undefined,
-      maintainers,
+      // the package name
       name: pkg.fullname,
-      readme: '',
-      readmeFilename: undefined,
+      // an object mapping versions to the time published, along with created and modified timestamps
       time: {
         // '1.0.0': '2012-09-18T14:46:08.346Z',
         created: pkg.createdAt,
         modified: pkg.updatedAt,
       },
+      // a mapping of semver-compliant version numbers to version data
       versions: {},
+      // The following fields are hoisted to the top-level of the package json from the latest version published:
+      // human object
+      author: undefined,
+      bugs: undefined,
+      description: pkg.description,
+      homepage: undefined,
+      keywords: undefined,
+      // the SPDX identifier of the package's license
+      license: undefined,
+      // array of human objects for people with permission to publish this package; not authoritative but informational
+      maintainers,
+      // contributors: array of human objects
+      // the first 64K of the README data for the most-recently published version of the package
+      readme: '',
+      // The name of the file from which the readme data was taken
+      readmeFilename: undefined,
+      // as given in package.json, for the latest version
+      repository: undefined,
+      // users: an object whose keys are the npm user names of people who have starred this package
     };
 
     let lastestTagVersion = '';
@@ -792,6 +816,7 @@ export class PackageManagerService extends AbstractService {
     }
 
     let latestManifest: any;
+    let latestPackageVersion = packageVersions[0];
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
       const manifest = await this.distRepository.readDistBytesToJSON(packageVersion.manifestDist);
@@ -801,22 +826,17 @@ export class PackageManagerService extends AbstractService {
       }
       if (lastestTagVersion && packageVersion.version === lastestTagVersion) {
         latestManifest = manifest;
-        // set readme
-        data.readme = await this.distRepository.readDistBytesToString(packageVersion.readmeDist);
+        latestPackageVersion = packageVersion;
       }
       data.versions[packageVersion.version] = manifest;
       data.time[packageVersion.version] = packageVersion.publishTime;
     }
+    // the latest version readme
+    data.readme = await this.distRepository.readDistBytesToString(latestPackageVersion.readmeDist);
     if (!latestManifest) {
-      latestManifest = data.versions[packageVersions[0].version];
-      const firstPkgVersion = packageVersions[0];
-      data.readme = await this.distRepository.readDistBytesToString(firstPkgVersion.readmeDist);
+      latestManifest = data.versions[latestPackageVersion.version];
     }
-    if (latestManifest) {
-      data.license = latestManifest.license;
-      data.author = latestManifest.author;
-      data.readmeFilename = latestManifest.readmeFilename;
-    }
+    this._mergeLatestManifestFields(data, latestManifest);
     return data;
   }
 
