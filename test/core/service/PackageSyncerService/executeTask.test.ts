@@ -566,7 +566,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
-      console.log(log);
+      // console.log(log);
       assert(log.includes('🚧 Syncing versions 1 => 1'));
       res = await packageManagerService.listPackageFullManifests('', name);
       assert(res.data.versions[res.data['dist-tags'].latest].hasInstallScript === true);
