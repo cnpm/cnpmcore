@@ -27,6 +27,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
 
     // syncMode=all
     mock(app.config.cnpmcore, 'syncMode', 'all');
+    mock(app.config.cnpmcore, 'changesStreamRegistry', 'https://r.cnpmjs.org');
     await app.runSchedule('ChangesStreamWorker');
     app.notExpectLog('[ChangesStreamWorker:start]');
 
@@ -49,6 +50,9 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     assert(result.waiting === 0);
     // mock request https://replicate.npmjs.com/_changes error
     app.mockHttpclient(/https:\/\/replicate.npmjs.com\/_changes/, () => {
+      throw new Error('mock request replicate _changes error');
+    });
+    app.mockHttpclient(/https:\/\/r.cnpmjs.org\/_changes/, () => {
       throw new Error('mock request replicate _changes error');
     });
     await app.runSchedule('ChangesStreamWorker');
@@ -100,7 +104,11 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     app.mockLog();
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'enableChangesStream', true);
+    mock(app.config.cnpmcore, 'changesStreamRegistry', 'https://r.cnpmjs.org');
     app.mockHttpclient(/https:\/\/replicate\.npmjs\.com\//, () => {
+      throw new Error('mock request replicate.npmjs.com error');
+    });
+    app.mockHttpclient(/https:\/\/r\.cnpmjs\.org\//, () => {
       throw new Error('mock request replicate.npmjs.com error');
     });
     await app.runSchedule('ChangesStreamWorker');
