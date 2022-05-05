@@ -1,7 +1,7 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 
-interface UserData extends EntityData {
+export interface UserData extends EntityData {
   userId: string;
   name: string;
   email: string;

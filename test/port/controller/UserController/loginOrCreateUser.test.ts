@@ -4,8 +4,27 @@ import { app, mock } from 'egg-mock/bootstrap';
 
 describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => {
   let ctx: Context;
+  const mockedAccessToken = 'mock_access_token';
+  const mockUser = {
+    name: 'cnpm_user',
+    email: 'cnpm_user@npmmirror.com',
+  };
+
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
+    const { oauth2 } = app.config.cnpmcore;
+    mock(app.config.cnpmcore.oauth2, 'enable', true);
+    const { accessTokenUri, userInfoUri } = oauth2;
+    app.mockHttpclient(accessTokenUri, {
+      status: 200,
+      data: {
+        access_token: mockedAccessToken,
+      },
+    });
+    app.mockHttpclient(`${userInfoUri}?access_token=${mockedAccessToken}`, {
+      status: 200,
+      data: mockUser,
+    });
   });
 
   afterEach(async () => {
@@ -162,5 +181,88 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
         .expect(401);
       assert.equal(res.body.error, '[UNAUTHORIZED] Please check your login name and password');
     });
+
+    it('should create user with sso and token', async () => {
+      let res = await app.httpRequest()
+        .put('/-/user/org.couchdb.user:npm_oauth_auth_dummy_user')
+        .send({
+          name: 'npm_oauth_auth_dummy_user',
+          password: 'placeholder',
+          type: 'user',
+          email: 'support@npmjs.com',
+        })
+        .expect(200);
+      assert.equal(res.body.ok, true);
+      assert.equal(res.body.id, 'org.couchdb.user:npm_oauth_auth_dummy_user');
+      assert(res.body.rev);
+      assert.match(res.body.token, /^cnpm_\w+/);
+      assert(res.body.sso);
+
+      const lastToken = res.body.token;
+      await app.httpRequest()
+        .get(`/-/sso/callback?state=${lastToken}&code=fake_sso_code`)
+        .expect(302);
+
+      const whoami = await app.httpRequest()
+        .get('/-/whoami')
+        .set('authorization', `Bearer ${lastToken}`)
+        .expect(200);
+      assert.equal(whoami.body.username, mockUser.name);
+      // login again, user exits and create a another token
+      res = await app.httpRequest()
+        .put('/-/user/org.couchdb.user:npm_oauth_auth_dummy_user')
+        .send({
+          name: 'npm_oauth_auth_dummy_user',
+          password: 'placeholder',
+          type: 'user',
+          email: 'support@npmjs.com',
+        })
+        .expect(200);
+      const token = res.body.token;
+      await app.httpRequest()
+        .get(`/-/sso/callback?state=${token}&code=fake_sso_code`)
+        .expect(302);
+      assert.notEqual(lastToken, token);
+    });
+
+    it('should throw error when email is empty', async () => {
+      const { oauth2 } = app.config.cnpmcore;
+      const { userInfoUri } = oauth2;
+      app.mockHttpclient(`${userInfoUri}?access_token=${mockedAccessToken}`, {
+        status: 200,
+        data: {
+          name: 'nobody',
+        },
+      });
+      const res = await app.httpRequest()
+        .get('/-/sso/callback?state=fake_token&code=fake_sso_code')
+        .expect(404);
+      assert.equal(res.body.error, '[NOT_FOUND] User nobody email not exists');
+    });
+
+    it('should throw error when access token error', async () => {
+      const { oauth2 } = app.config.cnpmcore;
+      const { accessTokenUri } = oauth2;
+      app.mockHttpclient(accessTokenUri, {
+        status: 500,
+        data: {},
+      });
+      await app.httpRequest()
+        .get('/-/sso/callback?state=fake_token&code=fake_sso_code')
+        .expect(403);
+    });
+
+    it('should throw error when sso get user info error', async () => {
+      const { oauth2 } = app.config.cnpmcore;
+      const { userInfoUri } = oauth2;
+      app.mockHttpclient(`${userInfoUri}?access_token=${mockedAccessToken}`, {
+        status: 500,
+        data: mockUser,
+      });
+      await app.httpRequest()
+        .get('/-/sso/callback?state=fake_token&code=fake_sso_code')
+        .expect(403);
+    });
   });
+
 });

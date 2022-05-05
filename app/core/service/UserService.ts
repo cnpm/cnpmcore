@@ -17,6 +17,7 @@ type CreateUser = {
   password: string;
   email: string;
   ip: string;
+  token?: string;
 };
 
 type LoginResult = {
@@ -29,6 +30,7 @@ type CreateTokenOptions = {
   isReadonly?: boolean;
   isAutomation?: boolean;
   cidrWhitelist?: string[];
+  token?: string;
 };
 
 @ContextProto({
@@ -53,6 +55,14 @@ export class UserService extends AbstractService {
     return { code: LoginResultCode.Success, user, token };
   }
 
+  async loginWithToken(name: string, token: string) {
+    const user = await this.userRepository.findUserByName(name);
+    if (!user) return { code: LoginResultCode.UserNotFound };
+    // set token when user exits
+    const newToken = await this.createToken(user.userId, { token });
+    return { code: LoginResultCode.Success, user, token: newToken };
+  }
+
   async create(createUser: CreateUser) {
     const passwordSalt = crypto.randomBytes(30).toString('hex');
     const plain = `${passwordSalt}${createUser.password}`;
@@ -66,7 +76,7 @@ export class UserService extends AbstractService {
       isPrivate: true,
     });
     await this.userRepository.saveUser(userEntity);
-    const token = await this.createToken(userEntity.userId);
+    const token = await this.createToken(userEntity.userId, { token: createUser.token });
     return { user: userEntity, token };
   }
 
@@ -99,7 +109,7 @@ export class UserService extends AbstractService {
   async createToken(userId: string, options: CreateTokenOptions = {}) {
     // https://github.blog/2021-09-23-announcing-npms-new-access-token-format/
     // https://github.blog/2021-04-05-behind-githubs-new-authentication-token-formats/
-    const token = randomToken(this.config.cnpmcore.name);
+    const token = options.token || randomToken(this.config.cnpmcore.name);
     const tokenKey = sha512(token);
     const tokenMark = token.substring(0, token.indexOf('_') + 4);
     const tokenEntity = TokenEntity.create({

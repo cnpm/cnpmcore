@@ -69,6 +69,22 @@ export default (appInfo: EggAppConfig) => {
     cdnVaryHeader: 'Accept, Accept-Encoding',
     // store full package version manifests data to database table(package_version_manifests), default is false
     enableStoreFullPackageVersionManifestsToDatabase: false,
+    oauth2: {
+      enable: false,
+      npmOauthUser: 'npm_oauth_auth_dummy_user',
+      clientIdName: 'client_id',
+      clientSecretName: 'client_secret',
+      clientId: 'client_id',
+      clientSecret: 'client_secret',
+      scope: '',
+      // sso url
+      redirectUri: 'https://your_cnpm_host.com/-/sso/callback',
+      host: 'https://sso-example.com.com',
+      accessTokenUri: 'https://sso-example.com/oauth2/access_token',
+      authorizationUri: 'https://sso-example.com/oauth2/authorize',
+      userInfoUri: 'https://sso-example.com/oauth2/userinfo',
+      logoutUri: 'https://sso-example.com/oauth2/logout',
+    },
   };
 
   // override config from framework / plugin

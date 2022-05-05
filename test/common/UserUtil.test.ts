@@ -1,5 +1,5 @@
 import assert = require('assert');
-import { randomToken, checkToken } from '../../app/common/UserUtil';
+import { randomToken, checkToken, randomPassword } from '../../app/common/UserUtil';
 
 describe('test/common/UserUtil.test.ts', () => {
   describe('randomToken()', () => {
@@ -22,6 +22,12 @@ describe('test/common/UserUtil.test.ts', () => {
       assert(!checkToken('cnpm_1_2', 'npm'));
       assert(!checkToken('cnpm_1_2', 'cnpm'));
       assert(!checkToken('cnpm_1?!@#_2\\dd', 'cnpm'));
+    });
+  });
+
+  describe('randomPassword()', () => {
+    it('should work', () => {
+      assert.equal(randomPassword().length, 10);
     });
   });
 });

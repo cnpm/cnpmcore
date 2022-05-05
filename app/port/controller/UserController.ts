@@ -6,6 +6,8 @@ import {
   HTTPBody,
   Context,
   EggContext,
+  HTTPQuery,
+  Inject,
 } from '@eggjs/tegg';
 import {
   UnprocessableEntityError,
@@ -16,7 +18,8 @@ import {
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
 import { LoginResultCode } from '../../common/enum/User';
-import { sha512 } from '../../common/UserUtil';
+import { randomPassword, sha512 } from '../../common/UserUtil';
+import { SsoService } from 'app/core/service/SsoService';
 
 // body: {
 //   _id: 'org.couchdb.user:dddd',
@@ -45,11 +48,16 @@ const UserRule = Type.Object({
   // Passwords should be a minimum of 8 characters.
   password: Type.String({ minLength: 8, maxLength: 100 }),
   email: Type.Optional(Type.String({ format: 'email' })),
+  sso: Type.Optional(Type.String()),
 });
 type User = Static<typeof UserRule>;
 
+
 @HTTPController()
 export class UserController extends AbstractController {
+  @Inject()
+  protected ssoService: SsoService;
+
   // https://github.com/npm/npm-profile/blob/main/lib/index.js#L127
   @HTTPMethod({
     path: '/-/user/org.couchdb.user::username',
@@ -76,6 +84,20 @@ export class UserController extends AbstractController {
         throw new ForbiddenError('Public registration is not allowed');
       }
     }
+
+    // npm login --auth-type=sso
+    const { oauth2 } = this.config.cnpmcore;
+    if (user.name === oauth2?.npmOauthUser && oauth2?.enable) {
+      const [ sso, token ] = this.ssoService.getLoginUrlAndToken();
+      return {
+        ok: true,
+        id: `org.couchdb.user:${user.name}`,
+        rev: `${Date.now()}-${user.name}`,
+        sso,
+        token,
+      };
+    }
+
 
     const result = await this.userService.login(user.name, user.password);
     // user exists and password not match
@@ -116,6 +138,39 @@ export class UserController extends AbstractController {
       rev: userEntity.userId,
       token: token.token,
     };
+  }
+
+  @HTTPMethod({
+    path: '/-/sso/callback',
+    method: HTTPMethodEnum.GET,
+  })
+  async ssoCallback(@Context() ctx: EggContext, @HTTPQuery() code: string, @HTTPQuery() state: string) {
+    const accessToken = await this.ssoService.getAccessToken(code);
+    const user = await this.ssoService.getUserInfo(accessToken.access_token);
+    const result = await this.userService.loginWithToken(user.name, state);
+
+    if (result.code === LoginResultCode.Success) {
+      // login success, make sso callback redirect to home
+      ctx.redirect('/');
+      return;
+    }
+
+    // others: LoginResultCode.UserNotFound
+    // 1. login request
+    if (!user.email) {
+      // user not exists
+      throw new NotFoundError(`User ${user.name} email not exists`);
+    }
+
+    await this.userService.create({
+      name: user.name,
+      password: randomPassword(),
+      email: user.email,
+      ip: ctx.ip,
+      token: state,
+    });
+    // login success, make sso callback redirect to home
+    ctx.redirect('/');
   }
 
   // https://github.com/npm/cli/blob/latest/lib/commands/logout.js#L24
