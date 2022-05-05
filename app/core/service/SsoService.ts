@@ -39,7 +39,7 @@ export class SsoService extends AbstractService {
       redirect_uri: redirectUri,
       state: token,
     });
-    const loginUrl = `${authorizationUri}?${params.toString()}`;
+    const loginUrl = `${authorizationUri}?${decodeURIComponent(params.toString())}`;
     return [ loginUrl, token ];
   }
 
