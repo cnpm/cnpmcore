@@ -106,7 +106,7 @@ export class UserRoleManager {
 
   public async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
     // should be private package
-    if (!pkg.isPrivate) {
+    if (pkg.isPrivate) {
       // admins can modified public package
       if (this.config.cnpmcore.admins[user.name]) {
         this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified public package "%s"',
