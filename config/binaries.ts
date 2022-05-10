@@ -806,6 +806,13 @@ const binaries: {
     repo: 'TryGhost/node-sqlite3',
     distUrl: 'https://github.com/TryGhost/node-sqlite3/releases',
   },
+  keytar: {
+    category: 'keytar',
+    description: 'Native Password Node Module',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'atom/node-keytar',
+    distUrl: 'https://github.com/atom/node-keytar/releases',
+  },
 };
 
 export default binaries;
