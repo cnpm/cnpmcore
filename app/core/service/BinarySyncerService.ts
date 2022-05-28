@@ -29,6 +29,7 @@ import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
 import { ElectronBinary } from '../../common/adapter/binary/ElectronBinary';
 import { NodePreGypBinary } from '../../common/adapter/binary/NodePreGypBinary';
 import { ImageminBinary } from '../../common/adapter/binary/ImageminBinary';
+import { PlaywrightBinary } from '../../common/adapter/binary/PlaywrightBinary';
 
 const BinaryClasses = {
   [SyncerClass.NodeBinary]: NodeBinary,
@@ -41,6 +42,7 @@ const BinaryClasses = {
   [SyncerClass.ElectronBinary]: ElectronBinary,
   [SyncerClass.NodePreGypBinary]: NodePreGypBinary,
   [SyncerClass.ImageminBinary]: ImageminBinary,
+  [SyncerClass.PlaywrightBinary]: PlaywrightBinary,
 };
 
 function isoNow() {
