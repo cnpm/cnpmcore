@@ -9,6 +9,7 @@ export enum SyncerClass {
   PuppeteerBinary = 'PuppeteerBinary',
   NodePreGypBinary = 'NodePreGypBinary',
   ImageminBinary = 'ImageminBinary',
+  PlaywrightBinary = 'PlaywrightBinary',
 }
 
 export type BinaryTaskConfig = {
@@ -812,6 +813,14 @@ const binaries: {
     syncer: SyncerClass.GithubBinary,
     repo: 'atom/node-keytar',
     distUrl: 'https://github.com/atom/node-keytar/releases',
+  },
+  // PlaywrightBinary
+  playwright: {
+    category: 'playwright',
+    description: 'Playwright is a framework for Web Testing and Automation.',
+    syncer: SyncerClass.PlaywrightBinary,
+    repo: 'microsoft/playwright',
+    distUrl: 'https://github.com/microsoft/playwright/releases',
   },
 };
 
