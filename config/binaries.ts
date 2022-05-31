@@ -575,6 +575,13 @@ const binaries: {
     repo: 'sass/node-sass',
     distUrl: 'https://github.com/sass/node-sass/releases',
   },
+  'sass-embedded': {
+    category: 'sass-embedded',
+    description: 'This is a wrapper for Dart Sass that implements the compiler side of the Embedded Sass protocol.',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'sass/dart-sass-embedded',
+    distUrl: 'https://github.com/sass/dart-sass-embedded/releases',
+  },
   electron: {
     category: 'electron',
     description: 'Build cross-platform desktop apps with JavaScript, HTML, and CSS',
