@@ -21,6 +21,10 @@ const plugin: EggPlugin = {
     enable: true,
     package: '@eggjs/tegg-eventbus-plugin',
   },
+  aopModule: {
+    enable: true,
+    package: '@eggjs/tegg-aop-plugin',
+  },
   view: {
     enable: false,
   },
