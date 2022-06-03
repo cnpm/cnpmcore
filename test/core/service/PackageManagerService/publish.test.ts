@@ -36,6 +36,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
 
   describe('publish()', () => {
     it('should work with dist.content', async () => {
+      app.mockLog();
       const { packageId } = await packageManagerService.publish({
         dist: {
           content: Buffer.alloc(0),
@@ -69,6 +70,9 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
       pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.1');
       assert(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.1');
+      // expect aop async timer
+      // 2022-06-03 13:55:39,152 INFO 79813 [-/127.0.0.1/cb81b2f0-e301-11ec-94f3-bf6547f48233/112.523ms GET /] [0.311] [NFSAdapter:uploadBytes|T]
+      app.expectLog(/\[\d+\.\d+\] \[NFSAdapter:uploadBytes|T\]/);
     });
 
     it('should work with dist.localFile', async () => {
