@@ -192,16 +192,21 @@ export class PackageSyncerService extends AbstractService {
 
   public async executeTask(task: Task) {
     const fullname = task.targetName;
-    const { tips, skipDependencies, syncDownloadData } = task.data as SyncPackageTaskOptions;
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData } = task.data as SyncPackageTaskOptions;
     const registry = this.npmRegistry.registry;
     let logs: string[] = [];
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
     }
+    const taskQueueLength = await this.taskService.getTaskQueueLength(task.type);
+    const taskQueueHighWaterSize = this.config.cnpmcore.taskQueueHighWaterSize;
+    const taskQueueInHighWaterState = taskQueueLength >= taskQueueHighWaterSize;
+    const skipDependencies = taskQueueInHighWaterState ? true : !!originSkipDependencies;
+    const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
-    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, log: %s',
-      task.taskId, task.targetName, task.attempts, logUrl);
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}" 🚧🚧🚧🚧🚧`);
+    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
+      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
     const [ scope, name ] = getScopeAndName(fullname);
@@ -217,7 +222,7 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    if (this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst) {
+    if (syncUpstream) {
       await this.taskService.appendTaskLog(task, logs.join('\n'));
       logs = [];
       // create sync task on sourceRegistry and skipDependencies = true
