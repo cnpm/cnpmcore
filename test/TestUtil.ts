@@ -55,16 +55,24 @@ export class TestUtil {
   }
 
   static async getTableSqls(): Promise<string> {
-    const dirents = await fs.readdir(path.join(__dirname, '../sql'));
-    let versions = dirents.filter(t => path.extname(t) === '.sql').map(t => path.basename(t, '.sql'));
-    versions = semver.sort(versions);
+    const dirs = await fs.readdir(path.join(__dirname, '../sql'));
+    const versions = semver.sort(dirs.filter(t => path.extname(t) === '.sql').map(t => path.basename(t, '.sql')));
     const sqls = await Promise.all(versions.map(version => {
       return fs.readFile(path.join(__dirname, '../sql', `${version}.sql`), 'utf8');
     }));
     return sqls.join('\n');
   }
 
-  static async query(sql): Promise<any[]> {
+  static async getInitDatasSqls(): Promise<string> {
+    const dirs = await fs.readdir(path.join(__dirname, 'test-datas'));
+    const files = semver.sort(dirs.filter(t => path.extname(t) === '.sql').map(t => path.basename(t, '.sql')));
+    const sqls = await Promise.all(files.map((file: string) => {
+      return fs.readFile(path.join(__dirname, 'test-datas', `${file}.sql`), 'utf8');
+    }));
+    return sqls.join('\n');
+  }
+
+  static async query(sql: string): Promise<any[]> {
     const conn = this.getConnection();
     return new Promise((resolve, reject) => {
       conn.query(sql, (err, rows) => {
@@ -98,7 +106,6 @@ export class TestUtil {
   static async createDatabase() {
     // TODO use leoric sync
     const database = this.getDatabase();
-    const sqls = await this.getTableSqls();
     // no need to create database on GitHub Action CI env
     if (!process.env.CI) {
       await this.query(`DROP DATABASE IF EXISTS ${database};`);
@@ -106,7 +113,8 @@ export class TestUtil {
       console.log('[TestUtil] CREATE DATABASE: %s', database);
     }
     await this.query(`USE ${database};`);
-    await this.query(sqls);
+    await this.query(await this.getTableSqls());
+    await this.query(await this.getInitDatasSqls());
     this.destroyConnection();
   }
 
@@ -135,7 +143,7 @@ export class TestUtil {
     return this._app;
   }
 
-  static rm(filepath) {
+  static rm(filepath: string) {
     rmSync(filepath, { recursive: true, force: true });
   }
 

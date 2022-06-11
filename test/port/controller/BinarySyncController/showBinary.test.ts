@@ -46,6 +46,57 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       }
     });
 
+    it('should show playwright binaries', async () => {
+      let res = await app.httpRequest()
+        .get('/-/binary/playwright/');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      let items = res.body;
+      assert(items.length > 0);
+      for (const item of items) {
+        assert(item.type === 'dir');
+        assert(item.name);
+        assert(item.url);
+      }
+
+      res = await app.httpRequest()
+        .get('/-/binary/playwright/builds/');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      items = res.body;
+      assert(items.length > 0);
+      for (const item of items) {
+        assert(item.type === 'dir');
+        assert(item.name);
+        assert(item.url);
+      }
+
+      res = await app.httpRequest()
+        .get('/-/binary/playwright/builds/chromium/');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      items = res.body;
+      assert(items.length > 0);
+      for (const item of items) {
+        assert(item.type === 'dir');
+        assert(item.name);
+        assert(item.url);
+      }
+
+      res = await app.httpRequest()
+        .get('/-/binary/playwright/builds/chromium/1005/');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      items = res.body;
+      assert(items.length > 0);
+      for (const item of items) {
+        assert(item.type === 'file');
+        assert(item.name);
+        assert(item.url);
+        assert(item.size);
+      }
+    });
+
     it('should show node binaries', async () => {
       await binarySyncerService.createTask('node', {});
       const task = await binarySyncerService.findExecuteTask();
