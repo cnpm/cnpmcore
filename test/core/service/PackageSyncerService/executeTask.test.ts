@@ -62,6 +62,28 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(abbreviatedManifests.data.name, manifests.data.name);
     });
 
+    it('should not sync dependencies where task queue length too high', async () => {
+      mock(app.config.cnpmcore, 'taskQueueHighWaterSize', 2);
+      await packageSyncerService.createTask('foo', { skipDependencies: false });
+      await packageSyncerService.createTask('foo', { skipDependencies: false });
+      await packageSyncerService.createTask('foo', { skipDependencies: false });
+      await packageSyncerService.createTask('bar', { skipDependencies: false });
+      await packageSyncerService.createTask('foobar', { skipDependencies: false });
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      assert(!await TaskModel.findOne({ taskId: task.taskId }));
+      assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      const model = await PackageModel.findOne({ scope: '', name: 'foo' });
+      assert.equal(model!.isPrivate, false);
+      assert(log.includes(', taskQueue: 3/2'));
+      assert(log.includes(', skipDependencies: true'));
+    });
+
     it('should execute @node-rs/xxhash task, contains optionalDependencies', async () => {
       await packageSyncerService.createTask('@node-rs/xxhash');
       const task = await packageSyncerService.findExecuteTask();
@@ -773,9 +795,31 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
+      assert(log.includes(', syncUpstream: true'));
       assert(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
       assert(log.includes('][UP] 🚧🚧🚧🚧🚧 Waiting sync "cnpmcore-test-sync-dependencies" task on https://r.cnpmjs.org 🚧'));
       assert(log.includes('][UP] 🟢🟢🟢🟢🟢 https://r.cnpmjs.org/cnpmcore-test-sync-dependencies 🟢'));
+    });
+
+    it('should not sync upstream when task queue too high', async () => {
+      mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
+      mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
+      mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
+      mock(app.config.cnpmcore, 'taskQueueHighWaterSize', 1);
+      const name = 'cnpmcore-test-sync-dependencies';
+      await packageSyncerService.createTask(name);
+      await packageSyncerService.createTask(name + '-foo');
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes(', syncUpstream: false'));
+      assert(log.includes(', taskQueue: 1/1'));
+      assert(!log.includes('][UP] 🚧🚧🚧🚧🚧 Waiting sync "cnpmcore-test-sync-dependencies" task on https://r.cnpmjs.org 🚧'));
     });
 
     it('should sync sourceRegistryIsCNpm = true && syncUpstreamFirst = false', async () => {

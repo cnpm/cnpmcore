@@ -21,12 +21,21 @@ export class TaskService extends AbstractService {
   @Inject()
   private readonly queueAdapter: QueueAdapter;
 
+  public async getTaskQueueLength(taskType: TaskType) {
+    return await this.queueAdapter.length(taskType);
+  }
+
   public async createTask(task: Task, addTaskQueueOnExists: boolean) {
     const existsTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type);
     if (existsTask) {
       if (addTaskQueueOnExists && existsTask.state === TaskState.Waiting) {
-        // make sure waiting task in queue
-        await this.queueAdapter.push<string>(task.type, existsTask.taskId);
+        const queueLength = await this.getTaskQueueLength(task.type);
+        if (queueLength < this.config.cnpmcore.taskQueueHighWaterSize) {
+          // make sure waiting task in queue
+          await this.queueAdapter.push<string>(task.type, existsTask.taskId);
+          this.logger.info('[TaskService.createTask:exists-to-queue] taskType: %s, targetName: %s, taskId: %s, queue size: %s',
+            task.type, task.targetName, task.taskId, queueLength);
+        }
       }
       return existsTask;
     }

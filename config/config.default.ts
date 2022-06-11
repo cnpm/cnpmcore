@@ -16,6 +16,7 @@ export default (appInfo: EggAppConfig) => {
     syncUpstreamFirst: false,
     // 3 mins
     sourceRegistrySyncTimeout: 180000,
+    taskQueueHighWaterSize: 100,
     // sync mode
     //  - none: don't sync npm package, just redirect it to sourceRegistry
     //  - all: sync all npm packages

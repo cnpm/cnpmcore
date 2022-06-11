@@ -25,4 +25,8 @@ export class QueueAdapter {
     if (!json) return null;
     return JSON.parse(json) as T;
   }
+
+  async length(key: string) {
+    return await this.redis.llen(this.getQueueName(key));
+  }
 }
