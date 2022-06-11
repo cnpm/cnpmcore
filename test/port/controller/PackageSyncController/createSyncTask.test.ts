@@ -1,8 +1,10 @@
 import assert = require('assert');
+import { setTimeout } from 'timers/promises';
 import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { Task as TaskModel } from 'app/repository/model/Task';
+import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 
 describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', () => {
   let publisher;
@@ -69,6 +71,55 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.ok === true);
       assert(res.body.state === 'waiting');
       assert(res.body.id);
+      app.notExpectLog('[PackageSyncController.createSyncTask:execute-immediately]');
+    });
+
+    it('should not sync immediately when normal user request', async () => {
+      mock(app.config.cnpmcore, 'alwaysAuth', false);
+      const res = await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .set('authorization', publisher.authorization)
+        .send({ force: true })
+        .expect(201);
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
+      assert(res.body.id);
+      app.notExpectLog('[PackageSyncController.createSyncTask:execute-immediately]');
+    });
+
+    it('should sync immediately when admin user request', async () => {
+      mock(app.config.cnpmcore, 'alwaysAuth', false);
+      const admin = await TestUtil.createAdmin();
+      const res = await app.httpRequest()
+        .put('/-/package/koa-not-exists/syncs')
+        .set('authorization', admin.authorization)
+        .send({ force: true })
+        .expect(201);
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
+      assert(res.body.id);
+      app.expectLog('[PackageSyncController.createSyncTask:execute-immediately]');
+      app.expectLog('[PackageSyncController:executeTask:start]');
+      app.expectLog(', targetName: koa-not-exists,');
+    });
+
+    it('should sync immediately and mock executeTask error when admin user request', async () => {
+      mock(app.config.cnpmcore, 'alwaysAuth', false);
+      mock.error(PackageSyncerService.prototype, 'executeTask');
+      const admin = await TestUtil.createAdmin();
+      const res = await app.httpRequest()
+        .put('/-/package/koa-not-exists-error/syncs')
+        .set('authorization', admin.authorization)
+        .send({ force: true })
+        .expect(201);
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
+      assert(res.body.id);
+      app.expectLog('[PackageSyncController.createSyncTask:execute-immediately]');
+      app.expectLog('[PackageSyncController:executeTask:start]');
+      app.expectLog(', targetName: koa-not-exists-error,');
+      await setTimeout(100);
+      app.expectLog('[PackageSyncController:executeTask:error]');
     });
 
     it('should 201 if user not login when alwaysAuth = false', async () => {

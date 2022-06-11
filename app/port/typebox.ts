@@ -40,6 +40,8 @@ export const SyncPackageTaskRule = Type.Object({
   }),
   skipDependencies: Type.Boolean(),
   syncDownloadData: Type.Boolean(),
+  // force sync immediately, only allow by admin
+  force: Type.Boolean(),
 });
 export type SyncPackageTaskType = Static<typeof SyncPackageTaskRule>;
 
