@@ -13,6 +13,7 @@ config/config.prod.ts
 config/**/*.js
 app/**/*.js
 test/**/*.js
+app.js
 
 .cnpmcore
 .cnpmcore_unittest
