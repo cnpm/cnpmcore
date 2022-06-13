@@ -2,6 +2,7 @@ import { mkdir, rm } from 'fs/promises';
 import { createWriteStream } from 'fs';
 import { setTimeout } from 'timers/promises';
 import path from 'path';
+import url from 'url';
 import { randomBytes } from 'crypto';
 import { EggContextHttpClient } from 'egg';
 import dayjs from './dayjs';
@@ -10,7 +11,10 @@ export async function createTempfile(dataDir: string, filename: string) {
   // will auto clean on CleanTempDir Schedule
   const tmpdir = path.join(dataDir, 'downloads', dayjs().format('YYYY/MM/DD'));
   await mkdir(tmpdir, { recursive: true });
-  const tmpfile = path.join(tmpdir, `${randomBytes(10).toString('hex')}-${path.basename(filename)}`);
+
+  // The filename is a URL (from dist.tarball), which needs to be truncated, (`getconf NAME_MAX /` # max filename length: 255 bytes)
+  // https://github.com/cnpm/cnpmjs.org/pull/1345
+  const tmpfile = path.join(tmpdir, `${randomBytes(10).toString('hex')}-${path.basename(url.parse(filename).pathname!)}`);
   return tmpfile;
 }
 
