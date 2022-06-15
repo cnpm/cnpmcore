@@ -2,10 +2,25 @@
   "name": "cnpmcore",
   "version": "1.0.0-rc.1",
   "description": "npm core",
-  "main": "index.js",
   "files": [
     "dist/**/*"
   ],
+  "main": "./dist/app.js",
+  "typings": "./dist/app",
+  "exports": {
+    "./common/package.json": "./dist/app/common/package.json",
+    "./common/*": "./dist/app/common/*.js",
+    "./core/package.json": "./dist/app/core/package.json",
+    "./core/*": "./dist/app/core/*.js",
+    "./infra/package.json": "./dist/app/infra/package.json",
+    "./infra/*": "./dist/app/infra/*.js",
+    "./port/package.json": "./dist/app/port/package.json",
+    "./port/*": "./dist/app/port/*.js",
+    "./repository/package.json": "./dist/app/repository/package.json",
+    "./repository/*": "./dist/app/repository/*.js",
+    "./schedule/package.json": "./dist/app/schedule/package.json",
+    "./schedule/*": "./dist/app/schedule/*.js"
+  },
   "scripts": {
     "contributor": "git-contributor",
     "dev": "egg-bin dev",

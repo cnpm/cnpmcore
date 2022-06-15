@@ -1,11 +1,11 @@
 import {
-  SingletonProto,
   AccessLevel,
   Inject,
+  ContextProto,
 } from '@eggjs/tegg';
 import { Redis } from 'ioredis';
 
-@SingletonProto({
+@ContextProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class QueueAdapter {

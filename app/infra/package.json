@@ -1,0 +1,6 @@
+{
+  "name": "cnpmcore-infra",
+  "eggModule": {
+    "name": "cnpmcoreInfra"
+  }
+}
