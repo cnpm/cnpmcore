@@ -9,17 +9,35 @@
   "typings": "./dist/app",
   "exports": {
     "./common/package.json": "./dist/app/common/package.json",
-    "./common/*": "./dist/app/common/*.js",
+    "./common/*": {
+      "type": "./dist/app/common",
+      "node": "./dist/app/common/*.js"
+    },
     "./core/package.json": "./dist/app/core/package.json",
-    "./core/*": "./dist/app/core/*.js",
+    "./core/*": {
+      "type": "./dist/app/core",
+      "node": "./dist/app/core/*.js"
+    },
     "./infra/package.json": "./dist/app/infra/package.json",
-    "./infra/*": "./dist/app/infra/*.js",
+    "./infra/*": {
+      "type": "./dist/app/infra",
+      "node": "./dist/app/infra/*.js"
+    },
     "./port/package.json": "./dist/app/port/package.json",
-    "./port/*": "./dist/app/port/*.js",
+    "./port/*": {
+      "type": "./dist/app/port",
+      "node": "./dist/app/port/*.js"
+    },
     "./repository/package.json": "./dist/app/repository/package.json",
-    "./repository/*": "./dist/app/repository/*.js",
+    "./repository/*": {
+      "type": "./dist/app/repository",
+      "node": "./dist/app/repository/*.js"
+    },
     "./schedule/package.json": "./dist/app/schedule/package.json",
-    "./schedule/*": "./dist/app/schedule/*.js"
+    "./schedule/*": {
+      "type": "./dist/app/schedule",
+      "node": "./dist/app/schedule/*.js"
+    }
   },
   "scripts": {
     "contributor": "git-contributor",
