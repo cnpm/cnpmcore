@@ -1,5 +1,5 @@
 import {
-  SingletonProto,
+  ContextProto,
   AccessLevel,
   Inject,
 } from '@eggjs/tegg';
@@ -7,7 +7,7 @@ import { Redis } from 'ioredis';
 
 const ONE_DAY = 3600 * 24;
 
-@SingletonProto({
+@ContextProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class CacheAdapter {
