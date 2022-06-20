@@ -1,4 +1,10 @@
 
+1.2.0 / 2022-06-20
+==================
+
+**others**
+  * [[`c0d8b52`](http://github.com/cnpm/cnpmcore/commit/c0d8b52ea09736ac11b0ef780aec781d172fb94c)] - refactor: move CacheAdapter to ContextProto (#249) (killa <<killa123@126.com>>)
+
 1.1.0 / 2022-06-20
 ==================
 
