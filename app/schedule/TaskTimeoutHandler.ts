@@ -14,10 +14,10 @@ export default class TaskTimeoutHandler extends Subscription {
   }
 
   async subscribe() {
-    const { ctx, app } = this;
+    const { ctx } = this;
     await ctx.beginModuleScope(async () => {
       const taskService: TaskService = ctx.module[cnpmcoreCore].taskService;
-      const cache: CacheAdapter = await app.getEggObject(CacheAdapter);
+      const cache: CacheAdapter = await ctx.getEggObject(CacheAdapter);
 
       await cache.usingLock('TaskTimeoutHandler', 60, async () => {
         const result = await taskService.retryExecuteTimeoutTasks();

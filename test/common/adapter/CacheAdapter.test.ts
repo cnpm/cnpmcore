@@ -7,7 +7,8 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
   let cache: CacheAdapter;
 
   beforeEach(async () => {
-    cache = await app.getEggObject(CacheAdapter);
+    const ctx = await app.mockModuleContext();
+    cache = await ctx.getEggObject(CacheAdapter);
   });
 
   describe('lock(), unlock()', () => {
