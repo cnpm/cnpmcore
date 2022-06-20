@@ -1,4 +1,10 @@
 
+1.1.0 / 2022-06-20
+==================
+
+**features**
+  * [[`66b411e`](http://github.com/cnpm/cnpmcore/commit/66b411ea5bf6192dc9509df408525078e7128a27)] - feat: add type for exports (#248) (killa <<killa123@126.com>>)
+
 1.0.0 / 2022-06-17
 ==================
 
