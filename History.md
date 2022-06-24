@@ -1,4 +1,10 @@
 
+1.3.1 / 2022-06-24
+==================
+
+**fixes**
+  * [[`4ea0ef6`](http://github.com/cnpm/cnpmcore/commit/4ea0ef63b7af9fd4dcc247c2c2ac8e4d579f941a)] - fix: query changes with order by id asc (#251) (killa <<killa123@126.com>>)
+
 1.3.0 / 2022-06-24
 ==================
 
