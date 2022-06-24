@@ -48,7 +48,7 @@ describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () 
         .get('/_changes')
         .query({ since });
       assert(res.status === 200);
-      assert(res.body.results.length === 0);
+      assert(res.body.results.length === 1);
 
       await TestUtil.createPackage({ name: '@cnpm/other-package' });
       await eventWaiter.await('PACKAGE_VERSION_ADDED');
@@ -56,7 +56,7 @@ describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () 
         .get('/_changes')
         .query({ since });
       assert(res.status === 200);
-      assert(res.body.results.length === 1);
+      assert(res.body.results.length === 2);
       assert(res.body.results[0].type === 'PACKAGE_VERSION_ADDED');
 
       res = await app.httpRequest()
