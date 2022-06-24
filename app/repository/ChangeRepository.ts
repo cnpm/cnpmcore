@@ -12,8 +12,9 @@ export class ChangeRepository extends AbstractRepository {
     await ModelConvertor.convertEntityToModel(change, ChangeModel);
   }
 
-  async query(since: number, limit: number) {
-    return await ChangeModel.find({ id: { $gt: since } }).order('id', 'desc').limit(limit);
+  async query(since: number, limit: number): Promise<Array<ChangeEntity>> {
+    const models = await ChangeModel.find({ id: { $gte: since } }).order('id', 'asc').limit(limit);
+    return models.toObject() as ChangeEntity[];
   }
 
   async getLastChange() {
