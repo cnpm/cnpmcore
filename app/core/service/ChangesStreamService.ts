@@ -62,7 +62,8 @@ export class ChangesStreamService extends AbstractService {
         this.logger.warn('[ChangesStreamService.executeTask:firstSeq] GET %s status: %s, data: %j, since: %s',
           changesStreamRegistry, status, data, since);
       }
-      while (since) {
+      // allow disable changesStream dynamic
+      while (since && this.config.cnpmcore.enableChangesStream) {
         const { lastSince, taskCount } = await this.handleChanges(since, task);
         this.logger.warn('[ChangesStreamService.executeTask:changes] since: %s => %s, %d new tasks, taskId: %s, updatedAt: %j',
           since, lastSince, taskCount, task.taskId, task.updatedAt);
