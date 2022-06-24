@@ -1,4 +1,10 @@
 
+1.3.0 / 2022-06-24
+==================
+
+**features**
+  * [[`0948a71`](http://github.com/cnpm/cnpmcore/commit/0948a71a40ac4897d129ef56830665dc028f07c7)] - feat: read enableChangesStream when sync changes stream (#250) (killa <<killa123@126.com>>)
+
 1.2.0 / 2022-06-20
 ==================
 
