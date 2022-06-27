@@ -120,7 +120,8 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
       const user = await TestUtil.createUser();
       let res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
-        .set('authorization', user.authorization)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('user-agent', '')
         .set('npm-command', 'owner')
         .send({
@@ -132,9 +133,11 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         })
         .expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] Only allow npm client to access');
+
       res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
-        .set('authorization', user.authorization)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
         .set('user-agent', 'npm/6.3.1')
         .set('npm-command', 'owner')
         .send({
@@ -146,6 +149,24 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         })
         .expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] Only allow npm@>=7.0.0 client to access');
+
+      // should valid with pnpm6 and npm>10
+      res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('user-agent', 'pnpm/6.0.0 npm/17.1.0')
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+            { name: publisher.name, email: publisher.email },
+          ],
+        })
+        .expect(200);
+      assert.equal(res.body.ok, true);
     });
 
     it('should 200 and get latest maintainers', async () => {
