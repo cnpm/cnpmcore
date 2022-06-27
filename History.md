@@ -1,4 +1,13 @@
 
+1.3.2 / 2022-06-27
+==================
+
+**fixes**
+  * [[`c63159d`](http://github.com/cnpm/cnpmcore/commit/c63159d8df804fe711b664606fe42be42010eb38)] - fix: valid npm client with correct pattern (#252) (TZ | 天猪 <<atian25@qq.com>>)
+
+**others**
+  * [[`d578baf`](http://github.com/cnpm/cnpmcore/commit/d578bafff07a0f9d4dd75393492cffc7f5d2660b)] - 🐛 FIX: Ignore exists seq on changes worker (#253) (fengmk2 <<fengmk2@gmail.com>>)
+
 1.3.1 / 2022-06-24
 ==================
 
