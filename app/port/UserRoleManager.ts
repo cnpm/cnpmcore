@@ -84,7 +84,7 @@ export class UserRoleManager {
       }
       // only support npm >= 7.0.0 allow publish action
       // user-agent: "npm/6.14.12 node/v10.24.1 darwin x64"
-      const m = /\bnpm\/(\d{1,5})\.\b/.exec(ctx.get('user-agent'));
+      const m = /\bnpm\/(\d{1,5})\./.exec(ctx.get('user-agent'));
       if (!m) {
         throw new ForbiddenError('Only allow npm client to access');
       }
