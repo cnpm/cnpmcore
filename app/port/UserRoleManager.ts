@@ -78,7 +78,8 @@ export class UserRoleManager {
       throw new UnauthorizedError(message);
     }
     const { user, token } = authorizedUserAndToken;
-    if (role === 'publish') {
+    // only enable npm client and version check setting will go into this condition
+    if (this.config.cnpmcore.enableNpmClientAndVersionCheck && role === 'publish') {
       if (token.isReadonly) {
         throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't publish`);
       }
