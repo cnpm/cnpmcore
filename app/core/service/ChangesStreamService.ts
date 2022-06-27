@@ -145,7 +145,7 @@ export class ChangesStreamService extends AbstractService {
         for (const change of data.results) {
           const seq = change.seq;
           const fullname = change.id;
-          if (seq && fullname) {
+          if (seq && fullname && seq !== since) {
             await this.packageSyncerService.createTask(fullname, {
               authorIp: os.hostname(),
               authorId: 'ChangesStreamService',
