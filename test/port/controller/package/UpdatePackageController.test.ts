@@ -236,7 +236,6 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
       res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
         .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
         .set('user-agent', 'pnpm/6.0.0 npm/17.1.0')
         .set('npm-command', 'owner')
         .send({
