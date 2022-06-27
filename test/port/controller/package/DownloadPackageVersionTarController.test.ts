@@ -3,14 +3,15 @@ import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { NFSClientAdapter } from 'app/infra/NFSClientAdapter';
-import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let ctx: Context;
-  let publisher;
+  let publisher: any;
+  let nfsClientAdapter: NFSClientAdapter;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     ctx = await app.mockModuleContext();
+    nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
   });
 
   afterEach(async () => {
@@ -45,9 +46,10 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
 
   describe('[GET /:fullname/-/:name-:version.tgz] download()', () => {
     it('should download a version tar redirect to mock cdn success', async () => {
-      mock(NFSClientAdapter.prototype, 'url', async (storeKey: string) => {
+      mock(nfsClientAdapter, 'url', async (storeKey: string) => {
         return `https://cdn.mock.com${storeKey}`;
       });
+
       let res = await app.httpRequest()
         .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`);
       assert(res.status === 302);
@@ -60,9 +62,10 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
 
     if (process.env.CNPMCORE_NFS_TYPE !== 'oss') {
       it('should download a version tar redirect to mock cdn success with url function is not async function', async () => {
-        mock(NFSClientAdapter.prototype, 'url', (storeKey: string) => {
+        mock(nfsClientAdapter, 'url', (storeKey: string) => {
           return `https://cdn.mock.com${storeKey}`;
         });
+
         let res = await app.httpRequest()
           .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`);
         assert(res.status === 302);
@@ -75,7 +78,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     }
 
     it('should download a version tar with streaming success', async () => {
-      mock(NFSClientAdapter.prototype, 'url', 'not-function');
+      mock(nfsClientAdapter, 'url', 'not-function');
       await app.httpRequest()
         .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`)
         .expect('content-type', 'application/octet-stream')
@@ -90,6 +93,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     });
 
     it('should download non-scope package tar success', async () => {
+      mock(nfsClientAdapter, 'url', 'not-function');
       const pkg = await TestUtil.getFullPackage({ name: 'testmodule-download-version-tar222', version: '1.0.0' });
       await app.httpRequest()
         .put(`/${pkg.name}`)
@@ -114,11 +118,11 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .send(pkg)
         .expect(201);
 
-      mock(NFSAdapter.prototype, 'getDownloadUrlOrStream', async () => {
+      mock(nfsClientAdapter, 'createDownloadStream', async () => {
         return undefined;
       });
       if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
-        mock(NFSAdapter.prototype, 'getDownloadUrl', async () => {
+        mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
       }
@@ -140,7 +144,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
 
     it('should 404 when package not exists', async () => {
       if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
-        mock(NFSAdapter.prototype, 'getDownloadUrl', async () => {
+        mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
       }
@@ -159,7 +163,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
 
     it('should 404 when package version not exists', async () => {
       if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
-        mock(NFSAdapter.prototype, 'getDownloadUrl', async () => {
+        mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
       }
@@ -181,7 +185,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
 
     it('should not redirect public package to source registry when syncMode=all', async () => {
       if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
-        mock(NFSAdapter.prototype, 'getDownloadUrl', async () => {
+        mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
       }
@@ -209,7 +213,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
 
     it('should redirect public package to source registry when syncMode=none', async () => {
       if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
-        mock(NFSAdapter.prototype, 'getDownloadUrl', async () => {
+        mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
       }
@@ -243,8 +247,8 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
 
   describe('[GET /:fullname/download/:fullname-:version.tgz] deprecatedDownload()', () => {
     it('should download a version tar redirect to mock cdn success', async () => {
-      mock(NFSClientAdapter.prototype, 'url', async (storeKey: string) => {
-        console.log('call url: ', storeKey);
+      mock(nfsClientAdapter, 'url', async (storeKey: string) => {
+        // console.log('call url: ', storeKey);
         return `https://cdn.mock.com${storeKey}`;
       });
       let res = await app.httpRequest()
@@ -258,7 +262,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     });
 
     it('should download a version tar with streaming success', async () => {
-      mock(NFSClientAdapter.prototype, 'url', 'not-function');
+      mock(nfsClientAdapter, 'url', 'not-function');
       const res = await app.httpRequest()
         .get(`/${name}/download/${name}-1.0.0.tgz`);
       assert(res.status === 200);
@@ -273,11 +277,11 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     });
 
     it('should mock getDownloadUrlOrStream return undefined', async () => {
-      mock(NFSAdapter.prototype, 'getDownloadUrlOrStream', async () => {
+      mock(nfsClientAdapter, 'createDownloadStream', async () => {
         return undefined;
       });
       if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
-        mock(NFSAdapter.prototype, 'getDownloadUrl', async () => {
+        mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
       }
