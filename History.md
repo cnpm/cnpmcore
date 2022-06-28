@@ -1,4 +1,13 @@
 
+1.4.0 / 2022-06-28
+==================
+
+**features**
+  * [[`57da0a3`](http://github.com/cnpm/cnpmcore/commit/57da0a3c7e56d6613b57391948949ffea24ec058)] - feat: add configuration enableNopmClientAndVersionCheck (laibao101 <<369632567@qq.com>>)
+
+**others**
+  * [[`bf62932`](http://github.com/cnpm/cnpmcore/commit/bf62932f2e5224de6e34b873bf690a6e887b94b0)] - 🤖 TEST: Fix unstable test cases on OSS env (#254) (fengmk2 <<fengmk2@gmail.com>>)
+
 1.3.2 / 2022-06-27
 ==================
 
