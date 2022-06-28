@@ -118,7 +118,7 @@ export class UserRoleManager {
     }
 
     // admins can modified private package (publish to cnpmcore)
-    if (pkg.isPrivate && this.config.cnpmcore.admins[user.name]) {
+    if (pkg.isPrivate && this.config.cnpmcore.admins[user.name] === user.email) {
       this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified private package "%s"',
         user.name, pkg.fullname);
       return;
