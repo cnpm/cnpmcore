@@ -70,6 +70,8 @@ export default (appInfo: EggAppConfig) => {
     cdnVaryHeader: 'Accept, Accept-Encoding',
     // store full package version manifests data to database table(package_version_manifests), default is false
     enableStoreFullPackageVersionManifestsToDatabase: false,
+    // only support npm as client and npm >= 7.0.0 allow publish action
+    enableNpmClientAndVersionCheck: true,
   };
 
   // override config from framework / plugin

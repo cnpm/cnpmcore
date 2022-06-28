@@ -1,6 +1,6 @@
 import assert = require('assert');
 import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
@@ -85,6 +85,26 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
       assert.equal(res.body.error, `[FORBIDDEN] "${user.name}" not authorized to modify ${scopedName}, please contact maintainers: "${publisher.name}"`);
     });
 
+    it('should 200 request when user is admin and user is not maintainer', async () => {
+      const user = await TestUtil.createUser();
+      mock(app.config.cnpmcore, 'admins', { [user.name]: user.email });
+      const res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(200);
+      assert.equal(res.statusCode, 200);
+      assert.deepEqual(res.body, { ok: true });
+    });
+
     it('should 400 when npm-command invalid', async () => {
       const user = await TestUtil.createUser();
       let res = await app.httpRequest()
@@ -146,6 +166,78 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           ],
         })
         .expect(403);
+      assert.equal(res.body.error, '[FORBIDDEN] Only allow npm@>=7.0.0 client to access');
+    });
+
+    it('should 200 when enableNpmClientAndVersionCheck is false', async () => {
+      mock(app.config.cnpmcore, 'enableNpmClientAndVersionCheck', false);
+      const user = await TestUtil.createUser();
+      mock(app.config.cnpmcore, 'admins', { [user.name]: user.email });
+      let res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', '')
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(200);
+      assert.equal(res.statusCode, 200);
+      assert.deepEqual(res.body, { ok: true });
+      res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', 'npm/6.3.1')
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(200);
+      assert.equal(res.statusCode, 200);
+      assert.deepEqual(res.body, { ok: true });
+    });
+
+    it('should 403 when enableNpmClientAndVersionCheck is true', async () => {
+      mock(app.config.cnpmcore, 'enableNpmClientAndVersionCheck', true);
+      const user = await TestUtil.createUser();
+      mock(app.config.cnpmcore, 'admins', { [user.name]: user.email });
+      let res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', '')
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(403);
+      assert.equal(res.statusCode, 403);
+      assert.equal(res.body.error, '[FORBIDDEN] Only allow npm client to access');
+      res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', 'npm/6.3.1')
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(403);
+      assert.equal(res.statusCode, 403);
       assert.equal(res.body.error, '[FORBIDDEN] Only allow npm@>=7.0.0 client to access');
     });
 

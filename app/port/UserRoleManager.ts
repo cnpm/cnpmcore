@@ -78,7 +78,8 @@ export class UserRoleManager {
       throw new UnauthorizedError(message);
     }
     const { user, token } = authorizedUserAndToken;
-    if (role === 'publish') {
+    // only enable npm client and version check setting will go into this condition
+    if (this.config.cnpmcore.enableNpmClientAndVersionCheck && role === 'publish') {
       if (token.isReadonly) {
         throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't publish`);
       }
@@ -115,6 +116,14 @@ export class UserRoleManager {
       }
       throw new ForbiddenError(`Can\'t modify npm public package "${pkg.fullname}"`);
     }
+
+    // admins can modified private package (publish to cnpmcore)
+    if (pkg.isPrivate && this.config.cnpmcore.admins[user.name] === user.email) {
+      this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified private package "%s"',
+        user.name, pkg.fullname);
+      return;
+    }
+
     const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
     const maintainer = maintainers.find(m => m.userId === user.userId);
     if (!maintainer) {
