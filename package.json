@@ -70,7 +70,7 @@
     "npm"
   ],
   "dependencies": {
-    "@eggjs/tegg": "^1.0.5",
+    "@eggjs/tegg": "^1.2.0",
     "@eggjs/tegg-aop-plugin": "^1.0.5",
     "@eggjs/tegg-config": "^1.0.0",
     "@eggjs/tegg-controller-plugin": "^1.0.5",
