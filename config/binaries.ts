@@ -829,6 +829,13 @@ const binaries: {
     repo: 'microsoft/playwright',
     distUrl: 'https://github.com/microsoft/playwright/releases',
   },
+  'skia-canvas': {
+    category: 'skia-canvas',
+    description: 'A canvas environment for Node',
+    syncer: SyncerClass.BucketBinary,
+    repo: 'samizdatco/skia-canvas',
+    distUrl: 'https://skia-canvas.s3.us-east-1.amazonaws.com/',
+  },
 };
 
 export default binaries;
