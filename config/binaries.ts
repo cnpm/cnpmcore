@@ -133,6 +133,13 @@ const binaries: {
     repo: 'grpc/grpc-node',
     distUrl: 'https://node-precompiled-binaries.grpc.io',
   },
+  'skia-canvas': {
+    category: 'skia-canvas',
+    description: 'A canvas environment for Node',
+    syncer: SyncerClass.NodePreGypBinary,
+    repo: 'samizdatco/skia-canvas',
+    distUrl: 'https://skia-canvas.s3.us-east-1.amazonaws.com',
+  },
   nodegit: {
     category: 'nodegit',
     description: 'Native Node bindings to Git.',
@@ -828,13 +835,6 @@ const binaries: {
     syncer: SyncerClass.PlaywrightBinary,
     repo: 'microsoft/playwright',
     distUrl: 'https://github.com/microsoft/playwright/releases',
-  },
-  'skia-canvas': {
-    category: 'skia-canvas',
-    description: 'A canvas environment for Node',
-    syncer: SyncerClass.BucketBinary,
-    repo: 'samizdatco/skia-canvas',
-    distUrl: 'https://skia-canvas.s3.us-east-1.amazonaws.com/',
   },
 };
 

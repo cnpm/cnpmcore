@@ -128,5 +128,53 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       assert(matchFile2);
       assert(matchFile3);
     });
+
+    it('should fetch skia-canvas', async () => {
+      const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries['skia-canvas']);
+      let result = await binary.fetch('/');
+      assert(result);
+      assert(result.items.length > 0);
+      // console.log(JSON.stringify(result.items, null, 2));
+      let matchDir = false;
+      for (const item of result.items) {
+        assert(item.isDir === true);
+        if (item.name === 'v0.9.30/') {
+          matchDir = true;
+        }
+      }
+      assert(matchDir);
+
+      result = await binary.fetch('/v0.9.30/');
+      assert(result);
+      assert(result.items.length > 0);
+      // console.log(JSON.stringify(result.items, null, 2));
+      let matchFile1 = false;
+      let matchFile2 = false;
+      let matchFile3 = false;
+      for (const item of result.items) {
+        assert(item.isDir === false);
+        if (item.name === 'darwin-arm64-napi-v6-unknown.tar.gz') {
+          assert(item.date === '2022-06-08T01:53:43.908Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/darwin-arm64-napi-v6-unknown.tar.gz');
+          matchFile1 = true;
+        }
+        if (item.name === 'linux-arm-napi-v6-glibc.tar.gz') {
+          assert(item.date === '2022-06-08T01:53:43.908Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/linux-arm-napi-v6-glibc.tar.gz');
+          matchFile2 = true;
+        }
+        if (item.name === 'win32-x64-napi-v6-unknown.tar.gz') {
+          assert(item.date === '2022-06-08T01:53:43.908Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/win32-x64-napi-v6-unknown.tar.gz');
+          matchFile3 = true;
+        }
+      }
+      assert(matchFile1);
+      assert(matchFile2);
+      assert(matchFile3);
+    });
   });
 });
