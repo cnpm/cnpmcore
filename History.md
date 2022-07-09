@@ -1,4 +1,13 @@
 
+1.5.0 / 2022-07-09
+==================
+
+**features**
+  * [[`b15b10c`](http://github.com/cnpm/cnpmcore/commit/b15b10c5c6cfb32bcc2b1d94434cdd16871ae565)] - feat(mirror): add skia-canvas mirror (#258) (Beace <<beaceshimin@gmail.com>>)
+
+**others**
+  * [[`2bd6ed0`](http://github.com/cnpm/cnpmcore/commit/2bd6ed0e5dace1d8840c342ecf4c86e8973dc6b7)] - 👌 IMPROVE: use tegg@1.2.0 (fengmk2 <<fengmk2@gmail.com>>)
+
 1.4.0 / 2022-06-28
 ==================
 
