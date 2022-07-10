@@ -141,6 +141,9 @@ const binaries: {
     syncer: SyncerClass.NodePreGypBinary,
     repo: 'samizdatco/skia-canvas',
     distUrl: 'https://skia-canvas.s3.us-east-1.amazonaws.com',
+    options: {
+      requiredNapiVersions: true,
+    },
   },
   nodegit: {
     category: 'nodegit',
