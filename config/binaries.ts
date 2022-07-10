@@ -33,6 +33,8 @@ export type BinaryTaskConfig = {
     maxPage?: number;
     // custom npm package name, for ImageminBinary
     npmPackageName?: string;
+    // custom for NodePreGypBinary
+    requiredNapiVersions?: boolean;
   },
   disable?: boolean;
 };
