@@ -34,6 +34,7 @@ export class NodePreGypBinary extends AbstractBinary {
         let versionPrefix = '';
         const remotePath = pkgVersion.binary.remote_path;
         const napiVersions = pkgVersion.binary.napi_versions ?? [];
+        if (this.binaryConfig.options?.requiredNapiVersions && napiVersions.length === 0) continue;
         if (remotePath?.includes('{version}')) {
           const dirName = remotePath.includes('v{version}') ? `v${version}` : version;
           versionPrefix = `/${dirName}`;
@@ -132,7 +133,7 @@ export class NodePreGypBinary extends AbstractBinary {
                     size: '-',
                     isDir: false,
                     url: `${this.binaryConfig.distUrl}${versionPrefix}/${name}`,
-                    ignoreDownloadStatuses: [ 404 ],
+                    ignoreDownloadStatuses: [ 404, 403 ],
                   });
                 }
               }

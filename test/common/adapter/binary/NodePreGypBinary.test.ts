@@ -153,6 +153,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       let matchFile3 = false;
       for (const item of result.items) {
         assert(item.isDir === false);
+        assert.deepEqual(item.ignoreDownloadStatuses, [ 404, 403 ]);
         if (item.name === 'darwin-arm64-napi-v6-unknown.tar.gz') {
           assert(item.date === '2022-06-08T01:53:43.908Z');
           assert(item.size === '-');
