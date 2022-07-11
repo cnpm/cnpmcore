@@ -841,6 +841,13 @@ const binaries: {
     repo: 'microsoft/playwright',
     distUrl: 'https://github.com/microsoft/playwright/releases',
   },
+  nydus: {
+    category: 'nydus',
+    description: 'the Dragonfly image service, providing fast, secure and easy access to container images.',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'dragonflyoss/image-service',
+    distUrl: 'https://github.com/dragonflyoss/image-service/releases',
+  },
 };
 
 export default binaries;
