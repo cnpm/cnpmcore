@@ -1,4 +1,14 @@
 
+1.6.0 / 2022-07-11
+==================
+
+**features**
+  * [[`1b9a9c7`](http://github.com/cnpm/cnpmcore/commit/1b9a9c70f66d8393e3b132f18713461a9243db73)] - feat: mirror nydus binaries (#261) (killa <<killa123@126.com>>)
+
+**others**
+  * [[`c1256bf`](http://github.com/cnpm/cnpmcore/commit/c1256bf3807bcc9a5c8be2ec5bf5ca8a5eef112e)] - 🐛 FIX: Ignore 403 status on s3 download fail (#260) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`d685772`](http://github.com/cnpm/cnpmcore/commit/d6857724307fb0df0c4c118491784b30d19a9a15)] - 🐛 FIX: skia-canvas should use NodePreGypBinary (#259) (fengmk2 <<fengmk2@gmail.com>>)
+
 1.5.0 / 2022-07-09
 ==================
 
