@@ -95,16 +95,16 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async replacePackageMaintainers(packageId: string, userIds: string[]): Promise<void> {
-    await MaintainerModel.transaction(async () => {
+    await MaintainerModel.transaction(async ({ connection }) => {
       // delete exists
       // const removeCount = await MaintainerModel.remove({ packageId }, true, { transaction });
-      const removeCount = await MaintainerModel.remove({ packageId });
+      const removeCount = await MaintainerModel.remove({ packageId }, true, { connection });
       this.logger.info('[PackageRepository:replacePackageMaintainers:remove] %d rows, packageId: %s',
         removeCount, packageId);
       // add news
       for (const userId of userIds) {
         // const model = await MaintainerModel.create({ packageId, userId }, transaction);
-        const model = await MaintainerModel.create({ packageId, userId });
+        const model = await MaintainerModel.create({ packageId, userId }, { connection });
         this.logger.info('[PackageRepository:replacePackageMaintainers:new] id: %s, packageId: %s, userId: %s',
           model.id, model.packageId, model.userId);
       }
