@@ -1,4 +1,10 @@
 
+1.7.0 / 2022-07-12
+==================
+
+**others**
+  * [[`4f7ce8b`](http://github.com/cnpm/cnpmcore/commit/4f7ce8b4b2a5806a225ce67228388e14388b7059)] - deps: upgrade leoric to 2.x (#262) (killa <<killa123@126.com>>)
+
 1.6.0 / 2022-07-11
 ==================
 
