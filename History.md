@@ -1,4 +1,10 @@
 
+1.7.1 / 2022-07-20
+==================
+
+**fixes**
+  * [[`52fca55`](http://github.com/cnpm/cnpmcore/commit/52fca55aa883865f0ae70bfc1ff274c313b8f76a)] - fix: show package not use cache if isSync (#268) (killa <<killa123@126.com>>)
+
 1.7.0 / 2022-07-12
 ==================
 
