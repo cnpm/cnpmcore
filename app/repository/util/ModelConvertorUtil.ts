@@ -12,7 +12,7 @@ export class ModelConvertorUtil {
    * If has no entity property info, use modelProperty as default value
    */
   static getEntityPropertyName(clazz: EggProtoImplClass, modelProperty: string): string {
-    const propertyMap: Map<string, string> | undefined = MetadataUtil.getOwnMetaData(ENTITY_PROPERTY_MAP_ATTRIBUTE, clazz);
+    const propertyMap: Map<string, string> | undefined = MetadataUtil.getMetaData(ENTITY_PROPERTY_MAP_ATTRIBUTE, clazz);
     return propertyMap?.get(modelProperty) ?? modelProperty;
   }
 }
