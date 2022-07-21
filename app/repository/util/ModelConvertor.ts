@@ -10,7 +10,7 @@ const ID = 'id';
 
 export class ModelConvertor {
   static async convertEntityToModel<T extends Bone>(entity: object, ModelClazz: EggProtoImplClass<T>, options?): Promise<T> {
-    const metadata = ModelMetadataUtil.getControllerMetadata(ModelClazz);
+    const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);
     }
@@ -35,7 +35,7 @@ export class ModelConvertor {
   // Find out which attributes changed and set `updatedAt` to now
   static async saveEntityToModel<T extends Bone>(entity: object, model: T, options?): Promise<boolean> {
     const ModelClazz = model.constructor as EggProtoImplClass<T>;
-    const metadata = ModelMetadataUtil.getControllerMetadata(ModelClazz);
+    const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);
     }
@@ -57,7 +57,7 @@ export class ModelConvertor {
   static convertModelToEntity<T>(bone: Bone, entityClazz: EggProtoImplClass<T>, data?: object): T {
     data = data || {};
     const ModelClazz = bone.constructor;
-    const metadata = ModelMetadataUtil.getControllerMetadata(ModelClazz);
+    const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);
     }
