@@ -1,4 +1,10 @@
 
+1.8.0 / 2022-07-21
+==================
+
+**features**
+  * [[`b49a38c`](http://github.com/cnpm/cnpmcore/commit/b49a38c77e044c978e6de32a9d3e257cc90ea7c1)] - feat: use Model with inject (#269) (killa <<killa123@126.com>>)
+
 1.7.1 / 2022-07-20
 ==================
 
