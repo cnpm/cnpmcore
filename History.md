@@ -1,4 +1,10 @@
 
+1.9.0 / 2022-07-25
+==================
+
+**features**
+  * [[`af6a75a`](http://github.com/cnpm/cnpmcore/commit/af6a75af32ea04c90fda82be3a56c99ec77e5807)] - feat: add forceSyncHistory options (#271) (killa <<killa123@126.com>>)
+
 1.8.0 / 2022-07-21
 ==================
 
