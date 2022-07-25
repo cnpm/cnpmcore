@@ -14,6 +14,10 @@ import type { Maintainer as MaintainerModel } from './model/Maintainer';
 import type { User as UserModel } from './model/User';
 import { User as UserEntity } from '../core/entity/User';
 import { AbstractRepository } from './AbstractRepository';
+import leoric from 'leoric';
+
+// use raw(`Binary '${name}'`) to avoid mysql case insensitive problem
+const raw = (leoric as any).raw;
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -41,7 +45,7 @@ export class PackageRepository extends AbstractRepository {
   private readonly User: typeof UserModel;
 
   async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
-    const model = await this.Package.findOne({ scope, name });
+    const model = await this.Package.findOne({ scope, name: raw(`Binary '${name}'`) });
     if (!model) return null;
     const manifestsDistModel = model.manifestsDistId ? await this.Dist.findOne({ distId: model.manifestsDistId }) : null;
     const abbreviatedsDistModel = model.abbreviatedsDistId ? await this.Dist.findOne({ distId: model.abbreviatedsDistId }) : null;
@@ -54,7 +58,7 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async findPackageId(scope: string, name: string) {
-    const model = await this.Package.findOne({ scope, name }).select('packageId');
+    const model = await this.Package.findOne({ scope, name: raw(`Binary '${name}'`) }).select('packageId');
     if (!model) return null;
     return model.packageId;
   }
