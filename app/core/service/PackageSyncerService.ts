@@ -192,7 +192,7 @@ export class PackageSyncerService extends AbstractService {
 
   public async executeTask(task: Task) {
     const fullname = task.targetName;
-    const { tips, skipDependencies: originSkipDependencies, syncDownloadData } = task.data as SyncPackageTaskOptions;
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
     const registry = this.npmRegistry.registry;
     let logs: string[] = [];
     if (tips) {
@@ -206,7 +206,7 @@ export class PackageSyncerService extends AbstractService {
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
       task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
     const [ scope, name ] = getScopeAndName(fullname);
@@ -391,7 +391,7 @@ export class PackageSyncerService extends AbstractService {
       const version: string = item.version;
       if (!version) continue;
       let existsItem = existsVersionMap[version];
-      const existsAbbreviatedItem = abbreviatedVersionMap[version];
+      let existsAbbreviatedItem = abbreviatedVersionMap[version];
       const shouldDeleteReadme = !!(existsItem && 'readme' in existsItem);
       if (pkg) {
         if (existsItem) {
@@ -410,6 +410,18 @@ export class PackageSyncerService extends AbstractService {
             // bugfix: https://github.com/cnpm/cnpmcore/issues/115
             updateVersions.push(version);
             logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
+          }
+        }
+
+        if (existsItem && forceSyncHistory === true) {
+          const pkgVer = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+          if (pkgVer) {
+            logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Remove version ${version} for force sync history`);
+            await this.packageManagerService.removePackageVersion(pkg, pkgVer, true);
+            existsItem = undefined;
+            existsAbbreviatedItem = undefined;
+            existsVersionMap[version] = undefined;
+            abbreviatedVersionMap[version] = undefined;
           }
         }
       }
