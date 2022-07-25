@@ -42,6 +42,8 @@ export const SyncPackageTaskRule = Type.Object({
   syncDownloadData: Type.Boolean(),
   // force sync immediately, only allow by admin
   force: Type.Boolean(),
+  // sync history version
+  forceSyncHistory: Type.Boolean(),
 });
 export type SyncPackageTaskType = Static<typeof SyncPackageTaskRule>;
 

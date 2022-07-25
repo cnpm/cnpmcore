@@ -62,6 +62,24 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(abbreviatedManifests.data.name, manifests.data.name);
     });
 
+    it('should resync history version if forceSyncHistory is true', async () => {
+      await packageSyncerService.createTask('foo', { skipDependencies: true });
+      let task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+
+      await packageSyncerService.createTask('foo', { forceSyncHistory: true, skipDependencies: true });
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const stream2 = await packageSyncerService.findTaskLog(task);
+      assert(stream2);
+      const log2 = await TestUtil.readStreamToLog(stream2);
+      // console.log(log2);
+      assert(/Remove version 1\.0\.0 for force sync history/.test(log2));
+      assert(/Syncing version 1\.0\.0/.test(log2));
+    });
+
     it('should not sync dependencies where task queue length too high', async () => {
       mock(app.config.cnpmcore, 'taskQueueHighWaterSize', 2);
       await packageSyncerService.createTask('foo', { skipDependencies: false });

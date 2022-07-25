@@ -8,6 +8,7 @@ import {
   EggContext,
   Inject,
   HTTPQuery,
+  BackgroundTaskHelper,
 } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
@@ -21,6 +22,9 @@ import { SyncPackageTaskRule, SyncPackageTaskType } from '../typebox';
 export class PackageSyncController extends AbstractController {
   @Inject()
   private packageSyncerService: PackageSyncerService;
+
+  @Inject()
+  private backgroundTaskHelper: BackgroundTaskHelper;
 
   private async _executeTaskAsync(task: Task) {
     const startTime = Date.now();
@@ -50,12 +54,15 @@ export class PackageSyncController extends AbstractController {
       throw new ForbiddenError('Not allow to sync package');
     }
     const tips = data.tips || `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
     const params = {
       fullname,
       tips,
       skipDependencies: !!data.skipDependencies,
       syncDownloadData: !!data.syncDownloadData,
       force: !!data.force,
+      // only admin allow to sync history version
+      forceSyncHistory: !!data.forceSyncHistory && isAdmin,
     };
     ctx.tValidate(SyncPackageTaskRule, params);
     const [ scope, name ] = getScopeAndName(params.fullname);
@@ -73,16 +80,20 @@ export class PackageSyncController extends AbstractController {
       tips: params.tips,
       skipDependencies: params.skipDependencies,
       syncDownloadData: params.syncDownloadData,
+      forceSyncHistory: params.forceSyncHistory,
     });
     ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
       task.taskId, fullname);
     if (data.force) {
-      const isAdmin = await this.userRoleManager.isAdmin(ctx);
       if (isAdmin) {
-        // execute task in background
-        this._executeTaskAsync(task);
-        ctx.logger.info('[PackageSyncController.createSyncTask:execute-immediately] taskId: %s',
-          task.taskId);
+        // set background task timeout to 5min
+        this.backgroundTaskHelper.timeout = 1000 * 60 * 5;
+        this.backgroundTaskHelper.run(async () => {
+          ctx.logger.info('[PackageSyncController.createSyncTask:execute-immediately] taskId: %s',
+            task.taskId);
+          // execute task in background
+          await this._executeTaskAsync(task);
+        });
       }
     }
     ctx.status = 201;
@@ -153,6 +164,7 @@ export class PackageSyncController extends AbstractController {
       skipDependencies: nodeps === 'true',
       syncDownloadData: false,
       force: false,
+      forceSyncHistory: false,
     };
     const task = await this.createSyncTask(ctx, fullname, options);
     return {
