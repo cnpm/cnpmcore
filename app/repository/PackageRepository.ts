@@ -40,6 +40,11 @@ export class PackageRepository extends AbstractRepository {
   @Inject()
   private readonly User: typeof UserModel;
 
+  async listAllPackages(): Promise<PackageEntity[]> {
+    const models = await this.Package.all;
+    return models.map(pkg => ModelConvertor.convertModelToEntity(pkg, PackageEntity));
+  }
+
   async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
     const model = await this.Package.findOne({ scope, name });
     if (!model) return null;
