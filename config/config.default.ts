@@ -20,6 +20,7 @@ export default (appInfo: EggAppConfig) => {
     // sync mode
     //  - none: don't sync npm package, just redirect it to sourceRegistry
     //  - all: sync all npm packages
+    //  - exist: only sync exist packages
     syncMode: 'none',
     syncPackageWorkerMaxConcurrentTasks: 10,
     // stop syncing these packages in future
