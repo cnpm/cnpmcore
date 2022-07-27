@@ -42,8 +42,8 @@ export abstract class AbstractController extends MiddlewareController {
     return this.config.cnpmcore.sourceRegistry;
   }
 
-  protected get enableSyncAll() {
-    return this.config.cnpmcore.syncMode === 'all';
+  protected get enableSync() {
+    return this.config.cnpmcore.syncMode === 'all' || this.config.cnpmcore.syncMode === 'exist';
   }
 
   protected isPrivateScope(scope: string) {
@@ -57,7 +57,7 @@ export abstract class AbstractController extends MiddlewareController {
     // dont sync private scope
     if (!this.isPrivateScope(scope)) {
       // syncMode = none, redirect public package to source registry
-      if (!this.enableSyncAll) {
+      if (!this.enableSync) {
         err.redirectToSourceRegistry = this.sourceRegistry;
       }
     }
