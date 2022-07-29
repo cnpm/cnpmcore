@@ -694,4 +694,21 @@ export class PackageSyncerService extends AbstractService {
     this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
       task.taskId, task.targetName);
   }
+
+  public async syncExistPackage(): Promise<Task[]> {
+    const packages = await this.packageRepository.listAllPackages();
+    const shouldSync = packages.filter(pkg => !pkg.isPrivate);
+    const tasks:Task[] = [];
+    for (const pkg of shouldSync) {
+      const task = await this.createTask(pkg.fullname, {
+        tips: 'Sync cause by exist_packages',
+        skipDependencies: true,
+      });
+
+      this.logger.info('[PackageSyncerService.syncExistPackage] taskId: %s, targetName: %s', task.taskId, task.targetName);
+      tasks.push(task);
+    }
+
+    return tasks;
+  }
 }

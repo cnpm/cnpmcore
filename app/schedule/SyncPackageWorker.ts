@@ -14,7 +14,7 @@ export default class SyncPackageWorker extends Subscription {
 
   async subscribe() {
     const { ctx, app } = this;
-    if (app.config.cnpmcore.syncMode !== 'all') return;
+    if (app.config.cnpmcore.syncMode === 'none') return;
     if (executingCount >= app.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks) return;
 
     await ctx.beginModuleScope(async () => {
