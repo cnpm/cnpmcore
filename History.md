@@ -1,4 +1,13 @@
 
+1.9.1 / 2022-07-29
+==================
+
+**fixes**
+  * [[`c54aa21`](http://github.com/cnpm/cnpmcore/commit/c54aa2165c3938dcbb5a2b3b54e66a0d961cc813)] - fix: check executingCount after task is done (#276) (killa <<killa123@126.com>>)
+
+**others**
+  * [[`3268d03`](http://github.com/cnpm/cnpmcore/commit/3268d030b620825c8c2e6331e1745c1788066c61)] - 🤖 TEST: show package not use cache if isSync (#273) (fengmk2 <<fengmk2@gmail.com>>)
+
 1.9.0 / 2022-07-25
 ==================
 
