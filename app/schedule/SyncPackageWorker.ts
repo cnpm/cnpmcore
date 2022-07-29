@@ -31,6 +31,11 @@ export default class SyncPackageWorker extends Subscription {
           const use = Date.now() - startTime;
           ctx.logger.info('[SyncPackageWorker:subscribe:executeTask:success][%s] taskId: %s, targetName: %s, use %sms',
             executingCount, task.taskId, task.targetName, use);
+          if (executingCount >= app.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks) {
+            ctx.logger.info('[SyncPackageWorker:subscribe:executeTask] current sync task count %s, exceed max concurrent tasks %s',
+              executingCount, app.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks);
+            break;
+          }
           // try next task
           task = await packageSyncerService.findExecuteTask();
         }
