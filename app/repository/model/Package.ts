@@ -37,6 +37,9 @@ export class Package extends Bone {
   @Attribute(DataTypes.STRING(10240))
   description: string;
 
+  @Attribute(DataTypes.STRING(256), { allowNull: true })
+  registryName: string;
+
   // store all abbreviated manifests into Dist store
   @EntityProperty('abbreviatedsDist.distId')
   @Attribute(DataTypes.STRING(24), { allowNull: true })

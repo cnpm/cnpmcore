@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS `packages` (
   `description` varchar(10240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'package description',
   `abbreviateds_dist_id` varchar(24) NULL COMMENT 'all abbreviated manifests dist id',
   `manifests_dist_id` varchar(24) NULL COMMENT 'all full manifests dist id',
+  `registry_name` varchar(256) NULL COMMENT 'registry name',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_package_id` (`package_id`),
   UNIQUE KEY `uk_scope_name` (`scope`,`name`)
@@ -276,3 +277,26 @@ CREATE TABLE IF NOT EXISTS `binaries` (
   UNIQUE KEY `uk_category_parent_name` (`category`, `parent`, `name`),
   KEY `idx_category_parent` (`category`, `parent`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='binary info';
+
+CREATE TABLE IF NOT EXISTS `registries` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` timestamp NOT NULL  COMMENT 'create time',
+  `gmt_modified` timestamp NOT NULL COMMENT 'modified time',
+  `registry_id` varchar(24) NOT NULL COMMENT 'registry id',
+  `name` varchar(256) DEFAULT NULL COMMENT 'registry name',
+  `host` varchar(4096) DEFAULT NULL COMMENT 'registry host',
+  `change_stream` varchar(4096) DEFAULT NULL COMMENT 'change stream url',
+  `user_prefix` varchar(256) DEFAULT NULL COMMENT 'user prefix',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='registry info';
+
+CREATE TABLE IF NOT EXISTS `scopes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `gmt_create` timestamp NOT NULL  COMMENT 'create time',
+  `gmt_modified` timestamp NOT NULL COMMENT 'modified time',
+  `scope_id` varchar(24) NOT NULL COMMENT 'scope id',
+  `name` varchar(214) DEFAULT NULL COMMENT 'scope name',
+  `registry_id` varchar(24) NOT NULL COMMENT 'registry id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='scope info';
+;

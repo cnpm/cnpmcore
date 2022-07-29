@@ -8,7 +8,7 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { Static, Type } from '@sinclair/typebox';
+import { Static, Type } from 'egg-typebox-validate/typebox';
 import { AbstractController } from './AbstractController';
 
 // Creating and viewing access tokens

@@ -16,7 +16,7 @@ import {
 } from '@eggjs/tegg';
 import * as ssri from 'ssri';
 import validateNpmPackageName from 'validate-npm-package-name';
-import { Static, Type } from '@sinclair/typebox';
+import { Static, Type } from 'egg-typebox-validate/typebox';
 import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { Package as PackageEntity } from '../../../core/entity/Package';
@@ -230,4 +230,3 @@ export class SavePackageVersionController extends AbstractController {
     }
   }
 }
-

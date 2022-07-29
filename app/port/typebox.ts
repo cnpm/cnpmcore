@@ -1,4 +1,4 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Type, Static } from 'egg-typebox-validate/typebox';
 import semver from 'semver';
 
 export const Name = Type.String({

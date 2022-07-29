@@ -13,7 +13,7 @@ import {
   UnauthorizedError,
   ForbiddenError,
 } from 'egg-errors';
-import { Static, Type } from '@sinclair/typebox';
+import { Static, Type } from 'egg-typebox-validate/typebox';
 import { AbstractController } from './AbstractController';
 import { LoginResultCode } from '../../common/enum/User';
 import { sha512 } from '../../common/UserUtil';
