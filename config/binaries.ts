@@ -145,12 +145,12 @@ const binaries: {
       requiredNapiVersions: true,
     },
   },
-  'wrtc': {
+  wrtc: {
     category: 'wrtc',
     description: 'node-webrtc is a Node.js Native Addon that provides bindings to WebRTC M87.',
     syncer: SyncerClass.NodePreGypBinary,
     repo: 'node-webrtc/node-webrtc',
-    distUrl: 'https://node-webrtc.s3.amazonaws.com'
+    distUrl: 'https://node-webrtc.s3.amazonaws.com',
   },
   nodegit: {
     category: 'nodegit',
