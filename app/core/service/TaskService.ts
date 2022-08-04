@@ -8,7 +8,7 @@ import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { Task } from '../entity/Task';
-import { QueueAdapter } from '../../common/adapter/QueueAdapter';
+import { QueueAdapter } from '../../common/typing';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
