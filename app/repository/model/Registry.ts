@@ -15,7 +15,9 @@ export class Registry extends Bone {
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
   updatedAt: Date;
 
-  @Attribute(DataTypes.STRING(256))
+  @Attribute(DataTypes.STRING(24), {
+    unique: true,
+  })
   registryId: string;
 
   @Attribute(DataTypes.STRING(256))

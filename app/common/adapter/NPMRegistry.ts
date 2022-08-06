@@ -26,8 +26,17 @@ export class NPMRegistry {
   private config: EggAppConfig;
   private timeout = 10000;
 
+  public registryHost: string;
+
   get registry(): string {
+    if (this.registryHost) {
+      return this.registryHost;
+    }
     return this.config.cnpmcore.sourceRegistry;
+  }
+
+  public setRegistry(registryHost: string) {
+    this.registryHost = registryHost;
   }
 
   public async getFullManifests(fullname: string, retries = 3) {

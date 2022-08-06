@@ -25,7 +25,7 @@ export class Registry extends Entity {
     this.userPrefix = data.userPrefix;
   }
 
-  static create(data: EasyData<RegistryData, 'registryId'>): Registry {
+  public static create(data: EasyData<RegistryData, 'registryId'>): Registry {
     const newData = EntityUtil.defaultData(data, 'registryId');
     return new Registry(newData);
   }

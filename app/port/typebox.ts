@@ -19,7 +19,7 @@ export const Version = Type.String({
   maxLength: 256,
 });
 
-export const Description = Type.String({ maxLength: 10240, transform: [ 'trim' ] });
+export const Description = Type.String({ maxLength: 10240, transform: ['trim'] });
 
 export const TagRule = Type.Object({
   tag: Tag,
@@ -35,7 +35,7 @@ export const TagWithVersionRule = Type.Object({
 export const SyncPackageTaskRule = Type.Object({
   fullname: Name,
   tips: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     maxLength: 1024,
   }),
   skipDependencies: Type.Boolean(),
@@ -50,7 +50,7 @@ export type SyncPackageTaskType = Static<typeof SyncPackageTaskRule>;
 export const BlockPackageRule = Type.Object({
   fullname: Name,
   reason: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     maxLength: 10240,
   }),
 });

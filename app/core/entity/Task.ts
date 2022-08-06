@@ -25,6 +25,8 @@ export type SyncPackageTaskOptions = {
   tips?: string;
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
+  registryHost?: string;
+  userPrefix?: string;
   // force sync history version
   forceSyncHistory?: boolean;
 };
@@ -85,6 +87,8 @@ export class Task extends Entity {
         skipDependencies: options?.skipDependencies,
         syncDownloadData: options?.syncDownloadData,
         forceSyncHistory: options?.forceSyncHistory,
+        registryHost: options?.registryHost ?? '',
+        userPrefix: options?.userPrefix ?? '',
       },
     };
     const task = this.create(data);

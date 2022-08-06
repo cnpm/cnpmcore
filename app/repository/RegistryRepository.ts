@@ -25,6 +25,14 @@ export class RegistryRepository extends AbstractRepository {
     return null;
   }
 
+  async findRegistryByChangeStream(changeStream: string): Promise<RegistryEntity | null> {
+    const model = await this.Registry.findOne({ changeStream });
+    if (model) {
+      return ModelConvertor.convertModelToEntity(model, RegistryEntity);
+    }
+    return null;
+  }
+
   async saveRegistry(registry: EasyData<RegistryEntity, 'id' | 'registryId'>) {
     if (registry.id) {
       const model = await this.Registry.findOne({ registryId: registry.id });

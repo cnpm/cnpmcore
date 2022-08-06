@@ -14,6 +14,11 @@ import { TaskRepository } from '../../repository/TaskRepository';
 import { Task } from '../entity/Task';
 import { PackageSyncerService } from './PackageSyncerService';
 import { TaskService } from './TaskService';
+import { RegistryRepository } from 'app/repository/RegistryRepository';
+import { RegistryService } from './RegistryService';
+import { Scope } from '../entity/Scope';
+import { Unpack } from '../util/EntityUtil';
+import { getScopeAndName } from '../../common/PackageUtil';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -22,11 +27,15 @@ export class ChangesStreamService extends AbstractService {
   @Inject()
   private readonly taskRepository: TaskRepository;
   @Inject()
+  private readonly registryRepository: RegistryRepository;
+  @Inject()
   private readonly httpclient: EggContextHttpClient;
   @Inject()
   private readonly packageSyncerService: PackageSyncerService;
   @Inject()
   private readonly taskService: TaskService;
+  @Inject()
+  private readonly registryService: RegistryService;
 
   public async findExecuteTask() {
     const targetName = 'GLOBAL_WORKER';
@@ -37,19 +46,51 @@ export class ChangesStreamService extends AbstractService {
     return await this.taskService.findExecuteTask(TaskType.ChangesStream);
   }
 
-  public async executeTask(task: Task) {
-    task.authorIp = os.hostname();
-    task.authorId = `pid_${process.pid}`;
-    await this.taskRepository.saveTask(task);
-
+  // since 2022-08-08, cnpmcore supports multiple changesStream
+  async convertLegacyChangeStream(task: Task) {
+    const { data } = task;
+    if (Array.isArray(data)) {
+      return task;
+    }
     const changesStreamRegistry: string = this.config.cnpmcore.changesStreamRegistry;
-    // https://github.com/npm/registry-follower-tutorial
-    // default "update_seq": 7138885,
+    // will be npmmirror or npm registry
+    const targetRegistry = await this.registryRepository.findRegistryByChangeStream(`${changesStreamRegistry}/_changes`);
+
+    // do nothing
+    if (!targetRegistry) {
+      this.logger.warn('[ChangesStreamService.convertLegacyChangeStream:noTargetRegistry] %s', changesStreamRegistry);
+      task.data = [
+         { name: 'unknown', data, }
+      ];
+      return task;
+    }
+
+    // convert the single task to array
+    task.data = [{
+      name: targetRegistry.name,
+      data,
+    }];
+
+    return task;
+  }
+
+  private async _executeTask(registry: Unpack<ReturnType<typeof this.registryService.list>>[number], task: Task) {
+    let targetData = task.data.find(data => data.name === registry.name);
+    if (!targetData) {
+      const newTask = {
+        name: registry.name,
+        data: {},
+      };
+      targetData = newTask.data;
+      task.data.push(newTask);
+      await this.taskRepository.saveTask(task);
+    }
+    const { changeStream } = registry;
     try {
-      let since: string = task.data.since;
+      let since: string = targetData.since;
       // get update_seq from ${changesStreamRegistry} on the first time
       if (!since) {
-        const { status, data } = await this.httpclient.request(changesStreamRegistry, {
+        const { status, data } = await this.httpclient.request(registry.changeStream + '?since=7139538', {
           followRedirect: true,
           timeout: 10000,
           dataType: 'json',
@@ -60,11 +101,12 @@ export class ChangesStreamService extends AbstractService {
           since = '7139538';
         }
         this.logger.warn('[ChangesStreamService.executeTask:firstSeq] GET %s status: %s, data: %j, since: %s',
-          changesStreamRegistry, status, data, since);
+          changeStream, status, data, since);
+        await this.taskRepository.saveTask(task);
       }
       // allow disable changesStream dynamic
       while (since && this.config.cnpmcore.enableChangesStream) {
-        const { lastSince, taskCount } = await this.handleChanges(since, task);
+        const { lastSince, taskCount } = await this.handleChanges(since, task, registry);
         this.logger.warn('[ChangesStreamService.executeTask:changes] since: %s => %s, %d new tasks, taskId: %s, updatedAt: %j',
           since, lastSince, taskCount, task.taskId, task.updatedAt);
         since = lastSince;
@@ -76,15 +118,38 @@ export class ChangesStreamService extends AbstractService {
     } catch (err) {
       this.logger.error('[ChangesStreamService.executeTask:error] %s, exit now', err);
       this.logger.error(err);
-      task.error = `${err}`;
+      targetData.error = `${err}`;
       await this.taskRepository.saveTask(task);
     }
   }
 
-  private async handleChanges(since: string, task: Task) {
-    const changesStreamRegistry: string = this.config.cnpmcore.changesStreamRegistry;
+  public async executeTask(task: Task) {
+    task.authorIp = os.hostname();
+    task.authorId = `pid_${process.pid}`;
+    task = await this.convertLegacyChangeStream(task);
+    const registries = await this.registryService.list();
+    await Promise.all(registries.map(registry => this._executeTask(registry, task)));
+    await this.taskRepository.saveTask(task);
+
+  }
+
+  // check need handle the change task
+  needHandle(scopes: Scope[], pkgName: string) {
+    // common package registry
+    if (scopes.length === 0) {
+      return true;
+    }
+    // scoped registry do not sync common package
+    const [scope] = getScopeAndName(pkgName);
+    if (!scope) {
+      return false;
+    }
+    return scopes.some(s => s.name === scope);
+  }
+
+  private async handleChanges(since: string, task: Task, registry: Unpack<ReturnType<typeof this.registryService.list>>[number]) {
     const changesStreamRegistryMode: string = this.config.cnpmcore.changesStreamRegistryMode;
-    const db = `${changesStreamRegistry}/_changes?since=${since}`;
+    const db = `${registry.changeStream}?since=${since}&limit=2000`;
     let lastSince = since;
     let taskCount = 0;
     if (changesStreamRegistryMode === 'streaming') {
@@ -107,12 +172,16 @@ export class ChangesStreamService extends AbstractService {
           const seq = match[1];
           const fullname = match[2];
           if (seq && fullname) {
-            await this.packageSyncerService.createTask(fullname, {
-              authorIp: os.hostname(),
-              authorId: 'ChangesStreamService',
-              skipDependencies: true,
-              tips: `Sync cause by changes_stream(${changesStreamRegistry}) update seq: ${seq}`,
-            });
+            if (this.needHandle(registry.scopes, fullname)) {
+              await this.packageSyncerService.createTask(fullname, {
+                authorIp: os.hostname(),
+                authorId: 'ChangesStreamService',
+                registryHost: registry.host,
+                userPrefix: registry.userPrefix,
+                skipDependencies: true,
+                tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
+              });
+            }
             count++;
             lastSince = seq;
             lastPackage = fullname;
@@ -143,15 +212,19 @@ export class ChangesStreamService extends AbstractService {
         let count = 0;
         let lastPackage = '';
         for (const change of data.results) {
-          const seq = change.seq;
+          const seq = change.seq || new Date(change.gmt_modified).getTime();
           const fullname = change.id;
           if (seq && fullname && seq !== since) {
-            await this.packageSyncerService.createTask(fullname, {
-              authorIp: os.hostname(),
-              authorId: 'ChangesStreamService',
-              skipDependencies: true,
-              tips: `Sync cause by changes_stream(${changesStreamRegistry}) update seq: ${seq}, change: ${JSON.stringify(change)}`,
-            });
+            if (this.needHandle(registry.scopes, fullname)) {
+              await this.packageSyncerService.createTask(fullname, {
+                authorIp: os.hostname(),
+                authorId: 'ChangesStreamService',
+                skipDependencies: true,
+                registryHost: registry.host,
+                userPrefix: registry.userPrefix,
+                tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}, change: ${JSON.stringify(change)}`,
+              });
+            }
             count++;
             lastSince = seq;
             lastPackage = fullname;

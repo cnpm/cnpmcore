@@ -193,7 +193,10 @@ export class PackageSyncerService extends AbstractService {
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
-    const registry = this.npmRegistry.registry;
+    const registryHost = task.data.registryHost;
+    const userPrefix = task.data.userPrefix;
+    this.npmRegistry.setRegistry(registryHost);
+
     let logs: string[] = [];
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
@@ -204,9 +207,9 @@ export class PackageSyncerService extends AbstractService {
     const skipDependencies = taskQueueInHighWaterState ? true : !!originSkipDependencies;
     const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
-    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
-      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
+    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s, registry: %s',
+      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl, this.npmRegistry.registry);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
     const [ scope, name ] = getScopeAndName(fullname);
@@ -322,7 +325,7 @@ export class PackageSyncerService extends AbstractService {
       for (const maintainer of maintainers) {
         if (maintainer.name && maintainer.email) {
           maintainersMap[maintainer.name] = maintainer;
-          const { changed, user } = await this.userService.savePublicUser(maintainer.name, maintainer.email);
+          const { changed, user } = await this.userService.saveUser(maintainer.name, maintainer.email, userPrefix);
           users.push(user);
           if (changed) {
             changedUserCount++;

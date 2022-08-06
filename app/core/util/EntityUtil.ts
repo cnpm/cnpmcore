@@ -5,6 +5,8 @@ type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export type EasyData<T extends EntityData, Id extends keyof T> = PartialBy<T, 'createdAt' | 'updatedAt' | Id>;
 
+export type Unpack<T> = T extends Promise<infer U> ? U : T;
+
 
 export class EntityUtil {
   static defaultData<T extends EntityData, Id extends keyof T>(data: EasyData<T, Id>, id: Id): T {
