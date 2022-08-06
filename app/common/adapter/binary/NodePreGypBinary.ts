@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { AbstractBinary, FetchResult, BinaryItem } from './AbstractBinary';
 
 export class NodePreGypBinary extends AbstractBinary {
@@ -32,7 +33,7 @@ export class NodePreGypBinary extends AbstractBinary {
 
         let currentDir = this.dirItems['/'];
         let versionPrefix = '';
-        const remotePath = pkgVersion.binary.remote_path;
+        let remotePath = pkgVersion.binary.remote_path;
         const napiVersions = pkgVersion.binary.napi_versions ?? [];
         if (this.binaryConfig.options?.requiredNapiVersions && napiVersions.length === 0) continue;
         if (remotePath?.includes('{version}')) {
@@ -148,17 +149,31 @@ export class NodePreGypBinary extends AbstractBinary {
           //   "package_name": "{platform}-{arch}.tar.gz",
           //   "module_path": "bin"
           // },
+          // handle {configuration}
+          // "binary": {
+          //   "module_name": "wrtc",
+          //   "module_path": "./build/{configuration}/",
+          //   "remote_path": "./{module_name}/v{version}/{configuration}/",
+          //   "package_name": "{platform}-{arch}.tar.gz",
+          //   "host": "https://node-webrtc.s3.amazonaws.com"
+          // },
           for (const platform of nodePlatforms) {
             const archs = nodeArchs[platform];
             for (const arch of archs) {
-              const name = binaryFile.replace('{platform}', platform)
+              const binaryFileName = binaryFile.replace('{platform}', platform)
                 .replace('{arch}', arch);
+              remotePath = remotePath.replace('{module_name}', moduleName)
+                .replace('{name}', this.binaryConfig.category)
+                .replace('{version}', version)
+                .replace('{configuration}', 'Release');
+              const binaryFilePath = join('/', remotePath, binaryFileName);
+              const remoteUrl = `${this.binaryConfig.distUrl}${binaryFilePath}`;
               currentDir.push({
-                name,
+                name: binaryFileName,
                 date,
                 size: '-',
                 isDir: false,
-                url: `${this.binaryConfig.distUrl}/${this.binaryConfig.category}${versionPrefix}/${name}`,
+                url: remoteUrl,
                 ignoreDownloadStatuses: [ 404 ],
               });
             }
