@@ -40,9 +40,10 @@ export class TaskService extends AbstractService {
       return existsTask;
     }
     await this.taskRepository.saveTask(task);
-    const queueSize = await this.queueAdapter.push<string>(task.type, task.taskId);
+    await this.queueAdapter.push<string>(task.type, task.taskId);
+    const queueLength = await this.getTaskQueueLength(task.type);
     this.logger.info('[TaskService.createTask:new] taskType: %s, targetName: %s, taskId: %s, queue size: %s',
-      task.type, task.targetName, task.taskId, queueSize);
+      task.type, task.targetName, task.taskId, queueLength);
     return task;
   }
 
@@ -54,9 +55,10 @@ export class TaskService extends AbstractService {
     // make sure updatedAt changed
     task.updatedAt = new Date();
     await this.taskRepository.saveTask(task);
-    const queueSize = await this.queueAdapter.push<string>(task.type, task.taskId);
+    await this.queueAdapter.push<string>(task.type, task.taskId);
+    const queueLength = await this.getTaskQueueLength(task.type);
     this.logger.info('[TaskService.retryTask:save] taskType: %s, targetName: %s, taskId: %s, queue size: %s',
-      task.type, task.targetName, task.taskId, queueSize);
+      task.type, task.targetName, task.taskId, queueLength);
   }
 
   public async findTask(taskId: string) {
