@@ -32,4 +32,7 @@ export class Registry extends Bone {
   @Attribute(DataTypes.STRING(4096), { name: 'user_prefix' })
   userPrefix: string;
 
+  @Attribute(DataTypes.STRING(256))
+  type: string;
+
 }

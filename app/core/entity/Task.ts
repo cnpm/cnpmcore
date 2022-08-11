@@ -26,6 +26,7 @@ export type SyncPackageTaskOptions = {
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
   registryHost?: string;
+  registryName?: string;
   userPrefix?: string;
   // force sync history version
   forceSyncHistory?: boolean;
@@ -88,6 +89,7 @@ export class Task extends Entity {
         syncDownloadData: options?.syncDownloadData,
         forceSyncHistory: options?.forceSyncHistory,
         registryHost: options?.registryHost ?? '',
+        registryName: options?.registryName ?? '',
         userPrefix: options?.userPrefix ?? '',
       },
     };

@@ -192,10 +192,9 @@ export class PackageSyncerService extends AbstractService {
 
   public async executeTask(task: Task) {
     const fullname = task.targetName;
-    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
-    const registryHost = task.data.registryHost;
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, registryHost, registryName } = task.data as SyncPackageTaskOptions;
     const userPrefix = task.data.userPrefix;
-    this.npmRegistry.setRegistry(registryHost);
+    registryHost && this.npmRegistry.setRegistry(registryHost);
 
     let logs: string[] = [];
     if (tips) {
@@ -526,7 +525,9 @@ export class PackageSyncerService extends AbstractService {
         isPrivate: false,
         publishTime,
         skipRefreshPackageManifests: true,
+        registryName,
       };
+
       try {
         const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
         updateVersions.push(pkgVersion.version);

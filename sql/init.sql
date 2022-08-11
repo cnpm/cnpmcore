@@ -286,6 +286,7 @@ CREATE TABLE IF NOT EXISTS `registries` (
   `name` varchar(256) DEFAULT NULL COMMENT 'registry name',
   `host` varchar(4096) DEFAULT NULL COMMENT 'registry host',
   `change_stream` varchar(4096) DEFAULT NULL COMMENT 'change stream url',
+  `type` varchar(256) DEFAULT NULL COMMENT 'registry type cnpmjsorg/cnpmcore/npm ',
   `user_prefix` varchar(256) DEFAULT NULL COMMENT 'user prefix',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='registry info';

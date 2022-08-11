@@ -32,6 +32,11 @@ const RegistryCreateOptions = Type.Object({
     minLength: 1,
     maxLength: 256,
   })),
+  type: Type.String({
+    transform: ['trim'],
+    minLength: 1,
+    maxLength: 256,
+  }),
   scopes: Type.Array(Type.String({
     transform: ['trim'],
     minLength: 1,
@@ -74,13 +79,14 @@ export class RegistryController extends AbstractController {
     // TODO only admins can create registry
     // verify unique name, scopes
     ctx.tValidate(RegistryCreateOptions, registryOptions);
-    const { name, changeStream, scopes, host, userPrefix = '' } = registryOptions;
+    const { name, changeStream, scopes, host, userPrefix = '', type } = registryOptions;
     return await this.registryService.update({
       name,
       changeStream,
       scopes,
       host,
       userPrefix,
+      type,
     });
   }
 

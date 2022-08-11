@@ -14,7 +14,7 @@ import { Registry } from '../entity/Registry';
 export type CreateCmd = {
   name: string;
   scopes: string[];
-} & Pick<RegistryModel, 'changeStream' | 'host' | 'userPrefix'>
+} & Pick<RegistryModel, 'changeStream' | 'host' | 'userPrefix' | 'type'>
 
 export type RemoveCmd = {
   name?: string;
@@ -32,11 +32,11 @@ export class RegistryService extends AbstractService {
   private readonly scopeRepository: ScopeRepository;
 
   async update(createCmd: CreateCmd) {
-    const { name, scopes, changeStream, host, userPrefix } = createCmd;
+    const { name, scopes, changeStream, host, userPrefix, type } = createCmd;
     // save Registry
     const registryModel = await this.registryRepository.saveRegistry(Registry.create(
       {
-        name, changeStream, host, userPrefix
+        name, changeStream, host, userPrefix, type
       }
     ));
 

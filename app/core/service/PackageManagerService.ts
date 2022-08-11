@@ -60,6 +60,7 @@ export interface PublishPackageCmd {
   publishTime?: Date;
   // only use on sync package for speed up https://github.com/cnpm/cnpmcore/issues/28
   skipRefreshPackageManifests?: boolean;
+  registryName?: string
 }
 
 const TOTAL = '@@TOTAL@@';
@@ -95,6 +96,7 @@ export class PackageManagerService extends AbstractService {
         name: cmd.name,
         isPrivate: cmd.isPrivate,
         description: cmd.description,
+        registryName: cmd.registryName,
       });
     } else {
       // update description
