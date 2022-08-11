@@ -15,12 +15,13 @@ export type HandleResult = {
   taskData: {
     lastSince: string;
     last_package: string;
-    last_package_created: Date,
-    task_count: number,
-    sync_count: number,
-  } | {},
-  lastSince: string,
-  taskCount: number,
+    last_package_created: Date;
+    task_count: number;
+    sync_count: number;
+  } | {};
+  lastSince: string;
+  taskCount: number;
+  syncCount: number;
 };
 
 export type RegistryWithScopes = Registry & { scopes: Scope[] }

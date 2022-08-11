@@ -1,11 +1,11 @@
 import { Registry } from "app/core/entity/Registry";
 import { CnpmjsOrgRegistry } from "./CnpmjsOrgRegistry";
-import { NpmcoreRegistry } from "./NpmcoreRegistry";
+import { CnpmcoreRegistry } from "./NpmcoreRegistry";
 import { NpmRegistry } from "./NpmRegistry";
 
 const REGISTRY_TYPE_MAP = {
   cnpmjsorg: CnpmjsOrgRegistry,
-  npmcore: NpmcoreRegistry,
+  npmcore: CnpmcoreRegistry,
   NpmRegistry: NpmRegistry,
 };
 

@@ -3,7 +3,7 @@ import { Task } from 'app/core/entity/Task';
 import { AbstractRegistry, HandleResult } from './AbstractRegistry';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 
-export class NpmcoreRegistry extends AbstractRegistry {
+export class CnpmcoreRegistry extends AbstractRegistry {
   // fetch changes from cnpmjs.org based registry
   // since we hasn't support seqId, we need to detect limit
   async fetch(since: string) {
@@ -41,7 +41,7 @@ export class NpmcoreRegistry extends AbstractRegistry {
         const seq = new Date(change.gmt_modified).getTime() + '';
         const fullname = change.id;
         if (seq && fullname && seq !== since) {
-          if (this.needSync(this.registry.scopes, fullname)) {
+          if (this.needSync(this.registry.scopes, fullname) && change.type === 'PACKAGE_VERSION_ADDED') {
             syncCount++;
             await packageSyncerService.createTask(fullname, {
               authorIp: os.hostname(),
@@ -73,6 +73,7 @@ export class NpmcoreRegistry extends AbstractRegistry {
       lastSince,
       taskData: res,
       taskCount,
+      syncCount,
     };
   }
 }

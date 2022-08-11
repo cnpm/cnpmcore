@@ -73,6 +73,7 @@ export class CnpmjsOrgRegistry extends AbstractRegistry {
       lastSince,
       taskData: res,
       taskCount,
+      syncCount,
     };
   }
 }

@@ -41,7 +41,7 @@ export class NpmRegistry extends AbstractRegistry {
         const seq = new Date(change.gmt_modified).getTime() + '';
         const fullname = change.id;
         if (seq && fullname && seq !== since) {
-          if (this.needSync(this.registry.scopes, fullname)) {
+          if (this.needSync(this.registry.scopes, fullname) && change.type === 'PACKAGE_VERSION_ADDED') {
             syncCount++;
             await packageSyncerService.createTask(fullname, {
               authorIp: os.hostname(),
@@ -73,6 +73,7 @@ export class NpmRegistry extends AbstractRegistry {
       lastSince,
       taskData: res,
       taskCount,
+      syncCount,
     };
   }
 }

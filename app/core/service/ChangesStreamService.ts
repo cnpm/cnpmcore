@@ -99,12 +99,12 @@ export class ChangesStreamService extends AbstractService {
       }
       // allow disable changesStream dynamic
       while (since && this.config.cnpmcore.enableChangesStream) {
-        const { taskData, taskCount} = await this.handleChanges(since, targetData, registry);
+        const { taskData, taskCount, syncCount } = await this.handleChanges(since, targetData, registry);
         Object.assign(targetData, taskData);
         task.updatedAt = new Date();
         await this.taskRepository.saveTask(task);
         this.logger.warn('[ChangesStreamService.executeTask:changes] since: %s => %s, %d new tasks, %d need to sync, taskId: %s, updatedAt: %j',
-          since, targetData.since, taskCount, targetData.sync_count, task.taskId, task.updatedAt);
+          since, targetData.since, taskCount, syncCount, task.taskId, task.updatedAt);
         since = targetData.since;
         if (taskCount === 0 && this.config.env === 'unittest') {
           break;
