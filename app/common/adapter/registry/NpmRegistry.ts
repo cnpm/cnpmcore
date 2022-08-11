@@ -23,43 +23,42 @@ export class NpmRegistry extends AbstractRegistry {
 
   async handleChanges(since: string, taskData: Task['data'], packageSyncerService: PackageSyncerService): Promise<HandleResult> {
     const db = `${this.registry.changeStream}?since=${since}&limit=2000`;
-    let res = {};
     let lastSince = since;
     let syncCount = 0;
     let taskCount = 0;
-    // json mode
-    const { data } = await this.httpclient.request(db, {
-      followRedirect: true,
-      timeout: 30000,
-      dataType: 'json',
-      gzip: true,
+    let taskResult = {};
+    const { res } = await this.httpclient.request(db, {
+      streaming: true,
+      timeout: 10000,
     });
-    if (data.results?.length > 0) {
+    for await (const chunk of res) {
+      const text: string = chunk.toString();
+      // {"seq":7138879,"id":"@danydodson/prettier-config","changes":[{"rev":"5-a56057032714af25400d93517773a82a"}]}
+      // console.log('😄%j😄', text);
+      // 😄"{\"seq\":7138738,\"id\":\"wargerm\",\"changes\":[{\"rev\":\"59-f0a0d326db4c62ed480987a04ba3bf8f\"}]}"😄
+      // 😄",\n{\"seq\":7138739,\"id\":\"@laffery/webpack-starter-kit\",\"changes\":[{\"rev\":\"4-84a8dc470a07872f4cdf85cf8ef892a1\"}]},\n{\"seq\":7138741,\"id\":\"venom-bot\",\"changes\":[{\"rev\":\"103-908654b1ad4b0e0fd40b468d75730674\"}]}"😄
+      // 😄",\n{\"seq\":7138743,\"id\":\"react-native-template-pytorch-live\",\"changes\":[{\"rev\":\"40-871c686b200312303ba7c4f7f93e0362\"}]}"😄
+      // 😄",\n{\"seq\":7138745,\"id\":\"ccxt\",\"changes\":[{\"rev\":\"10205-25367c525a0a3bd61be3a72223ce212c\"}]}"😄
+      const matchs = text.matchAll(/"seq":(\d+),"id":"([^"]+)"/gm);
       let count = 0;
       let lastPackage = '';
-      for (const change of data.results) {
-        const seq = new Date(change.gmt_modified).getTime() + '';
-        const fullname = change.id;
-        if (seq && fullname && seq !== since) {
-          if (this.needSync(this.registry.scopes, fullname) && change.type === 'PACKAGE_VERSION_ADDED') {
-            syncCount++;
-            await packageSyncerService.createTask(fullname, {
-              authorIp: os.hostname(),
-              authorId: 'ChangesStreamService',
-              skipDependencies: true,
-              registryHost: this.registry.host,
-              registryName: this.registry.name,
-              userPrefix: this.registry.userPrefix,
-              tips: `Sync cause by changes_stream(${this.registry.changeStream}) update seq: ${seq}, change: ${JSON.stringify(change)}`,
-            });
-          }
+      for (const match of matchs) {
+        const seq = match[1];
+        const fullname = match[2];
+        if (seq && this.needSync(this.registry.scopes, fullname)) {
+          await packageSyncerService.createTask(fullname, {
+            authorIp: os.hostname(),
+            authorId: 'ChangesStreamService',
+            skipDependencies: true,
+            tips: `Sync cause by changes_stream(${this.registry.changeStream}) update seq: ${seq}`,
+          });
           count++;
           lastSince = seq;
           lastPackage = fullname;
         }
       }
       if (count > 0) {
-        res = {
+        taskResult = {
           since: lastSince,
           last_package: lastPackage,
           last_package_created: new Date(),
@@ -67,11 +66,10 @@ export class NpmRegistry extends AbstractRegistry {
           sync_count: (taskData.sync_count || 0) + syncCount,
         };
       }
-      taskCount = count;
     }
     return {
       lastSince,
-      taskData: res,
+      taskData: taskResult,
       taskCount,
       syncCount,
     };
