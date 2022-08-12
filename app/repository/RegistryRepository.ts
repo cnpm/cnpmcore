@@ -35,16 +35,16 @@ export class RegistryRepository extends AbstractRepository {
 
   async saveRegistry(registry: EasyData<RegistryEntity, 'id' | 'registryId'>) {
     if (registry.id) {
-      const model = await this.Registry.findOne({ registryId: registry.id });
+      const model = await this.Registry.findOne({ id: registry.id });
       if (!model) return;
       await ModelConvertor.saveEntityToModel(registry, model);
       return model;
-    } else {
-      const model = await ModelConvertor.convertEntityToModel(registry, this.Registry);
-      this.logger.info('[RegistryRepository:saveRegistry:new] id: %s, registryId: %s',
-        model.id, model.registryId);
-      return model;
     }
+    const model = await ModelConvertor.convertEntityToModel(registry, this.Registry);
+    this.logger.info('[RegistryRepository:saveRegistry:new] id: %s, registryId: %s',
+      model.id, model.registryId);
+    return model;
+
   }
 
   async removeRegistry(registryId: string): Promise<void> {

@@ -10,11 +10,14 @@ import { ScopeRepository } from '../../repository/ScopeRepository';
 import { Scope } from '../entity/Scope';
 import pMap from 'p-map';
 import { Registry } from '../entity/Registry';
+import { RegistryType } from 'app/common/enum/registry';
 
 export type CreateCmd = {
+  id?: bigint;
+  registryId?: string;
   name: string;
   scopes: string[];
-} & Pick<RegistryModel, 'changeStream' | 'host' | 'userPrefix' | 'type'>
+} & Pick<RegistryModel, 'changeStream' | 'host' | 'userPrefix' | 'type'>;
 
 export type RemoveCmd = {
   name?: string;
@@ -32,18 +35,21 @@ export class RegistryService extends AbstractService {
   private readonly scopeRepository: ScopeRepository;
 
   async update(createCmd: CreateCmd) {
-    const { name, scopes, changeStream, host, userPrefix, type } = createCmd;
+    const { name, scopes, changeStream, host, userPrefix, type, id, registryId } = createCmd;
+    if (registryId) {
+      // remove Scopes
+      await this.scopeRepository.removeScopeByRegistryId(registryId);
+    }
     // save Registry
     const registryModel = await this.registryRepository.saveRegistry(Registry.create(
       {
-        name, changeStream, host, userPrefix, type
-      }
+        id, name, changeStream, host, userPrefix, type: type as RegistryType,
+      },
     ));
 
     if (registryModel) {
       // Save Scopes
-      // May be need transaction
-      for (let scope of scopes) {
+      for (const scope of scopes) {
         const scopeModel = Scope.create({ name: scope, registryId: registryModel.registryId });
         await this.scopeRepository.saveScope(scopeModel);
       }
@@ -66,16 +72,22 @@ export class RegistryService extends AbstractService {
   async remove(removeCmd: RemoveCmd): Promise<void> {
     let registryModel: Registry | null;
 
+    let registryId: string | undefined;
     if (removeCmd.name) {
       registryModel = await this.registryRepository.findRegistry(removeCmd.name);
       if (!registryModel) {
         return;
       }
-      await this.registryRepository.removeRegistry(registryModel.registryId);
+      registryId = registryModel.registryId;
     }
-    if (removeCmd.registryId) {
-      await this.registryRepository.removeRegistry(removeCmd.registryId);
+
+    registryId = registryId || removeCmd.registryId;
+
+    if (registryId) {
+      await this.registryRepository.removeRegistry(registryId);
+      await this.scopeRepository.removeScopeByRegistryId(registryId);
     }
+
   }
 
 }

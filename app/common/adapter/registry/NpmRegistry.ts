@@ -22,10 +22,10 @@ export class NpmRegistry extends AbstractRegistry {
   }
 
   async handleChanges(since: string, taskData: Task['data'], packageSyncerService: PackageSyncerService): Promise<HandleResult> {
-    const db = `${this.registry.changeStream}?since=${since}&limit=2000`;
+    const db = `${this.registry.changeStream}?since=${since}`;
     let lastSince = since;
-    let syncCount = 0;
-    let taskCount = 0;
+    const syncCount = 0;
+    const taskCount = 0;
     let taskResult = {};
     const { res } = await this.httpclient.request(db, {
       streaming: true,

@@ -1,5 +1,6 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
+import { RegistryType } from 'app/common/enum/registry';
 
 interface RegistryData extends EntityData {
   name: string;
@@ -7,7 +8,7 @@ interface RegistryData extends EntityData {
   host: string;
   changeStream: string;
   userPrefix: string;
-  type: string;
+  type: RegistryType;
 }
 
 export class Registry extends Entity {
@@ -16,7 +17,7 @@ export class Registry extends Entity {
   host: string;
   changeStream: string;
   userPrefix: string;
-  type: string;
+  type: RegistryType;
 
   constructor(data: RegistryData) {
     super(data);

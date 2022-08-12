@@ -6,7 +6,7 @@ import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 export class CnpmcoreRegistry extends AbstractRegistry {
   // fetch changes from cnpmjs.org based registry
   // since we hasn't support seqId, we need to detect limit
-  async fetch(since: string) {
+  async fetch(since?: string) {
     since = since || '1';
     const { registry } = this;
     const { status, data } = await this.httpclient.request(
@@ -22,7 +22,7 @@ export class CnpmcoreRegistry extends AbstractRegistry {
   }
 
   async handleChanges(since: string, taskData: Task['data'], packageSyncerService: PackageSyncerService): Promise<HandleResult> {
-    const db = `${this.registry.changeStream}?since=${since}&limit=2000`;
+    const db = `${this.registry.changeStream}?since=${since}`;
     let res = {};
     let lastSince = since;
     let syncCount = 0;
@@ -38,10 +38,10 @@ export class CnpmcoreRegistry extends AbstractRegistry {
       let count = 0;
       let lastPackage = '';
       for (const change of data.results) {
-        const seq = new Date(change.gmt_modified).getTime() + '';
+        const seq = change.seq;
         const fullname = change.id;
         if (seq && fullname && seq !== since) {
-          if (this.needSync(this.registry.scopes, fullname) && change.type === 'PACKAGE_VERSION_ADDED') {
+          if (this.needSync(this.registry.scopes, fullname)) {
             syncCount++;
             await packageSyncerService.createTask(fullname, {
               authorIp: os.hostname(),

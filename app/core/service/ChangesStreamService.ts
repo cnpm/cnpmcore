@@ -46,35 +46,46 @@ export class ChangesStreamService extends AbstractService {
   }
 
   // since 2022-08-08, cnpmcore supports multiple changesStream
+  // we will convert the cnpmcore config to registries
   async convertLegacyChangeStream(task: Task) {
     const { data } = task;
-    if (Array.isArray(data)) {
-      return task;
-    }
     const changesStreamRegistry: string = this.config.cnpmcore.changesStreamRegistry;
     // will be npmmirror or npm registry
     const targetRegistry = await this.registryRepository.findRegistryByChangeStream(`${changesStreamRegistry}/_changes`);
+    const { changesStreamRegistryMode, changesStreamRegistry: host } = this.config.cnpmcore;
+    const type = changesStreamRegistryMode === 'json' ? 'cnpmcore' : 'npm';
+    const name = type;
 
-    // do nothing
-    if (!targetRegistry) {
-      this.logger.warn('[ChangesStreamService.convertLegacyChangeStream:noTargetRegistry] %s', changesStreamRegistry);
+    // no target registry try to create
+    if (!targetRegistry && changesStreamRegistry) {
+      this.logger.warn('[ChangesStreamService.convertLegacyChangeStream:noTargetRegistry] %s', changesStreamRegistry, changesStreamRegistryMode);
       task.data = [
-         { name: 'unknown', data, }
+        { name, data },
       ];
+
+      await this.registryService.update({
+        name,
+        scopes: [],
+        type,
+        userPrefix: 'npm:',
+        host: host,
+        changeStream: `${host}/_changes`,
+      });
       return task;
     }
 
-    // convert the single task to array
-    task.data = [{
-      name: targetRegistry.name,
-      data,
-    }];
-
+    if (task.data && !Array.isArray(task.data)) {
+      // convert the single task to array
+      task.data = [{
+        name,
+        data,
+      }];
+    }
     return task;
   }
 
   private async _executeTask(registry: Unpack<ReturnType<typeof this.registryService.list>>[number], task: Task) {
-    let targetData = task.data.find(data => data.name === registry.name);
+    let targetData = task.data.find(data => data.name === registry.name)?.data;
     const registryAdapter = this.getAdapter(registry);
     if (!targetData) {
       const newTask = {
@@ -103,8 +114,8 @@ export class ChangesStreamService extends AbstractService {
         Object.assign(targetData, taskData);
         task.updatedAt = new Date();
         await this.taskRepository.saveTask(task);
-        this.logger.warn('[ChangesStreamService.executeTask:changes] since: %s => %s, %d new tasks, %d need to sync, taskId: %s, updatedAt: %j',
-          since, targetData.since, taskCount, syncCount, task.taskId, task.updatedAt);
+        this.logger.warn('[ChangesStreamService.executeTask:changes] registry: %s, since: %s => %s, %d new tasks, %d need to sync, taskId: %s, updatedAt: %j',
+          registry.name, since, targetData.since, taskCount, syncCount, task.taskId, task.updatedAt);
         since = targetData.since;
         if (taskCount === 0 && this.config.env === 'unittest') {
           break;
@@ -124,7 +135,7 @@ export class ChangesStreamService extends AbstractService {
     task.authorId = `pid_${process.pid}`;
     task = await this.convertLegacyChangeStream(task);
     const registries = await this.registryService.list();
-    this.logger.error('[ChangesStreamService.executeTask:info] registries %j', registries.map(registry => registry.name));
+    this.logger.info('[ChangesStreamService.executeTask:info] registries %j', registries.map(registry => registry.name));
     await Promise.all(registries.map(registry => this._executeTask(registry, task)));
     await this.taskRepository.saveTask(task);
 
@@ -136,7 +147,7 @@ export class ChangesStreamService extends AbstractService {
   }
 
   private getAdapter(registry: Registry) {
-    const Adapter = getRegistryAdapter(registry);
+    const Adapter = getRegistryAdapter(registry) as any;
     return new Adapter(this.httpclient, this.logger, registry);
   }
 }

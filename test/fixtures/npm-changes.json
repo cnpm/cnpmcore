@@ -1,0 +1,21 @@
+{
+  "results": [
+    {
+      "seq": 7139720,
+      "id": "test-dsr-vases-blags-chirm-stout",
+      "changes": [{ "rev": "1-dc597d3ab46804c18ddfc123c4a50fc8" }]
+    },
+    {
+      "seq": 7139722,
+      "id": "test-dsr-agene-dowel-hawse-mains",
+      "changes": [{ "rev": "2-8183bcf892a9048f4844cc4e9d201b81" }],
+      "deleted": true
+    },
+    {
+      "seq": 7139728,
+      "id": "dsr-package-slush-sewen-hokes-gowks",
+      "changes": [{ "rev": "3-ff364e93d60265e7093f12c4f882edbb" }],
+      "deleted": true
+    }
+  ]
+}

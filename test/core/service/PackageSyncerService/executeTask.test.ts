@@ -1085,7 +1085,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     });
 
     it('should mock getFullManifests missing tarball error and downloadTarball error', async () => {
-      mock.error(NPMRegistry.prototype, 'downloadTarball');
+      app.mockHttpclient(/^http:\/\/foo\.com\//, 'GET', () => {
+        throw new Error('mock request error');
+      });
       mock.data(NPMRegistry.prototype, 'getFullManifests', {
         data: {
           maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],

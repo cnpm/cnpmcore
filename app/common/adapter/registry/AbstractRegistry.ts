@@ -9,7 +9,7 @@ export type FetchResult = {
   data: any;
   status: number;
   since?: string;
-}
+};
 
 export type HandleResult = {
   taskData: {
@@ -24,7 +24,7 @@ export type HandleResult = {
   syncCount: number;
 };
 
-export type RegistryWithScopes = Registry & { scopes: Scope[] }
+export type RegistryWithScopes = Registry & { scopes: Scope[] };
 
 export abstract class AbstractRegistry {
   protected registry: RegistryWithScopes;
@@ -44,7 +44,7 @@ export abstract class AbstractRegistry {
       return true;
     }
     // scoped registry do not sync common package
-    const [scope] = getScopeAndName(pkgName);
+    const [ scope ] = getScopeAndName(pkgName);
     if (!scope) {
       return false;
     }

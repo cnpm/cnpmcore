@@ -1,0 +1,28 @@
+{
+  "results": [
+    {
+      "seq": 10000,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@cnpm/jfs-core",
+      "changes": [{ "version": "10.0.0-beta.177" }]
+    },
+    {
+      "seq": 10001,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@cnpmjs/ide-toolbar",
+      "changes": [{ "version": "2.13.7-next-1640751253.0" }]
+    },
+    {
+      "seq": 10002,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "@uiw/react-color-wheel",
+      "changes": [{ "tag": "latest" }]
+    },
+    {
+      "seq": 10003,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@opensumi/ide-webview",
+      "changes": [{ "version": "2.13.7-next-1640751253.0" }]
+    }
+  ]
+}

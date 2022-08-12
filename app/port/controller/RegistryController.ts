@@ -13,32 +13,32 @@ import { RegistryService } from '../../core/service/RegistryService';
 
 const RegistryCreateOptions = Type.Object({
   name: Type.String({
-    transform: ['trim'],
+    transform: [ 'trim' ],
     minLength: 1,
     maxLength: 256,
   }),
   host: Type.String({
-    transform: ['trim'],
+    transform: [ 'trim' ],
     minLength: 1,
     maxLength: 4096,
   }),
   changeStream: Type.String({
-    transform: ['trim'],
+    transform: [ 'trim' ],
     minLength: 1,
     maxLength: 4096,
   }),
   userPrefix: Type.Optional(Type.String({
-    transform: ['trim'],
+    transform: [ 'trim' ],
     minLength: 1,
     maxLength: 256,
   })),
   type: Type.String({
-    transform: ['trim'],
+    transform: [ 'trim' ],
     minLength: 1,
     maxLength: 256,
   }),
   scopes: Type.Array(Type.String({
-    transform: ['trim'],
+    transform: [ 'trim' ],
     minLength: 1,
     maxLength: 214,
   })),
@@ -46,12 +46,12 @@ const RegistryCreateOptions = Type.Object({
 
 const RegistryRemoveOptions = Type.Object({
   name: Type.Optional(Type.String({
-    transform: ['trim'],
+    transform: [ 'trim' ],
     minLength: 1,
     maxLength: 256,
   })),
   registryId: Type.Optional(Type.String({
-    transform: ['trim'],
+    transform: [ 'trim' ],
     minLength: 1,
     maxLength: 256,
   })),

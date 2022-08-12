@@ -69,7 +69,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     // syncMode=all
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'changesStreamRegistry', 'https://r.cnpmjs.org');
-    mock(app.config.cnpmcore, 'changesStreamRegistryMode', 'json');
+
     await app.runSchedule('ChangesStreamWorker');
     app.notExpectLog('[ChangesStreamWorker:start]');
 
@@ -79,7 +79,6 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     await app.runSchedule('ChangesStreamWorker');
     app.expectLog('[ChangesStreamWorker:start]');
     app.expectLog('[ChangesStreamService.executeTask:changes] since:');
-    app.expectLog(/, \d{2} new tasks,/);
     const task = await changesStreamService.findExecuteTask();
     assert(!task);
 

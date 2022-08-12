@@ -1,14 +1,20 @@
-import { Registry } from "app/core/entity/Registry";
-import { CnpmjsOrgRegistry } from "./CnpmjsOrgRegistry";
-import { CnpmcoreRegistry } from "./NpmcoreRegistry";
-import { NpmRegistry } from "./NpmRegistry";
+import { Registry } from 'app/core/entity/Registry';
+import { CnpmjsOrgRegistry } from './CnpmjsOrgRegistry';
+import { CnpmcoreRegistry } from './CnpmcoreRegistry';
+import { NpmRegistry } from './NpmRegistry';
+import { AbstractRegistry } from './AbstractRegistry';
+import { RegistryType } from 'app/common/enum/registry';
 
-const REGISTRY_TYPE_MAP = {
+const REGISTRY_TYPE_MAP: Record<RegistryType, typeof AbstractRegistry> = {
   cnpmjsorg: CnpmjsOrgRegistry,
-  npmcore: CnpmcoreRegistry,
-  NpmRegistry: NpmRegistry,
+  cnpmcore: CnpmcoreRegistry,
+  npm: NpmRegistry,
 };
 
 export function getRegistryAdapter(registry: Registry) {
-  return REGISTRY_TYPE_MAP[registry.type];
+  const target = REGISTRY_TYPE_MAP[registry.type];
+  if (!target) {
+    throw new Error(`Registry type ${registry.type} not supported`);
+  };
+  return target;
 }
