@@ -33,7 +33,7 @@ describe('test/core/service/ChangeStreamService/executeTask.test.ts', () => {
       let retryCount = 1;
       app.mockHttpclient(/^https:\/\/registry/, () => {
         if (retryCount) {
-          retryCount --
+          retryCount--;
           return {
             data,
             status: 200,
@@ -66,7 +66,7 @@ describe('test/core/service/ChangeStreamService/executeTask.test.ts', () => {
       });
       await changeStreamService.executeTask(task);
 
-      assert(task.data[0].error === 'Error: mock request error');
+      assert(task.data[0].data.error === 'Error: mock request error');
 
     });
 
@@ -82,7 +82,7 @@ describe('test/core/service/ChangeStreamService/executeTask.test.ts', () => {
       let retryCount = 2;
       app.mockHttpclient(/^https:\/\/r\.cnpmjs\.org/, () => {
         if (retryCount) {
-          retryCount --
+          retryCount--;
           return {
             data,
             status: 200,
@@ -95,10 +95,10 @@ describe('test/core/service/ChangeStreamService/executeTask.test.ts', () => {
       });
 
       const customData = await TestUtil.readJSONFile(TestUtil.getFixtures('custom-changes.json'));
-      let npmRetry = 2
+      let npmRetry = 2;
       app.mockHttpclient(/^https:\/\/replicate\.npmjs\.com/, () => {
         if (npmRetry) {
-          npmRetry --
+          npmRetry--;
           return {
             data: customData,
             status: 200,
@@ -116,7 +116,7 @@ describe('test/core/service/ChangeStreamService/executeTask.test.ts', () => {
         host: 'https://cnpmjs.org',
         userPrefix: 'cnpm:',
         type: 'cnpmcore',
-        scopes: ['@cnpm', '@cnpmjs'],
+        scopes: [ '@cnpm', '@cnpmjs' ],
       });
 
       await changeStreamService.executeTask(task);

@@ -40,7 +40,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     mock(app.config.cnpmcore, 'enableChangesStream', true);
     await app.runSchedule('ChangesStreamWorker');
     app.expectLog('[ChangesStreamWorker:start]');
-    app.expectLog('[ChangesStreamService.executeTask:changes] since: ');
+    app.expectLog('[ChangesStreamService.executeTask:changes] registry: npm, since:');
     const task = await changesStreamService.findExecuteTask();
     assert(!task, 'task should not exists');
 
@@ -53,10 +53,10 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     assert(result.processing === 1);
     assert(result.waiting === 0);
     // mock request https://replicate.npmjs.com/_changes error
-    app.mockHttpclient(/https:\/\/replicate.npmjs.com\/_changes/, () => {
+    app.mockHttpclient(/https:\/\/replicate\.npmjs\.com\/_changes/, () => {
       throw new Error('mock request replicate _changes error');
     });
-    app.mockHttpclient(/https:\/\/r.cnpmjs.org\/_changes/, () => {
+    app.mockHttpclient(/https:\/\/r\.cnpmjs\.org\/_changes/, () => {
       throw new Error('mock request replicate _changes error');
     });
     await app.runSchedule('ChangesStreamWorker');
@@ -82,7 +82,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     mock(app.config.cnpmcore, 'enableChangesStream', true);
     await app.runSchedule('ChangesStreamWorker');
     app.expectLog('[ChangesStreamWorker:start]');
-    app.expectLog('[ChangesStreamService.executeTask:changes] since:');
+    app.expectLog('[ChangesStreamService.executeTask:changes] registry: npm, since:');
     const task = await changesStreamService.findExecuteTask();
     assert(!task);
 
@@ -144,7 +144,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
       host: 'https://cnpmjs.org',
       userPrefix: 'cnpm:',
       type: 'cnpmcore',
-      scopes: ['@dnpm', '@dnpmjs'],
+      scopes: [ '@dnpm', '@dnpmjs' ],
     });
 
     // mock changes stream
@@ -152,7 +152,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     let retryCount = 2;
     app.mockHttpclient(/^https:\/\/r\.cnpmjs\.org/, () => {
       if (retryCount) {
-        retryCount --
+        retryCount--;
         return {
           data,
           status: 200,
@@ -165,10 +165,10 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     });
 
     const customData = await TestUtil.readJSONFile(TestUtil.getFixtures('custom-changes.json'));
-    let npmRetry = 2
+    let npmRetry = 2;
     app.mockHttpclient(/^https:\/\/r2\.cnpmjs\.org/, () => {
       if (npmRetry) {
-        npmRetry --
+        npmRetry--;
         return {
           data: customData,
           status: 200,
@@ -195,10 +195,10 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     assert(result.processing === 1);
     assert(result.waiting === 0);
     // mock request https://replicate.npmjs.com/_changes error
-    app.mockHttpclient(/https:\/\/r2.cnpmjs.org\/_changes/, () => {
+    app.mockHttpclient(/https:\/\/r2\.cnpmjs.org\/_changes/, () => {
       throw new Error('mock request replicate _changes error');
     });
-    app.mockHttpclient(/https:\/\/r.cnpmjs.org\/_changes/, () => {
+    app.mockHttpclient(/https:\/\/r\.cnpmjs.org\/_changes/, () => {
       throw new Error('mock request replicate _changes error');
     });
     await app.runSchedule('ChangesStreamWorker');

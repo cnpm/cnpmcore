@@ -37,15 +37,15 @@ describe('test/repository/ChangeRepository.test.ts', () => {
 
       // list
       const scopes = await scopeRepository.listScopes();
-      assert.deepEqual([cnpmjsScope.name, cnpmScope.name], scopes.map(scope => scope.name));
+      assert.deepEqual([ cnpmjsScope.name, cnpmScope.name ], scopes.map(scope => scope.name));
 
       // remove
       await scopeRepository.removeScope(cnpmjsScope.scopeId);
       const scopesAfterRemove = await scopeRepository.listScopes();
-      assert.deepEqual(scopesAfterRemove.map(scope => scope.name), [cnpmScope.name]);
+      assert.deepEqual(scopesAfterRemove.map(scope => scope.name), [ cnpmScope.name ]);
       await scopeRepository.removeScopeByRegistryId(cnpmjsScope.registryId);
       const empty = await scopeRepository.listScopes();
       assert.deepEqual(empty, []);
-    })
+    });
   });
 });

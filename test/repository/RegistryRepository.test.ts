@@ -56,12 +56,12 @@ describe('test/repository/ChangeRepository.test.ts', () => {
 
       // list
       const registries = await registryRepository.listRegistries();
-      assert.deepEqual([registry], registries);
+      assert.deepEqual([ registry ], registries);
 
       // remove
       await registryRepository.removeRegistry(registry.registryId);
       const empty = await registryRepository.listRegistries();
       assert.deepEqual(empty, []);
-    })
+    });
   });
 });

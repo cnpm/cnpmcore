@@ -29,14 +29,14 @@ describe('test/core/service/ChangeStreamService/executeTask.test.ts', () => {
         host: 'https://cnpmjs.org',
         userPrefix: 'cnpm:',
         type: 'cnpmcore',
-        scopes: ['@cnpm', '@cnpmjs'],
+        scopes: [ '@cnpm', '@cnpmjs' ],
       });
 
       const [ registry ] = await registryService.list();
 
       assert(registry.name === 'custom');
       assert(registry.type === 'cnpmcore');
-      assert.deepEqual(registry.scopes.map(item => item.name), ['@cnpm', '@cnpmjs']);
+      assert.deepEqual(registry.scopes.map(item => item.name), [ '@cnpm', '@cnpmjs' ]);
       assert(registry.scopes[0].registryId === registry.registryId);
 
       // create another
@@ -46,12 +46,13 @@ describe('test/core/service/ChangeStreamService/executeTask.test.ts', () => {
         host: 'https://cnpmjs.org',
         userPrefix: 'cnpm:',
         type: 'cnpmcore',
-        scopes: ['@dnpm', '@dnpmjs'],
+        scopes: [ '@dnpm', '@dnpmjs' ],
       });
 
-      const [_, otherRegistry] = await registryService.list();
+      const [ _, otherRegistry ] = await registryService.list();
+      assert(_);
       assert(otherRegistry.name === 'custom2');
-      assert.deepEqual(otherRegistry.scopes.map(item => item.name), ['@dnpm', '@dnpmjs']);
+      assert.deepEqual(otherRegistry.scopes.map(item => item.name), [ '@dnpm', '@dnpmjs' ]);
       assert(otherRegistry.scopes[0].registryId === otherRegistry.registryId);
 
       // update registry
@@ -62,13 +63,13 @@ describe('test/core/service/ChangeStreamService/executeTask.test.ts', () => {
         scopes: [],
       });
 
-      const [updatedRegistry] = await registryService.list();
+      const [ updatedRegistry ] = await registryService.list();
 
       assert(updatedRegistry.name === 'foo');
       assert.deepEqual(updatedRegistry.scopes, []);
 
       // remove registry
-      await registryService.remove({name: updatedRegistry.name});
+      await registryService.remove({ name: updatedRegistry.name });
       await registryService.remove({ registryId: otherRegistry.registryId });
       const registryList = await registryService.list();
       assert(registryList.length === 0);

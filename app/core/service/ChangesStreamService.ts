@@ -68,7 +68,7 @@ export class ChangesStreamService extends AbstractService {
         scopes: [],
         type,
         userPrefix: 'npm:',
-        host: host,
+        host,
         changeStream: `${host}/_changes`,
       });
       return task;

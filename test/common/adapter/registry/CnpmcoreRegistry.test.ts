@@ -64,7 +64,7 @@ describe('test/common/adapter/registry/CnpmcoreRegistry.test.ts', () => {
       const adapter = new CnpmcoreRegistry(ctx.httpclient, ctx.logger, registry);
 
       const data = await TestUtil.readJSONFile(TestUtil.getFixtures('cnpmcore-changes.json'));
-      app.mockHttpclient(/https:\/\/replicate.npmjs.com\/_changes/, 'GET', {
+      app.mockHttpclient(/https:\/\/replicate\.npmjs\.com\/_changes/, 'GET', {
         data,
         status: 200,
       });

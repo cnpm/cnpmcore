@@ -17,8 +17,8 @@ describe('test/common/adapter/registry/AbstractRegistry.test.ts', () => {
       constructor() {
         super({} as any, {} as any, {} as any);
       }
-      async fetch() { return {} as any}
-      async handleChanges() { return {} as any}
+      async fetch() { return {} as any; }
+      async handleChanges() { return {} as any; }
     };
   });
 
@@ -46,7 +46,7 @@ describe('test/common/adapter/registry/AbstractRegistry.test.ts', () => {
     it('should sync for specify scope', async () => {
       await registryService.update({
         name: 'cnpm',
-        scopes: ['@cnpm', '@dnpm'],
+        scopes: [ '@cnpm', '@dnpm' ],
         userPrefix: 'cnpm:',
         changeStream: 'https://replicate.cnpmjs.com/_changes',
         host: 'https://registry.cnpmjs.org',
@@ -63,17 +63,17 @@ describe('test/common/adapter/registry/AbstractRegistry.test.ts', () => {
     it('should ignore for other scope', async () => {
       await registryService.update({
         name: 'cnpm',
-        scopes: ['@cnpm', '@dnpm'],
+        scopes: [ '@cnpm', '@dnpm' ],
         userPrefix: 'cnpm:',
         changeStream: 'https://replicate.cnpmjs.com/_changes',
         host: 'https://registry.cnpmjs.org',
         type: 'cnpmcore',
       });
-      const [registry] = await registryService.list();
+      const [ registry ] = await registryService.list();
 
       const adapter = new Adapter();
-      assert(adapter.needSync(registry.scopes, '@enpm/banana') === false );
-      assert(adapter.needSync(registry.scopes, 'test') === false );
+      assert(adapter.needSync(registry.scopes, '@enpm/banana') === false);
+      assert(adapter.needSync(registry.scopes, 'test') === false);
 
     });
 

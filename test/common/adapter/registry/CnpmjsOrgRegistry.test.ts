@@ -26,7 +26,7 @@ describe('test/common/adapter/registry/CnpmjsOrgRegistry.test.ts', () => {
     it('should fetch success', async () => {
       await registryService.update({
         name: 'cnpmjsorg',
-        scopes: ['@cnpmjs', '@cnpm'],
+        scopes: [ '@cnpmjs', '@cnpm' ],
         userPrefix: 'cnpmjs:',
         changeStream: 'https://replicate.npmjs.com/_changes',
         host: 'https://registry.npmjs.org',
@@ -54,17 +54,17 @@ describe('test/common/adapter/registry/CnpmjsOrgRegistry.test.ts', () => {
     it('should sync all packages', async () => {
       await registryService.update({
         name: 'cnpmjsorg',
-        scopes: ['@cnpmjs', '@cnpm'],
+        scopes: [ '@cnpmjs', '@cnpm' ],
         userPrefix: 'cnpmjs:',
         changeStream: 'https://replicate.npmjs.com/_changes',
         host: 'https://registry.npmjs.org',
         type: 'cnpmcore',
       });
-      const [registry] = await registryService.list();
+      const [ registry ] = await registryService.list();
       const adapter = new CnpmjsOrgRegistry(ctx.httpclient, ctx.logger, registry);
 
       const data = await TestUtil.readJSONFile(TestUtil.getFixtures('cnpmjsorg-changes.json'));
-      app.mockHttpclient(/https:\/\/replicate.npmjs.com\/_changes/, 'GET', {
+      app.mockHttpclient(/https:\/\/replicate\.npmjs\.com\/_changes/, 'GET', {
         data,
         status: 200,
       });

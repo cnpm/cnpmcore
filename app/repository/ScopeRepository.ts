@@ -27,13 +27,12 @@ export class ScopeRepository extends AbstractRepository {
       if (!model) return;
       await ModelConvertor.saveEntityToModel(scope, model);
       return model;
-    } else {
-      const model = await ModelConvertor.convertEntityToModel(scope, this.Scope);
-      this.logger.info('[ScopeRepository:saveScope:new] id: %s, scopeId: %s',
-        model.id, model.scopeId);
-      await model.save();
-      return model;
     }
+    const model = await ModelConvertor.convertEntityToModel(scope, this.Scope);
+    this.logger.info('[ScopeRepository:saveScope:new] id: %s, scopeId: %s',
+      model.id, model.scopeId);
+    await model.save();
+    return model;
   }
 
   async removeScope(scopeId: string): Promise<void> {

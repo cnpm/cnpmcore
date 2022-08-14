@@ -15,6 +15,6 @@ export function getRegistryAdapter(registry: Registry) {
   const target = REGISTRY_TYPE_MAP[registry.type];
   if (!target) {
     throw new Error(`Registry type ${registry.type} not supported`);
-  };
+  }
   return target;
 }

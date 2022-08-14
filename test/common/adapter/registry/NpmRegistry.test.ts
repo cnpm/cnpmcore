@@ -65,9 +65,9 @@ describe('test/common/adapter/registry/NpmRegistry.test.ts', () => {
       const [ registry ] = await registryService.list();
       const adapter = new NpmRegistry(ctx.httpclient, ctx.logger, registry);
 
-      const dataPath = TestUtil.getFixtures('npm-changes.json')
+      const dataPath = TestUtil.getFixtures('npm-changes.json');
       const data = await TestUtil.readJSONFile(dataPath);
-      app.mockHttpclient(/https:\/\/replicate.npmjs.com\/_changes/, () => {
+      app.mockHttpclient(/https:\/\/replicate\.npmjs\.com\/_changes/, () => {
         return fs.createReadStream(dataPath) as any;
       });
       const { taskData, syncCount, taskCount, lastSince } = await adapter.handleChanges('10000', {}, packageSyncerService);

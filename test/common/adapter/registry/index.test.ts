@@ -4,7 +4,7 @@ import { getRegistryAdapter } from 'app/common/adapter/registry/index';
 
 describe('test/common/adapter/registry/index.test.ts', () => {
   it('should get registry success', async () => {
-    ['npm', 'cnpmcore', 'cnpmjsorg'].forEach((type) => {
+    [ 'npm', 'cnpmcore', 'cnpmjsorg' ].forEach(type => {
       const adapter = getRegistryAdapter({ type } as any);
       assert(adapter);
     });
