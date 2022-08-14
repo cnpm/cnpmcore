@@ -3,7 +3,7 @@ import { Registry } from '../../../core/entity/Registry';
 import { Scope } from '../../../core/entity/Scope';
 import { Task } from '../../../core/entity/Task';
 import { EggContextHttpClient, EggLogger } from 'egg';
-import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
+import type { PackageSyncerService } from '../../../core/service/PackageSyncerService';
 
 export type FetchResult = {
   data: any;
@@ -30,24 +30,29 @@ export abstract class AbstractRegistry {
   protected registry: RegistryWithScopes;
   protected httpclient: EggContextHttpClient;
   protected logger: EggLogger;
+  protected fullScopes: string[];
 
-  constructor(httpclient: EggContextHttpClient, logger: EggLogger, registry: RegistryWithScopes) {
+  constructor(httpclient: EggContextHttpClient, logger: EggLogger, registry: RegistryWithScopes, fullScopes: string[] = []) {
     this.httpclient = httpclient;
     this.logger = logger;
     this.registry = registry;
+    this.fullScopes = fullScopes;
   }
 
   // check need handle the change task
   needSync(scopes: Scope[], pkgName: string) {
+    const [ scope ] = getScopeAndName(pkgName);
     // common package registry
     if (scopes.length === 0) {
-      return true;
+      // should not be conflict with other registry
+      return this.fullScopes.every(otherScope => otherScope !== scope);
     }
-    // scoped registry do not sync common package
-    const [ scope ] = getScopeAndName(pkgName);
+
+    // scoped registries
     if (!scope) {
       return false;
     }
+
     return scopes.some(s => s.name === scope);
   }
 

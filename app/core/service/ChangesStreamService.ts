@@ -17,7 +17,7 @@ import { EggContextHttpClient } from 'egg';
 import { getRegistryAdapter } from '../../common/adapter/registry';
 import { Registry } from '../entity/Registry';
 import { PackageSyncerService } from './PackageSyncerService';
-import { HandleResult } from 'app/common/adapter/registry/AbstractRegistry';
+import type { HandleResult } from '../../common/adapter/registry/AbstractRegistry';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -84,9 +84,9 @@ export class ChangesStreamService extends AbstractService {
     return task;
   }
 
-  private async _executeTask(registry: Unpack<ReturnType<typeof this.registryService.list>>[number], task: Task) {
+  private async _executeTask(registry: Unpack<ReturnType<typeof this.registryService.list>>[number], task: Task, fullScopes: string[]) {
     let targetData = task.data.find(data => data.name === registry.name)?.data;
-    const registryAdapter = this.getAdapter(registry);
+    const registryAdapter = this.getAdapter(registry, fullScopes);
     if (!targetData) {
       const newTask = {
         name: registry.name,
@@ -110,7 +110,7 @@ export class ChangesStreamService extends AbstractService {
       }
       // allow disable changesStream dynamic
       while (since && this.config.cnpmcore.enableChangesStream) {
-        const { taskData, taskCount, syncCount } = await this.handleChanges(since, targetData, registry);
+        const { taskData, taskCount, syncCount } = await this.handleChanges(since, targetData, registry, fullScopes);
         Object.assign(targetData, taskData);
         task.updatedAt = new Date();
         await this.taskRepository.saveTask(task);
@@ -135,19 +135,20 @@ export class ChangesStreamService extends AbstractService {
     task.authorId = `pid_${process.pid}`;
     task = await this.convertLegacyChangeStream(task);
     const registries = await this.registryService.list();
+    const fullScopes = registries.map(registry => registry.scopes.map(scope => scope.name)).flat();
     this.logger.info('[ChangesStreamService.executeTask:info] registries %j', registries.map(registry => registry.name));
-    await Promise.all(registries.map(registry => this._executeTask(registry, task)));
+    await Promise.all(registries.map(registry => this._executeTask(registry, task, fullScopes)));
     await this.taskRepository.saveTask(task);
 
   }
 
-  private async handleChanges(since: string, task: Task, registry: Unpack<ReturnType<typeof this.registryService.list>>[number]): Promise<HandleResult> {
-    const registryAdapter = this.getAdapter(registry);
+  private async handleChanges(since: string, task: Task, registry: Unpack<ReturnType<typeof this.registryService.list>>[number], fullScopes: string[]): Promise<HandleResult> {
+    const registryAdapter = this.getAdapter(registry, fullScopes);
     return registryAdapter.handleChanges(since, task, this.packageSyncerService);
   }
 
-  private getAdapter(registry: Registry) {
+  private getAdapter(registry: Registry, fullScopes: string[]) {
     const Adapter = getRegistryAdapter(registry) as any;
-    return new Adapter(this.httpclient, this.logger, registry);
+    return new Adapter(this.httpclient, this.logger, registry, fullScopes);
   }
 }

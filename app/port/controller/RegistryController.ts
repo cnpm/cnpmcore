@@ -10,6 +10,8 @@ import {
 import { AbstractController } from './AbstractController';
 import { Static, Type } from 'egg-typebox-validate/typebox';
 import { RegistryService } from '../../core/service/RegistryService';
+import { ForbiddenError } from 'egg-errors';
+import { uniq } from 'lodash';
 
 const RegistryCreateOptions = Type.Object({
   name: Type.String({
@@ -76,11 +78,17 @@ export class RegistryController extends AbstractController {
     method: HTTPMethodEnum.POST,
   })
   async createRegistry(@Context() ctx: EggContext, @HTTPBody() registryOptions: Static<typeof RegistryCreateOptions>) {
-    // TODO only admins can create registry
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
+    if (!isAdmin) {
+      throw new ForbiddenError('Not allow to create registry');
+    }
     // verify unique name, scopes
     ctx.tValidate(RegistryCreateOptions, registryOptions);
-    const { name, changeStream, scopes, host, userPrefix = '', type } = registryOptions;
-    return await this.registryService.update({
+    const { name, changeStream, scopes: originScopes, host, userPrefix = '', type } = registryOptions;
+    const scopes = uniq(originScopes);
+
+    // need transaction
+    await this.registryService.update({
       name,
       changeStream,
       scopes,
@@ -88,6 +96,7 @@ export class RegistryController extends AbstractController {
       userPrefix,
       type,
     });
+    return { ok: true };
   }
 
   @HTTPMethod({
@@ -95,10 +104,13 @@ export class RegistryController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   async removeRegistry(@Context() ctx: EggContext, @HTTPBody() registryOptions: Static<typeof RegistryRemoveOptions>) {
-    // TODO only admins can create registry
-    // verify unique name, scopes
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
+    if (!isAdmin) {
+      throw new ForbiddenError('Not allow to delete registry');
+    }
     ctx.tValidate(RegistryRemoveOptions, registryOptions);
-    return await this.registryService.remove(registryOptions);
+    await this.registryService.remove(registryOptions);
+    return { ok: true };
   }
 
 }

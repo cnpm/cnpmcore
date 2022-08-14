@@ -288,6 +288,7 @@ CREATE TABLE IF NOT EXISTS `registries` (
   `change_stream` varchar(4096) DEFAULT NULL COMMENT 'change stream url',
   `type` varchar(256) DEFAULT NULL COMMENT 'registry type cnpmjsorg/cnpmcore/npm ',
   `user_prefix` varchar(256) DEFAULT NULL COMMENT 'user prefix',
+  UNIQUE KEY `uk_name` (`name`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='registry info';
 
@@ -298,6 +299,7 @@ CREATE TABLE IF NOT EXISTS `scopes` (
   `scope_id` varchar(24) NOT NULL COMMENT 'scope id',
   `name` varchar(214) DEFAULT NULL COMMENT 'scope name',
   `registry_id` varchar(24) NOT NULL COMMENT 'registry id',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='scope info';
 ;
