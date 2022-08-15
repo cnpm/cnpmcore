@@ -65,6 +65,10 @@ export class TaskService extends AbstractService {
     return await this.taskRepository.findTask(taskId);
   }
 
+  public async findTasks(taskIdList: Array<string>) {
+    return await this.taskRepository.findTasks(taskIdList);
+  }
+
   public async findTaskLog(task: Task) {
     return await this.nfsAdapter.getDownloadUrlOrStream(task.logPath);
   }

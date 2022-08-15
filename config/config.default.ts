@@ -9,6 +9,7 @@ export default (appInfo: EggAppConfig) => {
 
   config.cnpmcore = {
     name: 'cnpm',
+    hooksLimit: 20,
     sourceRegistry: 'https://registry.npmjs.org',
     // upstream registry is base on `cnpmcore` or not
     // if your upstream is official npm registry, please turn it off

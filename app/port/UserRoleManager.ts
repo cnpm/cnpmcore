@@ -14,7 +14,7 @@ import { Token as TokenEntity } from '../core/entity/Token';
 import { sha512 } from '../common/UserUtil';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
-type TokenRole = 'read' | 'publish' | 'setting';
+export type TokenRole = 'read' | 'publish' | 'setting';
 
 @ContextProto({
   // only inject on port module
