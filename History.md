@@ -1,4 +1,10 @@
 
+1.10.0 / 2022-08-04
+==================
+
+**features**
+  * [[`c2b7d5a`](http://github.com/cnpm/cnpmcore/commit/c2b7d5aa98b5ba8649ec246c616574a22e9a74b8)] - feat: use sort set to impl queue (#277) (killa <<killa123@126.com>>)
+
 1.9.1 / 2022-07-29
 ==================
 

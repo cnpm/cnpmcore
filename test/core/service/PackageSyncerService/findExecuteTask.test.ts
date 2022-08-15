@@ -138,9 +138,7 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       assert(result.processing === 0);
       assert(result.waiting === 0);
 
-      // has two tasks in queue
-      task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      // has one tasks in queue
       task = await packageSyncerService.findExecuteTask();
       assert(task);
       task = await packageSyncerService.findExecuteTask();

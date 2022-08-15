@@ -27,23 +27,19 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
 
       const newTask = await packageSyncerService.createTask('foo');
       assert(newTask);
+      app.expectLog(/queue size: 1/);
       assert(!newTask.data.taskWorker);
-      // same task but in queue has two
+      // same task not create again
       const newTask2 = await packageSyncerService.createTask('foo');
       assert(newTask2);
       assert(newTask2.taskId === newTask.taskId);
       assert(!newTask2.data.taskWorker);
+      app.expectLog(/queue size: 1/);
 
       // find other task type
       task = await taskService.findExecuteTask(TaskType.SyncBinary);
       assert(!task);
 
-      task = await taskService.findExecuteTask(TaskType.SyncPackage);
-      assert(task);
-      assert(task.targetName === 'foo');
-      assert(task.taskId === newTask.taskId);
-      assert(task.data.taskWorker);
-      assert(task.state === TaskState.Processing);
       task = await taskService.findExecuteTask(TaskType.SyncPackage);
       assert(task);
       assert(task.targetName === 'foo');

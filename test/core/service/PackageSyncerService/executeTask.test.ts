@@ -87,6 +87,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.createTask('foo', { skipDependencies: false });
       await packageSyncerService.createTask('bar', { skipDependencies: false });
       await packageSyncerService.createTask('foobar', { skipDependencies: false });
+      await packageSyncerService.createTask('foobarfoo', { skipDependencies: false });
       const task = await packageSyncerService.findExecuteTask();
       assert(task);
       await packageSyncerService.executeTask(task);

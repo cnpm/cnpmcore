@@ -35,3 +35,9 @@ export interface NFSClient {
 
   url?(key: string): string;
 }
+
+export interface QueueAdapter {
+  push<T>(key: string, item: T): Promise<boolean>;
+  pop<T>(key: string): Promise<T | null>;
+  length(key: string): Promise<number>;
+}
