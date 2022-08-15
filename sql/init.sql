@@ -222,8 +222,10 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `log_store_position` varchar(10) NOT NULL COMMENT 'cloud store disk position',
   `attempts` int unsigned DEFAULT 0 COMMENT 'task execute attempts times',
   `error` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'error description',
+  `biz_id` varchar(48) NOT NULL COMMENT 'unique biz id to keep task unique',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_task_id` (`task_id`),
+  UNIQUE KEY `uk_biz_id` (`biz_id`),
   KEY `idx_type_state_target_name` (`target_name`, `type`, `state`),
   KEY `idx_type_state_gmt_modified` (`type`, `state`, `gmt_modified`),
   KEY `idx_gmt_modified` (`gmt_modified`)
