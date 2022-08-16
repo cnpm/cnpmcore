@@ -22,7 +22,10 @@ export default (appInfo: EggAppConfig) => {
     //  - none: don't sync npm package, just redirect it to sourceRegistry
     //  - all: sync all npm packages
     syncMode: 'none',
+    hookEnable: false,
     syncPackageWorkerMaxConcurrentTasks: 10,
+    triggerHookWorkerMaxConcurrentTasks: 10,
+    createTriggerHookWorkerMaxConcurrentTasks: 10,
     // stop syncing these packages in future
     syncPackageBlockList: [],
     // check recently from https://www.npmjs.com/browse/updated, if use set changesStreamRegistry to cnpmcore,

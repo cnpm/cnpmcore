@@ -216,7 +216,7 @@ export class PackageManagerService extends AbstractService {
     if (cmd.tag) {
       await this.savePackageTag(pkg, cmd.tag, cmd.version, true);
     }
-    this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version);
+    this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, cmd.tag);
     return pkgVersion;
   }
 
@@ -273,7 +273,7 @@ export class PackageManagerService extends AbstractService {
   async replacePackageMaintainers(pkg: Package, maintainers: User[]) {
     await this.packageRepository.replacePackageMaintainers(pkg.packageId, maintainers.map(m => m.userId));
     await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
-    this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname);
+    this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname, maintainers);
   }
 
   async savePackageMaintainers(pkg: Package, maintainers: User[]) {
@@ -286,7 +286,7 @@ export class PackageManagerService extends AbstractService {
     }
     if (hasNewRecord) {
       await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
-      this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname);
+      this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname, maintainers);
     }
   }
 
@@ -468,6 +468,7 @@ export class PackageManagerService extends AbstractService {
     // all versions removed
     const versions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
     if (versions.length > 0) {
+      let updateTag: string | undefined;
       // make sure latest tag exists
       const latestTag = await this.packageRepository.findPackageTag(pkg.packageId, 'latest');
       if (latestTag?.version === pkgVersion.version) {
@@ -475,12 +476,13 @@ export class PackageManagerService extends AbstractService {
         // https://github.com/npm/libnpmpublish/blob/main/unpublish.js#L62
         const latestVersion = versions.sort(semver.compareLoose).pop();
         if (latestVersion) {
+          updateTag = latestTag.tag;
           await this.savePackageTag(pkg, latestTag.tag, latestVersion, true);
         }
       }
       if (skipRefreshPackageManifests !== true) {
         await this.refreshPackageChangeVersionsToDists(pkg, undefined, [ pkgVersion.version ]);
-        this.eventBus.emit(PACKAGE_VERSION_REMOVED, pkg.fullname, pkgVersion.version);
+        this.eventBus.emit(PACKAGE_VERSION_REMOVED, pkg.fullname, pkgVersion.version, updateTag);
       }
       return;
     }

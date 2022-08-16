@@ -3,7 +3,7 @@ import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { TaskRepository } from 'app/repository/TaskRepository';
 import { Task as TaskModel } from 'app/repository/model/Task';
-import { Task, TaskData } from '../../app/core/entity/Task';
+import { ChangeStreamTaskData, Task, TaskData } from '../../app/core/entity/Task';
 import { TaskState, TaskType } from '../../app/common/enum/Task';
 import os from 'os';
 import { EasyData, EntityUtil } from '../../app/core/util/EntityUtil';
@@ -28,7 +28,7 @@ describe('test/repository/TaskRepository.test.ts', () => {
   describe('unique biz id', () => {
     it('should save succeed if biz id is equal', async () => {
       const bizId = 'mock_dup_biz_id';
-      const data: EasyData<TaskData, 'taskId'> = {
+      const data: EasyData<TaskData<ChangeStreamTaskData>, 'taskId'> = {
         type: TaskType.ChangesStream,
         state: TaskState.Waiting,
         targetName: 'foo',

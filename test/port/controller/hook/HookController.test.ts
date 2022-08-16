@@ -7,7 +7,7 @@ import { Hook } from '../../../../app/core/entity/Hook';
 import { UserRepository } from '../../../../app/repository/UserRepository';
 import { HookType } from '../../../../app/common/enum/Hook';
 
-describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
+describe('test/port/controller/hook/HookController.test.ts', () => {
   let ctx: Context;
   let hookManageService: HookManageService;
   let user;
@@ -22,10 +22,10 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     userId = userEntity?.userId;
   });
 
-  describe('POST /v1/hooks/hook', () => {
+  describe('POST /-/npm/v1/hooks/hook', () => {
     it('should work', async () => {
       const res = await app.httpRequest()
-        .post('/v1/hooks/hook')
+        .post('/-/npm/v1/hooks/hook')
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
         .send({
@@ -51,7 +51,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     });
   });
 
-  describe('PUT /v1/hooks/hook/:id', () => {
+  describe('PUT /-/npm/v1/hooks/hook/:id', () => {
     let hook: Hook;
     beforeEach(async () => {
       hook = await hookManageService.createHook({
@@ -65,7 +65,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
     it('should work', async () => {
       const res = await app.httpRequest()
-        .put(`/v1/hooks/hook/${hook.hookId}`)
+        .put(`/-/npm/v1/hooks/hook/${hook.hookId}`)
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
         .send({
@@ -78,7 +78,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     });
   });
 
-  describe('DELETE /v1/hooks/hook/:id', () => {
+  describe('DELETE /-/npm/v1/hooks/hook/:id', () => {
     let hook: Hook;
     beforeEach(async () => {
       hook = await hookManageService.createHook({
@@ -92,7 +92,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
     it('should work', async () => {
       const res = await app.httpRequest()
-        .delete(`/v1/hooks/hook/${hook.hookId}`)
+        .delete(`/-/npm/v1/hooks/hook/${hook.hookId}`)
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
         .expect(200);
@@ -100,7 +100,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     });
   });
 
-  describe('GET /v1/hooks', () => {
+  describe('GET /-/npm/v1/hooks', () => {
     beforeEach(async () => {
       await hookManageService.createHook({
         type: HookType.Package,
@@ -113,15 +113,15 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
     it('should work', async () => {
       const res = await app.httpRequest()
-        .get('/v1/hooks')
+        .get('/-/npm/v1/hooks')
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
         .expect(200);
-      assert(res.body.length === 1);
+      assert(res.body.objects.length === 1);
     });
   });
 
-  describe('GET /v1/hooks/hook/:id', () => {
+  describe('GET /-/npm/v1/hooks/hook/:id', () => {
     let hook: Hook;
     beforeEach(async () => {
       hook = await hookManageService.createHook({
@@ -135,7 +135,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
     it('should work', async () => {
       const res = await app.httpRequest()
-        .get(`/v1/hooks/hook/${hook.hookId}`)
+        .get(`/-/npm/v1/hooks/hook/${hook.hookId}`)
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
         .expect(200);

@@ -12,7 +12,7 @@ import { HookManageService } from '../../core/service/HookManageService';
 import { TaskService } from '../../core/service/TaskService';
 import { UserRoleManager } from '../UserRoleManager';
 import { HookType } from '../../common/enum/Hook';
-import { Task } from '../../core/entity/Task';
+import { TriggerHookTask } from '../../core/entity/Task';
 import { HookConvertor } from './convertor/HookConvertor';
 import { CreateHookRequestRule, UpdateHookRequestRule } from '../typebox';
 
@@ -28,7 +28,9 @@ export interface UpdateHookRequest {
   secret: string;
 }
 
-@HTTPController()
+@HTTPController({
+  path: '/-/npm',
+})
 export class HookController {
   @Inject()
   private readonly hookManageService: HookManageService;
@@ -69,9 +71,9 @@ export class HookController {
       endpoint: req.endpoint,
       secret: req.secret,
     });
-    let task: Task | null = null;
+    let task: TriggerHookTask | null = null;
     if (hook.latestTaskId) {
-      task = await this.taskService.findTask(hook.latestTaskId);
+      task = await this.taskService.findTask(hook.latestTaskId) as TriggerHookTask;
     }
     return HookConvertor.convertToHookVo(hook, user, task);
   }
@@ -86,9 +88,9 @@ export class HookController {
       operatorId: user.userId,
       hookId: id,
     });
-    let task: Task | null = null;
+    let task: TriggerHookTask | null = null;
     if (hook.latestTaskId) {
-      task = await this.taskService.findTask(hook.latestTaskId);
+      task = await this.taskService.findTask(hook.latestTaskId) as TriggerHookTask;
     }
     return HookConvertor.convertToDeleteHookVo(hook, user, task);
   }
@@ -101,10 +103,13 @@ export class HookController {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const hooks = await this.hookManageService.listHooksByOwnerId(user.userId);
     const tasks = await this.taskService.findTasks(hooks.map(t => t.latestTaskId).filter((t): t is string => !!t));
-    return hooks.map(hook => {
-      const task = tasks.find(t => t.taskId === hook.latestTaskId);
+    const res = hooks.map(hook => {
+      const task = tasks.find(t => t.taskId === hook.latestTaskId) as TriggerHookTask;
       return HookConvertor.convertToHookVo(hook, user, task);
     });
+    return {
+      objects: res,
+    };
   }
 
   @HTTPMethod({
@@ -114,9 +119,9 @@ export class HookController {
   async getHook(@Context() ctx: EggContext, @HTTPParam() id: string) {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const hook = await this.hookManageService.getHookByOwnerId(id, user.userId);
-    let task: Task | null = null;
+    let task: TriggerHookTask | null = null;
     if (hook.latestTaskId) {
-      task = await this.taskService.findTask(hook.latestTaskId);
+      task = await this.taskService.findTask(hook.latestTaskId) as TriggerHookTask;
     }
     return HookConvertor.convertToHookVo(hook, user, task);
   }

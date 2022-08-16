@@ -1,5 +1,5 @@
 import { Hook } from '../../../core/entity/Hook';
-import { Task } from '../../../core/entity/Task';
+import { TriggerHookTask } from '../../../core/entity/Task';
 import { User } from '../../../core/entity/User';
 import { HookType } from '../../../common/enum/Hook';
 
@@ -35,7 +35,7 @@ export interface DeleteHookVo {
 }
 
 export class HookConvertor {
-  static convertToHookVo(hook: Hook, user: User, task?: Task | null): HookVo {
+  static convertToHookVo(hook: Hook, user: User, task?: TriggerHookTask | null | undefined): HookVo {
     return {
       id: hook.hookId,
       username: user.name,
@@ -47,12 +47,12 @@ export class HookConvertor {
       updated: hook.updatedAt,
       delivered: !!task,
       last_delivery: task?.updatedAt || null,
-      response_code: task?.data.responseData || 0,
+      response_code: task?.data.responseStatus || 0,
       status: 'active',
     };
   }
 
-  static convertToDeleteHookVo(hook: Hook, user: User, task?: Task | null): DeleteHookVo {
+  static convertToDeleteHookVo(hook: Hook, user: User, task?: TriggerHookTask | null): DeleteHookVo {
     const vo = HookConvertor.convertToHookVo(hook, user, task);
     return Object.assign(vo, {
       deleted: true,

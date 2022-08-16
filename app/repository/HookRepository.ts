@@ -2,6 +2,7 @@ import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
 import { Hook } from '../core/entity/Hook';
 import type { Hook as HookModel } from './model/Hook';
 import { ModelConvertor } from './util/ModelConvertor';
+import { HookType } from '../common/enum/Hook';
 
 export interface UpdateHookCommand {
   hookId: string;
@@ -29,7 +30,7 @@ export class HookRepository {
   async findHookById(hookId: string): Promise<Hook | undefined> {
     const model = await this.Hook.findOne({ hookId });
     if (!model) return;
-    return ModelConvertor.convertModelToEntity(model, this.Hook);
+    return ModelConvertor.convertModelToEntity(model, Hook);
   }
 
   async removeHook(hookId: string): Promise<void> {
@@ -50,6 +51,16 @@ export class HookRepository {
 
   async listHooksByOwnerId(ownerId: string) {
     const hookRows = await this.Hook.find({ ownerId });
+    return hookRows.map(row => ModelConvertor.convertModelToEntity(row, Hook));
+  }
+
+  async listHooksByTypeAndName(type: HookType, name: string, since?: bigint): Promise<Array<Hook>> {
+    let hookRows: Array<HookModel>;
+    if (typeof since !== 'undefined') {
+      hookRows = await this.Hook.find({ type, name, id: { $gt: since } }).limit(100);
+    } else {
+      hookRows = await this.Hook.find({ type, name }).limit(100);
+    }
     return hookRows.map(row => ModelConvertor.convertModelToEntity(row, Hook));
   }
 }

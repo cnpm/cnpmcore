@@ -1,6 +1,8 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 import { HookType } from '../../common/enum/Hook';
+import crypto from 'crypto';
+
 export type CreateHookData = Omit<EasyData<HookData, 'hookId'>, 'enable' | 'latestTaskId'>;
 
 export interface HookData extends EntityData {
@@ -43,5 +45,17 @@ export class Hook extends Entity {
     });
     const newData = EntityUtil.defaultData(hookData, 'hookId');
     return new Hook(newData);
+  }
+
+  // payload 可能会特别大，如果做多次 stringify 浪费太多 cpu
+  signPayload(payload: object): { digest, payloadStr } {
+    const payloadStr = JSON.stringify(payload);
+    const digest = crypto.createHmac('sha256', this.secret)
+      .update(JSON.stringify(payload))
+      .digest('hex');
+    return {
+      digest,
+      payloadStr,
+    };
   }
 }
