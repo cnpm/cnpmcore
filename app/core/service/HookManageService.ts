@@ -1,5 +1,6 @@
 import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
-import { HookType, Hook } from '../entity/Hook';
+import { Hook } from '../entity/Hook';
+import { HookType } from '../../common/enum/Hook';
 import {
   ForbiddenError,
   NotFoundError,
@@ -42,7 +43,7 @@ export class HookManageService {
   }
 
   async createHook(cmd: CreateHookCommand): Promise<Hook> {
-    const hooks = await this.hookRepository.listHookByOwnerId(cmd.ownerId);
+    const hooks = await this.hookRepository.listHooksByOwnerId(cmd.ownerId);
     // FIXME: 会有并发问题，需要有一个用户全局锁去记录
     if (hooks.length >= this.hooksLimit) {
       throw new ForbiddenError('hooks limit exceeded');
@@ -74,12 +75,12 @@ export class HookManageService {
     if (hook.ownerId !== cmd.operatorId) {
       throw new ForbiddenError(`hook ${cmd.hookId} not belong to ${cmd.operatorId}`);
     }
-    await this.hookRepository.deleteById(cmd.hookId);
+    await this.hookRepository.removeHook(cmd.hookId);
     return hook;
   }
 
   async listHooksByOwnerId(ownerId: string): Promise<Hook[]> {
-    return await this.hookRepository.listHookByOwnerId(ownerId);
+    return await this.hookRepository.listHooksByOwnerId(ownerId);
   }
 
   async getHookByOwnerId(hookId: string, userId: string): Promise<Hook> {

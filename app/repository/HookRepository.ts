@@ -32,7 +32,7 @@ export class HookRepository {
     return ModelConvertor.convertModelToEntity(model, this.Hook);
   }
 
-  async deleteById(hookId: string): Promise<void> {
+  async removeHook(hookId: string): Promise<void> {
     await this.Hook.remove({ hookId });
   }
 
@@ -48,7 +48,7 @@ export class HookRepository {
     });
   }
 
-  async listHookByOwnerId(ownerId: string) {
+  async listHooksByOwnerId(ownerId: string) {
     const hookRows = await this.Hook.find({ ownerId });
     return hookRows.map(row => ModelConvertor.convertModelToEntity(row, Hook));
   }

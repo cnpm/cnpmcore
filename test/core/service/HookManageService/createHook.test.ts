@@ -2,8 +2,8 @@ import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { HookManageService } from '../../../../app/core/service/HookManageService';
-import { HookType } from '../../../../app/core/entity/Hook';
 import { TestUtil } from '../../../TestUtil';
+import { HookType } from '../../../../app/common/enum/Hook';
 
 describe('test/core/service/HookManageService/createHook.test.ts', () => {
   let ctx: Context;

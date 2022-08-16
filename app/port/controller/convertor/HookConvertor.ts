@@ -1,6 +1,7 @@
-import { Hook, HookType } from '../../../core/entity/Hook';
+import { Hook } from '../../../core/entity/Hook';
 import { Task } from '../../../core/entity/Task';
 import { User } from '../../../core/entity/User';
+import { HookType } from '../../../common/enum/Hook';
 
 export interface HookVo {
   id: string;

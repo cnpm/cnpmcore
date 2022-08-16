@@ -11,7 +11,7 @@ import {
 import { HookManageService } from '../../core/service/HookManageService';
 import { TaskService } from '../../core/service/TaskService';
 import { UserRoleManager } from '../UserRoleManager';
-import { HookType } from '../../core/entity/Hook';
+import { HookType } from '../../common/enum/Hook';
 import { Task } from '../../core/entity/Task';
 import { HookConvertor } from './convertor/HookConvertor';
 import { CreateHookRequestRule, UpdateHookRequestRule } from '../typebox';

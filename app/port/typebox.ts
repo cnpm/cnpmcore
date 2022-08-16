@@ -1,6 +1,6 @@
 import { Type, Static } from '@sinclair/typebox';
 import semver from 'semver';
-import { HookType } from '../core/entity/Hook';
+import { HookType } from '../common/enum/Hook';
 
 export const Name = Type.String({
   transform: [ 'trim' ],

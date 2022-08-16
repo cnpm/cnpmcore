@@ -1,12 +1,6 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
-
-export enum HookType {
-  Package = 'package',
-  Scope = 'scope',
-  Owner = 'Owner',
-}
-
+import { HookType } from '../../common/enum/Hook';
 export type CreateHookData = Omit<EasyData<HookData, 'hookId'>, 'enable' | 'latestTaskId'>;
 
 export interface HookData extends EntityData {
