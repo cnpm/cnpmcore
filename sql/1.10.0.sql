@@ -222,10 +222,8 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `log_store_position` varchar(10) NOT NULL COMMENT 'cloud store disk position',
   `attempts` int unsigned DEFAULT 0 COMMENT 'task execute attempts times',
   `error` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'error description',
-  `biz_id` varchar(48) NULL COMMENT 'unique biz id to keep task unique',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_task_id` (`task_id`),
-  UNIQUE KEY `uk_biz_id` (`biz_id`),
   KEY `idx_type_state_target_name` (`target_name`, `type`, `state`),
   KEY `idx_type_state_gmt_modified` (`type`, `state`, `gmt_modified`),
   KEY `idx_gmt_modified` (`gmt_modified`)
@@ -278,19 +276,3 @@ CREATE TABLE IF NOT EXISTS `binaries` (
   UNIQUE KEY `uk_category_parent_name` (`category`, `parent`, `name`),
   KEY `idx_category_parent` (`category`, `parent`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='binary info';
-
-CREATE TABLE IF NOT EXISTS `hooks` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
-  `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
-  `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
-  `hook_id` varchar(24) NOT NULL COMMENT 'hook id',
-  `type` varchar(20) NOT NULL COMMENT 'hook type, scope, name, owner',
-  `name` varchar(428) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT 'hook name',
-  `owner_id` varchar(24) NOT NULL COMMENT 'hook owner id',
-  `endpoint` varchar(2048) NOT NULL COMMENT 'hook url',
-  `secret` varchar(200) NOT NULL COMMENT 'sign secret',
-  `latest_task_id` varchar(24) NULL COMMENT 'latest task id',
-  `enable` tinyint NOT NULL DEFAULT 0 COMMENT 'hook is enable not, 1: true, other: false',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_type_name_owner_id` (`type`, `name`, `owner_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='task info';
