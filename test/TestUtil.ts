@@ -6,6 +6,7 @@ import mysql from 'mysql';
 import path from 'path';
 import crypto from 'crypto';
 import { getScopeAndName } from '../app/common/PackageUtil';
+import semver from 'semver';
 
 type PackageOptions = {
   name?: string;
@@ -53,7 +54,13 @@ export class TestUtil {
   }
 
   static async getTableSqls(): Promise<string> {
-    return await fs.readFile(path.join(__dirname, '../sql/init.sql'), 'utf8');
+    const dirents = await fs.readdir(path.join(__dirname, '../sql'));
+    let versions = dirents.filter(t => path.extname(t) === '.sql').map(t => path.basename(t, '.sql'));
+    versions = semver.sort(versions);
+    const sqls = await Promise.all(versions.map(version => {
+      return fs.readFile(path.join(__dirname, '../sql', `${version}.sql`), 'utf8');
+    }));
+    return sqls.join('\n');
   }
 
   static async query(sql): Promise<any[]> {
