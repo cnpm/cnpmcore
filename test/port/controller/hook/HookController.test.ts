@@ -3,7 +3,7 @@ import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { TestUtil } from '../../../TestUtil';
 import { HookManageService } from '../../../../app/core/service/HookManageService';
-import { Hook} from '../../../../app/core/entity/Hook';
+import { Hook } from '../../../../app/core/entity/Hook';
 import { UserRepository } from '../../../../app/repository/UserRepository';
 import { HookType } from '../../../../app/common/enum/Hook';
 
