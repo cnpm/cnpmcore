@@ -69,6 +69,14 @@ export class TaskRepository extends AbstractRepository {
     return null;
   }
 
+  async findTaskByBizId(bizId: string) {
+    const task = await this.Task.findOne({ bizId });
+    if (task) {
+      return ModelConvertor.convertModelToEntity(task, TaskEntity);
+    }
+    return null;
+  }
+
   async findTasks(taskIds: Array<string>): Promise<Array<TaskEntity>> {
     const tasks = await this.HistoryTask.find({ taskId: { $in: taskIds } });
     return tasks.map(task => ModelConvertor.convertModelToEntity(task, TaskEntity));

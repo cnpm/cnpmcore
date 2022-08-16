@@ -11,7 +11,7 @@ import {
 import { TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
-import { Task } from '../entity/Task';
+import { ChangeStreamTask, Task } from '../entity/Task';
 import { PackageSyncerService } from './PackageSyncerService';
 import { TaskService } from './TaskService';
 
@@ -28,16 +28,16 @@ export class ChangesStreamService extends AbstractService {
   @Inject()
   private readonly taskService: TaskService;
 
-  public async findExecuteTask() {
+  public async findExecuteTask(): Promise<ChangeStreamTask | null> {
     const targetName = 'GLOBAL_WORKER';
     const existsTask = await this.taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
     if (!existsTask) {
       await this.taskService.createTask(Task.createChangesStream(targetName), false);
     }
-    return await this.taskService.findExecuteTask(TaskType.ChangesStream);
+    return await this.taskService.findExecuteTask(TaskType.ChangesStream) as ChangeStreamTask;
   }
 
-  public async executeTask(task: Task) {
+  public async executeTask(task: ChangeStreamTask) {
     task.authorIp = os.hostname();
     task.authorId = `pid_${process.pid}`;
     await this.taskRepository.saveTask(task);
@@ -81,7 +81,7 @@ export class ChangesStreamService extends AbstractService {
     }
   }
 
-  private async handleChanges(since: string, task: Task) {
+  private async handleChanges(since: string, task: ChangeStreamTask) {
     const changesStreamRegistry: string = this.config.cnpmcore.changesStreamRegistry;
     const changesStreamRegistryMode: string = this.config.cnpmcore.changesStreamRegistryMode;
     const db = `${changesStreamRegistry}/_changes?since=${since}`;
