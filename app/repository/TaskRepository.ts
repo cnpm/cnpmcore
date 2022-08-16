@@ -22,7 +22,25 @@ export class TaskRepository extends AbstractRepository {
       if (!model) return;
       await ModelConvertor.saveEntityToModel(task, model);
     } else {
-      await ModelConvertor.convertEntityToModel(task, this.Task);
+      try {
+        await ModelConvertor.convertEntityToModel(task, this.Task);
+      } catch (e) {
+        e.message = '[TaskRepository] insert Task failed: ' + e.message;
+        if (e.code === 'ER_DUP_ENTRY') {
+          this.logger.warn(e);
+          const taskModel = await this.Task.findOne({ bizId: task.bizId });
+          // 覆盖 bizId 相同的 id 和 taskId
+          if (taskModel) {
+            task.id = taskModel.id;
+            task.taskId = taskModel.taskId;
+            return;
+          }
+          // taskModel 可能不存在，遇到数据错误
+          // 重新将错误抛出。
+          throw e;
+        }
+        throw e;
+      }
     }
   }
 

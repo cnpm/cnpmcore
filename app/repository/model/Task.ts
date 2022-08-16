@@ -50,4 +50,9 @@ export class Task extends Bone {
 
   @Attribute(DataTypes.TEXT('long'))
   error: string;
+
+  @Attribute(DataTypes.STRING(48), {
+    unique: true,
+  })
+  bizId: string;
 }

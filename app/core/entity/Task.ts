@@ -5,7 +5,10 @@ import { EasyData, EntityUtil } from '../util/EntityUtil';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import dayjs from '../../common/dayjs';
 
-interface TaskData extends EntityData {
+const HOST_NAME = os.hostname();
+const PID = process.pid;
+
+export interface TaskData extends EntityData {
   taskId: string;
   type: TaskType;
   state: TaskState;
@@ -17,6 +20,7 @@ interface TaskData extends EntityData {
   logStorePosition?: string;
   attempts?: number;
   error?: string;
+  bizId?: string;
 }
 
 export type SyncPackageTaskOptions = {
@@ -41,6 +45,7 @@ export class Task extends Entity {
   logStorePosition: string;
   attempts: number;
   error: string;
+  bizId?: string;
 
   constructor(data: TaskData) {
     super(data);
@@ -55,6 +60,7 @@ export class Task extends Entity {
     this.logStorePosition = data.logStorePosition ?? '';
     this.attempts = data.attempts ?? 0;
     this.error = data.error ?? '';
+    this.bizId = data.bizId;
   }
 
   public resetLogPath() {
@@ -63,7 +69,7 @@ export class Task extends Entity {
   }
 
   public setExecuteWorker() {
-    this.data.taskWorker = `${os.hostname()}:${process.pid}`;
+    this.data.taskWorker = `${HOST_NAME}:${PID}`;
   }
 
   private static create(data: EasyData<TaskData, 'taskId'>): Task {
@@ -97,8 +103,8 @@ export class Task extends Entity {
       type: TaskType.ChangesStream,
       state: TaskState.Waiting,
       targetName,
-      authorId: `pid_${process.pid}`,
-      authorIp: os.hostname(),
+      authorId: `pid_${PID}`,
+      authorIp: HOST_NAME,
       data: {
         // task execute worker
         taskWorker: '',
@@ -113,8 +119,8 @@ export class Task extends Entity {
       type: TaskType.SyncBinary,
       state: TaskState.Waiting,
       targetName,
-      authorId: `pid_${process.pid}`,
-      authorIp: os.hostname(),
+      authorId: `pid_${PID}`,
+      authorIp: HOST_NAME,
       data: {
         // task execute worker
         taskWorker: '',
