@@ -71,7 +71,7 @@ export class HookController {
     });
     let task: Task | null = null;
     if (hook.latestTaskId) {
-      task = await this.taskService.findTask(hook.hookId);
+      task = await this.taskService.findTask(hook.latestTaskId);
     }
     return HookConvertor.convertToHookVo(hook, user, task);
   }
@@ -88,7 +88,7 @@ export class HookController {
     });
     let task: Task | null = null;
     if (hook.latestTaskId) {
-      task = await this.taskService.findTask(hook.hookId);
+      task = await this.taskService.findTask(hook.latestTaskId);
     }
     return HookConvertor.convertToDeleteHookVo(hook, user, task);
   }
@@ -100,7 +100,7 @@ export class HookController {
   async listHooks(@Context() ctx: EggContext) {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const hooks = await this.hookManageService.listHooksByOwnerId(user.userId);
-    const tasks = await this.taskService.findTasks(hooks.map(t => t.hookId));
+    const tasks = await this.taskService.findTasks(hooks.map(t => t.latestTaskId).filter((t): t is string => !!t));
     return hooks.map(hook => {
       const task = tasks.find(t => t.taskId === hook.latestTaskId);
       return HookConvertor.convertToHookVo(hook, user, task);
@@ -116,7 +116,7 @@ export class HookController {
     const hook = await this.hookManageService.getHookByOwnerId(id, user.userId);
     let task: Task | null = null;
     if (hook.latestTaskId) {
-      task = await this.taskService.findTask(hook.hookId);
+      task = await this.taskService.findTask(hook.latestTaskId);
     }
     return HookConvertor.convertToHookVo(hook, user, task);
   }
