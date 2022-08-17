@@ -1,4 +1,5 @@
 import { Type, Static } from '@sinclair/typebox';
+import { RegistryType } from '../common/enum/Registry';
 import semver from 'semver';
 import { HookType } from '../common/enum/Hook';
 
@@ -105,3 +106,99 @@ export function patchAjv(ajv: any) {
     },
   });
 }
+
+export const QueryPageOptions = Type.Object({
+  pageSize: Type.Optional(Type.Number({
+    transform: [ 'trim' ],
+    minimum: 1,
+    maximum: 100,
+  })),
+  pageIndex: Type.Optional(Type.Number({
+    transform: [ 'trim' ],
+    minimum: 0,
+  })),
+});
+
+export const RegistryCreateOptions = Type.Object({
+  name: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  }),
+  host: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 4096,
+  }),
+  changeStream: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 4096,
+  }),
+  userPrefix: Type.Optional(Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  })),
+  type: Type.Enum(RegistryType),
+});
+
+export const RegistryUpdateOptions = Type.Object({
+  name: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  }),
+  host: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 4096,
+  }),
+  changeStream: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 4096,
+  }),
+  userPrefix: Type.Optional(Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  })),
+  type: Type.Enum(RegistryType),
+  registryId: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  }),
+});
+
+export const ScopeCreateOptions = Type.Object({
+  name: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  }),
+  registryId: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  }),
+});
+
+export const ScopeUpdateOptions = Type.Object({
+  name: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  }),
+  registryId: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  }),
+  scopeId: Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  }),
+});

@@ -1,10 +1,24 @@
 import { EntityData } from '../entity/Entity';
 import ObjectID from 'bson-objectid';
+import { E400 } from 'egg-errors';
 
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export type EasyData<T extends EntityData, Id extends keyof T> = PartialBy<T, 'createdAt' | 'updatedAt' | Id>;
 
+const MAX_PAGE_SIZE = 100 as const;
+export interface PageOptions {
+  pageSize?: number;
+  pageIndex?: number;
+}
+export interface PageResult<T> {
+  count: number;
+  data: Array<T>
+}
+export interface PageLimitOptions {
+  offset: number;
+  limit: number;
+}
 
 export class EntityUtil {
   static defaultData<T extends EntityData, Id extends keyof T>(data: EasyData<T, Id>, id: Id): T {
@@ -16,5 +30,16 @@ export class EntityUtil {
 
   static createId(): string {
     return new ObjectID().toHexString();
+  }
+
+  static convertPageOptionsToLimitOption(page: PageOptions): PageLimitOptions {
+    const { pageIndex = 0, pageSize = 20 } = page;
+    if (pageSize > MAX_PAGE_SIZE) {
+      throw new E400(`max page size is 100, current request is ${pageSize}`);
+    }
+    return {
+      offset: pageIndex * pageSize,
+      limit: pageSize,
+    };
   }
 }
