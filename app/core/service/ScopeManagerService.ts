@@ -31,6 +31,16 @@ export class ScopeManagerService extends AbstractService {
   @Inject()
   private readonly scopeRepository: ScopeRepository;
 
+  async findByName(name: string): Promise<Scope | null> {
+    const scope = await this.scopeRepository.findByName(name);
+    return scope;
+  }
+
+  async countByRegistryId(registryId: string): Promise<number> {
+    const count = await this.scopeRepository.countByRegistryId(registryId);
+    return count;
+  }
+
   async createScope(createCmd: CreateScopeCmd): Promise<Scope> {
     const { name, registryId, operatorId } = createCmd;
     this.logger.info('[ScopeManagerService.CreateScope:prepare] operatorId: %s, createCmd: %s', operatorId, createCmd);

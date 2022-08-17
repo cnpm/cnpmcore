@@ -1,0 +1,73 @@
+import { CnpmcoreChangesStream } from 'app/common/adapter/changesStream/CnpmcoreChangesStream';
+import { RegistryType } from 'app/common/enum/Registry';
+import { Registry } from 'app/core/entity/Registry';
+import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
+import assert = require('assert');
+import { Context } from 'egg';
+import { app } from 'egg-mock/bootstrap';
+
+describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () => {
+  let ctx: Context;
+  let cnpmcoreChangesStream: CnpmcoreChangesStream;
+  let registryManagerService: RegistryManagerService;
+  let registry: Registry;
+  beforeEach(async () => {
+    ctx = await app.mockModuleContext();
+    cnpmcoreChangesStream = await ctx.getEggObject(CnpmcoreChangesStream);
+    registryManagerService = await ctx.getEggObject(RegistryManagerService);
+    registry = await registryManagerService.createRegistry({
+      name: 'cnpmcore',
+      changeStream: 'https://r.cnpmjs.org/_changes',
+      host: 'https://registry.npmmirror.com',
+      userPrefix: 'cnpm:',
+      type: RegistryType.Cnpmcore,
+    });
+  });
+
+  describe('getInitialSince()', () => {
+    it('should work', async () => {
+      app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, {
+        status: 200,
+        data: {
+          update_seq: 9527,
+        },
+      });
+      const since = await cnpmcoreChangesStream.getInitialSince(registry);
+      assert(since === '9517');
+    });
+
+    it('should throw error', async () => {
+      app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, () => {
+        throw new Error('mock request replicate _changes error');
+      });
+      await assert.rejects(cnpmcoreChangesStream.getInitialSince(registry), /mock request/);
+    });
+  });
+
+  describe('fetchChanges()', () => {
+    it('should work', async () => {
+      app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, {
+        status: 200,
+        data: {
+          results: [
+            {
+              seq: 1,
+              type: 'PACKAGE_VERSION_ADDED',
+              id: 'create-react-component-helper',
+              changes: [{ version: '1.0.2' }],
+            },
+            {
+              seq: 2,
+              type: 'PACKAGE_VERSION_ADDED',
+              id: 'yj-binaryxml',
+              changes: [{ version: '1.0.0-arisa0' }],
+            },
+          ],
+        },
+      });
+      const res = await cnpmcoreChangesStream.fetchChanges(registry, '1');
+      assert(res.changes.length === 1);
+      assert(res.lastSince === '2');
+    });
+  });
+});

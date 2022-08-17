@@ -60,6 +60,7 @@ export interface ChangeStreamTaskData extends TaskBaseData {
   last_package?: string,
   last_package_created?: Date,
   task_count?: number,
+  registryId?: string,
 }
 
 export type CreateHookTask = Task<CreateHookTaskData>;
