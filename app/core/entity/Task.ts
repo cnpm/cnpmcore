@@ -6,8 +6,8 @@ import { TaskType, TaskState } from '../../common/enum/Task';
 import dayjs from '../../common/dayjs';
 import { HookEvent } from './HookEvent';
 
-const HOST_NAME = os.hostname();
-const PID = process.pid;
+export const HOST_NAME = os.hostname();
+export const PID = process.pid;
 
 export interface TaskBaseData {
   taskWorker: string;
@@ -32,6 +32,7 @@ export type SyncPackageTaskOptions = {
   authorId?: string;
   authorIp?: string;
   tips?: string;
+  bizId?: string;
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
   // force sync history version
@@ -55,7 +56,7 @@ export interface CreateSyncPackageTaskData extends TaskBaseData {
   forceSyncHistory?: boolean;
 }
 
-export interface ChangeStreamTaskData extends TaskBaseData {
+export interface ChangesStreamTaskData extends TaskBaseData {
   since: string;
   last_package?: string,
   last_package_created?: Date,
@@ -66,13 +67,13 @@ export interface ChangeStreamTaskData extends TaskBaseData {
 export type CreateHookTask = Task<CreateHookTaskData>;
 export type TriggerHookTask = Task<TriggerHookTaskData>;
 export type CreateSyncPackageTask = Task<CreateSyncPackageTaskData>;
-export type ChangeStreamTask = Task<ChangeStreamTaskData>;
 
 export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
   taskId: string;
   type: TaskType;
   state: TaskState;
   targetName: string;
+  taskWorker: string;
   authorId: string;
   authorIp: string;
   data: T;
@@ -119,6 +120,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       targetName: fullname,
       authorId: options?.authorId ?? '',
       authorIp: options?.authorIp ?? '',
+      bizId: options?.bizId ?? '',
       data: {
         // task execute worker
         taskWorker: '',
@@ -133,7 +135,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static createChangesStream(targetName: string): ChangeStreamTask {
+  public static createChangesStream(targetName: string): ChangesStreamTask {
     const data = {
       type: TaskType.ChangesStream,
       state: TaskState.Waiting,
@@ -146,7 +148,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
         since: '',
       },
     };
-    return this.create(data);
+    return this.create(data) as ChangesStreamTask;
   }
 
   public static createCreateHookTask(hookEvent: HookEvent): CreateHookTask {
@@ -204,5 +206,25 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     const task = this.create(data);
     task.logPath = `/binaries/${targetName}/syncs/${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
     return task;
+  }
+}
+
+export type SyncInfo = {
+  lastSince: string;
+  taskCount: number;
+  lastPackage?: string;
+};
+
+export class ChangesStreamTask extends Task<ChangesStreamTaskData> {
+  updateSyncData({ lastSince, taskCount, lastPackage }: SyncInfo) {
+    const { data: syncData } = this;
+    // 更新任务记录信息
+    syncData.since = lastSince;
+    syncData.task_count = (syncData.task_count || 0) + taskCount;
+
+    if (taskCount > 0) {
+      syncData.last_package = lastPackage;
+      syncData.last_package_created = new Date();
+    }
   }
 }

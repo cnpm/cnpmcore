@@ -13,7 +13,7 @@ export class ScopeRepository extends AbstractRepository {
   private readonly Scope: typeof ScopeModel;
 
   async countByRegistryId(registryId: string): Promise<number> {
-    return this.Scope.find({ registryId }).count();
+    return await this.Scope.find({ registryId }).count();
   }
   async findByName(name: string): Promise<Scope | null> {
     const model = await this.Scope.findOne({ name });

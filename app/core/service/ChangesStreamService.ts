@@ -9,7 +9,7 @@ import {
 import { TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
-import { ChangeStreamTask, Task } from '../entity/Task';
+import { HOST_NAME, ChangesStreamTask, Task } from '../entity/Task';
 import { PackageSyncerService } from './PackageSyncerService';
 import { TaskService } from './TaskService';
 import { RegistryManagerService } from './RegistryManagerService';
@@ -37,16 +37,16 @@ export class ChangesStreamService extends AbstractService {
   @Inject()
   private readonly eggObjectFactory: EggObjectFactory;
 
-  public async findExecuteTask(): Promise<ChangeStreamTask | null> {
+  public async findExecuteTask(): Promise<ChangesStreamTask | null> {
     const targetName = 'GLOBAL_WORKER';
     const existsTask = await this.taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
     if (!existsTask) {
       await this.taskService.createTask(Task.createChangesStream(targetName), false);
     }
-    return await this.taskService.findExecuteTask(TaskType.ChangesStream) as ChangeStreamTask;
+    return await this.taskService.findExecuteTask(TaskType.ChangesStream) as ChangesStreamTask;
   }
 
-  public async executeTask(task: ChangeStreamTask) {
+  public async executeTask(task: ChangesStreamTask) {
     task.authorIp = os.hostname();
     task.authorId = `pid_${process.pid}`;
     await this.taskRepository.saveTask(task);
@@ -78,7 +78,7 @@ export class ChangesStreamService extends AbstractService {
   }
 
   // 优先从 registryId 获取，如果没有的话再返回默认的 registry
-  public async prepareRegistry(task: ChangeStreamTask): Promise<Registry> {
+  public async prepareRegistry(task: ChangesStreamTask): Promise<Registry> {
     const { registryId } = task.data || {};
     // 如果已有 registryId, 查询 DB 直接获取
     if (registryId) {
@@ -129,7 +129,7 @@ export class ChangesStreamService extends AbstractService {
 
     return false;
   }
-  public async getInitialSince(task: ChangeStreamTask): Promise<string> {
+  public async getInitialSince(task: ChangesStreamTask): Promise<string> {
     const registry = await this.prepareRegistry(task);
     const changesStreamAdapter = await this.eggObjectFactory.getEggObject(AbstractChangeStream, registry.type) as AbstractChangeStream;
     const since = await changesStreamAdapter.getInitialSince(registry);
@@ -138,7 +138,7 @@ export class ChangesStreamService extends AbstractService {
 
   // 从 changesStream 获取需要同步的数据
   // 更新任务的 since 和 taskCount 相关字段
-  public async executeSync(since: string, task: ChangeStreamTask) {
+  public async executeSync(since: string, task: ChangesStreamTask) {
     const registry = await this.prepareRegistry(task);
     const changesStreamAdapter = await this.eggObjectFactory.getEggObject(AbstractChangeStream, registry.type) as AbstractChangeStream;
     let taskCount = 0;
@@ -153,26 +153,33 @@ export class ChangesStreamService extends AbstractService {
     for await (const change of stream) {
       const { fullname, seq } = change as ChangesStreamChange;
       lastPackage = fullname;
-      const valid = await this.needSync(registry, fullname);
-      if (valid) {
-        taskCount++;
-        lastSince = seq;
-        await this.packageSyncerService.createTask(fullname, {
-          authorIp: os.hostname(),
-          authorId: 'ChangesStreamService',
-          skipDependencies: true,
-          tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
-        });
+      try {
+        const valid = await this.needSync(registry, fullname);
+        if (valid) {
+          taskCount++;
+          lastSince = seq;
+          await this.packageSyncerService.createTask(fullname, {
+            authorIp: HOST_NAME,
+            bizId: `SyncPackage:${registry.registryId}:${fullname}:${seq}`,
+            authorId: 'ChangesStreamService',
+            skipDependencies: true,
+            tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
+          });
+        }
+      } catch (e) {
+        // bizId 可能出现重复，(tag 和 version 一起创建)，导致任务创建失败
+        // 为了防止任务堵塞，在这里 catch
+        this.logger.error(`[ChangesStreamService.executeSync:error] registryId: ${registry.registryId}, fullname: ${fullname}, seq: ${seq}`);
+        this.logger.error(e);
       }
     }
 
     // 更新任务记录信息
-    task.data.since = lastSince;
-    task.data.task_count = (task.data.task_count || 0) + taskCount;
-    if (taskCount > 0) {
-      task.data.last_package = lastPackage;
-      task.data.last_package_created = new Date();
-    }
+    task.updateSyncData({
+      lastSince,
+      lastPackage,
+      taskCount,
+    });
 
     await this.taskRepository.saveTask(task);
     return { lastSince, taskCount };

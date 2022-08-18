@@ -26,7 +26,7 @@ export class NpmChangesStream extends AbstractChangeStream {
   }
 
   async fetchChanges(registry: Registry, since: string): Promise<Readable> {
-
+    const { logger } = this;
     const db = `${registry.changeStream}?since=${since}`;
     const { res } = await this.httpclient.request(db, {
       streaming: true,
@@ -43,6 +43,8 @@ export class NpmChangesStream extends AbstractChangeStream {
           const fullname = match[2];
           if (seq && fullname) {
             this.push({ fullname, seq } as ChangesStreamChange);
+          } else {
+            logger.warn('[NpmChangesStream.fetchChanges] invalid change: %s', text);
           }
         }
         callback();
