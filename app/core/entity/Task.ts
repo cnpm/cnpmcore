@@ -32,7 +32,6 @@ export type SyncPackageTaskOptions = {
   authorId?: string;
   authorIp?: string;
   tips?: string;
-  bizId?: string;
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
   // force sync history version
@@ -67,6 +66,7 @@ export interface ChangesStreamTaskData extends TaskBaseData {
 export type CreateHookTask = Task<CreateHookTaskData>;
 export type TriggerHookTask = Task<TriggerHookTaskData>;
 export type CreateSyncPackageTask = Task<CreateSyncPackageTaskData>;
+export type ChangesStreamTask = Task<ChangesStreamTaskData>;
 
 export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
   taskId: string;
@@ -120,7 +120,6 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       targetName: fullname,
       authorId: options?.authorId ?? '',
       authorIp: options?.authorIp ?? '',
-      bizId: options?.bizId ?? '',
       data: {
         // task execute worker
         taskWorker: '',
@@ -149,6 +148,18 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       },
     };
     return this.create(data) as ChangesStreamTask;
+  }
+
+  public updateSyncData({ lastSince, taskCount, lastPackage }: SyncInfo) {
+    const syncData = this.data as unknown as ChangesStreamTaskData;
+    // 更新任务记录信息
+    syncData.since = lastSince;
+    syncData.task_count = (syncData.task_count || 0) + taskCount;
+
+    if (taskCount > 0) {
+      syncData.last_package = lastPackage;
+      syncData.last_package_created = new Date();
+    }
   }
 
   public static createCreateHookTask(hookEvent: HookEvent): CreateHookTask {
@@ -214,17 +225,3 @@ export type SyncInfo = {
   taskCount: number;
   lastPackage?: string;
 };
-
-export class ChangesStreamTask extends Task<ChangesStreamTaskData> {
-  updateSyncData({ lastSince, taskCount, lastPackage }: SyncInfo) {
-    const { data: syncData } = this;
-    // 更新任务记录信息
-    syncData.since = lastSince;
-    syncData.task_count = (syncData.task_count || 0) + taskCount;
-
-    if (taskCount > 0) {
-      syncData.last_package = lastPackage;
-      syncData.last_package_created = new Date();
-    }
-  }
-}

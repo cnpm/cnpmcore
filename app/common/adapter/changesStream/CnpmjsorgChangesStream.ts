@@ -12,10 +12,9 @@ const MAX_LIMIT = 10000;
 export class CnpmjsorgChangesStream extends AbstractChangeStream {
 
   // cnpmjsorg 未实现 update_seq 字段
-  // 返回静态的 since
-  // 后续可以将 since 改为 registry.gmt_modified 来初始化增量同步
+  // 默认返回当前时间戳字符串
   async getInitialSince(registry: Registry): Promise<string> {
-    const since = '1';
+    const since = String((new Date()).getTime() - 1);
     this.logger.warn(`[CnpmjsorgChangesStream.getInitialSince] since: 1, skip query ${registry.changeStream}`);
     return since;
   }

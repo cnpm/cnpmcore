@@ -153,24 +153,16 @@ export class ChangesStreamService extends AbstractService {
     for await (const change of stream) {
       const { fullname, seq } = change as ChangesStreamChange;
       lastPackage = fullname;
-      try {
-        const valid = await this.needSync(registry, fullname);
-        if (valid) {
-          taskCount++;
-          lastSince = seq;
-          await this.packageSyncerService.createTask(fullname, {
-            authorIp: HOST_NAME,
-            bizId: `SyncPackage:${registry.registryId}:${fullname}:${seq}`,
-            authorId: 'ChangesStreamService',
-            skipDependencies: true,
-            tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
-          });
-        }
-      } catch (e) {
-        // bizId 可能出现重复，(tag 和 version 一起创建)，导致任务创建失败
-        // 为了防止任务堵塞，在这里 catch
-        this.logger.error(`[ChangesStreamService.executeSync:error] registryId: ${registry.registryId}, fullname: ${fullname}, seq: ${seq}`);
-        this.logger.error(e);
+      const valid = await this.needSync(registry, fullname);
+      if (valid) {
+        taskCount++;
+        lastSince = seq;
+        await this.packageSyncerService.createTask(fullname, {
+          authorIp: HOST_NAME,
+          authorId: 'ChangesStreamService',
+          skipDependencies: true,
+          tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
+        });
       }
     }
 

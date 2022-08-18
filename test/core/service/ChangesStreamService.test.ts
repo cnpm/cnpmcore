@@ -4,7 +4,7 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
 import { TaskService } from 'app/core/service/TaskService';
-import { ChangeStreamTask, Task } from 'app/core/entity/Task';
+import { ChangesStreamTask, Task } from 'app/core/entity/Task';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
 import { RegistryType } from 'app/common/enum/Registry';
 import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
@@ -16,7 +16,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
   let scopeManagerService: ScopeManagerService;
   let registryManagerService: RegistryManagerService;
   let taskService: TaskService;
-  let task: ChangeStreamTask;
+  let task: ChangesStreamTask;
   let npmRegistry: Registry;
   let cnpmRegistry: Registry;
   beforeEach(async () => {
