@@ -1,4 +1,5 @@
 import assert = require('assert');
+import { Readable } from 'node:stream';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
@@ -125,7 +126,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     it('should work', async () => {
       mock(ctx.httpclient, 'request', async () => {
         return {
-          res: [ Promise.resolve(
+          res: Readable.from(
             [
               JSON.stringify({
                 seq: 2,
@@ -140,10 +141,10 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
                 deleted: true,
               }),
             ],
-          ) ],
+          ),
         };
       });
-      const changes = await changesStreamService.fetchChanges('1', task);
+      const changes = await changesStreamService.executeSync('1', task);
       assert(changes.taskCount === 2);
       assert(changes.lastSince === '3');
     });

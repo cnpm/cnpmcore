@@ -16,7 +16,7 @@ import { RegistryManagerService } from './RegistryManagerService';
 import { RegistryType } from 'app/common/enum/Registry';
 import { E500 } from 'egg-errors';
 import { Registry } from '../entity/Registry';
-import { AbstractChangeStream } from 'app/common/adapter/changesStream/AbstractChangesStream';
+import { AbstractChangeStream, ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
 import { getScopeAndName } from 'app/common/PackageUtil';
 import { ScopeManagerService } from './ScopeManagerService';
 
@@ -60,7 +60,7 @@ export class ChangesStreamService extends AbstractService {
       }
       // allow disable changesStream dynamic
       while (since && this.config.cnpmcore.enableChangesStream) {
-        const { lastSince, taskCount } = await this.fetchChanges(since, task);
+        const { lastSince, taskCount } = await this.executeSync(since, task);
         this.logger.warn('[ChangesStreamService.executeTask:changes] since: %s => %s, %d new tasks, taskId: %s, updatedAt: %j',
           since, lastSince, taskCount, task.taskId, task.updatedAt);
         since = lastSince;
@@ -138,23 +138,25 @@ export class ChangesStreamService extends AbstractService {
 
   // 从 changesStream 获取需要同步的数据
   // 更新任务的 since 和 taskCount 相关字段
-  public async fetchChanges(since: string, task: ChangeStreamTask) {
+  public async executeSync(since: string, task: ChangeStreamTask) {
     const registry = await this.prepareRegistry(task);
     const changesStreamAdapter = await this.eggObjectFactory.getEggObject(AbstractChangeStream, registry.type) as AbstractChangeStream;
     let taskCount = 0;
+    let lastSince = since;
 
     // 获取需要同步的数据
     // 只获取需要同步的 task 信息
-    const { changes, lastSince } = await changesStreamAdapter.fetchChanges(registry, since);
+    const stream = await changesStreamAdapter.fetchChanges(registry, since);
     let lastPackage: string | undefined;
 
     // 创建同步任务
-    for (const change of changes) {
-      const { fullname, seq } = change;
+    for await (const change of stream) {
+      const { fullname, seq } = change as ChangesStreamChange;
       lastPackage = fullname;
       const valid = await this.needSync(registry, fullname);
       if (valid) {
         taskCount++;
+        lastSince = seq;
         await this.packageSyncerService.createTask(fullname, {
           authorIp: os.hostname(),
           authorId: 'ChangesStreamService',

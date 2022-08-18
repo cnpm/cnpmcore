@@ -4,6 +4,7 @@ import {
   QualifierImplDecoratorUtil,
 } from '@eggjs/tegg';
 import { RegistryType } from 'app/common/enum/Registry';
+import { Readable } from 'node:stream';
 import { Registry } from 'app/core/entity/Registry';
 import {
   EggHttpClient,
@@ -11,14 +12,9 @@ import {
 } from 'egg';
 
 export const CHANGE_STREAM_ATTRIBUTE = 'CHANGE_STREAM_ATTRIBUTE';
-export type Change = {
+export type ChangesStreamChange = {
   seq: string;
   fullname: string;
-};
-export type FetchChangesResult = {
-  taskCount: number;
-  changes: Change[];
-  lastSince: string;
 };
 
 export abstract class AbstractChangeStream {
@@ -29,7 +25,7 @@ export abstract class AbstractChangeStream {
   protected httpclient: EggHttpClient;
 
   abstract getInitialSince(registry: Registry): Promise<string>;
-  abstract fetchChanges(registry: Registry, since: string): Promise<FetchChangesResult>;
+  abstract fetchChanges(registry: Registry, since: string): Promise<Readable>;
 }
 
 export const RegistryChangesStream: ImplDecorator<AbstractChangeStream, typeof RegistryType> =

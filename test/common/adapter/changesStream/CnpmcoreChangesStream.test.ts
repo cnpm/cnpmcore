@@ -1,3 +1,4 @@
+import { ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
 import { CnpmcoreChangesStream } from 'app/common/adapter/changesStream/CnpmcoreChangesStream';
 import { RegistryType } from 'app/common/enum/Registry';
 import { Registry } from 'app/core/entity/Registry';
@@ -65,9 +66,14 @@ describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () =
           ],
         },
       });
-      const res = await cnpmcoreChangesStream.fetchChanges(registry, '1');
-      assert(res.changes.length === 1);
-      assert(res.lastSince === '2');
+      const stream = await cnpmcoreChangesStream.fetchChanges(registry, '1');
+      const res: ChangesStreamChange[] = [];
+
+      for await (const change of stream) {
+        res.push(change as ChangesStreamChange);
+      }
+
+      assert(res.length === 1);
     });
   });
 });

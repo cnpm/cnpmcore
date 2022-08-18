@@ -1,3 +1,4 @@
+import { ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
 import { CnpmjsorgChangesStream } from 'app/common/adapter/changesStream/CnpmjsorgChangesStream';
 import { RegistryType } from 'app/common/enum/Registry';
 import { Registry } from 'app/core/entity/Registry';
@@ -53,9 +54,12 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
           ],
         },
       });
-      const res = await cnpmjsorgChangesStream.fetchChanges(registry, '1');
-      assert(res.changes.length === 2);
-      assert(res.lastSince === '1389814509000');
+      const stream = await cnpmjsorgChangesStream.fetchChanges(registry, '1');
+      const res: ChangesStreamChange[] = [];
+      for await (const change of stream) {
+        res.push(change as ChangesStreamChange);
+      }
+      assert(res.length === 2);
     });
 
     it('should reject when limit', async () => {

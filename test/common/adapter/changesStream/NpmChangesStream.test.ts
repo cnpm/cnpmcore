@@ -1,3 +1,5 @@
+import { Readable } from 'node:stream';
+import { ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
 import { NpmChangesStream } from 'app/common/adapter/changesStream/NpmChangesStream';
 import { RegistryType } from 'app/common/enum/Registry';
 import { Registry } from 'app/core/entity/Registry';
@@ -48,27 +50,28 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
     it('should work', async () => {
       mock(ctx.httpclient, 'request', async () => {
         return {
-          res: [ Promise.resolve(
-            [
-              JSON.stringify({
-                seq: 2,
-                id: 'backbone.websql.deferred',
-                changes: [{ rev: '4-f5150b238ab62cd890211fb57fc9eca5' }],
-                deleted: true,
-              }),
-              JSON.stringify({
-                seq: 3,
-                id: 'binomal-hash-list',
-                changes: [{ rev: '2-dced04d62bef47954eac61c217ed6fc1' }],
-                deleted: true,
-              }),
-            ],
-          ) ],
+          res: Readable.from(JSON.stringify([
+            {
+              seq: 2,
+              id: 'backbone.websql.deferred',
+              changes: [{ rev: '4-f5150b238ab62cd890211fb57fc9eca5' }],
+              deleted: true,
+            },
+            {
+              seq: 3,
+              id: 'binomal-hash-list',
+              changes: [{ rev: '2-dced04d62bef47954eac61c217ed6fc1' }],
+              deleted: true,
+            },
+          ])),
         };
       });
-      const res = await npmChangesStream.fetchChanges(registry, '9517');
-      assert(res.changes.length === 2);
-      assert(res.lastSince === '3');
+      const res: ChangesStreamChange[] = [];
+      const stream = await npmChangesStream.fetchChanges(registry, '9517');
+      for await (const change of stream) {
+        res.push(change);
+      }
+      assert(res.length === 2);
     });
   });
 

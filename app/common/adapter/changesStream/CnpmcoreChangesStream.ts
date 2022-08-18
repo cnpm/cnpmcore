@@ -1,8 +1,9 @@
+import { Readable } from 'node:stream';
 import { ContextProto } from '@eggjs/tegg';
 import { RegistryType } from 'app/common/enum/Registry';
 import { Registry } from 'app/core/entity/Registry';
 import { E500 } from 'egg-errors';
-import { AbstractChangeStream, FetchChangesResult, RegistryChangesStream } from './AbstractChangesStream';
+import { AbstractChangeStream, ChangesStreamChange, RegistryChangesStream } from './AbstractChangesStream';
 
 @ContextProto()
 @RegistryChangesStream(RegistryType.Cnpmcore)
@@ -24,10 +25,8 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
     return since;
   }
 
-  async fetchChanges(registry: Registry, since: string): Promise<FetchChangesResult> {
-    let lastSince = since;
-    let taskCount = 0;
-    const changes: FetchChangesResult['changes'] = [];
+  async fetchChanges(registry: Registry, since: string): Promise<Readable> {
+    const changes: ChangesStreamChange[] = [];
 
     const db = `${registry.changeStream}?since=${since}`;
     // json mode
@@ -40,24 +39,18 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
 
     if (data.results?.length > 0) {
       for (const change of data.results) {
-        const seq = change.seq;
+        const seq = String(change.seq);
         const fullname = change.id;
         // cnpmcore 默认返回 >= 需要做特殊判断
-        if (seq && fullname && String(seq) !== since) {
-          taskCount++;
+        if (seq && fullname && seq !== since) {
           changes.push({
             fullname,
             seq,
           });
-          lastSince = String(seq);
         }
       }
     }
 
-    return {
-      lastSince,
-      taskCount,
-      changes,
-    };
+    return Readable.from(changes);
   }
 }

@@ -1,8 +1,9 @@
 import { ContextProto } from '@eggjs/tegg';
+import { Readable } from 'node:stream';
 import { RegistryType } from 'app/common/enum/Registry';
 import { Registry } from 'app/core/entity/Registry';
 import { E500 } from 'egg-errors';
-import { AbstractChangeStream, FetchChangesResult, RegistryChangesStream } from './AbstractChangesStream';
+import { AbstractChangeStream, ChangesStreamChange, RegistryChangesStream } from './AbstractChangesStream';
 
 const MAX_LIMIT = 10000;
 
@@ -43,10 +44,8 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
     return res;
   }
 
-  async fetchChanges(registry: Registry, since: string): Promise<FetchChangesResult> {
-    let lastSince = since;
-    let taskCount = 0;
-    const changes: FetchChangesResult['changes'] = [];
+  async fetchChanges(registry: Registry, since: string): Promise<Readable> {
+    const changes: ChangesStreamChange[] = [];
 
     // ref: https://github.com/cnpm/cnpmjs.org/pull/1734
     // 由于 cnpmjsorg 无法计算准确的 seq
@@ -58,20 +57,14 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
         const seq = new Date(change.gmt_modified).getTime() + '';
         const fullname = change.id;
         if (seq && fullname && seq !== since) {
-          taskCount++;
           changes.push({
             fullname,
             seq,
           });
-          lastSince = seq;
         }
       }
     }
 
-    return {
-      lastSince,
-      taskCount,
-      changes,
-    };
+    return Readable.from(changes);
   }
 }
