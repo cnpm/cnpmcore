@@ -1,6 +1,7 @@
 import { ContextProto } from '@eggjs/tegg';
 import { RegistryType } from 'app/common/enum/Registry';
 import { Registry } from 'app/core/entity/Registry';
+import { E500 } from 'egg-errors';
 import { AbstractChangeStream, FetchChangesResult, RegistryChangesStream } from './AbstractChangesStream';
 
 @ContextProto()
@@ -14,8 +15,11 @@ export class NpmChangesStream extends AbstractChangeStream {
       timeout: 10000,
       dataType: 'json',
     });
-    const since = String((data.update_seq || 7139548) - 10);
-    this.logger.warn('[ChangesStreamService.executeTask:firstSeq] GET %s status: %s, data: %j, since: %s',
+    const since = String(data.update_seq - 10);
+    if (!data.update_seq) {
+      throw new E500(`get getInitialSince failed: ${data.update_seq}`);
+    }
+    this.logger.warn('[NpmChangesStream.getInitialSince] GET %s status: %s, data: %j, since: %s',
       registry.name, registry.changeStream, status, data, since);
     return since;
   }

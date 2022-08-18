@@ -1,6 +1,7 @@
 import { ContextProto } from '@eggjs/tegg';
 import { RegistryType } from 'app/common/enum/Registry';
 import { Registry } from 'app/core/entity/Registry';
+import { E500 } from 'egg-errors';
 import { AbstractChangeStream, FetchChangesResult, RegistryChangesStream } from './AbstractChangesStream';
 
 @ContextProto()
@@ -14,8 +15,11 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
       timeout: 10000,
       dataType: 'json',
     });
-    const since = String((data.update_seq || 7139548) - 10);
-    this.logger.warn('[ChangesStreamService.executeTask:firstSeq] GET %s status: %s, data: %j, since: %s',
+    if (!data.update_seq) {
+      throw new E500(`get getInitialSince failed: ${data.update_seq}`);
+    }
+    const since = String(data.update_seq - 10);
+    this.logger.warn('[NpmChangesStream.getInitialSince:firstSeq] GET %s status: %s, data: %j, since: %s',
       registry.name, status, data, since);
     return since;
   }
@@ -39,7 +43,7 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
         const seq = change.seq;
         const fullname = change.id;
         // cnpmcore 默认返回 >= 需要做特殊判断
-        if (seq && fullname && seq + '' !== since) {
+        if (seq && fullname && String(seq) !== since) {
           taskCount++;
           changes.push({
             fullname,

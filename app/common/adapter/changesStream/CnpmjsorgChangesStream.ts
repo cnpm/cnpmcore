@@ -15,7 +15,7 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
   // 后续可以将 since 改为 registry.gmt_modified 来初始化增量同步
   async getInitialSince(registry: Registry): Promise<string> {
     const since = '1';
-    this.logger.warn(`[ChangesStreamService.executeTask:firstSeq] since: 1, skip query ${registry.changeStream}`);
+    this.logger.warn(`[CnpmjsorgChangesStream.getInitialSince] since: 1, skip query ${registry.changeStream}`);
     return since;
   }
 
