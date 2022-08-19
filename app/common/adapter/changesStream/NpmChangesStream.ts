@@ -52,7 +52,7 @@ export class NpmChangesStream extends AbstractChangeStream {
   async fetchChanges(registry: Registry, since: string): Promise<Readable> {
     const self = this;
     const { parseChangeChunk } = this;
-    const db = `${registry.changeStream}?since=${since}`;
+    const db = this.getChangesStreamUrl(registry, since);
     const { res } = await this.httpclient.request(db, {
       streaming: true,
       timeout: 10000,

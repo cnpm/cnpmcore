@@ -26,6 +26,15 @@ export abstract class AbstractChangeStream {
 
   abstract getInitialSince(registry: Registry): Promise<string>;
   abstract fetchChanges(registry: Registry, since: string): Promise<Readable>;
+
+  getChangesStreamUrl(registry: Registry, since: string, limit?: number): string {
+    const url = new URL(registry.changeStream);
+    url.searchParams.set('since', since);
+    if (limit) {
+      url.searchParams.set('limit', String(limit));
+    }
+    return url.toString();
+  }
 }
 
 export const RegistryChangesStream: ImplDecorator<AbstractChangeStream, typeof RegistryType> =

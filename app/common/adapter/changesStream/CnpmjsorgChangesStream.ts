@@ -14,8 +14,8 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
   // cnpmjsorg 未实现 update_seq 字段
   // 默认返回当前时间戳字符串
   async getInitialSince(registry: Registry): Promise<string> {
-    const since = String((new Date()).getTime() - 1);
-    this.logger.warn(`[CnpmjsorgChangesStream.getInitialSince] since: 1, skip query ${registry.changeStream}`);
+    const since = String((new Date()).getTime());
+    this.logger.warn(`[CnpmjsorgChangesStream.getInitialSince] since: ${since}, skip query ${registry.changeStream}`);
     return since;
   }
 
@@ -23,7 +23,7 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
     if (limit > MAX_LIMIT) {
       throw new E500(`limit too large, current since: ${since}, limit: ${limit}`);
     }
-    const db = `${registry.changeStream}?since=${since}&limit=${limit}`;
+    const db = this.getChangesStreamUrl(registry, since, limit);
     // json mode
     const res = await this.httpclient.request(db, {
       followRedirect: true,

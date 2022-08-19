@@ -28,7 +28,7 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
   async fetchChanges(registry: Registry, since: string): Promise<Readable> {
     const changes: ChangesStreamChange[] = [];
 
-    const db = `${registry.changeStream}?since=${since}`;
+    const db = this.getChangesStreamUrl(registry, since);
     // json mode
     const { data } = await this.httpclient.request(db, {
       followRedirect: true,
