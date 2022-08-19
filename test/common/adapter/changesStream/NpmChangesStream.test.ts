@@ -1,4 +1,4 @@
-import { Readable } from 'node:stream';
+import { Readable, Duplex } from 'node:stream';
 import { ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
 import { NpmChangesStream } from 'app/common/adapter/changesStream/NpmChangesStream';
 import { RegistryType } from 'app/common/enum/Registry';
@@ -72,6 +72,25 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
         res.push(change);
       }
       assert(res.length === 2);
+    });
+
+    it('should work for broken chunk', async () => {
+      const rStream = Duplex.from('');
+      mock(ctx.httpclient, 'request', async () => {
+        return {
+          res: rStream,
+        };
+      });
+      const res: ChangesStreamChange[] = [];
+      const stream = await npmChangesStream.fetchChanges(registry, '9517');
+      assert(stream);
+      rStream.push('{"seq":2');
+      rStream.push(',"id":"bac');
+      rStream.push('kbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true}');
+      for await (const change of stream) {
+        res.push(change);
+      }
+      assert(res.length === 1);
     });
   });
 

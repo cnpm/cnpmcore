@@ -9,6 +9,8 @@ import { Transform, Readable } from 'node:stream';
 @RegistryChangesStream(RegistryType.Npm)
 export class NpmChangesStream extends AbstractChangeStream {
 
+  private legacy = '';
+
   async getInitialSince(registry: Registry): Promise<string> {
     const db = (new URL(registry.changeStream)).origin;
     const { status, data } = await this.httpclient.request(db, {
@@ -25,8 +27,31 @@ export class NpmChangesStream extends AbstractChangeStream {
     return since;
   }
 
+  // 网络问题可能会导致获取到的数据不完整
+  // 先保存在 legacy 中，参与下次解析
+  parseChangeChunk(text: string): ChangesStreamChange[] {
+    const matches = (this.legacy + text).matchAll(/"seq":(\d+),"id":"([^"]+)"/gm);
+    const changes: ChangesStreamChange[] = [];
+    for (const match of matches) {
+      const seq = match[1];
+      const fullname = match[2];
+      if (seq && fullname) {
+        // 已经完成解析，清空 legacy
+        changes.push({ seq, fullname });
+      }
+    }
+
+    // 这次没有提取到数据，保存在 legacy 中
+    if (changes.length === 0) {
+      this.logger.warn('[NpmChangesStream.fetchChanges] invalid change chunk: %s', text);
+      this.legacy += text;
+    }
+    return changes;
+  }
+
   async fetchChanges(registry: Registry, since: string): Promise<Readable> {
-    const { logger } = this;
+    const self = this;
+    const { parseChangeChunk } = this;
     const db = `${registry.changeStream}?since=${since}`;
     const { res } = await this.httpclient.request(db, {
       streaming: true,
@@ -37,16 +62,8 @@ export class NpmChangesStream extends AbstractChangeStream {
       readableObjectMode: true,
       transform(chunk, _, callback) {
         const text = chunk.toString();
-        const matchs = text.matchAll(/"seq":(\d+),"id":"([^"]+)"/gm);
-        for (const match of matchs) {
-          const seq = match[1];
-          const fullname = match[2];
-          if (seq && fullname) {
-            this.push({ fullname, seq } as ChangesStreamChange);
-          } else {
-            logger.warn('[NpmChangesStream.fetchChanges] invalid change: %s', text);
-          }
-        }
+        const changes = parseChangeChunk.call(self, text?.trim());
+        changes.forEach(change => this.push(change));
         callback();
       },
     });
