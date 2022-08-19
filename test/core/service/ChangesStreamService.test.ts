@@ -69,6 +69,19 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       registries = await registryManagerService.listRegistries({});
       assert(registries.count === 3);
     });
+
+    it('should throw error when invalid registryId', async () => {
+      await changesStreamService.prepareRegistry(task);
+      let registries = await registryManagerService.listRegistries({});
+      assert(registries.count === 3);
+
+      // remove the registry
+      const registryId = task.data.registryId;
+      assert(registryId);
+      await registryManagerService.remove({ registryId });
+
+      await assert.rejects(changesStreamService.prepareRegistry(task), /invalid change stream registry/);
+    });
   });
 
   describe('needSync()', () => {
@@ -126,22 +139,10 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     it('should work', async () => {
       mock(ctx.httpclient, 'request', async () => {
         return {
-          res: Readable.from(
-            [
-              JSON.stringify({
-                seq: 2,
-                id: 'backbone.websql.deferred',
-                changes: [{ rev: '4-f5150b238ab62cd890211fb57fc9eca5' }],
-                deleted: true,
-              }),
-              JSON.stringify({
-                seq: 3,
-                id: 'binomal-hash-list',
-                changes: [{ rev: '2-dced04d62bef47954eac61c217ed6fc1' }],
-                deleted: true,
-              }),
-            ],
-          ),
+          res: Readable.from(`
+            {"seq":2,"id":"backbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
+            {"seq":3,"id":"backbone2.websql.deferred","changes":[{"rev":"4-f6150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
+            `),
         };
       });
       const changes = await changesStreamService.executeSync('1', task);

@@ -122,12 +122,8 @@ export class ChangesStreamService extends AbstractService {
     }
 
     const registryScopeCount = await this.scopeManagerService.countByRegistryId(registry.registryId);
-    const inCurrentDefaultRegistry = !scope && !registryScopeCount;
-    if (inCurrentDefaultRegistry) {
-      return true;
-    }
-
-    return false;
+    // 当前包没有 scope 信息，且当前 registry 下没有 scope，是通用 registry，需要同步
+    return !scope && !registryScopeCount;
   }
   public async getInitialSince(task: ChangesStreamTask): Promise<string> {
     const registry = await this.prepareRegistry(task);

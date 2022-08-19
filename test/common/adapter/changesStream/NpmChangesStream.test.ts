@@ -44,26 +44,21 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
       });
       await assert.rejects(npmChangesStream.getInitialSince(registry), /mock request/);
     });
+
+    it('should throw error invalid seq', async () => {
+      app.mockHttpclient(/https:\/\/replicate\.npmjs\.com/, { data: { update_seqs: 'invalid' } });
+      await assert.rejects(npmChangesStream.getInitialSince(registry), /get getInitialSince failed/);
+    });
   });
 
   describe('fetchChanges()', () => {
     it('should work', async () => {
       mock(ctx.httpclient, 'request', async () => {
         return {
-          res: Readable.from(JSON.stringify([
-            {
-              seq: 2,
-              id: 'backbone.websql.deferred',
-              changes: [{ rev: '4-f5150b238ab62cd890211fb57fc9eca5' }],
-              deleted: true,
-            },
-            {
-              seq: 3,
-              id: 'binomal-hash-list',
-              changes: [{ rev: '2-dced04d62bef47954eac61c217ed6fc1' }],
-              deleted: true,
-            },
-          ])),
+          res: Readable.from(`
+          {"seq":2,"id":"backbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
+          {"seq":3,"id":"backbone2.websql.deferred","changes":[{"rev":"4-f6150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
+          `),
         };
       });
       const res: ChangesStreamChange[] = [];

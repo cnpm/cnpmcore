@@ -28,24 +28,30 @@ export class NpmChangesStream extends AbstractChangeStream {
   }
 
   // 网络问题可能会导致获取到的数据不完整
+  // 最后数据可能会发生截断，需要按行读取，例如:
+  // "seq": 1, "id": "test1",
+  // "seq"
+  // :2,
+  // "id": "test2",
   // 先保存在 legacy 中，参与下次解析
   parseChangeChunk(text: string): ChangesStreamChange[] {
-    const matches = (this.legacy + text).matchAll(/"seq":(\d+),"id":"([^"]+)"/gm);
+    const lines = text.split('\n');
     const changes: ChangesStreamChange[] = [];
-    for (const match of matches) {
-      const seq = match[1];
-      const fullname = match[2];
+
+    for (const line of lines) {
+      const content = this.legacy + line;
+      const match = /"seq":(\d+),"id":"([^"]+)"/g.exec(content);
+      const seq = match?.[1];
+      const fullname = match?.[2];
       if (seq && fullname) {
-        // 已经完成解析，清空 legacy
         changes.push({ seq, fullname });
+        this.legacy = '';
+      } else {
+        this.legacy += line;
+        this.logger.warn('[NpmChangesStream.fetchChanges] invalid line chunk: %s', line);
       }
     }
 
-    // 这次没有提取到数据，保存在 legacy 中
-    if (changes.length === 0) {
-      this.logger.warn('[NpmChangesStream.fetchChanges] invalid change chunk: %s', text);
-      this.legacy += text;
-    }
     return changes;
   }
 
