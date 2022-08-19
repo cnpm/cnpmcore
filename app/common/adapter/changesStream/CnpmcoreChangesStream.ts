@@ -1,7 +1,7 @@
 import { Readable } from 'node:stream';
 import { ContextProto } from '@eggjs/tegg';
-import { RegistryType } from 'app/common/enum/Registry';
-import { Registry } from 'app/core/entity/Registry';
+import { RegistryType } from '../../../common/enum/Registry';
+import { Registry } from '../../../core/entity/Registry';
 import { E500 } from 'egg-errors';
 import { AbstractChangeStream, ChangesStreamChange, RegistryChangesStream } from './AbstractChangesStream';
 

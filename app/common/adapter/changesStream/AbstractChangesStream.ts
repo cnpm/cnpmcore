@@ -3,9 +3,9 @@ import {
   Inject,
   QualifierImplDecoratorUtil,
 } from '@eggjs/tegg';
-import { RegistryType } from 'app/common/enum/Registry';
 import { Readable } from 'node:stream';
-import { Registry } from 'app/core/entity/Registry';
+import { RegistryType } from '../../../common/enum/Registry';
+import { Registry } from '../../../core/entity/Registry';
 import {
   EggHttpClient,
   EggLogger,

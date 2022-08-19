@@ -72,7 +72,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
 
     it('should throw error when invalid registryId', async () => {
       await changesStreamService.prepareRegistry(task);
-      let registries = await registryManagerService.listRegistries({});
+      const registries = await registryManagerService.listRegistries({});
       assert(registries.count === 3);
 
       // remove the registry

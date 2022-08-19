@@ -13,11 +13,11 @@ import { HOST_NAME, ChangesStreamTask, Task } from '../entity/Task';
 import { PackageSyncerService } from './PackageSyncerService';
 import { TaskService } from './TaskService';
 import { RegistryManagerService } from './RegistryManagerService';
-import { RegistryType } from 'app/common/enum/Registry';
+import { RegistryType } from '../../common/enum/Registry';
 import { E500 } from 'egg-errors';
 import { Registry } from '../entity/Registry';
-import { AbstractChangeStream, ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
-import { getScopeAndName } from 'app/common/PackageUtil';
+import { AbstractChangeStream, ChangesStreamChange } from '../../common/adapter/changesStream/AbstractChangesStream';
+import { getScopeAndName } from '../../common/PackageUtil';
 import { ScopeManagerService } from './ScopeManagerService';
 
 @ContextProto({
@@ -159,17 +159,16 @@ export class ChangesStreamService extends AbstractService {
           skipDependencies: true,
           tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
         });
+        // 实时更新 task 信息
+        task.updateSyncData({
+          lastSince,
+          lastPackage,
+          taskCount,
+        });
+        await this.taskRepository.saveTask(task);
       }
     }
 
-    // 更新任务记录信息
-    task.updateSyncData({
-      lastSince,
-      lastPackage,
-      taskCount,
-    });
-
-    await this.taskRepository.saveTask(task);
     return { lastSince, taskCount };
   }
 }

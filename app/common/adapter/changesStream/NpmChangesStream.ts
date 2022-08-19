@@ -1,15 +1,14 @@
 import { ContextProto } from '@eggjs/tegg';
-import { RegistryType } from 'app/common/enum/Registry';
-import { Registry } from 'app/core/entity/Registry';
+import { Readable, pipeline } from 'node:stream';
 import { E500 } from 'egg-errors';
-import { AbstractChangeStream, ChangesStreamChange, RegistryChangesStream } from './AbstractChangesStream';
-import { Transform, Readable } from 'node:stream';
+import { RegistryType } from '../../../common/enum/Registry';
+import { Registry } from '../../../core/entity/Registry';
+import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesStream';
+import ChangesStreamTransform from '../../../core/util/ChangesStreamTransform';
 
 @ContextProto()
 @RegistryChangesStream(RegistryType.Npm)
 export class NpmChangesStream extends AbstractChangeStream {
-
-  private legacy = '';
 
   async getInitialSince(registry: Registry): Promise<string> {
     const db = (new URL(registry.changeStream)).origin;
@@ -27,54 +26,17 @@ export class NpmChangesStream extends AbstractChangeStream {
     return since;
   }
 
-  // 网络问题可能会导致获取到的数据不完整
-  // 最后数据可能会发生截断，需要按行读取，例如:
-  // "seq": 1, "id": "test1",
-  // "seq"
-  // :2,
-  // "id": "test2",
-  // 先保存在 legacy 中，参与下次解析
-  parseChangeChunk(text: string): ChangesStreamChange[] {
-    const lines = text.split('\n');
-    const changes: ChangesStreamChange[] = [];
-
-    for (const line of lines) {
-      const content = this.legacy + line;
-      const match = /"seq":(\d+),"id":"([^"]+)"/g.exec(content);
-      const seq = match?.[1];
-      const fullname = match?.[2];
-      if (seq && fullname) {
-        changes.push({ seq, fullname });
-        this.legacy = '';
-      } else {
-        this.legacy += line;
-        this.logger.warn('[NpmChangesStream.fetchChanges] invalid line chunk: %s', line);
-      }
-    }
-
-    return changes;
-  }
-
   async fetchChanges(registry: Registry, since: string): Promise<Readable> {
-    const self = this;
-    const { parseChangeChunk } = this;
     const db = this.getChangesStreamUrl(registry, since);
     const { res } = await this.httpclient.request(db, {
       streaming: true,
       timeout: 10000,
     });
 
-    const transform = new Transform({
-      readableObjectMode: true,
-      transform(chunk, _, callback) {
-        const text = chunk.toString();
-        const changes = parseChangeChunk.call(self, text?.trim());
-        changes.forEach(change => this.push(change));
-        callback();
-      },
+    const transform = new ChangesStreamTransform();
+    return pipeline(res, transform, error => {
+      this.logger.error('[NpmChangesStream.fetchChanges] pipeline error: %s', error);
     });
-
-    return res.pipe(transform);
   }
 
 }
