@@ -119,6 +119,10 @@ export const QueryPageOptions = Type.Object({
   })),
 });
 
+export const RegistryCreateSyncOptions = Type.Object({
+  since: Type.Optional(Type.String()),
+});
+
 export const RegistryCreateOptions = Type.Object({
   name: Type.String({
     transform: [ 'trim' ],

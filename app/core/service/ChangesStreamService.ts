@@ -37,6 +37,9 @@ export class ChangesStreamService extends AbstractService {
   @Inject()
   private readonly eggObjectFactory: EggObjectFactory;
 
+  // 出于向下兼容考虑, changes_stream 类型 Task 分为
+  // GLOBAL_WORKER: 默认的同步源
+  // `{registryName}_WORKER`: 自定义 scope 的同步源
   public async findExecuteTask(): Promise<ChangesStreamTask | null> {
     const targetName = 'GLOBAL_WORKER';
     const existsTask = await this.taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
@@ -156,6 +159,7 @@ export class ChangesStreamService extends AbstractService {
         await this.packageSyncerService.createTask(fullname, {
           authorIp: HOST_NAME,
           authorId: 'ChangesStreamService',
+          registryId: registry.registryId,
           skipDependencies: true,
           tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
         });
