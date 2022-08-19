@@ -19,7 +19,7 @@ import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { UserRepository } from '../../repository/UserRepository';
 import { DistRepository } from '../../repository/DistRepository';
-import { Task, SyncPackageTaskOptions } from '../entity/Task';
+import { Task, SyncPackageTaskOptions, CreateSyncPackageTask } from '../entity/Task';
 import { Package } from '../entity/Package';
 import { UserService } from './UserService';
 import { TaskService } from './TaskService';
@@ -75,7 +75,7 @@ export class PackageSyncerService extends AbstractService {
   }
 
   public async findExecuteTask() {
-    return await this.taskService.findExecuteTask(TaskType.SyncPackage);
+    return await this.taskService.findExecuteTask(TaskType.SyncPackage) as CreateSyncPackageTask;
   }
 
   public get allowSyncDownloadData() {
@@ -194,24 +194,25 @@ export class PackageSyncerService extends AbstractService {
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
-  public async prepareRegistryHost(task: Task): Promise<Registry | null> {
+  public async initSpecRegistry(task: Task): Promise<Registry | null> {
     const { registryId } = task.data as SyncPackageTaskOptions;
+    let targetHost: string = this.config.cnpmcore.sourceRegistry;
+    let registry: Registry | null = null;
     // 历史 Task 可能没有配置 registryId
-    if (!registryId) {
-      return null;
+    if (registryId) {
+      registry = await this.registryManagerService.findByRegistryId(registryId);
+      if (registry?.host) {
+        targetHost = registry.host;
+      }
     }
-    const registry = await this.registryManagerService.findByRegistryId(registryId);
-    if (registry?.host) {
-      this.npmRegistry.setRegistryHost(registry?.host);
-      this.logger.info('[PackageSyncerService.executeTask:setRegistryHost] registryHost: %s', registry?.host);
-    }
+    this.npmRegistry.setRegistryHost(targetHost);
     return registry;
   }
 
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
-    const registry = await this.prepareRegistryHost(task);
+    const registry = await this.initSpecRegistry(task);
     const registryHost = this.npmRegistry.registry;
     let logs: string[] = [];
     if (tips) {
@@ -536,6 +537,7 @@ export class PackageSyncerService extends AbstractService {
         description,
         packageJson: item,
         readme,
+        registryId: registry?.registryId,
         dist: {
           localFile,
         },

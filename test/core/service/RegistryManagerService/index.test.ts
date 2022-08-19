@@ -117,7 +117,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       let registry: Registry;
       beforeEach(async () => {
         // create scope
-        [registry] = (await registryManagerService.listRegistries({})).data;
+        [ registry ] = (await registryManagerService.listRegistries({})).data;
         await scopeManagerService.createScope({ name: '@cnpm', registryId: registry.registryId });
       });
 
@@ -127,11 +127,11 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
         const targetName = 'CUSTOM_WORKER';
         const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
         assert(task);
-      })
+      });
 
       it('should preCheck registry', async () => {
         await assert.rejects(registryManagerService.createSyncChangesStream({ registryId: 'mock_invalid_registry_id' }), /not found/);
-      })
+      });
 
       it('should preCheck scopes', async () => {
         const newRegistry = await registryManagerService.createRegistry({
@@ -142,7 +142,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
           type: RegistryType.Cnpmcore,
         });
         await assert.rejects(registryManagerService.createSyncChangesStream({ registryId: newRegistry.registryId }), /please create scopes first/);
-      })
+      });
 
       it('should create only once', async () => {
         // create success
@@ -152,7 +152,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
         const targetName = 'CUSTOM_WORKER';
         const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
         assert((task?.data as ChangesStreamTaskData).since === '');
-      })
+      });
     });
 
 

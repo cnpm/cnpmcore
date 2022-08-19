@@ -46,6 +46,7 @@ export interface PublishPackageCmd {
   version: string;
   description: string;
   packageJson: any;
+  registryId?: string;
   readme: string;
   // require content or localFile field
   dist: RequireAtLeastOne<{
@@ -95,6 +96,7 @@ export class PackageManagerService extends AbstractService {
         name: cmd.name,
         isPrivate: cmd.isPrivate,
         description: cmd.description,
+        registryId: cmd.registryId,
       });
     } else {
       // update description

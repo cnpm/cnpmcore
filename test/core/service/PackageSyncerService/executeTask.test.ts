@@ -12,6 +12,9 @@ import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
 import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
 import { getScopeAndName } from 'app/common/PackageUtil';
 import { PackageRepository } from 'app/repository/PackageRepository';
+import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
+import { Registry } from 'app/core/entity/Registry';
+import { RegistryType } from 'app/common/enum/Registry';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let ctx: Context;
@@ -19,6 +22,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let packageManagerService: PackageManagerService;
   let packageRepository: PackageRepository;
   let npmRegistry: NPMRegistry;
+  let registryManagerService: RegistryManagerService;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
@@ -26,6 +30,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     packageManagerService = await ctx.getEggObject(PackageManagerService);
     packageRepository = await ctx.getEggObject(PackageRepository);
     npmRegistry = await ctx.getEggObject(NPMRegistry);
+    registryManagerService = await ctx.getEggObject(RegistryManagerService);
   });
 
   afterEach(async () => {
@@ -1329,5 +1334,48 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('][DownloadData] ❌ Get download data error: '));
       assert(log.includes('][DownloadData] ❌❌❌❌❌ 🚮 give up 🚮 ❌❌❌❌❌'));
     });
+
+    describe('should sync from spec registry', async() => {
+      let registry: Registry;
+      beforeEach(async () => {
+        registry = await registryManagerService.createRegistry({
+          name: 'cnpm',
+          changeStream: 'https://replicate.npmjs.com/_changes',
+          host: 'https://custom.npmjs.com',
+          userPrefix: 'cnpm:',
+          type: RegistryType.Npm,
+        });
+      });
+
+      it('should sync from target registry & default registry', async () => {
+        app.mockHttpclient(/https:\/\/custom\.npmjs\.com/, 'GET', () => {
+          throw new Error('mock error');
+        });
+        app.mockHttpclient(/https:\/\/default\.npmjs\.com/, 'GET', () => {
+          throw new Error('mock error');
+        });
+
+        await packageSyncerService.createTask('cnpm-pkg', { registryId: registry.registryId });
+        await packageSyncerService.createTask('npm-pkg');
+
+        // custom registry
+        let task = await packageSyncerService.findExecuteTask();
+        await packageSyncerService.executeTask(task);
+        let stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        let log = await TestUtil.readStreamToLog(stream);
+        assert(log.includes('Syncing from https://custom.npmjs.com/cnpm-pkg'));
+
+        // default registry
+        task = await packageSyncerService.findExecuteTask();
+        mock(app.config.cnpmcore, 'sourceRegistry', 'https://default.npmjs.org');
+        await packageSyncerService.executeTask(task);
+        stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        log = await TestUtil.readStreamToLog(stream);
+        assert(log.includes('Syncing from https://default.npmjs.org/npm-pkg'));
+
+      })
+    })
   });
 });

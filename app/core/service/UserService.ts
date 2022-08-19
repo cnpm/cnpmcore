@@ -70,7 +70,7 @@ export class UserService extends AbstractService {
     return { user: userEntity, token };
   }
 
-  async saveUser(userPrefix: string = 'npm:', name: string, email: string): Promise<{ changed: boolean, user: UserEntity }> {
+  async saveUser(userPrefix = 'npm:', name: string, email: string): Promise<{ changed: boolean, user: UserEntity }> {
     const storeName = name.startsWith('name:') ? name : `${userPrefix}${name}`;
     let user = await this.userRepository.findUserByName(storeName);
     if (!user) {

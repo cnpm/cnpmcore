@@ -34,7 +34,7 @@ export class NPMRegistry {
     return this.config.cnpmcore.sourceRegistry;
   }
 
-  public setRegistryHost(registryHost: string = '') {
+  public setRegistryHost(registryHost = '') {
     this.registryHost = registryHost;
   }
 

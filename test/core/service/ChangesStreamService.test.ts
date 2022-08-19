@@ -26,7 +26,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     registryManagerService = await ctx.getEggObject(RegistryManagerService);
     scopeManagerService = await ctx.getEggObject(ScopeManagerService);
     assert(changesStreamService);
-    task = Task.createChangesStream('GLOBAL_WORKER');
+    task = Task.createChangesStream('GLOBAL_WORKER', '9527');
     taskService.createTask(task, false);
 
     // create default registry
@@ -59,6 +59,9 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
   });
 
   describe('prepareRegistry()', () => {
+    it('should init since', async() => {
+      assert(task.data.since === '9527');
+    })
     it('should create default registry by config', async () => {
       await changesStreamService.prepareRegistry(task);
       let registries = await registryManagerService.listRegistries({});

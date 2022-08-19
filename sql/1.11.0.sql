@@ -1,5 +1,6 @@
 ALTER TABLE `tasks` ADD COLUMN `biz_id` varchar(100) NULL COMMENT 'unique biz id to keep task unique';
 ALTER TABLE `tasks` ADD UNIQUE KEY `uk_biz_id` (`biz_id`);
+ALTER TABLE `packages` ADD COLUMN `registry_id` varchar(24) NULL COMMENT 'source registry';
 
 CREATE TABLE IF NOT EXISTS `hooks` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'primary key',
