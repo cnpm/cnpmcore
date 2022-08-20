@@ -99,6 +99,10 @@ export class RegistryManagerService extends AbstractService {
     return await this.registryRepository.findRegistryByRegistryId(registryId);
   }
 
+  async findByRegistryName(registryName?: string): Promise<Registry | null> {
+    return await this.registryRepository.findRegistry(registryName);
+  }
+
   // 删除 Registry 方法
   // 可选传入 operatorId 作为参数，用于记录操作人员
   // 同时删除对应的 scope 数据

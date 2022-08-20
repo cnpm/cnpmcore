@@ -66,6 +66,8 @@ export const SyncPackageTaskRule = Type.Object({
   force: Type.Boolean(),
   // sync history version
   forceSyncHistory: Type.Boolean(),
+  // source registry
+  registryName: Type.Optional(Type.String()),
 });
 export type SyncPackageTaskType = Static<typeof SyncPackageTaskRule>;
 

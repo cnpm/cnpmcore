@@ -15,6 +15,7 @@ import { AbstractController } from './AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil';
 import { Task } from '../../core/entity/Task';
 import { PackageSyncerService } from '../../core/service/PackageSyncerService';
+import { RegistryManagerService } from '../../core/service/RegistryManagerService';
 import { TaskState } from '../../common/enum/Task';
 import { SyncPackageTaskRule, SyncPackageTaskType } from '../typebox';
 
@@ -25,6 +26,9 @@ export class PackageSyncController extends AbstractController {
 
   @Inject()
   private backgroundTaskHelper: BackgroundTaskHelper;
+
+  @Inject()
+  private registryManagerService: RegistryManagerService;
 
   private async _executeTaskAsync(task: Task) {
     const startTime = Date.now();
@@ -55,6 +59,7 @@ export class PackageSyncController extends AbstractController {
     }
     const tips = data.tips || `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
     const isAdmin = await this.userRoleManager.isAdmin(ctx);
+
     const params = {
       fullname,
       tips,
@@ -67,11 +72,19 @@ export class PackageSyncController extends AbstractController {
     ctx.tValidate(SyncPackageTaskRule, params);
     const [ scope, name ] = getScopeAndName(params.fullname);
     const packageEntity = await this.packageRepository.findPackage(scope, name);
-    if (packageEntity?.isPrivate) {
+    const registry = await this.registryManagerService.findByRegistryName(data?.registryName);
+
+    if (!registry && data.registryName) {
+      throw new ForbiddenError(`Can\'t find target registry "${data.registryName}"`);
+    }
+    if (packageEntity?.isPrivate && !registry) {
       throw new ForbiddenError(`Can\'t sync private package "${params.fullname}"`);
     }
     if (params.syncDownloadData && !this.packageSyncerService.allowSyncDownloadData) {
       throw new ForbiddenError('Not allow to sync package download data');
+    }
+    if (packageEntity?.registryId && packageEntity.registryId !== registry!.registryId) {
+      throw new ForbiddenError(`The package is synced from ${packageEntity.registryId}`);
     }
     const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     const task = await this.packageSyncerService.createTask(params.fullname, {
@@ -81,6 +94,7 @@ export class PackageSyncController extends AbstractController {
       skipDependencies: params.skipDependencies,
       syncDownloadData: params.syncDownloadData,
       forceSyncHistory: params.forceSyncHistory,
+      registryId: registry?.registryId,
     });
     ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
       task.taskId, fullname);

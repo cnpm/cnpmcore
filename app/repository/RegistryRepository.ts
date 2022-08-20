@@ -22,7 +22,7 @@ export class RegistryRepository extends AbstractRepository {
     };
   }
 
-  async findRegistry(name: string): Promise<RegistryEntity | null> {
+  async findRegistry(name?: string): Promise<RegistryEntity | null> {
     const model = await this.Registry.findOne({ name });
     if (model) {
       return ModelConvertor.convertModelToEntity(model, RegistryEntity);

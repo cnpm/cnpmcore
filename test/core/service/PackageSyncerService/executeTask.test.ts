@@ -1335,7 +1335,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('][DownloadData] ❌❌❌❌❌ 🚮 give up 🚮 ❌❌❌❌❌'));
     });
 
-    describe('should sync from spec registry', async() => {
+    describe('should sync from spec registry', async () => {
       let registry: Registry;
       beforeEach(async () => {
         registry = await registryManagerService.createRegistry({
@@ -1375,7 +1375,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         log = await TestUtil.readStreamToLog(stream);
         assert(log.includes('Syncing from https://default.npmjs.org/npm-pkg'));
 
-      })
-    })
+      });
+    });
   });
 });

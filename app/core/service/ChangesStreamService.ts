@@ -19,6 +19,7 @@ import { Registry } from '../entity/Registry';
 import { AbstractChangeStream, ChangesStreamChange } from '../../common/adapter/changesStream/AbstractChangesStream';
 import { getScopeAndName } from '../../common/PackageUtil';
 import { ScopeManagerService } from './ScopeManagerService';
+import { PackageRepository } from '../../repository/PackageRepository';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -36,16 +37,21 @@ export class ChangesStreamService extends AbstractService {
   private readonly scopeManagerService : ScopeManagerService;
   @Inject()
   private readonly eggObjectFactory: EggObjectFactory;
+  @Inject()
+  private readonly packageRepository: PackageRepository;
 
   // 出于向下兼容考虑, changes_stream 类型 Task 分为
   // GLOBAL_WORKER: 默认的同步源
   // `{registryName}_WORKER`: 自定义 scope 的同步源
   public async findExecuteTask(): Promise<ChangesStreamTask | null> {
     const targetName = 'GLOBAL_WORKER';
-    const existsTask = await this.taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
-    if (!existsTask) {
+    const globalRegistryTask = await this.taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
+    // 如果没有配置默认同步源，先进行初始化
+    if (!globalRegistryTask) {
       await this.taskService.createTask(Task.createChangesStream(targetName), false);
     }
+    // 自定义 scope 由 admin 手动创建
+    // 根据 TaskType.ChangesStream 从队列中获取
     return await this.taskService.findExecuteTask(TaskType.ChangesStream) as ChangesStreamTask;
   }
 
@@ -113,12 +119,18 @@ export class ChangesStreamService extends AbstractService {
   }
 
   // 根据 regsitry 判断是否需要添加同步任务
+  // 1. 如果该包已经指定了 registryId 则以 registryId 为准
   // 1. 该包的 scope 在当前 registry 下
   // 2. 如果 registry 下没有配置 scope (认为是通用 registry 地址) ，且该包的 scope 不在其他 registry 下
   public async needSync(registry: Registry, fullname: string): Promise<boolean> {
-    const [ scopeName ] = getScopeAndName(fullname);
-    const scope = await this.scopeManagerService.findByName(scopeName);
+    const [ scopeName, name ] = getScopeAndName(fullname);
+    const packageEntity = await this.packageRepository.findPackage(scopeName, name);
 
+    if (packageEntity?.registryId) {
+      return registry.registryId === packageEntity.registryId;
+    }
+
+    const scope = await this.scopeManagerService.findByName(scopeName);
     const inCurrentRegistry = scope && scope?.registryId === registry.registryId;
     if (inCurrentRegistry) {
       return true;

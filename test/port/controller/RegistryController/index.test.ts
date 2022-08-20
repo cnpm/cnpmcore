@@ -160,19 +160,19 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         .get(`/-/registry/${registry.registryId}/scopes`)
         .expect(200);
       assert(scopRes.body.count === 4);
-      assert(scopRes.body.data.length === 3);
+      assert(scopRes.body.data.length === 4);
 
       scopRes = await app.httpRequest()
         .get(`/-/registry/${registry.registryId}/scopes?pageSize=1`)
         .expect(200);
-      assert(scopRes.body.count === 3);
+      assert(scopRes.body.count === 4);
       assert(scopRes.body.data.length === 1);
 
       scopRes = await app.httpRequest()
         .get(`/-/registry/${registry.registryId}/scopes?pageSize=2&pageIndex=1`)
         .expect(200);
-      assert(scopRes.body.count === 3);
-      assert(scopRes.body.data.length === 1);
+      assert(scopRes.body.count === 4);
+      assert(scopRes.body.data.length === 2);
 
     });
     it('should error', async () => {

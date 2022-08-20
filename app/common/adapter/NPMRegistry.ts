@@ -28,10 +28,7 @@ export class NPMRegistry {
   public registryHost: string;
 
   get registry(): string {
-    if (this.registryHost) {
-      return this.registryHost;
-    }
-    return this.config.cnpmcore.sourceRegistry;
+    return this.registryHost || this.config.cnpmcore.sourceRegistry;
   }
 
   public setRegistryHost(registryHost = '') {

@@ -9,6 +9,7 @@ import { RegistryManagerService } from 'app/core/service/RegistryManagerService'
 import { RegistryType } from 'app/common/enum/Registry';
 import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
 import { Registry } from 'app/core/entity/Registry';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/core/service/ChangesStreamService.test.ts', () => {
   let ctx: Context;
@@ -59,9 +60,9 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
   });
 
   describe('prepareRegistry()', () => {
-    it('should init since', async() => {
+    it('should init since', async () => {
       assert(task.data.since === '9527');
-    })
+    });
     it('should create default registry by config', async () => {
       await changesStreamService.prepareRegistry(task);
       let registries = await registryManagerService.listRegistries({});
@@ -88,6 +89,16 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
   });
 
   describe('needSync()', () => {
+    it('follow ', async () => {
+      await TestUtil.createPackage({
+        name: '@cnpm/test',
+        isPrivate: false,
+        registryId: npmRegistry.registryId,
+      });
+      const res = await changesStreamService.needSync(npmRegistry, '@cnpm/test');
+      assert(res);
+    });
+
     it('unscoped package should sync default registry', async () => {
       const res = await changesStreamService.needSync(npmRegistry, 'banana');
       assert(res);
