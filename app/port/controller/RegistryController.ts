@@ -15,7 +15,7 @@ import { AbstractController } from './AbstractController';
 import { Static } from 'egg-typebox-validate/typebox';
 import { RegistryManagerService } from '../../core/service/RegistryManagerService';
 import { AdminAccess } from '../middleware/AdminAccess';
-import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
+import { ScopeManagerService } from '../../core/service/ScopeManagerService';
 import { RegistryCreateOptions, QueryPageOptions } from '../typebox';
 
 @HTTPController()

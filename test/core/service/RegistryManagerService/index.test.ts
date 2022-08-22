@@ -54,7 +54,6 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       it('pageOptions should work', async () => {
         // pageOptions should work
         let queryRes = await registryManagerService.listRegistries({ pageIndex: 0, pageSize: 1 });
-        console.log(queryRes.data);
         assert(queryRes.count === 2);
         assert(queryRes.data.length === 1);
         const [ firstRegistry ] = queryRes.data;

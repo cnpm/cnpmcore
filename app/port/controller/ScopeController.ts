@@ -9,13 +9,13 @@ import {
   Inject,
   Middleware,
 } from '@eggjs/tegg';
+import { E400 } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { Static } from 'egg-typebox-validate/typebox';
 import { AdminAccess } from '../middleware/AdminAccess';
 import { ScopeManagerService } from '../../core/service/ScopeManagerService';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
+import { RegistryManagerService } from '../../core/service/RegistryManagerService';
 import { ScopeCreateOptions } from '../typebox';
-import { E400 } from 'egg-errors';
 
 
 @HTTPController()

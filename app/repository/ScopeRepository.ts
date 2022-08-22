@@ -12,6 +12,16 @@ export class ScopeRepository extends AbstractRepository {
   @Inject()
   private readonly Scope: typeof ScopeModel;
 
+  async countByRegistryId(registryId: string): Promise<number> {
+    return await this.Scope.find({ registryId }).count();
+  }
+  async findByName(name: string): Promise<Scope | null> {
+    const model = await this.Scope.findOne({ name });
+    if (!model) {
+      return null;
+    }
+    return ModelConvertor.convertModelToEntity(model, Scope);
+  }
   async listScopesByRegistryId(registryId: string, page: PageOptions): Promise<PageResult<Scope>> {
     const { offset, limit } = EntityUtil.convertPageOptionsToLimitOption(page);
     const count = await this.Scope.find({ registryId }).count();

@@ -1,6 +1,6 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
-import type { RegistryType } from 'app/common/enum/Registry';
+import type { RegistryType } from '../../common/enum/Registry';
 
 interface RegistryData extends EntityData {
   name: string;
