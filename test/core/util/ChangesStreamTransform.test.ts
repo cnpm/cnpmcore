@@ -90,7 +90,7 @@ describe('test/core/util/ChangesStreamTransform.test.ts', () => {
   it('should work handle backpressure', async () => {
     let seq = 1;
     stream = Readable.from('');
-    const transform = new ChangesStreamTransform();
+    const transform = new ChangesStreamTransform({ highWaterMark: 1 });
     let assertDrainTime = 0;
     let assertWriteTime = 0;
 
@@ -119,13 +119,13 @@ describe('test/core/util/ChangesStreamTransform.test.ts', () => {
       });
     });
 
-    (new Array(50)).fill(0).forEach(() => {
+    for (let i = 0; i < 50; i++) {
       stream.push(`{"seq":${++seq},"id":"${seq}","changes":[{"rev":"5-a87e847a323ce2503582b68c5f66a8a3"}],"deleted":true},`);
-    });
+    }
 
     await res;
 
-    assert(assertDrainTime === assertWriteTime - 1);
+    assert(assertDrainTime === assertWriteTime);
     assert(assertWriteTime === 50);
 
   });

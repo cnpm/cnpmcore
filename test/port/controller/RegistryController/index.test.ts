@@ -220,6 +220,14 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         .expect(403);
     });
 
+    it('should error when invalid registryId', async () => {
+      const res = await app.httpRequest()
+        .post('/-/registry/in_valid/sync')
+        .set('authorization', adminUser.authorization)
+        .expect(404);
+      assert(res.body.error.includes('registry not found'));
+    });
+
     it('should 200', async () => {
       await app.httpRequest()
         .post(`/-/registry/${registry.registryId}/sync`)
