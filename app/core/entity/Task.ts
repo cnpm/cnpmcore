@@ -36,6 +36,7 @@ export type SyncPackageTaskOptions = {
   syncDownloadData?: boolean;
   // force sync history version
   forceSyncHistory?: boolean;
+  registryId?: string;
 };
 
 export interface CreateHookTaskData extends TaskBaseData {
@@ -124,6 +125,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
         // task execute worker
         taskWorker: '',
         tips: options?.tips,
+        registryId: options?.registryId ?? '',
         skipDependencies: options?.skipDependencies,
         syncDownloadData: options?.syncDownloadData,
         forceSyncHistory: options?.forceSyncHistory,
@@ -134,7 +136,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static createChangesStream(targetName: string): ChangesStreamTask {
+  public static createChangesStream(targetName: string, since = ''): ChangesStreamTask {
     const data = {
       type: TaskType.ChangesStream,
       state: TaskState.Waiting,
@@ -144,7 +146,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       data: {
         // task execute worker
         taskWorker: '',
-        since: '',
+        since,
       },
     };
     return this.create(data) as ChangesStreamTask;

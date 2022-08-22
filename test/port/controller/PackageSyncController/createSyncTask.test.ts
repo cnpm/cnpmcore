@@ -103,6 +103,47 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       app.expectLog(', targetName: koa-not-exists,');
     });
 
+    it('should error when invalid registryName', async () => {
+      mock(app.config.cnpmcore, 'alwaysAuth', false);
+      const admin = await TestUtil.createAdmin();
+      const res = await app.httpRequest()
+        .put('/-/package/koa-not-exists/syncs')
+        .set('authorization', admin.authorization)
+        .send({ registryName: 'invalid' })
+        .expect(403);
+
+      assert(res.body.error.includes('Can\'t find target registry'));
+    });
+
+    it('should check the packageEntity registryId', async () => {
+      mock(app.config.cnpmcore, 'alwaysAuth', false);
+      await TestUtil.createPackage({
+        name: '@cnpm/banana',
+        registryId: 'mock_registry_id',
+        isPrivate: false,
+      });
+      const admin = await TestUtil.createAdmin();
+      // create registry
+      await app.httpRequest()
+        .post('/-/registry')
+        .set('authorization', admin.authorization)
+        .send(
+          {
+            name: 'cnpm',
+            host: 'https://r.cnpmjs.org/',
+            changeStream: 'https://r.cnpmjs.org/_changes',
+            type: 'cnpmcore',
+          });
+
+      const res = await app.httpRequest()
+        .put('/-/package/@cnpm/banana/syncs')
+        .set('authorization', admin.authorization)
+        .send({ registryName: 'cnpm' })
+        .expect(403);
+
+      assert(res.body.error.includes('The package is synced from'));
+    });
+
     it('should sync immediately and mock executeTask error when admin user request', async () => {
       mock(app.config.cnpmcore, 'alwaysAuth', false);
       mock.error(PackageSyncerService.prototype, 'executeTask');

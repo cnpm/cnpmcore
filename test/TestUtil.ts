@@ -20,6 +20,7 @@ type PackageOptions = {
   isPrivate?: boolean;
   libc?: string[];
   description?: string;
+  registryId?: string;
 };
 
 type UserOptions = {
@@ -214,10 +215,11 @@ export class TestUtil {
       .set('user-agent', user.ua)
       .send(pkg)
       .expect(201);
+
     if (options?.isPrivate === false) {
       const [ scope, name ] = getScopeAndName(pkg.name);
       const { Package: PackageModel } = require('../app/repository/model/Package');
-      await PackageModel.update({ scope, name }, { isPrivate: false });
+      await PackageModel.update({ scope, name }, { isPrivate: false, registryId: options?.registryId });
     }
     return { user, pkg };
   }
@@ -287,6 +289,20 @@ export class TestUtil {
     return await this.createUser({
       name: adminName,
     });
+  }
+  static async createRegistryAndScope() {
+    // create success
+    const adminUser = await this.createAdmin();
+    await this.app.httpRequest()
+      .post('/-/registry')
+      .set('authorization', adminUser.authorization)
+      .send(
+        {
+          name: 'custom6',
+          host: 'https://r.cnpmjs.org/',
+          changeStream: 'https://r.cnpmjs.org/_changes',
+          type: 'cnpmcore',
+        });
   }
 
   static async readStreamToLog(urlOrStream) {

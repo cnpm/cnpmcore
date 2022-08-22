@@ -3,14 +3,23 @@ import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
 import { RegistryType } from 'app/common/enum/Registry';
+import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
+import { Registry } from 'app/core/entity/Registry';
+import { TaskRepository } from 'app/repository/TaskRepository';
+import { TaskType } from 'app/common/enum/Task';
+import { ChangesStreamTaskData } from 'app/core/entity/Task';
 
 describe('test/core/service/RegistryManagerService/index.test.ts', () => {
   let ctx: Context;
   let registryManagerService: RegistryManagerService;
+  let scopeManagerService: ScopeManagerService;
+  let taskRepository: TaskRepository;
 
   before(async () => {
     ctx = await app.mockModuleContext();
     registryManagerService = await ctx.getEggObject(RegistryManagerService);
+    scopeManagerService = await ctx.getEggObject(ScopeManagerService);
+    taskRepository = await ctx.getEggObject(TaskRepository);
   });
 
   beforeEach(async () => {
@@ -103,5 +112,49 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       queryRes = await registryManagerService.listRegistries({});
       assert(queryRes.count === 0);
     });
+
+    describe('createSyncChangesStream()', async () => {
+      let registry: Registry;
+      beforeEach(async () => {
+        // create scope
+        [ registry ] = (await registryManagerService.listRegistries({})).data;
+        await scopeManagerService.createScope({ name: '@cnpm', registryId: registry.registryId });
+      });
+
+      it('should work', async () => {
+        // create success
+        await registryManagerService.createSyncChangesStream({ registryId: registry.registryId });
+        const targetName = 'CUSTOM_WORKER';
+        const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
+        assert(task);
+      });
+
+      it('should preCheck registry', async () => {
+        await assert.rejects(registryManagerService.createSyncChangesStream({ registryId: 'mock_invalid_registry_id' }), /not found/);
+      });
+
+      it('should preCheck scopes', async () => {
+        const newRegistry = await registryManagerService.createRegistry({
+          name: 'custom4',
+          changeStream: 'https://r.cnpmjs.org/_changes',
+          host: 'https://cnpmjs.org',
+          userPrefix: 'cnpm:',
+          type: RegistryType.Cnpmcore,
+        });
+        await assert.rejects(registryManagerService.createSyncChangesStream({ registryId: newRegistry.registryId }), /please create scopes first/);
+      });
+
+      it('should create only once', async () => {
+        // create success
+        await registryManagerService.createSyncChangesStream({ registryId: registry.registryId });
+        await registryManagerService.createSyncChangesStream({ registryId: registry.registryId });
+        await registryManagerService.createSyncChangesStream({ registryId: registry.registryId, since: '100' });
+        const targetName = 'CUSTOM_WORKER';
+        const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
+        assert((task?.data as ChangesStreamTaskData).since === '');
+      });
+    });
+
+
   });
 });

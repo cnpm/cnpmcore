@@ -21,6 +21,9 @@ export class Package extends Bone {
   })
   packageId: string;
 
+  @Attribute(DataTypes.STRING(24))
+  registryId: string;
+
   @Attribute(DataTypes.STRING(214))
   scope: string;
 

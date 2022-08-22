@@ -66,6 +66,8 @@ export const SyncPackageTaskRule = Type.Object({
   force: Type.Boolean(),
   // sync history version
   forceSyncHistory: Type.Boolean(),
+  // source registry
+  registryName: Type.Optional(Type.String()),
 });
 export type SyncPackageTaskType = Static<typeof SyncPackageTaskRule>;
 
@@ -117,6 +119,10 @@ export const QueryPageOptions = Type.Object({
     transform: [ 'trim' ],
     minimum: 0,
   })),
+});
+
+export const RegistryCreateSyncOptions = Type.Object({
+  since: Type.Optional(Type.String()),
 });
 
 export const RegistryCreateOptions = Type.Object({

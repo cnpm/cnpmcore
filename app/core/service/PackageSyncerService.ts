@@ -19,13 +19,15 @@ import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { UserRepository } from '../../repository/UserRepository';
 import { DistRepository } from '../../repository/DistRepository';
-import { Task, SyncPackageTaskOptions } from '../entity/Task';
+import { Task, SyncPackageTaskOptions, CreateSyncPackageTask } from '../entity/Task';
 import { Package } from '../entity/Package';
 import { UserService } from './UserService';
 import { TaskService } from './TaskService';
 import { PackageManagerService } from './PackageManagerService';
 import { CacheService } from './CacheService';
 import { User } from '../entity/User';
+import { RegistryManagerService } from './RegistryManagerService';
+import { Registry } from '../entity/Registry';
 
 function isoNow() {
   return new Date().toISOString();
@@ -57,6 +59,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly httpclient: EggContextHttpClient;
   @Inject()
   private readonly distRepository: DistRepository;
+  @Inject()
+  private readonly registryManagerService: RegistryManagerService;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
     return await this.taskService.createTask(Task.createSyncPackage(fullname, options), true);
@@ -71,7 +75,7 @@ export class PackageSyncerService extends AbstractService {
   }
 
   public async findExecuteTask() {
-    return await this.taskService.findExecuteTask(TaskType.SyncPackage);
+    return await this.taskService.findExecuteTask(TaskType.SyncPackage) as CreateSyncPackageTask;
   }
 
   public get allowSyncDownloadData() {
@@ -190,10 +194,26 @@ export class PackageSyncerService extends AbstractService {
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
+  public async initSpecRegistry(task: Task): Promise<Registry | null> {
+    const { registryId } = task.data as SyncPackageTaskOptions;
+    let targetHost: string = this.config.cnpmcore.sourceRegistry;
+    let registry: Registry | null = null;
+    // 历史 Task 可能没有配置 registryId
+    if (registryId) {
+      registry = await this.registryManagerService.findByRegistryId(registryId);
+      if (registry?.host) {
+        targetHost = registry.host;
+      }
+    }
+    this.npmRegistry.setRegistryHost(targetHost);
+    return registry;
+  }
+
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
-    const registry = this.npmRegistry.registry;
+    const registry = await this.initSpecRegistry(task);
+    const registryHost = this.npmRegistry.registry;
     let logs: string[] = [];
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
@@ -206,7 +226,7 @@ export class PackageSyncerService extends AbstractService {
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
       task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
     const [ scope, name ] = getScopeAndName(fullname);
@@ -322,7 +342,7 @@ export class PackageSyncerService extends AbstractService {
       for (const maintainer of maintainers) {
         if (maintainer.name && maintainer.email) {
           maintainersMap[maintainer.name] = maintainer;
-          const { changed, user } = await this.userService.savePublicUser(maintainer.name, maintainer.email);
+          const { changed, user } = await this.userService.saveUser(registry?.userPrefix, maintainer.name, maintainer.email);
           users.push(user);
           if (changed) {
             changedUserCount++;
@@ -517,6 +537,7 @@ export class PackageSyncerService extends AbstractService {
         description,
         packageJson: item,
         readme,
+        registryId: registry?.registryId,
         dist: {
           localFile,
         },

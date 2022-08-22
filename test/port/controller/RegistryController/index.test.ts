@@ -1,4 +1,7 @@
+import { TaskType } from 'app/common/enum/Task';
 import { Registry } from 'app/core/entity/Registry';
+import { ChangesStreamTaskData } from 'app/core/entity/Task';
+import { TaskService } from 'app/core/service/TaskService';
 import assert = require('assert');
 import { Context } from 'egg';
 import { app } from 'egg-mock/bootstrap';
@@ -8,8 +11,10 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
   let ctx: Context;
   let adminUser: any;
   let registry: Registry;
+  let taskService: TaskService;
   before(async () => {
     ctx = await app.mockModuleContext();
+    taskService = await ctx.getEggObject(TaskService);
   });
   beforeEach(async () => {
     adminUser = await TestUtil.createAdmin();
@@ -32,6 +37,17 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
       .expect(200);
 
     registry = res.body.data[0];
+
+    // create scope
+    await app.httpRequest()
+      .post('/-/scope')
+      .set('authorization', adminUser.authorization)
+      .send({
+        name: '@cnpm',
+        registryId: registry.registryId,
+      })
+      .expect(200);
+
   });
 
   afterEach(async () => {
@@ -143,20 +159,20 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
       let scopRes = await app.httpRequest()
         .get(`/-/registry/${registry.registryId}/scopes`)
         .expect(200);
-      assert(scopRes.body.count === 3);
-      assert(scopRes.body.data.length === 3);
+      assert(scopRes.body.count === 4);
+      assert(scopRes.body.data.length === 4);
 
       scopRes = await app.httpRequest()
         .get(`/-/registry/${registry.registryId}/scopes?pageSize=1`)
         .expect(200);
-      assert(scopRes.body.count === 3);
+      assert(scopRes.body.count === 4);
       assert(scopRes.body.data.length === 1);
 
       scopRes = await app.httpRequest()
         .get(`/-/registry/${registry.registryId}/scopes?pageSize=2&pageIndex=1`)
         .expect(200);
-      assert(scopRes.body.count === 3);
-      assert(scopRes.body.data.length === 1);
+      assert(scopRes.body.count === 4);
+      assert(scopRes.body.data.length === 2);
 
     });
     it('should error', async () => {
@@ -196,4 +212,45 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
       assert(queryRes.body.count === 0);
     });
   });
+
+  describe('[POST /-/registry/:id/sync] createRegistrySyncTask()', () => {
+    it('should 403', async () => {
+      await app.httpRequest()
+        .post(`/-/registry/${registry.registryId}/sync`)
+        .expect(403);
+    });
+
+    it('should error when invalid registryId', async () => {
+      const res = await app.httpRequest()
+        .post('/-/registry/in_valid/sync')
+        .set('authorization', adminUser.authorization)
+        .expect(404);
+      assert(res.body.error.includes('registry not found'));
+    });
+
+    it('should 200', async () => {
+      await app.httpRequest()
+        .post(`/-/registry/${registry.registryId}/sync`)
+        .set('authorization', adminUser.authorization)
+        .expect(200);
+
+      const task = await taskService.findExecuteTask(TaskType.ChangesStream);
+      assert(task?.targetName === 'CUSTOM3_WORKER');
+    });
+
+    it('since params', async () => {
+      await app.httpRequest()
+        .post(`/-/registry/${registry.registryId}/sync`)
+        .set('authorization', adminUser.authorization)
+        .send({
+          since: '9527',
+        })
+        .expect(200);
+
+      const task = await taskService.findExecuteTask(TaskType.ChangesStream);
+      assert(task?.targetName === 'CUSTOM3_WORKER');
+      assert((task?.data as ChangesStreamTaskData).since === '9527');
+    });
+  });
+
 });

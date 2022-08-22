@@ -16,7 +16,7 @@ import { Static } from 'egg-typebox-validate/typebox';
 import { RegistryManagerService } from '../../core/service/RegistryManagerService';
 import { AdminAccess } from '../middleware/AdminAccess';
 import { ScopeManagerService } from '../../core/service/ScopeManagerService';
-import { RegistryCreateOptions, QueryPageOptions } from '../typebox';
+import { RegistryCreateOptions, QueryPageOptions, RegistryCreateSyncOptions } from '../typebox';
 
 @HTTPController()
 export class RegistryController extends AbstractController {
@@ -76,6 +76,23 @@ export class RegistryController extends AbstractController {
       operatorId: authorizedUser.userId,
       type,
     });
+    return { ok: true };
+  }
+
+  @HTTPMethod({
+    path: '/-/registry/:id/sync',
+    method: HTTPMethodEnum.POST,
+  })
+  @Middleware(AdminAccess)
+  async createRegistrySyncTask(@Context() ctx: EggContext, @HTTPParam() id: string, @HTTPBody() registryOptions: Static<typeof RegistryCreateSyncOptions>) {
+    ctx.tValidate(RegistryCreateSyncOptions, registryOptions);
+    const { since } = registryOptions;
+    const registry = await this.registryManagerService.findByRegistryId(id);
+    if (!registry) {
+      throw new NotFoundError('registry not found');
+    }
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
+    await this.registryManagerService.createSyncChangesStream({ registryId: registry.registryId, since, operatorId: authorizedUser.userId });
     return { ok: true };
   }
 
