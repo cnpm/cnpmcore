@@ -55,7 +55,7 @@ export class RegistryManagerService extends AbstractService {
 
     // 启动 changeStream
     const targetName = `${registry.name.toUpperCase()}_WORKER`;
-    await this.taskService.createTask(Task.createChangesStream(targetName, since), false);
+    await this.taskService.createTask(Task.createChangesStream(targetName, registryId, since), false);
   }
 
   async createRegistry(createCmd: CreateRegistryCmd): Promise<Registry> {

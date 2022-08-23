@@ -136,7 +136,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static createChangesStream(targetName: string, since = ''): ChangesStreamTask {
+  public static createChangesStream(targetName: string, registryId = '', since = ''): ChangesStreamTask {
     const data = {
       type: TaskType.ChangesStream,
       state: TaskState.Waiting,
@@ -146,6 +146,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       data: {
         // task execute worker
         taskWorker: '',
+        registryId,
         since,
       },
     };

@@ -1,5 +1,5 @@
 import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
-import { DataTypes, Bone } from 'leoric';
+import { DataTypes, Bone, LENGTH_VARIANTS } from 'leoric';
 
 @Model()
 export class PackageVersionBlock extends Bone {
@@ -26,6 +26,6 @@ export class PackageVersionBlock extends Bone {
   @Attribute(DataTypes.STRING(256))
   version: string;
 
-  @Attribute(DataTypes.TEXT('long'))
+  @Attribute(DataTypes.TEXT(LENGTH_VARIANTS.long))
   reason: string;
 }

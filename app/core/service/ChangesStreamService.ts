@@ -164,10 +164,10 @@ export class ChangesStreamService extends AbstractService {
     for await (const change of stream) {
       const { fullname, seq } = change as ChangesStreamChange;
       lastPackage = fullname;
+      lastSince = seq;
       const valid = await this.needSync(registry, fullname);
       if (valid) {
         taskCount++;
-        lastSince = seq;
         await this.packageSyncerService.createTask(fullname, {
           authorIp: HOST_NAME,
           authorId: 'ChangesStreamService',
@@ -183,6 +183,17 @@ export class ChangesStreamService extends AbstractService {
         });
         await this.taskRepository.saveTask(task);
       }
+    }
+
+    // 如果没有需要同步的任务，也更新一下 taskData 里的信息
+    if (taskCount === 0) {
+      // 实时更新 task 信息
+      task.updateSyncData({
+        lastSince,
+        lastPackage,
+        taskCount,
+      });
+      await this.taskRepository.saveTask(task);
     }
 
     return { lastSince, taskCount };
