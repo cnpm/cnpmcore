@@ -1,4 +1,21 @@
 
+1.11.0 / 2022-08-23
+==================
+
+**features**
+  * [[`a91c8ac`](http://github.com/cnpm/cnpmcore/commit/a91c8ac4d05dc903780fda516b09364a05a2b1e6)] - feat: sync package from spec regsitry (#293) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+  * [[`de37008`](http://github.com/cnpm/cnpmcore/commit/de37008261b05845f392d66764cdfe14ae324756)] - feat: changesStream adapter & needSync() method (#292) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+  * [[`4b506c8`](http://github.com/cnpm/cnpmcore/commit/4b506c8371697ddacdbe99a8ecb330bfc1911ec6)] - feat: init registry & scope (#286) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+  * [[`41c6e24`](http://github.com/cnpm/cnpmcore/commit/41c6e24c84d546eb9d5515cc0940cc3e4274687b)] - feat: impl trigger Hooks (#289) (killa <<killa123@126.com>>)
+  * [[`79cb826`](http://github.com/cnpm/cnpmcore/commit/79cb82615f04bdb3da3ccbe09bb6a861608b69c5)] - feat: impl migration sql (#290) (killa <<killa123@126.com>>)
+  * [[`4cfa8ed`](http://github.com/cnpm/cnpmcore/commit/4cfa8ed9d687ce7d950d7d20c0ea28221763ba5f)] - feat: impl hooks api (#287) (killa <<killa123@126.com>>)
+  * [[`47d53d2`](http://github.com/cnpm/cnpmcore/commit/47d53d22ad03c02ee9cb9035a38ae205a6d38381)] - feat: add bizId for task (#285) (killa <<killa123@126.com>>)
+  * [[`3b1536b`](http://github.com/cnpm/cnpmcore/commit/3b1536b070b2f9062bc2cc377db96d2f4a160efc)] - feat: add node-webrtc mirror (#274) (Opportunity <<opportunity@live.in>>)
+
+**others**
+  * [[`7106807`](http://github.com/cnpm/cnpmcore/commit/710680742a078b2faf4cb18c3a39c0397308712e)] - 🐛 FIX: Should show queue size on logging (#280) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`3a41b21`](http://github.com/cnpm/cnpmcore/commit/3a41b2161cc99bb2f6f6dd7cbaa7abef25ff4393)] - 🐛 FIX: Handle binary configuration value (#278) (fengmk2 <<fengmk2@gmail.com>>)
+
 1.10.0 / 2022-08-04
 ==================
 
