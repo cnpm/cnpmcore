@@ -833,7 +833,7 @@ const binaries: {
     repo: 'TryGhost/node-sqlite3',
     distUrl: 'https://github.com/TryGhost/node-sqlite3/releases',
   },
-  "better-sqlite3": {
+  'better-sqlite3': {
     category: 'better-sqlite3',
     description: 'AsyncThe fastest and simplest library for SQLite3 in Node.js',
     syncer: SyncerClass.GithubBinary,
