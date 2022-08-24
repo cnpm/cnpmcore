@@ -833,6 +833,13 @@ const binaries: {
     repo: 'TryGhost/node-sqlite3',
     distUrl: 'https://github.com/TryGhost/node-sqlite3/releases',
   },
+  "better-sqlite3": {
+    category: 'better-sqlite3',
+    description: 'AsyncThe fastest and simplest library for SQLite3 in Node.js',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'WiseLibs/better-sqlite3',
+    distUrl: 'https://github.com/WiseLibs/better-sqlite3/releases',
+  },
   keytar: {
     category: 'keytar',
     description: 'Native Password Node Module',
