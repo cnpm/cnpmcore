@@ -1,4 +1,10 @@
 
+1.11.1 / 2022-08-24
+==================
+
+**fixes**
+  * [[`359a150`](http://github.com/cnpm/cnpmcore/commit/359a150eb450d69e6523b20efcc5c7cfe3efab4d)] - fix: changes stream (#297) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
 1.11.0 / 2022-08-23
 ==================
 
