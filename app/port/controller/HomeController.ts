@@ -32,8 +32,6 @@ export class HomeController extends AbstractController {
       doc_version_count: totalData.packageVersionCount,
       download: totalData.download,
       update_seq: totalData.lastChangeId,
-      // follow https://registry.npmjs.org/ and https://replicate.npmjs.com/ defined keyword: committed_update_seq
-      committed_update_seq: totalData.lastChangeId,
       sync_model: this.config.cnpmcore.syncMode,
       sync_changes_steam: totalData.changesStream,
       sync_binary: this.config.cnpmcore.enableSyncBinary,
