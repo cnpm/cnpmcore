@@ -27,7 +27,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     registryManagerService = await ctx.getEggObject(RegistryManagerService);
     scopeManagerService = await ctx.getEggObject(ScopeManagerService);
     assert(changesStreamService);
-    task = Task.createChangesStream('GLOBAL_WORKER', '9527');
+    task = Task.createChangesStream('GLOBAL_WORKER', '', '9527');
     taskService.createTask(task, false);
 
     // create default registry
@@ -162,6 +162,24 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       const changes = await changesStreamService.executeSync('1', task);
       assert(changes.taskCount === 2);
       assert(changes.lastSince === '3');
+    });
+
+    it('should update since even not taskCount', async () => {
+      mock(ChangesStreamService.prototype, 'needSync', async () => {
+        return false;
+      });
+      mock(ctx.httpclient, 'request', async () => {
+        return {
+          res: Readable.from(`
+            {"seq":2,"id":"backbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
+            {"seq":3,"id":"backbone2.websql.deferred","changes":[{"rev":"4-f6150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
+            `),
+        };
+      });
+      const changes = await changesStreamService.executeSync('1', task);
+      assert(changes.taskCount === 0);
+      assert(changes.lastSince === '3');
+      assert(task.data.since === '3');
     });
   });
 

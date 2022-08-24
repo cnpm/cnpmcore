@@ -127,6 +127,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
         const targetName = 'CUSTOM_WORKER';
         const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
         assert(task);
+        assert((task.data as ChangesStreamTaskData).registryId === registry.registryId);
       });
 
       it('should preCheck registry', async () => {
