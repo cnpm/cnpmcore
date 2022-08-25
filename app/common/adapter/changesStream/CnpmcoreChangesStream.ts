@@ -1,9 +1,8 @@
-import { Readable } from 'node:stream';
 import { ContextProto } from '@eggjs/tegg';
 import { RegistryType } from '../../../common/enum/Registry';
 import { Registry } from '../../../core/entity/Registry';
 import { E500 } from 'egg-errors';
-import { AbstractChangeStream, ChangesStreamChange, RegistryChangesStream } from './AbstractChangesStream';
+import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesStream';
 
 @ContextProto()
 @RegistryChangesStream(RegistryType.Cnpmcore)
@@ -25,9 +24,7 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
     return since;
   }
 
-  async fetchChanges(registry: Registry, since: string): Promise<Readable> {
-    const changes: ChangesStreamChange[] = [];
-
+  async* fetchChanges(registry: Registry, since: string) {
     const db = this.getChangesStreamUrl(registry, since);
     // json mode
     const { data } = await this.httpclient.request(db, {
@@ -43,14 +40,13 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
         const fullname = change.id;
         // cnpmcore 默认返回 >= 需要做特殊判断
         if (seq && fullname && seq !== since) {
-          changes.push({
+          const change = {
             fullname,
             seq,
-          });
+          };
+          yield change;
         }
       }
     }
-
-    return Readable.from(changes);
   }
 }

@@ -114,7 +114,7 @@
     "git-contributor": "^1.0.10",
     "npm-cli-login": "^1.0.0",
     "ts-node": "^10.4.0",
-    "typescript": "^4.3.5"
+    "typescript": "~4.7.0"
   },
   "author": "killagu",
   "license": "MIT",

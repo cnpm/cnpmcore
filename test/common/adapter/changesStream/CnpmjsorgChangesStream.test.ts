@@ -83,7 +83,13 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
           ],
         },
       });
-      await assert.rejects(cnpmjsorgChangesStream.fetchChanges(registry, '1'), /limit too large/);
+      const stream = await cnpmjsorgChangesStream.fetchChanges(registry, '1');
+      await assert.rejects(async () => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        for await (const _ of stream) {
+          // ...
+        }
+      }, /limit too large/);
     });
   });
 });
