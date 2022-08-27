@@ -1,10 +1,8 @@
 import { ContextProto } from '@eggjs/tegg';
-import { Readable, pipeline } from 'node:stream';
 import { E500 } from 'egg-errors';
 import { RegistryType } from '../../../common/enum/Registry';
 import { Registry } from '../../../core/entity/Registry';
-import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesStream';
-import ChangesStreamTransform from '../../../core/util/ChangesStreamTransform';
+import { AbstractChangeStream, ChangesStreamChange, RegistryChangesStream } from './AbstractChangesStream';
 
 @ContextProto()
 @RegistryChangesStream(RegistryType.Npm)
@@ -26,17 +24,32 @@ export class NpmChangesStream extends AbstractChangeStream {
     return since;
   }
 
-  async fetchChanges(registry: Registry, since: string): Promise<Readable> {
+  async* fetchChanges(registry: Registry, since: string) {
     const db = this.getChangesStreamUrl(registry, since);
     const { res } = await this.httpclient.request(db, {
       streaming: true,
       timeout: 10000,
     });
 
-    const transform = new ChangesStreamTransform();
-    return pipeline(res, transform, error => {
-      this.logger.error('[NpmChangesStream.fetchChanges] pipeline error: %s', error);
-    });
+    let buf = '';
+    for await (const chunk of res) {
+      const text = chunk.toString();
+      const lines = text.split('\n');
+
+      for (const line of lines) {
+        const content = buf + line;
+        const match = /"seq":(\d+),"id":"([^"]+)"/g.exec(content);
+        const seq = match?.[1];
+        const fullname = match?.[2];
+        if (seq && fullname) {
+          buf = '';
+          const change: ChangesStreamChange = { fullname, seq };
+          yield change;
+        } else {
+          buf += line;
+        }
+      }
+    }
   }
 
 }

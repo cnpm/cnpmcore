@@ -3,7 +3,6 @@ import {
   Inject,
   QualifierImplDecoratorUtil,
 } from '@eggjs/tegg';
-import { Readable } from 'node:stream';
 import { RegistryType } from '../../../common/enum/Registry';
 import { Registry } from '../../../core/entity/Registry';
 import {
@@ -25,7 +24,7 @@ export abstract class AbstractChangeStream {
   protected httpclient: EggHttpClient;
 
   abstract getInitialSince(registry: Registry): Promise<string>;
-  abstract fetchChanges(registry: Registry, since: string): Promise<Readable>;
+  abstract fetchChanges(registry: Registry, since: string): AsyncGenerator<ChangesStreamChange>;
 
   getChangesStreamUrl(registry: Registry, since: string, limit?: number): string {
     const url = new URL(registry.changeStream);
