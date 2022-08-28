@@ -108,7 +108,7 @@ jobs:
       run: npm run ci
       env:
         CNPMCORE_NFS_TYPE: oss
-        CNPMCORE_NFS_OSS_BUCKET: cnpmcore-unittest-github
+        CNPMCORE_NFS_OSS_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
         CNPMCORE_NFS_OSS_ENDPOINT: https://oss-us-west-1.aliyuncs.com
         CNPMCORE_NFS_OSS_ID: ${{ secrets.CNPMCORE_NFS_OSS_ID }}
         CNPMCORE_NFS_OSS_SECRET: ${{ secrets.CNPMCORE_NFS_OSS_SECRET }}
