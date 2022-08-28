@@ -1,4 +1,18 @@
 
+1.11.2 / 2022-08-28
+==================
+
+**fixes**
+  * [[`4e8700c`](http://github.com/cnpm/cnpmcore/commit/4e8700c4f7c6fb5c4f4d4a2b9a9546096c5d10e2)] - fix: only create createHookTask if hook enable (#299) (killa <<killa123@126.com>>)
+
+**others**
+  * [[`e06c841`](http://github.com/cnpm/cnpmcore/commit/e06c841537113fdb0c00beb22b0a55378c61ce80)] - 🐛 FIX: Should sync public package when registryName not exists (#303) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`f139444`](http://github.com/cnpm/cnpmcore/commit/f139444213403494ebe9bf073df62125413892d9)] - 📖 DOC: Update contributors (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`c4a9de5`](http://github.com/cnpm/cnpmcore/commit/c4a9de598dce9a1b82bbcdd91968a15bbc5a4b6b)] - Create SECURITY.md (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`709d65b`](http://github.com/cnpm/cnpmcore/commit/709d65bd0473856c9bfc4416ea2ca375136e354f)] - 🤖 TEST: Use diff bucket on OSS test (#301) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`9576699`](http://github.com/cnpm/cnpmcore/commit/95766990fa9c4c2c43d462f6b151557425b0c741)] - chore: use AsyncGenerator insteadof Transform stream (#300) (killa <<killa123@126.com>>)
+  * [[`3ed5269`](http://github.com/cnpm/cnpmcore/commit/3ed5269f1d22ca3aaca89a90a4fff90f293e2464)] - 📦 NEW: Mirror better-sqlite3 binary (#296) (fengmk2 <<fengmk2@gmail.com>>)
+
 1.11.1 / 2022-08-24
 ==================
 
