@@ -83,7 +83,7 @@ export class PackageSyncController extends AbstractController {
     if (params.syncDownloadData && !this.packageSyncerService.allowSyncDownloadData) {
       throw new ForbiddenError('Not allow to sync package download data');
     }
-    if (packageEntity?.registryId && packageEntity.registryId !== registry!.registryId) {
+    if (registry && packageEntity?.registryId && packageEntity.registryId !== registry.registryId) {
       throw new ForbiddenError(`The package is synced from ${packageEntity.registryId}`);
     }
     const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
