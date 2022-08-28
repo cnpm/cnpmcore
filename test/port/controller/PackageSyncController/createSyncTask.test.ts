@@ -144,6 +144,36 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.error.includes('The package is synced from'));
     });
 
+    it('should ignore the packageEntity registryId when registry not exists', async () => {
+      mock(app.config.cnpmcore, 'alwaysAuth', false);
+      await TestUtil.createPackage({
+        name: '@cnpm/banana',
+        registryId: 'mock_registry_id',
+        isPrivate: false,
+      });
+      const admin = await TestUtil.createAdmin();
+      // create registry
+      await app.httpRequest()
+        .post('/-/registry')
+        .set('authorization', admin.authorization)
+        .send(
+          {
+            name: 'cnpm',
+            host: 'https://r.cnpmjs.org/',
+            changeStream: 'https://r.cnpmjs.org/_changes',
+            type: 'cnpmcore',
+          });
+
+      const res = await app.httpRequest()
+        .put('/-/package/@cnpm/banana/syncs')
+        .set('authorization', admin.authorization)
+        .send()
+        .expect(201);
+      assert(res.body.ok === true);
+      assert(res.body.state === 'waiting');
+      assert(res.body.id);
+    });
+
     it('should sync immediately and mock executeTask error when admin user request', async () => {
       mock(app.config.cnpmcore, 'alwaysAuth', false);
       mock.error(PackageSyncerService.prototype, 'executeTask');
