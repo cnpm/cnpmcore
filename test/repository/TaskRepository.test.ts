@@ -1,6 +1,7 @@
 import assert = require('assert');
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
+import { setTimeout } from 'timers/promises';
 import { TaskRepository } from 'app/repository/TaskRepository';
 import { Task as TaskModel } from 'app/repository/model/Task';
 import { ChangesStreamTaskData, Task, TaskData } from '../../app/core/entity/Task';
@@ -53,6 +54,40 @@ describe('test/repository/TaskRepository.test.ts', () => {
       assert(task1.taskId);
       assert(task2.taskId);
       assert(task1.taskId === task2.taskId);
+    });
+
+    it('should update changesStream syncData', async () => {
+      const bizId = 'mock_dup_biz_id';
+      const data: EasyData<TaskData<ChangesStreamTaskData>, 'taskId'> = {
+        type: TaskType.ChangesStream,
+        state: TaskState.Waiting,
+        targetName: 'foo',
+        authorId: `pid_${process.pid}`,
+        authorIp: os.hostname(),
+        data: {
+          taskWorker: '',
+          since: '',
+        },
+        bizId,
+      };
+
+      const newData = EntityUtil.defaultData(data, 'taskId');
+      const task1 = new Task(newData);
+      await taskRepository.saveTask(task1);
+
+      const originTask = await taskRepository.findTask(task1.taskId) as Task;
+      originTask.updateSyncData({ lastSince: '9527', taskCount: 0 });
+      await setTimeout(1000);
+      await taskRepository.saveTask(originTask);
+      const firstUpdated = originTask.updatedAt;
+
+      originTask.updateSyncData({ lastSince: '9527', taskCount: 0 });
+      await setTimeout(1000);
+      await taskRepository.saveTask(originTask);
+      const secondUpdated = originTask.updatedAt;
+
+      assert(secondUpdated.getTime() - firstUpdated.getTime() >= 1000);
+
     });
   });
 });
