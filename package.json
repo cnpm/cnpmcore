@@ -80,7 +80,7 @@
     "base-x": "^3.0.9",
     "bson-objectid": "^2.0.1",
     "dayjs": "^1.10.7",
-    "egg": "^2.29.4",
+    "egg": "^3.1.0",
     "egg-cors": "^2.2.3",
     "egg-errors": "^2.3.0",
     "egg-redis": "^2.4.0",
