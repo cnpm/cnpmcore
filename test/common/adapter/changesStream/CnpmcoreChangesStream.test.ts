@@ -71,7 +71,7 @@ describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () =
           ],
         },
       });
-      const stream = await cnpmcoreChangesStream.fetchChanges(registry, '1');
+      const stream = cnpmcoreChangesStream.fetchChanges(registry, '1');
       const res: ChangesStreamChange[] = [];
 
       for await (const change of stream) {

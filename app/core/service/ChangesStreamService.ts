@@ -16,7 +16,7 @@ import { RegistryManagerService } from './RegistryManagerService';
 import { RegistryType } from '../../common/enum/Registry';
 import { E500 } from 'egg-errors';
 import { Registry } from '../entity/Registry';
-import { AbstractChangeStream, ChangesStreamChange } from '../../common/adapter/changesStream/AbstractChangesStream';
+import { AbstractChangeStream } from '../../common/adapter/changesStream/AbstractChangesStream';
 import { getScopeAndName } from '../../common/PackageUtil';
 import { ScopeManagerService } from './ScopeManagerService';
 import { PackageRepository } from '../../repository/PackageRepository';
@@ -156,13 +156,13 @@ export class ChangesStreamService extends AbstractService {
     let lastSince = since;
 
     // 获取需要同步的数据
-    // 只获取需要同步的 task 信息
-    const stream = await changesStreamAdapter.fetchChanges(registry, since);
+    // 需要根据 scope 和包信息进行过滤
+    const stream = changesStreamAdapter.fetchChanges(registry, since);
     let lastPackage: string | undefined;
 
     // 创建同步任务
     for await (const change of stream) {
-      const { fullname, seq } = change as ChangesStreamChange;
+      const { fullname, seq } = change;
       lastPackage = fullname;
       lastSince = seq;
       const valid = await this.needSync(registry, fullname);
@@ -175,19 +175,9 @@ export class ChangesStreamService extends AbstractService {
           skipDependencies: true,
           tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
         });
-        // 实时更新 task 信息
-        task.updateSyncData({
-          lastSince,
-          lastPackage,
-          taskCount,
-        });
-        await this.taskRepository.saveTask(task);
       }
-    }
-
-    // 如果没有需要同步的任务，也更新一下 taskData 里的信息
-    if (taskCount === 0) {
       // 实时更新 task 信息
+      // 即使不需要同步，防止任务处理累积耗时超过 10min
       task.updateSyncData({
         lastSince,
         lastPackage,

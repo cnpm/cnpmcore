@@ -77,16 +77,16 @@ describe('test/repository/TaskRepository.test.ts', () => {
 
       const originTask = await taskRepository.findTask(task1.taskId) as Task;
       originTask.updateSyncData({ lastSince: '9527', taskCount: 0 });
-      await setTimeout(1000);
+      await setTimeout(1);
       await taskRepository.saveTask(originTask);
       const firstUpdated = originTask.updatedAt;
 
       originTask.updateSyncData({ lastSince: '9527', taskCount: 0 });
-      await setTimeout(1000);
+      await setTimeout(1);
       await taskRepository.saveTask(originTask);
       const secondUpdated = originTask.updatedAt;
 
-      assert(secondUpdated.getTime() - firstUpdated.getTime() >= 1000);
+      assert(secondUpdated.getTime() - firstUpdated.getTime() >= 1);
 
     });
   });

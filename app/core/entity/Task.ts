@@ -156,7 +156,6 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
   public updateSyncData({ lastSince, taskCount, lastPackage }: SyncInfo) {
     const syncData = this.data as unknown as ChangesStreamTaskData;
     // 更新任务记录信息
-    this.updatedAt = new Date();
     syncData.since = lastSince;
     syncData.task_count = (syncData.task_count || 0) + taskCount;
 
