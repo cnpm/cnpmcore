@@ -27,6 +27,7 @@ describe('test/repository/TaskRepository.test.ts', () => {
 
 
   describe('unique biz id', () => {
+
     it('should save succeed if biz id is equal', async () => {
       const bizId = 'mock_dup_biz_id';
       const data: EasyData<TaskData<ChangesStreamTaskData>, 'taskId'> = {
@@ -70,7 +71,6 @@ describe('test/repository/TaskRepository.test.ts', () => {
         },
         bizId,
       };
-
       // 首先创建一个 task1
       const newData = EntityUtil.defaultData(data, 'taskId');
       const task1 = new Task(newData);
@@ -112,6 +112,7 @@ describe('test/repository/TaskRepository.test.ts', () => {
       const newData = EntityUtil.defaultData(data, 'taskId');
       const task1 = new Task(newData);
       const lastSince = new Date();
+      await setTimeout(1);
       task1.updatedAt = lastSince;
       await taskRepository.saveTask(task1);
 
