@@ -52,8 +52,6 @@ export class TaskService extends AbstractService {
       await this.appendLogToNFS(task, appendLog);
     }
     task.state = TaskState.Waiting;
-    // make sure updatedAt changed
-    task.updatedAt = new Date();
     await this.taskRepository.saveTask(task);
     await this.queueAdapter.push<string>(task.type, task.taskId);
     const queueLength = await this.getTaskQueueLength(task.type);
@@ -125,7 +123,6 @@ export class TaskService extends AbstractService {
 
   public async appendTaskLog(task: Task, appendLog: string) {
     await this.appendLogToNFS(task, appendLog);
-    task.updatedAt = new Date();
     await this.taskRepository.saveTask(task);
   }
 

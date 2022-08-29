@@ -46,9 +46,10 @@ export class ModelConvertor {
       const attributeValue = _.get(entity, entityPropertyName);
       model[modelPropertyName] = attributeValue;
     }
-    if (!model.changed()) {
-      return false;
-    }
+
+    // 不允许设置 UPDATED_AT
+    // 通过 leoric 进行更新
+    model[UPDATED_AT] = undefined;
     await model.save(options);
     entity[UPDATED_AT] = model[UPDATED_AT];
     return true;
