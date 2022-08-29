@@ -1,4 +1,11 @@
 
+1.11.3 / 2022-08-29
+==================
+
+**fixes**
+  * [[`48f228d`](http://github.com/cnpm/cnpmcore/commit/48f228da447d8cde62849fa52cf43bae7754e2e3)] - fix: changes stream updatedAt (#304) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+  * [[`87045ba`](http://github.com/cnpm/cnpmcore/commit/87045ba8b0e14547c93689600eb7e2c1de2a611b)] - fix: task updatedAt save (#305) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
 1.11.2 / 2022-08-28
 ==================
 
