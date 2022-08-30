@@ -186,6 +186,16 @@ export class ChangesStreamService extends AbstractService {
       await this.taskRepository.saveTask(task);
     }
 
+    // 如果 taskCount 为 0 更新一下任务信息
+    if (taskCount === 0) {
+      task.updateSyncData({
+        lastSince,
+        lastPackage,
+        taskCount,
+      });
+      await this.taskRepository.saveTask(task);
+    }
+
     return { lastSince, taskCount };
   }
 }
