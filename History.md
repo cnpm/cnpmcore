@@ -1,4 +1,10 @@
 
+1.11.4 / 2022-08-30
+==================
+
+**fixes**
+  * [[`f9210ca`](http://github.com/cnpm/cnpmcore/commit/f9210ca7e180e19bce08da9ef33e46e990b86ef1)] - fix: changes stream empty (#306) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
 1.11.3 / 2022-08-29
 ==================
 
