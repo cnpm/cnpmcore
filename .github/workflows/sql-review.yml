@@ -1,5 +1,7 @@
 # https://github.com/marketplace/actions/sql-review
 
+name: SQL Review
+
 on: [pull_request]
 
 jobs:
