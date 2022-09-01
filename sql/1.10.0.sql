@@ -8,10 +8,10 @@ CREATE TABLE IF NOT EXISTS `packages` (
   `scope` varchar(214) NOT NULL COMMENT 'package name, empty string meaning no scope',
   `description` varchar(10240) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT 'package description',
   `abbreviateds_dist_id` varchar(24) NULL COMMENT 'all abbreviated manifests dist id',
-  `manifests_dist_id` varchar2(24) NULL COMMENT 'all full manifests dist id',
+  `manifests_dist_id` varchar(24) NULL COMMENT 'all full manifests dist id',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_package_id` (`package_id`),
-  UNIQUE KEY `uk_scope_name` (`scope`,`name`),
+  UNIQUE KEY `uk_scope_name` (`scope`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='package info';
 
 CREATE TABLE IF NOT EXISTS `package_versions` (
