@@ -68,5 +68,17 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
       task = await taskService.findExecuteTask(TaskType.SyncPackage);
       assert(!task);
     });
+
+    it('should check task state before execute', async () => {
+      const task1 = await packageSyncerService.createTask('foo-1');
+      const task2 = await packageSyncerService.createTask('foo-2');
+      // task 已被执行成功
+      await taskService.finishTask(task1, TaskState.Success, '');
+
+      let executeTask = await taskService.findExecuteTask(task1.type);
+      assert(executeTask === null);
+      executeTask = await taskService.findExecuteTask(task1.type);
+      assert(executeTask?.taskId === task2.taskId);
+    });
   });
 });
