@@ -75,7 +75,9 @@ export class TaskService extends AbstractService {
     const taskId = await this.queueAdapter.pop<string>(taskType);
     if (taskId) {
       const task = await this.taskRepository.findTask(taskId);
-      if (task) {
+      // 队列中的任务预期为 createTask 和 retryTask 传入
+      // 可能任务已经触发或执行完成，需要再次判断一下任务状态
+      if (task && task.state === TaskState.Waiting) {
         task.setExecuteWorker();
         task.state = TaskState.Processing;
         task.attempts += 1;
