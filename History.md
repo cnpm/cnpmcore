@@ -1,4 +1,13 @@
 
+1.11.5 / 2022-09-02
+==================
+
+**fixes**
+  * [[`f673ab8`](http://github.com/cnpm/cnpmcore/commit/f673ab8ba1545909ff6b8e445364646511930891)] - fix: execute state check (#308) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
+**others**
+  * [[`091420a`](http://github.com/cnpm/cnpmcore/commit/091420ae2677ecedd1a26a238921321c2a191675)] - 🤖 TEST: Add SQL Review Action (#307) (fengmk2 <<fengmk2@gmail.com>>)
+
 1.11.4 / 2022-08-30
 ==================
 
