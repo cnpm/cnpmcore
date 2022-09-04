@@ -1,19 +1,25 @@
-import { Subscription } from 'egg';
+import { EggAppConfig, EggLogger } from 'egg';
+import { CronParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import { Inject } from '@eggjs/tegg';
 import { rm, access } from 'fs/promises';
 import path from 'path';
-import dayjs from '../common/dayjs';
+import dayjs from '../../common/dayjs';
 
-export default class CleanTempDir extends Subscription {
-  static get schedule() {
-    return {
-      cron: '0 2 * * *', // run every day at 02:00
-      type: 'worker',
-    };
-  }
+@Schedule<CronParams>({
+  type: ScheduleType.WORKER,
+  scheduleData: {
+    cron: '0 2 * * *', // run every day at 02:00
+  },
+})
+export class CleanTempDir {
+  @Inject()
+  private readonly config: EggAppConfig;
+
+  @Inject()
+  private readonly logger: EggLogger;
 
   async subscribe() {
-    const { ctx, app } = this;
-    const downloadDir = path.join(app.config.dataDir, 'downloads');
+    const downloadDir = path.join(this.config.dataDir, 'downloads');
     const oldDirs = [
       path.join(downloadDir, dayjs().subtract(1, 'day').format('YYYY/MM/DD')),
       path.join(downloadDir, dayjs().subtract(2, 'day').format('YYYY/MM/DD')),
@@ -32,10 +38,10 @@ export default class CleanTempDir extends Subscription {
         // console.log(err);
         exists = false;
       }
-      ctx.logger.info('[CleanTempDir.subscribe] dir "%s" exists: %s', dir, exists);
+      this.logger.info('[CleanTempDir.subscribe] dir "%s" exists: %s', dir, exists);
       if (exists) {
         await rm(dir, { recursive: true, force: true });
-        ctx.logger.info('[CleanTempDir.subscribe] remove dir "%s"', dir);
+        this.logger.info('[CleanTempDir.subscribe] remove dir "%s"', dir);
       }
     }
   }
