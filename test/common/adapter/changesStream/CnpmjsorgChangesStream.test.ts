@@ -5,7 +5,7 @@ import { Registry } from 'app/core/entity/Registry';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
 import assert = require('assert');
 import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 
 describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () => {
   let ctx: Context;
@@ -63,7 +63,7 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
       assert(res.length === 2);
     });
 
-    it('should reject when limit', async () => {
+    it('should work when fetch latest changes', async () => {
       app.mockHttpclient(/https:\/\/r2\.cnpmjs\.org/, {
         status: 200,
         data: {
@@ -82,6 +82,28 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
             },
           ],
         },
+      });
+      const stream = await cnpmjsorgChangesStream.fetchChanges(registry, '1');
+      const changes:ChangesStreamChange[] = [];
+      for await (const change of stream) {
+        changes.push(change);
+      }
+      assert(changes.length === 2);
+    });
+
+    it('should reject max limit', async () => {
+      mock(ctx.httpclient, 'request', async (url: string) => {
+        const limit = (new URL(url)).searchParams.get('limit');
+        return {
+          data: {
+            results: new Array(Number(limit)).fill(0).map((_, i) => ({
+              type: 'PACKAGE_TAG_ADDED',
+              id: `abc-cli-${i}`,
+              changes: [{ tag: 'latest' }],
+              gmt_modified: '2014-01-15T19:35:09.000Z',
+            })),
+          },
+        };
       });
       const stream = await cnpmjsorgChangesStream.fetchChanges(registry, '1');
       await assert.rejects(async () => {
