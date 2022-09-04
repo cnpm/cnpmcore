@@ -1,4 +1,10 @@
 
+1.11.6 / 2022-09-04
+==================
+
+**fixes**
+  * [[`768f951`](http://github.com/cnpm/cnpmcore/commit/768f951b6f2509f14c30a70d86a6719107d963a4)] - fix: cnpmjsorg changesstream limit (#310) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
 1.11.5 / 2022-09-02
 ==================
 
