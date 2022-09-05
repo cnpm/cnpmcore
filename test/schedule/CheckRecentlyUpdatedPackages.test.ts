@@ -3,6 +3,8 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 
+const CheckRecentlyUpdatedPackagesPath = require.resolve('../../app/port/schedule/CheckRecentlyUpdatedPackages');
+
 describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
   let ctx: Context;
   let packageSyncerService: PackageSyncerService;
@@ -18,12 +20,12 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
   it('should work', async () => {
     app.mockLog();
     // syncMode=none
-    await app.runSchedule('CheckRecentlyUpdatedPackages');
+    await app.runSchedule(CheckRecentlyUpdatedPackagesPath);
     app.notExpectLog('[CheckRecentlyUpdatedPackages.subscribe]');
 
     // syncMode=all
     mock(app.config.cnpmcore, 'syncMode', 'all');
-    await app.runSchedule('CheckRecentlyUpdatedPackages');
+    await app.runSchedule(CheckRecentlyUpdatedPackagesPath);
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe][0] request');
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe][0] parse');
     const task = await packageSyncerService.findExecuteTask();
@@ -36,7 +38,7 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
     app.mockHttpclient(/https:\/\/www.npmjs.com\/browse\/updated/, () => {
       throw new Error('mock http request error');
     });
-    await app.runSchedule('CheckRecentlyUpdatedPackages');
+    await app.runSchedule(CheckRecentlyUpdatedPackagesPath);
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe:error][0] request');
     const task = await packageSyncerService.findExecuteTask();
     assert(!task);
@@ -46,7 +48,7 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
     mock(app.config.cnpmcore, 'syncMode', 'all');
     app.mockLog();
     mock.error(PackageSyncerService.prototype, 'createTask');
-    await app.runSchedule('CheckRecentlyUpdatedPackages');
+    await app.runSchedule(CheckRecentlyUpdatedPackagesPath);
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe:error][0] parse');
     const task = await packageSyncerService.findExecuteTask();
     assert(!task);

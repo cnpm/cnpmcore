@@ -32,11 +32,6 @@
     "./repository/*": {
       "type": "./dist/app/repository",
       "node": "./dist/app/repository/*.js"
-    },
-    "./schedule/package.json": "./dist/app/schedule/package.json",
-    "./schedule/*": {
-      "type": "./dist/app/schedule",
-      "node": "./dist/app/schedule/*.js"
     }
   },
   "scripts": {
@@ -70,13 +65,14 @@
     "npm"
   ],
   "dependencies": {
-    "@eggjs/tegg": "^1.3.2",
+    "@eggjs/tegg": "^1.4.0",
     "@eggjs/tegg-aop-plugin": "^1.3.2",
     "@eggjs/tegg-config": "^1.0.0",
     "@eggjs/tegg-controller-plugin": "^1.3.2",
     "@eggjs/tegg-eventbus-plugin": "^1.3.2",
     "@eggjs/tegg-orm-decorator": "^1.4.0",
     "@eggjs/tegg-orm-plugin": "^2.1.0",
+    "@eggjs/tegg-schedule-plugin": "^2.2.0",
     "@eggjs/tegg-plugin": "^1.3.2",
     "@eggjs/tsconfig": "^1.0.0",
     "@node-rs/crc32": "^1.2.2",

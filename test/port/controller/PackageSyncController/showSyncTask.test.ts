@@ -5,6 +5,8 @@ import { TestUtil } from 'test/TestUtil';
 import { TaskRepository } from '../../../../app/repository/TaskRepository';
 import { TaskState } from '../../../../app/common/enum/Task';
 
+const SyncPackageWorkerPath = require.resolve('../../../../app/port/schedule/SyncPackageWorker');
+
 describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () => {
   let publisher;
   let ctx: Context;
@@ -81,9 +83,9 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
         .expect(200);
       // waiting state logUrl is not exists
       assert(!res.body.logUrl);
-      await app.runSchedule('SyncPackageWorker');
+      await app.runSchedule(SyncPackageWorkerPath);
       // again should work
-      await app.runSchedule('SyncPackageWorker');
+      await app.runSchedule(SyncPackageWorkerPath);
 
       res = await app.httpRequest()
         .get(`/-/package/${name}/syncs/${taskId}`)

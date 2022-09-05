@@ -2,6 +2,8 @@ import assert = require('assert');
 import { app, mock } from 'egg-mock/bootstrap';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 
+const SyncPackageWorkerPath = require.resolve('../../app/port/schedule/SyncPackageWorker');
+
 describe('test/schedule/SyncPackageWorker.test.ts', () => {
   beforeEach(async () => {
     mock(app.config.cnpmcore, 'syncMode', 'all');
@@ -14,11 +16,11 @@ describe('test/schedule/SyncPackageWorker.test.ts', () => {
       .expect(201);
 
     app.mockLog();
-    await app.runSchedule('SyncPackageWorker');
+    await app.runSchedule(SyncPackageWorkerPath);
     app.expectLog('[SyncPackageWorker:subscribe:executeTask:start]');
     app.expectLog('[SyncPackageWorker:subscribe:executeTask:success]');
     // again should work
-    await app.runSchedule('SyncPackageWorker');
+    await app.runSchedule(SyncPackageWorkerPath);
 
     const res = await app.httpRequest()
       .get(`/${name}`)
@@ -34,7 +36,7 @@ describe('test/schedule/SyncPackageWorker.test.ts', () => {
       .put(`/-/package/${name}/syncs`)
       .expect(201);
 
-    await app.runSchedule('SyncPackageWorker');
+    await app.runSchedule(SyncPackageWorkerPath);
     const res = await app.httpRequest()
       .get(`/${name}`)
       .set('Accept', 'application/json');
@@ -50,7 +52,7 @@ describe('test/schedule/SyncPackageWorker.test.ts', () => {
 
     mock.error(PackageSyncerService.prototype, 'executeTask');
     app.mockLog();
-    await app.runSchedule('SyncPackageWorker');
+    await app.runSchedule(SyncPackageWorkerPath);
     app.expectLog('[SyncPackageWorker:subscribe:executeTask:start]');
     app.expectLog('[SyncPackageWorker:subscribe:executeTask:error]');
 

@@ -13,6 +13,10 @@ const plugin: EggPlugin = {
     enable: true,
     package: '@eggjs/tegg-controller-plugin',
   },
+  teggSchedule: {
+    enable: true,
+    package: '@eggjs/tegg-schedule-plugin',
+  },
   teggOrm: {
     enable: true,
     package: '@eggjs/tegg-orm-plugin',
