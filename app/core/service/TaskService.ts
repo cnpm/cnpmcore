@@ -72,19 +72,26 @@ export class TaskService extends AbstractService {
   }
 
   public async findExecuteTask(taskType: TaskType) {
-    const taskId = await this.queueAdapter.pop<string>(taskType);
-    if (taskId) {
-      const task = await this.taskRepository.findTask(taskId);
-      // 队列中的任务预期为 createTask 和 retryTask 传入
-      // 可能任务已经触发或执行完成，需要再次判断一下任务状态
-      if (task && task.state === TaskState.Waiting) {
-        task.setExecuteWorker();
-        task.state = TaskState.Processing;
-        task.attempts += 1;
-        await this.taskRepository.saveTask(task);
-        return task;
+    let taskId = await this.queueAdapter.pop<string>(taskType);
+    let task: Task | null;
+
+    while (taskId) {
+      task = await this.taskRepository.findTask(taskId);
+
+      // 任务已删除或任务已执行
+      // 继续取下一个任务
+      if (task === null || task?.state !== TaskState.Waiting) {
+        taskId = await this.queueAdapter.pop<string>(taskType);
+        continue;
       }
+
+      task.setExecuteWorker();
+      task.state = TaskState.Processing;
+      task.attempts += 1;
+      await this.taskRepository.saveTask(task);
+      return task;
     }
+
     return null;
   }
 
