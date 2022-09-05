@@ -1,4 +1,10 @@
 
+2.1.0 / 2022-09-05
+==================
+
+**features**
+  * [[`c5d2b49`](http://github.com/cnpm/cnpmcore/commit/c5d2b49ab3a0ce0d67f6e7cc19e0be867c92d04c)] - feat: auto get next valid task (#311) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
 2.0.0 / 2022-09-05
 ==================
 
