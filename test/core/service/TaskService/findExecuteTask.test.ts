@@ -75,10 +75,22 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
       // task 已被执行成功
       await taskService.finishTask(task1, TaskState.Success, '');
 
-      let executeTask = await taskService.findExecuteTask(task1.type);
-      assert(executeTask === null);
-      executeTask = await taskService.findExecuteTask(task1.type);
+      const executeTask = await taskService.findExecuteTask(task1.type);
+
+      // 直接返回下一个 task2
       assert(executeTask?.taskId === task2.taskId);
     });
+
+    it('should return null when no valid task', async () => {
+      const task1 = await packageSyncerService.createTask('foo-1');
+      // task 已被执行成功
+      await taskService.finishTask(task1, TaskState.Success, '');
+
+      const executeTask = await taskService.findExecuteTask(task1.type);
+
+      // 直接返回下一个 task2
+      assert(executeTask === null);
+    });
+
   });
 });
