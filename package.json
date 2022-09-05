@@ -32,11 +32,6 @@
     "./repository/*": {
       "type": "./dist/app/repository",
       "node": "./dist/app/repository/*.js"
-    },
-    "./schedule/package.json": "./dist/app/schedule/package.json",
-    "./schedule/*": {
-      "type": "./dist/app/schedule",
-      "node": "./dist/app/schedule/*.js"
     }
   },
   "scripts": {
