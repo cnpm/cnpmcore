@@ -5,6 +5,8 @@ import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
 import { TaskService } from 'app/core/service/TaskService';
 import { Task } from 'app/repository/model/Task';
 
+const ChangesStreamWorkerPath = require.resolve('../../app/port/schedule/ChangesStreamWorker');
+
 describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   let ctx: Context;
   let changesStreamService: ChangesStreamService;
@@ -22,19 +24,19 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   it('should work', async () => {
     app.mockLog();
     // syncMode=none
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.notExpectLog('[ChangesStreamWorker:start]');
 
     // syncMode=all
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'changesStreamRegistry', 'https://r.cnpmjs.org');
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.notExpectLog('[ChangesStreamWorker:start]');
 
     // syncMode=all and enableChangesStream = true
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'enableChangesStream', true);
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamWorker:start]');
     app.expectLog('[ChangesStreamService.executeTask:changes] since: ');
     const task = await changesStreamService.findExecuteTask();
@@ -55,7 +57,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     app.mockHttpclient(/https:\/\/r.cnpmjs.org\/_changes/, () => {
       throw new Error('mock request replicate _changes error');
     });
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamService.executeTask:error]');
     app.expectLog('mock request replicate _changes error');
   });
@@ -63,20 +65,20 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   it('should work on replicate: r.cnpmjs.org', async () => {
     app.mockLog();
     // syncMode=none
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.notExpectLog('[ChangesStreamWorker:start]');
 
     // syncMode=all
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'changesStreamRegistry', 'https://r.cnpmjs.org');
     mock(app.config.cnpmcore, 'changesStreamRegistryMode', 'json');
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.notExpectLog('[ChangesStreamWorker:start]');
 
     // syncMode=all and enableChangesStream = true
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'enableChangesStream', true);
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamWorker:start]');
     app.expectLog('[ChangesStreamService.executeTask:changes] since:');
     app.expectLog(/, \d{2} new tasks,/);
@@ -95,7 +97,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     app.mockHttpclient(/https:\/\/r\.cnpmjs\.org\/_changes/, () => {
       throw new Error('mock request replicate r.cnpmjs.org/_changes error');
     });
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamService.executeTask:error]');
     app.expectLog('mock request replicate r.cnpmjs.org/_changes error');
   });
@@ -111,7 +113,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     app.mockHttpclient(/https:\/\/r\.cnpmjs\.org\//, () => {
       throw new Error('mock request replicate.npmjs.com error');
     });
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamWorker:start]');
     app.expectLog('[ChangesStreamService.executeTask:error]');
     app.expectLog('mock request replicate.npmjs.com error');
