@@ -1,4 +1,10 @@
 
+2.0.0 / 2022-09-05
+==================
+
+**others**
+  * [[`fc4baff`](http://github.com/cnpm/cnpmcore/commit/fc4baff226540e7cfee9adc069e17a59f4050a43)] - chore: refactor schedule with @Schedule (#309) (killa <<killa123@126.com>>)
+
 1.11.6 / 2022-09-04
 ==================
 
