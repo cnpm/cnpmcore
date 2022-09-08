@@ -160,7 +160,7 @@
         for (var i = 0; i < directories.length; i++) {
           var lnk = location.pathname.substr(0, location.pathname.indexOf('?'));
           var item = directories[i];
-          lnk += '?path=' + path + item.name;
+          lnk += '?path=' + path + '/' + item.name;
       
           document.write('<tr>');
           document.write('<td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*ct35SJLile8AAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>');
