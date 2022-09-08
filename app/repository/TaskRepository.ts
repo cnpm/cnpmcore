@@ -1,8 +1,9 @@
+import assert from 'assert';
 import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { Task as TaskModel } from './model/Task';
 import type { HistoryTask as HistoryTaskModel } from './model/HistoryTask';
-import { Task as TaskEntity } from '../core/entity/Task';
+import { Task as TaskEntity, TaskUpdateCondition } from '../core/entity/Task';
 import { AbstractRepository } from './AbstractRepository';
 import { TaskType, TaskState } from '../../app/common/enum/Task';
 
@@ -42,6 +43,16 @@ export class TaskRepository extends AbstractRepository {
         throw e;
       }
     }
+  }
+
+  async idempotentSaveTask(task: TaskEntity, condition: TaskUpdateCondition): Promise<boolean> {
+    assert(task.id, 'task have no save');
+    const changes = ModelConvertor.convertEntityToChanges(task, this.Task);
+    const updateRows = await this.Task.update({
+      taskId: condition.taskId,
+      attempts: condition.attempts,
+    }, changes);
+    return updateRows === 1;
   }
 
   async saveTaskToHistory(task: TaskEntity): Promise<void> {

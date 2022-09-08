@@ -85,10 +85,12 @@ export class TaskService extends AbstractService {
         continue;
       }
 
-      task.setExecuteWorker();
-      task.state = TaskState.Processing;
-      task.attempts += 1;
-      await this.taskRepository.saveTask(task);
+      const condition = task.start();
+      const saveSucceed = await this.taskRepository.idempotentSaveTask(task, condition);
+      if (!saveSucceed) {
+        taskId = await this.queueAdapter.pop<string>(taskType);
+        continue;
+      }
       return task;
     }
 

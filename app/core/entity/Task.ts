@@ -64,6 +64,11 @@ export interface ChangesStreamTaskData extends TaskBaseData {
   registryId?: string,
 }
 
+export interface TaskUpdateCondition {
+  taskId: string;
+  attempts: number;
+}
+
 export type CreateHookTask = Task<CreateHookTaskData>;
 export type TriggerHookTask = Task<TriggerHookTaskData>;
 export type CreateSyncPackageTask = Task<CreateSyncPackageTaskData>;
@@ -220,6 +225,17 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     const task = this.create(data);
     task.logPath = `/binaries/${targetName}/syncs/${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
     return task;
+  }
+
+  start(): TaskUpdateCondition {
+    const condition = {
+      taskId: this.taskId,
+      attempts: this.attempts,
+    };
+    this.setExecuteWorker();
+    this.state = TaskState.Processing;
+    this.attempts += 1;
+    return condition;
   }
 }
 

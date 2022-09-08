@@ -119,4 +119,37 @@ describe('test/repository/TaskRepository.test.ts', () => {
       assert(task1.updatedAt.getTime() > lastSince.getTime());
     });
   });
+
+  describe('idempotentSaveTask', () => {
+    let task: Task;
+    beforeEach(async () => {
+      const bizId = 'mock_dup_biz_id';
+      const data: EasyData<TaskData<ChangesStreamTaskData>, 'taskId'> = {
+        type: TaskType.ChangesStream,
+        state: TaskState.Waiting,
+        targetName: 'foo',
+        authorId: `pid_${process.pid}`,
+        authorIp: os.hostname(),
+        data: {
+          taskWorker: '',
+          since: '',
+        },
+        bizId,
+      };
+      // 首先创建一个 task1
+      const newData = EntityUtil.defaultData(data, 'taskId');
+      task = new Task(newData);
+      // 持久化保存 task1
+      await taskRepository.saveTask(task);
+    });
+
+    it('should only save one', async () => {
+      const condition = task.start();
+      const [ firstSave, secondSave ] = await Promise.all([
+        taskRepository.idempotentSaveTask(task, condition),
+        taskRepository.idempotentSaveTask(task, condition),
+      ]);
+      assert(firstSave !== secondSave);
+    });
+  });
 });
