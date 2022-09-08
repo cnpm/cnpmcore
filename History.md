@@ -1,4 +1,10 @@
 
+2.1.1 / 2022-09-08
+==================
+
+**fixes**
+  * [[`8fb9dd8`](http://github.com/cnpm/cnpmcore/commit/8fb9dd8cf4800afe3f54aba9ee4c0ae05efb4f1d)] - fix: findExecuteTask only return waiting task (#312) (killa <<killa123@126.com>>)
+
 2.1.0 / 2022-09-05
 ==================
 
