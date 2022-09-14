@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Start local server
-        run: MYSQL_DATABASE=cnpmcore npm run prepare-database && npm run dev &
+        run: MYSQL_DATABASE=cnpmcore_unittest npm run prepare-database && npm run dev &
       - name: Wait for local server ready
         run: sleep 10
       - name: Run Playwright tests
