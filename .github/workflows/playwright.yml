@@ -8,6 +8,15 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_DATABASE: cnpmcore_unittest
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -16,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Start local server
-        run: MYSQL_DATABASE=cnpmcore npm run prepare-database && npm run dev &
+        run: MYSQL_DATABASE=cnpmcore npm run prepare-database && npm run dev & && sleep 10
       - name: Run Playwright tests
         run: npm run e2e
       - uses: actions/upload-artifact@v2
