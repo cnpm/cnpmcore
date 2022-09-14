@@ -25,7 +25,9 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Start local server
-        run: MYSQL_DATABASE=cnpmcore npm run prepare-database && npm run dev & && sleep 10
+        run: MYSQL_DATABASE=cnpmcore npm run prepare-database && npm run dev &
+      - name: Wait for local server ready
+        run: sleep 10
       - name: Run Playwright tests
         run: npm run e2e
       - uses: actions/upload-artifact@v2
