@@ -6,6 +6,7 @@ import { PackageManagerService } from 'app/core/service/PackageManagerService';
 import { DistRepository } from 'app/repository/DistRepository';
 import { Package as PackageModel } from 'app/repository/model/Package';
 import { Task as TaskModel } from 'app/repository/model/Task';
+import { Task as TaskEntity } from 'app/core/entity/Task';
 import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
 import { TestUtil } from 'test/TestUtil';
 import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
@@ -15,6 +16,7 @@ import { PackageRepository } from 'app/repository/PackageRepository';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
 import { Registry } from 'app/core/entity/Registry';
 import { RegistryType } from 'app/common/enum/Registry';
+import { TaskService } from 'app/core/service/TaskService';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let ctx: Context;
@@ -23,6 +25,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let packageRepository: PackageRepository;
   let npmRegistry: NPMRegistry;
   let registryManagerService: RegistryManagerService;
+  let taskService: TaskService;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
@@ -30,6 +33,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     packageManagerService = await ctx.getEggObject(PackageManagerService);
     packageRepository = await ctx.getEggObject(PackageRepository);
     npmRegistry = await ctx.getEggObject(NPMRegistry);
+    taskService = await ctx.getEggObject(TaskService);
     registryManagerService = await ctx.getEggObject(RegistryManagerService);
   });
 
@@ -1375,6 +1379,25 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         log = await TestUtil.readStreamToLog(stream);
         assert(log.includes('Syncing from https://default.npmjs.org/npm-pkg'));
 
+      });
+
+      it('should not sync from target registry if not match', async () => {
+        const pkgName = '@cnpmcore/sync_not_match_registry_name';
+        await TestUtil.createPackage({
+          name: pkgName,
+          registryId: 'mock_registry_id',
+        }, {
+          name: 'mock_username',
+        });
+        await taskService.createTask(TaskEntity.createSyncPackage(pkgName, {
+          registryId: registry.registryId,
+        }), true);
+        const task = await packageSyncerService.findExecuteTask();
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log.includes('skip sync'));
       });
     });
   });
