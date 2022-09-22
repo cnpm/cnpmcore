@@ -1,4 +1,18 @@
 
+2.2.0 / 2022-09-22
+==================
+
+**features**
+  * [[`bca0fb3`](http://github.com/cnpm/cnpmcore/commit/bca0fb3c37b9f74f3c41ab181dd3113d9dab4c05)] - feat: only allow pkg sync from registry it belong (#317) (killa <<killa123@126.com>>)
+
+**fixes**
+  * [[`7e9beea`](http://github.com/cnpm/cnpmcore/commit/7e9beead576a41de3aa042b92b788bde5d55f44a)] - fix: only append / if path is not empty and not ends with / (#316) (killa <<killa123@126.com>>)
+  * [[`4fe68cb`](http://github.com/cnpm/cnpmcore/commit/4fe68cbf38f303e797b80b88407f714ec76bfae0)] - fix: fix directory path (#313) (killa <<killa123@126.com>>)
+
+**others**
+  * [[`e72ce35`](http://github.com/cnpm/cnpmcore/commit/e72ce3576f9a3cda095e3feac59eeb1d8c1e8033)] - 🤖 TEST: Skip unstable tests (#318) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`171b11f`](http://github.com/cnpm/cnpmcore/commit/171b11f7bba534c993af4088b00f8545216734a9)] - Revert "fix: fix directory path (#313)" (fengmk2 <<fengmk2@gmail.com>>)
+
 2.1.1 / 2022-09-08
 ==================
 
