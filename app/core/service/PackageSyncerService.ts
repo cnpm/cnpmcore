@@ -28,9 +28,13 @@ import { CacheService } from './CacheService';
 import { User } from '../entity/User';
 import { RegistryManagerService } from './RegistryManagerService';
 import { Registry } from '../entity/Registry';
+import { BadRequestError } from 'egg-errors';
 
 function isoNow() {
   return new Date().toISOString();
+}
+
+export class RegistryNotMatchError extends BadRequestError {
 }
 
 @ContextProto({
@@ -63,6 +67,14 @@ export class PackageSyncerService extends AbstractService {
   private readonly registryManagerService: RegistryManagerService;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
+    const [ scope, name ] = getScopeAndName(fullname);
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    // sync task request registry is not same as package registry
+    if (pkg && options?.registryId) {
+      if (pkg.registryId !== options.registryId) {
+        throw new RegistryNotMatchError(`package ${fullname} is not in registry ${options.registryId}`);
+      }
+    }
     return await this.taskService.createTask(Task.createSyncPackage(fullname, options), true);
   }
 
@@ -231,6 +243,15 @@ export class PackageSyncerService extends AbstractService {
 
     const [ scope, name ] = getScopeAndName(fullname);
     let pkg = await this.packageRepository.findPackage(scope, name);
+    if (pkg && registry) {
+      if (pkg.registryId !== registry.registryId) {
+        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry.registryId}, skip sync ❌❌❌❌❌`);
+        await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+        this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
+          task.taskId, task.targetName);
+        return;
+      }
+    }
 
     if (syncDownloadData && pkg) {
       await this.syncDownloadData(task, pkg);

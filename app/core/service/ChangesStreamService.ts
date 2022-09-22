@@ -10,7 +10,7 @@ import { TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { HOST_NAME, ChangesStreamTask, Task } from '../entity/Task';
-import { PackageSyncerService } from './PackageSyncerService';
+import { PackageSyncerService, RegistryNotMatchError } from './PackageSyncerService';
 import { TaskService } from './TaskService';
 import { RegistryManagerService } from './RegistryManagerService';
 import { RegistryType } from '../../common/enum/Registry';
@@ -168,13 +168,21 @@ export class ChangesStreamService extends AbstractService {
       const valid = await this.needSync(registry, fullname);
       if (valid) {
         taskCount++;
-        await this.packageSyncerService.createTask(fullname, {
-          authorIp: HOST_NAME,
-          authorId: 'ChangesStreamService',
-          registryId: registry.registryId,
-          skipDependencies: true,
-          tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
-        });
+        try {
+          await this.packageSyncerService.createTask(fullname, {
+            authorIp: HOST_NAME,
+            authorId: 'ChangesStreamService',
+            registryId: registry.registryId,
+            skipDependencies: true,
+            tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
+          });
+        } catch (e) {
+          if (e instanceof RegistryNotMatchError) {
+            this.logger.warn('[ChangesStreamService.executeSync:skip] %s', e.message);
+            continue;
+          }
+          throw e;
+        }
       }
       // 实时更新 task 信息
       // 即使不需要同步，防止任务处理累积耗时超过 10min
