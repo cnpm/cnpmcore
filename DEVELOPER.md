@@ -32,7 +32,7 @@ $ npm install
 $ MYSQL_DATABASE=cnpmcore npm run prepare-database
 
 # 启动 Web 服务
-$ DEBUG_LOCAL_SQL=true npm run dev
+$ npm run dev
 
 # 访问
 curl -v http://127.0.0.1:7001
