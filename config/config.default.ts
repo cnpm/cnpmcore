@@ -94,7 +94,7 @@ export default (appInfo: EggAppConfig) => {
     config.orm.logger = {
       // TODO: try to save SQL log into ctx logger or app logger
       logQuery(sql: string, duration: number) {
-        console.log('[%sms] %s', duration, sql);
+        console.log('[sql-debug] [%sms] %s', duration, sql);
       },
     };
   }
