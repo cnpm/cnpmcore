@@ -1,4 +1,11 @@
 
+2.3.0 / 2022-09-24
+==================
+
+**others**
+  * [[`bd83a19`](http://github.com/cnpm/cnpmcore/commit/bd83a19eca761c96bcee04e6ae91e68eac3cb6bf)] - 👌 IMPROVE: use urllib3 instead (#302) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`35e7d3a`](http://github.com/cnpm/cnpmcore/commit/35e7d3ad3c78712b507d522a0b72b5a6a5a4ec1c)] - 👌 IMPROVE: Enable phpmyadmin and DEBUG_LOCAL_SQL by default (#320) (fengmk2 <<fengmk2@gmail.com>>)
+
 2.2.0 / 2022-09-22
 ==================
 
