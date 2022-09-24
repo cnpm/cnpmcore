@@ -31,21 +31,21 @@ services:
       - cnpm
 
   # database explorer
-  # phpmyadmin:
-  #   image: phpmyadmin
-  #   restart: always
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD:
-  #     MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-  #     MYSQL_USER: user
-  #     MYSQL_PASSWORD: pass
-  #     PMA_HOST: 'mysql'
-  #   ports:
-  #     - 8080:80
-  #   networks:
-  #     - cnpm
-  #   depends_on:
-  #     - mysql
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+      PMA_HOST: 'mysql'
+    ports:
+      - 8080:80
+    networks:
+      - cnpm
+    depends_on:
+      - mysql
 
 volumes:
   cnpm-redis:

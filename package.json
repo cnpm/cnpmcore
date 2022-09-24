@@ -36,7 +36,7 @@
   },
   "scripts": {
     "contributor": "git-contributor",
-    "dev": "egg-bin dev",
+    "dev": "DEBUG_LOCAL_SQL=true egg-bin dev",
     "debug": "egg-bin debug",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
