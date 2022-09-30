@@ -121,6 +121,18 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       assert(!res);
     });
 
+    it('the package does not exist should not sync with any registry', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'exist');
+      await TestUtil.createPackage({
+        name: '@cnpm/test',
+        isPrivate: false,
+        registryId: npmRegistry.registryId,
+      });
+      let res = await changesStreamService.needSync(npmRegistry, 'banana');
+      assert(!res);
+      res = await changesStreamService.needSync(npmRegistry, '@cnpm/test');
+      assert(res);
+    });
   });
 
   describe('getInitialSince()', () => {

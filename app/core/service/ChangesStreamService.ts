@@ -126,6 +126,11 @@ export class ChangesStreamService extends AbstractService {
     const [ scopeName, name ] = getScopeAndName(fullname);
     const packageEntity = await this.packageRepository.findPackage(scopeName, name);
 
+    // 如果包不存在，且处在 exist 模式下，则不同步
+    if (this.config.cnpmcore.syncMode === 'exist' && !packageEntity) {
+      return false;
+    }
+
     if (packageEntity?.registryId) {
       return registry.registryId === packageEntity.registryId;
     }

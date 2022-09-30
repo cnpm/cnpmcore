@@ -2,6 +2,8 @@ import { EggAppConfig, EggHttpClient, EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import { PackageSyncerService } from '../../core/service/PackageSyncerService';
+import { PackageRepository } from '../../repository/PackageRepository';
+import { getScopeAndName } from '../../common/PackageUtil';
 
 // https://github.com/cnpm/cnpmcore/issues/9
 @Schedule<IntervalParams>({
@@ -14,6 +16,8 @@ import { PackageSyncerService } from '../../core/service/PackageSyncerService';
 export class CheckRecentlyUpdatedPackages {
   @Inject()
   private readonly packageSyncerService: PackageSyncerService;
+  @Inject()
+  private readonly packageRepository: PackageRepository;
 
   @Inject()
   private readonly config: EggAppConfig;
@@ -25,7 +29,7 @@ export class CheckRecentlyUpdatedPackages {
   private readonly httpclient: EggHttpClient;
 
   async subscribe() {
-    if (this.config.cnpmcore.syncMode !== 'all' || !this.config.cnpmcore.enableCheckRecentlyUpdated) return;
+    if (this.config.cnpmcore.syncMode === 'none' || !this.config.cnpmcore.enableCheckRecentlyUpdated) return;
     const pageSize = 36;
     const pageCount = this.config.env === 'unittest' ? 2 : 5;
     for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
@@ -59,6 +63,14 @@ export class CheckRecentlyUpdatedPackages {
           this.logger.info('[CheckRecentlyUpdatedPackages.subscribe][%s] parse %d packages on %s',
             pageIndex, packages.length, pageUrl);
           for (const pkg of packages) {
+            // skip update when package does not exist
+            if (this.config.cnpmcore.syncMode === 'exist') {
+              const [ scope, name ] = getScopeAndName(pkg.name);
+              const pkgId = await this.packageRepository.findPackageId(scope, name);
+              if (!pkgId) {
+                continue;
+              }
+            }
             const task = await this.packageSyncerService.createTask(pkg.name, {
               tips: `Sync cause by recently updated packages ${pageUrl}`,
             });
