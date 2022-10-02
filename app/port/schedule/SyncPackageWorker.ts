@@ -7,9 +7,9 @@ import { PackageSyncerService } from '../../core/service/PackageSyncerService';
 let executingCount = 0;
 
 @Schedule<IntervalParams>({
-  type: ScheduleType.WORKER,
+  type: ScheduleType.ALL,
   scheduleData: {
-    interval: 60000,
+    interval: 1000,
   },
 })
 export class SyncPackageWorker {
