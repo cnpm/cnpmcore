@@ -102,6 +102,8 @@
   },
   "devDependencies": {
     "@types/mocha": "^9.0.0",
+    "@types/mysql": "^2.15.21",
+    "@types/semver": "^7.3.12",
     "coffee": "^5.4.0",
     "egg-bin": "^4.16.4",
     "egg-mock": "^4.2.0",
