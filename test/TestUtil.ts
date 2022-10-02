@@ -64,10 +64,10 @@ export class TestUtil {
     return sqls.join('\n');
   }
 
-  static async query(sql): Promise<any[]> {
+  static async query(sql: string): Promise<any[]> {
     const conn = this.getConnection();
     return new Promise((resolve, reject) => {
-      conn.query(sql, (err, rows) => {
+      conn.query(sql, (err: Error, rows: any[]) => {
         if (err) {
           return reject(err);
         }
@@ -78,7 +78,7 @@ export class TestUtil {
 
   static getConnection() {
     if (!this.connection) {
-      const config = this.getMySqlConfig();
+      const config: any = this.getMySqlConfig();
       if (process.env.CI) {
         console.log('[TestUtil] connection to mysql: %j', config);
       }
@@ -123,7 +123,7 @@ export class TestUtil {
   static async truncateDatabase() {
     const database = this.getDatabase();
     const tables = await this.getTableNames();
-    await Promise.all(tables.map(table => this.query(`TRUNCATE TABLE ${database}.${table};`)));
+    await Promise.all(tables.map((table: string) => this.query(`TRUNCATE TABLE ${database}.${table};`)));
   }
 
   static get app() {
