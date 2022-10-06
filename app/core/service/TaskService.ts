@@ -114,7 +114,7 @@ export class TaskService extends AbstractService {
         task.resetLogPath();
       }
       await this.retryTask(task);
-      this.logger.warn(
+      this.logger.info(
         '[TaskService.retryExecuteTimeoutTasks:retry] taskType: %s, targetName: %s, taskId: %s, attempts %s will retry again',
         task.type, task.targetName, task.taskId, task.attempts);
     }
