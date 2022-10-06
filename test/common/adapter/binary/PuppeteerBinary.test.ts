@@ -24,7 +24,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://unpkg.com/puppeteer-core@latest/lib/cjs/puppeteer/revisions.js', 'GET', {
-        data: await readFile(TestUtil.getFixtures('puppeteer_revisions.js')),
+        data: await readFile(TestUtil.getFixtures('puppeteer_revisions.js.txt')),
         persist: false,
       });
       app.mockHttpclient('https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2FLAST_CHANGE', 'GET', {
