@@ -1,0 +1,114 @@
+{
+  "_attachments": {},
+  "_id": "foobar",
+  "_rev": "110049-61bf33b897e6fc8ce29c16f6",
+  "author": {
+    "name": "Jamison Dance",
+    "email": "jergason@gmail.com",
+    "url": "http://jamisondance.com/"
+  },
+  "description": "A test module",
+  "dist-tags": {
+    "latest": "1.1.0"
+  },
+  "maintainers": [
+    {
+      "name": "jergason",
+      "email": "jergason@gmail.com"
+    }
+  ],
+  "name": "foobar",
+  "readme": "",
+  "time": {
+    "created": "2021-12-19T13:29:28.691Z",
+    "modified": "2021-12-19T13:29:28.691Z",
+    "1.1.0": "2011-11-04T02:20:58.139Z",
+    "1.0.0": "2011-11-04T02:13:09.038Z"
+  },
+  "versions": {
+    "1.1.0": {
+      "author": {
+        "name": "Jamison Dance",
+        "email": "jergason@gmail.com",
+        "url": "http://jamisondance.com/"
+      },
+      "name": "foobar",
+      "description": "A test module",
+      "version": "1.1.0",
+      "repository": {
+        "url": ""
+      },
+      "main": "lib/index",
+      "engines": {
+        "node": "~0.4.12"
+      },
+      "dependencies": {},
+      "devDependencies": {},
+      "_npmUser": {
+        "name": "jergason",
+        "email": "jergason@gmail.com"
+      },
+      "_id": "foobar@1.1.0",
+      "_engineSupported": true,
+      "_npmVersion": "1.0.103",
+      "_nodeVersion": "v0.4.12",
+      "_defaultsLoaded": true,
+      "dist": {
+        "shasum": "0b76cc4e6c5b8d592db598fb870414c290511df2",
+        "tarball": "https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz",
+        "size": 10240,
+        "integrity": "sha512-Tgp9F/BvfxSOVik+cgMFLn5GUo0mjOrUeWsSwa1TgjZtuglfpIUpP5OaIYbyI8R2q8NVcnfYRGd5OuNxVC+o+g=="
+      },
+      "maintainers": [
+        {
+          "name": "jergason",
+          "email": "jergason@gmail.com"
+        }
+      ],
+      "directories": {},
+      "_cnpmcore_publish_time": "2021-12-19T13:29:29.567Z"
+    },
+    "1.0.0": {
+      "author": {
+        "name": "Jamison Dance",
+        "email": "jergason@gmail.com",
+        "url": "http://jamisondance.com/"
+      },
+      "name": "foobar",
+      "description": "A test module",
+      "version": "1.0.0",
+      "repository": {
+        "url": ""
+      },
+      "main": "lib/index",
+      "engines": {
+        "node": "~0.4.12"
+      },
+      "dependencies": {},
+      "devDependencies": {},
+      "_npmUser": {
+        "name": "jergason",
+        "email": "jergason@gmail.com"
+      },
+      "_id": "foobar@1.0.0",
+      "_engineSupported": true,
+      "_npmVersion": "1.0.103",
+      "_nodeVersion": "v0.4.12",
+      "_defaultsLoaded": true,
+      "dist": {
+        "shasum": "116ff82f61ce1e9545c5ba302ead651f5bb31247",
+        "tarball": "https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz",
+        "size": 10240,
+        "integrity": "sha512-ojyo6LOnMwMDfdEjVgzMpZ4UdV4iXauePAsYEZU746H95qF/PDQ8Q8lrACnuTp/5otZPabr2mFivvLacbXLyMg=="
+      },
+      "maintainers": [
+        {
+          "name": "jergason",
+          "email": "jergason@gmail.com"
+        }
+      ],
+      "directories": {},
+      "_cnpmcore_publish_time": "2021-12-19T13:29:28.700Z"
+    }
+  }
+}
