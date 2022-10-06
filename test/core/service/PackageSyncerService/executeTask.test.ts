@@ -1354,11 +1354,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       });
 
       it('should sync from target registry & default registry', async () => {
-        app.mockHttpclient(/https:\/\/custom\.npmjs\.com/, 'GET', () => {
-          throw new Error('mock error');
+        app.mockHttpclient(/https:\/\/custom\.npmjs\.com/, 'GET', {
+          status: 500,
+          data: 'mock error',
         });
-        app.mockHttpclient(/https:\/\/default\.npmjs\.com/, 'GET', () => {
-          throw new Error('mock error');
+        app.mockHttpclient(/https:\/\/default\.npmjs\.com/, 'GET', {
+          status: 500,
+          data: 'mock error',
         });
 
         await packageSyncerService.createTask('cnpm-pkg', { registryId: registry.registryId });

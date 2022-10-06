@@ -14,7 +14,7 @@ import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTr
 import { TaskRepository } from '../../../app/repository/TaskRepository';
 import { Hook } from '../../../app/core/entity/Hook';
 import { HookTriggerService } from '../../../app/core/service/HookTriggerService';
-import { RequestOptions } from 'urllib';
+import { RequestOptions } from 'urllib/src/Request';
 
 describe('test/core/service/HookTriggerService.test.ts', () => {
   let ctx: Context;
