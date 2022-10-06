@@ -174,7 +174,7 @@ export class BinarySyncerService extends AbstractService {
             logs = [];
           } catch (err: any) {
             if (err.name === 'DownloadNotFoundError') {
-              this.logger.warn('Not found %s, skip it', item.sourceUrl);
+              this.logger.info('Not found %s, skip it', item.sourceUrl);
               logs.push(`[${isoNow()}][${dir}] 🧪️ [${parentIndex}${index}] Download ${item.sourceUrl} not found, skip it`);
             } else {
               this.logger.error('Download binary %s %s', item.sourceUrl, err);
