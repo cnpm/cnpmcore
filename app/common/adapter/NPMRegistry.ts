@@ -52,7 +52,8 @@ export class NPMRegistry {
       retries--;
       if (retries > 0) {
         // sleep 1s ~ 4s in random
-        await setTimeout(1000 + Math.random() * 4000);
+        const delay = process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
+        await setTimeout(delay);
       }
     }
     throw lastError;

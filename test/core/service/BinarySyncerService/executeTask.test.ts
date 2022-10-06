@@ -128,11 +128,13 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         }
         return { items: [] };
       });
-      app.mockHttpclient('https://nodejs.org/dist/index-not-exists.json', 'GET', () => {
-        throw new Error('mock error');
+      app.mockHttpclient('https://nodejs.org/dist/index-not-exists.json', 'GET', {
+        status: 404,
+        data: 'mock error',
       });
-      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks-not-exists.json', 'GET', () => {
-        throw new Error('mock error');
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks-not-exists.json', 'GET', {
+        status: 404,
+        data: 'mock error',
       });
       await binarySyncerService.executeTask(task);
       assert(!await TaskModel.findOne({ taskId: task.taskId }));
