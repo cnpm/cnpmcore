@@ -1,0 +1,319 @@
+[
+  {
+    "id": "61d3ba564693fb942e011714",
+    "category": "node",
+    "name": "docs/",
+    "date": "30-Nov-2021 19:33",
+    "type": "dir",
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/docs/",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01171a",
+    "category": "node",
+    "name": "node-v16.13.1-aix-ppc64.tar.gz",
+    "date": "01-Dec-2021 11:51",
+    "type": "file",
+    "size": 43966837,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-aix-ppc64.tar.gz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01171b",
+    "category": "node",
+    "name": "node-v16.13.1-darwin-arm64.tar.gz",
+    "date": "01-Dec-2021 11:33",
+    "type": "file",
+    "size": 28506601,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-darwin-arm64.tar.gz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01171c",
+    "category": "node",
+    "name": "node-v16.13.1-darwin-arm64.tar.xz",
+    "date": "01-Dec-2021 11:33",
+    "type": "file",
+    "size": 18427632,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-darwin-arm64.tar.xz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01171d",
+    "category": "node",
+    "name": "node-v16.13.1-darwin-x64.tar.gz",
+    "date": "01-Dec-2021 12:14",
+    "type": "file",
+    "size": 29938975,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-darwin-x64.tar.gz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01171e",
+    "category": "node",
+    "name": "node-v16.13.1-darwin-x64.tar.xz",
+    "date": "01-Dec-2021 12:15",
+    "type": "file",
+    "size": 20056120,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-darwin-x64.tar.xz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01171f",
+    "category": "node",
+    "name": "node-v16.13.1-headers.tar.gz",
+    "date": "01-Dec-2021 11:27",
+    "type": "file",
+    "size": 562423,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-headers.tar.gz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011720",
+    "category": "node",
+    "name": "node-v16.13.1-headers.tar.xz",
+    "date": "01-Dec-2021 11:27",
+    "type": "file",
+    "size": 381248,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-headers.tar.xz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011721",
+    "category": "node",
+    "name": "node-v16.13.1-linux-arm64.tar.gz",
+    "date": "01-Dec-2021 11:15",
+    "type": "file",
+    "size": 32385016,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-linux-arm64.tar.gz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011722",
+    "category": "node",
+    "name": "node-v16.13.1-linux-arm64.tar.xz",
+    "date": "01-Dec-2021 11:16",
+    "type": "file",
+    "size": 20985584,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-linux-arm64.tar.xz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011723",
+    "category": "node",
+    "name": "node-v16.13.1-linux-armv7l.tar.gz",
+    "date": "01-Dec-2021 12:31",
+    "type": "file",
+    "size": 29679419,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-linux-armv7l.tar.gz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011724",
+    "category": "node",
+    "name": "node-v16.13.1-linux-armv7l.tar.xz",
+    "date": "01-Dec-2021 12:32",
+    "type": "file",
+    "size": 17985684,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-linux-armv7l.tar.xz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011725",
+    "category": "node",
+    "name": "node-v16.13.1-linux-ppc64le.tar.gz",
+    "date": "01-Dec-2021 11:16",
+    "type": "file",
+    "size": 34444979,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-linux-ppc64le.tar.gz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011726",
+    "category": "node",
+    "name": "node-v16.13.1-linux-ppc64le.tar.xz",
+    "date": "01-Dec-2021 11:18",
+    "type": "file",
+    "size": 22100280,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-linux-ppc64le.tar.xz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011727",
+    "category": "node",
+    "name": "node-v16.13.1-linux-s390x.tar.gz",
+    "date": "01-Dec-2021 11:15",
+    "type": "file",
+    "size": 32655582,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-linux-s390x.tar.gz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011728",
+    "category": "node",
+    "name": "node-v16.13.1-linux-s390x.tar.xz",
+    "date": "01-Dec-2021 11:16",
+    "type": "file",
+    "size": 20575440,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-linux-s390x.tar.xz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011729",
+    "category": "node",
+    "name": "node-v16.13.1-linux-x64.tar.gz",
+    "date": "01-Dec-2021 11:29",
+    "type": "file",
+    "size": 32395116,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-linux-x64.tar.gz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01172a",
+    "category": "node",
+    "name": "node-v16.13.1-linux-x64.tar.xz",
+    "date": "01-Dec-2021 11:30",
+    "type": "file",
+    "size": 21606428,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-linux-x64.tar.xz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01172b",
+    "category": "node",
+    "name": "node-v16.13.1-win-x64.7z",
+    "date": "01-Dec-2021 11:40",
+    "type": "file",
+    "size": 16721509,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-win-x64.7z",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01172c",
+    "category": "node",
+    "name": "node-v16.13.1-win-x64.zip",
+    "date": "01-Dec-2021 11:40",
+    "type": "file",
+    "size": 25689871,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-win-x64.zip",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01172d",
+    "category": "node",
+    "name": "node-v16.13.1-win-x86.7z",
+    "date": "01-Dec-2021 11:38",
+    "type": "file",
+    "size": 15557278,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-win-x86.7z",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01172e",
+    "category": "node",
+    "name": "node-v16.13.1-win-x86.zip",
+    "date": "01-Dec-2021 11:38",
+    "type": "file",
+    "size": 24039967,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-win-x86.zip",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e01172f",
+    "category": "node",
+    "name": "node-v16.13.1-x64.msi",
+    "date": "01-Dec-2021 11:40",
+    "type": "file",
+    "size": 28020736,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-x64.msi",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011730",
+    "category": "node",
+    "name": "node-v16.13.1-x86.msi",
+    "date": "01-Dec-2021 11:38",
+    "type": "file",
+    "size": 26267648,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1-x86.msi",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011731",
+    "category": "node",
+    "name": "node-v16.13.1.pkg",
+    "date": "01-Dec-2021 11:48",
+    "type": "file",
+    "size": 55634645,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1.pkg",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011732",
+    "category": "node",
+    "name": "node-v16.13.1.tar.gz",
+    "date": "01-Dec-2021 11:19",
+    "type": "file",
+    "size": 64385859,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1.tar.gz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011733",
+    "category": "node",
+    "name": "node-v16.13.1.tar.xz",
+    "date": "01-Dec-2021 11:24",
+    "type": "file",
+    "size": 33907544,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/node-v16.13.1.tar.xz",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011717",
+    "category": "node",
+    "name": "SHASUMS256.txt",
+    "date": "01-Dec-2021 16:13",
+    "type": "file",
+    "size": 3153,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/SHASUMS256.txt",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011718",
+    "category": "node",
+    "name": "SHASUMS256.txt.asc",
+    "date": "01-Dec-2021 16:13",
+    "type": "file",
+    "size": 3690,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/SHASUMS256.txt.asc",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011719",
+    "category": "node",
+    "name": "SHASUMS256.txt.sig",
+    "date": "01-Dec-2021 16:13",
+    "type": "file",
+    "size": 310,
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/SHASUMS256.txt.sig",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011715",
+    "category": "node",
+    "name": "win-x64/",
+    "date": "30-Nov-2021 19:42",
+    "type": "dir",
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/win-x64/",
+    "modified": "2022-01-04T03:09:10.168Z"
+  },
+  {
+    "id": "61d3ba564693fb942e011716",
+    "category": "node",
+    "name": "win-x86/",
+    "date": "30-Nov-2021 19:41",
+    "type": "dir",
+    "url": "https://r.cnpmjs.org/-/binary/node/v16.13.1/win-x86/",
+    "modified": "2022-01-04T03:09:10.168Z"
+  }
+]

@@ -1,4 +1,5 @@
 import assert = require('assert');
+import { readFile } from 'fs/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
@@ -21,6 +22,28 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
   it('should work', async () => {
     app.mockLog();
 
+    app.mockAgent()
+      .get('https://www.npmjs.com')
+      .intercept({
+        method: 'GET',
+        path: '/browse/updated',
+        query: {
+          offset: '0',
+        },
+      })
+      .reply(200, await readFile(TestUtil.getFixtures('browse-updated-page-0.html')))
+      .times(2);
+    app.mockAgent()
+      .get('https://www.npmjs.com')
+      .intercept({
+        method: 'GET',
+        path: '/browse/updated',
+        query: {
+          offset: '36',
+        },
+      })
+      .reply(200, await readFile(TestUtil.getFixtures('browse-updated-page-1.html')))
+      .times(2);
     // syncMode=none
     mock(app.config.cnpmcore, 'syncMode', 'none');
     await app.runSchedule(CheckRecentlyUpdatedPackagesPath);
@@ -42,6 +65,7 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe:createTask]');
     const task = await packageSyncerService.findExecuteTask();
     assert(task);
+    app.mockAgent().assertNoPendingInterceptors();
   });
 
   it('should not sync packages with exist mode', async () => {
@@ -90,6 +114,26 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
   });
 
   it('should handle PackageSyncerService.createTask error', async () => {
+    app.mockAgent()
+      .get('https://www.npmjs.com')
+      .intercept({
+        method: 'GET',
+        path: '/browse/updated',
+        query: {
+          offset: '0',
+        },
+      })
+      .reply(200, await readFile(TestUtil.getFixtures('browse-updated-page-0.html')));
+    app.mockAgent()
+      .get('https://www.npmjs.com')
+      .intercept({
+        method: 'GET',
+        path: '/browse/updated',
+        query: {
+          offset: '36',
+        },
+      })
+      .reply(200, await readFile(TestUtil.getFixtures('browse-updated-page-1.html')));
     mock(app.config.cnpmcore, 'syncMode', 'all');
     app.mockLog();
     mock.error(PackageSyncerService.prototype, 'createTask');
@@ -97,5 +141,6 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe:error][0] parse');
     const task = await packageSyncerService.findExecuteTask();
     assert(!task);
+    app.mockAgent().assertNoPendingInterceptors();
   });
 });

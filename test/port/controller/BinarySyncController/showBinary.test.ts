@@ -1,9 +1,11 @@
 import assert = require('assert');
+import { readFile } from 'fs/promises';
 import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
 import { SqlcipherBinary } from 'app/common/adapter/binary/SqlcipherBinary';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
   let ctx: Context;
@@ -47,6 +49,14 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
     });
 
     it('should show node binaries', async () => {
+      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+        data: await readFile(TestUtil.getFixtures('nodejs.org/site/index.json')),
+        persist: false,
+      });
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
+        data: await readFile(TestUtil.getFixtures('nodejs.org/site/latest/docs/apilinks.json')),
+        persist: false,
+      });
       await binarySyncerService.createTask('node', {});
       const task = await binarySyncerService.findExecuteTask();
       assert(task);
@@ -150,9 +160,14 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
       data = res.body;
       assert(data.error === '[NOT_FOUND] Binary "node/latest/docs/apilinks-404.json" not found');
+      app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should show node binaries: /@journeyapps/sqlcipher', async () => {
+      app.mockHttpclient('https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher/v5.3.1/napi-v6-win32-ia32.tar.gz', 'GET', {
+        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        persist: false,
+      });
       await binarySyncerService.createTask('@journeyapps/sqlcipher', {});
       const task = await binarySyncerService.findExecuteTask();
       assert(task);
@@ -215,7 +230,9 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       assert(items[0].name === 'napi-v6-win32-ia32.tar.gz');
       assert(items[0].category === '@journeyapps/sqlcipher');
       assert(items[0].type === 'file');
-      assert(items[0].size === 1856939);
+      // assert(items[0].size === 1856939);
+      // mock size
+      assert(items[0].size === 10240);
       assert(items[0].date === '2021-12-14T13:12:31.587Z');
       assert(items[0].id);
       assert(items[0].modified);
@@ -229,6 +246,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       } else {
         assert(res.status === 302);
       }
+      app.mockAgent().assertNoPendingInterceptors();
     });
   });
 });

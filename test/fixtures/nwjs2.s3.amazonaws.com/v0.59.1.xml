@@ -1,0 +1,3 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>nwjs2</Name><Prefix>v0.59.1/x64/</Prefix><Marker></Marker><MaxKeys>1000</MaxKeys><Delimiter>/</Delimiter><IsTruncated>false</IsTruncated><Contents><Key>v0.59.1/x64/node.lib</Key><LastModified>2021-12-21T22:41:19.000Z</LastModified><ETag>&quot;50367e39fb13034c3c05b7fb5d7f6fbc&quot;</ETag><Size>871984</Size><StorageClass>STANDARD</StorageClass></Contents><Contents><Key>v0.59.1/x64/nw.lib</Key><LastModified>2021-12-21T22:41:19.000Z</LastModified><ETag>&quot;9374a126a292b2e8372ab442fce507cf&quot;</ETag><Size>6213840</Size><StorageClass>STANDARD</StorageClass></Contents></ListBucketResult>
