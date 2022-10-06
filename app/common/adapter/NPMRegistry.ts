@@ -9,7 +9,7 @@ import {
   EggContextHttpClient,
   EggAppConfig,
 } from 'egg';
-import { HttpMethod } from 'urllib';
+import { HttpMethod } from 'urllib/src/Request';
 
 const INSTANCE_NAME = 'npmRegistry';
 
