@@ -1,8 +1,10 @@
 import assert = require('assert');
+import { readFile } from 'fs/promises';
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
 import binaries from 'config/binaries';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
   let ctx: Context;
@@ -158,6 +160,19 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
     });
 
     it('should on python', async () => {
+      app.mockHttpclient('https://www.python.org/ftp/python/', 'GET', {
+        data: await readFile(TestUtil.getFixtures('www.python.org/ftp/python/index.html')),
+        persist: false,
+      });
+      app.mockHttpclient('https://www.python.org/ftp/python/3.7.3/', 'GET', {
+        data: await readFile(TestUtil.getFixtures('www.python.org/ftp/python/3.7.3.html')),
+        persist: false,
+      });
+      app.mockHttpclient('https://www.python.org/ftp/python/src/', 'GET', {
+        data: await readFile(TestUtil.getFixtures('www.python.org/ftp/python/src.html')),
+        persist: false,
+      });
+
       const binary = new NodeBinary(ctx.httpclient, ctx.logger, binaries.python);
       let result = await binary.fetch('/');
       assert(result);

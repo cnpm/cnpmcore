@@ -27,7 +27,7 @@ export class PuppeteerBinary extends AbstractBinary {
       //   chromium: '768783',
       //   firefox: 'latest',
       // };
-      const unpkgURL = 'https://unpkg.com/puppeteer@latest/lib/cjs/puppeteer/revisions.js';
+      const unpkgURL = 'https://unpkg.com/puppeteer-core@latest/lib/cjs/puppeteer/revisions.js';
       const text = await this.requestXml(unpkgURL);
       const m = /chromium:\s+\'(\d+)\'\,/.exec(text);
       if (m && !chromiumRevisions.has(m[1])) {

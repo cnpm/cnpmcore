@@ -1,8 +1,10 @@
 import assert = require('assert');
+import { readFile } from 'fs/promises';
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PlaywrightBinary } from 'app/common/adapter/binary/PlaywrightBinary';
 import binaries from 'config/binaries';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
   let ctx: Context;
@@ -17,6 +19,17 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
+      app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
+        data: await readFile(TestUtil.getFixtures('playwright-core.json')),
+        persist: false,
+      });
+      app.mockAgent().get('https://unpkg.com')
+        .intercept({
+          method: 'GET',
+          path: /browsers\.json/,
+        })
+        .reply(200, await readFile(TestUtil.getFixtures('playwright-core-browsers.json')))
+        .persist();
       const binary = new PlaywrightBinary(ctx.httpclient, ctx.logger, binaries.playwright);
       const result = await binary.fetch('/');
       assert(result);
@@ -34,6 +47,17 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /builds/, /builds/chromium/ work', async () => {
+      app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
+        data: await readFile(TestUtil.getFixtures('playwright-core.json')),
+        persist: false,
+      });
+      app.mockAgent().get('https://unpkg.com')
+        .intercept({
+          method: 'GET',
+          path: /browsers\.json/,
+        })
+        .reply(200, await readFile(TestUtil.getFixtures('playwright-core-browsers.json')))
+        .persist();
       const binary = new PlaywrightBinary(ctx.httpclient, ctx.logger, binaries.playwright);
       let result = await binary.fetch('/builds/');
       assert(result);
@@ -52,7 +76,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       for (const dirname of names) {
         result = await binary.fetch(`/builds/${dirname}/`);
         assert(result);
-        // console.log(result.items);
+        // console.log(dirname, result.items);
         assert(result.items.length > 0);
         for (const item of result.items) {
           assert(item.isDir);

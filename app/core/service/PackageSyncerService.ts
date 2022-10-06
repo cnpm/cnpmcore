@@ -176,7 +176,8 @@ export class PackageSyncerService extends AbstractService {
     let useTime = Date.now() - startTime;
     while (useTime < maxTimeout) {
       // sleep 1s ~ 6s in random
-      await setTimeout(1000 + Math.random() * 5000);
+      const delay = process.env.NODE_ENV === 'test' ? 100 : 1000 + Math.random() * 5000;
+      await setTimeout(delay);
       try {
         const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset);
         useTime = Date.now() - startTime;

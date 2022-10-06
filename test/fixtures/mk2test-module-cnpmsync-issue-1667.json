@@ -1,0 +1,68 @@
+{
+  "_id": "mk2test-module-cnpmsync-issue-1667",
+  "_rev": "2-57a43a0162877af66e64ba8a0dba1096",
+  "name": "mk2test-module-cnpmsync-issue-1667",
+  "dist-tags": {
+    "latest": "3.0.0"
+  },
+  "versions": {
+    "3.0.0": {
+      "name": "mk2test-module-cnpmsync-issue-1667",
+      "version": "3.0.0",
+      "description": "",
+      "main": "index.js",
+      "scripts": {
+        "install": "node-pre-gyp install --fallback-to-build"
+      },
+      "author": "",
+      "license": "ISC",
+      "_id": "mk2test-module-cnpmsync-issue-1667@3.0.0",
+      "_nodeVersion": "16.13.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-pwnnZyjvr29UxwFAIx7xHvVCkFpGVAYgaFllr/m5AZoD1CR2uHHPw16ISEO/A2rZ0WM3UoAghwd5bAZ4pYzD2Q==",
+        "shasum": "c31af371a6cdc10dd5b9ad26625a4c863249198d",
+        "tarball": "https://registry.npmjs.org/mk2test-module-cnpmsync-issue-1667/-/mk2test-module-cnpmsync-issue-1667-3.0.0.tgz",
+        "fileCount": 2,
+        "unpackedSize": 232,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJh2zXVCRA9TVsSAnZWagAAqE0P/0HH0RwNvXEEWCsXjygV\n/SztddmVqTrOchNLWCMpRj9jlC2XlYxP8soQr1TBmvanke6MfeMmDsaj2T73\nV5W99jY4rLuE5a9XIzKuJDeTJNZL+T/BydKKjd0IfSqnj+KxUPMJDD2hjPZJ\neWkauhrgSVu32NTydMFnwnSOKdQSx0uy9OZ2ZpF7RtmQ1jr8PgBx8j2XEawW\n6kqWbEVU+8phJ29FpcgYcqu8Orvwnzv9iX71TOC2vPNm9PPKleTF4naubC0j\nRJDi0PrJH8wcwh+Q8XLag4HFOsdcDIaV9eeYwtcvEzTc2Uvgi4FKbUDBbVB/\ney8SvM735pJvaQp9TyiEQC36/lja8dz2xVTY6Yo5VcIj3iLceT35iFt7MK+p\nz6F9Zj/zCrP4YRY6Jw/vgx0F3LnlE8cNJ4KOuU6HxJIKzQE9vOsqUgrejafe\ndK7KSZPzBO0dWHEJDOkldZPC9aBHTqynEagHyPBUZXWUQoRIqBWi301+ABgg\nsHu5ZvZ++Vvlr2fGlVmaxQDfNYf1CJLlH1hqWx75IqECJBvVmnAWEBuayDKk\nsJyO0qGajH85m8heBlTDDo65jaB+WPLgjb/oflz/3FKy5i3vO7EbcPQ1gitD\nuv9LLDOXDAjqd2ghjtQA2W3WMEivyc1IDwbMcyAm2mOMaXQCKdoy7UFXjb+Z\n/s87\r\n=y9ff\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIAqkMRX59H6PDgEwY7omIwG8zbxT56vbjo9T5S3GQZwkAiAiPQ/fYhRnQtCEf3KIi6DF1ISUl0aiNZN8UV9KOr5atQ=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "fengmk2",
+        "email": "fengmk2@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "fengmk2",
+          "email": "fengmk2@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mk2test-module-cnpmsync-issue-1667_3.0.0_1636291934033_0.49155793649853874"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "time": {
+    "created": "2021-11-07T13:32:14.033Z",
+    "3.0.0": "2021-11-07T13:32:14.130Z",
+    "modified": "2022-05-09T12:14:27.129Z"
+  },
+  "maintainers": [
+    {
+      "name": "fengmk2",
+      "email": "fengmk2@gmail.com"
+    }
+  ],
+  "license": "ISC",
+  "readme": "ERROR: No README data found!",
+  "readmeFilename": ""
+}

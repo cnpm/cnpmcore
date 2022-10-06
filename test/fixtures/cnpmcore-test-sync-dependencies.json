@@ -1,0 +1,70 @@
+{
+  "_id": "cnpmcore-test-sync-dependencies",
+  "_rev": "1-2a9458f12e76a0ef5c17a49d165abea4",
+  "name": "cnpmcore-test-sync-dependencies",
+  "dist-tags": {
+    "latest": "0.0.0"
+  },
+  "versions": {
+    "0.0.0": {
+      "name": "cnpmcore-test-sync-dependencies",
+      "version": "0.0.0",
+      "description": "",
+      "main": "index.js",
+      "scripts": {
+        "test": "echo 1 && exit 1"
+      },
+      "author": "",
+      "license": "ISC",
+      "dependencies": {
+        "cnpmcore-test-sync-deprecated": "0.0.0"
+      },
+      "_id": "cnpmcore-test-sync-dependencies@0.0.0",
+      "_nodeVersion": "16.13.1",
+      "_npmVersion": "8.1.2",
+      "dist": {
+        "integrity": "sha512-ihh0b0qjJqK7hlEpwUeBJudnETNQRevG3KHBqGX2D6ounXqZ4eBXQCrlwjOjJ1Z74nKyYZmCRXqCshMFZ0q/zA==",
+        "shasum": "d997fa2bf4e2051f3eb02c85b8f4b48e3149270b",
+        "tarball": "https://registry.npmjs.org/cnpmcore-test-sync-dependencies/-/cnpmcore-test-sync-dependencies-0.0.0.tgz",
+        "fileCount": 1,
+        "unpackedSize": 297,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIFoiDQ0FgQbFR1oMt4PVSQyq3JFhKsAmcNijviAY7th/AiAOx9FuyesZ8wCj0tQNefqgle0C+aPuzt1ignmrhHAU9Q=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "fengmk2",
+        "email": "fengmk2@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "fengmk2",
+          "email": "fengmk2@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/cnpmcore-test-sync-dependencies_0.0.0_1639269863358_0.4624824030643129"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "time": {
+    "created": "2021-12-12T00:44:23.358Z",
+    "0.0.0": "2021-12-12T00:44:23.520Z",
+    "modified": "2022-04-12T06:56:55.444Z"
+  },
+  "maintainers": [
+    {
+      "name": "fengmk2",
+      "email": "fengmk2@gmail.com"
+    }
+  ],
+  "license": "ISC",
+  "readme": "ERROR: No README data found!",
+  "readmeFilename": ""
+}

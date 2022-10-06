@@ -1,4 +1,5 @@
 import assert = require('assert');
+import { readFile } from 'fs/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
@@ -23,6 +24,14 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
 
   describe('executeTask()', () => {
     it('should execute "node" task', async () => {
+      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+        data: await readFile(TestUtil.getFixtures('nodejs.org/site/index.json')),
+        persist: false,
+      });
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
+        data: await readFile(TestUtil.getFixtures('nodejs.org/site/latest/docs/apilinks.json')),
+        persist: false,
+      });
       await binarySyncerService.createTask('node', {});
       let task = await binarySyncerService.findExecuteTask();
       assert(task);
@@ -52,6 +61,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         return { items: [] };
       });
       await binarySyncerService.executeTask(task);
+      app.mockAgent().assertNoPendingInterceptors();
       assert(!await TaskModel.findOne({ taskId: task.taskId }));
       assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
       let stream = await binarySyncerService.findTaskLog(task);
@@ -76,6 +86,10 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert(log.includes('[/] 🟢 Synced dir success'));
 
       // mock date change
+      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+        data: await readFile(TestUtil.getFixtures('nodejs.org/site/index.json')),
+        persist: false,
+      });
       mock(NodeBinary.prototype, 'fetch', async (dir: string) => {
         if (dir === '/') {
           return {
@@ -97,6 +111,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(log.includes('Syncing diff: 2 => 1'));
       assert(log.includes('[/] 🟢 Synced dir success'));
+      app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should mock download file error', async () => {
@@ -128,11 +143,13 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         }
         return { items: [] };
       });
-      app.mockHttpclient('https://nodejs.org/dist/index-not-exists.json', 'GET', () => {
-        throw new Error('mock error');
+      app.mockHttpclient('https://nodejs.org/dist/index-not-exists.json', 'GET', {
+        status: 500,
+        data: 'mock error',
       });
-      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks-not-exists.json', 'GET', () => {
-        throw new Error('mock error');
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks-not-exists.json', 'GET', {
+        status: 500,
+        data: 'mock error',
       });
       await binarySyncerService.executeTask(task);
       assert(!await TaskModel.findOne({ taskId: task.taskId }));
@@ -178,6 +195,14 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         }
         return { items: [] };
       });
+      app.mockHttpclient('https://nodejs.org/dist/index-not-exists.json', 'GET', {
+        status: 404,
+        data: 'not found',
+      });
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks-not-exists.json', 'GET', {
+        status: 404,
+        data: 'not found',
+      });
       await binarySyncerService.executeTask(task);
       assert(!await TaskModel.findOne({ taskId: task.taskId }));
       assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
@@ -194,6 +219,14 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
     });
 
     it('should execute "node" task with ApiBinary when sourceRegistryIsCNpm=true', async () => {
+      app.mockHttpclient('https://cnpmjs.org/mirrors/node/index.json', 'GET', {
+        data: await readFile(TestUtil.getFixtures('nodejs.org/site/index.json')),
+        persist: false,
+      });
+      app.mockHttpclient('https://cnpmjs.org/mirrors/node/latest/docs/apilinks.json', 'GET', {
+        data: await readFile(TestUtil.getFixtures('nodejs.org/site/latest/docs/apilinks.json')),
+        persist: false,
+      });
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
       await binarySyncerService.createTask('node', {});
       let task = await binarySyncerService.findExecuteTask();
@@ -246,6 +279,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(log.includes('Syncing diff: 2 => 0'));
       assert(log.includes('[/] 🟢 Synced dir success'));
+      app.mockAgent().assertNoPendingInterceptors();
     });
   });
 });

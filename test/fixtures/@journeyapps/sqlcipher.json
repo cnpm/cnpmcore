@@ -1,0 +1,2123 @@
+{
+  "_id": "@journeyapps/sqlcipher",
+  "_rev": "17-750dd1eeca150606220a3172a34a5eac",
+  "name": "@journeyapps/sqlcipher",
+  "description": "Asynchronous, non-blocking SQLCipher bindings",
+  "dist-tags": {
+    "latest": "5.3.1"
+  },
+  "versions": {
+    "3.1.4-test1": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLite3 bindings",
+      "version": "3.1.4-test1",
+      "homepage": "http://github.com/mapbox/node-sqlite3",
+      "author": {
+        "name": "MapBox",
+        "url": "https://mapbox.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/{node_abi}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/mapbox/node-sqlite3.git"
+      },
+      "dependencies": {
+        "nan": "~2.3.3",
+        "node-pre-gyp": "^0.6.39"
+      },
+      "devDependencies": {
+        "mocha": "2.x",
+        "aws-sdk": "2.x"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "licenseText": "Copyright (c) MapBox\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without modification,\nare permitted provided that the following conditions are met:\n\n- Redistributions of source code must retain the above copyright notice, this\n  list of conditions and the following disclaimer.\n- Redistributions in binary form must reproduce the above copyright notice, this\n  list of conditions and the following disclaimer in the documentation and/or\n  other materials provided with the distribution.\n- Neither the name \"MapBox\" nor the names of its contributors may be\n  used to endorse or promote products derived from this software without\n  specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\nANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\nWARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\nDISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR\nANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\nLOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON\nANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\nSOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+      "_id": "@journeyapps/sqlcipher@3.1.4-test1",
+      "dist": {
+        "shasum": "af47a2029c9831822a4cd7ac13642e27907607a9",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-3.1.4-test1.tgz",
+        "integrity": "sha512-vNDE2MF8WJqIxTQsuILqs+wGjR3V/5jmYkyuqa/sivOvM++S4PC0wteVk7/01s0TT1wpR35lU32kcVkB+Zox/Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIEfpuNEBDRbbbPYUrXW39eLuQxW6fisuj0pgFePG4tIVAiEAm5aAUl3iaLKkLSQhDMRKBv4mstnIQerMSbSJHA/vF8Q="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        }
+      ],
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher-3.1.4-test1.tgz_1513680286872_0.8456649021245539"
+      },
+      "directories": {}
+    },
+    "3.1.4-test2": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLite3 bindings",
+      "version": "3.1.4-test2",
+      "homepage": "http://github.com/mapbox/node-sqlite3",
+      "author": {
+        "name": "MapBox",
+        "url": "https://mapbox.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/{node_abi}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/mapbox/node-sqlite3.git"
+      },
+      "dependencies": {
+        "nan": "~2.3.3",
+        "node-pre-gyp": "^0.6.39"
+      },
+      "devDependencies": {
+        "aws-sdk": "2.x",
+        "mocha": "2.x"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "gitHead": "2b04626f2f373bc8097d00c7f8192acd396e37a7",
+      "bugs": {
+        "url": "https://github.com/mapbox/node-sqlite3/issues"
+      },
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "@journeyapps/sqlcipher@3.1.4-test2",
+      "_npmVersion": "5.4.2",
+      "_nodeVersion": "8.0.0",
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "dist": {
+        "integrity": "sha512-zPQ/AwXhHImYoQyiuf0yGUyDV1W54nBReJzHnq9esWuUJ62J9KMe5503DPSVp9jvF1JSsvHIOnSVKWu23itePQ==",
+        "shasum": "4a5fd540af10580261f3b36d6791d2e51de9854e",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-3.1.4-test2.tgz",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCBjJFkTBn4RJLXqWtXObYLV9FV3BbNmTbI2SBJaBKEEQIhAOvX0GJefBRWtwIwMwRSXVu4RxIeS9jOFuI/F70JpylZ"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher-3.1.4-test2.tgz_1513694524740_0.8931154059246182"
+      },
+      "directories": {}
+    },
+    "3.1.15": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLite3 bindings",
+      "version": "3.1.15",
+      "homepage": "http://github.com/mapbox/node-sqlite3",
+      "author": {
+        "name": "MapBox",
+        "url": "https://mapbox.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/{node_abi}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/mapbox/node-sqlite3.git"
+      },
+      "dependencies": {
+        "nan": "~2.7.0",
+        "node-pre-gyp": "~0.6.38"
+      },
+      "devDependencies": {
+        "aws-sdk": "2.x",
+        "eslint": "3.5.0",
+        "mocha": "3.x"
+      },
+      "scripts": {
+        "prepublishOnly": "npm ls",
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "gitHead": "1cc71b28c476b7d4364aaa285a80d000f51a07b7",
+      "bugs": {
+        "url": "https://github.com/mapbox/node-sqlite3/issues"
+      },
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "@journeyapps/sqlcipher@3.1.15",
+      "_npmVersion": "5.4.2",
+      "_nodeVersion": "8.0.0",
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "dist": {
+        "integrity": "sha512-2rvH0P2DEXR80vfuGhAMLs7LiEyjyecVPbpuWTxfxqqeH/pMJ3GJQRie1QJM6iLFl/nlaSNvod1JbvB6l2H03A==",
+        "shasum": "aec6f087a9e565e747a2644fd52f201fdea3ffa3",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-3.1.15.tgz",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIFptzPpBfTY0GK0efp3K/tAwSobbkRqnU5rQyauZa0kBAiBXBRY/dJJH1JdfZoxdQLt33obPZ7T3iI7bfRz3Wl8jyA=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher-3.1.15.tgz_1513763805245_0.2695124589372426"
+      },
+      "directories": {}
+    },
+    "3.1.16": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLite3 bindings",
+      "version": "3.1.16",
+      "homepage": "http://github.com/mapbox/node-sqlite3",
+      "author": {
+        "name": "MapBox",
+        "url": "https://mapbox.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/{node_abi}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/mapbox/node-sqlite3.git"
+      },
+      "dependencies": {
+        "nan": "~2.7.0",
+        "node-pre-gyp": "~0.6.38"
+      },
+      "devDependencies": {
+        "aws-sdk": "2.x",
+        "electron": "^1.7.10",
+        "electron-mocha": "^5.0.0",
+        "electron-rebuild": "^1.6.0",
+        "eslint": "3.5.0",
+        "mocha": "3.x"
+      },
+      "scripts": {
+        "prepublishOnly": "npm ls",
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "gitHead": "11aaff3104fa72b0257e16104c7f9a0cb81af8c3",
+      "bugs": {
+        "url": "https://github.com/mapbox/node-sqlite3/issues"
+      },
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "@journeyapps/sqlcipher@3.1.16",
+      "_npmVersion": "5.4.2",
+      "_nodeVersion": "8.0.0",
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "dist": {
+        "integrity": "sha512-jzC8Cy/l6uATub2GL6SQJM5HiUyizYfHNPrUjf2M6gg1DR0+MO/hBi38dmLkd12mdiQRMw3BnaPCkQ72uWgH4g==",
+        "shasum": "faa4467946eb59dcd878933c9aac480e8db977ed",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-3.1.16.tgz",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIE/WncoQBtVu+YVF5nlmACZ3YpKojqpDApHTMVl7FONLAiEAudUu3b9xwi7cEr5986awTw9WkwSi5K1RwgI2w3wxdr0="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher-3.1.16.tgz_1513856308113_0.3059702389873564"
+      },
+      "directories": {}
+    },
+    "3.2.0": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLCipher bindings",
+      "version": "3.2.0",
+      "homepage": "http://github.com/journeyapps/node-sqlcipher",
+      "author": {
+        "name": "JourneyApps",
+        "url": "https://journeyapps.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/{node_abi}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/journeyapps/node-sqlcipher.git"
+      },
+      "dependencies": {
+        "nan": "~2.7.0",
+        "node-pre-gyp": "~0.6.38"
+      },
+      "devDependencies": {
+        "aws-sdk": "2.x",
+        "electron": "^1.7.10",
+        "electron-mocha": "^5.0.0",
+        "electron-rebuild": "^1.6.0",
+        "eslint": "3.5.0",
+        "mocha": "3.x"
+      },
+      "scripts": {
+        "prepublishOnly": "npm ls",
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "gitHead": "00b112d2ca63a7346ed4fe88b742f4f136db31f1",
+      "bugs": {
+        "url": "https://github.com/journeyapps/node-sqlcipher/issues"
+      },
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "@journeyapps/sqlcipher@3.2.0",
+      "_npmVersion": "5.4.2",
+      "_nodeVersion": "8.0.0",
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "dist": {
+        "integrity": "sha512-4z8DjLsbNIFBDLS0wshewQifPJZ4FDHmZk/yfh7+GVLkB80CxuEgNVrRF8RkwfDQKFTF4ob8fJhN8bTivxCsug==",
+        "shasum": "7a16907dda0f72a6414aa2a57e3e7dde8a3a6854",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-3.2.0.tgz",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDN0zqWUjV9LagC+jNkkY0W5ruhmcAHAJGe47+58mnSAgIhAOtB1U74FMGYBCMPYlBJVtEokXSBI1D8AlyfcCI821G/"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher-3.2.0.tgz_1515493784699_0.9346252423711121"
+      },
+      "directories": {}
+    },
+    "3.2.1": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLCipher bindings",
+      "version": "3.2.1",
+      "homepage": "http://github.com/journeyapps/node-sqlcipher",
+      "author": {
+        "name": "JourneyApps",
+        "url": "https://journeyapps.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/{node_abi}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/journeyapps/node-sqlcipher.git"
+      },
+      "dependencies": {
+        "nan": "^2.10.0",
+        "node-pre-gyp": "^0.10.0"
+      },
+      "devDependencies": {
+        "aws-sdk": "^2.251.1",
+        "electron": "^2.0.4",
+        "electron-mocha": "^5.0.0",
+        "electron-rebuild": "^1.8.1",
+        "eslint": "3.5.0",
+        "mocha": "^5.2.0"
+      },
+      "scripts": {
+        "prepublishOnly": "npm ls",
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "gitHead": "64e7040a9ebb2469b7d727c3b9e0f29e8b3bc294",
+      "bugs": {
+        "url": "https://github.com/journeyapps/node-sqlcipher/issues"
+      },
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "@journeyapps/sqlcipher@3.2.1",
+      "_npmVersion": "6.1.0",
+      "_nodeVersion": "8.9.3",
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "dist": {
+        "integrity": "sha512-I2cOoX0ybyL0azMGP69H4AoW43NO400GvELM0pKXONVjjMs7DV9EHgSNwQouznhq72paJjv7h2f2e1DYxyaMVw==",
+        "shasum": "6705d7eb8034b656f6280d15b60029bc5bf1566b",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-3.2.1.tgz",
+        "fileCount": 567,
+        "unpackedSize": 7212379,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJbaZV8CRA9TVsSAnZWagAABLUQAI/tRvlI5XhO5wcBjO4v\nXFPBTR+90G/GQQFc5jY0WA1U63rSaEJdtwDPRKzWnaXL6RByC/thIvMcqAQt\nA4dkMjJtORfgBN2j8463ZMDeWkr/Uu08x7s2+kStR+AaK0C0yOiefLeY3dBu\nIvwjdVrVLWQiGT/EKlouA7YvTYKbMYe4Y2Y+C1wf3hqXrF1AljAik+gnmlTI\nkKhvkPjLG9vFI/TDo3Lp3Ql0HUS75VgjY1GuZOqjglA4AE3m6nxQiUCM/IKn\nbpGCwQbHivSGdTMtzVNWXoRVMUgcFkaSu2UDtaVWzvWg0QIEyC+Kt6K7Q5OU\n2M9b3KiTql1/JC56enRzZHEWekNghuHOWvVIfW8Wc+EFY7HaVQyBcbdIr/zm\n2cgbVnH4M8BQqzkbD9rOaLIDZaKM4PI9qoR8aiSxZ5pR049hCbPWYRWoc5ac\nMv9QWhrcKLuA+cRtQHeaVGY4DLumNbUNg2z4MMw5b2fvQTN1pvQ3+fnsRNxN\n7EW0a8p/+vxa043iU3u6FUx4S/LOyg6VURU3weGe8s0MGTprzcoF1Pfh0LLG\nSyjXg5KQ8JZ0BnmGG5ET2f9/fhGhpTPMAgdLqqmUthW/pnEW8eiwFTqkrZNl\n+AHS8tSAf1KMAHE8+M1ljyyXlyaReG6kQQCtW3v86eEwjcQjnv6HLYYHEnSZ\nLHFg\r\n=b3Qv\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDtHocByZBDC3RNoGJZNwlkC7I7lHEEcwhqKshLcE7GlQIhANR4ZeT+jsLykOr0ByxnyQy3U9G7WtF782S7156xGdyF"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher_3.2.1_1533646203647_0.19050531154748063"
+      },
+      "_hasShrinkwrap": false
+    },
+    "4.0.0": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLCipher bindings",
+      "version": "4.0.0",
+      "homepage": "http://github.com/journeyapps/node-sqlcipher",
+      "author": {
+        "name": "JourneyApps",
+        "url": "https://journeyapps.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/{node_abi}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/journeyapps/node-sqlcipher.git"
+      },
+      "dependencies": {
+        "nan": "^2.12.1",
+        "node-pre-gyp": "^0.11.0",
+        "request": "^2.87.0"
+      },
+      "devDependencies": {
+        "aws-sdk": "^2.251.1",
+        "electron": "^5.0.6",
+        "electron-mocha": "^5.0.0",
+        "electron-rebuild": "^1.8.5",
+        "eslint": "3.5.0",
+        "mocha": "^5.2.0"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000",
+        "pack": "node-pre-gyp package"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "gitHead": "25c8c914763d06ed4bf0932a5c60a2cdb2f4f62c",
+      "bugs": {
+        "url": "https://github.com/journeyapps/node-sqlcipher/issues"
+      },
+      "_id": "@journeyapps/sqlcipher@4.0.0",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "8.9.4",
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "dist": {
+        "integrity": "sha512-tF9mjUFqqB40N8OsNa0CO6UTHptrHj8wUcpU463xJE9YLOyPs+RkXkCAWll4kHRzHWrZDnGEEKhJll3RxJycww==",
+        "shasum": "ad7683d145af40e2d0ec05bac7ec9ce752a578a4",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-4.0.0.tgz",
+        "fileCount": 31,
+        "unpackedSize": 5600387,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJdHycLCRA9TVsSAnZWagAAFjgP/1hsph3Tuy5NwsSH7IkK\njpbzswcRl4rS5cer3zQXEydFYa9vmH0LPz/biWzbIxatVdsiVoo1IzSavVqV\nVW/F5dUy4Rwq83y4O3ADq0DwQpejvyYke2MBLM0fJWOxV+viiztfWF5XSFFT\n/ZQd0CoWDZcVB3P4RiskhB2x6huf8HQCPW65K8pGwtOCBOf0dDwA8OzGGZOH\nD3Kt7qg80El4NO8zZbQXSJrIZ/Zr0RV1vVSKufbz5OMBoy8Hq10mTBclfbJm\nqCZlVISLjaQfi942zUsKj/ws3/+raeCjNKjzG0xD3Q/1RKGr4R80kBGqhJRQ\nib0xWcrezQTyNNeJ6N/b1BldIHBrzvgyla9kYlBn+qbb3u0UO5/G5ZfYxIIh\nddh2yDI+5IajNXs2IVCiETkAO7zdtYypPhOTLZLWufHyGuk/pyrB1UicUJGX\nbaOgCKpiTHhaAtuMHDM/E0+EdqXxqCSwoasM7Uqr7DDcH+Pv26t37U++kVKh\nHVaqiVDH4XHqlMpCIMV9oOhDVrdwd1FhAtik9HrBZH3/CUKqdOY5C+KyETC/\necrO1R9mFf2WL9lcVG33b6W7ZAG64Tn/4ywRvu50ULKVhY3HBQ/11Ahceecv\nsHF7wCbxb8ibUmqlXVixOpalLlmurQmXznOPzbrLl64k22RUivaNXUyFnWe+\nQrKb\r\n=u4Xr\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIAKRUE1+qZqhjH3cNO2tcAQ5iURY2b30ccZiCMpzNwD+AiEA+L7yV/+mp+ALVnFSBvI0EkV8379VndKGX82q6uDh0n8="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher_4.0.0_1562322698129_0.37465066262521063"
+      },
+      "_hasShrinkwrap": false
+    },
+    "4.1.0": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLCipher bindings",
+      "version": "4.1.0",
+      "homepage": "http://github.com/journeyapps/node-sqlcipher",
+      "author": {
+        "name": "JourneyApps",
+        "url": "https://journeyapps.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/{node_abi}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "{node_abi}-{platform}-{arch}.tar.gz"
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/journeyapps/node-sqlcipher.git"
+      },
+      "dependencies": {
+        "nan": "^2.12.1",
+        "node-pre-gyp": "^0.11.0",
+        "request": "^2.88.2"
+      },
+      "devDependencies": {
+        "aws-sdk": "^2.641.0",
+        "electron": "^5.0.13",
+        "electron-mocha": "^5.0.0",
+        "electron-rebuild": "^1.10.1",
+        "eslint": "3.5.0",
+        "mocha": "^5.2.0"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000",
+        "pack": "node-pre-gyp package"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "gitHead": "4e4c5f30e0ef259e3b2c7696f25446104ed9abc7",
+      "bugs": {
+        "url": "https://github.com/journeyapps/node-sqlcipher/issues"
+      },
+      "_id": "@journeyapps/sqlcipher@4.1.0",
+      "_nodeVersion": "12.13.0",
+      "_npmVersion": "6.12.0",
+      "dist": {
+        "integrity": "sha512-32bdp8ydWTrf4YNdayg2BD9gR0bQ4p0DD6gWN6nAbuDzjLRizqxe4lJVVb4iTB07hTdLrclrzn5jpsq1rImTKg==",
+        "shasum": "fcafe916e942feb1df483ce92c9598b281d7cf61",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-4.1.0.tgz",
+        "fileCount": 37,
+        "unpackedSize": 5644351,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJeeJSXCRA9TVsSAnZWagAAxtMP/ic90xHQE/pDvNGYQTA1\nUM56JtyKvP7Aem/apU4wqvi0JmSReZMrLa21r2UBoZbRI8KJrtmScpmVvSXZ\nu/sQYLC7dVNUinvPPMdchoroYlvqY84Tpt0rE5wFhhICwtaF05UpfVcawZ8h\njVE7cEAk1NRRbX6uBi+QYbgQ7eY6b5uovdjNkxzS/9y1QOjIezd3p/3l9Z9I\nPg+iWEBdakKiGmlaJFIoU0AvuwUJG7hEzebaJaY1fIRLlurkYLJtNMFVLVF2\naKSw59rkB4nA/WcMUL2XdR4OtBfhThGba3GsbX4mhduXWqc4yp9ss2MexoO0\nhiV7KP3PSEwA37nTY/0M1/CLDQCCV9McjpWowKpKvVYfhTPy6L/zbqPAwxv2\nc2VmGphxbOA8WSmGGosOCx12r37J1c+OdMmurYezNhrY/6B676DY9UYfoedp\nytU3q1B/PKD96ueMN6VVj/p5dvrqELURnU5kCFFasIcS/DBTpaXkqL2ubxc+\ncXS5ehLoXo5s/0AEIYMTYA/FOVtaEWAISOPckYTsvbnBrKJ9sFZ8jKP5Zsxt\nfXuJQQJJ8dMuWgXhVL/k2vVQCBBvBHD5QLO6sIh37JaTOxFXze2F6w1eStiW\ne435xKuK7TN9K4VHnwGZnpc0WONM+Pj6vUOIE+x9qJLx6vVKIFboxz/ribyE\nFP4N\r\n=IqyA\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIH7Es8i9X5/qo0ytxr4Rk/QpTT/4APGT82OSdWsfCbwjAiEA9bMWMcVn6tA9GgecF+zQY8WwUoKbq45bUAziFXLnpQk="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        }
+      ],
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher_4.1.0_1584960663131_0.5025077298809566"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.0.0": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLCipher bindings",
+      "version": "5.0.0",
+      "homepage": "http://github.com/journeyapps/node-sqlcipher",
+      "author": {
+        "name": "JourneyApps",
+        "url": "https://journeyapps.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/napi-v{napi_build_version}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "napi-v{napi_build_version}-{platform}-{arch}.tar.gz",
+        "napi_versions": [
+          3,
+          6
+        ]
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/journeyapps/node-sqlcipher.git"
+      },
+      "dependencies": {
+        "node-addon-api": "^3.0.0",
+        "node-pre-gyp": "^0.15.0"
+      },
+      "devDependencies": {
+        "aws-sdk": "^2.641.0",
+        "electron": "^10.1.2",
+        "electron-mocha": "^5.0.0",
+        "electron-rebuild": "^1.10.1",
+        "eslint": "3.5.0",
+        "mocha": "^5.2.0",
+        "node-gyp": "^6.1.0"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000",
+        "pack": "node-pre-gyp package"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "gitHead": "5894da50fc521ffca8b5de46a673c4c4e5d8cd6a",
+      "bugs": {
+        "url": "https://github.com/journeyapps/node-sqlcipher/issues"
+      },
+      "_id": "@journeyapps/sqlcipher@5.0.0",
+      "_nodeVersion": "12.6.0",
+      "_npmVersion": "6.14.2",
+      "dist": {
+        "integrity": "sha512-addNQxuJjvHtELKE1gHO1AARZt58P161rgwGhf4KP2XGn3hMfuHgoBPCcxmq6JZEiDgg4jObvZIsyFfio3kbgA==",
+        "shasum": "30d8c901803c201c816b943307d8e8197a4c9676",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-5.0.0.tgz",
+        "fileCount": 25,
+        "unpackedSize": 5676152,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJfbesOCRA9TVsSAnZWagAAC6gP/i3OvQTxasAtWAx9voEN\n66RCrK9X0slX7nSnozXVu0oKkp/WSF6is6GVS1V0O1mbY9AZ6YwnAxn5Z4/f\nPIdxr+P0viVsKE1cbDlP9cCHrFuIpj6PQa8tRmNQvKKY7p0gm/FAMQS0ZVwC\nICVPEtCM93M/haP4ZdP4joqnu3NxY8ahAVOBua08y40SBz3BhiwEGPTAB73q\n/G9HyRUJf7lS+GULCN4SHsL2DrhaKj0EeVBwzfvedD+T0nxV/HKhSkMklhp0\n1HCs8ZtX58BzR8770AimcbMjiVOOYPI8LTHrV5VUDzd1agZLz/mmpoNvnycW\najZmWb4ykjfBCOxBF48gIwx5JdzSZK15MIopJyiyQ2nkSGfqDmI77P/IF64U\n8jOlZkj8+g/2Fm54Gz92cn/OUv/hx1GRELDR43eqxmVQwCNKZl3lRExe4mR/\nYhioZtkQHeJ9OnzsPvWJbyWX9M26j1qnFYzPRue9mGvUFbEcNbJc1bCHokvW\n02/YplB0PgprtJQZA6uUYq4yP5vX/YvAU9fL4mzy8F8C6rpsntPq4ZqWJapu\n325vqXtm/jJ8ipYVVgwFqDBSY7WQfa75KpKJiaIV9uLzqe5sdv89XX/dr7Hj\nlUr+uOTY3g9Snli0tOwqboec3olNZ7pH3l+pVJivNexI6lwe+HhbtDjP898D\ntJH/\r\n=zQab\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCPklgjrdTeUfNl1TlsawnUUfTqgwVuWPuSWLsvcjJs3gIhAPSK0y9jKo58AaCIvwlHdDjqt9k8UNNLT3OnMx2BhKur"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        }
+      ],
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher_5.0.0_1601039117364_0.7643082703856128"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.1.0": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLCipher bindings",
+      "version": "5.1.0",
+      "homepage": "http://github.com/journeyapps/node-sqlcipher",
+      "author": {
+        "name": "JourneyApps",
+        "url": "https://journeyapps.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/napi-v{napi_build_version}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "napi-v{napi_build_version}-{platform}-{arch}.tar.gz",
+        "napi_versions": [
+          3,
+          6
+        ]
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/journeyapps/node-sqlcipher.git"
+      },
+      "dependencies": {
+        "node-addon-api": "^3.0.0",
+        "node-pre-gyp": "^0.15.0"
+      },
+      "devDependencies": {
+        "aws-sdk": "^2.641.0",
+        "electron": "^11.2.3",
+        "electron-mocha": "^10.0.0",
+        "electron-rebuild": "^1.11.0",
+        "eslint": "3.5.0",
+        "mocha": "^5.2.0",
+        "node-abi": "^2.19.3",
+        "node-gyp": "^6.1.0"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000",
+        "pack": "node-pre-gyp package"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "gitHead": "e6eaafed10a8ee73949b4b09c608e2e0d2c10997",
+      "bugs": {
+        "url": "https://github.com/journeyapps/node-sqlcipher/issues"
+      },
+      "_id": "@journeyapps/sqlcipher@5.1.0",
+      "_nodeVersion": "12.6.0",
+      "_npmVersion": "6.14.2",
+      "dist": {
+        "integrity": "sha512-iAN4kkTJ4NVvBK/4HvFfYTPSF6cHs33/hq3O0PUHIY/xIoq9WEagSjXpH7E0TnP7IhLQKXL0n1e1f3V2snBT/g==",
+        "shasum": "a351d41dc6b583fde5637918707a5d81a502d91b",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-5.1.0.tgz",
+        "fileCount": 25,
+        "unpackedSize": 5697500,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJgM1xqCRA9TVsSAnZWagAA9DMQAIDSVtZch13VBouEqNoV\n4kMhmlqTUpfsvXuI7jYbYvOQ9VHCS/nCH/UcHju7D/3wNVN9VvUvpTE1Ym9s\nkyeO1pmOisJpVPmyRrN4T1jcKq/3cm8m+S7kZ5gZuayEn2YiwtL2Kzu+BGjz\nO0XDaNQLqqxIZhisV26p3iRSbjanhUAQSKToL99noW8i+CpGq7bEb9+AF7sa\nSFp61r7wTl7sZrw4dg0qJ/mu34SbOwzOdsA9QQFFCdumzJI20XJTOk1/Vm2Z\nVXvROqlRyDm8IqkTBKBgWVlsRU6SlNJPFv8vzGZRELL5gN7pxS+kySAn3pto\nPrSBSOgyNtQRNpkEYy6/AtVlIjTmlX44ATyHpYQTK4gp6cdLvAymtXdlU8UQ\nMQhEcDllIP52CTTnzQkD3YMKVclLFwY90xRwxUut3aTNanhxUe6QeCxwEWgE\ni4zlrlwTnmQRX065TAsPMTPJ3utoIeuV08zeRZy0D20x2LyOfQ3Ome7ngZoq\nfLyq9RMuVOkTBaZprFApX0Pg9e4KV8IWmLpy2/FBNGOupB4/Q4urb8PbFJ2F\n0Fk3jH1fbvuX2hevOuK3+czEeYVJ7Nlx4O7zyrj3qsoLyCK6TTnFyjbMrU11\n1k0xBb83jyrBhOnApHihfuvomswHbQe2vQWyNAlHRZ9ttdvGhy5ndpqm3XQY\nadS+\r\n=/hNT\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCcyVbT5T/qjk9A4PlftiEHUPuENUOVrSLummrMSSZr2wIgacyzVp/+zR9Kq3DElfCND7PxYROtj/BQ2aV5+AXOArc="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher_5.1.0_1613978729463_0.63679136162287"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.2.0": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLCipher bindings",
+      "version": "5.2.0",
+      "homepage": "http://github.com/journeyapps/node-sqlcipher",
+      "author": {
+        "name": "JourneyApps",
+        "url": "https://journeyapps.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/napi-v{napi_build_version}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "napi-v{napi_build_version}-{platform}-{arch}.tar.gz",
+        "napi_versions": [
+          3,
+          6
+        ]
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/journeyapps/node-sqlcipher.git"
+      },
+      "dependencies": {
+        "@mapbox/node-pre-gyp": "^1.0.0",
+        "node-addon-api": "^3.0.0"
+      },
+      "devDependencies": {
+        "aws-sdk": "^2.641.0",
+        "electron": "^11.2.3",
+        "electron-mocha": "^10.0.0",
+        "electron-rebuild": "^1.11.0",
+        "eslint": "3.5.0",
+        "mocha": "^5.2.0",
+        "node-abi": "^2.19.3",
+        "node-gyp": "^6.1.0"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000",
+        "pack": "node-pre-gyp package"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "gitHead": "344a23c45ea76056c5e690347be520a233666afe",
+      "bugs": {
+        "url": "https://github.com/journeyapps/node-sqlcipher/issues"
+      },
+      "_id": "@journeyapps/sqlcipher@5.2.0",
+      "_nodeVersion": "12.13.0",
+      "_npmVersion": "6.12.0",
+      "dist": {
+        "integrity": "sha512-YTENn2pWVO6BU+DdQPFpubDn2AWcjrEV+6JAshx7tCL9fDI/80WrdB38BqNDeJhnFuiED6sRH+IjLZo4fByO6g==",
+        "shasum": "5b75ff0ff8ce46bdca91ab7864c4039b62654230",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-5.2.0.tgz",
+        "fileCount": 26,
+        "unpackedSize": 23286603,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJgNQErCRA9TVsSAnZWagAAZZMP/jM42OvGrp4W+5CO9XWc\nb06bu+hieksR7dbIpyDvXhG2EoNMtiNLzYHrteGQjn07MlNk0XEAEVtoasxv\n2sKNK3Fg6+7auCrgUD6rgB9DKtikk0Ia+vDBf5mg+29CUwQ831mIFHj0CezG\nmfLa7Q+U+RXSN0l3oJMjczLNOvb9o5K/6RJ3pCTZB3iXy01vqoUbkPfm4DGO\n9NBbhPyaHxS2BlhAJyNzhrkRNoMq3fjRPi8tuxYJ2moVnM5ovfsjK/JxbaFn\nF8JCyvQPvu7/Zo7lSR2d6gMRbqppm8PeYb1njhc6AJO0oXehA1DFQY7HTxHW\nlNMwCXTwLJhCw82OxYtUo4Jy9Ch0zRwg4Ir0LQGb9RT0+fDAYDZO3wTsJRn3\nypWzK9YjlvHOPlQ9C+oAlb7x26ZFwiZJSjbP8fnK6xcLO4De6l2YL+c28Mj+\nMNKhZEdfXvOHlx6tvNu8khUEHoPWFwSbXZF6L37idZ8uCzsJQkxJShOigRME\nLwH/5wbkPplLNbbUtF4PGKeMLhANbx8Ic5HmUQIbJ68tTqnZvAg4TXsp5CcK\n1RVMlaMjHSk13flU0+tcG3+O9/2271TBbKimHPeNIio9ZG37rT4Gf/Q3bb0G\n47Jv6gweh+tF/+Vk87F48/PC0qznWcWpjD8Ek27PYDkydhb/C5aj7v42iGqI\nLtH5\r\n=JRan\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIDIS/1KgV1RsXK6zlu9XEFJu6ghMNwcW6Ol1rI2uqIaDAiEA2C1JPXQRiXpsGCHJA8MpZS/UXUUNLr38zCplmtTQPN0="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher_5.2.0_1614086442294_0.5649364441072164"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.3.0": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLCipher bindings",
+      "version": "5.3.0",
+      "homepage": "http://github.com/journeyapps/node-sqlcipher",
+      "author": {
+        "name": "JourneyApps",
+        "url": "https://journeyapps.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/napi-v{napi_build_version}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "napi-v{napi_build_version}-{platform}-{arch}.tar.gz",
+        "napi_versions": [
+          3,
+          6
+        ]
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/journeyapps/node-sqlcipher.git"
+      },
+      "dependencies": {
+        "@mapbox/node-pre-gyp": "^1.0.0",
+        "node-addon-api": "^3.0.0"
+      },
+      "devDependencies": {
+        "aws-sdk": "^2.641.0",
+        "electron": "^11.2.3",
+        "electron-mocha": "^10.0.0",
+        "electron-rebuild": "^1.11.0",
+        "eslint": "3.5.0",
+        "mocha": "^5.2.0",
+        "node-abi": "^2.19.3",
+        "node-gyp": "^6.1.0"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000",
+        "pack": "node-pre-gyp package"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "types": "./lib/sqlite3.d.ts",
+      "gitHead": "46392d55b4e93a98027f17f5a85cfcab70520d10",
+      "bugs": {
+        "url": "https://github.com/journeyapps/node-sqlcipher/issues"
+      },
+      "_id": "@journeyapps/sqlcipher@5.3.0",
+      "_nodeVersion": "16.6.0",
+      "_npmVersion": "7.22.0",
+      "dist": {
+        "integrity": "sha512-5YWguiyGq/Lj00z4gE5tyMGr+hdjhN4YIcBbmcaZTSEKKcy2g4Ji6NL5uzKg1kdOPxHHbk+eYt/ADNxgTFG9wg==",
+        "shasum": "5b948eb5825fa10c39f8b6b4aa39882f3c240e7d",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-5.3.0.tgz",
+        "fileCount": 9,
+        "unpackedSize": 20423,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJht1RJCRA9TVsSAnZWagAAuEwP/jzUQGqcM4gd/iq9o1Rd\nCK89gLICtAZHgBPV19gw3SMDnlorHIhmRcxmzpSf7vb0i1td9kMbCKJQJT5F\nHIjOO5zOZNmIjmUunz5leua5qojfPmMPen373HO9AFQkWroI1KvbOV0hau6g\nwLocH8SzCNT5Wx52UBkopYxGy3ZlxRTNNW6nRNGoRyt0OFlrOhQwBcOLK5Zf\nJItEyXcQYg40MxnBiZTx0h1isPFPKnb6i+iFr8WmkHrjuAQD+je0qxhIp0fq\n/gFlMLCDQEOtKhixQ0xzft1sI36pKLar85D+cxWJRQhdl5Xu4hVxAwEsiJYR\nQekAQQ0TBE+x0apqlv1mXv8VqPVhvB+YvEkhsJAdDBe7GO+skvy5nT0cjcuY\nAANrRZlqEyMltziTkCiDzS4alytSnVZOZOB0fF/sPjc7j25EVKlxFvizNzWZ\nDy7e52wLWvBl2Jt8+D8kkuKbsZ9KZBoN1OUr/IH88gPsHSYRBu695F3l41lf\n5OHYq57ayMgn4TjMA++hCw3VZ+VmFwNL17j+ldzRbDkCm+5D1yJprf32BH9k\nruMagxaT4YN2F42R5vWSxuOyAVMCLCbQVPfdf5pDmuTIt5+gNhQGQQ5QRBon\nEwUY+QqBFX04jAkqjrmIhO7dFPslk8qgQTOcygz8yHxv1/jhRVFl4+FKz5VA\ninE7\r\n=EgUD\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQD7yeFSSwFX73jJuZnrInE2+/gvYOWQbwRoLJbdklZNkAIhAPq/vGR/DVqjaA479GlUBBuNeZ3JZi9kitG6twQxTgrI"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher_5.3.0_1639404617732_0.680405027170419"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.3.1": {
+      "name": "@journeyapps/sqlcipher",
+      "description": "Asynchronous, non-blocking SQLCipher bindings",
+      "version": "5.3.1",
+      "homepage": "http://github.com/journeyapps/node-sqlcipher",
+      "author": {
+        "name": "JourneyApps",
+        "url": "https://journeyapps.com/"
+      },
+      "binary": {
+        "module_name": "node_sqlite3",
+        "module_path": "./lib/binding/napi-v{napi_build_version}-{platform}-{arch}",
+        "host": "https://journeyapps-node-binary.s3.amazonaws.com",
+        "remote_path": "./{name}/v{version}/{toolset}/",
+        "package_name": "napi-v{napi_build_version}-{platform}-{arch}.tar.gz",
+        "napi_versions": [
+          3,
+          6
+        ]
+      },
+      "contributors": [
+        {
+          "name": "Konstantin Käfer",
+          "email": "mail@kkaefer.com"
+        },
+        {
+          "name": "Dane Springmeyer",
+          "email": "dane@mapbox.com"
+        },
+        {
+          "name": "Will White",
+          "email": "will@mapbox.com"
+        },
+        {
+          "name": "Orlando Vazquez",
+          "email": "ovazquez@gmail.com"
+        },
+        {
+          "name": "Artem Kustikov",
+          "email": "kustikoff@gmail.com"
+        },
+        {
+          "name": "Eric Fredricksen",
+          "email": "efredricksen@gmail.com"
+        },
+        {
+          "name": "John Wright",
+          "email": "mrjjwright@gmail.com"
+        },
+        {
+          "name": "Ryan Dahl",
+          "email": "ry@tinyclouds.org"
+        },
+        {
+          "name": "Tom MacWright",
+          "email": "tom@mapbox.com"
+        },
+        {
+          "name": "Carter Thaxton",
+          "email": "carter.thaxton@gmail.com"
+        },
+        {
+          "name": "Audrius Kažukauskas",
+          "email": "audrius@neutrino.lt"
+        },
+        {
+          "name": "Johannes Schauer",
+          "email": "josch@pyneo.org"
+        },
+        {
+          "name": "Nathan Rajlich",
+          "email": "nathan@tootallnate.net"
+        },
+        {
+          "name": "AJ ONeal",
+          "email": "coolaj86@gmail.com"
+        },
+        {
+          "name": "Mithgol"
+        },
+        {
+          "name": "Ben Noordhuis",
+          "email": "ben@strongloop.com"
+        }
+      ],
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/journeyapps/node-sqlcipher.git"
+      },
+      "dependencies": {
+        "@mapbox/node-pre-gyp": "^1.0.0",
+        "node-addon-api": "^3.0.0"
+      },
+      "devDependencies": {
+        "aws-sdk": "^2.641.0",
+        "electron": "^11.2.3",
+        "electron-mocha": "^10.0.0",
+        "electron-rebuild": "^1.11.0",
+        "eslint": "3.5.0",
+        "mocha": "^5.2.0",
+        "node-abi": "^2.19.3",
+        "node-gyp": "^6.1.0"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install --fallback-to-build",
+        "pretest": "node test/support/createdb.js",
+        "test": "mocha -R spec --timeout 480000",
+        "pack": "node-pre-gyp package"
+      },
+      "license": "BSD-3-Clause",
+      "keywords": [
+        "sql",
+        "sqlite",
+        "sqlite3",
+        "database"
+      ],
+      "main": "./lib/sqlite3",
+      "types": "./lib/sqlite3.d.ts",
+      "gitHead": "d91cea7757b6ab3a3bfec1f29780381f5d9700e0",
+      "bugs": {
+        "url": "https://github.com/journeyapps/node-sqlcipher/issues"
+      },
+      "_id": "@journeyapps/sqlcipher@5.3.1",
+      "_nodeVersion": "12.13.0",
+      "_npmVersion": "6.12.0",
+      "dist": {
+        "integrity": "sha512-d1mncvE1f9+A/P3HJLwjSAgY6/IDAf2TPLGRgTLQN4hRO7J0QdqEC6CRUvPFJXcsGHn9JkEHQnPpzFXh81ocLA==",
+        "shasum": "2e3b7a840a32c318ff6531623a31bd04693d7716",
+        "tarball": "https://registry.npmjs.org/@journeyapps/sqlcipher/-/sqlcipher-5.3.1.tgz",
+        "fileCount": 10,
+        "unpackedSize": 23180,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJhuJg/CRA9TVsSAnZWagAA0iYP/iBkOSezwzgqVO2fq972\n58BLHNeu7rTQaWYhB8EZJBvQym1WY5IEllamCXBb0Whoe6WDQ8rm9lREaejx\nfXLCYCdKFvKnvMn0G5CTT13EQsBIsVmYkt4/4rM5dJ30wACZUu7UJHaZF44w\nwUa5fzN6T1cz/IXobasF6Lhz6oF6ZP1gQP3c9thf8TFhnC96U0YrOLYpfSOy\nkJDSxO6HbCoZf621TL0+daCBX16bpxafzH5nzo7YkfmdrODAoKDoLeaHpkSl\n/c3f+GIaXVJqEJBW7TprfIO3wba1DB1Sldya59qJJoUWZnsbMrNVaPARVr0s\nTFWqC1TkgRGakA4zYmAMeGh+hxKHU+KmcCkLsdWGeExR3ldvs1CpisQPekZ0\n1gAHTfb834SNdFNH4/T8IW67x8fdba/N3hwj3Qx0YVsMVhmOHk8HSU/QH8Ph\nUWFMbdK3uJKQgfBvm15EPnyC4TP3VMOaAdFRfbpoV/KFDPjMUwIoFiXYaMQJ\n9aVaGOSGoAUeNciowuuKjvulJ02nI5erak9D5lfF6mQDnvkTrk3uYrqtlXfz\n20lqCTklnXfp7ci2TqEmRfX05MXfPh7CRHcWPt0HCt30ErljejL2ktKdjBJF\neDcIkMTV/GHsrYj7C2uPUU9qTMr1KmEGqzmo+2fo5CQv0IIVk+/818+9t/hA\n5g4J\r\n=QZFp\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQC/4aSRLZafRCJ2EYffLjDtP8ZS7HvEZh6kifToXzOZlQIgPCOlvvD8/1Rx6VdVdGTyUZagCO26/C6+OuIUXQZ7TsM="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "journeyapps-platform",
+        "email": "platform@journeyapps.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "journeyapps-admin",
+          "email": "infrastructure@journeyapps.com"
+        },
+        {
+          "name": "journeyapps-platform",
+          "email": "platform@journeyapps.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/sqlcipher_5.3.1_1639487551431_0.7438030133067259"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "readme": "Fork of [node-sqlite3](https://github.com/mapbox/node-sqlite3), modified to use [SQLCipher](https://www.zetetic.net/sqlcipher/).\n\nWhile the `node-sqlite3` project does include support for compiling against sqlcipher, it requires manual work, and does not work out-of-the-box on Electron on Windows. This fork changes the default configuration to bundle SQLCipher directly, as well as OpenSSL where required.\n\n## Supported platforms\n\nBinaries are built against N-API 3 and 6, on MacOS, Windows (ia32 and x64) and Linux (x64).\n\nNode 10+ and Electron 6+ is supported.\n\nOther platforms/architectures may work by building from source - see the section below.\n\n# Installation\n\n```sh\nyarn add \"@journeyapps/sqlcipher\"\n# Or: npm install --save \"@journeyapps/sqlcipher\"\n```\n\n# Usage\n\n``` js\nvar sqlite3 = require('@journeyapps/sqlcipher').verbose();\nvar db = new sqlite3.Database('test.db');\n\ndb.serialize(function() {\n  // This is the default, but it is good to specify explicitly:\n  db.run(\"PRAGMA cipher_compatibility = 4\");\n\n  // To open a database created with SQLCipher 3.x, use this:\n  // db.run(\"PRAGMA cipher_compatibility = 3\");\n\n  db.run(\"PRAGMA key = 'mysecret'\");\n  db.run(\"CREATE TABLE lorem (info TEXT)\");\n\n  var stmt = db.prepare(\"INSERT INTO lorem VALUES (?)\");\n  for (var i = 0; i < 10; i++) {\n      stmt.run(\"Ipsum \" + i);\n  }\n  stmt.finalize();\n\n  db.each(\"SELECT rowid AS id, info FROM lorem\", function(err, row) {\n      console.log(row.id + \": \" + row.info);\n  });\n});\n\ndb.close();\n```\n\n# SQLCipher\n\nA copy of the source for SQLCipher 4.4.2 is bundled, which is based on SQLite 3.33.0.\n\n## Building from source.\n\nBuilding from source when installing the package is only supported up to version 5.2.0.\n\nThe two pre-built versions (N-API 3 and N-API 6) cover all electron and node versions, so building from source should\nnot be required.\n\n## Usage with electron-forge / electron-rebuild\n\n[electron-forge](https://www.electronforge.io/) uses [electron-rebuild](https://github.com/electron/electron-rebuild) and attempts to rebuild this library from source by default, in a way\nthat is _not_ compatible with the way `node-pre-gyp` is used here.\n\nThe workaround is to disable the rebuilding:\n1. If using Electron 11+, use a node version that supports N-API 6+ (v10.20.0+ / v12.17.0+ / v14.0.0).\n2. After `npm install` / `yarn install`, make sure that the folder `node_modules/@journeyapps/sqlcipher/lib/binding/napi-v6-linux-x64` exists.\n   If not, check the previous step again, remove the `node_modules` folder, and try again.\n3. Disable rebuilding of this library using the `onlyModules` option of `electron-rebuild` in your `package.json`:\n\n        \"config\": {\n            \"forge\": {\n                \"electronRebuildConfig\": {\n                    \"onlyModules\": []  // Specify other native modules here if required\n                }\n            }\n        }\n\nNote: [electron-builder](https://www.electron.build/) does not appear to have this issue, and should work directly.\nSimilarly, using electron directly should just work, but do check that a compatible node version is used (see above). \n\n## OpenSSL\n\nSQLCipher depends on OpenSSL.\n\nFor Windows, we bundle OpenSSL 1.1.1i. Binaries are generated using [vckpg](https://github.com/microsoft/vcpkg) (e.g., `.\\vcpkg\\vcpkg install openssl:x64-windows-static`).\n\nOn Mac we bundle OpenSSL 1.1.1l.\n\nOn Linux we dynamically link against the system OpenSSL.\n\n# API\n\nSee the [API documentation](https://github.com/mapbox/node-sqlite3/wiki) in the wiki.\n\nDocumentation for the SQLCipher extension is available [here](https://www.zetetic.net/sqlcipher/sqlcipher-api/).\n\n# Acknowledgments\n\nMost of the work in this library is from the [node-sqlite3](https://github.com/mapbox/node-sqlite3) library by [MapBox](https://mapbox.com/).\n\nAdditionally, some of the SQLCipher-related changes are based on a fork by [liubiggun](https://github.com/liubiggun/node-sqlite3).\n\n# License\n\n`node-sqlcipher` is [BSD licensed](./LICENSE).\n\n`SQLCipher` is `Copyright (c) 2016, ZETETIC LLC` under the [BSD license](https://github.com/sqlcipher/sqlcipher/blob/master/LICENSE).\n\n`SQLite` is Public Domain\n",
+  "maintainers": [
+    {
+      "name": "journeyapps-admin",
+      "email": "infrastructure@journeyapps.com"
+    },
+    {
+      "name": "journeyapps-platform",
+      "email": "platform@journeyapps.com"
+    }
+  ],
+  "time": {
+    "modified": "2022-06-12T20:24:21.449Z",
+    "created": "2017-12-19T10:44:47.217Z",
+    "3.1.4-test1": "2017-12-19T10:44:47.217Z",
+    "3.1.4-test2": "2017-12-19T14:42:05.275Z",
+    "3.1.14": "2017-12-20T09:34:48.953Z",
+    "3.1.15": "2017-12-20T09:56:45.594Z",
+    "3.1.16": "2017-12-21T11:38:28.354Z",
+    "3.2.0": "2018-01-09T10:29:45.472Z",
+    "3.2.1": "2018-08-07T12:50:04.088Z",
+    "4.0.0": "2019-07-05T10:31:38.425Z",
+    "4.1.0": "2020-03-23T10:51:03.422Z",
+    "5.0.0": "2020-09-25T13:05:17.722Z",
+    "5.1.0": "2021-02-22T07:25:29.774Z",
+    "5.2.0": "2021-02-23T13:20:42.854Z",
+    "5.3.0": "2021-12-13T14:10:17.854Z",
+    "5.3.1": "2021-12-14T13:12:31.587Z"
+  },
+  "homepage": "http://github.com/journeyapps/node-sqlcipher",
+  "keywords": [
+    "sql",
+    "sqlite",
+    "sqlite3",
+    "database"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/journeyapps/node-sqlcipher.git"
+  },
+  "contributors": [
+    {
+      "name": "Konstantin Käfer",
+      "email": "mail@kkaefer.com"
+    },
+    {
+      "name": "Dane Springmeyer",
+      "email": "dane@mapbox.com"
+    },
+    {
+      "name": "Will White",
+      "email": "will@mapbox.com"
+    },
+    {
+      "name": "Orlando Vazquez",
+      "email": "ovazquez@gmail.com"
+    },
+    {
+      "name": "Artem Kustikov",
+      "email": "kustikoff@gmail.com"
+    },
+    {
+      "name": "Eric Fredricksen",
+      "email": "efredricksen@gmail.com"
+    },
+    {
+      "name": "John Wright",
+      "email": "mrjjwright@gmail.com"
+    },
+    {
+      "name": "Ryan Dahl",
+      "email": "ry@tinyclouds.org"
+    },
+    {
+      "name": "Tom MacWright",
+      "email": "tom@mapbox.com"
+    },
+    {
+      "name": "Carter Thaxton",
+      "email": "carter.thaxton@gmail.com"
+    },
+    {
+      "name": "Audrius Kažukauskas",
+      "email": "audrius@neutrino.lt"
+    },
+    {
+      "name": "Johannes Schauer",
+      "email": "josch@pyneo.org"
+    },
+    {
+      "name": "Nathan Rajlich",
+      "email": "nathan@tootallnate.net"
+    },
+    {
+      "name": "AJ ONeal",
+      "email": "coolaj86@gmail.com"
+    },
+    {
+      "name": "Mithgol"
+    },
+    {
+      "name": "Ben Noordhuis",
+      "email": "ben@strongloop.com"
+    }
+  ],
+  "author": {
+    "name": "JourneyApps",
+    "url": "https://journeyapps.com/"
+  },
+  "license": "BSD-3-Clause",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/journeyapps/node-sqlcipher/issues"
+  }
+}
