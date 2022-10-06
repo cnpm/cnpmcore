@@ -88,7 +88,6 @@
     "egg-tracer": "^1.1.0",
     "egg-typebox-validate": "^2.0.0",
     "fs-cnpm": "^2.4.0",
-    "grpc-tools": "^1.11.3",
     "ioredis": "^4.28.3",
     "leoric": "^2.6.2",
     "lodash": "^4.17.21",
