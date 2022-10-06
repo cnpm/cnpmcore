@@ -1,4 +1,15 @@
 
+2.3.1 / 2022-10-06
+==================
+
+**features**
+  * [[`bbc08fd`](http://github.com/cnpm/cnpmcore/commit/bbc08fd26887d55b98b70d1ed210caf81f9d5c22)] - 👌 IMPROVE: syncPackageWorkerMaxConcurrentTasks up to 20 (#322) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`5852f22`](http://github.com/cnpm/cnpmcore/commit/5852f22023525d857ff1ceea205e4315c8079877)] - feat: support sync exist mode (#275) (zhangyuantao <<zhangyuantao@163.com>>)
+
+**fixes**
+  * [[`d79634e`](http://github.com/cnpm/cnpmcore/commit/d79634eea749fef1a420988a8599f156f28ee85a)] - 🐛 FIX: Should sync package when registry id is null (#324) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`24f920d`](http://github.com/cnpm/cnpmcore/commit/24f920d65b31f9eb83c1ecda36adf7f9e2c379c3)] - 🐛 FIX: Should run sync package on all worker (#323) (fengmk2 <<fengmk2@gmail.com>>)
+
 2.3.0 / 2022-09-24
 ==================
 
