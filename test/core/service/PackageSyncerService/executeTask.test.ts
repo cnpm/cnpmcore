@@ -725,8 +725,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     });
 
     it('should work on mock package.readme is undefined', async () => {
+      const pkg = await TestUtil.readJSONFile(TestUtil.getFixtures('cnpmcore-test-sync-dependencies.json'));
+      delete pkg.readme;
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-dependencies.json')),
+        data: JSON.stringify(pkg),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies/-/cnpmcore-test-sync-dependencies-0.0.0.tgz', 'GET', {
@@ -1031,7 +1033,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should not sync upstream when task queue too high', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
@@ -1060,7 +1062,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync sourceRegistryIsCNpm = true && syncUpstreamFirst = false', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
@@ -1086,7 +1088,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync sourceRegistryIsCNpm = true and mock createSyncTask error', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
@@ -1114,7 +1116,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync sourceRegistryIsCNpm = true and mock createSyncTask return missing logId', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
@@ -1142,7 +1144,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync sourceRegistryIsCNpm = true and mock getSyncTask syncDone = false', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
@@ -1201,7 +1203,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: true,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {

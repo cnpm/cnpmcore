@@ -22,7 +22,7 @@
       "dist": {
         "integrity": "sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==",
         "shasum": "c73398ff6db39d138a56c04c7a90f35b70d7b78f",
-        "tarball": "https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz",
+        "tarball": "https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz",
         "fileCount": 1,
         "unpackedSize": 250
       },
