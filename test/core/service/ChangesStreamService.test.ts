@@ -1,4 +1,4 @@
-import assert = require('assert');
+import assert = require('assert/strict');
 import { Readable } from 'node:stream';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
@@ -194,5 +194,4 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       assert(task.data.since === '3');
     });
   });
-
 });

@@ -1,5 +1,5 @@
 import assert = require('assert');
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
 import { TestUtil } from '../../../TestUtil';
@@ -17,6 +17,7 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
     await TestUtil.createPackage({
       name: pkgName,
       registryId: 'mock_registry_id',
+      isPrivate: false,
     }, {
       name: username,
     });
@@ -32,5 +33,27 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
         registryId: 'sync_registry_id',
       });
     }, /package @cnpmcore\/foo is not in registry sync_registry_id/);
+  });
+
+  it('should work when registryId is null', async () => {
+    mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+    await TestUtil.createPackage({
+      name: 'binary-mirror-config',
+      isPrivate: false,
+    }, {
+      name: username,
+    });
+
+    const task = await packageSyncerService.createTask('binary-mirror-config', {
+      registryId: 'sync_registry_id',
+    });
+    assert(task);
+  });
+
+  it('should work when pkg not exists', async () => {
+    const task = await packageSyncerService.createTask('binary-mirror-config-not-exists', {
+      registryId: 'sync_registry_id',
+    });
+    assert(task);
   });
 });

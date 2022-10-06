@@ -8,6 +8,6 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  mock.restore();
+  await mock.restore();
   await TestUtil.truncateDatabase();
 });

@@ -70,7 +70,7 @@ export class PackageSyncerService extends AbstractService {
     const [ scope, name ] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
     // sync task request registry is not same as package registry
-    if (pkg && options?.registryId) {
+    if (pkg && pkg.registryId && options?.registryId) {
       if (pkg.registryId !== options.registryId) {
         throw new RegistryNotMatchError(`package ${fullname} is not in registry ${options.registryId}`);
       }
