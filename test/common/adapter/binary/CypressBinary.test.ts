@@ -1,5 +1,4 @@
 import assert = require('assert');
-import { readFile } from 'fs/promises';
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { CypressBinary } from 'app/common/adapter/binary/CypressBinary';
@@ -20,7 +19,7 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/cypress', 'GET', {
-        data: await readFile(TestUtil.getFixtures('registry.npmjs.com/cypress.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/cypress.json'),
         persist: false,
       });
       const binary = new CypressBinary(ctx.httpclient, ctx.logger, binaries.cypress);
@@ -49,7 +48,7 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
 
     it('should fetch subdir: /4.0.0/, /4.0.0/linux-x64/ work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/cypress', 'GET', {
-        data: await readFile(TestUtil.getFixtures('registry.npmjs.com/cypress.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/cypress.json'),
         persist: false,
       });
       const binary = new CypressBinary(ctx.httpclient, ctx.logger, binaries.cypress);

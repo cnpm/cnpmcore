@@ -1,0 +1,212 @@
+{
+  "results": [
+    {
+      "seq": 13429359,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@swarmion/serverless-cdk-plugin",
+      "changes": [
+        {
+          "version": "0.11.0-alpha.0"
+        }
+      ]
+    },
+    {
+      "seq": 13429360,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@buidlerlabs/rollup-plugin-hedera-strato",
+      "changes": [
+        {
+          "version": "0.8.0"
+        }
+      ]
+    },
+    {
+      "seq": 13429361,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "@swarmion/serverless-cdk-plugin",
+      "changes": [
+        {
+          "tag": "alpha"
+        }
+      ]
+    },
+    {
+      "seq": 13429362,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "@buidlerlabs/rollup-plugin-hedera-strato",
+      "changes": [
+        {
+          "tag": "latest"
+        }
+      ]
+    },
+    {
+      "seq": 13429363,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@fundamental-ngx/i18n",
+      "changes": [
+        {
+          "version": "0.36.1-rc.29"
+        }
+      ]
+    },
+    {
+      "seq": 13429364,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@fluencelabs/marine-js",
+      "changes": [
+        {
+          "version": "0.3.3-chore-update-bindgen-generated-code.2"
+        }
+      ]
+    },
+    {
+      "seq": 13429365,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "@fundamental-ngx/i18n",
+      "changes": [
+        {
+          "tag": "prerelease"
+        }
+      ]
+    },
+    {
+      "seq": 13429366,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "@fluencelabs/marine-js",
+      "changes": [
+        {
+          "tag": "beta"
+        }
+      ]
+    },
+    {
+      "seq": 13429367,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@dvx-solutions/lab-ui",
+      "changes": [
+        {
+          "version": "1.12.55"
+        }
+      ]
+    },
+    {
+      "seq": 13429368,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "create-swarmion-app",
+      "changes": [
+        {
+          "version": "0.11.0-alpha.0"
+        }
+      ]
+    },
+    {
+      "seq": 13429369,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@swarmion/serverless-helpers",
+      "changes": [
+        {
+          "version": "0.11.0-alpha.0"
+        }
+      ]
+    },
+    {
+      "seq": 13429370,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "@dvx-solutions/lab-ui",
+      "changes": [
+        {
+          "tag": "latest"
+        }
+      ]
+    },
+    {
+      "seq": 13429371,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@swarmion/eslint-plugin",
+      "changes": [
+        {
+          "version": "0.11.0-alpha.0"
+        }
+      ]
+    },
+    {
+      "seq": 13429372,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "create-swarmion-app",
+      "changes": [
+        {
+          "tag": "alpha"
+        }
+      ]
+    },
+    {
+      "seq": 13429373,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "@swarmion/serverless-helpers",
+      "changes": [
+        {
+          "tag": "alpha"
+        }
+      ]
+    },
+    {
+      "seq": 13429374,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "@swarmion/eslint-plugin",
+      "changes": [
+        {
+          "tag": "alpha"
+        }
+      ]
+    },
+    {
+      "seq": 13429375,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@swarmion/nx-plugin",
+      "changes": [
+        {
+          "version": "0.11.0-alpha.0"
+        }
+      ]
+    },
+    {
+      "seq": 13429376,
+      "type": "PACKAGE_VERSION_ADDED",
+      "id": "@swarmion/serverless-contracts",
+      "changes": [
+        {
+          "version": "0.11.0-alpha.0"
+        }
+      ]
+    },
+    {
+      "seq": 13429377,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "@swarmion/nx-plugin",
+      "changes": [
+        {
+          "tag": "alpha"
+        }
+      ]
+    },
+    {
+      "seq": 13429378,
+      "type": "PACKAGE_TAG_CHANGED",
+      "id": "@swarmion/serverless-contracts",
+      "changes": [
+        {
+          "tag": "alpha"
+        }
+      ]
+    },
+    {
+      "seq": 13429379,
+      "type": "PACKAGE_UNPUBLISHED",
+      "id": "es-monitor",
+      "changes": [
+        {}
+      ]
+    }
+  ]
+}

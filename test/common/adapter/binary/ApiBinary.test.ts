@@ -1,5 +1,4 @@
 import assert = require('assert');
-import { readFile } from 'fs/promises';
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { ApiBinary } from 'app/common/adapter/binary/ApiBinary';
@@ -20,7 +19,7 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://cnpmjs.org/mirrors/apis/node/', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmjs.org/mirrors/apis/node.json')),
+        data: await TestUtil.readFixturesFile('cnpmjs.org/mirrors/apis/node.json'),
         persist: false,
       });
       const binary = new ApiBinary(ctx.httpclient, ctx.logger, binaries.node, 'https://cnpmjs.org/mirrors/apis');
@@ -54,7 +53,7 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
 
     it('should fetch subdir: /v16.13.1/ work', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/-/binary/node/v16.13.1/', 'GET', {
-        data: await readFile(TestUtil.getFixtures('r.cnpmjs.org/-/binary/node/v16.13.1.json')),
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/-/binary/node/v16.13.1.json'),
         persist: false,
       });
       const binary = new ApiBinary(ctx.httpclient, ctx.logger, binaries.node, 'https://r.cnpmjs.org/-/binary');

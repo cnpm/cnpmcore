@@ -1,5 +1,4 @@
 import assert = require('assert');
-import { readFile } from 'fs/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
@@ -25,11 +24,11 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
   describe('executeTask()', () => {
     it('should execute "node" task', async () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
-        data: await readFile(TestUtil.getFixtures('nodejs.org/site/index.json')),
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
       });
       app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
-        data: await readFile(TestUtil.getFixtures('nodejs.org/site/latest/docs/apilinks.json')),
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
         persist: false,
       });
       await binarySyncerService.createTask('node', {});
@@ -87,7 +86,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
 
       // mock date change
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
-        data: await readFile(TestUtil.getFixtures('nodejs.org/site/index.json')),
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
       });
       mock(NodeBinary.prototype, 'fetch', async (dir: string) => {
@@ -220,11 +219,11 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
 
     it('should execute "node" task with ApiBinary when sourceRegistryIsCNpm=true', async () => {
       app.mockHttpclient('https://cnpmjs.org/mirrors/node/index.json', 'GET', {
-        data: await readFile(TestUtil.getFixtures('nodejs.org/site/index.json')),
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
       });
       app.mockHttpclient('https://cnpmjs.org/mirrors/node/latest/docs/apilinks.json', 'GET', {
-        data: await readFile(TestUtil.getFixtures('nodejs.org/site/latest/docs/apilinks.json')),
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
         persist: false,
       });
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);

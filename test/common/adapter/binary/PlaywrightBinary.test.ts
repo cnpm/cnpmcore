@@ -1,5 +1,4 @@
 import assert = require('assert');
-import { readFile } from 'fs/promises';
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PlaywrightBinary } from 'app/common/adapter/binary/PlaywrightBinary';
@@ -20,7 +19,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
-        data: await readFile(TestUtil.getFixtures('playwright-core.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
         persist: false,
       });
       app.mockAgent().get('https://unpkg.com')
@@ -28,7 +27,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
           method: 'GET',
           path: /browsers\.json/,
         })
-        .reply(200, await readFile(TestUtil.getFixtures('playwright-core-browsers.json')))
+        .reply(200, await TestUtil.readFixturesFile('unpkg.com/playwright-core-browsers.json'))
         .persist();
       const binary = new PlaywrightBinary(ctx.httpclient, ctx.logger, binaries.playwright);
       const result = await binary.fetch('/');
@@ -48,7 +47,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
 
     it('should fetch subdir: /builds/, /builds/chromium/ work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
-        data: await readFile(TestUtil.getFixtures('playwright-core.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
         persist: false,
       });
       app.mockAgent().get('https://unpkg.com')
@@ -56,7 +55,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
           method: 'GET',
           path: /browsers\.json/,
         })
-        .reply(200, await readFile(TestUtil.getFixtures('playwright-core-browsers.json')))
+        .reply(200, await TestUtil.readFixturesFile('unpkg.com/playwright-core-browsers.json'))
         .persist();
       const binary = new PlaywrightBinary(ctx.httpclient, ctx.logger, binaries.playwright);
       let result = await binary.fetch('/builds/');

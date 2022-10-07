@@ -4,6 +4,7 @@ import { Context } from 'egg';
 import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
 import { TaskService } from 'app/core/service/TaskService';
 import { Task } from 'app/repository/model/Task';
+import { TestUtil } from 'test/TestUtil';
 
 const ChangesStreamWorkerPath = require.resolve('../../app/port/schedule/ChangesStreamWorker');
 
@@ -22,6 +23,12 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   });
 
   it('should work', async () => {
+    app.mockHttpclient('https://r.cnpmjs.org/', 'GET', {
+      data: await TestUtil.readFixturesFile('r.cnpmjs.org/index.json'),
+    });
+    app.mockHttpclient('https://r.cnpmjs.org/_changes', 'GET', {
+      data: await TestUtil.readFixturesFile('r.cnpmjs.org/_changes.json'),
+    });
     app.mockLog();
     // syncMode=none
     await app.runSchedule(ChangesStreamWorkerPath);
@@ -53,6 +60,16 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   });
 
   it('should work on replicate: r.cnpmjs.org', async () => {
+    app.mockHttpclient('https://r.cnpmjs.org/', 'GET', {
+      data: await TestUtil.readFixturesFile('r.cnpmjs.org/index.json'),
+      persist: false,
+      repeats: 2,
+    });
+    app.mockHttpclient('https://r.cnpmjs.org/_changes', 'GET', {
+      data: await TestUtil.readFixturesFile('r.cnpmjs.org/_changes.json'),
+      persist: false,
+      repeats: 2,
+    });
     app.mockLog();
     // syncMode=none
     await app.runSchedule(ChangesStreamWorkerPath);
@@ -71,7 +88,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamWorker:start]');
     app.expectLog('[ChangesStreamService.executeTask:changes] since:');
-    app.expectLog(/, \d{2} new tasks,/);
+    app.expectLog(/, \d+ new tasks,/);
     const task = await changesStreamService.findExecuteTask();
     assert(!task);
 
@@ -84,9 +101,10 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     assert(result.processing === 1);
     assert(result.waiting === 0);
     // mock request https://r.cnpmjs.org/_changes error
-    app.mockHttpclient(/\/_changes/, {
+    app.mockHttpclient('https://r.cnpmjs.org/_changes', 'GET', {
       status: 500,
       data: 'mock request replicate /_changes error',
+      persist: false,
     });
     await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamService.executeTask:error]');

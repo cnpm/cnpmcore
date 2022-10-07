@@ -1,0 +1,2242 @@
+{
+  "_id": "zopflipng-bin",
+  "_rev": "221-3c25c04f96d964255982bb44c53cc833",
+  "name": "zopflipng-bin",
+  "description": "`zopflipng` wrapper that makes it seamlessly available as a local dependency",
+  "dist-tags": {
+    "latest": "7.1.0"
+  },
+  "versions": {
+    "0.0.1": {
+      "name": "zopflipng-bin",
+      "version": "0.0.1",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/zopflipng",
+      "bin": {
+        "pngcrush": "bin/zopflipng.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/check.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.0.1",
+      "dist": {
+        "shasum": "3db7fbe735a261167934af46bea72a69f91bc2e4",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.0.1.tgz",
+        "integrity": "sha512-tMoo1bC/VC/vScpuIxmPG5ObEPqfz3bmEcxQstyN0EJtPZPMCfWZZTgTkGDE1pfGdvYGO9S59OHrKYUJNePuGA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIHH9h3ca7/mtotwekeQvK67bJm9IHTEQUEWRa0lYv/nmAiBvqhgsBKcbOHWCAXK4ODnxwlJ6mRnf9Jrp7EPjeCIeDA=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.0": {
+      "name": "zopflipng-bin",
+      "version": "0.1.0",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/zopflipng",
+      "scripts": {
+        "postinstall": "node lib/check.js"
+      },
+      "bin": {
+        "pngcrush": "bin/zopflipng.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.1.0",
+      "dist": {
+        "shasum": "2813434949eaf56d0089229da9968505c993b125",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.1.0.tgz",
+        "integrity": "sha512-FwCl1bQD/dp8RGXrLoiBNwZXxsa8Ep35TbsBCdMd1nvHmw9S16dEwnPuCNpTYJPMdErb2N87Z8hWHHKjMYIJ0Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQD1r7Luvvcn/kSYQMRZpq0HkYKdZia8sdOwPfrgnWAUkQIgIR0NWUeewgCi8tLw5Q/HiSPk1CKWz/q6tM8vbTPYEZk="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.1": {
+      "name": "zopflipng-bin",
+      "version": "0.1.1",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/zopflipng",
+      "scripts": {
+        "postinstall": "node lib/check.js"
+      },
+      "bin": {
+        "pngcrush": "bin/zopflipng.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.1.1",
+      "dist": {
+        "shasum": "d215eb25293c00875b6502217e87ef109c298d95",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.1.1.tgz",
+        "integrity": "sha512-EuXYBfZLphgMSKp2V0QzJVHANrNKZNHlu0mEQyghXiajIXIyzV85/qkbQmAqe0/GvNu239d+vlXeXTn2f8U9Iw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIEoHfQeiofBnWKSef0yzw7WHBp5CsS4mwWbb/l+MkAqBAiEA/XGqw1nma1KT+z1nTY+jLe7BtsguP4tNKpU8mPldJq0="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.2": {
+      "name": "zopflipng-bin",
+      "version": "0.1.2",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/zopflipng",
+      "scripts": {
+        "postinstall": "node lib/check.js"
+      },
+      "bin": {
+        "zopflipng": "bin/zopflipng.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.1.2",
+      "dist": {
+        "shasum": "3eaf403c995fc9e641321af5f4e85065ca2ebe6c",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.1.2.tgz",
+        "integrity": "sha512-zH0TaO/mPUl9eqvnyetZwV50mzOShrjD+W2pvQXLwfBbpDblmKd5oSRiBosTEj1iB2XyVXu+e9Nzd2cWowkiyw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDG7qNFe0YVSq1KXi6cW18dO1CfVTEIRU5sIYiTz8NJCQIgaO+IV5+IYpPtoPOkve9W8so2qU47qo6DruZ952ogSbs="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.5": {
+      "name": "zopflipng-bin",
+      "version": "0.1.5",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/zopflipng",
+      "bin": {
+        "zopflipng": "bin/zopflipng.js"
+      },
+      "scripts": {
+        "test": "mocha ./test/*.js",
+        "postinstall": "node ./lib/check.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.1.5",
+      "dist": {
+        "shasum": "700bf5aad5e9d2efefac475d5268eeec53573cc4",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.1.5.tgz",
+        "integrity": "sha512-i3oMEpyTnZdGyDGDLBV75eRfszQ/ZoRHBRyB0pHqpTHB56HJB4pnohNnJHwMw/0k6NuSoVm+KfLrc+VHI/UG3A==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIH4KKa8UtPlhgfsyuBSGTnYr9mBnA/tYJ/2VHpA83aAaAiEAqV0He3mkuZu2F8pj8TwVMUwmTYb+4v37lPSnm7FPZE0="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.6": {
+      "name": "zopflipng-bin",
+      "version": "0.1.6",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/zopflipng",
+      "bin": {
+        "zopflipng": "bin/zopflipng.js"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.1.6",
+      "dist": {
+        "shasum": "7b58b495473bbc58c25f7d5519db6fc6b742124a",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.1.6.tgz",
+        "integrity": "sha512-PWjUbl4GnBe3CxoDTCYC7r9G+e5y4yTdTy0O+IEMX+ygIHRCdVHCL0Ir7USXjeElmMTmOt7r12DVmOQh/dla+w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIB/NPu3Y63ghPn1+xS/6wWxIAk7NX1WLrqLQDS+XkQK9AiBangA1aM1UjzBmWBFAI6kFLbLlYEnEzItZCzmEMy0aXg=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.7": {
+      "name": "zopflipng-bin",
+      "version": "0.1.7",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/zopflipng",
+      "bin": {
+        "zopflipng": "bin/zopflipng.js"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.1.7",
+      "dist": {
+        "shasum": "26c025595c1441ebe3779f2aaf6ca37855ca324d",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.1.7.tgz",
+        "integrity": "sha512-KcxrtYTr0uXRd09lpZ+kGILvrx96ymb7EROaDdV2uHc3A1/U+8PNx9/m8xQ57bpKeHRT1X7OcDEA7vtEmErmnQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIHkdYoSIAOv4ollJZN+Q1bcTHu5Rqt35SrtROiinTCPTAiEAxckdPGZfyBrQVsaWBFFY6X5NYuO8Thpl7KdA/n+IUmI="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.8": {
+      "name": "zopflipng-bin",
+      "version": "0.1.8",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/zopflipng",
+      "bin": {
+        "zopflipng": "bin/zopflipng.js"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "vendor"
+      ],
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.1.8",
+      "dist": {
+        "shasum": "ad9e8f08d37b4525f1afdfd957909375c9b64a57",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.1.8.tgz",
+        "integrity": "sha512-b2cO1oZ6VJkjOPDJmu2x9OZ2QHSc1Ql0FAgWIlGQfstBfGp+yAIOGGLzwO0k+KaJL0ThqbMMOtFNDiNj4R5wGg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIFL9RMjZefI/xFiBqIdr7oqu8Gzq+9q7VUqXzrPLeib3AiAhssDxkmrg7PRQedWHL6iB1QxrMfsJVRVTzy2AlMDnkA=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.9": {
+      "name": "zopflipng-bin",
+      "version": "0.1.9",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "scripts": {
+        "test": "mocha --reporter spec --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.1.9",
+      "dist": {
+        "shasum": "74804323420c0f40d8eefcf474e6656772d94865",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.1.9.tgz",
+        "integrity": "sha512-ZzYWniRCTDbRZlgSk0pBN4ITHj/hK/0yHxft+Cm/9ftLTImZmGdE2CPGPFz+MnhCMsM9UfvEnZiTKWZ4njA87w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIC0fU2HtXcz5cTTdoVmn6WR5sRj02so9AvFNqevhV40UAiByy4Jm+Knj5a6H/hzXv7J2iQOnH/BvNu2Ubad18Qbu2g=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.11": {
+      "name": "zopflipng-bin",
+      "version": "0.1.11",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "https://github.com/1000ch"
+      },
+      "maintainer": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "scripts": {
+        "test": "mocha --reporter spec --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-build": "^0.1.1",
+        "bin-wrapper": "^0.3.4",
+        "chalk": "^0.5.1"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.1.11",
+      "_shasum": "329f6f0991e51a84cd41eb6e3acb07f16eb2c63c",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "329f6f0991e51a84cd41eb6e3acb07f16eb2c63c",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.1.11.tgz",
+        "integrity": "sha512-Q1Peq27S4TH8NXT4VylFyPKahiz61fEYadJFMuP59VdapfIbcGf9QkB19lcpvHtqZtQofHN0CBGJ0Z0u7hYQvA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIDqMPb20fdqIKbNgcCA8btqLHIOwCLDFNeUepMgQ/p3bAiANf7RQWBchWbO28XunAq7/NpZ9xj5F2Xdo8fLIQscZZQ=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.12": {
+      "name": "zopflipng-bin",
+      "version": "0.1.12",
+      "description": "Zopflipng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "https://github.com/1000ch"
+      },
+      "maintainer": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "scripts": {
+        "test": "mocha --reporter spec --timeout 50000",
+        "postinstall": "node lib/install.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-zopflipng-bin.git"
+      },
+      "dependencies": {
+        "bin-build": "^0.2.0",
+        "bin-wrapper": "^0.4.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.2.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "license": "BSD",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-zopflipng-bin/issues"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "gitHead": "44b0b8a518713ddcf8e2f53359ad7095a2236aa2",
+      "homepage": "https://github.com/1000ch/node-zopflipng-bin",
+      "_id": "zopflipng-bin@0.1.12",
+      "_shasum": "30167c2068e206193c76e63ec74098643890b44a",
+      "_from": ".",
+      "_npmVersion": "1.4.21",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "30167c2068e206193c76e63ec74098643890b44a",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-0.1.12.tgz",
+        "integrity": "sha512-GAmDf/JDr9JLPwonJVzmN8MVSmuZUQbE8AegSM62ye7NmXAiCj53gp7/VoZft/iOHivod9LauIbarBmEO1rKoQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCICFYi80AglvCY75sKeer2xSIsaEVl3CHgVQtfJoRo+WkAiAV2vR5gByXpalWnc107d6VN8rXOq4UwNF6x/9JAcyKDA=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.1": {
+      "name": "zopflipng-bin",
+      "version": "1.0.1",
+      "description": "zopflipng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/zopflipng-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "node test/test.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^1.0.0",
+        "bin-wrapper": "^1.0.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "rimraf": "^2.2.8"
+      },
+      "gitHead": "35e874df61c0b852f3ca05d53645369eea167bfe",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin",
+      "_id": "zopflipng-bin@1.0.1",
+      "_shasum": "d5c2ceea7ad721136d177b38596ca9ffd1291161",
+      "_from": ".",
+      "_npmVersion": "1.4.23",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "d5c2ceea7ad721136d177b38596ca9ffd1291161",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-1.0.1.tgz",
+        "integrity": "sha512-uBNcEo5SW/plv8t9S5FISquNVXtS6W851vQPGpFTtAYrprkHq+mlBUp7klsb/BM6/Den779xCmAGyMVR5dks1Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDVU2gjiFJgjag2sEI7EhgCgxjFnQn4uL7mxvm4MaLOuwIgA1DsYD78+H5oKehyJCUz1+yXMXJ5kcVJO7QDNTZ+JAA="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.0": {
+      "name": "zopflipng-bin",
+      "version": "2.0.0",
+      "description": "zopflipng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/zopflipng-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "9594d8cf1359c59e5b2142b66c0c2d0b80740e2e",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin",
+      "_id": "zopflipng-bin@2.0.0",
+      "_shasum": "00d975ebf856fdc1973aa1a9374745b3460af7d6",
+      "_from": ".",
+      "_npmVersion": "2.1.5",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "00d975ebf856fdc1973aa1a9374745b3460af7d6",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-2.0.0.tgz",
+        "integrity": "sha512-ZykZa6bW9HIABj6wwTodpwTemOBSeSWTsM8TJ2MHhvntFFZeV3rV9jr6OSSPsMJxJz33WeMkzosJzNqZt+06lg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIAl1PdXMdv9SfsD3Ou6hPONfSx/RPS4OKykD9rSgB+c9AiBPJRLuZFjX+Quu/5sQZeolpOMDDuLYDe9yXndmLHoGqQ=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.1": {
+      "name": "zopflipng-bin",
+      "version": "2.0.1",
+      "description": "zopflipng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/zopflipng-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "1b6ea0f3c7f452f13af2a624807d623297f6f199",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin",
+      "_id": "zopflipng-bin@2.0.1",
+      "_shasum": "e3c585e3687c06e79316847678460424e32054a7",
+      "_from": ".",
+      "_npmVersion": "2.1.7",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "e3c585e3687c06e79316847678460424e32054a7",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-2.0.1.tgz",
+        "integrity": "sha512-jI3m9Cqw/mNwSG2d0mBecwbrJIIpqUR5TcfxSoAsMkwTN+pEXS1GI9JxJ8zXn/4BLPMM3LZurmkngEd+u+i95w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQC8ZpJl3fZGGqVkx99MNVfxc064k8pGEoY1UnX3uDIiegIhANqtSU8qQxplQiz8hOXqNbKTr74gUdIhjhzSrhNEdSey"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.0": {
+      "name": "zopflipng-bin",
+      "version": "3.0.0",
+      "description": "zopflipng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/zopflipng-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 20000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "2e93b3b24aa5e75498b83426820bee49067f17e0",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin",
+      "_id": "zopflipng-bin@3.0.0",
+      "_shasum": "217b39ea7a14ee7a6e65854c13a9e3b318d271b3",
+      "_from": ".",
+      "_npmVersion": "2.7.6",
+      "_nodeVersion": "1.7.1",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "217b39ea7a14ee7a6e65854c13a9e3b318d271b3",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-3.0.0.tgz",
+        "integrity": "sha512-hbiAr4d8sOPXY1bg+GQ/4ZdDxYuRukd6S4defeGN3iAhvcQGK/1QLhu1ZJvCz33Xv1WsbCVmj5VURQI6kO4Skg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIFPjdjY8rJ2P8Ad06zNFP88koah5QxDdYUh/b9SoVgBXAiEA7RhoGcAcW4sHfXmRtydjm11ik4LvxJi2BibudJyLBOw="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.1": {
+      "name": "zopflipng-bin",
+      "version": "3.0.1",
+      "description": "zopflipng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/zopflipng-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 50000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "zopfli",
+        "zopflipng"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "685d365552255c2aad86ecafbe5bf8a9080d0d67",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin",
+      "_id": "zopflipng-bin@3.0.1",
+      "_shasum": "988203810fd152e4ed75f4476be0cdf2aadba758",
+      "_from": ".",
+      "_npmVersion": "2.7.4",
+      "_nodeVersion": "0.12.2",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "988203810fd152e4ed75f4476be0cdf2aadba758",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-3.0.1.tgz",
+        "integrity": "sha512-Nr2QZjDOGbtnAD6z7AUfBeWIdo68dFD7ovMDx6skFjrwuD2X1QK00+pUVWQvM+s+wm8AooIf5D0NCRxFBFCj6w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIBUDmXOyO8geS+Z1ExfVY7ZVkxU/sfEJ7LInr6td4mzIAiBT4z8VVsJQOYrk03TThgWXsE6ln8sLWKdwU6BZ5MbcLQ=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "4.0.0": {
+      "name": "zopflipng-bin",
+      "version": "4.0.0",
+      "description": "`zopflipng` wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/zopflipng-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=4"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "zopfli",
+        "zopflipng"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "mkdirp": "^0.5.0",
+        "mocha": "^3.2.0",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "8a7dfdf727bd13bd38ee28fa7824e36013d9e5be",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin#readme",
+      "_id": "zopflipng-bin@4.0.0",
+      "_shasum": "e3cd3d1264605f38f405a770c191e89520bfa22e",
+      "_from": ".",
+      "_npmVersion": "2.15.11",
+      "_nodeVersion": "4.7.3",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "dist": {
+        "shasum": "e3cd3d1264605f38f405a770c191e89520bfa22e",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-4.0.0.tgz",
+        "integrity": "sha512-22Emhl+ZvSsxo9XKQoaE6bigKPySP35wIiKUyNtdspEVKf8DeL+7Mn1I5QER4oOBCp9hviYpi6YxDBdtXDOxZg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIGnlfv0H5D5pBpPgc//WOI4ZvY6OHBPB/u/uPYbuuSmWAiAXKhmipCNSruVhINHlsfo8pXwA8sbTeyRsJDweH4XW4Q=="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/zopflipng-bin-4.0.0.tgz_1490342054043_0.5524878073483706"
+      },
+      "directories": {}
+    },
+    "4.1.0": {
+      "name": "zopflipng-bin",
+      "version": "4.1.0",
+      "description": "`zopflipng` wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/zopflipng-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=4"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "zopfli",
+        "zopflipng"
+      ],
+      "dependencies": {
+        "bin-build": "^2.2.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^0.8.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "gitHead": "39675a3ff0646919df9a1a6f9768f943fece9dc1",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin#readme",
+      "_id": "zopflipng-bin@4.1.0",
+      "_shasum": "46bcd5833381e64ece17f14c6effea20e6397300",
+      "_from": ".",
+      "_npmVersion": "2.15.11",
+      "_nodeVersion": "4.8.4",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "dist": {
+        "shasum": "46bcd5833381e64ece17f14c6effea20e6397300",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-4.1.0.tgz",
+        "integrity": "sha512-zXPYg5+FUz/Uy3ilOBnJ0iSIm/H2FjRY+qDUzVelo/0cZGgGvXb3sZxmc3R+qzHPkkSCew40tHn6Z1GjinQFOQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDGEeaYVIfmFdwcwrc8kwnaEL38wJ2f021PkkUwFGkQsgIgaP/6qB+QHFf9HAPXDVcPpQ3OgTFWsKJp1CcavP3uhgE="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/zopflipng-bin-4.1.0.tgz_1514375100961_0.9862003927119076"
+      },
+      "directories": {}
+    },
+    "5.0.0": {
+      "name": "zopflipng-bin",
+      "version": "5.0.0",
+      "description": "`zopflipng` wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/zopflipng-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "zopfli",
+        "zopflipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.1",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "^0.25.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^1.0.0",
+        "tempy": "^0.2.1",
+        "xo": "^0.23.0"
+      },
+      "gitHead": "92b85c274498941c846bfdb9ba6efb5bdc52394e",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin#readme",
+      "_id": "zopflipng-bin@5.0.0",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.14.1",
+      "_npmUser": {
+        "name": "xhmikosr",
+        "email": "xhmikosr@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-8AWRT/CPkIBEup96LSiVdhLT4n7b4bpzY0BcQ26OjdRnjODa+JWNK55Ii63CiOEyqObPSwjLifuUI5ooFmjiGQ==",
+        "shasum": "e5f1ce3486032a5348cc099293f083fb4c061fa5",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-5.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 5156,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcDUDMCRA9TVsSAnZWagAA8c8QAIurxsubURs5UrFTJMoS\ntebEKTacLbSaNxMdN/l9wSiP52HqeU6iAQcOn8f6Zlr/4sw9Vb3+AMGjeO2s\nvkQTtWn5IxFNYTvPv1CDeHVr6XUObHCghxF9KKE2SObXWUNpEzuDyCsg7Xxv\nx4MCEcwUbJZupqlvbZAeyiWgLNkGhfe8YxP0KMps5ywMVJSiNmep1oD3SLuj\nMVYOpLS6HYMJMoOXFAf68B7D9wpiaovu/1eib0fvwm0O8R+jZeq+G4/YHPxi\nPyiylfedDVW01YXoH3kZqXpfJ72It7VI+DLIuuwKYwJeu6UgMaRWzxDNEkYM\nlEKEtGi20qZEgfp9SLP3VS1IYoW7CpvzetGiJuJR14gtkc/UuTs4gcn/9IX9\nHHzwlIhG0tZRyxy7HvySqGOaAHoB0DMrsNKfuOB2yfz6rFXUbpmyqhY2VBac\nERjcQdNen6GAqbFgHpUKigohAsfuy/l3EzxN9wwGMMbO2hfR7mN7nqkWDUwB\n/KrFkdaqW6rmOZDIJa7D9RYKKn3v0+ihIot7KYYXhJkdRxxmixIbfU/9Vgty\npWaEcjFHSoxgXoeEzcHMB6RrI6d7u7hgHmjJw902VzUyxBWT5Lejj5jCJChH\n/TkwOtKRcZzm7kZMIVSpT0I12GcJ2GKI7mfVqAotYuuSx6P0OezDHn3C2nzL\nHg1Q\r\n=V4NM\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCILROc+ThyzrKfVByoXEQABOn/S3pVbyDD5zcYUuwszgIhAOOWZzgv5FKh8u3k1d5n8lhWy7cjSIFWW2ziQabAOPt9"
+          }
+        ]
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/zopflipng-bin_5.0.0_1544372428038_0.4551816717631638"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.0": {
+      "name": "zopflipng-bin",
+      "version": "6.0.0",
+      "description": "`zopflipng` wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/zopflipng-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "zopfli",
+        "zopflipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.1",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "9a1951eb6df424bb820f6ed3ebf3c3a337a3411e",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin#readme",
+      "_id": "zopflipng-bin@6.0.0",
+      "_nodeVersion": "12.16.1",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-UVaWMTb8LM1bRa2JWrSIOu7gJ01mOnz8scBELv6+idbSAL5hiQ69NdkNnvWWdjfX6Wv8dX4uV0zo9ZK6FcoZ8w==",
+        "shasum": "e638baf74c799bc6cebad3c81e197991b3343a5b",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-6.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4893,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe0S23CRA9TVsSAnZWagAAglUP/j4dcXxRza6uoVSrH/Xn\nK7eqimIl/JCdMycUrWmXnmi8WMf5Qh0XuAW3oCIKGepmf5/FeCFpJZp2qFMb\noL/3mjHjst+j1QgWtZQCR7AFni0eDXXBJo8h9+kAzyfVc1Jvbx3dZeuG1MKA\n6IkVNXHmxrz0K+dgIDBPZg99hIB/f5xe97X/R53AlnTiw4Ba3UHRju94eFhh\nKX07kXpUoQDu1J/yFG9oiJs0vnqL7DF03vFG8MJK2nTu/PH4k8JigweGWuy0\n+fbgfZfv0fLJ5VKLIcIpFUDeqHSst+WsbvIOUOxxRs6pvLpQw+xxM4iNrXTa\nh26XbNnUKj8zUOC/d0JcIj+ylv9Ctj2doUOzzTbE1SLaIXLVeuYg635Il+AX\nbf/fN9tZhQPo2ctgrjpdhiG2RYZSeXvB437n+TtR7LbN+QwilvIOwBCqyG5H\nomde/2/cciCKE0git/h/8blyq8cua7HwSkMlTjFt31Yl7vZ0gIBO3FLkAzZF\n2VnzCpYAwnHkF/ia+8O720XvUJHWJ2MKpjHmXje6puouzGG7peUmiqfCnpkg\n1kHc6pZqkIUelTNBpAlYyptqQ8rzbe8a7uw7zF/Ul7Z2PXQAq20oyhKUPg+x\nQY59qIsxhDPJVyK+N7iiUoMmMn09fcl28ZSEscLsHeYCAbo1Fm+RpfeYRHwT\nlkiP\r\n=D0oa\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIBRFMgA0KNTPnnyp0ITX7uBRllpYNB2UqyqDqQw41tt9AiEA9UtDdj3Ga39Tm3IX5ruMyQupagMQKHcr6CSHDmEiO3o="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/zopflipng-bin_6.0.0_1590767030346_0.7727407060534612"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.1": {
+      "name": "zopflipng-bin",
+      "version": "6.0.1",
+      "description": "`zopflipng` wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/zopflipng-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "zopfli",
+        "zopflipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.1",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "9d5dcfe3c3212225cf47d9ba1a2a1f93cc2fd6d4",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin#readme",
+      "_id": "zopflipng-bin@6.0.1",
+      "_nodeVersion": "12.18.0",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-+aybvXv/xafL6I67uSH5yLHrSy4/OaSOV9tniw4yZFIHpINXUcctVHE/WzHxOONrL2GHzJ8Fd4iDrNyaS6TVbg==",
+        "shasum": "a91ef81bdba18e151dda3f34df23d3ecd7d04a1f",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-6.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 200141,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe+rIFCRA9TVsSAnZWagAAKhQP/0z/OvEFCd3UpjTVWqM5\njy09OnvU3QckZ42HtCLzePIDHMOWWG8d4t6KDqbZmi7rGhCvjs4KU0inE7J7\nEk0yqI6ToDHlv7BQsyNvlqt7nhIaMWEpikOT7Hg6b30+aOnotd6jZBCpUPAJ\nU0s8nAEjHru0/HxKfhmUPOR5mQMVJpSOy0Fe3Oi2HMczya/cbVMuzS2UbQlo\nokZhZDDauNnbTgVqA+xcDh3exLQXNNbcVTv9IO02Q8s5zUI9kL9clbCf8T24\nimiIuOJsVPZU86ZTOvpE6UaI8wlrdBWU9nwaBEkoUlVH6Ez2rQljvF/DzkG6\nb+vZ1MuqkZWkD1YwNQUelzMjHBylzS6orHzofE5B0+2ZbVbEPzeUafM7nQKp\nqYydYmJS+ERx2hRBQDKE9d2l3IAWFdfpwzSRU/bM3iijBBQ/baJV1iIVMzmk\nBhIkRNE4ICT+0vHUaAytseDJuRM8uFxnbUL/ijpQwvU5xPIAsunDbkc3Ac04\nhO3hO+T9x+OBeKiwiRnP4rY+kbbpkad7a5iROdMnBIhPcNXhSMugo8kKE/1B\nCqleCX/ehCEV9C4R+qr1jL7WTVDl6fJB+9Odh+Ngk7xIbkvf1aTpESop8WZl\nppg80fxtw81SwaUNtWmovlCD0XCgxJhv4vpFjXfSe4BAWVCiqVSHpi0ajSxt\nybOF\r\n=JPhS\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIDeyFbOWZ2gIuEiHTxWBfR6UsFDcBrgMSVjn/ZqlkpdfAiEA2jMdMEA30KBp7nQBHUsruTIZZKnSMR2y/mLDNapYAVM="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/zopflipng-bin_6.0.1_1593487877321_0.31277001612044564"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.0": {
+      "name": "zopflipng-bin",
+      "version": "7.0.0",
+      "description": "`zopflipng` wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/zopflipng-bin.git"
+      },
+      "type": "module",
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogosensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "zopfli",
+        "zopflipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.1"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "067584b8a02fb1c9f525118810d02972b0a039da",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin#readme",
+      "_id": "zopflipng-bin@7.0.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-azoEGlnw3ocaCuV8QQGpfCd+N4IGB8dsn8Atur8VZyGACOUpzgJSV+92MtzRbvkJ5MudvaiGARRDga1bsFP+tg==",
+        "shasum": "b86389230613baedb5d736015a2967f1268d2cfe",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-7.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 200359,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCX8GUduxqUsL23xQGl63ZTASSPqpvotKDr/YANnXSsLQIgNC2Jve+xTzp07KqjsTlZov78rqXTgSuulrNeRiKpXS0="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/zopflipng-bin_7.0.0_1634997871060_0.1858163540881521"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.1": {
+      "name": "zopflipng-bin",
+      "version": "7.0.1",
+      "description": "`zopflipng` wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/zopflipng-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogosensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "zopfli",
+        "zopflipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.1"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "3a6bf8fde5d2a79cd59b93ce389777ebd077c2e9",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin#readme",
+      "_id": "zopflipng-bin@7.0.1",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-OD+FguavHprCqkHJCXNpMWopaX9AX8Y6etUoKp+I9EcqDo4nR9ad4twgYWdGe2VuoJ2ls01R8ItMJXh7aq7o2A==",
+        "shasum": "cb2d201fed3e00dd7b26281dd2bdc12aed894ea5",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-7.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 200386,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCdcepNChMY47FhWYNndSJxxyPv86pfHw5DRGhyxyK/wwIhAJJLfxlFaEtmaV+2KGcMmsVEgrgYN9KRnS5+UqmSHLhZ"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/zopflipng-bin_7.0.1_1636523711390_0.5412927727790007"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.1.0": {
+      "name": "zopflipng-bin",
+      "version": "7.1.0",
+      "description": "`zopflipng` wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/zopflipng-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogosensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "zopflipng": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "zopfli",
+        "zopflipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.1"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "fca1f765f36bbb16c95cea3dece667ff7369e0d2",
+      "bugs": {
+        "url": "https://github.com/imagemin/zopflipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/zopflipng-bin#readme",
+      "_id": "zopflipng-bin@7.1.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-KgYbjNAADVSr5QhkQm0D05u2ZowQXi4+zfN2tUIV/ulGBRP8IhWxLqfLl1TZfXZM8Ll8Asn6KMzUERAjLF8Jaw==",
+        "shasum": "73f088c71eece63afd360b0f6a46f8bd759db9d2",
+        "tarball": "https://registry.npmjs.org/zopflipng-bin/-/zopflipng-bin-7.1.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 200386,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJh3CzjCRA9TVsSAnZWagAAtn0P/iHzmfma/ZDDfzAuPYJs\nTUxKpGz9suPKkKg6bPhJNKlQ1QJxwKKqo3hUM9PPfzyG7ZKuZ1NE6GgFcGEB\nc1vj8D9TqkwVVAFbi2YHNvj2U5AYByHQaRj7MYDPNCSy4f2Q+vCSgnnGqdW+\n6Tk9ngQyDJxC6dknWl+FhnWXztqNsdiXXAmHgZyL+enPRxCnmBYQRa96LrfP\nwK75H1x7KkuxeiuuPVjQlMIq+XD60XOSzwf6jePygUFXlE2hqb0jgISQQNLQ\nnqqpkliIZALa5FsidIVbuJ4UALPBIlky9EV7UsTY0/530ngfLnDsywFcOmzw\n8R88DCA1sGGa9ZaZHvRvemTaG33nf+u/Wj7XZg8hOszX8v4n/Y3W/XpCn5Zm\nwQ8TAzvXKrBuIyeHixhQIsymgdJ5j0aZqpOdMkkHu6oQaJNE2LkXEQfMqtmm\n8kaxMfXIe+obcwwa2rhbVCWJ5Y2cGWa9rWXSKfbeGQO9zN9JpPhRvFnNKUWw\newvjLg9DcySUMeMEtS4hOkIOUentYy/JifqjLN0B8+DDVy47uNzQvrgF9p9T\nVobgOQyNGBxXfLei7zsYSX4kkO+97s95EPzGf+JnvF9kls1yHGr3qbk3nyHY\nVsanyPnqz3ec20JASkldR3Gee+BmdnZQcbJjY9r+iiDmLq9dH8OZYjw6/eks\nP9Ok\r\n=fdu6\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQD7+H4LCx+FGuJg9mg8cXJyKjqWrN6QHt5eAowO1cFrbgIgdfjK/0yNE/GJndRi+E93EazNuf8JKtsNkltJHYB1NuQ="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/zopflipng-bin_7.1.0_1636684434922_0.5663359104513528"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "readme": "# zopflipng-bin ![GitHub Actions Status](https://github.com/imagemin/zopflipng-bin/workflows/test/badge.svg?branch=main)\n\n\n> [zopfli](https://github.com/google/zopfli) Compression Algorithm is a new zlib (gzip, deflate) compatible compressor that takes more time (~100x slower), but compresses around 5% better than zlib and better than any other zlib-compatible compressor\n\nYou probably want [`imagemin-zopfli`](https://github.com/imagemin/imagemin-zopfli) instead.\n\n\n## Install\n\n```\n$ npm install zopflipng-bin\n```\n\n\n## Usage\n\n```js\nimport {execFile} from 'node:child_process';\nimport zopflipng from 'zopflipng-bin';\n\nexecFile(zopflipng, ['-m', '--lossy_8bit', 'input.png', 'outout.png'], () => {\n\tconsole.log('Image minified!');\n});\n```\n\n\n## CLI\n\n```\n$ npm install --global zopflipng-bin\n```\n\n```\n$ zopflipng --help\n```\n\n\n## License\n\nMIT © [Imagemin](https://github.com/imagemin)\n",
+  "maintainers": [
+    {
+      "name": "nothingismagick",
+      "email": "denjell@sfosc.org"
+    },
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "kevva",
+      "email": "kevinmartensson@gmail.com"
+    },
+    {
+      "name": "shinnn",
+      "email": "snnskwtnb@gmail.com"
+    },
+    {
+      "name": "1000ch",
+      "email": "shogosensui@gmail.com"
+    },
+    {
+      "name": "bradbaris",
+      "email": "bradbaris@gmail.com"
+    },
+    {
+      "name": "xhmikosr",
+      "email": "xhmikosr@gmail.com"
+    }
+  ],
+  "time": {
+    "modified": "2022-06-29T17:54:00.194Z",
+    "created": "2014-01-31T02:50:36.641Z",
+    "0.0.1": "2014-01-31T02:50:36.641Z",
+    "0.1.0": "2014-01-31T07:27:50.946Z",
+    "0.1.1": "2014-01-31T12:15:50.684Z",
+    "0.1.2": "2014-02-03T06:23:56.167Z",
+    "0.1.5": "2014-02-03T08:57:47.532Z",
+    "0.1.6": "2014-02-03T12:14:31.169Z",
+    "0.1.7": "2014-02-04T07:23:24.190Z",
+    "0.1.8": "2014-04-23T14:05:52.791Z",
+    "0.1.9": "2014-04-30T02:19:17.251Z",
+    "0.1.11": "2014-07-22T11:04:03.185Z",
+    "0.1.12": "2014-08-13T01:24:14.775Z",
+    "1.0.1": "2014-09-07T13:37:51.294Z",
+    "2.0.0": "2014-10-20T15:34:33.350Z",
+    "2.0.1": "2014-11-24T15:05:15.736Z",
+    "3.0.0": "2015-04-22T14:49:48.884Z",
+    "3.0.1": "2015-05-10T14:05:07.118Z",
+    "4.0.0": "2017-03-24T07:54:16.654Z",
+    "4.1.0": "2017-12-27T11:45:03.441Z",
+    "5.0.0": "2018-12-09T16:20:28.181Z",
+    "6.0.0": "2020-05-29T15:43:50.451Z",
+    "6.0.1": "2020-06-30T03:31:17.432Z",
+    "7.0.0": "2021-10-23T14:04:31.234Z",
+    "7.0.1": "2021-11-10T05:55:11.644Z",
+    "7.1.0": "2021-11-12T02:33:55.143Z"
+  },
+  "readmeFilename": "readme.md",
+  "homepage": "https://github.com/imagemin/zopflipng-bin#readme",
+  "keywords": [
+    "imagemin",
+    "compress",
+    "image",
+    "img",
+    "minify",
+    "optimize",
+    "png",
+    "zopfli",
+    "zopflipng"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imagemin/zopflipng-bin.git"
+  },
+  "author": {
+    "name": "Shogo Sensui",
+    "email": "shogosensui@gmail.com",
+    "url": "github.com/1000ch"
+  },
+  "bugs": {
+    "url": "https://github.com/imagemin/zopflipng-bin/issues"
+  },
+  "license": "MIT",
+  "users": {
+    "silverwind": true
+  }
+}

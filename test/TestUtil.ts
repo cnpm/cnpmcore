@@ -147,6 +147,10 @@ export class TestUtil {
     return path.join(__dirname, 'fixtures', name ?? '');
   }
 
+  static async readFixturesFile(name?: string): Promise<Buffer> {
+    return await fs.readFile(this.getFixtures(name));
+  }
+
   static async readJSONFile(filepath: string) {
     const bytes = await fs.readFile(filepath);
     return JSON.parse(bytes.toString());

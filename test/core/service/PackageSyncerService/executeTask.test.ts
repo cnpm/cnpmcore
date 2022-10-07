@@ -1,5 +1,4 @@
 import assert = require('assert');
-import { readFile } from 'fs/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
@@ -44,16 +43,16 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   describe('executeTask()', () => {
     it('should execute "foobar" task', async () => {
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
         persist: false,
         repeats: 2,
       });
       app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.1.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
         persist: false,
       });
       await packageSyncerService.createTask('foobar', { skipDependencies: true });
@@ -87,17 +86,17 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should resync history version if forceSyncHistory is true', async () => {
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
         persist: false,
         repeats: 2,
       });
       app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
         repeats: 2,
       });
       app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.1.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
         persist: false,
         repeats: 2,
       });
@@ -121,15 +120,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should not sync dependencies where task queue length too high', async () => {
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.1.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
         persist: false,
       });
       mock(app.config.cnpmcore, 'taskQueueHighWaterSize', 2);
@@ -160,7 +159,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/@node-rs/xxhash/-/xxhash-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       await packageSyncerService.createTask('@node-rs/xxhash');
@@ -183,11 +182,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync cnpmcore-test-sync-deprecated and mock 404', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'cnpmcore-test-sync-deprecated';
@@ -227,11 +226,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
       // sync again
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       await packageSyncerService.createTask(name);
@@ -274,11 +273,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should ignore PositionNotEqualToLength error', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org//foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const err = {
@@ -303,11 +302,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should ignore ObjectNotAppendable error', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const err = {
@@ -332,11 +331,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync cnpmcore-test-sync-dependencies => cnpmcore-test-sync-deprecated', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-dependencies.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-dependencies.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies/-/cnpmcore-test-sync-dependencies-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       let name = 'cnpmcore-test-sync-dependencies';
@@ -353,11 +352,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
       // will sync cnpmcore-test-sync-deprecated
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       name = 'cnpmcore-test-sync-deprecated';
@@ -379,11 +378,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.createTask(name);
 
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-dependencies.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-dependencies.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies/-/cnpmcore-test-sync-dependencies-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       name = 'cnpmcore-test-sync-dependencies';
@@ -403,11 +402,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should ignore publish error on sync task', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'cnpmcore-test-sync-deprecated';
@@ -433,11 +432,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should ignore publish ForbiddenError on sync task', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'cnpmcore-test-sync-deprecated';
@@ -458,7 +457,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should ignore download error error on sync task', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
@@ -488,11 +487,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         repeats: 2,
       });
       app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
 
@@ -619,11 +618,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = '@cnpmcore/test-sync-package-has-two-versions';
@@ -681,11 +680,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
       // sync unpublished
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       name = 'cnpmcore-test-sync-deprecated';
@@ -725,14 +724,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     });
 
     it('should work on mock package.readme is undefined', async () => {
-      const pkg = await TestUtil.readJSONFile(TestUtil.getFixtures('cnpmcore-test-sync-dependencies.json'));
+      const pkg = await TestUtil.readJSONFile(TestUtil.getFixtures('registry.npmjs.org/cnpmcore-test-sync-dependencies.json'));
       delete pkg.readme;
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies', 'GET', {
         data: JSON.stringify(pkg),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies/-/cnpmcore-test-sync-dependencies-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'cnpmcore-test-sync-dependencies';
@@ -755,7 +754,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       // https://github.com/cnpm/cnpm/issues/374
@@ -799,7 +798,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'cnpmcore-test-sync-deprecated';
@@ -823,7 +822,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'cnpmcore-test-sync-deprecated';
@@ -844,7 +843,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'cnpmcore-test-sync-deprecated';
@@ -924,7 +923,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.getFixtures('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'cnpmcore-test-sync-deprecated';
@@ -1006,11 +1005,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     // 有任务积压，不一定能够同步完
     it.skip('should sync sourceRegistryIsCNpm = true && syncUpstreamFirst = true', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated.json')),
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
@@ -1033,11 +1032,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should not sync upstream when task queue too high', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
@@ -1062,11 +1061,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync sourceRegistryIsCNpm = true && syncUpstreamFirst = false', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
@@ -1088,11 +1087,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync sourceRegistryIsCNpm = true and mock createSyncTask error', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
@@ -1116,11 +1115,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync sourceRegistryIsCNpm = true and mock createSyncTask return missing logId', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
@@ -1144,11 +1143,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync sourceRegistryIsCNpm = true and mock getSyncTask syncDone = false', async () => {
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/sync', 'PUT', {
@@ -1203,11 +1202,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: true,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        data: await readFile(TestUtil.getFixtures('cnpmcore-test-sync-deprecated-r.cnpmjs.org.json')),
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
       });
       app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
@@ -1277,7 +1276,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       // https://registry.npmjs.org/postman-jsdoc-theme
@@ -1318,11 +1317,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/D/-/D-0.0.1.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/D/-/D-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'D';
@@ -1354,7 +1353,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'Buffer';
@@ -1381,11 +1380,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should mock security holding package', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-security-holding-package', 'GET', {
-        data: await readFile(TestUtil.getFixtures('security-holding-package.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/security-holding-package.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/webpack.js.org/-/webpack.js.org-0.0.1-security.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'cnpmcore-test-sync-security-holding-package';
@@ -1481,15 +1480,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync mk2test-module-cnpmsync with different metas', async () => {
       app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync', 'GET', {
-        data: await readFile(TestUtil.getFixtures('mk2test-module-cnpmsync.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/mk2test-module-cnpmsync.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync/-/mk2test-module-cnpmsync-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync/-/mk2test-module-cnpmsync-3.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
 
@@ -1522,7 +1521,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
       // again should skip sync different metas
       app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync', 'GET', {
-        data: await readFile(TestUtil.getFixtures('mk2test-module-cnpmsync.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/mk2test-module-cnpmsync.json'),
         persist: false,
       });
       await packageSyncerService.createTask(name);
@@ -1538,7 +1537,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
       // should delete readme
       app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync', 'GET', {
-        data: await readFile(TestUtil.getFixtures('mk2test-module-cnpmsync.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/mk2test-module-cnpmsync.json'),
         persist: false,
       });
       manifests.data.versions['2.0.0'].readme = 'mock version readme content';
@@ -1568,7 +1567,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.deepStrictEqual(abbreviatedManifests.data.versions['2.0.0'].libc, [ 'glibc' ]);
 
       app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync', 'GET', {
-        data: await readFile(TestUtil.getFixtures('mk2test-module-cnpmsync.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/mk2test-module-cnpmsync.json'),
         persist: false,
       });
       await packageSyncerService.createTask(name);
@@ -1592,15 +1591,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
       mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
       app.mockHttpclient('https://registry.npmjs.org/pedding', 'GET', {
-        data: await readFile(TestUtil.getFixtures('pedding.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/pedding.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.1.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const response = await TestUtil.readJSONFile(TestUtil.getFixtures('downloads.json'));
@@ -1659,15 +1658,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should ignore sync download data work on enableSyncDownloadData = false', async () => {
       app.mockHttpclient('https://registry.npmjs.org/pedding', 'GET', {
-        data: await readFile(TestUtil.getFixtures('pedding.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/pedding.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.1.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       mock(app.config.cnpmcore, 'enableSyncDownloadData', false);
@@ -1695,15 +1694,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
     it('should sync download data and mock getDownloadRanges error', async () => {
       app.mockHttpclient('https://registry.npmjs.org/pedding', 'GET', {
-        data: await readFile(TestUtil.getFixtures('pedding.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/pedding.json'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.0.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.1.0.tgz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');

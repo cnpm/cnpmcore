@@ -1,0 +1,3177 @@
+{
+  "_id": "mozjpeg",
+  "_rev": "89-69b26301cb72dc65de238c695cb26c92",
+  "name": "mozjpeg",
+  "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+  "dist-tags": {
+    "latest": "8.0.0",
+    "next": "4.1.3-rc.4"
+  },
+  "versions": {
+    "0.1.0": {
+      "name": "mozjpeg",
+      "version": "0.1.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/kevva/mozjpeg"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 0"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-wrapper": "^0.2.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/kevva/mozjpeg/issues"
+      },
+      "homepage": "https://github.com/kevva/mozjpeg",
+      "_id": "mozjpeg@0.1.0",
+      "dist": {
+        "shasum": "69fd26def4d8115f42c5453b9d46ad2f3c3b910c",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.0.tgz",
+        "integrity": "sha512-TU918qhxAkHHQmIS9vx0JOiLrqMCHIYQkjv9nFMBnU5S6T4WFI+AixPx19hWpoXJ4rIOvf0sOyLZ3ytBf6aoDA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQC0oiDNROpRcdIfGTxwGQUvrpIUl7zxu8qYIghO1AzRoQIhAPpFWqD2RPUN1ziYHXc2juXMkPnMfAPgjSj3FLsoym55"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.6",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.1": {
+      "name": "mozjpeg",
+      "version": "0.1.1",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/kevva/mozjpeg"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 0"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/kevva/mozjpeg/issues"
+      },
+      "homepage": "https://github.com/kevva/mozjpeg",
+      "_id": "mozjpeg@0.1.1",
+      "_shasum": "e15eb6309f275b2a001d1a7b3fb1ad05ec38dc6e",
+      "_from": ".",
+      "_npmVersion": "1.4.7",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "e15eb6309f275b2a001d1a7b3fb1ad05ec38dc6e",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.1.tgz",
+        "integrity": "sha512-UHqvic1AvFRCNqLJSXgH7b51OZ1cETSaQ4oOpffImeBQGseZlCSXkKrlZO4J4y2ccJRG2c5OHi1LKIAF7IjpFg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQC49GfgJg50E55pMqDuJD7GAW5NXpwK7wj9f4B9LtRsdwIgPedxo4sEz/LlpRiJvDvRWWdbkqK/GXBzPyFNwZoZ2VY="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.2": {
+      "name": "mozjpeg",
+      "version": "0.1.2",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/kevva/mozjpeg"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 0"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/kevva/mozjpeg/issues"
+      },
+      "homepage": "https://github.com/kevva/mozjpeg",
+      "_id": "mozjpeg@0.1.2",
+      "_shasum": "8f4fa5e70531ab1b30596e169527a77f480bc768",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "8f4fa5e70531ab1b30596e169527a77f480bc768",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.2.tgz",
+        "integrity": "sha512-S5Aw8ZhT8kN0LQP2/QuI+54RMrCswSjqBdch4KIDx1cChbnngvkR5i7R594STB1tL+OvEVwtMS+Q1nivbqgu8w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCXKIRVOV+pDKuqtoPsNgi+yDe6FO6DJaiLXZqDNProWwIgaGIcdw+3Bs/JYCmV4rA18ZKq8KGK46szgu5yTSJqvZM="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.3": {
+      "name": "mozjpeg",
+      "version": "0.1.3",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/kevva/mozjpeg"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 50000"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/kevva/mozjpeg/issues"
+      },
+      "homepage": "https://github.com/kevva/mozjpeg",
+      "_id": "mozjpeg@0.1.3",
+      "_shasum": "c124fada216abac2eea8e92372f37dc09bbd81d7",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "c124fada216abac2eea8e92372f37dc09bbd81d7",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.3.tgz",
+        "integrity": "sha512-fimmq81xKwri/NtAUk78nx1phgi/gqBFDOjV2X4ZazrrMxMgiNxubsiLH8sRqNnPB8yID3IC/jDsrCQKbQFOxA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIAtwkzqRGhBqBl8Oy970leiUwojkGCMfosxWDK25H1MOAiEAsyDp4nGEHN1+3VUAqvJGxucwd3dnQ8lHzuH4p91V+90="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.4": {
+      "name": "mozjpeg",
+      "version": "0.1.4",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/kevva/mozjpeg"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 100000"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/kevva/mozjpeg/issues"
+      },
+      "homepage": "https://github.com/kevva/mozjpeg",
+      "_id": "mozjpeg@0.1.4",
+      "_shasum": "a9853eab3ac152dba684850f55137a18e9fd53ab",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "a9853eab3ac152dba684850f55137a18e9fd53ab",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.4.tgz",
+        "integrity": "sha512-apk6jpSBC0tsguc6KvUQbjhBPI3qYKU4Ul55KqIIHcu86NxHv3OHqR+Rg5lPWc4k/PzARRa5pSV/dlgD8NmH/A==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQD0nvuV/rY2Kf3R8msa/hY2n7urEhZ7yyhzoposY2qU+wIhAJiI6XC6d4hRpfP5gKVWqVuqzzZirntMOcZEXdBGFRIC"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.5": {
+      "name": "mozjpeg",
+      "version": "0.1.5",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/kevva/mozjpeg"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 150000"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/kevva/mozjpeg/issues"
+      },
+      "homepage": "https://github.com/kevva/mozjpeg",
+      "_id": "mozjpeg@0.1.5",
+      "_shasum": "01033f7ce660a88270a30b0b63540457a36686ca",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "01033f7ce660a88270a30b0b63540457a36686ca",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.5.tgz",
+        "integrity": "sha512-N4yWKkvII79mhQlHeBoWF7uJ4xchLI5MGFDQy+8XJWdqmoTMS3nHesd3eVEyxKTSGrHmxWcRjO5ttd7H9D/SjA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDLoYj56E6KWBURlJvrOYn+5FUXR7ZSoBn7fGPJQkL3RwIhANih1TTiZTWhTwFt+17Kal3FvIDT3zXKntPc74KK5Mey"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.6": {
+      "name": "mozjpeg",
+      "version": "0.1.6",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/kevva/mozjpeg"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 150000"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/kevva/mozjpeg/issues"
+      },
+      "homepage": "https://github.com/kevva/mozjpeg",
+      "_id": "mozjpeg@0.1.6",
+      "_shasum": "7f096bdf8395ffdffd8c317194e39f3de3700e7f",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "7f096bdf8395ffdffd8c317194e39f3de3700e7f",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.6.tgz",
+        "integrity": "sha512-cygGY71yE05Rv1NoJbTuxd5qBOa6WMgrgEAXwJv1D9EOgt9eKYuqGNvmCfAnkoTaK4Hpfck0yoAPV3cMK9rhKg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIEKDufEuOqvopPHXiPHkxW6i4MAUsZswxu43wRXHN7A2AiEA6/L9BVfyfglmXiZTGaEhudjEmnT3v8+EkMxOkS+UwEk="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.7": {
+      "name": "mozjpeg",
+      "version": "0.1.7",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/kevva/mozjpeg"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 150000"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/kevva/mozjpeg/issues"
+      },
+      "homepage": "https://github.com/kevva/mozjpeg",
+      "_id": "mozjpeg@0.1.7",
+      "_shasum": "57be765c779e52a9967a0aa9eeff8cfad6aca77c",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "57be765c779e52a9967a0aa9eeff8cfad6aca77c",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.7.tgz",
+        "integrity": "sha512-FX+IGhyQGumbhz5fipXfwKgwYMeYeUFW0N7VVgfvgDRStlbgQNyo9Z6y3VGSIfRCXVkmyHP4rXi56OmLFGNC7A==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDvxLzVmGadvmz3jYCoYqld4cvZuJNArkSyHLImxdxk1wIhALSpDfZO8C2ILU4YARHqKm9xIf9JjrGuy4B1ZQtvs/VI"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.8": {
+      "name": "mozjpeg",
+      "version": "0.1.8",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/kevva/mozjpeg"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 150000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "test"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.2.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/kevva/mozjpeg/issues"
+      },
+      "homepage": "https://github.com/kevva/mozjpeg",
+      "_id": "mozjpeg@0.1.8",
+      "_shasum": "9af1aff185b682bdcbf10353fdfd0e07be9f894b",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "9af1aff185b682bdcbf10353fdfd0e07be9f894b",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.8.tgz",
+        "integrity": "sha512-oLZ0SQPjXmiSFIdGbo3v0IlaTJRcdHUs28rjoz508YdGOMz6cA23KTk5Tq7F75paq3OwbBYTtUWJE0+iR3t/1A==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCs8dQKYJdjgp2hPx/hrBAHYz19FKE3X0xUmw+nG8yM9wIhAJvOs7TsrHBirdoBRhT44UG+et+gDtOVQWYmZvm68PvL"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.9": {
+      "name": "mozjpeg",
+      "version": "0.1.9",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/kevva/mozjpeg"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 150000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "test"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.2.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/kevva/mozjpeg/issues"
+      },
+      "homepage": "https://github.com/kevva/mozjpeg",
+      "_id": "mozjpeg@0.1.9",
+      "_shasum": "5a14d8168c39e3ad788ab364e71b31c8272a5436",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "5a14d8168c39e3ad788ab364e71b31c8272a5436",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.9.tgz",
+        "integrity": "sha512-FSoR12uFQj4IHG4szKcTpBeWjIjxvcRJhRu1hsoi9tROCiqdQEUZ9aKqPk/lmknlc6tz2TcCNjnVPU4tNGJ+eA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIErikmnTkRGCO2+7Xd3zeFDteLEwECNhsOHb+RFbZPT1AiBzdiC/o1bRfkkTYMRhxInLUZcRarWqiYuygr42mTGS7g=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.10": {
+      "name": "mozjpeg",
+      "version": "0.1.10",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/imagemin/mozjpeg-bin"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --reporter list --timeout 150000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.2.0",
+        "bin-wrapper": "^0.4.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin",
+      "_id": "mozjpeg@0.1.10",
+      "_shasum": "d656ea393ac107d99190de62ca0b7b37699545f5",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "d656ea393ac107d99190de62ca0b7b37699545f5",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-0.1.10.tgz",
+        "integrity": "sha512-vdf7FTcPSUsDP1UlyxScQMAE2hyS4IlzeOkOAIgXRLT4g1Hh1CWoqunP9BYVMhZVbdgjmW/0bCWb152301/wsA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCzxLBj3rvn4j7usLzOaMtJzzH9YSeGmApyI5guG1nJiwIgXCbTiNp1/u/A3Hn1S/CjcMqB601CQZ72IzmhaKBbYEk="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.0": {
+      "name": "mozjpeg",
+      "version": "1.0.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/mozjpeg-bin"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --reporter list --timeout 150000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.2.0",
+        "bin-wrapper": "^0.4.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "gitHead": "52db111964f08c95e9ff33ad4a1f47d5020fe5f0",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin",
+      "_id": "mozjpeg@1.0.0",
+      "_shasum": "ba232ee5bbe9b6da9bb305efa1a4d3d79cba5481",
+      "_from": ".",
+      "_npmVersion": "1.4.21",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "ba232ee5bbe9b6da9bb305efa1a4d3d79cba5481",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-1.0.0.tgz",
+        "integrity": "sha512-KwkUKTsO+4kXEXT/RM6Wqzia9MnLfRYhr1MDcgXd2Bo5E8hoQQ40t5h55xqWtQnpdm4banjpqu41VZi242fvMA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIHsKsz5DMSSI2sTplr48g0PgrwQiZttiWqE5872Vyc1BAiAVvq53bfAMoNR0u+INH98EgjCvyACBAUndGs3Hw5hiPw=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.1": {
+      "name": "mozjpeg",
+      "version": "1.0.1",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/mozjpeg-bin"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "node test/test.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^1.0.1",
+        "bin-wrapper": "^1.0.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "0.0.4",
+        "bin-check": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "rimraf": "^2.2.6"
+      },
+      "gitHead": "5863474f581e5306075c48b034e0cfad12a92326",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin",
+      "_id": "mozjpeg@1.0.1",
+      "_shasum": "9ae1fffe93ad2d0a9e0620df1e1367499173c390",
+      "_from": ".",
+      "_npmVersion": "1.4.23",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "9ae1fffe93ad2d0a9e0620df1e1367499173c390",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-1.0.1.tgz",
+        "integrity": "sha512-/W1KG/TUsi/6e0xwOGkkapU4KtQIqYNTPwBWQooK+NvS/9TkmXYL+XOqcY/8EK84UOmVAsQUwPhGbV9AQz8wNQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIHnK6xsIyxIVKGd6x+3WKhsyHJmMxybFksanvJ9LF439AiBVDLFE6xBG5h7rzeTQMvspHmktiyuC9pGTru3/Tbwf3g=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.0": {
+      "name": "mozjpeg",
+      "version": "2.0.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/mozjpeg-bin"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "8097386298bb822766e8eb920c26686b7f0d7b1f",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin",
+      "_id": "mozjpeg@2.0.0",
+      "_shasum": "1777c17cd0b6bbaabf810043f0153242c9183054",
+      "_from": ".",
+      "_npmVersion": "2.1.5",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "1777c17cd0b6bbaabf810043f0153242c9183054",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-2.0.0.tgz",
+        "integrity": "sha512-thYhcYGG/34A/79KUH/1rJ6PTfpEhm88Dm7urbQU3//NHWEQgihAyQ4iThG5JxjmlJ85JNxZJLqX1lZ1LJrglA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDnObNifl9OM1OuN4jLNQXw9XZ6I4KuUYm2bvSlG08PSQIhAITzBUNUOcdU/J7bDrsX/9XX/23uFEy/RGyNor0Xjoxe"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.1": {
+      "name": "mozjpeg",
+      "version": "2.0.1",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/mozjpeg-bin"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "8317f5f4958df2a9e4a6aef85312a87fdf7a66d7",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin",
+      "_id": "mozjpeg@2.0.1",
+      "_shasum": "3930d824839e3e687240d8fa056e58c4fefee60e",
+      "_from": ".",
+      "_npmVersion": "2.1.5",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "3930d824839e3e687240d8fa056e58c4fefee60e",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-2.0.1.tgz",
+        "integrity": "sha512-pjAcUwaA/UlLG1BV+DXx2L1UMWBIi9+GxWTa72XLcHO6UNVPFtKfLZloPzsBADfL7u0i3g6t+0Ymc4cSgkV7ww==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCxLIJC4zdCUI0kg5ppA1Cr/Z1ysMgywiRafM8a39TQWwIgUm4kT73uKOE+4+9bgZcCRBYhsI4U7EFC8O8wUCMfgk0="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.2": {
+      "name": "mozjpeg",
+      "version": "2.0.2",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/mozjpeg-bin"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "ec0e3443f73a93ecde3fca9d124268656f3d9a65",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin",
+      "_id": "mozjpeg@2.0.2",
+      "_shasum": "731374cd00b50c8d02d1237867c75f7f2818758d",
+      "_from": ".",
+      "_npmVersion": "2.1.5",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "731374cd00b50c8d02d1237867c75f7f2818758d",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-2.0.2.tgz",
+        "integrity": "sha512-aLnAedwScesi3uDlG3qZ5bGDdQHnwqebgtOXv/3NavQV9y0RSWTcMFgEoZLEUg8nP64mZK0pxJyyhYNL2GNcKg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCL3yXnVv314zdcVK5KIRJCCvya8GztjKFoiQzACHt0fAIhAJX0WzicuyIODFapGB+Pako+ZMTCuWkY4B+BJXnzhZFw"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.3": {
+      "name": "mozjpeg",
+      "version": "2.0.3",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/mozjpeg-bin"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "85936455100f05ebd12d6f84f6cad75b9e2359bf",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin",
+      "_id": "mozjpeg@2.0.3",
+      "_shasum": "587ac2730bfe7f52511c8e1b30d7abdde57b977d",
+      "_from": ".",
+      "_npmVersion": "2.1.7",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "587ac2730bfe7f52511c8e1b30d7abdde57b977d",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-2.0.3.tgz",
+        "integrity": "sha512-OHnIVIEe5sKMuyxV9+tbmWX/C+GlIWtBsLKu745eWmYMhX7cJx4OwWDIc9kRSqbxOmiME5fdBpR8UBj/Mig7nw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCICKAbWNpw2WemT6J1DaxAQwc1+yzyV+Oq0MXdK/LUIOWAiEA+h0mcjstbqkPoVM49ddmuD4l+rABptSyaMvIkw3Ykxk="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.4": {
+      "name": "mozjpeg",
+      "version": "2.0.4",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/mozjpeg-bin"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "66a0c1d14789b24a4d1c4869a66ef47f4e5bf4ee",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin",
+      "_id": "mozjpeg@2.0.4",
+      "_shasum": "0b92e5ad5e56e3e398c770555058cc4f3e5d4ee5",
+      "_from": ".",
+      "_npmVersion": "2.1.7",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "0b92e5ad5e56e3e398c770555058cc4f3e5d4ee5",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-2.0.4.tgz",
+        "integrity": "sha512-PwnJ+9PxMmSSih5hQHkhj+gS3/KC6/IQ2sXEMik/lym3S2RzaMcbue3Z+zAdq93h/ECUAhIUZI9Bht9FBvALVw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCiRS8u+sSaQQyP/I4N/WoOXOSn5n7L2jCN9W73aIaIGgIhAMkp6DeMuDAej8BH9uhKhVwvrGShNcT6mBLpkdWxc8Kd"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.0": {
+      "name": "mozjpeg",
+      "version": "3.0.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/mozjpeg-bin"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "9bb00fa3dfa1594c31cd2cc6d3a102c524906cea",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin",
+      "_id": "mozjpeg@3.0.0",
+      "_shasum": "e23c89673026d2474ad5421662ff7dab12c08355",
+      "_from": ".",
+      "_npmVersion": "2.3.0",
+      "_nodeVersion": "1.0.4",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "e23c89673026d2474ad5421662ff7dab12c08355",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-3.0.0.tgz",
+        "integrity": "sha512-hB5fxXM+2BxCncHfpOBFXglAoDsoxDkdD5LcqPNrWQpt29/DMZ8jEwtl8qEjIFOEJyInpQOEtIbKiYDxVUTAZQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCbrVFdaA0YcgotVN4uR4trgB+qOvZiY6UM1wyqWHSRwwIgK1rlV8f/AriuMsjA/fj5tMqaoVPV4CnrTc1uqeT/KZM="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "4.0.0": {
+      "name": "mozjpeg",
+      "version": "4.0.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/mozjpeg-bin"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 100000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "1956b3022a30c873a6b698087c93fe5cf199a962",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin",
+      "_id": "mozjpeg@4.0.0",
+      "_shasum": "5488f45ac9469d6abcf914d90be555f014303631",
+      "_from": ".",
+      "_npmVersion": "2.7.6",
+      "_nodeVersion": "1.7.1",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "5488f45ac9469d6abcf914d90be555f014303631",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-4.0.0.tgz",
+        "integrity": "sha512-UVF5OX48vKm/aFiLN4lTPzothgi1xRqbxRfkfGo28LuAECSZwpIUsBzyzHWnvG8HjPoJIC4s7tp5+TqfSxgDWA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDvFqQsZ5ICiIALjH80z5L8tsoTHB+KlKa6CumleeIh8AIhAI/cPtYk9fSa57A9CLcLdSX1BluBWKgQWv6AIkyupRHF"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "4.0.1": {
+      "name": "mozjpeg",
+      "version": "4.0.1",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "41f437abad92dbe64580f21e6d0a0f497fbf2ab9",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@4.0.1",
+      "_shasum": "baddd7592b2036c07111bbd19b16c552c5520f7f",
+      "_from": ".",
+      "_npmVersion": "2.11.1",
+      "_nodeVersion": "2.0.1",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "baddd7592b2036c07111bbd19b16c552c5520f7f",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-4.0.1.tgz",
+        "integrity": "sha512-m/bpCU1YEqYCyWciZ06YHZWkWpCuzqqcl9WYfjfCKQJlhPMnpmnrmOtVmRf+kE0SOjzG1yZeZHyLOlOx0qOGoQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIGILjtQOR0EjCTSMEgOEZ2V9CItDSZ6ozcZ2CvQBuatWAiEAuL7EezHxGLvA4QlCYpRFhcJt3oH2qgVNRNCv9gT6oSY="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "4.1.0": {
+      "name": "mozjpeg",
+      "version": "4.1.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "0fd2b2b7684d87611194c51994faf279da54ef3c",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@4.1.0",
+      "_shasum": "e4e246cf7dfbd7124cba486c600b3a6ef70b9775",
+      "_from": ".",
+      "_npmVersion": "3.3.12",
+      "_nodeVersion": "5.1.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "e4e246cf7dfbd7124cba486c600b3a6ef70b9775",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-4.1.0.tgz",
+        "integrity": "sha512-UOOWdz6UK+WIEYaWx1s7EI78hcvbgQncf4IDRhC1AW2xh11dYYFMJYyZw5uH3nISjkMuid3SHqJ1HROtdhn9VA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIEXH/CyG0h9QnlKgdo7mVfUONi2FmPLMdHen5ZNu3ZsMAiEAuJCpUz11B7lkoIemIFvAnfGoNPyyQeVPWQB7WrgTJgE="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "4.1.1": {
+      "name": "mozjpeg",
+      "version": "4.1.1",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "f3bd55037097e63b10d939b2d2c00fae711dd06e",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@4.1.1",
+      "_shasum": "859030b24f689a53db9b40f0160d89195b88fd50",
+      "_from": ".",
+      "_npmVersion": "3.3.12",
+      "_nodeVersion": "5.1.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "859030b24f689a53db9b40f0160d89195b88fd50",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-4.1.1.tgz",
+        "integrity": "sha512-6ooUG7GZ81aJ1NUNdjqwZEWuyPX/uZ3nmFitGBexYnYO6xG4p36maKKBB7pJiutK5iGPFDzawImx5E88wDTkzQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCzyrVrMfcxe+VHb2y/pMhlW5cXxteDumSq2oLUXFdzgAIhAPNSx58+ziIczj/GSfQgOrTlCgSWehJeDQ5bcNO868UV"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "4.1.3-rc.1": {
+      "name": "mozjpeg",
+      "version": "4.1.3-rc.1",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "817f0e4c880e9ebe8ca86dc149d48091e4e7c659",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@4.1.3-rc.1",
+      "_shasum": "5baec6ebb5f718e02fdd60d2588ade1204404d00",
+      "_from": ".",
+      "_npmVersion": "3.8.9",
+      "_nodeVersion": "6.1.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "5baec6ebb5f718e02fdd60d2588ade1204404d00",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-4.1.3-rc.1.tgz",
+        "integrity": "sha512-Niabc1eK/aTwz8xL/H5Ln22mkR1iprlE07Ty44WcVC86ecyKPqB0UwjmF6fgPthyzPboEl+VWe0wP7yc5TndXA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIGxzy0VdvKpTlO4Phn9moFzKwmjdxVPH2hD81Kb0Lf0pAiBkfp6/jrm1z9JZ5fWHJHnv2UG76hP4RmVCD52AUlR2/A=="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-16-east.internal.npmjs.com",
+        "tmp": "tmp/mozjpeg-4.1.3-rc.1.tgz_1462801461522_0.5038267918862402"
+      },
+      "directories": {}
+    },
+    "4.1.3-rc.2": {
+      "name": "mozjpeg",
+      "version": "4.1.3-rc.2",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "817f0e4c880e9ebe8ca86dc149d48091e4e7c659",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@4.1.3-rc.2",
+      "_shasum": "ca19bf3f2484c2b17530e093d1f780667f92a515",
+      "_from": ".",
+      "_npmVersion": "3.8.8",
+      "_nodeVersion": "6.1.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "ca19bf3f2484c2b17530e093d1f780667f92a515",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-4.1.3-rc.2.tgz",
+        "integrity": "sha512-TDaQtHPUC8thrZiubyxGyczPmZ4EzxUqWw7BfeHx9kkkimZoVdiRxokIe9Qb/RJMavh/6pSLicpH2E4kvAoiRA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIACvNxXF0KRf6ax0aQY/0xZuGTjhrdBIOo112Ksb3+UcAiEAzW17bVxbs6Ha/Nqnbfy3ozgrvSW2ny0X7BzWue8KQic="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/mozjpeg-4.1.3-rc.2.tgz_1462801855370_0.08439628756605089"
+      },
+      "directories": {}
+    },
+    "4.1.3-rc.3": {
+      "name": "mozjpeg",
+      "version": "4.1.3-rc.3",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "817f0e4c880e9ebe8ca86dc149d48091e4e7c659",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@4.1.3-rc.3",
+      "_shasum": "c2bcba427b36ab825648242e168cdf37670e8632",
+      "_from": ".",
+      "_npmVersion": "3.8.5",
+      "_nodeVersion": "6.1.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "c2bcba427b36ab825648242e168cdf37670e8632",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-4.1.3-rc.3.tgz",
+        "integrity": "sha512-SXLczPZwE29x9EMt3GrXHu/fS6z1QJXIqVBVF3BTQAgp7HAjJP1W9qQnHk647xDip7j3UMc7WP/WF1s/8XO//A==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCVOeWaAayC5ziJfBqmFUDuvIMz8gdpL/fcrm9zxqEKygIgEyMWqzD6y1Ve4rMZPVPyLSH9rvbj4rDgNXVsAT2U6SI="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-16-east.internal.npmjs.com",
+        "tmp": "tmp/mozjpeg-4.1.3-rc.3.tgz_1462802215003_0.8062084089033306"
+      },
+      "directories": {}
+    },
+    "4.1.3-rc.4": {
+      "name": "mozjpeg",
+      "version": "4.1.3-rc.4",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "817f0e4c880e9ebe8ca86dc149d48091e4e7c659",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@4.1.3-rc.4",
+      "_shasum": "ff11ed69a9028444c9dcea24527c4c78484c4266",
+      "_from": ".",
+      "_npmVersion": "3.8.5",
+      "_nodeVersion": "6.1.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "ff11ed69a9028444c9dcea24527c4c78484c4266",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-4.1.3-rc.4.tgz",
+        "integrity": "sha512-SRHMhjgDIqBIEGvwobT1ESqwaVVBaQSj3rbhFVX+6isavJBnDk1Jp3lFyq4spA/iY03rZjQpfyuot58GTe3z3w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCgXc3emOq4ktnmWzjcuEwo/NX5tHv/ECyEb0+iVGHJnQIgPx16ojaez9RgJyp4Vg9nXQjH3LBb2hg0+QXaxpFsDTY="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/mozjpeg-4.1.3-rc.4.tgz_1462802693244_0.36611615866422653"
+      },
+      "directories": {}
+    },
+    "5.0.0": {
+      "name": "mozjpeg",
+      "version": "5.0.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "author": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "engines": {
+        "node": ">=4"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "imagemin",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.2.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^0.8.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "ava": {
+        "serial": true
+      },
+      "gitHead": "7be97ba3abdf68e9108ae0f5d4bc5a9ba634aa4f",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@5.0.0",
+      "_shasum": "b8671c4924568a363de003ff2fd397ab83f752c5",
+      "_from": ".",
+      "_npmVersion": "2.15.11",
+      "_nodeVersion": "4.8.4",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "dist": {
+        "shasum": "b8671c4924568a363de003ff2fd397ab83f752c5",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-5.0.0.tgz",
+        "integrity": "sha512-1Zi02hpMpXUIUJ8btnNie9KcJtXDObOF7z5BF4bp0esvzKHtjkHsir0KtJvZ29/xlxZX1uSVbYIKzhcPlqejcA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIDjmIsGj/a3JMlCfBpzE8LiScvp1LDEf+VumLf9I6ItCAiBJKKJS1c4P7BbozZqeW8utAOr6/FfZ2IHL5fuc94raOA=="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mozjpeg-5.0.0.tgz_1514393905006_0.7139151431620121"
+      },
+      "directories": {}
+    },
+    "6.0.0": {
+      "name": "mozjpeg",
+      "version": "6.0.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava",
+        "build-linux": "docker build --tag imagemin/mozjpeg docker && docker run --rm --volume $(pwd)/vendor/linux:/src/out imagemin/mozjpeg cp cjpeg /src/out"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "imagemin",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^0.10.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "ava": {
+        "serial": true
+      },
+      "gitHead": "f0f68e50e2ca9f13efa05ce4bfc2ff716d214bc6",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@6.0.0",
+      "_npmVersion": "5.6.0",
+      "_nodeVersion": "8.11.1",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-P7+DRsA88Ghtnjdk37IElbZBwPALFe/qJ55whaJA72ACrulH+c6y9Z0phlV6L5WnbGahSwe0kofDV8y4b175QQ==",
+        "shasum": "ff908a1034de25340ae3e450750c1a6b015e46dc",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-6.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4608,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJa8UTqCRA9TVsSAnZWagAAQZcQAJmVVkLyUilf1I+MnH9x\nBJLcIxQt2NSm88Tgk8hN7RNuDTP9Y3iwuPI9M3+HqAXqClujSmUUxcn/Jovr\n3yODpphv3nmk1RhSEdQ20sOYFUnwXEvaq17EB9jI7OlTAqWOHAeB9AevbNtv\nsrw2RE95AiGuMzy3mWhw/WoLs20KIfkaHFYizU4nCStRHH0tFk9dNJBIP5B0\nW/cjhEfHhlzFsNIF/WIuydfi2hyy8lbFV7fK6F2p20UO3xPhDb4tTJavi/ex\nNn/i5HZSxuvJ5HkqYe2jk4Uc/+Eg0kMO/lNzPD83+yAyB+p+8Gouj1IAtoHq\n4+/egQTQVjhkIeRuiDTsd+/w2P9IstFIBhPJNcDZThljsvIcGNlgwZALXtls\nxGmgrjlFxQ7aZyolqjFdbnTPpejxVguUrD5cjIM1Q2jfVUvwhssJiav9GlHJ\nsgSnk9GSqum9nPH3+21nlt1VWNp2gbVcNQOxZP89OSWlbY9rgNXd3Ba4UpSn\n8XjwWgGT+0Ma58ibkQ87NoMrIUdRtuSn8qtfmBzCaPCzT0v04s6shhFZMaiL\nHL0pXN53dsVjvjb22A7+LB8ueSLUMnnaXYuEnpahbd0vfNQ00HYL+EaQnAh1\nwUuzn4XBEhjGErgtjFVs5CJAJmEucxIM2hpMrHgU0FZ9jPNLncCNCtbc6l1S\necgi\r\n=xLSM\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIEf5x/UQF9XryqlEKMq4pSzj3DDr9VsY/SYQUGkntRR5AiAXB3DWAqznujUD4avUOp6lVC/hOw9n0FDrdOVMeZ2X+A=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mozjpeg_6.0.0_1525761257101_0.8194249472042578"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.1": {
+      "name": "mozjpeg",
+      "version": "6.0.1",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava",
+        "build-linux": "docker build --tag imagemin/mozjpeg docker && docker run --rm --volume $(pwd)/vendor/linux:/src/out imagemin/mozjpeg cp cjpeg /src/out"
+      },
+      "keywords": [
+        "imagemin",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^1.0.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "ava": {
+        "serial": true
+      },
+      "gitHead": "651d9b607f1eebb3aba3028b6c0331884697d50e",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@6.0.1",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.10.0",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-9Z59pJMi8ni+IUvSH5xQwK5tNLw7p3dwDNCZ3o1xE+of3G5Hc/yOz6Ue/YuLiBXU3ZB5oaHPURyPdqfBX/QYJA==",
+        "shasum": "56969dddb5741ef2bcb1af066cae21e61a91a27b",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-6.0.1.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4600,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJb2Q2WCRA9TVsSAnZWagAA6bAQAJ8oj0+5UhAuKc6QFnTl\nRh+9Z3spX3HE9+to7GPx+oNOt8E+d7Y7GJczYsMNmujHrYSV5rfuU2Bx+SoP\nX1wPYS4smzllFd913q6XXsKi5lohZMrnpSrrQWhpeY5Gmcw0ZKDDAvRrnRXv\nJW2auE43uMuXs97zD888Sb8nMY+haKOc5HDpUD0qTcawe8PU1jHGLxHNe/MX\niOYFQGmtNFWTH2GFFpbbyRIyu6lrVEWSox4/T/Cuyr1aeHsBirk9LVpAG0O3\niV7bh+QxoulEgojf63cLeQT3SvlzZcBL640sDKSNTg7RRVACvGQXyXAEXNVp\nepvi9/jOW5gOldTOtGFHpho0+5BbHZktMZ+SsgyG8Dt+L47vngUsSRwDInyg\nOwC9fnZcLnjCErixC6P0SmFMRXthCThkwmjqxE5mynokp70DSxEOzvvc8yii\nBkM4KHqfEEWGsjEflCnPh+7dEkizf2nUtwAfkkdgUFKPBB3Dk74JjvTVZih2\nq75VBH4wYGqGVQEx2T/lQn7CsHyXCyb9F6vUdgpZ8NGXCHaPLKYdl7iF8RB4\nQFo0V9pZEzZI72487m2kdx1KG6HPCByUK59n1TZ3khPWIMsV2T6C+WsyjlaK\nSF64Ot53tPFAW3I9M7sjmLk8Jd1GH5yToPHrLacs/arVXkk1x8rZyKUhRKQ9\nbLCs\r\n=YFL9\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDVnUTzcQ004+hfJr7yvTpqJ8x7mZmCq2I5BU9n8ZlTcAIhAKXuQ7iL8dCKOx76SgzOkXPefDbmd/BmMh8BbfDCMoF5"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "email": "shogo.sensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mozjpeg_6.0.1_1540951446116_0.8925920171887565"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.0": {
+      "name": "mozjpeg",
+      "version": "7.0.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s",
+        "build-linux": "docker build --tag imagemin/mozjpeg docker && docker run --rm --volume $(pwd)/vendor/linux:/src/out imagemin/mozjpeg cp cjpeg /src/out"
+      },
+      "keywords": [
+        "imagemin",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "ava": {
+        "serial": true
+      },
+      "gitHead": "a8f6bc40900e16acf2e3bc76185e2132c85e47e6",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@7.0.0",
+      "_nodeVersion": "12.16.1",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-mH7atSbIusVTO3A4H43sEdmveN3aWn54k6V0edefzCEvOsTrbjg5murY2TsNznaztWnIgaRbWxeLVp4IgKdedQ==",
+        "shasum": "c20f67a538fcaaa388d325875c53c0e7bc432f7d",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-7.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 1637964,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe0MViCRA9TVsSAnZWagAAmY8QAJvo82XsXAfrTLAk9Vt/\ntAJphDbC19Ttjwaum+iYF2nb2KK7EXgcoeLub53h1jX4L4DqG8s7oWi4qhLO\nLsjQrx//Sv3jvQo11swjv+qLCLDIjHauX6f2qKwTYhoCAj5zbmhYwVDqhjwY\nDP57au4QRjJVuO3Xpb3YbJ7Gn4S72OC62eIYYdyRSiSVRZ9B9GADoSlXvTpK\nxO/VPgzE8VMOkd0dg+f4oy8LdrnWHGeVM4qeqMhFzHL0JqoK8ynSc1rsyzS8\n9qOFuUIoQMvDrB29KEMFa10SLyRlRksZhmwcFvDqV+CFMOb7pVZNLzG1DG1I\nKoJYwmGEsBpMPN+cb2a33l8n4OkFaLV/WFusOf4A8nA1tGO620tZ0klDc1Lk\nPee+iDmjxRtbixPXTWAInKdpsJtCo4NKLMXcDSTfL3RXMe4l25xJMq2QyooI\n6YxvJ+NuI1bgs301OxzuBt48UHebaKMLHLZ3flHBKJwnawDuTaarYSk21Rao\n9lSu5azrYH7n81bOKXaGFdwby364vpLtCIaFWcBUT3qdJ3Suz8SOJf+a9ZyP\nkXW2IYxNtjbqEYU/6pTvUI+qtK5pmW0svOrqu107QYCk9j9b7AmeZf1jOVh0\nncs5XbNpxesbYkRj1E4H2Uwm0uOG84rFE6lHKgTCZIMazrp9vYv6Eq7fFK4z\nPlGc\r\n=fq6I\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDW8HlA4Lsk+o/UyxbiWWlDd4wELeaMec9wg5uQGzCh2wIhAPbDOuAf9u+q9l2JwwtPynzXK0rBn71JSUNgxB4xFMyE"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mozjpeg_7.0.0_1590740322135_0.7437984468192058"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.1.0": {
+      "name": "mozjpeg",
+      "version": "7.1.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s",
+        "build-linux": "docker build --tag imagemin/mozjpeg docker && docker run --rm --volume $(pwd)/vendor/linux:/src/out imagemin/mozjpeg cp cjpeg /src/out"
+      },
+      "keywords": [
+        "imagemin",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "ava": {
+        "serial": true
+      },
+      "gitHead": "726d6848453a1c77595d29257903bc1fe2995ae5",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@7.1.0",
+      "_nodeVersion": "12.22.1",
+      "_npmVersion": "7.10.0",
+      "dist": {
+        "integrity": "sha512-A6nVpI33DVi04HxatRx3PZTeVAOP1AC/T/5kXEvP0U8F+J11mmFFDv46BM2j5/cEyzDDtK8ptHeBSphNMrQLqA==",
+        "shasum": "23f202f3e48e98f02ed84f415358d4cbfab66c19",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-7.1.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 1637959,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJgskHKCRA9TVsSAnZWagAAjkgP/03Y5vivp/CBeDwu72U1\n+RmNrKV9PH5qyG/9YQRrs9o2r+pSfh45RdioSb2L7aopIHI1XO1DBnSwOyA+\ns//B0ZH4PlWAK/YS81CECvje1RyKodbnmK9LJpP/VM4WSV/v8pei1mk6MAXF\nDud7oAp1RTXYJEUJRw9icf8zOVd7qT43hQHDUSFrh8DELoyeLbm7zgq7CO42\nfRjWUOA3egnFQYeKZOFRy55XqOdociLRx4zjkoqo77q9tUAWW64pYbPA6SXm\nwHvHOnilomrmH1G9QeUt16PlyoKCRkkpVqdjpjoT7RRFk3rzKwlA9ZULeCF5\n3alAY9FoOP6XKueAYuD81+XygtuKj/S6PSyoL3YimSC6UW/uXnrqhA4fpc4K\nYzKdVWZ5lO0Wjft0V1Fy4QZc+6WEAQM3rAumncBqIQUECUQM+FRAXsLb2WnT\nbTj5T5awzdOZcNRGLk69A6hgYXAD0XIu4i41Tr4YGFiLxumn9x6XFLxTZv8n\nTlMffabyXV4+HRvbUoW/rCEs9nXtKfD9NmXkgN9ZlBnq6QD3CvguMH8KktAl\niPKiXHZxElr/rbNJaIzRM0Sz2ffAztax8kbS4w7SuRLXubvLBngdI9j+2x8c\nX7J00eLqgUOEvi4oIAy0AuhSoGm2u9G1THLcX/FlJdyfR4NgZYTIaZX8ywlu\nunwy\r\n=/0j8\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQD595TIfQipS6q9t249HzohhFEbwmijp+SoyMDB8sGoFQIhAJ04j9TwfQLDNWpHGTKTVpMOBVb2QI5W5IxE38BWIYac"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mozjpeg_7.1.0_1622294985427_0.25628300697869144"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.1.1": {
+      "name": "mozjpeg",
+      "version": "7.1.1",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s",
+        "build-linux": "docker build --tag imagemin/mozjpeg docker && docker run --rm --volume $(pwd)/vendor/linux:/src/out imagemin/mozjpeg cp cjpeg /src/out"
+      },
+      "keywords": [
+        "imagemin",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "ava": {
+        "serial": true
+      },
+      "gitHead": "72c6d9fa64aff2ca853100e5e549fa4d096ef6ab",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@7.1.1",
+      "_nodeVersion": "16.4.1",
+      "_npmVersion": "7.21.0",
+      "dist": {
+        "integrity": "sha512-iIDxWvzhWvLC9mcRJ1uSkiKaj4drF58oCqK2bITm5c2Jt6cJ8qQjSSru2PCaysG+hLIinryj8mgz5ZJzOYTv1A==",
+        "shasum": "dfb61953536e66fcabd4ae795e7a312d42a51f18",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-7.1.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 1637920,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCgyNDxUy3vW5jwGsALI0Fx4LdxMi03/49NgsVDOO8weAIhAOXZZNGAeg1eKcHASG5DAQjq2VNcvbPvKTWtCJxvUC7I"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mozjpeg_7.1.1_1634218634552_0.5900396073631922"
+      },
+      "_hasShrinkwrap": false
+    },
+    "8.0.0": {
+      "name": "mozjpeg",
+      "version": "8.0.0",
+      "description": "mozjpeg wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "bin": {
+        "mozjpeg": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s",
+        "build-linux": "docker build --tag imagemin/mozjpeg docker && docker run --rm --volume $(pwd)/vendor/linux:/src/out imagemin/mozjpeg cp cjpeg /src/out"
+      },
+      "keywords": [
+        "imagemin",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "mozjpeg",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "ava": {
+        "serial": true
+      },
+      "gitHead": "c72b1f53c8faf7ede18e00d1d7fbc4552e40994b",
+      "bugs": {
+        "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+      "_id": "mozjpeg@8.0.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-Ca2Yhah9hG0Iutgsn8MOrAl37P9ThnKsJatjXoWdUO+8X8GeG/6ahvHZrTyqvbs6leMww1SauWUCao/L9qBuFQ==",
+        "shasum": "cd990d96581626ca64b877146ce22ba00b3b308c",
+        "tarball": "https://registry.npmjs.org/mozjpeg/-/mozjpeg-8.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 1638240,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJh2zslCRA9TVsSAnZWagAA/pMP/19BaaiGHHF6/FaAwLLR\nR83rRJbI0qDxWIrO1KRKMxPCqwYXQ+Px1Z/QXOvsB8TmoBCMcjGyqHr4JCQb\naqYu+Tc5F6fft+Mv64NMao4A74A4S6NS7TVN/+qMidTs0+MkPJOEP3IBQhmV\nYPfNywgEJRm//zb7cm9+7AW/5ewac4O/vTJPky/+wCbYJNRwOnvv3PbivfrH\nu5cRt4dQSg7v2a0zL7vTDwFDUwjnoXQVX51Qf9lNRU4DY2uBvqgdK60KnlTw\nn9AHbhXe6ganOrXbCa6NHcqkSNTqDpt8iqHNT3JILhubalfMDR8YgySJGof/\n/cVTUMANWVFGvrgYu5PjiaHqXuRynPtrjHt/bUgVZRBXjrJ7hIgOJ6ipJIMu\nrPlywa2CY50xeuDmNYR4xME7wrOAj7hFDUJZy1FXei7rlYUMRWIgy6S4j3g/\nCZLzUOUi6M9XtD52pjizPklE9xHtBHUv5gtcYUKlfVhSkBXdQSpXkYISKrPh\nIPCDMFnNU8Z3LKLxPuK+o4qHitig58zDBS2iiQtGEsrCs1982n908wYlImmK\nQ2dxZfZdUqAG6wS6Tw5WHJk2nx7qKVd9YCz9J9c8GFO/Wpi+CW+3dhTizrN8\nyU8Bcx7kBRaFI/QS0d1YSN6a2dtPj6NVwCuUcV2cgE91h23qvEGKfFSibxbM\nejIw\r\n=8ov7\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIDDwnBKo4QRbBe+Lb0QjwX66iPSdS87k3hUm+m6sV7t/AiEApqVp3A4G6/8O/5wUMBe6t9bSjXR5U8Lu7lRDL+NtccE="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mozjpeg_8.0.0_1636521600882_0.6235506598103415"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "readme": "# mozjpeg-bin ![GitHub Actions Status](https://github.com/imagemin/mozjpeg-bin/workflows/test/badge.svg?branch=main)\n\n> [mozjpeg](https://github.com/mozilla/mozjpeg) is a production-quality JPEG encoder that improves compression while maintaining compatibility with the vast majority of deployed decoders\n\nYou probably want [`imagemin-mozjpeg`](https://github.com/imagemin/imagemin-mozjpeg) instead.\n\n\n## Install\n\n```\n$ npm install mozjpeg\n```\n\n\n## Usage\n\n```js\nimport {execFile} from 'node:child_process';\nimport mozjpeg from 'mozjpeg';\n\nexecFile(mozjpeg, ['-outfile', 'output.jpg', 'input.jpg'], err => {\n\tconsole.log('Image minified!');\n});\n```\n\n\n## CLI\n\n```\n$ npm install --global mozjpeg\n```\n\n```\n$ mozjpeg --help\n```\n\n\n## License\n\nMIT © [Imagemin](https://github.com/imagemin)\n",
+  "maintainers": [
+    {
+      "name": "nothingismagick",
+      "email": "denjell@sfosc.org"
+    },
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "kevva",
+      "email": "kevinmartensson@gmail.com"
+    },
+    {
+      "name": "shinnn",
+      "email": "snnskwtnb@gmail.com"
+    },
+    {
+      "name": "1000ch",
+      "email": "shogosensui@gmail.com"
+    },
+    {
+      "name": "bradbaris",
+      "email": "bradbaris@gmail.com"
+    },
+    {
+      "name": "xhmikosr",
+      "email": "xhmikosr@gmail.com"
+    }
+  ],
+  "time": {
+    "modified": "2022-06-20T10:48:21.810Z",
+    "created": "2014-04-23T09:51:54.295Z",
+    "0.1.0": "2014-04-23T09:51:54.295Z",
+    "0.1.1": "2014-05-13T08:47:29.547Z",
+    "0.1.2": "2014-05-30T07:05:25.654Z",
+    "0.1.3": "2014-08-08T14:26:34.090Z",
+    "0.1.4": "2014-08-08T15:51:13.316Z",
+    "0.1.5": "2014-08-09T18:35:58.335Z",
+    "0.1.6": "2014-08-09T18:38:00.286Z",
+    "0.1.7": "2014-08-09T19:31:27.260Z",
+    "0.1.8": "2014-08-09T19:36:28.026Z",
+    "0.1.9": "2014-08-09T21:56:02.081Z",
+    "0.1.10": "2014-08-12T23:13:11.908Z",
+    "1.0.0": "2014-08-18T01:21:40.818Z",
+    "1.0.1": "2014-09-05T15:51:31.117Z",
+    "2.0.0": "2014-10-20T15:27:40.830Z",
+    "2.0.1": "2014-10-20T16:37:52.843Z",
+    "2.0.2": "2014-10-21T16:45:54.603Z",
+    "2.0.3": "2014-11-24T15:02:36.541Z",
+    "2.0.4": "2014-12-08T13:05:01.144Z",
+    "3.0.0": "2015-01-27T08:00:39.820Z",
+    "4.0.0": "2015-04-22T14:55:09.649Z",
+    "4.0.1": "2015-06-06T15:16:03.517Z",
+    "4.1.0": "2015-12-13T13:01:24.959Z",
+    "4.1.1": "2015-12-13T13:32:42.843Z",
+    "4.1.2": "2016-05-09T12:38:44.161Z",
+    "4.1.3-rc.1": "2016-05-09T13:44:24.013Z",
+    "4.1.3-rc.2": "2016-05-09T13:50:55.813Z",
+    "4.1.3-rc.3": "2016-05-09T13:56:57.657Z",
+    "4.1.3-rc.4": "2016-05-09T14:04:53.677Z",
+    "5.0.0": "2017-12-27T16:58:25.922Z",
+    "6.0.0": "2018-05-08T06:34:17.161Z",
+    "6.0.1": "2018-10-31T02:04:06.257Z",
+    "7.0.0": "2020-05-29T08:18:42.399Z",
+    "7.1.0": "2021-05-29T13:29:45.663Z",
+    "7.1.1": "2021-10-14T13:37:14.784Z",
+    "8.0.0": "2021-11-10T05:20:01.096Z"
+  },
+  "homepage": "https://github.com/imagemin/mozjpeg-bin#readme",
+  "keywords": [
+    "imagemin",
+    "jpeg",
+    "jpg",
+    "img",
+    "image",
+    "compress",
+    "minify",
+    "mozjpeg",
+    "optimize"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imagemin/mozjpeg-bin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/imagemin/mozjpeg-bin/issues"
+  },
+  "license": "MIT",
+  "readmeFilename": "readme.md",
+  "users": {
+    "t1st3": true,
+    "gurunate": true,
+    "papasavva": true,
+    "jalcine": true,
+    "agplan": true
+  }
+}

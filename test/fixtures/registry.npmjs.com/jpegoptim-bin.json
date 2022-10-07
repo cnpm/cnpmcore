@@ -1,0 +1,1817 @@
+{
+  "_id": "jpegoptim-bin",
+  "_rev": "215-d34541dc4625bc3064d0a0c39f9ccb1f",
+  "name": "jpegoptim-bin",
+  "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+  "dist-tags": {
+    "latest": "7.1.0"
+  },
+  "versions": {
+    "0.1.0": {
+      "name": "jpegoptim-bin",
+      "version": "0.1.0",
+      "description": "JpegOptim Node.js wrapper",
+      "keywords": [
+        "jpg",
+        "jpeg",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/jpegoptim",
+      "bin": {
+        "pngcrush": "bin/jpegoptim.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-jpegoptim-bin.git"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-jpegoptim-bin",
+      "_id": "jpegoptim-bin@0.1.0",
+      "dist": {
+        "shasum": "7d29f1071cd3287478d861010a6f0f4abc2abc23",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-0.1.0.tgz",
+        "integrity": "sha512-VU7W5f2+LSSpUkH7lDSFMXgR+bZ9yLFArBQ59QSFdfW4JI2ZP9jaklGwELV4/Futrdoyy/0jbKE+XA2+fDslmQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCtW9QIsw9UJDG2B9zBkJAsZj8JI52Xwa+yxmoXo7XbsAIhAMppCqUeBqfYtLeb4dvwrI6fKvCH3htu8rX0vwY5pgnh"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.1": {
+      "name": "jpegoptim-bin",
+      "version": "0.1.1",
+      "description": "JpegOptim Node.js wrapper",
+      "keywords": [
+        "jpg",
+        "jpeg",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/jpegoptim",
+      "bin": {
+        "pngcrush": "bin/jpegoptim.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-jpegoptim-bin.git"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "bin-wrapper": "^0.1.9",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "^1.18.2"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-jpegoptim-bin",
+      "_id": "jpegoptim-bin@0.1.1",
+      "dist": {
+        "shasum": "846234f49bf65a46898d009e6fe3a1b8b513a32a",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-0.1.1.tgz",
+        "integrity": "sha512-9zXLX1d9dD7qLXbiSXpEoDLGBl0bv5cGJ5dctwroG72XASgAF3HK+HS9I2QlPPoy24AEHdj6UQAfKvMM5dBtbw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIFLHo1J8KfrnGZut3192A+ktUp9hnMDhluVN2kbw0akwAiAOUPuDhzRsnw7tqcClKKqUkndcIR2vpzMc87O1uCYs6g=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.2": {
+      "name": "jpegoptim-bin",
+      "version": "0.1.2",
+      "description": "JpegOptim Node.js wrapper",
+      "keywords": [
+        "jpg",
+        "jpeg",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/jpegoptim",
+      "bin": {
+        "pngcrush": "bin/jpegoptim.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-jpegoptim-bin.git"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "bin-wrapper": "^0.1.9",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "^1.18.2"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "vendor"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-jpegoptim-bin",
+      "_id": "jpegoptim-bin@0.1.2",
+      "dist": {
+        "shasum": "601946e0677ea43337ee00517d729d5fe6d8e5c7",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-0.1.2.tgz",
+        "integrity": "sha512-qFglm7z/z6sM5g4dJQojGI3hzntz7M+Sud7t12+LO8f3ApTtiqtjEXQvDOTefKgIwxRltUN7rdjc8di3NLtESw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCSQ1iTsq8e34xCFtS7BFgfr8+OmD3ljBvTepIlXdCsFwIgSDagPHO36GBNMqhdCgU1DSQt/Ea1v7GB+9sPyPhc5BM="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.3": {
+      "name": "jpegoptim-bin",
+      "version": "0.1.3",
+      "description": "JpegOptim Node.js wrapper",
+      "keywords": [
+        "jpg",
+        "jpeg",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "main": "lib/jpegoptim",
+      "bin": {
+        "jpegoptim": "bin/jpegoptim.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-jpegoptim-bin.git"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "bin-wrapper": "^0.1.9",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "^1.18.2"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "vendor"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-jpegoptim-bin",
+      "_id": "jpegoptim-bin@0.1.3",
+      "dist": {
+        "shasum": "cf264261047453a36fed20f19204b2b6b12265b3",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-0.1.3.tgz",
+        "integrity": "sha512-gTZog7p9sKcEi48479kz01n7Z1+IYMiIKNo/pXIkMGiNtNEsso+CvjzZm9+fv3Lec0tk5m6sC7J296yoaDn9sA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCIb+YUHD3eqf/FRkihHTida1FW7+Y8yPYxqqJQZq/xyQIgR9Qz4Ab4uBfwL3hCCwH6qGgONYldrKbeoUotm3AcsDM="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.4": {
+      "name": "jpegoptim-bin",
+      "version": "0.1.4",
+      "description": "JpegOptim Node.js wrapper",
+      "keywords": [
+        "jpg",
+        "jpeg",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://1000ch.net"
+      },
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-jpegoptim-bin.git"
+      },
+      "scripts": {
+        "test": "mocha --reporter spec --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "BSD",
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-jpegoptim-bin",
+      "_id": "jpegoptim-bin@0.1.4",
+      "dist": {
+        "shasum": "48c587fdc26be09d6fd4654664f335cf34e03a0c",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-0.1.4.tgz",
+        "integrity": "sha512-LiIcVhPoggo9T83wIr8902PQtT8H/lqQLzjG27eDLBhEIwFB5APm9Kaz7IThqpYwVGHpDpMCmexE8t1NLmjCeQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDI6OWRoOGngFs3Vag8b6Bc7A9EC5OXswS2uYYjNgP1kQIgDLA/3Y4eANWcQXKT/95Fa1KruQH31Gm0/F3TcAgKpV8="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.6": {
+      "name": "jpegoptim-bin",
+      "version": "0.1.6",
+      "description": "JpegOptim Node.js wrapper",
+      "keywords": [
+        "jpg",
+        "jpeg",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "https://github.com/1000ch"
+      },
+      "maintainer": {
+        "name": "Kevin Mårtensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "https://github.com/kevva"
+      },
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-jpegoptim-bin.git"
+      },
+      "scripts": {
+        "test": "mocha --reporter spec --timeout 50000",
+        "postinstall": "node lib/install.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "BSD",
+      "dependencies": {
+        "bin-build": "^0.2.0",
+        "bin-wrapper": "^0.4.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.2.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "gitHead": "1eecabf7c441434b1d25295f31b438f081ddee1e",
+      "bugs": {
+        "url": "https://github.com/1000ch/node-jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-jpegoptim-bin",
+      "_id": "jpegoptim-bin@0.1.6",
+      "_shasum": "871310c8290a6c317ee21118bc3a2c68c868aa4f",
+      "_from": ".",
+      "_npmVersion": "1.4.21",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "871310c8290a6c317ee21118bc3a2c68c868aa4f",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-0.1.6.tgz",
+        "integrity": "sha512-mM2NfH/j4IeBEMszff9dbMGxLvzlpZ4sCHB4rczQoIl6HketeH8IHtVVKcdLhjoApHMtyMmonRQVXKL1kSulPQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIEI/yzHqXiPGt/P7cp84Rp+L37j7qyXg1OMBXrrp/DOYAiBmMbODcvbhYYjDNSy/2ixlY37Yws9j7E6li52SbgCwDg=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.0": {
+      "name": "jpegoptim-bin",
+      "version": "1.0.0",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/jpegoptim-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "node test/test.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^1.0.0",
+        "bin-wrapper": "^1.0.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "0.0.4",
+        "bin-version": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "rimraf": "^2.2.8"
+      },
+      "gitHead": "770224592c96cfa3a36c4f8361bd6d2fde723cb8",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin",
+      "_id": "jpegoptim-bin@1.0.0",
+      "_shasum": "5ee12ab45ed1ba94e069755b6f940b2d8970107d",
+      "_from": ".",
+      "_npmVersion": "1.4.26",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "5ee12ab45ed1ba94e069755b6f940b2d8970107d",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-1.0.0.tgz",
+        "integrity": "sha512-XIVQ+H8VE2jikbN3sx3BPFlEIUVZp8w6hdilPaILStz+r2btyItynosrAYNu3sfoiRb/PJfSSR6M+2aYrjNiGw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIHG7REdKO+hgx8ezPf4w2m6dUmoUXhVBfedCEBj5vfRyAiAITufhRKym1o5+Bqe0+/o5Hiz0TP4mGN4/1JKPLni/DA=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.0": {
+      "name": "jpegoptim-bin",
+      "version": "2.0.0",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/jpegoptim-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-version": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "419a6e019dbdc44b6db92e4ff3cd9e1db12e8692",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin",
+      "_id": "jpegoptim-bin@2.0.0",
+      "_shasum": "57c390bf5907aeb172109ce4ac684cc91b95e918",
+      "_from": ".",
+      "_npmVersion": "2.1.5",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "57c390bf5907aeb172109ce4ac684cc91b95e918",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-2.0.0.tgz",
+        "integrity": "sha512-NvyEKdxUzIQSBuEOpKOnQpwUtLMFRWY2YNyCgkSD3mIw2YDeR5tYGmUAFxGhiE3xExoR0j2q1K7U/kzvItVjzg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQD164YV4VlMltUsE6W/ZTWVaZnM5s3g1YmmT3/wN0K9AAIhAILZRs3YJ9MiwzPQBPkEM4r06ULrepOEEvejySVVSGmq"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.1": {
+      "name": "jpegoptim-bin",
+      "version": "2.0.1",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/jpegoptim-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-version": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "317a8620745ee1894a8adbe8ee0c5cd037691b75",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin",
+      "_id": "jpegoptim-bin@2.0.1",
+      "_shasum": "dc06f646159bb86e62031a403d49afa077563e16",
+      "_from": ".",
+      "_npmVersion": "2.1.7",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "dc06f646159bb86e62031a403d49afa077563e16",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-2.0.1.tgz",
+        "integrity": "sha512-JcXd/kxGNy8fdHUR26CFhncP3KlJ6rSRwXvcQEtgzdexIIKYR67QqRHzQr1y62r+JNyYacbF42uE5PHqewApDQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDcTtjidS0c3ZhNpXrrHs1VQFj/+m/WQWFhg9nnfkkQXgIgb46vw+duVdu8s1N6SzYwjSMLKHER48yUkV5sY+Zg4Ng="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.0": {
+      "name": "jpegoptim-bin",
+      "version": "3.0.0",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegoptim-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 50000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "6486ac51ad25c596d2fd930c6fc577b6c2c16fdc",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin#readme",
+      "_id": "jpegoptim-bin@3.0.0",
+      "_shasum": "9f7a05d83b302bd19913decf339a9dae1bda0c2b",
+      "_from": ".",
+      "_npmVersion": "3.4.0",
+      "_nodeVersion": "5.0.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "9f7a05d83b302bd19913decf339a9dae1bda0c2b",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-3.0.0.tgz",
+        "integrity": "sha512-ttmGw92F10UIqG2wCWoNP3MFjBVBBNU5L9CLFFO7ruCFi+q2A4wpXyPsTmd8oVVLgHUdcNaYVyidlCNey6l+ug==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIFND+LMTnktC1t0drxSSBybSHo2tn1SfPpU+AAbJ9yedAiEArKfqsJuvcWrnliZhur4GRkquwjPVKpcBVzpHKjcWCFY="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "4.0.0": {
+      "name": "jpegoptim-bin",
+      "version": "4.0.0",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegoptim-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "engines": {
+        "node": ">=4"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "imagemin",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegoptim"
+      ],
+      "dependencies": {
+        "bin-build": "^2.2.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^0.8.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "gitHead": "06ad9c5bccdf57633d4e5662b6b9c15fb45a80c1",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin#readme",
+      "_id": "jpegoptim-bin@4.0.0",
+      "_shasum": "64839a91d8efd935c37441afc8f73ef407248bb6",
+      "_from": ".",
+      "_npmVersion": "2.15.11",
+      "_nodeVersion": "4.8.4",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "dist": {
+        "shasum": "64839a91d8efd935c37441afc8f73ef407248bb6",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-4.0.0.tgz",
+        "integrity": "sha512-d+pxu1as1BT2/A2tzab/DtdxvUpzwYKl1bQk6YDqGn5DGp7EdomaRGVMlFiGsvNLgFpbxCjochMlYX6f24PG2w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIHAC6zjKtEEBUDBWj6JoD/5YLc4Nq/aXD+NssPDWHwkqAiEAkRbUF0qplMEOObLV9Rrk5FEwx/NWtyx4Yse3jvrzKD4="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegoptim-bin-4.0.0.tgz_1514403356766_0.8382778819650412"
+      },
+      "directories": {}
+    },
+    "5.0.0": {
+      "name": "jpegoptim-bin",
+      "version": "5.0.0",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegoptim-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "email": "shogo.sensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        }
+      ],
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "compress",
+        "imagemin",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegoptim"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^1.0.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "gitHead": "559b4313beb797051ce249009c35f70cf2fd2e06",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin#readme",
+      "_id": "jpegoptim-bin@5.0.0",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.10.0",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-JsnxFB3qsopgpjuHPLncdh1aISAGiyOkmXGVWcjaMQ69CUxjkEn/V8ZQNO2qjt8iliMgmYvt140lydYKv7+qVw==",
+        "shasum": "ff75d99fff5927f90f0ced6dde811b405b00dcbe",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-5.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4966,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJb2YTFCRA9TVsSAnZWagAAIOIP/RwqMNeE9WDeZzYQoPv1\nfIr6ixY7OA3/jQ0VDdK5kDZldChQs6xocRJqc1IOSuCWrgplz/dV+IvRfX/O\npjRVdL3snlczTdaGmt8gGNyPDeBErv7kHC49OtJ7yaFGthqg+RJDjuuqO6GD\ntrqs5RDO/NxKCQPsUnLBC2oSDupeuAAZBsEqvIjDmhZtkAoDUw6aJsu6iEW4\n7kAwuCWQsge+YcEU8U8/saO9ZcfqifMdj0NXzsZe8AChIOA/KUrr9z+e/WNh\nVhJZzvWCbN8otiVCwcZN7ksKX8r3EXfQHeBNfIDXSI4DfAr/jE4MJAVhphTr\n9NlOIt8PtsVOJ0zQ4Xe+0aJnMm0a6TzTDZ+B+PQmZs1mMRATfuv4aO21xEKC\nijaGgrjje+Mg2Gm4QCcKsaQmeoMznnY+jNF49Mdf1Yq5KoNuOOTE44XS+OvV\nZsNSwxcCrqlaRbuDx9QRuaUP8W8vViO1BZjOS27b6TwHSCk+yV1HpdMBRr9c\n3Saw4vF+62Ixs53bPNj0zFFn0hnp654j8LJCp8Hbvxr+Lj0GW0BWb+/9DyDf\nPIIruubY6FbMX6b5NZjo8zLwvI6tFb3MIeLbkAVykFaK3bBUYjG33uBuq2rn\nXVIZq5Km6L9blShd/Dfhk6AMJ4KLyQP+v2y5wCPKGXck/uFBW0zTqHE06BDU\nS0Il\r\n=J2He\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCTKBdKhjmhNH0huIUFzi786OyhgzBFSltZwPuoZBEfdwIhAPblRvF+Lev3YF6nHfLwUh1FopRrZydL1PumwUk2vG84"
+          }
+        ]
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegoptim-bin_5.0.0_1540981956606_0.0377913383111661"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.1.0": {
+      "name": "jpegoptim-bin",
+      "version": "5.1.0",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegoptim-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "compress",
+        "imagemin",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegoptim"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^1.0.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "gitHead": "9edfe230c59e80570f5c05949edfd0bb3b5922c1",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin#readme",
+      "_id": "jpegoptim-bin@5.1.0",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.14.1",
+      "_npmUser": {
+        "name": "xhmikosr",
+        "email": "xhmikosr@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-BdvkO6wPLLSid7M6t3HnXuYvfLOxbeatgePBi4c4ps3iwoJ2ReUtvXJvJtsDCeN5l3Cm2tHEUcU7V5+M30hUew==",
+        "shasum": "afe26498bcf91d64beca9e235f60bac7525bf969",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-5.1.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 5103,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcDT/8CRA9TVsSAnZWagAAphkP/Regxnhfkusnx3oKBr3K\nJhNJkYoYC04wCU9ZVVkOneOY9JW0/7tx0ss3/m3FbXmSkzKbiYblhSL44k8X\n8BdQ0XNjkUObJe2M8u6/ZwvUqXRSuB39WB9HoWJVNAkZbRRC/tyoDctKN74v\nYwUQ1ITyifXTb+IjMyg1nnw1ATB/ZoRgdLSPdU3xcLUI573x0EEEbYpMSTpA\nYvQ/DVsbSuhexKNTekm6Yw3NCv1U3xpvxfcHK1N8fE4f0u5gVDT33W/695Op\nXjB2l0+vuquU3kESMTyXH1ySK4qYc+ucb7pSs5/tdujyu4aBxKvlazeVMnS+\nWtHEqQYNdyokMZUvvV13k/sTSDXrfAhMLZVSOiEj3h9iaqVZ/gSJeDzsOcye\nFd0UgqUNAkXk074W2Lqeqoiut5pJhEcqpwljjpmGDbUVy4pNh8AJqJCYk01V\nX9ibHZDc3RXoaZeJSR1ECeYybRfUh7Cyn6RoPH2jNVa1DKcxvLBDz2ZmVBTG\nh01E+eiST+Ndqe2xNMiXGSHsyrzFvnYfCzF7jKBdoRXv/lszI8QErH+agDLb\nFqDMZoO0Ifa8LIOHbtvb5RbGGDwS9dexbHXw84o7Vr4iqWncPeZ5dlk7xIqV\n5n+ozypl+omWDWcR1wEgFlu+zPcuMt9l+yVhvRw5wfDf6jgkdR5tVmi+p0WZ\nFaft\r\n=RN7H\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQC5dbVrXUh7mOLcgXKgeqQ0OolyXzHpmHHtsJonbKyFDwIgcLCPwi/HykKlX7EyvhDrgza25FX4XD+WxzFQoOXJdGA="
+          }
+        ]
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegoptim-bin_5.1.0_1544372220167_0.4659154834193724"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.0": {
+      "name": "jpegoptim-bin",
+      "version": "6.0.0",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegoptim-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=20s"
+      },
+      "keywords": [
+        "compress",
+        "imagemin",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegoptim"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "26ae86b1f02efd70276470b20541e0dbcd87bfa2",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin#readme",
+      "_id": "jpegoptim-bin@6.0.0",
+      "_nodeVersion": "12.16.1",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-zcztMFmVtr0zZvwoTyAyU3dc9X8nmeqwM2VZHE7dxUgZYW4xMknw3U1B/CmW9tnoK3b5cUKa/fyi5O3NV4RjNA==",
+        "shasum": "c9df0c4636c9efff3d978a0b7eb60e945a83b5a9",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-6.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 5009,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJey6WYCRA9TVsSAnZWagAAVHgQAJvsVa5ynDoyrheooSmC\n4ofxOZ+73rGr65JMUnbrwycrg4QBMCSrLMK8RSBzjO6TR4bGEx+lmVSYQeyt\npRBKVh0D+g9v+oCGygKmCsqcuDwuiZfs1ugymo/VAFOm0eRrVaEl4uxeOl/h\naNOX20gIzaDdg7QAPggwf+feQtg0U/CJtVMUqmGWjqmmSuSqKnJMuEofDdbE\nn8No4Z1sMNxcaEjwg875/p8RLPav3IEY0y1SB8XyJL2CGOF41ayKVQr93kOo\nnK/4KurXlvilg8DNDupjkXNQao+K/5yUn9T+elLw/b03gHX8HnWUM84lZFzz\n1uQ++DBTey5hbUdHH6Tn5JaWNOjtZJob3VFtQeHI+HM4MXvsqmaeK2CZ9V6a\n28OrjgOb73dNAvQu1QInLJSUJaq06cb6ugVSTDDfMuaQrur0XCXyUVPeP7Vw\nm1St16cXP/CWIycKxY2SzIUMAWOsTGAfmDd5epq5Lrj3MqphQPS0yQpje2ki\n/Ew1qvWSo63YuFP0Nsh1BrEX/Y4FoWMauQFt2uOQLJtYB2C9oAlnMnWsBzyp\ncHnH06L46injNgp0yV1ik15juxsAFmsanqV3yNm4huh5pG4mSbUsmuudEz+f\n2xT9mepN+GVwHtpbF1ejiBW6DGixdsCVA1J64PjmAsnUR+0OhaqVKmUU1SjO\niVUB\r\n=0DHC\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIAloRJscNOUYwi4cPzgU568k2GaYdoYE6eJzkQXrMPNwAiBiQuDtoLkeUMgtgJ2WDI/9+J+rnT5W1U75RK/69FCeyA=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegoptim-bin_6.0.0_1590404503666_0.05887036602586093"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.1": {
+      "name": "jpegoptim-bin",
+      "version": "6.0.1",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegoptim-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "compress",
+        "imagemin",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegoptim"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "2114178d0023cfb67cde2bbe893fff833b2be0da",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin#readme",
+      "_id": "jpegoptim-bin@6.0.1",
+      "_nodeVersion": "16.4.1",
+      "_npmVersion": "7.21.0",
+      "dist": {
+        "integrity": "sha512-lf1fOC2R59gixaXzMLiGemTtzmjRejfLiSnesXSW8/F/D9RsWWlNpX734RfrjLrWtjjpemYLfaPYmRBLZ/SUnQ==",
+        "shasum": "ee545ffcae9dfd16427a3514e5b1c8ee7e263eb7",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-6.0.1.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4937,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCICfbg1kJwA6K+y9HEVf+ARGEhRXP2pVpRodMJfBBx9AVAiEAiOiNV/XlzJg2fqioJRZHa9qfEiPE4gUQmD0GA78ED9U="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegoptim-bin_6.0.1_1634361100544_0.1159746270573756"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.0": {
+      "name": "jpegoptim-bin",
+      "version": "7.0.0",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegoptim-bin.git"
+      },
+      "type": "module",
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogosensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "compress",
+        "imagemin",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegoptim"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "197b282dbfd6c2b0355e69e60948153f43948f8e",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin#readme",
+      "_id": "jpegoptim-bin@7.0.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-ZJYpZZMbhA8HjPo+y9HSxaY5RPJcn48aHz4I4eVqIievq4YlNULNCeUwOCIufHBeKUjNkZ1bskeULtvssPIvoQ==",
+        "shasum": "f54585ca8b68a1017288e814d3bf1b0f2a6f78ce",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-7.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 5180,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIBVNvvmp1112oFzbqMKvL/JcVLXbggzqw7duxmwSoTxnAiEA/w76Cy1B5ZKCU80qil8KIaW2jkzbgT/3xVUD21j+f/s="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegoptim-bin_7.0.0_1634957167221_0.3023830653183113"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.1": {
+      "name": "jpegoptim-bin",
+      "version": "7.0.1",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegoptim-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogosensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "compress",
+        "imagemin",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegoptim"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "88da3d823a5488d1f871bdb86377c5702ec70e17",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin#readme",
+      "_id": "jpegoptim-bin@7.0.1",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-ZZMNQGUMqWYBM21W5GiAbzA6dHWpUDB6oBpok9gpkKBXiFQH0GXWcnAPwerw/YIpevb+5g4G80PDthMk4YiVdA==",
+        "shasum": "f068909ebe15445d6050c9db9160ac8475120399",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-7.0.1.tgz",
+        "fileCount": 7,
+        "unpackedSize": 5207,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIAVDNnm/RwSTci7OEeqHS8UEQ3EO6upVcXSjhwAn8LXeAiEA9ICBMkqW1dLuz4AxLVYvsL/XS5fl5LDxYiePxztNPHo="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegoptim-bin_7.0.1_1636523871355_0.1896796043638611"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.1.0": {
+      "name": "jpegoptim-bin",
+      "version": "7.1.0",
+      "description": "jpegoptim wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegoptim-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogosensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "jpegoptim": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "compress",
+        "imagemin",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegoptim"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "ba8535cdf55c955111b27ef255457fc3e2cab918",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegoptim-bin#readme",
+      "_id": "jpegoptim-bin@7.1.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-D4F/ML4T36A8cit5Wuwy5aaRIxqRCgkvZL1F01lKL30nHW/Rnq3f5fnsSuxSE8BW2Z31ajS2L6Rvt65rTxSCbA==",
+        "shasum": "cf5b6c15a64ad3717dc4562092dbb9e711bb4312",
+        "tarball": "https://registry.npmjs.org/jpegoptim-bin/-/jpegoptim-bin-7.1.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 5207,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJh2wk+CRA9TVsSAnZWagAAnO8P/34ASZcJa66zFqlQceEu\nR7rvMH7UOQMN/949ap7TrPvuOjX6n9x/ahcEZ3Gp1EkWO3QjPtFhsHd9Eng8\nt+suwq/l8S1pOOCNI1e9zIAU8Y9ZGFPUCGodzv9dSSLoQbo15KWwI40PojfE\n37Gq3d5xKR8Tf8wjGqHeJKLHqMQo/xCkXGs9mFy1AAPxYgWexgOMqrKyRrNy\n8GB9EGYTT7q8CsWO9DK7iqetYETdU6uvj+LUj+ZijorVEauibnywn2BoQZHX\ndEE83IITlgKsBbn1qL0+Fhna+y07i8GH8E7FTZ3mosmLBmyeampEEA00hEwR\nSS0vd0XNqtjVxxoN2z59M1epwloneLP860gGt7HoXlOgMVe1qbPzpQUGsBCn\nF/QA22AMFEoZ+h7IJ+Uws3bWf4Ymi69nFAKcTlzajT5vXEENJr14+DvWuQVy\nhycblnYTiZwZ/KlmLfXCBVU6mirqycZwsIr9bfUQWQKC8wrqax/cIVW4Iy55\nTtujZ40CqewZ8E0YhmPL0ta+cc317+pbtJBnTiez3Hf0AELYEhj2srcQNAsU\ntgiX0e+O4sD1w5/v3yhwDLvi9Zs+L4vrpbWorSEw+FZ5Ckbq6pwWmQO6OtFq\nxlUJVxgAGc6bE3X8wr+Bda85G07w9TDIx38a6wLwx7fegLnZGaz3rSxoGVJL\ngV5w\r\n=7c40\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCoSS1eMvB7ciCwCTBQX2wZv4vjQxqxoQG3uKfZ0ANMvQIgJl2Uyc/RJlHWnskf5zQwCfq3mMvehFon31LLCNXVbds="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegoptim-bin_7.1.0_1636639084624_0.3885861719409216"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "readme": "# jpegoptim-bin ![GitHub Actions Status](https://github.com/imagemin/jpegoptim-bin/workflows/test/badge.svg?branch=main)\n\n\n> [jpegoptim](https://github.com/tjko/jpegoptim) is a utility for optimizing JPEG files that provides lossless optimization (based on optimizing the Huffman tables) and \"lossy\" optimization based on setting a maximum quality factor\n\nYou probably want [`imagemin-jpegoptim`](https://github.com/imagemin/imagemin-jpegoptim) instead.\n\n\n## Install\n\n```\n$ npm install jpegoptim-bin\n```\n\nMake sure you have the correct version of libjpeg. See [jpegoptim's README](https://github.com/tjko/jpegoptim#readme) for more information.\n\n\n## Usage\n\n```js\nimport {execFile} from 'child_process';\nimport jpegoptim from 'jpegoptim-bin';\n\nconst args = [\n\t'--overwrite',\n\t'--strip-all',\n\t'--strip-iptc',\n\t'--strip-icc',\n\t'--all-progressive',\n\t'--dest=build',\n\t'input.jpg'\n];\n\nexecFile(jpegoptim, args, error => {\n\tconsole.log('Image minified');\n});\n```\n\n\n## CLI\n\n```\n$ npm install --global jpegoptim-bin\n```\n\n```\n$ jpegoptim --help\n```\n\n\n## License\n\nMIT © [Imagemin](https://github.com/imagemin)\n",
+  "maintainers": [
+    {
+      "name": "nothingismagick",
+      "email": "denjell@sfosc.org"
+    },
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "kevva",
+      "email": "kevinmartensson@gmail.com"
+    },
+    {
+      "name": "shinnn",
+      "email": "snnskwtnb@gmail.com"
+    },
+    {
+      "name": "1000ch",
+      "email": "shogosensui@gmail.com"
+    },
+    {
+      "name": "bradbaris",
+      "email": "bradbaris@gmail.com"
+    },
+    {
+      "name": "xhmikosr",
+      "email": "xhmikosr@gmail.com"
+    }
+  ],
+  "time": {
+    "modified": "2022-06-19T04:52:47.208Z",
+    "created": "2014-03-21T03:29:19.120Z",
+    "0.1.0": "2014-03-21T03:29:19.120Z",
+    "0.1.1": "2014-04-22T01:15:56.359Z",
+    "0.1.2": "2014-04-23T14:08:44.996Z",
+    "0.1.3": "2014-04-23T14:12:28.873Z",
+    "0.1.4": "2014-04-30T02:21:25.852Z",
+    "0.1.6": "2014-08-13T01:15:41.182Z",
+    "1.0.0": "2014-09-17T13:38:04.002Z",
+    "2.0.0": "2014-10-20T15:31:42.468Z",
+    "2.0.1": "2014-11-24T14:59:47.537Z",
+    "2.1.0": "2015-11-13T16:30:56.066Z",
+    "3.0.0": "2015-11-15T20:59:22.617Z",
+    "4.0.0": "2017-12-27T19:35:57.621Z",
+    "5.0.0": "2018-10-31T10:32:36.789Z",
+    "5.1.0": "2018-12-09T16:17:00.281Z",
+    "6.0.0": "2020-05-25T11:01:43.781Z",
+    "6.0.1": "2021-10-16T05:11:40.675Z",
+    "7.0.0": "2021-10-23T02:46:07.412Z",
+    "7.0.1": "2021-11-10T05:57:51.483Z",
+    "7.1.0": "2021-11-11T13:58:04.774Z"
+  },
+  "homepage": "https://github.com/imagemin/jpegoptim-bin#readme",
+  "keywords": [
+    "compress",
+    "imagemin",
+    "image",
+    "img",
+    "jpeg",
+    "jpg",
+    "minify",
+    "optimize",
+    "jpegoptim"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imagemin/jpegoptim-bin.git"
+  },
+  "author": {
+    "name": "Shogo Sensui",
+    "email": "shogosensui@gmail.com",
+    "url": "github.com/1000ch"
+  },
+  "bugs": {
+    "url": "https://github.com/imagemin/jpegoptim-bin/issues"
+  },
+  "readmeFilename": "readme.md",
+  "license": "MIT",
+  "users": {
+    "rosswil": true,
+    "t1st3": true,
+    "codepile": true,
+    "giuseppe.morelli": true
+  }
+}

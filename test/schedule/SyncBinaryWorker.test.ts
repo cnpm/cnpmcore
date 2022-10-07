@@ -1,6 +1,6 @@
-// import assert = require('assert');
 import { app, mock } from 'egg-mock/bootstrap';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
+import { TestUtil } from 'test/TestUtil';
 
 const CreateSyncBinaryTaskPath = require.resolve('../../app/port/schedule/CreateSyncBinaryTask');
 const SyncBinaryWorkerPath = require.resolve('../../app/port/schedule/SyncBinaryWorker');
@@ -14,7 +14,15 @@ describe('test/schedule/SyncBinaryWorker.test.ts', () => {
     app.notExpectLog('[SyncBinaryWorker:executeTask:success]');
   });
 
-  it('should sync worker success', async () => {
+  it('should sync binary worker success', async () => {
+    app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+      data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
+      persist: false,
+    });
+    app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
+      data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+      persist: false,
+    });
     mock(app.config.cnpmcore, 'enableSyncBinary', true);
     // create task
     await app.runSchedule(CreateSyncBinaryTaskPath);

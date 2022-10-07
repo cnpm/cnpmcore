@@ -1,5 +1,4 @@
 import assert = require('assert');
-import { readFile } from 'fs/promises';
 import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
@@ -50,11 +49,11 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
     it('should show node binaries', async () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
-        data: await readFile(TestUtil.getFixtures('nodejs.org/site/index.json')),
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
       });
       app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
-        data: await readFile(TestUtil.getFixtures('nodejs.org/site/latest/docs/apilinks.json')),
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
         persist: false,
       });
       await binarySyncerService.createTask('node', {});
@@ -165,7 +164,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
     it('should show node binaries: /@journeyapps/sqlcipher', async () => {
       app.mockHttpclient('https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher/v5.3.1/napi-v6-win32-ia32.tar.gz', 'GET', {
-        data: await readFile(TestUtil.getFixtures('foobar-1.0.0.tgz')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       await binarySyncerService.createTask('@journeyapps/sqlcipher', {});

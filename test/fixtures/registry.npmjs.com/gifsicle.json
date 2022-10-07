@@ -1,0 +1,3271 @@
+{
+  "_id": "gifsicle",
+  "_rev": "94-8d290ce7a780ff4475fdd94c8048b625",
+  "name": "gifsicle",
+  "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+  "dist-tags": {
+    "latest": "7.0.1",
+    "version5": "5.3.0"
+  },
+  "versions": {
+    "0.1.0": {
+      "name": "gifsicle",
+      "version": "0.1.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-gifsicle",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-gifsicle/issues"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-gifsicle.git"
+      },
+      "main": "lib/gifsicle",
+      "bin": {
+        "gifsicle": "bin/gifsicle.js"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node lib/check.js"
+      },
+      "dependencies": {
+        "which": "~1.0.5",
+        "mocha": "~1.12.0",
+        "tar": "~0.1.17",
+        "request": "~2.25.0",
+        "request-progress": "~0.2.1",
+        "chalk": "~0.2.0"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "test"
+      ],
+      "_id": "gifsicle@0.1.0",
+      "dist": {
+        "shasum": "440d737306601eec983c0d02d0ce12e468fcf296",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-0.1.0.tgz",
+        "integrity": "sha512-FHQ0U6JS8aFB+C/KW989DhRd9AwqLatljlxyJzsayxJffLyPGsiQ4Vwj/hIYYejcI2aYxCc6vrv44khFee3/Rg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIEJtzdbRUwrFfSLO4HMZFME12KlymmaujvFIrkQVafs7AiBo4wb+v3BCO9DgkLumW60OrWvtSodkSlt8E7jAI587cw=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.32",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.1": {
+      "name": "gifsicle",
+      "version": "0.1.1",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-gifsicle",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-gifsicle/issues"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-gifsicle.git"
+      },
+      "main": "lib/gifsicle",
+      "bin": {
+        "gifsicle": "bin/gifsicle.js"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node lib/check.js"
+      },
+      "dependencies": {
+        "which": "~1.0.5",
+        "mocha": "~1.12.0",
+        "tar": "~0.1.17",
+        "request": "~2.25.0",
+        "request-progress": "~0.2.1",
+        "chalk": "~0.2.0"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "test"
+      ],
+      "_id": "gifsicle@0.1.1",
+      "dist": {
+        "shasum": "e3edde999a8c0f379afda0ce8ade2224f405a8a6",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-0.1.1.tgz",
+        "integrity": "sha512-gtg4YIh3eErEyvgEHFoe0eLXRBr53qr6Fl0hyhpIV0Ds9M1E/gum4HIh95PtEsXb1CZbu5wTZSWP7GK4MJIAVQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCH4AocDq2p1cCwvIJLlqWivrLrQoDc9ApAjFtTp1YxvwIhAKn0VOjj7s89mhcN2Jt772Bj0OyG4zuoH+Dfo03zI1fL"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.5",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.2": {
+      "name": "gifsicle",
+      "version": "0.1.2",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-gifsicle",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-gifsicle/issues"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-gifsicle.git"
+      },
+      "main": "lib/gifsicle",
+      "bin": {
+        "gifsicle": "bin/gifsicle.js"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node lib/check.js"
+      },
+      "dependencies": {
+        "which": "~1.0.5",
+        "mocha": "~1.12.0",
+        "tar": "~0.1.17",
+        "request": "~2.25.0",
+        "request-progress": "~0.2.1",
+        "chalk": "~0.2.0",
+        "mkdirp": "~0.3.5"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "test"
+      ],
+      "_id": "gifsicle@0.1.2",
+      "dist": {
+        "shasum": "6e03a2d7d2668f99134ddd02224cd899c2befb19",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-0.1.2.tgz",
+        "integrity": "sha512-h63nKxZk/i1pfNlstSGvAPp9/iDy2UC9UsZqt06KHhIJFEuy5mt1UnqmGG+ARAewCQYxpBw5uCMPIU9Tn4UlhA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCVlc0pYgvDa6jPQ59VlPYp0yv6Oc/B2S2dPCLS0pWsswIgZtRdmYrvHfFmsQb/fnyTzoe+conIqaAeVzTF/fADDO0="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.32",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.3": {
+      "name": "gifsicle",
+      "version": "0.1.3",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-gifsicle",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-gifsicle/issues"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-gifsicle.git"
+      },
+      "main": "lib/gifsicle",
+      "bin": {
+        "gifsicle": "bin/gifsicle.js"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node lib/check.js"
+      },
+      "dependencies": {
+        "which": "~1.0.5",
+        "mocha": "~1.12.0",
+        "tar": "~0.1.17",
+        "request": "~2.25.0",
+        "request-progress": "~0.2.1",
+        "chalk": "~0.2.0",
+        "mkdirp": "~0.3.5"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "test"
+      ],
+      "_id": "gifsicle@0.1.3",
+      "dist": {
+        "shasum": "7aafd8321df02a102b87feddf5b41bd3f3a9672a",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-0.1.3.tgz",
+        "integrity": "sha512-r40AUq2LgYywNfUo23VIMdKXmehuk8xr7JRgA6S1PjFvuLQaGoaOwT2VGxyRNQMPIq3RPa4CKqB9XKTLVcF/zg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIEbEC1Th5yVuVbEFXQZHZ9xTTvjJn4mnRD7erjcywzq1AiBrdT6B05gK1AnpS0/rp1P7FxD1c2qYcsFEi+AuCPM7Bw=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.8",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.4": {
+      "name": "gifsicle",
+      "version": "0.1.4",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-gifsicle",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-gifsicle/issues"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-gifsicle.git"
+      },
+      "main": "lib/gifsicle",
+      "bin": {
+        "gifsicle": "bin/gifsicle.js"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node lib/check.js"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.3",
+        "chalk": "~0.2.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.13.0"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "_id": "gifsicle@0.1.4",
+      "dist": {
+        "shasum": "c592c8625fc0ae05f88ceaa8e67ce20351236d3c",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-0.1.4.tgz",
+        "integrity": "sha512-uUc7xSNlSrnhf5vfEYZQcWVk1dZQu3nRZhj6QysWGW4ZMnnd8bitIqEbYD8daAWnCT+hCaAAD4AsrBYN7dvulQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCICjrXiGyLb7JtwmfRyw55uMO73OtIUt3fvHSFEUJS+xvAiBy5UUdRm8sJ63BEFnixgWZeHWGX4vayrKGLlMnBu0ajw=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.11",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.5": {
+      "name": "gifsicle",
+      "version": "0.1.5",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-gifsicle"
+      },
+      "main": "index.js",
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "test": "mocha --reporter list --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.2.0",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "~0.1.0",
+        "mocha": "~1.18.2",
+        "rimraf": "~2.2.6"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "bugs": {
+        "url": "https://github.com/yeoman/node-gifsicle/issues"
+      },
+      "homepage": "https://github.com/yeoman/node-gifsicle",
+      "_id": "gifsicle@0.1.5",
+      "dist": {
+        "shasum": "5691192e8e042d697b8fcdc0e8d091d159c5c812",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-0.1.5.tgz",
+        "integrity": "sha512-FX60+Sm7v/X9NDjwpY+PyX7WZ/4gQwwZxPtUKPiUJaWE5JW3Hmb7KhaCiHtqm2NIJ0/s1Hcdxmq0t1ss9FXIIw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIDK/8ukcCx3EM11lMfmXLr5scNqxBuzGFK9rCjzkkB7BAiEAlGIV1wNvFoyDgfXVQBULx/8Pup0Mg7lO8ahC4nC82kk="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.6": {
+      "name": "gifsicle",
+      "version": "0.1.6",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/imagemin/gifsicle-bin"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "test": "mocha --reporter list --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin",
+      "_id": "gifsicle@0.1.6",
+      "_shasum": "3d6725f46d29868b5eec388e84314be1a11b503f",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "dist": {
+        "shasum": "3d6725f46d29868b5eec388e84314be1a11b503f",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-0.1.6.tgz",
+        "integrity": "sha512-EejFzrwfFAWPoZ1bhWCxoY66FO3snLp4pjzTDFEMJwz6zbFXI68kIfCQI/6gzg7vWZ7GrHYsrZ6iUZacdy6lkw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIHacp0Psmtr4ZM0RZzVEjJrX0tQ6E0n74/uye0RMpPh0AiEAuBCI8aORVPTVcVwux/LWLd35mglRuZ7aB7LtrNd40Bo="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.1.7": {
+      "name": "gifsicle",
+      "version": "0.1.7",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/imagemin/gifsicle-bin"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "test": "mocha --reporter list --timeout 50000",
+        "postinstall": "node index.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin",
+      "_id": "gifsicle@0.1.7",
+      "_shasum": "d6b1d66f71d7d583d7daa5e560a9130127727b4b",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "dist": {
+        "shasum": "d6b1d66f71d7d583d7daa5e560a9130127727b4b",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-0.1.7.tgz",
+        "integrity": "sha512-JcMIsAE0l0qHTlLRuilwqjjt1HeZwK/fBInHdU9JT8Jm32CFoa3/WHqIbdXrdyjKqwjpVx0b54vafJ1Qv9E7uQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIESBy1m+HrueJuumtzYhL0UhFseoNs8mTWIew1i7CfTMAiBd6QPYnZCLQ7TpuleHia7TU3T98xiM0phCgF9g7POkKQ=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.0": {
+      "name": "gifsicle",
+      "version": "1.0.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/gifsicle-bin"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "test": "mocha --reporter list --timeout 50000",
+        "postinstall": "node lib/install.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.2.0",
+        "bin-wrapper": "^0.4.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "gitHead": "1cc02d36606149e1ec4b1f2b71927888d07fe68d",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin",
+      "_id": "gifsicle@1.0.0",
+      "_shasum": "222b97047c1859166704e5af6a694532056e6113",
+      "_from": ".",
+      "_npmVersion": "1.4.21",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "dist": {
+        "shasum": "222b97047c1859166704e5af6a694532056e6113",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-1.0.0.tgz",
+        "integrity": "sha512-DkzDOsfyAKG3wFRRHgez/37xz08Uy8wgkjhiL39uupG/qywx8ANlCIz26KYZySnuSKbJQDVCOxAcJeXh58EKcQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIF5kupIqCXx2+5/IA5ARLYVpGqlOX0RlND9+bh1rQM5qAiEAhfHjHOqgwzj6RmNsYsZ0lrQFA1ETDSn4ZTiijTyIqRs="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.1": {
+      "name": "gifsicle",
+      "version": "1.0.1",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/gifsicle-bin"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "test": "node test/test.js",
+        "postinstall": "node lib/install.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.2.0",
+        "bin-wrapper": "^0.4.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "0.0.4",
+        "bin-check": "^1.0.0"
+      },
+      "gitHead": "bad86e43e32e3ab64ec43c8014c2cd39c6acdd2b",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin",
+      "_id": "gifsicle@1.0.1",
+      "_shasum": "47d60081ffdd06c3121f29894b6e845277c043a2",
+      "_from": ".",
+      "_npmVersion": "1.4.23",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "dist": {
+        "shasum": "47d60081ffdd06c3121f29894b6e845277c043a2",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-1.0.1.tgz",
+        "integrity": "sha512-6zgCDCF1W2av2Uos1R5SrSyQjFPNGvxHVXVMxFWJ/K+FSEbEHZGNF/YIWztW/o+EtHsf7seKSWjTZtp71la3Qw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDMqtMsuRTGvMYM2ZYsoGrwxyifPXBcvHxd4O3h7Dw9ygIgGkNiqh5Iy9elASa//wkc3RRed1mYFjWlCMA3/srH8Kk="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.2": {
+      "name": "gifsicle",
+      "version": "1.0.2",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/gifsicle-bin"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "test": "node test/test.js",
+        "postinstall": "node lib/install.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^1.0.0",
+        "bin-wrapper": "^1.0.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "0.0.4",
+        "bin-check": "^1.0.0"
+      },
+      "gitHead": "9aef47fd27ad62936e48d8aeda806f677722457e",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin",
+      "_id": "gifsicle@1.0.2",
+      "_shasum": "9b7cdee0c9533e36d681b950d7aff7963715bd09",
+      "_from": ".",
+      "_npmVersion": "1.4.23",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "dist": {
+        "shasum": "9b7cdee0c9533e36d681b950d7aff7963715bd09",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-1.0.2.tgz",
+        "integrity": "sha512-xtPIIwadWr+cVQuILWPRdkCfjdvOPlFfRNf6uIqvQeFGDgk+45KhR0fOqvELDUjaZGaWI0v3hdiHMatfHQ7v8A==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIEwEKd9CjEiw0YQ8dRCCXGX+gHJ8ekyIBApOa1/OkgKFAiBuY5iHtkmq8J+2uiIUIVov6XiQTwWfeospEVL21kWeGQ=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.3": {
+      "name": "gifsicle",
+      "version": "1.0.3",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/gifsicle-bin"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "test": "node test/test.js",
+        "postinstall": "node lib/install.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^1.0.0",
+        "bin-wrapper": "^1.0.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "0.0.4",
+        "bin-check": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "rimraf": "^2.2.8"
+      },
+      "gitHead": "5b57c7121c5c924917be770cfc96d2c7514c3d6f",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin",
+      "_id": "gifsicle@1.0.3",
+      "_shasum": "817eb56c8583c3ca2e0541e775a0e8ca9c3e38f5",
+      "_from": ".",
+      "_npmVersion": "1.4.23",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "dist": {
+        "shasum": "817eb56c8583c3ca2e0541e775a0e8ca9c3e38f5",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-1.0.3.tgz",
+        "integrity": "sha512-YzFVtg4SglaBpNQAm0vIpIBPd2NngaUYG5CWOSdisRTmWqM1Emf4gQGhOf78IUrHexvFmJZfI2HC/+Qo83v50Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCI2abADRl7oXiweRGNa9FOLDPq0ChOJYCsX2sR/esFSwIhAN4AioGmBgTqm5/mCoPPOa4d9FRMnIEN0q8eJp4VgVUB"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.0": {
+      "name": "gifsicle",
+      "version": "2.0.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/gifsicle-bin"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp",
+        "postinstall": "node lib/install.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.0",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.0"
+      },
+      "gitHead": "212cb5e87549aec47f8cddcd84f412eefdfc59c6",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin",
+      "_id": "gifsicle@2.0.0",
+      "_shasum": "1585a839b91e8ba2e2e53f8a3f181f9133a1cf9f",
+      "_from": ".",
+      "_npmVersion": "2.1.5",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "1585a839b91e8ba2e2e53f8a3f181f9133a1cf9f",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-2.0.0.tgz",
+        "integrity": "sha512-W3E3AN576fdtCrjilFoFiJ6Cx3IMEfTE6dTeSEQCDHKb1A/C193OC4VQLXow7Jotf13yrkXocAWWwwg9dIUp9A==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCICCyuzbC6ItpfvMtqSW5qmUFmzy/YH4qAL1FINidke5ZAiBxqBLNKA8p1c6ZDY0aMnqJDlubcP5FINeMChe7EnYvqg=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.1": {
+      "name": "gifsicle",
+      "version": "2.0.1",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/gifsicle-bin"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "http://kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp",
+        "postinstall": "node lib/install.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.0",
+        "imagemin-log": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.0"
+      },
+      "gitHead": "6003c38f7a5276d64a0976552646dea5cdc9a32e",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin",
+      "_id": "gifsicle@2.0.1",
+      "_shasum": "dee3617ca4e30bf02c3a77ca3041ec40efcd8364",
+      "_from": ".",
+      "_npmVersion": "2.1.7",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "dee3617ca4e30bf02c3a77ca3041ec40efcd8364",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-2.0.1.tgz",
+        "integrity": "sha512-kwtSxfD7K3acphLL8O5j7boQQhrQMTmPmf3Rv9Ar+mDfdp209Qu7xvEdP54bNGlrTCyOw1pRP/UAeDouOyPWhg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDf0OMa6LGVQb+avnj34xcZv8s3ol76wFa8URrjmwabYAIhALlUASXjde3Sm+Ff0ZljtlhK8fRnBmnQcr0lb8TrRbvr"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.0": {
+      "name": "gifsicle",
+      "version": "3.0.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "76881a73a5b66cd565a210d9c946ff04bab688e7",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@3.0.0",
+      "_shasum": "775b91ad494fa5ed816dd038156a65ac9fc89454",
+      "_from": ".",
+      "_npmVersion": "2.11.1",
+      "_nodeVersion": "2.2.1",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "775b91ad494fa5ed816dd038156a65ac9fc89454",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-3.0.0.tgz",
+        "integrity": "sha512-OAM+ljN0KKQg0y69dNs6CaoF6mMcJa6AFoz/5OSp5wlaqahCIB+x3UDroksgoQxstqHzW85tme9WB9Cybox69g==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDo+f7//xoaF3HnO0JI7/GbviY1Hg0ccn9IB+wxwDzZ/QIhAMzf18q4WoV1/hx4KF/PiFJ4enIAVH+AhSSnNxRAZp7X"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.1": {
+      "name": "gifsicle",
+      "version": "3.0.1",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "2be4606d536c54d6950451e1c302b433b55c986b",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@3.0.1",
+      "_shasum": "9812793ee4099497498e86b490126b8f0a3b0131",
+      "_from": ".",
+      "_npmVersion": "2.11.3",
+      "_nodeVersion": "2.2.1",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "9812793ee4099497498e86b490126b8f0a3b0131",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-3.0.1.tgz",
+        "integrity": "sha512-3Ye9zIK8BimLYGTTmm+dW75ocgNdY6QTp/p0PClczQowR1ME10maxixeQrOjt6HqBboran3Yakib+a7uSu0I+g==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCxl5EEfKndWowrhxQszkb4VB+K2sjF5pP07Cg+a45vrAIgc47tuAgLlA/7YlO8K4eZg3EQiJTbQ7VXuxPDuuClS5A="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.2": {
+      "name": "gifsicle",
+      "version": "3.0.2",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "831f819b502745adc1e42bbf4e79745b8b18b0c7",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@3.0.2",
+      "_shasum": "1b093baee733a19ebdb5449dec7409cdbe23caba",
+      "_from": ".",
+      "_npmVersion": "3.4.0",
+      "_nodeVersion": "5.0.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "1b093baee733a19ebdb5449dec7409cdbe23caba",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-3.0.2.tgz",
+        "integrity": "sha512-ZjxP8LYx1ZjnAoQFA150J2q+GZksDbmzrpnMySvOZ0TeEg3kDZIQLQS1e8w8VcwM9SO4tRzH983FG+NvmOZaOQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIEY1G7rLUFtsNJfJ0i/xpCPduGPrwlVLwS92DZcUccuvAiEA9kIA/OA4ANVPFi4a3NSRDuOJIk1CJYgq/6lVKnCvrl4="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.3": {
+      "name": "gifsicle",
+      "version": "3.0.3",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "kevinmartensson.com"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "2522b056a32a581dbd6617985a9dcc86e6bb20a8",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@3.0.3",
+      "_shasum": "17230d311c68cbcf31bd54e22741e5c8a373117c",
+      "_from": ".",
+      "_npmVersion": "3.4.0",
+      "_nodeVersion": "5.0.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "17230d311c68cbcf31bd54e22741e5c8a373117c",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-3.0.3.tgz",
+        "integrity": "sha512-XSDNYt8bhvuyKbc73PsquIzaUQjK6b4w5vJoX0fAB0rR4dnyE9zZEUa9uJrDWaNW1/R1fk0y4oMw8ol6AktPZA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDwYMkKomaLb4mVt7c31jphHQCgmNNTPpIQMNArGc07uQIhALU3wYeqE4RhJmeJIFN2nM6MPjWdLFCc5wi+wO4eInVt"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.4": {
+      "name": "gifsicle",
+      "version": "3.0.4",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "88b8b2d536749d484c6d5a2fb5cf5f3756138864",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@3.0.4",
+      "_shasum": "f45cb5ed10165b665dc929e0e9328b6c821dfa3b",
+      "_from": ".",
+      "_npmVersion": "3.10.6",
+      "_nodeVersion": "6.5.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "f45cb5ed10165b665dc929e0e9328b6c821dfa3b",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-3.0.4.tgz",
+        "integrity": "sha512-bfwYZooxxqCHpu3qUMn3En9xij/rrQd1fD9TNr+f7r5y/Inqj0WGkL7AeqQffBe/Sd6M/MIHzRKeD9hgI6Xavg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCRRPVCMnRjgRYLAHy0LI30bpy7v8978pG6zNHXQW+IJgIgEh3u3NIDyWqxqqiC035Ir6sTamDm6Wd3muh4eJiuDl4="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/gifsicle-3.0.4.tgz_1472875137097_0.5108370378147811"
+      },
+      "directories": {}
+    },
+    "4.0.0": {
+      "name": "gifsicle",
+      "version": "4.0.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "maintainers": [
+        {
+          "email": "shogo.sensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        }
+      ],
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^1.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "gitHead": "41147375783fe7abf87d10b19b44573e9030a47b",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@4.0.0",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.10.0",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-9V5kKYR7tuYT9PN4BHYuQWblYu1Ah7yO/U7I3+x73R5XUSqabodtYcvF86oDvCo575UVZXth5fHGwZrS4EjgEA==",
+        "shasum": "94e73df2bc2ed3c5ba3af983b3adaaa5c628a77a",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-4.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4786,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJb2Ct8CRA9TVsSAnZWagAAQTsP/iQVTaJR1VfIaVWAlWI2\n6xvFm+O2mBNJXWOeTlGE6NgS3F4MUqNf/r4+3dEmMZHPTU03BTICzs5XwKAT\nYzRWfz5Ii//7hkPs9wDwTQdle1gTnmm/RludJOvT4Ixlhl7VSxyWSp5kB0Dz\nJTtYXqiXJw/AWxjYD/nn8tIlWA5Y9P6hG8RWRgU0dqBtsdrwNj5vYnhDntpw\nH73oTrIWltWG0rUR90Jqk//g6ZpdHMcePf23BeLpfGiXyVWSRRedePKV3ivr\n3v+oqMiTmrk8/r4iiaAvfC7u4DuzswZQjqNRSclyD6HXL9IPiucvcpo2v+pN\n80NWzFEPjOXNDo84PKoJYm+piqUm/Y5pS+pgD4gYUwWCwZTWIZ9FSSMaGbGg\nXP3zz6ek8bHkaojrALqU1fh4SWHwmN3MK1JArevjvHE3PiV8k/glxuNbZeWI\neEZcvWpqt8G9sQWZ5G8PYl/hYXtdfDI3yDfodyc6uCMtkBDHomnJKGEpSjV6\nEYwFwW/U7v7MS5p+X3GIhl5e6qvV2WrypCMt1+9/oIwv5/TFILmq/9C9K0gx\nJ62PeSmd5Zaj2xwme1CJpxnyAmMR0cX+KJiurW8LS5zNBD7E2Euq+PQ0STHn\nuppT4z2lEW9P3d/r/HSRwL0zVweSgF9GhaHtJwG+AxGW1qc1yPFKj4mY2+IN\nWJM1\r\n=qm+T\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIFwWPbBDM7Gf3jnAZk6pBU92RKyT6op6f+tN7Fk8NIVLAiA+oISj7Q4a1WnCoTbCUYQyLr/nJB4iiuH9eJxsh748UQ=="
+          }
+        ]
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_4.0.0_1540893563143_0.583624072690422"
+      },
+      "_hasShrinkwrap": false
+    },
+    "4.0.1": {
+      "name": "gifsicle",
+      "version": "4.0.1",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "author": {
+        "name": "Kevin Martensson",
+        "email": "kevinmartensson@gmail.com",
+        "url": "github.com/kevva"
+      },
+      "maintainers": [
+        {
+          "email": "shogo.sensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        }
+      ],
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^1.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "gitHead": "f9a249ba92bf06af06fa14fbecb2a15786c96ac7",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@4.0.1",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.10.0",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-A/kiCLfDdV+ERV/UB+2O41mifd+RxH8jlRG8DMxZO84Bma/Fw0htqZ+hY2iaalLRNyUu7tYZQslqUBJxBggxbg==",
+        "shasum": "30e1e61e3ee4884ef702641b2e98a15c2127b2e2",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-4.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 481757,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJb2D1aCRA9TVsSAnZWagAAD80P/iQV6CXtYYj3dBihDYId\nzKK0mlK4cp9kQnc2kKEhjla8fEk0+IReC7zyXpB2R8ckmHKuvwzOHxiOZb40\nnR+I2WjqHZU1fXxqu++SbD6fKgSZVpEWqDOrifQ7tOm8KHeVRz8VbjbFAQZX\njlN4Hh7iG0LHocaJerwTurkrp13Q4L5ulvo698uhv2i1dBIotinSoK36VWsN\nmIvumRY18bH0TBpgGwnbtTizNPoRTQceNhV2ccl87l8x7l6H7fBsFn+/9qTt\nWcXum1oJMclwcSV1iVm5huIgdFZKAmdkq8U/F6QUueRXYqFSUZF+uT++N7Mc\nbJrttIeHpZfyfB0uaMRbAvCgFVKNj9//B22MAYDX8Hg9QS8c3Sh5pQCRqidV\n4YwCS6NknajIfMl86EPQAL9NgmGyVvUBvrJJRkzqHAAeJhB664obV/6WK/E5\nGhSIUUhuFeuqXel+sEoqG9juPwReS6DbCGP5YHV67FGxjt8s/FhH8+Cm++w4\nooBS4hH+DtgYEhgBDJCyhhalX11nt8mXyXZ038cNwe/XvM1QOoKIEPDhfgKO\nBRuSTN5j/+MYsuJKS8/8Gt0bRThssDl23wRZVlMNUkOfyMbStldUKck1zQF2\nmA2DJZ3i+5gKBd5qvnP3DORB/6gyQZj1QjowcdasCXeERWX0zm6aZpR4c9Bk\nhSEj\r\n=UDjH\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCID6x07Jz04bHYOEa+BZNav2IbKnjn6OtA0DMizXVWHjTAiEAjhEtnO9fr+fvL0/KFbCm4d7tJwlljf1d16H78IvBJHQ="
+          }
+        ]
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_4.0.1_1540898138139_0.81220360472283"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.0.0": {
+      "name": "gifsicle",
+      "version": "5.0.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "funding": "https://github.com/imagemin/gisicle-bin?sponsor=1",
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^1.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^1.4.1",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^0.2.1",
+        "xo": "^0.25.3"
+      },
+      "gitHead": "26d16d6fdd4f87802cf3f43f0e42bf11bf1b1780",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@5.0.0",
+      "_nodeVersion": "10.17.0",
+      "_npmVersion": "6.11.3",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-GZ1ym4uY12FHXsf26Kk1G06Edwago9zctqUqin69pm8ObA13jb3urgHU9PgKmtH6kHaCjEcjoRzNjxUyYvb1Bg==",
+        "shasum": "d1ca7f223e949966d373eb1fb6e7ce156d257750",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-5.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 480872,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJeJsD3CRA9TVsSAnZWagAAsQoP/jy+VFKSsiurirJ6aBKo\nojPdpQ+EypfuRbbNmEfqsqUEw2BhG7cpCmi8hNjBTxNmV5KrfnyIFHBphs4+\nvF2NrDN59f2Qw7EUmINFSyEZqw+pY1ZGqUyHjd44v8zl6oFE5nLOSAOw4TYJ\ndN/u/NO+hFNRIsSY85FGGdORZuhoSZmESd1XJHYzOVYR5qHs0kXVxat9U5ZV\nezo+w07exApBIxuEDvTV5dP5NNVeiy4HLmfuObctgKuzBFRlh6Hhvavy2Ean\nSUAG1aJVv0ro6Lm+xdGfvZkpcAhGagkAflG+bgIayFIwyHeZqlv9eDCYWNuX\n0MnBp9mh5z5bPnGlt7PZubuuGr+Esyz1N/ljZIFvApOcFoLGfrGpUxjpsoqM\n/7E4QNk/uYgHlOy5hEcLaWtf7rXD1wM3gQld8hXpz7M9412qsUNqoPL1gQfX\nnLLSu+C3mKLGTSHC16ZiHwHGSLJLg/P3ZMnskp3Sk7UONCOSwzxlFq4Tngyn\nizseNCovugPKVl/8xWTr+LW3/SoNb4mBEfBRjOwhjjjA4iHYGOPYAHifKh4W\nhRPsq5jaRplfbT/obq/YCPgD8MAH/7PDCeQPNu69gzVYYpP4+UegjoNYOcrA\n0PdSo7MC9H8wiD5bfSwnhT+k/doaRXCgnF/8hKuKDuGgCX9qhu4hG65qEjVL\nLMKp\r\n=c/h1\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIH09X3WBsA2GmMTCVoBT2gFTTDjgjO1EFzefobnsCDk2AiB/3JjDOq/jqT+U7oO5YRzrDqJBndeE+EpvMGlkzSEBwA=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_5.0.0_1579598071340_0.9946099312485608"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.1.0": {
+      "name": "gifsicle",
+      "version": "5.1.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "funding": "https://github.com/imagemin/gisicle-bin?sponsor=1",
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "0468252f065deaa34fbbaff9c708ee6a08bc4405",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@5.1.0",
+      "_nodeVersion": "12.16.1",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-hQsOH7yjC7fMokntysN6f2QuxrnX+zmKKKVy0sC3Vhtnk8WrOxLdfH/Z2PNn7lVVx+1+drzIeAe8ufcmdSC/8g==",
+        "shasum": "08f878e9048c70adf046185115a6350516a1fdc0",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-5.1.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 579849,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe0osdCRA9TVsSAnZWagAAGe0P/0SpW00hPd+/+gOlGVsN\npOV0d7LNftXanD00gtEDutqQiUhHmTs9DS99GfErVjkzJ4oSU2gx6gzU6xzy\nQk4B0SN0uKlCeiG4Aq6Gxt5jNvaOioijtMPTVVTB38plMFsZxOa3rorNmEpX\nS8f6iuDuQ9wMtBdZMjzyEIVeMuWc7M30GeVQvkPnrMiZlQHxD58TD43M8WDB\nmEXzctbkRa3Jy7TndptzpC1Kk3Yrn0KhmdYyGFW/mxebRWoe+1FqJhmBC5lI\n8Ssbp+tdypFO6cUS7TIzwn6aDuAMOm/NJloS1mVwalpnElLnd5wnJrBASdby\nzMY2iRoyy1AxdS40DHizfGDlYtDyWf/AWnU8QFsUzJdC16jX9RBBjOZ/2xnr\nw+eJbRm8a21JbT+Qj6SQOYDKPbcbqhIOpn0yIhQCGA2J3XTrBtuS8X/AgG5Q\nRg+2U6/vXKiEQRMpVLDHwgt/R/p1pnzIKLKXSDVlaadkBM+2TZ8dZ3OKVS2A\nH3umZE9/evbMTEoIHrU3YSf4JkyFovkS9eptsSVZcNeHYI+Q2t9jVb/YWTWm\n9LCvXs5fC9fcvAlDmlqgOpvb5TDFNjhYapO7VzuUilRT9Akk5Va4npB8AYYA\n8PQm1lzypB1nJf58mQfGpP+1EPeXjcGfA9nhVNo8KTqBtGwPuy7gzg5iDMzT\n+Mxi\r\n=PK0J\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIBwMLVmoNts0ExpdzYO28aIRCYv99EGqpoRCW+FGRfeEAiBOH/yZzl+nxggbtJPe4o2saFTZEuHEbEV2mUkQD9togA=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_5.1.0_1590856476402_0.023206798685902363"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.2.0": {
+      "name": "gifsicle",
+      "version": "5.2.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "funding": {
+        "url": "https://github.com/imagemin/gisicle-bin?sponsor=1"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^5.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^1.0.0",
+        "xo": "^0.38.1"
+      },
+      "gitHead": "2f53dab47fbed96dd57f7f9974592e6e85e46f02",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@5.2.0",
+      "_nodeVersion": "14.15.3",
+      "_npmVersion": "7.5.6",
+      "dist": {
+        "integrity": "sha512-vOIS3j0XoTCxq9pkGj43gEix82RkI5FveNgaFZutjbaui/HH+4fR8Y56dwXDuxYo8hR4xOo6/j2h1WHoQW6XLw==",
+        "shasum": "b06b25ed7530f033f6ed2c545d6f9b546cc182fb",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-5.2.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 579863,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJgOwz5CRA9TVsSAnZWagAA5fYP/3KSPlhoFfccsTb0pFcT\nZzwEH+wRmfs8BNkfHLSPV0Cg8VaLaoTK369vm/0o0mKQs/Fyb8oNMlvEUVO9\nHoH13Yn90q6QD3ffqpCUqkwqrW3NcJczUqr0BsWH3jDV08+5SrsdLiL01pff\n42uzWRl7jPyQAB/f6kBK48iAgLSkmflvTD9K4RIkouLwB5GqAWe1pzEFFXRq\n36SUDQPt34JrHwgfI5uuYhErg0aB0L+7UNGYbRZxIpzs02CYLbBytb7CBSPy\nGGMsB7OB0Gr5kCO3ilhokxOHwMTjnybiKGP8ODqfs1nH1vHZAPiM5LUzSAQI\n6Qmb9ziXcif65nnJbfnQ0iKfnq6ShzeuTD2LNiprGRcQqX6TH5/FE84lJ94J\nsn1+jfrMMjjEpa8RIPAvLtGAW0Qdlbq1Rm7/EkIcqAIbRJIew5ZcDbr5FCx8\n2IvBsmZczNSQ9kCezJ/pJZXyT89UvHv426vYrkz+0aNopREiy6Akcg4Y5thv\n1HvDa+tp/sz3GMOIlpQAIcBW9+q/W9Z02SFcXzpb9Tr1m/Tf6DmZO+B7JPbV\n2kd3R5sIqjfMsIV6Sc7QL5PKybKoZSj7leqahEDKKjR8+IvY2/+rLDrDG85A\nXGC8teBROkKqvJ8jOVb2YAto4vsDvQ2pOqCi/yw8+TfXLMVfV9dbAJINxEWc\nSbH6\r\n=irdq\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIHtjDK/g/5UgafH0mVDlp92ian9B7lTF6oC8om/pctKlAiEA/RcBX03PqfcIAQ8LPY5Y57mnOc6CoPgEfwFnZ7ikiqU="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_5.2.0_1614482680494_0.40175303741529467"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.2.1": {
+      "name": "gifsicle",
+      "version": "5.2.1",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "funding": {
+        "url": "https://github.com/imagemin/gisicle-bin?sponsor=1"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^5.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^1.0.0",
+        "xo": "^0.38.1"
+      },
+      "gitHead": "9ec0ada51ec01e5c0c166b0ec57fae332076047b",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@5.2.1",
+      "_nodeVersion": "16.4.1",
+      "_npmVersion": "7.21.0",
+      "dist": {
+        "integrity": "sha512-9ewIQQCAnSmkU2DhuWafd1DdsgzAkKqIWnY+023xBLSiK9Az2TDUozWQW+SyRQgFMclbe6RQldUk/49TRO3Aqw==",
+        "shasum": "efadab266a493ef0b4178e34597493349937369e",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-5.2.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 579698,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIBz9oup/aDnwbmTaPUeL6YDs4SWV9lrRssQOnYrK1qVfAiEAgcX2mlTkfH3zajKfQOIXJsGPq/1ZLg5c+A/ilcb5jrc="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_5.2.1_1634208036748_0.7151417341728243"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.0": {
+      "name": "gifsicle",
+      "version": "6.0.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "type": "module",
+      "funding": {
+        "url": "https://github.com/imagemin/gisicle-bin?sponsor=1"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^5.1.1"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "0332afd6a59779f307a3e3017418d41e35272192",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@6.0.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-277gINiPnk8YuNMv1Z0/8XyGrwz6OZ0PFCmjXNOwBws7Xi2M1pVK7vvG7H9pNn5r/u3Fq0d0AHl+8DpfG9j0Zw==",
+        "shasum": "1bf5fe31428b1b9a91e21f805fe3080929b2cd99",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-6.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 484302,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCWjoEK05xR8GI3lrHO97zpLnc6JJjFRJ4at18PsXgIpgIhANUv+Tgt0iw7rZ3uZndP6hRaDpmh4T4ZpYuQiwf6srmG"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_6.0.0_1634997486944_0.4587908391539972"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.1": {
+      "name": "gifsicle",
+      "version": "6.0.1",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "type": "module",
+      "funding": {
+        "url": "https://github.com/imagemin/gisicle-bin?sponsor=1"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^5.1.1"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "e1271066ba76ef69044a85fc08be0203fa97109a",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@6.0.1",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-E8wAUcPNci3A/Q4vxL6iYJj4IlC6rN8YdgiElNHBVRICbFv2MYIczoMA4Fu/nb2lKeCzv+a6RD3C6N0IopyUUw==",
+        "shasum": "ae326ddd1429f7571501f45d0ebe6c65d5571972",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-6.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 484302,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCx2spHUP+KdjysHI9jZEs8vf5E72924iZKa6SBNV5CGAIgFPpcpweLbhU9G8xmNyzCxu/Wx5qtdEwAdZcMd/SD9CU="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_6.0.1_1635312979809_0.9017077839997769"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.2": {
+      "name": "gifsicle",
+      "version": "6.0.2",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "type": "module",
+      "funding": {
+        "url": "https://github.com/imagemin/gisicle-bin?sponsor=1"
+      },
+      "main": "index.js",
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^5.1.1"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "de929e080608521e5d3e8886aaabf166bb74dba2",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@6.0.2",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-zobQj8W8R/U/ib11E/PYcV1EzRJeA3QY/F0u5sug7HpIbOz1xPvznubnWn5cJI7O0734fyh3rduM5+deXKrklQ==",
+        "shasum": "f96bd0d7e2168e10bfb2049b541c46073390c700",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-6.0.2.tgz",
+        "fileCount": 8,
+        "unpackedSize": 484323,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDBflDfvQXP3V2fiprbd4uXmMJ7+ssvRtsoD5APV7C4ugIhAM2793Ac+xyIRJ2NUeYAAEhXGVSqVQ3QcZvOCDO436DL"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_6.0.2_1636420185724_0.6081320508532992"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.3": {
+      "name": "gifsicle",
+      "version": "6.0.3",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "funding": {
+        "url": "https://github.com/imagemin/gisicle-bin?sponsor=1"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^5.1.1"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "436d3637faef1de8a2c44cb73ce71cdceb356db2",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@6.0.3",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-y3ej/9UnrNl7FuPOXUM/n4/GLUYAup/SyKzfwJXt8/ScrlXUYXeNvcbMCfTy/IllQUplB7gUYdTnqou6hwEMcg==",
+        "shasum": "2d3290720c980fe5ca166785d6c6f54f32d1df35",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-6.0.3.tgz",
+        "fileCount": 8,
+        "unpackedSize": 484328,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCICAyawa9zPrvlIjHThPecQmY4eTB+5MscyLSQRNw02uKAiEArINP7PofwuNnHiA2Z4Rx67ap6b/i9RJ8ZDs6Zy5k5qE="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_6.0.3_1636522678558_0.551454297753218"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.1.0": {
+      "name": "gifsicle",
+      "version": "6.1.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "funding": {
+        "url": "https://github.com/imagemin/gisicle-bin?sponsor=1"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^5.1.1"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "701718c2f32dee7c203113f4a971dad27cda7f5c",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@6.1.0",
+      "_nodeVersion": "17.0.1",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-tmnKbW2UQzoc/FTg2dq98sUaoGM1/CRQP+HtyeIMNLDlB8ijZbX7TKBCc2s5YJ8oXUZIxdqXH2rKXnCB0/Hg3w==",
+        "shasum": "16194fe7d9420a539709eb065e7245eaf74de5a7",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-6.1.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 484328,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJhnMwACRA9TVsSAnZWagAAoq8P/j0D8NE0KqnpaTkiheng\nAddXM4kOMItrhB2gtMMEbhEXTLmGQC0jg8UPYf15NjM9CZhwEXaZB00rBnXt\nm+MCocDSAiWveeBr6l+DinYKgOJtdf+OPOn70imhppMwpHCg9v6mkkZHnd9R\nW9uP4ZR6MOo3zvlf+F9gtf8Kd32570CTJakZ/WUr/b19lfSWrhL7n4FFIPRQ\nQAOWUOjORoKbuzjZsUd84o5gyv5+UTBMVuZ4br/MLjDmhXA/0JHUUT7CWtHg\nCn/aTUMGEFdaIYCiteTnLqgwCQSeIQwy+EaUybWgyDJLBJZwsn3rh499uY2z\nANBhsaMl4L6ty92Ag5Nzz3pAJMY6Yi7DUA5hJClmp/hbceUz/3Eho1nfvJW1\niovhAnDM37EXk+wUU4pOnm2mQbSRlJkiO5w7wAjhw0jVEDb/5oXP8ir0gueS\n0TwLN9hNRs8VPB3EQdPudFylLAuDxlK6RKPLZmRpqeWG4cKKJ9zRamYgbt27\nBPN16nGu8osMKKxRP3S+EhrNbpXWGVArzAth0Uedh429sEALGpyDn6nUUjVE\nSI6UhoB4U/GazKgugSyI+1OmmTSXqovlhPY+f3UZuXNt9yzbATWR/qDyiLsn\n920GKWjRIbYIwR0PxE76xWZryEt/NARjpirMWQ22rvMk8oTW/DLAB1BPzvEV\nFYNN\r\n=bFqh\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIH820S62Y8mYrXFOFPYqP4TUnR9DoWPpNNc2xbnwj8ibAiEA6T3U+IdzA/f/jpOBx8x7T85uglr2Kzq5gflloTbjHZM="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_6.1.0_1637665792123_0.9132247616084082"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.3.0": {
+      "name": "gifsicle",
+      "version": "5.3.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "funding": {
+        "url": "https://github.com/imagemin/gisicle-bin?sponsor=1"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^5.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^1.0.0",
+        "xo": "^0.38.1"
+      },
+      "readme": "# gifsicle-bin\n\n> gifsicle manipulates GIF image files in many different ways. Depending on command line options, it can merge several GIFs into a GIF animation; explode an animation into its component frames; change individual frames in an animation; turn interlacing on and off; add transparency and much more.\n\nYou probably want [`imagemin-gifsicle`](https://github.com/imagemin/imagemin-gifsicle) instead.\n\n## Install\n\n```\n$ npm install gifsicle\n```\n\n## Usage\n\n```js\nconst {execFile} = require('child_process');\nconst gifsicle = require('gifsicle');\n\nexecFile(gifsicle, ['-o', 'output.gif', 'input.gif'], err => {\n\tconsole.log('Image minified!');\n});\n```\n\n## CLI\n\n```\n$ npm install --global gifsicle\n```\n\n```\n$ gifsicle --help\n```\n",
+      "readmeFilename": "readme.md",
+      "gitHead": "7d471d8bd4249452e1b4807525a2308936ee4f2f",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@5.3.0",
+      "_nodeVersion": "14.17.5",
+      "_npmVersion": "8.1.1",
+      "dist": {
+        "integrity": "sha512-FJTpgdj1Ow/FITB7SVza5HlzXa+/lqEY0tHQazAJbuAdvyJtkH4wIdsR2K414oaTwRXHFLLF+tYbipj+OpYg+Q==",
+        "shasum": "499713c6f1e89ebbc3630da3a74fdb4697913b4e",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-5.3.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 579698,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJhnM8hCRA9TVsSAnZWagAAL3kP/3gsPWNpU5BXBCRH71Ym\n3bk+Tbq8gtiKaKwKdSlih5KmnzX+xSsGGmbsyxp6B0XeLSGiwtpi3/PZh64/\nEDlwQ2xeg4Ur2IZ2OtDn525JsJ0Usgv4gMcuH3VbgmjwCZVMrgIyKYOV4AtN\nbaLQ3PY03rC+ViQnQhJVpCTTkvLfWDSZvJ0WPrm0hJDtZ+LyNBJVUuzE+xz8\nmN5VnY3LF2QWirWh2xDVrPElpJ6jhGIbi4CTFPMDBri+ALqvY0sNH3o8Euvx\nLQs30V5WB2ZxaBcckliWtkfA8mQPsFXBjUF2elBjJXkHaBNymfcLV27Ujm4h\nLeCG6ncceIh8D945zYKyMAtmVPYb0rmccbPDpKYqedqo/b81OVrmRbllKUX8\n+dLVCflaXeH/KCc5ASptE5TvcZUpFP/BKaNRP+24htf+tAGynctfhfhboCwR\nZGDDKITfkF5rrIKw3ytfvfs8js1MQXy4mQPh7FIJrP5zecOPXpydTf32dWOL\n+SE5xbLbiLa6FY0g3/fJSTaZSHoupM5Fj4rDxt6gTjLonLkKyALKpl7pri9Y\nDANIurh/rr8k4WLCWTzZGc2nG85TvaW1bbIleYFo4Zy0xN28JaLwkUvPGnbn\nCA8TwYbDLwYqqtMzhyN8K8vNTWheYVMabSV0d6aIEEoHjCR4gC0ZbUfdCc5p\n05Bb\r\n=APem\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCSVqJjqwWGYv9f7XpGGLAbwXTiL2/mMbVLyQgxXZh9lwIhAKEuEnngit1plQCvKpUYD5L6Fa5EBnhZ8zKugBPA8Ro/"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_5.3.0_1637666593277_0.9968556015880452"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.0": {
+      "name": "gifsicle",
+      "version": "7.0.0",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "funding": {
+        "url": "https://github.com/imagemin/gisicle-bin?sponsor=1"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": "^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^6.1.0"
+      },
+      "devDependencies": {
+        "ava": "^4.2.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^3.0.0",
+        "xo": "^0.48.0"
+      },
+      "gitHead": "973cea24333049debe1cfc75286ec81b0a763d3b",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@7.0.0",
+      "_nodeVersion": "16.13.2",
+      "_npmVersion": "8.5.5",
+      "dist": {
+        "integrity": "sha512-MqUXOFk2GR6yl4TMZzKNVItnjp8w4b9m00wvaoz2iYe22AgfDK3sZn9SLMGi9fOqykffgVsYf3LUqjEEPjQZ/Q==",
+        "shasum": "7f2411dbee8d90ebeb054f0a049248dd2c9452eb",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-7.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 484315,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCHH7+G27z7F5xtMB1k3uJZWU1VwFvaVqGdwXFMg1U/YwIhAJ/DSWi2+4s8q42/oxt6PaO4+IpnVfmopc57HdByg3Qd"
+          }
+        ],
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJicnhTACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmrzMQ//TRT+1WRNIiyP6n5nOSYcpUbh5pL+P/6qm/WLUA3qeRLHRgZQ\r\nSNw+VaOe+0ttMbKCT8WKDGHlaL7ztrOdr8xj0OD6C5qaTKyQ1gYim0fkegh+\r\nadJw+RH+ML78ej4Ra+Ck8w2MWfIzPvzQYsgXslzWjydJN0O7pj41PBHLHYVq\r\nR9bhnDdiinW4DAsjibk7tr0z+EY4PtvmsQxIBury7Ce+dUQckhZrL21OmbKi\r\nsz69D+t5fNihFns2dOchG6tjBZMmteGJhsamN/w+rQo6p6005gQZF+9G4FD5\r\nyqQZVPLfGBawsb48xwcy4M4IyC3p9CGj8sF5LKrmrt6PMxZAKBia9TdDfCxs\r\nmNRxwbMrB4AFtyU1o7wF99h7igYn1Yd/MwIB4JEhhqaImYNjVEH7FXBACrZU\r\nlQz34PZp7FCFi9lNFeWiLsD8697AGuca0D5RpuK22/OD/yVPSFqBnfiqmKUT\r\n5izWHg/By1t88S1LS5Y3dyEQKUfhC2PE7lXp/rbGFK67s7mPTw0AZkvzcDgc\r\n9PWN5c+RW9o72A6x9wXhlEOIp5+Vq66+K1BT/7Qbmxd15rmYVSrP9ro5qt3p\r\n5uDY09X8zDyoLr7onFWeB/obNn3Z0RKvHXneTMHZNiiz2WC8ci36DHlHGZRx\r\nTxW7RVTfbrp0C2c9CIqVu4SFP71bOep8DUE=\r\n=qTfp\r\n-----END PGP SIGNATURE-----\r\n"
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_7.0.0_1651669075082_0.6952353318255924"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.1": {
+      "name": "gifsicle",
+      "version": "7.0.1",
+      "description": "gifsicle wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "funding": {
+        "url": "https://github.com/imagemin/gisicle-bin?sponsor=1"
+      },
+      "bin": {
+        "gifsicle": "cli.js"
+      },
+      "engines": {
+        "node": "^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "gif",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize",
+        "gifsicle"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "execa": "^6.1.0"
+      },
+      "devDependencies": {
+        "ava": "^4.2.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "tempy": "^3.0.0",
+        "xo": "^0.48.0"
+      },
+      "gitHead": "55087486e1425fd8e99597cff3b2e1d019d8a797",
+      "bugs": {
+        "url": "https://github.com/imagemin/gifsicle-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+      "_id": "gifsicle@7.0.1",
+      "_nodeVersion": "16.13.2",
+      "_npmVersion": "8.5.5",
+      "dist": {
+        "integrity": "sha512-Mwg4tDc7dUUWYNan/NAf4pKcrCwDSUAXRqBNtqXjtwzMyGJ6LVFz5pwMC/SEj2rsw1VILrhr+kk/2wG3+GMXfg==",
+        "shasum": "52dab0677063505f6735410bfaf81efc3d3be1d5",
+        "tarball": "https://registry.npmjs.org/gifsicle/-/gifsicle-7.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 484317,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDwjsbEcAi5kPovQgOeHvRuPwczXBgmQKS+zkqyJr1XWwIhAOo+7MYiM4ATmLbjzPGj4QsekEF0jK24nLEx4UK3/grF"
+          }
+        ],
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJihE24ACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmrMvhAAi7D68gMofmR25IBpCLtnkOavutl5ji9igLFI6IJSjToF7EMN\r\nVDYCzm8MjoMqdSsIuXctzGw1lhxsfWJOCeKPdfiC1aFn36S+aVZ8yj4GNMpO\r\nF7udQDoaM5fIHUqMFaYpSAXwx4bLZuaAMuRWuD+p+IUTDgehtxXelPOIxYtw\r\nYZDF2ezLM1JM0JP4NIrCt5LJCPy/ZjTWaJdn0luoNs3+aVb1+wiRM7SfUxan\r\nfbnIzFvIkhEGeyo3DzJC9lWyYa1miPGYrnyPVFwLjablzD06g9+lF6A9LiNU\r\nIpSb0CT/kyq6JtlEA3mg/JFkegyMaLvtZJ6o70J0Xg2PPDRLSIOeJAWGo1Nr\r\nlWkZqnnQ8dUb5N5lWedhaOCsbng/jmR9AwR2lUzLUkM9d04qyvbjOJ2jbOeX\r\ngZ1Se6cqnu6rME5lMJGe4DOAmPn0zt0hmnhWf1CjfU4zelKpaNBNWRUGIAlV\r\nfsgdVN0+e8/7YQze06jImnAWyGA/hX1MJLR+RM0PdGz/eow7VrK4tcOhsaL7\r\n1+6qHKC+rzY7yY+tzYaSvyExrBV6DAC6RyNvnSCsKE6M41pASnBdm1SaIbLh\r\nZJ9vkIKrUht+n2v/RKxr0GBPB+pTTFaHV4PJWttCIvhexsz5wyFI00GwO+7F\r\nVh3Q2tPc9cdf9DLZNveOxKdvnU1t83HqtRA=\r\n=3MdL\r\n-----END PGP SIGNATURE-----\r\n"
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/gifsicle_7.0.1_1652837816162_0.04043321127110722"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "readme": "# gifsicle-bin ![GitHub Actions Status](https://github.com/imagemin/gifsicle-bin/workflows/test/badge.svg?branch=main)\n\n> gifsicle manipulates GIF image files in many different ways. Depending on command line options, it can merge several GIFs into a GIF animation; explode an animation into its component frames; change individual frames in an animation; turn interlacing on and off; add transparency and much more.\n\nYou probably want [`imagemin-gifsicle`](https://github.com/imagemin/imagemin-gifsicle) instead.\n\n## Install\n\n```\n$ npm install gifsicle\n```\n\n## Usage\n\n```js\nimport {execFile} from 'node:child_process';\nimport gifsicle from 'gifsicle';\n\nexecFile(gifsicle, ['-o', 'output.gif', 'input.gif'], error => {\n\tconsole.log('Image minified!');\n});\n```\n\n## CLI\n\n```\n$ npm install --global gifsicle\n```\n\n```\n$ gifsicle --help\n```\n",
+  "maintainers": [
+    {
+      "name": "nothingismagick",
+      "email": "denjell@sfosc.org"
+    },
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "kevva",
+      "email": "kevinmartensson@gmail.com"
+    },
+    {
+      "name": "1000ch",
+      "email": "shogosensui@gmail.com"
+    },
+    {
+      "name": "xhmikosr",
+      "email": "xhmikosr@gmail.com"
+    },
+    {
+      "name": "shinnn",
+      "email": "snnskwtnb@gmail.com"
+    }
+  ],
+  "time": {
+    "modified": "2022-06-18T08:18:40.394Z",
+    "created": "2013-08-11T19:04:08.730Z",
+    "0.1.0": "2013-08-11T19:04:12.060Z",
+    "0.1.1": "2013-08-12T12:36:48.496Z",
+    "0.1.2": "2013-08-15T15:16:12.095Z",
+    "0.1.3": "2013-08-26T10:36:29.708Z",
+    "0.1.4": "2013-10-16T13:55:28.525Z",
+    "0.1.5": "2014-03-21T13:13:05.983Z",
+    "0.1.6": "2014-06-19T13:23:45.408Z",
+    "0.1.7": "2014-08-08T14:17:59.589Z",
+    "1.0.0": "2014-08-18T12:21:20.060Z",
+    "1.0.1": "2014-08-22T17:29:22.679Z",
+    "1.0.2": "2014-09-01T00:59:01.002Z",
+    "1.0.3": "2014-09-19T13:00:44.242Z",
+    "2.0.0": "2014-10-20T15:22:17.973Z",
+    "2.0.1": "2014-11-24T14:57:42.962Z",
+    "3.0.0": "2015-06-07T13:31:24.577Z",
+    "3.0.1": "2015-06-16T16:00:57.841Z",
+    "3.0.2": "2015-11-13T16:24:36.322Z",
+    "3.0.3": "2015-11-13T17:28:44.882Z",
+    "3.0.4": "2016-09-03T03:58:57.337Z",
+    "4.0.0": "2018-10-30T09:59:23.463Z",
+    "4.0.1": "2018-10-30T11:15:38.271Z",
+    "5.0.0": "2020-01-21T09:14:31.566Z",
+    "5.1.0": "2020-05-30T16:34:36.684Z",
+    "5.2.0": "2021-02-28T03:24:40.656Z",
+    "5.2.1": "2021-10-14T10:40:37.040Z",
+    "6.0.0": "2021-10-23T13:58:07.344Z",
+    "6.0.1": "2021-10-27T05:36:20.194Z",
+    "6.0.2": "2021-11-09T01:09:45.902Z",
+    "6.0.3": "2021-11-10T05:37:58.812Z",
+    "6.1.0": "2021-11-23T11:09:52.325Z",
+    "5.3.0": "2021-11-23T11:23:13.476Z",
+    "7.0.0": "2022-05-04T12:57:55.275Z",
+    "7.0.1": "2022-05-18T01:36:56.457Z"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imagemin/gifsicle-bin.git"
+  },
+  "users": {
+    "passy": true,
+    "guiambros": true,
+    "t1st3": true,
+    "nketchum": true,
+    "darkwark": true,
+    "zya": true,
+    "wangnan0610": true,
+    "vorg": true,
+    "papasavva": true,
+    "princetoad": true,
+    "kklepikov": true
+  },
+  "homepage": "https://github.com/imagemin/gifsicle-bin#readme",
+  "keywords": [
+    "imagemin",
+    "gif",
+    "img",
+    "image",
+    "compress",
+    "minify",
+    "optimize",
+    "gifsicle"
+  ],
+  "bugs": {
+    "url": "https://github.com/imagemin/gifsicle-bin/issues"
+  },
+  "license": "MIT",
+  "readmeFilename": "readme.md"
+}
