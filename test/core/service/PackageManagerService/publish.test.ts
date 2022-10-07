@@ -78,7 +78,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
     it('should work with dist.localFile', async () => {
       const { packageId } = await packageManagerService.publish({
         dist: {
-          localFile: TestUtil.getFixtures('pedding-1.1.0.tgz'),
+          localFile: TestUtil.getFixtures('registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'),
         },
         tag: '',
         scope: '',

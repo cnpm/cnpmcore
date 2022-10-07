@@ -1,5 +1,4 @@
 import assert = require('assert');
-import { readFile } from 'fs/promises';
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { PuppeteerBinary } from 'app/common/adapter/binary/PuppeteerBinary';
@@ -20,11 +19,11 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
   describe('fetch()', () => {
     it('should fetch work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/puppeteer', 'GET', {
-        data: await readFile(TestUtil.getFixtures('puppeteer.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/puppeteer.json'),
         persist: false,
       });
       app.mockHttpclient('https://unpkg.com/puppeteer-core@latest/lib/cjs/puppeteer/revisions.js', 'GET', {
-        data: await readFile(TestUtil.getFixtures('puppeteer_revisions.js.txt')),
+        data: await TestUtil.readFixturesFile('unpkg.com/puppeteer-core@latest/lib/cjs/puppeteer/revisions.js.txt'),
         persist: false,
       });
       app.mockHttpclient('https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2FLAST_CHANGE', 'GET', {

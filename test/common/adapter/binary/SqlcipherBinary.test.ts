@@ -1,5 +1,4 @@
 import assert = require('assert');
-import { readFile } from 'fs/promises';
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { SqlcipherBinary } from 'app/common/adapter/binary/SqlcipherBinary';
@@ -20,7 +19,7 @@ describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/@journeyapps/sqlcipher', 'GET', {
-        data: await readFile(TestUtil.getFixtures('@journeyapps/sqlcipher.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/@journeyapps/sqlcipher.json'),
         persist: false,
       });
       const binary = new SqlcipherBinary(ctx.httpclient, ctx.logger, binaries['@journeyapps/sqlcipher']);
@@ -50,7 +49,7 @@ describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
 
     it('should fetch subdir: /v5.3.1/ work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/@journeyapps/sqlcipher', 'GET', {
-        data: await readFile(TestUtil.getFixtures('@journeyapps/sqlcipher.json')),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/@journeyapps/sqlcipher.json'),
         persist: false,
       });
       const binary = new SqlcipherBinary(ctx.httpclient, ctx.logger, binaries['@journeyapps/sqlcipher']);

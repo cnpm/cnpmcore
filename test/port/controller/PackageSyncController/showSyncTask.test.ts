@@ -72,6 +72,14 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
     });
 
     it('should get sucess task after schedule run', async () => {
+      app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync-issue-1667', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/mk2test-module-cnpmsync-issue-1667.json'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync-issue-1667/-/mk2test-module-cnpmsync-issue-1667-3.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
       const name = 'mk2test-module-cnpmsync-issue-1667';
       let res = await app.httpRequest()
         .put(`/-/package/${name}/syncs`)

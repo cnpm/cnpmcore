@@ -1,5 +1,4 @@
 import assert = require('assert');
-import { readFile } from 'fs/promises';
 import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
@@ -19,6 +18,9 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
+      app.mockHttpclient('https://nodejs.org/dist/', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.html'),
+      });
       const binary = new NodeBinary(ctx.httpclient, ctx.logger, binaries.node);
       const result = await binary.fetch('/');
       assert(result);
@@ -49,6 +51,9 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v16.13.1/ work', async () => {
+      app.mockHttpclient('https://nodejs.org/dist/v16.13.1/', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/v16.13.1/index.html'),
+      });
       const binary = new NodeBinary(ctx.httpclient, ctx.logger, binaries.node);
       const result = await binary.fetch('/v16.13.1/');
       assert(result);
@@ -79,6 +84,9 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v14.0.0-nightly20200119b318926634/ work', async () => {
+      app.mockHttpclient('https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/index.html'),
+      });
       const binary = new NodeBinary(ctx.httpclient, ctx.logger, binaries['node-nightly']);
       const result = await binary.fetch('/v14.0.0-nightly20200119b318926634/');
       assert(result);
@@ -118,6 +126,9 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
     });
 
     it('should skip zero size file', async () => {
+      app.mockHttpclient('https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/index.html'),
+      });
       const binary = new NodeBinary(ctx.httpclient, ctx.logger, binaries['node-nightly']);
       const result = await binary.fetch('/v14.0.0-nightly20200204ee9e689df2/');
       assert(result);
@@ -161,15 +172,15 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
 
     it('should on python', async () => {
       app.mockHttpclient('https://www.python.org/ftp/python/', 'GET', {
-        data: await readFile(TestUtil.getFixtures('www.python.org/ftp/python/index.html')),
+        data: await TestUtil.readFixturesFile('www.python.org/ftp/python/index.html'),
         persist: false,
       });
       app.mockHttpclient('https://www.python.org/ftp/python/3.7.3/', 'GET', {
-        data: await readFile(TestUtil.getFixtures('www.python.org/ftp/python/3.7.3.html')),
+        data: await TestUtil.readFixturesFile('www.python.org/ftp/python/3.7.3.html'),
         persist: false,
       });
       app.mockHttpclient('https://www.python.org/ftp/python/src/', 'GET', {
-        data: await readFile(TestUtil.getFixtures('www.python.org/ftp/python/src.html')),
+        data: await TestUtil.readFixturesFile('www.python.org/ftp/python/src.html'),
         persist: false,
       });
 

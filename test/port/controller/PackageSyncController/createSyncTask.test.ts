@@ -7,7 +7,7 @@ import { Task as TaskModel } from 'app/repository/model/Task';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 
 describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', () => {
-  let publisher;
+  let publisher: any;
   let ctx: Context;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
@@ -88,6 +88,11 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
     });
 
     it('should sync immediately when admin user request', async () => {
+      app.mockHttpclient('https://registry.npmjs.org/koa-not-exists', 'GET', {
+        status: 404,
+        data: { error: 'Not found' },
+        persist: false,
+      });
       mock(app.config.cnpmcore, 'alwaysAuth', false);
       const admin = await TestUtil.createAdmin();
       const res = await app.httpRequest()
@@ -101,6 +106,8 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       app.expectLog('[PackageSyncController.createSyncTask:execute-immediately]');
       app.expectLog('[PackageSyncController:executeTask:start]');
       app.expectLog(', targetName: koa-not-exists,');
+      await setTimeout(100); // await for sync task started
+      app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should error when invalid registryName', async () => {

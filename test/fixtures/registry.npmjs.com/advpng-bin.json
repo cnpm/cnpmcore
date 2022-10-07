@@ -1,0 +1,1989 @@
+{
+  "_id": "advpng-bin",
+  "_rev": "220-a89b78595dc720ad105ecab1159ee1cb",
+  "name": "advpng-bin",
+  "description": "AdvPNG bin-wrapper that makes it seamlessly available as a local dependency",
+  "dist-tags": {
+    "latest": "7.0.0"
+  },
+  "versions": {
+    "0.0.1": {
+      "name": "advpng-bin",
+      "version": "0.0.1",
+      "description": "Pngcrush wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch"
+      },
+      "main": "lib/advpng",
+      "bin": {
+        "advpng": "bin/advpng.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-advpng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "BSD",
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-advpng-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-advpng-bin",
+      "_id": "advpng-bin@0.0.1",
+      "dist": {
+        "shasum": "90b11b0c193ff25457e604394081115f48323fa1",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-0.0.1.tgz",
+        "integrity": "sha512-8gm3e5LAjpq6okB1XxfikZl3bhJ1HXq7HDMt46z25/VPWH0zUusvP7nSV0cOd6ZQSzKIOTq9Ze+jevADAJ6sbw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCHVzo+1a7xFs30MCru0ZCz/4p7JkARUBDExT52mAKVugIhAIECn3UvCfxtO9IROFvOc9zbgF7oRhWOtanO6phNp+QS"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.0": {
+      "name": "advpng-bin",
+      "version": "0.1.0",
+      "description": "Pngcrush wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch"
+      },
+      "main": "lib/advpng",
+      "bin": {
+        "advpng": "bin/advpng.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-advpng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "BSD",
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-advpng-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-advpng-bin",
+      "_id": "advpng-bin@0.1.0",
+      "dist": {
+        "shasum": "078d26bb0a04f5abf636b2310009516a23db7fde",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-0.1.0.tgz",
+        "integrity": "sha512-+IwAhK2/QPusPeKlt3hUeZnL9WlKZL8KgagAgesYPhC3GoJ/5hx69VAgj0zO9RlvbDLSw/PPtDbnMxdMjf+t4g==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCy/nRgv+CmdqTHGbuOGUYsVeS17rGegN5tvnHsPgIT9AIhAOBZrW7+s4nA+jruQvuiKsapo3Plkb0JP0P2rRVvXTME"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.1": {
+      "name": "advpng-bin",
+      "version": "0.1.1",
+      "description": "Pngcrush wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch"
+      },
+      "main": "lib/advpng",
+      "bin": {
+        "advpng": "bin/advpng.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-advpng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "BSD",
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-advpng-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-advpng-bin",
+      "_id": "advpng-bin@0.1.1",
+      "dist": {
+        "shasum": "471a7095c7be378a70163fd0ba26fdb753fd86a1",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-0.1.1.tgz",
+        "integrity": "sha512-4YSgYw81MQP9rn9lx6CM/o9JhihvuMhGo2IzQQOJQAM1qJbf5Yyg/j+HK06hzJYSzCy2us1dh5KAWcWZGFtAxw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCq2CbveQ5mQnNvsW4dXX3D8IKOvc01khBGwNEwGI9rsQIhAMEqT2f9TxYREi5tl/Lzzv3dxoEZB8CLXVKvY6wmTqi7"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.2": {
+      "name": "advpng-bin",
+      "version": "0.1.2",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch"
+      },
+      "main": "lib/advpng",
+      "bin": {
+        "advpng": "bin/advpng.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-advpng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "BSD",
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-advpng-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-advpng-bin",
+      "_id": "advpng-bin@0.1.2",
+      "dist": {
+        "shasum": "a7f6791dfe5a1d847bc6da69391deccbcc3bb980",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-0.1.2.tgz",
+        "integrity": "sha512-4stKB5hVsfg6OnN2catXyXdJAQdJlg2zPU4aMO6LjUoBZCqByCL/cxmutIJtEAIMk30jkxlPAxgTGHKehItANA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDEIGGDhVxtHEr8EVxkTp1FmqxbdHtImHKrs4R/cuvp9gIhAIf06Gt5JLns7pGj+J8ml19ZszB6Vj+6Rd9VLtDG3uXQ"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.24",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "orz1000ch@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.3": {
+      "name": "advpng-bin",
+      "version": "0.1.3",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://1000ch.net/"
+      },
+      "main": "lib/advpng",
+      "bin": {
+        "advpng": "bin/advpng.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-advpng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "BSD",
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "vendor"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-advpng-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-advpng-bin",
+      "_id": "advpng-bin@0.1.3",
+      "dist": {
+        "shasum": "a306d5cceba02674a3ff3f02f7172c99873374b3",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-0.1.3.tgz",
+        "integrity": "sha512-BS9+M0o1DEQuFVxSy7Msvureq5Rh6FeCVmBoncQE7DtmZ07pdVAIauB2JSf4Xt+kaupfMSTkHqveYukIHNLQLQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIGBj7m24iRI3RnZvKRP7fphBe17kFVDBIkt+Z3L2mdHaAiBFg0/3TvnbzHi4u8yZrVkf7LS8cChTfoHRzSMz0weiig=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.4": {
+      "name": "advpng-bin",
+      "version": "0.1.4",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://1000ch.net/"
+      },
+      "main": "lib/advpng",
+      "bin": {
+        "advpng": "bin/advpng.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-advpng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha ./test/test-build.js ./test/test-path.js",
+        "postinstall": "node ./lib/build.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "BSD",
+      "dependencies": {
+        "bin-wrapper": "~0.1.9",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.17.1"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "vendor"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-advpng-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-advpng-bin",
+      "_id": "advpng-bin@0.1.4",
+      "dist": {
+        "shasum": "510730c9fb4c1fc60b271d5d0e01bc833a3efd9a",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-0.1.4.tgz",
+        "integrity": "sha512-pvmzMQl1/xe+bcaXSH38p/jSiu3VKzT7XehuXPOcrjySsOG8msKcrsD6BtdRwsYenWsYZJjYjlThjRznnkC9Zg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDrxL3DI4jOViXDSpsDcKCSHJhuaFESgZlavFYTI0CcZQIhANOx3DKN3IxC8/439xANN9F6LZnrSxTD6nevgk65vIlf"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.5": {
+      "name": "advpng-bin",
+      "version": "0.1.5",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://1000ch.net/"
+      },
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-advpng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha --reporter spec --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "BSD",
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-advpng-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-advpng-bin",
+      "_id": "advpng-bin@0.1.5",
+      "dist": {
+        "shasum": "eb811774be12041c25a0d0a869c513039b6a623f",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-0.1.5.tgz",
+        "integrity": "sha512-JPgL8H07kbHcgYD+LZ/JSgOUIlcbjGlxvAYhqGH3qcQUeuBODJW8Lc/QQBK/IRBov7gbgVd/M6naFJkzKb7wRg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIC5F36W1CkXthIoPXTrgqnK05w/W2CRbJ84kDOeivrL0AiB7CIw3yb6O01MQYOIgAOUNKZMo200Aq1mfS2Vnm4xCMg=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.6": {
+      "name": "advpng-bin",
+      "version": "0.1.6",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency on OS X, Linux",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/1000ch/node-advpng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha --reporter spec --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "BSD",
+      "dependencies": {
+        "bin-build": "^0.1.1",
+        "bin-wrapper": "^0.3.4",
+        "chalk": "^0.5.1"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "bugs": {
+        "url": "https://github.com/1000ch/node-advpng-bin/issues"
+      },
+      "homepage": "https://github.com/1000ch/node-advpng-bin",
+      "_id": "advpng-bin@0.1.6",
+      "_shasum": "600011884a6cbf4c98a3636f4db1836a746fc473",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "600011884a6cbf4c98a3636f4db1836a746fc473",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-0.1.6.tgz",
+        "integrity": "sha512-IPP92KQEr64s6F2uOwX741dla5poPxYifL8lWWJWYS2YkLwnkiO6zxNyBf+6CFqtq3LCAsCiZyFE6fMq1tn+/Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDvdMQXXF24LJYsM7FYJE0evJzBfw+zavM3xnG8Rh/RagIgFfTaavfkijeZ45Jk6adAz/lPj62KUXevuK/5j1sJUrc="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.0": {
+      "name": "advpng-bin",
+      "version": "1.0.0",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/advpng-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "node test/test.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^1.0.0",
+        "bin-wrapper": "^1.0.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "0.0.4",
+        "bin-check": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "rimraf": "^2.2.8"
+      },
+      "gitHead": "0de9cde02d0805b8bacf37c58a3521caf1786421",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin",
+      "_id": "advpng-bin@1.0.0",
+      "_shasum": "4d4548f6fd5a884094c7d2a1233a352cf01e548f",
+      "_from": ".",
+      "_npmVersion": "1.4.23",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "4d4548f6fd5a884094c7d2a1233a352cf01e548f",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-1.0.0.tgz",
+        "integrity": "sha512-MKOR4xbeq7BbEhXiWPc1gS4Q7TRzshhH/c+Q0zaWqCLGSAR+XaPj8TQ99uraY2HFlZI4SpS5XanYk6fbol7N3g==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIG343jWHl502IouYVnleRzDL9Nofeiel2djeVYAwrMeIAiEA2FBBwwH/2x773NPrfEFSfrubswAKCeDu0DFwWRBvt1Y="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.1": {
+      "name": "advpng-bin",
+      "version": "1.0.1",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/advpng-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "node test/test.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^1.0.0",
+        "bin-wrapper": "^1.0.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "0.0.4",
+        "bin-check": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "rimraf": "^2.2.8"
+      },
+      "gitHead": "0d0d4527954c1f025cca70d156cc54da6a029d57",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin",
+      "_id": "advpng-bin@1.0.1",
+      "_shasum": "9bd3dbd051502496e3d5fd9b0ef87a089f4ce377",
+      "_from": ".",
+      "_npmVersion": "1.4.23",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "9bd3dbd051502496e3d5fd9b0ef87a089f4ce377",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-1.0.1.tgz",
+        "integrity": "sha512-js0aS2yGTQXbcXqR3e7Tokg/BKoioxTrwNCE14AR45ATijfOU5Dmm7Sc4OYlxJVNGEyei3zRhHdWKwSoS5oSMg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDYSToQ8L2wGicdnAyq1q1+jJKmsz1aOtt6UDhGGT3aqgIhAIN2Asbhc5FAUIpqXIorH83ggVMzO3Szx0soZYQoHasg"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.0": {
+      "name": "advpng-bin",
+      "version": "2.0.0",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/advpng-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "0e336c1c56369c223dc553eb2c86d8521985a62e",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin",
+      "_id": "advpng-bin@2.0.0",
+      "_shasum": "76bb0a9fac85a393a4e86f7ca3f587401e66afc2",
+      "_from": ".",
+      "_npmVersion": "2.1.5",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "76bb0a9fac85a393a4e86f7ca3f587401e66afc2",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-2.0.0.tgz",
+        "integrity": "sha512-ewMhmxf1uj86sA8TMsopbkZpg3MppTb4XA7URjJ0RwCF03RbP5pnCkNF78Ty5rWKOxdOglYDgSIUH1d0aTbtRw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIALKwo94BrZMTh9uIt7Pn9e9lJtE2XrlND9GMKW2XPTIAiEAse5dRS9inaciCSpC6wHSS9ZlA+UbN/JhpvgSCNSpJjs="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.1": {
+      "name": "advpng-bin",
+      "version": "2.0.1",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/advpng-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "9d18527ca2ae5c2b429484a85d39edce28a0c9f7",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin",
+      "_id": "advpng-bin@2.0.1",
+      "_shasum": "bad4c6c7ba4191870315def3256b40aed9768e13",
+      "_from": ".",
+      "_npmVersion": "2.1.6",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "bad4c6c7ba4191870315def3256b40aed9768e13",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-2.0.1.tgz",
+        "integrity": "sha512-0MTAG/Ru80mAPCIXiNAcMXWlmENeQo/Isv5R5YGaNLnoqAfmzRYykY2FhahC7WMQBP8XyF5Tn0WUOGmev2f8xg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIDDRx/M85m0nsJTEAMmaA88Jd/2JE1nPSs2pgWEGP7yrAiEAgKuKMJPSuYOYAFHGDMLlaG/kHq5SnVGACXg+XWlGiU8="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.2": {
+      "name": "advpng-bin",
+      "version": "2.0.2",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/advpng-bin"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "0c73ee4eec3013b3fd1c94658098c0272be14f9e",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin",
+      "_id": "advpng-bin@2.0.2",
+      "_shasum": "d54e7afd649f4e44eb44494bf3d282cba6997369",
+      "_from": ".",
+      "_npmVersion": "2.1.7",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "orz1000ch@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "d54e7afd649f4e44eb44494bf3d282cba6997369",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-2.0.2.tgz",
+        "integrity": "sha512-8EZOO4mjJCobQCCXHCLoemAnoGjGKQabL07AHw0QPsFieb0fIqgOspLYb4tUKVmtqNckdo0yPFxlKL7CvNi4ew==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIDxG69rX6CNmBETOQfhPiiRpnRenxzQvwQ6Ak8rMOfMiAiEAs7mNwXAgStlSMhd8f6Vc6eOFlyxiW+LsSfvhG/hB/cE="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.0": {
+      "name": "advpng-bin",
+      "version": "3.0.0",
+      "description": "advpng wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/advpng-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "http://github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 20000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "e797a5a73c835832684777509f5990d94bf05984",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin#readme",
+      "_id": "advpng-bin@3.0.0",
+      "_shasum": "0bdfc142e1a8b3a4a4a3a2b4bdec6ebb2a331365",
+      "_from": ".",
+      "_npmVersion": "3.3.6",
+      "_nodeVersion": "5.0.0",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "shasum": "0bdfc142e1a8b3a4a4a3a2b4bdec6ebb2a331365",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-3.0.0.tgz",
+        "integrity": "sha512-ZBaewwRt0cEAyjiGX5cFPfj7HXPPb+vU8b/Hr/RTOoh1P/MuddqTU5dWyDT9yXWHAMNeWajOQJpKITnEEFOrYQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIFFF2i5L80rJ3qroTcjjTgs8vKhsPcDmm/LTlFG2wrojAiEA+eDuUSWD2HcTjey+A4ab7mBcpV0Kk253kClFFgE2n/U="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "4.0.0": {
+      "name": "advpng-bin",
+      "version": "4.0.0",
+      "description": "AdvPNG bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/advpng-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "engines": {
+        "node": ">=8"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "advpng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.1.0",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^3.2.0",
+        "tempy": "^0.3.0",
+        "xo": "*"
+      },
+      "gitHead": "79225973988bae3ac6a2797e2fcbbe48aea07ab9",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin#readme",
+      "_id": "advpng-bin@4.0.0",
+      "_nodeVersion": "10.16.3",
+      "_npmVersion": "6.12.0",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-0r7GoXTns5jOdRUGmuLN8NA53axOmmMnSh4L62aJPfGfK+WW2ZlLhnCQhdA/1Zte1ALt+JWD5Ji24/cOX9C9YA==",
+        "shasum": "eae1c2a0989ab7771b5624a84c4f1933259df611",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-4.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4520,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJdsCzTCRA9TVsSAnZWagAAu8MP+wYoAevJZbhAEDU+Nlz6\nxL3pJ7SKJ3g2DNTtbHL/YmSzehJzbTekst4Yor3gWtN/a0wlq9RfjZZeUv3e\nYIp/aBq2hZaXh66lgmQ/pFbSIQaYjO7IHXHtxJ+XYoSo1C1ZruIH0FFyRM26\nsdreSK3HOfMVaS3dIOsyNYa5Dhdn8MLSHAY6G7ACasCzLqjN4XMRmzKF6+/c\nv6zdWGp86VYm2qVSovpvkMNcoOPU/zehGJnI7bEXAaAm1F3szgR5B14bck3L\nEm10OxNssX/kNIw3KrK0+JnA9IkvtW/5MpKH3KVHSotFQ1M33fS1EqzvURP0\neAggRBEerfUj0hX2u1LgI90V2aqFToXBbJtyv4WqJ5Ibf3PYXHHjO7XiZYAR\niZlsKX8UeBFz8dlZ3dlRy2pY4vb72rv2X5+OmuGCCzU/W3DDcy1oww69cugM\nGJx06vnOIIY0B0tH6+m6Tqj5COtCo6kZ9V0/tb/LMnJuZwmFklK1cBLBNLob\nNIVW8JFHbRZNsYbaIqooBWKWyr9d+zprGc0bd6NqZWWqPx99KaiRswebRdvc\nKQHlXOSnSLIj9VDDej+p0W59CNfjOtk7fuIeQnly8KCNoFwf2tn2sbsr2tQL\nTSdPnFvAi55evshuZ05renO6U3QGptjhIIvbVrqUJGIkKmomWWnCeWiGXmdu\nWzbZ\r\n=k79C\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIDTyc0jzQp2W02mx6oXMl7o8IiwymT+MmrRBgrTj13PyAiAC3i/zlEI9GQ+0gXhE4DuHcNg7yh1z/SRjRm2yjgzQ8A=="
+          }
+        ]
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/advpng-bin_4.0.0_1571826898780_0.0663784047125997"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.0.0": {
+      "name": "advpng-bin",
+      "version": "5.0.0",
+      "description": "AdvPNG bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/advpng-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "advpng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.1.0",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "43b22bc38af3f336fac96d8190c9527c624a5716",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin#readme",
+      "_id": "advpng-bin@5.0.0",
+      "_nodeVersion": "12.16.1",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-80ZtLfsEgMQYf4ZFeTFiTC9jDarT50NobfDgU3a9rFOAZlSo2vKYG8YuB77KVBvTHuX6oSSlhPHz14KRh84SVg==",
+        "shasum": "f0f0d7fb53a883b8d6f1d1b79fc067532b38ae9b",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-5.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4559,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe0cxMCRA9TVsSAnZWagAA4HYP/28w7fOBaMZbTQEQ57Ur\nePybEbRs4sJVB29ofHJ1/BjDf3p9+TDcpDbhQpQ91gbPLZFV9eHRSlv9lX9e\n5xsmf4bgXUXV2u64g514JCsJyxLUZScCETWido02jlf3kQvf0hgW1tvICp44\niJjwPh9uomSQ34p+z5+qYKsR7HjZ91cUPFq/yNriSoujwsmFGkTLHXERdpYo\n49dMZC858Y2hLbOA7F5NLv53h+KPX7OniIaUiJnupX6zXb7F5rsBfl9rghck\nt92EArbgvSbf/zwdLR+9c3oeUqrLWRJV857rIPwrtwbnXWV6L8zA5N2vW2bj\nwheHWwRP1w/vWbAZ0YMybl9ea7W1twvN67C8ztFtdrszEFys2Jt66rWIS/bQ\n1zNA6Ndh3KIDAb6/ggoAKvlVOylJ2g5yLSx2wno62LLadwm/1n7u0UChn5N2\nbN7Bfh3Av9Lr5jWC5FJCf5tq+9pBDz8AvW7EpYTqxb6ixoPdRzsvNqi89oIC\ngVcj0fhWVfe5MYuI6RYp77iBtR+4u7qRLj2iYjm0eos+AXcovCRLrIhI0Xha\naMfJFPC3N+Tfo1ANIwtfeNu5g8m5qGUtI32nt2B8OxahBEK1+u33V2wXrE9A\nYUkAA14VSyZvnR1kbpzt4OPDuJ8k4sXaXlZ79Bw96dXm4FbdQQAYFBOLZqlz\n52eU\r\n=5/VS\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDiohrm1+qeIbTupTL1gHEOg3YE/SCNCcADVaILcLzX1AIhAMwvbGgpVKCLJcSfpDqy+O1KxFtgJmSgCSS08ruHLDT9"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/advpng-bin_5.0.0_1590807627673_0.6889582036784545"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.0.1": {
+      "name": "advpng-bin",
+      "version": "5.0.1",
+      "description": "AdvPNG bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/advpng-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "advpng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.1.0",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "0682a700ad520c102f28dd3cae0f1a47015ac86d",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin#readme",
+      "_id": "advpng-bin@5.0.1",
+      "_nodeVersion": "12.18.0",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-ANSeL5vVu8o5c8P3zouJjWkwzsZnE59GL7c/nk97BXtzN6pbXFeEoXjx9q/jVT2MhjL1O1cIljQO72kHAg0wLg==",
+        "shasum": "d93f7c9ed452164ddde344f0966449af3387966d",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-5.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 1199382,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe+rCICRA9TVsSAnZWagAAp40P+wTIX/CYyBqGt2akKIiH\nwXL3KC7YpYNMCyobsoVCdXIhNgxVgvUEr3yOgZerAhw2GfTrqlOUbAxqiS2U\nyD8g7uhspUCdbT7VQJcgPaAJvCxa3ZOJR2XWdIyKpxfAl46uolJL3WeVcynN\nxnGX6tW1v5JljuWE6LHrP/0eAKP0mCRwqc2DU9600tFqD4heHKvZzL0aMmHu\nLKCS4U1kYsIb1IQO1qCdPcy6aZhEP3wmXAZoqdW5IjjEFUfOonaDDchofHmb\nVVpc1Tb8O5kLR5u7RSVTbuCu4cq+nba4f2yrUF01uZtSWEEI5A8LCs6mlFp3\nXnzU3fczyLr+YHtNwYZNQKQ3gxezBVtHzoFtWIzI3o2NkE29tRY0HjOo4ymq\nDpfcDao0pPM4Vk06TcRy7IfSN0jYX23mO7ZWXA+woN1yrpZ8HW+c74v/MlTs\n5Vw8d2UNKXAso2U+2hQYAmyqar5A9t+KqY45KessYjxR8Bku5gztDJlmTvzz\nY0cMK2gPxfYX3E5/j/x3OjHPi1iOUOdKhVxq7W60B7tPCpCgOhd4uUqZUU1e\nB7algrq6wCHQ9hKXdELSjZVomACz+Lw1J2pA2F8OmGEoC7wQ2UjPvWyEvCtn\nC50JKqoHc+vojIEK13ZdzHfy7mgGcWMmtV4ucFvchX0LE+Zb8KHdarp4BoVp\nP7CJ\r\n=vDDb\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIDPei2VfdNWbrwXxb2zTBtZUaw1xfcULigGM9w5g0w3vAiBwYTfm4JJMqKjxf+215kYjIaOYwUR17UDY7fKLeyYIqA=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/advpng-bin_5.0.1_1593487495934_0.12736257929467398"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.0.2": {
+      "name": "advpng-bin",
+      "version": "5.0.2",
+      "description": "AdvPNG bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/advpng-bin.git"
+      },
+      "author": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=180s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "advpng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "2e6181c2fdb9b6c45d61df8be8cff1135496cfd9",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin#readme",
+      "_id": "advpng-bin@5.0.2",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-7nGBexTUTUPAY3OU5PI9AEM0j6b7xQDRD0t434dQnMvCo6lxRc12nPCFKbYyAtvOc6dF/CJQBnOTKp0gRrTt6g==",
+        "shasum": "3009b574f7a7876232884209bcaaf930875aaf8f",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-5.0.2.tgz",
+        "fileCount": 8,
+        "unpackedSize": 1199152,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIHY0ptwCOGZgK4IY/pIuQ+jEdF1KQcQgY9OUp/taq+sJAiEAtrUvVhK+gj2idxu0rs6+4/KDTBFDTLPsK6pWQfv9mOY="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/advpng-bin_5.0.2_1634916885982_0.1827275406531994"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.0": {
+      "name": "advpng-bin",
+      "version": "6.0.0",
+      "description": "AdvPNG bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/advpng-bin.git"
+      },
+      "type": "module",
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogosensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=180s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "advpng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "b68884e8638b18f9d7c1e0391e67d0cffb9aba6c",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin#readme",
+      "_id": "advpng-bin@6.0.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-zwo90jD8+ui125bZOwbwUGjD1PsELoQtpEvKfF+E0UoB20QujF4tREzElO+ZZ3mVUghee2oGtKBZshmlVe0HHg==",
+        "shasum": "ce7504584ca18bb9754f3d454cdb1b4498013c38",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-6.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 1199520,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCKNHPbdjXmdHBfKxw1GUhMaBNNKpv/TIL8jM8mjc7qpQIhAI6M7zd1w0/V42VcZIXNnpskk0FfvnIPKahGFVY/vEvn"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/advpng-bin_6.0.0_1634977728121_0.009817021116088398"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.1": {
+      "name": "advpng-bin",
+      "version": "6.0.1",
+      "description": "AdvPNG bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/advpng-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogosensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=180s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "advpng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "1722957320aab61a2fc2a89291d3b7a22b68442f",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin#readme",
+      "_id": "advpng-bin@6.0.1",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-XyhFGDPoml3ECkQp4KdP2YBnruzLnCYJDlsi+QjH4IyDH8gwDNaB0NsBCRfih04MH4tZ3uhcLzOZEtKQbDutOg==",
+        "shasum": "2b4c760eb767e101173787868fb1ac1712d752a6",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-6.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 1199547,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJh2jCYCRA9TVsSAnZWagAAXXUQAIcT8iZMKxsD/otBwmP5\nso7kVjuC63Tnuf10oCtfDveeN0esqkAntBviCO47qu2mr+m0TCIxzSqtU4nZ\nW9jPHIX5hBuhIcmSh1IaHvf2Tshw8LU+28oMpq5KXv3O7Y7f/ulMYHsEHN9J\nlMseTkHbL+tUda8zbHeCPbfG9jZIuCHKFqxCa+5yaWqCWGvy4WL2YZSohZwo\nejJsXJqIQt1RgiEjmY6d326hCYBAL41hHxSP4lvHwc2rNv1TothXR2/YZI58\nnzla7g58r54k0mNY3asHH8Ahz+9tHxGurGB1DI71wRH+6UIrASYUpgo+Scrf\nyD2lDfHytbnRhMYxp5kXZ0TB9YaUOYbuUVoLjE08aSi1CYclfoZvSkpb4AyU\nym8HPIYk9/fP+AlKmtXzJxCHsukUoKiptGOXhDDJEI997TV/yHSsaENsZTU2\nct3soGaLdyKl/XDYZ5RNHYonSD63AEklnx7g8CYyma8dw/4v+jzolsKUSbFp\n/nJBZxz7tDdZi5KrOn9Po3ORMCCCPWEIhWwQoFdYZmYi7K60iooLT5SR39bT\nqmFjUbs/UCwJAALfO3QmS2vWl6OOiDE9VbnvAi4B7HyA4wJZ7v7xt8QgLD3J\neM6Tepuq/CAqHuHhFc3apSyBJbqZ3QC4H3xqmFe7dd2N4qYkVE66aynckoRB\npA4Y\r\n=Agnc\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCICjLsBEQeRQAM4hA9fxQMj1hbGyQJatwPtJTu0ysOArRAiAQV8HXSIOXqHwjDPKm2g4G6m8r1m59LCADBNKd8qPHHQ=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/advpng-bin_6.0.1_1636522866642_0.07079908487602249"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.0": {
+      "name": "advpng-bin",
+      "version": "7.0.0",
+      "description": "AdvPNG bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/advpng-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogosensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "bin": {
+        "advpng": "cli.js"
+      },
+      "engines": {
+        "node": "^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=180s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "advpng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.1.0"
+      },
+      "devDependencies": {
+        "ava": "^4.2.0",
+        "bin-check": "^4.1.0",
+        "compare-size": "^3.0.0",
+        "execa": "^6.1.0",
+        "tempy": "^3.0.0",
+        "xo": "^0.48.0"
+      },
+      "gitHead": "9a61708bb34f294186135c776657b3b2c05d96af",
+      "bugs": {
+        "url": "https://github.com/imagemin/advpng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/advpng-bin#readme",
+      "_id": "advpng-bin@7.0.0",
+      "_nodeVersion": "16.13.2",
+      "_npmVersion": "8.5.5",
+      "dist": {
+        "integrity": "sha512-bAqyPFi+2c4eZBt06k73SY8TpTfUtcNwbVT2NyZawBVVY/BZ6PmGU1rZjW12is1VTDYTbqgQS7N04xh7w6yvAw==",
+        "shasum": "33c8ea50273c320a2e56774df829275f6dffc6df",
+        "tarball": "https://registry.npmjs.org/advpng-bin/-/advpng-bin-7.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 1199534,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQC6ebGkFcechZScX0rn0xd5OZpdhPE6MjDEu823xyR/ZQIhANPY0qLwnfcaOhf7joGWi3GkQzF9an1iMvUVRMVWeERI"
+          }
+        ],
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJifOmCACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2Vmo54w/8DD8gTZYGbF5gaoMhINsdTDsVVg5N+VHFGJMbI6E9GoZiZIrq\r\n/YtD+rxRSe+SdVKSeH4DqA5X5JbSFYw5vehizAlEn1LBP7RM7V2L4Tewv+3u\r\n6Ilxah4EQuHiPOFRk8qiVu0eSNhI81cMtOxRl48pSfxrUkb7MYwqXmq62/Sr\r\nnhgE0B+M3IJjoTSK3ktOkBVNmqnmcQgJaUhyGRZttbm3nOFv4TdyPH7NdheF\r\nuIgwonFWtv0JUMIEd8SwJbSE5dZ6TPKpGrbkDFaQ9pgSDL3BVvfk/vZCLVzx\r\n4tUuKlMA2CDayqOLkcS1uVMIG4BDZ9TCO7TAj255zIeMIvAq9/vU2Tez3eW0\r\nP2UmHo73p+kM7hTbTzVqxsPSaQE1uQ43P2O+vJI1tY1Uz/bSD78hqhJXMcSO\r\nlr0jVyT6oG2fGAzgYwWDDbGsojfs+ysGGl7eYqDfkRVF9XHDePd3DhxX66Mc\r\nscj5RpByiDzG+qIwvWKvteXrZqSxPXxu9dpQdVxlgFSi6UddzqIiKtX9w1SO\r\n6cRgIfqmL2zXkVpOMnqFp7bgSkbtRlq2lA+IvDf9U0y561w4btjZ6StVToXV\r\nq/4r8t2f4QuU+/xRaxcuBfg/NXsTPWL59JCcDpzoz3IkFbZ2SxojrBsDWGx4\r\nCpegu625vkA/g0c78bDUo0b3XCwD7UoGHVs=\r\n=Mu/g\r\n-----END PGP SIGNATURE-----\r\n"
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/advpng-bin_7.0.0_1652353409954_0.14466194220814077"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "readme": "# advpng-bin ![GitHub Actions Status](https://github.com/imagemin/advpng-bin/workflows/test/badge.svg?branch=main)\n\n> The main purpose of this utility is to recompress png files to get the smallest possible size\n\nYou probably want [`imagemin-advpng`](https://github.com/imagemin/imagemin-advpng) instead.\n\n## Install\n\n```\n$ npm install --save advpng-bin\n```\n\n## Usage\n\n```js\nimport {execFile} from 'node:child_process';\nimport advpng from 'advpng-bin';\n\nexecFile(advpng, ['--recompress', '--shrink-extra', 'image.png'], error => {\n\tconsole.log('Image minified!');\n});\n```\n\n## CLI\n\n```\n$ npm install --global advpng-bin\n```\n\n```\n$ advpng --help\n```\n",
+  "maintainers": [
+    {
+      "name": "nothingismagick",
+      "email": "denjell@sfosc.org"
+    },
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "kevva",
+      "email": "kevinmartensson@gmail.com"
+    },
+    {
+      "name": "1000ch",
+      "email": "shogosensui@gmail.com"
+    },
+    {
+      "name": "xhmikosr",
+      "email": "xhmikosr@gmail.com"
+    },
+    {
+      "name": "shinnn",
+      "email": "snnskwtnb@gmail.com"
+    }
+  ],
+  "time": {
+    "modified": "2022-06-13T02:27:59.472Z",
+    "created": "2014-02-14T01:50:52.049Z",
+    "0.0.1": "2014-02-14T01:50:52.049Z",
+    "0.1.0": "2014-02-14T02:24:29.209Z",
+    "0.1.1": "2014-02-14T02:55:44.981Z",
+    "0.1.2": "2014-02-14T02:58:07.311Z",
+    "0.1.3": "2014-04-23T14:26:25.905Z",
+    "0.1.4": "2014-04-23T14:28:41.171Z",
+    "0.1.5": "2014-04-30T02:23:20.753Z",
+    "0.1.6": "2014-07-19T02:41:08.064Z",
+    "1.0.0": "2014-09-16T14:41:02.595Z",
+    "1.0.1": "2014-09-16T15:23:37.406Z",
+    "2.0.0": "2014-10-20T15:28:16.591Z",
+    "2.0.1": "2014-11-04T14:11:40.941Z",
+    "2.0.2": "2014-11-24T14:58:42.945Z",
+    "3.0.0": "2015-11-09T05:17:46.723Z",
+    "4.0.0": "2019-10-23T10:34:58.915Z",
+    "5.0.0": "2020-05-30T03:00:27.772Z",
+    "5.0.1": "2020-06-30T03:24:56.099Z",
+    "5.0.2": "2021-10-22T15:34:46.191Z",
+    "6.0.0": "2021-10-23T08:28:48.368Z",
+    "6.0.1": "2021-11-10T05:41:06.848Z",
+    "7.0.0": "2022-05-12T11:03:30.202Z"
+  },
+  "readmeFilename": "readme.md",
+  "homepage": "https://github.com/imagemin/advpng-bin#readme",
+  "keywords": [
+    "imagemin",
+    "compress",
+    "image",
+    "img",
+    "minify",
+    "optimize",
+    "png",
+    "advpng"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imagemin/advpng-bin.git"
+  },
+  "author": {
+    "name": "Shogo Sensui",
+    "email": "shogosensui@gmail.com",
+    "url": "github.com/1000ch"
+  },
+  "bugs": {
+    "url": "https://github.com/imagemin/advpng-bin/issues"
+  },
+  "license": "MIT",
+  "users": {
+    "t1st3": true
+  }
+}

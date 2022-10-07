@@ -1,0 +1,35 @@
+{
+  "last_package": "luotao-bbtn",
+  "last_package_version": "@kickstartds/form@1.6.0-canary.1092.4870.0",
+  "doc_count": 2268083,
+  "doc_version_count": 29126081,
+  "download": {
+    "today": 162817,
+    "yesterday": 207125,
+    "samedayLastweek": 162712,
+    "thisweek": 886933,
+    "thismonth": 991957,
+    "thisyear": 164563253,
+    "lastweek": 3290529,
+    "lastmonth": 14963354,
+    "lastyear": 2606292
+  },
+  "update_seq": 13428717,
+  "sync_model": "all",
+  "sync_changes_steam": {
+    "since": "16428228",
+    "registryId": "63064513c65c21ab03a7324a",
+    "taskWorker": "cnpmcore-02:548959",
+    "task_count": 34060416,
+    "last_package": "@keepsdev/ng-keeps-ui",
+    "last_package_created": "2022-10-07T15:18:33.266Z"
+  },
+  "sync_binary": true,
+  "instance_start_time": "2022-10-06T04:51:33.080Z",
+  "node_version": "v16.17.1",
+  "app_version": "2.3.1",
+  "engine": "mysql",
+  "source_registry": "https://registry.npmjs.org",
+  "changes_stream_registry": "https://replicate.npmjs.com",
+  "cache_time": "2022-10-07T15:18:34.341Z"
+}
