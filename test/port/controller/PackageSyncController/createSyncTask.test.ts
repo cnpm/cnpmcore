@@ -5,6 +5,7 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { Task as TaskModel } from 'app/repository/model/Task';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
+import { TaskState } from 'app/common/enum/Task';
 
 describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', () => {
   let publisher: any;
@@ -294,7 +295,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.id);
       const firstTaskId = res.body.id;
 
-      await TaskModel.update({ taskId: firstTaskId }, { state: 'processing' });
+      await TaskModel.update({ taskId: firstTaskId }, { state: TaskState.Processing });
       // again dont create
       res = await app.httpRequest()
         .put('/-/package/koa/syncs')
