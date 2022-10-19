@@ -20,7 +20,7 @@ export class ChangesStreamWorker {
   private readonly logger: EggLogger;
 
   async subscribe() {
-    if (this.config.cnpmcore.syncMode !== 'all' || !this.config.cnpmcore.enableChangesStream) return;
+    if (this.config.cnpmcore.syncMode === 'none' || !this.config.cnpmcore.enableChangesStream) return;
     const task = await this.changesStreamService.findExecuteTask();
     if (!task) return;
     this.logger.info('[ChangesStreamWorker:start] taskId: %s', task.taskId);
