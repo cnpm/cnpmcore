@@ -77,6 +77,10 @@ export default (appInfo: EggAppConfig) => {
     enableStoreFullPackageVersionManifestsToDatabase: false,
     // only support npm as client and npm >= 7.0.0 allow publish action
     enableNpmClientAndVersionCheck: true,
+    // sync when package not found, only effect when syncMode = all/exist
+    syncNotFound: true,
+    // redirect to source registry when package not found, only effect when syncMode = all/exist
+    redirectNotFound: true,
   };
 
   // override config from framework / plugin

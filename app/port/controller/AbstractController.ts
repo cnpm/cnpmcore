@@ -50,7 +50,37 @@ export abstract class AbstractController extends MiddlewareController {
     return scope && this.config.cnpmcore.allowScopes.includes(scope);
   }
 
-  protected createPackageNotFoundError(fullname: string, version?: string) {
+  protected get syncNotFound() {
+    return this.config.cnpmcore.syncNotFound;
+  }
+
+  protected get redirectNotFound() {
+    return this.config.cnpmcore.redirectNotFound;
+  }
+
+  protected getAllowSync(ctx: EggContext): boolean {
+    let allowSync = false;
+
+    if (!this.syncNotFound) {
+      return allowSync;
+    }
+
+    // request not by node, consider it request from web, don't sync
+    const ua = ctx.get('user-agent');
+    if (!ua || !ua.includes('node')) {
+      return allowSync;
+    }
+
+    // if request with `/xxx?write=true`, meaning the read request using for write, don't sync
+    if (ctx.query.write) {
+      return allowSync;
+    }
+
+    allowSync = true;
+    return allowSync;
+  }
+
+  protected createPackageNotFoundError(fullname: string, version?: string, allowSync = false) {
     const message = version ? `${fullname}@${version} not found` : `${fullname} not found`;
     const err = new PackageNotFoundError(message);
     const [ scope ] = getScopeAndName(fullname);
@@ -59,6 +89,18 @@ export abstract class AbstractController extends MiddlewareController {
       // syncMode = none, redirect public package to source registry
       if (!this.enableSync) {
         err.redirectToSourceRegistry = this.sourceRegistry;
+      // syncMode = all/exist
+      } else {
+        if (allowSync) {
+          // ErrorHandler will use syncPackage to create sync task
+          err.syncPackage = {
+            fullname,
+          };
+        }
+        if (allowSync && this.redirectNotFound) {
+          // redirect when package not found
+          err.redirectToSourceRegistry = this.sourceRegistry;
+        }
       }
     }
     return err;
