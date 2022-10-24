@@ -29,6 +29,7 @@ import { User } from '../entity/User';
 import { RegistryManagerService } from './RegistryManagerService';
 import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
+import { ScopeManagerService } from './ScopeManagerService';
 
 function isoNow() {
   return new Date().toISOString();
@@ -65,6 +66,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly distRepository: DistRepository;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
+  @Inject()
+  private readonly scopeManagerService: ScopeManagerService;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
     const [ scope, name ] = getScopeAndName(fullname);
@@ -207,16 +210,35 @@ export class PackageSyncerService extends AbstractService {
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
-  public async initSpecRegistry(task: Task): Promise<Registry | null> {
+  // 初始化对应的 Registry
+  // 1. 优先从 task.data.registryId
+  // 2. 其次根据 scope 进行计算
+  // 3. 返回默认的全局 registryId
+  public async initSpecRegistry(task: Task, scope?: string): Promise<Registry | null> {
     const { registryId } = task.data as SyncPackageTaskOptions;
     let targetHost: string = this.config.cnpmcore.sourceRegistry;
     let registry: Registry | null = null;
+
     // 历史 Task 可能没有配置 registryId
+    // 当前任务作为 deps 时，也不会配置 registryId
     if (registryId) {
       registry = await this.registryManagerService.findByRegistryId(registryId);
-      if (registry?.host) {
-        targetHost = registry.host;
+    } else if (scope){
+      const scopeModel = await this.scopeManagerService.findByName(scope);
+      if (scopeModel?.registryId) {
+        registry = await this.registryManagerService.findByRegistryId(scopeModel?.registryId);
       }
+    }
+
+    // 采用默认的 registry
+    if (!registry) {
+      registry = await this.registryManagerService.findByRegistryName('default');
+    }
+
+    // 更新 targetHost 地址
+    // defaultRegistry 可能还未创建
+    if (registry?.host) {
+      targetHost = registry.host;
     }
     this.npmRegistry.setRegistryHost(targetHost);
     return registry;
@@ -224,8 +246,10 @@ export class PackageSyncerService extends AbstractService {
 
   public async executeTask(task: Task) {
     const fullname = task.targetName;
+    const [ scope, name ] = getScopeAndName(fullname);
     const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
-    const registry = await this.initSpecRegistry(task);
+    let pkg = await this.packageRepository.findPackage(scope, name);
+    const registry = await this.initSpecRegistry(task, scope);
     const registryHost = this.npmRegistry.registry;
     let logs: string[] = [];
     if (tips) {
@@ -242,16 +266,19 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
-    const [ scope, name ] = getScopeAndName(fullname);
-    let pkg = await this.packageRepository.findPackage(scope, name);
-    if (pkg && registry) {
-      if (pkg.registryId !== registry.registryId) {
-        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry.registryId}, skip sync ❌❌❌❌❌`);
-        await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
+    if (pkg && pkg?.registryId !== registry?.registryId) {
+      if (pkg.registryId) {
+        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry?.registryId}, skip sync ❌❌❌❌❌`);
+        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+        this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid registryId',
           task.taskId, task.targetName);
         return;
       }
+      // 多同步源之前没有 registryId
+      // publish() 版本不变时，不会更新 registryId
+      // 在同步前，进行更新操作
+      pkg.registryId = registry?.registryId;
+      await this.packageRepository.savePackage(pkg);
     }
 
     if (syncDownloadData && pkg) {
