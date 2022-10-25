@@ -181,12 +181,15 @@ export class ChangesStreamService extends AbstractService {
             skipDependencies: true,
             tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
           });
-        } catch (e) {
-          if (e instanceof RegistryNotMatchError) {
-            this.logger.warn('[ChangesStreamService.executeSync:skip] %s', e.message);
+        } catch (err) {
+          if (err instanceof RegistryNotMatchError) {
+            this.logger.warn('[ChangesStreamService.executeSync:skip] %s', err.message);
             continue;
           }
-          throw e;
+          // only log error, make sure changes still reading
+          this.logger.error('[ChangesStreamService.executeSync:error] %s', err);
+          this.logger.error(err);
+          continue;
         }
       }
       // 实时更新 task 信息
