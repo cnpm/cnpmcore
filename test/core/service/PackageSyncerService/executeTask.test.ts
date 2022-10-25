@@ -16,6 +16,7 @@ import { RegistryManagerService } from 'app/core/service/RegistryManagerService'
 import { Registry } from 'app/core/entity/Registry';
 import { RegistryType } from 'app/common/enum/Registry';
 import { TaskService } from 'app/core/service/TaskService';
+import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let ctx: Context;
@@ -25,6 +26,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let npmRegistry: NPMRegistry;
   let registryManagerService: RegistryManagerService;
   let taskService: TaskService;
+  let scopeManagerService: ScopeManagerService;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
@@ -34,6 +36,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     npmRegistry = await ctx.getEggObject(NPMRegistry);
     taskService = await ctx.getEggObject(TaskService);
     registryManagerService = await ctx.getEggObject(RegistryManagerService);
+    scopeManagerService = await ctx.getEggObject(ScopeManagerService);
   });
 
   afterEach(async () => {
@@ -1770,6 +1773,67 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         log = await TestUtil.readStreamToLog(stream);
         assert(log.includes('Syncing from https://default.npmjs.org/npm-pkg'));
         app.mockAgent().assertNoPendingInterceptors();
+      });
+
+      it('should sync from default registry when pkg.registryId is undefined', async () => {
+        const pkgName = '@cnpmcore/sync_not_match_registry_name';
+        await TestUtil.createPackage({
+          name: pkgName,
+          registryId: undefined,
+          isPrivate: false,
+        }, {
+          name: 'mock_username',
+        });
+
+        // default registry
+        app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/sync_not_match_registry_name', 'GET', {
+          status: 500,
+          data: 'mock default.npmjs.org error',
+          persist: false,
+          repeats: 3,
+        });
+
+        await taskService.createTask(TaskEntity.createSyncPackage(pkgName, {}), true);
+        const task = await packageSyncerService.findExecuteTask();
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log.includes('Syncing from https://registry.npmjs.org/@cnpmcore/sync_not_match_registry_name'));
+
+      });
+
+      it('should sync from target registry when pkg.registryId is undefined', async () => {
+        const pkgName = '@cnpm/banana';
+        await TestUtil.createPackage({
+          name: pkgName,
+          isPrivate: false,
+        }, {
+          name: 'mock_username',
+        });
+        await packageSyncerService.createTask(pkgName);
+        const task = await packageSyncerService.findExecuteTask();
+
+        // create custom scope
+        await scopeManagerService.createScope({
+          name: '@cnpm',
+          registryId: registry.registryId,
+        });
+
+        app.mockHttpclient('https://custom.npmjs.com/@cnpm/banana', 'GET', {
+          status: 500,
+          data: 'mock error',
+          persist: false,
+          repeats: 3,
+        });
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log.includes('Syncing from https://custom.npmjs.com/@cnpm/banana'));
+
+        const pkg = await packageRepository.findPackage('@cnpm', 'banana');
+        assert(pkg!.registryId === registry.registryId);
       });
 
       it('should not sync from target registry if not match', async () => {

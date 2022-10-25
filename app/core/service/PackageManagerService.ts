@@ -104,6 +104,10 @@ export class PackageManagerService extends AbstractService {
       if (pkg.description !== cmd.description) {
         pkg.description = cmd.description;
       }
+
+      if (!pkg.registryId && cmd.registryId) {
+        pkg.registryId = cmd.registryId;
+      }
     }
     await this.packageRepository.savePackage(pkg);
     // create maintainer
