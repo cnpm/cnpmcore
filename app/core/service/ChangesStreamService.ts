@@ -183,7 +183,7 @@ export class ChangesStreamService extends AbstractService {
           });
         } catch (err) {
           if (err instanceof RegistryNotMatchError) {
-            this.logger.warn('[ChangesStreamService.executeSync:skip] %s', e.message);
+            this.logger.warn('[ChangesStreamService.executeSync:skip] %s', err.message);
             continue;
           }
           // only log error, make sure changes still reading
