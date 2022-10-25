@@ -1,4 +1,19 @@
 
+2.4.0 / 2022-10-25
+==================
+
+**features**
+  * [[`6aa302d`](http://github.com/cnpm/cnpmcore/commit/6aa302d074f2c84f39e2065fa20853b007f6fa3b)] - 📦 NEW: Use oss-cnpm v4 (#340) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`a217fd0`](http://github.com/cnpm/cnpmcore/commit/a217fd07ccad3fe5058881654a13e0c69c758717)] - 👌 IMPROVE: Reduce warning log (#326) (fengmk2 <<fengmk2@gmail.com>>)
+
+**fixes**
+  * [[`b19b0a0`](http://github.com/cnpm/cnpmcore/commit/b19b0a0496e35ac1c6b3de746b9221990ba9dc93)] - fix: Lazy set registryId when executeTask (#341) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
+**others**
+  * [[`305175a`](http://github.com/cnpm/cnpmcore/commit/305175ab5fcdc3ad3b60055d45cfcacb23065a80)] - 🤖 TEST: Use enum define on unittest (#333) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`07f2eba`](http://github.com/cnpm/cnpmcore/commit/07f2eba137ba625b2d422677a465920617141b87)] - 🤖 TEST: Mock all binary http requests (#328) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`4b0c7dc`](http://github.com/cnpm/cnpmcore/commit/4b0c7dc6196960d34b2529bfde724e97f1af8444)] - 🤖 TEST: Mock all httpclient request (#327) (fengmk2 <<fengmk2@gmail.com>>)
+
 2.3.1 / 2022-10-06
 ==================
 
