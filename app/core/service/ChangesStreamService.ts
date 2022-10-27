@@ -173,21 +173,26 @@ export class ChangesStreamService extends AbstractService {
       const valid = await this.needSync(registry, fullname);
       if (valid) {
         taskCount++;
+        const tips = `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`;
         try {
-          await this.packageSyncerService.createTask(fullname, {
+          const task = await this.packageSyncerService.createTask(fullname, {
             authorIp: HOST_NAME,
             authorId: 'ChangesStreamService',
             registryId: registry.registryId,
             skipDependencies: true,
-            tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
+            tips,
           });
+          this.logger.info('[ChangesStreamService.createTask:success] fullname: %s, task: %s, tips: %s',
+            fullname, task.id, tips);
         } catch (err) {
           if (err instanceof RegistryNotMatchError) {
-            this.logger.warn('[ChangesStreamService.executeSync:skip] %s', err.message);
+            this.logger.warn('[ChangesStreamService.executeSync:skip] fullname: %s, error: %s, tips: %s',
+              fullname, err, tips);
             continue;
           }
           // only log error, make sure changes still reading
-          this.logger.error('[ChangesStreamService.executeSync:error] %s', err);
+          this.logger.error('[ChangesStreamService.executeSync:error] fullname: %s, error: %s, tips: %s',
+            fullname, err, tips);
           this.logger.error(err);
           continue;
         }
