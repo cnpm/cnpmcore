@@ -104,10 +104,10 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.ok === true);
       assert(res.body.state === 'waiting');
       assert(res.body.id);
+      await setTimeout(100); // await for sync task started
       app.expectLog('[PackageSyncController.createSyncTask:execute-immediately]');
       app.expectLog('[PackageSyncController:executeTask:start]');
       app.expectLog(', targetName: koa-not-exists,');
-      await setTimeout(100); // await for sync task started
       app.mockAgent().assertNoPendingInterceptors();
     });
 
