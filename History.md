@@ -1,4 +1,14 @@
 
+2.4.1 / 2022-10-28
+==================
+
+**features**
+  * [[`92350a8`](http://github.com/cnpm/cnpmcore/commit/92350a864313ee42a048d9e83886ef42db3419de)] - 👌 IMPROVE: Show changes stream create task log (#347) (fengmk2 <<fengmk2@gmail.com>>)
+
+**fixes**
+  * [[`28eeeaf`](http://github.com/cnpm/cnpmcore/commit/28eeeafd9870c6b1c5b4f4c23916f6ae73ddda12)] - fix: registry host config (#346) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+  * [[`cd5bd92`](http://github.com/cnpm/cnpmcore/commit/cd5bd923b8d47bf90b5f077ce04777b38653b850)] - 🐛 FIX: Catch all error on changes stream handler (#344) (fengmk2 <<fengmk2@gmail.com>>)
+
 2.4.0 / 2022-10-25
 ==================
 
