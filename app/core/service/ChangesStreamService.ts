@@ -100,14 +100,14 @@ export class ChangesStreamService extends AbstractService {
     }
 
     // 从配置文件默认生成
-    const { changesStreamRegistryMode, changesStreamRegistry: host } = this.config.cnpmcore;
-    const type = changesStreamRegistryMode === 'json' ? 'cnpmcore' : 'npm';
+    const { changesStreamRegistryMode, changesStreamRegistry: changesStreamHost, sourceRegistry: host } = this.config.cnpmcore;
+    const type = changesStreamRegistryMode === 'json' ? RegistryType.Cnpmcore : RegistryType.Npm;
     const registry = await this.registryManagerService.createRegistry({
       name: 'default',
-      type: type as RegistryType,
+      type,
       userPrefix: 'npm:',
       host,
-      changeStream: `${host}/_changes`,
+      changeStream: `${changesStreamHost}/_changes`,
     });
     task.data = {
       ...(task.data || {}),
