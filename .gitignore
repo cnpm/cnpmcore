@@ -8,6 +8,7 @@ lerna-debug.log*
 
 .npmrc
 package-lock.json
+pnpm-lock.yaml
 
 config/config.prod.ts
 config/**/*.js
