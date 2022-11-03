@@ -65,6 +65,7 @@ export interface PublishPackageCmd {
 
 const TOTAL = '@@TOTAL@@';
 const SCOPE_TOTAL_PREFIX = '@@SCOPE@@:';
+const DESCRIPTION_LIMIT = 1024 * 10;
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -108,6 +109,11 @@ export class PackageManagerService extends AbstractService {
       if (!pkg.registryId && cmd.registryId) {
         pkg.registryId = cmd.registryId;
       }
+    }
+
+    // 防止 description 长度超过 db 限制
+    if (pkg.description?.length > DESCRIPTION_LIMIT) {
+      pkg.description = pkg.description.substring(0, DESCRIPTION_LIMIT);
     }
     await this.packageRepository.savePackage(pkg);
     // create maintainer
