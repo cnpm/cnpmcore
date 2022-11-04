@@ -1,4 +1,10 @@
 
+2.5.0 / 2022-11-04
+==================
+
+**features**
+  * [[`43d77ee`](http://github.com/cnpm/cnpmcore/commit/43d77ee91e52bd74594d9d569b839c1a4b7fbac6)] - feat: long description (#349) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
 2.4.1 / 2022-10-28
 ==================
 
