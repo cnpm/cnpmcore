@@ -67,6 +67,13 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
       assert(result.items[0].url === 'https://cdn.cypress.io/desktop/4.0.0/darwin-x64/cypress.zip');
       assert(!result.items[0].isDir);
 
+      result = await binary.fetch('/4.0.0/darwin-arm64/');
+      assert(result);
+      assert(result.items.length === 1);
+      assert(result.items[0].name === 'cypress.zip');
+      assert(result.items[0].url === 'https://cdn.cypress.io/desktop/4.0.0/darwin-arm64/cypress.zip');
+      assert(!result.items[0].isDir);
+
       result = await binary.fetch('/4.0.0/linux-x64/');
       assert(result);
       assert(result.items.length === 1);
