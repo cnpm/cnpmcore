@@ -1,6 +1,6 @@
 -- fix https://github.com/cnpm/cnpmcore/issues/343
 UPDATE
-	`cnpmcore`.`registries`
+	`registries`
 SET
 	`host` = 'https://registry.npmjs.org'
 WHERE
