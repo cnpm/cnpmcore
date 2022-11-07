@@ -1,4 +1,10 @@
 
+2.5.1 / 2022-11-07
+==================
+
+**others**
+  * [[`e40c502`](http://github.com/cnpm/cnpmcore/commit/e40c5021bb2ba78f8879d19bc477883168560b85)] - 🐛 FIX: Mirror cypress arm64 binary (#351) (fengmk2 <<fengmk2@gmail.com>>)
+
 2.5.0 / 2022-11-04
 ==================
 
