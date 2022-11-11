@@ -5,7 +5,6 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { Task as TaskModel } from 'app/repository/model/Task';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
-import { TaskState } from 'app/common/enum/Task';
 
 describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', () => {
   let publisher: any;
@@ -286,7 +285,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.id === firstTaskId);
     });
 
-    it('should dont create exists processing task update less than 1 min', async () => {
+    it('should dont create exists waiting task', async () => {
       let res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(201);
@@ -295,13 +294,12 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.id);
       const firstTaskId = res.body.id;
 
-      await TaskModel.update({ taskId: firstTaskId }, { state: TaskState.Processing });
       // again dont create
       res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(201);
       assert(res.body.ok === true);
-      assert(res.body.state === 'processing');
+      assert(res.body.state === 'waiting');
       assert(res.body.id === firstTaskId);
 
       // update bigger than 1 min, same task return
@@ -310,7 +308,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .put('/-/package/koa/syncs')
         .expect(201);
       assert(res.body.ok === true);
-      assert(res.body.state === 'processing');
+      assert(res.body.state === 'waiting');
       assert(res.body.id === firstTaskId);
     });
   });

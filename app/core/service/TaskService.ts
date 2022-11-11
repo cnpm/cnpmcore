@@ -28,16 +28,21 @@ export class TaskService extends AbstractService {
   public async createTask(task: Task, addTaskQueueOnExists: boolean) {
     const existsTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type);
     if (existsTask) {
-      if (addTaskQueueOnExists && existsTask.state === TaskState.Waiting) {
-        const queueLength = await this.getTaskQueueLength(task.type);
-        if (queueLength < this.config.cnpmcore.taskQueueHighWaterSize) {
-          // make sure waiting task in queue
-          await this.queueAdapter.push<string>(task.type, existsTask.taskId);
-          this.logger.info('[TaskService.createTask:exists-to-queue] taskType: %s, targetName: %s, taskId: %s, queue size: %s',
-            task.type, task.targetName, task.taskId, queueLength);
+      // 如果任务还未被触发，就不继续重复创建
+      // 如果任务正在执行，可能任务状态已更新，这种情况需要继续创建
+      if (existsTask.state === TaskState.Waiting) {
+        // 提高任务的优先级
+        if (addTaskQueueOnExists) {
+          const queueLength = await this.getTaskQueueLength(task.type);
+          if (queueLength < this.config.cnpmcore.taskQueueHighWaterSize) {
+            // make sure waiting task in queue
+            await this.queueAdapter.push<string>(task.type, existsTask.taskId);
+            this.logger.info('[TaskService.createTask:exists-to-queue] taskType: %s, targetName: %s, taskId: %s, queue size: %s',
+              task.type, task.targetName, task.taskId, queueLength);
+          }
         }
+        return existsTask;
       }
-      return existsTask;
     }
     await this.taskRepository.saveTask(task);
     await this.queueAdapter.push<string>(task.type, task.taskId);
