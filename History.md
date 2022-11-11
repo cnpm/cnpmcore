@@ -1,4 +1,10 @@
 
+2.5.2 / 2022-11-11
+==================
+
+**fixes**
+  * [[`7eb209d`](http://github.com/cnpm/cnpmcore/commit/7eb209de1332417db2070846891d78f5afa0cd10)] - fix: create task when waiting (#352) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
 2.5.1 / 2022-11-07
 ==================
 
