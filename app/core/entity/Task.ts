@@ -216,6 +216,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       targetName,
       authorId: `pid_${PID}`,
       authorIp: HOST_NAME,
+      bizId: `SyncBinary:${targetName}`,
       data: {
         // task execute worker
         taskWorker: '',
