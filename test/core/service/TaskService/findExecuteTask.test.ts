@@ -116,38 +116,28 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
     });
 
     it('should skip task since other same task executing', async () => {
-      await packageSyncerService.createTask('foo-1');
+      await packageSyncerService.createTask('boo-1');
       const task1 = await packageSyncerService.findExecuteTask();
       task1.start();
       await taskRepository.saveTask(task1);
 
-
-      await packageSyncerService.createTask('foo-1');
+      const task2 = await packageSyncerService.createTask('boo-1');
       let queueLength = await taskService.getTaskQueueLength(task1.type);
       assert(queueLength === 1);
 
+      // already skip
       const empty = await packageSyncerService.findExecuteTask();
       assert(empty === null);
       queueLength = await taskService.getTaskQueueLength(task1.type);
-      assert(queueLength === 1);
-    });
+      assert(queueLength === 0);
 
-    it('should return another task since other same task executing', async () => {
-      await packageSyncerService.createTask('foo-1');
-      const task1 = await packageSyncerService.findExecuteTask();
-      task1.start();
-      await taskRepository.saveTask(task1);
-
-      await packageSyncerService.createTask('foo-1');
-      await packageSyncerService.createTask('foo-2');
-
-      let queueLength = await taskService.getTaskQueueLength(task1.type);
-      assert(queueLength === 2);
-
-      const task2 = await packageSyncerService.findExecuteTask();
-      assert(task2.targetName === 'foo-2');
+      // callback when finish
+      await taskService.finishTask(task1, TaskState.Success, '');
       queueLength = await taskService.getTaskQueueLength(task1.type);
       assert(queueLength === 1);
+      const callbackTask = await packageSyncerService.findExecuteTask();
+      assert(callbackTask.taskId === task2.taskId);
+
     });
 
   });

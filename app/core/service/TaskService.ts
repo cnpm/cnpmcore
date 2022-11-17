@@ -78,8 +78,6 @@ export class TaskService extends AbstractService {
 
   // 需要保证同时只会有一个相同的任务在运行
   // 防止任务并行导致请求结果冲突
-  // 在 createTask 时已经确保不会有两个同时 waiting 的 Task
-  // 但是可能相同的 task 正在执行，需要再做一次判断
   public async findExecuteTask(taskType: TaskType) {
     let taskId = await this.queueAdapter.pop<string>(taskType);
     let task: Task | null;
@@ -94,26 +92,25 @@ export class TaskService extends AbstractService {
         continue;
       }
 
-      const condition = task.start();
-      const saveSucceed = await this.taskRepository.idempotentSaveTask(task, condition);
-      if (!saveSucceed) {
+      // 判断一下是否有相同任务正在执行
+      // 如果有就先跳过，后续再执行
+      const sameTaskList = await this.taskRepository.findTasksByTargetNameAndType(task.targetName, task.type);
+      // 任务创建时会做 waiting 状态判断，只有 非 waiting 时才会创建
+      // 但是也可能是任务超时后重置，可能出现多个 waiting 任务的场景
+      const anotherProcessingTask = sameTaskList.find(item => item.state !== TaskState.Waiting);
+      if (anotherProcessingTask) {
+        this.logger.info(
+          '[TaskService.find:findExecuteTask:skip] taskType: %s, targetName: %s, taskId: %s, anotherTaskIsProcessing: %s',
+          task.type, task.targetName, task.taskId, anotherProcessingTask.taskId);
+        // anotherTaskIsProcessing 回调后会触发回调
+        // 继续从队列中取下一个任务
         taskId = await this.queueAdapter.pop<string>(taskType);
         continue;
       }
 
-      // 判断一下是否有相同任务正在执行
-      // 如果有就先跳过，后续再执行
-      const sameTaskList = await this.taskRepository.findTasksByTargetNameAndType(task.targetName, task.type);
-      // 任务可能经过超时重试，存在多个 Waiting 状态的任务
-      const anotherTaskIsProcessing = sameTaskList.some(item => item.state !== TaskState.Waiting);
-      if (anotherTaskIsProcessing) {
-        await this.queueAdapter.push<string>(taskType, taskId);
-        const queueLength = await this.getTaskQueueLength(task.type);
-        // 如果没有其他任务在执行，那么就等下次轮询时再做判断
-        if (queueLength === 1) {
-          break;
-        }
-        // 如果还有其他任务在执行，取下一个任务继续
+      const condition = task.start();
+      const saveSucceed = await this.taskRepository.idempotentSaveTask(task, condition);
+      if (!saveSucceed) {
         taskId = await this.queueAdapter.pop<string>(taskType);
         continue;
       }
@@ -170,6 +167,13 @@ export class TaskService extends AbstractService {
     }
     task.state = taskState;
     await this.taskRepository.saveTaskToHistory(task);
+
+    // 任取一个 waiting 的任务执行
+    // 相同 targetName 的任务理论上是一致的
+    const sameTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type, TaskState.Waiting);
+    if (sameTask) {
+      await this.retryTask(sameTask);
+    }
   }
 
   private async appendLogToNFS(task: Task, appendLog: string) {
