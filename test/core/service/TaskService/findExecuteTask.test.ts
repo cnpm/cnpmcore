@@ -4,6 +4,7 @@ import { Context } from 'egg';
 import { TaskService } from 'app/core/service/TaskService';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { TaskState, TaskType } from 'app/common/enum/Task';
+import { TaskRepository } from 'app/repository/TaskRepository';
 import { RedisQueueAdapter } from '../../../../app/infra/QueueAdapter';
 
 describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
@@ -11,12 +12,14 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
   let taskService: TaskService;
   let packageSyncerService: PackageSyncerService;
   let queueAdapter: RedisQueueAdapter;
+  let taskRepository: TaskRepository;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     taskService = await ctx.getEggObject(TaskService);
     packageSyncerService = await ctx.getEggObject(PackageSyncerService);
     queueAdapter = await ctx.getEggObject(RedisQueueAdapter);
+    taskRepository = await ctx.getEggObject(TaskRepository);
   });
 
   afterEach(async () => {
@@ -111,5 +114,41 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
       ]);
       assert(tasks[0]?.taskId !== task1[1]?.taskId);
     });
+
+    it('should skip task since other same task executing', async () => {
+      await packageSyncerService.createTask('foo-1');
+      const task1 = await packageSyncerService.findExecuteTask();
+      task1.start();
+      await taskRepository.saveTask(task1);
+
+
+      await packageSyncerService.createTask('foo-1');
+      let queueLength = await taskService.getTaskQueueLength(task1.type);
+      assert(queueLength === 1);
+
+      const empty = await packageSyncerService.findExecuteTask();
+      assert(empty === null);
+      queueLength = await taskService.getTaskQueueLength(task1.type);
+      assert(queueLength === 1);
+    });
+
+    it('should return another task since other same task executing', async () => {
+      await packageSyncerService.createTask('foo-1');
+      const task1 = await packageSyncerService.findExecuteTask();
+      task1.start();
+      await taskRepository.saveTask(task1);
+
+      await packageSyncerService.createTask('foo-1');
+      await packageSyncerService.createTask('foo-2');
+
+      let queueLength = await taskService.getTaskQueueLength(task1.type);
+      assert(queueLength === 2);
+
+      const task2 = await packageSyncerService.findExecuteTask();
+      assert(task2.targetName === 'foo-2');
+      queueLength = await taskService.getTaskQueueLength(task1.type);
+      assert(queueLength === 1);
+    });
+
   });
 });

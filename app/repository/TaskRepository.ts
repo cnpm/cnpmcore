@@ -93,6 +93,12 @@ export class TaskRepository extends AbstractRepository {
     return tasks.map(task => ModelConvertor.convertModelToEntity(task, TaskEntity));
   }
 
+  async findTasksByTargetNameAndType(targetName: string, type: TaskType) {
+    const where: any = { targetName, type };
+    const tasks = await this.Task.find(where);
+    return tasks.map(task => ModelConvertor.convertModelToEntity(task, TaskEntity));
+  }
+
   async findTaskByTargetName(targetName: string, type: TaskType, state?: TaskState) {
     const where: any = { targetName, type };
     if (state) {

@@ -76,6 +76,10 @@ export class TaskService extends AbstractService {
     return await this.nfsAdapter.getDownloadUrlOrStream(task.logPath);
   }
 
+  // 需要保证同时只会有一个相同的任务在运行
+  // 防止任务并行导致请求结果冲突
+  // 在 createTask 时已经确保不会有两个同时 waiting 的 Task
+  // 但是可能相同的 task 正在执行，需要再做一次判断
   public async findExecuteTask(taskType: TaskType) {
     let taskId = await this.queueAdapter.pop<string>(taskType);
     let task: Task | null;
@@ -96,6 +100,24 @@ export class TaskService extends AbstractService {
         taskId = await this.queueAdapter.pop<string>(taskType);
         continue;
       }
+
+      // 判断一下是否有相同任务正在执行
+      // 如果有就先跳过，后续再执行
+      const sameTaskList = await this.taskRepository.findTasksByTargetNameAndType(task.targetName, task.type);
+      // 任务可能经过超时重试，存在多个 Waiting 状态的任务
+      const anotherTaskIsProcessing = sameTaskList.some(item => item.state !== TaskState.Waiting);
+      if (anotherTaskIsProcessing) {
+        await this.queueAdapter.push<string>(taskType, taskId);
+        const queueLength = await this.getTaskQueueLength(task.type);
+        // 如果没有其他任务在执行，那么就等下次轮询时再做判断
+        if (queueLength === 1) {
+          break;
+        }
+        // 如果还有其他任务在执行，取下一个任务继续
+        taskId = await this.queueAdapter.pop<string>(taskType);
+        continue;
+      }
+
       return task;
     }
 
