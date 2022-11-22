@@ -36,7 +36,7 @@ export class UpdatePackageController extends AbstractController {
     // PUT /:fullname/-rev/:rev
     path: `/:fullname(${FULLNAME_REG_STRING})/-rev/:rev`,
     method: HTTPMethodEnum.PUT,
-    })
+  })
   async update(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: Maintainer) {
     if (this.isNpmCommandValid(ctx, 'unpublish')) {
       // ignore it
