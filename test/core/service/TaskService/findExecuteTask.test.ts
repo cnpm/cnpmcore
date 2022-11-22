@@ -1,22 +1,26 @@
 import assert = require('assert');
-import { app } from 'egg-mock/bootstrap';
+import { app, mm } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { TaskService } from 'app/core/service/TaskService';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { TaskState, TaskType } from 'app/common/enum/Task';
+import { RedisQueueAdapter } from '../../../../app/infra/QueueAdapter';
 
 describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
   let ctx: Context;
   let taskService: TaskService;
   let packageSyncerService: PackageSyncerService;
+  let queueAdapter: RedisQueueAdapter;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     taskService = await ctx.getEggObject(TaskService);
     packageSyncerService = await ctx.getEggObject(PackageSyncerService);
+    queueAdapter = await ctx.getEggObject(RedisQueueAdapter);
   });
 
   afterEach(async () => {
+    mm.restore();
     await app.destroyModuleContext(ctx);
   });
 
@@ -27,23 +31,19 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
 
       const newTask = await packageSyncerService.createTask('foo');
       assert(newTask);
+      app.expectLog(/queue size: 1/);
       assert(!newTask.data.taskWorker);
-      // same task but in queue has two
+      // same task not create again
       const newTask2 = await packageSyncerService.createTask('foo');
       assert(newTask2);
       assert(newTask2.taskId === newTask.taskId);
       assert(!newTask2.data.taskWorker);
+      app.expectLog(/queue size: 1/);
 
       // find other task type
       task = await taskService.findExecuteTask(TaskType.SyncBinary);
       assert(!task);
 
-      task = await taskService.findExecuteTask(TaskType.SyncPackage);
-      assert(task);
-      assert(task.targetName === 'foo');
-      assert(task.taskId === newTask.taskId);
-      assert(task.data.taskWorker);
-      assert(task.state === TaskState.Processing);
       task = await taskService.findExecuteTask(TaskType.SyncPackage);
       assert(task);
       assert(task.targetName === 'foo');
@@ -71,6 +71,45 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
       assert(task);
       task = await taskService.findExecuteTask(TaskType.SyncPackage);
       assert(!task);
+    });
+
+    it('should check task state before execute', async () => {
+      const task1 = await packageSyncerService.createTask('foo-1');
+      const task2 = await packageSyncerService.createTask('foo-2');
+      // task 已被执行成功
+      await taskService.finishTask(task1, TaskState.Success, '');
+
+      const executeTask = await taskService.findExecuteTask(task1.type);
+
+      // 直接返回下一个 task2
+      assert(executeTask?.taskId === task2.taskId);
+    });
+
+    it('should return null when no valid task', async () => {
+      const task1 = await packageSyncerService.createTask('foo-1');
+      // task 已被执行成功
+      await taskService.finishTask(task1, TaskState.Success, '');
+
+      const executeTask = await taskService.findExecuteTask(task1.type);
+
+      // 直接返回下一个 task2
+      assert(executeTask === null);
+    });
+
+    it('should not task which take be other', async () => {
+      const task1 = await packageSyncerService.createTask('foo-1');
+      const task2 = await packageSyncerService.createTask('foo-2');
+      // mock pop get duplicate taskId
+      const popResult = [ task1.taskId, task1.taskId, task2.taskId ];
+      let times = 0;
+      mm(queueAdapter, 'pop', async () => {
+        return popResult[times++];
+      });
+      const tasks = await Promise.all([
+        taskService.findExecuteTask(task1.type),
+        taskService.findExecuteTask(task1.type),
+      ]);
+      assert(tasks[0]?.taskId !== task1[1]?.taskId);
     });
   });
 });

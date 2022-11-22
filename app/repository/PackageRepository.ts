@@ -1,17 +1,17 @@
-import { AccessLevel, ContextProto } from '@eggjs/tegg';
-import { Package as PackageModel } from './model/Package';
+import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import type { Package as PackageModel } from './model/Package';
 import { Package as PackageEntity } from '../core/entity/Package';
 import { ModelConvertor } from './util/ModelConvertor';
 import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVersion';
-import { PackageVersion as PackageVersionModel } from './model/PackageVersion';
+import type { PackageVersion as PackageVersionModel } from './model/PackageVersion';
 import { PackageVersionManifest as PackageVersionManifestEntity } from '../core/entity/PackageVersionManifest';
-import { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest';
-import { Dist as DistModel } from './model/Dist';
+import type { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest';
+import type { Dist as DistModel } from './model/Dist';
 import { Dist as DistEntity } from '../core/entity/Dist';
 import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag';
-import { PackageTag as PackageTagModel } from './model/PackageTag';
-import { Maintainer as MaintainerModel } from './model/Maintainer';
-import { User as UserModel } from './model/User';
+import type { PackageTag as PackageTagModel } from './model/PackageTag';
+import type { Maintainer as MaintainerModel } from './model/Maintainer';
+import type { User as UserModel } from './model/User';
 import { User as UserEntity } from '../core/entity/User';
 import { AbstractRepository } from './AbstractRepository';
 
@@ -19,11 +19,32 @@ import { AbstractRepository } from './AbstractRepository';
   accessLevel: AccessLevel.PUBLIC,
 })
 export class PackageRepository extends AbstractRepository {
+  @Inject()
+  private readonly Package: typeof PackageModel;
+
+  @Inject()
+  private readonly Dist: typeof DistModel;
+
+  @Inject()
+  private readonly PackageVersion: typeof PackageVersionModel;
+
+  @Inject()
+  private readonly PackageVersionManifest: typeof PackageVersionManifestModel;
+
+  @Inject()
+  private readonly PackageTag: typeof PackageTagModel;
+
+  @Inject()
+  private readonly Maintainer: typeof MaintainerModel;
+
+  @Inject()
+  private readonly User: typeof UserModel;
+
   async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
-    const model = await PackageModel.findOne({ scope, name });
+    const model = await this.Package.findOne({ scope, name });
     if (!model) return null;
-    const manifestsDistModel = model.manifestsDistId ? await DistModel.findOne({ distId: model.manifestsDistId }) : null;
-    const abbreviatedsDistModel = model.abbreviatedsDistId ? await DistModel.findOne({ distId: model.abbreviatedsDistId }) : null;
+    const manifestsDistModel = model.manifestsDistId ? await this.Dist.findOne({ distId: model.manifestsDistId }) : null;
+    const abbreviatedsDistModel = model.abbreviatedsDistId ? await this.Dist.findOne({ distId: model.abbreviatedsDistId }) : null;
     const data = {
       manifestsDist: manifestsDistModel && ModelConvertor.convertModelToEntity(manifestsDistModel, DistEntity),
       abbreviatedsDist: abbreviatedsDistModel && ModelConvertor.convertModelToEntity(abbreviatedsDistModel, DistEntity),
@@ -33,18 +54,18 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async findPackageId(scope: string, name: string) {
-    const model = await PackageModel.findOne({ scope, name }).select('packageId');
+    const model = await this.Package.findOne({ scope, name }).select('packageId');
     if (!model) return null;
     return model.packageId;
   }
 
   async savePackage(pkgEntity: PackageEntity): Promise<void> {
     if (pkgEntity.id) {
-      const model = await PackageModel.findOne({ id: pkgEntity.id });
+      const model = await this.Package.findOne({ id: pkgEntity.id });
       if (!model) return;
       await ModelConvertor.saveEntityToModel(pkgEntity, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(pkgEntity, PackageModel);
+      const model = await ModelConvertor.convertEntityToModel(pkgEntity, this.Package);
       this.logger.info('[PackageRepository:savePackage:new] id: %s, packageId: %s', model.id, model.packageId);
     }
   }
@@ -53,11 +74,11 @@ export class PackageRepository extends AbstractRepository {
     const dist = isFullManifests ? pkgEntity.manifestsDist : pkgEntity.abbreviatedsDist;
     if (!dist) return;
     if (dist.id) {
-      const model = await DistModel.findOne({ id: dist.id });
+      const model = await this.Dist.findOne({ id: dist.id });
       if (!model) return;
       await ModelConvertor.saveEntityToModel(dist, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(dist, DistModel);
+      const model = await ModelConvertor.convertEntityToModel(dist, this.Dist);
       this.logger.info('[PackageRepository:savePackageDist:new] id: %s, distId: %s, packageId: %s',
         model.id, model.distId, pkgEntity.packageId);
     }
@@ -67,7 +88,7 @@ export class PackageRepository extends AbstractRepository {
   async removePackageDist(pkgEntity: PackageEntity, isFullManifests: boolean): Promise<void> {
     const dist = isFullManifests ? pkgEntity.manifestsDist : pkgEntity.abbreviatedsDist;
     if (!dist) return;
-    const model = await DistModel.findOne({ id: dist.id });
+    const model = await this.Dist.findOne({ id: dist.id });
     if (!model) return;
     await model.remove();
     this.logger.info('[PackageRepository:removePackageDist:remove] id: %s, distId: %s, packageId: %s',
@@ -79,9 +100,9 @@ export class PackageRepository extends AbstractRepository {
   // Package Maintainers
   // return true meaning create new record
   async savePackageMaintainer(packageId: string, userId: string): Promise<undefined | true> {
-    let model = await MaintainerModel.findOne({ packageId, userId });
+    let model = await this.Maintainer.findOne({ packageId, userId });
     if (!model) {
-      model = await MaintainerModel.create({ packageId, userId });
+      model = await this.Maintainer.create({ packageId, userId });
       this.logger.info('[PackageRepository:addPackageMaintainer:new] id: %s, packageId: %s, userId: %s',
         model.id, model.packageId, model.userId);
       return true;
@@ -89,22 +110,22 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async listPackageMaintainers(packageId: string): Promise<UserEntity[]> {
-    const models = await MaintainerModel.find({ packageId });
-    const userModels = await UserModel.find({ userId: models.map(m => m.userId) });
+    const models = await this.Maintainer.find({ packageId });
+    const userModels = await this.User.find({ userId: models.map(m => m.userId) });
     return userModels.map(user => ModelConvertor.convertModelToEntity(user, UserEntity));
   }
 
   async replacePackageMaintainers(packageId: string, userIds: string[]): Promise<void> {
-    await MaintainerModel.transaction(async () => {
+    await this.Maintainer.transaction(async ({ connection }) => {
       // delete exists
-      // const removeCount = await MaintainerModel.remove({ packageId }, true, { transaction });
-      const removeCount = await MaintainerModel.remove({ packageId });
+      // const removeCount = await this.Maintainer.remove({ packageId }, true, { transaction });
+      const removeCount = await this.Maintainer.remove({ packageId }, true, { connection });
       this.logger.info('[PackageRepository:replacePackageMaintainers:remove] %d rows, packageId: %s',
         removeCount, packageId);
       // add news
       for (const userId of userIds) {
-        // const model = await MaintainerModel.create({ packageId, userId }, transaction);
-        const model = await MaintainerModel.create({ packageId, userId });
+        // const model = await this.Maintainer.create({ packageId, userId }, transaction);
+        const model = await this.Maintainer.create({ packageId, userId }, { connection });
         this.logger.info('[PackageRepository:replacePackageMaintainers:new] id: %s, packageId: %s, userId: %s',
           model.id, model.packageId, model.userId);
       }
@@ -112,7 +133,7 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async removePackageMaintainer(packageId: string, userId: string) {
-    const model = await MaintainerModel.findOne({ packageId, userId });
+    const model = await this.Maintainer.findOne({ packageId, userId });
     if (model) {
       await model.remove();
       this.logger.info('[PackageRepository:removePackageMaintainer:remove] id: %s, packageId: %s, userId: %s',
@@ -124,36 +145,36 @@ export class PackageRepository extends AbstractRepository {
 
   // TODO: support paging
   async listPackagesByUserId(userId: string): Promise<PackageEntity[]> {
-    const models = await MaintainerModel.find({ userId });
-    const packageModels = await PackageModel.find({ packageId: models.map(m => m.packageId) });
+    const models = await this.Maintainer.find({ userId });
+    const packageModels = await this.Package.find({ packageId: models.map(m => m.packageId) });
     return packageModels.map(pkg => ModelConvertor.convertModelToEntity(pkg, PackageEntity));
   }
 
   async createPackageVersion(pkgVersionEntity: PackageVersionEntity) {
-    await PackageVersionModel.transaction(async function(transaction) {
+    await this.PackageVersion.transaction(async transaction => {
       await Promise.all([
         // FIXME: transaction is not the options
-        ModelConvertor.convertEntityToModel(pkgVersionEntity, PackageVersionModel, transaction),
-        ModelConvertor.convertEntityToModel(pkgVersionEntity.manifestDist, DistModel, transaction),
-        ModelConvertor.convertEntityToModel(pkgVersionEntity.tarDist, DistModel, transaction),
-        ModelConvertor.convertEntityToModel(pkgVersionEntity.readmeDist, DistModel, transaction),
-        ModelConvertor.convertEntityToModel(pkgVersionEntity.abbreviatedDist, DistModel, transaction),
+        ModelConvertor.convertEntityToModel(pkgVersionEntity, this.PackageVersion, transaction),
+        ModelConvertor.convertEntityToModel(pkgVersionEntity.manifestDist, this.Dist, transaction),
+        ModelConvertor.convertEntityToModel(pkgVersionEntity.tarDist, this.Dist, transaction),
+        ModelConvertor.convertEntityToModel(pkgVersionEntity.readmeDist, this.Dist, transaction),
+        ModelConvertor.convertEntityToModel(pkgVersionEntity.abbreviatedDist, this.Dist, transaction),
       ]);
     });
   }
 
   async savePackageVersion(pkgVersionEntity: PackageVersionEntity) {
     // only abbreviatedDist and manifestDist allow to change, like `deprecated` message
-    let model = await DistModel.findOne({ id: pkgVersionEntity.manifestDist.id });
+    let model = await this.Dist.findOne({ id: pkgVersionEntity.manifestDist.id });
     if (model) {
       await ModelConvertor.saveEntityToModel(pkgVersionEntity.manifestDist, model);
     }
-    model = await DistModel.findOne({ id: pkgVersionEntity.abbreviatedDist.id });
+    model = await this.Dist.findOne({ id: pkgVersionEntity.abbreviatedDist.id });
     if (model) {
       await ModelConvertor.saveEntityToModel(pkgVersionEntity.abbreviatedDist, model);
     }
     if (pkgVersionEntity.id) {
-      const model = await PackageVersionModel.findOne({ id: pkgVersionEntity.id });
+      const model = await this.PackageVersion.findOne({ id: pkgVersionEntity.id });
       if (model) {
         await ModelConvertor.saveEntityToModel(pkgVersionEntity, model);
       }
@@ -161,14 +182,14 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async findPackageVersion(packageId: string, version: string): Promise<PackageVersionEntity | null> {
-    const pkgVersionModel = await PackageVersionModel.findOne({ packageId, version });
+    const pkgVersionModel = await this.PackageVersion.findOne({ packageId, version });
     if (!pkgVersionModel) return null;
     return await this.fillPackageVersionEntitiyData(pkgVersionModel);
   }
 
   async listPackageVersions(packageId: string): Promise<PackageVersionEntity[]> {
     // FIXME: read all versions will hit the memory limit
-    const models = await PackageVersionModel.find({ packageId }).order('id desc');
+    const models = await this.PackageVersion.find({ packageId }).order('id desc');
     const entities: PackageVersionEntity[] = [];
     for (const model of models) {
       entities.push(await this.fillPackageVersionEntitiyData(model));
@@ -177,19 +198,19 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async listPackageVersionNames(packageId: string): Promise<string[]> {
-    const rows = await PackageVersionModel.find({ packageId }).select('version').order('id desc');
+    const rows = await this.PackageVersion.find({ packageId }).select('version').order('id desc');
     return rows.map(row => row.version);
   }
 
   // only for unittest now
   async removePackageVersions(packageId: string): Promise<void> {
-    const removeCount = await PackageVersionModel.remove({ packageId });
+    const removeCount = await this.PackageVersion.remove({ packageId });
     this.logger.info('[PackageRepository:removePackageVersions:remove] %d rows, packageId: %s',
       removeCount, packageId);
   }
 
   async removePackageVersion(pkgVersion: PackageVersionEntity): Promise<void> {
-    const distRemoveCount = await DistModel.remove({
+    const distRemoveCount = await this.Dist.remove({
       distId: [
         pkgVersion.abbreviatedDist.distId,
         pkgVersion.manifestDist.distId,
@@ -197,32 +218,32 @@ export class PackageRepository extends AbstractRepository {
         pkgVersion.tarDist.distId,
       ],
     });
-    const removeCount = await PackageVersionModel.remove({ packageVersionId: pkgVersion.packageVersionId });
+    const removeCount = await this.PackageVersion.remove({ packageVersionId: pkgVersion.packageVersionId });
     this.logger.info('[PackageRepository:removePackageVersion:remove] %d dist rows, %d rows, packageVersionId: %s',
       distRemoveCount, removeCount, pkgVersion.packageVersionId);
   }
 
   async savePackageVersionManifest(manifestEntity: PackageVersionManifestEntity): Promise<void> {
-    let model = await PackageVersionManifestModel.findOne({ packageVersionId: manifestEntity.packageVersionId });
+    let model = await this.PackageVersionManifest.findOne({ packageVersionId: manifestEntity.packageVersionId });
     if (model) {
       model.manifest = manifestEntity.manifest;
       await model.save();
     } else {
-      model = await ModelConvertor.convertEntityToModel(manifestEntity, PackageVersionManifestModel);
+      model = await ModelConvertor.convertEntityToModel(manifestEntity, this.PackageVersionManifest);
       this.logger.info('[PackageRepository:savePackageVersionManifest:new] id: %s, packageVersionId: %s',
         model.id, model.packageVersionId);
     }
   }
 
   async findPackageVersionManifest(packageVersionId: string) {
-    const model = await PackageVersionManifestModel.findOne({ packageVersionId });
+    const model = await this.PackageVersionManifest.findOne({ packageVersionId });
     if (!model) return null;
-    return ModelConvertor.convertModelToEntity(model, PackageVersionManifestModel);
+    return ModelConvertor.convertModelToEntity(model, this.PackageVersionManifest);
   }
 
   public async queryTotal() {
-    const lastPkg = await PackageModel.findOne().order('id', 'desc');
-    const lastVersion = await PackageVersionModel.findOne().order('id', 'desc');
+    const lastPkg = await this.Package.findOne().order('id', 'desc');
+    const lastVersion = await this.PackageVersion.findOne().order('id', 'desc');
     let packageCount = 0;
     let packageVersionCount = 0;
     let lastPackage = '';
@@ -235,7 +256,7 @@ export class PackageRepository extends AbstractRepository {
     }
 
     if (lastVersion) {
-      const pkg = await PackageModel.findOne({ packageId: lastVersion.packageId });
+      const pkg = await this.Package.findOne({ packageId: lastVersion.packageId });
       if (pkg) {
         const fullname = pkg.scope ? `${pkg.scope}/${pkg.name}` : pkg.name;
         lastPackageVersion = `${fullname}@${lastVersion.version}`;
@@ -257,10 +278,10 @@ export class PackageRepository extends AbstractRepository {
       manifestDistModel,
       abbreviatedDistModel,
     ] = await Promise.all([
-      DistModel.findOne({ distId: model.tarDistId }),
-      DistModel.findOne({ distId: model.readmeDistId }),
-      DistModel.findOne({ distId: model.manifestDistId }),
-      DistModel.findOne({ distId: model.abbreviatedDistId }),
+      this.Dist.findOne({ distId: model.tarDistId }),
+      this.Dist.findOne({ distId: model.readmeDistId }),
+      this.Dist.findOne({ distId: model.manifestDistId }),
+      this.Dist.findOne({ distId: model.abbreviatedDistId }),
     ]);
     const data = {
       tarDist: tarDistModel && ModelConvertor.convertModelToEntity(tarDistModel, DistEntity),
@@ -272,7 +293,7 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async findPackageTag(packageId: string, tag: string): Promise<PackageTagEntity | null> {
-    const model = await PackageTagModel.findOne({ packageId, tag });
+    const model = await this.PackageTag.findOne({ packageId, tag });
     if (!model) return null;
     const entity = ModelConvertor.convertModelToEntity(model, PackageTagEntity);
     return entity;
@@ -280,18 +301,18 @@ export class PackageRepository extends AbstractRepository {
 
   async savePackageTag(packageTagEntity: PackageTagEntity) {
     if (packageTagEntity.id) {
-      const model = await PackageTagModel.findOne({ id: packageTagEntity.id });
+      const model = await this.PackageTag.findOne({ id: packageTagEntity.id });
       if (!model) return;
       await ModelConvertor.saveEntityToModel(packageTagEntity, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(packageTagEntity, PackageTagModel);
+      const model = await ModelConvertor.convertEntityToModel(packageTagEntity, this.PackageTag);
       this.logger.info('[PackageRepository:savePackageTag:new] id: %s, packageTagId: %s, tags: %s => %s',
         model.id, model.packageTagId, model.tag, model.version);
     }
   }
 
   async removePackageTag(packageTagEntity: PackageTagEntity) {
-    const model = await PackageTagModel.findOne({ id: packageTagEntity.id });
+    const model = await this.PackageTag.findOne({ id: packageTagEntity.id });
     if (!model) return;
     await model.remove();
     this.logger.info('[PackageRepository:removePackageTag:remove] id: %s, packageTagId: %s, packageId: %s',
@@ -299,7 +320,7 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async listPackageTags(packageId: string): Promise<PackageTagEntity[]> {
-    const models = await PackageTagModel.find({ packageId });
+    const models = await this.PackageTag.find({ packageId });
     const entities: PackageTagEntity[] = [];
     for (const model of models) {
       entities.push(ModelConvertor.convertModelToEntity(model, PackageTagEntity));

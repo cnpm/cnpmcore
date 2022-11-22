@@ -1,0 +1,3297 @@
+{
+  "_id": "grpc-tools",
+  "_rev": "45-deed7de363825d2e9f1b99fbc3779c3a",
+  "name": "grpc-tools",
+  "description": "Tools for developing with gRPC on Node.js",
+  "dist-tags": {
+    "latest": "1.11.3"
+  },
+  "versions": {
+    "0.14.1-pre1": {
+      "name": "grpc-tools",
+      "version": "0.14.1-pre1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@0.14.1-pre1",
+      "_shasum": "8d05469d5a64009b2cf609b9e35b884a8c5b2ab9",
+      "_resolved": "file:grpc-tools-0.14.1-pre1.tgz",
+      "_from": "grpc-tools-0.14.1-pre1.tgz",
+      "_npmVersion": "3.8.6",
+      "_nodeVersion": "6.1.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "michael.lumish@gmail.com"
+        }
+      ],
+      "dist": {
+        "shasum": "8d05469d5a64009b2cf609b9e35b884a8c5b2ab9",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-0.14.1-pre1.tgz",
+        "integrity": "sha512-iVgPbie0NHQ0Mj2xKBqzOX+jr7uqIWGYW0mcEw6WdtQdYNzksxa1kdlYl3oH3gI27eH27Rr/7usplpVChb2jsw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCuSORvw6mJC0opExSoCpqBsc5zwJIAH1M9irLto75ASAIgdlmAtKg3zh6UN2iUNxF8/KI5dOCNGiqOqOSoSo6JA2U="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-16-east.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-0.14.1-pre1.tgz_1462905328162_0.8536354133393615"
+      },
+      "directories": {}
+    },
+    "0.14.1": {
+      "name": "grpc-tools",
+      "version": "0.14.1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@0.14.1",
+      "_shasum": "c60d4b5424855b4f0edad366a07c0a7f606029c2",
+      "_resolved": "file:grpc-tools-0.14.1.tgz",
+      "_from": "grpc-tools-0.14.1.tgz",
+      "_npmVersion": "3.8.6",
+      "_nodeVersion": "6.1.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "c60d4b5424855b4f0edad366a07c0a7f606029c2",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-0.14.1.tgz",
+        "integrity": "sha512-RwP63fzIJrYqq15/yre9z0jzgQc03zfeA+bIehgv5XTncxLBZqlXw7ItNb6pJf4+vIH9UJTaL/rnLkqorJm4Pw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIDHwSqU375b8KIQJNreLIrh5Mm/CsvkLp28ftUZxpgepAiEAmT4BY4HURMfugXencenjoUcMXI+xArOOdoUyKSGYxsU="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-0.14.1.tgz_1463007261987_0.4092865560669452"
+      },
+      "directories": {}
+    },
+    "0.15.0": {
+      "name": "grpc-tools",
+      "version": "0.15.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@0.15.0",
+      "_shasum": "5e0e2669362065c035973cdf39ff729822bb773e",
+      "_resolved": "file:grpc-tools-0.15.0.tgz",
+      "_from": "grpc-tools-0.15.0.tgz",
+      "_npmVersion": "2.15.1",
+      "_nodeVersion": "4.4.3",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "5e0e2669362065c035973cdf39ff729822bb773e",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-0.15.0.tgz",
+        "integrity": "sha512-MQzSKtatxnPs2L+TeYCdBO7/XzQrq1C1zpCzQ3J0tz0em0swIL+7xeTJ9agZLyGYdELzpJtOGzg9n4ovK98inA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIF0pBRWEuCdrRYJsIrVY6kVtonyVKu4PJKS6aiQrKbWAAiAqMmbcwwC61/Qt/7cQjRiTdnUCjUMTIERjyXb4HV7srQ=="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-0.15.0.tgz_1467048352360_0.857200103579089"
+      },
+      "directories": {}
+    },
+    "1.0.0-pre1": {
+      "name": "grpc-tools",
+      "version": "1.0.0-pre1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.0.0-pre1",
+      "_shasum": "0f981434a549e1ab0d2875b89673b5b6c84fec49",
+      "_resolved": "file:Downloads/grpc-tools-1.0.0-pre1.tgz",
+      "_from": "Downloads/grpc-tools-1.0.0-pre1.tgz",
+      "_npmVersion": "2.15.1",
+      "_nodeVersion": "4.4.3",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "0f981434a549e1ab0d2875b89673b5b6c84fec49",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.0.0-pre1.tgz",
+        "integrity": "sha512-YBPqo+rxzJFglDpDcxXmYbkcFZ6R3XnTkiyuA8NtTx6bwlt0c99Sc8rljDdwBFY3cM2RWt7s41sFvaJvJq9t1Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCVL3xUs6a6s6zQPY8Np/r5xQ5mX8LlfYyFGYXjNTQmywIhAKWDEupzFZlfunzrR5X3lvzkFlbVa4MeK/qv0KV33CTf"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.0.0-pre1.tgz_1469124715395_0.7513710367493331"
+      },
+      "directories": {}
+    },
+    "1.0.0-pre2": {
+      "name": "grpc-tools",
+      "version": "1.0.0-pre2",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.0.0-pre2",
+      "_shasum": "815fc8f4d85ddd00a27e0abfe984001392d1f790",
+      "_resolved": "file:Downloads/grpc-tools-1.0.0-pre2.tgz",
+      "_from": "Downloads/grpc-tools-1.0.0-pre2.tgz",
+      "_npmVersion": "2.15.8",
+      "_nodeVersion": "4.4.7",
+      "_npmUser": {
+        "name": "grpc-packages",
+        "email": "grpc-packages@google.com"
+      },
+      "dist": {
+        "shasum": "815fc8f4d85ddd00a27e0abfe984001392d1f790",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.0.0-pre2.tgz",
+        "integrity": "sha512-af0hV9d2MB6pdDPgFa058qiJhVxNs7Rnv+1+k6JNVfAhL+hN3HslZdvPdxQTnb7pcGYb1+0VSG4T1mE2S0a/dw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDmEkYyu5BaBWYwjlnzOQldRDtwJM3J5NT16w4spVpXegIgfVuXcglum5E1H2ePlS2Oqa74SY01m67EFg9LrPIWnw4="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "packages-16-east.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.0.0-pre2.tgz_1470957775484_0.5019501857459545"
+      },
+      "directories": {}
+    },
+    "1.0.0": {
+      "name": "grpc-tools",
+      "version": "1.0.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.0.0",
+      "_shasum": "57a9e2ce7a030adab8b1964137cc85ef0e0bec92",
+      "_resolved": "file:Downloads/grpc-tools-1.0.0.tgz",
+      "_from": "Downloads/grpc-tools-1.0.0.tgz",
+      "_npmVersion": "3.10.6",
+      "_nodeVersion": "6.3.1",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "57a9e2ce7a030adab8b1964137cc85ef0e0bec92",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.0.0.tgz",
+        "integrity": "sha512-pFJOrgzpcKvEPp860vxeRJqnGfJImuOcHYAFlOTQHblossVFgOws72ehkNZV0OrEo8EZuz02TE8facgrRIz6QQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCUsYJJp5e3VTOnv7Q+HlnxKTHADv/G/JfX0PN0dxbIdgIhAJwb49fmdMiGMQhL1faCL1OsflZbmjunLuLI9g21b7uq"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-16-east.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.0.0.tgz_1471562012406_0.3189019358251244"
+      },
+      "directories": {}
+    },
+    "1.0.1-pre1": {
+      "name": "grpc-tools",
+      "version": "1.0.1-pre1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.0.1-pre1",
+      "_shasum": "d579b6a167d87a5dee1dbec2b899c17273a35d9e",
+      "_resolved": "file:grpc-tools-1.0.1-pre1.tgz",
+      "_from": "grpc-tools-1.0.1-pre1.tgz",
+      "_npmVersion": "3.10.3",
+      "_nodeVersion": "6.6.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "d579b6a167d87a5dee1dbec2b899c17273a35d9e",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.0.1-pre1.tgz",
+        "integrity": "sha512-rjExhA55f73E7G2Qu45lxQ3QC2z9W036Uf2aTrefByXnlKJayMIKIDx3ESXrFxZ0qzTyEUpsoMR6DF0ttwjKYA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQChx8C/nV7fYa0MGRSLcZXRs8WtGdn3he6usbl0YqgeigIhAMHcTPd4MqmJx/hGyTYyeoNS+ZL3KqDCe8VAr9T0liBs"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.0.1-pre1.tgz_1475789957588_0.6892156729009002"
+      },
+      "directories": {}
+    },
+    "1.0.1": {
+      "name": "grpc-tools",
+      "version": "1.0.1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.0.1",
+      "_shasum": "a6cf0d517bc6e0dd33b6459b958feef2a92feaa8",
+      "_resolved": "file:grpc-tools-1.0.1.tgz",
+      "_from": "grpc-tools-1.0.1.tgz",
+      "_npmVersion": "3.10.3",
+      "_nodeVersion": "6.6.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "a6cf0d517bc6e0dd33b6459b958feef2a92feaa8",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.0.1.tgz",
+        "integrity": "sha512-tfgSLp5NIi1xu2v3J30XKcDHjEHmqJ4oAweW6zWGWcAPPcT63ZgozFmIqK117s9mOY5uEWwajiOOe3AYAxBlKg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCYsrwMZ92Z6ufprm1HlDK+XuKf+zU/PCLG+tfHeYfqYQIhAIUgIT64pDaKjMKp+ebHpyd9DYv3bwoW1kigmqKUMxNf"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.0.1.tgz_1477610159804_0.29919913224875927"
+      },
+      "directories": {}
+    },
+    "1.1.0-pre1": {
+      "name": "grpc-tools",
+      "version": "1.1.0-pre1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.1.0-pre1",
+      "_shasum": "73ea213940501daea41c0fdb818fc4ff1db561ce",
+      "_resolved": "file:Downloads/grpc-tools-1.1.0-pre1.tgz",
+      "_from": "Downloads/grpc-tools-1.1.0-pre1.tgz",
+      "_npmVersion": "3.10.3",
+      "_nodeVersion": "6.6.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "73ea213940501daea41c0fdb818fc4ff1db561ce",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.1.0-pre1.tgz",
+        "integrity": "sha512-oVfWcyTDlsdfQ93iPM1d7J410rUc+49WATkSHLVW+RLthTar1Jo3zRFtBlOXwn+lE3dqgbdsed1F2tyyE3dq4w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDQPKnDW2CQ2ACwL5Jbs2mQyujlzvQFdCSovQ4lR3U4BwIhAJ2TUtnVyie78Q5yvNlzoFz5G22rLF6PT5dssTY+eobX"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.1.0-pre1.tgz_1485372590375_0.14547539199702442"
+      },
+      "directories": {}
+    },
+    "1.1.0": {
+      "name": "grpc-tools",
+      "version": "1.1.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.1.0",
+      "_shasum": "3caeed223d349d79ad766c7861beb63094095f9f",
+      "_resolved": "file:Downloads/2661/archive/artifacts/grpc-tools-1.1.0.tgz",
+      "_from": "Downloads/2661/archive/artifacts/grpc-tools-1.1.0.tgz",
+      "_npmVersion": "3.10.3",
+      "_nodeVersion": "6.6.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "3caeed223d349d79ad766c7861beb63094095f9f",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.1.0.tgz",
+        "integrity": "sha512-b78IGG5Q4cs0U9xd/I8ebkN/ImkRd8/VCnbnBv1RycEqm+4SnPv2/1l61IHXtfUBNDS4Fph6ehXVDDJVhM5OPA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQC9kVJRgIvsMPwovn0qvNQPDrOhznB3fldoZowTi8TjAAIgS3qMtJsLYOBHa1VLVlBHdr3dOQe/esv3cdAs9HMbC/0="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.1.0.tgz_1485826291380_0.08694894728250802"
+      },
+      "directories": {}
+    },
+    "1.1.1": {
+      "name": "grpc-tools",
+      "version": "1.1.1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.1.1",
+      "_shasum": "060f7e53f127ee2beb36095a6755175e74736297",
+      "_resolved": "file:Downloads/2678/archive/artifacts/grpc-tools-1.1.1.tgz",
+      "_from": "Downloads/2678/archive/artifacts/grpc-tools-1.1.1.tgz",
+      "_npmVersion": "3.10.3",
+      "_nodeVersion": "6.6.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "060f7e53f127ee2beb36095a6755175e74736297",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.1.1.tgz",
+        "integrity": "sha512-DNKa/t+pOveJudtHDvUVYiqB/SQycm/CIcP9y/See1MX0uTZ4/8SAF160CAw3sGzAV7GVBdAk1UCT163Rof8MQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCICwzlhb1b8PsYeX++DvEMN/GYEV42/o9x+1jAA37QqUDAiA9b/0sNsZDe9PkHSGjzLFp5tt0F+A2ABJtuqzabHSXjw=="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.1.1.tgz_1485982429824_0.22573021170683205"
+      },
+      "directories": {}
+    },
+    "1.1.2": {
+      "name": "grpc-tools",
+      "version": "1.1.2",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.1.2",
+      "_shasum": "92170081cbfa079fc0be820ac8b2f92532e6a80b",
+      "_resolved": "file:Downloads/2725/archive/artifacts/grpc-tools-1.1.2.tgz",
+      "_from": "Downloads/2725/archive/artifacts/grpc-tools-1.1.2.tgz",
+      "_npmVersion": "3.10.10",
+      "_nodeVersion": "6.9.5",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "92170081cbfa079fc0be820ac8b2f92532e6a80b",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.1.2.tgz",
+        "integrity": "sha512-LQ1TVl5by9zt2KqXaWHObcGvV5OzOZSdQO/MVWKhpmYnFOfSHTtJv8We6UqnSvxJBiBUvufqgWZ6kmbv5D41aA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIEMlEgC+JrH5nX1crW8wF22OwhtqfeI0RZOIzWfsLPmKAiBsZbXaUortju+bcAI/ZVTNMf42vjURsmNrxvVdQOve2g=="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.1.2.tgz_1486575069545_0.6071770957205445"
+      },
+      "directories": {}
+    },
+    "1.2.0-pre1": {
+      "name": "grpc-tools",
+      "version": "1.2.0-pre1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.2.0-pre1",
+      "_shasum": "acdccef542a6d882830380854dabe83810cb7532",
+      "_resolved": "file:2977/archive/artifacts/grpc-tools-1.2.0-pre1.tgz",
+      "_from": "2977/archive/artifacts/grpc-tools-1.2.0-pre1.tgz",
+      "_npmVersion": "4.1.2",
+      "_nodeVersion": "7.6.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "acdccef542a6d882830380854dabe83810cb7532",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.2.0-pre1.tgz",
+        "integrity": "sha512-ue6fk7WCFkq2GDC6zWYcBMLHe9jyzYxw5tNCA3w1z0RK/XvgH6pWiyoAZkRk9TAkQInHbEMvzqvXBNopbK8l+g==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIByobBnFvkaf6Bd5zo6VYnxUUjhlnMmxOlNyPNDM53JiAiEA1aClXaGfBI2ketdEPJZNi/obYIHwOCkHoXRDRu+wQZY="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.2.0-pre1.tgz_1489702234450_0.44133011321537197"
+      },
+      "directories": {}
+    },
+    "1.2.0": {
+      "name": "grpc-tools",
+      "version": "1.2.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.2.0",
+      "_shasum": "395546880df7cfba6aa57c6ed94e0175588351cc",
+      "_resolved": "file:3010/archive/artifacts/grpc-tools-1.2.0.tgz",
+      "_from": "3010/archive/artifacts/grpc-tools-1.2.0.tgz",
+      "_npmVersion": "4.1.2",
+      "_nodeVersion": "7.6.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "395546880df7cfba6aa57c6ed94e0175588351cc",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.2.0.tgz",
+        "integrity": "sha512-ctgIDf0O14Z204b9/MMq5kpXA1HTuSOyQy4Go2ynD7DKb5znDx5GumbZm8vznlPAM84QlandS8/i51gUGfQsfQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCcgOARVfrpGF6rjChEzgRlDjt0ODeasXzQ86Ej7RqXmAIgbcOSjWdpBebt1qkt3U0quZmIQOoXzbnIjDPd36V1OfU="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.2.0.tgz_1490052458190_0.04161026841029525"
+      },
+      "directories": {}
+    },
+    "1.2.3": {
+      "name": "grpc-tools",
+      "version": "1.2.3",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.2.3",
+      "_shasum": "77e3da334403dcd3e534986ec6af243ea335aefb",
+      "_resolved": "file:3143/archive/artifacts/grpc-tools-1.2.3.tgz",
+      "_from": "3143/archive/artifacts/grpc-tools-1.2.3.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "77e3da334403dcd3e534986ec6af243ea335aefb",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.2.3.tgz",
+        "integrity": "sha512-xR22mkukHaW0ZWms2XnMhUnCnciubzXCMdfMFq/uVXmzIPLsctj/i7RuU/ljbwLbz8hCh9xef/1T5eTPRk9Z9Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDny185KbJnz4aGWxzpSe3SoPOwEBK5WoAMKWDx6ccHAgIhAJSJoX7cPJGFfvYIm88KIBmH593TSJZv0crKalxRMSib"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.2.3.tgz_1491603269548_0.08423120505176485"
+      },
+      "directories": {}
+    },
+    "1.2.4": {
+      "name": "grpc-tools",
+      "version": "1.2.4",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.2.4",
+      "_shasum": "f6a385ff0258ac5c226060540bb131a794627201",
+      "_resolved": "file:3180/archive/artifacts/grpc-tools-1.2.4.tgz",
+      "_from": "3180/archive/artifacts/grpc-tools-1.2.4.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "f6a385ff0258ac5c226060540bb131a794627201",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.2.4.tgz",
+        "integrity": "sha512-SFwEAJoqaoove99FgeIETjinU053WZkbP0YGKV588kzonx0/J/oq6ZhxJSlP1Q7/icCLsdMyZW0/ANfioR7XQg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCin/aKgGlReGfqDu7OpFhVlObjh2UHe9rowtArAPQWcgIgOnaHmunuOHVXWyTvKNHUXX2WHKR0paVUMIqexWZHKGs="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.2.4.tgz_1492042219766_0.15784097905270755"
+      },
+      "directories": {}
+    },
+    "1.3.0": {
+      "name": "grpc-tools",
+      "version": "1.3.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.3.0",
+      "_shasum": "7aa0f47a9d628beb186ed6f0311a043a8db72291",
+      "_resolved": "file:3277/archive/artifacts/grpc-tools-1.3.0.tgz",
+      "_from": "3277/archive/artifacts/grpc-tools-1.3.0.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "7aa0f47a9d628beb186ed6f0311a043a8db72291",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.3.0.tgz",
+        "integrity": "sha512-jrII4WTFZTEit8vmZnqLDhcAo09sVgPTVXYJLx6H0PvpjVeIGY7Ygo2167hMDPi8RRTGsjIDKZXjk+c3xSoPvg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQC4XKcAqWx2eOOyftjRqGF8SXVTxsPEI7FpuoBI87n4cAIhAIGKldx949Ol/q4w4PFIQHJcpVYRQ972gfYj+nCMyG/q"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.3.0.tgz_1493339407068_0.4892351538874209"
+      },
+      "directories": {}
+    },
+    "1.3.1-pre1": {
+      "name": "grpc-tools",
+      "version": "1.3.1-pre1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.3.1-pre1",
+      "_shasum": "ce4e1b72c4b4ed07e95cf35699bd45365e685c31",
+      "_resolved": "file:3329/archive/artifacts/grpc-tools-1.3.1-pre1.tgz",
+      "_from": "3329/archive/artifacts/grpc-tools-1.3.1-pre1.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "ce4e1b72c4b4ed07e95cf35699bd45365e685c31",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.3.1-pre1.tgz",
+        "integrity": "sha512-IwPqOqZJNEMNmJjbSlAAbwhwhYEQfD9S1wYQm1m9q5LkuBG3kOFtn0rd75OBKwS0rWaPdBRDaATLXXoNnY2r1A==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCnOHA1HGV2I75g9/6tLIUWVw2a6Wd0ZBkv2vGBAbhkVAIhANHYr96VMbPWFKWG4FAROLD6A5137hp56QBHVzKqwQ72"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.3.1-pre1.tgz_1493928497490_0.9018021419178694"
+      },
+      "directories": {}
+    },
+    "1.3.1": {
+      "name": "grpc-tools",
+      "version": "1.3.1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.3.1",
+      "_shasum": "9647a568cb4f4c678e7126de39588ba2a392f4b8",
+      "_resolved": "file:3336/archive/artifacts/grpc-tools-1.3.1.tgz",
+      "_from": "3336/archive/artifacts/grpc-tools-1.3.1.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "9647a568cb4f4c678e7126de39588ba2a392f4b8",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.3.1.tgz",
+        "integrity": "sha512-ZcOEX8G/GsQmd6xKP+86pNavmZFVG+xDHmdPzBwWwuVhgutx00duAGCMW12TJP3kvgCn/YyojILAOg7aD6Yj8w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDCQJKcObwcAR1+jx2qaoFgYJo+GFR0xkQFXSruNaJaJwIgERc16ccCEFTMbgMTeXOmRSb3mb8QCZQkYdIC8Gu4Vn4="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.3.1.tgz_1494017638856_0.19175669783726335"
+      },
+      "directories": {}
+    },
+    "1.3.2": {
+      "name": "grpc-tools",
+      "version": "1.3.2",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.3.2",
+      "_shasum": "5b7cb1fcf7ad81e87f64c4492a3d1175415014aa",
+      "_resolved": "file:3387/archive/artifacts/grpc-tools-1.3.2.tgz",
+      "_from": "3387/archive/artifacts/grpc-tools-1.3.2.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "5b7cb1fcf7ad81e87f64c4492a3d1175415014aa",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.3.2.tgz",
+        "integrity": "sha512-vIulhwsulowCVhHdfWyhh1ImRo0dKc5drBpNzGZpbWCwy7+ifs4qzp+04e23Bsnw7A4mEjxwd1dqelarvjhL2w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIGAkUcYX3HlqStUIEFqUKE8IzpTcjAee00VyXTYd3sqKAiEA24zDmoSMPMaUv3F33VeLdAubFwMQoKZNAJEYnVKaKG4="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/grpc-tools-1.3.2.tgz_1494531687487_0.3972564530558884"
+      },
+      "directories": {}
+    },
+    "1.3.7": {
+      "name": "grpc-tools",
+      "version": "1.3.7",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.3.7",
+      "_shasum": "692703aa19ea396c0bae40c1087127611d6817af",
+      "_resolved": "file:3420/archive/artifacts/grpc-tools-1.3.7.tgz",
+      "_from": "3420/archive/artifacts/grpc-tools-1.3.7.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "michael.lumish@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "dist": {
+        "shasum": "692703aa19ea396c0bae40c1087127611d6817af",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.3.7.tgz",
+        "integrity": "sha512-+zsHV2a6gbWFM0hRhqb61gTzo+l+x41YJ5wkSFi+1L/LfmEr9YkyrCvjPiYjw5RnmRwgxVD3O4YFIWFoeMychQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIH843Ix8fY6Jqi7xtc8oJ8XR1PEnf4vvrVQ7c+DdjPKJAiEAiJYvl1g1ssBsGqS7IP2rNkRC5MkZDI5JV5l09sGKXYo="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools-1.3.7.tgz_1496179233896_0.08017294341698289"
+      },
+      "directories": {}
+    },
+    "1.4.0-pre1": {
+      "name": "grpc-tools",
+      "version": "1.4.0-pre1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.4.0-pre1",
+      "_shasum": "5c3284adf060ee88291420f4535811e7043e89a6",
+      "_resolved": "file:186/archive/artifacts/grpc-tools-1.4.0-pre1.tgz",
+      "_from": "186/archive/artifacts/grpc-tools-1.4.0-pre1.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "dist": {
+        "shasum": "5c3284adf060ee88291420f4535811e7043e89a6",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.4.0-pre1.tgz",
+        "integrity": "sha512-Jdhd1zo2xsEYgd8CK9K53NphWAL495pbwVFw3eqo+PJdfOcBGK6Vhu3GaTvtlR4vVc6l8fz9FDPWMYbPwoCiMQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIBuqB7UpMBLj60gDobXzpUSj1yVQkyZ1MXuuEFIqecHcAiEAvLwrGs6L7VJe54wChQCLq5bCnI5xlIJ5utgouWmA+zo="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools-1.4.0-pre1.tgz_1496853663784_0.12377674714662135"
+      },
+      "directories": {}
+    },
+    "1.3.8": {
+      "name": "grpc-tools",
+      "version": "1.3.8",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.3.8",
+      "_shasum": "ab9c4ef4bbb5107dbb4720b376e96b4544f02055",
+      "_resolved": "file:3423/archive/artifacts/grpc-tools-1.3.8.tgz",
+      "_from": "3423/archive/artifacts/grpc-tools-1.3.8.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "dist": {
+        "shasum": "ab9c4ef4bbb5107dbb4720b376e96b4544f02055",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.3.8.tgz",
+        "integrity": "sha512-Pqk5J9UVW8TF1tiHYC9BSutia5rY32wXVaqrl2u14dfF8u/alW8bzGcCDUG6PiBe1fBRyY/4DqphxkSmm6VFOg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCsmZ6xPVXgFDOctnVa/H7oFXuYaSOrS1ndVUTrIN8iSAIgIJDt8cZ6Fx3+jv1K3ztiqRorpdvG2UtJ6dr7HWDETho="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools-1.3.8.tgz_1496853858279_0.13403131673112512"
+      },
+      "directories": {}
+    },
+    "1.4.1": {
+      "name": "grpc-tools",
+      "version": "1.4.1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "http://www.grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.4.1",
+      "_shasum": "41ea9d6e209af9fa8798e9a7bd83b4d06cf3a789",
+      "_resolved": "file:337/archive/artifacts/grpc-tools-1.4.1.tgz",
+      "_from": "337/archive/artifacts/grpc-tools-1.4.1.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "dist": {
+        "shasum": "41ea9d6e209af9fa8798e9a7bd83b4d06cf3a789",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.4.1.tgz",
+        "integrity": "sha512-fSK2MKzr5ooXDgRoLdT3GvOjlr0GgMe+c+2MsaEQIeP6dSH75a0Wz/1ymV9LTPGLLdwQkpc0rKXBGhd192yeRA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIEWudA5qZOzOQsjFditFbOMc7BbPaDF5F7on+KRE/qY7AiA4GSlkFVki6vfyg/JnzqGgn2nAfrCWBCkCuKa2YjBL5Q=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools-1.4.1.tgz_1498611206469_0.9015418062917888"
+      },
+      "directories": {}
+    },
+    "1.6.0-pre1": {
+      "name": "grpc-tools",
+      "version": "1.6.0-pre1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "dependencies": {
+        "node-pre-gyp": "^0.6.36"
+      },
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "grpc-tools@1.6.0-pre1",
+      "_shasum": "e5d56fe3c570eea008397f3bd9bf3e3484edb41c",
+      "_resolved": "file:Downloads/686/archive/artifacts/grpc-tools-1.6.0-pre1.tgz",
+      "_from": "Downloads/686/archive/artifacts/grpc-tools-1.6.0-pre1.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "dist": {
+        "shasum": "e5d56fe3c570eea008397f3bd9bf3e3484edb41c",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.6.0-pre1.tgz",
+        "integrity": "sha512-Vofy81gAF+2F7b8NP1JXrcJuv9GPGTTryLI/sPK9qu/c0+a1Kdac+zZ95yqHrcXKehF8Z9Xo1VzvScDMKCk5MA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCk5OGtnsJj3QgZEWeyA9+bRzteSZXoT1Ow1qc/g32yFQIhALyEWV2iyQh9ImkWNU7TxLmB5uA6Tqyr3iPpbjIczGsx"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools-1.6.0-pre1.tgz_1503507301357_0.2938328848686069"
+      },
+      "directories": {}
+    },
+    "1.6.0": {
+      "name": "grpc-tools",
+      "version": "1.6.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "dependencies": {
+        "node-pre-gyp": "^0.6.36"
+      },
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "grpc-tools@1.6.0",
+      "_shasum": "b61ff94d08321bc31a14e72dc03a282c0adf785c",
+      "_resolved": "file:Downloads/731/archive/artifacts/grpc-tools-1.6.0.tgz",
+      "_from": "Downloads/731/archive/artifacts/grpc-tools-1.6.0.tgz",
+      "_npmVersion": "4.2.0",
+      "_nodeVersion": "7.8.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "dist": {
+        "shasum": "b61ff94d08321bc31a14e72dc03a282c0adf785c",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.6.0.tgz",
+        "integrity": "sha512-tycJUj3VBL6XG4rAyRnC/PhCNyEGZsVWMx9X1PxVXrPTJYjInFmcMR+a1fLa/pSPSrZsq9mAPvnYdN5GF03Qqg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIAIUyoJjs8oNhdxsU9UDNkJEAbl6Ik7z9tX66bvVGdmiAiAfJKibeLjvCqfcLrXkE0S8Q1cJpS4Ln1boCVwcbMkQOA=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools-1.6.0.tgz_1504111462526_0.9752571021672338"
+      },
+      "directories": {}
+    },
+    "1.6.6": {
+      "name": "grpc-tools",
+      "version": "1.6.6",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://storage.googleapis.com/",
+        "remote_path": "grpc-precompiled-binaries/node/{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "files": [
+        "index.js",
+        "bin/protoc.js",
+        "bin/protoc_plugin.js",
+        "bin/google/protobuf",
+        "LICENSE"
+      ],
+      "main": "index.js",
+      "dependencies": {
+        "node-pre-gyp": "^0.6.38"
+      },
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "grpc-tools@1.6.6",
+      "_shasum": "36f2a0d1ac956766fbb3685f40138a5828fff749",
+      "_resolved": "file:Downloads/grpc-tools-1.6.6.tgz",
+      "_from": "Downloads/grpc-tools-1.6.6.tgz",
+      "_npmVersion": "4.6.1",
+      "_nodeVersion": "6.3.1",
+      "_npmUser": {
+        "name": "grpc-packages",
+        "email": "grpc-packages@google.com"
+      },
+      "dist": {
+        "shasum": "36f2a0d1ac956766fbb3685f40138a5828fff749",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.6.6.tgz",
+        "integrity": "sha512-OkaRNRdAZHBSSDj3w0ArWVRuoxp5Ip/3HsWdtf8YwtTaTDR2AHC+qXPwm7HMmP/4iu6Gyk4TKOBWiO4BfpfnOA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIGYxS7k4xEKNu/MURe/2j/MpPe9oHTaFm1NH0o0CLtDuAiEAzaAAUCp06ZAVJlyv63ea6hhHMqriaqDdT5dx7GGhoDo="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools-1.6.6.tgz_1507237578194_0.6795225676614791"
+      },
+      "directories": {}
+    },
+    "1.7.0": {
+      "name": "grpc-tools",
+      "version": "1.7.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.7.0",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.12.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "dist": {
+        "integrity": "sha512-dD7cuk+7M1C62A8seEGF0lOry53d/RxrS/WImb0dEIJ1N4q5LhS4dwb0CHGhYLMGa9YOExeRGLLMQgvHIodyQQ==",
+        "shasum": "b3d298bfbc241c82cf73eb65284bb749fbb47d7c",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.7.0.tgz",
+        "fileCount": 16,
+        "unpackedSize": 101304,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcbFCxCRA9TVsSAnZWagAAcsEP/2sUfJQ/B/t9uk6QoIF2\nSk1O4bkg+Ir+XfOXtcMKrf8omjT3A5A5p/MIR/QMj92H369TAE9uOcZkE3Bh\nnoVeIjkt51dUCHeQcPGVEu3RR/Umtw1zhKwX+xTPFdfe4rctDwSUG0dWpDcB\n4F60ELdjtqmXOhIvsBP9R8K3RutMo7cc3v43CflgrH+1vKWBzL6J6Unmx/nM\nboFL5aEE95bnbfqcgN7kHBmOh33SSq5vfuU8q0A/Jz1LjrMMSnPpj9VhMDpN\nFIkAE+2JTIpakb/8+DbUhvXGdXtxk8PQNVcr2fy9ke3jcmEO56DfuSkCzo56\nx9d4lpb+X+ukkf9Ve6v1ry3lkAgFrHzPAIH1EaXw+bRjJfZT9Cwl52lminw1\nLmlirhlgAZpj3uPVplZ9VRr5WCMgDmhjVKV9kjylrMz0QAeM0Wcy0VqXRyto\nVE6/Hqosy7AFCTLs511nr2JtC3CSX6oWLAtMHGXxQKSZgasQLGeu2H24ZdAj\n+YClxund2mP5YxJ/7S2fTtgWIEgocUDOh7FJFO/Ng6Kb+Cs/tnqDA1QM3Wq8\nYJXbFb85OpI9SdHC6i0oTquIKEb2wZLNZC/o+bARE/Vpk/MDPgczHi90qN5h\nuBYHkgwQXqhkkNW+7bsE7WkeROIUuYuZAfmKNPPNQDDGFV9cCcyvr5rsXDzD\nLp7i\r\n=feNJ\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIAD41h/Ugua1fr7Lljq0sp/ZZEpKvP2BwXeR0l20UrBeAiEA0TVrqP1bmo+nvor7u8crmlYNapf3nX1OqRSWmCiMn14="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.7.0_1550602416441_0.14868047381550542"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.7.1": {
+      "name": "grpc-tools",
+      "version": "1.7.1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "dependencies": {
+        "node-pre-gyp": "*"
+      },
+      "_id": "grpc-tools@1.7.1",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.12.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "dist": {
+        "integrity": "sha512-mK2AvaWhr6nfthLs2igXxo8c3jjOkr5fra+ifJ6LGgIT+iyJTb4AZOA09s86wDVyBpodqF9XCT1HsXVV6OJIAg==",
+        "shasum": "f353812fd21df057d09cf94d06134c19834ad67c",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.7.1.tgz",
+        "fileCount": 541,
+        "unpackedSize": 1951717,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcbfLUCRA9TVsSAnZWagAAlkwP/2zCY3VCfL9IKwH/2YSS\nMuQ6KE6IRZ+K0Pd8a4hgiRqyzpFhqZPEKszgncdXE3PWQ8SzrP356SvvArjP\nJ0t+ksZp/LRqv5Mxt7joQjdZnZsiuMxa1LOC6P9aq1kpP5VMRuL2pPl7YRyQ\nlDodH6AuxBSrVXqkZvd42LlTPU7NA/ebLqa4t5APzUxP4iDcWIrhwCyuTdj8\nhLKn1znpWn/NeBe1t98R8NKeDvXd0VX4+rsfIxWzdh7p3YPUrsPZQ4o238Ac\nwWIvD1J/HQ7QvMDETd/qyq8H9R9cPYkIgoFw2NSzeL/PbnkVFk2G6Pv1NbcN\nGjOA5NYCOs7DP6vCbMLi1H/eCcup+aa8tHhFe9RN7koRm4xwAMW1iS0zvBA0\nAr6hkWvMjGV6iAaQb2yWt4D6guvMbcJDWxxEDcDk7YAM1NTQhe4B5IukllcV\nnVVM0IqcX0Sb4Xz5bxymzMw8z6EuCKtQCXQ6d8ebhs3oTHci1/Q2smNapCPJ\nwr6CjCirULwgpxNCglIntDJc+0PhBPG0MPpjB5yOTn16RQPSIC14pkRoS/MA\nhXTTvuEIaGMB1Tt0JCLEFieGpOS2L2Hj9EI6W6LdxzPhPumLov4t+5WTWYk9\nmDcS/KmAmaryd0tKu1oCwcVeHJIj7CT6LJN+RiNikBsNHksEZ1M9AJWCAFHp\nDisx\r\n=x9jt\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCb9pjoBziKAgB50Jlphj0HFkWIXcANWySc+htxZ8BbaAIgUAjcO9/OBl8eaNmzAS69O8ImrbREAfYUMbAPyzLiuNc="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.7.1_1550709459706_0.30471524292716623"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.7.2": {
+      "name": "grpc-tools",
+      "version": "1.7.2",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "node-pre-gyp": "^0.12.0"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "grpc-tools@1.7.2",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.12.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "dist": {
+        "integrity": "sha512-ogiyD6v3pXH/x17iaXWjSTGR5yN8bUZdn4ZcRknGOBiO/usulDhq0iWD3UFI4r5lAthq0Y62pGA+vaiLUfa6FQ==",
+        "shasum": "e49943de0c91c28ceba7d9d2c77c604a05d9e010",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.7.2.tgz",
+        "fileCount": 542,
+        "unpackedSize": 1963129,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcm6jPCRA9TVsSAnZWagAAqFQP/2tFxLf/x/h9IFNCaRGd\nFh1HnjsP6ZZrDF7n01sc9UWJNa0E+3tHhUeRdoQPDNtkU5rDVLVuw9c/i5bo\nRtP5GkLw2ifjBwGiHJOedaFFY03vWO9reeJGebYFEF8xaGwzu+M06UCs5Zp2\nDbc1zMZbYuwmzKcHzGGTTwHpcGAiSXMwSGP1I17SJFEKnLffdSziLEfNysm/\nSZdbIhV+9i+5w8JPh5ggexaQLl9drsxIxZ0iMr2m1q+i3HJqQ5H0Or7Foww5\nCQQG3dPAs3BrB562BEzQCPr+ACkAvt8Y65euTg0foUwJp+MrDuf9r5cSGVFm\nK2gNAuuCx6kXIDKh2IyXikQukYoCNowEqCRj0kNsjon01pQbXO4G1moMUASk\nSCA9R9jztM4WFnm7QaQIdWHfvH6rOCkbm6/dk32/RdBNyZXKv5tH6h73hyS4\n9BB5wxIoI5b9Or+PJscpg2VRf1q4sYP5Wa95yDQeNaj4AmJ4jd31ZOoF2M02\n52Te1O6vv/6KO+qLONoxrT0/ToQt2w575hA2gg8L5QEStNN2xBLUv98Zyxqi\nkJMmzU1+XAiMAsjvnj9+oKay1UR1TzXgbmp7+AkX6pf4uRifDiftWZ2gZqXG\n1Pr3SbuGhsbYDwXStyukpXzVDVcO6aIp6nNlfMHdbczbjaAI1fV05uB0Erjq\nN4IA\r\n=so6L\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQC1J7y2t53rbwOnGcN7jryVY0z0Z0c+pWzks+7+iqTXtwIhAPfSbnvECMVCSJ0ikGCa84wTxsARn82HbY6kQmauCDE+"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.7.2_1553705166650_0.5633282642285666"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.7.3": {
+      "name": "grpc-tools",
+      "version": "1.7.3",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "node-pre-gyp": "^0.12.0"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "grpc-tools@1.7.3",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.12.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "dist": {
+        "integrity": "sha512-PBNuL5z6c0HW0KetkvcHPnNyaSvBU63I5FnWX6izR/iBJmsKDI+NXfQRJjuKTF7sdyBqFf2k9xGIhVDUG9MUlQ==",
+        "shasum": "db682246d30274653db7fb19ba6a4efd04ef2496",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.7.3.tgz",
+        "fileCount": 542,
+        "unpackedSize": 1963129,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcr6gyCRA9TVsSAnZWagAA19wP/RBkRqtgqlT1ChvFOnur\nrH9/rRTJpl5UaSdV3CNEJ59lAVUFeE3Lta4ltabQg+sxlp0REmAumwdAzXkB\nTUYnLAfS0i5qWRlYHYSQVQyZ5jIqpMB8Z9KwISpBsjjHPXrsXeSm40qLtgN9\n4IxW6AeqpiAxlVjBitQdXd1R+b3jy2GiwhN21On12TrQS2rmwDYZ9goHmvzX\n7gxQSKv46Fc/My4v8EKyEvJAA3tU38Raag+4OWwPpErYGJ3CXIq+0/vP/G76\nOsFVb6c+uflfc7jy6kE4BcfjF/j3fq52ZFlwIgWYjDBImD0/P7oar2D4lLfG\nK7JqNugx6eUgyb82jGmq2hYwAvNcZ+vL2yj1jMDJ/o/pIl2f0mhs3wXOh4ag\nbf5su7FGOIOrtB7NBB7ukN97FrS8sT14od8n4BgzH15eFEHvGFHazWfaGDn0\n5fpIfcd6oJQRe2JS2xYCpVvFTWBBnFjLF/bjSO7hEonVavsAK9vYFWEBByYs\nqCRWr64WLxOcaLvIzfCXaRsBPXmWHIn60yo65LlKTUWiC6hEBLSU4jE9HVsB\nas5IXc8DFIyAoL+pKmDwdGA7XTbjtLpxQTXxWc/Klg+/Tg2gF3gd9B6Azt+v\n9e0GG89eNzMD42awkbaIz87tgi1icoqCNLXnWz/goy20OgRBU51ilFWwnNMD\n/wum\r\n=wzVS\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCwPtzVoMCzlhqvHOa4QOIc5rnuhpGc6NIoZroTA7ABtQIgBKAFE0P8fQo41aU7dndyig6nASD0hFpPjpkAIspbNrA="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.7.3_1555015729371_0.8463125048677664"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.8.0": {
+      "name": "grpc-tools",
+      "version": "1.8.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "node-pre-gyp": "^0.12.0"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "grpc-tools@1.8.0",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.12.0",
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "dist": {
+        "integrity": "sha512-GzYHjPQ/sbV/DmnNRksapMlLj26Tvq2Qppmzjmd+lHYZNeWM1feiGsYCduzJLyy295P+3uYIPy2/w/1thAnOow==",
+        "shasum": "db438dbd0cfb43d412dc02a767d5fb2193636847",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.8.0.tgz",
+        "fileCount": 542,
+        "unpackedSize": 1963129,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJdC8klCRA9TVsSAnZWagAArF0P/1wGnSimUZjFKzB0Fn5X\nBQhISaFSWQakfcvtQfZWrkQ1LV64rtgsCyAj5J4s0MMZK3GfZBKrAO3iMPIP\ndxtTRcUxGfWPOvVJkEskHvzYhKzjVtdy5qcjHHr6HEjrl+CnA0uBTbS5ta5U\nL5iuozruI9u+QPF7AWCfbbwuwiV4KOFF6159uYMnjIidca5Z5BATNxHP13cS\nhw5/aXr07SH+X+GGzieOOgv1NzCFKCMZMeVqGJ7kvsjcUlp9zVoDnzRGumii\n6ZZUwy3FWDLEU6fL4JXy0q/KJQkBRGBSvDLJr9Ds58+pdGYb9tuc73+DLCwE\ndCMynAedrtN6Clh99ZQJ5rQMZN98bE6oFNXbQ6x3750P8E6PHyHFAruxUQsy\nUq2u71ITzo8o5tvQC3+FyC8m6bA+TuAKqr1QgBdaqjDVUAEybfwHkbzvabLS\n6eZagcXkNVFfUczI0VJLAhNg1nnjhFpYqjA5ugky6g7QYUx9s1Qf3ZtaA+LI\n1ROrL9y48Wy6QATeRgU9AVAiqWxvLH3CBK1vsUJ6pVFVCzPfcfMIZHPi5V9H\n/8koHPebt5Otwt0Yn1MuVJqxRXYkEkV1h/R2t20CBzNP/sbFCxN3ORJab/Mu\nD1mkgyZPIhTh3u1cU/78H5yRg1WnQBV7t8PfljD1MRJgA4DRrCJ0rEIWL2AI\n1nVu\r\n=Pg3A\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIAI2zHwPbFdQ6SRMFrjqK15SJXeXKTHFMGS/Gra1vhfGAiEAmI1+ybYDcFcnDVAcbSSsWXVvHLAjFvKxADTMj6HpCEk="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.8.0_1561053476495_0.21043406132474818"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.8.1": {
+      "name": "grpc-tools",
+      "version": "1.8.1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "./bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "./bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "node-pre-gyp": "^0.12.0"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "bundleDependencies": [
+        "node-pre-gyp"
+      ],
+      "_id": "grpc-tools@1.8.1",
+      "_nodeVersion": "12.9.0",
+      "_npmVersion": "6.10.2",
+      "dist": {
+        "integrity": "sha512-CvZLshEDbum8ZtB8r3bn6JsrHs3L7S1jf7PTa02nZSLmcLTKbiXH5UYrte06Kh7SdzFmkxPMaOsys2rCs+HRjA==",
+        "shasum": "8b2e8bf42028d94c85817d954685c46a7bfbc31a",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.8.1.tgz",
+        "fileCount": 542,
+        "unpackedSize": 1963129,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJeFQiuCRA9TVsSAnZWagAAhB0P+QD4EItD8JcA/COtJlKR\nEnczWjSNzH9h4TgsCjbZ9aJFcbN/AOdyklWeM0922E1Kdp8nr9yN4MAXWuNx\nltt++WT3PAcZ/8qh0oqP3w/ywe/QH6DwO8WWYt8Z8FFPHcaOn56rFFrPvjeE\nrr7CDwRPWby+b/vtIH9Qv3IygnjjvxSTxq6qo4JBM3/cp3UYvqfJkqh+ATvV\nNzsQ8t1GLxhq0N5A5ejLMCuZwU8P1U847E7kBMNwPadRwZ2QYmHWXyYyDi1k\nyMwRwC6tFPju2BhCmKNwEqwSNe6HynANJ5rd8kFTZPWt3ZDqomxLjzmKkV13\ndtVGBbl8bF2TU6j364Wxa8M8++Y8Gxeken7lnVO2LBym5/1bcbd1rXpwYqpD\nIZJR3kbwxM9VpvUENHXQ9ouh8HQ394wcGsf2dUDbML+hD4O9mAb4gi0mPRpt\n0CqAl6LIiuq8Ll4SjQd06LepSzm261kzZjzUMlZema3omwmlop0j/WOypSLd\n0N9qSds9grL1W0Ln09F07u+UR2UFqOD9x3vJ8YQvXi3vq40qixd9JYGHlyuc\nZPesrDzzZCH1EJ9+uDSBgyNSdpwNVyjVgiR51W9fIRmjTKuxfIw1BvGHlVsz\nw/RruuZBQlozHGCbR8XbO+N3IXSED7JytgRwwlTX2W7Q/GoKaCYer5e68/s4\nDbsu\r\n=+RLq\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDvBQw92Gtxt/DIsZ9dHnvmCdsLRW/Y+pnVAbMJ5BWjEAIhAKGo/HrggW/IRH8xCldlq9QzCcAivuaLAZ1tPVom8Gsl"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.8.1_1578436781661_0.5493650514662016"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.9.0": {
+      "name": "grpc-tools",
+      "version": "1.9.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "node-pre-gyp": "^0.12.0"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "_id": "grpc-tools@1.9.0",
+      "_nodeVersion": "14.2.0",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-du10qytFNDVNYGJQ/AxXTF6lXchgCZ7ls8BtBDCtnuinjGbnPFHpOIzoEAT8NsmgFg4RCpsWW8vsQ+RCyQ3SXA==",
+        "shasum": "57fd0f577dbf842e03215857582f5dc808d96cad",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.9.0.tgz",
+        "fileCount": 18,
+        "unpackedSize": 113580,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJexvq9CRA9TVsSAnZWagAAaHsP/2nDvFE4tW9SFqJr9+Um\nRwmNomx9unQFhfpcCr9g0NlcI0dynt4WcCPIgnV4QKeOLRWBjHICZi7CYpcI\np07ZMLTMnm3ZMMBDD/Y5RMP3rj94337RZBROzFmzMLcQcRitRzxCBLW1/ORq\nhEoJkMRY9qW4B1NgSCV37MYQ0FFAi+9hjYgexCddwexg+CqcZpm4hwzQX2a0\nWDT/augFHH5wpfQJr2VHTeKiuChIlp6w3s0XMx7kIiX6hk8CuTWQtdirfKnR\n6T6/EkdO9d6d52rwPVsB9kU07WhFfhAIkT0MNcXHOsp4ToJakrdqWyqB0huI\nCIj9CJxA+R88/UNyDOuuCiRdQ6ixEu2cfcHZSz2mn64USchANnh3/EsbXoSc\ndUkKevuMQFEMkzRgsLbig18bnIBZCrNuuIGIPhFMkJdDLXg6i9E/ZyDX1NFf\nD5ObjLBYJoA3TTWMjwPmGkp2Kxn5cKWWaM2TaVvxr5b0qMqpwIwxYWDvneF/\nVybO4ZM8fFKWDsDcX0Vtr4dviu96dO6Mk9U3i/9LbXJEtVQIU3vSYgZU5KsG\nQxUnNO1NT6AcQT2mrxGwB28IdWH3BpNjgV2VtNDxYkenkOkRZ5TqON5hmc6j\nz6sOKceCXxFzwSmY+ASbRJkoRUMULQqKDlvd87l7Xlb03lhlOPg5+o8lplWF\n1WAc\r\n=l65f\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIHfIqh9piR8AwGVQ3UmqrY/RNgXs3oWoI/Q8w925Y8j9AiEA7s5tFKr1naINAsuPPwTPGcam+Rxzc83hXg0woCGd3jI="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.9.0_1590098621270_0.2887716247654406"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.9.1": {
+      "name": "grpc-tools",
+      "version": "1.9.1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "node-pre-gyp": "^0.15.0"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "_id": "grpc-tools@1.9.1",
+      "_nodeVersion": "12.16.3",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-t2JFMPLjxcgwVSJwFEauFaoEiO56kijxSwehQDgZNR/hrStJCH0pHGsjqJNuCOvmI9Z31pYOfgj4zeInTQWh5A==",
+        "shasum": "e43be478860a21781ce9a535647985cd365b1e06",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.9.1.tgz",
+        "fileCount": 18,
+        "unpackedSize": 113580,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJfFzbmCRA9TVsSAnZWagAAEtQP/22LpP8ynMyazaLATGJr\n+5PidGs3DJgWJ/navxaFvFBx21jeG0bwJY9Q9DNbzw+yACts/NmoMA/R/rF7\nOa2G9Rmaz98R/wcVgZL/Cg7LJn7YM32THDtNK7OYwfqD732ZG6XQ8Yj5WG7u\n3Jn8eBC2NPX1pEJctErlNsX1FbqNYPFbDfrMA8Dnex0M0vgvGEQtmln2SPQK\n8zLpIOyKqDy4OgyK2rtQHGJsWtbpXnyglK5BMWIbKIUYdqkE1uU1JlTa4W2f\nfBtNB0lR2Vz6Q8xHQ/yuDEPxv5CJm8va6TXaan24t5SstU5gQYK+YmNYwqGS\nJKsOP7qFbcoM+Myz7JXRrKj5A8hbebtxaq3+2L6iwe2F6oPLjEUOpjY96YRO\n6YCnqQxzKCp0Twk3RbFy5klcYAslRdBzZe0hU6tWtLAldR4c+cDf9j5htsQo\nl12lJTehlxPsPsHvK6qh9ojGQbistR5ej+SsMyWPL9u60H0lLD3CxRBfoiEt\nAGXecY0PBPgLywLc8rQvGf/7/Ej+plMqJoxiLpvS0Nxpa1eITFDGLttq3FG0\n+RKVJZ8f3v23/Cj4zcvjwi25LBy58aOvdEq7untksaVl+ZPV4qY999vMqwF6\nPA3iFwXTrPiDUyx/SRJIIDny4C+OScnpWmJRKnujqj9X31p7UOEjqm3TQNJv\nmfw3\r\n=d4iy\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIBpGfvmQKEVSLzwNEk21eL6P9cumQXncpi9qSzXq4xMdAiBYSASrgezuCEgYeUH0BkVJmb+OmhwXIL139K/pfJOW0Q=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.9.1_1595356901599_0.637304164587323"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.10.0": {
+      "name": "grpc-tools",
+      "version": "1.10.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "node-pre-gyp": "^0.15.0"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "_id": "grpc-tools@1.10.0",
+      "_nodeVersion": "12.18.3",
+      "_npmVersion": "6.14.6",
+      "dist": {
+        "integrity": "sha512-tEbO16TuXV+aJPTMK4FCd4Jw6uzR/wm4h3u27MmZQlWLETp3bL/6KQdVM6xujNx8N1Mbj0/Be2f/0SedzGm0dQ==",
+        "shasum": "687c0599715fc8c02e93496f8f37f89bc9840ef7",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.10.0.tgz",
+        "fileCount": 18,
+        "unpackedSize": 115723,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJftaspCRA9TVsSAnZWagAAnEEP/ivPrGEwpFWJSW+OAe9G\n9CeqX+Hxma1jg0vYWA+fXfYr/SJSXPTKgi7Wb7oAKMJE5BOhHb31xAc1gr1r\nqGP1vkIAPZWlrdUauoIDCF4kXrm0Bq67pMt0UCnahvQDyWmyj8mk6Np4gnLF\nDX2XlbkNLMCdJg3oXV7WNqQfk/TfptbUwI3Y1zbDf2vebSo9rGFn3DRc/Ovz\nPWeRmeXm9cJFfZ8pjZ8ewOfFG1C1WGnktr9MU4GVx2olDE6+lP5kKjHZYIUn\nzzpancieNnfqEKGpLdGST48NhU1PGQCjNijmOwjsQbmYMSnjNV2WiZPg8vuI\nZKBT7t8ow5mweJVIU+U4/AtRlSTh4+EJFdZxjFyv60prN6uacKOUHnDaemWp\nRGLMguuZskISOfX+45ohkKylq6hyT5HShla1jYgnAwU8+HGE0fvXIbT4r+wR\nxc33NNJtk+K/uiVvLRSinpSpUfg8otCmVVfNIlCgeG7/NET8wJxP3Tjmn+tF\n32kYUBJ9xTRV4+WfKLH+VGL+sjaBqACNPNyBkwWjqh8hUghBVD4aG7RglnI7\nQ9PlpW80YpsKo+d4a6ydFnZj5po55uLAHaULO1JtBCIC7QMNnOzaVle1idod\n8KlKfxqVOyEBXvx6KthgZpZWYDJFvzwDV9nhdRoBH5lSEP1hI+Ys6+bYlFxy\nKbfO\r\n=dmox\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIBv72T/Oo5xWrQrtqOn33OCX/xvy3gCnD7OqhHG2+8GNAiEApLupyMBSC3u2dJioAydItAflW9bqNScFMpA4Z6zATk0="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        },
+        {
+          "name": "grpc-packages",
+          "email": "grpc-packages@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.10.0_1605741352738_0.4889405142780805"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.11.0": {
+      "name": "grpc-tools",
+      "version": "1.11.0",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "node-pre-gyp": "^0.15.0"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "_id": "grpc-tools@1.11.0",
+      "_nodeVersion": "14.15.4",
+      "_npmVersion": "6.14.10",
+      "dist": {
+        "integrity": "sha512-siGr9wGnDYT4oBjekc5hsPluu8aBsu2P3JlPIDnGE237eisXzdavc1r7tGe5IWf2SNIiVGD65FqXNo6KNbPaRw==",
+        "shasum": "dd7a653e46e840ec6dcd13e5aef693beddd2d685",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.11.0.tgz",
+        "fileCount": 18,
+        "unpackedSize": 115723,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJgUi6aCRA9TVsSAnZWagAAceoP/i3BwGuwgJwqDmK4+TVe\nBPVVPHTUKg/OvdYujfWCa1kPF0KDk090ZBSYxFoK5A18tdJfa444g1V8/tVW\n0Uxim0qlWy815Q0zv74W0xA5ximvq+fAcTnW2E9D+JktSF5+tTDUeY4p3Hxq\nQChWmNS9lSLDgWwr3SXEXfzakFT8gNUV2lyGe9YwstMCM0v9RXrzypV+SsUB\ndseB1nu+rvZDrEkVGugVbnL060DiQ2zhaTsSDeTbUjbY8HESqu/+aB8q/wlU\nBbGYX8jX7KLDgWpo4SYvSaCtGIVFCtOgs/yqwDGt4j3+8ZFQ/MvrQmicaH2G\nAHoZ8vgP40mr7I10ZdUikNJaWAgeV4+rd7LwAu9WbWWK1UQmxR7MD2YmamPv\nzydxUkl2gQ3GS6qHmugiCdGeW+rCaHO2bYvvtcNzX3vBFlnzS6uupyL0NQOW\nSFnFFjqsNloM70fPiaUprXcbnMhwyMN4jF03cIzd3DPfRrIwt4Pv1YIPijtT\nyzUxBA4fNK1fZfgDE/KTPiqVMxIggv5ZjuJQsfYT3wWBW78qW+wTfNIi0UCa\nGEB5L7TQrfW1Jw0y6q/RmGXbwfo8FXd7rPlUq4Vyri15IRCvSQm5r/o+OLqa\n4n62T3lRZ92etxUQ8xD0pbECowsRR6haJVBoPTV6/HOZx694h/fbDVoUWq1+\nASqu\r\n=+97y\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCICPbo6CznIXYLX/0zaHedg9Fdy/vgXtsFmvtjsiV5jB/AiEAtzq3GpgW7Rk0HSGb7YF1RcsyDYuyodwXO1PhiPK4Sw0="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        },
+        {
+          "name": "grpc-packages",
+          "email": "grpc-packages@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.11.0_1615998617603_0.14470696972709263"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.11.1": {
+      "name": "grpc-tools",
+      "version": "1.11.1",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "node-pre-gyp": "^0.15.0"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "_id": "grpc-tools@1.11.1",
+      "_nodeVersion": "14.15.4",
+      "_npmVersion": "6.14.10",
+      "dist": {
+        "integrity": "sha512-QNz6xuiyBuHXKu78bv5PAOzv/EBKkH54OgeTkHyFkic8TrY8oiifs6hozRJQxJb+L7k+udWYmPvfK76Pgt4JhA==",
+        "shasum": "25b3f9f47f4a691b2b1a44ee47e9603c189e2034",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.11.1.tgz",
+        "fileCount": 18,
+        "unpackedSize": 115723,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJgWlpMCRA9TVsSAnZWagAAA2AP/34dp3wN7w07368aN5RK\nf6PeQZhYkzLbtiUKDaJ4A+/DTpnhbny6GdMjOi6wczXI2jiC13O5EpqoMv6U\nmlzRJgohr1+iSPfD+ZCQ0ND4R10r8W2sXAxbXs0DR/GoWjaV/Tarv8y5ROU7\nVdgozcWpPVoPT35euQOwY9Qz/AqtHc5zx42kwSUgJW4aBq6ziJVG0KeVIuOV\nkvxEJpeDTEUNQ71hlA0+ViFxT5K6S2bey27IuQCayK39iSeYsek4hVf87oC4\ntj3599qykRGU1lPr1xAxIZgqunmNdLegG31h4JveHEuh1UYQTKMqfHkdhjHX\nficzhwZZN+Qdhz6o4bys9rsqrqf0sSYbxC0NEmwYgPq28gUVh2uV2nYgXST+\nyvdbY1bC3y+vb0tbVVD+/aqs/7RCkLeMTcvqtA05gherwis8iKgy6aaOMT1i\nWGhttGKZ77vB/2xpvAbyGL6k13MH2KI/r935bgLygjzV+xBtv9JAPk6yjFNQ\nwEh4teUo0g3ZrusZO2er4jcM1rIflVcUCWUgRBRPY/5dBLFHZb3CFMOakygT\npiZx0nw5/HKj9KDISowiHAL7B7AEP3v+Ti/xrvT3G25NAnyivae2q6k0et56\nC9sR8wXEBsWr/Wi65jTMKWrKZ22xr+nLSXXdqpcJMnb2YP2sgn+wsj21pVd+\nNb8A\r\n=JuNJ\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIGrE5kd1rKoJQbaEjDwlRi6N3j7nTetthfXcP7iv2RUaAiAvymxbXqPK+KLU7+104X/SMrGXdicDJi8qTcmQYk0Qeg=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        },
+        {
+          "name": "grpc-packages",
+          "email": "grpc-packages@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.11.1_1616534092038_0.6937725255549725"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.11.2": {
+      "name": "grpc-tools",
+      "version": "1.11.2",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "@mapbox/node-pre-gyp": "^1.0.5"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "_id": "grpc-tools@1.11.2",
+      "_nodeVersion": "12.18.1",
+      "_npmVersion": "6.14.5",
+      "dist": {
+        "integrity": "sha512-4+EgpnnkJraamY++oyBCw5Hp9huRYfgakjNVKbiE3PgO9Tv5ydVlRo7ZyGJ0C0SEiA7HhbVc1sNNtIyK7FiEtg==",
+        "shasum": "22d802d40012510ccc6591d11f9c94109ac07aab",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.11.2.tgz",
+        "fileCount": 18,
+        "unpackedSize": 115730,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJgzNF+CRA9TVsSAnZWagAA+wIP/0Tf1K499ddZbu3u0k/f\nLO0Pm2ex4x5gHDtaX3Ttj2tNv9QFBArp4Rs4mid6Jozc86DBlRG2FOjLk9B+\nhpxnVRzQQFXiJoEynGRzmhTu3y2vczckxLeM6I1kzenx62vXq46c3jHahv7i\nh6qv04W+inEEV2+Kfj8cdjeDz0qO963/SOXHIjVVTJD6U0zCIEVTH/posUAD\nDJfipqJ4IuQ1qffK1AytuTqV69kE7Qo55auxmGWJXH2kpDCfp91TdDdl/dOi\nb5UaD6ON1L54yTofU+f3+xS53alunx2EyJQOnOGZ2ptzoN3p8u5hQkOz3ZfW\nX/RiNQ51/vwgAe57WA9dE/+7X0fnwpHsHFcz7nNZVhu+26YQeM1n3wgZaX1J\nNhem2S1JqNuZi/BuktWfQKyriBgaPhPRgVyopJZ3k5goWFP9CqADpxnX0xdi\n+DwtEMo8MvKd7JVoiySXw0ARiIrt6m6LB+OUYS8I3828QS3YuKxdjkO+c5zj\ny+5H1sUzH0iEQi3Zunq2wCGvQ3yk1kt6YLkzPiOyoLkv3tjcfHTklqHd3IJi\nQDRHLEh3TuYgnEpkmddq6PGv8/xmR+AmBUPF5wWMObkrri+Bv0u7nMID/Uf4\nGoVE8uiNYf4V+V7mSZNa8sFBnRxh1o0s3p5LEYQzCupNx22Oo9tactKiZwqC\nVyGE\r\n=6SGg\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDHX5i/d+H54ppHKm4a4DqHI53wQ7Srgd5WgS+4kPBPCgIgLuTuYbv95ibIEBfRlTWKu6jnUpB0pMuvRKpHRwbTiwc="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        },
+        {
+          "name": "grpc-packages",
+          "email": "grpc-packages@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.11.2_1624035709744_0.11432800073489169"
+      },
+      "_hasShrinkwrap": false
+    },
+    "1.11.3": {
+      "name": "grpc-tools",
+      "version": "1.11.3",
+      "author": {
+        "name": "Google Inc."
+      },
+      "description": "Tools for developing with gRPC on Node.js",
+      "homepage": "https://grpc.io/",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/grpc/grpc-node.git"
+      },
+      "bugs": {
+        "url": "https://github.com/grpc/grpc-node/issues"
+      },
+      "contributors": [
+        {
+          "name": "Michael Lumish",
+          "email": "mlumish@google.com"
+        }
+      ],
+      "bin": {
+        "grpc_tools_node_protoc": "bin/protoc.js",
+        "grpc_tools_node_protoc_plugin": "bin/protoc_plugin.js"
+      },
+      "scripts": {
+        "install": "node-pre-gyp install",
+        "prepublishOnly": "git submodule update --init --recursive && node copy_well_known_protos.js"
+      },
+      "dependencies": {
+        "@mapbox/node-pre-gyp": "^1.0.5"
+      },
+      "binary": {
+        "module_name": "grpc_tools",
+        "host": "https://node-precompiled-binaries.grpc.io/",
+        "remote_path": "{name}/v{version}",
+        "package_name": "{platform}-{arch}.tar.gz",
+        "module_path": "bin"
+      },
+      "main": "index.js",
+      "gitHead": "87e21674d914f1faba32e0cf91eb15b9df470dbd",
+      "_id": "grpc-tools@1.11.3",
+      "_nodeVersion": "16.9.1",
+      "_npmVersion": "7.21.1",
+      "dist": {
+        "integrity": "sha512-cRSK2uhDKHtZ9hLRM35HxaMAMxyh/L7C96Ojt58DhQBdwTOQlV1VIJHSK6X/pDeSQKhaQqWMFfebt8tIcvRfjQ==",
+        "shasum": "8218a86ef994e58bd06330b74033de8d7719ea0d",
+        "tarball": "https://registry.npmjs.org/grpc-tools/-/grpc-tools-1.11.3.tgz",
+        "fileCount": 18,
+        "unpackedSize": 115730,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIC0sWHGllTSxvQ69djVmm29NQTtwxIqVbW78tmhMPtkkAiEAmh8GolmjCeLMJFH4ExgNdK8zxv33+eEjoBvxxoMv/qQ="
+          }
+        ],
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJjPcu1ACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmoyhQ//eez2+w4W1zQLK4s6RaiLoXChrbacrnPFWJ5ZqPq/75lXkqfY\r\nWhid7d39tBmhVtxXKJZybHz2JlbxTbCSHNvfKk/EtsoWgznPfhqD2w94eQlp\r\nWDpPoDKTlHc2G24M534QhbjbQqIba6L5vNVSP3nh6ZwdvXWv9Xi5W0banTbf\r\nqwrXUNJB0ljUhPd+6VRce48qPv7PV6vyjthDqU1k660D08EEdPOSiEqutvSG\r\nJZQPebGH/tmllwRzZdUAH03gzr9TNy69eUQMbGhFjMnCOxp5MPY5lnCJNWUE\r\n41sO2871uCE6v78uhROZi2ympvbtLhWjepg58Lt3/mxxPTiUJ43zRnaTpDvo\r\nNGIJZPuUCvNUZwohRFXaB0bQssj/PaD3H5v+ZBciIe8LE2hLhcRjnKR9xhG8\r\nXVNraLpVMrLTdgzP/h66Xddk9zsEu7Ky9cGKEGh9OV/DJ+SB7JFlsp9gt+QI\r\nEEZF0SXOAtFdBYLEdnr7OP+EzI8a54byZiFDRK9l1SjLqSvAswX4072IA6VI\r\nNfaUavoPrW6+5o8SeVxNCRZZtFViTXqrAzAd/UopWrw5gSu90Blda1FloklW\r\nNht0FWvzOB+vflJ1vebZkD8izKSLCeJcellFUoTDYo1m2WAkXnufhur9HTwI\r\nyJvTteh5XuJjgbGBH9VGf9B4j3UGSrL2U2Y=\r\n=MC1w\r\n-----END PGP SIGNATURE-----\r\n"
+      },
+      "_npmUser": {
+        "name": "murgatroid99",
+        "email": "mlumish@google.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "murgatroid99",
+          "email": "mlumish@google.com"
+        },
+        {
+          "name": "grpc-packages",
+          "email": "grpc-packages@google.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/grpc-tools_1.11.3_1664994229677_0.3786790719780886"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "readme": "# grpc-tools\r\n\r\nThis package distributes the Protocol Buffers compiler `protoc` along with the\r\nplugin for generating client and service objects for use with the Node gRPC\r\nlibraries.\r\n\r\n## Usage\r\n\r\nThis library exports the `grpc_tools_node_protoc` executable, which accepts all\r\nof the same arguments as `protoc` itself. For use with Node, you most likely\r\nwant to use CommonJS-style imports. An example of generating code this way can\r\nbe found in [this guide](https://developers.google.com/protocol-buffers/docs/reference/javascript-generated#commonjs-imports).\r\nThe `grpc_tools_node_protoc` automatically includes the Node gRPC plugin, so\r\nit also accepts the `--grpc_out=[option:]path` argument. The option can be\r\none of the following:\r\n\r\n - `grpc_js`: Generates code with `require('@grpc/grpc-js')` instead of\r\n   `require('grpc')`\r\n - `generate_package_definition`: Generates code that does not `require` any\r\n   gRPC library, and instead generates `PackageDefinition` objects that can\r\n   be passed to the `loadPackageDefinition` function provided by both the\r\n   `grpc` and `@grpc/grpc-js` libraries.",
+  "maintainers": [
+    {
+      "name": "murgatroid99",
+      "email": "mlumish@google.com"
+    },
+    {
+      "name": "grpc-packages",
+      "email": "grpc-packages@google.com"
+    }
+  ],
+  "time": {
+    "modified": "2022-10-05T18:23:49.980Z",
+    "created": "2016-05-10T18:35:29.475Z",
+    "0.14.1-pre1": "2016-05-10T18:35:29.475Z",
+    "0.14.1": "2016-05-11T22:54:25.492Z",
+    "0.15.0": "2016-06-27T17:25:55.416Z",
+    "1.0.0-pre1": "2016-07-21T18:11:58.168Z",
+    "1.0.0-pre2": "2016-08-11T23:22:56.746Z",
+    "1.0.0": "2016-08-18T23:13:33.444Z",
+    "1.0.1-pre1": "2016-10-06T21:39:20.285Z",
+    "1.0.1": "2016-10-27T23:16:02.239Z",
+    "1.1.0-pre1": "2017-01-25T19:29:52.969Z",
+    "1.1.0": "2017-01-31T01:31:31.614Z",
+    "1.1.1": "2017-02-01T20:53:51.910Z",
+    "1.1.2": "2017-02-08T17:31:09.801Z",
+    "1.2.0-pre1": "2017-03-16T22:10:36.876Z",
+    "1.2.0": "2017-03-20T23:27:40.736Z",
+    "1.2.3": "2017-04-07T22:14:29.795Z",
+    "1.2.4": "2017-04-13T00:10:20.085Z",
+    "1.3.0": "2017-04-28T00:30:07.356Z",
+    "1.3.1-pre1": "2017-05-04T20:08:17.771Z",
+    "1.3.1": "2017-05-05T20:54:02.364Z",
+    "1.3.2": "2017-05-11T19:41:30.635Z",
+    "1.3.7": "2017-05-30T21:20:34.056Z",
+    "1.4.0-pre1": "2017-06-07T16:41:03.957Z",
+    "1.3.8": "2017-06-07T16:44:18.466Z",
+    "1.4.1": "2017-06-28T00:53:26.812Z",
+    "1.6.0-pre1": "2017-08-23T16:55:02.024Z",
+    "1.6.0": "2017-08-30T16:44:22.909Z",
+    "1.6.6": "2017-10-05T21:06:18.363Z",
+    "1.7.0": "2019-02-19T18:53:36.575Z",
+    "1.7.1": "2019-02-21T00:37:39.912Z",
+    "1.7.2": "2019-03-27T16:46:06.813Z",
+    "1.7.3": "2019-04-11T20:48:49.590Z",
+    "1.8.0": "2019-06-20T17:57:56.660Z",
+    "1.8.1": "2020-01-07T22:39:41.868Z",
+    "1.9.0": "2020-05-21T22:03:41.392Z",
+    "1.9.1": "2020-07-21T18:41:41.743Z",
+    "1.10.0": "2020-11-18T23:15:52.866Z",
+    "1.11.0": "2021-03-17T16:30:17.790Z",
+    "1.11.1": "2021-03-23T21:14:52.271Z",
+    "1.11.2": "2021-06-18T17:01:49.917Z",
+    "1.11.3": "2022-10-05T18:23:49.907Z"
+  },
+  "homepage": "https://grpc.io/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grpc/grpc-node.git"
+  },
+  "contributors": [
+    {
+      "name": "Michael Lumish",
+      "email": "mlumish@google.com"
+    }
+  ],
+  "author": {
+    "name": "Google Inc."
+  },
+  "bugs": {
+    "url": "https://github.com/grpc/grpc-node/issues"
+  },
+  "readmeFilename": "README.md"
+}

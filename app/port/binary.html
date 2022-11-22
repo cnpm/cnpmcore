@@ -1,9 +1,9 @@
-<!DOCTYPE html> 
-<html> 
-  <head> 
+<!DOCTYPE html>
+<html>
+  <head>
     <title>CNPM Binaries Mirror</title>
-  </head> 
-  <body> 
+  </head>
+  <body>
     <script>
       // Forked from https://chromedriver.storage.googleapis.com/index.html
       // Split a string in 2 parts. The first is the leading number, if any,
@@ -52,11 +52,11 @@
         // the lowest.
         if (isNaN(numA) == false) return -1
         if (isNaN(numB) == false) return 1
-       
-        // They are both strings. 
+
+        // They are both strings.
         return (a < b) ? -1 : (a > b ? 1 : 0)
       }
- 
+
       // Helper function to retrieve the value of a GET query parameter.
       // Greatly inspired from http://alturl.com/8rj7a
       function getParameter(parameterName) {
@@ -66,26 +66,26 @@
         if (queryString.length <= 0) {
           return '';
         }
-        
+
         // Find the beginning of the string
         begin = queryString.indexOf(parameterName);
- 
+
         // If the parameter name is not found, skip it, otherwise return the
         // value.
         if (begin == -1) {
           return '';
         }
-         
+
         // Add the length (integer) to the beginning.
         begin += parameterName.length;
- 
+
         // Multiple parameters are separated by the '&' sign.
         end = queryString.indexOf ('&', begin);
-        
+
         if (end == -1) {
           end = queryString.length;
         }
-        
+
         // Return the string.
         return escape(unescape(queryString.substring(begin, end)));
       }
@@ -94,7 +94,7 @@
       function displayList(items, root, path) {
         // Display the header
         document.write('<h1>Index of /' + path + '</h1>');
- 
+
         // Start the table for the results.
         document.write('<table style="border-spacing:15px 0px;">');
 
@@ -103,18 +103,18 @@
         if (sortOrder != 'desc') {
           sortLink += '&sort=desc';
         }
- 
+
         // Display the table header.
         document.write('<tr><th><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*v6fRRLopV_0AAAAAAAAAAAAAARQnAQ" alt="[ICO]"></th>');
         document.write('<th><a href="' + sortLink + '">Name</a></th>');
         document.write('<th>Last modified</th>');
         document.write('<th>Size</th>');
         document.write('<tr><th colspan="5"><hr></th></tr>');
- 
+
         // Display the 'go back' button.
         if (path != '') {
           var backpath = location.pathname;
- 
+
           // If there is more than one section delimited by '/' in the current
           // path we truncate the last section and append the rest to backpath.
           var delimiter = path.lastIndexOf('/');
@@ -125,15 +125,15 @@
               backpath += path.substr(0, delimiter+1);
             }
           }
- 
+
           document.write('<tr><td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*3QmJSqp2zpUAAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>');
           document.write('<td><a href="');
           document.write(backpath);
           document.write('">Parent Directory</a></td>');
           document.write('<td>&nbsp;</td>');
-          document.write('<td align="right">  - </td></tr>'); 
+          document.write('<td align="right">  - </td></tr>');
         }
- 
+
         // Set up the variables.
         var directories = new Array();
         var files = new Array();
@@ -146,7 +146,7 @@
             directories.push(item);
           }
         }
- 
+
         files.sort(alphanumCompare);
         directories.sort(alphanumCompare);
 
@@ -155,13 +155,18 @@
           files.reverse();
           directories.reverse();
         }
-      
+
         // Display the directories.
         for (var i = 0; i < directories.length; i++) {
           var lnk = location.pathname.substr(0, location.pathname.indexOf('?'));
           var item = directories[i];
-          lnk += '?path=' + path + item.name;
-      
+          if (path && !path.endsWith('/')) {
+            lnk += '?path=' + path + '/' + item.name;
+          } else {
+            lnk += '?path=' + path + item.name;
+          }
+
+
           document.write('<tr>');
           document.write('<td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*ct35SJLile8AAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>');
           document.write('<td><a href="' + lnk + '">' +
@@ -170,7 +175,7 @@
           document.write('<td align="right">-</td>');
           document.write('</tr>');
         }
-      
+
         // Display the files.
         for (var i = 0; i < files.length; i++) {
           var item = files[i];
@@ -189,16 +194,16 @@
           if (sizeUnit !== '') {
             size = size.toFixed(2) + sizeUnit;
           }
-          var lastModified = item.date;          
+          var lastModified = item.date;
           // Remove the entries we don't want to show.
           if (filename == '') {
             continue;
           }
-        
+
           if (filename.indexOf('$folder$') >= 0) {
             continue;
           }
-        
+
           // Display the row.
           document.write('<tr>');
           document.write('<td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*FKvWRo-vns4AAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>');
@@ -208,13 +213,13 @@
           document.write('<td align="right">' + size + '</td>');
           document.write('</tr>');
         }
- 
+
         // Close the table.
         document.write('<tr><th colspan="5"><hr></th></tr>');
         document.write('</table>');
         document.title = 'CNPM Binaries Mirror';
       }
- 
+
       function fetchAndDisplay() {
         var path = getParameter('path');
         var lastSlash = location.pathname.lastIndexOf("/");
@@ -238,6 +243,6 @@
         }
       }
       fetchAndDisplay();
-    </script> 
-  </body> 
+    </script>
+  </body>
 </html>

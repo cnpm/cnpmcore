@@ -3,6 +3,7 @@ import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { NodePreGypBinary } from 'app/common/adapter/binary/NodePreGypBinary';
 import binaries from 'config/binaries';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
   let ctx: Context;
@@ -17,6 +18,12 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch grpc', async () => {
+      app.mockHttpclient('https://registry.npmjs.com/grpc', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/grpc.json'),
+      });
+      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
+      });
       const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries.grpc);
       let result = await binary.fetch('/');
       assert(result);
@@ -54,6 +61,12 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
     });
 
     it('should fetch grpc-tools', async () => {
+      app.mockHttpclient('https://registry.npmjs.com/grpc-tools', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/grpc-tools.json'),
+      });
+      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
+      });
       const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries['grpc-tools']);
       let result = await binary.fetch('/');
       assert(result);
@@ -92,6 +105,12 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
     });
 
     it('should fetch nodegit', async () => {
+      app.mockHttpclient('https://registry.npmjs.com/nodegit', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/nodegit.json'),
+      });
+      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
+      });
       const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries.nodegit);
       const result = await binary.fetch('/');
       assert(result);
@@ -122,6 +141,116 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
         }
         if (item.name === 'nodegit-v0.27.0-node-v64-linux-ia32.tar.gz') {
           throw new Error('should not run this');
+        }
+      }
+      assert(matchFile1);
+      assert(matchFile2);
+      assert(matchFile3);
+    });
+
+    it('should fetch skia-canvas', async () => {
+      app.mockHttpclient('https://registry.npmjs.com/skia-canvas', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/skia-canvas.json'),
+      });
+      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
+      });
+      const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries['skia-canvas']);
+      let result = await binary.fetch('/');
+      assert(result);
+      assert(result.items.length > 0);
+      // console.log(JSON.stringify(result.items, null, 2));
+      let matchDir = false;
+      for (const item of result.items) {
+        assert(item.isDir === true);
+        if (item.name === 'v0.9.30/') {
+          matchDir = true;
+        }
+      }
+      assert(matchDir);
+
+      result = await binary.fetch('/v0.9.30/');
+      assert(result);
+      assert(result.items.length > 0);
+      // console.log(JSON.stringify(result.items, null, 2));
+      let matchFile1 = false;
+      let matchFile2 = false;
+      let matchFile3 = false;
+      for (const item of result.items) {
+        assert(item.isDir === false);
+        assert.deepEqual(item.ignoreDownloadStatuses, [ 404, 403 ]);
+        if (item.name === 'darwin-arm64-napi-v6-unknown.tar.gz') {
+          assert(item.date === '2022-06-08T01:53:43.908Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/darwin-arm64-napi-v6-unknown.tar.gz');
+          matchFile1 = true;
+        }
+        if (item.name === 'linux-arm-napi-v6-glibc.tar.gz') {
+          assert(item.date === '2022-06-08T01:53:43.908Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/linux-arm-napi-v6-glibc.tar.gz');
+          matchFile2 = true;
+        }
+        if (item.name === 'win32-x64-napi-v6-unknown.tar.gz') {
+          assert(item.date === '2022-06-08T01:53:43.908Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/win32-x64-napi-v6-unknown.tar.gz');
+          matchFile3 = true;
+        }
+      }
+      assert(matchFile1);
+      assert(matchFile2);
+      assert(matchFile3);
+    });
+
+    it('should fetch wrtc', async () => {
+      app.mockHttpclient('https://registry.npmjs.com/wrtc', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/wrtc.json'),
+      });
+      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
+      });
+      const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries.wrtc);
+      let result = await binary.fetch('/');
+      assert(result);
+      assert(result.items.length > 0);
+      // console.log(JSON.stringify(result.items, null, 2));
+      let matchDir = false;
+      for (const item of result.items) {
+        assert(item.isDir === true);
+        if (item.name === 'v0.4.7/') {
+          matchDir = true;
+        }
+      }
+      assert(matchDir);
+
+      result = await binary.fetch('/v0.4.7/');
+      assert(result);
+      assert(result.items.length > 0);
+      // console.log(JSON.stringify(result.items, null, 2));
+      let matchFile1 = false;
+      let matchFile2 = false;
+      let matchFile3 = false;
+      for (const item of result.items) {
+        assert(item.isDir === false);
+        assert.deepEqual(item.ignoreDownloadStatuses, [ 404 ]);
+        if (item.name === 'linux-arm64.tar.gz') {
+          assert(item.date === '2021-01-10T15:43:35.384Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/linux-arm64.tar.gz');
+          matchFile1 = true;
+        }
+        if (item.name === 'linux-x64.tar.gz') {
+          assert(item.date === '2021-01-10T15:43:35.384Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/linux-x64.tar.gz');
+          matchFile2 = true;
+        }
+        if (item.name === 'darwin-x64.tar.gz') {
+          assert(item.date === '2021-01-10T15:43:35.384Z');
+          assert(item.size === '-');
+          assert(item.url === 'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/darwin-x64.tar.gz');
+          matchFile3 = true;
         }
       }
       assert(matchFile1);

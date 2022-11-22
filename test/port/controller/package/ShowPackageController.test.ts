@@ -112,6 +112,22 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .set('If-None-Match', res.headers.etag)
         .expect('vary', 'Origin')
         .expect(304);
+      // ignore sync request
+      res2 = await app.httpRequest()
+        .get(`/${name}?cache=0`)
+        .set('If-None-Match', res.headers.etag)
+        .expect('vary', 'Origin')
+        .expect(200);
+      assert(res2.body.name);
+      assert.equal(res2.headers.etag, res.headers.etag);
+      res2 = await app.httpRequest()
+        .get(`/${name}`)
+        .set('If-None-Match', res.headers.etag)
+        .set('user-agent', 'npm_service.cnpmjs.org/1.0.0')
+        .expect('vary', 'Origin')
+        .expect(200);
+      assert(res2.body.name);
+      assert.equal(res2.headers.etag, res.headers.etag);
 
       mock(app.config.cnpmcore, 'enableCDN', true);
       await app.httpRequest()

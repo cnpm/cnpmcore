@@ -1,21 +1,31 @@
-// import assert = require('assert');
 import { app, mock } from 'egg-mock/bootstrap';
-// import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
+import { TestUtil } from 'test/TestUtil';
+
+const CreateSyncBinaryTaskPath = require.resolve('../../app/port/schedule/CreateSyncBinaryTask');
+const SyncBinaryWorkerPath = require.resolve('../../app/port/schedule/SyncBinaryWorker');
 
 describe('test/schedule/SyncBinaryWorker.test.ts', () => {
   it('should ignore when enableSyncBinary=false', async () => {
-    await app.runSchedule('CreateSyncBinaryTask');
+    await app.runSchedule(CreateSyncBinaryTaskPath);
     app.mockLog();
-    await app.runSchedule('SyncBinaryWorker');
+    await app.runSchedule(SyncBinaryWorkerPath);
     app.notExpectLog('[SyncBinaryWorker:executeTask:start]');
     app.notExpectLog('[SyncBinaryWorker:executeTask:success]');
   });
 
-  it('should sync worker success', async () => {
+  it('should sync binary worker success', async () => {
+    app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+      data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
+      persist: false,
+    });
+    app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
+      data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+      persist: false,
+    });
     mock(app.config.cnpmcore, 'enableSyncBinary', true);
     // create task
-    await app.runSchedule('CreateSyncBinaryTask');
+    await app.runSchedule(CreateSyncBinaryTaskPath);
     mock(NodeBinary.prototype, 'fetch', async (dir: string) => {
       if (dir === '/') {
         return {
@@ -43,22 +53,22 @@ describe('test/schedule/SyncBinaryWorker.test.ts', () => {
     });
 
     app.mockLog();
-    await app.runSchedule('SyncBinaryWorker');
+    await app.runSchedule(SyncBinaryWorkerPath);
     app.expectLog('[SyncBinaryWorker:executeTask:start]');
     app.expectLog('targetName: node');
     app.expectLog('[SyncBinaryWorker:executeTask:success]');
     // again should work
-    await app.runSchedule('SyncBinaryWorker');
+    await app.runSchedule(SyncBinaryWorkerPath);
   });
 
   it('should mock sync error', async () => {
     mock(app.config.cnpmcore, 'enableSyncBinary', true);
     // create task
-    await app.runSchedule('CreateSyncBinaryTask');
+    await app.runSchedule(CreateSyncBinaryTaskPath);
     mock.error(NodeBinary.prototype, 'fetch');
 
     app.mockLog();
-    await app.runSchedule('SyncBinaryWorker');
+    await app.runSchedule(SyncBinaryWorkerPath);
     app.expectLog('[SyncBinaryWorker:executeTask:start]');
     app.expectLog('[BinarySyncerService.executeTask:fail]');
   });

@@ -9,6 +9,7 @@ export enum SyncerClass {
   PuppeteerBinary = 'PuppeteerBinary',
   NodePreGypBinary = 'NodePreGypBinary',
   ImageminBinary = 'ImageminBinary',
+  PlaywrightBinary = 'PlaywrightBinary',
 }
 
 export type BinaryTaskConfig = {
@@ -32,6 +33,8 @@ export type BinaryTaskConfig = {
     maxPage?: number;
     // custom npm package name, for ImageminBinary
     npmPackageName?: string;
+    // custom for NodePreGypBinary
+    requiredNapiVersions?: boolean;
   },
   disable?: boolean;
 };
@@ -131,6 +134,23 @@ const binaries: {
     syncer: SyncerClass.NodePreGypBinary,
     repo: 'grpc/grpc-node',
     distUrl: 'https://node-precompiled-binaries.grpc.io',
+  },
+  'skia-canvas': {
+    category: 'skia-canvas',
+    description: 'A canvas environment for Node',
+    syncer: SyncerClass.NodePreGypBinary,
+    repo: 'samizdatco/skia-canvas',
+    distUrl: 'https://skia-canvas.s3.us-east-1.amazonaws.com',
+    options: {
+      requiredNapiVersions: true,
+    },
+  },
+  wrtc: {
+    category: 'wrtc',
+    description: 'node-webrtc is a Node.js Native Addon that provides bindings to WebRTC M87.',
+    syncer: SyncerClass.NodePreGypBinary,
+    repo: 'node-webrtc/node-webrtc',
+    distUrl: 'https://node-webrtc.s3.amazonaws.com',
   },
   nodegit: {
     category: 'nodegit',
@@ -575,6 +595,13 @@ const binaries: {
     repo: 'sass/node-sass',
     distUrl: 'https://github.com/sass/node-sass/releases',
   },
+  'sass-embedded': {
+    category: 'sass-embedded',
+    description: 'This is a wrapper for Dart Sass that implements the compiler side of the Embedded Sass protocol.',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'sass/dart-sass-embedded',
+    distUrl: 'https://github.com/sass/dart-sass-embedded/releases',
+  },
   electron: {
     category: 'electron',
     description: 'Build cross-platform desktop apps with JavaScript, HTML, and CSS',
@@ -805,6 +832,35 @@ const binaries: {
     syncer: SyncerClass.GithubBinary,
     repo: 'TryGhost/node-sqlite3',
     distUrl: 'https://github.com/TryGhost/node-sqlite3/releases',
+  },
+  'better-sqlite3': {
+    category: 'better-sqlite3',
+    description: 'AsyncThe fastest and simplest library for SQLite3 in Node.js',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'WiseLibs/better-sqlite3',
+    distUrl: 'https://github.com/WiseLibs/better-sqlite3/releases',
+  },
+  keytar: {
+    category: 'keytar',
+    description: 'Native Password Node Module',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'atom/node-keytar',
+    distUrl: 'https://github.com/atom/node-keytar/releases',
+  },
+  // PlaywrightBinary
+  playwright: {
+    category: 'playwright',
+    description: 'Playwright is a framework for Web Testing and Automation.',
+    syncer: SyncerClass.PlaywrightBinary,
+    repo: 'microsoft/playwright',
+    distUrl: 'https://github.com/microsoft/playwright/releases',
+  },
+  nydus: {
+    category: 'nydus',
+    description: 'the Dragonfly image service, providing fast, secure and easy access to container images.',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'dragonflyoss/image-service',
+    distUrl: 'https://github.com/dragonflyoss/image-service/releases',
   },
 };
 

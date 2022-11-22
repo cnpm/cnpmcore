@@ -3,6 +3,7 @@ import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { NwjsBinary } from 'app/common/adapter/binary/NwjsBinary';
 import binaries from 'config/binaries';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
   let ctx: Context;
@@ -17,6 +18,10 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
+      app.mockHttpclient('https://dl.nwjs.io/', 'GET', {
+        data: await TestUtil.readFixturesFile('dl.nwjs.io/index.html'),
+        persist: false,
+      });
       const binary = new NwjsBinary(ctx.httpclient, ctx.logger, binaries.nwjs);
       const result = await binary.fetch('/');
       assert(result);
@@ -35,6 +40,10 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v0.59.0/, /v0.59.1/x64/ work', async () => {
+      app.mockHttpclient('https://nwjs2.s3.amazonaws.com/', 'GET', {
+        data: await TestUtil.readFixturesFile('nwjs2.s3.amazonaws.com/v0.59.0.xml'),
+        persist: false,
+      });
       const binary = new NwjsBinary(ctx.httpclient, ctx.logger, binaries.nwjs);
       let result = await binary.fetch('/v0.59.0/');
       assert(result);
@@ -65,6 +74,10 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
       assert(matchFile);
 
       // https://nwjs2.s3.amazonaws.com/?delimiter=/&prefix=v0.59.1%2Fx64%2F
+      app.mockHttpclient('https://nwjs2.s3.amazonaws.com/', 'GET', {
+        data: await TestUtil.readFixturesFile('nwjs2.s3.amazonaws.com/v0.59.1.xml'),
+        persist: false,
+      });
       result = await binary.fetch('/v0.59.1/x64/');
       assert(result);
       assert(result.items.length === 2);

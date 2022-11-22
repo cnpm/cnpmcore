@@ -4,6 +4,8 @@ import { app, mock } from 'egg-mock/bootstrap';
 import dayjs from '../../../../app/common/dayjs';
 import { TestUtil } from 'test/TestUtil';
 
+const SavePackageVersionDownloadCounterPath = require.resolve('../../../../app/port/schedule/SavePackageVersionDownloadCounter');
+
 describe('test/port/controller/DownloadController/showPackageDownloads.test.ts', () => {
   let ctx: Context;
   let publisher;
@@ -97,7 +99,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
           .expect(200);
       }
 
-      await app.runSchedule('SavePackageVersionDownloadCounter');
+      await app.runSchedule(SavePackageVersionDownloadCounterPath);
 
       const start = dayjs().subtract(100, 'days').format('YYYY-MM-DD');
       const end = dayjs().add(100, 'days').format('YYYY-MM-DD');
@@ -173,7 +175,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
           .expect(200);
       }
 
-      await app.runSchedule('SavePackageVersionDownloadCounter');
+      await app.runSchedule(SavePackageVersionDownloadCounterPath);
 
       const start = dayjs().format('YYYY-MM-DD');
       const end = dayjs().add(100, 'days').format('YYYY-MM-DD');
@@ -196,7 +198,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         .send(pkg)
         .expect(201);
 
-      await app.runSchedule('SavePackageVersionDownloadCounter');
+      await app.runSchedule(SavePackageVersionDownloadCounterPath);
 
       const start = dayjs().format('YYYY-MM-DD');
       const end = dayjs().format('YYYY-MM-DD');

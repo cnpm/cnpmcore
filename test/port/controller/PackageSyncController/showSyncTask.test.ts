@@ -5,6 +5,8 @@ import { TestUtil } from 'test/TestUtil';
 import { TaskRepository } from '../../../../app/repository/TaskRepository';
 import { TaskState } from '../../../../app/common/enum/Task';
 
+const SyncPackageWorkerPath = require.resolve('../../../../app/port/schedule/SyncPackageWorker');
+
 describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () => {
   let publisher;
   let ctx: Context;
@@ -70,6 +72,14 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
     });
 
     it('should get sucess task after schedule run', async () => {
+      app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync-issue-1667', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/mk2test-module-cnpmsync-issue-1667.json'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync-issue-1667/-/mk2test-module-cnpmsync-issue-1667-3.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
       const name = 'mk2test-module-cnpmsync-issue-1667';
       let res = await app.httpRequest()
         .put(`/-/package/${name}/syncs`)
@@ -81,9 +91,9 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
         .expect(200);
       // waiting state logUrl is not exists
       assert(!res.body.logUrl);
-      await app.runSchedule('SyncPackageWorker');
+      await app.runSchedule(SyncPackageWorkerPath);
       // again should work
-      await app.runSchedule('SyncPackageWorker');
+      await app.runSchedule(SyncPackageWorkerPath);
 
       res = await app.httpRequest()
         .get(`/-/package/${name}/syncs/${taskId}`)

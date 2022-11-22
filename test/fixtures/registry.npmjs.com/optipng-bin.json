@@ -1,0 +1,4788 @@
+{
+  "_id": "optipng-bin",
+  "_rev": "322-845c482f6ff42c4adf80eb849f26975f",
+  "name": "optipng-bin",
+  "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+  "dist-tags": {
+    "latest": "9.0.0"
+  },
+  "versions": {
+    "0.1.0": {
+      "name": "optipng-bin",
+      "version": "0.1.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "bugs": "https://github.com/yeoman/node-optipng-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "main": "lib/optipng-bin.js",
+      "bin": {
+        "optipng-bin": "bin/optipng-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "node node_modules/mocha/bin/mocha test/test-*.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "devDependencies": {
+        "mocha": "~1.6.0"
+      },
+      "_id": "optipng-bin@0.1.0",
+      "dist": {
+        "shasum": "a40abfc902e0ce037f285e0cf744d89726f9f369",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.1.0.tgz",
+        "integrity": "sha512-SU3B+z8yCe6HrkLOOs/an1JeEdnKyH8odbnZfBumY6PmIjqETe4FNPobhPicNN+d44tPU523AJ+5rVhxD/cYBw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQD5krXfxwnoSMDxzE3xdUgR8ndnY5PVe38HjwhLHos0fwIhALSQQITnjA5HvUKWUXePBEzJGXxPdu7ofrBbgEPjxOKk"
+          }
+        ]
+      },
+      "_npmVersion": "1.1.65",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.2.0": {
+      "name": "optipng-bin",
+      "version": "0.2.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "bugs": "https://github.com/yeoman/node-optipng-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "main": "lib/optipng-bin.js",
+      "bin": {
+        "optipng-bin": "bin/optipng-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "node node_modules/mocha/bin/mocha test/test-*.js",
+        "postinstall": "node rebuild-optipng.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5",
+        "exec-sync": "~0.1.5"
+      },
+      "devDependencies": {
+        "mocha": "~1.6.0"
+      },
+      "_id": "optipng-bin@0.2.0",
+      "dist": {
+        "shasum": "c5472ae66b321b9ef5bfe46164fb5c0951a8aa3e",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.2.0.tgz",
+        "integrity": "sha512-raEO7LeM+F8gkyGzypjHZsC9GmixWGwfVj8+ZA3s15spzkAeqlCBVB87chl9k7uC/N4ahowbQRnPGrvCYgCGFw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDlO3LqpIoAW4dAjH/wiuFNRCp3i6og2fFFxwRS9Be72QIgWu8Xp/a/aETcujtdRvph5rC8R5wiufahPSw22vSeckM="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.10",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.2.1": {
+      "name": "optipng-bin",
+      "version": "0.2.1",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "bugs": "https://github.com/yeoman/node-optipng-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "main": "lib/optipng-bin.js",
+      "bin": {
+        "optipng-bin": "bin/optipng-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha test/test-*.js",
+        "postinstall": "node build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5",
+        "exec-sync": "~0.1.5"
+      },
+      "devDependencies": {
+        "mocha": "~1.6.0"
+      },
+      "_id": "optipng-bin@0.2.1",
+      "dist": {
+        "shasum": "16fa8e0894fd2c5536720f3972746f827ed775ea",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.2.1.tgz",
+        "integrity": "sha512-3hM3lV9HGqAydZCMVE2rsopZjykUiDvVHNsoWIpvmhLTy4njLv/0xKsN2NzQ/dhdVP94armsoOAVa32HrYurjQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIE0vzEY0PASG3kHSd9Br4Yz0vXeo+VgsYyB4AZVWCHe0AiAIrkrwPYCHA8XTJE/il71rT2gC6gfCLZoSrhM5yZEnmQ=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.10",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.2.2": {
+      "name": "optipng-bin",
+      "version": "0.2.2",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "bugs": "https://github.com/yeoman/node-optipng-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "main": "lib/optipng-bin.js",
+      "bin": {
+        "optipng-bin": "bin/optipng-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha test/test-*.js",
+        "postinstall": "node build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5"
+      },
+      "devDependencies": {
+        "mocha": "~1.6.0"
+      },
+      "_id": "optipng-bin@0.2.2",
+      "dist": {
+        "shasum": "04d32deab2b508811dea88a5bc9cf6ea71bfc96d",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.2.2.tgz",
+        "integrity": "sha512-m+WXyqjLQxN7nYnDcEseeqm7mHyn5ZVi364TDSpX9GO1n8BJvBVwTBZM8C/bn92TyULhDCYjx8AYftEmsdMrpA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDvqrJVdsOmNO1oTUbn1dVOEtOcfIFyRA+1aIExdTRJNAIgGMs5CjAOXjizPcKm4vFLik1L3e6SoW/Jf/joXMK0bqk="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.10",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.2.3": {
+      "name": "optipng-bin",
+      "version": "0.2.3",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "bugs": "https://github.com/yeoman/node-optipng-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        }
+      ],
+      "main": "lib/optipng-bin.js",
+      "bin": {
+        "optipng-bin": "bin/optipng-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node pre-build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5",
+        "mocha": "~1.9.0"
+      },
+      "_id": "optipng-bin@0.2.3",
+      "dist": {
+        "shasum": "f6927740b316f867a0e87a2e0eb56712ea3d1a1c",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.2.3.tgz",
+        "integrity": "sha512-dJHTUwSlw/AvKfIxm5+Gw2rlT0FIfn2OMp5ef1pjMoVrRE7bnpXp2L79I5zGLP7j96SRr7emx7GH1veTbG2SVA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIAtb348xf7efUxomVWIfF4dc6keYum5R4VZb8ulWs6mWAiBgbN8y64y3ziG4WUW1KrQUl25US7Vdm7rpxEKkCBTDQg=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.18",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.2.4": {
+      "name": "optipng-bin",
+      "version": "0.2.4",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "bugs": "https://github.com/yeoman/node-optipng-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        }
+      ],
+      "main": "lib/optipng-bin.js",
+      "bin": {
+        "optipng-bin": "bin/optipng-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node pre-build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5",
+        "mocha": "~1.9.0",
+        "tar": "~0.1.17",
+        "request": "~2.16.6"
+      },
+      "_id": "optipng-bin@0.2.4",
+      "dist": {
+        "shasum": "9e681bd00e041d3179a3405f6d136a96449cbe6e",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.2.4.tgz",
+        "integrity": "sha512-Zj/lnl9QY0lZCzpvLOf5odPsQrQnYf7ikPZutbNf1T5U1FZeDvbYZW55svVWas9XCeaGexu+iHGBUI4vAfpfeQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCk81Kxszp+7+XnOjLeZTgC+tD1fsi4wXz3ceTLQRpslgIgLa7POPVnlB+UV1hQASeG6I+FpiurnnfZh3jaueaRAsg="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.18",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.2.5": {
+      "name": "optipng-bin",
+      "version": "0.2.5",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "bugs": "https://github.com/yeoman/node-optipng-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        }
+      ],
+      "main": "lib/optipng-bin.js",
+      "bin": {
+        "optipng-bin": "bin/optipng-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node pre-build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5",
+        "mocha": "~1.9.0",
+        "tar": "~0.1.17",
+        "request": "~2.16.6"
+      },
+      "_id": "optipng-bin@0.2.5",
+      "dist": {
+        "shasum": "1e7c0a5f91915f38e4dd5df116c3b28934bb4296",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.2.5.tgz",
+        "integrity": "sha512-sdztp7d/69JC/PG2r9laymWvvfGIh5v/tvAGiLCi/WSoY+2Xu6pjwl/t/gOnbF6KfiWE4hDTpjvv9IBhRObQJw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDd2lMgqyaJS6cHQhzibyjFhBivaQN/vyXb0Vaf2MJ/DAIhAMuRpdg1sUF9mE4sJlJEkBuFT9t/oaVyDt4jpyBtwgGR"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.18",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.2.6": {
+      "name": "optipng-bin",
+      "version": "0.2.6",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "bugs": "https://github.com/yeoman/node-optipng-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        }
+      ],
+      "main": "lib/optipng-bin.js",
+      "bin": {
+        "optipng-bin": "bin/optipng-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node pre-build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5",
+        "mocha": "~1.9.0",
+        "tar": "~0.1.17",
+        "request": "~2.16.6"
+      },
+      "_id": "optipng-bin@0.2.6",
+      "dist": {
+        "shasum": "f74f769ae55b946187ee46ebe00e4a28f6720590",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.2.6.tgz",
+        "integrity": "sha512-qRwSo+2s2PPKpe1PHUY4TG2JBF3d6hz4QodxfLZNf4duKKGMzP+XLhQMvgQUpUEPinNisJpoRHyiIh0yay+V5Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIBh2tDMQRiTbVt7eFRv9yRqQeSl+9T1sinSAUA6fg/A1AiEAjIErFCWGMwFMfDymjCagN2qtWT8htuHXqzkmMXz1kqo="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.18",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.3.0": {
+      "name": "optipng-bin",
+      "version": "0.3.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-optipng-bin/issues"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "main": "lib/optipng",
+      "bin": {
+        "optipng": "bin/optipng.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node pre-build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "which": "~1.0.5",
+        "mocha": "~1.12.0",
+        "tar": "~0.1.17",
+        "request": "~2.26.0",
+        "chalk": "~0.2.0",
+        "mkdirp": "~0.3.5"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "test",
+        "build.js",
+        "pre-build.js"
+      ],
+      "_id": "optipng-bin@0.3.0",
+      "dist": {
+        "shasum": "ea5a94af525586d2a2bb88092c979e4683bc94d3",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.0.tgz",
+        "integrity": "sha512-taNDm/rTrXMGPhDaUTQgHiSnWAGME3CV2Z0ppYzQn9KLBe/srZ9GfipMSAEAQJOcVEhAuYH9/xhLsecAtUU6zA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQC9oVSWE+0+dMZ5OmTLELDgGmXgeT/dDFCKOzei+GRiNgIhAInMZv6UHZLkbaGcwdb9jFFmZocf1i57Rln5PmXt/uhB"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.8",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.3.1": {
+      "name": "optipng-bin",
+      "version": "0.3.1",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-optipng-bin/issues"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "main": "lib/optipng",
+      "bin": {
+        "optipng": "bin/optipng.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node lib/check.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "bin-wrapper": "~0.1.3",
+        "chalk": "~0.2.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.13.0"
+      },
+      "files": [
+        "bin",
+        "lib"
+      ],
+      "_id": "optipng-bin@0.3.1",
+      "dist": {
+        "shasum": "d3eee5ee9dfcc8d7ae2086fd8f9dcec084c6e79b",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.1.tgz",
+        "integrity": "sha512-EwS1fvOYKOJK6w1C2Kz+82OACtMudjBpKqKKS0k9aYcfYZgS/D7zpsZi+8UDwNdAA2bRVJIaQTCxA3cIf6/lAQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDCEjSQ0fUs/MeBabKWZyFtM/wQYhzrgdSiga4mEUaVMwIgYR1/GIM+UtvBrKSozrtzaNCpCr7BlSBooS/SiQZlRRk="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.11",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.3.2": {
+      "name": "optipng-bin",
+      "version": "0.3.2",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        }
+      ],
+      "main": "index.js",
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha --reporter list --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "bin-wrapper": "~0.2.0",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "~0.1.0",
+        "mocha": "~1.18.2",
+        "rimraf": "~2.2.6"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "bugs": {
+        "url": "https://github.com/yeoman/node-optipng-bin/issues"
+      },
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "_id": "optipng-bin@0.3.2",
+      "dist": {
+        "shasum": "159ca1c41c6de620bf962de861cb7634156ec4cd",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.2.tgz",
+        "integrity": "sha512-eeSs8fg4CzAIckNq/z+eAohFs+dPqW/VR9tfqkw2ewtszlNAhmPaA2GNkhtkhC2XYQsDTTH9NYWwq81PekT9bQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIAdbgr+AVbBznV2VfvWggLfSVFB9PhDFJ6xEHB+5tMowAiAGG16JBBCe3JMFz2+/xr6yEgDfcDc5nFx2j2on7oH6mw=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.3.3": {
+      "name": "optipng-bin",
+      "version": "0.3.3",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "keywords": [
+        "png",
+        "compress",
+        "minify",
+        "optimize",
+        "img",
+        "image"
+      ],
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        }
+      ],
+      "main": "index.js",
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-optipng-bin.git"
+      },
+      "scripts": {
+        "test": "mocha --reporter list --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "bin-wrapper": "^0.2.0",
+        "chalk": "^0.4.0",
+        "concat-stream": "^1.4.4",
+        "rimraf": "^2.2.6",
+        "tempfile": "^0.1.3",
+        "win-spawn": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "multipipe": "^0.0.2"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "stream.js"
+      ],
+      "bugs": {
+        "url": "https://github.com/yeoman/node-optipng-bin/issues"
+      },
+      "homepage": "https://github.com/yeoman/node-optipng-bin",
+      "_id": "optipng-bin@0.3.3",
+      "dist": {
+        "shasum": "ddda8ed1f6785c71d3b180490f6c62cf9294cb30",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.3.tgz",
+        "integrity": "sha512-uIvvlPzjGDoUPiAxeJd6XCv82MAh28ZvwWARgPATdnRnY0F8e4vh1gjrjTE1xjjtGEF/BmmhUV/w/jX2+yvMfw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIDGB+Co8FMX1sL21NfHpB6YBlJtlDqe09kdwzdhU/4ipAiEA0x8Ew8Yffo/2OLnaiGRJoRj2a3Irh8JXkAQpGfrgqdo="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.3.4": {
+      "name": "optipng-bin",
+      "version": "0.3.4",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 0"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/yeoman/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/yeoman/optipng-bin",
+      "_id": "optipng-bin@0.3.4",
+      "_shasum": "e033549ac7134e388b4e50168c353bd041c3e058",
+      "_from": ".",
+      "_npmVersion": "1.4.7",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "e033549ac7134e388b4e50168c353bd041c3e058",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.4.tgz",
+        "integrity": "sha512-z0DVQzfh6Y1yAiDOxdYLKHgdqThgBd/umzEWv0kYsCZD16vjZguY/rlyfEjB7Y33bfFVv+8ubLjp+pYzbu9lFg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQChrHvZNMM2nWalE5onp/lhyuuknn06MJidglXXEXD/9QIgCaXQaqJSvQFLAU5wT9b89hXLBz92rxdOSIbDUbpUgVw="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.3.5": {
+      "name": "optipng-bin",
+      "version": "0.3.5",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 0"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/yeoman/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/yeoman/optipng-bin",
+      "_id": "optipng-bin@0.3.5",
+      "_shasum": "f819e383be43d6c8be274c8d75c9f421fdfbf840",
+      "_from": ".",
+      "_npmVersion": "1.4.7",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "f819e383be43d6c8be274c8d75c9f421fdfbf840",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.5.tgz",
+        "integrity": "sha512-wyJKMWAGrtFrihQS901An2EZ4qfloBrUYZbRDb3M5ZVJi3GiANJi64Ofk7AQAJ71hiCCGTUhvmY9z4sCpooDeQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDs5RDNiW84oxOwKyj0eugijpY56MBIAr47OkVEIN8T1AIgdrKrErxedYUvOXOuEczIZz9GW9ds4jA0ETguYFiNcmw="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.3.6": {
+      "name": "optipng-bin",
+      "version": "0.3.6",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 0"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/yeoman/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/yeoman/optipng-bin",
+      "_id": "optipng-bin@0.3.6",
+      "_shasum": "92e445dfb466148e4d3f5c765713d33e0ddf4cdb",
+      "_from": ".",
+      "_npmVersion": "1.4.7",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "92e445dfb466148e4d3f5c765713d33e0ddf4cdb",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.6.tgz",
+        "integrity": "sha512-BLZe45Pawc4CZXz3nE6qfDNboURbW1dUZOa35fHQy3AO4a6B5YR4UNvItJhPzJscL24nM9YHANWj/ulxV3qPaA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCnTOuzNVkfn7KBpYS80UY1bZ51cX7D6kUcus99TgJoXQIgaCJlwRMW8X6j2kkiURiaFMxw7fdioQe2qB/kh9OOhdE="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.3.7": {
+      "name": "optipng-bin",
+      "version": "0.3.7",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 0"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/yeoman/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/yeoman/optipng-bin",
+      "_id": "optipng-bin@0.3.7",
+      "_shasum": "147973b4dc0e80bb6230073e2c256c68dd7560b7",
+      "_from": ".",
+      "_npmVersion": "1.4.7",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "147973b4dc0e80bb6230073e2c256c68dd7560b7",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.7.tgz",
+        "integrity": "sha512-XZhpuFzh6q06Zd9aVMVxJatVc9llCoYKJFq6bJNmggEx2IbBwKlY5j1pVXLNh997NRokYIYLnEs0ZQWC7T/ebQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIAo/IWMXkq3g252Hq5DtftN2AnNi6SWTa6DoRchUnzJLAiBSW09UFgfuJPDA9Zqfm5Dqrq0zpMfLKSIFEN8uqQla0w=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.3.8": {
+      "name": "optipng-bin",
+      "version": "0.3.8",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 0"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/yeoman/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/yeoman/optipng-bin",
+      "_id": "optipng-bin@0.3.8",
+      "_shasum": "eb0eb3bc781fff4c84a6ab662234b8a169a8da8c",
+      "_from": ".",
+      "_npmVersion": "1.4.7",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "eb0eb3bc781fff4c84a6ab662234b8a169a8da8c",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.8.tgz",
+        "integrity": "sha512-aJmstEheMknUTiwb7QM/HQt10qUa/3xdHF3mbfNxa9PzMfOhPghWI1BRzqq7+88yc18a1PKJNnGtD/bZg5LdfA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQD6Gaj6b40h2Gvw/tn3WFlq9YW13ORm6fjxfIirrsg7tgIhAJIi8xwxXcvLg+LxddGGtkY5hkNKIfPcoIWGfaNLzUi5"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.3.9": {
+      "name": "optipng-bin",
+      "version": "0.3.9",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/imagemin/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 0"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin",
+      "_id": "optipng-bin@0.3.9",
+      "_shasum": "924abc4ffd8832c902a3cf78cfc257a0ec6cdecb",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "924abc4ffd8832c902a3cf78cfc257a0ec6cdecb",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.9.tgz",
+        "integrity": "sha512-MfyhzsJGfvCU2pzPvg6jJC6KG9t+luM5V1mjrSNVqvjPb2qj5K6mYgHextrzu1OhSOZp836KtAiTDzVSNPQ56Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIDsvi56ltK28anWZzYU6BMcYhXTLeNqrBlcTysXT/3DIAiAf8rjjhPmMZ1QBcUORoLKDLP1WfhZK7ryz4/XtUXRylg=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.3.10": {
+      "name": "optipng-bin",
+      "version": "0.3.10",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/imagemin/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 50000"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin",
+      "_id": "optipng-bin@0.3.10",
+      "_shasum": "304c3b879e11dd00aed09804958bf76ca192d26d",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "304c3b879e11dd00aed09804958bf76ca192d26d",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.10.tgz",
+        "integrity": "sha512-9QK4Q1Zreuh0FNTc03xsVZj58XY2+a5OaBqIsDN7oYky/Ljk2D0rTWHhPs7VUUzeYeSP556MmwbzxBoVLRmOWQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCICUHDSL7Nkb6NOTyEKCVDycpFh53fc8nH+BKDTEyA9KOAiEAwV1t+LBxGPt9tBNp/eC6p+muIN5kWK6M7jYRta/hA2o="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.3.11": {
+      "name": "optipng-bin",
+      "version": "0.3.11",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/imagemin/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node index.js",
+        "test": "mocha --reporter list --timeout 50000"
+      },
+      "files": [
+        "cli.js",
+        "index.js"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin",
+      "_id": "optipng-bin@0.3.11",
+      "_shasum": "400d19329f29c508b89b478b5d42ba1afb3bd4ab",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "400d19329f29c508b89b478b5d42ba1afb3bd4ab",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-0.3.11.tgz",
+        "integrity": "sha512-LOlYWBx0H3UXS0rf6HzIWgoQFcjfW/qRrlpBRm4kgGas54cVsimqSGzNsWEjMPViejbhhRN6h7MVZhYaMS8l7Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDIsdN1ajEbiUYmJXrrG0rAZG77QPQ9F57xurk2P9HrTwIhAO963ycODRHVo9u/0RkjEu344CuH56e49bhGlq0PmYlu"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.0": {
+      "name": "optipng-bin",
+      "version": "1.0.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --reporter list --timeout 50000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^0.2.0",
+        "bin-wrapper": "^0.4.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "gitHead": "0b70894ac9ad1f527ae6416337d0f0b00dc31bd2",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin",
+      "_id": "optipng-bin@1.0.0",
+      "_shasum": "9604adae111b975c64fc14f90ec37b1faad7b5b4",
+      "_from": ".",
+      "_npmVersion": "1.4.21",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "9604adae111b975c64fc14f90ec37b1faad7b5b4",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-1.0.0.tgz",
+        "integrity": "sha512-+B8pgr1b+2uTn+KBwESUqvspt5JOfeLGfb9yEnGgqSvCk6SfMV2guPciTiAwzxB5WAbVO7D3pUdaFg904zHboA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCKf/XlDGni7SDsLqkWeoLnf9+3WjhcF1YpUZGPKHgiLAIhAMQES0g10N2VTgUNqZ1QQAdYnkRfzZjGVqnyFdVYkR1s"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.1": {
+      "name": "optipng-bin",
+      "version": "1.0.1",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD and Windows",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --reporter list --timeout 50000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^1.0.0",
+        "bin-wrapper": "^1.0.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "gitHead": "1054adfe6d01cc7982d00205a2d99ea0e0078cc3",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin",
+      "_id": "optipng-bin@1.0.1",
+      "_shasum": "bb52d3d8a4305766449d95c89d6830464cf05c70",
+      "_from": ".",
+      "_npmVersion": "1.4.23",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "bb52d3d8a4305766449d95c89d6830464cf05c70",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-1.0.1.tgz",
+        "integrity": "sha512-/Ymtx4BcJNJvdBct3ux0xU5hrEOLUvq6OQxSSCct2pNu5laSElgdr76xGo328A2zqMxUBePEfpRUryIDy6vcSQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIHdO4o7gTznA9YFe++YqWfJLnXKhbxqXcZ8r7z9VzTk6AiBFaytZr/JXW9YwgVHvStMOKoI8doCfkuUR7JY1P7aVtA=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.0": {
+      "name": "optipng-bin",
+      "version": "2.0.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "68946272d40892768c105fe8a5647041745b16ff",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin",
+      "_id": "optipng-bin@2.0.0",
+      "_shasum": "f2211ab5298494bcbd1f1fa606fc571f91ac1cc8",
+      "_from": ".",
+      "_npmVersion": "2.1.5",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "f2211ab5298494bcbd1f1fa606fc571f91ac1cc8",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-2.0.0.tgz",
+        "integrity": "sha512-yJX7VvtnPXRpUCRlCovLI1hCuzXpkdpfrfxjiCxL1X0mPXvLVWD3QnflEO/lOkADWDjVmbTv+NWL+HsN1yXddw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQD0VV7g1m2uiHYEByguY0KKLtEUIq2KThWLQKM/b9R9UQIhALWGMWB/6n2wxHYpSkJCSIJpQm0EFh+7xFFbhSBY9QDl"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.1": {
+      "name": "optipng-bin",
+      "version": "2.0.1",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "ed0054edfc17acc9b147945832f5661c1a478897",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin",
+      "_id": "optipng-bin@2.0.1",
+      "_shasum": "85d01105e68d0a74599f79fc499904b372ae9de0",
+      "_from": ".",
+      "_npmVersion": "2.1.5",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "85d01105e68d0a74599f79fc499904b372ae9de0",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-2.0.1.tgz",
+        "integrity": "sha512-PqA5IHwXh4b7DX8dFvi5L9ye4hxkrXGUKY7tyiIDsAUNiGasZ5dkC4YEMIrvDEhOsogvDK5eCweV9ukXycKGYg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDjU2NXcEJ53KooADWKNPiMLkTG3glaRHjFX7RHNksbvgIhAM5OVoHVtAQiQh8yHVmJ6YYeb1gB94Lugv1Z7PtvuGIp"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.2": {
+      "name": "optipng-bin",
+      "version": "2.0.2",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "ac6164989c35dca3afdf1f3f8be5c2607846e114",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin",
+      "_id": "optipng-bin@2.0.2",
+      "_shasum": "e0ad18ce3f6482a247118719860d0eaef1273933",
+      "_from": ".",
+      "_npmVersion": "2.1.6",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "e0ad18ce3f6482a247118719860d0eaef1273933",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-2.0.2.tgz",
+        "integrity": "sha512-0zLFd80f8j1/fgsMTBgq2zLOCIGM3LwyVDD8OKf70mMq5V9kFVw2s9UGwYPp3TCH81LxJgTfzQ1+TCdSsgj+Rg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIGxZ6U8Yc0wBJ7QKOrsTosd+fHxNSsM6zYgDsZxZuQZFAiAXLKze6C343fRtv/hBdiZjSKC6YwCpe468yGOnCWYokQ=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.3": {
+      "name": "optipng-bin",
+      "version": "2.0.3",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "926c9d4d6bd33564f7f596d5b140faec9e18bbb1",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin",
+      "_id": "optipng-bin@2.0.3",
+      "_shasum": "b5ee8ea30a7709b562b6832616354d594c455537",
+      "_from": ".",
+      "_npmVersion": "2.1.7",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "b5ee8ea30a7709b562b6832616354d594c455537",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-2.0.3.tgz",
+        "integrity": "sha512-EtOhxpMzgd+mccaO5jnjZW4Qh/LpENpTWIPsealdvOtgC4DKbP/rj+cFcs+V4JsQGS1/WJEyIPygMKhjentnww==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIBZVMVPeuikpqYu7TM6X0JZgcRGL0JJVmPQStIvtxqIWAiEA9AGwM3gWqgvR3ctnW/Tc34YK6txBHvE4JMHOqaHLXu0="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.4": {
+      "name": "optipng-bin",
+      "version": "2.0.4",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/optipng-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "0e11059b8e25937caa7ea0c456b1d533bf9bba1c",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin",
+      "_id": "optipng-bin@2.0.4",
+      "_shasum": "1f0ad9307951deb5f93038629e781b1997ad0527",
+      "_from": ".",
+      "_npmVersion": "2.1.7",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "1f0ad9307951deb5f93038629e781b1997ad0527",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-2.0.4.tgz",
+        "integrity": "sha512-PmL3FBw6ShPYqtSXeV7dWgZsxtISpf8CzBjsSTdccnyjh9LlFFLDNxv5pyOiZonE/XBVhD1BHo/mAR9arMEwpA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCG0NsVKoAlX2PJgIWOAwtm+hOD/0Ip6Pv50TOmDWyfYgIgO4z4c8IBluy6ne1dYd0ER1MBeQnDduFcF7hmMUppOGs="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.0": {
+      "name": "optipng-bin",
+      "version": "3.0.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "48d2ca30e3059352259886cac88aaaf4648e287f",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.0.0",
+      "_shasum": "cb1ccfce886e29c82fc0cd49a41ec26ed209a63f",
+      "_from": ".",
+      "_npmVersion": "2.11.1",
+      "_nodeVersion": "2.0.1",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "cb1ccfce886e29c82fc0cd49a41ec26ed209a63f",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.0.0.tgz",
+        "integrity": "sha512-U3kjsnanQHNQWuE975BbcYsJN0NyUIWJnErL+MhsUPkF8XUUTXH82wysgQLP0KgHcLEliBSThSaPN4Dkp5pT0g==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDhtDNiFeRj1bM/h2IJNaN3HQlMyxHqvZfCKCHtuW4CgQIgBD3VdTr5+T+/eM6WcnhfBaMJ/D2KOW0pClEMTo5L8Ks="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.1": {
+      "name": "optipng-bin",
+      "version": "3.0.1",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "7a1e96d292ecc8aee3085b6a6511aa13fd026e54",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.0.1",
+      "_shasum": "089f26e4fd4ee75ca2ac62fc446a8637309abfa6",
+      "_from": ".",
+      "_npmVersion": "2.11.1",
+      "_nodeVersion": "2.0.1",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "089f26e4fd4ee75ca2ac62fc446a8637309abfa6",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.0.1.tgz",
+        "integrity": "sha512-whlDLqIa1Jau2hDiG3IZSj+j7AfrC4ZdcfpDmdJ/uWadMCxnGCaalQOSXJe4tRqhgS1RNr4LRQwDkLAi19Ti7g==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCICYxKhJyyhmlB+cmxXEzzpSWZ7HpN56CpCJBo/AH91v0AiEAlEaIs4nVLRYekeDv28YiM/DOn47ct8cQtxnfkY9jypA="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.2": {
+      "name": "optipng-bin",
+      "version": "3.0.2",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "09b28c35268463866ad9604ba32be40ecc0a8e46",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.0.2",
+      "_shasum": "323d94eca48c5788f51c9e51577db593bb007c12",
+      "_from": ".",
+      "_npmVersion": "2.11.1",
+      "_nodeVersion": "2.0.1",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "323d94eca48c5788f51c9e51577db593bb007c12",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.0.2.tgz",
+        "integrity": "sha512-TfjHK9pzSbh9+n4VXfi8qOzRzOu9RS5WM2K024pk8ukmS8AzQB7G13OR04h6UlvUqbfmiPm3757ff4f/oIi/rg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDSigy6cp9+Kz7glJ2CT4qBTXbUyuhhlb8HJ3+lQbzG5gIhAInE2exd2qrWv3FA+u5bjYFGQ8e8qCoUculG208wukmq"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.3": {
+      "name": "optipng-bin",
+      "version": "3.0.3",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "path-exists": "^1.0.0",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "17d5c3293c622f0ded6122a005d13de78e8da1c1",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.0.3",
+      "_shasum": "39f5cdd80920afe2f3aac09992bb06652b7b799d",
+      "_from": ".",
+      "_npmVersion": "3.4.0",
+      "_nodeVersion": "5.0.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "39f5cdd80920afe2f3aac09992bb06652b7b799d",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.0.3.tgz",
+        "integrity": "sha512-XL0SSNB8nv1y0i1oBabn+qURD/yHrcLQSAbulBqrFTQZk6Q4IVPgWy8a/3tM9sZC/RuYOk1LnbcXproBX11Dhg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIARVqqUQqEjEaxIc6pQUGRGMnBr3ZwMBoSlXw3lqAazoAiBkhu7kdhyGrbBsB1p0xq+OtlXfBxP6OY9wt2vzrAGSaA=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.4": {
+      "name": "optipng-bin",
+      "version": "3.0.4",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "path-exists": "^1.0.0",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "45d419577a7a246449f52e5c36a166ffbabaa9ea",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.0.4",
+      "_shasum": "4142c53227cbb65e5c77d7a3bbfa99a027897be9",
+      "_from": ".",
+      "_npmVersion": "3.3.12",
+      "_nodeVersion": "5.1.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "4142c53227cbb65e5c77d7a3bbfa99a027897be9",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.0.4.tgz",
+        "integrity": "sha512-hbTFEZKpqhIEPaxWCmwNHLaRpJKHtzpy/ZEXvAUk3RN2liF7rd1POAlAjALS5MVh30UT/nWnAf7E6Z6MqghvGA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCqh2nYivE3VprPe7YH+6Cuilr3m4+DAD5tUwi1iQQQdwIgLqHSnEJz8GN9woijiUi88hdKtdyAPnS9CPu7gMjBhjU="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.1.0": {
+      "name": "optipng-bin",
+      "version": "3.1.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "path-exists": "^1.0.0",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "bccd73d21e5ed55f0ae494fa1d0c1a3f5837a7bc",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.1.0",
+      "_shasum": "de8e3979e8c01621239497efa9106fb377c5f9ba",
+      "_from": ".",
+      "_npmVersion": "3.7.2",
+      "_nodeVersion": "5.6.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "de8e3979e8c01621239497efa9106fb377c5f9ba",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.1.0.tgz",
+        "integrity": "sha512-+1rTjYvrZo8rtQc/WKHnnhE7ZqjNsWnjpZO033OjpO4ZTjfXr2j+JGeJIZ5QCetOhBA3OtYfY8ZqzvHJwNtruA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIHDcoLj+R+WjzfkFa+9qSgCz6E9Q/RRKK3oeN4YaDL07AiA/edoTIaQR45sPs+/sMgKb4+VypgHsSKvKj5rhaGB5bA=="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-5-east.internal.npmjs.com",
+        "tmp": "tmp/optipng-bin-3.1.0.tgz_1455616294253_0.1779038740787655"
+      },
+      "directories": {}
+    },
+    "3.1.1": {
+      "name": "optipng-bin",
+      "version": "3.1.1",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "path-exists": "^1.0.0",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "3148bdc59957b82cab1e929fd71d9b0d9dbcd214",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.1.1",
+      "_shasum": "035133621344245e9095a718c790a7092eaea515",
+      "_from": ".",
+      "_npmVersion": "3.8.5",
+      "_nodeVersion": "5.10.1",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "035133621344245e9095a718c790a7092eaea515",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.1.1.tgz",
+        "integrity": "sha512-3rBqNlj13rujY8K6tB5c7UsHFLBtbY4mtclxr69eSd0zcXJxjFaYyMBdhGIHzU6vGOJVh/jMf2TLRdYVxpYmhQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCICdVcPCeh3nQLMtSoa5Fli9UxKT2Iu8pLJqyPHi2h2ZkAiAfyzdk1JY29Zs1l0fU2KCezjJdImsI0sDP5Z17DZpFlw=="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/optipng-bin-3.1.1.tgz_1460458869727_0.5578530805651098"
+      },
+      "directories": {}
+    },
+    "3.1.1-rc.1": {
+      "name": "optipng-bin",
+      "version": "3.1.1-rc.1",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "path-exists": "^1.0.0",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "516656b48d41e45cf4ae19415e1aa5994eae0ee6",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.1.1-rc.1",
+      "_shasum": "fca144578dbffbf9f461ce38eccf325f3aa7beee",
+      "_from": ".",
+      "_npmVersion": "3.8.9",
+      "_nodeVersion": "6.1.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "fca144578dbffbf9f461ce38eccf325f3aa7beee",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.1.1-rc.1.tgz",
+        "integrity": "sha512-hFPvypX07NTEdkSxcOJZ/7zGkOX9u91A+UtZwFAB9WlRR3W+mdWiau2G+VRTLYSkGocsg7y5DrX1bSXOJqPULA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDTpY6AqG1MiT0vNrt1JO7Hd0UyaB6GCMQLCTNRK6/LYgIhAKLtuDQUw/NkTsS4BtqmjOEFRhsRBY/rxdSY6YPuA9BX"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/optipng-bin-3.1.1-rc.1.tgz_1463055149071_0.8280474091880023"
+      },
+      "directories": {}
+    },
+    "3.1.1-rc.2": {
+      "name": "optipng-bin",
+      "version": "3.1.1-rc.2",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "path-exists": "^1.0.0",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "516656b48d41e45cf4ae19415e1aa5994eae0ee6",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.1.1-rc.2",
+      "_shasum": "15c58566b04f288049b7dae7ea6e55b7f7875b9a",
+      "_from": ".",
+      "_npmVersion": "3.8.9",
+      "_nodeVersion": "6.1.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "15c58566b04f288049b7dae7ea6e55b7f7875b9a",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.1.1-rc.2.tgz",
+        "integrity": "sha512-2Xw9kdKdxDUHgcM3mxraUzspOj0CpWQi0/5/MU6xm1R+0xQaczh/FD+Kwb84HKTaD9Z62LtHNeMUpAauUIU2SA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIAohkoqVRV3+h66nD/B/56Z4rb4LwpfmGT+LgmQIL3d/AiEAgmjXCn++B9ACGUldWjZqwzzvd/AvSLXtO6ERVrokMwU="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/optipng-bin-3.1.1-rc.2.tgz_1463056015447_0.7923370646312833"
+      },
+      "directories": {}
+    },
+    "3.1.1-rc.3": {
+      "name": "optipng-bin",
+      "version": "3.1.1-rc.3",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "path-exists": "^1.0.0",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "516656b48d41e45cf4ae19415e1aa5994eae0ee6",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.1.1-rc.3",
+      "_shasum": "33e12f1c0f8b37903838e65402e054ed4ce094b8",
+      "_from": ".",
+      "_npmVersion": "3.8.9",
+      "_nodeVersion": "5.9.1",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "33e12f1c0f8b37903838e65402e054ed4ce094b8",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.1.1-rc.3.tgz",
+        "integrity": "sha512-wV4kP0H62Y7emtoTriAanHNLTU2e9hAAsLLBaXwrgsWJLgsfyFkPkZ+lDiRIud7M3cf15WMO0YXN4MFhfeoAfA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDvl79wsBWWnlanCPdlxbqCKZut4qUD04WataF3NdlvuAIhAIuhKIt7uXXOeUC1Fnpmct/Vvo8CCYA5UqktHNWZaAdg"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/optipng-bin-3.1.1-rc.3.tgz_1463057125069_0.22171003022231162"
+      },
+      "directories": {}
+    },
+    "3.1.2": {
+      "name": "optipng-bin",
+      "version": "3.1.2",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "path-exists": "^1.0.0",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "4f5aff1e4542801bd03a6318974d6513b3483450",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.1.2",
+      "_shasum": "18c5a3388ed5d6f1e6ef1998ab0a6bcc8bdd0ca0",
+      "_from": ".",
+      "_npmVersion": "3.8.9",
+      "_nodeVersion": "5.9.1",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "18c5a3388ed5d6f1e6ef1998ab0a6bcc8bdd0ca0",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.1.2.tgz",
+        "integrity": "sha512-JoJT0c0tAGgHvxJ7cL2UXAHxc9QtSFdRnLK8DphEIOl+BmhWSk6YOVZEiVZIkVbGN5d01D28kEcskWKV4tWiKQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCICHrBbPOL2gOng6CYZHLilSbeMZFkcBlTVGVwB8GVtkCAiBdAMhVvaLe92hCNriSLEsbc6cE/g4CRI8qfj/2P8SjHw=="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/optipng-bin-3.1.2.tgz_1463057576627_0.9457041309215128"
+      },
+      "directories": {}
+    },
+    "3.1.3": {
+      "name": "optipng-bin",
+      "version": "3.1.3",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=4"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^2.2.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^0.6.3",
+        "tempy": "^0.1.0",
+        "xo": "*"
+      },
+      "gitHead": "b46d91c1b0d312624273173f68ab378683ece34a",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.1.3",
+      "_shasum": "3e3f1772e6d2293370b9484b2be85ecbc73cb6d2",
+      "_from": ".",
+      "_npmVersion": "3.10.10",
+      "_nodeVersion": "6.9.5",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "shasum": "3e3f1772e6d2293370b9484b2be85ecbc73cb6d2",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.1.3.tgz",
+        "integrity": "sha512-HCGHp65/WVrojHj0Gi2zcu+2tiHzxzm6p6Bf9Ep4jKmyjM+KJ7EScvh06u7J5L7dAcwk5Iq7WTryp0WcXbL1jA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDfPWwfWcEIE4e/taWR1YBrJxE0RT+Kowa3xILj9W2iyAIgMAkDOx6z1sCrEfWdRfi02zzr7HjjJqXzHkyb0nyu9mo="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/optipng-bin-3.1.3.tgz_1491440854406_0.7726863364223391"
+      },
+      "directories": {}
+    },
+    "3.1.4": {
+      "name": "optipng-bin",
+      "version": "3.1.4",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 50000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "path-exists": "^1.0.0",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "6bc08279f23be59d8ef2e430fc702767ce840601",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@3.1.4",
+      "_shasum": "95d34f2c488704f6fd70606bfea0c659f1d95d84",
+      "_from": ".",
+      "_npmVersion": "3.10.10",
+      "_nodeVersion": "6.9.5",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "shasum": "95d34f2c488704f6fd70606bfea0c659f1d95d84",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-3.1.4.tgz",
+        "integrity": "sha512-gsHt71VXDuI7ymHq5pBdzKS5Q1dcHLW6V6j13gnutO1mS8ezulK5Q+Xj/9/e6AwtjOResu2/UOBO/AiGrBo6+A==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDjfAwe4zZu17myVxoordvFha8wB1oPBvp3M4nRDH4zfAIhAJjcG9rWifpotsOTb33AG2lqBseMapjjob5k1pAJ2QHA"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/optipng-bin-3.1.4.tgz_1491492167507_0.33282686793245375"
+      },
+      "directories": {}
+    },
+    "4.0.0": {
+      "name": "optipng-bin",
+      "version": "4.0.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=4"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^2.2.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^0.6.3",
+        "tempy": "^0.1.0",
+        "xo": "*"
+      },
+      "gitHead": "185e37c35d4f9ca39d6f04563e2238b03f5eb39b",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@4.0.0",
+      "_shasum": "92b937d97ee67fe8a2d29bbcec6b8cee8f1a867e",
+      "_from": ".",
+      "_npmVersion": "3.10.10",
+      "_nodeVersion": "6.9.5",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "shasum": "92b937d97ee67fe8a2d29bbcec6b8cee8f1a867e",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-4.0.0.tgz",
+        "integrity": "sha512-0pHmew57gjiZa/mEMW1STfktXzH2ZEQgZ0iXZhu2UcDTZitssvy/byEqb0i3Mn8Rn7Z0gzLhCxaNKPxyjlQASA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQC5ybDMXcCcyguIHqYBLf7cQaqxK/Ecv5x/FBgyQgQLBQIhAIjRQpFsGO+WJr4KVcwkjVkbdI//amUSyf/IqpNC2QBm"
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/optipng-bin-4.0.0.tgz_1493615637593_0.835092093795538"
+      },
+      "directories": {}
+    },
+    "5.0.0": {
+      "name": "optipng-bin",
+      "version": "5.0.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "email": "shogo.sensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        }
+      ],
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^1.0.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "gitHead": "9d792dcc60cdd2cda4ed0061dd388c5225b72d6d",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@5.0.0",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.11.0",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-tJYll67J8lXcOwNKBR6MKhMUsbxaYB67nO/7hUQTIO2sRzwUHV9vO9wZo/LvAY86YiptLH6uTKgkJ1cV1DgjxA==",
+        "shasum": "2eadef9e50c0965bcb9107ccfaedf8560d0d8b93",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-5.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4708,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJb2cfHCRA9TVsSAnZWagAAxVkP/0HxERC0RD4IAS83jmII\n0f0MynYJfZkxQPO2lbz01XUFPBOAGywZEnfjg0HL8yYHfJ5Wezs1QJFHbeq/\noJnRCRSdsOO3qX5MUEUWGL6bNMTphCwSIQ2e3N4j9LKG0ak64Fuv8S5UeF+P\nMAFJw/k7Ss0SVxNScgjYk9DofEQBNCQvRfCXEfcdz0NKILHMWVPw5umPydUe\nuIR1Uxw69goNO0BMhjM8yS43YOd4V453hEvTpJG8xe/GJf/UjYhrTkivF49o\n+yLx576uqKGvPNfbGSXZubNmaP+AJtc5SUm2+FLWBxLv6CusBZXh91BSHCr0\nYI4PFBXlWUhP+rdWNj3qumJ4bLhU8QXDyfSPocc3RVjAj4HWEI2Jj1GHpcCy\nLThmtreAXUvoorf5Jd/AdY6xh2m4GKPj4NzWqqJFla8XBL+wCNVn9f55fycm\nx+sT+wZDH0KPRY0Orf4Uuiq0D50o/qt0X9n4T8XPCK9RhthYy+eo/c2Binnr\nnCAtbHiDd+GOfjZovQm4Ew+j2ufpfn4RIQEm0BA2y8H5hJFySe8n0JlsQU9G\nEZmxRiYRzGcvW46F146A0P50Qwe/jgHbwJuv92nPe//C2tv3SoWjPGN8pfqL\n0wBOYbP5vitIaWRKITyk3mbVnubNORjc0lc6I4SCUi3xbuWdevVpmOCRc0oA\nx3cx\r\n=AOwb\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDZjI8j+rGAbQX4miYfBit+SHmzcqqrI8rfDSdniLI52AIhAOCT1ETsYZ4TQ8ZENTy0MbK5OT8AotjWUH9XAwwZEIVx"
+          }
+        ]
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/optipng-bin_5.0.0_1540999110323_0.5916975053787259"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.1.0": {
+      "name": "optipng-bin",
+      "version": "5.1.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^1.0.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "gitHead": "65d3530f5871beb47bdc966c9b211ef675990ecc",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@5.1.0",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.14.1",
+      "_npmUser": {
+        "name": "xhmikosr",
+        "email": "xhmikosr@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-9baoqZTNNmXQjq/PQTWEXbVV3AMO2sI/GaaqZJZ8SExfAzjijeAP7FEeT+TtyumSw7gr0PZtSUYB/Ke7iHQVKA==",
+        "shasum": "a7c7ab600a3ab5a177dae2f94c2d800aa386b5a9",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-5.1.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4830,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcDUBECRA9TVsSAnZWagAAb+4QAJxgICVH57uVitlnoDW2\nOLuwjDVNuxp6eHjlMxldhg2bBKZPkAwYpHImGYA5+CEmTT5DmzfsEaM3ar93\nIkT4NyLMqqdj6YyFwCCDqUhZ+b29n/41wAVb0mhIhTRECJFexg+8tSPlZCT8\nI4l5WOHmux8xl+eQeiK7DJfdiXgTJqSWr08vIEFe8EPjGCLD92ggH6gQUOWj\nYIIT4lWtRoMZ2If8eLpHdNlOIDurF8wGMZrDyXuBNAGdCjQr0alTQ13VfOnf\nEqCQP/te04wb2PlcAJ5NeJCrnl3cyckF1HTFqQUVWr0A5GfNVn+s3HZpZA6Y\nD/MQgU3GM8NsaCmChid/60LH3JqVHs822A1gqrhtqOuDi5m7Ga50dfVZBwvO\nMY6Qdhupj8awG5OekfADGnliHmmrN9EAVK+6EU/CnnnMcubsJ291NeKsU56Q\nPknE9x/Wa2MLgouo3Fu8+xlQE5u6uxpVkj7I4DgapOhI94pB3C5CriwjY8G1\n/4QrqEhefQjK00CXd1QIin1o/D6XUiRj6GfrLMfTw5s0JR7mOKZIY4ObPKaG\nwcrp/P7N2uCue8IPhHLVf6xB9OemueuJzZDBDWTBVSMUuBJqhi78kyzl0N/a\nt3UNTIX2U5KFfe2swI3L0i5XK0Kqt9/CoTqGnqoJzGDV/mDc6JkrLh7OpaU5\nPgdy\r\n=0sjo\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIChBwaja3vN7r9jQZLKUEOEQ/Ar3y68SoDWKPGNFyn8sAiBzvdffki5rTUQ5ZKJTYNS17s1qKgk5KEvBbpyCyj5s4g=="
+          }
+        ]
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/optipng-bin_5.1.0_1544372291780_0.8641380164526575"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.0": {
+      "name": "optipng-bin",
+      "version": "6.0.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=8"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^1.4.1",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^1.0.0",
+        "tempy": "^0.3.0",
+        "xo": "^0.24.0"
+      },
+      "gitHead": "2280591611b0dce3cd24b8b4ad58fa43f8b53fe5",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@6.0.0",
+      "_nodeVersion": "8.16.0",
+      "_npmVersion": "6.9.0",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-95bB4y8IaTsa/8x6QH4bLUuyvyOoGBCLDA7wOgDL8UFqJpSUh1Hob8JRJhit+wC1ZLN3tQ7mFt7KuBj0x8F2Wg==",
+        "shasum": "376120fa79d5e71eee2f524176efdd3a5eabd316",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-6.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 2334082,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJc6UuDCRA9TVsSAnZWagAAtOcP/0B5BVAO+K6hbr/GhJop\nnsVcisPbYZKWAGSv7rCXUdDTBYLUhzE5HpaTDpspSSsulIRReH0CNIAV6RAI\nUqCANYlRmOR5t8Hi6Lkstjy2bdWoUHl6HqSQ6NnWjELIY9DYIDf/bJZptqpf\n5PbxewY/qPXl/c6KwkUzDZeBumCUbuPAcIqF8fnqTkJWGgkjMf2aYWq91VRM\naoRzGpPFSCh9qSPdzfJc+uoGnfr0f2fbA/wNdnYd0E16F5PTEntzNPyhEy/M\nGlek0X1x8mhGCMK/r1la+QZb1MJ1bXOxE0eEyYjm8EyJw+BvkgUlO6Y1wDqp\nqwwHVtA2DVyPssTzpGQxAty/Hfft4JXtroYX+GMs0KfhzTlpNJMB2ZvdPVy0\nH8qupPZkGu2YiBX0DkGSHfRmQb+Y+R/SS16QfjZvAWQ96i3TVg93u6+kaVCu\nmXaxiBUwvpgDfvW3HVRcZ6kqigwwlL5oJc4AmQt44aXDEYoLfH43qVosXhFe\nTIBqhxxmSbrPkRuhXBsdrJonxEvWp0RaO3LWIfrS5195YkaWrQl3I8q40wju\n17Z+lSaiyj+irNgR3Y5VpS7DuqK7swItsnDo0RPOFkgn2KILI6BeNavOYqrF\nddUbzon2OVNT1L73x47wme4OOobYdqQhGm0HCxJCw9kcAglnH0uyT2tSKdcu\nJrrI\r\n=M8PK\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDE9lifZffmHk5j50pc83EY2BczJy3hjBhlvDXD5cwtbAIgOuu0euafYDVtRT+cUZJLsXSalwpBkYnUXRoRLYNYkDQ="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/optipng-bin_6.0.0_1558793090696_0.6738626813944921"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.0": {
+      "name": "optipng-bin",
+      "version": "7.0.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "0791476c3134ab295fc8376c709f469c94fb5731",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@7.0.0",
+      "_nodeVersion": "12.16.1",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-mesUAwfedu5p9gRQwlYgD6Svw5IH3VUIWDJj/9cNpP3yFNbbEVqkTMWYhrIEn/cxmbGA3LpZrdoV2Yl8OfmnIA==",
+        "shasum": "2dfcc68a5f006e7746e76ad64d317d6fb7c7f9ed",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-7.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 2334083,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJeynzTCRA9TVsSAnZWagAA3SgQAJ7X79OrxB8SMOUhMCeB\nDtEVcJ4xTmMQHd+0ZUu7uyoaQ1Bq/Twt7pGnrETIrHsXtKBv3z1It4SkktHO\nh9egYV22I42fLv8+QlQsGwdBfKknUv9cApSflLiVJP/KftKxSuPcG+BRgEqf\n4pT/oIOSoH7qPn8pmKb2evW2BldvRvugmD9Ps+nUdx7VV+IhtH+wVwS2l+2L\nDVv//sRLxmhA3ohRutZetASvezW/X1DxF9hgtL1PLUv5gUR6SH5qZppVcdgv\nCMrhUykvM5y8eqeefyGEQjvXVECbXJCz+tzEuqUM3WeJB4ubUt3sexl2RfZb\nJjyPOvSiy/H3iWTRlFLPNn6g1tqJg1GmshL8WpIjSa6XTQwq5y26FdrLC62A\nxaLQwxJhAQV5Uwo2QmTcOyvRqqdegXsP96ow3ks6uOyEPT6+Ccj28GiA7t4i\nSy11yZUVCUsWIt2P2Xo4aFlRzuAC9B1TElsPgvevnahvy+4ocmX1CLHP4Vhq\nXr/5T6cdIsahhXb05FQMLmVSM7hG0AVp1tR8oAi/BZ4ZLVz/ugROW0fdeNQQ\no4CgmFeVGRxHRbWRh+SEOCp3HbMN9Zt0xRxFWie4XQiybU22L2BeHZ5U64AY\nt5p5bcjGrqtfPM+W64aXapc7U3/MSBOT1zne3TRkigWjqMoSlZvfb3f25QaR\njDg3\r\n=NkJH\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCDLnXiI9swvS2Kw0vL3AK9Wt/5YCpVR4EdksIq7jCOXwIhAJm3BbTMIhQoPFhkTFse8aiEP/jlc2Fa0k0zK2++SDWI"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/optipng-bin_7.0.0_1590328530752_0.0675740512687435"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.1": {
+      "name": "optipng-bin",
+      "version": "7.0.1",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.0.0",
+        "tempy": "^1.0.0",
+        "xo": "^0.38.1"
+      },
+      "gitHead": "14f7065bdca9cb0bdc718a4a5b8ac982c8054f05",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@7.0.1",
+      "_nodeVersion": "16.4.1",
+      "_npmVersion": "7.21.0",
+      "dist": {
+        "integrity": "sha512-W99mpdW7Nt2PpFiaO+74pkht7KEqkXkeRomdWXfEz3SALZ6hns81y/pm1dsGZ6ItUIfchiNIP6ORDr1zETU1jA==",
+        "shasum": "beb8e55a52f8a26f885ee57ab44fcf62397d6972",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-7.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 2334045,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCQeTOE1wfmkzqAAtXah7wfATO7RbBg0xFlgajnMY6GJgIhALU2KsJ/m+9IhOz7SD5Oui4PjeGazOyF/5qlYAVi9Pgd"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/optipng-bin_7.0.1_1634735991179_0.8347267735397286"
+      },
+      "_hasShrinkwrap": false
+    },
+    "8.0.0": {
+      "name": "optipng-bin",
+      "version": "8.0.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "type": "module",
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "e038d04a6256668bc07819f2783a74b316bae37a",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@8.0.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-BQF6uP3uBxA6fmdrDC1rQ23EE46oXurFqMyh5SqmHsq54AtfaF8DGDYhlbt6er6JRVQRWj+HaapEbasyUOQ1yg==",
+        "shasum": "b4a474d2007c2a916671b1de7b2aed5c5d8dd810",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-8.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 2334226,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIFdwNUN4phSJMhTu3sNM/glePn2bNnl2wYzaXdRwaDwsAiAQoJ+mkS0SOr7OTlKh+GwY0rlaRkeA0nrfyxFsUUSv/Q=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/optipng-bin_8.0.0_1634998089762_0.7028578506213115"
+      },
+      "_hasShrinkwrap": false
+    },
+    "8.0.1": {
+      "name": "optipng-bin",
+      "version": "8.0.1",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "32a07dcc43d43cf2bb3b017b3b746ac752161ebb",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@8.0.1",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-fKrq5hBD80nCsfzIkuG3nGxlUS3S+e19ySbTgXWbm+LzohY55DxnXeJj+UIMlF1TIcS2cyB7IwOMPrT+IvkyRg==",
+        "shasum": "06e6aab6b3ddee5622933c2b44a3eec902eeed30",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-8.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 2334252,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDyxHvSFcVxgiMHOD44ifACfp9x13cPIxPsZkPn3quSeQIhAMlTSxRxRLnY3NVPPF2mEJ23nCg43d+EiNlC9eI4HQZT"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/optipng-bin_8.0.1_1636523272055_0.3337235703940986"
+      },
+      "_hasShrinkwrap": false
+    },
+    "8.1.0": {
+      "name": "optipng-bin",
+      "version": "8.1.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "c65f3dafe15414bc87a70e7f87372e50987e9217",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@8.1.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-RZcT8AFfidQs5r2m8w3A7eh9Snag0TY0IwP7O+2ugCPnTuGQdQve/TBz1easnyvTVzzEwk8YJwbf2k05mcaEGQ==",
+        "shasum": "9b6044afa0825c439f405cfc1be67a5d9aa90cfa",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-8.1.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 2334252,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJh219iCRA9TVsSAnZWagAAVicP/A7GIIfWB86EgD067QMs\nA1d7lojan53kcAnZ1Ur1ugjiW7htQG5/wh0no78o8vm03WYWTWIDFVWIe55v\nEnIQkU+3zfRlNPjI6RVByea7oIKWdxNP1dQegqYtOcspmsDeMdqnhOI/Qt6e\nggaVEPOLUBTTzpV4etVSAtdkQU0E8UjcWfXPSLaQQP1LdILzKUT/UGo10cRb\noxmVNaBUSxD66/EdH8Mf2AoraOR39PWkLmmBzY9ZujB75rlbOc9UsC5z3Y7j\na1mf2C5MY0jwTnIDALYqQP/I/YLhE0xcfWCUY2z8eeGgaa5r4PrTfH55xH4k\nYEbMqEiJkAGCT7zBh9SthROgKZF0K1DWiOsjJeka2z1YA59KSOdXq+JAmfbZ\nJaLUb/rlsZbFUGkfuQaFW6XaszgwMZZauQTPUPLQjmnL3BUcDhkcwILp/utB\nspBGsgd9En5aAeeN2bHo2cPSerpx087sCxbT8IRnku4VUVkel08cJwaiXC/p\nP5nAYwkZnBPiyAhpll6VzVD+FpGt+InPKiQds1E8T30Z8jO5KrsfL5ykqDhY\n2x5f5INN1Iod36CC3fydNP+fZYw/DsdPOlbTffeTeuqp5znW5e3Aeh1mYjbl\n2I35jqqrQnR7dk9pwsMKp+G5yJ2VR0W7x39Z08DqWl6VL2ETIYRg3tsc2mp9\npSB9\r\n=xZUc\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIHKyBNA+2I1JIpkcKbapDIetTcLWBBHHtOgFh8K/AQkKAiBZN3cKHgRKpBaDImijJ1RxkxDr/2teMU1SQ6Lycynz9w=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/optipng-bin_8.1.0_1636684871133_0.02939022247072387"
+      },
+      "_hasShrinkwrap": false
+    },
+    "9.0.0": {
+      "name": "optipng-bin",
+      "version": "9.0.0",
+      "description": "OptiPNG wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/optipng-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "bin": {
+        "optipng": "cli.js"
+      },
+      "engines": {
+        "node": "^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "minify",
+        "optimize",
+        "png",
+        "optipng"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^4.2.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^6.1.0",
+        "tempy": "^3.0.0",
+        "xo": "^0.48.0"
+      },
+      "gitHead": "8f19248039fe0d6f8bc700b3bcc05bcff0bdbd32",
+      "bugs": {
+        "url": "https://github.com/imagemin/optipng-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/optipng-bin#readme",
+      "_id": "optipng-bin@9.0.0",
+      "_nodeVersion": "16.13.2",
+      "_npmVersion": "8.5.5",
+      "dist": {
+        "integrity": "sha512-uDcmcNK4MRSM5ezLThUPI7fc9ZxlQMqnxhWxIc7foCcUZZ2LvzbcJwwVEsU78tC3t9B68dwE4y/m6at10Z93UA==",
+        "shasum": "4a27b6c265003ece4ab5b852424c06269fc7e817",
+        "tarball": "https://registry.npmjs.org/optipng-bin/-/optipng-bin-9.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 2334239,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCID0AziGJezXwH3PmqW2ee3/B68qb4Mt+fr3SvC4DmqMNAiEA71sW+c2plJppAGT9sA0JhPwdh6vpx2Z0Jzx+o0ZpqyY="
+          }
+        ],
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJicnlvACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmqFcQ//dtL/Y5mOATjaESd81r55dVqDCU7t39LA0A0U6ug2V6T+EvMr\r\n9rz+Jtq7Ab3XqzVacuHo2uPy/304gScMMtklBFA+81yHV8knWZIcolfqKNJ0\r\nU+RQcuIzqPkxfj6ZhuIr/A+Zo35N5TVjJYyUQ3ngWZshaHBuz6cj7bDElkuo\r\nJNbMw5HrQTiOLDT3gRAKEgOOE6XUUKCCvbQgUGglgtndpdzTMmGko2KvKJGh\r\neLWOlLWUtZAkobH6pUg2B4V2j2DX49KAIK7G2Xuj65MZSMxJWiH/OgGrmWrp\r\niRzLrsmW/kdEb7rYM7VUPv9NitNf7Gy1toSoxyD3Nyje6z6KFRcTpzFx3ePD\r\n+kU8m+LnqZOlzbffhUtUanxr+Mo8TNrji/Mp+X8es/DzG8YJr3BjjjFdbjyr\r\nC1mWB9cv1GKZgj4NMjO0rpq9/TcefbPwsHDAsiDADKWrgvg6MblG6cBVJnyC\r\nPNPgcSJgOJ6jsc/5OWiWhTxIQR5y2n6PZWEFKRchMrrwm4YLEmvzHRkbeXOy\r\nXNCKHiaf5lRMoRfKppL8fSooILHHF/q2hhTZ7lzE86urT/uR+1qbvupwssXm\r\nP2CbY4aibZmr3+f6XTON4BLb6itqyIItNdG+sMweQskxYkMXDURp4DRgNdGQ\r\ncbCGbnauQzGILUunnbQQALweDtld37tfedM=\r\n=1DNi\r\n-----END PGP SIGNATURE-----\r\n"
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/optipng-bin_9.0.0_1651669359233_0.9633161262760854"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "readme": "# optipng-bin ![GitHub Actions Status](https://github.com/imagemin/optipng-bin/workflows/test/badge.svg?branch=main)\n\n> [OptiPNG](http://optipng.sourceforge.net) is a PNG optimizer that recompresses image files to a smaller size, without losing any information\n\nYou probably want [`imagemin-optipng`](https://github.com/imagemin/imagemin-optipng) instead.\n\n\n## Install\n\n```\n$ npm install --save optipng-bin\n```\n\n\n## Usage\n\n```js\nimport {execFile} from 'node:child_process';\nimport optipng from 'optipng-bin';\n\nexecFile(optipng, ['-out', 'output.png', 'input.png'], error => {\n\tconsole.log('Image minified!');\n});\n```\n\n\n## CLI\n\n```\n$ npm install --global optipng-bin\n```\n\n```\n$ optipng --help\n```\n",
+  "maintainers": [
+    {
+      "name": "nothingismagick",
+      "email": "denjell@sfosc.org"
+    },
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "kevva",
+      "email": "kevinmartensson@gmail.com"
+    },
+    {
+      "name": "1000ch",
+      "email": "shogosensui@gmail.com"
+    },
+    {
+      "name": "xhmikosr",
+      "email": "xhmikosr@gmail.com"
+    },
+    {
+      "name": "shinnn",
+      "email": "snnskwtnb@gmail.com"
+    }
+  ],
+  "time": {
+    "modified": "2022-06-23T01:23:57.707Z",
+    "created": "2012-12-06T20:43:44.342Z",
+    "0.1.0": "2012-12-06T20:43:46.287Z",
+    "0.2.0": "2013-02-22T18:56:27.552Z",
+    "0.2.1": "2013-02-22T22:56:57.927Z",
+    "0.2.2": "2013-02-25T18:09:31.664Z",
+    "0.2.3": "2013-04-08T17:35:44.255Z",
+    "0.2.4": "2013-04-18T17:07:52.851Z",
+    "0.2.5": "2013-05-04T15:01:54.420Z",
+    "0.2.6": "2013-05-07T23:47:49.362Z",
+    "0.3.0": "2013-08-21T12:36:13.984Z",
+    "0.3.1": "2013-10-16T13:50:57.705Z",
+    "0.3.2": "2014-03-21T13:23:36.862Z",
+    "0.3.3": "2014-03-28T09:55:10.471Z",
+    "0.3.4": "2014-05-06T06:48:01.924Z",
+    "0.3.5": "2014-05-06T06:52:15.742Z",
+    "0.3.6": "2014-05-06T07:47:27.708Z",
+    "0.3.7": "2014-05-06T08:00:49.695Z",
+    "0.3.8": "2014-05-06T13:57:35.658Z",
+    "0.3.9": "2014-06-19T13:26:12.813Z",
+    "0.3.10": "2014-08-08T14:00:36.012Z",
+    "0.3.11": "2014-08-08T14:12:43.297Z",
+    "1.0.0": "2014-08-18T00:57:30.295Z",
+    "1.0.1": "2014-09-01T01:00:24.971Z",
+    "2.0.0": "2014-10-20T15:29:24.354Z",
+    "2.0.1": "2014-10-21T16:47:43.836Z",
+    "2.0.2": "2014-11-03T20:10:30.185Z",
+    "2.0.3": "2014-11-24T15:03:04.969Z",
+    "2.0.4": "2014-12-08T13:04:22.338Z",
+    "3.0.0": "2015-06-06T07:57:36.496Z",
+    "3.0.1": "2015-06-06T08:01:59.902Z",
+    "3.0.2": "2015-06-06T15:14:09.842Z",
+    "3.0.3": "2015-11-13T17:54:57.797Z",
+    "3.0.4": "2015-12-09T18:23:31.569Z",
+    "3.1.0": "2016-02-16T09:51:37.634Z",
+    "3.1.1": "2016-04-12T11:01:10.314Z",
+    "3.1.1-rc.1": "2016-05-12T12:12:29.542Z",
+    "3.1.1-rc.2": "2016-05-12T12:26:55.946Z",
+    "3.1.1-rc.3": "2016-05-12T12:45:25.538Z",
+    "3.1.2": "2016-05-12T12:52:57.130Z",
+    "3.1.3": "2017-04-06T01:07:36.455Z",
+    "3.1.4": "2017-04-06T15:22:47.746Z",
+    "4.0.0": "2017-05-01T05:13:59.462Z",
+    "5.0.0": "2018-10-31T15:18:30.530Z",
+    "5.1.0": "2018-12-09T16:18:11.892Z",
+    "6.0.0": "2019-05-25T14:04:50.994Z",
+    "7.0.0": "2020-05-24T13:55:30.979Z",
+    "7.0.1": "2021-10-20T13:19:51.335Z",
+    "8.0.0": "2021-10-23T14:08:09.948Z",
+    "8.0.1": "2021-11-10T05:47:52.458Z",
+    "8.1.0": "2021-11-12T02:41:11.435Z",
+    "9.0.0": "2022-05-04T13:02:39.464Z"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imagemin/optipng-bin.git"
+  },
+  "users": {
+    "passy": true,
+    "buster": true,
+    "giuseppe.morelli": true,
+    "qisong": true
+  },
+  "homepage": "https://github.com/imagemin/optipng-bin#readme",
+  "keywords": [
+    "imagemin",
+    "compress",
+    "image",
+    "minify",
+    "optimize",
+    "png",
+    "optipng"
+  ],
+  "bugs": {
+    "url": "https://github.com/imagemin/optipng-bin/issues"
+  },
+  "readmeFilename": "readme.md",
+  "license": "MIT"
+}

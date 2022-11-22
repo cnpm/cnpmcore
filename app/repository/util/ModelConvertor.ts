@@ -10,7 +10,7 @@ const ID = 'id';
 
 export class ModelConvertor {
   static async convertEntityToModel<T extends Bone>(entity: object, ModelClazz: EggProtoImplClass<T>, options?): Promise<T> {
-    const metadata = ModelMetadataUtil.getControllerMetadata(ModelClazz);
+    const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);
     }
@@ -31,11 +31,29 @@ export class ModelConvertor {
     return model as T;
   }
 
+  static convertEntityToChanges<T extends Bone>(entity: object, ModelClazz: EggProtoImplClass<T>) {
+    const changes = {};
+    const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
+    if (!metadata) {
+      throw new Error(`Model ${ModelClazz.name} has no metadata`);
+    }
+    for (const attributeMeta of metadata.attributes) {
+      const modelPropertyName = attributeMeta.propertyName;
+      const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
+      if (entityPropertyName === CREATED_AT) continue;
+      const attributeValue = _.get(entity, entityPropertyName);
+      changes[modelPropertyName] = attributeValue;
+    }
+    changes[UPDATED_AT] = new Date();
+    entity[UPDATED_AT] = changes[UPDATED_AT];
+    return changes;
+  }
+
   // TODO: options is QueryOptions, should let leoric export it to use
   // Find out which attributes changed and set `updatedAt` to now
   static async saveEntityToModel<T extends Bone>(entity: object, model: T, options?): Promise<boolean> {
     const ModelClazz = model.constructor as EggProtoImplClass<T>;
-    const metadata = ModelMetadataUtil.getControllerMetadata(ModelClazz);
+    const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);
     }
@@ -46,9 +64,10 @@ export class ModelConvertor {
       const attributeValue = _.get(entity, entityPropertyName);
       model[modelPropertyName] = attributeValue;
     }
-    if (!model.changed()) {
-      return false;
-    }
+
+    // 不允许设置 UPDATED_AT
+    // 通过 leoric 进行更新
+    model[UPDATED_AT] = undefined;
     await model.save(options);
     entity[UPDATED_AT] = model[UPDATED_AT];
     return true;
@@ -57,7 +76,7 @@ export class ModelConvertor {
   static convertModelToEntity<T>(bone: Bone, entityClazz: EggProtoImplClass<T>, data?: object): T {
     data = data || {};
     const ModelClazz = bone.constructor;
-    const metadata = ModelMetadataUtil.getControllerMetadata(ModelClazz);
+    const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);
     }

@@ -1,5 +1,5 @@
 import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
-import { DataTypes, Bone } from 'leoric';
+import { DataTypes, Bone, LENGTH_VARIANTS } from 'leoric';
 import { TaskState, TaskType } from '../../common/enum/Task';
 
 @Model()
@@ -48,6 +48,11 @@ export class Task extends Bone {
   @Attribute(DataTypes.INTEGER)
   attempts: number;
 
-  @Attribute(DataTypes.TEXT('long'))
+  @Attribute(DataTypes.TEXT(LENGTH_VARIANTS.long))
   error: string;
+
+  @Attribute(DataTypes.STRING(48), {
+    unique: true,
+  })
+  bizId: string;
 }

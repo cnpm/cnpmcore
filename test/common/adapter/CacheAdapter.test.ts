@@ -7,7 +7,8 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
   let cache: CacheAdapter;
 
   beforeEach(async () => {
-    cache = await app.getEggObject(CacheAdapter);
+    const ctx = await app.mockModuleContext();
+    cache = await ctx.getEggObject(CacheAdapter);
   });
 
   describe('lock(), unlock()', () => {
@@ -19,7 +20,7 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
       assert(!lockId2);
       const lockId3 = await cache.lock('unittest', 1);
       assert(!lockId3);
-      await setTimeout(1500);
+      await setTimeout(1100);
       // lock timeout
       const lockId4 = await cache.lock('unittest', 1);
       assert(lockId4);

@@ -1,0 +1,184 @@
+{
+  "_id": "mk2test-module-cnpmsync",
+  "_rev": "4-5ce9412ef04c734e05c990222217e209",
+  "name": "mk2test-module-cnpmsync",
+  "dist-tags": {
+    "latest": "3.0.0"
+  },
+  "versions": {
+    "1.0.0": {
+      "name": "mk2test-module-cnpmsync",
+      "version": "1.0.0",
+      "description": "",
+      "main": "index.js",
+      "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+      },
+      "author": "",
+      "license": "ISC",
+      "os": [
+        "linux"
+      ],
+      "cpu": [
+        "x64"
+      ],
+      "directories": {},
+      "_hasShrinkwrap": false,
+      "_id": "mk2test-module-cnpmsync@1.0.0",
+      "_nodeVersion": "12.22.1",
+      "_npmVersion": "6.14.12",
+      "dist": {
+        "integrity": "sha512-piK0lpdbWTc78ondfb8Tz5vtuRILbbTzno+/+S5sqt128+d2h1R2jTegpOT1VO1Qr3bZSn0J8eRKu43sOFiMFg==",
+        "shasum": "a71a469959855399b7abe75b47352e592cd501fe",
+        "tarball": "https://registry.npmjs.org/mk2test-module-cnpmsync/-/mk2test-module-cnpmsync-1.0.0.tgz",
+        "fileCount": 2,
+        "unpackedSize": 330,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCK4nA//tBQz2/KuxlYMfrpGDuLVVg6RyPEiHJwG6iKFwIhAPIhV/06UOaz75081PA74IUb8U0LdTFaAAUSU17NWBJL"
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "fengmk2",
+        "email": "fengmk2@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "fengmk2",
+          "email": "fengmk2@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mk2test-module-cnpmsync_1.0.0_1632730248622_0.3332581028631232"
+      }
+    },
+    "2.0.0": {
+      "name": "mk2test-module-cnpmsync",
+      "version": "2.0.0",
+      "description": "",
+      "main": "index.js",
+      "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+      },
+      "author": "",
+      "license": "ISC",
+      "peerDependenciesMeta": {
+        "bufferutil": {
+          "optional": true
+        },
+        "utf-8-validate": {
+          "optional": true
+        }
+      },
+      "os": [
+        "linux"
+      ],
+      "cpu": [
+        "x64"
+      ],
+      "directories": {},
+      "_hasShrinkwrap": false,
+      "_id": "mk2test-module-cnpmsync@2.0.0",
+      "_nodeVersion": "12.22.1",
+      "_npmVersion": "6.14.12",
+      "dist": {
+        "integrity": "sha512-VkYtIExG6XmHESMWHxQFjpHH5NNmPHQaSQAKWm2H8e5Ror5gBySsqJjPFn+4rXtefmnHMoFKRtwsLk88ice6Qw==",
+        "shasum": "93d825fb2d53e0c051bc257e3e17e91572509afa",
+        "tarball": "https://registry.npmjs.org/mk2test-module-cnpmsync/-/mk2test-module-cnpmsync-2.0.0.tgz",
+        "fileCount": 2,
+        "unpackedSize": 436,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQD4WjKR1KJbuO2Jx6/kqMqWZ1jltTM6CUUmPNIk+cgpxQIgeWijbYGrTkzfKUPKuB6EKAKZMCX8VYtZhayowVId15o="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "fengmk2",
+        "email": "fengmk2@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "fengmk2",
+          "email": "fengmk2@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mk2test-module-cnpmsync_2.0.0_1632732483099_0.18902750158956594"
+      }
+    },
+    "3.0.0": {
+      "name": "mk2test-module-cnpmsync",
+      "version": "3.0.0",
+      "description": "",
+      "main": "index.js",
+      "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+      },
+      "author": "",
+      "license": "ISC",
+      "peerDependenciesMeta": {
+        "bufferutil": {
+          "optional": true
+        },
+        "utf-8-validate": {
+          "optional": true
+        }
+      },
+      "directories": {},
+      "_hasShrinkwrap": false,
+      "_id": "mk2test-module-cnpmsync@3.0.0",
+      "_nodeVersion": "12.22.1",
+      "_npmVersion": "6.14.12",
+      "dist": {
+        "integrity": "sha512-4JwhZmW/twQk4rXEKpUbG32iYYoabRHr7HnQMQ0LRQ7u6oOu6Q+AQ5EttZKbB+Gms+NyBVyzJZhihbogoB+Jyw==",
+        "shasum": "02a247bc483c2e65404e5eb3772d8e1ec11f690d",
+        "tarball": "https://registry.npmjs.org/mk2test-module-cnpmsync/-/mk2test-module-cnpmsync-3.0.0.tgz",
+        "fileCount": 2,
+        "unpackedSize": 376,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJh2zXTCRA9TVsSAnZWagAAmzwP/iUE83lfm4diBan4L1LC\nE+M/bzza17I9CVfV84fZWWXwNNMLTOEBjbAWu+9cFv1PM+WAgg38v3Khd2F0\nvr5wp/X6BiINp0mjxYRyqmU21OHvkmhahCMSxqX+SZ2eFMYiV3TmOL1LWGmI\nL9nEJ+o/bVJ8R4Rg/DTrVFIJvKJN5hlsk3ZFEgIFZz6NZGXQAR7slsEuuDit\n0B4ZjoQH3bdMQXkO43UYQhdrdX3VfmoR815H7qdwfSIOMLREfcWiE+kOPI9u\nBUf0Og2Xiss7RasTShOHqVnsYnBm02LzJ1Av45OgzLR4Bpxvv0rS9BGAVnmR\nIQRSaj3T6NaADSN3dhDeUakOkzTUVyAT6Q+WyDSuy4vXZRspPJpsLxR1yeVa\nZquQEPTLwisM5fyl1vL8hsZ94JGRDQUV6Vb24JBmnF1Yfvi/8aJwzZ0euVSo\n074TG7+WV9gmadT0QvEt+fWnn/bM3kPWCq5Gfp3rk5M0rAbera9sUvnv4TaI\nCT0iLOsG38htO8bCNXhjVQbKy8PHslbBWX1mjJsTgLEfUyBsRFMBUiiYafOE\nbWChEa11BGOdPDA/iwwYf2bwo68a/zn8UHxGu51jzs/WGqnBaDlz/ymfcxCJ\nrmmhHdDdfmYhWUgyIlRobE02owmXe6cdgSNMIPTm+YRL0MEGbEhhoEj8qla6\nNKkE\r\n=awKd\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCICAhOYMv6PCr8KpNPyEisIKBHguA4cMisNHTxMPxdsemAiBlfaCFSmAPj75r18BvAd87EK9y8kHZGk/ezVtugR20Kg=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "fengmk2",
+        "email": "fengmk2@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "fengmk2",
+          "email": "fengmk2@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/mk2test-module-cnpmsync_3.0.0_1632733912778_0.7339024277257908"
+      }
+    }
+  },
+  "time": {
+    "created": "2021-09-27T08:10:48.622Z",
+    "1.0.0": "2021-09-27T08:10:48.747Z",
+    "modified": "2022-05-09T12:14:25.637Z",
+    "2.0.0": "2021-09-27T08:48:03.214Z",
+    "3.0.0": "2021-09-27T09:11:52.897Z"
+  },
+  "maintainers": [
+    {
+      "name": "fengmk2",
+      "email": "fengmk2@gmail.com"
+    }
+  ],
+  "license": "ISC",
+  "readme": "ERROR: No README data found!",
+  "readmeFilename": ""
+}

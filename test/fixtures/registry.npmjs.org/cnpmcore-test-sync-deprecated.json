@@ -1,0 +1,60 @@
+{
+  "_id": "cnpmcore-test-sync-deprecated",
+  "_rev": "2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0",
+  "name": "cnpmcore-test-sync-deprecated",
+  "dist-tags": {
+    "latest": "0.0.0"
+  },
+  "versions": {
+    "0.0.0": {
+      "name": "cnpmcore-test-sync-deprecated",
+      "readme": "foo readme",
+      "version": "0.0.0",
+      "description": "",
+      "main": "index.js",
+      "scripts": {},
+      "author": "",
+      "license": "ISC",
+      "dependencies": {},
+      "_id": "cnpmcore-test-sync-deprecated@0.0.0",
+      "_nodeVersion": "16.13.1",
+      "_npmVersion": "8.1.2",
+      "dist": {
+        "integrity": "sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==",
+        "shasum": "c73398ff6db39d138a56c04c7a90f35b70d7b78f",
+        "tarball": "https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz",
+        "fileCount": 1,
+        "unpackedSize": 250
+      },
+      "_npmUser": {
+        "name": "fengmk2",
+        "email": "fengmk2@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "fengmk2",
+          "email": "fengmk2@gmail.com"
+        }
+      ],
+      "_hasShrinkwrap": false,
+      "deprecated": "only test for cnpmcore"
+    }
+  },
+  "time": {
+    "created": "2021-12-11T18:09:24.624Z",
+    "0.0.0": "2021-12-11T18:09:24.768Z",
+    "modified": "2022-04-12T06:56:55.617Z"
+  },
+  "maintainers": [
+    {
+      "name": "fengmk2",
+      "email": "fengmk2@gmail.com"
+    }
+  ],
+  "license": "ISC",
+  "readme": {
+    "foo": "mock readme is object"
+  },
+  "readmeFilename": ""
+}

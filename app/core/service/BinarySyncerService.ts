@@ -29,6 +29,8 @@ import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
 import { ElectronBinary } from '../../common/adapter/binary/ElectronBinary';
 import { NodePreGypBinary } from '../../common/adapter/binary/NodePreGypBinary';
 import { ImageminBinary } from '../../common/adapter/binary/ImageminBinary';
+import { PlaywrightBinary } from '../../common/adapter/binary/PlaywrightBinary';
+import { TaskRepository } from 'app/repository/TaskRepository';
 
 const BinaryClasses = {
   [SyncerClass.NodeBinary]: NodeBinary,
@@ -41,6 +43,7 @@ const BinaryClasses = {
   [SyncerClass.ElectronBinary]: ElectronBinary,
   [SyncerClass.NodePreGypBinary]: NodePreGypBinary,
   [SyncerClass.ImageminBinary]: ImageminBinary,
+  [SyncerClass.PlaywrightBinary]: PlaywrightBinary,
 };
 
 function isoNow() {
@@ -55,6 +58,8 @@ export class BinarySyncerService extends AbstractService {
   private readonly binaryRepository: BinaryRepository;
   @Inject()
   private readonly taskService: TaskService;
+  @Inject()
+  private readonly taskRepository: TaskRepository;
   @Inject()
   private readonly httpclient: EggContextHttpClient;
   @Inject()
@@ -76,8 +81,18 @@ export class BinarySyncerService extends AbstractService {
     return await this.nfsAdapter.getDownloadUrlOrStream(binary.storePath);
   }
 
+  // SyncBinary 由定时任务每台单机定时触发，手动去重
+  // 添加 bizId 在 db 防止重复，记录 id 错误
   public async createTask(binaryName: string, lastData?: any) {
-    return await this.taskService.createTask(Task.createSyncBinary(binaryName, lastData), false);
+    const existsTask = await this.taskRepository.findTaskByTargetName(binaryName, TaskType.SyncBinary);
+    if (existsTask) {
+      return existsTask;
+    }
+    try {
+      return await this.taskService.createTask(Task.createSyncBinary(binaryName, lastData), false);
+    } catch (e) {
+      this.logger.error('[BinarySyncerService.createTask] binaryName: %s, error: %s', binaryName, e);
+    }
   }
 
   public async findTask(taskId: string) {
@@ -172,7 +187,7 @@ export class BinarySyncerService extends AbstractService {
             logs = [];
           } catch (err: any) {
             if (err.name === 'DownloadNotFoundError') {
-              this.logger.warn('Not found %s, skip it', item.sourceUrl);
+              this.logger.info('Not found %s, skip it', item.sourceUrl);
               logs.push(`[${isoNow()}][${dir}] 🧪️ [${parentIndex}${index}] Download ${item.sourceUrl} not found, skip it`);
             } else {
               this.logger.error('Download binary %s %s', item.sourceUrl, err);

@@ -9,7 +9,7 @@ import {
   EggContextHttpClient,
   EggAppConfig,
 } from 'egg';
-import { HttpMethod } from 'urllib';
+import { HttpMethod } from 'urllib/src/Request';
 
 const INSTANCE_NAME = 'npmRegistry';
 
@@ -25,9 +25,14 @@ export class NPMRegistry {
   @Inject()
   private config: EggAppConfig;
   private timeout = 10000;
+  public registryHost: string;
 
   get registry(): string {
-    return this.config.cnpmcore.sourceRegistry;
+    return this.registryHost || this.config.cnpmcore.sourceRegistry;
+  }
+
+  public setRegistryHost(registryHost = '') {
+    this.registryHost = registryHost;
   }
 
   public async getFullManifests(fullname: string, retries = 3) {
@@ -47,7 +52,8 @@ export class NPMRegistry {
       retries--;
       if (retries > 0) {
         // sleep 1s ~ 4s in random
-        await setTimeout(1000 + Math.random() * 4000);
+        const delay = process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
+        await setTimeout(delay);
       }
     }
     throw lastError;

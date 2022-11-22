@@ -19,16 +19,23 @@ import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { UserRepository } from '../../repository/UserRepository';
 import { DistRepository } from '../../repository/DistRepository';
-import { Task, SyncPackageTaskOptions } from '../entity/Task';
+import { Task, SyncPackageTaskOptions, CreateSyncPackageTask } from '../entity/Task';
 import { Package } from '../entity/Package';
 import { UserService } from './UserService';
 import { TaskService } from './TaskService';
 import { PackageManagerService } from './PackageManagerService';
 import { CacheService } from './CacheService';
 import { User } from '../entity/User';
+import { RegistryManagerService } from './RegistryManagerService';
+import { Registry } from '../entity/Registry';
+import { BadRequestError } from 'egg-errors';
+import { ScopeManagerService } from './ScopeManagerService';
 
 function isoNow() {
   return new Date().toISOString();
+}
+
+export class RegistryNotMatchError extends BadRequestError {
 }
 
 @ContextProto({
@@ -57,8 +64,20 @@ export class PackageSyncerService extends AbstractService {
   private readonly httpclient: EggContextHttpClient;
   @Inject()
   private readonly distRepository: DistRepository;
+  @Inject()
+  private readonly registryManagerService: RegistryManagerService;
+  @Inject()
+  private readonly scopeManagerService: ScopeManagerService;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
+    const [ scope, name ] = getScopeAndName(fullname);
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    // sync task request registry is not same as package registry
+    if (pkg && pkg.registryId && options?.registryId) {
+      if (pkg.registryId !== options.registryId) {
+        throw new RegistryNotMatchError(`package ${fullname} is not in registry ${options.registryId}`);
+      }
+    }
     return await this.taskService.createTask(Task.createSyncPackage(fullname, options), true);
   }
 
@@ -71,7 +90,7 @@ export class PackageSyncerService extends AbstractService {
   }
 
   public async findExecuteTask() {
-    return await this.taskService.findExecuteTask(TaskType.SyncPackage);
+    return await this.taskService.findExecuteTask(TaskType.SyncPackage) as CreateSyncPackageTask;
   }
 
   public get allowSyncDownloadData() {
@@ -160,7 +179,8 @@ export class PackageSyncerService extends AbstractService {
     let useTime = Date.now() - startTime;
     while (useTime < maxTimeout) {
       // sleep 1s ~ 6s in random
-      await setTimeout(1000 + Math.random() * 5000);
+      const delay = process.env.NODE_ENV === 'test' ? 100 : 1000 + Math.random() * 5000;
+      await setTimeout(delay);
       try {
         const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset);
         useTime = Date.now() - startTime;
@@ -190,22 +210,77 @@ export class PackageSyncerService extends AbstractService {
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
+  // 初始化对应的 Registry
+  // 1. 优先从 pkg.registryId 获取 (registryId 一经设置 不应改变)
+  // 1. 其次从 task.data.registryId (创建单包同步任务时传入)
+  // 2. 接着根据 scope 进行计算 (作为子包依赖同步时候，无 registryId)
+  // 3. 最后返回 default registryId (可能 default registry 也不存在)
+  public async initSpecRegistry(task: Task, pkg: Package | null = null): Promise<Registry | null> {
+    const registryId = pkg?.registryId || (task.data as SyncPackageTaskOptions).registryId;
+    let targetHost: string = this.config.cnpmcore.sourceRegistry;
+    let registry: Registry | null = null;
+
+    // 当前任务作为 deps 引入时，不会配置 registryId
+    // 历史 Task 可能没有配置 registryId
+    if (registryId) {
+      registry = await this.registryManagerService.findByRegistryId(registryId);
+    } else if (pkg?.scope) {
+      const scopeModel = await this.scopeManagerService.findByName(pkg?.scope);
+      if (scopeModel?.registryId) {
+        registry = await this.registryManagerService.findByRegistryId(scopeModel?.registryId);
+      }
+    }
+
+    // 采用默认的 registry
+    if (!registry) {
+      registry = await this.registryManagerService.findByRegistryName('default');
+    }
+
+    // 更新 targetHost 地址
+    // defaultRegistry 可能还未创建
+    if (registry?.host) {
+      targetHost = registry.host;
+    }
+    this.npmRegistry.setRegistryHost(targetHost);
+    return registry;
+  }
+
   public async executeTask(task: Task) {
     const fullname = task.targetName;
-    const { tips, skipDependencies, syncDownloadData } = task.data as SyncPackageTaskOptions;
-    const registry = this.npmRegistry.registry;
+    const [ scope, name ] = getScopeAndName(fullname);
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
+    let pkg = await this.packageRepository.findPackage(scope, name);
+    const registry = await this.initSpecRegistry(task, pkg);
+    const registryHost = this.npmRegistry.registry;
     let logs: string[] = [];
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
     }
+    const taskQueueLength = await this.taskService.getTaskQueueLength(task.type);
+    const taskQueueHighWaterSize = this.config.cnpmcore.taskQueueHighWaterSize;
+    const taskQueueInHighWaterState = taskQueueLength >= taskQueueHighWaterSize;
+    const skipDependencies = taskQueueInHighWaterState ? true : !!originSkipDependencies;
+    const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
-    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, log: %s',
-      task.taskId, task.targetName, task.attempts, logUrl);
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registry}/${fullname}, skipDependencies: ${!!skipDependencies}, syncDownloadData: ${!!syncDownloadData}, attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}" 🚧🚧🚧🚧🚧`);
+    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
+      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
-    const [ scope, name ] = getScopeAndName(fullname);
-    let pkg = await this.packageRepository.findPackage(scope, name);
+    if (pkg && pkg?.registryId !== registry?.registryId) {
+      if (pkg.registryId) {
+        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry?.registryId}, skip sync ❌❌❌❌❌`);
+        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+        this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid registryId',
+          task.taskId, task.targetName);
+        return;
+      }
+      // 多同步源之前没有 registryId
+      // publish() 版本不变时，不会更新 registryId
+      // 在同步前，进行更新操作
+      pkg.registryId = registry?.registryId;
+      await this.packageRepository.savePackage(pkg);
+    }
 
     if (syncDownloadData && pkg) {
       await this.syncDownloadData(task, pkg);
@@ -217,7 +292,7 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    if (this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst) {
+    if (syncUpstream) {
       await this.taskService.appendTaskLog(task, logs.join('\n'));
       logs = [];
       // create sync task on sourceRegistry and skipDependencies = true
@@ -317,7 +392,7 @@ export class PackageSyncerService extends AbstractService {
       for (const maintainer of maintainers) {
         if (maintainer.name && maintainer.email) {
           maintainersMap[maintainer.name] = maintainer;
-          const { changed, user } = await this.userService.savePublicUser(maintainer.name, maintainer.email);
+          const { changed, user } = await this.userService.saveUser(registry?.userPrefix, maintainer.name, maintainer.email);
           users.push(user);
           if (changed) {
             changedUserCount++;
@@ -386,7 +461,7 @@ export class PackageSyncerService extends AbstractService {
       const version: string = item.version;
       if (!version) continue;
       let existsItem = existsVersionMap[version];
-      const existsAbbreviatedItem = abbreviatedVersionMap[version];
+      let existsAbbreviatedItem = abbreviatedVersionMap[version];
       const shouldDeleteReadme = !!(existsItem && 'readme' in existsItem);
       if (pkg) {
         if (existsItem) {
@@ -405,6 +480,18 @@ export class PackageSyncerService extends AbstractService {
             // bugfix: https://github.com/cnpm/cnpmcore/issues/115
             updateVersions.push(version);
             logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
+          }
+        }
+
+        if (existsItem && forceSyncHistory === true) {
+          const pkgVer = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+          if (pkgVer) {
+            logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Remove version ${version} for force sync history`);
+            await this.packageManagerService.removePackageVersion(pkg, pkgVer, true);
+            existsItem = undefined;
+            existsAbbreviatedItem = undefined;
+            existsVersionMap[version] = undefined;
+            abbreviatedVersionMap[version] = undefined;
           }
         }
       }
@@ -500,6 +587,7 @@ export class PackageSyncerService extends AbstractService {
         description,
         packageJson: item,
         readme,
+        registryId: registry?.registryId,
         dist: {
           localFile,
         },

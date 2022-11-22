@@ -1,0 +1,1312 @@
+{
+  "_id": "guetzli",
+  "_rev": "23-2b12822b3ff92a960018db90c7fd24cb",
+  "name": "guetzli",
+  "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+  "dist-tags": {
+    "latest": "5.0.0"
+  },
+  "versions": {
+    "0.0.0": {
+      "name": "guetzli",
+      "version": "0.0.0",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.17.0",
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "rimraf": "^2.3.2",
+        "xo": "^0.17.0"
+      },
+      "gitHead": "bbc72d77ffe157d8392b96a7551cf37d7a6daccc",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@0.0.0",
+      "_shasum": "ed2722fc30af0d53de43239ae7baaf87c03664c6",
+      "_from": ".",
+      "_npmVersion": "3.10.10",
+      "_nodeVersion": "6.9.4",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "shasum": "ed2722fc30af0d53de43239ae7baaf87c03664c6",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-0.0.0.tgz",
+        "integrity": "sha512-8j/IowJv4IPiqEiIDUL+qZtT8kL/MRd723NI9PREuJxdd2OjFVYJzJHNkaOxCNQJIiMyX2RKcR7T4f0b09/0sg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDotDloiUa7shtVmv7UVjH0I7QBTJdhA8IBl3u1K435qAIhAIT4v8tWDRPuSU89C9bkfBMoYjeiJhBy05/mtzeGhvli"
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/guetzli-0.0.0.tgz_1484270562766_0.20876322477124631"
+      },
+      "directories": {}
+    },
+    "0.1.0": {
+      "name": "guetzli",
+      "version": "0.1.0",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.17.0",
+        "bin-check": "^2.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "rimraf": "^2.3.2",
+        "xo": "^0.17.0"
+      },
+      "gitHead": "76801f1efd1cd479776f467f63d56dda8d861f48",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@0.1.0",
+      "_shasum": "b07b3cd77d1fa6cfc9239fb6714ddf095dd48e73",
+      "_from": ".",
+      "_npmVersion": "3.10.10",
+      "_nodeVersion": "6.9.4",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "shasum": "b07b3cd77d1fa6cfc9239fb6714ddf095dd48e73",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-0.1.0.tgz",
+        "integrity": "sha512-xvG4W0m9LV1IDXGqPsFoHD5RiCzfQM5NoRy/haxmkg5FIITJi2y7cAuxcrwwdd+4UoH/zjUHAS8ZejGLZaEOkA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIGy66PqYTmK8Wu4e5sTx2yZWdNVJ0uXQmeBcs+Q8HR6OAiAX/0rAZDD1EUGrdU9AzLNoFhhy4aRoVgPXVpNDSK0Qqw=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "packages-12-west.internal.npmjs.com",
+        "tmp": "tmp/guetzli-0.1.0.tgz_1484271094096_0.8911221348680556"
+      },
+      "directories": {}
+    },
+    "1.0.0": {
+      "name": "guetzli",
+      "version": "1.0.0",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "engines": {
+        "node": ">=4"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "imagemin",
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.2.0",
+        "bin-wrapper": "^3.0.2",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^0.6.3",
+        "tempy": "^0.1.0",
+        "xo": "*"
+      },
+      "gitHead": "8917dd9b1f5b70508712cbebbab6665d7ad47875",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@1.0.0",
+      "_shasum": "361d662f519d43e7a4c53565dbbf54ebcd447181",
+      "_from": ".",
+      "_npmVersion": "3.10.10",
+      "_nodeVersion": "6.9.5",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "shasum": "361d662f519d43e7a4c53565dbbf54ebcd447181",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-1.0.0.tgz",
+        "integrity": "sha512-/BrS8eJRUfOdeY5RDXsrUPExRlNSRz7iR8/NTSSpnBuSmTjIReRdCC7keVnxgLPoM/j+dJyJH1lJ7SZE2LFWZA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIHSV7TN9PakhVcJKa825f+qJStnE04rBKYCR/vzbpgNcAiAf1hb2LbvbGX2aNxD6cQZ6pr4m/Epk77mKQTVMI4FChw=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/guetzli-1.0.0.tgz_1492564176720_0.8451033593155444"
+      },
+      "directories": {}
+    },
+    "1.0.1": {
+      "name": "guetzli",
+      "version": "1.0.1",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "author": {
+        "name": "Shogo Sensui",
+        "email": "shogo.sensui@gmail.com",
+        "url": "github.com/1000ch"
+      },
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "engines": {
+        "node": ">=4"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib"
+      ],
+      "keywords": [
+        "imagemin",
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.2.0",
+        "bin-wrapper": "^3.0.2",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^0.6.3",
+        "executable": "^4.1.0",
+        "tempy": "^0.1.0",
+        "xo": "*"
+      },
+      "gitHead": "a5bc41b83991c205b5b73f3928d59a19fecdf2c7",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@1.0.1",
+      "_shasum": "48cd01d18dbd60fb47318a1724a295a035d9b9f2",
+      "_from": ".",
+      "_npmVersion": "3.10.10",
+      "_nodeVersion": "6.9.5",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogo.sensui@gmail.com"
+      },
+      "dist": {
+        "shasum": "48cd01d18dbd60fb47318a1724a295a035d9b9f2",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-1.0.1.tgz",
+        "integrity": "sha512-71T2h+USCVMKfJw1pggXXonSOdEYhidr7OTPzVwimv3YPPjr768AO43xx7Tk29eoAWGJpGn83qQSxny7UkMHEA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIDpjN4RLpzf4B7mOS6ZLly0ov+JMrF7GsCtXGHvkSkAZAiAfvCFg6zB6IbT9jySILMDZexLOMA2/WnbxB80xbnbQhQ=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "name": "1000ch",
+          "email": "shogo.sensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/guetzli-1.0.1.tgz_1492752197533_0.4053893256932497"
+      },
+      "directories": {}
+    },
+    "2.0.0": {
+      "name": "guetzli",
+      "version": "2.0.0",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "^1.0.1",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^1.0.0",
+        "executable": "^4.1.0",
+        "tempy": "^0.2.1",
+        "xo": "^0.23.0"
+      },
+      "gitHead": "0b1a2ed2c515fce8fa5f590ca8968cc8e2618d88",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@2.0.0",
+      "_npmVersion": "6.5.0",
+      "_nodeVersion": "8.12.0",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-o/g6IZeTN0kOXGxr2SlvwDKa6CJHIRYh6kR28keyhE2+uJl+3bODBAJR4kmX8gKjFEQVAq02GYwfIIbJAFFekw==",
+        "shasum": "eb481c0e853fb9792a6704265f3da0011ec379eb",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-2.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4079,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJcIoCpCRA9TVsSAnZWagAAER8QAIH5fEg+PaRAfOHoa8NV\nOHxlM/PtubrukfbGGNxSdhh+jmc5T70cBe+PK30yfdkBl8V9VD+kWJEwoqos\nh/FbkuU8wRv2ezcntDpDVx3CClZQAMiDyMsdP4qUZPO3/5G8t+6O+awaxt2j\nFUVIyRmvK+Dqvz6UiheVbPqhdTz/g+6ujXELZu9L3czGsUYr5D7OIm2K8iyB\nXBl0Uh219Zd7owERpTzoW6nmsjM81rRSD/Bbw/rdRHs6h5TJOgSDFyDof1dT\nW0tjPT7gpPKyTtAY6SCaPD5Va9weTqTr2KMGuh9ZpZZOnexXAfLuvek/7b4E\nG15dGL1mug0txNLxf0Hsw/3pxyox1En2CEH/yBKG0iGyIeaWft09fin47N6p\nRHM3AYeMxzYWgPdi4eVJPE9PSknJrZZlKTTuzRhth7slf8f5HgCYTMrWtTB7\nspQDs/n37GL2adMFkICvLKjO/H2Y98FcVtGVnEMOkd57FQbLEJD9fA8OE7ka\naR/549dsNuXR9uyn0oiMIyBSGXYMtxWdCmHVV4nO+kwcUd5idsjYiq8uDMtv\ncBIm0IatSq0PzXv6h+OidNPYuBbACQiZVOD+Mcwm0AWDZD6eoMao11qlmt9O\n+PVNagkL6x+9U3cXRtWBieFJSN6M/qXUYWllDRTjNoWgC3xGQ6zv0rihl8Bp\ns8Cv\r\n=aXqZ\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIBhhn8yvjxhR0oa26DqBRSOVdISMBlb8yRo4U16x2LDjAiEA+FuySPjATfSzTcs+gNYeZO8k+0Ka+PcNd33TAa/z24s="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/guetzli_2.0.0_1545765032851_0.4992377646937085"
+      },
+      "_hasShrinkwrap": false
+    },
+    "3.0.0": {
+      "name": "guetzli",
+      "version": "3.0.0",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "executable": "^4.1.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "410ccb72eee1019f61615e160ca537037fa708f1",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@3.0.0",
+      "_nodeVersion": "12.16.1",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-aowUnJeeikt70Y3h9GRS7T3jJq6EzZ1CL87hCWGeNR4MQfpVPqkR48H+Mtv49H0DUc0bxZU355/bt88iEbV3bQ==",
+        "shasum": "f024929b340bb191576104187e4dca0541f0d08e",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-3.0.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 4134,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe0doOCRA9TVsSAnZWagAATFYP+wbBu7WmcuSPQvXUF0Se\nVv0x+sYYeyFMhPj/6dGjioRq4x7WpgBjNXfy6njJRtJWIG9y1MK1rjGsZHIr\nMG5LyBue21gvZhAq0jpBglskPb2tEr1gMyNdEoNVLR6Iv4HFA9TRzVaKSMoR\n6hcROzoIldt6o7Bwsvq1uKFQxZ6ogAyI2IZVvwXDx2CWgcQgtD9OXf5XKyFx\nG+iyPvE587J2h4SKLaDJoE+gus7SS8ErXFlMM5iEg7e8UsjgoGg7YU6SNKER\n8wuG1M59ArPgzuzfMspegDpbHskvMbxnFTGYmXGZUvYovUKJWzzhtb6gMrSK\nmzqQ+Fq3tgvY0xFp3MD+77eoOIM6jHmfsRCF1JGQGMkIpgWElsRVN9mzHfQN\n06aRx3+AAq3inn1mJi8CQ8L2PsvFLMt/eeZrELoRT3r7nYiLwX1JCQ/ROlXe\nJXOwPvRFkuttTjFnt7ht1MCnHOI25P4jhO50rIEbt3KipX871iktvrKx0ga+\nNse0IVW4xMUt8zQr3AthD2tTbltS7wID0dcRp7YMYv2/BAIylioRcc4FP2e1\n/KbzE0VTO6GL+/N9SOfnSAILBgGdDupphnkunM8kkt0nMJi4TE72ew+yBE6U\ng4lWeTNxKuxjKHjdfsiFKaaz0QSrXyxAWGjROuXrHjCx3CRiMG4uvvWxTReS\n+Ob3\r\n=7tAT\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIFrZhSOl/SnscBNYTcJ4CFDHpuO20ah/nmIYTIVA5sdxAiEA6PcB1lwN/u0FJJijpZ2vAB18UF2eEwkR8753o5hoiEg="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/guetzli_3.0.0_1590811149604_0.37408428570080265"
+      },
+      "_hasShrinkwrap": false
+    },
+    "3.0.1": {
+      "name": "guetzli",
+      "version": "3.0.1",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.1.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "executable": "^4.1.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "0b687732524395f146f408c088f5ae96beae5c62",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@3.0.1",
+      "_nodeVersion": "12.18.0",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-GnT3akQqs6lTdT6C5W5idekf22BlUd1M1LcIyAnWOk4fNreonEKx9ZGdCUvjaivKyHMjtXFNSRihhfO22FYQ2g==",
+        "shasum": "f76c599b59463a02b7073f8cc618efff090a16da",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-3.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 101404,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe+r8KCRA9TVsSAnZWagAACOsP/0tvqlPaAiWcbkstLK0o\nIqeV1ysd7ZLOnU+Gu7MVZY5MB+93FDUu/hF9bqz885RKzZxsOemmpku5SAa/\niK5SY0ckHM3fwwuGyp4Vk4/qN19uwa4CbSuHs1kEvL/h4ipPwjhPmsXFOjz7\njuGpZneUbJ2w2bcl9oNMHP3v4HlGLj1gZXk45Toz8RkOJoDRN6xTkCBLAL2o\nn0tncpp1b2XykwY23FRDxDEx8huoM3utuZJyh34GeWNMezWc44128zs7R/1A\n+wfBZddUvkGgf6a84S4rEmxRyBUEM9rJqRgaMK2Lxbh8TN2XlQiGWQe5iWWW\nGmNfDOKdz3TVENFVEh+0UwWJLNFwdYhGc1nj/ImntmY+LH2KfJ2CSSvtwNSN\nonFqe2HjXotDUgMC+Sb9iJOKmJ+2gW83zBJjm1AKCYalnzf9vbfX/CxAe9fw\n1yp4myHPL3mfGYnbhX9H+Fa7W+IVbFRunEhANEESVlRf8/N4XjtwL/LlFcVf\nFGgwjWn3IWusk3iATH1yh2uM09VK4mQXVH65j/t321ioXC4UdltsaePXYwAE\nsv2NeWMATxnPiotBPliHaihYGVTF14UJAdVNxl2W0hKu302uBfmgejGwpKaD\nHHRa2KGNl1YXKYLQUuao9rT8AHEGwtmFrVdw6FdUIbdiJ6GGKzlJwvIUJLHk\nIAZr\r\n=K1EL\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIDdZx7fAhBAumFennpWlOQCBnrE+uMpGgmWdLdCcvS9PAiBIhL73I4XRJWmN3DQJWGQHGTT/rIm4GtyPrC+XRxM40w=="
+          }
+        ]
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/guetzli_3.0.1_1593491209686_0.899076785238593"
+      },
+      "_hasShrinkwrap": false
+    },
+    "3.0.2": {
+      "name": "guetzli",
+      "version": "3.0.2",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "executable": "^4.1.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "75e43b3f9771eba8ea6949a65d540518b03cf136",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@3.0.2",
+      "_nodeVersion": "16.4.1",
+      "_npmVersion": "7.21.0",
+      "dist": {
+        "integrity": "sha512-bU6gdD6RR9qfRwQ0MbojyHB5ApREHquJVXfsH0IT78rfXn7OKymcS4Y/4OKPhVIl0GAnOLhBFFA05Okwk3gh7w==",
+        "shasum": "79d51ec9989905c090ddf8566264074c6bf5b9e0",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-3.0.2.tgz",
+        "fileCount": 8,
+        "unpackedSize": 101347,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIHjQPE6xgS264kspM7h7xevGNyjkXNjyMF8nV/eqlf8FAiBIvZvm3Y+I8hDnFweszzYSN7q99Xjpvfy5ADNFvjbJAA=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/guetzli_3.0.2_1634219130645_0.4982909753934466"
+      },
+      "_hasShrinkwrap": false
+    },
+    "4.0.0": {
+      "name": "guetzli",
+      "version": "4.0.0",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "type": "module",
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "executable": "^4.1.0",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "cf4faeebffffe5cdcdf05fdc2c0edbe536adebdf",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@4.0.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-xXUKcYIEO+MTVU612Bofkbfelym1jDO5TLv8BVpqMmh2SNkFQPuU0meFzy8Gd8HRnuoG7qyHMG8u8nInkg4rJA==",
+        "shasum": "17294533baea40f4784aedfc969fa12c14c5cf44",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-4.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 101843,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIFd/O6hu1ivgGlse0OQocdetpEaJZXLv7MZm3TBOguZ2AiAG17DlNMYsSM2vwpNe75xvawKLg24wQQRYjijSk9tx0w=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/guetzli_4.0.0_1635076798484_0.5287486943509381"
+      },
+      "_hasShrinkwrap": false
+    },
+    "4.0.1": {
+      "name": "guetzli",
+      "version": "4.0.1",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "type": "module",
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "executable": "^4.1.0",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "0bab820cc8c162f65982d3585bfa3cf4aa3a2f32",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@4.0.1",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-x+6T11Fu6Ne2gidRXQpUl5B56ndYuPyWylGxI4WadCDbTBUVkKE5iDxGY3QJnbA6nIpiksNSshGZlT4NUcp02w==",
+        "shasum": "d2aaa241e3ad05c5a36971ae7a92bd6a330cd599",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-4.0.1.tgz",
+        "fileCount": 8,
+        "unpackedSize": 101903,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCPmsW78UlYCjNGQ0Uzup+TZ16IQIhgkPPm0YHLurhJYgIgIpybvxk1AhKACG84cSJeUcPAwBkEcr9hdvEYTSpUuYo="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/guetzli_4.0.1_1636345806548_0.07426548896076057"
+      },
+      "_hasShrinkwrap": false
+    },
+    "4.0.2": {
+      "name": "guetzli",
+      "version": "4.0.2",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "executable": "^4.1.0",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "feb65ae5e123edc2843b2ba7d8a1d11aee0e51fd",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@4.0.2",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-WP2uCa+bhtnyUtnpe3QfDGL1YstfLRwnbahpe9eF/QQDf5T2fLqF0IVwvDt53qUmatngl5MJo5t03vVF/G3jxg==",
+        "shasum": "a57244ec5b262bd8599630acb1f52e10f738039a",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-4.0.2.tgz",
+        "fileCount": 8,
+        "unpackedSize": 101929,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJh2szaCRA9TVsSAnZWagAAQBoP/RJ8prXt9c2Enj47bOJX\nv3+fEZk+jWufAajgM9sWjm9YKCyTABpnan53TS8dM6UYX8Rgbh0JgbCRAyhO\n8maArnzIh47AWfY71yAo2+mFNOZznN9IUj9WhbfhRNxEiPsBYbLHqSCPGdhp\nO4vn7+7Qi/CrRIjqW4GpFgH6kwCJOTNNcPbAp0037kCCni/ZNbqKZJfPPaLN\nrKBBSDkNWvKKEndORqHZmGjVip+bVNffK3Tj9NeYZ4vBcP4CSzPn6Sh6Qv4W\nQCwZ26o6b7iaPX8cAqe1H2fBf8EdmksXCrSl1pQ2swWylh69SFuELg6mQhH5\ndBCqo4GMNv1RzphxRJwzD6eQOTSPlu1fcNY99/AWuhuJFWbR24/Ynqz8/6HV\nrlO4urqjl630aoSNxSVOjWWdUlPEy6buj7H2NVM/tvjrj5CONWafci6Eeus3\n5yZJBokrsxxcNlPQJT5/52UB/1Bj51pgnlYy6R8v9sPxTirrJ9H5eq+zopN7\nc6u0gZRiCE7nxdGdtLo5xmQ5PfYnlSaWp/DMlOS19pPcm180aoNGPAONLOAH\nOCHtvBOx1V2tDr778iX04blQ7luW+uTl9d/ByUMq78NHABQaf5AF24jl+2Cs\nelQIWFWiw5us0RftD7CcGwMaLINIo8ND1M8x8L/7U+fpomO59yudxpGiCv2N\neLGZ\r\n=E0Qt\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIAesVUSCXoNA/t1A7qkwADjDPs6eRqVEag7mHbzqQZhHAiEAtBWSeavc2pl59WDh6xIlY2iBU5JFguIdVkqPxMXWS+g="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/guetzli_4.0.2_1636522007749_0.10483461279573847"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.0.0": {
+      "name": "guetzli",
+      "version": "5.0.0",
+      "description": "guetzli wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/guetzli-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "bin": {
+        "guetzli": "cli.js"
+      },
+      "engines": {
+        "node": "^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=60s"
+      },
+      "keywords": [
+        "imagemin",
+        "guetzli",
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^4.2.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^6.1.0",
+        "executable": "^4.1.0",
+        "tempy": "^3.0.0",
+        "xo": "^0.48.0"
+      },
+      "gitHead": "81e14703ccdeafffe0efc0e5f88a270bee0d067d",
+      "bugs": {
+        "url": "https://github.com/imagemin/guetzli-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+      "_id": "guetzli@5.0.0",
+      "_nodeVersion": "16.13.2",
+      "_npmVersion": "8.5.5",
+      "dist": {
+        "integrity": "sha512-/PZ8Txz1X5UArJtLjfH1/O4AmvC12gqzksCXjRsWEiSC5ieetDaeLUb9tCUYbyK2cq9AzgGPEmdyHhZO02WowQ==",
+        "shasum": "2719bfdcad7711271800dcb13dd19a92dcac9859",
+        "tarball": "https://registry.npmjs.org/guetzli/-/guetzli-5.0.0.tgz",
+        "fileCount": 8,
+        "unpackedSize": 101916,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCID/7N+uFC8gfLwaNr5fO6c7rKOOkqNpfUizO20IOqfwqAiEArTgJcPJ9XL5qCU/fySwtGm4LOErkwEwoNSqF3QIAuL8="
+          }
+        ],
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJifSFzACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmpX6A/9GFEbQ8HUspMwGClwuM1kd8di4FBqsvN0tbtllrC/Qelx0HRJ\r\ntRYc0Y1Gp9O9ewY8Wmyq3OkfHCp8Q5jw7m5xHx92M2FEo3zzFkmPQPaXpdPq\r\n8a74iA8sKAfuteEQnaYrzVu9jPtXV0p6mngS3INvsY6oKjxZCkYpbrjBgPzx\r\nD5WQVdTHWKVYxVh6sz71qTcygr8Y5cQL7Pnbb5vQFr7qja3zX5G5rhwL3fpw\r\nX75LZD6kqWCDdLckIINtUPZAXi4tnE+U9/aeO1LTVEJF80l6lRN1dy4L5cEW\r\ncihEPAvU2WVuwthuk5dlP4Fa4FcnUIuU9O1g+3qyxk4ysZ/82rKSncfSCFVv\r\npboov70oomvc3ffKQl8JYALLtoTC8vaTTklW3vn/dv9CrYLO026hZbxjkG1K\r\nN/brzgAJoNHp92LcEOvn4cafx5X045KRbmno031gnkSzy3+2eyIB6B2Dyxor\r\n9CsK3L3k/rfLp4C3rT+i50G8nR53JHqw1RqJQO0T4/Xb7Aet1ieg2scZcYcw\r\nY+/fNxT+cRZ3NQv0cw5YOcRnI4vgkztkNwj/sZ4cmVeZ4CjEB+9XPLXNNU8R\r\n+j3byWU2QgW0mtEjNCuWgDC4owAITq4/sJ+0XI6Q/7J/acf3qmwDEA17vMqY\r\nvjU5Dpz7COquqYBKZ3kBhXNPNNQVOETVix0=\r\n=y+DM\r\n-----END PGP SIGNATURE-----\r\n"
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/guetzli_5.0.0_1652367731593_0.15375347977617526"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "readme": "# guetzli-bin ![GitHub Actions Status](https://github.com/imagemin/guetzli-bin/workflows/test/badge.svg?branch=main)\n\n> [Guetzli](https://github.com/google/guetzli) is a JPEG encoder that aims for excellent compression density at high visual quality. Guetzli-generated images are typically 20-30% smaller than images of equivalent quality generated by libjpeg.\n\nYou probably want [`imagemin-guetzli`](https://github.com/imagemin/imagemin-guetzli) instead.\n\n\n## Install\n\n```\n$ npm install guetzli\n```\n\n\n## Usage\n\n```js\nimport {execFile} from 'node:child_process';\nimport guetzli from 'guetzli';\n\nexecFile(guetzli, ['input.jpg', 'output.jpg'], error => {\n\tconsole.log('Image minified!');\n});\n```\n\n\n## CLI\n\n```\n$ npm install --global guetzli\n```\n\n```\n$ guetzli --help\n```\n\n\n## License\n\nMIT © [Imagemin](https://github.com/imagemin)\n",
+  "maintainers": [
+    {
+      "name": "nothingismagick",
+      "email": "denjell@sfosc.org"
+    },
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "kevva",
+      "email": "kevinmartensson@gmail.com"
+    },
+    {
+      "name": "1000ch",
+      "email": "shogosensui@gmail.com"
+    },
+    {
+      "name": "xhmikosr",
+      "email": "xhmikosr@gmail.com"
+    }
+  ],
+  "time": {
+    "modified": "2022-06-18T16:29:49.169Z",
+    "created": "2017-01-13T01:22:44.736Z",
+    "0.0.0": "2017-01-13T01:22:44.736Z",
+    "0.1.0": "2017-01-13T01:31:34.316Z",
+    "1.0.0": "2017-04-19T01:09:38.660Z",
+    "1.0.1": "2017-04-21T05:23:19.842Z",
+    "2.0.0": "2018-12-25T19:10:32.961Z",
+    "3.0.0": "2020-05-30T03:59:09.926Z",
+    "3.0.1": "2020-06-30T04:26:49.792Z",
+    "3.0.2": "2021-10-14T13:45:30.767Z",
+    "4.0.0": "2021-10-24T11:59:58.619Z",
+    "4.0.1": "2021-11-08T04:30:06.905Z",
+    "4.0.2": "2021-11-10T05:26:47.884Z",
+    "5.0.0": "2022-05-12T15:02:11.905Z"
+  },
+  "homepage": "https://github.com/imagemin/guetzli-bin#readme",
+  "keywords": [
+    "imagemin",
+    "guetzli",
+    "jpeg",
+    "jpg",
+    "img",
+    "image",
+    "compress",
+    "minify",
+    "optimize"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imagemin/guetzli-bin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/imagemin/guetzli-bin/issues"
+  },
+  "license": "MIT",
+  "readmeFilename": "readme.md",
+  "users": {
+    "gvn": true,
+    "jason0518": true
+  }
+}

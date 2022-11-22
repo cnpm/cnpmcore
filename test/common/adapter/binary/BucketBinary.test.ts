@@ -3,6 +3,7 @@ import { app } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
 import { BucketBinary } from 'app/common/adapter/binary/BucketBinary';
 import binaries from 'config/binaries';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
   let ctx: Context;
@@ -17,6 +18,10 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
+      app.mockHttpclient('https://chromedriver.storage.googleapis.com/', 'GET', {
+        data: await TestUtil.readFixturesFile('chromedriver.storage.googleapis.com/index.xml'),
+        persist: false,
+      });
       const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.chromedriver);
       const result = await binary.fetch('/');
       assert(result);
@@ -42,6 +47,10 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /97.0.4692.71/ work', async () => {
+      app.mockHttpclient('https://chromedriver.storage.googleapis.com/', 'GET', {
+        data: await TestUtil.readFixturesFile('chromedriver.storage.googleapis.com/97.0.4692.71.xml'),
+        persist: false,
+      });
       const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.chromedriver);
       const result = await binary.fetch('/97.0.4692.71/');
       assert(result);
@@ -63,6 +72,10 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
     });
 
     it('should ignore dir with size = 0', async () => {
+      app.mockHttpclient('https://selenium-release.storage.googleapis.com/', 'GET', {
+        data: await TestUtil.readFixturesFile('selenium-release.storage.googleapis.com/2.43.xml'),
+        persist: false,
+      });
       // https://selenium-release.storage.googleapis.com/?delimiter=/&prefix=2.43/
       const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.selenium);
       const result = await binary.fetch('/2.43/');
@@ -74,6 +87,10 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
     });
 
     it('should ignore AWSLogs/', async () => {
+      app.mockHttpclient('https://node-inspector.s3.amazonaws.com/', 'GET', {
+        data: await TestUtil.readFixturesFile('node-inspector.s3.amazonaws.com/index.xml'),
+        persist: false,
+      });
       const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries['node-inspector']);
       const result = await binary.fetch('/');
       assert(result);
@@ -84,6 +101,10 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
     });
 
     it('should ignore build_testruns/', async () => {
+      app.mockHttpclient('https://prisma-builds.s3-eu-west-1.amazonaws.com/', 'GET', {
+        data: await TestUtil.readFixturesFile('prisma-builds.s3-eu-west-1.amazonaws.com/index.xml'),
+        persist: false,
+      });
       const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.prisma);
       const result = await binary.fetch('/');
       assert(result);

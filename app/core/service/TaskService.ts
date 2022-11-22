@@ -8,7 +8,7 @@ import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { Task } from '../entity/Task';
-import { QueueAdapter } from '../../common/adapter/QueueAdapter';
+import { QueueAdapter } from '../../common/typing';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -21,19 +21,34 @@ export class TaskService extends AbstractService {
   @Inject()
   private readonly queueAdapter: QueueAdapter;
 
+  public async getTaskQueueLength(taskType: TaskType) {
+    return await this.queueAdapter.length(taskType);
+  }
+
   public async createTask(task: Task, addTaskQueueOnExists: boolean) {
     const existsTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type);
     if (existsTask) {
-      if (addTaskQueueOnExists && existsTask.state === TaskState.Waiting) {
-        // make sure waiting task in queue
-        await this.queueAdapter.push<string>(task.type, existsTask.taskId);
+      // 如果任务还未被触发，就不继续重复创建
+      // 如果任务正在执行，可能任务状态已更新，这种情况需要继续创建
+      if (existsTask.state === TaskState.Waiting) {
+        // 提高任务的优先级
+        if (addTaskQueueOnExists) {
+          const queueLength = await this.getTaskQueueLength(task.type);
+          if (queueLength < this.config.cnpmcore.taskQueueHighWaterSize) {
+            // make sure waiting task in queue
+            await this.queueAdapter.push<string>(task.type, existsTask.taskId);
+            this.logger.info('[TaskService.createTask:exists-to-queue] taskType: %s, targetName: %s, taskId: %s, queue size: %s',
+              task.type, task.targetName, task.taskId, queueLength);
+          }
+        }
+        return existsTask;
       }
-      return existsTask;
     }
     await this.taskRepository.saveTask(task);
-    const queueSize = await this.queueAdapter.push<string>(task.type, task.taskId);
+    await this.queueAdapter.push<string>(task.type, task.taskId);
+    const queueLength = await this.getTaskQueueLength(task.type);
     this.logger.info('[TaskService.createTask:new] taskType: %s, targetName: %s, taskId: %s, queue size: %s',
-      task.type, task.targetName, task.taskId, queueSize);
+      task.type, task.targetName, task.taskId, queueLength);
     return task;
   }
 
@@ -42,16 +57,19 @@ export class TaskService extends AbstractService {
       await this.appendLogToNFS(task, appendLog);
     }
     task.state = TaskState.Waiting;
-    // make sure updatedAt changed
-    task.updatedAt = new Date();
     await this.taskRepository.saveTask(task);
-    const queueSize = await this.queueAdapter.push<string>(task.type, task.taskId);
+    await this.queueAdapter.push<string>(task.type, task.taskId);
+    const queueLength = await this.getTaskQueueLength(task.type);
     this.logger.info('[TaskService.retryTask:save] taskType: %s, targetName: %s, taskId: %s, queue size: %s',
-      task.type, task.targetName, task.taskId, queueSize);
+      task.type, task.targetName, task.taskId, queueLength);
   }
 
   public async findTask(taskId: string) {
     return await this.taskRepository.findTask(taskId);
+  }
+
+  public async findTasks(taskIdList: Array<string>) {
+    return await this.taskRepository.findTasks(taskIdList);
   }
 
   public async findTaskLog(task: Task) {
@@ -59,17 +77,28 @@ export class TaskService extends AbstractService {
   }
 
   public async findExecuteTask(taskType: TaskType) {
-    const taskId = await this.queueAdapter.pop<string>(taskType);
-    if (taskId) {
-      const task = await this.taskRepository.findTask(taskId);
-      if (task) {
-        task.setExecuteWorker();
-        task.state = TaskState.Processing;
-        task.attempts += 1;
-        await this.taskRepository.saveTask(task);
-        return task;
+    let taskId = await this.queueAdapter.pop<string>(taskType);
+    let task: Task | null;
+
+    while (taskId) {
+      task = await this.taskRepository.findTask(taskId);
+
+      // 任务已删除或任务已执行
+      // 继续取下一个任务
+      if (task === null || task?.state !== TaskState.Waiting) {
+        taskId = await this.queueAdapter.pop<string>(taskType);
+        continue;
       }
+
+      const condition = task.start();
+      const saveSucceed = await this.taskRepository.idempotentSaveTask(task, condition);
+      if (!saveSucceed) {
+        taskId = await this.queueAdapter.pop<string>(taskType);
+        continue;
+      }
+      return task;
     }
+
     return null;
   }
 
@@ -90,7 +119,7 @@ export class TaskService extends AbstractService {
         task.resetLogPath();
       }
       await this.retryTask(task);
-      this.logger.warn(
+      this.logger.info(
         '[TaskService.retryExecuteTimeoutTasks:retry] taskType: %s, targetName: %s, taskId: %s, attempts %s will retry again',
         task.type, task.targetName, task.taskId, task.attempts);
     }
@@ -110,7 +139,6 @@ export class TaskService extends AbstractService {
 
   public async appendTaskLog(task: Task, appendLog: string) {
     await this.appendLogToNFS(task, appendLog);
-    task.updatedAt = new Date();
     await this.taskRepository.saveTask(task);
   }
 

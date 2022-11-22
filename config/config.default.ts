@@ -9,6 +9,7 @@ export default (appInfo: EggAppConfig) => {
 
   config.cnpmcore = {
     name: 'cnpm',
+    hooksLimit: 20,
     sourceRegistry: 'https://registry.npmjs.org',
     // upstream registry is base on `cnpmcore` or not
     // if your upstream is official npm registry, please turn it off
@@ -16,11 +17,16 @@ export default (appInfo: EggAppConfig) => {
     syncUpstreamFirst: false,
     // 3 mins
     sourceRegistrySyncTimeout: 180000,
+    taskQueueHighWaterSize: 100,
     // sync mode
     //  - none: don't sync npm package, just redirect it to sourceRegistry
     //  - all: sync all npm packages
+    //  - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
     syncMode: 'none',
+    hookEnable: false,
     syncPackageWorkerMaxConcurrentTasks: 10,
+    triggerHookWorkerMaxConcurrentTasks: 10,
+    createTriggerHookWorkerMaxConcurrentTasks: 10,
     // stop syncing these packages in future
     syncPackageBlockList: [],
     // check recently from https://www.npmjs.com/browse/updated, if use set changesStreamRegistry to cnpmcore,
@@ -89,7 +95,7 @@ export default (appInfo: EggAppConfig) => {
     config.orm.logger = {
       // TODO: try to save SQL log into ctx logger or app logger
       logQuery(sql: string, duration: number) {
-        console.log('[%sms] %s', duration, sql);
+        console.log('[sql-debug] [%sms] %s', duration, sql);
       },
     };
   }
@@ -155,5 +161,9 @@ export default (appInfo: EggAppConfig) => {
 
   // https://github.com/xiekw2010/egg-typebox-validate#%E5%A6%82%E4%BD%95%E5%86%99%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%A1%E9%AA%8C%E8%A7%84%E5%88%99
   config.typeboxValidate = { patchAjv };
+
+  config.httpclient = {
+    useHttpClientNext: true,
+  };
   return config;
 };

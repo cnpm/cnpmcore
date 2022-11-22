@@ -14,7 +14,7 @@ import { Token as TokenEntity } from '../core/entity/Token';
 import { sha512 } from '../common/UserUtil';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
-type TokenRole = 'read' | 'publish' | 'setting';
+export type TokenRole = 'read' | 'publish' | 'setting';
 
 @ContextProto({
   // only inject on port module
@@ -85,7 +85,7 @@ export class UserRoleManager {
       }
       // only support npm >= 7.0.0 allow publish action
       // user-agent: "npm/6.14.12 node/v10.24.1 darwin x64"
-      const m = /npm\/(\w{1,1000}\.)/.exec(ctx.get('user-agent'));
+      const m = /\bnpm\/(\d{1,5})\./.exec(ctx.get('user-agent'));
       if (!m) {
         throw new ForbiddenError('Only allow npm client to access');
       }

@@ -4,6 +4,9 @@ import { Context } from 'egg';
 import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
 import { TaskService } from 'app/core/service/TaskService';
 import { Task } from 'app/repository/model/Task';
+import { TestUtil } from 'test/TestUtil';
+
+const ChangesStreamWorkerPath = require.resolve('../../app/port/schedule/ChangesStreamWorker');
 
 describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   let ctx: Context;
@@ -20,20 +23,27 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   });
 
   it('should work', async () => {
+    app.mockHttpclient('https://r.cnpmjs.org/', 'GET', {
+      data: await TestUtil.readFixturesFile('r.cnpmjs.org/index.json'),
+    });
+    app.mockHttpclient('https://r.cnpmjs.org/_changes', 'GET', {
+      data: await TestUtil.readFixturesFile('r.cnpmjs.org/_changes.json'),
+    });
     app.mockLog();
     // syncMode=none
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.notExpectLog('[ChangesStreamWorker:start]');
 
     // syncMode=all
     mock(app.config.cnpmcore, 'syncMode', 'all');
-    await app.runSchedule('ChangesStreamWorker');
+    mock(app.config.cnpmcore, 'changesStreamRegistry', 'https://r.cnpmjs.org');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.notExpectLog('[ChangesStreamWorker:start]');
 
     // syncMode=all and enableChangesStream = true
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'enableChangesStream', true);
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamWorker:start]');
     app.expectLog('[ChangesStreamService.executeTask:changes] since: ');
     const task = await changesStreamService.findExecuteTask();
@@ -47,35 +57,38 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     const result = await taskService.retryExecuteTimeoutTasks();
     assert(result.processing === 1);
     assert(result.waiting === 0);
-    // mock request https://replicate.npmjs.com/_changes error
-    app.mockHttpclient(/https:\/\/replicate.npmjs.com\/_changes/, () => {
-      throw new Error('mock request replicate _changes error');
-    });
-    await app.runSchedule('ChangesStreamWorker');
-    app.expectLog('[ChangesStreamService.executeTask:error]');
-    app.expectLog('mock request replicate _changes error');
   });
 
   it('should work on replicate: r.cnpmjs.org', async () => {
+    app.mockHttpclient('https://r.cnpmjs.org/', 'GET', {
+      data: await TestUtil.readFixturesFile('r.cnpmjs.org/index.json'),
+      persist: false,
+      repeats: 2,
+    });
+    app.mockHttpclient('https://r.cnpmjs.org/_changes', 'GET', {
+      data: await TestUtil.readFixturesFile('r.cnpmjs.org/_changes.json'),
+      persist: false,
+      repeats: 2,
+    });
     app.mockLog();
     // syncMode=none
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.notExpectLog('[ChangesStreamWorker:start]');
 
     // syncMode=all
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'changesStreamRegistry', 'https://r.cnpmjs.org');
     mock(app.config.cnpmcore, 'changesStreamRegistryMode', 'json');
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.notExpectLog('[ChangesStreamWorker:start]');
 
     // syncMode=all and enableChangesStream = true
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'enableChangesStream', true);
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamWorker:start]');
     app.expectLog('[ChangesStreamService.executeTask:changes] since:');
-    app.expectLog(/, \d{2} new tasks,/);
+    app.expectLog(/, \d+ new tasks,/);
     const task = await changesStreamService.findExecuteTask();
     assert(!task);
 
@@ -88,24 +101,28 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     assert(result.processing === 1);
     assert(result.waiting === 0);
     // mock request https://r.cnpmjs.org/_changes error
-    app.mockHttpclient(/https:\/\/r\.cnpmjs\.org\/_changes/, () => {
-      throw new Error('mock request replicate r.cnpmjs.org/_changes error');
+    app.mockHttpclient('https://r.cnpmjs.org/_changes', 'GET', {
+      status: 500,
+      data: 'mock request replicate /_changes error',
+      persist: false,
     });
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamService.executeTask:error]');
-    app.expectLog('mock request replicate r.cnpmjs.org/_changes error');
+    app.expectLog('mock request replicate /_changes error');
   });
 
   it('should mock get update_seq error', async () => {
     app.mockLog();
     mock(app.config.cnpmcore, 'syncMode', 'all');
     mock(app.config.cnpmcore, 'enableChangesStream', true);
-    app.mockHttpclient(/https:\/\/replicate\.npmjs\.com\//, () => {
-      throw new Error('mock request replicate.npmjs.com error');
+    mock(app.config.cnpmcore, 'changesStreamRegistry', 'https://r.cnpmjs.org');
+    app.mockHttpclient(/https:\/\/r\.cnpmjs\.org\//, 'GET', {
+      status: 500,
+      data: 'mock request changes stream error',
     });
-    await app.runSchedule('ChangesStreamWorker');
+    await app.runSchedule(ChangesStreamWorkerPath);
     app.expectLog('[ChangesStreamWorker:start]');
     app.expectLog('[ChangesStreamService.executeTask:error]');
-    app.expectLog('mock request replicate.npmjs.com error');
+    app.expectLog('mock request changes stream error');
   });
 });

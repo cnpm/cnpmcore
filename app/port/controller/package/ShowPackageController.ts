@@ -33,7 +33,7 @@ export class ShowPackageController extends AbstractController {
     const isFullManifests = ctx.accepts([ 'json', abbreviatedMetaType ]) !== abbreviatedMetaType;
     // handle cache
     const cacheEtag = await this.cacheService.getPackageEtag(fullname, isFullManifests);
-    if (cacheEtag) {
+    if (!isSync && cacheEtag) {
       let requestEtag = ctx.request.get('if-none-match');
       if (requestEtag.startsWith('W/')) {
         requestEtag = requestEtag.substring(2);

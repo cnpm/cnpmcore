@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { AbstractBinary, FetchResult, BinaryItem } from './AbstractBinary';
 
 export class NodePreGypBinary extends AbstractBinary {
@@ -32,7 +33,9 @@ export class NodePreGypBinary extends AbstractBinary {
 
         let currentDir = this.dirItems['/'];
         let versionPrefix = '';
-        const remotePath = pkgVersion.binary.remote_path;
+        let remotePath = pkgVersion.binary.remote_path;
+        const napiVersions = pkgVersion.binary.napi_versions ?? [];
+        if (this.binaryConfig.options?.requiredNapiVersions && napiVersions.length === 0) continue;
         if (remotePath?.includes('{version}')) {
           const dirName = remotePath.includes('v{version}') ? `v${version}` : version;
           versionPrefix = `/${dirName}`;
@@ -102,6 +105,41 @@ export class NodePreGypBinary extends AbstractBinary {
               }
             }
           }
+        } else if (binaryFile.includes('{platform}-{arch}-{node_napi_label}-{libc}') && napiVersions.length > 0) {
+          // https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/darwin-arm64-napi-v6-unknown.tar.gz
+          // https://github.com/samizdatco/skia-canvas/blob/2a75801d7cce3b4e4e6ad015a173daefaa8465e6/package.json#L48
+          // "binary": {
+          //   "module_name": "index",
+          //   "module_path": "./lib/v{napi_build_version}",
+          //   "remote_path": "./v{version}",
+          //   "package_name": "{platform}-{arch}-{node_napi_label}-{libc}.tar.gz",
+          //   "host": "https://skia-canvas.s3.us-east-1.amazonaws.com",
+          //   "napi_versions": [
+          //     6
+          //   ]
+          // },
+          for (const platform of nodePlatforms) {
+            const archs = nodeArchs[platform];
+            const libcs = nodeLibcs[platform];
+            for (const arch of archs) {
+              for (const libc of libcs) {
+                for (const napiVersion of napiVersions) {
+                  const name = binaryFile.replace('{platform}', platform)
+                    .replace('{arch}', arch)
+                    .replace('{node_napi_label}', `napi-v${napiVersion}`)
+                    .replace('{libc}', libc);
+                  currentDir.push({
+                    name,
+                    date,
+                    size: '-',
+                    isDir: false,
+                    url: `${this.binaryConfig.distUrl}${versionPrefix}/${name}`,
+                    ignoreDownloadStatuses: [ 404, 403 ],
+                  });
+                }
+              }
+            }
+          }
         } else if (binaryFile.includes('{platform}') && binaryFile.includes('{arch}')) {
           // https://github.com/grpc/grpc-node/blob/master/packages/grpc-tools/package.json#L29
           // "binary": {
@@ -111,17 +149,31 @@ export class NodePreGypBinary extends AbstractBinary {
           //   "package_name": "{platform}-{arch}.tar.gz",
           //   "module_path": "bin"
           // },
+          // handle {configuration}
+          // "binary": {
+          //   "module_name": "wrtc",
+          //   "module_path": "./build/{configuration}/",
+          //   "remote_path": "./{module_name}/v{version}/{configuration}/",
+          //   "package_name": "{platform}-{arch}.tar.gz",
+          //   "host": "https://node-webrtc.s3.amazonaws.com"
+          // },
           for (const platform of nodePlatforms) {
             const archs = nodeArchs[platform];
             for (const arch of archs) {
-              const name = binaryFile.replace('{platform}', platform)
+              const binaryFileName = binaryFile.replace('{platform}', platform)
                 .replace('{arch}', arch);
+              remotePath = remotePath.replace('{module_name}', moduleName)
+                .replace('{name}', this.binaryConfig.category)
+                .replace('{version}', version)
+                .replace('{configuration}', 'Release');
+              const binaryFilePath = join('/', remotePath, binaryFileName);
+              const remoteUrl = `${this.binaryConfig.distUrl}${binaryFilePath}`;
               currentDir.push({
-                name,
+                name: binaryFileName,
                 date,
                 size: '-',
                 isDir: false,
-                url: `${this.binaryConfig.distUrl}/${this.binaryConfig.category}${versionPrefix}/${name}`,
+                url: remoteUrl,
                 ignoreDownloadStatuses: [ 404 ],
               });
             }

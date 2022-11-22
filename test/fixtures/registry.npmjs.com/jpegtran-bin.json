@@ -1,0 +1,3482 @@
+{
+  "_id": "jpegtran-bin",
+  "_rev": "334-7ebe90498c36bfb2697e3789ad7d4db0",
+  "name": "jpegtran-bin",
+  "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+  "dist-tags": {
+    "latest": "7.0.0"
+  },
+  "versions": {
+    "0.1.0": {
+      "name": "jpegtran-bin",
+      "version": "0.1.0",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": "https://github.com/yeoman/node-jpegtran-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "main": "lib/jpegtran-bin.js",
+      "bin": {
+        "jpegtran-bin": "bin/jpegtran-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "node node_modules/mocha/bin/mocha test/test-*.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "devDependencies": {
+        "mocha": "~1.6.0"
+      },
+      "_id": "jpegtran-bin@0.1.0",
+      "dist": {
+        "shasum": "493bbe4b39068c12617d0de717284cd3a2390fa5",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.1.0.tgz",
+        "integrity": "sha512-K/MZbO1zkmYmfoORmfz/cdv8kc3sc1yGe+Pfb5NMx6a/NcgLbySBwk4X/E+27guqqfdSOUQFQZEHor5fZwwJZw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIBSnejg+3upym66dsYVRPa572RLj0AQKs+ZFBPDxTjMoAiARoVUp6fYZGbeeLKGgLMcA7rvXJ4PoXmlolG9Z/K9A+g=="
+          }
+        ]
+      },
+      "_npmVersion": "1.1.65",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.2": {
+      "name": "jpegtran-bin",
+      "version": "0.1.2",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": "https://github.com/yeoman/node-jpegtran-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "main": "lib/jpegtran-bin.js",
+      "bin": {
+        "jpegtran-bin": "bin/jpegtran-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha test/test-*.js",
+        "postinstall": "node build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5"
+      },
+      "devDependencies": {
+        "mocha": "~1.6.0"
+      },
+      "_id": "jpegtran-bin@0.1.2",
+      "dist": {
+        "shasum": "4b51324b0c7b1554a3e06ebc6bcbfeff921eddaa",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.1.2.tgz",
+        "integrity": "sha512-OBs9vP01AJTqY+PjMr4xvIzhoycBpuC33xZC29dt+t9ZXpoEJKvwShAjLks3evEHbiaDffXrSy7EfdOs4tWpoA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDIB0sGY+HCTu/nk/T4t0cLc9wePg4H1/KltFATsd6EjgIgUaljVGN1z2MzTUZTQYlFma/CExMNe2u9rAnSHbQh0gg="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.11",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.3": {
+      "name": "jpegtran-bin",
+      "version": "0.1.3",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": "https://github.com/yeoman/node-jpegtran-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "main": "lib/jpegtran-bin.js",
+      "bin": {
+        "jpegtran-bin": "bin/jpegtran-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha test/test-*.js",
+        "postinstall": "node build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5"
+      },
+      "devDependencies": {
+        "mocha": "~1.6.0"
+      },
+      "_id": "jpegtran-bin@0.1.3",
+      "dist": {
+        "shasum": "07d62c2a27cc923c1cc58d755532146acf40b8e8",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.1.3.tgz",
+        "integrity": "sha512-wgkrU4X4WWdJZD25Y0GST7TGja34wBMlrjKx4s+7pH4H4+dXZ4yeIVKn/NcgrhMg7O1YWoNVJco9eeDEuOQyBA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDt+7CG3+ay6HfnLmAdPlbEsOhtbApm+Odov2H6tJN3cwIhAK2QKRYYKU037OzPK6IXodKcOPVOxJHxo/EksF7foGd/"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.12",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        }
+      ],
+      "directories": {}
+    },
+    "0.1.4": {
+      "name": "jpegtran-bin",
+      "version": "0.1.4",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": "https://github.com/yeoman/node-jpegtran-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        }
+      ],
+      "main": "lib/jpegtran-bin.js",
+      "bin": {
+        "jpegtran-bin": "bin/jpegtran-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node pre-build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5",
+        "mocha": "~1.9.0"
+      },
+      "_id": "jpegtran-bin@0.1.4",
+      "dist": {
+        "shasum": "aa648369c665ab2f8772cfb2504b8c7e923a07b2",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.1.4.tgz",
+        "integrity": "sha512-yH5daARivyJXT2Da6T9l8xrOPSqbj4VHVYe7+JqTMWTGD2Hw7YJ2lAJE6b0gkZR2758CtxsWDTEhnDy6uOqILA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDeyJpUcmx9Hm4asF0jvKaJUkgJNnYcRSJ6ZErHRVHLdwIgSliRfGfSamqKXHODgfdBpTmMe0vEZnJua8DXDtkrvq0="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.18",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.1.5": {
+      "name": "jpegtran-bin",
+      "version": "0.1.5",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": "https://github.com/yeoman/node-jpegtran-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        }
+      ],
+      "main": "lib/jpegtran-bin.js",
+      "bin": {
+        "jpegtran-bin": "bin/jpegtran-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node pre-build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5",
+        "mocha": "~1.9.0",
+        "tar": "~0.1.17",
+        "request": "~2.16.6"
+      },
+      "_id": "jpegtran-bin@0.1.5",
+      "dist": {
+        "shasum": "aec86bd7ef86b1a293667fdcc6c6599b178c0e16",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.1.5.tgz",
+        "integrity": "sha512-wwybo+GeyhpcQTSadE3xdTaD0K63807g0Ew088smplPJjT3e5Mn+qKdm6nvc30Iod2NSwlSnVnWIVXX3t/SSXQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIB876AODMbFIiQ7Ki05A+KjTKiTNWEZ0ircdFkGmzce7AiEA9CYlWHu1iM9jqF49ZU5VIKmlQ65Ts/yegcfwmEy6VXc="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.18",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.1.6": {
+      "name": "jpegtran-bin",
+      "version": "0.1.6",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": "https://github.com/yeoman/node-jpegtran-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        }
+      ],
+      "main": "lib/jpegtran-bin.js",
+      "bin": {
+        "jpegtran-bin": "bin/jpegtran-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node pre-build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5",
+        "mocha": "~1.9.0",
+        "tar": "~0.1.17",
+        "request": "~2.16.6"
+      },
+      "_id": "jpegtran-bin@0.1.6",
+      "dist": {
+        "shasum": "add0d9a173094d61744cb0e6ababb13611e4d9c3",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.1.6.tgz",
+        "integrity": "sha512-H4IUUMdrND5orKHebp9TMebMCGv1GATQyoCMAtO5vqUzqqnTTEdgs9mmbiDR+KSWjfDQD40RploQK3PUNTT9cw==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDyxeBz39mRggdBDF0BPQc1n/wMckJ1kSop5oweAal/wQIhAPmQbveMH05QjcsRYdGtzsrV3/x3Umm/ixphb6WE1hVW"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.18",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.1.7": {
+      "name": "jpegtran-bin",
+      "version": "0.1.7",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": "https://github.com/yeoman/node-jpegtran-bin/issues",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        }
+      ],
+      "main": "lib/jpegtran-bin.js",
+      "bin": {
+        "jpegtran-bin": "bin/jpegtran-bin"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node pre-build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "licenses": [
+        {
+          "type": "BSD"
+        }
+      ],
+      "dependencies": {
+        "colors": "~0.6.0",
+        "which": "~1.0.5",
+        "mocha": "~1.9.0",
+        "tar": "~0.1.17",
+        "request": "~2.16.6"
+      },
+      "_id": "jpegtran-bin@0.1.7",
+      "dist": {
+        "shasum": "233d8e1190243cba8a65bdb348d05b88122dc15a",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.1.7.tgz",
+        "integrity": "sha512-B/3A4vm23eu0fizcXumHBeXcaBZ4L0xmzDHEMquB0BlLp/fJq3lsaKykPuMGXgbAONz2pcd/1uiZTDamuwgnBA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIEgeVc1ZI8jlM4xNwnBUNtxSHezyJ38J93b89TZP3uaxAiAt22ZsHWaaRdkGY6jDq6O/Ex8fGImsTp/7aUrjfoK0ow=="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.2.18",
+      "_npmUser": {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.2.0": {
+      "name": "jpegtran-bin",
+      "version": "0.2.0",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD, Solaris and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-jpegtran-bin/issues"
+      },
+      "license": "BSD",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "main": "lib/jpegtran",
+      "bin": {
+        "jpegtran": "bin/jpegtran.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node pre-build.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "dependencies": {
+        "which": "~1.0.5",
+        "mocha": "~1.12.0",
+        "tar": "~0.1.17",
+        "request": "~2.26.0",
+        "chalk": "~0.2.0",
+        "mkdirp": "~0.3.5"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "test",
+        "build.js",
+        "pre-build.js"
+      ],
+      "_id": "jpegtran-bin@0.2.0",
+      "dist": {
+        "shasum": "ecb855af7f5443cf3c2d3081ba9bf9ef9e7a59e3",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.2.0.tgz",
+        "integrity": "sha512-tcdE+f+A+cdg3n2q11n1jKgPnjHVhfVEA4B1Lh03Z12Qe/SkZ5xTfZZcI1t+NzL1B8ayvJ8w4rNyd0+tNxum4Q==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQC40wRt2CAf3ONyxtHaYZaDI1ItJZkhqcvM+1DAb5RzaAIgVchuq5O1XDzIX+dqFWK+OIzFsvS7e99T4p78c7O7zHI="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.8",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.2.1": {
+      "name": "jpegtran-bin",
+      "version": "0.2.1",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD, Solaris and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-jpegtran-bin/issues"
+      },
+      "license": "BSD",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "main": "lib/jpegtran",
+      "bin": {
+        "jpegtran": "bin/jpegtran.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node lib/check.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.3",
+        "chalk": "~0.2.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.13.0"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "test"
+      ],
+      "_id": "jpegtran-bin@0.2.1",
+      "dist": {
+        "shasum": "7decf8bfb1a4a82400830233f363f7fc93511036",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.2.1.tgz",
+        "integrity": "sha512-FxC83pmGAhesIDzrPHj6kwMz/+V/sWHqeQGkZt1iyW8Lmi55GZE3MohONDUNGMcz29gbQcU1p/mHrOvTFouchQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCrPzlIMjZhrSDgad3xhPnNsBR8Y9XQZygZToW3tIIdtQIgZEJIysA0cZqmk8Oej4ljkIiavs+liyybX30JlYe/8TQ="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.11",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.2.2": {
+      "name": "jpegtran-bin",
+      "version": "0.2.2",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD, Solaris and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-jpegtran-bin/issues"
+      },
+      "license": "BSD",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "main": "lib/jpegtran",
+      "bin": {
+        "jpegtran": "bin/jpegtran.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node lib/check.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.3",
+        "chalk": "~0.2.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.13.0"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "test"
+      ],
+      "_id": "jpegtran-bin@0.2.2",
+      "dist": {
+        "shasum": "5bb07f12e441d7bb9fdd4531aa42bd1adddad347",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.2.2.tgz",
+        "integrity": "sha512-Qbokj4gGaDLLsm6Datf7SS3f+n3TYGyYHKpxnW4VLnpDKGsyA20B/ZsT2I7V6+3sG9W1poNV+7g2IFixQv1IKg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQC/Xmy6y6mN6u1CSfAtxl8+9FbEjlJcw2rJ2P27BDSZBgIgfhUIezhPnH5tUBuNeSsjjPzRsMStXpTqL3q4EPs5LIQ="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.22",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.2.3": {
+      "name": "jpegtran-bin",
+      "version": "0.2.3",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD, Solaris and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-jpegtran-bin/issues"
+      },
+      "license": "BSD",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "main": "lib/jpegtran",
+      "bin": {
+        "jpegtran": "bin/jpegtran.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha",
+        "postinstall": "node lib/check.js"
+      },
+      "engines": {
+        "node": ">=0.8.0"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.1.3",
+        "chalk": "~0.2.0"
+      },
+      "devDependencies": {
+        "mocha": "~1.13.0"
+      },
+      "files": [
+        "bin",
+        "lib",
+        "test"
+      ],
+      "_id": "jpegtran-bin@0.2.3",
+      "dist": {
+        "shasum": "81fa02d7b3330d5db57f369d4a316601220cd854",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.2.3.tgz",
+        "integrity": "sha512-gJu+r/ndUIfA0Q5Pgnp7OewNC+kVRKnPRRe43LGE32ukwJN3lueiVC4yz720SS1hCvG1xhP+e7yV0hf8ImMGzQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIErL9DsmRdp4ulNzKbnMOppKtRJwvG5djXyYeE7ECsF6AiEAhkMiNQh0LxPECXw4gymm+BTrTocACKplDRexkVV9L+U="
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.3.22",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.2.6": {
+      "name": "jpegtran-bin",
+      "version": "0.2.6",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD, Solaris and Windows. Most commonly used to losslessly minify JPEG images.",
+      "keywords": [
+        "jpeg",
+        "jpg",
+        "img",
+        "image",
+        "compress",
+        "minify",
+        "optimize"
+      ],
+      "homepage": "https://github.com/yeoman/node-jpegtran-bin",
+      "bugs": {
+        "url": "https://github.com/yeoman/node-jpegtran-bin/issues"
+      },
+      "license": "BSD",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        }
+      ],
+      "main": "index.js",
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/yeoman/node-jpegtran-bin.git"
+      },
+      "scripts": {
+        "test": "mocha --reporter list --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "dependencies": {
+        "bin-wrapper": "~0.2.0",
+        "chalk": "~0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "~0.1.0",
+        "mocha": "~1.18.2",
+        "rimraf": "~2.2.6"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "test"
+      ],
+      "_id": "jpegtran-bin@0.2.6",
+      "dist": {
+        "shasum": "d083686fef6e8386a710a07687dbcdeea9efab38",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.2.6.tgz",
+        "integrity": "sha512-6tYQfGGVSsDuADd9QYkMzUScMnCfBHw+yODimYfSnvlow3OvQS0xGjO171gWaQ4yJFhV1i56Ew8TZaZZ3n577g==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQC6e3RX74inPsQ61loTqC4D49hoFm7tlrbBJqFyAFl4NgIhAMbetOKkWFBdkjLhLagofL0rlooqMZgV8MHIogBSgYD8"
+          }
+        ]
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "directories": {}
+    },
+    "0.2.7": {
+      "name": "jpegtran-bin",
+      "version": "0.2.7",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD, Solaris and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/imagemin/jpegtran-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "test": "mocha --reporter list --timeout 0",
+        "postinstall": "node index.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "chalk": "^0.4.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin",
+      "_id": "jpegtran-bin@0.2.7",
+      "_shasum": "4e60a85001ac252defe5f7c198976b2e8b21921f",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "4e60a85001ac252defe5f7c198976b2e8b21921f",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.2.7.tgz",
+        "integrity": "sha512-CMqFUz87jiOWlnXwIWl+XC+NF6yQ6nAxquYyk4Kn+XJ7teNB5piOLM5pr1EXgsrR1fAiGV4su6WVVfrf24pXcA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDV8He4nCs86n5YEeW7GV7wNCdMDL6S8bOXVZ7c+pBaHgIhANzl6KMyTXwlDCQNcxtF6A9CAvbevVn12phZEW0PnEfn"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "0.2.8": {
+      "name": "jpegtran-bin",
+      "version": "0.2.8",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD, Solaris and Windows",
+      "license": "BSD",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/imagemin/jpegtran-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "test": "mocha --reporter list --timeout 50000",
+        "postinstall": "node index.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.1.0",
+        "bin-wrapper": "^0.3.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^0.1.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin",
+      "_id": "jpegtran-bin@0.2.8",
+      "_shasum": "759c1be0558de8701f87a90b7ae818d3060f712b",
+      "_from": ".",
+      "_npmVersion": "1.4.9",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "759c1be0558de8701f87a90b7ae818d3060f712b",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-0.2.8.tgz",
+        "integrity": "sha512-sT4XC9cqn6Yp45Bi/0/gTjCovfwJdcWNiNwa48y5J1Fb+qIs+UT9gkMBIMyAx6eMjDmjyFa2TNGwv4uieF1x3w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCWorZI8HBaMnXUpij9TqXoiOZEHbE7rj3OUd/m8EWgigIgRFvRS3LCU4IS1xg19gjCTEBv3O0E3GtQNubPbht4KVE="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.0": {
+      "name": "jpegtran-bin",
+      "version": "1.0.0",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD, Solaris and Windows",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/jpegtran-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --reporter list --timeout 100000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^0.2.0",
+        "bin-wrapper": "^0.4.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "gitHead": "4136af7af8cfea9ab63df8d6526b23909460e9d2",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin",
+      "_id": "jpegtran-bin@1.0.0",
+      "_shasum": "4cf50e4078993e6c1950a031207108575c72abcc",
+      "_from": ".",
+      "_npmVersion": "1.4.21",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "4cf50e4078993e6c1950a031207108575c72abcc",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-1.0.0.tgz",
+        "integrity": "sha512-25PzqGH+wxkoCwyaMXZ3ENLXpT5HIDBV9f6qtg2J/Z4mygvzKtX9Q7OEja/3/cctHTdraAazyas253g25vrrDA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCURAeZNTZGL9L0Wqic69RLBqxjIccj9zi/XaSPOKwihAIgGr4yv+9hNwzigIPdgh0anI0+GY+GD/H1q3UqXBahdIw="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.1": {
+      "name": "jpegtran-bin",
+      "version": "1.0.1",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD, Solaris and Windows",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/jpegtran-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --reporter list --timeout 100000"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^1.0.0",
+        "bin-wrapper": "^1.0.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^1.0.0",
+        "mocha": "^1.18.2",
+        "rimraf": "^2.2.6"
+      },
+      "gitHead": "b8cd74c1911c269d153b72cc901b42b90d4a284e",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin",
+      "_id": "jpegtran-bin@1.0.1",
+      "_shasum": "fcfbc1dd864b08f60cfbd046ebb5329959812b0b",
+      "_from": ".",
+      "_npmVersion": "1.4.23",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "fcfbc1dd864b08f60cfbd046ebb5329959812b0b",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-1.0.1.tgz",
+        "integrity": "sha512-KDw/0sY4o97YfJC4Qd9ZGhjdTn6byRHqj0MRd8/GGB9JIgVS1c0/xh/W1OmY6vsSWtwyjpOe2eK+aZrgmdtLgg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDVCEqJLys8AVUAJILiuqZ6y6/D6QxnturjvbYi6f2cIwIgE2VXBQ22UYfka24bEf+tEivCLlMIEPJFLOFXuxbH7pA="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "1.0.2": {
+      "name": "jpegtran-bin",
+      "version": "1.0.2",
+      "description": "jpegtran (part of libjpeg-turbo) wrapper that makes it seamlessly available as a local dependency on OS X, Linux, FreeBSD, Solaris and Windows",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/jpegtran-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "addyosmani",
+          "email": "addyosmani@gmail.com"
+        },
+        {
+          "name": "paulirish",
+          "email": "paul.irish@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "sboudrias",
+          "email": "admin@simonboudrias.com"
+        },
+        {
+          "name": "eddiemonge",
+          "email": "eddie+npm@eddiemonge.com"
+        },
+        {
+          "name": "passy",
+          "email": "phartig@rdrei.net"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "node test/test.js"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^1.0.0",
+        "bin-wrapper": "^1.0.0",
+        "log-symbols": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "0.0.4",
+        "bin-check": "^1.0.0",
+        "mkdirp": "^0.5.0",
+        "rimraf": "^2.2.8"
+      },
+      "gitHead": "8886cfc62c1badd1c89d9847f7bc09e619988306",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin",
+      "_id": "jpegtran-bin@1.0.2",
+      "_shasum": "66639e97554a10fcd5c6de5d40a34551399d5970",
+      "_from": ".",
+      "_npmVersion": "1.4.23",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "66639e97554a10fcd5c6de5d40a34551399d5970",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-1.0.2.tgz",
+        "integrity": "sha512-7PbpAy+eFlI2hbu332OaOJbT3n/hu/nM6LhiMggoJhbolWp8Uy6zbHchHaY3iOPbNCwVAG/2jXrLW3eFNqzJSQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCKUMVhpxTZ/OMn8Rp00ucDAXiNLpLyBhSrOQddBIiUaQIgSGtwAirtms89ou4QxT218ucH0jlK4wGR2QoAT+1Ixf4="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.0": {
+      "name": "jpegtran-bin",
+      "version": "2.0.0",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/jpegtran-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^1.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "20145f577b78b1b9ca4a32d364402ef1ed953c75",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin",
+      "_id": "jpegtran-bin@2.0.0",
+      "_shasum": "7a4f2ca4c53634aadc337792ee556b639038aa7c",
+      "_from": ".",
+      "_npmVersion": "2.1.5",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "7a4f2ca4c53634aadc337792ee556b639038aa7c",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-2.0.0.tgz",
+        "integrity": "sha512-mh3AUNOJePvZxxllRlQ9/Q7+sJ8l9Wae9xycNnMdnYKIubjBnJWoZKRbSMEasFbNRxpQiUBzLP5dl377PDVqgg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIBao1Rc0CC2lp6PnsJowZrAgW2BK7EM8/v6Hj9TEMFz9AiBjD/cmzSqc2qjMuqOx9AyKkW1Jmxp1SEIAnyozgrdM7Q=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.1": {
+      "name": "jpegtran-bin",
+      "version": "2.0.1",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/jpegtran-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "imagemin-log": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "3a1d8510fca0b22c15cb260e69e1fb87ef81e253",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin",
+      "_id": "jpegtran-bin@2.0.1",
+      "_shasum": "4ba22c622e5dc549bcfc40787638348073974ddb",
+      "_from": ".",
+      "_npmVersion": "2.1.7",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "4ba22c622e5dc549bcfc40787638348073974ddb",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-2.0.1.tgz",
+        "integrity": "sha512-jxdNCGCj+gh1OtScJwQbUHA2aI1uK95LEpm8OiOHNRQelrak9lHEb467HHap1m2I9nhPfcPLF+Q651YHz6RiEA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCW13+Jqu96sWC7Fdz5J7nebRiB2WrsXzWo9cDqH/FTgwIgE99nbLGj3W+OR07A1sqcltF5y29crLetS1s0+Ze2DPg="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "2.0.2": {
+      "name": "jpegtran-bin",
+      "version": "2.0.2",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/imagemin/jpegtran-bin"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "http://sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mkdir test/tmp && node test/test.js && rm -rf test/tmp"
+      },
+      "files": [
+        "cli.js",
+        "index.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^2.0.1",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1"
+      },
+      "gitHead": "d4ec8c23b08c360a32eabc9e2c2f9c8b532421d7",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin",
+      "_id": "jpegtran-bin@2.0.2",
+      "_shasum": "5ffa67f4e51f3396b46afc1b010d038208b7adcb",
+      "_from": ".",
+      "_npmVersion": "2.1.7",
+      "_nodeVersion": "0.10.32",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "5ffa67f4e51f3396b46afc1b010d038208b7adcb",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-2.0.2.tgz",
+        "integrity": "sha512-sElMajNlg7bC22duCsEMuby9IXFyNuKyPWFt5LFgDowuTj6mJ7aaYWeWOdpPNrHsmqw0ufvEIdvfMc/eVf9erQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIHMNB5IzJhYavBAk4Kyxg0vDvXYlYQ5W9ZGWlUxYY59aAiBCkZfpxKnmqkn5hVCnJFN81fnI7l4KW4M3p7ctOHlELQ=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.0": {
+      "name": "jpegtran-bin",
+      "version": "3.0.0",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "0b8e07aef3221b2dd6aacd1d8e392d2705e9acee",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@3.0.0",
+      "_shasum": "2b3da582588b4dcf975e13acac5de0d9479e15ff",
+      "_from": ".",
+      "_npmVersion": "2.11.0",
+      "_nodeVersion": "2.2.1",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "2b3da582588b4dcf975e13acac5de0d9479e15ff",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-3.0.0.tgz",
+        "integrity": "sha512-dmurXMmzjKJgPWDJyA+qJvKvdWYn4bhe5dTjBIVJXFWkprbmKY/MjqWMSFqZYH/L/iP8F51dU1MCQl0dHY/ujA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCLIdC17/+pVroq8K51HcrXYhNMmZt7G8xwE8plBfdZSQIgAu3jlfgnkC+DPcVjPFl8GmC9+5LgnSeWwYJ6KKDUOqw="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.1": {
+      "name": "jpegtran-bin",
+      "version": "3.0.1",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "f76b9231e18352da6cbd31c0fb81c107da2e83f7",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@3.0.1",
+      "_shasum": "13f066f884dc49a739d424ea03edfc1d50161c2e",
+      "_from": ".",
+      "_npmVersion": "2.11.0",
+      "_nodeVersion": "2.2.1",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "13f066f884dc49a739d424ea03edfc1d50161c2e",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-3.0.1.tgz",
+        "integrity": "sha512-maapJdwthprcgVmhDJq5NwKkS7W903gVDF+MFBQwN7ZoDsIA3rKkAQ6WH5zrVEGPM0D/Qb2zkOPUKdskeSkXFg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQDrqZJTNSf8yQBh2X4DUYw9VpD5l437cMQCdsqOWx3/KgIgKXY4PHwTDyN0T3TRH9ee3wTM0P6ETztowNfhb7i7AqY="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.2": {
+      "name": "jpegtran-bin",
+      "version": "3.0.2",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "18ec89f357fca992b6d8845133d1cab6ca5d542d",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@3.0.2",
+      "_shasum": "af8c7791c6247a685267f2f5d4cae58dc1bb23df",
+      "_from": ".",
+      "_npmVersion": "2.11.3",
+      "_nodeVersion": "2.3.0",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "af8c7791c6247a685267f2f5d4cae58dc1bb23df",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-3.0.2.tgz",
+        "integrity": "sha512-M4a43mzPoJWO1/Ki+lwwJKTQfuhQEYFTuMb/utfQRvW4cp/SzcBkrBx2OLHfOpk1o8KdPS2FpcOjAAY+Ix8pCQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCKlGFwBMAJIP/LYslJ58MOv9lsSHvJZKR0hhHhASu7EgIgBfHfK+oAocAWk8/cQ5kOGpfNrVsIhZAJNTHN0XiqknM="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.3": {
+      "name": "jpegtran-bin",
+      "version": "3.0.3",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "07882a344b6c74a5bf9cf007378e1ab69303445c",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@3.0.3",
+      "_shasum": "5acd3a245b171d66e05efc2380ccb34e5254d5a7",
+      "_from": ".",
+      "_npmVersion": "2.11.3",
+      "_nodeVersion": "2.3.0",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "5acd3a245b171d66e05efc2380ccb34e5254d5a7",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-3.0.3.tgz",
+        "integrity": "sha512-uDGzYAtFkmUJDHyAo7Fgi0EXzUjTgxz3yN+Qj7KRoyDHq+/r3KsQi4Tzhe1hsY8YOp88Yk4UxhK/ofPUuaHnEQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCTB2I2oU0M7Nq8eQHQPKsc4K1pLX/7TUjQHQEbBgpQWgIgDLacjE7AGceQ0woge+XceHbTjnq+ZEumV6vCHWr9ZDg="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.4": {
+      "name": "jpegtran-bin",
+      "version": "3.0.4",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^0.0.4",
+        "bin-check": "^1.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "83947e72a68eb6ccd1a323f7d8b453a80dba4819",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@3.0.4",
+      "_shasum": "b1789c7f100e116a0659a008a91fcac9389ba997",
+      "_from": ".",
+      "_npmVersion": "3.1.0",
+      "_nodeVersion": "2.3.0",
+      "_npmUser": {
+        "name": "kevva",
+        "email": "kevinmartensson@gmail.com"
+      },
+      "dist": {
+        "shasum": "b1789c7f100e116a0659a008a91fcac9389ba997",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-3.0.4.tgz",
+        "integrity": "sha512-myRXz21M4K/OVUCdtnPoPy4YGDZzBctuTEFk473puYelMTI9wfnr8pCbEUypXTh/Zvqh1IslrJxdr9Msj4dgWA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCs6IF/PtnaCSMKu2r730LktoXXjITbkm3ExDQenp0INAIgYGcvk8CL5/gCdFMRWGgQrIXy088P+ATzkM1Wg0th1x4="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.5": {
+      "name": "jpegtran-bin",
+      "version": "3.0.5",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^3.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "66d9bd6e54ad8a9a78f8059f35ecdebf6b41a345",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@3.0.5",
+      "_shasum": "f1c6572df049e3b0bd3c6e77b090ed48fa956f7a",
+      "_from": ".",
+      "_npmVersion": "3.3.5",
+      "_nodeVersion": "4.1.2",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "f1c6572df049e3b0bd3c6e77b090ed48fa956f7a",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-3.0.5.tgz",
+        "integrity": "sha512-H2JjVW82MYJx3WbdRiyDgYtR6TA48zBfxE8rJtp7Fr4rufpduGLtzdOjX6K1yo3oEs5UwUGT5ANWs0k7WENqeg==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIF8Ih8f+ZcJJpO0fLU5cl96Sp5VBZJuvF1i0muMaB0EBAiBEV1EMHasDzP1luPPJyGu09fduXOJ/ZJtgfrVIrX58Ew=="
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.0.6": {
+      "name": "jpegtran-bin",
+      "version": "3.0.6",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^3.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2"
+      },
+      "gitHead": "2a3b6ae973a5f44348b6a60bd03a4f8465a39582",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@3.0.6",
+      "_shasum": "d266af271a7603046984fd31c3c2503407b92323",
+      "_from": ".",
+      "_npmVersion": "3.4.0",
+      "_nodeVersion": "5.0.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "d266af271a7603046984fd31c3c2503407b92323",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-3.0.6.tgz",
+        "integrity": "sha512-u0n/+aV6g6BBF58CkR6DVgCZXf23kAepaXfXbfQZPC8WmKpyTegz/SHiq0H3MUcptEbB9Wo1YCtJeEdK5INItA==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQCBNgD2iW3F6rV54CQjQUJKaRTUpUBsIWTjawzWyYuQLAIhALCKh1N0QQkVIsqoinwaKqHaTpOLQWEK4suurB+itPf8"
+          }
+        ]
+      },
+      "directories": {}
+    },
+    "3.1.0": {
+      "name": "jpegtran-bin",
+      "version": "3.1.0",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^3.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "8add29083f481d92b3f43564d8b5bf2dc3213a9e",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@3.1.0",
+      "_shasum": "e6541eba8d97448282a1f8f80a1b6cc9feea55d0",
+      "_from": ".",
+      "_npmVersion": "3.10.5",
+      "_nodeVersion": "6.3.0",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "e6541eba8d97448282a1f8f80a1b6cc9feea55d0",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-3.1.0.tgz",
+        "integrity": "sha512-f/rNDpQkBWI0mG4zFhM6uieoZWp+77IEbw3xpOZaHa9r2jqaR4OT+ijIQl9rIver9dQiqXwH/MS85R2R6fIq9w==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIAgnPuTA2WTqDbPfL6zMfN8Q1CYU0VmQl0IZAkJYgY0nAiEAt2fqB2PjB0lOBn/4COCKkGwKpggLAMKuKpORQfBxfUs="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-16-east.internal.npmjs.com",
+        "tmp": "tmp/jpegtran-bin-3.1.0.tgz_1468439725050_0.5126396052073687"
+      },
+      "directories": {}
+    },
+    "3.2.0": {
+      "name": "jpegtran-bin",
+      "version": "3.2.0",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && mocha --timeout 100000"
+      },
+      "files": [
+        "index.js",
+        "cli.js",
+        "lib",
+        "test"
+      ],
+      "keywords": [
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize"
+      ],
+      "dependencies": {
+        "bin-build": "^2.0.0",
+        "bin-wrapper": "^3.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "bin-check": "^3.0.0",
+        "compare-size": "^1.0.1",
+        "mkdirp": "^0.5.0",
+        "mocha": "^2.2.4",
+        "rimraf": "^2.3.2",
+        "xo": "*"
+      },
+      "gitHead": "8f7752a5f77d1b7a3c7112bf048a8c65e3dcbc4c",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@3.2.0",
+      "_shasum": "f60ecf4ae999c0bdad2e9fbcdf2b6f0981e7a29b",
+      "_from": ".",
+      "_npmVersion": "3.10.9",
+      "_nodeVersion": "7.2.1",
+      "_npmUser": {
+        "name": "shinnn",
+        "email": "snnskwtnb@gmail.com"
+      },
+      "dist": {
+        "shasum": "f60ecf4ae999c0bdad2e9fbcdf2b6f0981e7a29b",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-3.2.0.tgz",
+        "integrity": "sha512-XdDj5m/ssa1Anieqd8/JVQLrIsBZ6A9rYzASfpNI0/o/rfsmQx1TP3zZ1GvkMMW5sVlqM2RcMjy8bg428UE9fQ==",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIF6UElUs7BzkX1hdEr0cw70v33IgK08dxrexbfXZ8VSXAiEAsNTJd5wI8uNAEhJIJOk9741GWWKOKVOEJoE7w0jfD0o="
+          }
+        ]
+      },
+      "_npmOperationalInternal": {
+        "host": "packages-18-east.internal.npmjs.com",
+        "tmp": "tmp/jpegtran-bin-3.2.0.tgz_1481718897365_0.39266888657584786"
+      },
+      "directories": {}
+    },
+    "4.0.0": {
+      "name": "jpegtran-bin",
+      "version": "4.0.0",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "email": "shogo.sensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        }
+      ],
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegtran"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "*",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^1.0.0",
+        "tempy": "^0.2.1",
+        "xo": "*"
+      },
+      "gitHead": "bec8ef6c0cb689b2d6ffac4818b26c510e99066a",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@4.0.0",
+      "_npmVersion": "6.4.1",
+      "_nodeVersion": "10.10.0",
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "dist": {
+        "integrity": "sha512-2cRl1ism+wJUoYAYFt6O/rLBfpXNWG2dUWbgcEkTt5WGMnqI46eEro8T4C5zGROxKRqyKpCBSdHPvt5UYCtxaQ==",
+        "shasum": "d00aed809fba7aa6f30817e59eee4ddf198f8f10",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-4.0.0.tgz",
+        "fileCount": 10,
+        "unpackedSize": 9693,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJb29lJCRA9TVsSAnZWagAAos4P/11+pkoIC6ncZm4fbyOD\nev25npwvVkTkCLC/sNHlGaLEnTki4MQbQY8hb/31A73U0lH/L03jeN5T42hL\nEY2hlTuP5zt5aKWCqT2wkhW9qxzOJyazN8JektJg+9vqcVGpcsBATMaLrZjs\nswwhL8x0aSD8eiF+n4lCgDw2Vww3rJLjwpVoAjGaby3GD/4rOp7FXp6KBBlX\nn/0sZDjvvxCg1xcWJCVKbTVYH8si9pVC5dY31jgRQIYabnlQEyG0BlOL5NoX\nJLY8VKU/FdpgK8UWKHYJn+NEKgZVm8e8xOZlvxkDgHg3q6/4QUDMWlKJPbpy\nix7Rh67j+Dypq6qjMRM7CdA5/ST+nhKp3xkwqhuY0TPbsOPOlcqoedz+eF9H\nC0g/OfW4RswTQRDmpH2Wvh2Z4SYDxyzPWlG0YQO39KIEB1E9cWlKUYQKcXg5\nGVs5Woxr2pEC92HRFznHP2KaiQ+0oW6EcmhKjScsMSFEwB2IniCas/oJNc9j\n9OdFNJqDPqHSYmrSo7MmAXX1JfSaLe6aevdoM5MGe21ZrMPqH1ZVW269jtth\nFsi3AJrew4bjRJ3IyL2z39QGF9od2bpau7OASst0HBQ+ywTiu1mK2UQSRKCA\nz/mfiVJtRmSok4jBWKyKbYwGubk+AgqxKh6xjwPOut7ObMFF9iTMRnKi7++A\nkH0c\r\n=mIhs\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEYCIQDG9d3KfMYEewKDAOH/c4IJC764bncaRwEdjkCLoO8uTQIhAMceVUk3UF5MUa9ajeu5K0Fn338y57qKm8VID3aSl8qP"
+          }
+        ]
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegtran-bin_4.0.0_1541134664764_0.9825150000774954"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.0.0": {
+      "name": "jpegtran-bin",
+      "version": "5.0.0",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegtran"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "416c8ff30514a8e37ad35b94ca054cd868560eaa",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@5.0.0",
+      "_nodeVersion": "12.16.1",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-EUcIHEeuPsmfyczHqbL6vXrD9scYXEvaBDAINfU5jmRjOrcZohRNVjr4Urlj/mDDPeD1KXFH9sA6mmEdhl1zXg==",
+        "shasum": "4fc8c0b3308299fd8ef63b325e2488f96e857e7d",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-5.0.0.tgz",
+        "fileCount": 10,
+        "unpackedSize": 9746,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe0OeSCRA9TVsSAnZWagAASMcQAJfIMb10CbeJZyQRxE2y\nWgwB39Dac/iDa8oRIDgzY4k5JR6v5Crtxs6wqlqerQKZ6tSuschzfnN35lCV\nYLfgf7Fw+kQduDCOY4w/utJ5r9WOWkAS/Kkp7WwsSAA7k9gRzjiEY01cuYct\nfrg7Qq++/LGh35przceFPdw5c3jOgaaDPL3AmREJXZhxGg2vAR6nULbAxn5I\nhH7ZN9Uy3sihY+wxuCk++ncdY4GKJNjPCj00MGCvFTcU3EIoIcE0/zi+Cs6F\ndgfkr5SYrX0GgtiuaCdhZHqc94CdfgtseTJ+SOoBNJqbgTxcf1cIhG/VjTZe\ne8CBdXH5qdkYlT7tWm1Zw12WO3j+3KQAA2shx76QOJsFLvWnyFpprYqsOHYe\nQsjjgJs4oqEpRqCFblwJxb8FQEDBuNjf6HqHXHx1SScwhPzxHSTUT4HMCEiF\n8hD8D82tKA2hI9ProPrmY2GL1BnPvCA2s+rwh28fE7h7G0C8ut9louvdehzm\ns39snv7HOUBTY/7pZETCvzc8gv0T/4Ggp6pB/GZUuBRkaghKMpHtGlyVKGM/\nr07n6tenYcP7cKgLYzXPk1QApnhk+z2z1MAF+oMbXWZb7wYjAckjVW23Do5y\n5xLgnQce+iB7ljRN4p8HnUVa/COSD1blaZgkgzOo5ys+5bPKj38XNTn4wiig\ngYYs\r\n=Qf84\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCIFcauivHo5GECjzMfnpdfIXE9nThuRu02iJUMf7wOHddAiBEsz4npVekegZ9wdcbHRO9SMMZuZNXr2tLnNjsqYUOuw=="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegtran-bin_5.0.0_1590749074230_0.17752046548138378"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.0.1": {
+      "name": "jpegtran-bin",
+      "version": "5.0.1",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegtran"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "62b5465eb692ae8a63472c956111afe987af28e8",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@5.0.1",
+      "_nodeVersion": "12.16.1",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-xQoXWkIEt4ckmvcHd9xG3RcCIn00sf2TshDyFMOAE+46EspEqwqoPWotVI3e55FGWafMa9cEqaoIyrCeWDnFPw==",
+        "shasum": "3cecaa471726bbcb66adabeeb544c409b17c73e5",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-5.0.1.tgz",
+        "fileCount": 10,
+        "unpackedSize": 9801,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe0i/3CRA9TVsSAnZWagAAZBgP/jJYCVBt92/r7Dn5ujYA\nsjiWnppSBj2mb0PLRTYpDOFmyT/wBWfnR+MdazMnROpZ1drlttk1SkD4x+FL\nBZHFKzoqiDclE/4Bp1xo9t/Rpix83BXXwzEfyBXp6Maj0t0wOYu4Bz6bGt9N\nZttSJ7X57aOPH41G9+XT1CC9NgS3dCmgT9Um9u4qjNwujlFp8jJhug76mV1B\nSgeHHpYTR+zJnXVdRqEEFGgVffbpXudHNa/x/mM1OdXqNeq0FlqH2IAaZTdT\n8YgGNyZeR5vwfrGv0O6V8xBQjpPVZLWXkTeaqKWIYJTTV5ofWed6tXY6vUOq\nKG8C0PX76M2r2tfN/wLTZPp/a4xP70fE3d2FLvlAHyPPnH+QwC8S2LWENIxR\nzgcBwYlfy4A/q28QX2/jcuCfrIToW/RRRChoP6cFv2aIICOT4NpSw/YBEvu8\nRkTF7Gx8DO53Q8mAoLj7TFROKhDocIe29qwJjAvKTrjt7cVPoxMq4ONRJ+xF\n3oaRrLb86fqgbVqm6CUVEmxdxjOufGKslyiBasY8Dwu3E/nuSU57aIXFrSBD\nlCNAghKdzlgfbHDudVkww5OwXwhQYOxOJ7/JLoxClnPBzpcmvjiRwIwDOEC9\nV7V0rGiCZ7Jk4CjelS8DfEQhW5MVFNC/IIyW2z+0AAjGaYRyXI/nxf+HVdJq\nHADm\r\n=gKUF\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIHumimMMZphph6O7301RXBfhiYW311dz5qE8F/Ynt0O2AiEA9T/MaXlDe++iULUnFCShhn1RP47fHI+V7d+OiGIxXFI="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegtran-bin_5.0.1_1590833143345_0.3136274884898951"
+      },
+      "_hasShrinkwrap": false
+    },
+    "5.0.2": {
+      "name": "jpegtran-bin",
+      "version": "5.0.2",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "email": "shogosensui@gmail.com",
+          "name": "1000ch"
+        },
+        {
+          "email": "bradbaris@gmail.com",
+          "name": "bradbaris"
+        },
+        {
+          "email": "kevinmartensson@gmail.com",
+          "name": "kevva"
+        },
+        {
+          "email": "daniel@kinokabaret.com",
+          "name": "nothingismagick"
+        },
+        {
+          "email": "snnskwtnb@gmail.com",
+          "name": "shinnn"
+        },
+        {
+          "email": "sindresorhus@gmail.com",
+          "name": "sindresorhus"
+        },
+        {
+          "email": "xhmikosr@gmail.com",
+          "name": "xhmikosr"
+        }
+      ],
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=120s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegtran"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0",
+        "logalot": "^2.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.8.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^4.0.0",
+        "tempy": "^0.5.0",
+        "xo": "^0.30.0"
+      },
+      "gitHead": "5f565a1572777f7960384e9abd27f88ca644d972",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@5.0.2",
+      "_nodeVersion": "12.18.0",
+      "_npmVersion": "6.14.4",
+      "dist": {
+        "integrity": "sha512-4FSmgIcr8d5+V6T1+dHbPZjaFH0ogVyP4UVsE+zri7S9YLO4qAT2our4IN3sW3STVgNTbqPermdIgt2XuAJ4EA==",
+        "shasum": "5870fd7e68317bd203a1c94572bd06ae7732cac3",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-5.0.2.tgz",
+        "fileCount": 11,
+        "unpackedSize": 1660469,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJe+rM4CRA9TVsSAnZWagAAT68QAJaY72sRMrSczMGmceGZ\n+Pho5EN1Y3Umgd1h8CG/Tx7FwdgIXfpizX0jDYzUA97IKFHMOmqQKxVbieb2\n1158jE/SKG1pYo1uhr5cC5P/LQ66Cco8yeXPlj1wTLiZab1c+AkdwD01zcfq\n3ooK67OcmODROGOmY7fiwP8EPEkmdRgX7N3IQQnKt90UA6wUzl5b/IZX4Vwo\noaz0/NI2Sx1FuhH2plWzrQzrHOTj0Sy1iLbLEvlkU/PChWLAxtTxpG8XW0fH\n0b3SyliKV6QJwTnjB9jliqyZJ5CSq64wA84UHFX6SC+EgKQI1afJPgqtJhKM\nQT+yM4L6TN67Rl1FSa748jhL6snEuC9Iq8BLQe1ykfsqZUY/wvgn1Z0abpLy\nAhB9IBOuxdNHNQoimMT4/Yh03TvXS4Io+Y4CItwlLJ2o97JQGegdwOKrER9y\nBvlrCV2UCeDe2ctR1cZRMrlwEH2LR3zAHwHSSEW+18zSSFdoTSai8gUWcFmA\ngCoJ3UjYKCOp35yyD0iwxbm6jZBtyfsPavBZCKTtDfWc6rqZVMkvEv3ZfoGj\nNflETTYx1gQahzQms/ILSKKiIRkzsocn+Fblm3fqEofgGNEV5HUmtsGr2Bw6\nnUpD/CuHxGN4yAMq3l3eCthTirAuvM6t6yHxfWBNiiyzY3jBbvBgG34hHbMc\ndfVd\r\n=KxUO\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIERiqNHJTKxZMLgMpUD9d9CsIw1azr4arqN33Lc0UzKhAiEAyDBvd/6Lf44LbRssUmVCCLgXUpDTQirPJcxyLF86zfo="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegtran-bin_5.0.2_1593488183978_0.6726702832364941"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.0": {
+      "name": "jpegtran-bin",
+      "version": "6.0.0",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "type": "module",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=180s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegtran"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "fda90d35bf491e4292db41b24304d98306f1c7f9",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@6.0.0",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-Q+twrj5hyf74mvqN0WEeboOLDIwrk8GzQ6TyIaai426uzXVwK/t3KVtQ+EXWhuxcj1UAORM9onqJgKSeeiWsZw==",
+        "shasum": "3dae0bfe8e4256ae092475378100ea74eefb162a",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-6.0.0.tgz",
+        "fileCount": 11,
+        "unpackedSize": 1660933,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIFaqXqRgyb/m/sJHxcFvM5cwh2JLlL0aojHcmZs4tE/cAiEA3u4+/skylcwck1WV8xU3s53QKCcUEIRA5ZL33nJqEsQ="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegtran-bin_6.0.0_1634998160896_0.03393953185045451"
+      },
+      "_hasShrinkwrap": false
+    },
+    "6.0.1": {
+      "name": "jpegtran-bin",
+      "version": "6.0.1",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "bradbaris",
+          "email": "bradbaris@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        }
+      ],
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=180s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegtran"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^3.15.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^5.1.1",
+        "tempy": "^2.0.0",
+        "xo": "^0.45.0"
+      },
+      "gitHead": "7ac176dfdba1a1b0717e49f0291f2d294d3ccf2d",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@6.0.1",
+      "_nodeVersion": "16.12.0",
+      "_npmVersion": "8.1.0",
+      "dist": {
+        "integrity": "sha512-WohhhHhqe22de7PU8hXs6Sr5d4BAvkrfA93NR5tGlHyPnFLgvEW/bH+q7fv65JgoiQDsd7SBwwQ/OGRBivU3Mw==",
+        "shasum": "9b86b8be0628c220cce40e7cb25d3541a8253459",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-6.0.1.tgz",
+        "fileCount": 11,
+        "unpackedSize": 1660960,
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJh2wlACRA9TVsSAnZWagAA1l8P/0gaSh+WdMCZ0/7gk27Q\n+zq+EaCes1UwW6GrZKcNwjbCmGiUDe7B5zTdhj/CCb/9TF2EpBSeM9S0KGZw\nCvL+aCYMqkj2R3HiPM84qMufN8kdAy9TZWUAeBmMCzh6PiU+psgPn6FdLqyR\noJ/TV/1UkdM+HLnvOX7OyLD3lif2NCU3gcK8tGJFpo5hD/sc7i7mKECBE7vK\n1g2fH1V1hPf3oPck58/D17FbYYZLP+86zFC70qTSWFjrl4F2pwGRTvEBEK1m\nIkpyRhfM4N7MxoK1W6F79hvLUhFuQ7n8xZyPasWZNKj9+DTkNPAK5DXPQvJi\nwU8IXQYQschrnX5nkUrlUMdX4QFoCy5EaqPG7QAdhpEosvqDwbCLvJ8I9oLy\n1oOoEFWhgWGCMwsnP1bGmpsi0LAp8aRULT4NT3Me/5nvwsf3mcztvJ/uK58o\nomk5jV3uumYVgjLwf2j0700loKe+a7dMm8/exzcrodMmD2QDArDSRXxiuh6Y\nT0kB8Y4DHGlQbrs2nEzPjauuEteFEnJnS6F4bivJ5OywnuqzuUnZLLZbDisa\nmhOBP3+uoTKbXTmHcW2wsksH6WEIE80shC6OcNq+web3hoDrJr4zYlotGwy5\n25gKGeZdb3qf+EiADJGWg2z13ozzrD1+qVvYau1jLOF6s/cMWbnFkvDrvvkZ\nqgXl\r\n=ZIpV\r\n-----END PGP SIGNATURE-----\r\n",
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIHaY/kymPxyUYQ0m/hfTJQL+cexDsMX07KV5nfCKsv4VAiEA6iGDDjmCBZi3d2CevSikBoY1f041HhO7/6+ZPEDiuvY="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegtran-bin_6.0.1_1636523435718_0.7950661635133716"
+      },
+      "_hasShrinkwrap": false
+    },
+    "7.0.0": {
+      "name": "jpegtran-bin",
+      "version": "7.0.0",
+      "description": "jpegtran (part of libjpeg-turbo) bin-wrapper that makes it seamlessly available as a local dependency",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+      },
+      "type": "module",
+      "exports": "./index.js",
+      "author": {
+        "name": "Sindre Sorhus",
+        "email": "sindresorhus@gmail.com",
+        "url": "sindresorhus.com"
+      },
+      "maintainers": [
+        {
+          "name": "nothingismagick",
+          "email": "denjell@sfosc.org"
+        },
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "kevva",
+          "email": "kevinmartensson@gmail.com"
+        },
+        {
+          "name": "1000ch",
+          "email": "shogosensui@gmail.com"
+        },
+        {
+          "name": "xhmikosr",
+          "email": "xhmikosr@gmail.com"
+        },
+        {
+          "name": "shinnn",
+          "email": "snnskwtnb@gmail.com"
+        }
+      ],
+      "bin": {
+        "jpegtran": "cli.js"
+      },
+      "engines": {
+        "node": "^14.13.1 || >=16.0.0"
+      },
+      "scripts": {
+        "postinstall": "node lib/install.js",
+        "test": "xo && ava --timeout=180s"
+      },
+      "keywords": [
+        "imagemin",
+        "compress",
+        "image",
+        "img",
+        "jpeg",
+        "jpg",
+        "minify",
+        "optimize",
+        "jpegtran"
+      ],
+      "dependencies": {
+        "bin-build": "^3.0.0",
+        "bin-wrapper": "^4.0.0"
+      },
+      "devDependencies": {
+        "ava": "^4.2.0",
+        "bin-check": "^4.0.1",
+        "compare-size": "^3.0.0",
+        "execa": "^6.1.0",
+        "tempy": "^3.0.0",
+        "xo": "^0.48.0"
+      },
+      "gitHead": "04c82c896f54082e011bdb19776a29f443a91412",
+      "bugs": {
+        "url": "https://github.com/imagemin/jpegtran-bin/issues"
+      },
+      "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+      "_id": "jpegtran-bin@7.0.0",
+      "_nodeVersion": "16.13.2",
+      "_npmVersion": "8.5.5",
+      "dist": {
+        "integrity": "sha512-8ecI4vXIV7eI2+nzRQsHAVaQVBGDotUY76CJZhlYaBAljBnK/509+sGGCs8eJyiS5N4tOcYZS+8Q4KgzorqlBA==",
+        "shasum": "9da72fc9e59b3cd45f2bafc5324c56c341141ae7",
+        "tarball": "https://registry.npmjs.org/jpegtran-bin/-/jpegtran-bin-7.0.0.tgz",
+        "fileCount": 11,
+        "unpackedSize": 1660970,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEQCID4mvd9UdIgfHnyzNGThqo8WZvCZ0iyMZS0iGi0a5GDXAiBohdfiGERWbE74xEB0VDDPEj6ReuTXuZSTBUaPqkLKoA=="
+          }
+        ],
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJifOqqACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2Vmq4UQ/+I/MlWZK1aGZhsQxSlsin5Soqz2CTC4qvOppo3Rc1U2ZypGtN\r\nzlz1R7g8hF8RWcT62QJZxGOA+QIvN7Wyeo4a2ANxNrw49+pjWRN6MKXq7Ngn\r\nmneutqYUyrxusvs/Hz0yE/eY9AuJbLL4QWjwS5huJw7syj25hftBOzWoYmkY\r\nmp3FiOxpJ/XlfKgjg8M1q8RGsCMh/M04VQu3/JWpYX58nQLpTuRc9Yg9/oig\r\nWX+N48lSl1Nal4iMQ4QfPYU9OGo/JVBd1mBjv8d9FqB4s4Gs0xlGnGGFZco3\r\nQ+wK18623Fv4GWwQo/vPDJY2Q4MCjXOp5PWxzJQ/Uc0rhnGBmKNEOsH2B8Xb\r\nqmcB4ru0NGQ+fZQVcXqtlhcxoX+5ei2rV9UBGvT734qm/2I1vDUE8FeOElNP\r\nqGz+Eglfr/pRChEey/6SLiJakFMl0Er6Yu0cTShNH3AciKc7Dxc02sEmB2TM\r\nSdpltkWYfFbvKRpdhXY9h9BWiyzNiXWNzg1PH4V8PB/P2kk8XxlkcH+g9pGs\r\nUFfIKRa5W6V9h6i6T3P2ikk9dHWU4gqw+TY9avK3s/JpyFzKRrF7FHOtFaub\r\nNC7tdUrRC7CyKlPnLGqEkqk1nh8aNHjPuujBqxRupPHvc4DKeYOlyikImPfx\r\nNwRrG0AZ85ahKzl5SZJy1W3SeH5M8qnrNaI=\r\n=hHNv\r\n-----END PGP SIGNATURE-----\r\n"
+      },
+      "_npmUser": {
+        "name": "1000ch",
+        "email": "shogosensui@gmail.com"
+      },
+      "directories": {},
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/jpegtran-bin_7.0.0_1652353706101_0.30381800250014446"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "readme": "# jpegtran-bin ![GitHub Actions Status](https://github.com/imagemin/jpegtran-bin/workflows/test/badge.svg?branch=main)\n\n> [libjpeg-turbo](http://libjpeg-turbo.virtualgl.org/) is a derivative of libjpeg that uses SIMD instructions (MMX, SSE2, NEON) to accelerate baseline JPEG compression and decompression on x86, x86-64, and ARM systems. On such systems, libjpeg-turbo is generally 2-4x as fast as the unmodified version of libjpeg, all else being equal.\n\nYou probably want [`imagemin-jpegtran`](https://github.com/imagemin/imagemin-jpegtran) instead.\n\n\n## Install\n\n```\n$ npm install --save jpegtran-bin\n```\n\n\n## Usage\n\n```js\nimport {execFile} from 'node:child_process';\nimport jpegtran from 'jpegtran-bin';\n\nexecFile(jpegtran, ['-outfile', 'output.jpg', 'input.jpg'], error => {\n\tconsole.log('Image minified!');\n});\n```\n\n\n## CLI\n\n```\n$ npm install --global jpegtran-bin\n```\n\n```\n$ jpegtran --help\n```\n\n\n## License\n\nMIT © [Imagemin](https://github.com/imagemin)\n",
+  "maintainers": [
+    {
+      "name": "nothingismagick",
+      "email": "denjell@sfosc.org"
+    },
+    {
+      "name": "sindresorhus",
+      "email": "sindresorhus@gmail.com"
+    },
+    {
+      "name": "kevva",
+      "email": "kevinmartensson@gmail.com"
+    },
+    {
+      "name": "1000ch",
+      "email": "shogosensui@gmail.com"
+    },
+    {
+      "name": "xhmikosr",
+      "email": "xhmikosr@gmail.com"
+    },
+    {
+      "name": "shinnn",
+      "email": "snnskwtnb@gmail.com"
+    }
+  ],
+  "time": {
+    "modified": "2022-06-19T04:52:54.253Z",
+    "created": "2012-12-06T20:44:30.691Z",
+    "0.1.0": "2012-12-06T20:44:32.587Z",
+    "0.1.2": "2013-03-04T00:00:14.587Z",
+    "0.1.3": "2013-03-06T22:41:42.608Z",
+    "0.1.4": "2013-04-08T17:38:05.730Z",
+    "0.1.5": "2013-04-18T17:18:11.726Z",
+    "0.1.6": "2013-05-04T14:42:07.122Z",
+    "0.1.7": "2013-05-04T14:53:12.273Z",
+    "0.2.0": "2013-08-23T11:15:35.220Z",
+    "0.2.1": "2013-11-20T11:49:34.224Z",
+    "0.2.2": "2013-12-02T16:30:29.151Z",
+    "0.2.3": "2014-01-13T12:21:17.400Z",
+    "0.2.4": "2014-03-21T13:22:27.714Z",
+    "0.2.5": "2014-03-21T16:41:43.681Z",
+    "0.2.6": "2014-03-21T16:54:52.709Z",
+    "0.2.7": "2014-06-19T13:25:20.415Z",
+    "0.2.8": "2014-08-08T14:10:27.461Z",
+    "1.0.0": "2014-08-18T01:29:07.946Z",
+    "1.0.1": "2014-09-01T01:14:58.657Z",
+    "1.0.2": "2014-09-08T10:37:11.886Z",
+    "2.0.0": "2014-10-20T15:33:44.802Z",
+    "2.0.1": "2014-11-24T15:01:25.154Z",
+    "2.0.2": "2014-12-08T13:05:54.324Z",
+    "3.0.0": "2015-06-06T15:11:55.063Z",
+    "3.0.1": "2015-06-06T15:13:39.077Z",
+    "3.0.2": "2015-06-16T18:05:36.547Z",
+    "3.0.3": "2015-07-03T19:05:19.760Z",
+    "3.0.4": "2015-07-04T14:26:31.177Z",
+    "3.0.5": "2015-10-10T17:45:24.116Z",
+    "3.0.6": "2015-11-13T17:43:00.883Z",
+    "3.1.0": "2016-07-13T19:55:28.394Z",
+    "3.2.0": "2016-12-14T12:34:59.299Z",
+    "4.0.0": "2018-11-02T04:57:44.876Z",
+    "5.0.0": "2020-05-29T10:44:34.357Z",
+    "5.0.1": "2020-05-30T10:05:43.498Z",
+    "5.0.2": "2020-06-30T03:36:24.201Z",
+    "6.0.0": "2021-10-23T14:09:21.112Z",
+    "6.0.1": "2021-11-10T05:50:35.901Z",
+    "7.0.0": "2022-05-12T11:08:26.293Z"
+  },
+  "author": {
+    "name": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imagemin/jpegtran-bin.git"
+  },
+  "users": {
+    "passy": true,
+    "carles": true,
+    "t1st3": true,
+    "yi": true,
+    "simonjie": true
+  },
+  "homepage": "https://github.com/imagemin/jpegtran-bin#readme",
+  "keywords": [
+    "imagemin",
+    "compress",
+    "image",
+    "img",
+    "jpeg",
+    "jpg",
+    "minify",
+    "optimize",
+    "jpegtran"
+  ],
+  "bugs": {
+    "url": "https://github.com/imagemin/jpegtran-bin/issues"
+  },
+  "license": "MIT",
+  "readmeFilename": "readme.md"
+}

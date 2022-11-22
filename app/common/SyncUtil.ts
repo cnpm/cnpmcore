@@ -6,7 +6,7 @@ export function isSyncWorkerRequest(ctx: EggContext) {
   if (!isSyncWorkerRequest) {
     const ua = ctx.headers['user-agent'] || '';
     // old sync client will request with these user-agent
-    if (ua.indexOf('npm_service.cnpmjs.org/') !== -1) {
+    if (ua.includes('npm_service.cnpmjs.org/')) {
       isSyncWorkerRequest = true;
     }
   }

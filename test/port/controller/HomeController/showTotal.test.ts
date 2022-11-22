@@ -5,6 +5,9 @@ import { TestUtil } from 'test/TestUtil';
 import { PackageVersionDownload } from 'app/repository/model/PackageVersionDownload';
 import dayjs from 'app/common/dayjs';
 
+const SavePackageVersionDownloadCounterPath = require.resolve('../../../../app/port/schedule/SavePackageVersionDownloadCounter');
+const UpdateTotalDataPath = require.resolve('../../../../app/port/schedule/UpdateTotalData');
+
 describe('test/port/controller/HomeController/showTotal.test.ts', () => {
   let ctx: Context;
   beforeEach(async () => {
@@ -62,8 +65,8 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         .get('/@cnpm/home1/-/home1-1.0.1.tgz');
       await app.httpRequest()
         .get('/@cnpm/home2/-/home2-2.0.0.tgz');
-      await app.runSchedule('SavePackageVersionDownloadCounter');
-      await app.runSchedule('UpdateTotalData');
+      await app.runSchedule(SavePackageVersionDownloadCounterPath);
+      await app.runSchedule(UpdateTotalDataPath);
 
       res = await app.httpRequest()
         .get('/');
@@ -136,7 +139,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       row[`d${lastYearDate}`] = 1;
       await row.save();
 
-      await app.runSchedule('UpdateTotalData');
+      await app.runSchedule(UpdateTotalDataPath);
       res = await app.httpRequest()
         .get('/');
       assert(res.status === 200);

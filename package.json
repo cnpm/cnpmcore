@@ -1,22 +1,50 @@
 {
   "name": "cnpmcore",
-  "version": "1.0.0-rc.1",
+  "version": "2.5.2",
   "description": "npm core",
-  "main": "index.js",
   "files": [
     "dist/**/*"
   ],
+  "main": "./dist/app.js",
+  "typings": "./dist/app",
+  "exports": {
+    "./common/package.json": "./dist/app/common/package.json",
+    "./common/*": {
+      "type": "./dist/app/common",
+      "node": "./dist/app/common/*.js"
+    },
+    "./core/package.json": "./dist/app/core/package.json",
+    "./core/*": {
+      "type": "./dist/app/core",
+      "node": "./dist/app/core/*.js"
+    },
+    "./infra/package.json": "./dist/app/infra/package.json",
+    "./infra/*": {
+      "type": "./dist/app/infra",
+      "node": "./dist/app/infra/*.js"
+    },
+    "./port/package.json": "./dist/app/port/package.json",
+    "./port/*": {
+      "type": "./dist/app/port",
+      "node": "./dist/app/port/*.js"
+    },
+    "./repository/package.json": "./dist/app/repository/package.json",
+    "./repository/*": {
+      "type": "./dist/app/repository",
+      "node": "./dist/app/repository/*.js"
+    }
+  },
   "scripts": {
     "contributor": "git-contributor",
-    "dev": "egg-bin dev",
+    "dev": "DEBUG_LOCAL_SQL=true egg-bin dev",
     "debug": "egg-bin debug",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "npm run lint:fix && npm run test-local",
-    "prepare-database": "ts-node test/prepare.ts",
-    "test-local": "npm run prepare-database && egg-bin test -r tsconfig-paths/register --full-trace --reporter dot",
-    "t": "npm run lint:fix && npm run prepare-database && egg-bin test --changed -r tsconfig-paths/register --full-trace --reporter dot",
-    "cov": "npm run prepare-database && egg-bin cov -r tsconfig-paths/register --full-trace --reporter dot",
+    "prepare-database": "rm -rf dist && ts-node test/prepare.ts",
+    "test-local": "npm run prepare-database && egg-bin test -r tsconfig-paths/register --full-trace",
+    "t": "npm run lint:fix && npm run prepare-database && egg-bin test --changed -r tsconfig-paths/register --full-trace",
+    "cov": "npm run prepare-database && egg-bin cov -r tsconfig-paths/register --full-trace",
     "ci": "npm run lint && npm run cov",
     "clean": "tsc -b --clean && rm -rf dist",
     "tsc": "npm run clean && ets && tsc -p ./tsconfig.json",
@@ -37,20 +65,22 @@
     "npm"
   ],
   "dependencies": {
-    "@eggjs/tegg": "^0.1.1",
-    "@eggjs/tegg-config": "^0.1.0",
-    "@eggjs/tegg-controller-plugin": "^0.1.1",
-    "@eggjs/tegg-eventbus-plugin": "^0.1.17",
-    "@eggjs/tegg-orm-decorator": "^0.1.5",
-    "@eggjs/tegg-orm-plugin": "^0.1.5",
-    "@eggjs/tegg-plugin": "^0.1.1",
+    "@eggjs/tegg": "^1.4.0",
+    "@eggjs/tegg-aop-plugin": "^1.3.2",
+    "@eggjs/tegg-config": "^1.0.0",
+    "@eggjs/tegg-controller-plugin": "^1.3.2",
+    "@eggjs/tegg-eventbus-plugin": "^1.3.2",
+    "@eggjs/tegg-orm-decorator": "^1.4.0",
+    "@eggjs/tegg-orm-plugin": "^2.1.0",
+    "@eggjs/tegg-plugin": "^1.3.2",
+    "@eggjs/tegg-schedule-plugin": "^2.2.0",
     "@eggjs/tsconfig": "^1.0.0",
     "@node-rs/crc32": "^1.2.2",
     "@sinclair/typebox": "^0.23.0",
     "base-x": "^3.0.9",
     "bson-objectid": "^2.0.1",
     "dayjs": "^1.10.7",
-    "egg": "^2.29.4",
+    "egg": "^3.1.0",
     "egg-cors": "^2.2.3",
     "egg-errors": "^2.3.0",
     "egg-redis": "^2.4.0",
@@ -59,27 +89,31 @@
     "egg-typebox-validate": "^2.0.0",
     "fs-cnpm": "^2.4.0",
     "ioredis": "^4.28.3",
-    "leoric": "^1.15.0",
+    "leoric": "^2.6.2",
+    "lodash": "^4.17.21",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.0",
-    "oss-cnpm": "^3.0.1",
+    "oss-cnpm": "^4.0.0",
     "p-map": "^4.0.0",
     "semver": "^7.3.5",
     "ssri": "^8.0.1",
     "type-fest": "^2.5.3",
+    "urllib": "^3.3.0",
     "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^9.0.0",
+    "@types/mysql": "^2.15.21",
+    "@types/semver": "^7.3.12",
     "coffee": "^5.4.0",
     "egg-bin": "^4.16.4",
-    "egg-mock": "^4.2.0",
+    "egg-mock": "^5.0.1",
     "eslint": "^7.32.0",
     "eslint-config-egg": "^9.0.0",
     "git-contributor": "^1.0.10",
     "npm-cli-login": "^1.0.0",
     "ts-node": "^10.4.0",
-    "typescript": "^4.3.5"
+    "typescript": "~4.7.0"
   },
   "author": "killagu",
   "license": "MIT",

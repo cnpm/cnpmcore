@@ -8,11 +8,14 @@ import {
   EggContext,
   Inject,
   HTTPQuery,
+  BackgroundTaskHelper,
 } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil';
+import { Task } from '../../core/entity/Task';
 import { PackageSyncerService } from '../../core/service/PackageSyncerService';
+import { RegistryManagerService } from '../../core/service/RegistryManagerService';
 import { TaskState } from '../../common/enum/Task';
 import { SyncPackageTaskRule, SyncPackageTaskType } from '../typebox';
 
@@ -21,25 +24,67 @@ export class PackageSyncController extends AbstractController {
   @Inject()
   private packageSyncerService: PackageSyncerService;
 
+  @Inject()
+  private backgroundTaskHelper: BackgroundTaskHelper;
+
+  @Inject()
+  private registryManagerService: RegistryManagerService;
+
+  private async _executeTaskAsync(task: Task) {
+    const startTime = Date.now();
+    this.logger.info('[PackageSyncController:executeTask:start] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms',
+      task.taskId, task.targetName, task.attempts, task.data, task.updatedAt,
+      startTime - task.updatedAt.getTime());
+    let result = 'success';
+    try {
+      await this.packageSyncerService.executeTask(task);
+    } catch (err) {
+      result = 'error';
+      this.logger.error(err);
+    } finally {
+      const use = Date.now() - startTime;
+      this.logger.info('[PackageSyncController:executeTask:%s] taskId: %s, targetName: %s, use %sms',
+        result, task.taskId, task.targetName, use);
+    }
+  }
+
   @HTTPMethod({
     // PUT /-/package/:fullname/syncs
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/syncs`,
     method: HTTPMethodEnum.PUT,
   })
   async createSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: SyncPackageTaskType) {
-    if (!this.enableSyncAll) {
+    if (!this.enableSync) {
       throw new ForbiddenError('Not allow to sync package');
     }
     const tips = data.tips || `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
-    const params = { fullname, tips, skipDependencies: !!data.skipDependencies, syncDownloadData: !!data.syncDownloadData };
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
+
+    const params = {
+      fullname,
+      tips,
+      skipDependencies: !!data.skipDependencies,
+      syncDownloadData: !!data.syncDownloadData,
+      force: !!data.force,
+      // only admin allow to sync history version
+      forceSyncHistory: !!data.forceSyncHistory && isAdmin,
+    };
     ctx.tValidate(SyncPackageTaskRule, params);
     const [ scope, name ] = getScopeAndName(params.fullname);
     const packageEntity = await this.packageRepository.findPackage(scope, name);
-    if (packageEntity?.isPrivate) {
+    const registry = await this.registryManagerService.findByRegistryName(data?.registryName);
+
+    if (!registry && data.registryName) {
+      throw new ForbiddenError(`Can\'t find target registry "${data.registryName}"`);
+    }
+    if (packageEntity?.isPrivate && !registry) {
       throw new ForbiddenError(`Can\'t sync private package "${params.fullname}"`);
     }
     if (params.syncDownloadData && !this.packageSyncerService.allowSyncDownloadData) {
       throw new ForbiddenError('Not allow to sync package download data');
+    }
+    if (registry && packageEntity?.registryId && packageEntity.registryId !== registry.registryId) {
+      throw new ForbiddenError(`The package is synced from ${packageEntity.registryId}`);
     }
     const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     const task = await this.packageSyncerService.createTask(params.fullname, {
@@ -48,9 +93,23 @@ export class PackageSyncController extends AbstractController {
       tips: params.tips,
       skipDependencies: params.skipDependencies,
       syncDownloadData: params.syncDownloadData,
+      forceSyncHistory: params.forceSyncHistory,
+      registryId: registry?.registryId,
     });
     ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
       task.taskId, fullname);
+    if (data.force) {
+      if (isAdmin) {
+        // set background task timeout to 5min
+        this.backgroundTaskHelper.timeout = 1000 * 60 * 5;
+        this.backgroundTaskHelper.run(async () => {
+          ctx.logger.info('[PackageSyncController.createSyncTask:execute-immediately] taskId: %s',
+            task.taskId);
+          // execute task in background
+          await this._executeTaskAsync(task);
+        });
+      }
+    }
     ctx.status = 201;
     return {
       ok: true,
@@ -118,6 +177,8 @@ export class PackageSyncController extends AbstractController {
       tips: `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`,
       skipDependencies: nodeps === 'true',
       syncDownloadData: false,
+      force: false,
+      forceSyncHistory: false,
     };
     const task = await this.createSyncTask(ctx, fullname, options);
     return {

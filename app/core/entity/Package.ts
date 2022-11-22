@@ -11,6 +11,7 @@ interface PackageData extends EntityData {
   description: string;
   abbreviatedsDist?: Dist;
   manifestsDist?: Dist;
+  registryId?: string;
 }
 
 export enum DIST_NAMES {
@@ -36,6 +37,7 @@ export class Package extends Entity {
   description: string;
   abbreviatedsDist?: Dist;
   manifestsDist?: Dist;
+  registryId?: string;
 
   constructor(data: PackageData) {
     super(data);
@@ -46,6 +48,7 @@ export class Package extends Entity {
     this.description = data.description;
     this.abbreviatedsDist = data.abbreviatedsDist;
     this.manifestsDist = data.manifestsDist;
+    this.registryId = data.registryId;
   }
 
   static create(data: EasyData<PackageData, 'packageId'>): Package {

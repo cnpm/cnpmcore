@@ -6,6 +6,7 @@ import mysql from 'mysql';
 import path from 'path';
 import crypto from 'crypto';
 import { getScopeAndName } from '../app/common/PackageUtil';
+import semver from 'semver';
 
 type PackageOptions = {
   name?: string;
@@ -18,6 +19,8 @@ type PackageOptions = {
   distTags?: object | null;
   isPrivate?: boolean;
   libc?: string[];
+  description?: string;
+  registryId?: string;
 };
 
 type UserOptions = {
@@ -52,13 +55,19 @@ export class TestUtil {
   }
 
   static async getTableSqls(): Promise<string> {
-    return await fs.readFile(path.join(__dirname, '../sql/init.sql'), 'utf8');
+    const dirents = await fs.readdir(path.join(__dirname, '../sql'));
+    let versions = dirents.filter(t => path.extname(t) === '.sql').map(t => path.basename(t, '.sql'));
+    versions = semver.sort(versions);
+    const sqls = await Promise.all(versions.map(version => {
+      return fs.readFile(path.join(__dirname, '../sql', `${version}.sql`), 'utf8');
+    }));
+    return sqls.join('\n');
   }
 
-  static async query(sql): Promise<any[]> {
+  static async query(sql: string): Promise<any[]> {
     const conn = this.getConnection();
     return new Promise((resolve, reject) => {
-      conn.query(sql, (err, rows) => {
+      conn.query(sql, (err: Error, rows: any[]) => {
         if (err) {
           return reject(err);
         }
@@ -69,7 +78,7 @@ export class TestUtil {
 
   static getConnection() {
     if (!this.connection) {
-      const config = this.getMySqlConfig();
+      const config: any = this.getMySqlConfig();
       if (process.env.CI) {
         console.log('[TestUtil] connection to mysql: %j', config);
       }
@@ -114,7 +123,7 @@ export class TestUtil {
   static async truncateDatabase() {
     const database = this.getDatabase();
     const tables = await this.getTableNames();
-    await Promise.all(tables.map(table => this.query(`TRUNCATE TABLE ${database}.${table};`)));
+    await Promise.all(tables.map((table: string) => this.query(`TRUNCATE TABLE ${database}.${table};`)));
   }
 
   static get app() {
@@ -136,6 +145,10 @@ export class TestUtil {
 
   static getFixtures(name?: string): string {
     return path.join(__dirname, 'fixtures', name ?? '');
+  }
+
+  static async readFixturesFile(name?: string): Promise<Buffer> {
+    return await fs.readFile(this.getFixtures(name));
   }
 
   static async readJSONFile(filepath: string) {
@@ -185,6 +198,9 @@ export class TestUtil {
       } else if (options.readme) {
         version.readme = pkg.readme = options.readme;
       }
+      if (options.description) {
+        version.description = options.description;
+      }
       if ('distTags' in options) {
         pkg['dist-tags'] = options.distTags;
       } else {
@@ -203,10 +219,11 @@ export class TestUtil {
       .set('user-agent', user.ua)
       .send(pkg)
       .expect(201);
+
     if (options?.isPrivate === false) {
       const [ scope, name ] = getScopeAndName(pkg.name);
       const { Package: PackageModel } = require('../app/repository/model/Package');
-      await PackageModel.update({ scope, name }, { isPrivate: false });
+      await PackageModel.update({ scope, name }, { isPrivate: false, registryId: options?.registryId });
     }
     return { user, pkg };
   }
@@ -276,6 +293,20 @@ export class TestUtil {
     return await this.createUser({
       name: adminName,
     });
+  }
+  static async createRegistryAndScope() {
+    // create success
+    const adminUser = await this.createAdmin();
+    await this.app.httpRequest()
+      .post('/-/registry')
+      .set('authorization', adminUser.authorization)
+      .send(
+        {
+          name: 'custom6',
+          host: 'https://r.cnpmjs.org/',
+          changeStream: 'https://r.cnpmjs.org/_changes',
+          type: 'cnpmcore',
+        });
   }
 
   static async readStreamToLog(urlOrStream) {
