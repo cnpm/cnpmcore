@@ -134,6 +134,65 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         })
         .expect(400);
       assert.equal(res.body.error, '[BAD_REQUEST] header: npm-command expected "owner", but got "adduser"');
+
+      // npm@6: referer: 'xxx [REDACTED]'
+      // npm@>=7: 'npm-command': 'xxx'
+      // when npm version < 7, npm command can get from referer
+      res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', 'npm/6.3.1')
+        .set('referer', 'addUser add someone [REDACTED]')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(400);
+      assert.equal(res.body.error, '[BAD_REQUEST] header: npm-command expected "owner", but got "adduser"');
+    });
+
+    it('should 200 when npm command is npm owner add', async () => {
+      // npm@6: referer: 'xxx [REDACTED]'
+      // npm@>=7: 'npm-command': 'xxx'
+
+      // npm version < 7
+      const user = await TestUtil.createUser();
+      let res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', 'npm/6.3.1')
+        .set('referer', 'owner add someone [REDACTED]')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(200);
+      assert.equal(res.statusCode, 200);
+      assert.deepEqual(res.body, { ok: true });
+
+      // npm version >= 7
+      res = await app.httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', 'npm/7.3.1')
+        .set('referer', '')
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        })
+        .expect(200);
+      assert.equal(res.statusCode, 200);
+      assert.deepEqual(res.body, { ok: true });
     });
 
     it('should 403 when npm client invalid', async () => {
