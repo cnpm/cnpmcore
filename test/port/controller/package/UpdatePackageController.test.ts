@@ -151,10 +151,11 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           ],
         })
         .expect(400);
-      assert.equal(res.body.error, '[BAD_REQUEST] header: npm-command expected "owner", but got "adduser"');
+      assert.equal(res.body.error, '[BAD_REQUEST] header: npm-command expected "owner", but got "addUser"');
     });
 
     it('should 200 when npm command is npm owner add', async () => {
+      mock(app.config.cnpmcore, 'enableNpmClientAndVersionCheck', false);
       // npm@6: referer: 'xxx [REDACTED]'
       // npm@>=7: 'npm-command': 'xxx'
 
@@ -162,7 +163,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
       const user = await TestUtil.createUser();
       let res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
-        .set('authorization', user.authorization)
+        .set('authorization', publisher.authorization)
         .set('user-agent', 'npm/6.3.1')
         .set('referer', 'owner add someone [REDACTED]')
         .send({
