@@ -1,4 +1,13 @@
 
+2.6.0 / 2022-11-23
+==================
+
+**features**
+  * [[`be8387d`](http://github.com/cnpm/cnpmcore/commit/be8387dfa48b9487156542000a93081fa823694a)] - feat: Support canvas sync from different binary (#357) (Ke Wu <<gemwuu@163.com>>)
+
+**fixes**
+  * [[`d6c4cf5`](http://github.com/cnpm/cnpmcore/commit/d6c4cf5029ca6450064fc05696a8624b6c36f0b2)] - fix: duplicate binary task (#354) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
 2.5.2 / 2022-11-11
 ==================
 
