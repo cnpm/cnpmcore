@@ -18,6 +18,7 @@ export type BinaryTaskConfig = {
   syncer: SyncerClass;
   repo: string;
   distUrl: string;
+  mergeCategory?: string;
   ignoreDirs?: string[];
   ignoreFiles?: string[];
   options?: {
@@ -637,13 +638,6 @@ const binaries: {
     repo: 'eugeneware/ffmpeg-static',
     distUrl: 'https://github.com/eugeneware/ffmpeg-static/releases',
   },
-  canvas: {
-    category: 'canvas',
-    description: 'Node canvas is a Cairo backed Canvas implementation for NodeJS.',
-    syncer: SyncerClass.GithubBinary,
-    repo: 'Automattic/node-canvas',
-    distUrl: 'https://github.com/Automattic/node-canvas/releases',
-  },
   nodejieba: {
     category: 'nodejieba',
     description: '"结巴"中文分词的Node.js版本',
@@ -861,6 +855,43 @@ const binaries: {
     syncer: SyncerClass.GithubBinary,
     repo: 'dragonflyoss/image-service',
     distUrl: 'https://github.com/dragonflyoss/image-service/releases',
+  },
+  canvas: {
+    category: 'canavs',
+    // canvas@<=2.6.1 二进制需要从 node-canvas-prebuilt 下载
+    mergeCategory: 'node-canvas-prebuilt',
+    description: 'Node canvas is a Cairo backed Canvas implementation for NodeJS.',
+    syncer: SyncerClass.GithubBinary,
+    repo: 'Automattic/node-canvas',
+    distUrl: 'https://github.com/Automattic/node-canvas/releases',
+  },
+ 'canvas-prebuilt': {
+    category: 'canvas-prebuilt',
+    distUrl: 'https://github.com/node-gfx/node-canvas-prebuilt/releases',
+    repo: 'chearon/node-canvas-prebuilt',
+    description: 'Prebuilt versions of node-canvas as a drop-in replacement',
+    syncer: SyncerClass.GithubBinary,
+    options: {
+      nodeArchs: {
+        linux: [ 'x64' ],
+        darwin: [ 'x64' ],
+        win32: [ 'x64' ],
+      },
+    },
+  },
+  'node-canvas-prebuilt': {
+    category: 'node-canvas-prebuilt',
+    distUrl: 'https://github.com/node-gfx/node-canvas-prebuilt/releases',
+    repo: 'node-gfx/node-canvas-prebuilt',
+    description: 'Repo used to build binaries for node-canvas on CI',
+    syncer: SyncerClass.GithubBinary,
+    options: {
+      nodeArchs: {
+        linux: [ 'x64' ],
+        darwin: [ 'x64' ],
+        win32: [ 'x64' ],
+      },
+    },
   },
 };
 

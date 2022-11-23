@@ -74,7 +74,34 @@ export class BinarySyncerService extends AbstractService {
   }
 
   public async listRootBinaries(binaryName: string) {
-    return await this.binaryRepository.listBinaries(binaryName, '/');
+    // 通常 binaryName 和 category 是一样的，但是有些特殊的 binaryName 会有多个 category，比如 canvas
+    // 所以查询 canvas 的时候，需要将 binaryName 和 category 的数据都查出来
+    const {
+      category,
+      mergeCategory,
+    } = binaries[binaryName];
+    const reqs = [
+      this.binaryRepository.listBinaries(binaryName, '/'),
+    ];
+    if (mergeCategory && mergeCategory !== category) {
+      reqs.push(this.binaryRepository.listBinaries(mergeCategory, '/'));
+    }
+
+    const [
+      rootBinary,
+      categoryBinary,
+    ] = await Promise.all(reqs);
+
+    const versions = rootBinary.map(b => b.name)
+    categoryBinary?.forEach(b => {
+      const version = b.name;
+      // 只将没有的版本添加进去
+      if (!versions.includes(version)) {
+        rootBinary.push(b);
+      }
+    });
+
+    return rootBinary;
   }
 
   public async downloadBinary(binary: Binary) {

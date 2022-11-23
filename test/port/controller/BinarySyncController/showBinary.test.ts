@@ -3,16 +3,20 @@ import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
-import { SqlcipherBinary } from 'app/common/adapter/binary/SqlcipherBinary';
+import { SqlcipherBinary }  from 'app/common/adapter/binary/SqlcipherBinary';
+import { BinaryRepository } from 'app/repository/BinaryRepository';
+import { Binary } from 'app/core/entity/Binary';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
   let ctx: Context;
   let binarySyncerService: BinarySyncerService;
+  let binaryRepository: BinaryRepository;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     binarySyncerService = await ctx.getEggObject(BinarySyncerService);
+    binaryRepository = await ctx.getEggObject(BinaryRepository);
   });
 
   afterEach(async () => {
@@ -246,6 +250,187 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         assert(res.status === 302);
       }
       app.mockAgent().assertNoPendingInterceptors();
+    });
+
+    it('should merge category binaries when binaryName and category not equal', async () => {
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'node-canvas-prebuilt',
+        parent: '/',
+        name: 'v2.6.1/',
+        isDir: true,
+        size: 0,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'node-canvas-prebuilt',
+        parent: '/',
+        name: 'v2.7.0/',
+        isDir: true,
+        size: 0,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'node-canvas-prebuilt',
+        parent: '/v2.6.1/',
+        name: 'node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+        isDir: false,
+        size: 10,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'canvas',
+        parent: '/v2.7.0/',
+        name: 'canvas-v2.7.0-node-v57-linux-glibc-x64.tar.gz',
+        isDir: false,
+        size: 10,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'canvas',
+        parent: '/',
+        name: 'v2.7.0/',
+        isDir: true,
+        size: 0,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+
+      let res = await app.httpRequest()
+        .get('/-/binary/canvas');
+
+      assert.strictEqual(res.status, 200);
+      assert(res.body);
+      let stableData = res.body.map(d => ({
+        name: d.name,
+        type: d.type,
+        category: d.category,
+        date: d.date,
+        url: d.url,
+      }))
+      assert.deepStrictEqual(stableData, [
+        {
+          category: 'canvas',
+          name: 'v2.7.0/',
+          date: '2021-12-14T13:12:31.587Z',
+          type: 'dir',
+          url: 'http://localhost:7001/-/binary/canvas/v2.7.0/',
+        },
+        {
+          category: 'node-canvas-prebuilt',
+          name: 'v2.6.1/',
+          date: '2021-12-14T13:12:31.587Z',
+          type: 'dir',
+          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/',
+        }
+      ]);
+
+      res = await app.httpRequest()
+        .get('/-/binary/node-canvas-prebuilt');
+
+      assert.strictEqual(res.status, 200);
+      assert(res.body);
+      stableData = res.body.map(d => ({
+        name: d.name,
+        type: d.type,
+        category: d.category,
+        date: d.date,
+        url: d.url,
+      }));
+      assert.deepStrictEqual(stableData, [
+        {
+          category: 'node-canvas-prebuilt',
+          name: 'v2.6.1/',
+          date: '2021-12-14T13:12:31.587Z',
+          type: 'dir',
+          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/',
+        },
+        {
+          category: 'node-canvas-prebuilt',
+          name: 'v2.7.0/',
+          date: '2021-12-14T13:12:31.587Z',
+          type: 'dir',
+          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.7.0/',
+        }
+      ]);
+
+      res = await app.httpRequest()
+        .get('/-/binary/canvas/v2.7.0/');
+
+      assert.strictEqual(res.status, 200);
+      assert(res.body);
+      stableData = res.body.map(d => ({
+        name: d.name,
+        type: d.type,
+        category: d.category,
+        date: d.date,
+        url: d.url,
+      }));
+
+      assert.deepStrictEqual(stableData, [
+        {
+          name: 'canvas-v2.7.0-node-v57-linux-glibc-x64.tar.gz',
+          type: 'file',
+          category: 'canvas',
+          date: '2021-12-14T13:12:31.587Z',
+          url: 'http://localhost:7001/-/binary/canvas/v2.7.0/canvas-v2.7.0-node-v57-linux-glibc-x64.tar.gz'
+        }
+      ]);
+
+      res = await app.httpRequest()
+        .get('/-/binary/canvas/v2.6.1/');
+
+      assert.strictEqual(res.status, 200);
+      assert(res.body);
+      stableData = res.body.map(d => ({
+        name: d.name,
+        type: d.type,
+        category: d.category,
+        date: d.date,
+        url: d.url,
+      }));
+
+      assert.deepStrictEqual(stableData, [
+        {
+          name: 'node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+          type: 'file',
+          category: 'node-canvas-prebuilt',
+          date: '2021-12-14T13:12:31.587Z',
+          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz'
+        }
+      ]);
+
+      res = await app.httpRequest()
+        .get('/-/binary/node-canvas-prebuilt/v2.6.1/');
+
+      assert.strictEqual(res.status, 200);
+      assert(res.body);
+      stableData = res.body.map(d => ({
+        name: d.name,
+        type: d.type,
+        category: d.category,
+        date: d.date,
+        url: d.url,
+      }));
+
+      assert.deepStrictEqual(stableData, [
+        {
+          name: 'node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+          type: 'file',
+          category: 'node-canvas-prebuilt',
+          date: '2021-12-14T13:12:31.587Z',
+          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz'
+        }
+      ]);
+
+      res = await app.httpRequest()
+        .get('/-/binary/canvas/v2.7.1/');
+
+      assert.strictEqual(res.status, 404);
+      res = await app.httpRequest()
+        .get('/-/binary/node-canvas-prebuilt/v2.7.1/');
+
+      assert.strictEqual(res.status, 404);
     });
   });
 });
