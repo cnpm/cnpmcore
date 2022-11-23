@@ -865,7 +865,7 @@ const binaries: {
     repo: 'Automattic/node-canvas',
     distUrl: 'https://github.com/Automattic/node-canvas/releases',
   },
- 'canvas-prebuilt': {
+  'canvas-prebuilt': {
     category: 'canvas-prebuilt',
     distUrl: 'https://github.com/node-gfx/node-canvas-prebuilt/releases',
     repo: 'chearon/node-canvas-prebuilt',

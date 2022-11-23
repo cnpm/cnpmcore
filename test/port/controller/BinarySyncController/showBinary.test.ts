@@ -3,7 +3,7 @@ import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
-import { SqlcipherBinary }  from 'app/common/adapter/binary/SqlcipherBinary';
+import { SqlcipherBinary } from 'app/common/adapter/binary/SqlcipherBinary';
 import { BinaryRepository } from 'app/repository/BinaryRepository';
 import { Binary } from 'app/core/entity/Binary';
 import { TestUtil } from 'test/TestUtil';
@@ -307,7 +307,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         category: d.category,
         date: d.date,
         url: d.url,
-      }))
+      }));
       assert.deepStrictEqual(stableData, [
         {
           category: 'canvas',
@@ -322,7 +322,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           date: '2021-12-14T13:12:31.587Z',
           type: 'dir',
           url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/',
-        }
+        },
       ]);
 
       res = await app.httpRequest()
@@ -351,7 +351,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           date: '2021-12-14T13:12:31.587Z',
           type: 'dir',
           url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.7.0/',
-        }
+        },
       ]);
 
       res = await app.httpRequest()
@@ -373,8 +373,8 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           type: 'file',
           category: 'canvas',
           date: '2021-12-14T13:12:31.587Z',
-          url: 'http://localhost:7001/-/binary/canvas/v2.7.0/canvas-v2.7.0-node-v57-linux-glibc-x64.tar.gz'
-        }
+          url: 'http://localhost:7001/-/binary/canvas/v2.7.0/canvas-v2.7.0-node-v57-linux-glibc-x64.tar.gz',
+        },
       ]);
 
       res = await app.httpRequest()
@@ -396,8 +396,8 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           type: 'file',
           category: 'node-canvas-prebuilt',
           date: '2021-12-14T13:12:31.587Z',
-          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz'
-        }
+          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+        },
       ]);
 
       res = await app.httpRequest()
@@ -419,8 +419,8 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           type: 'file',
           category: 'node-canvas-prebuilt',
           date: '2021-12-14T13:12:31.587Z',
-          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz'
-        }
+          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+        },
       ]);
 
       res = await app.httpRequest()

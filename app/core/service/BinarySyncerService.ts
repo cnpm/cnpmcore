@@ -92,7 +92,7 @@ export class BinarySyncerService extends AbstractService {
       categoryBinary,
     ] = await Promise.all(reqs);
 
-    const versions = rootBinary.map(b => b.name)
+    const versions = rootBinary.map(b => b.name);
     categoryBinary?.forEach(b => {
       const version = b.name;
       // 只将没有的版本添加进去
