@@ -857,7 +857,7 @@ const binaries: {
     distUrl: 'https://github.com/dragonflyoss/image-service/releases',
   },
   canvas: {
-    category: 'canavs',
+    category: 'canvas',
     // canvas@<=2.6.1 二进制需要从 node-canvas-prebuilt 下载
     mergeCategory: 'node-canvas-prebuilt',
     description: 'Node canvas is a Cairo backed Canvas implementation for NodeJS.',
