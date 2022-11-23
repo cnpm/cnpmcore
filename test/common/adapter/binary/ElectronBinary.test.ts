@@ -23,7 +23,7 @@ describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
         data: response,
         status: 200,
       });
-      const binary = new ElectronBinary(ctx.httpclient, ctx.logger, binaries.electron);
+      const binary = new ElectronBinary(ctx.httpclient, ctx.logger, binaries.electron, 'electron');
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);

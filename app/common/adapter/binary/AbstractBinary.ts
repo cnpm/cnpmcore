@@ -19,11 +19,13 @@ export abstract class AbstractBinary {
   protected httpclient: EggContextHttpClient;
   protected logger: EggLogger;
   protected binaryConfig: BinaryTaskConfig;
+  protected binaryName: string;
 
-  constructor(httpclient: EggContextHttpClient, logger: EggLogger, binaryConfig: BinaryTaskConfig) {
+  constructor(httpclient: EggContextHttpClient, logger: EggLogger, binaryConfig: BinaryTaskConfig, binaryName: string) {
     this.httpclient = httpclient;
     this.logger = logger;
     this.binaryConfig = binaryConfig;
+    this.binaryName = binaryName;
   }
 
   abstract fetch(dir: string, params?: any): Promise<FetchResult | undefined>;

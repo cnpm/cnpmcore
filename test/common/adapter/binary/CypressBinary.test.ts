@@ -22,7 +22,7 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('registry.npmjs.com/cypress.json'),
         persist: false,
       });
-      const binary = new CypressBinary(ctx.httpclient, ctx.logger, binaries.cypress);
+      const binary = new CypressBinary(ctx.httpclient, ctx.logger, binaries.cypress, 'cypress');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -51,7 +51,7 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('registry.npmjs.com/cypress.json'),
         persist: false,
       });
-      const binary = new CypressBinary(ctx.httpclient, ctx.logger, binaries.cypress);
+      const binary = new CypressBinary(ctx.httpclient, ctx.logger, binaries.cypress, 'cypress');
       let result = await binary.fetch('/4.0.0/');
       assert(result);
       assert(result.items.length === 4);

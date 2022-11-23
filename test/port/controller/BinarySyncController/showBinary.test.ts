@@ -6,17 +6,20 @@ import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
 import { SqlcipherBinary } from 'app/common/adapter/binary/SqlcipherBinary';
 import { BinaryRepository } from 'app/repository/BinaryRepository';
 import { Binary } from 'app/core/entity/Binary';
+import { NFSClientAdapter } from 'app/infra/NFSClientAdapter';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
   let ctx: Context;
   let binarySyncerService: BinarySyncerService;
   let binaryRepository: BinaryRepository;
+  let nfsClientAdapter: NFSClientAdapter;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     binarySyncerService = await ctx.getEggObject(BinarySyncerService);
     binaryRepository = await ctx.getEggObject(BinaryRepository);
+    nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
   });
 
   afterEach(async () => {
@@ -301,13 +304,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert(res.body);
-      let stableData = res.body.map(d => ({
-        name: d.name,
-        type: d.type,
-        category: d.category,
-        date: d.date,
-        url: d.url,
-      }));
+      let stableData = TestUtil.delDynamicKey(res.body, [ 'id', 'modified' ]);
       assert.deepStrictEqual(stableData, [
         {
           category: 'canvas',
@@ -330,13 +327,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert(res.body);
-      stableData = res.body.map(d => ({
-        name: d.name,
-        type: d.type,
-        category: d.category,
-        date: d.date,
-        url: d.url,
-      }));
+      stableData = TestUtil.delDynamicKey(res.body, [ 'id', 'modified' ]);
       assert.deepStrictEqual(stableData, [
         {
           category: 'node-canvas-prebuilt',
@@ -359,13 +350,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert(res.body);
-      stableData = res.body.map(d => ({
-        name: d.name,
-        type: d.type,
-        category: d.category,
-        date: d.date,
-        url: d.url,
-      }));
+      stableData = TestUtil.delDynamicKey(res.body, [ 'id', 'modified' ]);
 
       assert.deepStrictEqual(stableData, [
         {
@@ -382,13 +367,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert(res.body);
-      stableData = res.body.map(d => ({
-        name: d.name,
-        type: d.type,
-        category: d.category,
-        date: d.date,
-        url: d.url,
-      }));
+      stableData = TestUtil.delDynamicKey(res.body, [ 'id', 'modified' ]);
 
       assert.deepStrictEqual(stableData, [
         {
@@ -405,13 +384,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert(res.body);
-      stableData = res.body.map(d => ({
-        name: d.name,
-        type: d.type,
-        category: d.category,
-        date: d.date,
-        url: d.url,
-      }));
+      stableData = TestUtil.delDynamicKey(res.body, [ 'id', 'modified' ]);
 
       assert.deepStrictEqual(stableData, [
         {
@@ -425,12 +398,66 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       res = await app.httpRequest()
         .get('/-/binary/canvas/v2.7.1/');
-
       assert.strictEqual(res.status, 404);
+
       res = await app.httpRequest()
         .get('/-/binary/node-canvas-prebuilt/v2.7.1/');
 
       assert.strictEqual(res.status, 404);
+    });
+
+    it('should get binary file success', async () => {
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'node-canvas-prebuilt',
+        parent: '/',
+        name: 'v2.6.1/',
+        isDir: true,
+        size: 0,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'node-canvas-prebuilt',
+        parent: '/',
+        name: 'v2.7.0/',
+        isDir: true,
+        size: 0,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'node-canvas-prebuilt',
+        parent: '/v2.6.1/',
+        name: 'node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+        isDir: false,
+        size: 10,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'canvas',
+        parent: '/v2.7.0/',
+        name: 'canvas-v2.7.0-node-v57-linux-glibc-x64.tar.gz',
+        isDir: false,
+        size: 10,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'canvas',
+        parent: '/',
+        name: 'v2.7.0/',
+        isDir: true,
+        size: 0,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+
+        mock(nfsClientAdapter, 'url', (storeKey: string) => {
+          return `https://cdn.mock.com${storeKey}`;
+        });
+      const res = await app.httpRequest()
+        .get('/-/binary/canvas/v2.6.1/canvas-v2.6.1-node-v57-linux-glibc-x64.tar.gz');
+
+      assert.strictEqual(res.status, 302);
+      assert.strictEqual(res.headers.location, 'https://cdn.mock.com/binaries/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz');
     });
   });
 });

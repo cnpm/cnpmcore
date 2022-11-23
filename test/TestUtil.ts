@@ -323,4 +323,13 @@ export class TestUtil {
     }
     return Buffer.concat(chunks).toString();
   }
+
+  static delDynamicKey(obj, keys) {
+    const d = JSON.parse(JSON.stringify(obj));
+    for (const key of keys) {
+      delete d[key];
+    }
+
+    return d;
+  }
 }

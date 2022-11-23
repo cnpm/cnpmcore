@@ -22,7 +22,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('dl.nwjs.io/index.html'),
         persist: false,
       });
-      const binary = new NwjsBinary(ctx.httpclient, ctx.logger, binaries.nwjs);
+      const binary = new NwjsBinary(ctx.httpclient, ctx.logger, binaries.nwjs, 'nwjs');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -44,7 +44,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('nwjs2.s3.amazonaws.com/v0.59.0.xml'),
         persist: false,
       });
-      const binary = new NwjsBinary(ctx.httpclient, ctx.logger, binaries.nwjs);
+      const binary = new NwjsBinary(ctx.httpclient, ctx.logger, binaries.nwjs, 'nwjs');
       let result = await binary.fetch('/v0.59.0/');
       assert(result);
       assert(result.items.length > 0);

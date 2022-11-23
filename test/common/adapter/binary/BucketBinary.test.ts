@@ -22,7 +22,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('chromedriver.storage.googleapis.com/index.xml'),
         persist: false,
       });
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.chromedriver);
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.chromedriver, 'chromedriver');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -51,7 +51,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('chromedriver.storage.googleapis.com/97.0.4692.71.xml'),
         persist: false,
       });
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.chromedriver);
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.chromedriver, 'chromedriver');
       const result = await binary.fetch('/97.0.4692.71/');
       assert(result);
       assert(result.items.length > 0);
@@ -77,7 +77,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
         persist: false,
       });
       // https://selenium-release.storage.googleapis.com/?delimiter=/&prefix=2.43/
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.selenium);
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.selenium, 'selenium');
       const result = await binary.fetch('/2.43/');
       assert(result);
       assert(result.items.length > 0);
@@ -91,7 +91,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('node-inspector.s3.amazonaws.com/index.xml'),
         persist: false,
       });
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries['node-inspector']);
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries['node-inspector'], 'node-inspector');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -105,7 +105,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('prisma-builds.s3-eu-west-1.amazonaws.com/index.xml'),
         persist: false,
       });
-      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.prisma);
+      const binary = new BucketBinary(ctx.httpclient, ctx.logger, binaries.prisma, 'prisma');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
