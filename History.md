@@ -1,4 +1,10 @@
 
+2.6.1 / 2022-11-23
+==================
+
+**fixes**
+  * [[`0b35ead`](http://github.com/cnpm/cnpmcore/commit/0b35ead2a0cd73b89d2d961bafec13d7250fe805)] - 🐛 FIX: typo for canvas (fengmk2 <<fengmk2@gmail.com>>)
+
 2.6.0 / 2022-11-23
 ==================
 
