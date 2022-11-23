@@ -33,7 +33,7 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async listBinaries() {
-    return Object.entries(binaries).map(([binaryName, binaryConfig]) => {
+    return Object.entries(binaries).map(([ binaryName, binaryConfig ]) => {
       return {
         name: `${binaryName}}/`,
         category: `${binaryConfig.category}/`,

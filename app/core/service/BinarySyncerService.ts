@@ -294,7 +294,7 @@ export class BinarySyncerService extends AbstractService {
       const syncBinaryFromAPISource = config.syncBinaryFromAPISource || `${config.sourceRegistry}/-/binary`;
       return new ApiBinary(this.httpclient, this.logger, binaryConfig, syncBinaryFromAPISource, binaryName);
     }
-    for (const [binaryName, binaryConfig] of Object.entries(binaries)) {
+    for (const [ binaryName, binaryConfig ] of Object.entries(binaries)) {
       return new BinaryClasses[binaryConfig.syncer](this.httpclient, this.logger, binaryConfig, binaryName);
     }
   }

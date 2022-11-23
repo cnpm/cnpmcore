@@ -21,7 +21,7 @@ export class CreateSyncBinaryTask {
   async subscribe() {
     if (!this.config.cnpmcore.enableSyncBinary) return;
 
-    for (const [binaryName, binary] of Object.entries(binaries)) {
+    for (const [ binaryName, binary ] of Object.entries(binaries)) {
       if (this.config.env === 'unittest' && binaryName !== 'node') continue;
       if (binary.disable) continue;
 

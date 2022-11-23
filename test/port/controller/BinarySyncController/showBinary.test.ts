@@ -304,7 +304,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert(res.body);
-      let stableData = TestUtil.delDynamicKey(res.body, [ 'id', 'modified' ]);
+      let stableData = TestUtil.pickKeys(res.body, [ 'category', 'name', 'date', 'type', 'url' ]);
       assert.deepStrictEqual(stableData, [
         {
           category: 'canvas',
@@ -327,7 +327,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert(res.body);
-      stableData = TestUtil.delDynamicKey(res.body, [ 'id', 'modified' ]);
+      stableData = TestUtil.pickKeys(res.body, [ 'category', 'name', 'date', 'type', 'url' ]);
       assert.deepStrictEqual(stableData, [
         {
           category: 'node-canvas-prebuilt',
@@ -350,7 +350,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert(res.body);
-      stableData = TestUtil.delDynamicKey(res.body, [ 'id', 'modified' ]);
+      stableData = TestUtil.pickKeys(res.body, [ 'category', 'name', 'date', 'type', 'url' ]);
 
       assert.deepStrictEqual(stableData, [
         {
@@ -367,7 +367,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert(res.body);
-      stableData = TestUtil.delDynamicKey(res.body, [ 'id', 'modified' ]);
+      stableData = TestUtil.pickKeys(res.body, [ 'category', 'name', 'date', 'type', 'url' ]);
 
       assert.deepStrictEqual(stableData, [
         {
@@ -384,7 +384,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert(res.body);
-      stableData = TestUtil.delDynamicKey(res.body, [ 'id', 'modified' ]);
+      stableData = TestUtil.pickKeys(res.body, [ 'category', 'name', 'date', 'type', 'url' ]);
 
       assert.deepStrictEqual(stableData, [
         {
@@ -450,9 +450,9 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         date: '2021-12-14T13:12:31.587Z',
       }));
 
-        mock(nfsClientAdapter, 'url', (storeKey: string) => {
-          return `https://cdn.mock.com${storeKey}`;
-        });
+      mock(nfsClientAdapter, 'url', (storeKey: string) => {
+        return `https://cdn.mock.com${storeKey}`;
+      });
       const res = await app.httpRequest()
         .get('/-/binary/canvas/v2.6.1/canvas-v2.6.1-node-v57-linux-glibc-x64.tar.gz');
 
