@@ -4,6 +4,7 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { Redis } from 'ioredis';
+import { setTimeout } from 'timers/promises';
 
 const ONE_DAY = 3600 * 24;
 
@@ -60,14 +61,26 @@ export class CacheAdapter {
     await this.redis.del(lockName);
   }
 
-  async usingLock(key: string, seconds: number, func: () => Promise<void>) {
+  async waitForUnLock(key: string, seconds: number, func: () => Promise<void>, retry = 3) {
     const lockTimestamp = await this.lock(key, seconds);
-    if (!lockTimestamp) return;
-    try {
-      await func();
-    } finally {
-      await this.unlock(key, lockTimestamp);
+    // 抢占成功
+    if (lockTimestamp) {
+      try {
+        await func();
+      } finally {
+        await this.unlock(key, lockTimestamp);
+      }
+      return;
     }
+    // 抢占失败
+    if (retry) {
+      await setTimeout(seconds * 1000);
+      await this.waitForUnLock(key, seconds, func, retry - 1);
+    }
+  }
+
+  async usingLock(key: string, seconds: number, func: () => Promise<void>) {
+    await this.waitForUnLock(key, seconds, func, 0);
   }
 
   private getLockName(key: string) {

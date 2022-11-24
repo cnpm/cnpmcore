@@ -67,5 +67,25 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
       const lockId3 = await cache.lock('CNPMCORE_L_unittest', 10);
       assert(lockId3);
     });
+
+    describe('waitForUnLock()', () => {
+      it('should work', async () => {
+        let trigger = 0;
+        await cache.lock('unittest-waitForUnLock', 1);
+        await cache.waitForUnLock('unittest-waitForUnLock', 1, async () => {
+          trigger++;
+        });
+        assert(trigger === 1);
+      });
+
+      it('should abort after retry', async () => {
+        let trigger = 0;
+        await cache.lock('unittest-waitForUnLock', 10);
+        await cache.waitForUnLock('unittest-waitForUnLock', 1, async () => {
+          trigger++;
+        });
+        assert(trigger === 0);
+      });
+    });
   });
 });
