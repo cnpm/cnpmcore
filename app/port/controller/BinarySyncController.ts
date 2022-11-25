@@ -35,7 +35,7 @@ export class BinarySyncController extends AbstractController {
   async listBinaries() {
     return Object.entries(binaries).map(([ binaryName, binaryConfig ]) => {
       return {
-        name: `${binaryName}}/`,
+        name: `${binaryName}/`,
         category: `${binaryConfig.category}/`,
         description: binaryConfig.description,
         distUrl: binaryConfig.distUrl,
