@@ -323,4 +323,17 @@ export class TestUtil {
     }
     return Buffer.concat(chunks).toString();
   }
+
+  static pickKeys(obj, keys) {
+    const d: Record<string, any> = [];
+    obj.forEach(item => {
+      const newItem = {};
+      for (const key of keys) {
+        newItem[key] = item[key];
+      }
+
+      d.push(newItem);
+    });
+    return d;
+  }
 }

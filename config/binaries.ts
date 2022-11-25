@@ -13,12 +13,11 @@ export enum SyncerClass {
 }
 
 export type BinaryTaskConfig = {
-  category: string;
+  category: string; // 默认 category 为 binaryName，但是有些 binary 会有不同的 category，比如 canvas，包含 canvas 和 node-canvas-prebuilt 两个
   description: string;
   syncer: SyncerClass;
   repo: string;
   distUrl: string;
-  mergeCategory?: string;
   ignoreDirs?: string[];
   ignoreFiles?: string[];
   options?: {
@@ -857,9 +856,8 @@ const binaries: {
     distUrl: 'https://github.com/dragonflyoss/image-service/releases',
   },
   canvas: {
-    category: 'canvas',
     // canvas@<=2.6.1 二进制需要从 node-canvas-prebuilt 下载
-    mergeCategory: 'node-canvas-prebuilt',
+    category: 'node-canvas-prebuilt',
     description: 'Node canvas is a Cairo backed Canvas implementation for NodeJS.',
     syncer: SyncerClass.GithubBinary,
     repo: 'Automattic/node-canvas',

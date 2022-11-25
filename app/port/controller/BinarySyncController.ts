@@ -33,10 +33,10 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async listBinaries() {
-    return Object.values(binaries).map(binaryConfig => {
+    return Object.entries(binaries).map(([ binaryName, binaryConfig ]) => {
       return {
-        name: `${binaryConfig.category}/`,
-        mergeCategory: `${binaryConfig.mergeCategory}/`,
+        name: `${binaryName}}/`,
+        category: `${binaryConfig.category}/`,
         description: binaryConfig.description,
         distUrl: binaryConfig.distUrl,
         repoUrl: /^https?:\/\//.test(binaryConfig.repo) ? binaryConfig.repo : `https://github.com/${binaryConfig.repo}`,
@@ -64,11 +64,11 @@ export class BinarySyncController extends AbstractController {
     let binary = await this.binarySyncerService.findBinary(binaryName, parent, name);
     if (!binary) {
       // 查询不到再去查询 mergeCategory 的情况
-      const mergeCategory = binaries?.[binaryName]?.mergeCategory;
-      if (mergeCategory) {
+      const category = binaries?.[binaryName]?.category;
+      if (category) {
         // canvas/v2.6.1/canvas-v2.6.1-node-v57-linux-glibc-x64.tar.gz
         // -> node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz
-        binary = await this.binarySyncerService.findBinary(mergeCategory, parent, name.replace(new RegExp(`^${binaryName}-`), `${mergeCategory}-`));
+        binary = await this.binarySyncerService.findBinary(category, parent, name.replace(new RegExp(`^${binaryName}-`), `${category}-`));
       }
     }
 

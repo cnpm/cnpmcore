@@ -29,7 +29,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         })
         .reply(200, await TestUtil.readFixturesFile('unpkg.com/playwright-core-browsers.json'))
         .persist();
-      const binary = new PlaywrightBinary(ctx.httpclient, ctx.logger, binaries.playwright);
+      const binary = new PlaywrightBinary(ctx.httpclient, ctx.logger, binaries.playwright, 'playwright');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -57,7 +57,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         })
         .reply(200, await TestUtil.readFixturesFile('unpkg.com/playwright-core-browsers.json'))
         .persist();
-      const binary = new PlaywrightBinary(ctx.httpclient, ctx.logger, binaries.playwright);
+      const binary = new PlaywrightBinary(ctx.httpclient, ctx.logger, binaries.playwright, 'playwright');
       let result = await binary.fetch('/builds/');
       assert(result);
       // console.log(result.items);

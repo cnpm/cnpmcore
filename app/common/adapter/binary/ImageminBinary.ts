@@ -8,7 +8,7 @@ export class ImageminBinary extends AbstractBinary {
   async fetch(dir: string): Promise<FetchResult | undefined> {
     if (!this.dirItems) {
       this.dirItems = {};
-      const npmPackageName = this.binaryConfig.options?.npmPackageName ?? this.binaryConfig.category;
+      const npmPackageName = this.binaryConfig.options?.npmPackageName ?? this.binaryName;
       const pkgUrl = `https://registry.npmjs.com/${npmPackageName}`;
       const data = await this.requestJSON(pkgUrl);
       this.dirItems = {};

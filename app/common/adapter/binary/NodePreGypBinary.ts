@@ -10,7 +10,7 @@ export class NodePreGypBinary extends AbstractBinary {
   async fetch(dir: string): Promise<FetchResult | undefined> {
     if (!this.dirItems) {
       this.dirItems = {};
-      const pkgUrl = `https://registry.npmjs.com/${this.binaryConfig.category}`;
+      const pkgUrl = `https://registry.npmjs.com/${this.binaryName}`;
       const data = await this.requestJSON(pkgUrl);
       this.dirItems = {};
       this.dirItems['/'] = [];
@@ -77,7 +77,7 @@ export class NodePreGypBinary extends AbstractBinary {
                     date,
                     size: '-',
                     isDir: false,
-                    url: `${this.binaryConfig.distUrl}/${this.binaryConfig.category}${versionPrefix}/${name}`,
+                    url: `${this.binaryConfig.distUrl}/${this.binaryName}${versionPrefix}/${name}`,
                     ignoreDownloadStatuses: [ 404 ],
                   });
                 }
@@ -99,7 +99,7 @@ export class NodePreGypBinary extends AbstractBinary {
                   date,
                   size: '-',
                   isDir: false,
-                  url: `${this.binaryConfig.distUrl}/${this.binaryConfig.category}${versionPrefix}/${name}`,
+                  url: `${this.binaryConfig.distUrl}/${this.binaryName}${versionPrefix}/${name}`,
                   ignoreDownloadStatuses: [ 404 ],
                 });
               }
@@ -163,7 +163,7 @@ export class NodePreGypBinary extends AbstractBinary {
               const binaryFileName = binaryFile.replace('{platform}', platform)
                 .replace('{arch}', arch);
               remotePath = remotePath.replace('{module_name}', moduleName)
-                .replace('{name}', this.binaryConfig.category)
+                .replace('{name}', this.binaryName)
                 .replace('{version}', version)
                 .replace('{configuration}', 'Release');
               const binaryFilePath = join('/', remotePath, binaryFileName);

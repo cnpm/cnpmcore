@@ -21,10 +21,14 @@ export class CreateSyncBinaryTask {
   async subscribe() {
     if (!this.config.cnpmcore.enableSyncBinary) return;
 
-    for (const binary of Object.values(binaries)) {
-      if (this.config.env === 'unittest' && binary.category !== 'node') continue;
+    for (const [ binaryName, binary ] of Object.entries(binaries)) {
+      if (this.config.env === 'unittest' && binaryName !== 'node') continue;
       if (binary.disable) continue;
-      await this.binarySyncerService.createTask(binary.category);
+
+      // 默认只同步 binaryName 的二进制，即使有不一致的 category，会在同名的 binaryName 任务中同步
+      // 例如 canvas 只同步 binaryName 为 canvas 的二进制，不同步 category 为 node-canvas-prebuilt 的二进制
+      // node-canvas-prebuilt 的二进制会在 node-canvas-prebuilt 的任务中同步
+      await this.binarySyncerService.createTask(binaryName);
     }
   }
 }

@@ -78,13 +78,12 @@ export class BinarySyncerService extends AbstractService {
     // 所以查询 canvas 的时候，需要将 binaryName 和 category 的数据都查出来
     const {
       category,
-      mergeCategory,
     } = binaries[binaryName];
     const reqs = [
       this.binaryRepository.listBinaries(binaryName, '/'),
     ];
-    if (mergeCategory && mergeCategory !== category) {
-      reqs.push(this.binaryRepository.listBinaries(mergeCategory, '/'));
+    if (category && category !== binaryName) {
+      reqs.push(this.binaryRepository.listBinaries(category, '/'));
     }
 
     const [
@@ -290,15 +289,13 @@ export class BinarySyncerService extends AbstractService {
 
   private createBinaryInstance(binaryName: string): AbstractBinary | undefined {
     const config = this.config.cnpmcore;
+    const binaryConfig = binaries[binaryName];
+
     if (config.sourceRegistryIsCNpm) {
-      const binaryConfig = binaries[binaryName];
       const syncBinaryFromAPISource = config.syncBinaryFromAPISource || `${config.sourceRegistry}/-/binary`;
-      return new ApiBinary(this.httpclient, this.logger, binaryConfig, syncBinaryFromAPISource);
+      return new ApiBinary(this.httpclient, this.logger, binaryConfig, syncBinaryFromAPISource, binaryName);
     }
-    for (const binaryConfig of Object.values(binaries)) {
-      if (binaryConfig.category === binaryName) {
-        return new BinaryClasses[binaryConfig.syncer](this.httpclient, this.logger, binaryConfig);
-      }
-    }
+
+    return new BinaryClasses[binaryConfig.syncer](this.httpclient, this.logger, binaryConfig, binaryName);
   }
 }

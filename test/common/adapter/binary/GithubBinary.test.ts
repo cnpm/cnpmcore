@@ -23,7 +23,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         data: response,
         status: 200,
       });
-      const binary = new GithubBinary(ctx.httpclient, ctx.logger, binaries.electron);
+      const binary = new GithubBinary(ctx.httpclient, ctx.logger, binaries.electron, 'electron');
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
