@@ -1,4 +1,10 @@
 
+2.7.1 / 2022-11-25
+==================
+
+**fixes**
+  * [[`c6b8aec`](http://github.com/cnpm/cnpmcore/commit/c6b8aecfd0c2b0d454389e931747c431dac5742b)] - fix: request binary error (#360) (Ke Wu <<gemwuu@163.com>>)
+
 2.7.0 / 2022-11-25
 ==================
 
