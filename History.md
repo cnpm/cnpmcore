@@ -1,4 +1,10 @@
 
+2.7.0 / 2022-11-25
+==================
+
+**others**
+  * [[`5738d56`](http://github.com/cnpm/cnpmcore/commit/5738d569ea691c05c3f3b0b74a454a33fefb8fc7)] - refactor: binary sync task use binaryName by default (#358) (Ke Wu <<gemwuu@163.com>>)
+
 2.6.1 / 2022-11-23
 ==================
 
