@@ -54,6 +54,99 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       }
     });
 
+    it('should show valid root dirs', async () => {
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'node-canvas-prebuilt',
+        parent: '/',
+        name: 'v2.6.1/',
+        isDir: true,
+        size: 0,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+      const res = await app.httpRequest()
+        .get('/-/binary/');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      const items = res.body;
+      assert(items.length > 0);
+      for (const item of items) {
+        assert(item.type === 'dir');
+        assert(item.name);
+        assert(item.url);
+        assert(item.repoUrl);
+        assert(item.distUrl);
+        assert(item.description);
+      }
+
+      const item = items.filter((item: any) => item.name === 'nwjs/');
+      assert.deepStrictEqual(item, [{
+        name: 'nwjs/',
+        category: 'nwjs/',
+        description: 'NW.js (previously known as node-webkit) lets you call all Node.js modules directly from DOM and enables a new way of writing applications with all Web technologies.',
+        distUrl: 'https://dl.nwjs.io/',
+        repoUrl: 'https://github.com/nwjs/nw.js',
+        type: 'dir',
+        url: 'http://localhost:7001/-/binary/nwjs/',
+      }]);
+    });
+    it('should show valid sub dirs', async () => {
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'node-canvas-prebuilt',
+        parent: '/',
+        name: 'v2.6.1/',
+        isDir: true,
+        size: 0,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+      const res = await app.httpRequest()
+        .get('/-/binary/node-canvas-prebuilt/');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      const items = TestUtil.pickKeys(res.body, [ 'category', 'name', 'date', 'type', 'url' ]);
+      assert.deepStrictEqual(items, [{
+        category: 'node-canvas-prebuilt',
+        name: 'v2.6.1/',
+        date: '2021-12-14T13:12:31.587Z',
+        type: 'dir',
+        url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/',
+      }]);
+
+    });
+    it('should show valid files', async () => {
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'node-canvas-prebuilt',
+        parent: '/',
+        name: 'v2.6.1/',
+        isDir: true,
+        size: 0,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+      await binaryRepository.saveBinary(Binary.create({
+        category: 'node-canvas-prebuilt',
+        parent: '/v2.6.1/',
+        name: 'node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+        isDir: false,
+        size: 10,
+        date: '2021-12-14T13:12:31.587Z',
+      }));
+      const res = await app.httpRequest()
+        .get('/-/binary/node-canvas-prebuilt/v2.6.1/');
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      const items = TestUtil.pickKeys(res.body, [ 'category', 'name', 'date', 'type', 'url' ]);
+      assert(items.length > 0);
+
+      assert.deepStrictEqual(items, [
+        {
+          category: 'node-canvas-prebuilt',
+          name: 'node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+          date: '2021-12-14T13:12:31.587Z',
+          type: 'file',
+          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+        },
+      ]);
+    });
+
     it('should show node binaries', async () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
