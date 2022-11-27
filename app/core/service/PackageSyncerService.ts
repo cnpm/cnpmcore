@@ -244,12 +244,16 @@ export class PackageSyncerService extends AbstractService {
     return registry;
   }
 
+  @Pointcut(EventCorkerAdvice)
+  public async executeTaskWithCorker(task: Task): Promise<void> {
+    await this.executeTask(task);
+  }
+
   // 由于 cnpmcore 将 version 和 tag 作为两个独立的 changes 事件分发
   // 普通版本发布时，短时间内会有两条相同 task 进行同步
   // 尽量保证读取和写入都需保证任务幂等，需要确保 changes 在同步任务完成后再触发
   // 通过 DB 唯一索引来保证任务幂等，插入失败不影响 pkg.manifests 更新
   // 通过 eventBus.cork/uncork 来暂缓事件触发
-  @Pointcut(EventCorkerAdvice)
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const [ scope, name ] = getScopeAndName(fullname);
@@ -562,21 +566,6 @@ export class PackageSyncerService extends AbstractService {
       if (!pkg) {
         pkg = await this.packageRepository.findPackage(scope, name);
       }
-
-      // pkg.manifests 和 version.manifests 是异步的
-      // 需要确保外围能感知到 pkg.manifests 上的变更
-      // FIXME 验证完成后可删除
-      // if (pkg) {
-      //   // check again, make sure prefix version not exists
-      //   const existsPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
-      //   if (existsPkgVersion) {
-      //     await rm(localFile, { force: true });
-      //     logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish it`);
-      //     await this.taskService.appendTaskLog(task, logs.join('\n'));
-      //     logs = [];
-      //     continue;
-      //   }
-      // }
 
       const publishCmd = {
         scope,

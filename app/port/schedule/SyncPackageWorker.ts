@@ -34,7 +34,7 @@ export class SyncPackageWorker {
         this.logger.info('[SyncPackageWorker:subscribe:executeTask:start][%s] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms',
           executingCount, task.taskId, task.targetName, task.attempts, task.data, task.updatedAt,
           startTime - task.updatedAt.getTime());
-        await this.packageSyncerService.executeTask(task);
+        await this.packageSyncerService.executeTaskWithCorker(task);
         const use = Date.now() - startTime;
         this.logger.info('[SyncPackageWorker:subscribe:executeTask:success][%s] taskId: %s, targetName: %s, use %sms',
           executingCount, task.taskId, task.targetName, use);
