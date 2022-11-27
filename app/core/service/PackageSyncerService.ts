@@ -4,6 +4,7 @@ import {
   ContextProto,
   Inject,
 } from '@eggjs/tegg';
+import { Pointcut } from '@eggjs/tegg/aop';
 import {
   EggContextHttpClient,
 } from 'egg';
@@ -18,7 +19,6 @@ import { TaskRepository } from '../../repository/TaskRepository';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { UserRepository } from '../../repository/UserRepository';
-import { DistRepository } from '../../repository/DistRepository';
 import { Task, SyncPackageTaskOptions, CreateSyncPackageTask } from '../entity/Task';
 import { Package } from '../entity/Package';
 import { UserService } from './UserService';
@@ -30,6 +30,7 @@ import { RegistryManagerService } from './RegistryManagerService';
 import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
 import { ScopeManagerService } from './ScopeManagerService';
+import { EventCorkerAdvice } from './EventCorkerAdvice';
 
 function isoNow() {
   return new Date().toISOString();
@@ -62,8 +63,6 @@ export class PackageSyncerService extends AbstractService {
   private readonly cacheService: CacheService;
   @Inject()
   private readonly httpclient: EggContextHttpClient;
-  @Inject()
-  private readonly distRepository: DistRepository;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
@@ -245,6 +244,12 @@ export class PackageSyncerService extends AbstractService {
     return registry;
   }
 
+  // 由于 cnpmcore 将 version 和 tag 作为两个独立的 changes 事件分发
+  // 普通版本发布时，短时间内会有两条相同 task 进行同步
+  // 尽量保证读取和写入都需保证任务幂等，需要确保 changes 在同步任务完成后再触发
+  // 通过 DB 唯一索引来保证任务幂等，插入失败不影响 pkg.manifests 更新
+  // 通过 eventBus.cork/uncork 来暂缓事件触发
+  @Pointcut(EventCorkerAdvice)
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const [ scope, name ] = getScopeAndName(fullname);
@@ -470,17 +475,6 @@ export class PackageSyncerService extends AbstractService {
             updateVersions.push(version);
             logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local abbreviated manifests, need to refresh`);
           }
-        } else {
-          // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called
-          existsItem = await this.distRepository.findPackageVersionManifest(pkg.packageId, version);
-          // only allow existsItem on db to force refresh, to avoid big versions fresh
-          // see https://r.cnpmjs.org/-/package/@npm-torg/public-scoped-free-org-test-package-2/syncs/61fcc7e8c1646e26a845b674/log
-          if (existsItem) {
-            // version not exists on manifests, need to refresh
-            // bugfix: https://github.com/cnpm/cnpmcore/issues/115
-            updateVersions.push(version);
-            logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
-          }
         }
 
         if (existsItem && forceSyncHistory === true) {
@@ -568,17 +562,21 @@ export class PackageSyncerService extends AbstractService {
       if (!pkg) {
         pkg = await this.packageRepository.findPackage(scope, name);
       }
-      if (pkg) {
-        // check again, make sure prefix version not exists
-        const existsPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
-        if (existsPkgVersion) {
-          await rm(localFile, { force: true });
-          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish it`);
-          await this.taskService.appendTaskLog(task, logs.join('\n'));
-          logs = [];
-          continue;
-        }
-      }
+
+      // pkg.manifests 和 version.manifests 是异步的
+      // 需要确保外围能感知到 pkg.manifests 上的变更
+      // FIXME 验证完成后可删除
+      // if (pkg) {
+      //   // check again, make sure prefix version not exists
+      //   const existsPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+      //   if (existsPkgVersion) {
+      //     await rm(localFile, { force: true });
+      //     logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish it`);
+      //     await this.taskService.appendTaskLog(task, logs.join('\n'));
+      //     logs = [];
+      //     continue;
+      //   }
+      // }
 
       const publishCmd = {
         scope,
@@ -596,12 +594,15 @@ export class PackageSyncerService extends AbstractService {
         skipRefreshPackageManifests: true,
       };
       try {
+        // 当 version 记录已经存在时，还需要校验一下 pkg.manifests 是否存在
         const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
         updateVersions.push(pkgVersion.version);
         logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
       } catch (err: any) {
         if (err.name === 'ForbiddenError') {
-          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish error`);
+          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`);
+          // 如果 pkg.manifests 不存在，需要补充一下
+          updateVersions.push(version);
         } else {
           err.taskId = task.taskId;
           this.logger.error(err);
