@@ -1,4 +1,10 @@
 
+2.8.0 / 2022-11-29
+==================
+
+**others**
+  * [[`d55c680`](http://github.com/cnpm/cnpmcore/commit/d55c680ef906ecb27f7967782ad7d25987cef7d4)] - Event cork (#361) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
 2.7.1 / 2022-11-25
 ==================
 
