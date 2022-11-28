@@ -67,7 +67,7 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
   });
 
   it('should create task when processing', async () => {
-    mock(PackageSyncerService.prototype, 'executeTask', async (task: Task) => {
+    mock(packageSyncerService, 'executeTask', async (task: Task) => {
       task.state = TaskState.Processing;
       await taskRepository.saveTask(task);
       await setTimeout(2);

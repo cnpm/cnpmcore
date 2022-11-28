@@ -30,7 +30,7 @@ import { RegistryManagerService } from './RegistryManagerService';
 import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
 import { ScopeManagerService } from './ScopeManagerService';
-import { EventCorkerAdvice } from './EventCorkerAdvice';
+import { EventCorkAdvice } from './EventCorkerAdvice';
 
 function isoNow() {
   return new Date().toISOString();
@@ -244,16 +244,12 @@ export class PackageSyncerService extends AbstractService {
     return registry;
   }
 
-  @Pointcut(EventCorkerAdvice)
-  public async executeTaskWithCorker(task: Task): Promise<void> {
-    await this.executeTask(task);
-  }
-
   // 由于 cnpmcore 将 version 和 tag 作为两个独立的 changes 事件分发
   // 普通版本发布时，短时间内会有两条相同 task 进行同步
   // 尽量保证读取和写入都需保证任务幂等，需要确保 changes 在同步任务完成后再触发
   // 通过 DB 唯一索引来保证任务幂等，插入失败不影响 pkg.manifests 更新
   // 通过 eventBus.cork/uncork 来暂缓事件触发
+  @Pointcut(EventCorkAdvice)
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const [ scope, name ] = getScopeAndName(fullname);

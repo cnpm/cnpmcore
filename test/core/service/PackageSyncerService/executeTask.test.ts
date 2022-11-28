@@ -5,7 +5,7 @@ import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
 import { Package as PackageModel } from 'app/repository/model/Package';
 import { Task as TaskModel } from 'app/repository/model/Task';
-import { Task, Task as TaskEntity } from 'app/core/entity/Task';
+import { Task as TaskEntity } from 'app/core/entity/Task';
 import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
 import { TestUtil } from 'test/TestUtil';
 import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
@@ -688,11 +688,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(task.targetName, name);
 
 
-      await packageSyncerService.executeTaskWithCorker(task);
+      await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
 
-      const finishedTask = await taskService.findTask(task.taskId) as Task;
+      const finishedTask = await taskService.findTask(task.taskId) as TaskEntity;
 
       const changes = await changeRepository.query(0, 100);
       const [ firstChange ] = changes;

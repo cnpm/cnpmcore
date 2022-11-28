@@ -2,7 +2,7 @@ import { ContextEventBus, Inject } from '@eggjs/tegg';
 import { Advice, IAdvice } from '@eggjs/tegg/aop';
 
 @Advice()
-export class EventCorkerAdvice implements IAdvice {
+export class EventCorkAdvice implements IAdvice {
   @Inject()
   private eventBus: ContextEventBus;
 
