@@ -57,20 +57,19 @@ export class ChangesStreamService extends AbstractService {
 
   public async suspendTaskWhenExit() {
     this.logger.info('[ChangesStreamService.suspendTaskWhenExit:start]');
-    if (!this.config.cnpmcore.enableChangesStream) {
-      return;
-    }
-    // 防止继续获取新的任务
-    this.config.cnpmcore.enableChangesStream = false;
-    const authorIp = os.hostname();
-    // 暂停当前机器所有的 changesStream 任务
-    const tasks = await this.taskRepository.findTaskByAuthorIpAndType(authorIp, TaskType.ChangesStream);
-    for (const task of tasks) {
-      if (task.state === TaskState.Processing) {
-        this.logger.info('[ChangesStreamService.suspendTaskWhenExit:suspend] taskId: %s', task.taskId);
-        // 1. 更新任务状态为 waiting
-        // 2. 重新推入任务队列供其他机器执行
-        await this.taskService.retryTask(task);
+    if (this.config.cnpmcore.enableChangesStream) {
+      // 防止继续获取新的任务
+      this.config.cnpmcore.enableChangesStream = false;
+      const authorIp = os.hostname();
+      // 暂停当前机器所有的 changesStream 任务
+      const tasks = await this.taskRepository.findTaskByAuthorIpAndType(authorIp, TaskType.ChangesStream);
+      for (const task of tasks) {
+        if (task.state === TaskState.Processing) {
+          this.logger.info('[ChangesStreamService.suspendTaskWhenExit:suspend] taskId: %s', task.taskId);
+          // 1. 更新任务状态为 waiting
+          // 2. 重新推入任务队列供其他机器执行
+          await this.taskService.retryTask(task);
+        }
       }
     }
     this.logger.info('[ChangesStreamService.suspendTaskWhenExit:finish]');

@@ -28,7 +28,7 @@ export default class CnpmcoreAppHook {
   async beforeClose() {
     const ctx = this.app.createAnonymousContext();
     await ctx.beginModuleScope(async () => {
-      await (ctx.module as any).cnpmcoreCore.changesStreamService.suspendTaskWhenExit();
+      await ctx.module.cnpmcoreCore.changesStreamService.suspendTaskWhenExit();
     });
   }
 }

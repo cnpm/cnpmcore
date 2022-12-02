@@ -1,4 +1,4 @@
-import assert = require('assert/strict');
+import assert = require('assert');
 import { Readable } from 'node:stream';
 import { app, mock } from 'egg-mock/bootstrap';
 import { Context } from 'egg';
@@ -10,6 +10,7 @@ import { RegistryType } from 'app/common/enum/Registry';
 import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
 import { Registry } from 'app/core/entity/Registry';
 import { TestUtil } from 'test/TestUtil';
+import { RedisQueueAdapter } from 'app/infra/QueueAdapter';
 
 describe('test/core/service/ChangesStreamService.test.ts', () => {
   let ctx: Context;
@@ -20,12 +21,14 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
   let task: ChangesStreamTask;
   let npmRegistry: Registry;
   let cnpmRegistry: Registry;
+  let queueAdapter: RedisQueueAdapter;
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
     changesStreamService = await ctx.getEggObject(ChangesStreamService);
     taskService = await ctx.getEggObject(TaskService);
     registryManagerService = await ctx.getEggObject(RegistryManagerService);
     scopeManagerService = await ctx.getEggObject(ScopeManagerService);
+    queueAdapter = await ctx.getEggObject(RedisQueueAdapter);
     assert(changesStreamService);
     task = Task.createChangesStream('GLOBAL_WORKER', '', '9527');
     taskService.createTask(task, false);
@@ -193,5 +196,43 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       assert(changes.lastSince === '3');
       assert(task.data.since === '3');
     });
+  });
+
+  describe('suspendTaskWhenExit()', () => {
+    it('should work', async () => {
+      app.mockLog();
+      mock(app.config.cnpmcore, 'enableChangesStream', true);
+      mock(ctx.httpclient, 'request', async () => {
+        return {
+          res: Readable.from(''),
+        };
+      });
+
+      const task = await changesStreamService.findExecuteTask();
+      assert(task);
+      await changesStreamService.executeTask(task);
+      assert(task.state === 'processing');
+
+      let len = await queueAdapter.length('changes_stream');
+      assert(len === 0);
+      await changesStreamService.suspendTaskWhenExit();
+      const newTask = await taskService.findTask(task.taskId);
+      assert(newTask);
+      assert(newTask.taskId === task.taskId);
+      assert(newTask.state === 'waiting');
+      len = await queueAdapter.length('changes_stream');
+      assert(len === 1);
+
+      app.expectLog('[ChangesStreamService.suspendTaskWhenExit:suspend] taskId');
+
+    });
+
+    it('should ignore when changesStream disable', async () => {
+      app.mockLog();
+      mock(app.config.cnpmcore, 'enableChangesStream', true);
+      await changesStreamService.suspendTaskWhenExit();
+      app.expectLog('[ChangesStreamService.suspendTaskWhenExit:finish]');
+    });
+
   });
 });
