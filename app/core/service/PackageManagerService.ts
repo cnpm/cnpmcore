@@ -223,7 +223,7 @@ export class PackageManagerService extends AbstractService {
     ]);
     try {
       await this.packageRepository.createPackageVersion(pkgVersion);
-    } catch(e) {
+    } catch (e) {
       if (e.code === 'ER_DUP_ENTRY') {
         throw new ForbiddenError(`Can't modify pre-existing version: ${pkg.fullname}@${cmd.version}`);
       }
