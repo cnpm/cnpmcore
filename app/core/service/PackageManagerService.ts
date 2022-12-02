@@ -221,7 +221,14 @@ export class PackageManagerService extends AbstractService {
       this.distRepository.saveDist(pkgVersion.manifestDist, manifestDistBytes),
       this.distRepository.saveDist(pkgVersion.readmeDist, readmeDistBytes),
     ]);
-    await this.packageRepository.createPackageVersion(pkgVersion);
+    try {
+      await this.packageRepository.createPackageVersion(pkgVersion);
+    } catch(e) {
+      if (e.code === 'ER_DUP_ENTRY') {
+        throw new ForbiddenError(`Can't modify pre-existing version: ${pkg.fullname}@${cmd.version}`);
+      }
+      throw e;
+    }
     if (cmd.skipRefreshPackageManifests !== true) {
       await this.refreshPackageChangeVersionsToDists(pkg, [ pkgVersion.version ]);
     }
