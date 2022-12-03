@@ -666,6 +666,12 @@ export class PackageSyncerService extends AbstractService {
     let shouldRefreshDistTags = false;
     for (const tag in distTags) {
       const version = distTags[tag];
+      // 新 tag 指向的版本既不在存量数据里，也不在本次同步版本列表里
+      // 例如 latest 对应的 version 写入失败跳过
+      if (!existsVersionMap[version] && !updateVersions.includes(version)) {
+        logs.push(`[${isoNow()}] 🚧 invalid tag(${tag}: ${version}), version is not exists, skip`);
+        continue;
+      }
       const changed = await this.packageManagerService.savePackageTag(pkg, tag, version);
       if (changed) {
         changedTags.push({ action: 'change', tag, version });
