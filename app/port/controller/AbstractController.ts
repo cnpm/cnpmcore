@@ -61,10 +61,6 @@ export abstract class AbstractController extends MiddlewareController {
   protected getAllowSync(ctx: EggContext): boolean {
     let allowSync = false;
 
-    if (!this.syncNotFound) {
-      return allowSync;
-    }
-
     // request not by node, consider it request from web, don't sync
     const ua = ctx.get('user-agent');
     if (!ua || !ua.includes('node')) {
@@ -91,7 +87,7 @@ export abstract class AbstractController extends MiddlewareController {
         err.redirectToSourceRegistry = this.sourceRegistry;
       // syncMode = all/exist
       } else {
-        if (allowSync) {
+        if (allowSync && this.syncNotFound) {
           // ErrorHandler will use syncPackage to create sync task
           err.syncPackage = {
             fullname,
