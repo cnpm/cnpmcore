@@ -100,14 +100,14 @@ export class ChangesStreamService extends AbstractService {
     }
 
     // 从配置文件默认生成
-    const { changesStreamRegistryMode, changesStreamRegistry: host } = this.config.cnpmcore;
-    const type = changesStreamRegistryMode === 'json' ? 'cnpmcore' : 'npm';
+    const { changesStreamRegistryMode, changesStreamRegistry: changesStreamHost, sourceRegistry: host } = this.config.cnpmcore;
+    const type = changesStreamRegistryMode === 'json' ? RegistryType.Cnpmcore : RegistryType.Npm;
     const registry = await this.registryManagerService.createRegistry({
       name: 'default',
-      type: type as RegistryType,
+      type,
       userPrefix: 'npm:',
       host,
-      changeStream: `${host}/_changes`,
+      changeStream: `${changesStreamHost}/_changes`,
     });
     task.data = {
       ...(task.data || {}),
@@ -173,20 +173,28 @@ export class ChangesStreamService extends AbstractService {
       const valid = await this.needSync(registry, fullname);
       if (valid) {
         taskCount++;
+        const tips = `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`;
         try {
-          await this.packageSyncerService.createTask(fullname, {
+          const task = await this.packageSyncerService.createTask(fullname, {
             authorIp: HOST_NAME,
             authorId: 'ChangesStreamService',
             registryId: registry.registryId,
             skipDependencies: true,
-            tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`,
+            tips,
           });
-        } catch (e) {
-          if (e instanceof RegistryNotMatchError) {
-            this.logger.warn('[ChangesStreamService.executeSync:skip] %s', e.message);
+          this.logger.info('[ChangesStreamService.createTask:success] fullname: %s, task: %s, tips: %s',
+            fullname, task.id, tips);
+        } catch (err) {
+          if (err instanceof RegistryNotMatchError) {
+            this.logger.warn('[ChangesStreamService.executeSync:skip] fullname: %s, error: %s, tips: %s',
+              fullname, err, tips);
             continue;
           }
-          throw e;
+          // only log error, make sure changes still reading
+          this.logger.error('[ChangesStreamService.executeSync:error] fullname: %s, error: %s, tips: %s',
+            fullname, err, tips);
+          this.logger.error(err);
+          continue;
         }
       }
       // 实时更新 task 信息

@@ -4,6 +4,7 @@ import {
   ContextProto,
   Inject,
 } from '@eggjs/tegg';
+import { Pointcut } from '@eggjs/tegg/aop';
 import {
   EggContextHttpClient,
 } from 'egg';
@@ -18,7 +19,6 @@ import { TaskRepository } from '../../repository/TaskRepository';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { UserRepository } from '../../repository/UserRepository';
-import { DistRepository } from '../../repository/DistRepository';
 import { Task, SyncPackageTaskOptions, CreateSyncPackageTask } from '../entity/Task';
 import { Package } from '../entity/Package';
 import { UserService } from './UserService';
@@ -29,6 +29,8 @@ import { User } from '../entity/User';
 import { RegistryManagerService } from './RegistryManagerService';
 import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
+import { ScopeManagerService } from './ScopeManagerService';
+import { EventCorkAdvice } from './EventCorkerAdvice';
 
 function isoNow() {
   return new Date().toISOString();
@@ -62,9 +64,9 @@ export class PackageSyncerService extends AbstractService {
   @Inject()
   private readonly httpclient: EggContextHttpClient;
   @Inject()
-  private readonly distRepository: DistRepository;
-  @Inject()
   private readonly registryManagerService: RegistryManagerService;
+  @Inject()
+  private readonly scopeManagerService: ScopeManagerService;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
     const [ scope, name ] = getScopeAndName(fullname);
@@ -207,25 +209,53 @@ export class PackageSyncerService extends AbstractService {
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
-  public async initSpecRegistry(task: Task): Promise<Registry | null> {
-    const { registryId } = task.data as SyncPackageTaskOptions;
+  // 初始化对应的 Registry
+  // 1. 优先从 pkg.registryId 获取 (registryId 一经设置 不应改变)
+  // 1. 其次从 task.data.registryId (创建单包同步任务时传入)
+  // 2. 接着根据 scope 进行计算 (作为子包依赖同步时候，无 registryId)
+  // 3. 最后返回 default registryId (可能 default registry 也不存在)
+  public async initSpecRegistry(task: Task, pkg: Package | null = null): Promise<Registry | null> {
+    const registryId = pkg?.registryId || (task.data as SyncPackageTaskOptions).registryId;
     let targetHost: string = this.config.cnpmcore.sourceRegistry;
     let registry: Registry | null = null;
+
+    // 当前任务作为 deps 引入时，不会配置 registryId
     // 历史 Task 可能没有配置 registryId
     if (registryId) {
       registry = await this.registryManagerService.findByRegistryId(registryId);
-      if (registry?.host) {
-        targetHost = registry.host;
+    } else if (pkg?.scope) {
+      const scopeModel = await this.scopeManagerService.findByName(pkg?.scope);
+      if (scopeModel?.registryId) {
+        registry = await this.registryManagerService.findByRegistryId(scopeModel?.registryId);
       }
+    }
+
+    // 采用默认的 registry
+    if (!registry) {
+      registry = await this.registryManagerService.findByRegistryName('default');
+    }
+
+    // 更新 targetHost 地址
+    // defaultRegistry 可能还未创建
+    if (registry?.host) {
+      targetHost = registry.host;
     }
     this.npmRegistry.setRegistryHost(targetHost);
     return registry;
   }
 
+  // 由于 cnpmcore 将 version 和 tag 作为两个独立的 changes 事件分发
+  // 普通版本发布时，短时间内会有两条相同 task 进行同步
+  // 尽量保证读取和写入都需保证任务幂等，需要确保 changes 在同步任务完成后再触发
+  // 通过 DB 唯一索引来保证任务幂等，插入失败不影响 pkg.manifests 更新
+  // 通过 eventBus.cork/uncork 来暂缓事件触发
+  @Pointcut(EventCorkAdvice)
   public async executeTask(task: Task) {
     const fullname = task.targetName;
+    const [ scope, name ] = getScopeAndName(fullname);
     const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
-    const registry = await this.initSpecRegistry(task);
+    let pkg = await this.packageRepository.findPackage(scope, name);
+    const registry = await this.initSpecRegistry(task, pkg);
     const registryHost = this.npmRegistry.registry;
     let logs: string[] = [];
     if (tips) {
@@ -242,16 +272,19 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
-    const [ scope, name ] = getScopeAndName(fullname);
-    let pkg = await this.packageRepository.findPackage(scope, name);
-    if (pkg && registry) {
-      if (pkg.registryId !== registry.registryId) {
-        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry.registryId}, skip sync ❌❌❌❌❌`);
-        await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
+    if (pkg && pkg?.registryId !== registry?.registryId) {
+      if (pkg.registryId) {
+        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry?.registryId}, skip sync ❌❌❌❌❌`);
+        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+        this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid registryId',
           task.taskId, task.targetName);
         return;
       }
+      // 多同步源之前没有 registryId
+      // publish() 版本不变时，不会更新 registryId
+      // 在同步前，进行更新操作
+      pkg.registryId = registry?.registryId;
+      await this.packageRepository.savePackage(pkg);
     }
 
     if (syncDownloadData && pkg) {
@@ -442,17 +475,6 @@ export class PackageSyncerService extends AbstractService {
             updateVersions.push(version);
             logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local abbreviated manifests, need to refresh`);
           }
-        } else {
-          // try to read from db detect if last sync interrupt before refreshPackageManifestsToDists() be called
-          existsItem = await this.distRepository.findPackageVersionManifest(pkg.packageId, version);
-          // only allow existsItem on db to force refresh, to avoid big versions fresh
-          // see https://r.cnpmjs.org/-/package/@npm-torg/public-scoped-free-org-test-package-2/syncs/61fcc7e8c1646e26a845b674/log
-          if (existsItem) {
-            // version not exists on manifests, need to refresh
-            // bugfix: https://github.com/cnpm/cnpmcore/issues/115
-            updateVersions.push(version);
-            logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local manifests, need to refresh`);
-          }
         }
 
         if (existsItem && forceSyncHistory === true) {
@@ -540,17 +562,6 @@ export class PackageSyncerService extends AbstractService {
       if (!pkg) {
         pkg = await this.packageRepository.findPackage(scope, name);
       }
-      if (pkg) {
-        // check again, make sure prefix version not exists
-        const existsPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
-        if (existsPkgVersion) {
-          await rm(localFile, { force: true });
-          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish it`);
-          await this.taskService.appendTaskLog(task, logs.join('\n'));
-          logs = [];
-          continue;
-        }
-      }
 
       const publishCmd = {
         scope,
@@ -568,12 +579,15 @@ export class PackageSyncerService extends AbstractService {
         skipRefreshPackageManifests: true,
       };
       try {
+        // 当 version 记录已经存在时，还需要校验一下 pkg.manifests 是否存在
         const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
         updateVersions.push(pkgVersion.version);
         logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
       } catch (err: any) {
         if (err.name === 'ForbiddenError') {
-          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish error`);
+          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`);
+          // 如果 pkg.manifests 不存在，需要补充一下
+          updateVersions.push(version);
         } else {
           err.taskId = task.taskId;
           this.logger.error(err);
@@ -652,6 +666,12 @@ export class PackageSyncerService extends AbstractService {
     let shouldRefreshDistTags = false;
     for (const tag in distTags) {
       const version = distTags[tag];
+      // 新 tag 指向的版本既不在存量数据里，也不在本次同步版本列表里
+      // 例如 latest 对应的 version 写入失败跳过
+      if (!existsVersionMap[version] && !updateVersions.includes(version)) {
+        logs.push(`[${isoNow()}] 🚧 invalid tag(${tag}: ${version}), version is not exists, skip`);
+        continue;
+      }
       const changed = await this.packageManagerService.savePackageTag(pkg, tag, version);
       if (changed) {
         changedTags.push({ action: 'change', tag, version });

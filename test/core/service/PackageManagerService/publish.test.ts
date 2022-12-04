@@ -75,6 +75,28 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
       app.expectLog(/\[\d+\.\d+\] \[NFSAdapter:uploadBytes|T\]/);
     });
 
+    it('should work slice long description', async () => {
+      app.mockLog();
+      const { packageId } = await packageManagerService.publish({
+        dist: {
+          content: Buffer.alloc(0),
+        },
+        tag: '',
+        scope: '',
+        name: 'foo',
+        description: '~'.repeat(1100 * 100),
+        packageJson: {},
+        readme: '',
+        version: '1.0.0',
+        isPrivate: true,
+      }, publisher);
+      const pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
+      assert(pkgVersion);
+      assert.equal(pkgVersion.version, '1.0.0');
+      const pkg = await packageRepository.findPackage('', 'foo');
+      assert(pkg?.description === '~'.repeat(1024 * 10));
+    });
+
     it('should work with dist.localFile', async () => {
       const { packageId } = await packageManagerService.publish({
         dist: {

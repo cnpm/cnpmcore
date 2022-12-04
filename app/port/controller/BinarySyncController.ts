@@ -33,9 +33,10 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async listBinaries() {
-    return Object.values(binaries).map(binaryConfig => {
+    return Object.entries(binaries).map(([ binaryName, binaryConfig ]) => {
       return {
-        name: `${binaryConfig.category}/`,
+        name: `${binaryName}/`,
+        category: `${binaryConfig.category}/`,
         description: binaryConfig.description,
         distUrl: binaryConfig.distUrl,
         repoUrl: /^https?:\/\//.test(binaryConfig.repo) ? binaryConfig.repo : `https://github.com/${binaryConfig.repo}`,
@@ -59,7 +60,18 @@ export class BinarySyncController extends AbstractController {
     const parsed = path.parse(subpath);
     const parent = parsed.dir === '/' ? '/' : `${parsed.dir}/`;
     const name = subpath.endsWith('/') ? `${parsed.base}/` : parsed.base;
-    const binary = await this.binarySyncerService.findBinary(binaryName, parent, name);
+    // 首先查询 binary === category 的情况
+    let binary = await this.binarySyncerService.findBinary(binaryName, parent, name);
+    if (!binary) {
+      // 查询不到再去查询 mergeCategory 的情况
+      const category = binaries?.[binaryName]?.category;
+      if (category) {
+        // canvas/v2.6.1/canvas-v2.6.1-node-v57-linux-glibc-x64.tar.gz
+        // -> node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz
+        binary = await this.binarySyncerService.findBinary(category, parent, name.replace(new RegExp(`^${binaryName}-`), `${category}-`));
+      }
+    }
+
     if (!binary) {
       throw new NotFoundError(`Binary "${binaryName}${subpath}" not found`);
     }

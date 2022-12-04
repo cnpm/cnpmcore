@@ -16,6 +16,9 @@ import { RegistryManagerService } from 'app/core/service/RegistryManagerService'
 import { Registry } from 'app/core/entity/Registry';
 import { RegistryType } from 'app/common/enum/Registry';
 import { TaskService } from 'app/core/service/TaskService';
+import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
+import { UserService } from 'app/core/service/UserService';
+import { ChangeRepository } from 'app/repository/ChangeRepository';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let ctx: Context;
@@ -25,6 +28,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let npmRegistry: NPMRegistry;
   let registryManagerService: RegistryManagerService;
   let taskService: TaskService;
+  let scopeManagerService: ScopeManagerService;
+  let userService: UserService;
+  let changeRepository: ChangeRepository;
 
   beforeEach(async () => {
     ctx = await app.mockModuleContext();
@@ -34,6 +40,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     npmRegistry = await ctx.getEggObject(NPMRegistry);
     taskService = await ctx.getEggObject(TaskService);
     registryManagerService = await ctx.getEggObject(RegistryManagerService);
+    scopeManagerService = await ctx.getEggObject(ScopeManagerService);
+    userService = await ctx.getEggObject(UserService);
+    changeRepository = await ctx.getEggObject(ChangeRepository);
   });
 
   afterEach(async () => {
@@ -386,7 +395,6 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         persist: false,
       });
       name = 'cnpmcore-test-sync-dependencies';
-      // don't add cnpmcore-test-sync-deprecated task if cnpmcore-test-sync-deprecated already exists
       const task = await packageSyncerService.createTask(name);
       assert(task);
       assert.equal(task.targetName, name);
@@ -430,7 +438,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
     });
 
-    it('should ignore publish ForbiddenError on sync task', async () => {
+    it('should ignore when all version publish ForbiddenError', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
@@ -450,8 +458,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      // console.log(log);
-      assert(log.includes('🐛 [1] Synced version 0.0.0 already exists, skip publish error'));
+      assert(log.includes('🐛 [1] Synced version 0.0.0 already exists, skip publish, try to set in local manifest'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -480,102 +487,312 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('❌ All versions sync fail, package not exists'));
     });
 
-    it('should sync 2 versions package: @cnpmcore/test-sync-package-has-two-versions', async () => {
-      app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
-        data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-        persist: false,
-        repeats: 2,
+    describe('sync version idempotence', async () => {
+      beforeEach(async () => {
+        app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+          persist: false,
+          repeats: 2,
+        });
+        app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        });
+        app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        });
       });
-      app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz', 'GET', {
-        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
-        persist: false,
+
+      it('should sync 2 versions package: @cnpmcore/test-sync-package-has-two-versions', async () => {
+        // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
+        const name = '@cnpmcore/test-sync-package-has-two-versions';
+        await packageSyncerService.createTask(name);
+        let task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        assert.equal(task.targetName, name);
+        await packageSyncerService.executeTask(task);
+        let stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        let log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert(log.includes('] 🟢 Synced updated 2 versions, removed 0 versions'));
+        assert(log.includes('] 🚧 Syncing versions 0 => 2'));
+
+        // mock listPackageFullManifests return only one version
+        // 如果 version publish 同步中断了，没有刷新 manifests，会导致下一次同步重新 version publish，然后报错
+        // Avoid: Can't modify pre-existing version: 1.0.0
+        const scopedAndName = getScopeAndName(name);
+        const manifests = await packageManagerService.listPackageFullManifests(scopedAndName[0], scopedAndName[1]);
+        delete manifests.data.versions['1.0.0'];
+        mock.data(PackageManagerService.prototype, 'listPackageFullManifests', manifests);
+
+        await packageSyncerService.createTask(name);
+        task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        assert.equal(task.targetName, name);
+        await packageSyncerService.executeTask(task);
+        stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert(log.includes('Synced version 1.0.0 already exists, skip publish, try to set in local manifest'));
+        assert(log.includes('] 🟢 Synced updated 1 versions'));
+        assert(log.includes('] 🚧 Syncing versions 1 => 2'));
+        app.mockAgent().assertNoPendingInterceptors();
+        await mock.restore();
+
+        app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+          persist: false,
+        });
+        const abbrs = await packageManagerService.listPackageAbbreviatedManifests(scopedAndName[0], scopedAndName[1]);
+        delete abbrs.data.versions['1.0.0'];
+        mock.data(PackageManagerService.prototype, 'listPackageAbbreviatedManifests', abbrs);
+
+        await packageSyncerService.createTask(name);
+        task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        assert.equal(task.targetName, name);
+        await packageSyncerService.executeTask(task);
+        stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert(log.includes('] 🐛 Remote version 1.0.0 not exists on local abbreviated manifests, need to refresh'));
+        assert(log.includes('] 🟢 Synced updated 1 versions'));
+        assert(log.includes('] 🚧 Syncing versions 2 => 2'));
+        app.mockAgent().assertNoPendingInterceptors();
+        await mock.restore();
+
+        // mock tag on database but not on manifest dist
+        // https://github.com/cnpm/cnpmcore/issues/97
+        app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+          persist: false,
+        });
+        const result = await npmRegistry.getFullManifests(name);
+        result.data['dist-tags'].foo = '2.0.0';
+        mock.data(NPMRegistry.prototype, 'getFullManifests', result);
+        mock.data(PackageManagerService.prototype, 'savePackageTag', null);
+        await packageSyncerService.createTask(name);
+        task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        await packageSyncerService.executeTask(task);
+        stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert(log.includes('] 🚧 Remote tag(foo: 2.0.0) not exists in local dist-tags'));
+        assert(!log.includes('] 🚧 Refreshing manifests to dists ......'));
+        app.mockAgent().assertNoPendingInterceptors();
       });
-      app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz', 'GET', {
-        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
-        persist: false,
+
+      it('should updated package manifests when version already published', async () => {
+        // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
+        const name = '@cnpmcore/test-sync-package-has-two-versions';
+        await packageSyncerService.createTask(name);
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        assert.equal(task.targetName, name);
+
+        const { user } = await userService.create({
+          name: 'test-user',
+          password: 'this-is-password',
+          email: 'hello@example.com',
+          ip: '127.0.0.1',
+        });
+
+        const publishCmd = {
+          scope: '@cnpmcore',
+          name: 'test-sync-package-has-two-versions',
+          version: '1.0.0',
+          description: '1.0.0',
+          readme: '',
+          registryId: undefined,
+          packageJson: { name, test: 'test', version: '1.0.0' },
+          dist: {
+            content: Buffer.alloc(0),
+          },
+          isPrivate: false,
+          publishTime: new Date(),
+          skipRefreshPackageManifests: false,
+        };
+        const pkgVersion = await packageManagerService.publish(publishCmd, user);
+        assert(pkgVersion.version === '1.0.0');
+
+        const publishCmd2 = {
+          scope: '@cnpmcore',
+          name: 'test-sync-package-has-two-versions',
+          version: '2.0.0',
+          description: '2.0.0',
+          readme: '',
+          registryId: undefined,
+          packageJson: { name, test: 'test', version: '2.0.0' },
+          dist: {
+            content: Buffer.alloc(0),
+          },
+          isPrivate: false,
+          publishTime: new Date(),
+          skipRefreshPackageManifests: true,
+        };
+        const pkgVersion2 = await packageManagerService.publish(publishCmd2, user);
+        assert(pkgVersion2.version === '2.0.0');
+
+        await packageSyncerService.executeTask(task);
+
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert(log.includes('Synced version 2.0.0 already exists, skip publish, try to set in local manifest'));
+        assert(log.includes('] 🚧 Syncing versions 1 => 2'));
+
+        const fullManifests = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
+        assert(fullManifests.data.versions['2.0.0']);
+
       });
 
-      // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
-      const name = '@cnpmcore/test-sync-package-has-two-versions';
-      await packageSyncerService.createTask(name);
-      let task = await packageSyncerService.findExecuteTask();
-      assert(task);
-      assert.equal(task.targetName, name);
-      await packageSyncerService.executeTask(task);
-      let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
-      let log = await TestUtil.readStreamToLog(stream);
-      // console.log(log);
-      assert(log.includes('] 🟢 Synced updated 2 versions, removed 0 versions'));
-      assert(log.includes('] 🚧 Syncing versions 0 => 2'));
+      it('should updated package manifests when version insert duplicated', async () => {
+        // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
+        const name = '@cnpmcore/test-sync-package-has-two-versions';
+        await packageSyncerService.createTask(name);
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        assert.equal(task.targetName, name);
 
-      // mock listPackageFullManifests return only one version
-      // 如果 version publish 同步中断了，没有刷新 manifests，会导致下一次同步重新 version publish，然后报错
-      // Avoid: Can't modify pre-existing version: 1.0.0
-      const scopedAndName = getScopeAndName(name);
-      const manifests = await packageManagerService.listPackageFullManifests(scopedAndName[0], scopedAndName[1]);
-      delete manifests.data.versions['1.0.0'];
-      mock.data(PackageManagerService.prototype, 'listPackageFullManifests', manifests);
+        const { user } = await userService.create({
+          name: 'test-user',
+          password: 'this-is-password',
+          email: 'hello@example.com',
+          ip: '127.0.0.1',
+        });
 
-      await packageSyncerService.createTask(name);
-      task = await packageSyncerService.findExecuteTask();
-      assert(task);
-      assert.equal(task.targetName, name);
-      await packageSyncerService.executeTask(task);
-      stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
-      log = await TestUtil.readStreamToLog(stream);
-      // console.log(log);
-      assert(log.includes('] 🐛 Remote version 1.0.0 not exists on local manifests, need to refresh'));
-      assert(log.includes('] 🟢 Synced updated 1 versions'));
-      assert(log.includes('] 🚧 Syncing versions 1 => 2'));
-      app.mockAgent().assertNoPendingInterceptors();
-      await mock.restore();
+        const publishCmd = {
+          scope: '@cnpmcore',
+          name: 'test-sync-package-has-two-versions',
+          version: '1.0.0',
+          description: '1.0.0',
+          readme: '',
+          registryId: undefined,
+          packageJson: { name, test: 'test', version: '1.0.0' },
+          dist: {
+            content: Buffer.alloc(0),
+          },
+          isPrivate: false,
+          publishTime: new Date(),
+          skipRefreshPackageManifests: false,
+        };
+        const pkgVersion = await packageManagerService.publish(publishCmd, user);
+        assert(pkgVersion.version === '1.0.0');
 
-      app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
-        data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-        persist: false,
+        const publishCmd2 = {
+          scope: '@cnpmcore',
+          name: 'test-sync-package-has-two-versions',
+          version: '2.0.0',
+          description: '2.0.0',
+          readme: '',
+          registryId: undefined,
+          packageJson: { name, test: 'test', version: '2.0.0' },
+          dist: {
+            content: Buffer.alloc(0),
+          },
+          isPrivate: false,
+          publishTime: new Date(),
+          skipRefreshPackageManifests: true,
+        };
+        const pkgVersion2 = await packageManagerService.publish(publishCmd2, user);
+        assert(pkgVersion2.version === '2.0.0');
+
+        // 模拟查询未发现版本重复，写入时异常
+        mock(packageRepository, 'findPackageVersion', async () => {
+          return null;
+        });
+        await packageSyncerService.executeTask(task);
+
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert(log.includes('Synced version 2.0.0 already exists, skip publish, try to set in local manifest'));
+        assert(log.includes('] 🚧 Syncing versions 1 => 2'));
+
       });
-      const abbrs = await packageManagerService.listPackageAbbreviatedManifests(scopedAndName[0], scopedAndName[1]);
-      delete abbrs.data.versions['1.0.0'];
-      mock.data(PackageManagerService.prototype, 'listPackageAbbreviatedManifests', abbrs);
 
-      await packageSyncerService.createTask(name);
-      task = await packageSyncerService.findExecuteTask();
-      assert(task);
-      assert.equal(task.targetName, name);
-      await packageSyncerService.executeTask(task);
-      stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
-      log = await TestUtil.readStreamToLog(stream);
-      // console.log(log);
-      assert(log.includes('] 🐛 Remote version 1.0.0 not exists on local abbreviated manifests, need to refresh'));
-      assert(log.includes('] 🟢 Synced updated 1 versions'));
-      assert(log.includes('] 🚧 Syncing versions 2 => 2'));
-      app.mockAgent().assertNoPendingInterceptors();
-      await mock.restore();
+      it('should skip version when insert error', async () => {
+        // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
+        const name = '@cnpmcore/test-sync-package-has-two-versions';
+        await packageSyncerService.createTask(name);
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        assert.equal(task.targetName, name);
+        const { user } = await userService.create({
+          name: 'test-user',
+          password: 'this-is-password',
+          email: 'hello@example.com',
+          ip: '127.0.0.1',
+        });
 
-      // mock tag on database but not on manifest dist
-      // https://github.com/cnpm/cnpmcore/issues/97
-      app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
-        data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-        persist: false,
+        const publishCmd = {
+          scope: '@cnpmcore',
+          name: 'test-sync-package-has-two-versions',
+          version: '1.0.0',
+          description: '1.0.0',
+          readme: '',
+          registryId: undefined,
+          packageJson: { name, test: 'test', version: '1.0.0' },
+          dist: {
+            content: Buffer.alloc(0),
+          },
+          isPrivate: false,
+          publishTime: new Date(),
+          skipRefreshPackageManifests: false,
+        };
+        const pkgVersion = await packageManagerService.publish(publishCmd, user);
+        assert(pkgVersion.version === '1.0.0');
+
+        // 模拟查询未发现版本重复，写入时异常
+        mock(packageRepository, 'findPackageVersion', async () => {
+          return null;
+        });
+
+        mock(packageRepository, 'createPackageVersion', async () => {
+          throw new Error('mock error');
+        });
+        await packageSyncerService.executeTask(task);
+
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log.includes(' Synced updated 0 versions, removed 0 versions'));
+
       });
-      const result = await npmRegistry.getFullManifests(name);
-      result.data['dist-tags'].foo = '2.0.0';
-      mock.data(NPMRegistry.prototype, 'getFullManifests', result);
-      mock.data(PackageManagerService.prototype, 'savePackageTag', null);
-      await packageSyncerService.createTask(name);
-      task = await packageSyncerService.findExecuteTask();
-      assert(task);
-      await packageSyncerService.executeTask(task);
-      stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
-      log = await TestUtil.readStreamToLog(stream);
-      // console.log(log);
-      assert(log.includes('] 🚧 Remote tag(foo: 2.0.0) not exists in local dist-tags'));
-      assert(!log.includes('] 🚧 Refreshing manifests to dists ......'));
-      app.mockAgent().assertNoPendingInterceptors();
+
+      it('event cork should work', async () => {
+        // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
+        const name = '@cnpmcore/test-sync-package-has-two-versions';
+        await packageSyncerService.createTask(name);
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        assert.equal(task.targetName, name);
+
+
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+
+        const finishedTask = await taskService.findTask(task.taskId) as TaskEntity;
+
+        const changes = await changeRepository.query(0, 100);
+        const [ firstChange ] = changes;
+        const firstChangeDate = new Date(firstChange.createdAt);
+        const taskFinishedDate = new Date(finishedTask!.updatedAt);
+
+        // 任务结束后一起触发
+        assert(firstChangeDate.getTime() - taskFinishedDate.getTime() > 0);
+
+      });
+
     });
 
     it.skip('should sync missing versions in database', async () => {
@@ -1770,6 +1987,67 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         log = await TestUtil.readStreamToLog(stream);
         assert(log.includes('Syncing from https://default.npmjs.org/npm-pkg'));
         app.mockAgent().assertNoPendingInterceptors();
+      });
+
+      it('should sync from default registry when pkg.registryId is undefined', async () => {
+        const pkgName = '@cnpmcore/sync_not_match_registry_name';
+        await TestUtil.createPackage({
+          name: pkgName,
+          registryId: undefined,
+          isPrivate: false,
+        }, {
+          name: 'mock_username',
+        });
+
+        // default registry
+        app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/sync_not_match_registry_name', 'GET', {
+          status: 500,
+          data: 'mock default.npmjs.org error',
+          persist: false,
+          repeats: 3,
+        });
+
+        await taskService.createTask(TaskEntity.createSyncPackage(pkgName, {}), true);
+        const task = await packageSyncerService.findExecuteTask();
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log.includes('Syncing from https://registry.npmjs.org/@cnpmcore/sync_not_match_registry_name'));
+
+      });
+
+      it('should sync from target registry when pkg.registryId is undefined', async () => {
+        const pkgName = '@cnpm/banana';
+        await TestUtil.createPackage({
+          name: pkgName,
+          isPrivate: false,
+        }, {
+          name: 'mock_username',
+        });
+        await packageSyncerService.createTask(pkgName);
+        const task = await packageSyncerService.findExecuteTask();
+
+        // create custom scope
+        await scopeManagerService.createScope({
+          name: '@cnpm',
+          registryId: registry.registryId,
+        });
+
+        app.mockHttpclient('https://custom.npmjs.com/@cnpm/banana', 'GET', {
+          status: 500,
+          data: 'mock error',
+          persist: false,
+          repeats: 3,
+        });
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log.includes('Syncing from https://custom.npmjs.com/@cnpm/banana'));
+
+        const pkg = await packageRepository.findPackage('@cnpm', 'banana');
+        assert(pkg!.registryId === registry.registryId);
       });
 
       it('should not sync from target registry if not match', async () => {

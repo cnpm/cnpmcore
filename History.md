@@ -1,4 +1,80 @@
 
+2.8.0 / 2022-11-29
+==================
+
+**others**
+  * [[`d55c680`](http://github.com/cnpm/cnpmcore/commit/d55c680ef906ecb27f7967782ad7d25987cef7d4)] - Event cork (#361) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
+2.7.1 / 2022-11-25
+==================
+
+**fixes**
+  * [[`c6b8aec`](http://github.com/cnpm/cnpmcore/commit/c6b8aecfd0c2b0d454389e931747c431dac5742b)] - fix: request binary error (#360) (Ke Wu <<gemwuu@163.com>>)
+
+2.7.0 / 2022-11-25
+==================
+
+**others**
+  * [[`5738d56`](http://github.com/cnpm/cnpmcore/commit/5738d569ea691c05c3f3b0b74a454a33fefb8fc7)] - refactor: binary sync task use binaryName by default (#358) (Ke Wu <<gemwuu@163.com>>)
+
+2.6.1 / 2022-11-23
+==================
+
+**fixes**
+  * [[`0b35ead`](http://github.com/cnpm/cnpmcore/commit/0b35ead2a0cd73b89d2d961bafec13d7250fe805)] - 🐛 FIX: typo for canvas (fengmk2 <<fengmk2@gmail.com>>)
+
+2.6.0 / 2022-11-23
+==================
+
+**features**
+  * [[`be8387d`](http://github.com/cnpm/cnpmcore/commit/be8387dfa48b9487156542000a93081fa823694a)] - feat: Support canvas sync from different binary (#357) (Ke Wu <<gemwuu@163.com>>)
+
+**fixes**
+  * [[`d6c4cf5`](http://github.com/cnpm/cnpmcore/commit/d6c4cf5029ca6450064fc05696a8624b6c36f0b2)] - fix: duplicate binary task (#354) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
+2.5.2 / 2022-11-11
+==================
+
+**fixes**
+  * [[`7eb209d`](http://github.com/cnpm/cnpmcore/commit/7eb209de1332417db2070846891d78f5afa0cd10)] - fix: create task when waiting (#352) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
+2.5.1 / 2022-11-07
+==================
+
+**others**
+  * [[`e40c502`](http://github.com/cnpm/cnpmcore/commit/e40c5021bb2ba78f8879d19bc477883168560b85)] - 🐛 FIX: Mirror cypress arm64 binary (#351) (fengmk2 <<fengmk2@gmail.com>>)
+
+2.5.0 / 2022-11-04
+==================
+
+**features**
+  * [[`43d77ee`](http://github.com/cnpm/cnpmcore/commit/43d77ee91e52bd74594d9d569b839c1a4b7fbac6)] - feat: long description (#349) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
+2.4.1 / 2022-10-28
+==================
+
+**features**
+  * [[`92350a8`](http://github.com/cnpm/cnpmcore/commit/92350a864313ee42a048d9e83886ef42db3419de)] - 👌 IMPROVE: Show changes stream create task log (#347) (fengmk2 <<fengmk2@gmail.com>>)
+
+**fixes**
+  * [[`28eeeaf`](http://github.com/cnpm/cnpmcore/commit/28eeeafd9870c6b1c5b4f4c23916f6ae73ddda12)] - fix: registry host config (#346) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+  * [[`cd5bd92`](http://github.com/cnpm/cnpmcore/commit/cd5bd923b8d47bf90b5f077ce04777b38653b850)] - 🐛 FIX: Catch all error on changes stream handler (#344) (fengmk2 <<fengmk2@gmail.com>>)
+
+2.4.0 / 2022-10-25
+==================
+
+**features**
+  * [[`6aa302d`](http://github.com/cnpm/cnpmcore/commit/6aa302d074f2c84f39e2065fa20853b007f6fa3b)] - 📦 NEW: Use oss-cnpm v4 (#340) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`a217fd0`](http://github.com/cnpm/cnpmcore/commit/a217fd07ccad3fe5058881654a13e0c69c758717)] - 👌 IMPROVE: Reduce warning log (#326) (fengmk2 <<fengmk2@gmail.com>>)
+
+**fixes**
+  * [[`b19b0a0`](http://github.com/cnpm/cnpmcore/commit/b19b0a0496e35ac1c6b3de746b9221990ba9dc93)] - fix: Lazy set registryId when executeTask (#341) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
+**others**
+  * [[`305175a`](http://github.com/cnpm/cnpmcore/commit/305175ab5fcdc3ad3b60055d45cfcacb23065a80)] - 🤖 TEST: Use enum define on unittest (#333) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`07f2eba`](http://github.com/cnpm/cnpmcore/commit/07f2eba137ba625b2d422677a465920617141b87)] - 🤖 TEST: Mock all binary http requests (#328) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`4b0c7dc`](http://github.com/cnpm/cnpmcore/commit/4b0c7dc6196960d34b2529bfde724e97f1af8444)] - 🤖 TEST: Mock all httpclient request (#327) (fengmk2 <<fengmk2@gmail.com>>)
+
 2.3.1 / 2022-10-06
 ==================
 

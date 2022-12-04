@@ -31,10 +31,11 @@ export class CypressBinary extends AbstractBinary {
         // "https://cdn.cypress.io/desktop/4.0.0/darwin-x64/cypress.zip"
         // "https://cdn.cypress.io/desktop/4.0.0/linux-x64/cypress.zip"
         // "https://cdn.cypress.io/desktop/4.0.0/win32-x64/cypress.zip"
+        // "https://cdn.cypress.io/desktop/9.2.0/darwin-arm64/cypress.zip"
         // "https://cdn.cypress.io/desktop/9.2.0/darwin-x64/cypress.zip"
         // "https://cdn.cypress.io/desktop/9.2.0/linux-x64/cypress.zip"
         // "https://cdn.cypress.io/desktop/9.2.0/win32-x64/cypress.zip"
-        const platforms = [ 'darwin-x64', 'linux-x64', 'win32-x64' ];
+        const platforms = [ 'darwin-x64', 'darwin-arm64', 'linux-x64', 'win32-x64' ];
         for (const platform of platforms) {
           this.dirItems[subDir].push({
             name: `${platform}/`,

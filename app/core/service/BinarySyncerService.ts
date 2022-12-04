@@ -30,6 +30,7 @@ import { ElectronBinary } from '../../common/adapter/binary/ElectronBinary';
 import { NodePreGypBinary } from '../../common/adapter/binary/NodePreGypBinary';
 import { ImageminBinary } from '../../common/adapter/binary/ImageminBinary';
 import { PlaywrightBinary } from '../../common/adapter/binary/PlaywrightBinary';
+import { TaskRepository } from 'app/repository/TaskRepository';
 
 const BinaryClasses = {
   [SyncerClass.NodeBinary]: NodeBinary,
@@ -58,6 +59,8 @@ export class BinarySyncerService extends AbstractService {
   @Inject()
   private readonly taskService: TaskService;
   @Inject()
+  private readonly taskRepository: TaskRepository;
+  @Inject()
   private readonly httpclient: EggContextHttpClient;
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
@@ -71,15 +74,51 @@ export class BinarySyncerService extends AbstractService {
   }
 
   public async listRootBinaries(binaryName: string) {
-    return await this.binaryRepository.listBinaries(binaryName, '/');
+    // 通常 binaryName 和 category 是一样的，但是有些特殊的 binaryName 会有多个 category，比如 canvas
+    // 所以查询 canvas 的时候，需要将 binaryName 和 category 的数据都查出来
+    const {
+      category,
+    } = binaries[binaryName];
+    const reqs = [
+      this.binaryRepository.listBinaries(binaryName, '/'),
+    ];
+    if (category && category !== binaryName) {
+      reqs.push(this.binaryRepository.listBinaries(category, '/'));
+    }
+
+    const [
+      rootBinary,
+      categoryBinary,
+    ] = await Promise.all(reqs);
+
+    const versions = rootBinary.map(b => b.name);
+    categoryBinary?.forEach(b => {
+      const version = b.name;
+      // 只将没有的版本添加进去
+      if (!versions.includes(version)) {
+        rootBinary.push(b);
+      }
+    });
+
+    return rootBinary;
   }
 
   public async downloadBinary(binary: Binary) {
     return await this.nfsAdapter.getDownloadUrlOrStream(binary.storePath);
   }
 
+  // SyncBinary 由定时任务每台单机定时触发，手动去重
+  // 添加 bizId 在 db 防止重复，记录 id 错误
   public async createTask(binaryName: string, lastData?: any) {
-    return await this.taskService.createTask(Task.createSyncBinary(binaryName, lastData), false);
+    const existsTask = await this.taskRepository.findTaskByTargetName(binaryName, TaskType.SyncBinary);
+    if (existsTask) {
+      return existsTask;
+    }
+    try {
+      return await this.taskService.createTask(Task.createSyncBinary(binaryName, lastData), false);
+    } catch (e) {
+      this.logger.error('[BinarySyncerService.createTask] binaryName: %s, error: %s', binaryName, e);
+    }
   }
 
   public async findTask(taskId: string) {
@@ -250,15 +289,13 @@ export class BinarySyncerService extends AbstractService {
 
   private createBinaryInstance(binaryName: string): AbstractBinary | undefined {
     const config = this.config.cnpmcore;
+    const binaryConfig = binaries[binaryName];
+
     if (config.sourceRegistryIsCNpm) {
-      const binaryConfig = binaries[binaryName];
       const syncBinaryFromAPISource = config.syncBinaryFromAPISource || `${config.sourceRegistry}/-/binary`;
-      return new ApiBinary(this.httpclient, this.logger, binaryConfig, syncBinaryFromAPISource);
+      return new ApiBinary(this.httpclient, this.logger, binaryConfig, syncBinaryFromAPISource, binaryName);
     }
-    for (const binaryConfig of Object.values(binaries)) {
-      if (binaryConfig.category === binaryName) {
-        return new BinaryClasses[binaryConfig.syncer](this.httpclient, this.logger, binaryConfig);
-      }
-    }
+
+    return new BinaryClasses[binaryConfig.syncer](this.httpclient, this.logger, binaryConfig, binaryName);
   }
 }

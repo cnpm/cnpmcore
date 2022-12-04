@@ -30,7 +30,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
         data: '1055816',
         persist: false,
       });
-      const binary = new PuppeteerBinary(ctx.httpclient, ctx.logger, binaries['chromium-browser-snapshots']);
+      const binary = new PuppeteerBinary(ctx.httpclient, ctx.logger, binaries['chromium-browser-snapshots'], 'chromium-browser-snapshots');
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length === 5);

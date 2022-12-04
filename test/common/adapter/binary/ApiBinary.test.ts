@@ -22,7 +22,7 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('cnpmjs.org/mirrors/apis/node.json'),
         persist: false,
       });
-      const binary = new ApiBinary(ctx.httpclient, ctx.logger, binaries.node, 'https://cnpmjs.org/mirrors/apis');
+      const binary = new ApiBinary(ctx.httpclient, ctx.logger, binaries.node, 'https://cnpmjs.org/mirrors/apis', 'node');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -56,7 +56,7 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('r.cnpmjs.org/-/binary/node/v16.13.1.json'),
         persist: false,
       });
-      const binary = new ApiBinary(ctx.httpclient, ctx.logger, binaries.node, 'https://r.cnpmjs.org/-/binary');
+      const binary = new ApiBinary(ctx.httpclient, ctx.logger, binaries.node, 'https://r.cnpmjs.org/-/binary', 'node');
       const result = await binary.fetch('/v16.13.1/');
       assert(result);
       assert(result.items.length > 0);

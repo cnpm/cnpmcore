@@ -65,6 +65,7 @@ export interface PublishPackageCmd {
 
 const TOTAL = '@@TOTAL@@';
 const SCOPE_TOTAL_PREFIX = '@@SCOPE@@:';
+const DESCRIPTION_LIMIT = 1024 * 10;
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -104,6 +105,15 @@ export class PackageManagerService extends AbstractService {
       if (pkg.description !== cmd.description) {
         pkg.description = cmd.description;
       }
+
+      if (!pkg.registryId && cmd.registryId) {
+        pkg.registryId = cmd.registryId;
+      }
+    }
+
+    // 防止 description 长度超过 db 限制
+    if (pkg.description?.length > DESCRIPTION_LIMIT) {
+      pkg.description = pkg.description.substring(0, DESCRIPTION_LIMIT);
     }
     await this.packageRepository.savePackage(pkg);
     // create maintainer
@@ -211,7 +221,14 @@ export class PackageManagerService extends AbstractService {
       this.distRepository.saveDist(pkgVersion.manifestDist, manifestDistBytes),
       this.distRepository.saveDist(pkgVersion.readmeDist, readmeDistBytes),
     ]);
-    await this.packageRepository.createPackageVersion(pkgVersion);
+    try {
+      await this.packageRepository.createPackageVersion(pkgVersion);
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
+        throw new ForbiddenError(`Can't modify pre-existing version: ${pkg.fullname}@${cmd.version}`);
+      }
+      throw e;
+    }
     if (cmd.skipRefreshPackageManifests !== true) {
       await this.refreshPackageChangeVersionsToDists(pkg, [ pkgVersion.version ]);
     }
