@@ -38,13 +38,13 @@ export class UpdatePackageController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async update(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: Maintainer) {
-    const npmCommand = ctx.get('npm-command');
-    if (npmCommand === 'unpublish') {
+    if (this.isNpmCommandValid(ctx, 'unpublish')) {
       // ignore it
       return { ok: false };
     }
     // only support update maintainer
-    if (npmCommand !== 'owner') {
+    if (!this.isNpmCommandValid(ctx, 'owner')) {
+      const npmCommand = this.getNpmCommand(ctx);
       throw new BadRequestError(`header: npm-command expected "owner", but got "${npmCommand}"`);
     }
     ctx.tValidate(MaintainerDataRule, data);
@@ -60,5 +60,22 @@ export class UpdatePackageController extends AbstractController {
     }
     await this.packageManagerService.replacePackageMaintainers(pkg, users);
     return { ok: true };
+  }
+
+  private getNpmCommand(ctx: EggContext) {
+    // npm@6: referer: 'xxx [REDACTED]'
+    // npm@>=7: 'npm-command': 'xxx'
+    let npmCommand = ctx.get('npm-command');
+    if (!npmCommand) {
+      npmCommand = ctx.get('referer').split(' ', 1)[0];
+    }
+
+    return npmCommand;
+  }
+
+  private isNpmCommandValid(ctx: EggContext, expectCommand: string) {
+    const npmCommand = this.getNpmCommand(ctx);
+
+    return npmCommand === expectCommand;
   }
 }

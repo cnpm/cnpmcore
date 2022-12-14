@@ -543,7 +543,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         date: '2021-12-14T13:12:31.587Z',
       }));
 
-      mock(nfsClientAdapter, 'url', (storeKey: string) => {
+      mock(nfsClientAdapter, 'url', async (storeKey: string) => {
         return `https://cdn.mock.com${storeKey}`;
       });
       const res = await app.httpRequest()
