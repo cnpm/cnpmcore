@@ -202,9 +202,11 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     it('should work', async () => {
       app.mockLog();
       mock(app.config.cnpmcore, 'enableChangesStream', true);
-      mock(ctx.httpclient, 'request', async () => {
+      app.mockHttpclient('https://replicate.npmjs.com/_changes?since=9527', 'GET', () => {
         return {
-          res: Readable.from(''),
+          data: {
+            res: Readable.from(''),
+          },
         };
       });
 
