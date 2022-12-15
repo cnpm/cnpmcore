@@ -1,4 +1,10 @@
 
+2.9.0 / 2022-12-15
+==================
+
+**features**
+  * [[`c562645`](http://github.com/cnpm/cnpmcore/commit/c562645db7c88f9c3c5787fd450b457574d1cce6)] - feat: suspend task before app close (#365) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
 2.8.1 / 2022-12-05
 ==================
 
