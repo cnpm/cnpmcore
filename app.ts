@@ -1,7 +1,6 @@
 import path from 'path';
 import { readFile } from 'fs/promises';
 import { Application } from 'egg';
-
 declare module 'egg' {
   interface Application {
     binaryHTML: string;
@@ -22,5 +21,14 @@ export default class CnpmcoreAppHook {
     const filepath = path.join(this.app.baseDir, 'app/port/binary.html');
     const text = await readFile(filepath, 'utf-8');
     this.app.binaryHTML = text.replace('{{registry}}', this.app.config.cnpmcore.registry);
+  }
+
+  // 应用退出时执行
+  // 需要暂停当前执行的 changesStream task
+  async beforeClose() {
+    const ctx = this.app.createAnonymousContext();
+    await ctx.beginModuleScope(async () => {
+      await ctx.module.cnpmcoreCore.changesStreamService.suspendTaskWhenExit();
+    });
   }
 }

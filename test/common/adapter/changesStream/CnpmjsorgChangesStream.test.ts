@@ -5,7 +5,7 @@ import { Registry } from 'app/core/entity/Registry';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
 import assert = require('assert');
 import { Context } from 'egg';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app } from 'egg-mock/bootstrap';
 
 describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () => {
   let ctx: Context;
@@ -83,7 +83,7 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
           ],
         },
       });
-      const stream = await cnpmjsorgChangesStream.fetchChanges(registry, '1');
+      const stream = cnpmjsorgChangesStream.fetchChanges(registry, '1');
       const changes:ChangesStreamChange[] = [];
       for await (const change of stream) {
         changes.push(change);
@@ -92,7 +92,7 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
     });
 
     it('should reject max limit', async () => {
-      mock(ctx.httpclient, 'request', async (url: string) => {
+      app.mockHttpclient('https://r2.cnpmjs.org/_changes?since=1&limit=', 'GET', (url = '') => {
         const limit = (new URL(url)).searchParams.get('limit');
         return {
           data: {
@@ -105,7 +105,7 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
           },
         };
       });
-      const stream = await cnpmjsorgChangesStream.fetchChanges(registry, '1');
+      const stream = cnpmjsorgChangesStream.fetchChanges(registry, '1');
       await assert.rejects(async () => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for await (const _ of stream) {
