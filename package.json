@@ -80,7 +80,7 @@
     "base-x": "^3.0.9",
     "bson-objectid": "^2.0.1",
     "dayjs": "^1.10.7",
-    "egg": "^3.1.0",
+    "egg": "^3.9.0",
     "egg-cors": "^2.2.3",
     "egg-errors": "^2.3.0",
     "egg-redis": "^2.4.0",
@@ -102,18 +102,18 @@
     "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
-    "@types/mocha": "^9.0.0",
+    "@types/mocha": "^10.0.1",
     "@types/mysql": "^2.15.21",
     "@types/semver": "^7.3.12",
     "coffee": "^5.4.0",
-    "egg-bin": "^4.16.4",
+    "egg-bin": "^5.5.0",
     "egg-mock": "^5.0.1",
-    "eslint": "^7.32.0",
-    "eslint-config-egg": "^9.0.0",
+    "eslint": "^8.29.0",
+    "eslint-config-egg": "^12.1.0",
     "git-contributor": "^1.0.10",
     "npm-cli-login": "^1.0.0",
-    "ts-node": "^10.4.0",
-    "typescript": "~4.7.0"
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
   },
   "author": "killagu",
   "license": "MIT",
