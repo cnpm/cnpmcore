@@ -26,9 +26,10 @@ export default class CnpmcoreAppHook {
   // 应用退出时执行
   // 需要暂停当前执行的 changesStream task
   async beforeClose() {
-    const ctx = this.app.createAnonymousContext();
-    await ctx.beginModuleScope(async () => {
-      await ctx.module.cnpmcoreCore.changesStreamService.suspendTaskWhenExit();
+    await this.app.runInAnonymousContextScope(async ctx => {
+      await ctx.beginModuleScope(async () => {
+        await ctx.module.cnpmcoreCore.changesStreamService.suspendTaskWhenExit();
+      });
     });
   }
 }
