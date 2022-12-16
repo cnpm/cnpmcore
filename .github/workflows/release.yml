@@ -1,0 +1,13 @@
+name: Release
+on:
+  # comment this if you want to release by manual trigger action
+  #push:
+  #  branches: [ master, main, next, beta, '*.x' ]
+
+  # manual trigger action at GitHub Actions Tab
+  workflow_dispatch: {}
+
+jobs:
+  release:
+    name: Node.js
+    uses: artusjs/github-actions/.github/workflows/node-release.yml@v1
