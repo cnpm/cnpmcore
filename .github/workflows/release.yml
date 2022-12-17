@@ -1,10 +1,10 @@
 name: Release
 on:
-  # comment this if you want to release by manual trigger action
+  # 合并后自动发布
   push:
-   branches: [ main ]
+    branches: [ master, main ]
 
-  # manual trigger action at GitHub Actions Tab
+  # 手动发布
   workflow_dispatch: {}
 
 jobs:
