@@ -1,10 +1,10 @@
-import { ContextProto } from '@eggjs/tegg';
+import { SingletonProto } from '@eggjs/tegg';
 import { RegistryType } from '../../../common/enum/Registry';
 import { Registry } from '../../../core/entity/Registry';
 import { E500 } from 'egg-errors';
 import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesStream';
 
-@ContextProto()
+@SingletonProto()
 @RegistryChangesStream(RegistryType.Cnpmcore)
 export class CnpmcoreChangesStream extends AbstractChangeStream {
 

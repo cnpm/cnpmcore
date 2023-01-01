@@ -1,20 +1,17 @@
+import assert from 'assert';
+import { app } from 'egg-mock/bootstrap';
 import { TaskType } from 'app/common/enum/Task';
 import { Registry } from 'app/core/entity/Registry';
 import { ChangesStreamTaskData } from 'app/core/entity/Task';
 import { TaskService } from 'app/core/service/TaskService';
-import assert = require('assert');
-import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../TestUtil';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/RegistryController/index.test.ts', () => {
-  let ctx: Context;
   let adminUser: any;
   let registry: Registry;
   let taskService: TaskService;
   before(async () => {
-    ctx = await app.mockModuleContext();
-    taskService = await ctx.getEggObject(TaskService);
+    taskService = await app.getEggObject(TaskService);
   });
   beforeEach(async () => {
     adminUser = await TestUtil.createAdmin();
@@ -47,11 +44,6 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         registryId: registry.registryId,
       })
       .expect(200);
-
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('[POST /-/registry] createRegistry()', () => {

@@ -1,22 +1,19 @@
 import { Readable, Duplex } from 'node:stream';
+import assert from 'assert';
+import { app, mock } from 'egg-mock/bootstrap';
 import { ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
 import { NpmChangesStream } from 'app/common/adapter/changesStream/NpmChangesStream';
 import { RegistryType } from 'app/common/enum/Registry';
 import { Registry } from 'app/core/entity/Registry';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
-import assert = require('assert');
-import { Context } from 'egg';
-import { app, mock } from 'egg-mock/bootstrap';
 
 describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
-  let ctx: Context;
   let npmChangesStream: NpmChangesStream;
   let registryManagerService: RegistryManagerService;
   let registry: Registry;
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    npmChangesStream = await ctx.getEggObject(NpmChangesStream);
-    registryManagerService = await ctx.getEggObject(RegistryManagerService);
+    npmChangesStream = await app.getEggObject(NpmChangesStream);
+    registryManagerService = await app.getEggObject(RegistryManagerService);
     registry = await registryManagerService.createRegistry({
       name: 'npm',
       changeStream: 'https://replicate.npmjs.com/_changes',
@@ -53,7 +50,7 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
 
   describe('fetchChanges()', () => {
     it('should work', async () => {
-      mock(ctx.httpclient, 'request', async () => {
+      mock(app.httpclient, 'request', async () => {
         return {
           res: Readable.from(`
           {"seq":2,"id":"backbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
@@ -71,7 +68,7 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
 
     it('should work for broken chunk', async () => {
       const rStream = Duplex.from('');
-      mock(ctx.httpclient, 'request', async () => {
+      mock(app.httpclient, 'request', async () => {
         return {
           res: rStream,
         };
@@ -88,5 +85,4 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
       assert(res.length === 1);
     });
   });
-
 });

@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { Task as TaskModel } from './model/Task';
 import type { HistoryTask as HistoryTaskModel } from './model/HistoryTask';
@@ -7,7 +7,7 @@ import { Task as TaskEntity, TaskUpdateCondition } from '../core/entity/Task';
 import { AbstractRepository } from './AbstractRepository';
 import { TaskType, TaskState } from '../../app/common/enum/Task';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class TaskRepository extends AbstractRepository {

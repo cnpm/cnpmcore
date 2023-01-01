@@ -1,6 +1,6 @@
 import { Readable } from 'stream';
 import {
-  ContextProto,
+  SingletonProto,
   AccessLevel,
   Inject,
 } from '@eggjs/tegg';
@@ -12,7 +12,7 @@ import { IncomingHttpHeaders } from 'http';
 
 const INSTANCE_NAME = 'nfsAdapter';
 
-@ContextProto({
+@SingletonProto({
   name: INSTANCE_NAME,
   accessLevel: AccessLevel.PUBLIC,
 })

@@ -1,5 +1,4 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { PackageRepository } from '../../../../app/repository/PackageRepository';
@@ -9,17 +8,11 @@ import { CacheService } from '../../../../app/core/service/CacheService';
 import { DistRepository } from '../../../../app/repository/DistRepository';
 
 describe('test/port/controller/package/ShowPackageController.test.ts', () => {
-  let ctx: Context;
   let packageRepository: PackageRepository;
   let publisher;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
-    ctx = await app.mockModuleContext();
-    packageRepository = await ctx.getEggObject(PackageRepository);
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
+    packageRepository = await app.getEggObject(PackageRepository);
   });
 
   describe('[GET /:fullname] show()', () => {

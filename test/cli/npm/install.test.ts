@@ -1,4 +1,4 @@
-import assert = require('assert');
+import assert from 'assert';
 import path from 'path';
 import { app } from 'egg-mock/bootstrap';
 import coffee from 'coffee';

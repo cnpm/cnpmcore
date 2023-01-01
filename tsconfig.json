@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": false,
     "resolveJsonModule": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "useUnknownInCatchVariables": false
   },
   "exclude": [

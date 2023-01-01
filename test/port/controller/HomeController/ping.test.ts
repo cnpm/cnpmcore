@@ -1,17 +1,7 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 
 describe('test/port/controller/HomeController/ping.test.ts', () => {
-  let ctx: Context;
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   describe('[GET /-/ping] ping()', () => {
     it('should 200', async () => {
       const res = await app.httpRequest()

@@ -1,20 +1,13 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
-import { BugVersion } from '../../../../app/core/entity/BugVersion';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
+import { BugVersion } from 'app/core/entity/BugVersion';
+import { PackageManagerService } from 'app/core/service/PackageManagerService';
 
 describe('test/port/controller/package/ShowPackageVersionController.test.ts', () => {
-  let ctx: Context;
   let publisher;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /:fullname/:versionOrTag] show()', () => {

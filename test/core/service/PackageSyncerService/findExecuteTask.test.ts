@@ -1,24 +1,17 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { Task as TaskModel } from 'app/repository/model/Task';
 import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
 import { TaskService } from 'app/core/service/TaskService';
 
 describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () => {
-  let ctx: Context;
   let packageSyncerService: PackageSyncerService;
   let taskService: TaskService;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    packageSyncerService = await ctx.getEggObject(PackageSyncerService);
-    taskService = await ctx.getEggObject(TaskService);
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
+    packageSyncerService = await app.getEggObject(PackageSyncerService);
+    taskService = await app.getEggObject(TaskService);
   });
 
   describe('findExecuteTask()', () => {

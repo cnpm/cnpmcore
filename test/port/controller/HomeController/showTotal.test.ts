@@ -1,5 +1,4 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { PackageVersionDownload } from 'app/repository/model/PackageVersionDownload';
@@ -9,15 +8,6 @@ const SavePackageVersionDownloadCounterPath = require.resolve('../../../../app/p
 const UpdateTotalDataPath = require.resolve('../../../../app/port/schedule/UpdateTotalData');
 
 describe('test/port/controller/HomeController/showTotal.test.ts', () => {
-  let ctx: Context;
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   describe('[GET /] showTotal()', () => {
     it('should total information', async () => {
       let res = await app.httpRequest()

@@ -1,21 +1,19 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
-import { TestUtil } from '../../TestUtil';
-import { HookManageService } from '../../../app/core/service/HookManageService';
-import { HookType } from '../../../app/common/enum/Hook';
-import { UserRepository } from '../../../app/repository/UserRepository';
-import { PACKAGE_VERSION_ADDED } from '../../../app/core/event';
-import { Change } from '../../../app/core/entity/Change';
-import { ChangeRepository } from '../../../app/repository/ChangeRepository';
-import { Task } from '../../../app/core/entity/Task';
-import { HookEvent } from '../../../app/core/entity/HookEvent';
-import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService';
-import { TaskRepository } from '../../../app/repository/TaskRepository';
-import { Hook } from '../../../app/core/entity/Hook';
+import { TestUtil } from 'test/TestUtil';
+import { HookManageService } from 'app/core/service/HookManageService';
+import { HookType } from 'app/common/enum/Hook';
+import { UserRepository } from 'app/repository/UserRepository';
+import { PACKAGE_VERSION_ADDED } from 'app/core/event';
+import { Change } from 'app/core/entity/Change';
+import { ChangeRepository } from 'app/repository/ChangeRepository';
+import { Task } from 'app/core/entity/Task';
+import { HookEvent } from 'app/core/entity/HookEvent';
+import { CreateHookTriggerService } from 'app/core/service/CreateHookTriggerService';
+import { TaskRepository } from 'app/repository/TaskRepository';
+import { Hook } from 'app/core/entity/Hook';
 
 describe('test/core/service/CreateHookTriggerService.test.ts', () => {
-  let ctx: Context;
   let hookManageService: HookManageService;
   let changeRepository: ChangeRepository;
   let createHookTriggerService: CreateHookTriggerService;
@@ -25,12 +23,11 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
   let userId: string;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    hookManageService = await ctx.getEggObject(HookManageService);
-    changeRepository = await ctx.getEggObject(ChangeRepository);
-    createHookTriggerService = await ctx.getEggObject(CreateHookTriggerService);
-    taskRepository = await ctx.getEggObject(TaskRepository);
-    const userRepository = await ctx.getEggObject(UserRepository);
+    hookManageService = await app.getEggObject(HookManageService);
+    changeRepository = await app.getEggObject(ChangeRepository);
+    createHookTriggerService = await app.getEggObject(CreateHookTriggerService);
+    taskRepository = await app.getEggObject(TaskRepository);
+    const userRepository = await app.getEggObject(UserRepository);
     await TestUtil.createPackage({
       name: pkgName,
     }, {

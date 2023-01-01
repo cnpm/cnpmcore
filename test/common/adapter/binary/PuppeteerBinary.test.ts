@@ -1,21 +1,10 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { PuppeteerBinary } from 'app/common/adapter/binary/PuppeteerBinary';
 import binaries from 'config/binaries';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
-  let ctx: Context;
-
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   describe('fetch()', () => {
     it('should fetch work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/puppeteer', 'GET', {
@@ -30,7 +19,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
         data: '1055816',
         persist: false,
       });
-      const binary = new PuppeteerBinary(ctx.httpclient, ctx.logger, binaries['chromium-browser-snapshots'], 'chromium-browser-snapshots');
+      const binary = new PuppeteerBinary(app.httpclient, app.logger, binaries['chromium-browser-snapshots'], 'chromium-browser-snapshots');
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length === 5);

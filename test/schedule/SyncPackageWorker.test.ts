@@ -1,4 +1,4 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { TestUtil } from 'test/TestUtil';

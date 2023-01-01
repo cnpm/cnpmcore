@@ -1,4 +1,4 @@
-import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
+import { Attribute, Model } from '@eggjs/tegg/orm';
 import { DataTypes, Bone } from 'leoric';
 import { EntityProperty } from '../util/EntityProperty';
 

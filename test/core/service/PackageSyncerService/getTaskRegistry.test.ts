@@ -1,6 +1,5 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
 import { Registry } from 'app/core/entity/Registry';
@@ -8,16 +7,14 @@ import { RegistryType } from 'app/common/enum/Registry';
 import { Task } from 'app/core/entity/Task';
 
 describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () => {
-  let ctx: Context;
   let packageSyncerService: PackageSyncerService;
   let registryManagerService: RegistryManagerService;
   let registry: Registry;
   let task: Task;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    packageSyncerService = await ctx.getEggObject(PackageSyncerService);
-    registryManagerService = await ctx.getEggObject(RegistryManagerService);
+    packageSyncerService = await app.getEggObject(PackageSyncerService);
+    registryManagerService = await app.getEggObject(RegistryManagerService);
     registry = await registryManagerService.createRegistry({
       name: 'cnpmcore',
       changeStream: 'https://r.cnpmjs.org/_changes',
@@ -33,11 +30,6 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
       skipDependencies: true,
       tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: 1`,
     });
-
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('getTaskRegistry()', () => {

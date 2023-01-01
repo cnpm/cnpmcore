@@ -1,18 +1,11 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/PackageTagController/removeTag.test.ts', () => {
   let publisher;
-  let ctx: Context;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('[DELETE /-/package/:fullname/dist-tags/:tag] removeTag()', () => {

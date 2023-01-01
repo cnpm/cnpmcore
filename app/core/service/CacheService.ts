@@ -1,6 +1,6 @@
 import {
   AccessLevel,
-  ContextProto,
+  SingletonProto,
   Inject,
 } from '@eggjs/tegg';
 import { CacheAdapter } from '../../common/adapter/CacheAdapter';
@@ -30,7 +30,7 @@ type TotalData = {
 };
 const TOTAL_DATA_KEY = '__TOTAL_DATA__';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class CacheService extends AbstractService {

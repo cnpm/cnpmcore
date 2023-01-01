@@ -1,10 +1,10 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { PackageVersionBlock as PackageVersionBlockModel } from './model/PackageVersionBlock';
 import { PackageVersionBlock as PackageVersionBlockEntity } from '../core/entity/PackageVersionBlock';
 import { AbstractRepository } from './AbstractRepository';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class PackageVersionBlockRepository extends AbstractRepository {

@@ -1,6 +1,5 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { setTimeout } from 'timers/promises';
 import { TaskRepository } from 'app/repository/TaskRepository';
 import { Task as TaskModel } from 'app/repository/model/Task';
@@ -10,21 +9,16 @@ import os from 'os';
 import { EasyData, EntityUtil } from '../../app/core/util/EntityUtil';
 
 describe('test/repository/TaskRepository.test.ts', () => {
-  let ctx: Context;
-
   let taskRepository: TaskRepository;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    taskRepository = await ctx.getEggObject(TaskRepository);
+    taskRepository = await app.getEggObject(TaskRepository);
     await TaskModel.truncate();
   });
 
   afterEach(async () => {
     await TaskModel.truncate();
-    await app.destroyModuleContext(ctx);
   });
-
 
   describe('unique biz id', () => {
 

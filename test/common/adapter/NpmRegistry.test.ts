@@ -1,13 +1,12 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { NPMRegistry } from '../../../app/common/adapter/NPMRegistry';
+import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
 
 describe('test/common/adapter/CacheAdapter.test.ts', () => {
   let npmRegistry: NPMRegistry;
 
   beforeEach(async () => {
-    const ctx = await app.mockModuleContext();
-    npmRegistry = await ctx.getEggObject(NPMRegistry);
+    npmRegistry = await app.getEggObject(NPMRegistry);
     mock(app.config.cnpmcore, 'registry', 'https://registry.npmjs.org');
   });
 

@@ -1,23 +1,21 @@
-import assert = require('assert');
+import assert from 'assert';
+import { RequestOptions } from 'urllib';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
-import { TestUtil } from '../../TestUtil';
-import { HookManageService } from '../../../app/core/service/HookManageService';
-import { HookType } from '../../../app/common/enum/Hook';
-import { UserRepository } from '../../../app/repository/UserRepository';
-import { PACKAGE_VERSION_ADDED } from '../../../app/core/event';
-import { Change } from '../../../app/core/entity/Change';
-import { ChangeRepository } from '../../../app/repository/ChangeRepository';
-import { Task, TriggerHookTask } from '../../../app/core/entity/Task';
-import { HookEvent } from '../../../app/core/entity/HookEvent';
-import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService';
-import { TaskRepository } from '../../../app/repository/TaskRepository';
-import { Hook } from '../../../app/core/entity/Hook';
-import { HookTriggerService } from '../../../app/core/service/HookTriggerService';
-import { RequestOptions } from 'urllib/src/Request';
+import { TestUtil } from 'test/TestUtil';
+import { HookManageService } from 'app/core/service/HookManageService';
+import { HookType } from 'app/common/enum/Hook';
+import { UserRepository } from 'app/repository/UserRepository';
+import { PACKAGE_VERSION_ADDED } from 'app/core/event';
+import { Change } from 'app/core/entity/Change';
+import { ChangeRepository } from 'app/repository/ChangeRepository';
+import { Task, TriggerHookTask } from 'app/core/entity/Task';
+import { HookEvent } from 'app/core/entity/HookEvent';
+import { CreateHookTriggerService } from 'app/core/service/CreateHookTriggerService';
+import { TaskRepository } from 'app/repository/TaskRepository';
+import { Hook } from 'app/core/entity/Hook';
+import { HookTriggerService } from 'app/core/service/HookTriggerService';
 
 describe('test/core/service/HookTriggerService.test.ts', () => {
-  let ctx: Context;
   let hookManageService: HookManageService;
   let changeRepository: ChangeRepository;
   let createHookTriggerService: CreateHookTriggerService;
@@ -28,13 +26,12 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
   let userId: string;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    hookManageService = await ctx.getEggObject(HookManageService);
-    changeRepository = await ctx.getEggObject(ChangeRepository);
-    createHookTriggerService = await ctx.getEggObject(CreateHookTriggerService);
-    taskRepository = await ctx.getEggObject(TaskRepository);
-    const userRepository = await ctx.getEggObject(UserRepository);
-    hookTriggerService = await ctx.getEggObject(HookTriggerService);
+    hookManageService = await app.getEggObject(HookManageService);
+    changeRepository = await app.getEggObject(ChangeRepository);
+    createHookTriggerService = await app.getEggObject(CreateHookTriggerService);
+    taskRepository = await app.getEggObject(TaskRepository);
+    const userRepository = await app.getEggObject(UserRepository);
+    hookTriggerService = await app.getEggObject(HookTriggerService);
     await TestUtil.createPackage({
       name: pkgName,
     }, {
@@ -69,7 +66,7 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
       const task = Task.createCreateHookTask(HookEvent.createPublishEvent(pkgName, change.changeId, '1.0.0', 'latest'));
       await createHookTriggerService.executeTask(task);
 
-      mock(ctx.httpclient, 'request', async (url, options) => {
+      mock(app.httpclient, 'request', async (url, options) => {
         callEndpoint = url;
         callOptions = options;
         return {

@@ -1,18 +1,8 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../TestUtil';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/UserController/showProfile.test.ts', () => {
-  let ctx: Context;
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   describe('[GET /-/npm/v1/user] showProfile()', () => {
     it('should 401', async () => {
       const { authorization } = await TestUtil.createUser();

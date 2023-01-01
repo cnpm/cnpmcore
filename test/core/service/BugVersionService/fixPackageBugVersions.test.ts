@@ -1,18 +1,15 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
-import { TestUtil } from '../../../TestUtil';
-import { BugVersionService } from '../../../../app/core/service/BugVersionService';
-import { BugVersion } from '../../../../app/core/entity/BugVersion';
+import { TestUtil } from 'test/TestUtil';
+import { BugVersionService } from 'app/core/service/BugVersionService';
+import { BugVersion } from 'app/core/entity/BugVersion';
 
 describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', () => {
-  let ctx: Context;
   let bugVersionService: BugVersionService;
   let bugVersion: BugVersion;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    bugVersionService = await ctx.getEggObject(BugVersionService);
+    bugVersionService = await app.getEggObject(BugVersionService);
     bugVersion = new BugVersion({
       faker: {
         '6.6.6': {
@@ -38,7 +35,6 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
   });
 
   afterEach(async () => {
-    await app.destroyModuleContext(ctx);
     mock.restore();
     await TestUtil.truncateDatabase();
   });

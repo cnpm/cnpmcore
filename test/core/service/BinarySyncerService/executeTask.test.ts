@@ -1,24 +1,17 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
+import { TestUtil } from 'test/TestUtil';
 import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
 import { Task as TaskModel } from 'app/repository/model/Task';
 import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
-import { TestUtil } from 'test/TestUtil';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
 import { ApiBinary } from 'app/common/adapter/binary/ApiBinary';
 
 describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
-  let ctx: Context;
   let binarySyncerService: BinarySyncerService;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    binarySyncerService = await ctx.getEggObject(BinarySyncerService);
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
+    binarySyncerService = await app.getEggObject(BinarySyncerService);
   });
 
   describe('executeTask()', () => {

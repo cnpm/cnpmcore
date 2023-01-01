@@ -1,21 +1,14 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { TestUtil } from 'test/TestUtil';
 
 const CheckRecentlyUpdatedPackagesPath = require.resolve('../../app/port/schedule/CheckRecentlyUpdatedPackages');
 
 describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
-  let ctx: Context;
   let packageSyncerService: PackageSyncerService;
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    packageSyncerService = await ctx.getEggObject(PackageSyncerService);
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
+    packageSyncerService = await app.getEggObject(PackageSyncerService);
   });
 
   it('should work', async () => {

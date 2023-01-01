@@ -1,18 +1,8 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../TestUtil';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/TokenController/removeToken.test.ts', () => {
-  let ctx: Context;
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   describe('[DELETE /-/npm/v1/tokens/token/:tokenKey] removeToken()', () => {
     it('should 200', async () => {
       const { authorization, password, token, ua } = await TestUtil.createUser();

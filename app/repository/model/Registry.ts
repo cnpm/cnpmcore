@@ -1,4 +1,4 @@
-import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
+import { Attribute, Model } from '@eggjs/tegg/orm';
 import { RegistryType } from '../../common/enum/Registry';
 import { DataTypes, Bone } from 'leoric';
 

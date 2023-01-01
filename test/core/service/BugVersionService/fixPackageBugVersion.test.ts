@@ -1,27 +1,24 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
-import { TestUtil } from '../../../TestUtil';
-import { BugVersionService } from '../../../../app/core/service/BugVersionService';
-import { DistRepository } from '../../../../app/repository/DistRepository';
-import { PackageRepository } from '../../../../app/repository/PackageRepository';
-import { BugVersion } from '../../../../app/core/entity/BugVersion';
-import { Package } from '../../../../app/core/entity/Package';
-import { PackageVersion } from '../../../../app/core/entity/PackageVersion';
-import { Dist } from '../../../../app/core/entity/Dist';
+import { TestUtil } from 'test/TestUtil';
+import { BugVersionService } from 'app/core/service/BugVersionService';
+import { DistRepository } from 'app/repository/DistRepository';
+import { PackageRepository } from 'app/repository/PackageRepository';
+import { BugVersion } from 'app/core/entity/BugVersion';
+import { Package } from 'app/core/entity/Package';
+import { PackageVersion } from 'app/core/entity/PackageVersion';
+import { Dist } from 'app/core/entity/Dist';
 
 describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () => {
-  let ctx: Context;
   let bugVersionService: BugVersionService;
   let bugVersion: BugVersion;
   let distRepository: DistRepository;
   let packageRepository: PackageRepository;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    bugVersionService = await ctx.getEggObject(BugVersionService);
-    distRepository = await ctx.getEggObject(DistRepository);
-    packageRepository = await ctx.getEggObject(PackageRepository);
+    bugVersionService = await app.getEggObject(BugVersionService);
+    distRepository = await app.getEggObject(DistRepository);
+    packageRepository = await app.getEggObject(PackageRepository);
     bugVersion = new BugVersion({
       faker: {
         '6.6.6': {
@@ -109,7 +106,6 @@ describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () 
   });
 
   afterEach(async () => {
-    await app.destroyModuleContext(ctx);
     mock.restore();
     await TestUtil.truncateDatabase();
   });
