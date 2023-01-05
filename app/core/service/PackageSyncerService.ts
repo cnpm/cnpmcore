@@ -342,10 +342,13 @@ export class PackageSyncerService extends AbstractService {
     const contentLength = headers['content-length'] || '-';
     logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`);
 
-    if (status === 404) {
+    // 404 unpublished
+    // 451 blocked
+    const shouldRemovePkg = status === 404 || status === 451;
+    if (shouldRemovePkg) {
       if (pkg) {
         await this.packageManagerService.unpublishPackage(pkg);
-        logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was unpublished caused by 404 response: ${JSON.stringify(data)}`);
+        logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was unpublished caused by ${status} response: ${JSON.stringify(data)}`);
         logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
         logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
         await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
