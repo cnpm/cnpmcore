@@ -1512,6 +1512,45 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
     });
 
+    it('should stop sync when upstream blocked', async () => {
+      // sync first
+      const name = 'cnpmcore-test-block-from-upstream';
+      app.mockHttpclient(`https://registry.npmjs.org/${name}`, 'GET', {
+        data: '{"_id":"cnpmcore-test-block-from-upstream","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-block-from-upstream","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-block-from-upstream","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-block-from-upstream@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-block-from-upstream/-/cnpmcore-test-block-from-upstream-0.0.0.tgz","fileCount":1,"unpackedSize":250},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-block-from-upstream/-/cnpmcore-test-block-from-upstream-0.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      await packageSyncerService.createTask(name);
+      let task = await packageSyncerService.findExecuteTask();
+      await packageSyncerService.executeTask(task);
+
+      const pkg = await packageRepository.findPackage('', name);
+      const pkgVersion = await packageRepository.findPackageVersion(pkg!.packageId, '0.0.0');
+      assert(pkg?.name === name);
+      assert(pkgVersion);
+
+      // mock unpublish
+      app.mockHttpclient(`https://registry.npmjs.org/${name}`, 'GET', {
+        data: `{"error":"[UNAVAILABLE_FOR_LEGAL_REASONS] ${name} was blocked, reason: foo (operator: cnpmcore_admin/61f154594ce7cf8f5827edf8)"}`,
+        persist: false,
+        status: 451,
+      });
+
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      await packageSyncerService.executeTask(task);
+
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+
+      assert(log.includes(`🟢 Package "${name}" was unpublished caused by 451 response`));
+    });
+
     it('should stop sync by block list', async () => {
       const name = 'cnpmcore-test-sync-blocklist';
       mock(app.config.cnpmcore, 'syncPackageBlockList', [ name, 'foo' ]);
