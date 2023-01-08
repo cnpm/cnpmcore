@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.1](https://github.com/cnpm/npmcore/compare/v2.10.0...v2.10.1) (2023-01-08)
+
+
+### Bug Fixes
+
+* export _cnpmcore_publish_time on abbreviated manifests ([#374](https://github.com/cnpm/npmcore/issues/374)) ([4bceac5](https://github.com/cnpm/npmcore/commit/4bceac5a4c94f8e8624ae1113ad1c5e69a5a2ae1))
+
 ## [2.10.0](https://github.com/cnpm/npmcore/compare/v2.9.1...v2.10.0) (2023-01-05)
 
 
