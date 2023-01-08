@@ -1,6 +1,6 @@
 import {
   AccessLevel,
-  SingletonProto,
+  ContextProto,
   Inject,
   EggContext,
 } from '@eggjs/tegg';
@@ -16,7 +16,7 @@ import { sha512 } from '../common/UserUtil';
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
 
-@SingletonProto({
+@ContextProto({
   // only inject on port module
   accessLevel: AccessLevel.PRIVATE,
 })

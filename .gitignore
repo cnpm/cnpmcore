@@ -117,4 +117,6 @@ dist
 .tern-port
 
 .idea
+.DS_Store
 run
+!test/ctx_register.js

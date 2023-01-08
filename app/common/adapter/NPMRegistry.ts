@@ -1,6 +1,6 @@
 import { setTimeout } from 'timers/promises';
 import {
-  SingletonProto,
+  ContextProto,
   AccessLevel,
   Inject,
 } from '@eggjs/tegg';
@@ -13,7 +13,7 @@ import { HttpMethod } from 'urllib';
 
 const INSTANCE_NAME = 'npmRegistry';
 
-@SingletonProto({
+@ContextProto({
   name: INSTANCE_NAME,
   accessLevel: AccessLevel.PUBLIC,
 })
