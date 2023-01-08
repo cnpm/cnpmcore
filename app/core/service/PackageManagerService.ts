@@ -129,9 +129,14 @@ export class PackageManagerService extends AbstractService {
       delete cmd.packageJson.readme;
     }
 
+    const publishTime = cmd.publishTime || new Date();
+
     // add _cnpmcore_publish_time field to cmd.packageJson
     if (!cmd.packageJson._cnpmcore_publish_time) {
-      cmd.packageJson._cnpmcore_publish_time = new Date();
+      cmd.packageJson._cnpmcore_publish_time = publishTime;
+    }
+    if (!cmd.packageJson.publish_time) {
+      cmd.packageJson.publish_time = publishTime.getTime();
     }
 
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
@@ -189,7 +194,7 @@ export class PackageManagerService extends AbstractService {
       hasInstallScript,
       // https://github.com/cnpm/npminstall/blob/13efc7eec21a61e509226e3772bfb75cd5605612/lib/install_package.js#L176
       // npminstall require publish time to show the recently update versions
-      _cnpmcore_publish_time: cmd.packageJson._cnpmcore_publish_time,
+      publish_time: cmd.packageJson.publish_time,
     });
     const abbreviatedDistBytes = Buffer.from(abbreviated);
     const abbreviatedDistIntegrity = await calculateIntegrity(abbreviatedDistBytes);
@@ -201,7 +206,7 @@ export class PackageManagerService extends AbstractService {
     pkgVersion = PackageVersion.create({
       packageId: pkg.packageId,
       version: cmd.version,
-      publishTime: cmd.publishTime || new Date(),
+      publishTime,
       manifestDist: pkg.createManifest(cmd.version, {
         size: manifestDistBytes.length,
         shasum: manifestDistIntegrity.shasum,
