@@ -187,6 +187,9 @@ export class PackageManagerService extends AbstractService {
       engines: cmd.packageJson.engines,
       _hasShrinkwrap: cmd.packageJson._hasShrinkwrap,
       hasInstallScript,
+      // https://github.com/cnpm/npminstall/blob/13efc7eec21a61e509226e3772bfb75cd5605612/lib/install_package.js#L176
+      // npminstall require publish time to show the recently update versions
+      _cnpmcore_publish_time: cmd.packageJson._cnpmcore_publish_time,
     });
     const abbreviatedDistBytes = Buffer.from(abbreviated);
     const abbreviatedDistIntegrity = await calculateIntegrity(abbreviatedDistBytes);
