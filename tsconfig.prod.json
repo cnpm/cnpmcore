@@ -16,6 +16,7 @@
     "app/**/*.json",
     "config/**/*.ts",
     "typings/**/*.ts",
-    "app.ts"
+    "app.ts",
+    "module.d.ts"
   ]
 }

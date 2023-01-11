@@ -1,4 +1,23 @@
 
+2.9.0 / 2022-12-15
+==================
+
+**features**
+  * [[`c562645`](http://github.com/cnpm/cnpmcore/commit/c562645db7c88f9c3c5787fd450b457574d1cce6)] - feat: suspend task before app close (#365) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
+2.8.1 / 2022-12-05
+==================
+
+**features**
+  * [[`fad30ad`](http://github.com/cnpm/cnpmcore/commit/fad30adc564c931c0bf63828d83bab84105aaef0)] - feat: npm command support npm v6 (#356) (laibao101 <<369632567@qq.com>>)
+
+**fixes**
+  * [[`f961219`](http://github.com/cnpm/cnpmcore/commit/f961219dbe4676156e1766db82379ee40087bcd8)] - fix: Sync save ignore ER_DUP_ENTRY error (#364) (elrrrrrrr <<elrrrrrrr@gmail.com>>)
+
+**others**
+  * [[`7bc0fcc`](http://github.com/cnpm/cnpmcore/commit/7bc0fccaca880efe08228b4109953bd3974d2eb9)] - 🤖 TEST: Fix async function mock (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`84ae9bc`](http://github.com/cnpm/cnpmcore/commit/84ae9bcfa06124255703b926f83fb5e6a6bf9d6b)] - 📖 DOC: Update contributors (fengmk2 <<fengmk2@gmail.com>>)
+
 2.8.0 / 2022-11-29
 ==================
 

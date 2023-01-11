@@ -6,7 +6,7 @@ import {
   EggObjectFactory,
   Inject,
 } from '@eggjs/tegg';
-import { TaskType } from '../../common/enum/Task';
+import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { HOST_NAME, ChangesStreamTask, Task } from '../entity/Task';
@@ -53,6 +53,26 @@ export class ChangesStreamService extends AbstractService {
     // 自定义 scope 由 admin 手动创建
     // 根据 TaskType.ChangesStream 从队列中获取
     return await this.taskService.findExecuteTask(TaskType.ChangesStream) as ChangesStreamTask;
+  }
+
+  public async suspendTaskWhenExit() {
+    this.logger.info('[ChangesStreamService.suspendTaskWhenExit:start]');
+    if (this.config.cnpmcore.enableChangesStream) {
+      // 防止继续获取新的任务
+      this.config.cnpmcore.enableChangesStream = false;
+      const authorIp = os.hostname();
+      // 暂停当前机器所有的 changesStream 任务
+      const tasks = await this.taskRepository.findTaskByAuthorIpAndType(authorIp, TaskType.ChangesStream);
+      for (const task of tasks) {
+        if (task.state === TaskState.Processing) {
+          this.logger.info('[ChangesStreamService.suspendTaskWhenExit:suspend] taskId: %s', task.taskId);
+          // 1. 更新任务状态为 waiting
+          // 2. 重新推入任务队列供其他机器执行
+          await this.taskService.retryTask(task);
+        }
+      }
+    }
+    this.logger.info('[ChangesStreamService.suspendTaskWhenExit:finish]');
   }
 
   public async executeTask(task: ChangesStreamTask) {

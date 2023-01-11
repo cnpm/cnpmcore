@@ -116,4 +116,12 @@ export class TaskRepository extends AbstractRepository {
     }).limit(1000);
     return models.map(model => ModelConvertor.convertModelToEntity(model, TaskEntity));
   }
+
+  async findTaskByAuthorIpAndType(authorIp: string, type: TaskType) {
+    const models = await this.Task.find({
+      type,
+      authorIp,
+    }).limit(1000);
+    return models.map(model => ModelConvertor.convertModelToEntity(model, TaskEntity));
+  }
 }

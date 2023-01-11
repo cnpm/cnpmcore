@@ -83,6 +83,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const versionOne = pkg.versions['1.0.0'];
       assert.equal(versionOne.dist.unpackedSize, 6497043);
       assert(versionOne._cnpmcore_publish_time);
+      assert(versionOne.publish_time);
       assert.equal(pkg._id, name);
       assert(pkg._rev);
       assert(versionOne._id);
@@ -214,6 +215,9 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const versionOne = pkg.versions['1.0.0'];
       assert(versionOne.dist.unpackedSize === 6497043);
       assert(versionOne._cnpmcore_publish_time);
+      assert.equal(typeof versionOne._cnpmcore_publish_time, 'string');
+      assert(versionOne.publish_time);
+      assert.equal(typeof versionOne.publish_time, 'number');
       assert(pkg._id === scopedName);
       assert(pkg._rev);
       assert(versionOne._id);
@@ -258,6 +262,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const versionOne = pkg.versions['2.0.0'];
       assert.equal(versionOne.dist.unpackedSize, 6497043);
       assert(!versionOne._cnpmcore_publish_time);
+      assert(versionOne.publish_time);
+      assert.equal(typeof versionOne.publish_time, 'number');
       assert(!pkg._rev);
       assert(!pkg._id);
       assert(!versionOne._id);
@@ -325,6 +331,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const versionOne = pkg.versions['2.0.0'];
       assert.equal(versionOne.dist.unpackedSize, 6497043);
       assert(!versionOne._cnpmcore_publish_time);
+      assert(versionOne.publish_time);
+      assert.equal(typeof versionOne.publish_time, 'number');
       assert(!pkg._rev);
       assert(!pkg._id);
       assert(!versionOne._id);
@@ -347,6 +355,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const versionOne = pkg.versions['2.0.0'];
       assert(versionOne.dist.unpackedSize === 6497043);
       assert(!versionOne._cnpmcore_publish_time);
+      assert(versionOne.publish_time);
+      assert.equal(typeof versionOne.publish_time, 'number');
       assert(!pkg._rev);
       assert(!pkg._id);
       assert(!versionOne._id);
