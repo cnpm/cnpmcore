@@ -1,21 +1,14 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import dayjs from '../../../../app/common/dayjs';
+import dayjs from 'app/common/dayjs';
 import { TestUtil } from 'test/TestUtil';
 
 const SavePackageVersionDownloadCounterPath = require.resolve('../../../../app/port/schedule/SavePackageVersionDownloadCounter');
 
 describe('test/port/controller/DownloadController/showPackageDownloads.test.ts', () => {
-  let ctx: Context;
   let publisher;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /downloads/range/:range/:fullname] showPackageDownloads()', () => {

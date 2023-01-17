@@ -1,21 +1,14 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
-import { UserRepository } from '../../../../app/repository/UserRepository';
+import { UserRepository } from 'app/repository/UserRepository';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
-  let ctx: Context;
   let userRepository: UserRepository;
   let publisher;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
-    ctx = await app.mockModuleContext();
-    userRepository = await ctx.getEggObject(UserRepository);
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
+    userRepository = await app.getEggObject(UserRepository);
   });
 
   describe('[PUT /:fullname] save()', () => {

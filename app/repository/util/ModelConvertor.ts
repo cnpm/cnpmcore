@@ -1,4 +1,4 @@
-import { ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
+import { ModelMetadataUtil } from '@eggjs/tegg/orm';
 import { Bone } from 'leoric';
 import { EggProtoImplClass } from '@eggjs/tegg';
 import _ from 'lodash';

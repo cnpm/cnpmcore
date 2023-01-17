@@ -1,4 +1,4 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { User as UserModel } from './model/User';
 import type { Token as TokenModel } from './model/Token';
@@ -6,7 +6,7 @@ import { User as UserEntity } from '../core/entity/User';
 import { Token as TokenEntity } from '../core/entity/Token';
 import { AbstractRepository } from './AbstractRepository';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class UserRepository extends AbstractRepository {

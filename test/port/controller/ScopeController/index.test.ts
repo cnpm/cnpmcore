@@ -1,19 +1,16 @@
-import assert = require('assert');
+import assert from 'assert';
 import { RegistryType } from 'app/common/enum/Registry';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
-import { Context } from 'egg';
 import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../TestUtil';
 import { Scope } from 'app/core/entity/Scope';
 
 describe('test/port/controller/ScopeController/index.test.ts', () => {
-  let ctx: Context;
   let adminUser: any;
   let registryManagerService: RegistryManagerService;
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
     adminUser = await TestUtil.createAdmin();
-    registryManagerService = await ctx.getEggObject(RegistryManagerService);
+    registryManagerService = await app.getEggObject(RegistryManagerService);
     // create registry
     await registryManagerService.createRegistry({
       name: 'custom',
@@ -22,10 +19,6 @@ describe('test/port/controller/ScopeController/index.test.ts', () => {
       userPrefix: 'cnpm:',
       type: RegistryType.Cnpmcore,
     });
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('[POST /-/scope] createScope()', () => {

@@ -1,26 +1,15 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { ImageminBinary } from 'app/common/adapter/binary/ImageminBinary';
 import binaries from 'config/binaries';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
-  let ctx: Context;
-
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   it('should fetch jpegtran-bin', async () => {
     app.mockHttpclient('https://registry.npmjs.com/jpegtran-bin', 'GET', {
       data: await TestUtil.readFixturesFile('registry.npmjs.com/jpegtran-bin.json'),
     });
-    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['jpegtran-bin'], 'jpegtran-bin');
+    const binary = new ImageminBinary(app.httpclient, app.logger, binaries['jpegtran-bin'], 'jpegtran-bin');
     let result = await binary.fetch('/');
     assert(result);
     assert(result.items.length > 0);
@@ -88,7 +77,7 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     app.mockHttpclient('https://registry.npmjs.com/advpng-bin', 'GET', {
       data: await TestUtil.readFixturesFile('registry.npmjs.com/advpng-bin.json'),
     });
-    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['advpng-bin'], 'advpng-bin');
+    const binary = new ImageminBinary(app.httpclient, app.logger, binaries['advpng-bin'], 'advpng-bin');
     let result = await binary.fetch('/');
     assert(result);
     assert(result.items.length > 0);
@@ -141,7 +130,7 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     app.mockHttpclient('https://registry.npmjs.com/mozjpeg', 'GET', {
       data: await TestUtil.readFixturesFile('registry.npmjs.com/mozjpeg.json'),
     });
-    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['mozjpeg-bin'], 'mozjpeg-bin');
+    const binary = new ImageminBinary(app.httpclient, app.logger, binaries['mozjpeg-bin'], 'mozjpeg-bin');
     let result = await binary.fetch('/');
     assert(result);
     // console.log(result.items);
@@ -205,7 +194,7 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     app.mockHttpclient('https://registry.npmjs.com/gifsicle', 'GET', {
       data: await TestUtil.readFixturesFile('registry.npmjs.com/gifsicle.json'),
     });
-    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['gifsicle-bin'], 'gifsicle-bin');
+    const binary = new ImageminBinary(app.httpclient, app.logger, binaries['gifsicle-bin'], 'gifsicle-bin');
     const result = await binary.fetch('/');
     assert(result);
     // console.log(result.items);
@@ -234,7 +223,7 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     app.mockHttpclient('https://registry.npmjs.com/optipng-bin', 'GET', {
       data: await TestUtil.readFixturesFile('registry.npmjs.com/optipng-bin.json'),
     });
-    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['optipng-bin'], 'optipng-bin');
+    const binary = new ImageminBinary(app.httpclient, app.logger, binaries['optipng-bin'], 'optipng-bin');
     const result = await binary.fetch('/');
     assert(result);
     // console.log(result.items);
@@ -263,7 +252,7 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     app.mockHttpclient('https://registry.npmjs.com/zopflipng-bin', 'GET', {
       data: await TestUtil.readFixturesFile('registry.npmjs.com/zopflipng-bin.json'),
     });
-    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['zopflipng-bin'], 'zopflipng-bin');
+    const binary = new ImageminBinary(app.httpclient, app.logger, binaries['zopflipng-bin'], 'zopflipng-bin');
     const result = await binary.fetch('/');
     assert(result);
     // console.log(result.items);
@@ -292,7 +281,7 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     app.mockHttpclient('https://registry.npmjs.com/jpegoptim-bin', 'GET', {
       data: await TestUtil.readFixturesFile('registry.npmjs.com/jpegoptim-bin.json'),
     });
-    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['jpegoptim-bin'], 'jpegoptim-bin');
+    const binary = new ImageminBinary(app.httpclient, app.logger, binaries['jpegoptim-bin'], 'jpegoptim-bin');
     const result = await binary.fetch('/');
     assert(result);
     // console.log(result.items);
@@ -321,7 +310,7 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     app.mockHttpclient('https://registry.npmjs.com/guetzli', 'GET', {
       data: await TestUtil.readFixturesFile('registry.npmjs.com/guetzli.json'),
     });
-    const binary = new ImageminBinary(ctx.httpclient, ctx.logger, binaries['guetzli-bin'], 'guetzli-bin');
+    const binary = new ImageminBinary(app.httpclient, app.logger, binaries['guetzli-bin'], 'guetzli-bin');
     const result = await binary.fetch('/');
     assert(result);
     // console.log(result.items);

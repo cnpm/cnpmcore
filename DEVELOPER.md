@@ -8,31 +8,30 @@
 
 ```bash
 # 启动本地依赖服务
-$ docker-compose up -d
+docker-compose up -d
 
 # 关闭本地依赖服务
-$ docker-compose down
+docker-compose down
 ```
 
 > 手动初始化依赖服务参见[文档](./docs/setup.md)
-
 
 ## 本地开发
 
 ### 安装依赖
 
 ```bash
-$ npm install
+npm install
 ```
 
 ### 开发运行
 
 ```bash
 # 初始化数据库
-$ MYSQL_DATABASE=cnpmcore npm run prepare-database
+MYSQL_DATABASE=cnpmcore npm run prepare-database
 
 # 启动 Web 服务
-$ npm run dev
+npm run dev
 
 # 访问
 curl -v http://127.0.0.1:7001
@@ -41,21 +40,8 @@ curl -v http://127.0.0.1:7001
 ### 单元测试
 
 ```bash
-$ npm run test
+npm run test
 ```
-
-编写单测规范：
-
-- assert 断言库必须使用 require 引入
-
-```ts
-import assert = require('assert');
-```
-
-> CAUTION: don't use `import assert from 'assert'`
-> Just use old style import assert = require('assert') for assert module. This is limitation.
-> See https://github.com/power-assert-js/espower-typescript#caution-dont-use-import-assert-from-assert
-
 
 ## 项目结构
 
@@ -80,29 +66,32 @@ app
 ```
 
 common：
+
 - util：全局工具类
 - adapter：外部服务调用
 
 core：
+
 - entity：核心模型，实现业务行为
 - event：异步事件定义，以及消费，串联业务
 - service：核心业务
 - util：服务 core 内部，不对外暴露
 
 repository：
+
 - model：ORM 模型，数据定义
 - XXXRepository: 仓储接口，存储、查询过程
 
 port：
-- controller：HTTP controller
 
+- controller：HTTP controller
 
 ## Controller 开发指南
 
 目前只支持 HTTP 协议的 Controller，代码在 `app/port/controller` 目录下。
 基于类继承的模式来实现，类关系大致如下：
 
-```
+```txt
 +----------------------+   +----------------------+   +---------------+
 | PackageController.ts |   | PackageTagController |   | XxxController |
 +---------------+------+   +---+------------------+   +--+------------+
@@ -130,15 +119,15 @@ port：
 例如会封装 PackageEntity、PackageVersionEntity 等查询方法。
 
 ```ts
-  // try to get package entity, throw NotFoundError when package not exists
-  private async getPackageEntity(scope: string, name: string) {
-    const packageEntity = await this.packageRepository.findPackage(scope, name);
-    if (!packageEntity) {
-      const fullname = getFullname(scope, name);
-      throw new NotFoundError(`${fullname} not found`);
-    }
-    return packageEntity;
+// try to get package entity, throw NotFoundError when package not exists
+private async getPackageEntity(scope: string, name: string) {
+  const packageEntity = await this.packageRepository.findPackage(scope, name);
+  if (!packageEntity) {
+    const fullname = getFullname(scope, name);
+    throw new NotFoundError(`${fullname} not found`);
   }
+  return packageEntity;
+}
 ```
 
 ### 请求合法性校验三部曲

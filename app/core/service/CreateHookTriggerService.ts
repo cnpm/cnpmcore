@@ -1,4 +1,4 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { AbstractService } from '../../common/AbstractService';
 import { HookType } from '../../common/enum/Hook';
 import { TaskState } from '../../common/enum/Task';
@@ -12,7 +12,7 @@ import { TaskService } from './TaskService';
 import { isoNow } from '../../common/LogUtil';
 import { getScopeAndName } from '../../common/PackageUtil';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class CreateHookTriggerService extends AbstractService {

@@ -1,28 +1,24 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
-import { HookManageService } from '../../../../app/core/service/HookManageService';
-import { TestUtil } from '../../../TestUtil';
-import { HookType } from '../../../../app/common/enum/Hook';
+import { TestUtil } from 'test/TestUtil';
+import { HookManageService } from 'app/core/service/HookManageService';
+import { HookType } from 'app/common/enum/Hook';
 
 describe('test/core/service/HookManageService/createHook.test.ts', () => {
-  let ctx: Context;
   let hookManageService: HookManageService;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    hookManageService = await ctx.getEggObject(HookManageService);
+    hookManageService = await app.getEggObject(HookManageService);
   });
 
   afterEach(async () => {
     await TestUtil.truncateDatabase();
-    await app.destroyModuleContext(ctx);
     mock.restore();
   });
 
   describe('limit exceeded', () => {
     beforeEach(() => {
-      mock(ctx.app.config.cnpmcore, 'hooksLimit', 0);
+      mock(app.config.cnpmcore, 'hooksLimit', 0);
     });
 
     it('should throw error', async () => {

@@ -8,10 +8,15 @@ import {
   EggLogger,
   EggContextHttpClient,
   EggAppConfig,
+  HttpClientRequestOptions,
+  HttpClientResponse,
 } from 'egg';
-import { HttpMethod } from 'urllib/src/Request';
+
+type HttpMethod = HttpClientRequestOptions['method'];
 
 const INSTANCE_NAME = 'npmRegistry';
+
+export type RegistryResponse = { method: HttpMethod } & HttpClientResponse;
 
 @ContextProto({
   name: INSTANCE_NAME,
@@ -35,7 +40,7 @@ export class NPMRegistry {
     this.registryHost = registryHost;
   }
 
-  public async getFullManifests(fullname: string, retries = 3) {
+  public async getFullManifests(fullname: string, retries = 3): Promise<RegistryResponse> {
     // set query t=timestamp, make sure CDN cache disable
     // cache=0 is sync worker request flag
     const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
@@ -60,7 +65,7 @@ export class NPMRegistry {
   }
 
   // app.put('/:name/sync', sync.sync);
-  public async createSyncTask(fullname: string) {
+  public async createSyncTask(fullname: string): Promise<RegistryResponse> {
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync?sync_upstream=true&nodeps=true`;
     // {
     //   ok: true,
@@ -70,18 +75,18 @@ export class NPMRegistry {
   }
 
   // app.get('/:name/sync/log/:id', sync.getSyncLog);
-  public async getSyncTask(fullname: string, id: string, offset: number) {
+  public async getSyncTask(fullname: string, id: string, offset: number): Promise<RegistryResponse> {
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync/log/${id}?offset=${offset}`;
     // { ok: true, syncDone: syncDone, log: log }
     return await this.request('GET', url);
   }
 
-  public async getDownloadRanges(registry: string, fullname: string, start: string, end: string) {
+  public async getDownloadRanges(registry: string, fullname: string, start: string, end: string): Promise<RegistryResponse> {
     const url = `${registry}/downloads/range/${start}:${end}/${encodeURIComponent(fullname)}`;
     return await this.request('GET', url);
   }
 
-  private async request(method: HttpMethod, url: string, params?: object, options?: object) {
+  private async request(method: HttpMethod, url: string, params?: object, options?: object): Promise<RegistryResponse> {
     const res = await this.httpclient.request(url, {
       method,
       data: params,
@@ -91,11 +96,10 @@ export class NPMRegistry {
       followRedirect: true,
       gzip: true,
       ...options,
-    });
+    }) as HttpClientResponse;
     this.logger.info('[NPMRegistry:request] %s %s, status: %s', method, url, res.status);
     return {
       method,
-      url,
       ...res,
     };
   }

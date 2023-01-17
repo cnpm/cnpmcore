@@ -1,5 +1,5 @@
 import { EntityUtil } from 'app/core/util/EntityUtil';
-import assert = require('assert');
+import assert from 'assert';
 
 describe('test/core/util/EntityUtil.test.ts', () => {
   describe('convertPageOptionsToLimitOption', () => {

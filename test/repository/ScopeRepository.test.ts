@@ -1,26 +1,18 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { ScopeRepository } from 'app/repository/ScopeRepository';
 import { Scope } from 'app/core/entity/Scope';
 
 describe('test/repository/ScopeRepository.test.ts', () => {
-  let ctx: Context;
-
   let scopeRepository: ScopeRepository;
   let cnpmjsScope: Scope;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    scopeRepository = await ctx.getEggObject(ScopeRepository);
+    scopeRepository = await app.getEggObject(ScopeRepository);
     cnpmjsScope = await scopeRepository.saveScope(Scope.create({
       name: '@cnpmjs',
       registryId: '1',
     })) as Scope;
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('RegistryRepository', () => {

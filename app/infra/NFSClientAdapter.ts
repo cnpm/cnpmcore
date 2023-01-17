@@ -1,13 +1,12 @@
 import {
-  SingletonProto,
   AccessLevel,
-  Inject,
   EggObjectLifecycle,
+  InitTypeQualifier,
+  Inject,
+  ObjectInitType,
+  SingletonProto,
 } from '@eggjs/tegg';
-import {
-  EggLogger,
-  EggAppConfig,
-} from 'egg';
+import { EggAppConfig, EggLogger } from 'egg';
 import FSClient from 'fs-cnpm';
 import { AppendResult, NFSClient, UploadOptions, UploadResult } from '../common/typing';
 import { Readable } from 'stream';
@@ -18,6 +17,7 @@ import { Readable } from 'stream';
 })
 export class NFSClientAdapter implements EggObjectLifecycle, NFSClient {
   @Inject()
+  @InitTypeQualifier(ObjectInitType.SINGLETON)
   private logger: EggLogger;
 
   @Inject()

@@ -1,10 +1,10 @@
-import { ContextProto } from '@eggjs/tegg';
+import { SingletonProto } from '@eggjs/tegg';
 import { E500 } from 'egg-errors';
 import { RegistryType } from '../../../common/enum/Registry';
 import { Registry } from '../../../core/entity/Registry';
 import { AbstractChangeStream, ChangesStreamChange, RegistryChangesStream } from './AbstractChangesStream';
 
-@ContextProto()
+@SingletonProto()
 @RegistryChangesStream(RegistryType.Npm)
 export class NpmChangesStream extends AbstractChangeStream {
 

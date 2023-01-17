@@ -4,7 +4,7 @@ import { setTimeout } from 'timers/promises';
 import path from 'path';
 import url from 'url';
 import { randomBytes } from 'crypto';
-import { EggContextHttpClient } from 'egg';
+import { EggContextHttpClient, HttpClientResponse } from 'egg';
 import dayjs from './dayjs';
 
 export async function createTempfile(dataDir: string, filename: string) {
@@ -37,9 +37,13 @@ export async function downloadToTempfile(httpclient: EggContextHttpClient,
   }
   throw lastError;
 }
-
+export interface Tempfile {
+  tmpfile: string;
+  headers: HttpClientResponse['res']['headers'];
+  timing: HttpClientResponse['res']['timing'];
+}
 async function _downloadToTempfile(httpclient: EggContextHttpClient,
-  dataDir: string, url: string, ignoreDownloadStatuses?: number[]) {
+  dataDir: string, url: string, ignoreDownloadStatuses?: number[]): Promise<Tempfile> {
   const tmpfile = await createTempfile(dataDir, url);
   const writeStream = createWriteStream(tmpfile);
   try {
@@ -50,7 +54,7 @@ async function _downloadToTempfile(httpclient: EggContextHttpClient,
       writeStream,
       timing: true,
       followRedirect: true,
-    });
+    }) as HttpClientResponse;
     if (status === 404 || (ignoreDownloadStatuses && ignoreDownloadStatuses.includes(status))) {
       const err = new Error(`Not found, status(${status})`);
       err.name = 'DownloadNotFoundError';

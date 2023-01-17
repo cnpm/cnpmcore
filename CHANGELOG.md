@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.0.0](https://github.com/cnpm/npmcore/compare/v2.10.1...v3.0.0) (2023-01-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* use SingletonProto instead of ContextProto
+
+Co-authored-by: killagu <killa123@126.com>
+
+### Code Refactoring
+
+* use tegg v3 ([#370](https://github.com/cnpm/npmcore/issues/370)) ([8e3acae](https://github.com/cnpm/npmcore/commit/8e3acaead9d0b9d54f0d62444d51d8a34e0842ef))
+
 ## [2.10.1](https://github.com/cnpm/npmcore/compare/v2.10.0...v2.10.1) (2023-01-08)
 
 

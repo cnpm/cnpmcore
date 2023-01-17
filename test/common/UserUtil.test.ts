@@ -1,4 +1,4 @@
-import assert = require('assert');
+import assert from 'assert';
 import { randomToken, checkToken } from '../../app/common/UserUtil';
 
 describe('test/common/UserUtil.test.ts', () => {

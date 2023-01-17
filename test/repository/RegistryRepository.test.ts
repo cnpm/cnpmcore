@@ -1,19 +1,15 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { RegistryRepository } from 'app/repository/RegistryRepository';
 import { Registry } from 'app/core/entity/Registry';
 import { RegistryType } from 'app/common/enum/Registry';
 
 describe('test/repository/RegistryRepository.test.ts', () => {
-  let ctx: Context;
-
   let registryRepository: RegistryRepository;
   let registryModel: Registry;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    registryRepository = await ctx.getEggObject(RegistryRepository);
+    registryRepository = await app.getEggObject(RegistryRepository);
     registryModel = await registryRepository.saveRegistry(Registry.create({
       name: 'cnpmcore',
       userPrefix: 'cnpm:',
@@ -21,13 +17,7 @@ describe('test/repository/RegistryRepository.test.ts', () => {
       host: 'https://registry.npmjs.org',
       type: 'cnpmcore' as RegistryType,
     })) as Registry;
-
   });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
 
   describe('RegistryRepository', () => {
     it('create work', async () => {

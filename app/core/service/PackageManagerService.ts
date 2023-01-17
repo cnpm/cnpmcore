@@ -1,7 +1,7 @@
 import { stat } from 'fs/promises';
 import {
   AccessLevel,
-  ContextProto,
+  SingletonProto,
   EventBus,
   Inject,
 } from '@eggjs/tegg';
@@ -67,7 +67,7 @@ const TOTAL = '@@TOTAL@@';
 const SCOPE_TOTAL_PREFIX = '@@SCOPE@@:';
 const DESCRIPTION_LIMIT = 1024 * 10;
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class PackageManagerService extends AbstractService {

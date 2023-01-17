@@ -1,6 +1,6 @@
 import {
   AccessLevel,
-  ContextProto,
+  SingletonProto,
   Inject,
 } from '@eggjs/tegg';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
@@ -10,7 +10,7 @@ import { TaskRepository } from '../../repository/TaskRepository';
 import { Task } from '../entity/Task';
 import { QueueAdapter } from '../../common/typing';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class TaskService extends AbstractService {

@@ -1,13 +1,12 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
+import { TestUtil } from 'test/TestUtil';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
 import { Package as PackageModel } from 'app/repository/model/Package';
 import { Task as TaskModel } from 'app/repository/model/Task';
 import { Task as TaskEntity } from 'app/core/entity/Task';
 import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
-import { TestUtil } from 'test/TestUtil';
 import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
 import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
 import { getScopeAndName } from 'app/common/PackageUtil';
@@ -21,7 +20,6 @@ import { UserService } from 'app/core/service/UserService';
 import { ChangeRepository } from 'app/repository/ChangeRepository';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
-  let ctx: Context;
   let packageSyncerService: PackageSyncerService;
   let packageManagerService: PackageManagerService;
   let packageRepository: PackageRepository;
@@ -33,20 +31,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let changeRepository: ChangeRepository;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    packageSyncerService = await ctx.getEggObject(PackageSyncerService);
-    packageManagerService = await ctx.getEggObject(PackageManagerService);
-    packageRepository = await ctx.getEggObject(PackageRepository);
-    npmRegistry = await ctx.getEggObject(NPMRegistry);
-    taskService = await ctx.getEggObject(TaskService);
-    registryManagerService = await ctx.getEggObject(RegistryManagerService);
-    scopeManagerService = await ctx.getEggObject(ScopeManagerService);
-    userService = await ctx.getEggObject(UserService);
-    changeRepository = await ctx.getEggObject(ChangeRepository);
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
+    packageSyncerService = await app.getEggObject(PackageSyncerService);
+    packageManagerService = await app.getEggObject(PackageManagerService);
+    packageRepository = await app.getEggObject(PackageRepository);
+    npmRegistry = await app.getEggObject(NPMRegistry);
+    taskService = await app.getEggObject(TaskService);
+    registryManagerService = await app.getEggObject(RegistryManagerService);
+    scopeManagerService = await app.getEggObject(ScopeManagerService);
+    userService = await app.getEggObject(UserService);
+    changeRepository = await app.getEggObject(ChangeRepository);
   });
 
   describe('executeTask()', () => {

@@ -1,21 +1,10 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { NodePreGypBinary } from 'app/common/adapter/binary/NodePreGypBinary';
 import binaries from 'config/binaries';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
-  let ctx: Context;
-
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   describe('fetch()', () => {
     it('should fetch grpc', async () => {
       app.mockHttpclient('https://registry.npmjs.com/grpc', 'GET', {
@@ -24,7 +13,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries.grpc, 'grpc');
+      const binary = new NodePreGypBinary(app.httpclient, app.logger, binaries.grpc, 'grpc');
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -67,7 +56,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries['grpc-tools'], 'grpc-tools');
+      const binary = new NodePreGypBinary(app.httpclient, app.logger, binaries['grpc-tools'], 'grpc-tools');
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -111,7 +100,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries.nodegit, 'nodegit');
+      const binary = new NodePreGypBinary(app.httpclient, app.logger, binaries.nodegit, 'nodegit');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -155,7 +144,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries['skia-canvas'], 'skia-canvas');
+      const binary = new NodePreGypBinary(app.httpclient, app.logger, binaries['skia-canvas'], 'skia-canvas');
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -210,7 +199,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      const binary = new NodePreGypBinary(ctx.httpclient, ctx.logger, binaries.wrtc, 'wrtc');
+      const binary = new NodePreGypBinary(app.httpclient, app.logger, binaries.wrtc, 'wrtc');
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);

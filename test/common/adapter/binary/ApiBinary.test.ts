@@ -1,28 +1,17 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { ApiBinary } from 'app/common/adapter/binary/ApiBinary';
 import binaries from 'config/binaries';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
-  let ctx: Context;
-
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://cnpmjs.org/mirrors/apis/node/', 'GET', {
         data: await TestUtil.readFixturesFile('cnpmjs.org/mirrors/apis/node.json'),
         persist: false,
       });
-      const binary = new ApiBinary(ctx.httpclient, ctx.logger, binaries.node, 'https://cnpmjs.org/mirrors/apis', 'node');
+      const binary = new ApiBinary(app.httpclient, app.logger, binaries.node, 'https://cnpmjs.org/mirrors/apis', 'node');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -56,7 +45,7 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('r.cnpmjs.org/-/binary/node/v16.13.1.json'),
         persist: false,
       });
-      const binary = new ApiBinary(ctx.httpclient, ctx.logger, binaries.node, 'https://r.cnpmjs.org/-/binary', 'node');
+      const binary = new ApiBinary(app.httpclient, app.logger, binaries.node, 'https://r.cnpmjs.org/-/binary', 'node');
       const result = await binary.fetch('/v16.13.1/');
       assert(result);
       assert(result.items.length > 0);

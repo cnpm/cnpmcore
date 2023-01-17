@@ -1,11 +1,11 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import { Registry, Registry as RegistryEntity } from '../core/entity/Registry';
 import { AbstractRepository } from './AbstractRepository';
 import type { Registry as RegistryModel } from './model/Registry';
 import { EntityUtil, PageOptions, PageResult } from '../core/util/EntityUtil';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class RegistryRepository extends AbstractRepository {

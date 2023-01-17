@@ -1,27 +1,19 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mm } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { TaskService } from 'app/core/service/TaskService';
 import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { TaskState, TaskType } from 'app/common/enum/Task';
-import { RedisQueueAdapter } from '../../../../app/infra/QueueAdapter';
+import { RedisQueueAdapter } from 'app/infra/QueueAdapter';
 
 describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
-  let ctx: Context;
   let taskService: TaskService;
   let packageSyncerService: PackageSyncerService;
   let queueAdapter: RedisQueueAdapter;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    taskService = await ctx.getEggObject(TaskService);
-    packageSyncerService = await ctx.getEggObject(PackageSyncerService);
-    queueAdapter = await ctx.getEggObject(RedisQueueAdapter);
-  });
-
-  afterEach(async () => {
-    mm.restore();
-    await app.destroyModuleContext(ctx);
+    taskService = await app.getEggObject(TaskService);
+    packageSyncerService = await app.getEggObject(PackageSyncerService);
+    queueAdapter = await app.getEggObject(RedisQueueAdapter);
   });
 
   describe('findExecuteTask()', () => {

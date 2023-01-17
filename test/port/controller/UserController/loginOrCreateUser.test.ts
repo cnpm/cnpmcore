@@ -1,17 +1,7 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 
 describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => {
-  let ctx: Context;
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   describe('[PUT /-/user/org.couchdb.user::username] loginOrCreateUser()', () => {
     it('should 422', async () => {
       let res = await app.httpRequest()

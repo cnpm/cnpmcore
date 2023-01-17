@@ -1,4 +1,4 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { Hook } from '../core/entity/Hook';
 import type { Hook as HookModel } from './model/Hook';
 import { ModelConvertor } from './util/ModelConvertor';
@@ -10,7 +10,7 @@ export interface UpdateHookCommand {
   secret: string;
 }
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class HookRepository {

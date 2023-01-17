@@ -1,4 +1,4 @@
-import assert = require('assert');
+import assert from 'assert';
 import path from 'path';
 import { app } from 'egg-mock/bootstrap';
 import coffee from 'coffee';
@@ -12,7 +12,7 @@ describe('test/cli/npm/install.test.ts', () => {
   let demoDir;
   let userconfig;
   let cacheDir;
-  before(done => {
+  before(async () => {
     cacheDir = TestUtil.mkdtemp();
     fooPkgDir = TestUtil.getFixtures('@cnpm/foo');
     demoDir = TestUtil.getFixtures('demo');
@@ -20,10 +20,12 @@ describe('test/cli/npm/install.test.ts', () => {
     TestUtil.rm(userconfig);
     TestUtil.rm(path.join(demoDir, 'node_modules'));
 
-    server = app.listen(0, () => {
-      registry = `http://localhost:${server.address().port}`;
-      console.log(`registry ${registry} ready`);
-      done();
+    return new Promise(resolve => {
+      server = app.listen(0, () => {
+        registry = `http://localhost:${server.address().port}`;
+        console.log(`registry ${registry} ready`);
+        resolve();
+      });
     });
   });
 

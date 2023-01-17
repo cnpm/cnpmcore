@@ -1,6 +1,6 @@
 import {
   AccessLevel,
-  ContextProto,
+  SingletonProto,
   Inject,
 } from '@eggjs/tegg';
 import { ScopeRepository } from '../../repository/ScopeRepository';
@@ -24,7 +24,7 @@ export interface RemoveScopeByRegistryIdCmd {
   registryId: string;
   operatorId?: string;
 }
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class ScopeManagerService extends AbstractService {

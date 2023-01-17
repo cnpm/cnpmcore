@@ -1,19 +1,12 @@
-import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import assert from 'assert';
-import { RedisQueueAdapter } from '../../app/infra/QueueAdapter';
+import { app } from 'egg-mock/bootstrap';
+import { RedisQueueAdapter } from 'app/infra/QueueAdapter';
 
 describe('test/infra/QueueAdapter.test.ts', () => {
-  let ctx: Context;
   let queueAdapter: RedisQueueAdapter;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    queueAdapter = await ctx.getEggObject(RedisQueueAdapter);
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
+    queueAdapter = await app.getEggObject(RedisQueueAdapter);
   });
 
   it('should not push duplicate task', async () => {

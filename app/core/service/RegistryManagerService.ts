@@ -1,6 +1,6 @@
 import {
   AccessLevel,
-  ContextProto,
+  SingletonProto,
   Inject,
 } from '@eggjs/tegg';
 import { E400, NotFoundError } from 'egg-errors';
@@ -28,7 +28,7 @@ export interface StartSyncCmd {
   operatorId?: string;
 }
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class RegistryManagerService extends AbstractService {
