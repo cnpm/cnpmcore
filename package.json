@@ -1,6 +1,9 @@
 {
   "name": "cnpmcore",
   "version": "2.10.1",
+  "publishConfig": {
+    "tag": "latest-2"
+  },
   "description": "npm core",
   "files": [
     "dist/**/*"
