@@ -1,11 +1,8 @@
 {
-  "extends": "@eggjs/tsconfig",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
     "declaration": true,
-    "resolveJsonModule": true,
-    "baseUrl": ".",
-    "useUnknownInCatchVariables": false
   },
   "exclude": [
     "node_modules",
