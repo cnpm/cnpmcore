@@ -1,6 +1,5 @@
-import assert = require('assert');
+import assert from 'assert';
 import { setTimeout } from 'timers/promises';
-import { Context } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { Task as TaskModel } from 'app/repository/model/Task';
@@ -8,15 +7,9 @@ import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 
 describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', () => {
   let publisher: any;
-  let ctx: Context;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
-    ctx = await app.mockModuleContext();
     mock(app.config.cnpmcore, 'syncMode', 'all');
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('[PUT /-/package/:fullname/syncs] createSyncTask()', () => {

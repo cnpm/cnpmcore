@@ -1,7 +1,7 @@
 import os from 'os';
 import {
   AccessLevel,
-  ContextProto,
+  SingletonProto,
   Inject,
 } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
@@ -39,7 +39,7 @@ function isoNow() {
 export class RegistryNotMatchError extends BadRequestError {
 }
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class PackageSyncerService extends AbstractService {

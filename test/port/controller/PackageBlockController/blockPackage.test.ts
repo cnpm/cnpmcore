@@ -1,18 +1,11 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () => {
   let adminUser: any;
-  let ctx: Context;
   beforeEach(async () => {
     adminUser = await TestUtil.createAdmin();
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('[PUT /-/package/:fullname/blocks] blockPackage()', () => {

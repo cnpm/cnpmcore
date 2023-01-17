@@ -1,4 +1,4 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { EggLogger } from 'egg';
 import pMap from 'p-map';
 import { BugVersion } from '../entity/BugVersion';
@@ -7,7 +7,7 @@ import { DistRepository } from '../../repository/DistRepository';
 import { getScopeAndName } from '../../common/PackageUtil';
 import { CacheService } from './CacheService';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class BugVersionService {

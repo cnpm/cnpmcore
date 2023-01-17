@@ -1,6 +1,5 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
 import { TaskService } from 'app/core/service/TaskService';
 import { Task } from 'app/repository/model/Task';
@@ -9,17 +8,11 @@ import { TestUtil } from 'test/TestUtil';
 const ChangesStreamWorkerPath = require.resolve('../../app/port/schedule/ChangesStreamWorker');
 
 describe('test/schedule/ChangesStreamWorker.test.ts', () => {
-  let ctx: Context;
   let changesStreamService: ChangesStreamService;
   let taskService: TaskService;
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    changesStreamService = await ctx.getEggObject(ChangesStreamService);
-    taskService = await ctx.getEggObject(TaskService);
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
+    changesStreamService = await app.getEggObject(ChangesStreamService);
+    taskService = await app.getEggObject(TaskService);
   });
 
   it('should work', async () => {

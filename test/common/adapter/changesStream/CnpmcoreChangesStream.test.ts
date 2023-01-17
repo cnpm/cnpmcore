@@ -1,21 +1,18 @@
+import assert from 'assert';
+import { app } from 'egg-mock/bootstrap';
 import { ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
 import { CnpmcoreChangesStream } from 'app/common/adapter/changesStream/CnpmcoreChangesStream';
 import { RegistryType } from 'app/common/enum/Registry';
 import { Registry } from 'app/core/entity/Registry';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
-import assert = require('assert');
-import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
 
 describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () => {
-  let ctx: Context;
   let cnpmcoreChangesStream: CnpmcoreChangesStream;
   let registryManagerService: RegistryManagerService;
   let registry: Registry;
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    cnpmcoreChangesStream = await ctx.getEggObject(CnpmcoreChangesStream);
-    registryManagerService = await ctx.getEggObject(RegistryManagerService);
+    cnpmcoreChangesStream = await app.getEggObject(CnpmcoreChangesStream);
+    registryManagerService = await app.getEggObject(RegistryManagerService);
     registry = await registryManagerService.createRegistry({
       name: 'cnpmcore',
       changeStream: 'https://r.cnpmjs.org/_changes',

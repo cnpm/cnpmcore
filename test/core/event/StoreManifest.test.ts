@@ -1,21 +1,14 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { TestUtil } from 'test/TestUtil';
 import { getScopeAndName } from 'app/common/PackageUtil';
 import { PackageRepository } from 'app/repository/PackageRepository';
 
 describe('test/core/event/StoreManifest.test.ts', () => {
-  let ctx: Context;
   let packageRepository: PackageRepository;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    packageRepository = await ctx.getEggObject(PackageRepository);
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
+    packageRepository = await app.getEggObject(PackageRepository);
   });
 
   describe('savePackageVersionManifest()', () => {

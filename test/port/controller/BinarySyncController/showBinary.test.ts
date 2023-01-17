@@ -1,5 +1,4 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
@@ -10,20 +9,14 @@ import { NFSClientAdapter } from 'app/infra/NFSClientAdapter';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
-  let ctx: Context;
   let binarySyncerService: BinarySyncerService;
   let binaryRepository: BinaryRepository;
   let nfsClientAdapter: NFSClientAdapter;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    binarySyncerService = await ctx.getEggObject(BinarySyncerService);
-    binaryRepository = await ctx.getEggObject(BinaryRepository);
+    binarySyncerService = await app.getEggObject(BinarySyncerService);
+    binaryRepository = await app.getEggObject(BinaryRepository);
     nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /binary.html] showBinaryHTML()', () => {

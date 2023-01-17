@@ -1,14 +1,13 @@
-import assert = require('assert');
+import assert from 'assert';
 import { setTimeout } from 'timers/promises';
 import { app } from 'egg-mock/bootstrap';
-import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter';
+import { CacheAdapter } from 'app/common/adapter/CacheAdapter';
 
 describe('test/common/adapter/CacheAdapter.test.ts', () => {
   let cache: CacheAdapter;
 
   beforeEach(async () => {
-    const ctx = await app.mockModuleContext();
-    cache = await ctx.getEggObject(CacheAdapter);
+    cache = await app.getEggObject(CacheAdapter);
   });
 
   describe('lock(), unlock()', () => {

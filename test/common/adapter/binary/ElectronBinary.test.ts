@@ -1,21 +1,10 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { ElectronBinary } from 'app/common/adapter/binary/ElectronBinary';
 import { TestUtil } from 'test/TestUtil';
 import binaries from 'config/binaries';
 
 describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
-  let ctx: Context;
-
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   describe('fetch()', () => {
     it('should fetch root and subdir work', async () => {
       const response = await TestUtil.readJSONFile(TestUtil.getFixtures('electron-releases.json'));
@@ -23,7 +12,7 @@ describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
         data: response,
         status: 200,
       });
-      const binary = new ElectronBinary(ctx.httpclient, ctx.logger, binaries.electron, 'electron');
+      const binary = new ElectronBinary(app.httpclient, app.logger, binaries.electron, 'electron');
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);

@@ -1,16 +1,14 @@
-import assert = require('assert');
-import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
+import assert from 'assert';
 import { setTimeout } from 'timers/promises';
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
-import { TestUtil } from '../../../TestUtil';
+import { app, mock } from 'egg-mock/bootstrap';
+import { TestUtil } from 'test/TestUtil';
+import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
 import { Task } from 'app/core/entity/Task';
-import { TaskState } from '../../../../app/common/enum/Task';
-import { TaskRepository } from '../../../../app/repository/TaskRepository';
-import { TaskService } from '../../../../app/core/service/TaskService';
+import { TaskState } from 'app/common/enum/Task';
+import { TaskRepository } from 'app/repository/TaskRepository';
+import { TaskService } from 'app/core/service/TaskService';
 
 describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
-  let ctx: Context;
   const pkgName = '@cnpmcore/foo';
   const username = 'mock_username';
   let packageSyncerService: PackageSyncerService;
@@ -18,10 +16,9 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
   let taskService: TaskService;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    packageSyncerService = await ctx.getEggObject(PackageSyncerService);
-    taskRepository = await ctx.getEggObject(TaskRepository);
-    taskService = await ctx.getEggObject(TaskService);
+    packageSyncerService = await app.getEggObject(PackageSyncerService);
+    taskRepository = await app.getEggObject(TaskRepository);
+    taskService = await app.getEggObject(TaskService);
 
     await TestUtil.createPackage({
       name: pkgName,
@@ -30,10 +27,6 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
     }, {
       name: username,
     });
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   it('should ignore if registryId not same', async () => {

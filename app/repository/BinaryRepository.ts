@@ -1,10 +1,10 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { Binary as BinaryModel } from './model/Binary';
 import { Binary as BinaryEntity } from '../core/entity/Binary';
 import { AbstractRepository } from './AbstractRepository';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class BinaryRepository extends AbstractRepository {

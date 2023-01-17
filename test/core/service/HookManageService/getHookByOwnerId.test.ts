@@ -1,19 +1,16 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
-import { HookManageService } from '../../../../app/core/service/HookManageService';
-import { Hook } from '../../../../app/core/entity/Hook';
-import { TestUtil } from '../../../TestUtil';
-import { HookType } from '../../../../app/common/enum/Hook';
+import { TestUtil } from 'test/TestUtil';
+import { HookManageService } from 'app/core/service/HookManageService';
+import { Hook } from 'app/core/entity/Hook';
+import { HookType } from 'app/common/enum/Hook';
 
 describe('test/core/service/HookManageService/getHookByOwnerId.test.ts', () => {
-  let ctx: Context;
   let hookManageService: HookManageService;
   let hook: Hook;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    hookManageService = await ctx.getEggObject(HookManageService);
+    hookManageService = await app.getEggObject(HookManageService);
     hook = await hookManageService.createHook({
       type: HookType.Package,
       ownerId: 'mock_owner_id',
@@ -25,7 +22,6 @@ describe('test/core/service/HookManageService/getHookByOwnerId.test.ts', () => {
 
   afterEach(async () => {
     await TestUtil.truncateDatabase();
-    await app.destroyModuleContext(ctx);
     mock.restore();
   });
 

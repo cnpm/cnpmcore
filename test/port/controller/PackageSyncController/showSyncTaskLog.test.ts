@@ -1,5 +1,4 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { TaskRepository } from 'app/repository/TaskRepository';
@@ -8,19 +7,13 @@ import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
 
 describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', () => {
   let publisher;
-  let ctx: Context;
   let taskRepository: TaskRepository;
   let nfsAdapter: NFSAdapter;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
-    ctx = await app.mockModuleContext();
-    taskRepository = await ctx.getEggObject(TaskRepository);
-    nfsAdapter = await ctx.getEggObject(NFSAdapter);
+    taskRepository = await app.getEggObject(TaskRepository);
+    nfsAdapter = await app.getEggObject(NFSAdapter);
     mock(app.config.cnpmcore, 'syncMode', 'all');
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('[GET /-/package/:fullname/syncs/:taskId/log] showSyncTaskLog()', () => {

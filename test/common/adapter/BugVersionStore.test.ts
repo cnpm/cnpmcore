@@ -1,4 +1,4 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 import { BugVersionStore } from '../../../app/common/adapter/BugVersionStore';
 import { BugVersion } from '../../../app/core/entity/BugVersion';

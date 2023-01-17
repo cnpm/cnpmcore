@@ -1,11 +1,11 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import { AbstractRepository } from './AbstractRepository';
 import { Scope as ScopeModel } from './model/Scope';
 import { Scope } from '../core/entity/Scope';
 import { EntityUtil, PageOptions, PageResult } from '../core/util/EntityUtil';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class ScopeRepository extends AbstractRepository {

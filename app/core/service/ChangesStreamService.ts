@@ -2,7 +2,7 @@ import os from 'os';
 import { setTimeout } from 'timers/promises';
 import {
   AccessLevel,
-  ContextProto,
+  SingletonProto,
   EggObjectFactory,
   Inject,
 } from '@eggjs/tegg';
@@ -21,7 +21,7 @@ import { getScopeAndName } from '../../common/PackageUtil';
 import { ScopeManagerService } from './ScopeManagerService';
 import { PackageRepository } from '../../repository/PackageRepository';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class ChangesStreamService extends AbstractService {

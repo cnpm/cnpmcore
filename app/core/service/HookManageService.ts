@@ -1,4 +1,4 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { Hook } from '../entity/Hook';
 import { HookType } from '../../common/enum/Hook';
 import {
@@ -28,7 +28,7 @@ export interface DeleteHookCommand {
   hookId: string;
 }
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class HookManageService {

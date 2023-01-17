@@ -1,22 +1,19 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
-import { BUG_VERSIONS } from '../../../app/common/constants';
-import { CacheService } from '../../../app/core/service/CacheService';
-import { BugVersionFixHandler } from '../../../app/core/event/BugVersionFixHandler';
-import { PackageManagerService } from '../../../app/core/service/PackageManagerService';
-import { BugVersion } from '../../../app/core/entity/BugVersion';
+import { BUG_VERSIONS } from 'app/common/constants';
+import { CacheService } from 'app/core/service/CacheService';
+import { BugVersionFixHandler } from 'app/core/event/BugVersionFixHandler';
+import { PackageManagerService } from 'app/core/service/PackageManagerService';
+import { BugVersion } from 'app/core/entity/BugVersion';
 
 describe('test/core/event/BugVersionFixHandler.test.ts', () => {
-  let ctx: Context;
   let cacheService: CacheService;
   let packageManagerService: PackageManagerService;
   const fullnames: string[] = [];
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    cacheService = await ctx.getEggObject(CacheService);
-    packageManagerService = await ctx.getEggObject(PackageManagerService);
+    cacheService = await app.getEggObject(CacheService);
+    packageManagerService = await app.getEggObject(PackageManagerService);
     mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
     mock(cacheService, 'removeCache', async fullname => {
       fullnames.push(fullname);
@@ -33,12 +30,8 @@ describe('test/core/event/BugVersionFixHandler.test.ts', () => {
     });
   });
 
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   it('should clean packages cache', async () => {
-    const bugVersionFixHandler = await ctx.getEggObject(BugVersionFixHandler);
+    const bugVersionFixHandler = await app.getEggObject(BugVersionFixHandler);
     await bugVersionFixHandler.handle(BUG_VERSIONS);
     assert.deepStrictEqual(fullnames, [
       'faker',

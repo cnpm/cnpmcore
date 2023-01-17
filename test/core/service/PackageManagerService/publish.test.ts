@@ -1,23 +1,20 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
-import { UserService } from '../../../../app/core/service/UserService';
-import { PackageRepository } from '../../../../app/repository/PackageRepository';
-import { TestUtil } from '../../../TestUtil';
+import { TestUtil } from 'test/TestUtil';
+import { PackageManagerService } from 'app/core/service/PackageManagerService';
+import { UserService } from 'app/core/service/UserService';
+import { PackageRepository } from 'app/repository/PackageRepository';
 
 describe('test/core/service/PackageManagerService/publish.test.ts', () => {
-  let ctx: Context;
   let packageManagerService: PackageManagerService;
   let userService: UserService;
   let packageRepository: PackageRepository;
   let publisher;
 
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    userService = await ctx.getEggObject(UserService);
-    packageManagerService = await ctx.getEggObject(PackageManagerService);
-    packageRepository = await ctx.getEggObject(PackageRepository);
+    userService = await app.getEggObject(UserService);
+    packageManagerService = await app.getEggObject(PackageManagerService);
+    packageRepository = await app.getEggObject(PackageRepository);
 
     const { user } = await userService.create({
       name: 'test-user',
@@ -29,7 +26,6 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   });
 
   afterEach(async () => {
-    await app.destroyModuleContext(ctx);
     mock.restore();
     await TestUtil.truncateDatabase();
   });

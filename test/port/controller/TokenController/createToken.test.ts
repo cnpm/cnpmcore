@@ -1,18 +1,8 @@
-import assert = require('assert');
-import { Context } from 'egg';
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../TestUtil';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/TokenController/createToken.test.ts', () => {
-  let ctx: Context;
-  beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
-  });
-
   describe('[POST /-/npm/v1/tokens] createToken()', () => {
     it('should 200', async () => {
       const { authorization, password, ua } = await TestUtil.createUser();

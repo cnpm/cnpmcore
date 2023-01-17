@@ -1,7 +1,7 @@
-import assert = require('assert');
+import assert from 'assert';
 import { Readable } from 'node:stream';
 import { app, mock } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
+import { TestUtil } from 'test/TestUtil';
 import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
 import { TaskService } from 'app/core/service/TaskService';
 import { ChangesStreamTask, Task } from 'app/core/entity/Task';
@@ -9,11 +9,9 @@ import { RegistryManagerService } from 'app/core/service/RegistryManagerService'
 import { RegistryType } from 'app/common/enum/Registry';
 import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
 import { Registry } from 'app/core/entity/Registry';
-import { TestUtil } from 'test/TestUtil';
 import { RedisQueueAdapter } from 'app/infra/QueueAdapter';
 
 describe('test/core/service/ChangesStreamService.test.ts', () => {
-  let ctx: Context;
   let changesStreamService: ChangesStreamService;
   let scopeManagerService: ScopeManagerService;
   let registryManagerService: RegistryManagerService;
@@ -23,12 +21,11 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
   let cnpmRegistry: Registry;
   let queueAdapter: RedisQueueAdapter;
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    changesStreamService = await ctx.getEggObject(ChangesStreamService);
-    taskService = await ctx.getEggObject(TaskService);
-    registryManagerService = await ctx.getEggObject(RegistryManagerService);
-    scopeManagerService = await ctx.getEggObject(ScopeManagerService);
-    queueAdapter = await ctx.getEggObject(RedisQueueAdapter);
+    changesStreamService = await app.getEggObject(ChangesStreamService);
+    taskService = await app.getEggObject(TaskService);
+    registryManagerService = await app.getEggObject(RegistryManagerService);
+    scopeManagerService = await app.getEggObject(ScopeManagerService);
+    queueAdapter = await app.getEggObject(RedisQueueAdapter);
     assert(changesStreamService);
     task = Task.createChangesStream('GLOBAL_WORKER', '', '9527');
     taskService.createTask(task, false);
@@ -166,7 +163,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
 
   describe('fetchChanges()', () => {
     it('should work', async () => {
-      mock(ctx.httpclient, 'request', async () => {
+      mock(app.httpclient, 'request', async () => {
         return {
           res: Readable.from(`
             {"seq":2,"id":"backbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
@@ -183,7 +180,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       mock(ChangesStreamService.prototype, 'needSync', async () => {
         return false;
       });
-      mock(ctx.httpclient, 'request', async () => {
+      mock(app.httpclient, 'request', async () => {
         return {
           res: Readable.from(`
             {"seq":2,"id":"backbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true},

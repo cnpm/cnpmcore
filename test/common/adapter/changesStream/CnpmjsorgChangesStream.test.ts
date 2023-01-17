@@ -1,21 +1,18 @@
+import assert from 'assert';
+import { app } from 'egg-mock/bootstrap';
 import { ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
 import { CnpmjsorgChangesStream } from 'app/common/adapter/changesStream/CnpmjsorgChangesStream';
 import { RegistryType } from 'app/common/enum/Registry';
 import { Registry } from 'app/core/entity/Registry';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
-import assert = require('assert');
-import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
 
 describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () => {
-  let ctx: Context;
   let cnpmjsorgChangesStream: CnpmjsorgChangesStream;
   let registryManagerService: RegistryManagerService;
   let registry: Registry;
   beforeEach(async () => {
-    ctx = await app.mockModuleContext();
-    cnpmjsorgChangesStream = await ctx.getEggObject(CnpmjsorgChangesStream);
-    registryManagerService = await ctx.getEggObject(RegistryManagerService);
+    cnpmjsorgChangesStream = await app.getEggObject(CnpmjsorgChangesStream);
+    registryManagerService = await app.getEggObject(RegistryManagerService);
     registry = await registryManagerService.createRegistry({
       name: 'cnpmcore',
       changeStream: 'https://r2.cnpmjs.org/_changes',
@@ -31,7 +28,6 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
       const now = new Date().getTime();
       assert(now - Number(since) < 10000);
     });
-
   });
 
   describe('fetchChanges()', () => {

@@ -1,10 +1,10 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { Change as ChangeModel } from './model/Change';
 import { Change as ChangeEntity } from '../core/entity/Change';
 import { AbstractRepository } from './AbstractRepository';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class ChangeRepository extends AbstractRepository {

@@ -1,4 +1,4 @@
-import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
+import { Attribute, Model } from '@eggjs/tegg/orm';
 import { DataTypes, Bone, LENGTH_VARIANTS } from 'leoric';
 
 @Model()

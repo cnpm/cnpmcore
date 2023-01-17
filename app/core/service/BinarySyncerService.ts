@@ -1,7 +1,7 @@
 import { rm } from 'fs/promises';
 import {
   AccessLevel,
-  ContextProto,
+  SingletonProto,
   Inject,
 } from '@eggjs/tegg';
 import {
@@ -50,7 +50,7 @@ function isoNow() {
   return new Date().toISOString();
 }
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class BinarySyncerService extends AbstractService {

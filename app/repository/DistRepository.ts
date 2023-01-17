@@ -1,9 +1,9 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { NFSAdapter } from '../common/adapter/NFSAdapter';
 import { PackageRepository } from './PackageRepository';
 import { Dist } from '../core/entity/Dist';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class DistRepository {

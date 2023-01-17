@@ -1,6 +1,5 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { Context } from 'egg';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
 import { RegistryType } from 'app/common/enum/Registry';
 import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
@@ -10,16 +9,14 @@ import { TaskType } from 'app/common/enum/Task';
 import { ChangesStreamTaskData } from 'app/core/entity/Task';
 
 describe('test/core/service/RegistryManagerService/index.test.ts', () => {
-  let ctx: Context;
   let registryManagerService: RegistryManagerService;
   let scopeManagerService: ScopeManagerService;
   let taskRepository: TaskRepository;
 
   before(async () => {
-    ctx = await app.mockModuleContext();
-    registryManagerService = await ctx.getEggObject(RegistryManagerService);
-    scopeManagerService = await ctx.getEggObject(ScopeManagerService);
-    taskRepository = await ctx.getEggObject(TaskRepository);
+    registryManagerService = await app.getEggObject(RegistryManagerService);
+    scopeManagerService = await app.getEggObject(ScopeManagerService);
+    taskRepository = await app.getEggObject(TaskRepository);
   });
 
   beforeEach(async () => {
@@ -31,10 +28,6 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       userPrefix: 'cnpm:',
       type: RegistryType.Cnpmcore,
     });
-  });
-
-  afterEach(async () => {
-    await app.destroyModuleContext(ctx);
   });
 
   describe('RegistryManagerService', () => {
@@ -155,7 +148,5 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
         assert((task?.data as ChangesStreamTaskData).since === '');
       });
     });
-
-
   });
 });

@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import {
   AccessLevel,
-  ContextProto,
+  SingletonProto,
   Inject,
 } from '@eggjs/tegg';
 import { NotFoundError, ForbiddenError } from 'egg-errors';
@@ -31,7 +31,7 @@ type CreateTokenOptions = {
   cidrWhitelist?: string[];
 };
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class UserService extends AbstractService {
