@@ -38,8 +38,8 @@
     "contributor": "git-contributor",
     "dev": "DEBUG_LOCAL_SQL=true egg-bin dev",
     "debug": "egg-bin debug",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "eslint --cache --ext .ts .",
+    "lint:fix": "eslint --cache --ext .ts --fix .",
     "test": "npm run lint:fix && npm run test-local",
     "prepare-database": "rm -rf dist && ts-node test/prepare.ts",
     "test-local": "npm run prepare-database && egg-bin test --full-trace",
@@ -97,7 +97,6 @@
     "semver": "^7.3.5",
     "ssri": "^8.0.1",
     "type-fest": "^2.5.3",
-    "urllib": "^3.3.0",
     "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
@@ -109,7 +108,7 @@
     "egg-mock": "^5.0.1",
     "eslint": "^8.29.0",
     "eslint-config-egg": "^12.1.0",
-    "git-contributor": "^1.0.10",
+    "git-contributor": "2",
     "npm-cli-login": "^1.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"

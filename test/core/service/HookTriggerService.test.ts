@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { RequestOptions } from 'urllib';
+import { HttpClientRequestOptions } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { HookManageService } from 'app/core/service/HookManageService';
@@ -45,7 +45,7 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
     let change: Change;
     let hook: Hook;
     let callEndpoint: string;
-    let callOptions: RequestOptions;
+    let callOptions: HttpClientRequestOptions;
 
     beforeEach(async () => {
       change = Change.create({

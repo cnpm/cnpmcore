@@ -8,8 +8,10 @@ import {
   EggLogger,
   EggContextHttpClient,
   EggAppConfig,
+  HttpClientRequestOptions,
 } from 'egg';
-import { HttpMethod } from 'urllib';
+
+type HttpMethod = HttpClientRequestOptions['method'];
 
 const INSTANCE_NAME = 'npmRegistry';
 
