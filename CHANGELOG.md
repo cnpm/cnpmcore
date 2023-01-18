@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/cnpm/npmcore/compare/v3.1.0...v3.1.1) (2023-01-18)
+
+
+### Bug Fixes
+
+* not exists binary should return 404 ([#377](https://github.com/cnpm/npmcore/issues/377)) ([0cc348d](https://github.com/cnpm/npmcore/commit/0cc348dd6e92ef8666d98991e8a6135a267ac2a6))
+
 ## [3.1.0](https://github.com/cnpm/npmcore/compare/v3.0.1...v3.1.0) (2023-01-18)
 
 
