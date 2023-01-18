@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/cnpm/npmcore/compare/v3.0.0...v3.0.1) (2023-01-18)
+
+
+### Bug Fixes
+
+* try to show latest version on sync log ([#375](https://github.com/cnpm/npmcore/issues/375)) ([1c64a57](https://github.com/cnpm/npmcore/commit/1c64a57dbe65f062751b11df7e5aa698e8fb1c77))
+
 ## [3.0.0](https://github.com/cnpm/npmcore/compare/v2.10.1...v3.0.0) (2023-01-17)
 
 
