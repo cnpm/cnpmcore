@@ -565,6 +565,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           persist: false,
         });
         const result = await npmRegistry.getFullManifests(name);
+        const latestVersion = result.data['dist-tags'].latest;
         result.data['dist-tags'].foo = '2.0.0';
         mock.data(NPMRegistry.prototype, 'getFullManifests', result);
         mock.data(PackageManagerService.prototype, 'savePackageTag', null);
@@ -578,6 +579,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         // console.log(log);
         assert(log.includes('] 🚧 Remote tag(foo: 2.0.0) not exists in local dist-tags'));
         assert(!log.includes('] 🚧 Refreshing manifests to dists ......'));
+        assert(log.includes('] 🚧 Syncing versions 2 => 2'));
+        assert(log.includes(`] 📖 @cnpmcore/test-sync-package-has-two-versions latest version: ${latestVersion}, published time: ${JSON.stringify(result.data.time[latestVersion])}`));
         app.mockAgent().assertNoPendingInterceptors();
       });
 
