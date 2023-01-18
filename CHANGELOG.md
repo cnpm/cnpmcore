@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/cnpm/npmcore/compare/v3.0.1...v3.1.0) (2023-01-18)
+
+
+### Features
+
+* support auto sync when package not found ([#337](https://github.com/cnpm/npmcore/issues/337)) ([8734413](https://github.com/cnpm/npmcore/commit/873441374fa67c2ec827ad7b9157d6f2f5dec217)), closes [#335](https://github.com/cnpm/npmcore/issues/335) [/github.com/cnpm/cnpmcore/pull/50/files#diff-97cbafa75ed0bae6a1f0a2df0676c00f56b9cf8944b04ddb82d6dd0ab141961](https://github.com/cnpm//github.com/cnpm/cnpmcore/pull/50/files/issues/diff-97cbafa75ed0bae6a1f0a2df0676c00f56b9cf8944b04ddb82d6dd0ab141961)
+
 ## [3.0.1](https://github.com/cnpm/npmcore/compare/v3.0.0...v3.0.1) (2023-01-18)
 
 
