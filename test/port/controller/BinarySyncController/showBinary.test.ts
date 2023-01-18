@@ -82,6 +82,27 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         url: 'http://localhost:7001/-/binary/nwjs/',
       }]);
     });
+
+    it('should 404 when binary not exists', async () => {
+      let res = await app.httpRequest()
+        .get('/-/binary/node-canvas-prebuilt-not-exists/');
+      assert.equal(res.status, 404);
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
+      assert.deepEqual(res.body, { error: '[NOT_FOUND] Binary "node-canvas-prebuilt-not-exists" not found' });
+
+      res = await app.httpRequest()
+        .get('/-/binary/node-canvas-prebuilt-not-exists/v2.6.1/');
+      assert.equal(res.status, 404);
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
+      assert.deepEqual(res.body, { error: '[NOT_FOUND] Binary "node-canvas-prebuilt-not-exists" not found' });
+
+      res = await app.httpRequest()
+        .get('/-/binary/node-canvas-prebuilt-not-exists/v2.6.1/foo.json');
+      assert.equal(res.status, 404);
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
+      assert.deepEqual(res.body, { error: '[NOT_FOUND] Binary "node-canvas-prebuilt-not-exists" not found' });
+    });
+
     it('should show valid sub dirs', async () => {
       await binaryRepository.saveBinary(Binary.create({
         category: 'node-canvas-prebuilt',
@@ -103,8 +124,8 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         type: 'dir',
         url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/',
       }]);
-
     });
+
     it('should show valid files', async () => {
       await binaryRepository.saveBinary(Binary.create({
         category: 'node-canvas-prebuilt',

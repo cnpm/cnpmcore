@@ -51,6 +51,9 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showBinary(@Context() ctx: EggContext, @HTTPParam() binaryName: string, @HTTPParam() subpath: string) {
+    if (!binaries[binaryName]) {
+      throw new NotFoundError(`Binary "${binaryName}" not found`);
+    }
     subpath = subpath || '/';
     if (subpath === '/') {
       const items = await this.binarySyncerService.listRootBinaries(binaryName);
