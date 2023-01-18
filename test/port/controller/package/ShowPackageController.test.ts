@@ -777,5 +777,29 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
     });
+
+    it('should create sync task if package not exists when syncNotFound=true', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'exist');
+      mock(app.config.cnpmcore, 'syncNotFound', true);
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
+      const res = await app.httpRequest()
+        .get('/lodash')
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res.status === 404);
+      app.expectLog('[middleware:ErrorHandler][syncPackage] create sync package');
+    });
+
+    it('should redirect public non-scope package to source registry if package not exists when redirectNotFound=true', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'exist');
+      mock(app.config.cnpmcore, 'syncNotFound', false);
+      mock(app.config.cnpmcore, 'redirectNotFound', true);
+      const res = await app.httpRequest()
+        .get('/egg')
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res.status === 302);
+      assert(res.headers.location === 'https://registry.npmjs.org/egg');
+    });
   });
 });

@@ -29,7 +29,8 @@ export class ShowPackageVersionController extends AbstractController {
     const isSync = isSyncWorkerRequest(ctx);
     const { blockReason, manifest, pkgId } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionOrTag, isSync);
     if (!pkgId) {
-      throw this.createPackageNotFoundError(fullname);
+      const allowSync = this.getAllowSync(ctx);
+      throw this.createPackageNotFoundError(fullname, undefined, allowSync);
     }
     if (blockReason) {
       this.setCDNHeaders(ctx);
