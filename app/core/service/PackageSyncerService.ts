@@ -368,6 +368,11 @@ export class PackageSyncerService extends AbstractService {
     const versionMap = data.versions || {};
     const distTags = data['dist-tags'] || {};
 
+    // show latest infomations
+    if (distTags.latest) {
+      logs.push(`[${isoNow()}] 📖 ${fullname} latest version: ${distTags.latest ?? '-'}, published time: ${JSON.stringify(timeMap[distTags.latest])}`);
+    }
+
     // 1. save maintainers
     // maintainers: [
     //   { name: 'bomsy', email: 'b4bomsy@gmail.com' },
