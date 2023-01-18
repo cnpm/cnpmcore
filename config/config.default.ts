@@ -78,7 +78,7 @@ export default (appInfo: EggAppConfig) => {
     // only support npm as client and npm >= 7.0.0 allow publish action
     enableNpmClientAndVersionCheck: true,
     // sync when package not found, only effect when syncMode = all/exist
-    syncNotFound: true,
+    syncNotFound: false,
     // redirect to source registry when package not found, only effect when syncMode = all/exist
     redirectNotFound: true,
   };
