@@ -1,17 +1,22 @@
-import { AbstractBinary, FetchResult, BinaryItem } from './AbstractBinary';
+import { SingletonProto } from '@eggjs/tegg';
+import { BinaryType } from 'app/common/enum/Binary';
+import binaries, { BinaryTaskConfig } from 'config/binaries';
+import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 
+@SingletonProto()
+@BinaryAdapter(BinaryType.Github)
 export class GithubBinary extends AbstractBinary {
   private releases?: any[];
 
-  protected async initReleases() {
+  protected async initReleases(binaryConfig: BinaryTaskConfig) {
     if (!this.releases) {
       // https://docs.github.com/en/rest/reference/releases get three pages
       // https://api.github.com/repos/electron/electron/releases
       // https://api.github.com/repos/electron/electron/releases?per_page=100&page=3
       let releases: any[] = [];
-      const maxPage = this.binaryConfig.options?.maxPage || 1;
+      const maxPage = binaryConfig.options?.maxPage || 1;
       for (let i = 0; i < maxPage; i++) {
-        const url = `https://api.github.com/repos/${this.binaryConfig.repo}/releases?per_page=100&page=${i + 1}`;
+        const url = `https://api.github.com/repos/${binaryConfig.repo}/releases?per_page=100&page=${i + 1}`;
         const data = await this.requestJSON(url);
         if (!Array.isArray(data)) {
           // {"message":"API rate limit exceeded for 47.57.239.54. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
@@ -29,7 +34,7 @@ export class GithubBinary extends AbstractBinary {
     return this.releases;
   }
 
-  protected formatItems(releaseItem: any) {
+  protected formatItems(releaseItem: any, binaryConfig: BinaryTaskConfig) {
     const items: BinaryItem[] = [];
     // 200MB
     const maxFileSize = 1024 * 1024 * 200;
@@ -50,7 +55,7 @@ export class GithubBinary extends AbstractBinary {
       items.push({
         name: `${releaseItem.tag_name}.tar.gz`,
         isDir: false,
-        url: `https://github.com/${this.binaryConfig.repo}/archive/${releaseItem.tag_name}.tar.gz`,
+        url: `https://github.com/${binaryConfig.repo}/archive/${releaseItem.tag_name}.tar.gz`,
         size: '-',
         date: releaseItem.published_at,
       });
@@ -59,7 +64,7 @@ export class GithubBinary extends AbstractBinary {
       items.push({
         name: `${releaseItem.tag_name}.zip`,
         isDir: false,
-        url: `https://github.com/${this.binaryConfig.repo}/archive/${releaseItem.tag_name}.zip`,
+        url: `https://github.com/${binaryConfig.repo}/archive/${releaseItem.tag_name}.zip`,
         size: '-',
         date: releaseItem.published_at,
       });
@@ -67,8 +72,9 @@ export class GithubBinary extends AbstractBinary {
     return items;
   }
 
-  async fetch(dir: string): Promise<FetchResult | undefined> {
-    const releases = await this.initReleases();
+  async fetch(dir: string, binaryName: string): Promise<FetchResult | undefined> {
+    const binaryConfig = binaries[binaryName];
+    const releases = await this.initReleases(binaryConfig);
     if (!releases) return;
 
     let items: BinaryItem[] = [];
@@ -85,7 +91,7 @@ export class GithubBinary extends AbstractBinary {
     } else {
       for (const item of releases) {
         if (dir === `/${item.tag_name}/`) {
-          items = this.formatItems(item);
+          items = this.formatItems(item, binaryConfig);
           break;
         }
       }

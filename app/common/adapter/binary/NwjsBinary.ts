@@ -1,14 +1,20 @@
-import { FetchResult, BinaryItem } from './AbstractBinary';
+import { SingletonProto } from '@eggjs/tegg';
+import { BinaryType } from 'app/common/enum/Binary';
+import binaries from 'config/binaries';
+import { FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 import { BucketBinary } from './BucketBinary';
 
+@SingletonProto()
+@BinaryAdapter(BinaryType.Nwjs)
 export class NwjsBinary extends BucketBinary {
   private s3Url = 'https://nwjs2.s3.amazonaws.com/?delimiter=/&prefix=';
 
   async fetch(dir: string): Promise<FetchResult | undefined> {
+    const binaryConfig = binaries.nwjs;
     const isRootDir = dir === '/';
     // /foo/ => foo/
     const subDir = dir.substring(1);
-    const url = isRootDir ? this.binaryConfig.distUrl : `${this.s3Url}${encodeURIComponent(subDir)}`;
+    const url = isRootDir ? binaryConfig.distUrl : `${this.s3Url}${encodeURIComponent(subDir)}`;
     const xml = await this.requestXml(url);
     if (!xml) return;
 
@@ -37,6 +43,6 @@ export class NwjsBinary extends BucketBinary {
       return { items, nextParams: null };
     }
 
-    return { items: this.parseItems(xml, dir), nextParams: null };
+    return { items: this.parseItems(xml, dir, binaryConfig), nextParams: null };
   }
 }

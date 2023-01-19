@@ -1,9 +1,14 @@
-import { BinaryItem, FetchResult } from './AbstractBinary';
+import { SingletonProto } from '@eggjs/tegg';
+import { BinaryType } from 'app/common/enum/Binary';
+import binaries from 'config/binaries';
+import { BinaryAdapter, BinaryItem, FetchResult } from './AbstractBinary';
 import { GithubBinary } from './GithubBinary';
 
+@SingletonProto()
+@BinaryAdapter(BinaryType.Electron)
 export class ElectronBinary extends GithubBinary {
   async fetch(dir: string): Promise<FetchResult | undefined> {
-    const releases = await this.initReleases();
+    const releases = await this.initReleases(binaries.electron);
     if (!releases) return;
 
     let items: BinaryItem[] = [];
@@ -30,7 +35,7 @@ export class ElectronBinary extends GithubBinary {
     } else {
       for (const item of releases) {
         if (dir === `/${item.tag_name}/` || dir === `/${item.tag_name.substring(1)}/`) {
-          items = this.formatItems(item);
+          items = this.formatItems(item, binaries.electron);
           break;
         }
       }

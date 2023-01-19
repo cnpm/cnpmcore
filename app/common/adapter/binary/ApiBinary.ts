@@ -1,16 +1,18 @@
-import { EggContextHttpClient, EggLogger } from 'egg';
-import { AbstractBinary, FetchResult, BinaryItem } from './AbstractBinary';
-import { BinaryTaskConfig } from '../../../../config/binaries';
+import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
+import { Inject, SingletonProto } from '@eggjs/tegg';
+import { BinaryType } from 'app/common/enum/Binary';
+import { EggAppConfig } from 'egg';
 
+@SingletonProto()
+@BinaryAdapter(BinaryType.Api)
 export class ApiBinary extends AbstractBinary {
-  private apiUrl: string;
-  constructor(httpclient: EggContextHttpClient, logger: EggLogger, binaryConfig: BinaryTaskConfig, apiUrl: string, binaryName: string) {
-    super(httpclient, logger, binaryConfig, binaryName);
-    this.apiUrl = apiUrl;
-  }
 
-  async fetch(dir: string): Promise<FetchResult | undefined> {
-    const url = `${this.apiUrl}/${this.binaryName}${dir}`;
+  @Inject()
+  private readonly config: EggAppConfig;
+
+  async fetch(dir: string, binaryName?: string): Promise<FetchResult | undefined> {
+    const apiUrl = this.config.syncBinaryFromAPISource || `${this.config.sourceRegistry}/-/binary`;
+    const url = `${apiUrl}/${binaryName}${dir}`;
     const data = await this.requestJSON(url);
     if (!Array.isArray(data)) {
       this.logger.warn('[ApiBinary.fetch:response-data-not-array] data: %j', data);

@@ -1,8 +1,14 @@
-import { AbstractBinary, FetchResult, BinaryItem } from './AbstractBinary';
+import { SingletonProto } from '@eggjs/tegg';
+import { BinaryType } from 'app/common/enum/Binary';
+import binaries from 'config/binaries';
+import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 
+@SingletonProto()
+@BinaryAdapter(BinaryType.Node)
 export class NodeBinary extends AbstractBinary {
-  async fetch(dir: string): Promise<FetchResult | undefined> {
-    const url = `${this.binaryConfig.distUrl}${dir}`;
+  async fetch(dir: string, binaryName: string): Promise<FetchResult | undefined> {
+    const binaryConfig = binaries[binaryName];
+    const url = `${binaryConfig.distUrl}${dir}`;
     const html = await this.requestXml(url);
     // <a href="v9.8.0/">v9.8.0/</a>                                            08-Mar-2018 01:55                   -
     // <a href="v9.9.0/">v9.9.0/</a>                                            21-Mar-2018 15:47                   -
@@ -20,7 +26,7 @@ export class NodeBinary extends AbstractBinary {
       const date = m[2];
       const size = m[3];
       if (size === '0') continue;
-      if (this.binaryConfig.ignoreFiles?.includes(`${dir}${name}`)) continue;
+      if (binaryConfig.ignoreFiles?.includes(`${dir}${name}`)) continue;
 
       items.push({
         name,
