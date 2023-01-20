@@ -252,7 +252,8 @@ export class PackageRepository extends AbstractRepository {
     if (lastPkg) {
       lastPackage = lastPkg.scope ? `${lastPkg.scope}/${lastPkg.name}` : lastPkg.name;
       // FIXME: id will be out of range number
-      packageCount = Number(lastPkg.id);
+      // 可能存在 id 增长不连续的情况，通过 count 查询
+      packageCount = await this.Package.find().count();
     }
 
     if (lastVersion) {
@@ -261,7 +262,7 @@ export class PackageRepository extends AbstractRepository {
         const fullname = pkg.scope ? `${pkg.scope}/${pkg.name}` : pkg.name;
         lastPackageVersion = `${fullname}@${lastVersion.version}`;
       }
-      packageVersionCount = Number(lastVersion.id);
+      packageVersionCount = await this.PackageVersion.find().count();
     }
     return {
       packageCount,

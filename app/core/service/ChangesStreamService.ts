@@ -18,6 +18,7 @@ import { E500 } from 'egg-errors';
 import { Registry } from '../entity/Registry';
 import { AbstractChangeStream } from '../../common/adapter/changesStream/AbstractChangesStream';
 import { getScopeAndName } from '../../common/PackageUtil';
+import { GLOBAL_WORKER } from '../../common/constants';
 import { ScopeManagerService } from './ScopeManagerService';
 import { PackageRepository } from '../../repository/PackageRepository';
 
@@ -44,7 +45,7 @@ export class ChangesStreamService extends AbstractService {
   // GLOBAL_WORKER: 默认的同步源
   // `{registryName}_WORKER`: 自定义 scope 的同步源
   public async findExecuteTask(): Promise<ChangesStreamTask | null> {
-    const targetName = 'GLOBAL_WORKER';
+    const targetName = GLOBAL_WORKER;
     const globalRegistryTask = await this.taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
     // 如果没有配置默认同步源，先进行初始化
     if (!globalRegistryTask) {

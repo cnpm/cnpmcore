@@ -1,14 +1,16 @@
 import { EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
+import { ChangesStreamTaskData } from '../../core/entity/Task';
+import { RegistryManagerService } from '../../core/service/RegistryManagerService';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { ChangeRepository } from '../../repository/ChangeRepository';
-import { CacheService } from '../../core/service/CacheService';
+import { CacheService, DownloadInfo, TotalData } from '../../core/service/CacheService';
 import { TaskType } from '../../common/enum/Task';
+import { GLOBAL_WORKER } from '../../common/constants';
 import dayjs from '../../common/dayjs';
-
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
@@ -38,11 +40,12 @@ export class UpdateTotalData {
   @Inject()
   private readonly cacheService: CacheService;
 
-  async subscribe() {
-    const changesStreamTask = await this.taskRepository.findTaskByTargetName('GLOBAL_WORKER', TaskType.ChangesStream);
-    const packageTotal = await this.packageRepository.queryTotal();
+  @Inject()
+  private readonly registryManagerService: RegistryManagerService;
 
-    const download = {
+  // 计算下载量相关信息，不区分不同 changesStream
+  private async calculateDownloadInfo() {
+    const download: DownloadInfo = {
       today: 0,
       yesterday: 0,
       samedayLastweek: 0,
@@ -92,15 +95,44 @@ export class UpdateTotalData {
         }
       }
     }
+    return download;
+  }
+
+  async subscribe() {
+    const packageTotal = await this.packageRepository.queryTotal();
+    const download = await this.calculateDownloadInfo();
 
     const lastChange = await this.changeRepository.getLastChange();
-    const totalData = {
+    const totalData: TotalData = {
       ...packageTotal,
       download,
-      changesStream: changesStreamTask && changesStreamTask.data || {},
       lastChangeId: lastChange && lastChange.id || 0,
       cacheTime: new Date().toISOString(),
+      changesStream: {} as unknown as ChangesStreamTaskData,
+      upstreamRegistries: [],
     };
+
+    const tasks = await this.taskRepository.findTasksByCondition({ type: TaskType.ChangesStream });
+    for (const task of tasks) {
+      // 全局 changesStream
+      const data = task.data as ChangesStreamTaskData;
+      // 补充录入 upstreamRegistries
+      const registry = await this.registryManagerService.findByRegistryId(data.registryId as string);
+      if (registry) {
+        totalData.upstreamRegistries.push({
+          ...data,
+          source_registry: registry?.host,
+          changes_stream_url: registry?.changeStream,
+          registry_name: registry?.name,
+        });
+      }
+
+      // 兼容 LegacyInfo 字段
+      if (task.targetName === GLOBAL_WORKER) {
+        totalData.changesStream = data;
+      }
+    }
+
     await this.cacheService.saveTotalData(totalData);
     this.logger.info('[UpdateTotalData.subscribe] total data: %j', totalData);
   }

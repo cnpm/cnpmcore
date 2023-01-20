@@ -8,9 +8,43 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { AbstractController } from './AbstractController';
-import { CacheService } from '../../core/service/CacheService';
+import { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService';
 
 const startTime = new Date();
+
+// registry 站点信息数据 SiteTotalData
+// SiteEnvInfo: 环境、运行时相关信息，实时查询
+// UpstreamInfo: 上游信息，实时查询
+// TotalInfo: 总数据信息，定时任务每分钟生成
+// LegacyInfo: 旧版兼容信息
+type SiteTotalData = LegacyInfo & SiteEnvInfo & TotalInfo;
+
+type LegacyInfo = {
+  source_registry: string,
+  changes_stream_registry: string,
+  sync_changes_steam: any,
+};
+
+type SiteEnvInfo = {
+  sync_model: string;
+  sync_binary: string;
+  instance_start_time: Date;
+  node_version: string;
+  app_version: string;
+  engine: string;
+  cache_time: string;
+};
+
+type TotalInfo = {
+  last_package: string;
+  last_package_version: string;
+  doc_count: number | bigint;
+  doc_version_count: number | bigint;
+  update_seq: number | bigint;
+  download: DownloadInfo;
+  upstream_registries?: UpstreamRegistryInfo[];
+};
+
 
 @HTTPController()
 export class HomeController extends AbstractController {
@@ -23,9 +57,12 @@ export class HomeController extends AbstractController {
     path: '/',
     method: HTTPMethodEnum.GET,
   })
+  // 2023-1-20
+  // 原有 LegacyInfo 字段继续保留，由于 ChangesStream 信息通过 registry 表配置，可能会过期
+  // 新增 upstream_registries 字段，展示上游源站 registry 信息列表
   async showTotal() {
     const totalData = await this.cacheService.getTotalData();
-    const data = {
+    const data: SiteTotalData = {
       last_package: totalData.lastPackage,
       last_package_version: totalData.lastPackageVersion,
       doc_count: totalData.packageCount,
@@ -42,6 +79,7 @@ export class HomeController extends AbstractController {
       source_registry: this.config.cnpmcore.sourceRegistry,
       changes_stream_registry: this.config.cnpmcore.changesStreamRegistry,
       cache_time: totalData.cacheTime,
+      upstream_registries: totalData.upstreamRegistries,
     };
     return data;
   }
