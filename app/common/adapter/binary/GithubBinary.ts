@@ -4,7 +4,7 @@ import binaries, { BinaryTaskConfig } from 'config/binaries';
 import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 
 @SingletonProto()
-@BinaryAdapter(BinaryType.Github)
+@BinaryAdapter(BinaryType.GitHub)
 export class GithubBinary extends AbstractBinary {
   private releases?: any[];
 
