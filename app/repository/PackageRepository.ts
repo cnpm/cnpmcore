@@ -14,9 +14,7 @@ import type { Maintainer as MaintainerModel } from './model/Maintainer';
 import type { User as UserModel } from './model/User';
 import { User as UserEntity } from '../core/entity/User';
 import { AbstractRepository } from './AbstractRepository';
-import { LeoricRegister } from '@eggjs/tegg-orm-plugin/lib/LeoricRegister';
-import { Bone } from 'leoric';
-import { EggAppConfig } from 'egg';
+import { RawQueryUtil } from './util/RawQueryUtil';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -44,10 +42,8 @@ export class PackageRepository extends AbstractRepository {
   private readonly User: typeof UserModel;
 
   @Inject()
-  private readonly leoricRegister: LeoricRegister;
+  private readonly rawQueryUtil : RawQueryUtil;
 
-  @Inject()
-  private readonly config: EggAppConfig;
 
   async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
     const model = await this.Package.findOne({ scope, name });
@@ -262,7 +258,7 @@ export class PackageRepository extends AbstractRepository {
       lastPackage = lastPkg.scope ? `${lastPkg.scope}/${lastPkg.name}` : lastPkg.name;
       // FIXME: id will be out of range number
       // 可能存在 id 增长不连续的情况，通过 count 查询
-      packageCount = await this.getCount(PackageModel);
+      packageCount = await this.rawQueryUtil.getCount(PackageModel);
     }
 
     if (lastVersion) {
@@ -271,7 +267,7 @@ export class PackageRepository extends AbstractRepository {
         const fullname = pkg.scope ? `${pkg.scope}/${pkg.name}` : pkg.name;
         lastPackageVersion = `${fullname}@${lastVersion.version}`;
       }
-      packageVersionCount = await this.getCount(PackageVersionModel);
+      packageVersionCount = await this.rawQueryUtil.getCount(PackageVersionModel);
     }
     return {
       packageCount,
@@ -338,11 +334,4 @@ export class PackageRepository extends AbstractRepository {
     return entities;
   }
 
-  async getCount(model: typeof Bone): Promise<number> {
-    const real = await this.leoricRegister.getOrCreateRealm(undefined);
-    const { database } = this.config.orm;
-    const sql = `select table_rows from information_schema.tables where table_schema='${database}' and table_name = '${model.table}'`;
-    const queryRes = await real.query(sql);
-    return queryRes?.rows?.[0]?.TABLE_ROWS || 0;
-  }
 }

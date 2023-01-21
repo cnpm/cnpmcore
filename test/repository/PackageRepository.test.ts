@@ -6,7 +6,7 @@ import { UserService } from 'app/core/service/UserService';
 
 describe('test/repository/PackageRepository.test.ts', () => {
   let packageRepository: PackageRepository;
-  let packageManagerService: PackageManagerService
+  let packageManagerService: PackageManagerService;
   let userService: UserService;
 
   describe('getCount', () => {
@@ -14,6 +14,10 @@ describe('test/repository/PackageRepository.test.ts', () => {
       packageRepository = await app.getEggObject(PackageRepository);
       packageManagerService = await app.getEggObject(PackageManagerService);
       userService = await app.getEggObject(UserService);
+
+    });
+    it('should work', async () => {
+      const { packageCount, packageVersionCount } = await packageRepository.queryTotal();
       const { user } = await userService.create({
         name: 'test-user',
         password: 'this-is-password',
@@ -33,11 +37,10 @@ describe('test/repository/PackageRepository.test.ts', () => {
         version: '1.0.0',
         isPrivate: true,
       }, user);
-    });
-    it('should work', async () => {
       const res = await packageRepository.queryTotal();
-      assert(res.packageCount === 1);
-      assert(res.packageVersionCount === 1);
+      // information_schema 只能返回大概值，仅验证增加
+      assert(res.packageCount > packageCount);
+      assert(res.packageVersionCount > packageVersionCount);
     });
   });
 });
