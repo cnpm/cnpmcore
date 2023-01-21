@@ -9,7 +9,7 @@ describe('test/repository/PackageRepository.test.ts', () => {
   let packageManagerService: PackageManagerService;
   let userService: UserService;
 
-  describe('getCount', () => {
+  describe('queryTotal', () => {
     beforeEach(async () => {
       packageRepository = await app.getEggObject(PackageRepository);
       packageManagerService = await app.getEggObject(PackageManagerService);

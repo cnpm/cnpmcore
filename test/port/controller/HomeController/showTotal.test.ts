@@ -69,6 +69,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       await app.runSchedule(SavePackageVersionDownloadCounterPath);
       await app.runSchedule(UpdateTotalDataPath);
 
+
       res = await app.httpRequest()
         .get('/');
       assert(res.status === 200);

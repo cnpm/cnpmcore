@@ -29,7 +29,7 @@ export class RawQueryUtil implements EggObjectLifecycle {
     const { database } = this.config.orm;
     const sql = `
       SELECT
-          table_rows
+          TABLE_ROWS
         FROM
           information_schema.tables
         WHERE
