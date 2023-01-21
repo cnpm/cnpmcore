@@ -1,17 +1,19 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 import { CypressBinary } from 'app/common/adapter/binary/CypressBinary';
-import binaries from 'config/binaries';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
+  let binary: CypressBinary;
+  beforeEach(async () => {
+    binary = await app.getEggObject(CypressBinary);
+  });
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/cypress', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.com/cypress.json'),
         persist: false,
       });
-      const binary = new CypressBinary(app.httpclient, app.logger, binaries.cypress, 'cypress');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -40,7 +42,6 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('registry.npmjs.com/cypress.json'),
         persist: false,
       });
-      const binary = new CypressBinary(app.httpclient, app.logger, binaries.cypress, 'cypress');
       let result = await binary.fetch('/4.0.0/');
       assert(result);
       assert(result.items.length === 4);

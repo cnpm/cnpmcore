@@ -1,18 +1,21 @@
 import assert from 'assert';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { ApiBinary } from 'app/common/adapter/binary/ApiBinary';
-import binaries from 'config/binaries';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
+  let binary: ApiBinary;
+  beforeEach(async () => {
+    binary = await app.getEggObject(ApiBinary);
+  });
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
+      mock(app.config, 'syncBinaryFromAPISource', 'https://cnpmjs.org/mirrors/apis');
       app.mockHttpclient('https://cnpmjs.org/mirrors/apis/node/', 'GET', {
         data: await TestUtil.readFixturesFile('cnpmjs.org/mirrors/apis/node.json'),
         persist: false,
       });
-      const binary = new ApiBinary(app.httpclient, app.logger, binaries.node, 'https://cnpmjs.org/mirrors/apis', 'node');
-      const result = await binary.fetch('/');
+      const result = await binary.fetch('/', 'node');
       assert(result);
       assert(result.items.length > 0);
       let matchDir = false;
@@ -41,12 +44,13 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v16.13.1/ work', async () => {
+      mock(app.config, 'syncBinaryFromAPISource', null);
+      mock(app.config, 'sourceRegistry', 'https://r.cnpmjs.org');
       app.mockHttpclient('https://r.cnpmjs.org/-/binary/node/v16.13.1/', 'GET', {
         data: await TestUtil.readFixturesFile('r.cnpmjs.org/-/binary/node/v16.13.1.json'),
         persist: false,
       });
-      const binary = new ApiBinary(app.httpclient, app.logger, binaries.node, 'https://r.cnpmjs.org/-/binary', 'node');
-      const result = await binary.fetch('/v16.13.1/');
+      const result = await binary.fetch('/v16.13.1/', 'node');
       assert(result);
       assert(result.items.length > 0);
       let matchDir = false;

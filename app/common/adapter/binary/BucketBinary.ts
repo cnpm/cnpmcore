@@ -1,16 +1,22 @@
+import { SingletonProto } from '@eggjs/tegg';
+import { BinaryType } from 'app/common/enum/Binary';
+import binaries, { BinaryTaskConfig } from 'config/binaries';
 import path from 'path';
-import { AbstractBinary, FetchResult, BinaryItem } from './AbstractBinary';
+import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 
+@SingletonProto()
+@BinaryAdapter(BinaryType.Bucket)
 export class BucketBinary extends AbstractBinary {
-  async fetch(dir: string): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: string): Promise<FetchResult | undefined> {
     // /foo/ => foo/
+    const binaryConfig = binaries[binaryName];
     const subDir = dir.substring(1);
-    const url = `${this.binaryConfig.distUrl}?delimiter=/&prefix=${encodeURIComponent(subDir)}`;
+    const url = `${binaryConfig.distUrl}?delimiter=/&prefix=${encodeURIComponent(subDir)}`;
     const xml = await this.requestXml(url);
-    return { items: this.parseItems(xml, dir), nextParams: null };
+    return { items: this.parseItems(xml, dir, binaryConfig), nextParams: null };
   }
 
-  protected parseItems(xml: string, dir: string) {
+  protected parseItems(xml: string, dir: string, binaryConfig: BinaryTaskConfig): BinaryItem[] {
     const items: BinaryItem[] = [];
     // https://nwjs2.s3.amazonaws.com/?prefix=v0.59.0%2Fx64%2F
     // https://chromedriver.storage.googleapis.com/?delimiter=/&prefix=
@@ -35,7 +41,7 @@ export class BucketBinary extends AbstractBinary {
       items.push({
         name,
         isDir: false,
-        url: `${this.binaryConfig.distUrl}${fullname}`,
+        url: `${binaryConfig.distUrl}${fullname}`,
         size,
         date,
       });
@@ -50,7 +56,7 @@ export class BucketBinary extends AbstractBinary {
       const fullname = m[1].trim();
       const name = `${path.basename(fullname)}/`;
       const fullpath = `${dir}${name}`;
-      if (this.binaryConfig.ignoreDirs?.includes(fullpath)) continue;
+      if (binaryConfig.ignoreDirs?.includes(fullpath)) continue;
       let date = '-';
       // root dir children, should set date to '2022-04-19T01:00:00Z', sync per hour
       if (dir === '/') {

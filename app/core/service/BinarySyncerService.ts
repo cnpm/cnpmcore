@@ -3,12 +3,13 @@ import {
   AccessLevel,
   SingletonProto,
   Inject,
+  EggObjectFactory,
 } from '@eggjs/tegg';
 import {
-  EggContextHttpClient,
+  EggHttpClient,
 } from 'egg';
 import fs from 'fs/promises';
-import binaries, { SyncerClass } from '../../../config/binaries';
+import binaries from '../../../config/binaries';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -17,34 +18,9 @@ import { Task } from '../entity/Task';
 import { Binary } from '../entity/Binary';
 import { TaskService } from './TaskService';
 import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
-import { ApiBinary } from '../../common/adapter/binary/ApiBinary';
 import { AbstractService } from '../../common/AbstractService';
-import { NodeBinary } from '../../common/adapter/binary/NodeBinary';
-import { NwjsBinary } from '../../common/adapter/binary/NwjsBinary';
-import { BucketBinary } from '../../common/adapter/binary/BucketBinary';
-import { CypressBinary } from '../../common/adapter/binary/CypressBinary';
-import { SqlcipherBinary } from '../../common/adapter/binary/SqlcipherBinary';
-import { PuppeteerBinary } from '../../common/adapter/binary/PuppeteerBinary';
-import { GithubBinary } from '../../common/adapter/binary/GithubBinary';
-import { ElectronBinary } from '../../common/adapter/binary/ElectronBinary';
-import { NodePreGypBinary } from '../../common/adapter/binary/NodePreGypBinary';
-import { ImageminBinary } from '../../common/adapter/binary/ImageminBinary';
-import { PlaywrightBinary } from '../../common/adapter/binary/PlaywrightBinary';
 import { TaskRepository } from 'app/repository/TaskRepository';
-
-const BinaryClasses = {
-  [SyncerClass.NodeBinary]: NodeBinary,
-  [SyncerClass.NwjsBinary]: NwjsBinary,
-  [SyncerClass.BucketBinary]: BucketBinary,
-  [SyncerClass.CypressBinary]: CypressBinary,
-  [SyncerClass.SqlcipherBinary]: SqlcipherBinary,
-  [SyncerClass.PuppeteerBinary]: PuppeteerBinary,
-  [SyncerClass.GithubBinary]: GithubBinary,
-  [SyncerClass.ElectronBinary]: ElectronBinary,
-  [SyncerClass.NodePreGypBinary]: NodePreGypBinary,
-  [SyncerClass.ImageminBinary]: ImageminBinary,
-  [SyncerClass.PlaywrightBinary]: PlaywrightBinary,
-};
+import { BinaryType } from 'app/common/enum/Binary';
 
 function isoNow() {
   return new Date().toISOString();
@@ -61,9 +37,11 @@ export class BinarySyncerService extends AbstractService {
   @Inject()
   private readonly taskRepository: TaskRepository;
   @Inject()
-  private readonly httpclient: EggContextHttpClient;
+  private readonly httpclient: EggHttpClient;
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
+  @Inject()
+  private readonly eggObjectFactory: EggObjectFactory;
 
   public async findBinary(binaryName: string, parent: string, name: string) {
     return await this.binaryRepository.findBinary(binaryName, parent, name);
@@ -135,11 +113,11 @@ export class BinarySyncerService extends AbstractService {
 
   public async executeTask(task: Task) {
     const binaryName = task.targetName;
-    const binaryInstance = this.createBinaryInstance(binaryName);
+    const binaryAdapter = await this.getBinaryAdapter(binaryName);
     const logUrl = `${this.config.cnpmcore.registry}/-/binary/${binaryName}/syncs/${task.taskId}/log`;
     let logs: string[] = [];
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync binary "${binaryName}" 🚧🚧🚧🚧🚧`);
-    if (!binaryInstance) {
+    if (!binaryAdapter) {
       task.error = 'unknow binaryName';
       logs.push(`[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ "${binaryName}" ❌❌❌❌❌`);
@@ -154,7 +132,7 @@ export class BinarySyncerService extends AbstractService {
     this.logger.info('[BinarySyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
       task.taskId, task.targetName, logUrl);
     try {
-      await this.syncDir(binaryInstance, task, '/');
+      await this.syncDir(binaryAdapter, task, '/');
       logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
       logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 "${binaryName}" 🟢🟢🟢🟢🟢`);
       await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
@@ -171,22 +149,22 @@ export class BinarySyncerService extends AbstractService {
     }
   }
 
-  private async syncDir(binaryInstance: AbstractBinary, task: Task, dir: string, parentIndex = '') {
+  private async syncDir(binaryAdapter: AbstractBinary, task: Task, dir: string, parentIndex = '') {
     const binaryName = task.targetName;
-    const result = await binaryInstance.fetch(dir, task.data);
+    const result = await binaryAdapter.fetch(dir, binaryName);
     let hasDownloadError = false;
     let hasItems = false;
     if (result && result.items.length > 0) {
       hasItems = true;
       let logs: string[] = [];
       const newItems = await this.diff(binaryName, dir, result.items);
-      logs.push(`[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryInstance.constructor.name}`);
+      logs.push(`[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryAdapter.constructor.name}`);
       for (const [ index, { item, reason }] of newItems.entries()) {
         if (item.isDir) {
           logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Start sync dir ${JSON.stringify(item)}, reason: ${reason}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
-          const [ hasError, hasSubItems ] = await this.syncDir(binaryInstance, task, `${dir}${item.name}`, `${parentIndex}${index}.`);
+          const [ hasError, hasSubItems ] = await this.syncDir(binaryAdapter, task, `${dir}${item.name}`, `${parentIndex}${index}.`);
           if (hasError) {
             hasDownloadError = true;
           } else {
@@ -287,15 +265,13 @@ export class BinarySyncerService extends AbstractService {
     return binary;
   }
 
-  private createBinaryInstance(binaryName: string): AbstractBinary | undefined {
+  private async getBinaryAdapter(binaryName: string): Promise<AbstractBinary | undefined> {
     const config = this.config.cnpmcore;
     const binaryConfig = binaries[binaryName];
 
     if (config.sourceRegistryIsCNpm) {
-      const syncBinaryFromAPISource = config.syncBinaryFromAPISource || `${config.sourceRegistry}/-/binary`;
-      return new ApiBinary(this.httpclient, this.logger, binaryConfig, syncBinaryFromAPISource, binaryName);
+      return await this.eggObjectFactory.getEggObject(AbstractBinary, BinaryType.Api);
     }
-
-    return new BinaryClasses[binaryConfig.syncer](this.httpclient, this.logger, binaryConfig, binaryName);
+    return await this.eggObjectFactory.getEggObject(AbstractBinary, binaryConfig.type);
   }
 }

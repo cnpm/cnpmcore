@@ -1,7 +1,9 @@
 
-import { AbstractBinary, BinaryItem, FetchResult } from './AbstractBinary';
+import { AbstractBinary, BinaryAdapter, BinaryItem, FetchResult } from './AbstractBinary';
 import util from 'util';
 import path from 'path';
+import { SingletonProto } from '@eggjs/tegg';
+import { BinaryType } from 'app/common/enum/Binary';
 
 const PACKAGE_URL = 'https://registry.npmjs.com/playwright-core';
 const DOWNLOAD_HOST = 'https://playwright.azureedge.net/';
@@ -144,6 +146,8 @@ const DOWNLOAD_PATHS = {
   },
 };
 
+@SingletonProto()
+@BinaryAdapter(BinaryType.Playwright)
 export class PlaywrightBinary extends AbstractBinary {
   private dirItems?: Record<string, BinaryItem[]>;
   async fetch(dir: string): Promise<FetchResult | undefined> {
@@ -216,4 +220,3 @@ export class PlaywrightBinary extends AbstractBinary {
     return { items: this.dirItems[dir] ?? [], nextParams: null };
   }
 }
-
