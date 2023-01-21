@@ -1,9 +1,9 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import type { Package as PackageModel } from './model/Package';
+import { Package as PackageModel } from './model/Package';
 import { Package as PackageEntity } from '../core/entity/Package';
 import { ModelConvertor } from './util/ModelConvertor';
 import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVersion';
-import type { PackageVersion as PackageVersionModel } from './model/PackageVersion';
+import { PackageVersion as PackageVersionModel } from './model/PackageVersion';
 import { PackageVersionManifest as PackageVersionManifestEntity } from '../core/entity/PackageVersionManifest';
 import type { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest';
 import type { Dist as DistModel } from './model/Dist';
@@ -14,6 +14,9 @@ import type { Maintainer as MaintainerModel } from './model/Maintainer';
 import type { User as UserModel } from './model/User';
 import { User as UserEntity } from '../core/entity/User';
 import { AbstractRepository } from './AbstractRepository';
+import { LeoricRegister } from '@eggjs/tegg-orm-plugin/lib/LeoricRegister';
+import { Bone } from 'leoric';
+import { EggAppConfig } from 'egg';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -39,6 +42,12 @@ export class PackageRepository extends AbstractRepository {
 
   @Inject()
   private readonly User: typeof UserModel;
+
+  @Inject()
+  private readonly leoricRegister: LeoricRegister;
+
+  @Inject()
+  private readonly config: EggAppConfig;
 
   async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
     const model = await this.Package.findOne({ scope, name });
@@ -253,7 +262,7 @@ export class PackageRepository extends AbstractRepository {
       lastPackage = lastPkg.scope ? `${lastPkg.scope}/${lastPkg.name}` : lastPkg.name;
       // FIXME: id will be out of range number
       // 可能存在 id 增长不连续的情况，通过 count 查询
-      packageCount = await this.Package.find().count();
+      packageCount = await this.getCount(PackageModel);
     }
 
     if (lastVersion) {
@@ -262,7 +271,7 @@ export class PackageRepository extends AbstractRepository {
         const fullname = pkg.scope ? `${pkg.scope}/${pkg.name}` : pkg.name;
         lastPackageVersion = `${fullname}@${lastVersion.version}`;
       }
-      packageVersionCount = await this.PackageVersion.find().count();
+      packageVersionCount = await this.getCount(PackageVersionModel);
     }
     return {
       packageCount,
@@ -327,5 +336,13 @@ export class PackageRepository extends AbstractRepository {
       entities.push(ModelConvertor.convertModelToEntity(model, PackageTagEntity));
     }
     return entities;
+  }
+
+  async getCount(model: typeof Bone): Promise<number> {
+    const real = await this.leoricRegister.getOrCreateRealm(undefined);
+    const { database } = this.config.orm;
+    const sql = `select table_rows from information_schema.tables where table_schema='${database}' and table_name = '${model.table}'`;
+    const queryRes = await real.query(sql);
+    return queryRes?.rows?.[0]?.TABLE_ROWS || 0;
   }
 }
