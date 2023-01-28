@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/cnpm/npmcore/compare/v3.1.2...v3.2.0) (2023-01-28)
+
+
+### Features
+
+* update index json ([#379](https://github.com/cnpm/npmcore/issues/379)) ([bce6e79](https://github.com/cnpm/npmcore/commit/bce6e7971f21a9a3bad9a70d85214ce04462f0c4))
+
 ## [3.1.2](https://github.com/cnpm/npmcore/compare/v3.1.1...v3.1.2) (2023-01-28)
 
 
