@@ -1,17 +1,19 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
-import binaries from 'config/binaries';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
+  let binary: NodeBinary;
+  beforeEach(async () => {
+    binary = await app.getEggObject(NodeBinary);
+  });
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://nodejs.org/dist/', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.html'),
       });
-      const binary = new NodeBinary(app.httpclient, app.logger, binaries.node, 'node');
-      const result = await binary.fetch('/');
+      const result = await binary.fetch('/', 'node');
       assert(result);
       assert(result.items.length > 0);
       let matchDir = false;
@@ -43,8 +45,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/v16.13.1/', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/v16.13.1/index.html'),
       });
-      const binary = new NodeBinary(app.httpclient, app.logger, binaries.node, 'node');
-      const result = await binary.fetch('/v16.13.1/');
+      const result = await binary.fetch('/v16.13.1/', 'node');
       assert(result);
       assert(result.items.length > 0);
       let matchDir = false;
@@ -76,8 +77,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/index.html'),
       });
-      const binary = new NodeBinary(app.httpclient, app.logger, binaries['node-nightly'], 'node-nightly');
-      const result = await binary.fetch('/v14.0.0-nightly20200119b318926634/');
+      const result = await binary.fetch('/v14.0.0-nightly20200119b318926634/', 'node-nightly');
       assert(result);
       assert(result.items.length > 0);
       let matchDir = false;
@@ -118,8 +118,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/index.html'),
       });
-      const binary = new NodeBinary(app.httpclient, app.logger, binaries['node-nightly'], 'node-nightly');
-      const result = await binary.fetch('/v14.0.0-nightly20200204ee9e689df2/');
+      const result = await binary.fetch('/v14.0.0-nightly20200204ee9e689df2/', 'node-nightly');
       assert(result);
       assert(result.items.length > 0);
       let matchDir = false;
@@ -173,8 +172,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
         persist: false,
       });
 
-      const binary = new NodeBinary(app.httpclient, app.logger, binaries.python, 'python');
-      let result = await binary.fetch('/');
+      let result = await binary.fetch('/', 'python');
       assert(result);
       assert(result.items.length > 0);
       let matchDir1 = false;
@@ -209,7 +207,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       assert(matchDir2);
       assert(matchFile);
 
-      result = await binary.fetch('/3.7.3/');
+      result = await binary.fetch('/3.7.3/', 'python');
       assert(result);
       assert(result.items.length > 0);
 
@@ -245,7 +243,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       assert(matchDir2);
       assert(matchFile);
 
-      result = await binary.fetch('/src/');
+      result = await binary.fetch('/src/', 'python');
       assert(result);
       assert(result.items.length > 0);
       assert(!result.items.find(item => item.name === 'Python-1.6.tar.gz'));

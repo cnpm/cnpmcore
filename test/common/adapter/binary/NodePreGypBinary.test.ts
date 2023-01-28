@@ -1,10 +1,13 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 import { NodePreGypBinary } from 'app/common/adapter/binary/NodePreGypBinary';
-import binaries from 'config/binaries';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
+  let binary: NodePreGypBinary;
+  beforeEach(async () => {
+    binary = await app.getEggObject(NodePreGypBinary);
+  });
   describe('fetch()', () => {
     it('should fetch grpc', async () => {
       app.mockHttpclient('https://registry.npmjs.com/grpc', 'GET', {
@@ -13,8 +16,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      const binary = new NodePreGypBinary(app.httpclient, app.logger, binaries.grpc, 'grpc');
-      let result = await binary.fetch('/');
+      let result = await binary.fetch('/', 'grpc');
       assert(result);
       assert(result.items.length > 0);
       let matchDir1 = false;
@@ -36,7 +38,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       assert(matchDir1);
       assert(matchDir2);
 
-      result = await binary.fetch('/v1.24.11/');
+      result = await binary.fetch('/v1.24.11/', 'grpc');
       assert(result);
       assert(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
@@ -56,8 +58,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      const binary = new NodePreGypBinary(app.httpclient, app.logger, binaries['grpc-tools'], 'grpc-tools');
-      let result = await binary.fetch('/');
+      let result = await binary.fetch('/', 'grpc-tools');
       assert(result);
       assert(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
@@ -80,7 +81,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       assert(matchDir1);
       assert(matchDir2);
 
-      result = await binary.fetch('/v1.11.2/');
+      result = await binary.fetch('/v1.11.2/', 'grpc-tools');
       assert(result);
       assert(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
@@ -100,8 +101,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      const binary = new NodePreGypBinary(app.httpclient, app.logger, binaries.nodegit, 'nodegit');
-      const result = await binary.fetch('/');
+      const result = await binary.fetch('/', 'nodegit');
       assert(result);
       assert(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
@@ -144,8 +144,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      const binary = new NodePreGypBinary(app.httpclient, app.logger, binaries['skia-canvas'], 'skia-canvas');
-      let result = await binary.fetch('/');
+      let result = await binary.fetch('/', 'skia-canvas');
       assert(result);
       assert(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
@@ -158,7 +157,10 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       }
       assert(matchDir);
 
-      result = await binary.fetch('/v0.9.30/');
+      result = await binary.fetch('/v0.9.24/', 'skia-canvas');
+      assert(result?.items.every(item => !/{.*}/.test(item.url)));
+
+      result = await binary.fetch('/v0.9.30/', 'skia-canvas');
       assert(result);
       assert(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
@@ -199,8 +201,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      const binary = new NodePreGypBinary(app.httpclient, app.logger, binaries.wrtc, 'wrtc');
-      let result = await binary.fetch('/');
+      let result = await binary.fetch('/', 'wrtc');
       assert(result);
       assert(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
@@ -213,7 +214,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       }
       assert(matchDir);
 
-      result = await binary.fetch('/v0.4.7/');
+      result = await binary.fetch('/v0.4.7/', 'wrtc');
       assert(result);
       assert(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));

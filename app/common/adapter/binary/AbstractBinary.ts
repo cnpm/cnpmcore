@@ -1,4 +1,6 @@
-import { EggContextHttpClient, EggLogger } from 'egg';
+import { ImplDecorator, Inject, QualifierImplDecoratorUtil } from '@eggjs/tegg';
+import { BinaryType } from 'app/common/enum/Binary';
+import { EggHttpClient, EggLogger } from 'egg';
 import { BinaryTaskConfig } from '../../../../config/binaries';
 
 export type BinaryItem = {
@@ -15,20 +17,16 @@ export type FetchResult = {
   nextParams?: any;
 };
 
+export const BINARY_ADAPTER_ATTRIBUTE = 'BINARY_ADAPTER_ATTRIBUTE';
+
 export abstract class AbstractBinary {
-  protected httpclient: EggContextHttpClient;
+  @Inject()
   protected logger: EggLogger;
-  protected binaryConfig: BinaryTaskConfig;
-  protected binaryName: string;
 
-  constructor(httpclient: EggContextHttpClient, logger: EggLogger, binaryConfig: BinaryTaskConfig, binaryName: string) {
-    this.httpclient = httpclient;
-    this.logger = logger;
-    this.binaryConfig = binaryConfig;
-    this.binaryName = binaryName;
-  }
+  @Inject()
+  protected httpclient: EggHttpClient;
 
-  abstract fetch(dir: string, params?: any): Promise<FetchResult | undefined>;
+  abstract fetch(dir: string, binaryName?: string): Promise<FetchResult | undefined>;
 
   protected async requestXml(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {
@@ -78,8 +76,8 @@ export abstract class AbstractBinary {
     return [ 'darwin', 'linux', 'win32' ];
   }
 
-  protected listNodeArchs() {
-    if (this.binaryConfig.options?.nodeArchs) return this.binaryConfig.options.nodeArchs;
+  protected listNodeArchs(binaryConfig?: BinaryTaskConfig) {
+    if (binaryConfig?.options?.nodeArchs) return binaryConfig.options.nodeArchs;
     // https://nodejs.org/api/os.html#osarch
     return {
       linux: [ 'arm', 'arm64', 's390x', 'ia32', 'x64' ],
@@ -97,3 +95,6 @@ export abstract class AbstractBinary {
     };
   }
 }
+
+export const BinaryAdapter: ImplDecorator<AbstractBinary, typeof BinaryType> =
+  QualifierImplDecoratorUtil.generatorDecorator(AbstractBinary, BINARY_ADAPTER_ATTRIBUTE);

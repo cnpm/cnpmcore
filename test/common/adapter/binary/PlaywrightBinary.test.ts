@@ -1,10 +1,13 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 import { PlaywrightBinary } from 'app/common/adapter/binary/PlaywrightBinary';
-import binaries from 'config/binaries';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
+  let binary: PlaywrightBinary;
+  beforeEach(async () => {
+    binary = await app.getEggObject(PlaywrightBinary);
+  });
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
@@ -18,7 +21,6 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         })
         .reply(200, await TestUtil.readFixturesFile('unpkg.com/playwright-core-browsers.json'))
         .persist();
-      const binary = new PlaywrightBinary(app.httpclient, app.logger, binaries.playwright, 'playwright');
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -46,7 +48,6 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         })
         .reply(200, await TestUtil.readFixturesFile('unpkg.com/playwright-core-browsers.json'))
         .persist();
-      const binary = new PlaywrightBinary(app.httpclient, app.logger, binaries.playwright, 'playwright');
       let result = await binary.fetch('/builds/');
       assert(result);
       // console.log(result.items);

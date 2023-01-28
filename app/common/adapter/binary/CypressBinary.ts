@@ -1,5 +1,9 @@
-import { AbstractBinary, FetchResult, BinaryItem } from './AbstractBinary';
+import { SingletonProto } from '@eggjs/tegg';
+import { BinaryType } from 'app/common/enum/Binary';
+import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 
+@SingletonProto()
+@BinaryAdapter(BinaryType.Cypress)
 export class CypressBinary extends AbstractBinary {
   private dirItems: {
     [key: string]: BinaryItem[];
