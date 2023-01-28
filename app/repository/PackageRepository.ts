@@ -1,9 +1,10 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import type { Package as PackageModel } from './model/Package';
+import { Orm } from '@eggjs/tegg-orm-plugin/lib/SingletonORM';
+import { Package as PackageModel } from './model/Package';
 import { Package as PackageEntity } from '../core/entity/Package';
 import { ModelConvertor } from './util/ModelConvertor';
 import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVersion';
-import type { PackageVersion as PackageVersionModel } from './model/PackageVersion';
+import { PackageVersion as PackageVersionModel } from './model/PackageVersion';
 import { PackageVersionManifest as PackageVersionManifestEntity } from '../core/entity/PackageVersionManifest';
 import type { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest';
 import type { Dist as DistModel } from './model/Dist';
@@ -14,6 +15,8 @@ import type { Maintainer as MaintainerModel } from './model/Maintainer';
 import type { User as UserModel } from './model/User';
 import { User as UserEntity } from '../core/entity/User';
 import { AbstractRepository } from './AbstractRepository';
+import { EggAppConfig } from 'egg';
+import { Bone } from 'leoric';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -39,6 +42,12 @@ export class PackageRepository extends AbstractRepository {
 
   @Inject()
   private readonly User: typeof UserModel;
+
+  @Inject()
+  private readonly config: EggAppConfig;
+
+  @Inject()
+  private readonly orm: Orm;
 
   async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
     const model = await this.Package.findOne({ scope, name });
@@ -241,6 +250,20 @@ export class PackageRepository extends AbstractRepository {
     return ModelConvertor.convertModelToEntity(model, this.PackageVersionManifest);
   }
 
+  private getCountSql(model: typeof Bone):string {
+    const { database } = this.config.orm;
+    const sql = `
+      SELECT
+          TABLE_ROWS
+        FROM
+          information_schema.tables
+        WHERE
+          table_schema = '${database}'
+          AND table_name = '${model.table}'
+    `;
+    return sql;
+  }
+
   public async queryTotal() {
     const lastPkg = await this.Package.findOne().order('id', 'desc');
     const lastVersion = await this.PackageVersion.findOne().order('id', 'desc');
@@ -252,7 +275,9 @@ export class PackageRepository extends AbstractRepository {
     if (lastPkg) {
       lastPackage = lastPkg.scope ? `${lastPkg.scope}/${lastPkg.name}` : lastPkg.name;
       // FIXME: id will be out of range number
-      packageCount = Number(lastPkg.id);
+      // 可能存在 id 增长不连续的情况，通过 count 查询
+      const queryRes = await this.orm.client.query(this.getCountSql(PackageModel));
+      packageCount = queryRes.rows?.[0].TABLE_ROWS as number;
     }
 
     if (lastVersion) {
@@ -261,7 +286,8 @@ export class PackageRepository extends AbstractRepository {
         const fullname = pkg.scope ? `${pkg.scope}/${pkg.name}` : pkg.name;
         lastPackageVersion = `${fullname}@${lastVersion.version}`;
       }
-      packageVersionCount = Number(lastVersion.id);
+      const queryRes = await this.orm.client.query(this.getCountSql(PackageVersionModel));
+      packageVersionCount = queryRes.rows?.[0].TABLE_ROWS as number;
     }
     return {
       packageCount,
@@ -327,4 +353,5 @@ export class PackageRepository extends AbstractRepository {
     }
     return entities;
   }
+
 }
