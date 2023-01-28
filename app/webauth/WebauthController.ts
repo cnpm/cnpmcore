@@ -49,7 +49,6 @@ export class WebauthController extends MiddlewareController {
     method: HTTPMethodEnum.POST,
   })
   async login(@Context() ctx: EggContext, @HTTPBody() loginRequest: LoginRequest) {
-    console.log(loginRequest, ctx.href, ctx.host, ctx.protocol);
     ctx.tValidate(LoginRequestRule, loginRequest);
     const sessionId = randomUUID();
     await this.cacheAdapter.set(sessionId, '');
