@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.2](https://github.com/cnpm/npmcore/compare/v3.1.1...v3.1.2) (2023-01-28)
+
+
+### Bug Fixes
+
+* binary path ([#381](https://github.com/cnpm/npmcore/issues/381)) ([790621b](https://github.com/cnpm/npmcore/commit/790621b4b941f06ac075423c139c365bd440fb9e))
+
 ## [3.1.1](https://github.com/cnpm/npmcore/compare/v3.1.0...v3.1.1) (2023-01-18)
 
 
