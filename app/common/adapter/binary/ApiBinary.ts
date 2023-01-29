@@ -11,7 +11,7 @@ export class ApiBinary extends AbstractBinary {
   private readonly config: EggAppConfig;
 
   async fetch(dir: string, binaryName?: string): Promise<FetchResult | undefined> {
-    const apiUrl = this.config.syncBinaryFromAPISource || `${this.config.sourceRegistry}/-/binary`;
+    const apiUrl = this.config.cnpmcore.syncBinaryFromAPISource || `${this.config.cnpmcore.sourceRegistry}/-/binary`;
     const url = `${apiUrl}/${binaryName}${dir}`;
     const data = await this.requestJSON(url);
     if (!Array.isArray(data)) {
