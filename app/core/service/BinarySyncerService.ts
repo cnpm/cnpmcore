@@ -19,8 +19,8 @@ import { Binary } from '../entity/Binary';
 import { TaskService } from './TaskService';
 import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
 import { AbstractService } from '../../common/AbstractService';
-import { TaskRepository } from 'app/repository/TaskRepository';
-import { BinaryType } from 'app/common/enum/Binary';
+import { TaskRepository } from '../../repository/TaskRepository';
+import { BinaryType } from '../../common/enum/Binary';
 
 function isoNow() {
   return new Date().toISOString();

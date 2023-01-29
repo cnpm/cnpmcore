@@ -1,4 +1,4 @@
-import { BinaryType } from 'app/common/enum/Binary';
+import { BinaryType } from '../app/common/enum/Binary';
 
 export type BinaryTaskConfig = {
   category: string; // 默认 category 为 binaryName，但是有些 binary 会有不同的 category，比如 canvas，包含 canvas 和 node-canvas-prebuilt 两个
