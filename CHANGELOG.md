@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/cnpm/npmcore/compare/v3.2.0...v3.2.1) (2023-01-29)
+
+
+### Bug Fixes
+
+* api binary host config ([#383](https://github.com/cnpm/npmcore/issues/383)) ([8a2415f](https://github.com/cnpm/npmcore/commit/8a2415f5a7e3e6ac5fb8df48ae2c2bd51ebf460e))
+
 ## [3.2.0](https://github.com/cnpm/npmcore/compare/v3.1.2...v3.2.0) (2023-01-28)
 
 
