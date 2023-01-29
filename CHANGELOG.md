@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/cnpm/npmcore/compare/v3.2.1...v3.2.2) (2023-01-29)
+
+
+### Bug Fixes
+
+* import path ([#384](https://github.com/cnpm/npmcore/issues/384)) ([750ef60](https://github.com/cnpm/npmcore/commit/750ef6092ef35c73056081c620ff83bdc200bd52))
+
 ## [3.2.1](https://github.com/cnpm/npmcore/compare/v3.2.0...v3.2.1) (2023-01-29)
 
 
