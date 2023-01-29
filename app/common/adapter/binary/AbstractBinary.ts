@@ -1,5 +1,5 @@
 import { ImplDecorator, Inject, QualifierImplDecoratorUtil } from '@eggjs/tegg';
-import { BinaryType } from 'app/common/enum/Binary';
+import { BinaryType } from '../../enum/Binary';
 import { EggHttpClient, EggLogger } from 'egg';
 import { BinaryTaskConfig } from '../../../../config/binaries';
 

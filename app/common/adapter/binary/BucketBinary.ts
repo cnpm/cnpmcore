@@ -1,5 +1,5 @@
 import { SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from 'app/common/enum/Binary';
+import { BinaryType } from '../../enum/Binary';
 import binaries, { BinaryTaskConfig } from 'config/binaries';
 import path from 'path';
 import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
