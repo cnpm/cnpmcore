@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.2.1](https://github.com/cnpm/npmcore/compare/v3.2.0...v3.2.1) (2023-01-29)
+
+
+### Bug Fixes
+
+* api binary host config ([#383](https://github.com/cnpm/npmcore/issues/383)) ([8a2415f](https://github.com/cnpm/npmcore/commit/8a2415f5a7e3e6ac5fb8df48ae2c2bd51ebf460e))
+
+## [3.2.0](https://github.com/cnpm/npmcore/compare/v3.1.2...v3.2.0) (2023-01-28)
+
+
+### Features
+
+* update index json ([#379](https://github.com/cnpm/npmcore/issues/379)) ([bce6e79](https://github.com/cnpm/npmcore/commit/bce6e7971f21a9a3bad9a70d85214ce04462f0c4))
+
+## [3.1.2](https://github.com/cnpm/npmcore/compare/v3.1.1...v3.1.2) (2023-01-28)
+
+
+### Bug Fixes
+
+* binary path ([#381](https://github.com/cnpm/npmcore/issues/381)) ([790621b](https://github.com/cnpm/npmcore/commit/790621b4b941f06ac075423c139c365bd440fb9e))
+
 ## [3.1.1](https://github.com/cnpm/npmcore/compare/v3.1.0...v3.1.1) (2023-01-18)
 
 

@@ -10,7 +10,7 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
   });
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      mock(app.config, 'syncBinaryFromAPISource', 'https://cnpmjs.org/mirrors/apis');
+      mock(app.config.cnpmcore, 'syncBinaryFromAPISource', 'https://cnpmjs.org/mirrors/apis');
       app.mockHttpclient('https://cnpmjs.org/mirrors/apis/node/', 'GET', {
         data: await TestUtil.readFixturesFile('cnpmjs.org/mirrors/apis/node.json'),
         persist: false,
@@ -44,8 +44,8 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v16.13.1/ work', async () => {
-      mock(app.config, 'syncBinaryFromAPISource', null);
-      mock(app.config, 'sourceRegistry', 'https://r.cnpmjs.org');
+      mock(app.config.cnpmcore, 'syncBinaryFromAPISource', null);
+      mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
       app.mockHttpclient('https://r.cnpmjs.org/-/binary/node/v16.13.1/', 'GET', {
         data: await TestUtil.readFixturesFile('r.cnpmjs.org/-/binary/node/v16.13.1.json'),
         persist: false,

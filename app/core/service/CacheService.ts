@@ -5,28 +5,38 @@ import {
 } from '@eggjs/tegg';
 import { CacheAdapter } from '../../common/adapter/CacheAdapter';
 import { AbstractService } from '../../common/AbstractService';
+import { ChangesStreamTaskData } from '../entity/Task';
 
 type PackageCacheAttribe = 'etag' | 'manifests';
 
-type TotalData = {
+export type UpstreamRegistryInfo = {
+  registry_name: string;
+  source_registry: string;
+  changes_stream_url: string;
+} & ChangesStreamTaskData;
+
+export type DownloadInfo = {
+  today: number;
+  yesterday: number;
+  samedayLastweek: number;
+  thisweek: number;
+  thismonth: number;
+  thisyear: number;
+  lastweek: number;
+  lastmonth: number;
+  lastyear: number;
+};
+
+export type TotalData = {
   packageCount: number;
   packageVersionCount: number;
   lastPackage: string;
   lastPackageVersion: string;
-  download: {
-    today: number;
-    yesterday: number;
-    samedayLastweek: number;
-    thisweek: number;
-    thismonth: number;
-    thisyear: number;
-    lastweek: number;
-    lastmonth: number;
-    lastyear: number;
-  };
-  changesStream: object,
+  download: DownloadInfo;
+  changesStream: ChangesStreamTaskData;
   lastChangeId: number | bigint;
   cacheTime: string;
+  upstreamRegistries: UpstreamRegistryInfo[];
 };
 const TOTAL_DATA_KEY = '__TOTAL_DATA__';
 
@@ -72,6 +82,7 @@ export class CacheService extends AbstractService {
         lastyear: 0,
       },
       changesStream: {},
+      upstreamRegistries: [],
       lastChangeId: 0,
       cacheTime: '',
     };

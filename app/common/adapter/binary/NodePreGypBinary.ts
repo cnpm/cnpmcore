@@ -144,6 +144,42 @@ export class NodePreGypBinary extends AbstractBinary {
             }
           }
         }
+      } else if (binaryFile.includes('{platform}-{arch}-{node_napi_label}')) {
+        // "_id": "skia-canvas@0.9.22",
+        // "binary": {
+        //   "module_name": "index",
+        //   "module_path": "./lib/v{napi_build_version}",
+        //   "remote_path": "./v{version}",
+        //   "package_name": "{platform}-{arch}-{node_napi_label}.tar.gz",
+        //   "host": "https://skia-canvas.s3.us-east-1.amazonaws.com",
+        //   "napi_versions": [
+        //     6
+        //   ]
+        // },
+        for (const platform of nodePlatforms) {
+          const archs = nodeArchs[platform];
+          for (const arch of archs) {
+            for (const napiVersion of napiVersions) {
+              const binaryFileName = binaryFile.replace('{platform}', platform)
+                .replace('{arch}', arch)
+                .replace('{node_napi_label}', napiVersion);
+              remotePath = remotePath.replace('{module_name}', moduleName)
+                .replace('{name}', binaryName)
+                .replace('{version}', version)
+                .replace('{configuration}', 'Release');
+              const binaryFilePath = join('/', remotePath, binaryFileName);
+              const remoteUrl = `${binaryConfig.distUrl}${binaryFilePath}`;
+              currentDir.push({
+                name: binaryFileName,
+                date,
+                size: '-',
+                isDir: false,
+                url: remoteUrl,
+                ignoreDownloadStatuses: [ 404 ],
+              });
+            }
+          }
+        }
       } else if (binaryFile.includes('{platform}') && binaryFile.includes('{arch}')) {
         // https://github.com/grpc/grpc-node/blob/master/packages/grpc-tools/package.json#L29
         // "binary": {

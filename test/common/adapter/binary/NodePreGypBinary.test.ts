@@ -157,6 +157,9 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       }
       assert(matchDir);
 
+      result = await binary.fetch('/v0.9.24/', 'skia-canvas');
+      assert(result?.items.every(item => !/{.*}/.test(item.url)));
+
       result = await binary.fetch('/v0.9.30/', 'skia-canvas');
       assert(result);
       assert(result.items.length > 0);
