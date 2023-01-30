@@ -16,3 +16,4 @@ export enum PresetRegistryName {
   default = 'default',
   self = 'self',
 }
+export const PROXY_MODE_CACHED_PACKAGE_DIR_NAME = 'proxy-mode-cached-packages';

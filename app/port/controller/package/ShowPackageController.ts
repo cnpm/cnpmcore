@@ -11,12 +11,15 @@ import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { ProxyModeService } from '../../../core/service/ProxyModeService';
 import { CacheService } from '../../../core/service/CacheService';
 
 @HTTPController()
 export class ShowPackageController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
+  @Inject()
+  private proxyModeService: ProxyModeService;
   @Inject()
   private cacheService: CacheService;
 
@@ -57,10 +60,20 @@ export class ShowPackageController extends AbstractController {
 
     // handle cache miss
     let result: { etag: string; data: any, blockReason: string };
-    if (isFullManifests) {
-      result = await this.packageManagerService.listPackageFullManifests(scope, name, isSync);
+    if (this.isEnableProxyMode) {
+      // proxy mode
+      if (isFullManifests) {
+        result = await this.proxyModeService.getPackageFullManifests(fullname);
+      } else {
+        result = await this.proxyModeService.getPackageAbbreviatedManifests(fullname);
+      }
     } else {
-      result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, isSync);
+      // sync mode
+      if (isFullManifests) {
+        result = await this.packageManagerService.listPackageFullManifests(scope, name, isSync);
+      } else {
+        result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, isSync);
+      }
     }
     const { etag, data, blockReason } = result;
     // 404, no data
