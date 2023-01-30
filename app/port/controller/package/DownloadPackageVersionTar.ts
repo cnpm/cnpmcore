@@ -14,11 +14,15 @@ import { AbstractController } from '../AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil';
 import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
-
+import { ProxyModeService } from '../../../core/service/ProxyModeService';
+import { PackageVersion as PackageVersionEntity } from '../../../core/entity/PackageVersion';
+import { Package as PackageEntity } from '../../../core/entity/Package';
 @HTTPController()
 export class DownloadPackageVersionTarController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
+  @Inject()
+  private proxyModeService: ProxyModeService;
   @Inject()
   private nfsAdapter: NFSAdapter;
 
@@ -40,8 +44,34 @@ export class DownloadPackageVersionTarController extends AbstractController {
     }
 
     // read from database
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    const packageVersion = await this.getPackageVersionEntity(pkg, version);
+    let pkg: PackageEntity;
+    try {
+      pkg = await this.getPackageEntityByFullname(fullname);
+    } catch (err) {
+      if (err.name === 'PackageNotFoundError') {
+        // proxy mode, package not found.
+        if (this.isEnableProxyMode) {
+          const tgzBuffer = await this.proxyModeService.getPackageVersionTarAndPublish(fullname, version, ctx.url);
+          ctx.attachment(`${filenameWithVersion}.tgz`);
+          return tgzBuffer;
+        }
+      }
+      throw this.createPackageNotFoundError(fullname);
+    }
+    let packageVersion: PackageVersionEntity;
+    try {
+      packageVersion = await this.getPackageVersionEntity(pkg, version);
+    } catch (err) {
+      if (err.name === 'NotFoundError') {
+        if (this.isEnableProxyMode) {
+          // proxy mode package version not found.
+          const tgzBuffer = await this.proxyModeService.getPackageVersionTarAndPublish(fullname, version, ctx.url);
+          ctx.attachment(`${filenameWithVersion}.tgz`);
+          return tgzBuffer;
+        }
+      }
+      throw new NotFoundError(`${pkg.fullname}@${version} not found`);
+    }
     ctx.logger.info('[PackageController:downloadVersionTar] %s@%s, packageVersionId: %s',
       pkg.fullname, version, packageVersion.packageVersionId);
     const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(packageVersion);

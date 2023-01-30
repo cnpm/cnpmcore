@@ -58,6 +58,10 @@ export abstract class AbstractController extends MiddlewareController {
     return this.config.cnpmcore.redirectNotFound;
   }
 
+  protected get isEnableProxyMode() {
+    return this.config.cnpmcore.enableProxyMode && this.config.cnpmcore.syncMode === 'none';
+  }
+
   protected getAllowSync(ctx: EggContext): boolean {
     let allowSync = false;
 

@@ -81,6 +81,7 @@ export default (appInfo: EggAppConfig) => {
     syncNotFound: false,
     // redirect to source registry when package not found, only effect when syncMode = all/exist
     redirectNotFound: true,
+    enableProxyMode: false,
   };
 
   // override config from framework / plugin
