@@ -13,6 +13,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     packageRepository = await app.getEggObject(PackageRepository);
+    // nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
   });
 
   describe('[GET /:fullname] show()', () => {
@@ -800,6 +801,43 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 302);
       assert(res.headers.location === 'https://registry.npmjs.org/egg');
+    });
+
+    it('should get manifest form source registry when enable proxy mode', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      mock(app.config.cnpmcore, 'enableProxyMode', true);
+      app.mockHttpclient(`${app.config.cnpmcore.sourceRegistry}/${name}?t=${Date.now()}&cache=0`, 'get', (_, opt) => {
+        if (opt.headers.accept === 'application/vnd.npm.install-v1+json') {
+          return JSON.stringify({ message: 'abbreviated manifest' });
+        }
+        return JSON.stringify({ message: 'full manifest' });
+      });
+      const abbreviatedRes = await app.httpRequest()
+        .get(`/${name}`)
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(abbreviatedRes.status === 200);
+      assert(abbreviatedRes.body.message === 'abbreviated manifest');
+
+      const abbreviatedRes2 = await app.httpRequest()
+        .get(`/${name}`)
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('If-None-Match', abbreviatedRes.headers.etag)
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(abbreviatedRes2.status === 304);
+
+      const fullRes = await app.httpRequest()
+        .get(`/${name}`)
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('If-None-Match', abbreviatedRes.headers.etag);
+      assert(fullRes.status === 200);
+      assert(fullRes.body.message === 'full manifest');
+
+      const fullRes2 = await app.httpRequest()
+        .get(`/${name}`)
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('If-None-Match', fullRes.headers.etag);
+      assert(fullRes2.status === 304);
     });
   });
 });
