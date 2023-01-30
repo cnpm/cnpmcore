@@ -2,6 +2,7 @@ import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { NFSClientAdapter } from 'app/infra/NFSClientAdapter';
+import { ProxyModeService } from 'app/core/service/ProxyModeService';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let publisher: any;
@@ -235,6 +236,23 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .expect({
           error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
         });
+    });
+
+    it('should return buffer from "ProxyModeService" when enable proxy mode', async () => {
+      const proxyModeService = await app.getEggObject(ProxyModeService);
+      const proxyModuleName = 'proxymodule-download-version-tar';
+      mock(nfsClientAdapter, 'url', 'not-function');
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      mock(app.config.cnpmcore, 'enableProxyMode', true);
+      mock(proxyModeService, 'getPackageVersionTarAndPublish', async () => {
+        return Buffer.from('mock tgz file buffer');
+      });
+      const res = await app.httpRequest()
+        .get(`/${proxyModuleName}/-/${proxyModuleName}-1.0.0.tgz`)
+        .expect('content-type', 'application/octet-stream')
+        .expect('content-disposition', `attachment; filename="${proxyModuleName}-1.0.0.tgz"`)
+        .expect(200);
+      assert(res.body.toString('utf8') === 'mock tgz file buffer');
     });
   });
 
