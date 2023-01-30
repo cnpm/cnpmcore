@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.3](https://github.com/cnpm/npmcore/compare/v3.2.2...v3.2.3) (2023-01-30)
+
+
+### Bug Fixes
+
+* config path ([#385](https://github.com/cnpm/npmcore/issues/385)) ([ab72a3b](https://github.com/cnpm/npmcore/commit/ab72a3bb8e0d429d1c96adbbc2a95ccf3ef11388))
+
 ## [3.2.2](https://github.com/cnpm/npmcore/compare/v3.2.1...v3.2.2) (2023-01-29)
 
 
