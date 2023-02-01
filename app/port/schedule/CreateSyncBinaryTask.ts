@@ -2,7 +2,7 @@ import { EggAppConfig } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import { BinarySyncerService } from '../../core/service/BinarySyncerService';
-import binaries from '../../../config/binaries';
+import binaries, { BinaryName } from '../../../config/binaries';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
@@ -28,7 +28,7 @@ export class CreateSyncBinaryTask {
       // 默认只同步 binaryName 的二进制，即使有不一致的 category，会在同名的 binaryName 任务中同步
       // 例如 canvas 只同步 binaryName 为 canvas 的二进制，不同步 category 为 node-canvas-prebuilt 的二进制
       // node-canvas-prebuilt 的二进制会在 node-canvas-prebuilt 的任务中同步
-      await this.binarySyncerService.createTask(binaryName);
+      await this.binarySyncerService.createTask(binaryName as BinaryName);
     }
   }
 }

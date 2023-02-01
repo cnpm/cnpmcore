@@ -12,8 +12,8 @@ import { NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { BinarySyncerService } from '../../core/service/BinarySyncerService';
 import { Binary } from '../../core/entity/Binary';
-import binaries from '../../../config/binaries';
-
+import binaries, { BinaryName } from '../../../config/binaries';
+import { BinaryNameRule } from '../typebox';
 @HTTPController()
 export class BinarySyncController extends AbstractController {
   @Inject()
@@ -50,8 +50,11 @@ export class BinarySyncController extends AbstractController {
     path: '/-/binary/:binaryName(@[^/]{1,220}\/[^/]{1,220}|[^@/]{1,220})/:subpath(.*)',
     method: HTTPMethodEnum.GET,
   })
-  async showBinary(@Context() ctx: EggContext, @HTTPParam() binaryName: string, @HTTPParam() subpath: string) {
-    if (!binaries[binaryName]) {
+  async showBinary(@Context() ctx: EggContext, @HTTPParam() binaryName: BinaryName, @HTTPParam() subpath: string) {
+    // check binaryName valid
+    try {
+      ctx.tValidate(BinaryNameRule, binaryName);
+    } catch (e) {
       throw new NotFoundError(`Binary "${binaryName}" not found`);
     }
     subpath = subpath || '/';
@@ -100,7 +103,13 @@ export class BinarySyncController extends AbstractController {
     path: '/-/binary/:binaryName(@[^/]{1,220}\/[^/]{1,220}|[^@/]{1,220})',
     method: HTTPMethodEnum.GET,
   })
-  async showBinaryIndex(@Context() ctx: EggContext, @HTTPParam() binaryName: string) {
+  async showBinaryIndex(@Context() ctx: EggContext, @HTTPParam() binaryName: BinaryName) {
+    // check binaryName valid
+    try {
+      ctx.tValidate(BinaryNameRule, binaryName);
+    } catch (e) {
+      throw new NotFoundError(`Binary "${binaryName}" not found`);
+    }
     return await this.showBinary(ctx, binaryName, '/');
   }
 

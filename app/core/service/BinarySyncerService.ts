@@ -9,7 +9,7 @@ import {
   EggHttpClient,
 } from 'egg';
 import fs from 'fs/promises';
-import binaries, { BinaryName } from '../../../config/binaries';
+import binaries, { BinaryName, CategoryName } from '../../../config/binaries';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -43,8 +43,11 @@ export class BinarySyncerService extends AbstractService {
   @Inject()
   private readonly eggObjectFactory: EggObjectFactory;
 
-  public async findBinary(binaryName: BinaryName, parent: string, name: string) {
-    return await this.binaryRepository.findBinary(binaryName, parent, name);
+  // canvas/v2.6.1/canvas-v2.6.1-node-v57-linux-glibc-x64.tar.gz
+  // -> node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz
+  // canvas 历史版本的 targetName 可能是 category 需要兼容
+  public async findBinary(targetName: BinaryName | CategoryName, parent: string, name: string) {
+    return await this.binaryRepository.findBinary(targetName, parent, name);
   }
 
   public async listDirBinaries(binary: Binary) {
@@ -150,7 +153,7 @@ export class BinarySyncerService extends AbstractService {
   }
 
   private async syncDir(binaryAdapter: AbstractBinary, task: Task, dir: string, parentIndex = '') {
-    const binaryName = task.targetName;
+    const binaryName = task.targetName as BinaryName;
     const result = await binaryAdapter.fetch(dir, binaryName);
     let hasDownloadError = false;
     let hasItems = false;
