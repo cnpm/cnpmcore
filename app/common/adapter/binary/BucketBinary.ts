@@ -1,13 +1,13 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
-import binaries, { BinaryTaskConfig } from 'config/binaries';
+import binaries, { BinaryName, BinaryTaskConfig } from '../../../../config/binaries';
 import path from 'path';
 import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Bucket)
 export class BucketBinary extends AbstractBinary {
-  async fetch(dir: string, binaryName: string): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     // /foo/ => foo/
     const binaryConfig = binaries[binaryName];
     const subDir = dir.substring(1);

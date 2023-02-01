@@ -1,22 +1,18 @@
 import { BinaryType } from '../app/common/enum/Binary';
 
 export type BinaryTaskConfig = {
-  category: string; // 默认 category 为 binaryName，但是有些 binary 会有不同的 category，比如 canvas，包含 canvas 和 node-canvas-prebuilt 两个
+  category: CategoryName; // 默认 category 为 binaryName，但是有些 binary 会有不同的 category，比如 canvas，包含 canvas 和 node-canvas-prebuilt 两个
   description: string;
   type: BinaryType;
   repo: string;
   distUrl: string;
-  ignoreDirs?: string[];
-  ignoreFiles?: string[];
+  ignoreDirs?: readonly string[];
+  ignoreFiles?: readonly string[];
   options?: {
-    nodePlatforms?: string[],
-    nodeArchs?: {
-      [key: string]: string[],
-    },
+    nodePlatforms?: readonly string[],
+    nodeArchs?: Record<string, readonly string[]>,
     // Imagemin binFiles
-    binFiles?: {
-      [key: string]: string[],
-    },
+    binFiles?: Record<string, readonly string[]>,
     // default is 1
     maxPage?: number;
     // custom npm package name, for ImageminBinary
@@ -27,9 +23,7 @@ export type BinaryTaskConfig = {
   disable?: boolean;
 };
 
-const binaries: {
-  [category: string]: BinaryTaskConfig;
-} = {
+const binaries = {
   // NwjsBinary
   nwjs: {
     category: 'nwjs',
@@ -462,7 +456,7 @@ const binaries: {
         osx: [],
         linux: [ 'x64', 'x86' ],
         freebsd: [ 'x64', 'x86' ],
-        win32: [ ],
+        win32: [],
       },
       binFiles: {
         osx: [ 'pngcrush' ],
@@ -483,8 +477,8 @@ const binaries: {
       nodePlatforms: [ 'macos', 'linux', 'win' ],
       nodeArchs: {
         macos: [],
-        linux: [ ],
-        win: [ ],
+        linux: [],
+        win: [],
       },
       binFiles: {
         macos: [ 'gif2webp' ],
@@ -506,8 +500,8 @@ const binaries: {
       nodePlatforms: [ 'macos', 'linux', 'win' ],
       nodeArchs: {
         macos: [],
-        linux: [ ],
-        win: [ ],
+        linux: [],
+        win: [],
       },
       binFiles: {
         macos: [ 'guetzli' ],
@@ -528,7 +522,7 @@ const binaries: {
       nodeArchs: {
         osx: [],
         linux: [],
-        win32: [ ],
+        win32: [],
       },
       binFiles: {
         osx: [ 'advpng' ],
@@ -879,6 +873,14 @@ const binaries: {
       },
     },
   },
+} as const;
+
+export type BinaryName = keyof typeof binaries;
+export type CategoryName = typeof binaries[BinaryName]['category'];
+
+const BinaryConfigMap: Record<BinaryName, BinaryTaskConfig> = {
+  ...binaries,
 };
 
-export default binaries;
+
+export default BinaryConfigMap;

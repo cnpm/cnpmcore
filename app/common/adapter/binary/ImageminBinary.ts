@@ -1,13 +1,13 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
-import binaries from '../../../../config/binaries';
+import binaries, { BinaryName } from '../../../../config/binaries';
 import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Imagemin)
 export class ImageminBinary extends AbstractBinary {
 
-  async fetch(dir: string, binaryName: string): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const dirItems: {
       [key: string]: BinaryItem[];

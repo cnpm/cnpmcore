@@ -2,6 +2,7 @@ import { Type, Static } from '@sinclair/typebox';
 import { RegistryType } from '../common/enum/Registry';
 import semver from 'semver';
 import { HookType } from '../common/enum/Hook';
+import binaryConfig from '../../config/binaries';
 
 export const Name = Type.String({
   transform: [ 'trim' ],
@@ -26,6 +27,13 @@ export const HookName = Type.String({
 });
 
 export const HookTypeType = Type.Enum(HookType);
+
+export const BinaryNameRule = Type.String({
+  format: 'binary-name',
+  transform: [ 'trim' ],
+  minLength: 1,
+  maxLength: 220,
+});
 
 export const Tag = Type.String({
   format: 'semver-tag',
@@ -105,6 +113,12 @@ export function patchAjv(ajv: any) {
     type: 'string',
     validate: (tag: string) => {
       return !semver.validRange(tag);
+    },
+  });
+  ajv.addFormat('binary-name', {
+    type: 'string',
+    validate: (binaryName: string) => {
+      return !!binaryConfig[binaryName];
     },
   });
 }
