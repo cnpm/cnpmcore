@@ -6,17 +6,13 @@ export type BinaryTaskConfig = {
   type: BinaryType;
   repo: string;
   distUrl: string;
-  ignoreDirs?: string[];
-  ignoreFiles?: string[];
+  ignoreDirs?: readonly string[];
+  ignoreFiles?: readonly string[];
   options?: {
-    nodePlatforms?: string[],
-    nodeArchs?: {
-      [key: string]: string[],
-    },
+    nodePlatforms?: readonly string[],
+    nodeArchs?: Record<string, readonly string[]>,
     // Imagemin binFiles
-    binFiles?: {
-      [key: string]: string[],
-    },
+    binFiles?: Record<string, readonly string[]>,
     // default is 1
     maxPage?: number;
     // custom npm package name, for ImageminBinary
@@ -27,9 +23,7 @@ export type BinaryTaskConfig = {
   disable?: boolean;
 };
 
-const binaries: {
-  [category: string]: BinaryTaskConfig;
-} = {
+const binaries = {
   // NwjsBinary
   nwjs: {
     category: 'nwjs',
@@ -148,10 +142,10 @@ const binaries: {
     distUrl: 'https://axonodegit.s3.amazonaws.com/nodegit',
     options: {
       nodeArchs: {
-        linux: [ 'x64' ],
-        darwin: [ 'x64' ],
+        linux: ['x64'],
+        darwin: ['x64'],
         // https://github.com/nodegit/nodegit/blob/master/.github/workflows/tests.yml#L141
-        win32: [ 'x64', 'ia32' ],
+        win32: ['x64', 'ia32'],
       },
     },
     // don't sync it for now
@@ -242,20 +236,20 @@ const binaries: {
     distUrl: 'https://raw.githubusercontent.com',
     options: {
       // https://github.com/imagemin/jpegtran-bin/blob/v4.0.0/lib/index.js
-      nodePlatforms: [ 'macos', 'linux', 'freebsd', 'sunos', 'win' ],
+      nodePlatforms: ['macos', 'linux', 'freebsd', 'sunos', 'win'],
       nodeArchs: {
         macos: [],
-        linux: [ 'x86', 'x64' ],
-        freebsd: [ 'x86', 'x64' ],
-        sunos: [ 'x86', 'x64' ],
-        win: [ 'x86', 'x64' ],
+        linux: ['x86', 'x64'],
+        freebsd: ['x86', 'x64'],
+        sunos: ['x86', 'x64'],
+        win: ['x86', 'x64'],
       },
       binFiles: {
-        macos: [ 'jpegtran' ],
-        linux: [ 'jpegtran' ],
-        freebsd: [ 'jpegtran' ],
-        sunos: [ 'jpegtran' ],
-        win: [ 'jpegtran.exe', 'libjpeg-62.dll' ],
+        macos: ['jpegtran'],
+        linux: ['jpegtran'],
+        freebsd: ['jpegtran'],
+        sunos: ['jpegtran'],
+        win: ['jpegtran.exe', 'libjpeg-62.dll'],
       },
     },
   },
@@ -267,18 +261,18 @@ const binaries: {
     distUrl: 'https://raw.githubusercontent.com',
     options: {
       // https://github.com/imagemin/pngquant-bin/blob/v4.0.0/lib/index.js
-      nodePlatforms: [ 'macos', 'linux', 'freebsd', 'win' ],
+      nodePlatforms: ['macos', 'linux', 'freebsd', 'win'],
       nodeArchs: {
         macos: [],
-        linux: [ 'x86', 'x64' ],
-        freebsd: [ 'x64' ],
+        linux: ['x86', 'x64'],
+        freebsd: ['x64'],
         win: [],
       },
       binFiles: {
-        macos: [ 'pngquant' ],
-        linux: [ 'pngquant' ],
-        freebsd: [ 'pngquant' ],
-        win: [ 'pngquant.exe' ],
+        macos: ['pngquant'],
+        linux: ['pngquant'],
+        freebsd: ['pngquant'],
+        win: ['pngquant.exe'],
       },
     },
   },
@@ -293,7 +287,7 @@ const binaries: {
       npmPackageName: 'mozjpeg',
       // https://github.com/imagemin/mozjpeg-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/mozjpeg-bin/blob/v5.0.0/lib/index.js
-      nodePlatforms: [ 'osx', 'macos', 'linux', 'win' ],
+      nodePlatforms: ['osx', 'macos', 'linux', 'win'],
       nodeArchs: {
         osx: [],
         macos: [],
@@ -301,10 +295,10 @@ const binaries: {
         win: [],
       },
       binFiles: {
-        osx: [ 'cjpeg' ],
-        macos: [ 'cjpeg' ],
-        linux: [ 'cjpeg' ],
-        win: [ 'cjpeg.exe' ],
+        osx: ['cjpeg'],
+        macos: ['cjpeg'],
+        linux: ['cjpeg'],
+        win: ['cjpeg.exe'],
       },
     },
   },
@@ -319,18 +313,18 @@ const binaries: {
       npmPackageName: 'gifsicle',
       // https://github.com/imagemin/gifsicle-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/gifsicle-bin/blob/v5.0.0/lib/index.js
-      nodePlatforms: [ 'macos', 'linux', 'freebsd', 'win' ],
+      nodePlatforms: ['macos', 'linux', 'freebsd', 'win'],
       nodeArchs: {
         macos: [],
-        linux: [ 'x86', 'x64' ],
-        freebsd: [ 'x86', 'x64' ],
-        win: [ 'x86', 'x64' ],
+        linux: ['x86', 'x64'],
+        freebsd: ['x86', 'x64'],
+        win: ['x86', 'x64'],
       },
       binFiles: {
-        macos: [ 'gifsicle' ],
-        linux: [ 'gifsicle' ],
-        freebsd: [ 'gifsicle' ],
-        win: [ 'gifsicle.exe' ],
+        macos: ['gifsicle'],
+        linux: ['gifsicle'],
+        freebsd: ['gifsicle'],
+        win: ['gifsicle.exe'],
       },
     },
   },
@@ -343,20 +337,20 @@ const binaries: {
     options: {
       // https://github.com/imagemin/optipng-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/optipng-bin/blob/v5.0.0/lib/index.js
-      nodePlatforms: [ 'macos', 'linux', 'freebsd', 'sunos', 'win' ],
+      nodePlatforms: ['macos', 'linux', 'freebsd', 'sunos', 'win'],
       nodeArchs: {
         macos: [],
-        linux: [ 'x86', 'x64' ],
-        freebsd: [ 'x86', 'x64' ],
-        sunos: [ 'x86', 'x64' ],
+        linux: ['x86', 'x64'],
+        freebsd: ['x86', 'x64'],
+        sunos: ['x86', 'x64'],
         win: [],
       },
       binFiles: {
-        macos: [ 'optipng' ],
-        linux: [ 'optipng' ],
-        freebsd: [ 'optipng' ],
-        sunos: [ 'optipng' ],
-        win: [ 'optipng.exe' ],
+        macos: ['optipng'],
+        linux: ['optipng'],
+        freebsd: ['optipng'],
+        sunos: ['optipng'],
+        win: ['optipng.exe'],
       },
     },
   },
@@ -369,16 +363,16 @@ const binaries: {
     options: {
       // https://github.com/imagemin/zopflipng-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/zopflipng-bin/blob/v5.0.0/lib/index.js
-      nodePlatforms: [ 'osx', 'linux', 'win32' ],
+      nodePlatforms: ['osx', 'linux', 'win32'],
       nodeArchs: {
         osx: [],
         linux: [],
         win32: [],
       },
       binFiles: {
-        osx: [ 'zopflipng' ],
-        linux: [ 'zopflipng' ],
-        win32: [ 'zopflipng.exe' ],
+        osx: ['zopflipng'],
+        linux: ['zopflipng'],
+        win32: ['zopflipng.exe'],
       },
     },
   },
@@ -391,16 +385,16 @@ const binaries: {
     options: {
       // https://github.com/imagemin/jpegoptim-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/jpegoptim-bin/blob/v5.0.0/lib/index.js
-      nodePlatforms: [ 'osx', 'linux', 'win32' ],
+      nodePlatforms: ['osx', 'linux', 'win32'],
       nodeArchs: {
         osx: [],
         linux: [],
         win32: [],
       },
       binFiles: {
-        osx: [ 'jpegoptim' ],
-        linux: [ 'jpegoptim' ],
-        win32: [ 'jpegoptim.exe' ],
+        osx: ['jpegoptim'],
+        linux: ['jpegoptim'],
+        win32: ['jpegoptim.exe'],
       },
     },
   },
@@ -413,16 +407,16 @@ const binaries: {
     options: {
       // https://github.com/imagemin/jpeg-recompress-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/jpeg-recompress-bin/blob/v5.0.0/lib/index.js
-      nodePlatforms: [ 'osx', 'linux', 'win' ],
+      nodePlatforms: ['osx', 'linux', 'win'],
       nodeArchs: {
         osx: [],
         linux: [],
         win: [],
       },
       binFiles: {
-        osx: [ 'jpeg-recompress' ],
-        linux: [ 'jpeg-recompress' ],
-        win: [ 'jpeg-recompress.exe' ],
+        osx: ['jpeg-recompress'],
+        linux: ['jpeg-recompress'],
+        win: ['jpeg-recompress.exe'],
       },
     },
   },
@@ -435,16 +429,16 @@ const binaries: {
     options: {
       // https://github.com/imagemin/pngcruss-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/pngcrush-bin/blob/v5.0.0/lib/index.js
-      nodePlatforms: [ 'osx', 'linux', 'win' ],
+      nodePlatforms: ['osx', 'linux', 'win'],
       nodeArchs: {
         osx: [],
         linux: [],
-        win: [ 'x64', 'x86' ],
+        win: ['x64', 'x86'],
       },
       binFiles: {
-        osx: [ 'pngcrush' ],
-        linux: [ 'pngcrush' ],
-        win: [ 'pngcrush.exe' ],
+        osx: ['pngcrush'],
+        linux: ['pngcrush'],
+        win: ['pngcrush.exe'],
       },
     },
   },
@@ -457,18 +451,18 @@ const binaries: {
     options: {
       // https://github.com/imagemin/pngout-bin/blob/v4.0.0/lib/index.js
       // https://github.com/imagemin/pngout-bin/blob/v5.0.0/lib/index.js
-      nodePlatforms: [ 'osx', 'linux', 'freebsd', 'win32' ],
+      nodePlatforms: ['osx', 'linux', 'freebsd', 'win32'],
       nodeArchs: {
         osx: [],
-        linux: [ 'x64', 'x86' ],
-        freebsd: [ 'x64', 'x86' ],
-        win32: [ ],
+        linux: ['x64', 'x86'],
+        freebsd: ['x64', 'x86'],
+        win32: [],
       },
       binFiles: {
-        osx: [ 'pngcrush' ],
-        linux: [ 'pngcrush' ],
-        freebsd: [ 'pngout' ],
-        win32: [ 'pngcrush.exe' ],
+        osx: ['pngcrush'],
+        linux: ['pngcrush'],
+        freebsd: ['pngout'],
+        win32: ['pngcrush.exe'],
       },
     },
   },
@@ -480,16 +474,16 @@ const binaries: {
     distUrl: 'https://raw.githubusercontent.com',
     options: {
       // https://github.com/imagemin/gif2webp-bin/blob/v4.0.0/lib/index.js
-      nodePlatforms: [ 'macos', 'linux', 'win' ],
+      nodePlatforms: ['macos', 'linux', 'win'],
       nodeArchs: {
         macos: [],
-        linux: [ ],
-        win: [ ],
+        linux: [],
+        win: [],
       },
       binFiles: {
-        macos: [ 'gif2webp' ],
-        linux: [ 'gif2webp' ],
-        win: [ 'gif2webp.exe' ],
+        macos: ['gif2webp'],
+        linux: ['gif2webp'],
+        win: ['gif2webp.exe'],
       },
     },
   },
@@ -503,16 +497,16 @@ const binaries: {
       // should use https://www.npmjs.com/package/guetzli
       npmPackageName: 'guetzli',
       // https://github.com/imagemin/guetzli-bin/blob/v4.0.0/lib/index.js
-      nodePlatforms: [ 'macos', 'linux', 'win' ],
+      nodePlatforms: ['macos', 'linux', 'win'],
       nodeArchs: {
         macos: [],
-        linux: [ ],
-        win: [ ],
+        linux: [],
+        win: [],
       },
       binFiles: {
-        macos: [ 'guetzli' ],
-        linux: [ 'guetzli' ],
-        win: [ 'guetzli.exe' ],
+        macos: ['guetzli'],
+        linux: ['guetzli'],
+        win: ['guetzli.exe'],
       },
     },
   },
@@ -524,16 +518,16 @@ const binaries: {
     distUrl: 'https://raw.githubusercontent.com',
     options: {
       // https://github.com/imagemin/advpng-bin/blob/v4.0.0/lib/index.js
-      nodePlatforms: [ 'osx', 'linux', 'win32' ],
+      nodePlatforms: ['osx', 'linux', 'win32'],
       nodeArchs: {
         osx: [],
         linux: [],
-        win32: [ ],
+        win32: [],
       },
       binFiles: {
-        osx: [ 'advpng' ],
-        linux: [ 'advpng' ],
-        win32: [ 'advpng.exe' ],
+        osx: ['advpng'],
+        linux: ['advpng'],
+        win32: ['advpng.exe'],
       },
     },
   },
@@ -545,16 +539,16 @@ const binaries: {
     distUrl: 'https://raw.githubusercontent.com',
     options: {
       // https://github.com/imagemin/cwebp-bin/blob/v4.0.0/lib/index.js
-      nodePlatforms: [ 'osx', 'linux', 'win' ],
+      nodePlatforms: ['osx', 'linux', 'win'],
       nodeArchs: {
         osx: [],
-        linux: [ 'x86', 'x64' ],
-        win: [ 'x86', 'x64' ],
+        linux: ['x86', 'x64'],
+        win: ['x86', 'x64'],
       },
       binFiles: {
-        osx: [ 'cwebp' ],
-        linux: [ 'cwebp' ],
-        win: [ 'cwebp.exe' ],
+        osx: ['cwebp'],
+        linux: ['cwebp'],
+        win: ['cwebp.exe'],
       },
     },
   },
@@ -859,9 +853,9 @@ const binaries: {
     type: BinaryType.GitHub,
     options: {
       nodeArchs: {
-        linux: [ 'x64' ],
-        darwin: [ 'x64' ],
-        win32: [ 'x64' ],
+        linux: ['x64'],
+        darwin: ['x64'],
+        win32: ['x64'],
       },
     },
   },
@@ -873,12 +867,19 @@ const binaries: {
     type: BinaryType.GitHub,
     options: {
       nodeArchs: {
-        linux: [ 'x64' ],
-        darwin: [ 'x64' ],
-        win32: [ 'x64' ],
+        linux: ['x64'],
+        darwin: ['x64'],
+        win32: ['x64'],
       },
     },
   },
+} as const;
+
+export type BinaryName = keyof typeof binaries;
+
+const BinaryConfigMap: Record<BinaryName, BinaryTaskConfig> = {
+  ...binaries,
 };
 
-export default binaries;
+
+export default BinaryConfigMap;

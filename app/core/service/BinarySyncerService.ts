@@ -9,7 +9,7 @@ import {
   EggHttpClient,
 } from 'egg';
 import fs from 'fs/promises';
-import binaries from '../../../config/binaries';
+import binaries, { BinaryName } from '../../../config/binaries';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -43,7 +43,7 @@ export class BinarySyncerService extends AbstractService {
   @Inject()
   private readonly eggObjectFactory: EggObjectFactory;
 
-  public async findBinary(binaryName: string, parent: string, name: string) {
+  public async findBinary(binaryName: BinaryName, parent: string, name: string) {
     return await this.binaryRepository.findBinary(binaryName, parent, name);
   }
 
@@ -51,7 +51,7 @@ export class BinarySyncerService extends AbstractService {
     return await this.binaryRepository.listBinaries(binary.category, `${binary.parent}${binary.name}`);
   }
 
-  public async listRootBinaries(binaryName: string) {
+  public async listRootBinaries(binaryName: BinaryName) {
     // 通常 binaryName 和 category 是一样的，但是有些特殊的 binaryName 会有多个 category，比如 canvas
     // 所以查询 canvas 的时候，需要将 binaryName 和 category 的数据都查出来
     const {
@@ -87,7 +87,7 @@ export class BinarySyncerService extends AbstractService {
 
   // SyncBinary 由定时任务每台单机定时触发，手动去重
   // 添加 bizId 在 db 防止重复，记录 id 错误
-  public async createTask(binaryName: string, lastData?: any) {
+  public async createTask(binaryName: BinaryName, lastData?: any) {
     const existsTask = await this.taskRepository.findTaskByTargetName(binaryName, TaskType.SyncBinary);
     if (existsTask) {
       return existsTask;
@@ -112,7 +112,7 @@ export class BinarySyncerService extends AbstractService {
   }
 
   public async executeTask(task: Task) {
-    const binaryName = task.targetName;
+    const binaryName = task.targetName as BinaryName;
     const binaryAdapter = await this.getBinaryAdapter(binaryName);
     const logUrl = `${this.config.cnpmcore.registry}/-/binary/${binaryName}/syncs/${task.taskId}/log`;
     let logs: string[] = [];
@@ -217,7 +217,7 @@ export class BinarySyncerService extends AbstractService {
     return [ hasDownloadError, hasItems ];
   }
 
-  private async diff(binaryName: string, dir: string, fetchItems: BinaryItem[]) {
+  private async diff(binaryName: BinaryName, dir: string, fetchItems: BinaryItem[]) {
     const existsItems = await this.binaryRepository.listBinaries(binaryName, dir);
     const existsMap = new Map<string, Binary>();
     for (const item of existsItems) {
@@ -265,7 +265,7 @@ export class BinarySyncerService extends AbstractService {
     return binary;
   }
 
-  private async getBinaryAdapter(binaryName: string): Promise<AbstractBinary | undefined> {
+  private async getBinaryAdapter(binaryName: BinaryName): Promise<AbstractBinary | undefined> {
     const config = this.config.cnpmcore;
     const binaryConfig = binaries[binaryName];
 

@@ -1,7 +1,7 @@
 import { ImplDecorator, Inject, QualifierImplDecoratorUtil } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
 import { EggHttpClient, EggLogger } from 'egg';
-import { BinaryTaskConfig } from '../../../../config/binaries';
+import { BinaryName, BinaryTaskConfig } from '../../../../config/binaries';
 
 export type BinaryItem = {
   name: string;
@@ -26,7 +26,7 @@ export abstract class AbstractBinary {
   @Inject()
   protected httpclient: EggHttpClient;
 
-  abstract fetch(dir: string, binaryName?: string): Promise<FetchResult | undefined>;
+  abstract fetch(dir: string, binaryName?: BinaryName): Promise<FetchResult | undefined>;
 
   protected async requestXml(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {

@@ -1,6 +1,6 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
-import binaries from '../../../../config/binaries';
+import binaries, { BinaryName } from '../../../../config/binaries';
 import { join } from 'path';
 import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 
@@ -9,7 +9,7 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 export class NodePreGypBinary extends AbstractBinary {
 
   // https://github.com/mapbox/node-pre-gyp
-  async fetch(dir: string, binaryName: string): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const pkgUrl = `https://registry.npmjs.com/${binaryName}`;
     const data = await this.requestJSON(pkgUrl);

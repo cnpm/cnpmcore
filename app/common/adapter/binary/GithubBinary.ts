@@ -1,6 +1,6 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
-import binaries, { BinaryTaskConfig } from '../../../../config/binaries';
+import binaries, { BinaryName, BinaryTaskConfig } from '../../../../config/binaries';
 import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 
 @SingletonProto()
@@ -72,7 +72,7 @@ export class GithubBinary extends AbstractBinary {
     return items;
   }
 
-  async fetch(dir: string, binaryName: string): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const releases = await this.initReleases(binaryConfig);
     if (!releases) return;
