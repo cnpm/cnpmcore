@@ -257,6 +257,59 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert(res.body.error === '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
 
+    it('should 404 or 500 when version not exists on proxy mode.', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      mock(app.config.cnpmcore, 'enableProxyMode', true);
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/foo',
+        version: '1.0.0',
+        versionObject: {
+          description: 'foo description',
+        },
+      });
+
+      const res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.40000404`);
+      assert(!res.headers.etag);
+      // maybe 500 connect time out error.
+      assert(res.status === 404 || 500);
+      assert(res.body.error === 'Not found' || '[INTERNAL_SERVER_ERROR] connect to uplink server failed.');
+    });
+
+    it('should 404 or 500 when package not exists on proxy mode', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      mock(app.config.cnpmcore, 'enableProxyMode', true);
+      const res = await app.httpRequest()
+        .get('/@cnpm/foonot-exists/1.0.40000404');
+      // maybe 500 connect time out error.
+      assert(res.status === 404 || 500);
+      assert(!res.headers.etag);
+    });
+
+    it('should show one package version in database even though this package not in source registry on proxy mode', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      mock(app.config.cnpmcore, 'enableProxyMode', true);
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const pkg = await TestUtil.getFullPackage({
+        name: 'foo',
+        version: '1.0.0',
+        versionObject: {
+          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+        },
+      });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      const res = await app.httpRequest()
+        .get('/foo/1.0.0')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert.equal(res.body.name, 'foo');
+    });
+
     it('should not redirect public package version to source registry when syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
       let res = await app.httpRequest()
