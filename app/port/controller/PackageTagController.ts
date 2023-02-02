@@ -12,12 +12,15 @@ import { ForbiddenError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil';
 import { PackageManagerService } from '../../core/service/PackageManagerService';
+import { ProxyModeService } from '../../core/service/ProxyModeService';
 import { TagRule, TagWithVersionRule } from '../typebox';
 
 @HTTPController()
 export class PackageTagController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
+  @Inject()
+  private proxyModeService: ProxyModeService;
 
   @HTTPMethod({
     // GET /-/package/:fullname/dist-tags
@@ -27,6 +30,15 @@ export class PackageTagController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showTags(@HTTPParam() fullname: string) {
+    // try to get package from source registry when proxy mode
+    if (this.isEnableProxyMode) {
+      const { data: manifest } = await this.proxyModeService.getPackageAbbreviatedManifests(fullname);
+      const tags = manifest['dist-tags'];
+      if (tags) {
+        return tags;
+      }
+      // package not in source registry
+    }
     const packageEntity = await this.getPackageEntityByFullname(fullname);
     const tagEntities = await this.packageRepository.listPackageTags(packageEntity.packageId);
     const tags = {};
