@@ -29,6 +29,16 @@ describe('test/port/controller/PackageTagController/showTags.test.ts', () => {
       assert(res.body.error === '[NOT_FOUND] @foo/not-exists not found');
     });
 
+    it('should 404 when package not exists on proxy mode', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      mock(app.config.cnpmcore, 'enableProxyMode', true);
+      const res = await app.httpRequest()
+        .get('/-/package/@cnpm/not-exists/dist-tags')
+        .expect(404);
+      // not found message from source registry
+      assert.equal(res.body.error, 'Not found');
+    });
+
     it('should 302 when package not exists on syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
       let res = await app.httpRequest()
@@ -54,6 +64,17 @@ describe('test/port/controller/PackageTagController/showTags.test.ts', () => {
       const res = await app.httpRequest()
         .get(`/-/package/${pkg.name}/dist-tags`)
         .expect(200);
+      assert.equal(res.body.latest, '1.0.0');
+      assert.deepEqual(Object.keys(res.body), [ 'latest' ]);
+    });
+
+    it('should get package tags on proxy mode', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      mock(app.config.cnpmcore, 'enableProxyMode', true);
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      app.mockHttpclient(`${app.config.cnpmcore.sourceRegistry}/${encodeURIComponent(pkg.name)}?t=${Date.now()}&cache=0`, 'get', { data: pkg });
+      const res = await app.httpRequest()
+        .get(`/-/package/${pkg.name}/dist-tags`);
       assert.equal(res.body.latest, '1.0.0');
       assert.deepEqual(Object.keys(res.body), [ 'latest' ]);
     });
