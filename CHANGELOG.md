@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.4](https://github.com/cnpm/npmcore/compare/v3.2.3...v3.2.4) (2023-02-02)
+
+
+### Bug Fixes
+
+* skip download exists binary file ([#389](https://github.com/cnpm/npmcore/issues/389)) ([f4f40ed](https://github.com/cnpm/npmcore/commit/f4f40edf43452e2ffdaa626d3dd4281cf5391d7d))
+
 ## [3.2.3](https://github.com/cnpm/npmcore/compare/v3.2.2...v3.2.3) (2023-01-30)
 
 
