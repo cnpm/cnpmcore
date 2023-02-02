@@ -182,7 +182,7 @@ export class BinarySyncerService extends AbstractService {
           logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Downloading ${JSON.stringify(item)}, reason: ${reason}`);
           // skip exists binary file
           const existsBinary = await this.binaryRepository.findBinary(item.category, item.parent, item.name);
-          if (existsBinary) {
+          if (existsBinary && existsBinary.date === item.date) {
             logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] binary file exists, skip download, binaryId: ${existsBinary.binaryId}`);
             this.logger.info('[BinarySyncerService.syncDir:skipDownload] binaryId: %s exists, storePath: %s',
               existsBinary.binaryId, existsBinary.storePath);

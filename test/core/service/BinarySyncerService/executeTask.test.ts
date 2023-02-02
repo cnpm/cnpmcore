@@ -87,7 +87,9 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
           return {
             items: [
               { name: 'latest/', isDir: true, url: '', size: '-', date: '17-Dec-2021 23:17' },
-              { name: 'index.json', isDir: false, url: 'https://nodejs.org/dist/index.json', size: '219862', date: '18-Dec-2021 23:16' },
+              { name: 'index.json', isDir: false, url: 'https://nodejs.org/dist/index.json', size: '219862',
+                // change date
+                date: '20-Dec-2021 23:16' },
             ],
           };
         }
