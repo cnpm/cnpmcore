@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.5](https://github.com/cnpm/npmcore/compare/v3.2.4...v3.2.5) (2023-02-03)
+
+
+### Bug Fixes
+
+* allow publish 10mb tarball package by default ([#391](https://github.com/cnpm/npmcore/issues/391)) ([f873b8d](https://github.com/cnpm/npmcore/commit/f873b8d3e419fba22e9a3bbf906a7c2b5a3db14d))
+
 ## [3.2.4](https://github.com/cnpm/npmcore/compare/v3.2.3...v3.2.4) (2023-02-02)
 
 
