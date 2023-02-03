@@ -151,6 +151,7 @@ export default (appInfo: EggAppConfig) => {
 
   config.logger = {
     enablePerformanceTimer: true,
+    enableFastContextLogger: true,
   };
 
   config.logrotator = {
@@ -161,6 +162,8 @@ export default (appInfo: EggAppConfig) => {
   config.bodyParser = {
     // saveTag will send version string in JSON format
     strict: false,
+    // set default limit to 10mb, see https://github.com/npm/npm/issues/12750
+    jsonLimit: '10mb',
   };
 
   // https://github.com/xiekw2010/egg-typebox-validate#%E5%A6%82%E4%BD%95%E5%86%99%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%A1%E9%AA%8C%E8%A7%84%E5%88%99
