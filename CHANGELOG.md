@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.6](https://github.com/cnpm/npmcore/compare/v3.2.5...v3.2.6) (2023-02-05)
+
+
+### Bug Fixes
+
+* should init binary adapter before reuse it ([#393](https://github.com/cnpm/npmcore/issues/393)) ([b9985ab](https://github.com/cnpm/npmcore/commit/b9985ab1660a4b5a7957988d33be273c07ac2f9d))
+
 ## [3.2.5](https://github.com/cnpm/npmcore/compare/v3.2.4...v3.2.5) (2023-02-03)
 
 
