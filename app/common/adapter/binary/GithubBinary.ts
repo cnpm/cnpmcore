@@ -6,32 +6,28 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.GitHub)
 export class GithubBinary extends AbstractBinary {
-  private releases?: any[];
 
   protected async initReleases(binaryConfig: BinaryTaskConfig) {
-    if (!this.releases) {
-      // https://docs.github.com/en/rest/reference/releases get three pages
-      // https://api.github.com/repos/electron/electron/releases
-      // https://api.github.com/repos/electron/electron/releases?per_page=100&page=3
-      let releases: any[] = [];
-      const maxPage = binaryConfig.options?.maxPage || 1;
-      for (let i = 0; i < maxPage; i++) {
-        const url = `https://api.github.com/repos/${binaryConfig.repo}/releases?per_page=100&page=${i + 1}`;
-        const data = await this.requestJSON(url);
-        if (!Array.isArray(data)) {
-          // {"message":"API rate limit exceeded for 47.57.239.54. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
-          if (typeof data?.message === 'string' && data.message.includes('rate limit')) {
-            this.logger.info('[GithubBinary.fetch:hit-rate-limit] skip sync this time, data: %j, url: %s', data, url);
-            return;
-          }
-          this.logger.warn('[GithubBinary.fetch:response-data-not-array] data: %j, url: %s', data, url);
+    // https://docs.github.com/en/rest/reference/releases get three pages
+    // https://api.github.com/repos/electron/electron/releases
+    // https://api.github.com/repos/electron/electron/releases?per_page=100&page=3
+    let releases: any[] = [];
+    const maxPage = binaryConfig.options?.maxPage || 1;
+    for (let i = 0; i < maxPage; i++) {
+      const url = `https://api.github.com/repos/${binaryConfig.repo}/releases?per_page=100&page=${i + 1}`;
+      const data = await this.requestJSON(url);
+      if (!Array.isArray(data)) {
+        // {"message":"API rate limit exceeded for 47.57.239.54. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
+        if (typeof data?.message === 'string' && data.message.includes('rate limit')) {
+          this.logger.info('[GithubBinary.fetch:hit-rate-limit] skip sync this time, data: %j, url: %s', data, url);
           return;
         }
-        releases = releases.concat(data);
+        this.logger.warn('[GithubBinary.fetch:response-data-not-array] data: %j, url: %s', data, url);
+        return;
       }
-      this.releases = releases;
+      releases = releases.concat(data);
     }
-    return this.releases;
+    return releases;
   }
 
   protected formatItems(releaseItem: any, binaryConfig: BinaryTaskConfig) {
