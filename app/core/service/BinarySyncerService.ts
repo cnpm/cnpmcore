@@ -284,9 +284,10 @@ export class BinarySyncerService extends AbstractService {
     let binaryAdapter: AbstractBinary;
     if (config.sourceRegistryIsCNpm) {
       binaryAdapter = await this.eggObjectFactory.getEggObject(AbstractBinary, BinaryType.Api);
+    } else {
+      binaryAdapter = await this.eggObjectFactory.getEggObject(AbstractBinary, binaryConfig.type);
     }
-    binaryAdapter = await this.eggObjectFactory.getEggObject(AbstractBinary, binaryConfig.type);
-    binaryAdapter.init();
+    await binaryAdapter.init();
     return binaryAdapter;
   }
 }
