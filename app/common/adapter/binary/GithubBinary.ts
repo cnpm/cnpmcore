@@ -8,8 +8,8 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 export class GithubBinary extends AbstractBinary {
   private releases: Record<string, any[]> = {};
 
-  async init() {
-    this.releases = {};
+  async init(binaryConfig: BinaryTaskConfig) {
+    delete this.releases[binaryConfig.category];
   }
 
   protected async initReleases(binaryConfig: BinaryTaskConfig) {

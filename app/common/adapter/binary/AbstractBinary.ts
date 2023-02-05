@@ -26,7 +26,7 @@ export abstract class AbstractBinary {
   @Inject()
   protected httpclient: EggHttpClient;
 
-  abstract init(): Promise<void>;
+  abstract init(binaryConfig: BinaryTaskConfig): Promise<void>;
   abstract fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined>;
 
   protected async requestXml(url: string) {
