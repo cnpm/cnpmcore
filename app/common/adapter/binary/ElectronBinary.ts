@@ -1,14 +1,14 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
-import binaries from '../../../../config/binaries';
+import binaries, { BinaryName } from '../../../../config/binaries';
 import { BinaryAdapter, BinaryItem, FetchResult } from './AbstractBinary';
 import { GithubBinary } from './GithubBinary';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Electron)
 export class ElectronBinary extends GithubBinary {
-  async fetch(dir: string): Promise<FetchResult | undefined> {
-    const releases = await this.initReleases(binaries.electron);
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
+    const releases = await this.initReleases(binaryName, binaries.electron);
     if (!releases) return;
 
     let items: BinaryItem[] = [];
