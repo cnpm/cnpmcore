@@ -9,7 +9,7 @@ export type BinaryItem = {
   url: string;
   size: string | number;
   date: string;
-  ignoreDownloadStatuses?: number[] | readonly number[];
+  ignoreDownloadStatuses?: number[];
 };
 
 export type FetchResult = {

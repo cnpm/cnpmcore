@@ -20,7 +20,7 @@ export type BinaryTaskConfig = {
     // custom for NodePreGypBinary
     requiredNapiVersions?: boolean;
     // ignore download fail response status
-    ignoreDownloadStatuses?: readonly number[],
+    ignoreDownloadStatuses?: number[],
   },
   disable?: boolean;
 };
@@ -81,7 +81,7 @@ const binaries = {
     ],
     options: {
       // https://www.python.org/ftp/python/3.9.14/Python-3.9.14.tar.xz.sig status(403)
-      ignoreDownloadStatuses: [ 403 ],
+      ignoreDownloadStatuses: [ 403 ] satisfies number[],
     },
   },
   // CypressBinary
