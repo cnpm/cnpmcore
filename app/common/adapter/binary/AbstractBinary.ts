@@ -27,7 +27,7 @@ export abstract class AbstractBinary {
   protected httpclient: EggHttpClient;
 
   abstract init(): Promise<void>;
-  abstract fetch(dir: string, binaryName?: BinaryName): Promise<FetchResult | undefined>;
+  abstract fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined>;
 
   protected async requestXml(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {

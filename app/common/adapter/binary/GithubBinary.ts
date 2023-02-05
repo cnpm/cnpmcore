@@ -6,14 +6,14 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.GitHub)
 export class GithubBinary extends AbstractBinary {
-  private releases?: any[];
+  private releases: Record<string, any[]> = {};
 
   async init() {
-    this.releases = undefined;
+    this.releases = {};
   }
 
   protected async initReleases(binaryConfig: BinaryTaskConfig) {
-    if (!this.releases) {
+    if (!this.releases[binaryConfig.category]) {
       // https://docs.github.com/en/rest/reference/releases get three pages
       // https://api.github.com/repos/electron/electron/releases
       // https://api.github.com/repos/electron/electron/releases?per_page=100&page=3
@@ -33,9 +33,9 @@ export class GithubBinary extends AbstractBinary {
         }
         releases = releases.concat(data);
       }
-      this.releases = releases;
+      this.releases[binaryConfig.category] = releases;
     }
-    return this.releases;
+    return this.releases[binaryConfig.category];
   }
 
   protected formatItems(releaseItem: any, binaryConfig: BinaryTaskConfig) {

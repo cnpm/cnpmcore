@@ -14,7 +14,7 @@ export class ApiBinary extends AbstractBinary {
     return;
   }
 
-  async fetch(dir: string, binaryName?: string): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: string): Promise<FetchResult | undefined> {
     const apiUrl = this.config.cnpmcore.syncBinaryFromAPISource || `${this.config.cnpmcore.sourceRegistry}/-/binary`;
     const url = `${apiUrl}/${binaryName}${dir}`;
     const data = await this.requestJSON(url);
