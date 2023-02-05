@@ -6,6 +6,10 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.Imagemin)
 export class ImageminBinary extends AbstractBinary {
+  async init() {
+    // do nothing
+    return;
+  }
 
   async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];

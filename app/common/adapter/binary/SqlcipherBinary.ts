@@ -5,6 +5,10 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.Sqlcipher)
 export class SqlcipherBinary extends AbstractBinary {
+  async init() {
+    // do nothing
+    return;
+  }
 
   async fetch(dir: string): Promise<FetchResult | undefined> {
     const dirItems: {

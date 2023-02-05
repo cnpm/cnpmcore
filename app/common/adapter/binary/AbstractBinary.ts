@@ -9,7 +9,7 @@ export type BinaryItem = {
   url: string;
   size: string | number;
   date: string;
-  ignoreDownloadStatuses?: number[];
+  ignoreDownloadStatuses?: number[] | readonly number[];
 };
 
 export type FetchResult = {
@@ -26,7 +26,8 @@ export abstract class AbstractBinary {
   @Inject()
   protected httpclient: EggHttpClient;
 
-  abstract fetch(dir: string, binaryName?: BinaryName): Promise<FetchResult | undefined>;
+  abstract init(binaryName: BinaryName): Promise<void>;
+  abstract fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined>;
 
   protected async requestXml(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {

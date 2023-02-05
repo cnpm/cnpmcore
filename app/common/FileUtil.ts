@@ -19,7 +19,7 @@ export async function createTempfile(dataDir: string, filename: string) {
 }
 
 export async function downloadToTempfile(httpclient: EggContextHttpClient,
-  dataDir: string, url: string, ignoreDownloadStatuses?: number[], retries = 3) {
+  dataDir: string, url: string, ignoreDownloadStatuses?: number[] | readonly number[], retries = 3) {
   let lastError: any;
   while (retries > 0) {
     try {
@@ -43,7 +43,7 @@ export interface Tempfile {
   timing: HttpClientResponse['res']['timing'];
 }
 async function _downloadToTempfile(httpclient: EggContextHttpClient,
-  dataDir: string, url: string, ignoreDownloadStatuses?: number[]): Promise<Tempfile> {
+  dataDir: string, url: string, ignoreDownloadStatuses?: number[] | readonly number[]): Promise<Tempfile> {
   const tmpfile = await createTempfile(dataDir, url);
   const writeStream = createWriteStream(tmpfile);
   try {
