@@ -6,9 +6,13 @@ import { EggAppConfig } from 'egg';
 @SingletonProto()
 @BinaryAdapter(BinaryType.Api)
 export class ApiBinary extends AbstractBinary {
-
   @Inject()
   private readonly config: EggAppConfig;
+
+  async init() {
+    // do nothing
+    return;
+  }
 
   async fetch(dir: string, binaryName?: string): Promise<FetchResult | undefined> {
     const apiUrl = this.config.cnpmcore.syncBinaryFromAPISource || `${this.config.cnpmcore.sourceRegistry}/-/binary`;

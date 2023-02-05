@@ -8,6 +8,10 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 export class GithubBinary extends AbstractBinary {
   private releases?: any[];
 
+  async init() {
+    this.releases = undefined;
+  }
+
   protected async initReleases(binaryConfig: BinaryTaskConfig) {
     if (!this.releases) {
       // https://docs.github.com/en/rest/reference/releases get three pages

@@ -7,6 +7,10 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.NodePreGyp)
 export class NodePreGypBinary extends AbstractBinary {
+  async init() {
+    // do nothing
+    return;
+  }
 
   // https://github.com/mapbox/node-pre-gyp
   async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {

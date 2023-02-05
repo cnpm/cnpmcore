@@ -5,9 +5,13 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.Cypress)
 export class CypressBinary extends AbstractBinary {
-  private dirItems: {
+  private dirItems?: {
     [key: string]: BinaryItem[];
-  };
+  } | null;
+
+  async init() {
+    this.dirItems = undefined;
+  }
 
   async fetch(dir: string): Promise<FetchResult | undefined> {
     if (!this.dirItems) {

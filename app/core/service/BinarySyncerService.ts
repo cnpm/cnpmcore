@@ -193,7 +193,8 @@ export class BinarySyncerService extends AbstractService {
           let localFile = '';
           try {
             const { tmpfile, headers, timing } =
-              await downloadToTempfile(this.httpclient, this.config.dataDir, item.sourceUrl!, item.ignoreDownloadStatuses);
+              await downloadToTempfile(
+                this.httpclient, this.config.dataDir, item.sourceUrl!, item.ignoreDownloadStatuses);
             logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)}, ${item.sourceUrl} => ${tmpfile}`);
             localFile = tmpfile;
             const binary = await this.saveBinaryItem(item, tmpfile);
@@ -280,9 +281,12 @@ export class BinarySyncerService extends AbstractService {
     const config = this.config.cnpmcore;
     const binaryConfig = binaries[binaryName];
 
+    let binaryAdapter: AbstractBinary;
     if (config.sourceRegistryIsCNpm) {
-      return await this.eggObjectFactory.getEggObject(AbstractBinary, BinaryType.Api);
+      binaryAdapter = await this.eggObjectFactory.getEggObject(AbstractBinary, BinaryType.Api);
     }
-    return await this.eggObjectFactory.getEggObject(AbstractBinary, binaryConfig.type);
+    binaryAdapter = await this.eggObjectFactory.getEggObject(AbstractBinary, binaryConfig.type);
+    binaryAdapter.init();
+    return binaryAdapter;
   }
 }
