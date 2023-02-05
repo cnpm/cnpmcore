@@ -17,7 +17,7 @@ import { BinaryRepository } from '../../repository/BinaryRepository';
 import { Task } from '../entity/Task';
 import { Binary } from '../entity/Binary';
 import { TaskService } from './TaskService';
-import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
+import { AbstractBinary, BinaryItem, FetchResult } from '../../common/adapter/binary/AbstractBinary';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { BinaryType } from '../../common/enum/Binary';
@@ -152,9 +152,9 @@ export class BinarySyncerService extends AbstractService {
     }
   }
 
-  private async syncDir(binaryAdapter: AbstractBinary, task: Task, dir: string, parentIndex = '') {
+  private async syncDir(binaryAdapter: AbstractBinary, task: Task, dir: string, parentIndex = '', cache: FetchResult['cache'] = {}) {
     const binaryName = task.targetName as BinaryName;
-    const result = await binaryAdapter.fetch(dir, binaryName);
+    const result = await binaryAdapter.fetch(dir, binaryName, cache);
     let hasDownloadError = false;
     let hasItems = false;
     if (result && result.items.length > 0) {
@@ -167,7 +167,7 @@ export class BinarySyncerService extends AbstractService {
           logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Start sync dir ${JSON.stringify(item)}, reason: ${reason}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
-          const [ hasError, hasSubItems ] = await this.syncDir(binaryAdapter, task, `${dir}${item.name}`, `${parentIndex}${index}.`);
+          const [ hasError, hasSubItems ] = await this.syncDir(binaryAdapter, task, `${dir}${item.name}`, `${parentIndex}${index}.`, result.cache);
           if (hasError) {
             hasDownloadError = true;
           } else {

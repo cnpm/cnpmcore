@@ -15,6 +15,10 @@ export type BinaryItem = {
 export type FetchResult = {
   items: BinaryItem[];
   nextParams?: any;
+  cache?: {
+    dirItems?: BinaryItem[];
+    releases?: any[];
+  };
 };
 
 export const BINARY_ADAPTER_ATTRIBUTE = 'BINARY_ADAPTER_ATTRIBUTE';
@@ -26,7 +30,7 @@ export abstract class AbstractBinary {
   @Inject()
   protected httpclient: EggHttpClient;
 
-  abstract fetch(dir: string, binaryName?: BinaryName): Promise<FetchResult | undefined>;
+  abstract fetch(dir: string, binaryName?: BinaryName, cache?: FetchResult['cache']): Promise<FetchResult | undefined>;
 
   protected async requestXml(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {

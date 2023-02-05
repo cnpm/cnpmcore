@@ -7,9 +7,11 @@ import { GithubBinary } from './GithubBinary';
 @SingletonProto()
 @BinaryAdapter(BinaryType.Electron)
 export class ElectronBinary extends GithubBinary {
-  async fetch(dir: string): Promise<FetchResult | undefined> {
-    const releases = await this.initReleases(binaries.electron);
-    if (!releases) return;
+  async fetch(dir: string, _: any, { releases }): Promise<FetchResult | undefined> {
+    if (!releases) {
+      releases = await this.initReleases(binaries.electron);
+      if (!releases) return;
+    }
 
     let items: BinaryItem[] = [];
     if (dir === '/') {
@@ -41,6 +43,6 @@ export class ElectronBinary extends GithubBinary {
       }
     }
 
-    return { items };
+    return { items, cache: { releases } };
   }
 }

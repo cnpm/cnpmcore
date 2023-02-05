@@ -149,71 +149,73 @@ const DOWNLOAD_PATHS = {
 @SingletonProto()
 @BinaryAdapter(BinaryType.Playwright)
 export class PlaywrightBinary extends AbstractBinary {
-  async fetch(dir: string): Promise<FetchResult | undefined> {
-    const packageData = await this.requestJSON(PACKAGE_URL);
-    const nowDateISO = new Date().toISOString();
-    const dirItems = {
-      '/': [{ name: 'builds/', isDir: true, url: '', size: '-', date: nowDateISO }],
-      '/builds/': Object.keys(DOWNLOAD_PATHS).map(
-        dist => ({ name: `${dist}/`, isDir: true, url: '', size: '-', date: nowDateISO })),
-      ...Object.fromEntries(Object.keys(DOWNLOAD_PATHS).map(dist => [ `/builds/${dist}/`, []])),
-    };
+  async fetch(dir: string, _, { dirItems }): Promise<FetchResult | undefined> {
+    if (!dirItems) {
+      const packageData = await this.requestJSON(PACKAGE_URL);
+      const nowDateISO = new Date().toISOString();
+      dirItems = {
+        '/': [{ name: 'builds/', isDir: true, url: '', size: '-', date: nowDateISO }],
+        '/builds/': Object.keys(DOWNLOAD_PATHS).map(
+          dist => ({ name: `${dist}/`, isDir: true, url: '', size: '-', date: nowDateISO })),
+        ...Object.fromEntries(Object.keys(DOWNLOAD_PATHS).map(dist => [ `/builds/${dist}/`, []])),
+      };
 
-    // Only download beta and release versions of packages to reduce amount of request
-    const packageVersions = Object.keys(packageData.versions)
-      .filter(version => version.match(/^(?:\d+\.\d+\.\d+)(?:-beta-\d+)?$/))
-      // select recently update 20 items
-      .slice(-20);
-    const browsers: { name: string; revision: string; browserVersion: string; revisionOverrides?: Record<string, string> }[] = [];
-    await Promise.all(
-      packageVersions.map(version =>
-        this.requestJSON(
-          `https://unpkg.com/playwright-core@${version}/browsers.json`,
-        )
-          .then(data => {
-            // browsers: [
-            //   {
-            //     "name": "chromium",
-            //     "revision": "1005",
-            //     "installByDefault": true,
-            //     "browserVersion": "102.0.5005.40",
-            //     "revisionOverrides": {}
-            //   },
-            // ]
-            browsers.push(...data.browsers);
-          })
-          .catch(err => {
-            this.logger.warn('[PlaywrightBinary.fetch:error] Playwright version %s browser data request failed: %s', version, err);
-          }),
-      ),
-    );
+      // Only download beta and release versions of packages to reduce amount of request
+      const packageVersions = Object.keys(packageData.versions)
+        .filter(version => version.match(/^(?:\d+\.\d+\.\d+)(?:-beta-\d+)?$/))
+        // select recently update 20 items
+        .slice(-20);
+      const browsers: { name: string; revision: string; browserVersion: string; revisionOverrides?: Record<string, string> }[] = [];
+      await Promise.all(
+        packageVersions.map(version =>
+          this.requestJSON(
+            `https://unpkg.com/playwright-core@${version}/browsers.json`,
+          )
+            .then(data => {
+              // browsers: [
+              //   {
+              //     "name": "chromium",
+              //     "revision": "1005",
+              //     "installByDefault": true,
+              //     "browserVersion": "102.0.5005.40",
+              //     "revisionOverrides": {}
+              //   },
+              // ]
+              browsers.push(...data.browsers);
+            })
+            .catch(err => {
+              this.logger.warn('[PlaywrightBinary.fetch:error] Playwright version %s browser data request failed: %s', version, err);
+            }),
+        ),
+      );
 
-    for (const browser of browsers) {
-      const downloadPaths = DOWNLOAD_PATHS[browser.name];
-      if (!downloadPaths) continue;
-      for (const [ platform, remotePath ] of Object.entries(downloadPaths)) {
-        if (typeof remotePath !== 'string') continue;
-        const revision = browser.revisionOverrides?.[platform] ?? browser.revision;
-        const itemDate = browser.browserVersion || revision;
-        const url = DOWNLOAD_HOST + util.format(remotePath, revision);
-        const name = path.basename(remotePath);
-        const dir = `/builds/${browser.name}/${revision}/`;
-        if (!dirItems[dir]) {
-          dirItems[`/builds/${browser.name}/`].push({
-            name: `${revision}/`,
-            isDir: true,
-            url: '',
-            size: '-',
-            date: revision,
-          });
-          dirItems[dir] = [];
-        }
-        if (!dirItems[dir].find(item => item.name === name)) {
-          dirItems[dir].push({ name, isDir: false, url, size: '-', date: itemDate });
+      for (const browser of browsers) {
+        const downloadPaths = DOWNLOAD_PATHS[browser.name];
+        if (!downloadPaths) continue;
+        for (const [ platform, remotePath ] of Object.entries(downloadPaths)) {
+          if (typeof remotePath !== 'string') continue;
+          const revision = browser.revisionOverrides?.[platform] ?? browser.revision;
+          const itemDate = browser.browserVersion || revision;
+          const url = DOWNLOAD_HOST + util.format(remotePath, revision);
+          const name = path.basename(remotePath);
+          const dir = `/builds/${browser.name}/${revision}/`;
+          if (!dirItems[dir]) {
+            dirItems[`/builds/${browser.name}/`].push({
+              name: `${revision}/`,
+              isDir: true,
+              url: '',
+              size: '-',
+              date: revision,
+            });
+            dirItems[dir] = [];
+          }
+          if (!dirItems[dir].find(item => item.name === name)) {
+            dirItems[dir].push({ name, isDir: false, url, size: '-', date: itemDate });
+          }
         }
       }
-    }
 
-    return { items: dirItems[dir] ?? [], nextParams: null };
+    }
+    return { items: dirItems[dir] ?? [], nextParams: null, cache: { dirItems } };
   }
 }

@@ -68,10 +68,12 @@ export class GithubBinary extends AbstractBinary {
     return items;
   }
 
-  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName, { releases }): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
-    const releases = await this.initReleases(binaryConfig);
-    if (!releases) return;
+    if (!releases) {
+      releases = await this.initReleases(binaryConfig);
+      if (!releases) return;
+    }
 
     let items: BinaryItem[] = [];
     if (dir === '/') {
@@ -93,6 +95,6 @@ export class GithubBinary extends AbstractBinary {
       }
     }
 
-    return { items };
+    return { items, cache: { releases } };
   }
 }
