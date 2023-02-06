@@ -17,7 +17,7 @@ export type FetchResult = {
   nextParams?: any;
 };
 
-export const BINARY_ADAPTER_ATTRIBUTE = 'BINARY_ADAPTER_ATTRIBUTE';
+export const BINARY_ADAPTER_ATTRIBUTE = Symbol('BINARY_ADAPTER_ATTRIBUTE');
 
 export abstract class AbstractBinary {
   @Inject()
