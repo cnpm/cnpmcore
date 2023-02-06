@@ -61,7 +61,7 @@ type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions' | '_attachmen
 }};
 
 // base64 regex https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data/475217#475217
-const PACKAGE_ATTACH_DATA_RE = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+const PACKAGE_ATTACH_DATA_RE = /^[A-Za-z0-9+/]{4}/;
 
 @HTTPController()
 export class SavePackageVersionController extends AbstractController {
@@ -130,8 +130,11 @@ export class SavePackageVersionController extends AbstractController {
     }
 
     // check attachment data format and size
-    if (!attachment.data || typeof attachment.data !== 'string' || !PACKAGE_ATTACH_DATA_RE.test(attachment.data)) {
+    if (!attachment.data || typeof attachment.data !== 'string') {
       throw new UnprocessableEntityError('attachment.data format invalid');
+    }
+    if (!PACKAGE_ATTACH_DATA_RE.test(attachment.data)) {
+      throw new UnprocessableEntityError('attachment.data string format invalid');
     }
     const tarballBytes = Buffer.from(attachment.data, 'base64');
     if (tarballBytes.length !== attachment.length) {

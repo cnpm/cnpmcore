@@ -5,9 +5,13 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.Puppeteer)
 export class PuppeteerBinary extends AbstractBinary {
-  private dirItems: {
+  private dirItems?: {
     [key: string]: BinaryItem[];
   };
+
+  async init() {
+    this.dirItems = undefined;
+  }
 
   async fetch(dir: string): Promise<FetchResult | undefined> {
     if (!this.dirItems) {

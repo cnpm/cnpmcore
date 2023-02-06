@@ -6,10 +6,14 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.GitHub)
 export class GithubBinary extends AbstractBinary {
-  private releases?: any[];
+  private releases: Record<string, any[]> = {};
 
-  protected async initReleases(binaryConfig: BinaryTaskConfig) {
-    if (!this.releases) {
+  async init(binaryName: BinaryName) {
+    delete this.releases[binaryName];
+  }
+
+  protected async initReleases(binaryName: BinaryName, binaryConfig: BinaryTaskConfig) {
+    if (!this.releases[binaryName]) {
       // https://docs.github.com/en/rest/reference/releases get three pages
       // https://api.github.com/repos/electron/electron/releases
       // https://api.github.com/repos/electron/electron/releases?per_page=100&page=3
@@ -29,9 +33,9 @@ export class GithubBinary extends AbstractBinary {
         }
         releases = releases.concat(data);
       }
-      this.releases = releases;
+      this.releases[binaryName] = releases;
     }
-    return this.releases;
+    return this.releases[binaryName];
   }
 
   protected formatItems(releaseItem: any, binaryConfig: BinaryTaskConfig) {
@@ -74,7 +78,7 @@ export class GithubBinary extends AbstractBinary {
 
   async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
-    const releases = await this.initReleases(binaryConfig);
+    const releases = await this.initReleases(binaryName, binaryConfig);
     if (!releases) return;
 
     let items: BinaryItem[] = [];

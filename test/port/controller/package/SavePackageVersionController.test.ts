@@ -2,6 +2,7 @@ import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { UserRepository } from 'app/repository/UserRepository';
+import { calculateIntegrity } from 'app/common/PackageUtil';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let userRepository: UserRepository;
@@ -163,6 +164,48 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .get(`/${pkg.name}`)
         .expect(200);
       assert.equal(res.body.versions[version].version, version);
+    });
+
+    it('should publish with 4mb tarball', async () => {
+      const tarball = Buffer.alloc(4 * 1024 * 1024);
+      const { integrity } = await calculateIntegrity(tarball);
+      const pkg = await TestUtil.getFullPackage({
+        attachment: {
+          data: tarball.toString('base64'),
+          length: tarball.length,
+        },
+        dist: {
+          integrity,
+        },
+      });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+    });
+
+    // unstable on supertest, will random fail with Error: write ECONNRESET
+    it.skip('should publish fail and response status 413 when tarball >= 10mb', async () => {
+      const tarball = Buffer.alloc(10 * 1024 * 1024);
+      const { integrity } = await calculateIntegrity(tarball);
+      const pkg = await TestUtil.getFullPackage({
+        attachment: {
+          data: tarball.toString('base64'),
+          length: tarball.length,
+        },
+        dist: {
+          integrity,
+        },
+      });
+      const res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(413);
+      console.log(res.body, res.text, res.headers);
     });
 
     it('should add new version success', async () => {
@@ -600,7 +643,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data string format invalid');
 
       pkg = await TestUtil.getFullPackage({
         attachment: {
@@ -614,6 +657,21 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
+    });
+
+    it('should 422 when attachment size not match', async () => {
+      let pkg = await TestUtil.getFullPackage({
+        attachment: {
+          length: 3,
+        },
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(422);
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment size 3 not match download size 251');
 
       pkg = await TestUtil.getFullPackage({
         attachment: {
@@ -626,22 +684,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
-    });
-
-    it('should 422 when attachment size not match', async () => {
-      const pkg = await TestUtil.getFullPackage({
-        attachment: {
-          length: 3,
-        },
-      });
-      const res = await app.httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(422);
-      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment size 3 not match download size 251');
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment size 251 not match download size 63');
     });
 
     it('should 422 dist.integrity invalid', async () => {

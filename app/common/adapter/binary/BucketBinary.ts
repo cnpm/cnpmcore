@@ -7,6 +7,11 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.Bucket)
 export class BucketBinary extends AbstractBinary {
+  async init() {
+    // do nothing
+    return;
+  }
+
   async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     // /foo/ => foo/
     const binaryConfig = binaries[binaryName];

@@ -6,6 +6,11 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.Node)
 export class NodeBinary extends AbstractBinary {
+  async init() {
+    // do nothing
+    return;
+  }
+
   async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const url = `${binaryConfig.distUrl}${dir}`;
@@ -34,6 +39,7 @@ export class NodeBinary extends AbstractBinary {
         url: fileUrl,
         size,
         date,
+        ignoreDownloadStatuses: binaryConfig.options?.ignoreDownloadStatuses,
       });
     }
     return { items, nextParams: null };

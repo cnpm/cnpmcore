@@ -19,6 +19,8 @@ export type BinaryTaskConfig = {
     npmPackageName?: string;
     // custom for NodePreGypBinary
     requiredNapiVersions?: boolean;
+    // ignore download fail response status
+    ignoreDownloadStatuses?: number[],
   },
   disable?: boolean;
 };
@@ -77,6 +79,10 @@ const binaries = {
     ignoreFiles: [
       '/src/Python-1.6.tar.gz',
     ],
+    options: {
+      // https://www.python.org/ftp/python/3.9.14/Python-3.9.14.tar.xz.sig status(403)
+      ignoreDownloadStatuses: [ 403 ] satisfies number[],
+    },
   },
   // CypressBinary
   cypress: {
@@ -881,6 +887,5 @@ export type CategoryName = typeof binaries[BinaryName]['category'];
 const BinaryConfigMap: Record<BinaryName, BinaryTaskConfig> = {
   ...binaries,
 };
-
 
 export default BinaryConfigMap;

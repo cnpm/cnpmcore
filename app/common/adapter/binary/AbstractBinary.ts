@@ -17,7 +17,7 @@ export type FetchResult = {
   nextParams?: any;
 };
 
-export const BINARY_ADAPTER_ATTRIBUTE = 'BINARY_ADAPTER_ATTRIBUTE';
+export const BINARY_ADAPTER_ATTRIBUTE = Symbol('BINARY_ADAPTER_ATTRIBUTE');
 
 export abstract class AbstractBinary {
   @Inject()
@@ -26,7 +26,8 @@ export abstract class AbstractBinary {
   @Inject()
   protected httpclient: EggHttpClient;
 
-  abstract fetch(dir: string, binaryName?: BinaryName): Promise<FetchResult | undefined>;
+  abstract init(binaryName: BinaryName): Promise<void>;
+  abstract fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined>;
 
   protected async requestXml(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {
