@@ -89,8 +89,7 @@ export class ProxyModeService extends AbstractService {
         await this.nfsAdapter.remove(storeKey);
         throw new InternalServerError('manifest in NFS JSON parse error');
       }
-      const { shasum: etag } = await calculateIntegrity(nfsBytes);
-      return { data: nfsPkgVersionManifgest, etag, blockReason: '' };
+      return nfsPkgVersionManifgest;
     }
 
     // not in NFS
@@ -117,6 +116,28 @@ export class ProxyModeService extends AbstractService {
     const proxyBytes = Buffer.from(JSON.stringify(pkgVerisonManifest));
     await this.nfsAdapter.uploadBytes(storeKey, proxyBytes);
     return pkgVerisonManifest;
+  }
+
+  async initProxyModeRegistry(): Promise<Registry | null> {
+    // 代理模式仅使用默认仓库，暂不实现Verdaccio的多上游仓库的功能
+    const targetHost: string = this.config.cnpmcore.sourceRegistry;
+    let registry = await this.registryManagerService.findByRegistryName('default');
+    // 更新 targetHost 地址
+    // defaultRegistry 可能还未创建
+    if (!registry) {
+      // 从配置文件默认生成
+      const { changesStreamRegistryMode, changesStreamRegistry: changesStreamHost, sourceRegistry: host } = this.config.cnpmcore;
+      const type = changesStreamRegistryMode === 'json' ? RegistryType.Cnpmcore : RegistryType.Npm;
+      registry = await this.registryManagerService.createRegistry({
+        name: 'default',
+        type,
+        userPrefix: 'npm:',
+        host,
+        changeStream: `${changesStreamHost}/_changes`,
+      });
+    }
+    this.npmRegistry.setRegistryHost(targetHost);
+    return registry;
   }
 
   private async _getPackageFullOrAbbreviatedManifest(fullname: string, isFullManifests: boolean) {
@@ -341,25 +362,4 @@ export class ProxyModeService extends AbstractService {
     await this.cacheService.removeCache(fullname);
   }
 
-  async initProxyModeRegistry(): Promise<Registry | null> {
-    // 代理模式仅使用默认仓库，暂不实现Verdaccio的多上游仓库的功能
-    const targetHost: string = this.config.cnpmcore.sourceRegistry;
-    let registry = await this.registryManagerService.findByRegistryName('default');
-    // 更新 targetHost 地址
-    // defaultRegistry 可能还未创建
-    if (!registry) {
-      // 从配置文件默认生成
-      const { changesStreamRegistryMode, changesStreamRegistry: changesStreamHost, sourceRegistry: host } = this.config.cnpmcore;
-      const type = changesStreamRegistryMode === 'json' ? RegistryType.Cnpmcore : RegistryType.Npm;
-      registry = await this.registryManagerService.createRegistry({
-        name: 'default',
-        type,
-        userPrefix: 'npm:',
-        host,
-        changeStream: `${changesStreamHost}/_changes`,
-      });
-    }
-    this.npmRegistry.setRegistryHost(targetHost);
-    return registry;
-  }
 }
