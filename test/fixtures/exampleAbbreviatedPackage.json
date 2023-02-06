@@ -1,0 +1,35 @@
+{
+  "name": "@cnpm/testmodule",
+  "description": "this is a module description",
+  "dist-tags": {
+    "latest": "0.0.1"
+  },
+  "versions": {
+    "0.0.1": {
+      "name": "@cnpm/testmodule",
+      "version": "0.0.1",
+      "description": "this is a module description",
+      "main": "index.js",
+      "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+      },
+      "author": "",
+      "license": "ISC",
+      "readme": "ERROR: No README data found!",
+      "_id": "@cnpm/testmodule@0.0.1",
+      "dist": {
+        "shasum": "fa475605f88bab9b1127833633ca3ae0a477224c",
+        "integrity":"sha512-n+4CQg0Rp1Qo0p9a0R5E5io67T9iD3Lcgg6exmpmt0s8kd4XcOoHu2kiu6U7xd69cGq0efkNGWUBP229ObfRSA==",
+        "tarball": "http://127.0.0.1:7001/@cnpm/testmodule/-/testmodule-0.0.1.tgz",
+        "fileCount": 3,
+        "unpackedSize": 6497043
+      },
+      "_from": ".",
+      "_npmVersion": "1.4.3",
+      "_npmUser": {
+        "name": "fengmk2",
+        "email": "fengmk2@gmail.com"
+      }
+    }
+  }
+}
