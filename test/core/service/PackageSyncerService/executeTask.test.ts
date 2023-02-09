@@ -18,6 +18,7 @@ import { TaskService } from 'app/core/service/TaskService';
 import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
 import { UserService } from 'app/core/service/UserService';
 import { ChangeRepository } from 'app/repository/ChangeRepository';
+import { PackageVersion } from 'app/repository/model/PackageVersion';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let packageSyncerService: PackageSyncerService;
@@ -2101,6 +2102,100 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         assert(stream);
         const log = await TestUtil.readStreamToLog(stream);
         assert(log.includes('skip sync'));
+      });
+    });
+
+    describe('syncDeleteMode = ignore', async () => {
+
+      // already synced pkg
+      beforeEach(async () => {
+        app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
+          persist: false,
+          repeats: 1,
+        });
+        app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        });
+        app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
+          persist: false,
+        });
+        await packageSyncerService.createTask('foobar', { skipDependencies: true });
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        await packageSyncerService.executeTask(task);
+        assert(!await TaskModel.findOne({ taskId: task.taskId }));
+        assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+
+      });
+
+      it('should ignore when upstream is removed', async () => {
+        // removed in remote
+        mock(app.config.cnpmcore, 'syncDeleteMode', 'ignore');
+        app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/security-holding-package.json'),
+        });
+        await packageSyncerService.createTask('foobar', { skipDependencies: true });
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        await packageSyncerService.executeTask(task);
+        assert(!await TaskModel.findOne({ taskId: task.taskId }));
+        assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log);
+        // console.log(log);
+        const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
+        assert(model);
+        const versions = await PackageVersion.find({ packageId: model.packageId });
+        assert.equal(model!.isPrivate, false);
+        assert(versions.length === 2);
+
+      });
+
+      it('should block when upstream is removed', async () => {
+        // removed in remote
+        mock(app.config.cnpmcore, 'syncDeleteMode', 'block');
+        app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/security-holding-package.json'),
+        });
+        await packageSyncerService.createTask('foobar', { skipDependencies: true });
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        await packageSyncerService.executeTask(task);
+        assert(!await TaskModel.findOne({ taskId: task.taskId }));
+        assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log);
+        // console.log(log);
+        const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
+        assert(model);
+        const versions = await PackageVersion.find({ packageId: model.packageId });
+        assert.equal(model!.isPrivate, false);
+        assert(versions.length === 2);
+
+        const manifests = await packageManagerService.listPackageFullManifests('', 'foobar');
+        assert(manifests.blockReason === 'Removed in remote registry');
+        assert(manifests.data.block === 'Removed in remote registry');
+        const pkg = await packageRepository.findPackage('', 'foobar');
+        assert(pkg);
+
+        await app.httpRequest()
+          .get(`/${pkg.name}`)
+          .expect(451);
+
+        // could resotre
+        await packageManagerService.unblockPackage(pkg);
+
+        await app.httpRequest()
+          .get(`/${pkg.name}`)
+          .expect(200);
+
       });
     });
   });

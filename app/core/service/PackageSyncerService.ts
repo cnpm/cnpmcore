@@ -257,7 +257,7 @@ export class PackageSyncerService extends AbstractService {
   private async syncDeletePkg({ task, pkg, logUrl, url, logs, data }: syncDeletePkgOptions) {
     const fullname = task.targetName;
     const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
-    const { syncDeleteMode = SyncDeleteMode } = this.config.cnpmcore;
+    const syncDeleteMode: SyncDeleteMode = this.config.cnpmcore.syncDeleteMode;
     logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was removed in remote registry, response data: ${JSON.stringify(data)}, config.syncDeleteMode = ${syncDeleteMode}`);
 
     // pkg not exists in local registry
@@ -271,19 +271,15 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    // ignore deleted package
     if (syncDeleteMode === SyncDeleteMode.ignore) {
+      // ignore deleted package
       logs.push(`[${isoNow()}] 🟢 Skip remove since config.syncDeleteMode = ignore`);
-    }
-
-    // block deleted package
-    if (syncDeleteMode === SyncDeleteMode.block) {
+    } else if (syncDeleteMode === SyncDeleteMode.block) {
+      // block deleted package
       await this.packageManagerService.blockPackage(pkg, 'Removed in remote registry');
       logs.push(`[${isoNow()}] 🟢 Block the package since config.syncDeleteMode = block`);
-    }
-
-    // delete package
-    if (syncDeleteMode === SyncDeleteMode.delete) {
+    } else if (syncDeleteMode === SyncDeleteMode.delete) {
+      // delete package
       await this.packageManagerService.unpublishPackage(pkg);
       logs.push(`[${isoNow()}] 🟢 Delete the package since config.syncDeleteMode = delete`);
     }
