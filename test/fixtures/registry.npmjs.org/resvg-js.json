@@ -1,0 +1,253 @@
+{
+  "_id": "resvg-js",
+  "_rev": "24-d0819ab202eaa116942cb3d33186771f",
+  "name": "@resvg/resvg-js",
+  "dist-tags": {
+    "latest": "2.4.0"
+  },
+  "versions": {
+    "2.4.0": {
+      "name": "resvg-js",
+      "version": "2.4.0",
+      "description": "A high-performance SVG renderer and toolkit, powered by Rust based resvg and napi-rs",
+      "main": "index.js",
+      "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/yisibl/resvg-js.git"
+      },
+      "license": "MPL-2.0",
+      "keywords": [
+        "resvg",
+        "svg",
+        "node-resvg",
+        "resvg-js",
+        "resvg-node",
+        "rust",
+        "svg2png",
+        "svg2img",
+        "svg to png"
+      ],
+      "napi": {
+        "name": "resvgjs",
+        "triples": {
+          "defaults": true,
+          "additional": [
+            "x86_64-unknown-linux-musl",
+            "aarch64-unknown-linux-gnu",
+            "i686-pc-windows-msvc",
+            "armv7-unknown-linux-gnueabihf",
+            "aarch64-apple-darwin",
+            "aarch64-linux-android",
+            "arm-linux-androideabi",
+            "aarch64-unknown-linux-musl",
+            "aarch64-pc-windows-msvc"
+          ]
+        }
+      },
+      "engines": {
+        "node": ">= 10"
+      },
+      "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
+      },
+      "scripts": {
+        "artifacts": "napi artifacts",
+        "bench": "node -r @swc-node/register benchmark/bench.ts",
+        "bundle": "run-p 'bundle:*'",
+        "bundle:js": "node bundle.js",
+        "bundle:dts": "dts-bundle-generator --external-types -o wasm/index.d.ts wasm-binding.ts",
+        "build": "napi build --platform --release --js js-binding.js --dts js-binding.d.ts",
+        "build:debug": "napi build --platform --js js-binding.js --dts js-binding.d.ts",
+        "build:wasm": "run-s build:wasm-web copy-wasm bundle",
+        "build:wasm-web": "wasm-pack build --target web --out-name index --out-dir wasm/dist --release",
+        "copy-wasm": "copyfiles -f wasm/dist/index_bg.wasm ./wasm",
+        "playground": "copyfiles -f playground/index.html ./wasm",
+        "format": "run-p format:md format:json format:yaml format:source format:rs",
+        "format:md": "prettier --parser markdown --write './**/*.md'",
+        "format:json": "prettier --parser json --write './**/*.json'",
+        "format:svg": "prettier --parser html --write './**/*.svg'",
+        "format:rs": "cargo fmt",
+        "format:source": "prettier --config ./package.json --write './**/*.{js,ts,mjs}'",
+        "format:yaml": "prettier --parser yaml --write './**/*.{yml,yaml}'",
+        "lint": "eslint . -c ./.eslintrc.yml './**/*.{ts,tsx,js}'",
+        "lint:fix": "eslint . -c ./.eslintrc.yml './**/*.{ts,tsx,js}' --fix",
+        "prepublishOnly": "napi prepublish -t npm && esbuild js-binding.js --minify --allow-overwrite --outfile=js-binding.js",
+        "test": "ava __test__/**/index*.*",
+        "test:wasm": "ava __test__/**/wasm*.*",
+        "version": "napi version"
+      },
+      "devDependencies": {
+        "@napi-rs/cli": "^2.14.6",
+        "@swc-node/register": "^1.5.1",
+        "@types/node": "^18.0.0",
+        "@typescript-eslint/eslint-plugin": "^5.30.3",
+        "@typescript-eslint/parser": "^5.30.3",
+        "ava": "^5.0.0",
+        "copyfiles": "^2.4.1",
+        "dts-bundle-generator": "^6.12.0",
+        "esbuild": "^0.17.0",
+        "eslint": "^8.19.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "eslint-plugin-sonarjs": "^0.18.0",
+        "husky": "^8.0.0",
+        "jimp-compact": "^0.16.1-2",
+        "lint-staged": "^12.5.0",
+        "node-fetch": "2.x",
+        "npm-run-all": "^4.1.5",
+        "prettier": "^2.7.1",
+        "typescript": "^4.7.4"
+      },
+      "lint-staged": {
+        "*.@(js|ts|tsx)": [
+          "prettier --write",
+          "eslint -c .eslintrc.yml --fix"
+        ],
+        "*.@(yml|yaml)": [
+          "prettier --parser yaml --write"
+        ],
+        "*.md": [
+          "prettier --parser markdown --write"
+        ],
+        "*.json": [
+          "prettier --parser json --write"
+        ],
+        "*.svg": [
+          "prettier --parser html --write"
+        ]
+      },
+      "ava": {
+        "require": [
+          "@swc-node/register"
+        ],
+        "extensions": [
+          "ts"
+        ],
+        "timeout": "3m",
+        "environmentVariables": {
+          "TS_NODE_PROJECT": "./tsconfig.json"
+        }
+      },
+      "prettier": {
+        "printWidth": 120,
+        "semi": false,
+        "trailingComma": "all",
+        "singleQuote": true,
+        "arrowParens": "always",
+        "parser": "typescript"
+      },
+      "packageManager": "yarn@3.4.1",
+      "optionalDependencies": {
+        "@resvg/resvg-js-win32-x64-msvc": "2.4.0",
+        "@resvg/resvg-js-darwin-x64": "2.4.0",
+        "@resvg/resvg-js-linux-x64-gnu": "2.4.0",
+        "@resvg/resvg-js-linux-x64-musl": "2.4.0",
+        "@resvg/resvg-js-linux-arm64-gnu": "2.4.0",
+        "@resvg/resvg-js-win32-ia32-msvc": "2.4.0",
+        "@resvg/resvg-js-linux-arm-gnueabihf": "2.4.0",
+        "@resvg/resvg-js-darwin-arm64": "2.4.0",
+        "@resvg/resvg-js-android-arm64": "2.4.0",
+        "@resvg/resvg-js-android-arm-eabi": "2.4.0",
+        "@resvg/resvg-js-linux-arm64-musl": "2.4.0",
+        "@resvg/resvg-js-win32-arm64-msvc": "2.4.0"
+      },
+      "types": "./index.d.ts",
+      "gitHead": "30ac8d830d44802df7e967569c92edabbbcec017",
+      "bugs": {
+        "url": "https://github.com/yisibl/resvg-js/issues"
+      },
+      "homepage": "https://github.com/yisibl/resvg-js#readme",
+      "dependencies": {
+        "@resvg/resvg-js-win32-x64-msvc": "2.4.0",
+        "@resvg/resvg-js-darwin-x64": "2.4.0",
+        "@resvg/resvg-js-linux-x64-gnu": "2.4.0",
+        "@resvg/resvg-js-linux-x64-musl": "2.4.0",
+        "@resvg/resvg-js-linux-arm64-gnu": "2.4.0",
+        "@resvg/resvg-js-win32-ia32-msvc": "2.4.0",
+        "@resvg/resvg-js-linux-arm-gnueabihf": "2.4.0",
+        "@resvg/resvg-js-darwin-arm64": "2.4.0",
+        "@resvg/resvg-js-android-arm64": "2.4.0",
+        "@resvg/resvg-js-android-arm-eabi": "2.4.0",
+        "@resvg/resvg-js-linux-arm64-musl": "2.4.0",
+        "@resvg/resvg-js-win32-arm64-msvc": "2.4.0"
+      },
+      "_id": "@resvg/resvg-js@2.4.0",
+      "_nodeVersion": "16.19.0",
+      "_npmVersion": "8.19.3",
+      "dist": {
+        "integrity": "sha512-M8Oetgb1w7x062aJDZl7Sf859pcbLm+5jen+aT5ShrSQRcHqftEbFzCgeOggZkcsFr4D8i9pM0ZuhOOhZWrORQ==",
+        "shasum": "66945e4bf4d6819ef1f459b893f9dede53a3e397",
+        "tarball": "https://registry.npmjs.org/resvg-js/-/resvg-js-2.4.0.tgz",
+        "fileCount": 7,
+        "unpackedSize": 42513,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIECFFeH01aH6Ql5mNjmgi2LJwoChTmq6pTNNWrmP1pGsAiEA/llhExtSmnhXXp8/j/YfnyoEeDN7aAr0ICQnjzFa9wE="
+          }
+        ],
+        "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJj5KlFACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2Vmp+FRAAi+oMc3M/stVkpXg0y7cu7MmG1vOxgwEJra5/KIkeZKQtA3i0\r\nPjC/+f6rhobft7yX2gkIuqvRmEbmQP1uHcttu3NuFbcunBp9db6Gz/TPF3qJ\r\nERq9NjGwzmojTKBSymcaye/ec4otD8NrJe3hNHJnEgGtgoxT+jGeg6U+cow/\r\nXM6nut3UfdphyQkgHaI83r5zhZuiCrR1ifySOpKJgJxUy5kCw0XOw34ZkUPn\r\noRMD5vWlubPPCdzOWQnuGkjgyPwOtisTw8yqywnok3Gu5P4Cmb/Hiqs4Pitx\r\n6GIBCw2JVXXOjw9Elzw6qftJlWNfWNR5oj3ZTsz+XbbGCjN1dJ5dswdFOY4J\r\ngxb3wOSQ1LmGtRsFU1gBy1eQqGoayv/XiviIRTsXtrpYe4XrjmbSI7HOQHRy\r\npwObsZMQnBQqFrZ0zNAltpLG+nogzkJcJmAADaRwpV5QXxEenAavBBzfWfz2\r\n2B2hty+GQtUQaYmQHBUjhzmY17G6uNgqm2KsZoN6PwpKETT5n+I2srf7Suti\r\nyHNTCFn/W/q6QaaKEva0rHjv/3M9eSSj/UaD990kM0dKeizYxLQBx3dqXoth\r\nFwTywGfEBdOancmsYN0nqFUGbL/HYeY3HMF7HvCse+ex/GclaRyBn5uIKXNW\r\nFaba2jk6inBxKUDk+x/4k2ByB+Vk4NAn0pA=\r\n=Krfr\r\n-----END PGP SIGNATURE-----\r\n"
+      },
+      "_npmUser": {
+        "name": "yisi",
+        "email": "yiorsi@gmail.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "broooooklyn",
+          "email": "lynweklm@gmail.com"
+        },
+        {
+          "name": "yisi",
+          "email": "yiorsi@gmail.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/resvg-js_2.4.0_1675929924821_0.10732824125122353"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "time": {
+    "created": "2021-10-09T15:57:54.902Z",
+    "modified": "2023-02-09T08:05:25.139Z",
+    "2.4.0": "2023-02-09T08:05:25.031Z"
+  },
+  "maintainers": [
+    {
+      "name": "broooooklyn",
+      "email": "lynweklm@gmail.com"
+    },
+    {
+      "name": "yisi",
+      "email": "yiorsi@gmail.com"
+    }
+  ],
+  "description": "A high-performance SVG renderer and toolkit, powered by Rust based resvg and napi-rs",
+  "homepage": "https://github.com/yisibl/resvg-js#readme",
+  "keywords": [
+    "resvg",
+    "svg",
+    "node-resvg",
+    "resvg-js",
+    "resvg-node",
+    "rust",
+    "svg2png",
+    "svg2img",
+    "svg to png"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/yisibl/resvg-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yisibl/resvg-js/issues"
+  },
+  "license": "MPL-2.0",
+  "readme": "# resvg-js\n\n<a href=\"https://github.com/yisibl/resvg-js/actions\"><img alt=\"GitHub CI Status\" src=\"https://github.com/yisibl/resvg-js/workflows/CI/badge.svg?branch=main\"></a>\n<a href=\"https://www.npmjs.com/package/@resvg/resvg-js\"><img src=\"https://img.shields.io/npm/v/@resvg/resvg-js.svg?sanitize=true\" alt=\"@resvg/resvg-js npm version\"></a>\n<a href=\"https://npmcharts.com/compare/@resvg/resvg-js?minimal=true\"><img src=\"https://img.shields.io/npm/dm/@resvg/resvg-js.svg?sanitize=true\" alt=\"@resvg/resvg-js downloads\"></a>\n[![Rust 1.65+](https://img.shields.io/badge/rust-1.65+-orange.svg)](https://www.rust-lang.org)\n\n> resvg-js is a high-performance SVG renderer and toolkit, powered by Rust based [resvg](https://github.com/RazrFalcon/resvg/), with Node.js backend using [napi-rs](https://github.com/napi-rs/napi-rs), also a pure WebAssmebly backend.\n\n## Features\n\n- Fast, safe and zero dependencies, with correct output.\n- Convert SVG to PNG, includes cropping, scaling and setting the background color.\n- Support system fonts and custom fonts in SVG text.\n- `v2`: Gets the width and height of the SVG and the generated PNG.\n- `v2`: Support for outputting simplified SVG strings, such as converting shapes(rect, circle, etc) to `<path>`.\n- `v2`: Support WebAssembly.\n- `v2`: Support to get SVG bounding box and crop according to bounding box.\n- `v2`: Support for loading images of external links in `<image>`.\n- No need for node-gyp and postinstall, the `.node` file has been compiled for you.\n- Cross-platform support, including [Apple M Chips](https://www.apple.com/newsroom/2020/11/apple-unleashes-m1/).\n- Support for running as native addons in Deno.\n\n## Installation\n\n### Node.js\n\n```shell\nnpm i @resvg/resvg-js\n```\n\n### Browser(Wasm)\n\n```html\n<script src=\"https://unpkg.com/@resvg/resvg-wasm\"></script>\n```\n\n## Example\n\n### [Node.js Example](example/index.js)\n\nThis example will load Source Han Serif, and then render the SVG to PNG.\n\n```shell\nnode example/index.js\n\nLoaded 1 font faces in 0ms.\nFont './example/SourceHanSerifCN-Light-subset.ttf':0 found in 0.006ms.\n✨ Done in 55.65491008758545 ms\n```\n\n### [Deno Example](example/index-deno.js)\n\n```shell\ndeno run --unstable --allow-read --allow-write --allow-ffi example/index-deno.js\n\n[2022-11-16T15:03:29Z DEBUG resvg_js::fonts] Loaded 1 font faces in 0.067ms.\n[2022-11-16T15:03:29Z DEBUG resvg_js::fonts] Font './example/SourceHanSerifCN-Light-subset.ttf':0 found in 0.001ms.\nOriginal SVG Size: 1324 x 687\nOutput PNG Size  : 1200 x 623\n✨ Done in 66 ms\n```\n\n| SVG                                                                                                                                                                                        | PNG                                                                                                                                                                                            |\n| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |\n| <img width=\"500\" src=\"example/text.svg\">                                                                                                                                                   | <img width=\"500\" src=\"example/text-out.png\">                                                                                                                                                   |\n\n## Usage\n\n### Node.js\n\n```js\nconst { promises } = require('fs')\nconst { join } = require('path')\nconst { Resvg } = require('@resvg/resvg-js')\n\nasync function main() {\n  const svg = await promises.readFile(join(__dirname, './text.svg'))\n  const opts = {\n    background: 'rgba(238, 235, 230, .9)',\n    fitTo: {\n      mode: 'width',\n      value: 1200,\n    },\n    font: {\n      fontFiles: ['./example/SourceHanSerifCN-Light-subset.ttf'], // Load custom fonts.\n      loadSystemFonts: false, // It will be faster to disable loading system fonts.\n      defaultFontFamily: 'Source Han Serif CN Light',\n    },\n  }\n  const resvg = new Resvg(svg, opts)\n  const pngData = resvg.render()\n  const pngBuffer = pngData.asPng()\n\n  console.info('Original SVG Size:', `${resvg.width} x ${resvg.height}`)\n  console.info('Output PNG Size  :', `${pngData.width} x ${pngData.height}`)\n\n  await promises.writeFile(join(__dirname, './text-out.png'), pngBuffer)\n}\n\nmain()\n```\n\n### Deno\n\nStarting with [Deno 1.26.1](https://github.com/denoland/deno/releases/tag/v1.26.1), there is support for running Native Addons directly from Node.js.\nThis allows for performance that is close to that found in Node.js.\n\n```shell\ndeno run --unstable --allow-read --allow-write --allow-ffi example/index-deno.js\n```\n\n```js\nimport * as path from 'https://deno.land/std@0.159.0/path/mod.ts'\nimport { Resvg } from 'npm:@resvg/resvg-js'\nconst __dirname = path.dirname(path.fromFileUrl(import.meta.url))\n\nconst svg = await Deno.readFile(path.join(__dirname, './text.svg'))\nconst opts = {\n  fitTo: {\n    mode: 'width',\n    value: 1200,\n  },\n}\n\nconst t = performance.now()\nconst resvg = new Resvg(svg, opts)\nconst pngData = resvg.render()\nconst pngBuffer = pngData.asPng()\nconsole.info('Original SVG Size:', `${resvg.width} x ${resvg.height}`)\nconsole.info('Output PNG Size  :', `${pngData.width} x ${pngData.height}`)\nconsole.info('✨ Done in', performance.now() - t, 'ms')\n\nawait Deno.writeFile(path.join(__dirname, './text-out-deno.png'), pngBuffer)\n```\n\n### WebAssembly\n\nThis package also ships a pure WebAssembly artifact built with `wasm-bindgen` to run in browsers.\n\n#### Browser\n\n```html\n<script src=\"https://unpkg.com/@resvg/resvg-wasm\"></script>\n<script>\n  (async function () {\n    // The Wasm must be initialized first\n    await resvg.initWasm(fetch('https://unpkg.com/@resvg/resvg-wasm/index_bg.wasm'))\n    const opts = {\n      fitTo: {\n        mode: 'width', // If you need to change the size\n        value: 800,\n      },\n    }\n\n    const svg = '<svg> ... </svg>' // Input SVG, String or Uint8Array\n    const resvgJS = new resvg.Resvg(svg, opts)\n    const pngData = resvgJS.render(svg, opts) // Output PNG data, Uint8Array\n    const pngBuffer = pngData.asPng()\n    const svgURL = URL.createObjectURL(new Blob([pngData], { type: 'image/png' }))\n    document.getElementById('output').src = svgURL\n  })()\n</script>\n```\n\nSee [playground](wasm/index.html), it is also possible to [call Wasm in Node.js](example/wasm-node.js), but it is slower.\n\n## Sample Benchmark\n\n```shell\nnpm i benny@3.x sharp@0.x @types/sharp svg2img@0.x\nnpm run bench\n```\n\n```shell\nRunning \"resize width\" suite...\n  resvg-js(Rust):\n    12 ops/s\n\n  sharp:\n    9 ops/s\n\n  skr-canvas(Rust):\n    7 ops/s\n\n  svg2img(canvg and node-canvas):\n    6 ops/s\n```\n\n## Support matrix\n\n|                  | Node.js 12 | Node.js 14 | Node.js 16 | Node.js 18 | npm |\n| ---------------- | ---------- | ---------- | ---------- | ---------- | --- |\n| Windows x64      | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-win32-x64-msvc.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-win32-x64-msvc) |\n| Windows x32      | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-win32-ia32-msvc.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-win32-ia32-msvc) |\n| Windows arm64    | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-win32-arm64-msvc.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-win32-arm64-msvc) |\n| macOS x64        | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-darwin-x64.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-darwin-x64) |\n| macOS arm64(M1)  | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-darwin-arm64.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-darwin-arm64) |\n| Linux x64 gnu    | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-linux-x64-gnu.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-linux-x64-gnu) |\n| Linux x64 musl   | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-linux-x64-musl.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-linux-x64-musl) |\n| Linux arm gnu    | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-linux-arm-gnueabihf.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-linux-arm-gnueabihf) |\n| Linux arm64 gnu  | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-linux-arm64-gnu.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-linux-arm64-gnu) |\n| Linux arm64 musl | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-linux-arm64-musl.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-linux-arm64-musl) |\n| Android arm64    | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-android-arm64.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-android-arm64) |\n| Android armv7    | ✓          | ✓          | ✓          |  ✓         |[![npm version](https://img.shields.io/npm/v/@resvg/resvg-js-android-arm-eabi.svg?sanitize=true)](https://www.npmjs.com/package/@resvg/resvg-js-android-arm-eabi) |\n\n## Test or Contributing\n\n- Install latest `Rust`\n- Install `Node.js@10+` which fully supported `Node-API`\n- Install `wasm-pack`\n\n  ```bash\n  curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh\n  ```\n\n  Normally `wasm-pack` will install `wasm-bindgen` automatically, but if the installation [fails due to network reasons](https://github.com/rustwasm/wasm-pack-template/issues/44#issuecomment-521657516), please try to install it manually.\n\n  ```bash\n  cargo install wasm-bindgen-cli\n  ```\n\n  On computers with Apple M chips, the following error message may appear:\n\n  > Error: failed to download from https://github.com/WebAssembly/binaryen/releases/download/version_90/binaryen-version_90-x86_64-apple-darwin.tar.gz\n\n  Please install binaryen manually:\n\n  ```bash\n  brew install binaryen\n  ```\n\n### Build Node.js bindings\n\n```bash\nnpm i\nnpm run build\nnpm test\n```\n\n### Build WebAssembly bindings\n\n```bash\nnpm i\nnpm run build:wasm\nnpm run test:wasm\n```\n\n## Roadmap\n\nI will consider implementing the following features, if you happen to be interested,\nplease feel free to discuss with me or submit a PR.\n\n- [x] Support async API\n- [x] Upgrade to napi-rs v2\n- [x] Support WebAssembly\n- [x] Output usvg-simplified SVG string\n- [x] Support for getting SVG Bounding box\n- [ ] Support for generating more lossless bitmap formats, e.g. avif, webp, JPEG XL\n\n## Release package\n\nWe use GitHub actions to automatically publish npm packages.\n\n```bash\n# 1.0.0 => 1.0.1\nnpm version patch\n\n# or 1.0.0 => 1.1.0\nnpm version minor\n```\n\n## License\n\n[MPLv2.0](https://www.mozilla.org/en-US/MPL/)\n\nCopyright (c) 2021-present, yisibl(一丝)\n",
+  "readmeFilename": "README.md"
+}

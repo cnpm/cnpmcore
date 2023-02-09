@@ -401,6 +401,27 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
     });
 
+    it('should sync package optionalDependencies', async () => {
+      const name = 'resvg-js';
+      const task = await packageSyncerService.createTask(name);
+      app.mockHttpclient('https://registry.npmjs.org/resvg-js', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/resvg-js.json'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/resvg-js/-/resvg-js-2.4.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      app.mockAgent().assertNoPendingInterceptors();
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('] 📦 Add dependency "@resvg/resvg-js-win32-x64-msvc" sync task: '));
+    });
+
     it('should ignore publish error on sync task', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),

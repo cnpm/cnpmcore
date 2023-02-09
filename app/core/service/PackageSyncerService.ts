@@ -607,8 +607,12 @@ export class PackageSyncerService extends AbstractService {
       logs = [];
       await rm(localFile, { force: true });
       if (!skipDependencies) {
-        const dependencies = item.dependencies || {};
+        const dependencies: Record<string, string> = item.dependencies || {};
         for (const dependencyName in dependencies) {
+          dependenciesSet.add(dependencyName);
+        }
+        const optionalDependencies: Record<string, string> = item.optionalDependencies || {};
+        for (const dependencyName in optionalDependencies) {
           dependenciesSet.add(dependencyName);
         }
       }
@@ -737,7 +741,7 @@ export class PackageSyncerService extends AbstractService {
 
     // 5. add deps sync task
     for (const dependencyName of dependenciesSet) {
-      const existsTask = await this.taskRepository.findTaskByTargetName(fullname, TaskType.SyncPackage, TaskState.Waiting);
+      const existsTask = await this.taskRepository.findTaskByTargetName(dependencyName, TaskType.SyncPackage, TaskState.Waiting);
       if (existsTask) {
         logs.push(`[${isoNow()}] 📖 Has dependency "${dependencyName}" sync task: ${existsTask.taskId}, db id: ${existsTask.id}`);
         continue;
