@@ -31,6 +31,17 @@ import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
 import { ScopeManagerService } from './ScopeManagerService';
 import { EventCorkAdvice } from './EventCorkerAdvice';
+import { SyncDeleteMode } from 'app/common/constants';
+
+type syncDeletePkgOptions = {
+  task: Task,
+  pkg: Package | null,
+  logUrl: string,
+  url: string,
+  logs: string[],
+  data: any,
+  status: number,
+};
 
 function isoNow() {
   return new Date().toISOString();
@@ -209,6 +220,56 @@ export class PackageSyncerService extends AbstractService {
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
+  // sync deleted package, deps on the syncDeleteMode
+  // - ignore: do nothing, just finish the task
+  // - delete: remove the package from local registry
+  // - block: block the package, update the manifest.block, instead of delete versions
+  // 根据 syncDeleteMode 配置，处理删包场景
+  // - ignore: 不做任何处理，直接结束任务
+  // - delete: 删除包数据，包括 manifest 存储
+  // - block: 软删除 将包标记为 block，用户无法直接使用
+  private async syncDeletePkg({ task, pkg, logUrl, url, logs, data, status }: syncDeletePkgOptions) {
+    const fullname = task.targetName;
+    const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
+    const { syncDeleteMode } = this.config;
+
+    // pkg not exists in local registry
+    if (!pkg) {
+      task.error = `Package not exists, response data: ${JSON.stringify(data)}`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ${failEnd}`);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
+      return;
+    }
+
+    // ignore deleted package
+    if (syncDeleteMode === SyncDeleteMode.ignore) {
+      logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was unpublished in remote registry, skip sync since config.syncDeleteMode = ignore`);
+    }
+
+    // block deleted package
+    if (syncDeleteMode === SyncDeleteMode.block) {
+      await this.packageManagerService.blockPackage(pkg, 'deleted in remote registry');
+      logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was unpublished in remote registry, block the package since config.syncDeleteMode = block`);
+    }
+
+    // delete package
+    if (syncDeleteMode === SyncDeleteMode.delete) {
+      await this.packageManagerService.unpublishPackage(pkg);
+      logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was unpublished caused by ${status} response: ${JSON.stringify(data)}`);
+    }
+
+    // update log
+    logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
+    logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
+    await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+    this.logger.info('[PackageSyncerService.executeTask:remove-package] taskId: %s, targetName: %s',
+      task.taskId, task.targetName);
+
+  }
+
   // 初始化对应的 Registry
   // 1. 优先从 pkg.registryId 获取 (registryId 一经设置 不应改变)
   // 1. 其次从 task.data.registryId (创建单包同步任务时传入)
@@ -344,31 +405,16 @@ export class PackageSyncerService extends AbstractService {
 
     // 404 unpublished
     // 451 blocked
-    const shouldRemovePkg = status === 404 || status === 451;
-    if (shouldRemovePkg) {
-      if (pkg) {
-        await this.packageManagerService.unpublishPackage(pkg);
-        logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was unpublished caused by ${status} response: ${JSON.stringify(data)}`);
-        logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
-        logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
-        await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:remove-package] taskId: %s, targetName: %s',
-          task.taskId, task.targetName);
-      } else {
-        task.error = `Package not exists, response data: ${JSON.stringify(data)}`;
-        logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
-        logs.push(`[${isoNow()}] ${failEnd}`);
-        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
-          task.taskId, task.targetName, task.error);
-      }
+    const removedInRemote = status === 404 || status === 451;
+    if (removedInRemote) {
+      await this.syncDeletePkg({ task, pkg, logs, logUrl, url, data, status });
       return;
     }
 
     const versionMap = data.versions || {};
     const distTags = data['dist-tags'] || {};
 
-    // show latest infomations
+    // show latest information
     if (distTags.latest) {
       logs.push(`[${isoNow()}] 📖 ${fullname} latest version: ${distTags.latest ?? '-'}, published time: ${JSON.stringify(timeMap[distTags.latest])}`);
     }
@@ -433,17 +479,7 @@ export class PackageSyncerService extends AbstractService {
       //   }
       // }
       if (timeMap.unpublished) {
-        if (pkg) {
-          await this.packageManagerService.unpublishPackage(pkg);
-          logs.push(`[${isoNow()}] 🟢 Sync unpublished package: ${JSON.stringify(timeMap.unpublished)} success`);
-        } else {
-          logs.push(`[${isoNow()}] 📖 Ignore unpublished package: ${JSON.stringify(timeMap.unpublished)}`);
-        }
-        logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
-        logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
-        await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
-          task.taskId, task.targetName);
+        await this.syncDeletePkg({ task, pkg, logs, logUrl, url, data, status });
         return;
       }
 
