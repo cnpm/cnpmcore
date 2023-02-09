@@ -80,7 +80,7 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
       data: await TestUtil.readFixturesFile('registry.npmjs.com/advpng-bin.json'),
     });
     let result = await binary.fetch('/', 'advpng-bin');
-    console.log(result?.items.map(_ => _.name));
+    // console.log(result?.items.map(_ => _.name));
     assert(result);
     assert(result.items.length > 0);
     let matchDir1 = false;
@@ -308,7 +308,7 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
       data: await TestUtil.readFixturesFile('registry.npmjs.com/guetzli.json'),
     });
     const result = await binary.fetch('/', 'guetzli-bin');
-    console.log(result);
+    // console.log(result);
     assert(result);
     // console.log(result.items);
     assert(result.items.length > 0);

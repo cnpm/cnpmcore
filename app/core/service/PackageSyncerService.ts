@@ -227,9 +227,9 @@ export class PackageSyncerService extends AbstractService {
       return true;
     }
 
-    const noMaintainers = data?.maintainers?.length === 0;
-    if (!noMaintainers) {
-      return true;
+    const hasMaintainers = data?.maintainers && data?.maintainers.length !== 0;
+    if (hasMaintainers) {
+      return false;
     }
 
     // unpublished
@@ -242,6 +242,8 @@ export class PackageSyncerService extends AbstractService {
     if (data?.repository === 'npm/security-holder') {
       return true;
     }
+
+    return false;
   }
 
   // sync deleted package, deps on the syncDeleteMode
@@ -255,7 +257,7 @@ export class PackageSyncerService extends AbstractService {
   private async syncDeletePkg({ task, pkg, logUrl, url, logs, data }: syncDeletePkgOptions) {
     const fullname = task.targetName;
     const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
-    const { syncDeleteMode } = this.config;
+    const { syncDeleteMode = SyncDeleteMode } = this.config.cnpmcore;
     logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was removed in remote registry, response data: ${JSON.stringify(data)}, config.syncDeleteMode = ${syncDeleteMode}`);
 
     // pkg not exists in local registry

@@ -218,7 +218,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes(`] 🟢 Package "${name}" was unpublished caused by 404 response`));
+      assert(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
 
       manifests = await packageManagerService.listPackageFullManifests('', name);
       assert(manifests.data.time.unpublished);
@@ -887,7 +887,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 📖 Ignore unpublished package: {'));
+      assert(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
       let data = await packageManagerService.listPackageFullManifests('', name);
       assert(data.data === null);
 
@@ -928,7 +928,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢 Sync unpublished package: {'));
+      assert(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
       data = await packageManagerService.listPackageFullManifests('', name);
       // console.log(data.data);
       assert(data.data.time.unpublished);
@@ -1544,7 +1544,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
 
-      assert(log.includes(`🟢 Package "${name}" was unpublished caused by 451 response`));
+      assert(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
     });
 
     it('should stop sync by block list', async () => {
@@ -1649,9 +1649,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🟢🟢🟢🟢🟢'));
-      assert(log.includes('🟢 [1] Synced version 0.0.1-security success'));
-      assert(log.includes('Syncing maintainers: [{\"name\":\"npm\",\"email\":\"npm@npmjs.com\"}]'));
+      assert(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
     });
 
     it('should mock getFullManifests missing tarball error and downloadTarball error', async () => {
