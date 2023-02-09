@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/cnpm/npmcore/compare/v3.2.6...v3.3.0) (2023-02-09)
+
+
+### Features
+
+* auto sync package's optionalDependencies ([#399](https://github.com/cnpm/npmcore/issues/399)) ([07a19cf](https://github.com/cnpm/npmcore/commit/07a19cfd1df84b4dce79e3fad666c91635d13d6e))
+
 ## [3.2.6](https://github.com/cnpm/npmcore/compare/v3.2.5...v3.2.6) (2023-02-05)
 
 
