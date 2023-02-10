@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.2](https://github.com/cnpm/npmcore/compare/v3.3.1...v3.3.2) (2023-02-10)
+
+
+### Reverts
+
+* Revert "fix: should sync package deps by default (#400)" (#401) ([b021e1e](https://github.com/cnpm/npmcore/commit/b021e1ebc31b2eea118694b0816eeb99e5112f7d)), closes [#400](https://github.com/cnpm/npmcore/issues/400) [#401](https://github.com/cnpm/npmcore/issues/401)
+
 ## [3.3.1](https://github.com/cnpm/npmcore/compare/v3.3.0...v3.3.1) (2023-02-10)
 
 
