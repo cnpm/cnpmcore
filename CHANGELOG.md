@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/cnpm/npmcore/compare/v3.3.2...v3.4.0) (2023-02-10)
+
+
+### Features
+
+* sync delete mode ([#398](https://github.com/cnpm/npmcore/issues/398)) ([27af0be](https://github.com/cnpm/npmcore/commit/27af0beaadba4e83177946100c3d47391c1c6b18))
+
 ## [3.3.2](https://github.com/cnpm/npmcore/compare/v3.3.1...v3.3.2) (2023-02-10)
 
 
