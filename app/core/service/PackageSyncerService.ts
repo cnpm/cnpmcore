@@ -10,6 +10,7 @@ import {
 } from 'egg';
 import { setTimeout } from 'timers/promises';
 import { rm } from 'fs/promises';
+import semver from 'semver';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -31,7 +32,7 @@ import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
 import { ScopeManagerService } from './ScopeManagerService';
 import { EventCorkAdvice } from './EventCorkerAdvice';
-import { SyncDeleteMode } from 'app/common/constants';
+import { SyncDeleteMode } from '../../common/constants';
 
 type syncDeletePkgOptions = {
   task: Task,
@@ -239,11 +240,20 @@ export class PackageSyncerService extends AbstractService {
     }
 
     // security holder
-    if (data?.repository === 'npm/security-holder') {
-      return true;
+    // test/fixtures/registry.npmjs.org/security-holding-package.json
+    let isSecurityHolder = true;
+    for (const versionInfo of Object.entries<{ _npmUser?: { name: string } }>(data.versions || {})) {
+      const [ v, info ] = versionInfo;
+      // >=0.0.1-security <0.0.2-0
+      const isSecurityVersion = semver.satisfies(v, '^0.0.1-security');
+      const isNpmUser = info?._npmUser?.name === 'npm';
+      if (!isSecurityVersion || !isNpmUser) {
+        isSecurityHolder = false;
+        break;
+      }
     }
 
-    return false;
+    return isSecurityHolder;
   }
 
   // sync deleted package, deps on the syncDeleteMode
