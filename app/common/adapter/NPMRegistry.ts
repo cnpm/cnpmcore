@@ -66,7 +66,7 @@ export class NPMRegistry {
 
   // app.put('/:name/sync', sync.sync);
   public async createSyncTask(fullname: string): Promise<RegistryResponse> {
-    const url = `${this.registry}/${encodeURIComponent(fullname)}/sync?sync_upstream=true`;
+    const url = `${this.registry}/${encodeURIComponent(fullname)}/sync?sync_upstream=true&nodeps=true`;
     // {
     //   ok: true,
     //   logId: logId
