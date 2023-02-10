@@ -10,7 +10,8 @@ import {
 } from 'egg';
 import { setTimeout } from 'timers/promises';
 import { rm } from 'fs/promises';
-import { NPMRegistry } from '../../common/adapter/NPMRegistry';
+import semver from 'semver';
+import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskState, TaskType } from '../../common/enum/Task';
@@ -31,6 +32,16 @@ import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
 import { ScopeManagerService } from './ScopeManagerService';
 import { EventCorkAdvice } from './EventCorkerAdvice';
+import { SyncDeleteMode } from '../../common/constants';
+
+type syncDeletePkgOptions = {
+  task: Task,
+  pkg: Package | null,
+  logUrl: string,
+  url: string,
+  logs: string[],
+  data: any,
+};
 
 function isoNow() {
   return new Date().toISOString();
@@ -209,6 +220,89 @@ export class PackageSyncerService extends AbstractService {
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
+  private isRemovedInRemote(remoteFetchResult: RegistryResponse) {
+    const { status, data } = remoteFetchResult;
+
+    // deleted or blocked
+    if (status === 404 || status === 451) {
+      return true;
+    }
+
+    const hasMaintainers = data?.maintainers && data?.maintainers.length !== 0;
+    if (hasMaintainers) {
+      return false;
+    }
+
+    // unpublished
+    const timeMap = data.time || {};
+    if (timeMap.unpublished) {
+      return true;
+    }
+
+    // security holder
+    // test/fixtures/registry.npmjs.org/security-holding-package.json
+    let isSecurityHolder = true;
+    for (const versionInfo of Object.entries<{ _npmUser?: { name: string } }>(data.versions || {})) {
+      const [ v, info ] = versionInfo;
+      // >=0.0.1-security <0.0.2-0
+      const isSecurityVersion = semver.satisfies(v, '^0.0.1-security');
+      const isNpmUser = info?._npmUser?.name === 'npm';
+      if (!isSecurityVersion || !isNpmUser) {
+        isSecurityHolder = false;
+        break;
+      }
+    }
+
+    return isSecurityHolder;
+  }
+
+  // sync deleted package, deps on the syncDeleteMode
+  // - ignore: do nothing, just finish the task
+  // - delete: remove the package from local registry
+  // - block: block the package, update the manifest.block, instead of delete versions
+  // 根据 syncDeleteMode 配置，处理删包场景
+  // - ignore: 不做任何处理，直接结束任务
+  // - delete: 删除包数据，包括 manifest 存储
+  // - block: 软删除 将包标记为 block，用户无法直接使用
+  private async syncDeletePkg({ task, pkg, logUrl, url, logs, data }: syncDeletePkgOptions) {
+    const fullname = task.targetName;
+    const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
+    const syncDeleteMode: SyncDeleteMode = this.config.cnpmcore.syncDeleteMode;
+    logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was removed in remote registry, response data: ${JSON.stringify(data)}, config.syncDeleteMode = ${syncDeleteMode}`);
+
+    // pkg not exists in local registry
+    if (!pkg) {
+      task.error = `Package not exists, response data: ${JSON.stringify(data)}`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ${failEnd}`);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
+      return;
+    }
+
+    if (syncDeleteMode === SyncDeleteMode.ignore) {
+      // ignore deleted package
+      logs.push(`[${isoNow()}] 🟢 Skip remove since config.syncDeleteMode = ignore`);
+    } else if (syncDeleteMode === SyncDeleteMode.block) {
+      // block deleted package
+      await this.packageManagerService.blockPackage(pkg, 'Removed in remote registry');
+      logs.push(`[${isoNow()}] 🟢 Block the package since config.syncDeleteMode = block`);
+    } else if (syncDeleteMode === SyncDeleteMode.delete) {
+      // delete package
+      await this.packageManagerService.unpublishPackage(pkg);
+      logs.push(`[${isoNow()}] 🟢 Delete the package since config.syncDeleteMode = delete`);
+    }
+
+    // update log
+    logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
+    logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
+    await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+    this.logger.info('[PackageSyncerService.executeTask:remove-package] taskId: %s, targetName: %s',
+      task.taskId, task.targetName);
+
+  }
+
   // 初始化对应的 Registry
   // 1. 优先从 pkg.registryId 获取 (registryId 一经设置 不应改变)
   // 1. 其次从 task.data.registryId (创建单包同步任务时传入)
@@ -314,11 +408,11 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    let result: any;
+    let registryFetchResult: RegistryResponse;
     try {
-      result = await this.npmRegistry.getFullManifests(fullname);
+      registryFetchResult = await this.npmRegistry.getFullManifests(fullname);
     } catch (err: any) {
-      const status = err.status || 'unknow';
+      const status = err.status || 'unknown';
       task.error = `request manifests error: ${err}, status: ${status}`;
       logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
@@ -328,7 +422,7 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    const { url, data, headers, res, status } = result;
+    const { url, data, headers, res, status } = registryFetchResult;
     let readme = data.readme || '';
     if (typeof readme !== 'string') {
       readme = JSON.stringify(readme);
@@ -342,33 +436,15 @@ export class PackageSyncerService extends AbstractService {
     const contentLength = headers['content-length'] || '-';
     logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`);
 
-    // 404 unpublished
-    // 451 blocked
-    const shouldRemovePkg = status === 404 || status === 451;
-    if (shouldRemovePkg) {
-      if (pkg) {
-        await this.packageManagerService.unpublishPackage(pkg);
-        logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was unpublished caused by ${status} response: ${JSON.stringify(data)}`);
-        logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
-        logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
-        await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:remove-package] taskId: %s, targetName: %s',
-          task.taskId, task.targetName);
-      } else {
-        task.error = `Package not exists, response data: ${JSON.stringify(data)}`;
-        logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
-        logs.push(`[${isoNow()}] ${failEnd}`);
-        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
-          task.taskId, task.targetName, task.error);
-      }
+    if (this.isRemovedInRemote(registryFetchResult)) {
+      await this.syncDeletePkg({ task, pkg, logs, logUrl, url, data });
       return;
     }
 
     const versionMap = data.versions || {};
     const distTags = data['dist-tags'] || {};
 
-    // show latest infomations
+    // show latest information
     if (distTags.latest) {
       logs.push(`[${isoNow()}] 📖 ${fullname} latest version: ${distTags.latest ?? '-'}, published time: ${JSON.stringify(timeMap[distTags.latest])}`);
     }
@@ -432,20 +508,6 @@ export class PackageSyncerService extends AbstractService {
       //     }
       //   }
       // }
-      if (timeMap.unpublished) {
-        if (pkg) {
-          await this.packageManagerService.unpublishPackage(pkg);
-          logs.push(`[${isoNow()}] 🟢 Sync unpublished package: ${JSON.stringify(timeMap.unpublished)} success`);
-        } else {
-          logs.push(`[${isoNow()}] 📖 Ignore unpublished package: ${JSON.stringify(timeMap.unpublished)}`);
-        }
-        logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
-        logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
-        await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
-          task.taskId, task.targetName);
-        return;
-      }
 
       // invalid maintainers, sync fail
       task.error = `invalid maintainers: ${JSON.stringify(maintainers)}`;

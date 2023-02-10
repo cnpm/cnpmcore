@@ -3,6 +3,7 @@ import { join } from 'path';
 import { EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
 import { patchAjv } from '../app/port/typebox';
+import { SyncDeleteMode, SyncMode } from '../app/common/constants';
 
 export default (appInfo: EggAppConfig) => {
   const config = {} as PowerPartial<EggAppConfig>;
@@ -22,7 +23,8 @@ export default (appInfo: EggAppConfig) => {
     //  - none: don't sync npm package, just redirect it to sourceRegistry
     //  - all: sync all npm packages
     //  - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
-    syncMode: 'none',
+    syncMode: SyncMode.none,
+    syncDeleteMode: SyncDeleteMode.delete,
     hookEnable: false,
     syncPackageWorkerMaxConcurrentTasks: 10,
     triggerHookWorkerMaxConcurrentTasks: 10,
