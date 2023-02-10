@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.1](https://github.com/cnpm/npmcore/compare/v3.3.0...v3.3.1) (2023-02-10)
+
+
+### Bug Fixes
+
+* should sync package deps by default ([#400](https://github.com/cnpm/npmcore/issues/400)) ([282abf6](https://github.com/cnpm/npmcore/commit/282abf692045f4660831ceacf7e1e7851ff58241))
+
 ## [3.3.0](https://github.com/cnpm/npmcore/compare/v3.2.6...v3.3.0) (2023-02-09)
 
 
