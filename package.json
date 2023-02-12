@@ -60,7 +60,9 @@
     "typescript": true
   },
   "keywords": [
-    "npm", "npm registry", "registry"
+    "npm",
+    "npm registry",
+    "registry"
   ],
   "dependencies": {
     "@eggjs/tegg": "^3.2.1",
@@ -103,8 +105,8 @@
     "@types/mysql": "^2.15.21",
     "@types/semver": "^7.3.12",
     "coffee": "^5.4.0",
-    "egg-bin": "next",
-    "egg-mock": "^5.0.1",
+    "egg-bin": "^6.0.0",
+    "egg-mock": "^5.10.4",
     "eslint": "^8.29.0",
     "eslint-config-egg": "^12.1.0",
     "git-contributor": "2",
