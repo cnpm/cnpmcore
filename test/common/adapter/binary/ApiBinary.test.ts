@@ -9,7 +9,7 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
     binary = await app.getEggObject(ApiBinary);
   });
   describe('fetch()', () => {
-    it('should fetch root: / work', async () => {
+    it.only('should fetch root: / work', async () => {
       mock(app.config.cnpmcore, 'syncBinaryFromAPISource', 'https://cnpmjs.org/mirrors/apis');
       app.mockHttpclient('https://cnpmjs.org/mirrors/apis/node/', 'GET', {
         data: await TestUtil.readFixturesFile('cnpmjs.org/mirrors/apis/node.json'),

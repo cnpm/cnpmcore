@@ -104,7 +104,7 @@
     "@types/mysql": "^2.15.21",
     "@types/semver": "^7.3.12",
     "coffee": "^5.4.0",
-    "egg-bin": "5",
+    "egg-bin": "next",
     "egg-mock": "^5.0.1",
     "eslint": "^8.29.0",
     "eslint-config-egg": "^12.1.0",
