@@ -57,11 +57,10 @@
     "url": "git+https://github.com/cnpm/npmcore.git"
   },
   "egg": {
-    "declarations": true,
     "typescript": true
   },
   "keywords": [
-    "npm"
+    "npm", "npm registry", "registry"
   ],
   "dependencies": {
     "@eggjs/tegg": "^3.2.1",
