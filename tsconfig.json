@@ -11,5 +11,8 @@
   },
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "ts-node": {
+    "tsc": true
+  }
 }
