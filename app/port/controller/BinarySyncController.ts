@@ -55,7 +55,7 @@ export class BinarySyncController extends AbstractController {
     // check binaryName valid
     try {
       ctx.tValidate(BinaryNameRule, binaryName);
-    } catch (e) {
+    } catch {
       throw new NotFoundError(`Binary "${binaryName}" not found`);
     }
     subpath = subpath || '/';
@@ -65,7 +65,7 @@ export class BinarySyncController extends AbstractController {
     }
     try {
       ctx.tValidate(BinarySubpathRule, subpath);
-    } catch (e) {
+    } catch {
       throw new NotFoundError(`Binary "${binaryName}/${subpath}" not found`);
     }
     subpath = `/${subpath}`;
