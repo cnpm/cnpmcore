@@ -161,6 +161,16 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       ]);
     });
 
+    it('should forbidden invalid paths', async () => {
+      const res = await app.httpRequest()
+        .get('/-/binary/chromium-browser-snapshots/Linux_x64/970485/%E4%B8%8B%E8%BD%BD%E7%9A%84');
+      assert.equal(res.status, 404);
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
+      assert.deepEqual(res.body, {
+        error: '[NOT_FOUND] Binary "chromium-browser-snapshots/Linux_x64/970485/下载的" not found',
+      });
+    });
+
     it('should show node binaries', async () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),

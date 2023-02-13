@@ -13,7 +13,8 @@ import { AbstractController } from './AbstractController';
 import { BinarySyncerService } from '../../core/service/BinarySyncerService';
 import { Binary } from '../../core/entity/Binary';
 import binaries, { BinaryName } from '../../../config/binaries';
-import { BinaryNameRule } from '../typebox';
+import { BinaryNameRule, BinarySubpathRule } from '../typebox';
+
 @HTTPController()
 export class BinarySyncController extends AbstractController {
   @Inject()
@@ -54,13 +55,18 @@ export class BinarySyncController extends AbstractController {
     // check binaryName valid
     try {
       ctx.tValidate(BinaryNameRule, binaryName);
-    } catch (e) {
+    } catch {
       throw new NotFoundError(`Binary "${binaryName}" not found`);
     }
     subpath = subpath || '/';
     if (subpath === '/') {
       const items = await this.binarySyncerService.listRootBinaries(binaryName);
       return this.formatItems(items);
+    }
+    try {
+      ctx.tValidate(BinarySubpathRule, subpath);
+    } catch {
+      throw new NotFoundError(`Binary "${binaryName}/${subpath}" not found`);
     }
     subpath = `/${subpath}`;
     const parsed = path.parse(subpath);
