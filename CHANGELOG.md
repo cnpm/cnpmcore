@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/cnpm/npmcore/compare/v3.4.0...v3.4.1) (2023-02-13)
+
+
+### Bug Fixes
+
+* forbidden non-ascii binary subpath ([#405](https://github.com/cnpm/npmcore/issues/405)) ([7b52f6f](https://github.com/cnpm/npmcore/commit/7b52f6f30332a9d83be4f958bd3c9b0577021507))
+
 ## [3.4.0](https://github.com/cnpm/npmcore/compare/v3.3.2...v3.4.0) (2023-02-10)
 
 
