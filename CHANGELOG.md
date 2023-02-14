@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.2](https://github.com/cnpm/npmcore/compare/v3.4.1...v3.4.2) (2023-02-14)
+
+
+### Bug Fixes
+
+* distinct processing task ([#406](https://github.com/cnpm/npmcore/issues/406)) ([c43c067](https://github.com/cnpm/npmcore/commit/c43c067211e80f402aa645cd9da36ae1e8c42153))
+
 ## [3.4.1](https://github.com/cnpm/npmcore/compare/v3.4.0...v3.4.1) (2023-02-13)
 
 
