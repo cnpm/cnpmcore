@@ -59,7 +59,7 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
     assert(task);
   });
 
-  it('should create task when processing', async () => {
+  it('should merge task when processing', async () => {
     mock(packageSyncerService, 'executeTask', async (task: Task) => {
       task.state = TaskState.Processing;
       await taskRepository.saveTask(task);
@@ -71,7 +71,7 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
       await setTimeout(1);
       return await packageSyncerService.createTask(pkgName);
     })() ]);
-    assert(res[1].taskId !== task.taskId);
+    assert(res[1].taskId === task.taskId);
   });
 
   it('should not duplicate task when waiting', async () => {
