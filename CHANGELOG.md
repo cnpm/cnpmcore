@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.3](https://github.com/cnpm/npmcore/compare/v3.4.2...v3.4.3) (2023-02-15)
+
+
+### Bug Fixes
+
+* changesStream suspend ([#408](https://github.com/cnpm/npmcore/issues/408)) ([2c821ea](https://github.com/cnpm/npmcore/commit/2c821eaa64a98b5515327ae5ffad0af2358a8554))
+
 ## [3.4.2](https://github.com/cnpm/npmcore/compare/v3.4.1...v3.4.2) (2023-02-14)
 
 
