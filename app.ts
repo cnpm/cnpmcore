@@ -1,6 +1,7 @@
 import path from 'path';
 import { readFile } from 'fs/promises';
 import { Application } from 'egg';
+import { ChangesStreamService } from './app/core/service/ChangesStreamService';
 declare module 'egg' {
   interface Application {
     binaryHTML: string;
@@ -26,10 +27,7 @@ export default class CnpmcoreAppHook {
   // 应用退出时执行
   // 需要暂停当前执行的 changesStream task
   async beforeClose() {
-    await this.app.runInAnonymousContextScope(async ctx => {
-      await ctx.beginModuleScope(async () => {
-        await ctx.module.cnpmcoreCore.changesStreamService.suspendTaskWhenExit();
-      });
-    });
+    const changesStreamService = await this.app.getEggObject(ChangesStreamService);
+    await changesStreamService.suspendTaskWhenExit();
   }
 }
