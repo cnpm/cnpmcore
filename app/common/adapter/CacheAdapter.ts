@@ -3,7 +3,9 @@ import {
   AccessLevel,
   Inject,
 } from '@eggjs/tegg';
-import { Redis } from 'ioredis';
+// FIXME: egg-redis should use ioredis v5
+// https://github.com/eggjs/egg-redis/issues/35
+import type { Redis } from 'ioredis';
 
 const ONE_DAY = 3600 * 24;
 
