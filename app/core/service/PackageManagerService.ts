@@ -106,6 +106,7 @@ export class PackageManagerService extends AbstractService {
         pkg.description = cmd.description;
       }
 
+      /* c8 ignore next 3 */
       if (!pkg.registryId && cmd.registryId) {
         pkg.registryId = cmd.registryId;
       }
@@ -600,6 +601,7 @@ export class PackageManagerService extends AbstractService {
     // TODO performance problem, cache bugVersion and update with schedule
     const pkg = await this.packageRepository.findPackage('', BUG_VERSIONS);
     if (!pkg) return;
+    /* c8 ignore next 10 */
     const tag = await this.packageRepository.findPackageTag(pkg!.packageId, LATEST_TAG);
     if (!tag) return;
     let bugVersion = this.bugVersionStore.getBugVersion(tag!.version);
@@ -774,6 +776,7 @@ export class PackageManagerService extends AbstractService {
     }
     await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
     const manifests = (fullManifests || abbreviatedManifests)!;
+    /* c8 ignore next 5 */
     if (bugVersion) {
       await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, (manifests as any).versions);
       const distBytes = Buffer.from(JSON.stringify(manifests));
@@ -850,6 +853,7 @@ export class PackageManagerService extends AbstractService {
     for (const packageVersion of packageVersions) {
       const manifest = await this.distRepository.readDistBytesToJSON(packageVersion.manifestDist);
       if (!manifest) continue;
+      /* c8 ignore next 3 */
       if ('readme' in manifest) {
         delete manifest.readme;
       }

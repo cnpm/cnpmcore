@@ -76,7 +76,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       data = res.body;
       assert(data.last_package === '@cnpm/home2');
       assert(data.last_package_version === '@cnpm/home1@1.0.1');
-      assert(data.doc_count === 2);
+      assert.equal(data.doc_count, 2);
       assert(data.doc_version_count === 3);
       assert(data.download.today === 3);
       assert(data.download.yesterday === 0);

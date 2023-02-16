@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { setTimeout } from 'timers/promises';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { CacheAdapter } from 'app/common/adapter/CacheAdapter';
 
 describe('test/common/adapter/CacheAdapter.test.ts', () => {
@@ -14,7 +14,7 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
     it('should work', async () => {
       const lockId = await cache.lock('unittest', 1);
       assert(lockId);
-      assert(typeof lockId === 'string');
+      assert.equal(typeof lockId, 'string');
       const lockId2 = await cache.lock('unittest', 1);
       assert(!lockId2);
       const lockId3 = await cache.lock('unittest', 1);
@@ -23,8 +23,8 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
       // lock timeout
       const lockId4 = await cache.lock('unittest', 1);
       assert(lockId4);
-      assert(typeof lockId4 === 'string');
-      assert(lockId4 !== lockId);
+      assert.equal(typeof lockId4, 'string');
+      assert.notEqual(lockId4, lockId);
       // unlock wrong
       await cache.unlock('unittest', lockId);
       const lockId5 = await cache.lock('unittest', 1);
@@ -57,14 +57,16 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
     });
 
     it('should mock lock timeout', async () => {
-      const lockId = await cache.lock('unittest', 10);
+      const lockId = await cache.lock('CNPMCORE_L_unittest', 10);
       assert(lockId);
-      const lockId2 = await cache.lock('unittest', 10);
+      const lockId2 = await cache.lock('CNPMCORE_L_unittest', 10);
       assert(!lockId2);
-      await cache.set('unittest', '123');
+      // mock get return existsTimestamp > now
+      mock.data(app.redis, 'get', `${Date.now() - 123 * 1000}`);
       // lock timeout, use new lock
       const lockId3 = await cache.lock('CNPMCORE_L_unittest', 10);
       assert(lockId3);
+      assert.notEqual(lockId3, lockId);
     });
   });
 });
