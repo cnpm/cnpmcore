@@ -87,7 +87,7 @@
     "egg-tracer": "^1.1.0",
     "egg-typebox-validate": "^2.0.0",
     "fs-cnpm": "^2.4.0",
-    "ioredis": "^4.28.3",
+    "ioredis": "^5.3.1",
     "leoric": "^2.6.2",
     "lodash": "^4.17.21",
     "mysql": "^2.18.1",
