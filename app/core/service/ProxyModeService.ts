@@ -1,8 +1,6 @@
 import { InternalServerError, ForbiddenError, HttpError } from 'egg-errors';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
-import {
-  EggContextHttpClient,
-} from 'egg';
+import { EggHttpClient } from 'egg';
 import { calculateIntegrity } from '../../common/PackageUtil';
 import { getScopeAndName } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -27,7 +25,7 @@ import { DIST_NAMES } from '../entity/Package';
 })
 export class ProxyModeService extends AbstractService {
   @Inject()
-  private readonly httpclient: EggContextHttpClient;
+  private readonly httpclient: EggHttpClient;
   @Inject()
   private readonly npmRegistry: NPMRegistry;
   @Inject()
@@ -50,27 +48,20 @@ export class ProxyModeService extends AbstractService {
       throw new ForbiddenError(`stop proxy by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`);
     }
     const requestTgzURL = `${this.npmRegistry.registry}/${url}`;
-    let tmpfile:string;
-    try {
-      ({ tmpfile } = await downloadToTempfile(this.httpclient, this.config.dataDir, requestTgzURL));
-    } catch (error) {
-      throw new InternalServerError('get uplink tgz file failed.');
-    }
-
+    const { tmpfile } = await downloadToTempfile(this.httpclient, this.config.dataDir, requestTgzURL);
     const tgzBuffer = await readFile(tmpfile);
-    // FIXME: should it run in background?
-    await this.publishDownloadPackageVersionTar(fullname, version, tmpfile);
+    this.publishDownloadPackageVersionTar(fullname, version, tmpfile);
     return tgzBuffer;
   }
 
   // used by GET /:fullname
   async getPackageFullManifests(fullname: string) {
-    return this._getPackageFullOrAbbreviatedManifest(fullname, true);
+    return await this._getPackageFullOrAbbreviatedManifest(fullname, true);
   }
 
   // used by GET /:fullname | GET /:fullname/:versionOrTag | GET /-/package/:fullname/dist-tags
   async getPackageAbbreviatedManifests(fullname: string) {
-    return this._getPackageFullOrAbbreviatedManifest(fullname, false);
+    return await this._getPackageFullOrAbbreviatedManifest(fullname, false);
   }
 
   // used by GET /:fullname/:versionOrTag
@@ -174,7 +165,7 @@ export class ProxyModeService extends AbstractService {
         responseResult = await this.npmRegistry.getAbbreviatedManifests(fullname);
       }
     } catch (err: any) {
-      throw new InternalServerError('connect to uplink server failed.');
+      throw new InternalServerError(`connect to uplink server failed: ${err.message}`);
     }
     if (responseResult.status !== 200) {
       throw new HttpError({
