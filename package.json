@@ -1,6 +1,6 @@
 {
   "name": "cnpmcore",
-  "version": "3.2.6",
+  "version": "3.4.3",
   "description": "npm core",
   "files": [
     "dist/**/*"
@@ -37,14 +37,13 @@
   "scripts": {
     "contributor": "git-contributor",
     "dev": "DEBUG_LOCAL_SQL=true egg-bin dev",
-    "debug": "egg-bin debug",
     "lint": "eslint --cache --ext .ts .",
     "lint:fix": "eslint --cache --ext .ts --fix .",
     "test": "npm run lint:fix && npm run test-local",
     "prepare-database": "rm -rf dist && ts-node test/prepare.ts",
-    "test-local": "npm run prepare-database && egg-bin test --full-trace",
-    "t": "npm run lint:fix && npm run prepare-database && egg-bin test --changed --full-trace",
-    "cov": "npm run prepare-database && egg-bin cov --full-trace",
+    "test-local": "npm run prepare-database && egg-bin test",
+    "t": "npm run lint:fix && npm run prepare-database && egg-bin test --changed",
+    "cov": "npm run prepare-database && egg-bin cov",
     "ci": "npm run lint && npm run cov && npm run tsc:prod",
     "clean": "tsc -b --clean && rm -rf dist",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
@@ -58,11 +57,12 @@
     "url": "git+https://github.com/cnpm/npmcore.git"
   },
   "egg": {
-    "declarations": true,
     "typescript": true
   },
   "keywords": [
-    "npm"
+    "npm",
+    "npm registry",
+    "registry"
   ],
   "dependencies": {
     "@eggjs/tegg": "^3.2.1",
@@ -87,7 +87,7 @@
     "egg-tracer": "^1.1.0",
     "egg-typebox-validate": "^2.0.0",
     "fs-cnpm": "^2.4.0",
-    "ioredis": "^4.28.3",
+    "ioredis": "^5.3.1",
     "leoric": "^2.6.2",
     "lodash": "^4.17.21",
     "mysql": "^2.18.1",
@@ -100,12 +100,13 @@
     "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
+    "@swc/core": "^1.3.35",
     "@types/mocha": "^10.0.1",
     "@types/mysql": "^2.15.21",
     "@types/semver": "^7.3.12",
     "coffee": "^5.4.0",
-    "egg-bin": "^5.9.0",
-    "egg-mock": "^5.0.1",
+    "egg-bin": "^6.0.0",
+    "egg-mock": "^5.10.4",
     "eslint": "^8.29.0",
     "eslint-config-egg": "^12.1.0",
     "git-contributor": "2",

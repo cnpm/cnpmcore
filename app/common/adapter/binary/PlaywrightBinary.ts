@@ -189,7 +189,9 @@ export class PlaywrightBinary extends AbstractBinary {
               browsers.push(...data.browsers);
             })
             .catch(err => {
-              this.logger.warn('[PlaywrightBinary.fetch:error] Playwright version %s browser data request failed: %s', version, err);
+              /* c8 ignore next 2 */
+              this.logger.warn('[PlaywrightBinary.fetch:error] Playwright version %s browser data request failed: %s',
+                version, err);
             }),
         ),
       );

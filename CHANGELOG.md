@@ -1,5 +1,54 @@
 # Changelog
 
+## [3.4.3](https://github.com/cnpm/npmcore/compare/v3.4.2...v3.4.3) (2023-02-15)
+
+
+### Bug Fixes
+
+* changesStream suspend ([#408](https://github.com/cnpm/npmcore/issues/408)) ([2c821ea](https://github.com/cnpm/npmcore/commit/2c821eaa64a98b5515327ae5ffad0af2358a8554))
+
+## [3.4.2](https://github.com/cnpm/npmcore/compare/v3.4.1...v3.4.2) (2023-02-14)
+
+
+### Bug Fixes
+
+* distinct processing task ([#406](https://github.com/cnpm/npmcore/issues/406)) ([c43c067](https://github.com/cnpm/npmcore/commit/c43c067211e80f402aa645cd9da36ae1e8c42153))
+
+## [3.4.1](https://github.com/cnpm/npmcore/compare/v3.4.0...v3.4.1) (2023-02-13)
+
+
+### Bug Fixes
+
+* forbidden non-ascii binary subpath ([#405](https://github.com/cnpm/npmcore/issues/405)) ([7b52f6f](https://github.com/cnpm/npmcore/commit/7b52f6f30332a9d83be4f958bd3c9b0577021507))
+
+## [3.4.0](https://github.com/cnpm/npmcore/compare/v3.3.2...v3.4.0) (2023-02-10)
+
+
+### Features
+
+* sync delete mode ([#398](https://github.com/cnpm/npmcore/issues/398)) ([27af0be](https://github.com/cnpm/npmcore/commit/27af0beaadba4e83177946100c3d47391c1c6b18))
+
+## [3.3.2](https://github.com/cnpm/npmcore/compare/v3.3.1...v3.3.2) (2023-02-10)
+
+
+### Reverts
+
+* Revert "fix: should sync package deps by default (#400)" (#401) ([b021e1e](https://github.com/cnpm/npmcore/commit/b021e1ebc31b2eea118694b0816eeb99e5112f7d)), closes [#400](https://github.com/cnpm/npmcore/issues/400) [#401](https://github.com/cnpm/npmcore/issues/401)
+
+## [3.3.1](https://github.com/cnpm/npmcore/compare/v3.3.0...v3.3.1) (2023-02-10)
+
+
+### Bug Fixes
+
+* should sync package deps by default ([#400](https://github.com/cnpm/npmcore/issues/400)) ([282abf6](https://github.com/cnpm/npmcore/commit/282abf692045f4660831ceacf7e1e7851ff58241))
+
+## [3.3.0](https://github.com/cnpm/npmcore/compare/v3.2.6...v3.3.0) (2023-02-09)
+
+
+### Features
+
+* auto sync package's optionalDependencies ([#399](https://github.com/cnpm/npmcore/issues/399)) ([07a19cf](https://github.com/cnpm/npmcore/commit/07a19cfd1df84b4dce79e3fad666c91635d13d6e))
+
 ## [3.2.6](https://github.com/cnpm/npmcore/compare/v3.2.5...v3.2.6) (2023-02-05)
 
 
