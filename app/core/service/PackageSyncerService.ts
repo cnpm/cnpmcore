@@ -253,7 +253,8 @@ export class PackageSyncerService extends AbstractService {
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const [ scope, name ] = getScopeAndName(fullname);
-    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, specificVersion } = task.data as SyncPackageTaskOptions;
+    let { tempFilePath } = task.data as SyncPackageTaskOptions;
     let pkg = await this.packageRepository.findPackage(scope, name);
     const registry = await this.initSpecRegistry(task, pkg);
     const registryHost = this.npmRegistry.registry;
@@ -267,8 +268,8 @@ export class PackageSyncerService extends AbstractService {
     const skipDependencies = taskQueueInHighWaterState ? true : !!originSkipDependencies;
     const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
-    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
-      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
+    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, specific version: %s, log: %s',
+      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, !!specificVersion, logUrl);
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
@@ -339,30 +340,32 @@ export class PackageSyncerService extends AbstractService {
     //   "modified": "2021-12-08T14:59:57.264Z",
     const timeMap = data.time || {};
     const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
-    const contentLength = headers['content-length'] || '-';
-    logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`);
+    if (!specificVersion) {
+      const contentLength = headers['content-length'] || '-';
+      logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`);
 
-    // 404 unpublished
-    // 451 blocked
-    const shouldRemovePkg = status === 404 || status === 451;
-    if (shouldRemovePkg) {
-      if (pkg) {
-        await this.packageManagerService.unpublishPackage(pkg);
-        logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was unpublished caused by ${status} response: ${JSON.stringify(data)}`);
-        logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
-        logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
-        await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:remove-package] taskId: %s, targetName: %s',
-          task.taskId, task.targetName);
-      } else {
-        task.error = `Package not exists, response data: ${JSON.stringify(data)}`;
-        logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
-        logs.push(`[${isoNow()}] ${failEnd}`);
-        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
-          task.taskId, task.targetName, task.error);
+      // 404 unpublished
+      // 451 blocked
+      const shouldRemovePkg = status === 404 || status === 451;
+      if (shouldRemovePkg) {
+        if (pkg) {
+          await this.packageManagerService.unpublishPackage(pkg);
+          logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was unpublished caused by ${status} response: ${JSON.stringify(data)}`);
+          logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
+          logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
+          await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+          this.logger.info('[PackageSyncerService.executeTask:remove-package] taskId: %s, targetName: %s',
+            task.taskId, task.targetName);
+        } else {
+          task.error = `Package not exists, response data: ${JSON.stringify(data)}`;
+          logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+          logs.push(`[${isoNow()}] ${failEnd}`);
+          await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+          this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
+            task.taskId, task.targetName, task.error);
+        }
+        return;
       }
-      return;
     }
 
     const versionMap = data.versions || {};
@@ -469,118 +472,187 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     const updateVersions: string[] = [];
     const differentMetas: any[] = [];
-    let syncIndex = 0;
-    for (const item of versions) {
-      const version: string = item.version;
-      if (!version) continue;
-      let existsItem = existsVersionMap[version];
-      let existsAbbreviatedItem = abbreviatedVersionMap[version];
-      const shouldDeleteReadme = !!(existsItem && 'readme' in existsItem);
-      if (pkg) {
-        if (existsItem) {
-          // check item on AbbreviatedManifests
-          if (!existsAbbreviatedItem) {
-            updateVersions.push(version);
-            logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local abbreviated manifests, need to refresh`);
-          }
-        }
 
-        if (existsItem && forceSyncHistory === true) {
-          const pkgVer = await this.packageRepository.findPackageVersion(pkg.packageId, version);
-          if (pkgVer) {
-            logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Remove version ${version} for force sync history`);
-            await this.packageManagerService.removePackageVersion(pkg, pkgVer, true);
-            existsItem = undefined;
-            existsAbbreviatedItem = undefined;
-            existsVersionMap[version] = undefined;
-            abbreviatedVersionMap[version] = undefined;
-          }
-        }
-      }
-
-      if (existsItem) {
-        // check metaDataKeys, if different value, override exists one
-        // https://github.com/cnpm/cnpmjs.org/issues/1667
-        // need libc field https://github.com/cnpm/cnpmcore/issues/187
-        const metaDataKeys = [
-          'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated',
-        ];
-        let diffMeta: any;
-        for (const key of metaDataKeys) {
-          let remoteItemValue = item[key];
-          // make sure hasInstallScript exists
-          if (key === 'hasInstallScript' && remoteItemValue === undefined) {
-            if (detectInstallScript(item)) {
-              remoteItemValue = true;
+    if (!specificVersion) {
+      // sync all versions
+      let syncIndex = 0;
+      for (const item of versions) {
+        const version: string = item.version;
+        if (!version) continue;
+        let existsItem = existsVersionMap[version];
+        let existsAbbreviatedItem = abbreviatedVersionMap[version];
+        const shouldDeleteReadme = !!(existsItem && 'readme' in existsItem);
+        if (pkg) {
+          if (existsItem) {
+            // check item on AbbreviatedManifests
+            if (!existsAbbreviatedItem) {
+              updateVersions.push(version);
+              logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local abbreviated manifests, need to refresh`);
             }
           }
-          const remoteItemDiffValue = JSON.stringify(remoteItemValue);
-          if (remoteItemDiffValue !== JSON.stringify(existsItem[key])) {
-            if (!diffMeta) diffMeta = {};
-            diffMeta[key] = remoteItemValue;
-          } else if (existsAbbreviatedItem && remoteItemDiffValue !== JSON.stringify(existsAbbreviatedItem[key])) {
-            // should diff exists abbreviated item too
-            if (!diffMeta) diffMeta = {};
-            diffMeta[key] = remoteItemValue;
+
+          if (existsItem && forceSyncHistory === true) {
+            const pkgVer = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+            if (pkgVer) {
+              logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Remove version ${version} for force sync history`);
+              await this.packageManagerService.removePackageVersion(pkg, pkgVer, true);
+              existsItem = undefined;
+              existsAbbreviatedItem = undefined;
+              existsVersionMap[version] = undefined;
+              abbreviatedVersionMap[version] = undefined;
+            }
           }
         }
-        // should delete readme
-        if (shouldDeleteReadme) {
-          if (!diffMeta) diffMeta = {};
-          diffMeta.readme = undefined;
-        }
-        if (diffMeta) {
-          differentMetas.push([ existsItem, diffMeta ]);
-        }
-        continue;
-      }
-      syncIndex++;
-      const description: string = item.description;
-      // "dist": {
-      //   "shasum": "943e0ec03df00ebeb6273a5b94b916ba54b47581",
-      //   "tarball": "https://registry.npmjs.org/foo/-/foo-1.0.0.tgz"
-      // },
-      const dist = item.dist;
-      const tarball: string = dist && dist.tarball;
-      if (!tarball) {
-        lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
-        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
-        await this.taskService.appendTaskLog(task, logs.join('\n'));
-        logs = [];
-        continue;
-      }
-      const publishTimeISO = timeMap[version];
-      const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
-      const delay = Date.now() - publishTime.getTime();
-      logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
-      let localFile: string;
-      try {
-        const { tmpfile, headers, timing } =
-          await downloadToTempfile(this.httpclient, this.config.dataDir, tarball);
-        localFile = tmpfile;
-        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
-      } catch (err: any) {
-        this.logger.error('Download tarball %s error: %s', tarball, err);
-        lastErrorMessage = `download tarball error: ${err}`;
-        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
-        await this.taskService.appendTaskLog(task, logs.join('\n'));
-        logs = [];
-        continue;
-      }
-      if (!pkg) {
-        pkg = await this.packageRepository.findPackage(scope, name);
-      }
 
+        if (existsItem) {
+          // check metaDataKeys, if different value, override exists one
+          // https://github.com/cnpm/cnpmjs.org/issues/1667
+          // need libc field https://github.com/cnpm/cnpmcore/issues/187
+          const metaDataKeys = [
+            'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated',
+          ];
+          let diffMeta: any;
+          for (const key of metaDataKeys) {
+            let remoteItemValue = item[key];
+            // make sure hasInstallScript exists
+            if (key === 'hasInstallScript' && remoteItemValue === undefined) {
+              if (detectInstallScript(item)) {
+                remoteItemValue = true;
+              }
+            }
+            const remoteItemDiffValue = JSON.stringify(remoteItemValue);
+            if (remoteItemDiffValue !== JSON.stringify(existsItem[key])) {
+              if (!diffMeta) diffMeta = {};
+              diffMeta[key] = remoteItemValue;
+            } else if (existsAbbreviatedItem && remoteItemDiffValue !== JSON.stringify(existsAbbreviatedItem[key])) {
+              // should diff exists abbreviated item too
+              if (!diffMeta) diffMeta = {};
+              diffMeta[key] = remoteItemValue;
+            }
+          }
+          // should delete readme
+          if (shouldDeleteReadme) {
+            if (!diffMeta) diffMeta = {};
+            diffMeta.readme = undefined;
+          }
+          if (diffMeta) {
+            differentMetas.push([ existsItem, diffMeta ]);
+          }
+          continue;
+        }
+        syncIndex++;
+        const description: string = item.description;
+        // "dist": {
+        //   "shasum": "943e0ec03df00ebeb6273a5b94b916ba54b47581",
+        //   "tarball": "https://registry.npmjs.org/foo/-/foo-1.0.0.tgz"
+        // },
+        const dist = item.dist;
+        const tarball: string = dist && dist.tarball;
+        if (!tarball) {
+          lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
+          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
+          await this.taskService.appendTaskLog(task, logs.join('\n'));
+          logs = [];
+          continue;
+        }
+        const publishTimeISO = timeMap[version];
+        const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
+        const delay = Date.now() - publishTime.getTime();
+        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
+        let localFile: string;
+        try {
+          const { tmpfile, headers, timing } =
+            await downloadToTempfile(this.httpclient, this.config.dataDir, tarball);
+          localFile = tmpfile;
+          logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
+        } catch (err: any) {
+          this.logger.error('Download tarball %s error: %s', tarball, err);
+          lastErrorMessage = `download tarball error: ${err}`;
+          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
+          await this.taskService.appendTaskLog(task, logs.join('\n'));
+          logs = [];
+          continue;
+        }
+        if (!pkg) {
+          pkg = await this.packageRepository.findPackage(scope, name);
+        }
+
+        const publishCmd = {
+          scope,
+          name,
+          version,
+          description,
+          packageJson: item,
+          readme,
+          registryId: registry?.registryId,
+          dist: {
+            localFile,
+          },
+          isPrivate: false,
+          publishTime,
+          skipRefreshPackageManifests: true,
+        };
+        try {
+          // 当 version 记录已经存在时，还需要校验一下 pkg.manifests 是否存在
+          const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
+          updateVersions.push(pkgVersion.version);
+          logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
+        } catch (err: any) {
+          if (err.name === 'ForbiddenError') {
+            logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`);
+            // 如果 pkg.manifests 不存在，需要补充一下
+            updateVersions.push(version);
+          } else {
+            err.taskId = task.taskId;
+            this.logger.error(err);
+            lastErrorMessage = `publish error: ${err}`;
+            logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} error, ${lastErrorMessage}`);
+          }
+        }
+        await this.taskService.appendTaskLog(task, logs.join('\n'));
+        logs = [];
+        await rm(localFile, { force: true });
+        if (!skipDependencies) {
+          const dependencies = item.dependencies || {};
+          for (const dependencyName in dependencies) {
+            dependenciesSet.add(dependencyName);
+          }
+        }
+      }
+    } else {
+      // sync specific version
+      const item = versionMap[specificVersion];
+      const publishTimeISO = timeMap[specificVersion];
+      const description: string = item.description;
+      const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
+      if (!tempFilePath) {
+        const dist = item.dist;
+        const tarball: string = dist && dist.tarball;
+        try {
+          const { tmpfile, headers, timing } =
+            await downloadToTempfile(this.httpclient, this.config.dataDir, tarball);
+          tempFilePath = tmpfile;
+          logs.push(`[${isoNow()}] 🚧 HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${tempFilePath}`);
+        } catch (err: any) {
+          this.logger.error('Download tarball %s error: %s', tarball, err);
+          lastErrorMessage = `download tarball error: ${err}`;
+          logs.push(`[${isoNow()}] ❌ Synced specific version ${specificVersion} fail, ${lastErrorMessage}`);
+          await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+          this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package not exists',
+            task.taskId, task.targetName);
+          return;
+        }
+      }
       const publishCmd = {
         scope,
         name,
-        version,
+        version: specificVersion,
         description,
         packageJson: item,
         readme,
         registryId: registry?.registryId,
         dist: {
-          localFile,
+          localFile: tempFilePath,
         },
         isPrivate: false,
         publishTime,
@@ -590,22 +662,22 @@ export class PackageSyncerService extends AbstractService {
         // 当 version 记录已经存在时，还需要校验一下 pkg.manifests 是否存在
         const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
         updateVersions.push(pkgVersion.version);
-        logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
+        logs.push(`[${isoNow()}] 🟢 Synced version ${specificVersion!} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
       } catch (err: any) {
         if (err.name === 'ForbiddenError') {
-          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`);
+          logs.push(`[${isoNow()}] 🐛 Synced version ${specificVersion!} already exists, skip publish, try to set in local manifest`);
           // 如果 pkg.manifests 不存在，需要补充一下
-          updateVersions.push(version);
+          updateVersions.push(specificVersion!);
         } else {
           err.taskId = task.taskId;
           this.logger.error(err);
           lastErrorMessage = `publish error: ${err}`;
-          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} error, ${lastErrorMessage}`);
+          logs.push(`[${isoNow()}] ❌ Synced version ${specificVersion!} error, ${lastErrorMessage}`);
         }
       }
       await this.taskService.appendTaskLog(task, logs.join('\n'));
       logs = [];
-      await rm(localFile, { force: true });
+      await rm(tempFilePath, { force: true });
       if (!skipDependencies) {
         const dependencies = item.dependencies || {};
         for (const dependencyName in dependencies) {
@@ -629,29 +701,35 @@ export class PackageSyncerService extends AbstractService {
     }
 
     // 2.1 save differentMetas
-    for (const [ existsItem, diffMeta ] of differentMetas) {
-      const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsItem.version);
-      if (pkgVersion) {
-        await this.packageManagerService.savePackageVersionManifest(pkgVersion, diffMeta, diffMeta);
-        updateVersions.push(pkgVersion.version);
-        let diffMetaInfo = JSON.stringify(diffMeta);
-        if ('readme' in diffMeta) {
-          diffMetaInfo += ', delete exists readme';
+    // there is no differentMetas in specific version mode
+    if (!specificVersion) {
+      for (const [ existsItem, diffMeta ] of differentMetas) {
+        const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsItem.version);
+        if (pkgVersion) {
+          await this.packageManagerService.savePackageVersionManifest(pkgVersion, diffMeta, diffMeta);
+          updateVersions.push(pkgVersion.version);
+          let diffMetaInfo = JSON.stringify(diffMeta);
+          if ('readme' in diffMeta) {
+            diffMetaInfo += ', delete exists readme';
+          }
+          logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${diffMetaInfo}`);
         }
-        logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${diffMetaInfo}`);
       }
     }
 
     const removeVersions: string[] = [];
     // 2.3 find out remove versions
-    for (const existsVersion in existsVersionMap) {
-      if (!(existsVersion in versionMap)) {
-        const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsVersion);
-        if (pkgVersion) {
-          await this.packageManagerService.removePackageVersion(pkg, pkgVersion, true);
-          logs.push(`[${isoNow()}] 🟢 Removed version ${existsVersion} success`);
+    // there is no need to remove versions in specific version mode
+    if (!specificVersion) {
+      for (const existsVersion in existsVersionMap) {
+        if (!(existsVersion in versionMap)) {
+          const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsVersion);
+          if (pkgVersion) {
+            await this.packageManagerService.removePackageVersion(pkg, pkgVersion, true);
+            logs.push(`[${isoNow()}] 🟢 Removed version ${existsVersion} success`);
+          }
+          removeVersions.push(existsVersion);
         }
-        removeVersions.push(existsVersion);
       }
     }
 
