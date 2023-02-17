@@ -244,7 +244,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       mock(nfsClientAdapter, 'url', 'not-function');
       mock(app.config.cnpmcore, 'syncMode', 'none');
       mock(app.config.cnpmcore, 'enableProxyMode', true);
-      mock(proxyModeService, 'getPackageVersionTarAndPublish', async () => {
+      mock(proxyModeService, 'getPackageVersionTarAndTempFilePath', async () => {
         return Buffer.from('mock tgz file buffer');
       });
       const res = await app.httpRequest()

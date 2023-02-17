@@ -184,7 +184,7 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
     });
   });
 
-  describe('getPackageVersionTarAndPublish()', () => {
+  describe('getPackageVersionTarAndTempFilePath()', () => {
     let tgzBuffer: Buffer;
     let resBuffer: Buffer | null;
     let packageManagerService: PackageManagerService;
@@ -199,7 +199,7 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
         persist: false,
       });
-      resBuffer = await proxyModeService.getPackageVersionTarAndPublish('foobar', '1.0.0', 'foobar/-/foobar-1.0.0.tgz');
+      resBuffer = await proxyModeService.getPackageVersionTarAndTempFilePath('foobar', '1.0.0', 'foobar/-/foobar-1.0.0.tgz');
     });
 
     it('should reject by block list', async () => {
@@ -207,7 +207,7 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
       mock(app.config.cnpmcore, 'syncPackageBlockList', [ name ]);
       let error;
       try {
-        await proxyModeService.getPackageVersionTarAndPublish(name, '1.0.0', `${name}/-/${name}-1.0.0.tgz`);
+        await proxyModeService.getPackageVersionTarAndTempFilePath(name, '1.0.0', `${name}/-/${name}-1.0.0.tgz`);
       } catch (err) {
         error = err;
       }

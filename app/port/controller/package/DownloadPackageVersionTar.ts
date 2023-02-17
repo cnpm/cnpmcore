@@ -15,6 +15,7 @@ import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUti
 import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import { ProxyModeService } from '../../../core/service/ProxyModeService';
+import { PackageSyncerService } from '../../../core/service/PackageSyncerService';
 import { PackageVersion as PackageVersionEntity } from '../../../core/entity/PackageVersion';
 import { Package as PackageEntity } from '../../../core/entity/Package';
 @HTTPController()
@@ -23,6 +24,8 @@ export class DownloadPackageVersionTarController extends AbstractController {
   private packageManagerService: PackageManagerService;
   @Inject()
   private proxyModeService: ProxyModeService;
+  @Inject()
+  private packageSyncerService: PackageSyncerService;
   @Inject()
   private nfsAdapter: NFSAdapter;
 
@@ -51,7 +54,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
       if (err.name === 'PackageNotFoundError') {
         // proxy mode, package not found.
         if (this.isEnableProxyMode) {
-          const tgzBuffer = await this.proxyModeService.getPackageVersionTarAndPublish(fullname, version, ctx.url);
+          const tgzBuffer = await this.getPackageVersionTarAndCreateSpecVersionSyncTask(ctx, fullname, version);
           ctx.attachment(`${filenameWithVersion}.tgz`);
           return tgzBuffer;
         }
@@ -65,7 +68,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
       if (err.name === 'NotFoundError') {
         if (this.isEnableProxyMode) {
           // proxy mode package version not found.
-          const tgzBuffer = await this.proxyModeService.getPackageVersionTarAndPublish(fullname, version, ctx.url);
+          const tgzBuffer = await this.getPackageVersionTarAndCreateSpecVersionSyncTask(ctx, fullname, version);
           ctx.attachment(`${filenameWithVersion}.tgz`);
           return tgzBuffer;
         }
@@ -98,4 +101,21 @@ export class DownloadPackageVersionTarController extends AbstractController {
     const filenameWithVersion = getScopeAndName(fullnameWithVersion)[1];
     return await this.download(ctx, fullname, filenameWithVersion);
   }
+
+  private async getPackageVersionTarAndCreateSpecVersionSyncTask(ctx: EggContext, fullname: string, version: string) {
+    const { tgzBuffer, tempFilePath } = await this.proxyModeService.getPackageVersionTarAndTempFilePath(fullname, ctx.url);
+    const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    const task = await this.packageSyncerService.createTask(fullname, {
+      authorIp: ctx.ip,
+      authorId: authorized?.user.userId,
+      tips: `Sync specific version in proxy mode cause by "${ctx.href}"`,
+      skipDependencies: true,
+      specificVersion: version,
+      tempFilePath,
+    });
+    ctx.logger.info('[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
+      task.taskId, fullname);
+    return tgzBuffer;
+  }
+
 }
