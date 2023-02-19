@@ -5,9 +5,7 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
-import {
-  EggContextHttpClient,
-} from 'egg';
+import { EggHttpClient } from 'egg';
 import { setTimeout } from 'timers/promises';
 import { rm } from 'fs/promises';
 import semver from 'semver';
@@ -73,7 +71,7 @@ export class PackageSyncerService extends AbstractService {
   @Inject()
   private readonly cacheService: CacheService;
   @Inject()
-  private readonly httpclient: EggContextHttpClient;
+  private readonly httpclient: EggHttpClient;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
@@ -674,14 +672,7 @@ export class PackageSyncerService extends AbstractService {
           logs = [];
           await rm(localFile, { force: true });
           if (!skipDependencies) {
-            const dependencies: Record<string, string> = item.dependencies || {};
-            for (const dependencyName in dependencies) {
-              dependenciesSet.add(dependencyName);
-            }
-            const optionalDependencies: Record<string, string> = item.optionalDependencies || {};
-            for (const dependencyName in optionalDependencies) {
-              dependenciesSet.add(dependencyName);
-            }
+            this._addDependenciesSet(item, dependenciesSet);
           }
         }
       } else {
@@ -744,10 +735,7 @@ export class PackageSyncerService extends AbstractService {
         logs = [];
         await rm(tempFilePath, { force: true });
         if (!skipDependencies) {
-          const dependencies = item.dependencies || {};
-          for (const dependencyName in dependencies) {
-            dependenciesSet.add(dependencyName);
-          }
+          this._addDependenciesSet(item, dependenciesSet);
         }
       }
       // try to read package entity again after first sync
@@ -953,6 +941,17 @@ export class PackageSyncerService extends AbstractService {
       await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
       this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
         task.taskId, task.targetName);
+    }
+  }
+
+  private _addDependenciesSet(item, dependenciesSet) {
+    const dependencies: Record<string, string> = item.dependencies || {};
+    for (const dependencyName in dependencies) {
+      dependenciesSet.add(dependencyName);
+    }
+    const optionalDependencies: Record<string, string> = item.optionalDependencies || {};
+    for (const dependencyName in optionalDependencies) {
+      dependenciesSet.add(dependencyName);
     }
   }
 
