@@ -95,6 +95,7 @@ PaaS 环境实现自己的 infra module。
 
 - NFSClientAdapter.ts
 - QueueAdapter.ts
+- AuthAdapter.ts
 
 ## Controller 开发指南
 

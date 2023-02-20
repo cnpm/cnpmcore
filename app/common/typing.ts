@@ -1,5 +1,6 @@
 import { Readable } from 'stream';
 import { IncomingHttpHeaders } from 'http';
+import { EggContext } from '@eggjs/tegg';
 
 export interface UploadResult {
   key: string;
@@ -40,4 +41,18 @@ export interface QueueAdapter {
   push<T>(key: string, item: T): Promise<boolean>;
   pop<T>(key: string): Promise<T | null>;
   length(key: string): Promise<number>;
+}
+
+export interface AuthUrlResult {
+  loginUrl: string;
+  doneUrl: string;
+}
+
+export interface userResult {
+  name: string;
+  email: string;
+}
+export interface AuthClient {
+  getAuthUrl(ctx: EggContext): Promise<AuthUrlResult>;
+  ensureCurrentUser(): Promise<userResult | null>;
 }

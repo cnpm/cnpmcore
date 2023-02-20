@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto';
 import {
   Inject,
   HTTPController,
@@ -14,15 +13,16 @@ import {
   EggAppConfig,
 } from 'egg';
 import { Static, Type } from '@sinclair/typebox';
-import { LoginResultCode } from '../common/enum/User';
-import { CacheAdapter } from '../common/adapter/CacheAdapter';
-import { UserService } from '../core/service/UserService';
-import { MiddlewareController } from '../port/middleware';
+import { ForbiddenError, NotFoundError } from 'egg-errors';
+import { LoginResultCode } from '../../common/enum/User';
+import { CacheAdapter } from '../../common/adapter/CacheAdapter';
+import { UserService } from '../../core/service/UserService';
+import { MiddlewareController } from '../middleware';
+import { AuthAdapter } from '../../infra/AuthAdapter';
 
 const LoginRequestRule = Type.Object({
   // cli 所在机器的 hostname
   hostname: Type.String({ minLength: 1, maxLength: 100 }),
-  create: Type.Optional(Type.Boolean({ default: false })),
 });
 type LoginRequest = Static<typeof LoginRequestRule>;
 
@@ -32,10 +32,17 @@ const UserRule = Type.Object({
 });
 type User = Static<typeof UserRule>;
 
+const SessionRule = Type.Object({
+  // uuid
+  sessionId: Type.String({ minLength: 36, maxLength: 36 }),
+});
+
 @HTTPController()
 export class WebauthController extends MiddlewareController {
   @Inject()
   private cacheAdapter: CacheAdapter;
+  @Inject()
+  private authAdapter: AuthAdapter;
   @Inject()
   protected logger: EggLogger;
   @Inject()
@@ -50,12 +57,7 @@ export class WebauthController extends MiddlewareController {
   })
   async login(@Context() ctx: EggContext, @HTTPBody() loginRequest: LoginRequest) {
     ctx.tValidate(LoginRequestRule, loginRequest);
-    const sessionId = randomUUID();
-    await this.cacheAdapter.set(sessionId, '');
-    return {
-      loginUrl: `${ctx.href}/request/session/${sessionId}`,
-      doneUrl: `${ctx.href}/done/session/${sessionId}`,
-    };
+    return this.authAdapter.getAuthUrl(ctx);
   }
 
   private setBasicAuth(ctx: EggContext) {
@@ -68,6 +70,7 @@ export class WebauthController extends MiddlewareController {
     method: HTTPMethodEnum.GET,
   })
   async loginRequest(@Context() ctx: EggContext, @HTTPParam() sessionId: string) {
+    ctx.tValidate(SessionRule, { sessionId });
     ctx.type = 'html';
     const sessionToken = await this.cacheAdapter.get(sessionId);
     if (typeof sessionToken !== 'string') {
@@ -99,18 +102,13 @@ export class WebauthController extends MiddlewareController {
       ctx.tValidate(UserRule, user);
     } catch (err) {
       let message = err.message;
-      const item = err.errors[0];
-      if (item.instancePath) {
-        message = `${item.instancePath.substring(1)}: ${item.message}`;
-      } else {
-        message = item.message;
-      }
       this.setBasicAuth(ctx);
       return `Unauthorized, ${message}`;
     }
 
     if (this.config.cnpmcore.allowPublicRegistration === false) {
       if (!this.config.cnpmcore.admins[user.name]) {
+        ctx.status = 403;
         return '<h1>😭😭😭 Public registration is not allowed 😭😭😭</h1>';
       }
     }
@@ -129,19 +127,41 @@ export class WebauthController extends MiddlewareController {
     } else {
       // others: LoginResultCode.UserNotFound
       // create user request
-      const { token: tokenEntity, user: userEntity } = await this.userService.create({
+      const createRes = await this.userService.ensureTokenByUser({
         name: user.name,
         password: user.password,
         // FIXME: email verify
         email: `${user.name}@webauth.cnpmjs.org`,
         ip: ctx.ip,
       });
-      this.logger.info('[WebauthController.loginRequest] create new user: %s', userEntity.userId);
-      token = tokenEntity.token!;
+      token = createRes.token!;
     }
 
     await this.cacheAdapter.set(sessionId, token);
     ctx.redirect('/-/v1/login/request/success');
+  }
+
+  @HTTPMethod({
+    path: '/-/v1/login/sso/:sessionId',
+    method: HTTPMethodEnum.POST,
+  })
+  async ssoRequest(@Context() ctx: EggContext, @HTTPParam() sessionId: string) {
+    ctx.tValidate(SessionRule, { sessionId });
+    const sessionData = await this.cacheAdapter.get(sessionId);
+    if (sessionData !== '') {
+      throw new ForbiddenError('invalid sessionId');
+    }
+    // get current userInfo from infra
+    // @see https://github.com/eggjs/egg-userservice
+    const userRes = await this.authAdapter.ensureCurrentUser();
+    if (!userRes?.name || !userRes?.email) {
+      throw new ForbiddenError('invalid user info');
+    }
+    const { name, email } = userRes;
+    const { token } = await this.userService.ensureTokenByUser({ name, email });
+    await this.cacheAdapter.set(sessionId, token!);
+
+    return { success: true };
   }
 
   @HTTPMethod({
@@ -159,10 +179,10 @@ export class WebauthController extends MiddlewareController {
     method: HTTPMethodEnum.GET,
   })
   async loginDone(@Context() ctx: EggContext, @HTTPParam() sessionId: string) {
+    ctx.tValidate(SessionRule, { sessionId });
     const token = await this.cacheAdapter.get(sessionId);
     if (typeof token !== 'string') {
-      ctx.status = 404;
-      return { message: 'session not found' };
+      throw new NotFoundError('session not found');
     }
     if (token === '') {
       ctx.status = 202;

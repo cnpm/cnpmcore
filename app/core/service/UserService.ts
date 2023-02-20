@@ -11,11 +11,14 @@ import { Token as TokenEntity } from '../entity/Token';
 import { LoginResultCode } from '../../common/enum/User';
 import { integrity, checkIntegrity, randomToken, sha512 } from '../../common/UserUtil';
 import { AbstractService } from '../../common/AbstractService';
+import { HOST_NAME } from '../entity/Task';
+
+type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
 
 type CreateUser = {
   name: string;
-  password: string;
   email: string;
+  password: string;
   ip: string;
 };
 
@@ -51,6 +54,23 @@ export class UserService extends AbstractService {
     }
     const token = await this.createToken(user.userId);
     return { code: LoginResultCode.Success, user, token };
+  }
+
+  async ensureTokenByUser({ name, email, password = crypto.randomUUID(), ip = HOST_NAME }: Optional<CreateUser, 'password' | 'ip'>) {
+    let user = await this.userRepository.findUserByName(name);
+    if (!user) {
+      const createRes = await this.create({
+        name,
+        email,
+        // Authentication via sso
+        // should use token instead of password
+        password,
+        ip,
+      });
+      user = createRes.user;
+    }
+    const token = await this.createToken(user.userId);
+    return token;
   }
 
   async create(createUser: CreateUser) {
