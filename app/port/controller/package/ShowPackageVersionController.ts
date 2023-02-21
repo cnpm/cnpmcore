@@ -32,7 +32,7 @@ export class ShowPackageVersionController extends AbstractController {
     const isSync = isSyncWorkerRequest(ctx);
     let { blockReason, manifest, pkgId } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionOrTag, isSync);
     if (!pkgId) {
-      if (this.isEnableProxyMode) {
+      if (this.enableProxyMode) {
         manifest = await this.proxyModeService.getPackageVersionOrTagManifest(fullname, versionOrTag);
       } else {
         const allowSync = this.getAllowSync(ctx);
@@ -44,7 +44,7 @@ export class ShowPackageVersionController extends AbstractController {
       throw this.createPackageBlockError(blockReason, fullname, versionOrTag);
     }
     if (!manifest) {
-      if (this.isEnableProxyMode) {
+      if (this.enableProxyMode) {
         manifest = await this.proxyModeService.getPackageVersionOrTagManifest(fullname, versionOrTag);
       } else {
         throw new NotFoundError(`${fullname}@${versionOrTag} not found`);

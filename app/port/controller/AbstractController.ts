@@ -74,7 +74,7 @@ export abstract class AbstractController extends MiddlewareController {
     return this.config.cnpmcore.redirectNotFound;
   }
 
-  protected get isEnableProxyMode() {
+  protected get enableProxyMode() {
     return this.config.cnpmcore.enableProxyMode && this.config.cnpmcore.syncMode === 'none';
   }
 

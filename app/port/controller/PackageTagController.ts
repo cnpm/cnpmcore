@@ -31,7 +31,7 @@ export class PackageTagController extends AbstractController {
   })
   async showTags(@HTTPParam() fullname: string) {
     // try to get package from source registry when proxy mode
-    if (this.isEnableProxyMode) {
+    if (this.enableProxyMode) {
       const { data: manifest } = await this.proxyModeService.getPackageAbbreviatedManifests(fullname);
       const tags = manifest['dist-tags'];
       if (tags) {

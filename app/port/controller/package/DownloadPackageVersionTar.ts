@@ -53,7 +53,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     } catch (err) {
       if (err.name === 'PackageNotFoundError') {
         // proxy mode, package not found.
-        if (this.isEnableProxyMode) {
+        if (this.enableProxyMode) {
           const tgzBuffer = await this.getPackageVersionTarAndCreateSpecVersionSyncTask(ctx, fullname, version);
           ctx.attachment(`${filenameWithVersion}.tgz`);
           return tgzBuffer;
@@ -66,7 +66,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
       packageVersion = await this.getPackageVersionEntity(pkg, version);
     } catch (err) {
       if (err.name === 'NotFoundError') {
-        if (this.isEnableProxyMode) {
+        if (this.enableProxyMode) {
           // proxy mode package version not found.
           const tgzBuffer = await this.getPackageVersionTarAndCreateSpecVersionSyncTask(ctx, fullname, version);
           ctx.attachment(`${filenameWithVersion}.tgz`);
