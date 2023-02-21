@@ -7,7 +7,7 @@ import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
-import { Task } from '../entity/Task';
+import { Task, CreateSyncPackageTaskData } from '../entity/Task';
 import { QueueAdapter } from '../../common/typing';
 
 @SingletonProto({
@@ -27,8 +27,16 @@ export class TaskService extends AbstractService {
 
   public async createTask(task: Task, addTaskQueueOnExists: boolean) {
     const existsTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type);
-    if (existsTask) {
-      // 如果任务还未被触发，就不继续重复创建
+    const existsTaskVersionList = await this.taskRepository.findAllTaskVersionByTargetName(task.targetName, task.type);
+    let isTheSameVersionTask = true;
+    if (task.type === TaskType.SyncPackage) {
+      const currentSpecificVersion = (task as Task<CreateSyncPackageTaskData>)?.data?.specificVersion;
+      if (currentSpecificVersion && !existsTaskVersionList.includes(currentSpecificVersion)) {
+        isTheSameVersionTask = false;
+      }
+    }
+    if (existsTask && isTheSameVersionTask) {
+      // 如果任务还未被触发，并且是相同版本的同步任务，就不继续重复创建
       // 如果任务正在执行，可能任务状态已更新，这种情况需要继续创建
       if (existsTask.state === TaskState.Waiting) {
         // 提高任务的优先级

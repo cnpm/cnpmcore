@@ -56,6 +56,8 @@ export interface CreateSyncPackageTaskData extends TaskBaseData {
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
   forceSyncHistory?: boolean;
+  specificVersion?: string;
+  tempFilePath?: string;
 }
 
 export interface ChangesStreamTaskData extends TaskBaseData {
