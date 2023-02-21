@@ -60,7 +60,7 @@ export class ShowPackageController extends AbstractController {
 
     // handle cache miss
     let result: { etag: string; data: any, blockReason: string };
-    if (this.isEnableProxyMode) {
+    if (this.enableProxyMode) {
       // proxy mode
       if (isFullManifests) {
         result = await this.proxyModeService.getPackageFullManifests(fullname);

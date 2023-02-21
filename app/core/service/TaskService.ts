@@ -27,15 +27,16 @@ export class TaskService extends AbstractService {
 
   public async createTask(task: Task, addTaskQueueOnExists: boolean) {
     const existsTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type);
-    const existsTaskVersionList = await this.taskRepository.findAllTaskVersionByTargetName(task.targetName, task.type);
-    let isTheSameVersionTask = true;
-    if (task.type === TaskType.SyncPackage) {
+    let haveTheSameVersionTask = true;
+    const enableProxyMode = this.config.cnpmcore.enableProxyMode && this.config.cnpmcore.syncMode === 'none';
+    if (task.type === TaskType.SyncPackage && enableProxyMode) {
+      const existsTaskVersionList = await this.taskRepository.findAllTaskVersionByTargetName(task.targetName, task.type);
       const currentSpecificVersion = (task as Task<CreateSyncPackageTaskData>)?.data?.specificVersion;
       if (currentSpecificVersion && !existsTaskVersionList.includes(currentSpecificVersion)) {
-        isTheSameVersionTask = false;
+        haveTheSameVersionTask = false;
       }
     }
-    if (existsTask && isTheSameVersionTask) {
+    if (existsTask && haveTheSameVersionTask) {
       // 如果任务还未被触发，并且是相同版本的同步任务，就不继续重复创建
       // 如果任务正在执行，可能任务状态已更新，这种情况需要继续创建
       if (existsTask.state === TaskState.Waiting) {

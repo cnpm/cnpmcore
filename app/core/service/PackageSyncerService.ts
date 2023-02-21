@@ -683,7 +683,7 @@ export class PackageSyncerService extends AbstractService {
       const description: string = item.description;
       const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
       // 下载的临时文件可能被清理
-      let isTempFileExist = true;
+      let isTempFileExist = false;
       if (tempFilePath) {
         try {
           await stat(tempFilePath);
@@ -691,8 +691,6 @@ export class PackageSyncerService extends AbstractService {
         } catch (err) {
           isTempFileExist = false;
         }
-      } else {
-        isTempFileExist = false;
       }
 
       if (!tempFilePath || !isTempFileExist) {
