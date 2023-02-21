@@ -3,7 +3,7 @@ import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { Task as TaskModel } from './model/Task';
 import type { HistoryTask as HistoryTaskModel } from './model/HistoryTask';
-import { Task as TaskEntity, TaskUpdateCondition } from '../core/entity/Task';
+import { Task as TaskEntity, TaskUpdateCondition, CreateSyncPackageTaskData } from '../core/entity/Task';
 import { AbstractRepository } from './AbstractRepository';
 import { TaskType, TaskState } from '../../app/common/enum/Task';
 
@@ -108,6 +108,23 @@ export class TaskRepository extends AbstractRepository {
       return ModelConvertor.convertModelToEntity(task, TaskEntity);
     }
     return null;
+  }
+
+  async findAllTaskVersionByTargetName(targetName: string, type: TaskType, state?: TaskState) {
+    const where: any = { targetName, type };
+    if (state) {
+      where.state = state;
+    }
+    const taskModelList = await (await this.Task.find(where));
+    if (taskModelList.length > 0) {
+      const taskList = taskModelList.map(item => {
+        return ModelConvertor.convertModelToEntity(item, TaskEntity);
+      });
+      return taskList.map((i:TaskEntity<CreateSyncPackageTaskData>) => {
+        return i.data?.specificVersion;
+      });
+    }
+    return [];
   }
 
   async findTimeoutTasks(taskState: TaskState, timeout: number) {

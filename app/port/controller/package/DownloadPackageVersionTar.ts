@@ -104,10 +104,9 @@ export class DownloadPackageVersionTarController extends AbstractController {
 
   private async getPackageVersionTarAndCreateSpecVersionSyncTask(ctx: EggContext, fullname: string, version: string) {
     const { tgzBuffer, tempFilePath } = await this.proxyModeService.getPackageVersionTarAndTempFilePath(fullname, ctx.url);
-    const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     const task = await this.packageSyncerService.createTask(fullname, {
       authorIp: ctx.ip,
-      authorId: authorized?.user.userId,
+      authorId: `pid_${process.pid}`,
       tips: `Sync specific version in proxy mode cause by "${ctx.href}"`,
       skipDependencies: true,
       specificVersion: version,
