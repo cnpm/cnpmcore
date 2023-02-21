@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0](https://github.com/cnpm/npmcore/compare/v3.4.3...v3.5.0) (2023-02-21)
+
+
+### Features
+
+* support webauth infra ([#411](https://github.com/cnpm/npmcore/issues/411)) ([583437a](https://github.com/cnpm/npmcore/commit/583437a83ea8cb04667629b70d637891808ae3dc))
+
 ## [3.4.3](https://github.com/cnpm/npmcore/compare/v3.4.2...v3.4.3) (2023-02-15)
 
 
