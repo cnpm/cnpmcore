@@ -2,8 +2,6 @@ import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import fs from 'fs/promises';
-import { Registry as RegistryModel } from 'app/repository/model/Registry';
-import { PackageManagerService } from 'app/core/service/PackageManagerService';
 import { ProxyModeService } from 'app/core/service/ProxyModeService';
 import { NFSClientAdapter } from 'app/infra/NFSClientAdapter';
 import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
@@ -19,19 +17,6 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
     proxyModeService = await app.getEggObject(ProxyModeService);
     nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
     npmRegistry = await app.getEggObject(NPMRegistry);
-  });
-
-  describe('initProxyModeRegistry()', () => {
-    it('should return default source registry.', async () => {
-      const registry = await proxyModeService.initProxyModeRegistry();
-      assert(registry?.host === app.config.cnpmcore.sourceRegistry);
-    });
-
-    it('should insert default registry into database after init.', async () => {
-      await proxyModeService.initProxyModeRegistry();
-      const model = await RegistryModel.findOne({ name: 'default' });
-      assert(model?.host === app.config.cnpmcore.sourceRegistry);
-    });
   });
 
   describe('get package manifest', () => {
@@ -187,9 +172,7 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
   describe('getPackageVersionTarAndTempFilePath()', () => {
     let tgzBuffer: Buffer;
     let resBuffer: Buffer | null;
-    let packageManagerService: PackageManagerService;
     beforeEach(async () => {
-      packageManagerService = await app.getEggObject(PackageManagerService);
       tgzBuffer = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz');
       app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
         data: tgzBuffer,
@@ -199,7 +182,7 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
         persist: false,
       });
-      resBuffer = await proxyModeService.getPackageVersionTarAndTempFilePath('foobar', '1.0.0', 'foobar/-/foobar-1.0.0.tgz');
+      ({ tgzBuffer: resBuffer } = await proxyModeService.getPackageVersionTarAndTempFilePath('foobar', 'foobar/-/foobar-1.0.0.tgz'));
     });
 
     it('should reject by block list', async () => {
@@ -207,7 +190,7 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
       mock(app.config.cnpmcore, 'syncPackageBlockList', [ name ]);
       let error;
       try {
-        await proxyModeService.getPackageVersionTarAndTempFilePath(name, '1.0.0', `${name}/-/${name}-1.0.0.tgz`);
+        await proxyModeService.getPackageVersionTarAndTempFilePath(name, `${name}/-/${name}-1.0.0.tgz`);
       } catch (err) {
         error = err;
       }
@@ -216,27 +199,6 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
 
     it('should get the tgz buffer from source registry', async () => {
       assert((await calculateIntegrity(resBuffer!)).shasum === (await calculateIntegrity(tgzBuffer)).shasum);
-    });
-
-    it('should publish the specified version to database', async () => {
-      const { data: manifests } = await packageManagerService.listPackageFullManifests('', 'foobar');
-      assert(manifests);
-      assert(manifests.versions['1.0.0']);
-      assert(Object.keys(manifests.versions).length === 1);
-    });
-
-    it('should sync maintainers when publish', async () => {
-      const { data: manifests } = await packageManagerService.listPackageFullManifests('', 'foobar');
-      const sourceManifests = JSON.parse((await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json')).toString('utf8'));
-      assert(manifests.maintainers.length >= 1);
-      assert.deepEqual(manifests.maintainers, sourceManifests.maintainers);
-    });
-
-    it('should sync dist-tags when publish', async () => {
-      const { data: manifests } = await packageManagerService.listPackageFullManifests('', 'foobar');
-      const sourceManifests = JSON.parse((await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json')).toString('utf8'));
-      assert(Object.keys(manifests['dist-tags']).length >= 1);
-      assert.deepEqual(manifests['dist-tags'], sourceManifests['dist-tags']);
     });
   });
 });

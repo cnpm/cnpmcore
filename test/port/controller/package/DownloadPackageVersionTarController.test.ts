@@ -3,6 +3,9 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { NFSClientAdapter } from 'app/infra/NFSClientAdapter';
 import { ProxyModeService } from 'app/core/service/ProxyModeService';
+import { TaskRepository } from 'app/repository/TaskRepository';
+import { TaskType } from 'app/common/enum/Task';
+import { Task, CreateSyncPackageTaskData } from 'app/core/entity/Task';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let publisher: any;
@@ -245,7 +248,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       mock(app.config.cnpmcore, 'syncMode', 'none');
       mock(app.config.cnpmcore, 'enableProxyMode', true);
       mock(proxyModeService, 'getPackageVersionTarAndTempFilePath', async () => {
-        return Buffer.from('mock tgz file buffer');
+        return { tgzBuffer: Buffer.from('mock tgz file buffer') };
       });
       const res = await app.httpRequest()
         .get(`/${proxyModuleName}/-/${proxyModuleName}-1.0.0.tgz`)
@@ -254,6 +257,45 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .expect(200);
       assert(res.body.toString('utf8') === 'mock tgz file buffer');
     });
+
+    describe('create package sync task in proxy mode', async () => {
+      let proxyModeService: ProxyModeService;
+      let taskRepository: TaskRepository;
+      const proxyModuleName = 'proxymodule-download-version-tar';
+
+      beforeEach(async () => {
+        proxyModeService = await app.getEggObject(ProxyModeService);
+        taskRepository = await app.getEggObject(TaskRepository);
+        mock(nfsClientAdapter, 'url', 'not-function');
+        mock(app.config.cnpmcore, 'syncMode', 'none');
+        mock(app.config.cnpmcore, 'enableProxyMode', true);
+        mock(proxyModeService, 'getPackageVersionTarAndTempFilePath', async () => {
+          return { tgzBuffer: Buffer.from('mock tgz file buffer') };
+        });
+      });
+
+      it('should create sync task in proxy', async () => {
+        await app.httpRequest()
+          .get(`/${proxyModuleName}/-/${proxyModuleName}-1.0.0.tgz`);
+        const task = (await taskRepository.findTaskByTargetName(proxyModuleName, TaskType.SyncPackage)) as Task<CreateSyncPackageTaskData>;
+        assert(task.data.specificVersion === '1.0.0');
+      });
+
+      it('should not create same version task', async () => {
+        await app.httpRequest().get(`/${proxyModuleName}/-/${proxyModuleName}-1.0.0.tgz`);
+        await app.httpRequest().get(`/${proxyModuleName}/-/${proxyModuleName}-1.0.0.tgz`);
+        const taskVersionList = await taskRepository.findAllTaskVersionByTargetName(proxyModuleName, TaskType.SyncPackage);
+        assert(taskVersionList.length === 1);
+      });
+
+      it('should create different version task', async () => {
+        await app.httpRequest().get(`/${proxyModuleName}/-/${proxyModuleName}-1.0.0.tgz`);
+        await app.httpRequest().get(`/${proxyModuleName}/-/${proxyModuleName}-2.0.0.tgz`);
+        const taskVersionList = await taskRepository.findAllTaskVersionByTargetName(proxyModuleName, TaskType.SyncPackage);
+        assert(taskVersionList.length === 2);
+      });
+    });
+
   });
 
   describe('[GET /:fullname/download/:fullname-:version.tgz] deprecatedDownload()', () => {
