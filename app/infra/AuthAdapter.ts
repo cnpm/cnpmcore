@@ -10,6 +10,11 @@ import { AuthClient, AuthUrlResult, userResult } from '../common/typing';
 
 const ONE_DAY = 3600 * 24;
 
+type SSO_USER = {
+  name: string;
+  email: string;
+};
+
 /**
  * Use sort set to keep queue in order and keep same value only insert once
  */
@@ -22,7 +27,7 @@ export class AuthAdapter implements AuthClient {
   readonly redis: Redis;
 
   @Inject()
-  readonly user: any;
+  readonly user: SSO_USER;
 
   async getAuthUrl(ctx: EggContext): Promise<AuthUrlResult> {
     const sessionId = randomUUID();

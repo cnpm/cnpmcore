@@ -30,7 +30,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
         .post('/-/v1/login');
 
       assert.equal(res.status, 422);
-      assert.equal(res.body.error, "[INVALID_PARAM] must have required property 'hostname'")
+      assert.equal(res.body.error, "[INVALID_PARAM] must have required property 'hostname'");
 
     });
 
@@ -48,7 +48,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
 
     it('should check sessionId type', async () => {
       const res = await app.httpRequest()
-        .get(`/-/v1/login/request/session/123`);
+        .get('/-/v1/login/request/session/123');
 
       assert.equal(res.status, 422);
       assert.equal(res.body.error, '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters');
@@ -87,8 +87,8 @@ describe('test/port/webauth/webauthController.test.ts', () => {
     });
 
     describe('should verify base64string', () => {
-      let authorization = ''
-      beforeEach(async() => {
+      let authorization = '';
+      beforeEach(async () => {
         const userService = await app.getEggObject(UserService);
         await userService.create({
           name: 'banana',
@@ -186,7 +186,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
     it('should check sessionId exists', async () => {
 
       const res = await app.httpRequest()
-        .post(`/-/v1/login/sso/banana`);
+        .post('/-/v1/login/sso/banana');
 
       assert.equal(res.status, 422);
       assert.equal(res.body.error, '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters');
@@ -220,11 +220,11 @@ describe('test/port/webauth/webauthController.test.ts', () => {
     it('should work', async () => {
 
       const res = await app.httpRequest()
-        .get(`/-/v1/login/request/success`);
+        .get('/-/v1/login/request/success');
 
       assert.equal(res.status, 200);
       assert.equal(res.headers['content-type'], 'text/html; charset=utf-8');
-      assert(/Authorization Successful/.test(res.text))
+      assert(/Authorization Successful/.test(res.text));
 
     });
   });
@@ -242,7 +242,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
     it('should check sessionId type', async () => {
 
       const res = await app.httpRequest()
-        .get(`/-/v1/login/done/session/123`);
+        .get('/-/v1/login/done/session/123');
 
       assert.equal(res.status, 422);
       assert.equal(res.body.error, '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters');

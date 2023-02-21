@@ -56,12 +56,6 @@ export class UserRepository extends AbstractRepository {
     return ModelConvertor.convertModelToEntity(model, TokenEntity);
   }
 
-  async findTokenByUserId(userId: string) {
-    const model = await this.Token.findOne({ userId });
-    if (!model) return null;
-    return ModelConvertor.convertModelToEntity(model, TokenEntity);
-  }
-
   async saveToken(token: TokenEntity): Promise<void> {
     if (token.id) {
       const model = await this.Token.findOne({ id: token.id });

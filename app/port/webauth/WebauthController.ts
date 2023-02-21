@@ -101,7 +101,7 @@ export class WebauthController extends MiddlewareController {
     try {
       ctx.tValidate(UserRule, user);
     } catch (err) {
-      let message = err.message;
+      const message = err.message;
       this.setBasicAuth(ctx);
       return `Unauthorized, ${message}`;
     }
@@ -158,7 +158,7 @@ export class WebauthController extends MiddlewareController {
       throw new ForbiddenError('invalid user info');
     }
     const { name, email } = userRes;
-    const { token } = await this.userService.ensureTokenByUser({ name, email });
+    const { token } = await this.userService.ensureTokenByUser({ name, email, ip: ctx.ip });
     await this.cacheAdapter.set(sessionId, token!);
 
     return { success: true };
