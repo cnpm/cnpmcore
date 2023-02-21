@@ -45,7 +45,7 @@ npm run test
 
 ## 项目结构
 
-```
+```txt
 app
 ├── common
 │   └── adapter
@@ -58,6 +58,8 @@ app
 │   └── controller
 ├── repository
 │   └── model
+├── infra
+│   └── NFSClientAdapter.ts
 └── test
     ├── control
     │   └── response_time.test.js
@@ -85,6 +87,15 @@ repository：
 port：
 
 - controller：HTTP controller
+
+infra：
+
+基于 PaaS 基础设置实现各种 adapter 真实适配实现，cnpmcore 会内置一种实现，企业自定义的 cnpmcore 应该自行基于自身的
+PaaS 环境实现自己的 infra module。
+
+- NFSClientAdapter.ts
+- QueueAdapter.ts
+- AuthAdapter.ts
 
 ## Controller 开发指南
 
