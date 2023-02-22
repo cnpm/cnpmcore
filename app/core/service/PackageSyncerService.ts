@@ -617,9 +617,10 @@ export class PackageSyncerService extends AbstractService {
       const delay = Date.now() - publishTime.getTime();
       logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
       let localFile: string;
-      // // 下载的临时文件可能被清理
+      // 下载的临时文件可能被清理
       let isTempFileExist = false;
-      if (tempFilePath) {
+      // tempFilePath仅在同步指定版本模式时作为可选参数传入
+      if (tempFilePath && specificVersion) {
         try {
           await stat(tempFilePath);
           isTempFileExist = true;

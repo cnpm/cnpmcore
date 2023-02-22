@@ -83,6 +83,8 @@ export default (appInfo: EggAppConfig) => {
     syncNotFound: false,
     // redirect to source registry when package not found, only effect when syncMode = all/exist
     redirectNotFound: true,
+    // switch cnpmcore to a proxy repository, e.g. nexus.only works in syncMode='none'.
+    // https://help.sonatype.com/repomanager3/using-nexus-repository/repository-manager-concepts/proxy-repository-concepts#ProxyRepositoryConcepts-Whatisaproxyrepository
     enableProxyMode: false,
   };
 
