@@ -15,7 +15,7 @@ import { QueueAdapter } from '../common/typing';
 })
 export class RedisQueueAdapter implements QueueAdapter {
   @Inject()
-  private readonly redis: Redis;
+  private readonly redis: Redis; // 由 redis 插件引入
 
   private getQueueName(key: string) {
     return `CNPMCORE_Q_V2_${key}`;
