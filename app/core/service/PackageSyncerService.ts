@@ -10,7 +10,7 @@ import { setTimeout } from 'timers/promises';
 import { rm, stat } from 'fs/promises';
 import semver from 'semver';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
-import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
+import { detectInstallScript, getScopeAndName, calculateIntegrity } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
@@ -645,6 +645,18 @@ export class PackageSyncerService extends AbstractService {
         }
       } else {
         localFile = tempFilePath;
+      }
+
+      // 校验下载的tgz是否完整
+      const tarDistIntegrity = await calculateIntegrity(localFile);
+      if (dist.integrity !== tarDistIntegrity.integrity) {
+        this.logger.error('Download tarball %s error: integrity check failed.', tarball);
+        await rm(localFile, { force: true });
+        lastErrorMessage = 'tgz file integrity check failed';
+        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
+        await this.taskService.appendTaskLog(task, logs.join('\n'));
+        logs = [];
+        continue;
       }
 
       if (!pkg) {
