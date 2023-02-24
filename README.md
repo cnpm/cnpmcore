@@ -16,6 +16,10 @@ See https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#npm-regi
 
 See [DEVELOPER.md](DEVELOPER.md)
 
+## How to integrate
+
+See [INTEGRATE.md](INTEGRATE.md)
+
 ## License
 
 [MIT](LICENSE)
