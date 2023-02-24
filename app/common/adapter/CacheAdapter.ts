@@ -14,7 +14,7 @@ const ONE_DAY = 3600 * 24;
 })
 export class CacheAdapter {
   @Inject()
-  private readonly redis: Redis;
+  private readonly redis: Redis; // 由 redis 插件引入
 
   async setBytes(key: string, bytes: Buffer) {
     await this.redis.setex(key, ONE_DAY, bytes);
