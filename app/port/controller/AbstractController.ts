@@ -43,7 +43,7 @@ export abstract class AbstractController extends MiddlewareController {
   }
 
   protected get enableSync() {
-    return this.config.cnpmcore.syncMode === 'all' || this.config.cnpmcore.syncMode === 'exist';
+    return this.config.cnpmcore.syncMode === 'all' || this.config.cnpmcore.syncMode === 'exist' || this.enableProxyMode;
   }
 
   protected isPrivateScope(scope: string) {
