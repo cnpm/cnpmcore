@@ -66,6 +66,7 @@ export class PackageSyncController extends AbstractController {
       skipDependencies: !!data.skipDependencies,
       syncDownloadData: !!data.syncDownloadData,
       force: !!data.force,
+      specificVersion: data.specificVersion,
       // only admin allow to sync history version
       forceSyncHistory: !!data.forceSyncHistory && isAdmin,
     };
@@ -94,6 +95,7 @@ export class PackageSyncController extends AbstractController {
       skipDependencies: params.skipDependencies,
       syncDownloadData: params.syncDownloadData,
       forceSyncHistory: params.forceSyncHistory,
+      specificVersion: params?.specificVersion,
       registryId: registry?.registryId,
     });
     ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',

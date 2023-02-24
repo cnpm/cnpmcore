@@ -73,6 +73,7 @@ export const SyncPackageTaskRule = Type.Object({
     maxLength: 1024,
   }),
   skipDependencies: Type.Boolean(),
+  specificVersion: Type.Optional(Version),
   syncDownloadData: Type.Boolean(),
   // force sync immediately, only allow by admin
   force: Type.Boolean(),
