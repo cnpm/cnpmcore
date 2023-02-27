@@ -59,6 +59,18 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
     assert(task);
   });
 
+  it('should create different task when pkg in different version in proxy mode', async () => {
+    mock(app.config.cnpmcore, 'syncMode', 'none');
+    mock(app.config.cnpmcore, 'enableProxyMode', true);
+    const task1 = await packageSyncerService.createTask(pkgName, {
+      specificVersion: '1.0.0',
+    });
+    const task2 = await packageSyncerService.createTask(pkgName, {
+      specificVersion: '2.0.0',
+    });
+    assert(task1.taskId !== task2.taskId);
+  });
+
   it('should merge task when processing', async () => {
     mock(packageSyncerService, 'executeTask', async (task: Task) => {
       task.state = TaskState.Processing;
