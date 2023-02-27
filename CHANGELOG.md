@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.0](https://github.com/cnpm/npmcore/compare/v3.5.0...v3.6.0) (2023-02-27)
+
+
+### Features
+
+* add integrate doc ([#413](https://github.com/cnpm/npmcore/issues/413)) ([a02f8b4](https://github.com/cnpm/npmcore/commit/a02f8b45d3f1436f392330b85b68101b74c43332))
+
 ## [3.5.0](https://github.com/cnpm/npmcore/compare/v3.4.3...v3.5.0) (2023-02-21)
 
 
