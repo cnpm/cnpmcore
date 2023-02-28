@@ -27,6 +27,7 @@ import {
   Name as NameType,
   Description as DescriptionType,
 } from '../../typebox';
+import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -66,7 +67,10 @@ const PACKAGE_ATTACH_DATA_RE = /^[A-Za-z0-9+/]{4}/;
 @HTTPController()
 export class SavePackageVersionController extends AbstractController {
   @Inject()
-  private packageManagerService: PackageManagerService;
+  private readonly packageManagerService: PackageManagerService;
+
+  @Inject()
+  private readonly registryManagerService: RegistryManagerService;
 
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#publish-a-new-package
   // https://github.com/npm/libnpmpublish/blob/main/publish.js#L43
@@ -187,6 +191,8 @@ export class SavePackageVersionController extends AbstractController {
     if (typeof packageVersion.description !== 'string') {
       packageVersion.description = '';
     }
+
+    const registry = await this.registryManagerService.ensureSelfRegistry();
     const packageVersionEntity = await this.packageManagerService.publish({
       scope,
       name,
@@ -198,8 +204,10 @@ export class SavePackageVersionController extends AbstractController {
         content: tarballBytes,
       },
       tag: tagWithVersion.tag,
+      registryId: registry.registryId,
       isPrivate: true,
     }, authorizedUser);
+
     this.logger.info('[package:version:add] %s@%s, packageVersionId: %s, tag: %s, userId: %s',
       packageVersion.name, packageVersion.version, packageVersionEntity.packageVersionId,
       tagWithVersion.tag, authorizedUser.userId);
@@ -233,4 +241,3 @@ export class SavePackageVersionController extends AbstractController {
     }
   }
 }
-

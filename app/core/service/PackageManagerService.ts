@@ -8,7 +8,7 @@ import {
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import semver from 'semver';
-import { calculateIntegrity, detectInstallScript, formatTarball, getFullname, getScopeAndName } from '../../common/PackageUtil';
+import { calculateIntegrity, cleanUserPrefix, detectInstallScript, formatTarball, getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { AbstractService } from '../../common/AbstractService';
 import { BugVersionStore } from '../../common/adapter/BugVersionStore';
 import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants';
@@ -107,7 +107,7 @@ export class PackageManagerService extends AbstractService {
       }
 
       /* c8 ignore next 3 */
-      if (!pkg.registryId && cmd.registryId) {
+      if (cmd.registryId) {
         pkg.registryId = cmd.registryId;
       }
     }
@@ -793,7 +793,8 @@ export class PackageManagerService extends AbstractService {
     const maintainers: { name: string; email: string; }[] = [];
     const users = await this.packageRepository.listPackageMaintainers(pkg.packageId);
     for (const user of users) {
-      const name = user.name.startsWith('npm:') ? user.name.replace('npm:', '') : user.name;
+      // replace the user-prefix
+      const name = cleanUserPrefix(user.name);
       maintainers.push({ name, email: user.email });
     }
     return maintainers;

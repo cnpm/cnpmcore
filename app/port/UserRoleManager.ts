@@ -105,21 +105,13 @@ export class UserRoleManager {
     return user;
   }
 
+  // 判断是否为包成员
+  // 1. 管理员默认返回成功
+  // 2. 非管理员，通过 Maintainer 表中数据进行判断
   public async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
-    // should be private package
-    if (!pkg.isPrivate) {
-      // admins can modified public package
-      if (this.config.cnpmcore.admins[user.name]) {
-        this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified public package "%s"',
-          user.name, pkg.fullname);
-        return;
-      }
-      throw new ForbiddenError(`Can\'t modify npm public package "${pkg.fullname}"`);
-    }
-
     // admins can modified private package (publish to cnpmcore)
-    if (pkg.isPrivate && this.config.cnpmcore.admins[user.name] === user.email) {
-      this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified private package "%s"',
+    if (this.config.cnpmcore.admins[user.name] === user.email) {
+      this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified package "%s"',
         user.name, pkg.fullname);
       return;
     }

@@ -20,6 +20,10 @@ export function getFullname(scope: string, name: string): string {
   return scope ? `${scope}/${name}` : name;
 }
 
+export function cleanUserPrefix(username: string): string {
+  return username.replace(/^.*:/, '');
+}
+
 export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
   let integrityObj;
   if (typeof contentOrFile === 'string') {
