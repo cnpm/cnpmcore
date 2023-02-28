@@ -195,8 +195,8 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     });
   });
 
-  describe('suspendTaskWhenExit()', () => {
-    it('should work', async () => {
+  describe('suspendSync()', () => {
+    beforeEach(async () => {
       app.mockLog();
       mock(app.config.cnpmcore, 'enableChangesStream', true);
       app.mockHttpclient('https://replicate.npmjs.com/_changes?since=9527', 'GET', () => {
@@ -206,7 +206,8 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
           },
         };
       });
-
+    });
+    it('should work', async () => {
       const task = await changesStreamService.findExecuteTask();
       assert(task);
       await changesStreamService.executeTask(task);
@@ -214,7 +215,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
 
       let len = await queueAdapter.length('changes_stream');
       assert(len === 0);
-      await changesStreamService.suspendTaskWhenExit();
+      await changesStreamService.suspendSync(true);
       const newTask = await taskService.findTask(task.taskId);
       assert(newTask);
       assert(newTask.taskId === task.taskId);
@@ -222,15 +223,35 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       len = await queueAdapter.length('changes_stream');
       assert(len === 1);
 
-      app.expectLog('[ChangesStreamService.suspendTaskWhenExit:suspend] taskId');
+      app.expectLog('[ChangesStreamService.suspendSync:suspend] taskId');
 
     });
 
-    it('should ignore when changesStream disable', async () => {
-      app.mockLog();
+    it('should suspendSync when error', async () => {
       mock(app.config.cnpmcore, 'enableChangesStream', true);
-      await changesStreamService.suspendTaskWhenExit();
-      app.expectLog('[ChangesStreamService.suspendTaskWhenExit:finish]');
+
+      const task = await changesStreamService.findExecuteTask();
+      assert(task);
+      mock(changesStreamService, 'executeSync', async () => {
+        throw new Error('mock error');
+      });
+      await changesStreamService.executeTask(task);
+
+      const newTask = await taskService.findTask(task.taskId);
+      assert(newTask);
+      assert(newTask.state === 'waiting');
+      // still sync nexttick;
+      assert(app.config.cnpmcore.enableChangesStream === true);
+      const len = await queueAdapter.length('changes_stream');
+      assert(len === 1);
+      app.expectLog('[ChangesStreamService.suspendSync:start]');
+      app.expectLog('[ChangesStreamService.suspendSync:suspend] taskId');
+    });
+
+    it('should ignore when changesStream disable', async () => {
+      mock(app.config.cnpmcore, 'enableChangesStream', false);
+      await changesStreamService.suspendSync(true);
+      app.expectLog('[ChangesStreamService.suspendSync:finish]');
     });
 
   });
