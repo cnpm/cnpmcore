@@ -8,7 +8,7 @@ import {
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import semver from 'semver';
-import { calculateIntegrity, cleanUserPrefix, detectInstallScript, formatTarball, getFullname, getScopeAndName } from '../../common/PackageUtil';
+import { calculateIntegrity, detectInstallScript, formatTarball, getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { AbstractService } from '../../common/AbstractService';
 import { BugVersionStore } from '../../common/adapter/BugVersionStore';
 import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants';
@@ -790,14 +790,8 @@ export class PackageManagerService extends AbstractService {
   }
 
   private async _listPackageMaintainers(pkg: Package) {
-    const maintainers: { name: string; email: string; }[] = [];
     const users = await this.packageRepository.listPackageMaintainers(pkg.packageId);
-    for (const user of users) {
-      // replace the user-prefix
-      const name = cleanUserPrefix(user.name);
-      maintainers.push({ name, email: user.email });
-    }
-    return maintainers;
+    return users.map(({ displayName, email }) => ({ name: displayName, email }));
   }
 
   private async _listPackageFullManifests(pkg: Package): Promise<object | null> {
