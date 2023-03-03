@@ -28,6 +28,6 @@ export default class CnpmcoreAppHook {
   // 需要暂停当前执行的 changesStream task
   async beforeClose() {
     const changesStreamService = await this.app.getEggObject(ChangesStreamService);
-    await changesStreamService.suspendTaskWhenExit();
+    await changesStreamService.suspendSync(true);
   }
 }

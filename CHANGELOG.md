@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.0](https://github.com/cnpm/npmcore/compare/v3.6.0...v3.7.0) (2023-03-01)
+
+
+### Features
+
+* retry changes task when current work error ([#414](https://github.com/cnpm/npmcore/issues/414)) ([d7ae7aa](https://github.com/cnpm/npmcore/commit/d7ae7aaaf2322985945967dc9e849c2fd798fc77))
+
 ## [3.6.0](https://github.com/cnpm/npmcore/compare/v3.5.0...v3.6.0) (2023-02-27)
 
 
