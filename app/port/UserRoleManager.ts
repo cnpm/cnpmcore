@@ -12,6 +12,8 @@ import { Package as PackageEntity } from '../core/entity/Package';
 import { User as UserEntity } from '../core/entity/User';
 import { Token as TokenEntity } from '../core/entity/Token';
 import { sha512 } from '../common/UserUtil';
+import { getScopeAndName } from 'app/common/PackageUtil';
+import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
@@ -29,10 +31,43 @@ export class UserRoleManager {
   private readonly config: EggAppConfig;
   @Inject()
   protected logger: EggLogger;
+  @Inject()
+  private readonly registryManagerService: RegistryManagerService;
 
   private handleAuthorized = false;
   private currentAuthorizedUser: UserEntity;
   private currentAuthorizedToken: TokenEntity;
+
+  public async checkPublishAccess(ctx: EggContext, fullname: string) {
+
+    const user = await this.requiredAuthorizedUser(ctx, 'publish');
+
+    // 管理员有所有权限
+    const isAdmin = await this.isAdmin(ctx);
+    if (isAdmin) {
+      return;
+    }
+
+    // 已在当前 registry 发布过的包，只有包成员才能再次发布
+    const [ scope, name ] = getScopeAndName(fullname);
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    const selfRegistry = await this.registryManagerService.ensureSelfRegistry();
+    const inSelfRegistry = pkg?.registryId === selfRegistry.registryId;
+    if (inSelfRegistry) {
+      await this.requiredPackageMaintainer(pkg, user);
+      return;
+    }
+
+    if (pkg && !scope && !inSelfRegistry) {
+      throw new ForbiddenError(`Can\'t modify npm public package "${fullname}"`);
+    }
+
+    await this.requiredPackageScope(scope, user);
+    if (pkg) {
+      await this.requiredPackageMaintainer(pkg!, user);
+      return;
+    }
+  }
 
   // {
   //   'user-agent': 'npm/8.1.2 node/v16.13.1 darwin arm64 workspaces/false',
@@ -117,7 +152,7 @@ export class UserRoleManager {
     }
 
     const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
-    const maintainer = maintainers.find(m => m.userId === user.userId);
+    const maintainer = maintainers.find(m => m.userId === user.userId || m.displayName === user.displayName);
     if (!maintainer) {
       const names = maintainers.map(m => m.name).join(', ');
       throw new ForbiddenError(`"${user.name}" not authorized to modify ${pkg.fullname}, please contact maintainers: "${names}"`);
@@ -126,14 +161,15 @@ export class UserRoleManager {
 
   public async requiredPackageScope(scope: string, user: UserEntity) {
     const cnpmcoreConfig = this.config.cnpmcore;
-    if (!cnpmcoreConfig.allowPublishNonScopePackage) {
-      const allowScopes = user.scopes ?? cnpmcoreConfig.allowScopes;
-      if (!scope) {
-        throw new ForbiddenError(`Package scope required, legal scopes: "${allowScopes.join(', ')}"`);
-      }
-      if (!allowScopes.includes(scope)) {
-        throw new ForbiddenError(`Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`);
-      }
+    if (cnpmcoreConfig.allowPublishNonScopePackage) {
+      return;
+    }
+    const allowScopes = user.scopes ?? cnpmcoreConfig.allowScopes;
+    if (!scope) {
+      throw new ForbiddenError(`Package scope required, legal scopes: "${allowScopes.join(', ')}"`);
+    }
+    if (!allowScopes.includes(scope)) {
+      throw new ForbiddenError(`Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`);
     }
   }
 

@@ -7,6 +7,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { getScopeAndName } from '../app/common/PackageUtil';
 import semver from 'semver';
+import { assert } from 'egg-mock/bootstrap';
 
 type PackageOptions = {
   name?: string;
@@ -213,12 +214,14 @@ export class TestUtil {
   static async createPackage(options?: PackageOptions, userOptions?: UserOptions) {
     const pkg = await this.getFullPackage(options);
     const user = await this.createUser(userOptions);
-    await this.app.httpRequest()
+    const res = await this.app.httpRequest()
       .put(`/${pkg.name}`)
       .set('authorization', user.authorization)
       .set('user-agent', user.ua)
-      .send(pkg)
-      .expect(201);
+      .send(pkg);
+    // console.log(res.body);
+    assert.equal(res.status, 201);
+
 
     if (options?.isPrivate === false) {
       const [ scope, name ] = getScopeAndName(pkg.name);

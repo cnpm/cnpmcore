@@ -12,7 +12,7 @@ import { setTimeout } from 'timers/promises';
 import { rm } from 'fs/promises';
 import semver from 'semver';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
-import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
+import { cleanUserPrefix, detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
@@ -783,7 +783,7 @@ export class PackageSyncerService extends AbstractService {
       let npmUserName = maintainer.name;
       if (npmUserName.startsWith('npm:')) {
         // fix cache npm user name
-        npmUserName = npmUserName.replace('npm:', '');
+        npmUserName = cleanUserPrefix(npmUserName);
         shouldRefreshMaintainers = true;
       }
       if (!(npmUserName in maintainersMap)) {

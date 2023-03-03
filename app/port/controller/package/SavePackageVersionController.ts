@@ -1,7 +1,6 @@
 import { PackageJson, Simplify } from 'type-fest';
 import {
   UnprocessableEntityError,
-  NotFoundError,
   ForbiddenError,
 } from 'egg-errors';
 import {
@@ -19,7 +18,6 @@ import validateNpmPackageName from 'validate-npm-package-name';
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
-import { Package as PackageEntity } from '../../../core/entity/Package';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import {
   VersionRule,
@@ -83,6 +81,7 @@ export class SavePackageVersionController extends AbstractController {
   async save(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     this.validateNpmCommand(ctx);
     ctx.tValidate(FullPackageRule, pkg);
+    await this.userRoleManager.checkPublishAccess(ctx, fullname);
     fullname = fullname.trim();
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
@@ -167,21 +166,6 @@ export class SavePackageVersionController extends AbstractController {
 
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
     const [ scope, name ] = getScopeAndName(fullname);
-    // check scope white list
-    await this.userRoleManager.requiredPackageScope(scope, authorizedUser);
-
-    // FIXME: maybe better code style?
-    let existsPackage: PackageEntity | null = null;
-    try {
-      existsPackage = await this.getPackageEntityByFullname(fullname);
-    } catch (err) {
-      if (err instanceof NotFoundError) {
-        existsPackage = null;
-      }
-    }
-    if (existsPackage) {
-      await this.userRoleManager.requiredPackageMaintainer(existsPackage, authorizedUser);
-    }
 
     // make sure readme is string
     const readme = typeof packageVersion.readme === 'string' ? packageVersion.readme : '';
