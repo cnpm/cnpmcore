@@ -108,7 +108,7 @@ export class SavePackageVersionController extends AbstractController {
       // PUT /:fullname?write=true
       // https://github.com/npm/cli/blob/latest/lib/commands/deprecate.js#L48
       if (isDeprecatedRequest) {
-        return await this.saveDeprecatedVersions(ctx, pkg.name, versions);
+        return await this.saveDeprecatedVersions(pkg.name, versions);
       }
 
       // invalid attachments
@@ -203,9 +203,8 @@ export class SavePackageVersionController extends AbstractController {
   }
 
   // https://github.com/cnpm/cnpmjs.org/issues/415
-  private async saveDeprecatedVersions(ctx: EggContext, fullname: string, versions: PackageVersion[]) {
-    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
-
+  private async saveDeprecatedVersions(fullname: string, versions: PackageVersion[]) {
+    const pkg = await this.getPackageEntityByFullname(fullname);
     await this.packageManagerService.saveDeprecatedVersions(pkg, versions.map(v => {
       return { version: v.version, deprecated: v.deprecated! };
     }));

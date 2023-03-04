@@ -50,6 +50,15 @@ export abstract class AbstractController extends MiddlewareController {
     return scope && this.config.cnpmcore.allowScopes.includes(scope);
   }
 
+  protected async ensurePublishAccess(ctx: EggContext, fullname: string) {
+    await this.userRoleManager.checkPublishAccess(ctx, fullname);
+    const pkg = await this.getPackageEntityByFullname(fullname);
+    if (!pkg) {
+      throw this.createPackageNotFoundError(fullname);
+    }
+    return pkg;
+  }
+
   protected get syncNotFound() {
     return this.config.cnpmcore.syncNotFound;
   }
@@ -110,17 +119,6 @@ export abstract class AbstractController extends MiddlewareController {
   protected async getPackageEntityByFullname(fullname: string): Promise<PackageEntity> {
     const [ scope, name ] = getScopeAndName(fullname);
     return await this.getPackageEntity(scope, name);
-  }
-
-  // 1. get package
-  // 2. check current user is maintainer
-  // 3. make sure current token can publish
-  protected async getPackageEntityAndRequiredMaintainer(ctx: EggContext, fullname: string): Promise<PackageEntity> {
-    const [ scope, name ] = getScopeAndName(fullname);
-    const pkg = await this.getPackageEntity(scope, name);
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
-    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
-    return pkg;
   }
 
   // try to get package entity, throw NotFoundError when package not exists

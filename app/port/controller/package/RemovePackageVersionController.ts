@@ -1,7 +1,6 @@
 import {
   BadRequestError,
   ForbiddenError,
-  NotFoundError,
 } from 'egg-errors';
 import {
   HTTPController,
@@ -13,7 +12,7 @@ import {
   EggContext,
 } from '@eggjs/tegg';
 import { AbstractController } from '../AbstractController';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil';
+import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 
 @HTTPController()
@@ -34,12 +33,7 @@ export class RemovePackageVersionController extends AbstractController {
     if (npmCommand !== 'unpublish') {
       throw new BadRequestError('Only allow "unpublish" npm-command');
     }
-    await this.userRoleManager.checkPublishAccess(ctx, fullname);
-    const [ scope, name ] = getScopeAndName(fullname);
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) {
-      throw new NotFoundError(`${fullname} not found`);
-    }
+    const pkg = await this.ensurePublishAccess(ctx, fullname);
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     // https://docs.npmjs.com/policies/unpublish

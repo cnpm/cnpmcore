@@ -48,7 +48,7 @@ export class UpdatePackageController extends AbstractController {
       throw new BadRequestError(`header: npm-command expected "owner", but got "${npmCommand}"`);
     }
     ctx.tValidate(MaintainerDataRule, data);
-    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
+    const pkg = await this.ensurePublishAccess(ctx, fullname);
     // make sure all maintainers exists
     const users: UserEntity[] = [];
     for (const maintainer of data.maintainers) {

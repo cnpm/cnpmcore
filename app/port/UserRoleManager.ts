@@ -152,7 +152,7 @@ export class UserRoleManager {
     }
 
     const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
-    const maintainer = maintainers.find(m => m.userId === user.userId || m.displayName === user.displayName);
+    const maintainer = maintainers.find(m => m.userId === user.userId);
     if (!maintainer) {
       const names = maintainers.map(m => m.name).join(', ');
       throw new ForbiddenError(`"${user.name}" not authorized to modify ${pkg.fullname}, please contact maintainers: "${names}"`);
