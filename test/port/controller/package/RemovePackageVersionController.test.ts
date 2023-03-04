@@ -93,7 +93,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .set('npm-command', 'unpublish')
         .set('user-agent', normalUser.ua);
       assert(res.status === 403);
-      console.log(res.body);
+      // console.log(res.body);
       assert(res.body.error === '[FORBIDDEN] Can\'t modify npm public package "foo"');
 
       res = await app.httpRequest()

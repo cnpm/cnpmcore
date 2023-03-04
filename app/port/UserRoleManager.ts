@@ -12,8 +12,8 @@ import { Package as PackageEntity } from '../core/entity/Package';
 import { User as UserEntity } from '../core/entity/User';
 import { Token as TokenEntity } from '../core/entity/Token';
 import { sha512 } from '../common/UserUtil';
-import { getScopeAndName } from 'app/common/PackageUtil';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
+import { getScopeAndName } from '../common/PackageUtil';
+import { RegistryManagerService } from '../core/service/RegistryManagerService';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
@@ -153,12 +153,6 @@ export class UserRoleManager {
   }
 
   public async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
-    // admins can modified private package (publish to cnpmcore)
-    if (this.config.cnpmcore.admins[user.displayName] === user.email) {
-      this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified package "%s"',
-        user.name, pkg.fullname);
-      return;
-    }
 
     const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
     const maintainer = maintainers.find(m => m.userId === user.userId);

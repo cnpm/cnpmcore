@@ -54,9 +54,10 @@ export abstract class AbstractController extends MiddlewareController {
     const user = await this.userRoleManager.checkPublishAccess(ctx, fullname);
     let pkg: PackageEntity | null = null;
     if (checkPkgExist) {
-      pkg = await this.getPackageEntityByFullname(fullname);
+      const [ scope, name ] = getScopeAndName(fullname);
+      pkg = await this.packageRepository.findPackage(scope, name);
       if (!pkg) {
-        throw this.createPackageNotFoundError(fullname);
+        throw this.createPackageNotFoundError(fullname, undefined);
       }
     }
     return {
@@ -91,9 +92,15 @@ export abstract class AbstractController extends MiddlewareController {
     return allowSync;
   }
 
-  protected createPackageNotFoundError(fullname: string, version?: string, allowSync = false) {
+  protected createPackageNotFoundError(fullname: string, version?: string) {
     const message = version ? `${fullname}@${version} not found` : `${fullname} not found`;
     const err = new PackageNotFoundError(message);
+    return err;
+  }
+
+  protected createPackageNotFoundErrorWithRedirect(fullname: string, version?: string, allowSync = false) {
+    // const err = new PackageNotFoundError(message);
+    const err = this.createPackageNotFoundError(fullname, version);
     const [ scope ] = getScopeAndName(fullname);
     // dont sync private scope
     if (!this.isPrivateScope(scope)) {
@@ -132,7 +139,7 @@ export abstract class AbstractController extends MiddlewareController {
     const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (!packageEntity) {
       const fullname = getFullname(scope, name);
-      throw this.createPackageNotFoundError(fullname);
+      throw this.createPackageNotFoundErrorWithRedirect(fullname);
     }
     return packageEntity;
   }

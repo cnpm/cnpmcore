@@ -28,8 +28,7 @@ npm install
 
 ```bash
 # 初始化数据库
-MYSQL_DATABASE=cnpmcore
-npm run test-local
+MYSQL_DATABASE=cnpmcore npm run prepare-database
 
 # 启动 Web 服务
 npm run dev

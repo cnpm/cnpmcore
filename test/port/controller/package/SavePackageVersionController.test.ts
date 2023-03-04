@@ -111,6 +111,35 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.equal(res.body.error, '[FORBIDDEN] Package scope required, legal scopes: "@cnpm, @cnpmcore, @example"');
     });
 
+    it('should 200 when migrate scoped package', async () => {
+      const name = '@cnpm/publish-package-test';
+      let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      assert(res);
+      const packageRepository = await app.getEggObject(PackageRepository);
+      let pkgEntity = await packageRepository.findPackage('@cnpm', 'publish-package-test');
+      assert(pkgEntity);
+      pkgEntity.registryId = '';
+      await packageRepository.savePackage(pkgEntity!);
+
+      pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      pkgEntity = await packageRepository.findPackage('@cnpm', 'publish-package-test');
+      assert(pkgEntity?.registryId);
+    });
+
     it('should publish on user custom scopes', async () => {
       // add user.scopes
       const user = await userRepository.findUserByName(publisher.name);

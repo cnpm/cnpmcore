@@ -25,6 +25,25 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
       rev = res.body.rev;
     });
 
+    it('should 404 when pkg not exists', async () => {
+      const user = await TestUtil.createUser();
+      mock(app.config.cnpmcore, 'admins', { [user.name]: user.email });
+      const res = await app.httpRequest()
+        .put('/banana/-rev/123')
+        .set('authorization', user.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+          ],
+        });
+      console.log(res.headers);
+      assert.equal(res.statusCode, 404);
+    });
+
     it('should 422 when maintainters empty', async () => {
       const res = await app.httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
