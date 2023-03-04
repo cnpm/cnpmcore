@@ -30,7 +30,6 @@ type Maintainer = Static<typeof MaintainerDataRule>;
 export class UpdatePackageController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
-  @Inject()
 
   // https://github.com/npm/cli/blob/latest/lib/commands/owner.js#L191
   @HTTPMethod({

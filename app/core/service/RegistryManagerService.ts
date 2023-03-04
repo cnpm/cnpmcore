@@ -40,8 +40,6 @@ export class RegistryManagerService extends AbstractService {
   private readonly scopeManagerService: ScopeManagerService;
   @Inject()
   private readonly taskService: TaskService;
-  @Inject()
-  private readonly config: EggAppConfig;
 
   async createSyncChangesStream(startSyncCmd: StartSyncCmd): Promise<void> {
     const { registryId, operatorId = '-', since } = startSyncCmd;
@@ -63,7 +61,7 @@ export class RegistryManagerService extends AbstractService {
   }
 
   async createRegistry(createCmd: CreateRegistryCmd): Promise<Registry> {
-    const { name, changeStream, host, userPrefix, type, operatorId = '-' } = createCmd;
+    const { name, changeStream = '', host, userPrefix = '', type, operatorId = '-' } = createCmd;
     this.logger.info('[RegistryManagerService.createRegistry:prepare] operatorId: %s, createCmd: %j', operatorId, createCmd);
     const registry = Registry.create({
       name,
@@ -129,6 +127,8 @@ export class RegistryManagerService extends AbstractService {
       name: PresetRegistryName.self,
       host: registryHost,
       type: RegistryType.Cnpmcore,
+      changeStream: '',
+      userPrefix: '',
     });
 
     return newRegistry;

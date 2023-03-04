@@ -17,8 +17,8 @@ export class Registry extends Entity {
   name: string;
   registryId: string;
   host: string;
-  changeStream?: string;
-  userPrefix?: string;
+  changeStream: string;
+  userPrefix: string;
   type: RegistryType;
 
   constructor(data: RegistryData) {

@@ -28,7 +28,8 @@ npm install
 
 ```bash
 # 初始化数据库
-MYSQL_DATABASE=cnpmcore npm run prepare-database
+MYSQL_DATABASE=cnpmcore
+npm run test-local
 
 # 启动 Web 服务
 npm run dev
@@ -192,7 +193,7 @@ await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
 当然，大部分对包进行写操作的请求下，我们在 AbstractController 里面抽取了一个更加简便的方法，一次性将数据获取和权限校验包含在一起：
 
 ```ts
-const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
+const { pkg } = await this.ensurePublishAccess(ctx, fullname);
 ```
 
 ## Service 开发指南
