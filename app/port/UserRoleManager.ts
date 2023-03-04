@@ -38,35 +38,47 @@ export class UserRoleManager {
   private currentAuthorizedUser: UserEntity;
   private currentAuthorizedToken: TokenEntity;
 
+  // check publish access
+  // 1. admin has all access
+  // 2. has published in current registry
+  // 3. pkg scope is allowed to publish
+  // use AbstractController#ensurePublishAccess ensure pkg exists;
   public async checkPublishAccess(ctx: EggContext, fullname: string) {
 
     const user = await this.requiredAuthorizedUser(ctx, 'publish');
 
-    // 管理员有所有权限
+    // 1. admin chas all access
     const isAdmin = await this.isAdmin(ctx);
     if (isAdmin) {
-      return;
+      return user;
     }
 
-    // 已在当前 registry 发布过的包，只有包成员才能再次发布
+    // 2. has published in current registry
     const [ scope, name ] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
     const selfRegistry = await this.registryManagerService.ensureSelfRegistry();
     const inSelfRegistry = pkg?.registryId === selfRegistry.registryId;
     if (inSelfRegistry) {
+      // 2.1 check in Maintainers table
+      // Higher priority than scope check
       await this.requiredPackageMaintainer(pkg, user);
-      return;
+      return user;
     }
 
     if (pkg && !scope && !inSelfRegistry) {
+      // 2.2 public package can't publish in other registry
+      // scope package can be migrated into self registry
       throw new ForbiddenError(`Can\'t modify npm public package "${fullname}"`);
     }
 
+    // 3 check scope is allowed to publish
     await this.requiredPackageScope(scope, user);
     if (pkg) {
+      // published scoped package
       await this.requiredPackageMaintainer(pkg!, user);
-      return;
     }
+
+    return user;
   }
 
   // {
@@ -140,12 +152,9 @@ export class UserRoleManager {
     return user;
   }
 
-  // 判断是否为包成员
-  // 1. 管理员默认返回成功
-  // 2. 非管理员，通过 Maintainer 表中数据进行判断
   public async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
     // admins can modified private package (publish to cnpmcore)
-    if (this.config.cnpmcore.admins[user.name] === user.email) {
+    if (this.config.cnpmcore.admins[user.displayName] === user.email) {
       this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified package "%s"',
         user.name, pkg.fullname);
       return;

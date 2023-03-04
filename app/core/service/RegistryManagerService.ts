@@ -11,8 +11,8 @@ import { PageOptions, PageResult } from '../util/EntityUtil';
 import { ScopeManagerService } from './ScopeManagerService';
 import { TaskService } from './TaskService';
 import { Task } from '../entity/Task';
-import { PresetRegistryName } from 'app/common/constants';
-import { RegistryType } from 'app/common/enum/Registry';
+import { PresetRegistryName } from '../../common/constants';
+import { RegistryType } from '../../common/enum/Registry';
 
 export interface CreateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'userPrefix' | 'type' | 'name'> {
   operatorId?: string;
@@ -129,8 +129,6 @@ export class RegistryManagerService extends AbstractService {
       name: PresetRegistryName.self,
       host: registryHost,
       type: RegistryType.Cnpmcore,
-      changeStream: '',
-      userPrefix: '',
     });
 
     return newRegistry;

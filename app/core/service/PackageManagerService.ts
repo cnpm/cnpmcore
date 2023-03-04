@@ -107,6 +107,7 @@ export class PackageManagerService extends AbstractService {
       }
 
       /* c8 ignore next 3 */
+      // package can be migrated into another registry
       if (cmd.registryId) {
         pkg.registryId = cmd.registryId;
       }

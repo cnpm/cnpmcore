@@ -50,13 +50,19 @@ export abstract class AbstractController extends MiddlewareController {
     return scope && this.config.cnpmcore.allowScopes.includes(scope);
   }
 
-  protected async ensurePublishAccess(ctx: EggContext, fullname: string) {
-    await this.userRoleManager.checkPublishAccess(ctx, fullname);
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    if (!pkg) {
-      throw this.createPackageNotFoundError(fullname);
+  protected async ensurePublishAccess(ctx: EggContext, fullname: string, checkPkgExist = true) {
+    const user = await this.userRoleManager.checkPublishAccess(ctx, fullname);
+    let pkg: PackageEntity | null = null;
+    if (checkPkgExist) {
+      pkg = await this.getPackageEntityByFullname(fullname);
+      if (!pkg) {
+        throw this.createPackageNotFoundError(fullname);
+      }
     }
-    return pkg;
+    return {
+      pkg,
+      user,
+    };
   }
 
   protected get syncNotFound() {

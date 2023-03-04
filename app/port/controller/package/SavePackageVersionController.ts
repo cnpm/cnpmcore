@@ -81,7 +81,7 @@ export class SavePackageVersionController extends AbstractController {
   async save(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     this.validateNpmCommand(ctx);
     ctx.tValidate(FullPackageRule, pkg);
-    await this.userRoleManager.checkPublishAccess(ctx, fullname);
+    const { user } = await this.ensurePublishAccess(ctx, fullname, false);
     fullname = fullname.trim();
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
@@ -164,7 +164,6 @@ export class SavePackageVersionController extends AbstractController {
       }
     }
 
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
     const [ scope, name ] = getScopeAndName(fullname);
 
     // make sure readme is string
@@ -190,11 +189,11 @@ export class SavePackageVersionController extends AbstractController {
       tag: tagWithVersion.tag,
       registryId: registry.registryId,
       isPrivate: true,
-    }, authorizedUser);
+    }, user);
 
     this.logger.info('[package:version:add] %s@%s, packageVersionId: %s, tag: %s, userId: %s',
       packageVersion.name, packageVersion.version, packageVersionEntity.packageVersionId,
-      tagWithVersion.tag, authorizedUser.userId);
+      tagWithVersion.tag, user.userId);
     ctx.status = 201;
     return {
       ok: true,
