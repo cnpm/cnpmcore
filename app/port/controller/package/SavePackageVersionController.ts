@@ -1,7 +1,6 @@
 import { PackageJson, Simplify } from 'type-fest';
 import {
   UnprocessableEntityError,
-  NotFoundError,
   ForbiddenError,
 } from 'egg-errors';
 import {
@@ -27,6 +26,7 @@ import {
   Name as NameType,
   Description as DescriptionType,
 } from '../../typebox';
+import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -68,6 +68,9 @@ export class SavePackageVersionController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
 
+  @Inject()
+  private readonly registryManagerService: RegistryManagerService;
+
   // https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#publish-a-new-package
   // https://github.com/npm/libnpmpublish/blob/main/publish.js#L43
   @HTTPMethod({
@@ -79,6 +82,7 @@ export class SavePackageVersionController extends AbstractController {
   async save(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     this.validateNpmCommand(ctx);
     ctx.tValidate(FullPackageRule, pkg);
+    const { user } = await this.ensurePublishAccess(ctx, fullname, false);
     fullname = fullname.trim();
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
@@ -105,7 +109,7 @@ export class SavePackageVersionController extends AbstractController {
       // PUT /:fullname?write=true
       // https://github.com/npm/cli/blob/latest/lib/commands/deprecate.js#L48
       if (isDeprecatedRequest) {
-        return await this.saveDeprecatedVersions(ctx, pkg.name, versions);
+        return await this.saveDeprecatedVersions(pkg.name, versions);
       }
 
       // invalid attachments
@@ -161,23 +165,9 @@ export class SavePackageVersionController extends AbstractController {
       }
     }
 
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
     const [ scope, name ] = getScopeAndName(fullname);
     // check scope white list
-    await this.userRoleManager.requiredPackageScope(scope, authorizedUser);
-
-    // FIXME: maybe better code style?
-    let existsPackage: PackageEntity | null = null;
-    try {
-      existsPackage = await this.getPackageEntityByFullname(fullname);
-    } catch (err) {
-      if (err instanceof NotFoundError) {
-        existsPackage = null;
-      }
-    }
-    if (existsPackage) {
-      await this.userRoleManager.requiredPackageMaintainer(existsPackage, authorizedUser);
-    }
+    await this.userRoleManager.requiredPackageScope(scope, user);
 
     // make sure readme is string
     const readme = typeof packageVersion.readme === 'string' ? packageVersion.readme : '';
@@ -187,22 +177,24 @@ export class SavePackageVersionController extends AbstractController {
     if (typeof packageVersion.description !== 'string') {
       packageVersion.description = '';
     }
+    const registry = await this.registryManagerService.ensureSelfRegistry();
     const packageVersionEntity = await this.packageManagerService.publish({
       scope,
       name,
       version: packageVersion.version,
       description: packageVersion.description,
       packageJson: packageVersion,
+      registryId: registry.registryId,
       readme,
       dist: {
         content: tarballBytes,
       },
       tag: tagWithVersion.tag,
       isPrivate: true,
-    }, authorizedUser);
+    }, user);
     this.logger.info('[package:version:add] %s@%s, packageVersionId: %s, tag: %s, userId: %s',
       packageVersion.name, packageVersion.version, packageVersionEntity.packageVersionId,
-      tagWithVersion.tag, authorizedUser.userId);
+      tagWithVersion.tag, user.userId);
     ctx.status = 201;
     return {
       ok: true,
@@ -211,8 +203,8 @@ export class SavePackageVersionController extends AbstractController {
   }
 
   // https://github.com/cnpm/cnpmjs.org/issues/415
-  private async saveDeprecatedVersions(ctx: EggContext, fullname: string, versions: PackageVersion[]) {
-    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
+  private async saveDeprecatedVersions(fullname: string, versions: PackageVersion[]) {
+    const pkg = await this.getPackageEntityByFullname(fullname);
 
     await this.packageManagerService.saveDeprecatedVersions(pkg, versions.map(v => {
       return { version: v.version, deprecated: v.deprecated! };
@@ -233,4 +225,3 @@ export class SavePackageVersionController extends AbstractController {
     }
   }
 }
-

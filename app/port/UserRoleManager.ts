@@ -12,6 +12,8 @@ import { Package as PackageEntity } from '../core/entity/Package';
 import { User as UserEntity } from '../core/entity/User';
 import { Token as TokenEntity } from '../core/entity/Token';
 import { sha512 } from '../common/UserUtil';
+import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
+import { getScopeAndName } from '../common/PackageUtil';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
@@ -28,11 +30,56 @@ export class UserRoleManager {
   @Inject()
   private readonly config: EggAppConfig;
   @Inject()
+  private readonly registryManagerService: RegistryManagerService;
+  @Inject()
   protected logger: EggLogger;
 
   private handleAuthorized = false;
   private currentAuthorizedUser: UserEntity;
   private currentAuthorizedToken: TokenEntity;
+
+   // check publish access
+  // 1. admin has all access
+  // 2. has published in current registry
+  // 3. pkg scope is allowed to publish
+  // use AbstractController#ensurePublishAccess ensure pkg exists;
+  public async checkPublishAccess(ctx: EggContext, fullname: string) {
+
+    const user = await this.requiredAuthorizedUser(ctx, 'publish');
+
+    // 1. admin chas all access
+    const isAdmin = await this.isAdmin(ctx);
+    if (isAdmin) {
+      return user;
+    }
+
+    // 2. has published in current registry
+    const [ scope, name ] = getScopeAndName(fullname);
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    const selfRegistry = await this.registryManagerService.ensureSelfRegistry();
+    const inSelfRegistry = pkg?.registryId === selfRegistry.registryId;
+    if (inSelfRegistry) {
+      // 2.1 check in Maintainers table
+      // Higher priority than scope check
+      await this.requiredPackageMaintainer(pkg, user);
+      return user;
+    }
+
+    if (pkg && !scope && !inSelfRegistry) {
+      // 2.2 public package can't publish in other registry
+      // scope package can be migrated into self registry
+      throw new ForbiddenError(`Can\'t modify npm public package "${fullname}"`);
+    }
+
+    // 3 check scope is allowed to publish
+    await this.requiredPackageScope(scope, user);
+    if (pkg) {
+      // published scoped package
+      await this.requiredPackageMaintainer(pkg!, user);
+    }
+
+    return user;
+  }
 
   // {
   //   'user-agent': 'npm/8.1.2 node/v16.13.1 darwin arm64 workspaces/false',
@@ -106,19 +153,8 @@ export class UserRoleManager {
   }
 
   public async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
-    // should be private package
-    if (!pkg.isPrivate) {
-      // admins can modified public package
-      if (this.config.cnpmcore.admins[user.name]) {
-        this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified public package "%s"',
-          user.name, pkg.fullname);
-        return;
-      }
-      throw new ForbiddenError(`Can\'t modify npm public package "${pkg.fullname}"`);
-    }
 
-    // admins can modified private package (publish to cnpmcore)
-    if (pkg.isPrivate && this.config.cnpmcore.admins[user.name] === user.email) {
+    if (this.config.cnpmcore.admins[user.displayName] === user.email) {
       this.logger.warn('[UserRoleManager.requiredPackageMaintainer] admin "%s" modified private package "%s"',
         user.name, pkg.fullname);
       return;
@@ -134,14 +170,15 @@ export class UserRoleManager {
 
   public async requiredPackageScope(scope: string, user: UserEntity) {
     const cnpmcoreConfig = this.config.cnpmcore;
-    if (!cnpmcoreConfig.allowPublishNonScopePackage) {
-      const allowScopes = user.scopes ?? cnpmcoreConfig.allowScopes;
-      if (!scope) {
-        throw new ForbiddenError(`Package scope required, legal scopes: "${allowScopes.join(', ')}"`);
-      }
-      if (!allowScopes.includes(scope)) {
-        throw new ForbiddenError(`Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`);
-      }
+    if (cnpmcoreConfig.allowPublishNonScopePackage) {
+      return;
+    }
+    const allowScopes = user.scopes ?? cnpmcoreConfig.allowScopes;
+    if (!scope) {
+      throw new ForbiddenError(`Package scope required, legal scopes: "${allowScopes.join(', ')}"`);
+    }
+    if (!allowScopes.includes(scope)) {
+      throw new ForbiddenError(`Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`);
     }
   }
 

@@ -11,6 +11,8 @@ import { PageOptions, PageResult } from '../util/EntityUtil';
 import { ScopeManagerService } from './ScopeManagerService';
 import { TaskService } from './TaskService';
 import { Task } from '../entity/Task';
+import { PresetRegistryName } from 'app/common/constants';
+import { RegistryType } from 'app/common/enum/Registry';
 
 export interface CreateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'userPrefix' | 'type' | 'name'> {
   operatorId?: string;
@@ -59,7 +61,7 @@ export class RegistryManagerService extends AbstractService {
   }
 
   async createRegistry(createCmd: CreateRegistryCmd): Promise<Registry> {
-    const { name, changeStream, host, userPrefix, type, operatorId = '-' } = createCmd;
+    const { name, changeStream = '', host, userPrefix = '', type, operatorId = '-' } = createCmd;
     this.logger.info('[RegistryManagerService.createRegistry:prepare] operatorId: %s, createCmd: %j', operatorId, createCmd);
     const registry = Registry.create({
       name,
@@ -111,5 +113,25 @@ export class RegistryManagerService extends AbstractService {
     this.logger.info('[RegistryManagerService.remove:prepare] operatorId: %s, registryId: %s', operatorId, registryId);
     await this.registryRepository.removeRegistry(registryId);
     await this.scopeManagerService.removeByRegistryId({ registryId, operatorId });
+  }
+
+  async ensureSelfRegistry(): Promise<Registry> {
+    const existRegistry = await this.registryRepository.findRegistry(PresetRegistryName.self);
+    if (existRegistry) {
+      return existRegistry;
+    }
+
+    const { registry: registryHost } = this.config.cnpmcore;
+
+    const newRegistry = await this.createRegistry({
+      name: PresetRegistryName.self,
+      host: registryHost,
+      type: RegistryType.Cnpmcore,
+      changeStream: '',
+      userPrefix: '',
+    });
+
+    return newRegistry;
+
   }
 }
