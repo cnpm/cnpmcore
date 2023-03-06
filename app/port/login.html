@@ -252,46 +252,54 @@
         function handleRegistration(data, { success, fail }) {
           data.challenge = base64url.decode(data.challenge);
           data.user.id = base64url.decode(data.user.id);
-          navigator.credentials.create({
-            publicKey: data,
-          }).then(credential => {
-            const result = {
-              id: credential.id,
-              rawId: base64url.encode(credential.rawId),
-              response: {
-                clientDataJSON: base64url.encode(credential.response.clientDataJSON),
-                attestationObject: base64url.encode(credential.response.attestationObject),
-              },
-              type: credential.type,
-            };
-            success && success(result);
-          }).catch(err => {
+          try {
+            navigator.credentials.create({
+              publicKey: data,
+            }).then(credential => {
+              const result = {
+                id: credential.id,
+                rawId: base64url.encode(credential.rawId),
+                response: {
+                  clientDataJSON: base64url.encode(credential.response.clientDataJSON),
+                  attestationObject: base64url.encode(credential.response.attestationObject),
+                },
+                type: credential.type,
+              };
+              success && success(result);
+            }).catch(err => {
+              fail && fail(err);
+            });
+          } catch (err) {
             fail && fail(err);
-          });
+          }
         }
         function handleAuthentication(data, { success, fail }) {
           data.challenge = base64url.decode(data.challenge);
           data.allowCredentials.forEach(c => {
             c.id = base64url.decode(c.id);
           });
-          navigator.credentials.get({
-            publicKey: data,
-          }).then(credential => {
-            const result = {
-              id: credential.id,
-              rawId: base64url.encode(credential.rawId),
-              response: {
-                authenticatorData: base64url.encode(credential.response.authenticatorData),
-                clientDataJSON: base64url.encode(credential.response.clientDataJSON),
-                signature: base64url.encode(credential.response.signature),
-                userHandle: credential.response.userHandle ? base64url.encode(credential.response.userHandle) : undefined,
-              },
-              type: credential.type,
-            };
-            success && success(result);
-          }).catch(err => {
+          try {
+            navigator.credentials.get({
+              publicKey: data,
+            }).then(credential => {
+              const result = {
+                id: credential.id,
+                rawId: base64url.encode(credential.rawId),
+                response: {
+                  authenticatorData: base64url.encode(credential.response.authenticatorData),
+                  clientDataJSON: base64url.encode(credential.response.clientDataJSON),
+                  signature: base64url.encode(credential.response.signature),
+                  userHandle: credential.response.userHandle ? base64url.encode(credential.response.userHandle) : undefined,
+                },
+                type: credential.type,
+              };
+              success && success(result);
+            }).catch(err => {
+              fail && fail(err);
+            });
+          } catch (err) {
             fail && fail(err);
-          });
+          }
         }
         function validInput() {
           var uval = $username.val().trim();
