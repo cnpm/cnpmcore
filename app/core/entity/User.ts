@@ -10,6 +10,8 @@ interface UserData extends EntityData {
   ip: string;
   isPrivate: boolean;
   scopes?: string[];
+  wanCPublicKey?: string;
+  wanCId?: string;
 }
 
 export class User extends Entity {
@@ -21,6 +23,8 @@ export class User extends Entity {
   ip: string;
   isPrivate: boolean;
   scopes?: string[];
+  wanCPublicKey?: string;
+  wanCId?: string;
 
   constructor(data: UserData) {
     super(data);
@@ -32,6 +36,8 @@ export class User extends Entity {
     this.ip = data.ip;
     this.isPrivate = data.isPrivate;
     this.scopes = data.scopes;
+    this.wanCPublicKey = data.wanCPublicKey;
+    this.wanCId = data.wanCId;
   }
 
   static create(data: EasyData<UserData, 'userId'>): User {

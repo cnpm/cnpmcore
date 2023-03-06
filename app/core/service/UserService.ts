@@ -45,6 +45,10 @@ export class UserService extends AbstractService {
     return checkIntegrity(plain, user.passwordIntegrity);
   }
 
+  async findUserByName(name: string): Promise<UserEntity | null> {
+    return await this.userRepository.findUserByName(name);
+  }
+
   async login(name: string, password: string): Promise<LoginResult> {
     const user = await this.userRepository.findUserByName(name);
     if (!user) return { code: LoginResultCode.UserNotFound };
@@ -69,7 +73,7 @@ export class UserService extends AbstractService {
       user = createRes.user;
     }
     const token = await this.createToken(user.userId);
-    return token;
+    return { user, token };
   }
 
   async create(createUser: CreateUser) {
@@ -111,6 +115,17 @@ export class UserService extends AbstractService {
       return { changed: false, user };
     }
     user.email = email;
+    await this.userRepository.saveUser(user);
+    return { changed: true, user };
+  }
+
+  async updateUserWebauthn(userId: string, wanCId: string, wanCPublicKey: string): Promise<{ changed: boolean, user?: UserEntity }> {
+    const user = await this.userRepository.findUserByUserId(userId);
+    if (!user) {
+      return { changed: false };
+    }
+    user.wanCId = wanCId;
+    user.wanCPublicKey = wanCPublicKey;
     await this.userRepository.saveUser(user);
     return { changed: true, user };
   }

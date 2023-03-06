@@ -32,6 +32,10 @@ const plugin: EggPlugin = {
   view: {
     enable: false,
   },
+  nunjucks: {
+    enable: true,
+    package: 'egg-view-nunjucks',
+  },
   tracer: {
     enable: true,
     package: 'egg-tracer',

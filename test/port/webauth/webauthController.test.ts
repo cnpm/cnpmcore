@@ -6,6 +6,7 @@ import { AuthAdapter } from 'app/infra/AuthAdapter';
 import { CacheAdapter } from 'app/common/adapter/CacheAdapter';
 import { UserService } from 'app/core/service/UserService';
 import { UserRepository } from 'app/repository/UserRepository';
+import { genRSAKeys, encryptRSA } from 'app/common/CryptoUtil';
 
 describe('test/port/webauth/webauthController.test.ts', () => {
   describe('/-/v1/login', () => {
@@ -36,13 +37,15 @@ describe('test/port/webauth/webauthController.test.ts', () => {
 
   });
 
-  describe('/-/v1/login/request/session/:sessionId', () => {
+  describe('GET /-/v1/login/request/session/:sessionId', () => {
 
     let sessionId = '';
     beforeEach(async () => {
       sessionId = crypto.randomUUID();
       const cacheAdapter = await app.getEggObject(CacheAdapter);
       await cacheAdapter.set(sessionId, '');
+      const rsaKeys = genRSAKeys();
+      app.mockSession({ privateKey: rsaKeys.privateKey });
     });
 
 
@@ -65,29 +68,49 @@ describe('test/port/webauth/webauthController.test.ts', () => {
 
     });
 
-    it('should require authorization', async () => {
+    it('should render login.html', async () => {
       const res = await app.httpRequest()
         .get(`/-/v1/login/request/session/${sessionId}`);
 
-      assert.equal(res.status, 401);
-      assert.equal(res.headers['www-authenticate'], 'Basic realm="Login to cnpmcore"');
-      assert.equal(res.text, 'Unauthorized');
+      assert.equal(res.status, 200);
+      assert(/<title>Sign in to CNPM<\/title>/.test(res.text));
 
     });
 
-    it('should check basic authorization', async () => {
+  });
+
+  describe('POST /-/v1/login/request/session/:sessionId', () => {
+
+    let sessionId = '';
+    const rsaKeys = genRSAKeys();
+    beforeEach(async () => {
+      sessionId = crypto.randomUUID();
+      const cacheAdapter = await app.getEggObject(CacheAdapter);
+      await cacheAdapter.set(sessionId, '');
+      app.mockSession({ privateKey: rsaKeys.privateKey });
+    });
+
+
+    it('should check sessionId type', async () => {
       const res = await app.httpRequest()
-        .get(`/-/v1/login/request/session/${sessionId}`)
-        .set('authorization', 'banana');
+        .post('/-/v1/login/request/session/123');
 
-      assert.equal(res.status, 401);
-      assert.equal(res.headers['www-authenticate'], 'Basic realm="Login to cnpmcore"');
-      assert.equal(res.text, 'Unauthorized, invalid authorization, only support "Basic" authorization');
+      assert.equal(res.status, 422);
+      assert.equal(res.body.error, '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters');
 
     });
 
-    describe('should verify base64string', () => {
-      let authorization = '';
+    it('should check sessionId exists', async () => {
+      const res = await app.httpRequest()
+        .post(`/-/v1/login/request/session/${crypto.randomUUID()}`);
+
+      assert.equal(res.status, 200);
+      assert(/Session not found/.test(res.text));
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
+
+    });
+
+    describe('should verify login request body', () => {
       beforeEach(async () => {
         const userService = await app.getEggObject(UserService);
         await userService.create({
@@ -96,50 +119,90 @@ describe('test/port/webauth/webauthController.test.ts', () => {
           password: 'flymetothemoon',
           ip: 'localhost',
         });
-        authorization = `Basic ${Buffer.from('banana:flymetothemoon', 'utf-8').toString('base64')}`;
       });
 
       it('should login success', async () => {
 
+        const password = encryptRSA(rsaKeys.publicKey, 'flymetothemoon');
         const res = await app.httpRequest()
-          .get(`/-/v1/login/request/session/${sessionId}`)
-          .set('authorization', authorization);
+          .post(`/-/v1/login/request/session/${sessionId}`)
+          .send({
+            accData: {
+              username: 'banana',
+              password,
+            },
+          });
 
-        assert.equal(res.status, 302);
-        assert.equal(res.headers.location, '/-/v1/login/request/success');
+        assert.equal(res.status, 200);
+        assert.equal(res.body.ok, true);
       });
 
       it('should check password', async () => {
 
+        const password = encryptRSA(rsaKeys.publicKey, 'incorrect_password');
         const res = await app.httpRequest()
-          .get(`/-/v1/login/request/session/${sessionId}`)
-          .set('authorization', `Basic ${Buffer.from('banana:let_me_play_with_the_star', 'utf-8').toString('base64')}`);
+          .post(`/-/v1/login/request/session/${sessionId}`)
+          .send({
+            accData: {
+              username: 'banana',
+              password,
+            },
+          });
 
-        assert.equal(res.status, 401);
-        assert(/Please check your login name and password/.test(res.text));
+        assert.equal(res.status, 200);
+        assert(/Please check your login name and password/.test(res.body.message));
 
       });
 
       it('should check user params', async () => {
 
+        const password = encryptRSA(rsaKeys.publicKey, 'incorrect_password');
         const res = await app.httpRequest()
-          .get(`/-/v1/login/request/session/${sessionId}`)
-          .set('authorization', `Basic ${Buffer.from('apple', 'utf-8').toString('base64')}`);
+          .post(`/-/v1/login/request/session/${sessionId}`)
+          .send({
+            accData: {
+              username: '',
+              password,
+            },
+          });
 
-        assert.equal(res.status, 401);
-        assert.equal(res.text, 'Unauthorized, Validation Failed');
+        assert.equal(res.status, 200);
+        assert(/Unauthorized, Validation Failed/.test(res.body.message));
 
       });
 
+      it('should check authentication user (unbound webauthn) when enableWebauthn', async () => {
+        mock(app.config.cnpmcore, 'enableWebAuthn', true);
+        app.mockContext({
+          hostname: 'localhost',
+        });
+        const res = await app.httpRequest()
+          .post(`/-/v1/login/request/session/${sessionId}`)
+          .send({
+            accData: {
+              username: 'banana',
+            },
+            wanCredentialAuthData: {},
+          });
+
+        assert.equal(res.status, 200);
+        assert(/Unauthorized, Please check your login name/.test(res.body.message));
+      });
 
       it('should add user', async () => {
+        const password = encryptRSA(rsaKeys.publicKey, 'newaccount_password');
         const userRepository = await app.getEggObject(UserRepository);
         const res = await app.httpRequest()
-          .get(`/-/v1/login/request/session/${sessionId}`)
-          .set('authorization', `Basic ${Buffer.from('orange:let_me_play_with_the_star', 'utf-8').toString('base64')}`);
+          .post(`/-/v1/login/request/session/${sessionId}`)
+          .send({
+            accData: {
+              username: 'orange',
+              password,
+            },
+          });
 
-        assert.equal(res.status, 302);
-        assert.equal(res.headers.location, '/-/v1/login/request/success');
+        assert.equal(res.status, 200);
+        assert.equal(res.body.ok, true);
 
         const user = await userRepository.findUserByName('orange');
         assert(user);
@@ -147,17 +210,54 @@ describe('test/port/webauth/webauthController.test.ts', () => {
 
       it('only support admin when not allowPublicRegistration', async () => {
         mock(app.config.cnpmcore, 'allowPublicRegistration', false);
+        const password = encryptRSA(rsaKeys.publicKey, 'newaccount_password');
         const res = await app.httpRequest()
-          .get(`/-/v1/login/request/session/${sessionId}`)
-          .set('authorization', authorization);
+          .post(`/-/v1/login/request/session/${sessionId}`)
+          .send({
+            accData: {
+              username: 'orange',
+              password,
+            },
+          });
 
-        assert.equal(res.status, 403);
-        assert(/Public registration is not allowed/.test(res.text));
+        assert.equal(res.status, 200);
+        assert(/Public registration is not allowed/.test(res.body.message));
 
       });
 
     });
 
+  });
+
+  describe('/-/v1/login/request/prepare', () => {
+    beforeEach(async () => {
+      const userService = await app.getEggObject(UserService);
+      const user = await userService.create({
+        name: 'banana',
+        email: 'banana@fruits.com',
+        password: 'flymetothemoon',
+        ip: 'localhost',
+      });
+      await userService.updateUserWebauthn(user.user.userId, 'mock_wanCId', 'mock_wanCPublicKey');
+    });
+
+    it('should get prepare with authentication options', async () => {
+
+      const res = await app.httpRequest()
+        .get('/-/v1/login/request/prepare?name=banana');
+
+      assert.equal(res.status, 200);
+      assert(typeof res.body.wanCredentialAuthOption === 'object');
+    });
+
+    it('should get prepare with registration options', async () => {
+
+      const res = await app.httpRequest()
+        .get('/-/v1/login/request/prepare?name=apple');
+
+      assert.equal(res.status, 200);
+      assert(typeof res.body.wanCredentialRegiOption === 'object');
+    });
   });
 
   describe('/-/v1/login/sso/:sessionId', () => {
