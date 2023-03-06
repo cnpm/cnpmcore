@@ -69,7 +69,7 @@ export default (appInfo: EggAppConfig) => {
       cnpmcore_admin: 'admin@cnpmjs.org',
     },
     // use webauthn for login, https://webauthn.guide/
-    enableWebAuthn: true,
+    enableWebAuthn: false,
     // http response cache control header
     enableCDN: false,
     // if you are using CDN, can set it to 'max-age=0, s-maxage=120, must-revalidate'
