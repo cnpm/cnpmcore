@@ -9,6 +9,10 @@ import * as ssri from 'ssri';
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
 export const FULLNAME_REG_STRING = '@[^/]{1,220}\/[^/]{1,220}|@[^%]+\%2[fF][^/]{1,220}|[^@/]{1,220}';
 
+export function cleanUserPrefix(username: string): string {
+  return username.replace(/^.*:/, '');
+}
+
 export function getScopeAndName(fullname: string): string[] {
   if (fullname.startsWith('@')) {
     return fullname.split('/', 2);

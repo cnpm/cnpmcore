@@ -11,3 +11,8 @@ export enum SyncDeleteMode {
   block = 'block',
   delete = 'delete',
 }
+
+export enum PresetRegistryName {
+  default = 'default',
+  self = 'self',
+}

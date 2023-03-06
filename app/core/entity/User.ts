@@ -1,5 +1,6 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
+import { cleanUserPrefix } from '../../common/PackageUtil';
 
 interface UserData extends EntityData {
   userId: string;
@@ -15,6 +16,7 @@ interface UserData extends EntityData {
 export class User extends Entity {
   userId: string;
   name: string;
+  displayName: string;
   email: string;
   passwordSalt: string;
   passwordIntegrity: string;
@@ -32,6 +34,7 @@ export class User extends Entity {
     this.ip = data.ip;
     this.isPrivate = data.isPrivate;
     this.scopes = data.scopes;
+    this.displayName = cleanUserPrefix(this.name);
   }
 
   static create(data: EasyData<UserData, 'userId'>): User {
