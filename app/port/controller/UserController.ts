@@ -159,7 +159,7 @@ export class UserController extends AbstractController {
   async whoami(@Context() ctx: EggContext) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     return {
-      username: authorizedUser.name,
+      username: authorizedUser.displayName,
     };
   }
 

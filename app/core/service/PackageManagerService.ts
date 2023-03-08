@@ -107,7 +107,8 @@ export class PackageManagerService extends AbstractService {
       }
 
       /* c8 ignore next 3 */
-      if (!pkg.registryId && cmd.registryId) {
+      // package can be migrated into another registry
+      if (cmd.registryId) {
         pkg.registryId = cmd.registryId;
       }
     }
@@ -790,13 +791,8 @@ export class PackageManagerService extends AbstractService {
   }
 
   private async _listPackageMaintainers(pkg: Package) {
-    const maintainers: { name: string; email: string; }[] = [];
     const users = await this.packageRepository.listPackageMaintainers(pkg.packageId);
-    for (const user of users) {
-      const name = user.name.startsWith('npm:') ? user.name.replace('npm:', '') : user.name;
-      maintainers.push({ name, email: user.email });
-    }
-    return maintainers;
+    return users.map(({ displayName, email }) => ({ name: displayName, email }));
   }
 
   private async _listPackageFullManifests(pkg: Package): Promise<object | null> {

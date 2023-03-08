@@ -67,7 +67,7 @@ export class ShowPackageController extends AbstractController {
     if (!etag) {
       const allowSync = this.getAllowSync(ctx);
       // don't set cdn header, no cdn cache for new package to sync as soon as possible
-      throw this.createPackageNotFoundError(fullname, undefined, allowSync);
+      throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
     }
     if (blockReason) {
       this.setCDNHeaders(ctx);
