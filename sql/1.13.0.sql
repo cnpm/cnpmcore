@@ -1,2 +1,2 @@
-ALTER TABLE `users` ADD COLUMN `wan_c_public_key` text NULL COMMENT 'webauthn credential publick key';
-ALTER TABLE `users` ADD COLUMN `wan_c_id` text NULL COMMENT 'webauthn credential id';
+ALTER TABLE `users` ADD COLUMN `wan_c_public_key` varchar(512) NULL COMMENT 'webauthn credential publick key';
+ALTER TABLE `users` ADD COLUMN `wan_c_id` varchar(200) NULL COMMENT 'webauthn credential id';
