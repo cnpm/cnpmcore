@@ -164,6 +164,11 @@
         const $errorMessage = $('#error_message');
         const $enableWebauthn = $('#enableWebauthn');
         const enableWebauthn = $enableWebauthn.val() === 'true';
+        // macOS Firefox not support
+        const ua = window.navigator.userAgent.toLowerCase();
+        const isMac = /mac os/.test(ua);
+        const isFirefox = ua.indexOf('firefox') > -1;
+        const isSupportWebauthn = window.PublicKeyCredential && (!isMac || !isFirefox) && enableWebauthn;
         let preapreData = {};
 
         $username.focus();
@@ -173,7 +178,7 @@
         $username.on('blur', () => {
           const name = $username.val().trim();
           $username.val(name);
-          if (!enableWebauthn || !window.PublicKeyCredential || !name || name.length > 100) return;
+          if (!name || name.length > 100) return;
           handlePrepare(name);
         });
         $username.on('input', () => {
@@ -193,7 +198,7 @@
             username: name,
             password: password ? encryptRSA(publicKey, password) : '',
           };
-          if (!enableWebauthn || !window.PublicKeyCredential || !preapreData.wanCredentialRegiOption) {
+          if (!isSupportWebauthn || !preapreData.wanCredentialRegiOption) {
             handleSubmit({ accData });
             return;
           }
@@ -212,20 +217,20 @@
             .done(res => {
               preapreData = res;
               setSignTextByStatus(res.wanStatus);
-              // webauthn bound
-              if (res.wanStatus === 2 && res.wanCredentialAuthOption) {
-                handleAuthentication(res.wanCredentialAuthOption, {
-                  success(data) {
-                    handleSubmit({ accData: { username: name }, wanCredentialAuthData: data });
-                  },
-                  fail(err) {
-                    showPasswordAndFocus();
-                  },
-                });
+              // webauthn unbound or user not found
+              if (!isSupportWebauthn || res.wanStatus !== 2 || !res.wanCredentialAuthOption) {
+                showPasswordAndFocus();
                 return;
               }
-              // webauthn unbound or user not found
-              showPasswordAndFocus();
+              // webauthn bound
+              handleAuthentication(res.wanCredentialAuthOption, {
+                success(data) {
+                  handleSubmit({ accData: { username: name }, wanCredentialAuthData: data });
+                },
+                fail(err) {
+                  showPasswordAndFocus();
+                },
+              });
             })
             .fail(() => {
               showPasswordAndFocus();
