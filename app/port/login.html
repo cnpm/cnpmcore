@@ -211,6 +211,7 @@
           $.get('/-/v1/login/request/prepare?name=' + name)
             .done(res => {
               preapreData = res;
+              setSignTextByStatus(res.wanStatus);
               // webauthn bound
               if (res.wanStatus === 2 && res.wanCredentialAuthOption) {
                 handleAuthentication(res.wanCredentialAuthOption, {
@@ -316,6 +317,12 @@
         function showPasswordAndFocus() {
           $password.show();
           $password.focus();
+        }
+        function setSignTextByStatus(status) {
+          const actionText = status === 0 ? 'up' : 'in';
+          document.title = 'Sign ' + actionText + ' to CNPM';
+          $('.title').text('Sign ' + actionText + ' to CNPM');
+          $submitBtn.text('Sign ' + actionText);
         }
       });
     </script>
