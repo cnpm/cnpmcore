@@ -12,10 +12,9 @@ export async function Tracing(ctx: EggContext, next: Next) {
   //   connection: 'keep-alive'
   // }
   ctx.set('request-id', ctx.tracer.traceId);
-  const hasAuthStamp = ctx.get('authorization') || (ctx.session.user && ctx.session.token);
   if (ctx.method !== 'HEAD') {
     ctx.logger.info('[Tracing] auth: %s, npm-command: %s, referer: %s, user-agent: %j',
-      hasAuthStamp ? 1 : 0,
+      ctx.get('authorization') ? 1 : 0,
       ctx.get('npm-command') || '-',
       ctx.get('referer') || '-',
       ctx.get('user-agent'));

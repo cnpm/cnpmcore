@@ -153,11 +153,9 @@ export class WebauthController extends MiddlewareController {
       const createToken = await this.userService.createToken(user.userId);
       token = createToken.token!;
 
-      // write login status and delete privateKey
-      ctx.session.user = user;
-      ctx.session.token = token;
-      delete ctx.session.privateKey;
+      // set sessionToken and delete privateKey
       await this.cacheAdapter.set(sessionId, token);
+      delete ctx.session.privateKey;
       return { ok: true };
     }
 
@@ -202,11 +200,9 @@ export class WebauthController extends MiddlewareController {
       user = createRes.user;
     }
 
-    // write login status and delete privateKey
-    ctx.session.user = user;
-    ctx.session.token = token;
-    delete ctx.session.privateKey;
+    // set sessionToken and delete privateKey
     await this.cacheAdapter.set(sessionId, token);
+    delete ctx.session.privateKey;
 
     // webauthn registration
     if (enableWebAuthn && isSupportWebAuthn && wanCredentialRegiData) {

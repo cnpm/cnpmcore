@@ -54,34 +54,27 @@ export class UserRoleManager {
       };
     }
 
-    const authorization = ctx.get('authorization');
-    let tokenKey;
-    if (ctx.session.user && ctx.session.token) {
-      tokenKey = sha512(ctx.session.token);
-    } else if (authorization) {
-      const matchs = /^Bearer ([\w\.]+?)$/.exec(authorization);
-      if (!matchs) return null;
-      const tokenValue = matchs[1];
-      tokenKey = sha512(tokenValue);
-    } else {
-      return null;
-    }
-
-    const authorizedUserAndToken = await this.userRepository.findUserAndTokenByTokenKey(tokenKey);
-    if (!authorizedUserAndToken) return null;
     this.handleAuthorized = true;
-    this.currentAuthorizedToken = authorizedUserAndToken.token;
-    this.currentAuthorizedUser = authorizedUserAndToken.user;
-    ctx.userId = authorizedUserAndToken.user.userId;
-
+    const authorization = ctx.get('authorization');
+    if (!authorization) return null;
+    const matchs = /^Bearer ([\w\.]+?)$/.exec(authorization);
+    if (!matchs) return null;
+    const tokenValue = matchs[1];
+    const tokenKey = sha512(tokenValue);
+    const authorizedUserAndToken = await this.userRepository.findUserAndTokenByTokenKey(tokenKey);
+    if (authorizedUserAndToken) {
+      this.currentAuthorizedToken = authorizedUserAndToken.token;
+      this.currentAuthorizedUser = authorizedUserAndToken.user;
+      ctx.userId = authorizedUserAndToken.user.userId;
+    }
     return authorizedUserAndToken;
   }
 
   public async requiredAuthorizedUser(ctx: EggContext, role: TokenRole) {
     const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) {
-      const hasAuthStamp = ctx.get('authorization') || (ctx.session.user && ctx.session.token);
-      const message = hasAuthStamp ? 'Invalid token' : 'Login first';
+      const authorization = ctx.get('authorization');
+      const message = authorization ? 'Invalid token' : 'Login first';
       throw new UnauthorizedError(message);
     }
     const { user, token } = authorizedUserAndToken;
