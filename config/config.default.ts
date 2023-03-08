@@ -69,6 +69,7 @@ export default (appInfo: EggAppConfig) => {
       cnpmcore_admin: 'admin@cnpmjs.org',
     },
     // use webauthn for login, https://webauthn.guide/
+    // only support platform authenticators, browser support: https://webauthn.me/browser-support
     enableWebAuthn: false,
     // http response cache control header
     enableCDN: false,
@@ -175,16 +176,6 @@ export default (appInfo: EggAppConfig) => {
 
   config.httpclient = {
     useHttpClientNext: true,
-  };
-
-  config.keys = appInfo.name + '_cnpm_cookie_sign_key';
-
-  config.session = {
-    key: 'cnpm_si',
-    maxAge: 600 * 1000,
-    httpOnly: true,
-    encrypt: true,
-    renew: true,
   };
 
   config.view = {

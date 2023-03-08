@@ -153,8 +153,8 @@
         <button id="submit" disabled="true">Sign in</button>
       </div>
     </div>
-    <script src="//cdn.bootcdn.net/ajax/libs/jsencrypt/3.3.1/jsencrypt.min.js"></script>
-    <script src="//cdn.bootcdn.net/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jsencrypt/3.3.1/jsencrypt.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script>
       $(function() {
         const $submitBtn = $('#submit');
@@ -173,7 +173,7 @@
         $username.on('blur', () => {
           const name = $username.val().trim();
           $username.val(name);
-          if (!enableWebauthn || !name || name.length > 100) return;
+          if (!enableWebauthn || !window.PublicKeyCredential || !name || name.length > 100) return;
           handlePrepare(name);
         });
         $username.on('input', () => {
@@ -193,7 +193,7 @@
             username: name,
             password: password ? encryptRSA(publicKey, password) : '',
           };
-          if (!enableWebauthn || !preapreData.wanCredentialRegiOption) {
+          if (!enableWebauthn || !window.PublicKeyCredential || !preapreData.wanCredentialRegiOption) {
             handleSubmit({ accData });
             return;
           }
@@ -208,7 +208,7 @@
         });
 
         function handlePrepare(name) {
-          $.get('/-/v1/login/request/prepare?name=' + name)
+          $.get('/-/v1/login/request/prepare/{{sessionId}}?name=' + name)
             .done(res => {
               preapreData = res;
               setSignTextByStatus(res.wanStatus);

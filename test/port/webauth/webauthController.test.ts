@@ -40,12 +40,12 @@ describe('test/port/webauth/webauthController.test.ts', () => {
   describe('GET /-/v1/login/request/session/:sessionId', () => {
 
     let sessionId = '';
+    const rsaKeys = genRSAKeys();
     beforeEach(async () => {
       sessionId = crypto.randomUUID();
       const cacheAdapter = await app.getEggObject(CacheAdapter);
       await cacheAdapter.set(sessionId, '');
-      const rsaKeys = genRSAKeys();
-      app.mockSession({ privateKey: rsaKeys.privateKey });
+      await cacheAdapter.set(`${sessionId}_privateKey`, rsaKeys.privateKey);
     });
 
 
@@ -87,7 +87,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
       sessionId = crypto.randomUUID();
       const cacheAdapter = await app.getEggObject(CacheAdapter);
       await cacheAdapter.set(sessionId, '');
-      app.mockSession({ privateKey: rsaKeys.privateKey });
+      await cacheAdapter.set(`${sessionId}_privateKey`, rsaKeys.privateKey);
     });
 
 
@@ -229,8 +229,14 @@ describe('test/port/webauth/webauthController.test.ts', () => {
 
   });
 
-  describe('/-/v1/login/request/prepare', () => {
+  describe('/-/v1/login/request/prepare/:sessionId', () => {
+    let sessionId = '';
+    const rsaKeys = genRSAKeys();
     beforeEach(async () => {
+      sessionId = crypto.randomUUID();
+      const cacheAdapter = await app.getEggObject(CacheAdapter);
+      await cacheAdapter.set(sessionId, '');
+      await cacheAdapter.set(`${sessionId}_privateKey`, rsaKeys.privateKey);
       const userService = await app.getEggObject(UserService);
       const user = await userService.create({
         name: 'banana',
@@ -241,10 +247,29 @@ describe('test/port/webauth/webauthController.test.ts', () => {
       await userService.updateUserWebauthn(user.user.userId, 'mock_wanCId', 'mock_wanCPublicKey');
     });
 
+    it('should check sessionId type', async () => {
+      const res = await app.httpRequest()
+        .get('/-/v1/login/request/prepare/123?name=banana');
+
+      assert.equal(res.status, 422);
+      assert.equal(res.body.error, '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters');
+
+    });
+
+    it('should check sessionId exists', async () => {
+      const res = await app.httpRequest()
+        .get(`/-/v1/login/request/prepare/${crypto.randomUUID()}?name=banana`);
+
+      assert.equal(res.status, 200);
+      assert(/Session not found/.test(res.text));
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
+
+    });
+
     it('should get prepare with authentication options', async () => {
 
       const res = await app.httpRequest()
-        .get('/-/v1/login/request/prepare?name=banana');
+        .get(`/-/v1/login/request/prepare/${sessionId}?name=banana`);
 
       assert.equal(res.status, 200);
       assert(typeof res.body.wanCredentialAuthOption === 'object');
@@ -253,7 +278,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
     it('should get prepare with registration options', async () => {
 
       const res = await app.httpRequest()
-        .get('/-/v1/login/request/prepare?name=apple');
+        .get(`/-/v1/login/request/prepare/${sessionId}?name=apple`);
 
       assert.equal(res.status, 200);
       assert(typeof res.body.wanCredentialRegiOption === 'object');

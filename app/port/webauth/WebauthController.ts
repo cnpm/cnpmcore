@@ -89,7 +89,7 @@ export class WebauthController extends MiddlewareController {
       return '<h1>😭😭😭 Session not found, please try again on your command line 😭😭😭</h1>';
     }
     const keys = genRSAKeys();
-    ctx.session.privateKey = keys.privateKey;
+    await this.cacheAdapter.set(`${sessionId}_privateKey`, keys.privateKey);
     await ctx.render('login.html', {
       sessionId,
       publicKey: keys.publicKey,
@@ -122,6 +122,7 @@ export class WebauthController extends MiddlewareController {
       }
     }
 
+    const expectedChallenge = (await this.cacheAdapter.get(`${sessionId}_challenge`)) || '';
     const expectedOrigin = this.config.cnpmcore.registry;
     const expectedRPID = new URL(expectedOrigin).hostname;
     // webauthn authentication
@@ -133,7 +134,7 @@ export class WebauthController extends MiddlewareController {
       try {
         const verification = await verifyAuthenticationResponse({
           response: wanCredentialAuthData,
-          expectedChallenge: ctx.session.challenge || '',
+          expectedChallenge,
           expectedOrigin,
           expectedRPID,
           authenticator: {
@@ -147,20 +148,18 @@ export class WebauthController extends MiddlewareController {
           return { ok: false, message: 'Invalid security arguments, please try again on your browser' };
         }
       } catch (err) {
-        this.logger.error('[WebauthController.loginImplement:verify-authentication-fail] challenge: %s, expectedOrigin: %s, expectedRPID: %s, wanCredentialAuthData: %j, error: %j', ctx.session.challenge, expectedOrigin, expectedRPID, wanCredentialAuthData, err);
+        this.logger.error('[WebauthController.loginImplement:verify-authentication-fail] expectedChallenge: %s, expectedOrigin: %s, expectedRPID: %s, wanCredentialAuthData: %j, error: %j', expectedChallenge, expectedOrigin, expectedRPID, wanCredentialAuthData, err);
         return { ok: false, message: 'Authentication failed, please continue to sign in with your password' };
       }
       const createToken = await this.userService.createToken(user.userId);
       token = createToken.token!;
 
-      // set sessionToken and delete privateKey
       await this.cacheAdapter.set(sessionId, token);
-      delete ctx.session.privateKey;
       return { ok: true };
     }
 
     // check privateKey valid
-    const privateKey = ctx.session.privateKey;
+    const privateKey = await this.cacheAdapter.get(`${sessionId}_privateKey`);
     if (!privateKey) {
       return { ok: false, message: 'Invalid security arguments, please try again on your browser' };
     }
@@ -200,16 +199,14 @@ export class WebauthController extends MiddlewareController {
       user = createRes.user;
     }
 
-    // set sessionToken and delete privateKey
     await this.cacheAdapter.set(sessionId, token);
-    delete ctx.session.privateKey;
 
     // webauthn registration
     if (enableWebAuthn && isSupportWebAuthn && wanCredentialRegiData) {
       try {
         const verification = await verifyRegistrationResponse({
           response: wanCredentialRegiData,
-          expectedChallenge: ctx.session.challenge || '',
+          expectedChallenge,
           expectedOrigin,
           expectedRPID,
         });
@@ -221,7 +218,7 @@ export class WebauthController extends MiddlewareController {
           this.userService.updateUserWebauthn(user.userId, base64CredentialID, base64CredentialPublicKey);
         }
       } catch (err) {
-        this.logger.error('[WebauthController.loginImplement:verify-registration-fail] challenge: %s, expectedOrigin: %s, expectedRPID: %s, wanCredentialRegiData: %j, error: %j', ctx.session.challenge, expectedOrigin, expectedRPID, wanCredentialRegiData, err);
+        this.logger.error('[WebauthController.loginImplement:verify-registration-fail] expectedChallenge: %s, expectedOrigin: %s, expectedRPID: %s, wanCredentialRegiData: %j, error: %j', expectedChallenge, expectedOrigin, expectedRPID, wanCredentialRegiData, err);
       }
     }
 
@@ -229,10 +226,16 @@ export class WebauthController extends MiddlewareController {
   }
 
   @HTTPMethod({
-    path: '/-/v1/login/request/prepare',
+    path: '/-/v1/login/request/prepare/:sessionId',
     method: HTTPMethodEnum.GET,
   })
-  async loginPrepare(@Context() ctx: EggContext, @HTTPQuery() name: string) {
+  async loginPrepare(@Context() ctx: EggContext, @HTTPParam() sessionId: string, @HTTPQuery() name: string) {
+    ctx.tValidate(SessionRule, { sessionId });
+    const sessionToken = await this.cacheAdapter.get(sessionId);
+    if (typeof sessionToken !== 'string') {
+      return { ok: false, message: 'Session not found, please try again on your command line' };
+    }
+
     const expectedRPID = new URL(this.config.cnpmcore.registry).hostname;
     const user = await this.userService.findUserByName(name);
     const result: LoginPrepareResult = { wanStatus: user ? WanStatusCode.Unbound : WanStatusCode.UserNotFound };
@@ -244,9 +247,10 @@ export class WebauthController extends MiddlewareController {
         allowCredentials: [{
           id: base64url.toBuffer(user.wanCId),
           type: 'public-key',
+          transports: [ 'internal' ],
         }],
       });
-      ctx.session.challenge = result.wanCredentialAuthOption.challenge;
+      await this.cacheAdapter.set(`${sessionId}_challenge`, result.wanCredentialAuthOption.challenge);
     } else {
       const encoder = new TextEncoder();
       const regUserIdBuffer = createHash('sha256').update(encoder.encode(name)).digest();
@@ -262,7 +266,7 @@ export class WebauthController extends MiddlewareController {
           authenticatorAttachment: 'platform',
         },
       });
-      ctx.session.challenge = result.wanCredentialRegiOption.challenge;
+      await this.cacheAdapter.set(`${sessionId}_challenge`, result.wanCredentialRegiOption.challenge);
     }
     return result;
   }
@@ -317,6 +321,8 @@ export class WebauthController extends MiddlewareController {
     }
     // only get once
     await this.cacheAdapter.delete(sessionId);
+    await this.cacheAdapter.delete(`${sessionId}_challenge`);
+    await this.cacheAdapter.delete(`${sessionId}_privateKey`);
     return { token };
   }
 }
