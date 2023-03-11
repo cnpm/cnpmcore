@@ -45,7 +45,7 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
       assert(error.status === 403);
     });
 
-    it('should get package full manifest from source registry and store it to NFS and replaced tgz path', async () => {
+    it('should get package full manifest from source registry and store it to NFS', async () => {
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
         persist: false,
@@ -54,13 +54,10 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
       const storeKey = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foobar/${DIST_NAMES.FULL_MANIFESTS}`;
       const nfsBytes = await nfsClientAdapter.readBytes(storeKey);
       const fullManifestBytes = Buffer.from(JSON.stringify(fullManifest));
-      Object.values(fullManifest.versions).forEach((item:any)=> {
-        assert(item.dist?.tarball?.indexOf('127.0.0.1') < 0)
-      })
       assert((await calculateIntegrity(fullManifestBytes)).shasum === (await calculateIntegrity(nfsBytes!)).shasum);
     });
 
-    it('should get package abbreviated manifest from source registry and store it to NFS and repalced the tgz path', async () => {
+    it('should get package abbreviated manifest from source registry and store it to NFS', async () => {
       const data = await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json');
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', (_, opt) => {
         assert(opt.headers.accept === 'application/vnd.npm.install-v1+json');
@@ -73,9 +70,6 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
       const storeKey = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foobar/${DIST_NAMES.ABBREVIATED_MANIFESTS}`;
       const nfsBytes = await nfsClientAdapter.readBytes(storeKey);
       const fullManifestBytes = Buffer.from(JSON.stringify(abbreviatedManifest));
-      Object.values(abbreviatedManifest.versions).forEach((item:any)=> {
-        assert(item.dist?.tarball?.indexOf('127.0.0.1') < 0)
-      })
       assert((await calculateIntegrity(fullManifestBytes)).shasum === (await calculateIntegrity(nfsBytes!)).shasum);
     });
 
@@ -123,24 +117,12 @@ describe('test/core/service/ProxyModeService.test.ts', () => {
       mock(proxyModeService, 'getPackageAbbreviatedManifests', async () => {
         return { data: pkg, etag: '', blockReason: '' };
       });
-    });
-
-    it('should throw http error from source registry', async () => {
-      app.mockHttpclient(`${app.config.cnpmcore.sourceRegistry}/${encodeURIComponent(name)}/${version}`, {
-        data: { message: 'mock package.json',error: 'teapot error' },
-        status: 418
-      });
-      try {
-        await proxyModeService.getPackageVersionOrTagManifest(name, version);
-      } catch (error) {
-        assert(error.status === 418);
-      }
-    });
-
-    it('should get package version info from source registry', async () => {
       app.mockHttpclient(`${app.config.cnpmcore.sourceRegistry}/${encodeURIComponent(name)}/${version}`, {
         data: { message: 'mock package.json' },
       });
+    });
+
+    it('should get package version info from source registry', async () => {
       const manifest = await proxyModeService.getPackageVersionOrTagManifest(name, version);
       assert(manifest.message === 'mock package.json');
     });

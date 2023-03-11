@@ -61,7 +61,12 @@ export class ProxyModeService extends AbstractService {
     }
 
     // not in NFS
-    const responseResult = await this.npmRegistry.getPackageVersionManifest(fullname, version);
+    let responseResult: RegistryResponse;
+    try {
+      responseResult = await this.npmRegistry.getPackageVersionManifest(fullname, version);
+    } catch (error) {
+      throw new InternalServerError(`connect to uplink server failed: ${error.message}`);
+    }
     if (responseResult.status !== 200) {
       throw new HttpError({
         status: responseResult.status,
@@ -108,10 +113,14 @@ export class ProxyModeService extends AbstractService {
 
     // not in NFS
     let responseResult: RegistryResponse;
-    if (isFullManifests) {
-      responseResult = await this.npmRegistry.getFullManifests(fullname);
-    } else {
-      responseResult = await this.npmRegistry.getAbbreviatedManifests(fullname);
+    try {
+      if (isFullManifests) {
+        responseResult = await this.npmRegistry.getFullManifests(fullname);
+      } else {
+        responseResult = await this.npmRegistry.getAbbreviatedManifests(fullname);
+      }
+    } catch (err: any) {
+      throw new InternalServerError('connect to uplink server failed.');
     }
     if (responseResult.status !== 200) {
       throw new HttpError({
