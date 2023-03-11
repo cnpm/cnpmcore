@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.0](https://github.com/cnpm/npmcore/compare/v3.7.0...v3.8.0) (2023-03-08)
+
+
+### Features
+
+* Support for migrating packages into current registry ([#417](https://github.com/cnpm/npmcore/issues/417)) ([e5f905b](https://github.com/cnpm/npmcore/commit/e5f905bd4834ae31580ed0bc2d8e5b750800275f))
+
 ## [3.7.0](https://github.com/cnpm/npmcore/compare/v3.6.0...v3.7.0) (2023-03-01)
 
 

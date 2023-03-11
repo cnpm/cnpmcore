@@ -1,8 +1,10 @@
 import assert from 'assert';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { UserRepository } from 'app/repository/UserRepository';
 import { calculateIntegrity } from 'app/common/PackageUtil';
+import { PackageRepository } from 'app/repository/PackageRepository';
+import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let userRepository: UserRepository;
@@ -13,16 +15,25 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
   });
 
   describe('[PUT /:fullname] save()', () => {
-    it('should 403 when package is public', async () => {
-      const { pkg, user } = await TestUtil.createPackage({ isPrivate: false, version: '1.0.0' });
+    it('should 200 when package in current registry', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const { pkg, user } = await TestUtil.createPackage({ name: 'non_scope_pkg', version: '1.0.0' });
       const pkg2 = await TestUtil.getFullPackage({ name: pkg.name, version: '2.0.0' });
       const res = await app.httpRequest()
         .put(`/${pkg2.name}`)
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
-        .send(pkg2)
-        .expect(403);
-      assert(res.body.error === `[FORBIDDEN] Can\'t modify npm public package "${pkg2.name}"`);
+        .send(pkg2);
+
+      assert.equal(res.status, 201);
+      const packageRepository = await app.getEggObject(PackageRepository);
+      const pkgEntity = await packageRepository.findPackage('', pkg.name);
+
+      const registryManagerService = await app.getEggObject(RegistryManagerService);
+      const selfRegistry = await registryManagerService.ensureSelfRegistry();
+
+      assert(pkgEntity);
+      assert.equal(pkgEntity.registryId, selfRegistry.registryId);
     });
 
     it('should add new version success on scoped package', async () => {
@@ -98,6 +109,35 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] Package scope required, legal scopes: "@cnpm, @cnpmcore, @example"');
+    });
+
+    it('should 200 when migrate scoped package', async () => {
+      const name = '@cnpm/publish-package-test';
+      let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      assert(res);
+      const packageRepository = await app.getEggObject(PackageRepository);
+      let pkgEntity = await packageRepository.findPackage('@cnpm', 'publish-package-test');
+      assert(pkgEntity);
+      pkgEntity.registryId = '';
+      await packageRepository.savePackage(pkgEntity!);
+
+      pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
+      res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      pkgEntity = await packageRepository.findPackage('@cnpm', 'publish-package-test');
+      assert(pkgEntity?.registryId);
     });
 
     it('should publish on user custom scopes', async () => {
@@ -584,6 +624,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     });
 
     it('should 422 when name format error', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       let pkg = await TestUtil.getFullPackage({
         name: 'excited!',
       });
@@ -713,12 +754,14 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(422);
+        .send(pkg);
+
+      assert.equal(res.status, 422);
       assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist.shasum invalid');
     });
 
     it('should 422 when name not match pkg.name', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkg = await TestUtil.getFullPackage();
       const res = await app.httpRequest()
         .put('/foo')
@@ -730,6 +773,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     });
 
     it('should 422 _attachments is empty', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       let res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)
@@ -782,6 +826,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     });
 
     it('should 422 versions is empty', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       let res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)
@@ -810,6 +855,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     });
 
     it('should 422 dist-tags is empty', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       let res = await app.httpRequest()
         .put('/foo')
         .set('authorization', publisher.authorization)

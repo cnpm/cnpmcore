@@ -58,7 +58,8 @@ export class PackageTagController extends AbstractController {
   async saveTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string, @HTTPBody() version: string) {
     const data = { tag, version };
     ctx.tValidate(TagWithVersionRule, data);
-    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
+    const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
+    const pkg = ensureRes.pkg!;
     const packageVersion = await this.getPackageVersionEntity(pkg, data.version);
     await this.packageManagerService.savePackageTag(pkg, data.tag, packageVersion.version);
     return { ok: true };
@@ -76,7 +77,8 @@ export class PackageTagController extends AbstractController {
     if (tag === 'latest') {
       throw new ForbiddenError('Can\'t remove the "latest" tag');
     }
-    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
+    const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
+    const pkg = ensureRes.pkg!;
     await this.packageManagerService.removePackageTag(pkg, data.tag);
     return { ok: true };
   }

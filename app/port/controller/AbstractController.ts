@@ -50,6 +50,22 @@ export abstract class AbstractController extends MiddlewareController {
     return scope && this.config.cnpmcore.allowScopes.includes(scope);
   }
 
+  protected async ensurePublishAccess(ctx: EggContext, fullname: string, checkPkgExist = true) {
+    const user = await this.userRoleManager.checkPublishAccess(ctx, fullname);
+    let pkg: PackageEntity | null = null;
+    if (checkPkgExist) {
+      const [ scope, name ] = getScopeAndName(fullname);
+      pkg = await this.packageRepository.findPackage(scope, name);
+      if (!pkg) {
+        throw this.createPackageNotFoundError(fullname, undefined);
+      }
+    }
+    return {
+      pkg,
+      user,
+    };
+  }
+
   protected get syncNotFound() {
     return this.config.cnpmcore.syncNotFound;
   }
@@ -80,9 +96,15 @@ export abstract class AbstractController extends MiddlewareController {
     return allowSync;
   }
 
-  protected createPackageNotFoundError(fullname: string, version?: string, allowSync = false) {
+  protected createPackageNotFoundError(fullname: string, version?: string) {
     const message = version ? `${fullname}@${version} not found` : `${fullname} not found`;
     const err = new PackageNotFoundError(message);
+    return err;
+  }
+
+  protected createPackageNotFoundErrorWithRedirect(fullname: string, version?: string, allowSync = false) {
+    // const err = new PackageNotFoundError(message);
+    const err = this.createPackageNotFoundError(fullname, version);
     const [ scope ] = getScopeAndName(fullname);
     // dont sync private scope
     if (!this.isPrivateScope(scope)) {
@@ -116,23 +138,12 @@ export abstract class AbstractController extends MiddlewareController {
     return await this.getPackageEntity(scope, name);
   }
 
-  // 1. get package
-  // 2. check current user is maintainer
-  // 3. make sure current token can publish
-  protected async getPackageEntityAndRequiredMaintainer(ctx: EggContext, fullname: string): Promise<PackageEntity> {
-    const [ scope, name ] = getScopeAndName(fullname);
-    const pkg = await this.getPackageEntity(scope, name);
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
-    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
-    return pkg;
-  }
-
   // try to get package entity, throw NotFoundError when package not exists
   protected async getPackageEntity(scope: string, name: string): Promise<PackageEntity> {
     const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (!packageEntity) {
       const fullname = getFullname(scope, name);
-      throw this.createPackageNotFoundError(fullname);
+      throw this.createPackageNotFoundErrorWithRedirect(fullname);
     }
     return packageEntity;
   }

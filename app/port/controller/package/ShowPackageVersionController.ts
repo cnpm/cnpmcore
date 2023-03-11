@@ -36,7 +36,7 @@ export class ShowPackageVersionController extends AbstractController {
         manifest = await this.proxyModeService.getPackageVersionOrTagManifest(fullname, versionOrTag);
       } else {
         const allowSync = this.getAllowSync(ctx);
-        throw this.createPackageNotFoundError(fullname, undefined, allowSync);
+        throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
       }
     }
     if (blockReason) {

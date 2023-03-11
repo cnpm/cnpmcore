@@ -30,7 +30,7 @@ import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
 import { ScopeManagerService } from './ScopeManagerService';
 import { EventCorkAdvice } from './EventCorkerAdvice';
-import { SyncDeleteMode } from '../../common/constants';
+import { PresetRegistryName, SyncDeleteMode } from '../../common/constants';
 
 type syncDeletePkgOptions = {
   task: Task,
@@ -324,7 +324,7 @@ export class PackageSyncerService extends AbstractService {
 
     // 采用默认的 registry
     if (!registry) {
-      registry = await this.registryManagerService.findByRegistryName('default');
+      registry = await this.registryManagerService.findByRegistryName(PresetRegistryName.default);
     }
 
     // 更新 targetHost 地址
