@@ -44,69 +44,18 @@ export class NPMRegistry {
     // set query t=timestamp, make sure CDN cache disable
     // cache=0 is sync worker request flag
     const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
-    let lastError: any;
-    while (retries > 0) {
-      try {
-        // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
-        // https://r.cnpmjs.org/intraactive-sdk-ui 44s
-        return await this.request('GET', url, undefined, { timeout: 120000 });
-      } catch (err: any) {
-        if (err.name === 'ResponseTimeoutError') throw err;
-        lastError = err;
-      }
-      retries--;
-      if (retries > 0) {
-        // sleep 1s ~ 4s in random
-        const delay = process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
-        await setTimeout(delay);
-      }
-    }
-    throw lastError;
+    return await this.getManifest(url, {}, retries)
   }
 
   public async getAbbreviatedManifests(fullname: string, retries = 3): Promise<RegistryResponse> {
-    // set query t=timestamp, make sure CDN cache disable
-    // cache=0 is sync worker request flag
     const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
-    let lastError: any;
     const headers = { Accept: 'application/vnd.npm.install-v1+json' };
-    while (retries > 0) {
-      try {
-        // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
-        // https://r.cnpmjs.org/intraactive-sdk-ui 44s
-        return await this.request('GET', url, undefined, { timeout: 120000, headers });
-      } catch (err: any) {
-        if (err.name === 'ResponseTimeoutError') throw err;
-        lastError = err;
-      }
-      retries--;
-      if (retries > 0) {
-        // sleep 1s ~ 4s in random
-        const delay = process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
-        await setTimeout(delay);
-      }
-    }
-    throw lastError;
+    return await this.getManifest(url, headers, retries)
   }
 
   public async getPackageVersionManifest(fullname: string, versionOrTag: string, retries = 3) {
     const url = `${this.registry}/${encodeURIComponent(fullname)}/${versionOrTag}`;
-    let lastError: any;
-    while (retries > 0) {
-      try {
-        return await this.request('GET', url, undefined, { timeout: 10000 });
-      } catch (err: any) {
-        if (err.name === 'ResponseTimeoutError') throw err;
-        lastError = err;
-      }
-      retries--;
-      if (retries > 0) {
-        // sleep 1s ~ 4s in random
-        const delay = process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
-        await setTimeout(delay);
-      }
-    }
-    throw lastError;
+    return await this.getManifest(url, {}, retries)
   }
 
   // app.put('/:name/sync', sync.sync);
@@ -147,5 +96,24 @@ export class NPMRegistry {
       method,
       ...res,
     };
+  }
+
+  private async getManifest(url: string, headers = {}, retries = 3) {
+    let lastError: any;
+    while (retries > 0) {
+      try {
+        return await this.request('GET', url, undefined, { timeout: 120000, headers });
+      } catch (err: any) {
+        if (err.name === 'ResponseTimeoutError') throw err;
+        lastError = err;
+      }
+      retries--;
+      if (retries > 0) {
+        // sleep 1s ~ 4s in random
+        const delay = process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
+        await setTimeout(delay);
+      }
+    }
+    throw lastError;
   }
 }
