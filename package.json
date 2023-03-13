@@ -110,7 +110,7 @@
     "eslint": "^8.29.0",
     "eslint-config-egg": "^12.1.0",
     "git-contributor": "2",
-    "npm-cli-login": "^1.0.0",
+    "@cnpmjs/npm-cli-login": "^1.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
   },
