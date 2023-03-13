@@ -431,14 +431,12 @@ export class PackageSyncerService extends AbstractService {
     //   "modified": "2021-12-08T14:59:57.264Z",
     const timeMap = data.time || {};
     const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
-    if (!specificVersion) {
-      const contentLength = headers['content-length'] || '-';
-      logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`);
+    const contentLength = headers['content-length'] || '-';
+    logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`);
 
-      if (this.isRemovedInRemote(registryFetchResult)) {
-        await this.syncDeletePkg({ task, pkg, logs, logUrl, url, data });
-        return;
-      }
+    if (this.isRemovedInRemote(registryFetchResult)) {
+      await this.syncDeletePkg({ task, pkg, logs, logUrl, url, data });
+      return;
     }
 
     const versionMap = data.versions || {};
@@ -531,7 +529,6 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     const updateVersions: string[] = [];
     const differentMetas: any[] = [];
-
     let syncIndex = 0;
     for (const item of versions) {
       const version: string = item.version;
@@ -811,16 +808,10 @@ export class PackageSyncerService extends AbstractService {
     // 4.1 find out remove maintainers
     const removedMaintainers: unknown[] = [];
     const existsMaintainers = existsData && existsData.maintainers || [];
-    let shouldRefreshMaintainers = false;
     for (const maintainer of existsMaintainers) {
-      let npmUserName = maintainer.name;
-      if (npmUserName.startsWith('npm:')) {
-        // fix cache npm user name
-        npmUserName = npmUserName.replace('npm:', '');
-        shouldRefreshMaintainers = true;
-      }
-      if (!(npmUserName in maintainersMap)) {
-        const user = await this.userRepository.findUserByName(`npm:${npmUserName}`);
+      const { name } = maintainer;
+      if (!(name in maintainersMap)) {
+        const user = await this.userRepository.findUserByName(`${registry?.userPrefix || 'npm:'}${name}`);
         if (user) {
           await this.packageManagerService.removePackageMaintainer(pkg, user);
           removedMaintainers.push(maintainer);
@@ -829,9 +820,6 @@ export class PackageSyncerService extends AbstractService {
     }
     if (removedMaintainers.length > 0) {
       logs.push(`[${isoNow()}] 🟢 Removed ${removedMaintainers.length} maintainers: ${JSON.stringify(removedMaintainers)}`);
-    } else if (shouldRefreshMaintainers) {
-      await this.packageManagerService.refreshPackageMaintainersToDists(pkg);
-      logs.push(`[${isoNow()}] 🟢 Refresh maintainers`);
     }
 
     // 5. add deps sync task
@@ -864,5 +852,4 @@ export class PackageSyncerService extends AbstractService {
     this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
       task.taskId, task.targetName);
   }
-
 }

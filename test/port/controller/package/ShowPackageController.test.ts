@@ -13,7 +13,6 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     packageRepository = await app.getEggObject(PackageRepository);
-    // nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
   });
 
   describe('[GET /:fullname] show()', () => {

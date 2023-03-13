@@ -51,27 +51,24 @@ export class DownloadPackageVersionTarController extends AbstractController {
     try {
       pkg = await this.getPackageEntityByFullname(fullname);
     } catch (err) {
-      if (err.name === 'PackageNotFoundError') {
-        // proxy mode, package not found.
-        if (this.enableProxyMode) {
-          const tgzBuffer = await this.getPackageVersionTarAndCreateSpecVersionSyncTask(ctx, fullname, version);
-          ctx.attachment(`${filenameWithVersion}.tgz`);
-          return tgzBuffer;
-        }
+      if (this.enableProxyMode) {
+        const tgzBuffer = await this.getPackageVersionTarAndCreateSpecVersionSyncTask(ctx, fullname, version);
+        this.packageManagerService.plusPackageVersionCounter(fullname, version);
+        ctx.attachment(`${filenameWithVersion}.tgz`);
+        return tgzBuffer;
       }
-      throw this.createPackageNotFoundError(fullname);
+      throw this.createPackageNotFoundErrorWithRedirect(fullname);
     }
     let packageVersion: PackageVersionEntity;
     try {
       packageVersion = await this.getPackageVersionEntity(pkg, version);
     } catch (err) {
-      if (err.name === 'NotFoundError') {
-        if (this.enableProxyMode) {
-          // proxy mode package version not found.
-          const tgzBuffer = await this.getPackageVersionTarAndCreateSpecVersionSyncTask(ctx, fullname, version);
-          ctx.attachment(`${filenameWithVersion}.tgz`);
-          return tgzBuffer;
-        }
+      if (this.enableProxyMode) {
+        // proxy mode package version not found.
+        const tgzBuffer = await this.getPackageVersionTarAndCreateSpecVersionSyncTask(ctx, fullname, version);
+        this.packageManagerService.plusPackageVersionCounter(fullname, version);
+        ctx.attachment(`${filenameWithVersion}.tgz`);
+        return tgzBuffer;
       }
       throw new NotFoundError(`${pkg.fullname}@${version} not found`);
     }

@@ -65,7 +65,7 @@ export class ProxyModeService extends AbstractService {
     if (responseResult.status !== 200) {
       throw new HttpError({
         status: responseResult.status,
-        message: responseResult.data,
+        message: responseResult.data || responseResult.statusText,
       });
     }
 
@@ -116,7 +116,7 @@ export class ProxyModeService extends AbstractService {
     if (responseResult.status !== 200) {
       throw new HttpError({
         status: responseResult.status,
-        message: responseResult.data?.error,
+        message: responseResult.data?.error || responseResult.statusText,
       });
     }
 
