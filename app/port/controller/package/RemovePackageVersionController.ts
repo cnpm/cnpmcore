@@ -33,7 +33,8 @@ export class RemovePackageVersionController extends AbstractController {
     if (npmCommand !== 'unpublish') {
       throw new BadRequestError('Only allow "unpublish" npm-command');
     }
-    const pkg = await this.getPackageEntityAndRequiredMaintainer(ctx, fullname);
+    const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
+    const pkg = ensureRes.pkg!;
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     // https://docs.npmjs.com/policies/unpublish

@@ -93,6 +93,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .set('npm-command', 'unpublish')
         .set('user-agent', normalUser.ua);
       assert(res.status === 403);
+      // console.log(res.body);
       assert(res.body.error === '[FORBIDDEN] Can\'t modify npm public package "foo"');
 
       res = await app.httpRequest()
@@ -242,8 +243,8 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .delete('/@cnpm/foo/-/foo-4.0.0.tgz/-rev/1-61af62d6295fcbd9f8f1c08f')
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
-        .set('npm-command', 'unpublish')
-        .expect(404);
+        .set('npm-command', 'unpublish');
+      assert.equal(res.status, 404);
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foo not found');
     });
 

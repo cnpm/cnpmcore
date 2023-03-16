@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
@@ -121,16 +121,16 @@ describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
       assert.equal(res.body.error, '[INVALID_PARAM] tag: must match format "semver-tag"');
     });
 
-    it('should 403 when package is public', async () => {
-      const { pkg, user } = await TestUtil.createPackage({ isPrivate: false, version: '1.0.0' });
-      const res = await app.httpRequest()
+    it('should 200 when publish package in current registry', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const { pkg, user } = await TestUtil.createPackage({ name: 'non_scope_pkg', version: '1.0.0' });
+      await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
         .set('content-type', 'application/json')
         .send(JSON.stringify('1.0.0'))
-        .expect(403);
-      assert.equal(res.body.error, `[FORBIDDEN] Can\'t modify npm public package "${pkg.name}"`);
+        .expect(200);
     });
 
     it('should 200', async () => {
