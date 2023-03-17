@@ -95,21 +95,6 @@ export class TestUtil {
     }
   }
 
-  static async createDatabase() {
-    // TODO use leoric sync
-    const database = this.getDatabase();
-    const sqls = await this.getTableSqls();
-    // no need to create database on GitHub Action CI env
-    if (!process.env.CI) {
-      await this.query(`DROP DATABASE IF EXISTS ${database};`);
-      await this.query(`CREATE DATABASE IF NOT EXISTS ${database} CHARACTER SET utf8;`);
-      console.log('[TestUtil] CREATE DATABASE: %s', database);
-    }
-    await this.query(`USE ${database};`);
-    await this.query(sqls);
-    this.destroyConnection();
-  }
-
   static async getTableNames() {
     if (!this.tables) {
       const database = this.getDatabase();
