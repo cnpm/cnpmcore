@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.0](https://github.com/cnpm/npmcore/compare/v3.8.0...v3.9.0) (2023-03-20)
+
+
+### Features
+
+* redis weak ([#426](https://github.com/cnpm/npmcore/issues/426)) ([300f0e4](https://github.com/cnpm/npmcore/commit/300f0e4fd97e1e3f181991841442e771b1451185))
+
 ## [3.8.0](https://github.com/cnpm/npmcore/compare/v3.7.0...v3.8.0) (2023-03-08)
 
 

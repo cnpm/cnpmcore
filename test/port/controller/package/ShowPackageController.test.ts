@@ -62,6 +62,35 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.match(res.body.rev, /^\d+\-\w{24}$/);
     });
 
+    describe('should fallback when cache error', async () => {
+      it('should fallback when get etag error', async () => {
+        app.mockLog();
+        mock(CacheService.prototype, 'getPackageEtag', async () => {
+          throw new Error('mock get etag error');
+        });
+        await app.httpRequest()
+          .get(`/${name}`)
+          .expect(200);
+
+        app.expectLog(/ShowPackageController.show:error/);
+      });
+
+      it('should fallback when get getPackageManifests error', async () => {
+        app.mockLog();
+        mock(CacheService.prototype, 'getPackageEtag', async () => {
+          return 'mock-etag';
+        });
+        mock(CacheService.prototype, 'getPackageManifests', async () => {
+          throw new Error('mock get etag error');
+        });
+        await app.httpRequest()
+          .get(`/${name}`)
+          .expect(200);
+
+        app.expectLog(/ShowPackageController.show:error/);
+      });
+    });
+
     it('should show one package with full manifests', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
       const res = await app.httpRequest()
