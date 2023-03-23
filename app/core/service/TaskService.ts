@@ -27,13 +27,16 @@ export class TaskService extends AbstractService {
 
   public async createTask(task: Task, addTaskQueueOnExists: boolean) {
     const existsTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type);
+    // 默认跳过同名依赖的同步
     let haveTheSameVersionTask = true;
-    const enableProxyMode = this.config.cnpmcore.enableProxyMode && this.config.cnpmcore.syncMode === 'none';
-    if (task.type === TaskType.SyncPackage && enableProxyMode) {
-      const existsTaskVersionList = await this.taskRepository.findAllTaskVersionByTargetName(task.targetName, task.type);
+    if (task.type === TaskType.SyncPackage) {
       const currentSpecificVersion = (task as Task<CreateSyncPackageTaskData>)?.data?.specificVersion;
-      if (currentSpecificVersion && !existsTaskVersionList.includes(currentSpecificVersion)) {
-        haveTheSameVersionTask = false;
+      if (currentSpecificVersion) {
+        const existsTaskVersionList = await this.taskRepository.findAllTaskVersionByTargetName(task.targetName, task.type);
+        if (currentSpecificVersion && !existsTaskVersionList.includes(currentSpecificVersion)) {
+          // 仅当指定了同步版本且同步版本不在当前任务列表中时不当作existsTask
+          haveTheSameVersionTask = false;
+        }
       }
     }
     if (existsTask && haveTheSameVersionTask) {
