@@ -924,7 +924,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(app.mockAgent().pendingInterceptors().length === 1);
     });
 
-    it('should only sync specific version success when specified the version in proxy mode even though the path is wrong.', async () => {
+    it('should only sync specific version success when specified the version, even though the path is wrong.', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
       mock(app.config.cnpmcore, 'enableProxyMode', true);
       app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
@@ -947,7 +947,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 🟢 Synced updated 1 versions'));
     });
 
-    it('should use temp tgz in proxy mode when supplied correct path.', async () => {
+    it('should use temp tgz in sync specific version when supplied correct path.', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
       mock(app.config.cnpmcore, 'enableProxyMode', true);
       app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {

@@ -9,6 +9,7 @@ import { EggHttpClient } from 'egg';
 import { setTimeout } from 'timers/promises';
 import { rm, stat } from 'fs/promises';
 import semver from 'semver';
+import semverRcompare from 'semver/functions/rcompare';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { detectInstallScript, getScopeAndName, calculateIntegrity } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -795,6 +796,19 @@ export class PackageSyncerService extends AbstractService {
         }
       }
     }
+
+    // 3.2 shoud add latest tag
+    // 在同步sepcific version时可能会出现latest tag丢失或指向版本不正确的情况，如果没有latest tag则将仓库中已有的最高版本标记为latest,保证依赖的latest标签
+    if (specificVersion) {
+      const existsVersionList: string[] = Object.keys(existsVersionMap);
+      existsVersionList.push(specificVersion);
+      const currentLatestVersion = existsVersionList.sort(semverRcompare)[0];
+      if (currentLatestVersion !== existsDistTags.latest) {
+        changedTags.push({ action: 'change', tag: 'latest', version: currentLatestVersion });
+        await this.packageManagerService.savePackageTag(pkg, 'latest', currentLatestVersion);
+      }
+    }
+
     if (changedTags.length > 0) {
       logs.push(`[${isoNow()}] 🟢 Synced ${changedTags.length} tags: ${JSON.stringify(changedTags)}`);
     }
