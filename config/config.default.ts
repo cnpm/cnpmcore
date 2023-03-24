@@ -81,7 +81,7 @@ export default (appInfo: EggAppConfig) => {
     enableNpmClientAndVersionCheck: true,
     // sync when package not found, only effect when syncMode = all/exist
     syncNotFound: false,
-    // redirect to source registry when package not found, only effect when syncMode = all/exist
+    // redirect to source registry when package not found
     redirectNotFound: true,
   };
 

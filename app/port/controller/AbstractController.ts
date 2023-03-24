@@ -106,7 +106,11 @@ export abstract class AbstractController extends MiddlewareController {
     if (!this.isPrivateScope(scope)) {
       // syncMode = none, redirect public package to source registry
       if (!this.enableSync) {
-        err.redirectToSourceRegistry = this.sourceRegistry;
+        if (this.redirectNotFound) {
+          err.redirectToSourceRegistry = this.sourceRegistry;
+        } else {
+          return err;
+        }
       // syncMode = all/exist
       } else {
         if (allowSync && this.syncNotFound) {
