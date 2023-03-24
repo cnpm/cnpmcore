@@ -1,6 +1,6 @@
 {
   "name": "cnpmcore",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "description": "npm core",
   "files": [
     "dist/**/*"
@@ -40,10 +40,12 @@
     "lint": "eslint --cache --ext .ts .",
     "lint:fix": "eslint --cache --ext .ts --fix .",
     "test": "npm run lint:fix && npm run test-local",
-    "prepare-database": "rm -rf dist && ts-node test/prepare.ts",
-    "test-local": "npm run prepare-database && egg-bin test",
-    "t": "npm run lint:fix && npm run prepare-database && egg-bin test --changed",
-    "cov": "npm run prepare-database && egg-bin cov",
+    "pretest-local": "bash ./prepare-database.sh",
+    "test-local": "egg-bin test",
+    "pret": "bash ./prepare-database.sh",
+    "t": "npm run lint:fix && egg-bin test --changed",
+    "precov": "bash ./prepare-database.sh",
+    "cov": "egg-bin cov",
     "ci": "npm run lint && npm run cov && npm run tsc:prod",
     "clean": "tsc -b --clean && rm -rf dist",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
@@ -115,7 +117,6 @@
     "eslint-config-egg": "^12.1.0",
     "git-contributor": "2",
     "@cnpmjs/npm-cli-login": "^1.1.0",
-    "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
   },
   "author": "killagu",
