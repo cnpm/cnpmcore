@@ -25,6 +25,8 @@ export default (appInfo: EggAppConfig) => {
     //  - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
     syncMode: SyncMode.none,
     syncDeleteMode: SyncDeleteMode.delete,
+    allowExecuteSyncTask: true,
+    enableSyncController: true,
     hookEnable: false,
     syncPackageWorkerMaxConcurrentTasks: 10,
     triggerHookWorkerMaxConcurrentTasks: 10,

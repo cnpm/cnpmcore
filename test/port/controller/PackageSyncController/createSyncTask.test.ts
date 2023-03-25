@@ -13,8 +13,8 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
   });
 
   describe('[PUT /-/package/:fullname/syncs] createSyncTask()', () => {
-    it('should 403 when syncMode = none', async () => {
-      mock(app.config.cnpmcore, 'syncMode', 'none');
+    it('should 403 when enableSyncController is false', async () => {
+      mock(app.config.cnpmcore, 'enableSyncController', false);
       const res = await app.httpRequest()
         .put('/-/package/koa/syncs')
         .expect(403);
@@ -307,8 +307,8 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
   });
 
   describe('[PUT /:fullname/sync] deprecatedCreateSyncTask()', () => {
-    it('should 403 when syncMode = none', async () => {
-      mock(app.config.cnpmcore, 'syncMode', 'none');
+    it('should 403 when enableSyncController is false', async () => {
+      mock(app.config.cnpmcore, 'enableSyncController', false);
       const res = await app.httpRequest()
         .put('/koa/sync')
         .expect(403);

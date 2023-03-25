@@ -54,7 +54,7 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async createSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: SyncPackageTaskType) {
-    if (!this.enableSync) {
+    if (!this.config.cnpmcore.enableSyncController) {
       throw new ForbiddenError('Not allow to sync package');
     }
     const tips = data.tips || `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
