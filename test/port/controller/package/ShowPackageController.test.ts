@@ -718,6 +718,15 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(res.headers.location === 'https://registry.npmjs.org/@eggjs/tegg-metadata?t=0123123&foo=bar');
     });
 
+    it('should not redirect to source registry when redirectNotFound is false and sync mode is none', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
+      const res = await app.httpRequest()
+        .get('/@eggjs/tegg-metadata')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res.status === 404);
+    });
+
     it('should redirect public non-scope package to source registry if package not exists when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
       let res = await app.httpRequest()
