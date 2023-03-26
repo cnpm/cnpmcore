@@ -54,12 +54,11 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async createSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: SyncPackageTaskType) {
-    if (!this.config.cnpmcore.enableSyncController) {
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
+    if (!this.config.cnpmcore.enableSyncController && !isAdmin) {
       throw new ForbiddenError('Not allow to sync package');
     }
     const tips = data.tips || `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-
     const params = {
       fullname,
       tips,

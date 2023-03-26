@@ -21,6 +21,15 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.error === '[FORBIDDEN] Not allow to sync package');
     });
 
+    it('should allow admin to create sync even though enableSyncController is false', async () => {
+      mock(app.config.cnpmcore, 'enableSyncController', false);
+      const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
+      await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .set('authorization', adminUser.authorization)
+        .expect(201);
+    });
+
     it('should 401 if user not login when alwaysAuth = true', async () => {
       mock(app.config.cnpmcore, 'alwaysAuth', true);
       const res = await app.httpRequest()
@@ -313,6 +322,15 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .put('/koa/sync')
         .expect(403);
       assert(res.body.error === '[FORBIDDEN] Not allow to sync package');
+    });
+
+    it('should allow admin to create sync even though enableSyncController is false', async () => {
+      mock(app.config.cnpmcore, 'enableSyncController', false);
+      const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
+      await app.httpRequest()
+        .put('/koa/sync')
+        .set('authorization', adminUser.authorization)
+        .expect(201);
     });
 
     it('should 201', async () => {
