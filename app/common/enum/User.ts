@@ -3,3 +3,9 @@ export enum LoginResultCode {
   Success,
   Fail,
 }
+
+export enum WanStatusCode {
+  UserNotFound,
+  Unbound,
+  Bound,
+}

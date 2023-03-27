@@ -2,8 +2,10 @@ import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { User as UserModel } from './model/User';
 import type { Token as TokenModel } from './model/Token';
+import type { WebauthnCredential as WebauthnCredentialModel } from './model/WebauthnCredential';
 import { User as UserEntity } from '../core/entity/User';
 import { Token as TokenEntity } from '../core/entity/Token';
+import { WebauthnCredential as WebauthnCredentialEntity } from '../core/entity/WebauthnCredential';
 import { AbstractRepository } from './AbstractRepository';
 
 @SingletonProto({
@@ -15,6 +17,9 @@ export class UserRepository extends AbstractRepository {
 
   @Inject()
   private readonly Token: typeof TokenModel;
+
+  @Inject()
+  private readonly WebauthnCredential: typeof WebauthnCredentialModel;
 
   async saveUser(user: UserEntity): Promise<void> {
     if (user.id) {
@@ -76,5 +81,30 @@ export class UserRepository extends AbstractRepository {
   async listTokens(userId: string): Promise<TokenEntity[]> {
     const models = await this.Token.find({ userId });
     return models.map(model => ModelConvertor.convertModelToEntity(model, TokenEntity));
+  }
+
+  async saveCredential(credential: WebauthnCredentialEntity): Promise<void> {
+    if (credential.id) {
+      const model = await this.WebauthnCredential.findOne({ id: credential.id });
+      if (!model) return;
+      await ModelConvertor.saveEntityToModel(credential, model);
+    } else {
+      const model = await ModelConvertor.convertEntityToModel(credential, this.WebauthnCredential);
+      this.logger.info('[UserRepository:saveCredential:new] id: %s, wancId: %s', model.id, model.wancId);
+    }
+  }
+
+  async findCredentialByUserIdAndBrowserType(userId: string, browserType: string | null) {
+    const model = await this.WebauthnCredential.findOne({
+      userId,
+      browserType,
+    });
+    if (!model) return null;
+    return ModelConvertor.convertModelToEntity(model, WebauthnCredentialEntity);
+  }
+
+  async removeCredential(wancId: string) {
+    const removeCount = await this.WebauthnCredential.remove({ wancId });
+    this.logger.info('[UserRepository:removeCredential:remove] %d rows, wancId: %s', removeCount, wancId);
   }
 }

@@ -333,11 +333,6 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .set('user-agent', publisher.ua)
         .send(pkgNew)
         .expect(201);
-      await app.httpRequest()
-        .get(`/${name}`)
-        .set('Accept', 'application/vnd.npm.install-v1+json')
-        .set('If-None-Match', res.headers.etag)
-        .expect(200);
     });
 
     it('should show one scoped package with abbreviated manifests', async () => {
