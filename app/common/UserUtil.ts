@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import base from 'base-x';
 import { crc32 } from '@node-rs/crc32';
 import * as ssri from 'ssri';
+import UAParser from 'ua-parser-js';
 
 const base62 = base('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
@@ -38,4 +39,18 @@ export function checkIntegrity(plain: string, expectedIntegrity: string): boolea
 
 export function sha512(plain: string): string {
   return crypto.createHash('sha512').update(plain).digest('hex');
+}
+
+export function getUAInfo(userAgent?: string) {
+  if (!userAgent) return null;
+  return new UAParser(userAgent);
+}
+
+export function getBrowserTypeForWebauthn(userAgent?: string) {
+  const ua = getUAInfo(userAgent);
+  if (!ua) return null;
+  const os = ua.getOS();
+  if (os.name === 'iOS' || os.name === 'Android') return 'mobile';
+  if (os.name === 'Mac OS') return ua.getBrowser().name;
+  return null;
 }

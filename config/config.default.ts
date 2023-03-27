@@ -68,6 +68,9 @@ export default (appInfo: EggAppConfig) => {
       // name: email
       cnpmcore_admin: 'admin@cnpmjs.org',
     },
+    // use webauthn for login, https://webauthn.guide/
+    // only support platform authenticators, browser support: https://webauthn.me/browser-support
+    enableWebAuthn: false,
     // http response cache control header
     enableCDN: false,
     // if you are using CDN, can set it to 'max-age=0, s-maxage=120, must-revalidate'
@@ -81,7 +84,7 @@ export default (appInfo: EggAppConfig) => {
     enableNpmClientAndVersionCheck: true,
     // sync when package not found, only effect when syncMode = all/exist
     syncNotFound: false,
-    // redirect to source registry when package not found, only effect when syncMode = all/exist
+    // redirect to source registry when package not found
     redirectNotFound: true,
     // switch cnpmcore to a proxy repository, e.g. nexus.only works in syncMode='none'.
     // https://help.sonatype.com/repomanager3/using-nexus-repository/repository-manager-concepts/proxy-repository-concepts#ProxyRepositoryConcepts-Whatisaproxyrepository
@@ -177,5 +180,11 @@ export default (appInfo: EggAppConfig) => {
   config.httpclient = {
     useHttpClientNext: true,
   };
+
+  config.view = {
+    root: join(appInfo.baseDir, 'app/port'),
+    defaultViewEngine: 'nunjucks',
+  };
+
   return config;
 };

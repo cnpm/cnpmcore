@@ -110,9 +110,11 @@ export abstract class AbstractController extends MiddlewareController {
     if (!this.isPrivateScope(scope)) {
       // syncMode = none, redirect public package to source registry
       if (!this.enableSync) {
-        err.redirectToSourceRegistry = this.sourceRegistry;
-      // syncMode = all/exist
+        if (this.redirectNotFound) {
+          err.redirectToSourceRegistry = this.sourceRegistry;
+        }
       } else {
+        // syncMode = all/exist
         if (allowSync && this.syncNotFound) {
           // ErrorHandler will use syncPackage to create sync task
           err.syncPackage = {
