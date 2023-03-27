@@ -244,7 +244,10 @@ describe('test/port/webauth/webauthController.test.ts', () => {
         password: 'flymetothemoon',
         ip: 'localhost',
       });
-      await userService.updateUserWebauthn(user.user.userId, 'mock_wanCId', 'mock_wanCPublicKey');
+      await userService.createWebauthnCredential(user.user.userId, {
+        credentialId: 'mock_credential_id',
+        publicKey: 'mock_public_key',
+      });
     });
 
     it('should check sessionId type', async () => {

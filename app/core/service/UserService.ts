@@ -8,6 +8,7 @@ import { NotFoundError, ForbiddenError } from 'egg-errors';
 import { UserRepository } from '../../repository/UserRepository';
 import { User as UserEntity } from '../entity/User';
 import { Token as TokenEntity } from '../entity/Token';
+import { WebauthnCredential as WebauthnCredentialEntity } from '../entity/WebauthnCredential';
 import { LoginResultCode } from '../../common/enum/User';
 import { integrity, checkIntegrity, randomToken, sha512 } from '../../common/UserUtil';
 import { AbstractService } from '../../common/AbstractService';
@@ -31,6 +32,12 @@ type CreateTokenOptions = {
   isReadonly?: boolean;
   isAutomation?: boolean;
   cidrWhitelist?: string[];
+};
+
+type CreateWebauthnCredentialOptions = {
+  credentialId: string;
+  publicKey: string;
+  browserType?: string;
 };
 
 @SingletonProto({
@@ -119,17 +126,6 @@ export class UserService extends AbstractService {
     return { changed: true, user };
   }
 
-  async updateUserWebauthn(userId: string, wanCId: string, wanCPublicKey: string): Promise<{ changed: boolean, user?: UserEntity }> {
-    const user = await this.userRepository.findUserByUserId(userId);
-    if (!user) {
-      return { changed: false };
-    }
-    user.wanCId = wanCId;
-    user.wanCPublicKey = wanCPublicKey;
-    await this.userRepository.saveUser(user);
-    return { changed: true, user };
-  }
-
   async createToken(userId: string, options: CreateTokenOptions = {}) {
     // https://github.blog/2021-09-23-announcing-npms-new-access-token-format/
     // https://github.blog/2021-04-05-behind-githubs-new-authentication-token-formats/
@@ -162,5 +158,32 @@ export class UserService extends AbstractService {
       throw new ForbiddenError(`Not authorized to remove token "${tokenKeyOrTokenValue}"`);
     }
     await this.userRepository.removeToken(token.tokenId);
+  }
+
+  async findWebauthnCredential(userId: string, browserType?: string) {
+    const credential = await this.userRepository.findCredentialByUserIdAndBrowserType(userId, browserType || null);
+    return credential;
+  }
+
+  async createWebauthnCredential(userId: string, options: CreateWebauthnCredentialOptions) {
+    const credentialEntity = WebauthnCredentialEntity.create({
+      userId,
+      credentialId: options.credentialId,
+      publicKey: options.publicKey,
+      browserType: options.browserType,
+    });
+    await this.userRepository.saveCredential(credentialEntity);
+    return credentialEntity;
+  }
+
+  async removeWebauthnCredential(userId: string, browserType?: string) {
+    const credential = await this.userRepository.findCredentialByUserIdAndBrowserType(userId, browserType || null);
+    if (!credential) {
+      throw new NotFoundError(`Not found webauthn credential with "userId=${userId}&&browserType=${browserType}"`);
+    }
+    if (credential.userId !== userId) {
+      throw new ForbiddenError(`Not authorized to remove webauthn credential "${credential.wancId}"`);
+    }
+    await this.userRepository.removeToken(credential.wancId);
   }
 }

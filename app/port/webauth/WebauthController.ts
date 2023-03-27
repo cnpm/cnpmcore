@@ -30,6 +30,7 @@ import { UserService } from '../../core/service/UserService';
 import { MiddlewareController } from '../middleware';
 import { AuthAdapter } from '../../infra/AuthAdapter';
 import { genRSAKeys, decryptRSA } from '../../common/CryptoUtil';
+import { getBrowserTypeForWebauthn } from '../../common/UserUtil';
 
 const LoginRequestRule = Type.Object({
   // cli 所在机器的 hostname
@@ -122,13 +123,18 @@ export class WebauthController extends MiddlewareController {
       }
     }
 
+    const browserType = getBrowserTypeForWebauthn(ctx.headers['user-agent']);
     const expectedChallenge = (await this.cacheAdapter.get(`${sessionId}_challenge`)) || '';
     const expectedOrigin = this.config.cnpmcore.registry;
     const expectedRPID = new URL(expectedOrigin).hostname;
     // webauthn authentication
     if (enableWebAuthn && isSupportWebAuthn && wanCredentialAuthData) {
       user = await this.userService.findUserByName(username);
-      if (!user || !user.wanCPublicKey || !user.wanCId) {
+      if (!user) {
+        return { ok: false, message: 'Unauthorized, Please check your login name' };
+      }
+      const credential = await this.userService.findWebauthnCredential(user.userId, browserType);
+      if (!credential?.credentialId || !credential?.publicKey) {
         return { ok: false, message: 'Unauthorized, Please check your login name' };
       }
       try {
@@ -138,8 +144,8 @@ export class WebauthController extends MiddlewareController {
           expectedOrigin,
           expectedRPID,
           authenticator: {
-            credentialPublicKey: base64url.toBuffer(user.wanCPublicKey),
-            credentialID: base64url.toBuffer(user.wanCId),
+            credentialPublicKey: base64url.toBuffer(credential.publicKey),
+            credentialID: base64url.toBuffer(credential.credentialId),
             counter: 0,
           },
         });
@@ -215,7 +221,11 @@ export class WebauthController extends MiddlewareController {
           const { credentialPublicKey, credentialID } = registrationInfo;
           const base64CredentialPublicKey = base64url.encode(Buffer.from(new Uint8Array(credentialPublicKey)));
           const base64CredentialID = base64url.encode(Buffer.from(new Uint8Array(credentialID)));
-          this.userService.updateUserWebauthn(user.userId, base64CredentialID, base64CredentialPublicKey);
+          this.userService.createWebauthnCredential(user.userId, {
+            credentialId: base64CredentialID,
+            publicKey: base64CredentialPublicKey,
+            browserType,
+          });
         }
       } catch (err) {
         this.logger.error('[WebauthController.loginImplement:verify-registration-fail] expectedChallenge: %s, expectedOrigin: %s, expectedRPID: %s, wanCredentialRegiData: %j, error: %j', expectedChallenge, expectedOrigin, expectedRPID, wanCredentialRegiData, err);
@@ -236,16 +246,22 @@ export class WebauthController extends MiddlewareController {
       return { ok: false, message: 'Session not found, please try again on your command line' };
     }
 
+    const browserType = getBrowserTypeForWebauthn(ctx.headers['user-agent']);
     const expectedRPID = new URL(this.config.cnpmcore.registry).hostname;
     const user = await this.userService.findUserByName(name);
-    const result: LoginPrepareResult = { wanStatus: user ? WanStatusCode.Unbound : WanStatusCode.UserNotFound };
-    if (user?.wanCPublicKey && user?.wanCId) {
+    const result: LoginPrepareResult = { wanStatus: WanStatusCode.UserNotFound };
+    let credential;
+    if (user) {
+      credential = await this.userService.findWebauthnCredential(user.userId, browserType);
+      result.wanStatus = WanStatusCode.Unbound;
+    }
+    if (credential?.credentialId && credential?.publicKey) {
       result.wanStatus = WanStatusCode.Bound;
       result.wanCredentialAuthOption = generateAuthenticationOptions({
         timeout: 60000,
         rpID: expectedRPID,
         allowCredentials: [{
-          id: base64url.toBuffer(user.wanCId),
+          id: base64url.toBuffer(credential.credentialId),
           type: 'public-key',
           transports: [ 'internal' ],
         }],

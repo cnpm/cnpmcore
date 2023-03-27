@@ -41,10 +41,4 @@ export class User extends Bone {
 
   @Attribute(DataTypes.JSONB, { allowNull: true })
   scopes: string[];
-
-  @Attribute(DataTypes.STRING(200), { allowNull: true })
-  wanCId: string;
-
-  @Attribute(DataTypes.STRING(512), { allowNull: true })
-  wanCPublicKey: string;
 }
