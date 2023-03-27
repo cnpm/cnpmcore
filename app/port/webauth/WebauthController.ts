@@ -109,7 +109,7 @@ export class WebauthController extends MiddlewareController {
       return { ok: false, message: 'Session not found, please try again on your command line' };
     }
 
-    const { accData, wanCredentialRegiData, wanCredentialAuthData } = loginImplementRequest;
+    const { accData, wanCredentialRegiData, wanCredentialAuthData, needUnbindWan } = loginImplementRequest;
     const { username, password = '' } = accData;
     const enableWebAuthn = this.config.cnpmcore.enableWebAuthn;
     const isSupportWebAuthn = ctx.protocol === 'https' || ctx.hostname === 'localhost';
@@ -191,6 +191,10 @@ export class WebauthController extends MiddlewareController {
       // login success
       token = result.token!.token!;
       user = result.user;
+      // need unbind webauthn credential
+      if (needUnbindWan) {
+        await this.userService.removeWebauthnCredential(user.userId, browserType);
+      }
     } else {
       // others: LoginResultCode.UserNotFound
       // create user request

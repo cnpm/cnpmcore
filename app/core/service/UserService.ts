@@ -178,12 +178,8 @@ export class UserService extends AbstractService {
 
   async removeWebauthnCredential(userId: string, browserType?: string) {
     const credential = await this.userRepository.findCredentialByUserIdAndBrowserType(userId, browserType || null);
-    if (!credential) {
-      throw new NotFoundError(`Not found webauthn credential with "userId=${userId}&&browserType=${browserType}"`);
+    if (credential) {
+      await this.userRepository.removeCredential(credential.wancId);
     }
-    if (credential.userId !== userId) {
-      throw new ForbiddenError(`Not authorized to remove webauthn credential "${credential.wancId}"`);
-    }
-    await this.userRepository.removeToken(credential.wancId);
   }
 }

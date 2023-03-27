@@ -40,7 +40,7 @@
       #login {
         margin-top: 16px;
       }
-      #login > input {
+      #username, #password {
         display: block;
         padding: 6.5px 11px;
         margin-bottom: 24px;
@@ -51,8 +51,26 @@
         border-radius: 4px;
         background: #f5f6f7;
       }
-      #login > input:focus {
+      #username:focus, #password:focus {
         border-color: #618eff;
+      }
+      #unbindWan {
+        display: none;
+        margin-bottom: 24px;
+        padding-left: 4px;
+        font-size: 14px;
+        text-align: left;
+        color: #555;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      #unbindWanCheckbox {
+        vertical-align: middle;
+        margin-bottom: 3px;
       }
       #submit {
         width: 100%;
@@ -146,6 +164,10 @@
           <input type="text" id="username" minlength="1" maxlength="100" placeholder="Username" autocomplete="username webauthn" />
           {% if enableWebauthn === true %}
           <input style="display: none" type="password" id="password" minlength="8" maxlength="100" placeholder="Password" autocomplete="current-password" oncontextmenu="return false" onpaste="return false" oncopy="return false" oncut="return false" />
+          <div id="unbindWan">
+            <input type="checkbox" id="unbindWanCheckbox" />
+            <label for="unbindWanCheckbox">Unbind Touch ID/Face ID</label>
+          </div>
           {% else %}
           <input type="password" id="password" minlength="8" maxlength="100" placeholder="Password" autocomplete="current-password" oncontextmenu="return false" onpaste="return false" oncopy="return false" oncut="return false" />
           {% endif %}
@@ -199,7 +221,7 @@
             password: password ? encryptRSA(publicKey, password) : '',
           };
           if (!isSupportWebauthn || !preapreData.wanCredentialRegiOption) {
-            handleSubmit({ accData });
+            handleSubmit({ accData, needUnbindWan: $('#unbindWanCheckbox').is(':checked') });
             return;
           }
           handleRegistration(preapreData.wanCredentialRegiOption, {
@@ -229,6 +251,7 @@
                 },
                 fail(err) {
                   showPasswordAndFocus();
+                  $('#unbindWan').show();
                 },
               });
             })
