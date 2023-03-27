@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.0](https://github.com/cnpm/npmcore/compare/v3.10.0...v3.11.0) (2023-03-27)
+
+
+### Features
+
+* support webauthn ([#422](https://github.com/cnpm/npmcore/issues/422)) ([1b8512b](https://github.com/cnpm/npmcore/commit/1b8512b3218e05d440f7cff6b95e0a1f65c0557d))
+
 ## [3.10.0](https://github.com/cnpm/npmcore/compare/v3.9.0...v3.10.0) (2023-03-27)
 
 
