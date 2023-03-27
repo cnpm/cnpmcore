@@ -108,11 +108,9 @@ export abstract class AbstractController extends MiddlewareController {
       if (!this.enableSync) {
         if (this.redirectNotFound) {
           err.redirectToSourceRegistry = this.sourceRegistry;
-        } else {
-          return err;
         }
-      // syncMode = all/exist
       } else {
+        // syncMode = all/exist
         if (allowSync && this.syncNotFound) {
           // ErrorHandler will use syncPackage to create sync task
           err.syncPackage = {
