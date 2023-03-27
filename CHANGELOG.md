@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.10.0](https://github.com/cnpm/npmcore/compare/v3.9.0...v3.10.0) (2023-03-27)
+
+
+### Features
+
+* redirect not found can be false when syncMode='none' ([#428](https://github.com/cnpm/npmcore/issues/428)) ([91ebd19](https://github.com/cnpm/npmcore/commit/91ebd195ce34c895feff70a71abacba8df2a7538))
+
 ## [3.9.0](https://github.com/cnpm/npmcore/compare/v3.8.0...v3.9.0) (2023-03-20)
 
 
