@@ -61,12 +61,14 @@ export class ModelConvertor {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
       if (entityPropertyName === CREATED_AT) continue;
+      // Restricted updates to the primary key
+      if (entityPropertyName === ID && model[ID]) continue;
       const attributeValue = _.get(entity, entityPropertyName);
       model[modelPropertyName] = attributeValue;
     }
 
-    // 不允许设置 UPDATED_AT
-    // 通过 leoric 进行更新
+    // Restricted updates to the UPDATED_AT
+    // Leoric will set by default
     model[UPDATED_AT] = undefined;
     await model.save(options);
     entity[UPDATED_AT] = model[UPDATED_AT];
