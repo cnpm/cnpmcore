@@ -106,30 +106,42 @@ export class TaskService extends AbstractService {
     // try processing timeout tasks in 10 mins
     const tasks = await this.taskRepository.findTimeoutTasks(TaskState.Processing, 60000 * 10);
     for (const task of tasks) {
-      // ignore ChangesStream task, it won't timeout
-      if (task.attempts >= 3 && task.type !== TaskType.ChangesStream) {
-        await this.finishTask(task, TaskState.Timeout);
-        this.logger.warn(
-          '[TaskService.retryExecuteTimeoutTasks:timeout] taskType: %s, targetName: %s, taskId: %s, attempts %s set to fail',
+      try {
+        // ignore ChangesStream task, it won't timeout
+        if (task.attempts >= 3 && task.type !== TaskType.ChangesStream) {
+          await this.finishTask(task, TaskState.Timeout);
+          this.logger.warn(
+            '[TaskService.retryExecuteTimeoutTasks:timeout] taskType: %s, targetName: %s, taskId: %s, attempts %s set to fail',
+            task.type, task.targetName, task.taskId, task.attempts);
+          continue;
+        }
+        if (task.attempts >= 1) {
+          // reset logPath
+          task.resetLogPath();
+        }
+        await this.retryTask(task);
+        this.logger.info(
+          '[TaskService.retryExecuteTimeoutTasks:retry] taskType: %s, targetName: %s, taskId: %s, attempts %s will retry again',
           task.type, task.targetName, task.taskId, task.attempts);
-        continue;
+      } catch (e) {
+        this.logger.error(
+          '[TaskService.retryExecuteTimeoutTasks:error] processing task, taskType: %s, targetName: %s, taskId: %s, attempts %s will retry again',
+          task.type, task.targetName, task.taskId, task.attempts);
       }
-      if (task.attempts >= 1) {
-        // reset logPath
-        task.resetLogPath();
-      }
-      await this.retryTask(task);
-      this.logger.info(
-        '[TaskService.retryExecuteTimeoutTasks:retry] taskType: %s, targetName: %s, taskId: %s, attempts %s will retry again',
-        task.type, task.targetName, task.taskId, task.attempts);
     }
     // try waiting timeout tasks in 30 mins
     const waitingTasks = await this.taskRepository.findTimeoutTasks(TaskState.Waiting, 60000 * 30);
     for (const task of waitingTasks) {
-      await this.retryTask(task);
-      this.logger.warn(
-        '[TaskService.retryExecuteTimeoutTasks:retryWaiting] taskType: %s, targetName: %s, taskId: %s waiting too long',
-        task.type, task.targetName, task.taskId);
+      try {
+        await this.retryTask(task);
+        this.logger.warn(
+          '[TaskService.retryExecuteTimeoutTasks:retryWaiting] taskType: %s, targetName: %s, taskId: %s waiting too long',
+          task.type, task.targetName, task.taskId);
+      } catch (e) {
+        this.logger.error(
+          '[TaskService.retryExecuteTimeoutTasks:error] waiting task, taskType: %s, targetName: %s, taskId: %s, attempts %s will retry again',
+          task.type, task.targetName, task.taskId, task.attempts);
+      }
     }
     return {
       processing: tasks.length,
