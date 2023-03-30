@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.11.1](https://github.com/cnpm/npmcore/compare/v3.11.0...v3.11.1) (2023-03-30)
+
+
+### Bug Fixes
+
+* timeout handler not work ([#430](https://github.com/cnpm/npmcore/issues/430)) ([3f83808](https://github.com/cnpm/npmcore/commit/3f838080cac7ecbf572105fa3869a62a0400d3a7))
+* update login assets cdn url ([#429](https://github.com/cnpm/npmcore/issues/429)) ([4ee410a](https://github.com/cnpm/npmcore/commit/4ee410a62eea250f2db9ef26c8508eae43a27a83))
+
 ## [3.11.1](https://github.com/cnpm/npmcore/compare/v3.11.0...v3.11.1) (2023-03-28)
 
 
