@@ -333,11 +333,6 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .set('user-agent', publisher.ua)
         .send(pkgNew)
         .expect(201);
-      await app.httpRequest()
-        .get(`/${name}`)
-        .set('Accept', 'application/vnd.npm.install-v1+json')
-        .set('If-None-Match', res.headers.etag)
-        .expect(200);
     });
 
     it('should show one scoped package with abbreviated manifests', async () => {
@@ -716,6 +711,15 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .set('Accept', 'application/json');
       assert(res.status === 302);
       assert(res.headers.location === 'https://registry.npmjs.org/@eggjs/tegg-metadata?t=0123123&foo=bar');
+    });
+
+    it('should not redirect to source registry when redirectNotFound is false and sync mode is none', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'none');
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
+      const res = await app.httpRequest()
+        .get('/@eggjs/tegg-metadata')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res.status === 404);
     });
 
     it('should redirect public non-scope package to source registry if package not exists when syncMode=none', async () => {

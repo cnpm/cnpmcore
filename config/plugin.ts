@@ -30,7 +30,11 @@ const plugin: EggPlugin = {
     package: '@eggjs/tegg-aop-plugin',
   },
   view: {
-    enable: false,
+    enable: true,
+  },
+  nunjucks: {
+    enable: true,
+    package: 'egg-view-nunjucks',
   },
   tracer: {
     enable: true,

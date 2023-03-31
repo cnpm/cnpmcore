@@ -1,5 +1,34 @@
 # Changelog
 
+## [3.11.1](https://github.com/cnpm/npmcore/compare/v3.11.0...v3.11.1) (2023-03-30)
+
+
+### Bug Fixes
+
+* timeout handler not work ([#430](https://github.com/cnpm/npmcore/issues/430)) ([3f83808](https://github.com/cnpm/npmcore/commit/3f838080cac7ecbf572105fa3869a62a0400d3a7))
+* update login assets cdn url ([#429](https://github.com/cnpm/npmcore/issues/429)) ([4ee410a](https://github.com/cnpm/npmcore/commit/4ee410a62eea250f2db9ef26c8508eae43a27a83))
+
+## [3.11.1](https://github.com/cnpm/npmcore/compare/v3.11.0...v3.11.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* update login assets cdn url ([#429](https://github.com/cnpm/npmcore/issues/429)) ([4ee410a](https://github.com/cnpm/npmcore/commit/4ee410a62eea250f2db9ef26c8508eae43a27a83))
+
+## [3.11.0](https://github.com/cnpm/npmcore/compare/v3.10.0...v3.11.0) (2023-03-27)
+
+
+### Features
+
+* support webauthn ([#422](https://github.com/cnpm/npmcore/issues/422)) ([1b8512b](https://github.com/cnpm/npmcore/commit/1b8512b3218e05d440f7cff6b95e0a1f65c0557d))
+
+## [3.10.0](https://github.com/cnpm/npmcore/compare/v3.9.0...v3.10.0) (2023-03-27)
+
+
+### Features
+
+* redirect not found can be false when syncMode='none' ([#428](https://github.com/cnpm/npmcore/issues/428)) ([91ebd19](https://github.com/cnpm/npmcore/commit/91ebd195ce34c895feff70a71abacba8df2a7538))
+
 ## [3.9.0](https://github.com/cnpm/npmcore/compare/v3.8.0...v3.9.0) (2023-03-20)
 
 
