@@ -34,7 +34,7 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
 
   describe('getTaskRegistry()', () => {
     it('should work', async () => {
-      const taskRegistry = await packageSyncerService.initSpecRegistry(task);
+      const taskRegistry = await packageSyncerService.initSpecRegistry(task, null, '@cnpm');
       assert(taskRegistry);
       assert(taskRegistry.registryId === registry.registryId);
     });
@@ -46,7 +46,7 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
         tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: 1`,
       });
 
-      const taskRegistry = await packageSyncerService.initSpecRegistry(task);
+      const taskRegistry = await packageSyncerService.initSpecRegistry(task, null, '@cnpm');
       assert(taskRegistry === null);
     });
   });

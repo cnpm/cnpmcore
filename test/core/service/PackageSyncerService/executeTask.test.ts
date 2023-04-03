@@ -2020,6 +2020,31 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         assert(pkg!.registryId === registry.registryId);
       });
 
+      it('should sync from target registry when pkg not exists', async () => {
+        const pkgName = '@cnpm/banana';
+        await packageSyncerService.createTask(pkgName);
+        const task = await packageSyncerService.findExecuteTask();
+
+        // create custom scope
+        await scopeManagerService.createScope({
+          name: '@cnpm',
+          registryId: registry.registryId,
+        });
+
+        app.mockHttpclient('https://custom.npmjs.com/@cnpm/banana', 'GET', {
+          status: 500,
+          data: 'mock error',
+          persist: false,
+          repeats: 3,
+        });
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log.includes('Syncing from https://custom.npmjs.com/@cnpm/banana'));
+      });
+
+
       it('should not sync from target registry if not match', async () => {
         const pkgName = '@cnpmcore/sync_not_match_registry_name';
         await TestUtil.createPackage({
