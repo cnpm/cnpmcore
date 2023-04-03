@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.2](https://github.com/cnpm/npmcore/compare/v3.11.1...v3.11.2) (2023-04-03)
+
+
+### Bug Fixes
+
+* init sync spec registry ([#433](https://github.com/cnpm/npmcore/issues/433)) ([eedfb2b](https://github.com/cnpm/npmcore/commit/eedfb2bb86e535ad8258d4dbb85e43917ac023e1))
+
 ## [3.11.1](https://github.com/cnpm/npmcore/compare/v3.11.0...v3.11.1) (2023-03-30)
 
 
