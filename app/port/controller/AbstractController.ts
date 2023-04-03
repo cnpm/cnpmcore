@@ -21,6 +21,7 @@ import { UserService } from '../../core/service/UserService';
 import {
   VersionRule,
 } from '../typebox';
+import { SyncMode } from '../../common/constants';
 
 class PackageNotFoundError extends NotFoundError {}
 
@@ -43,7 +44,7 @@ export abstract class AbstractController extends MiddlewareController {
   }
 
   protected get enableSync() {
-    return this.config.cnpmcore.syncMode === 'all' || this.config.cnpmcore.syncMode === 'exist';
+    return this.config.cnpmcore.syncMode !== SyncMode.none;
   }
 
   protected isPrivateScope(scope: string) {
@@ -110,7 +111,7 @@ export abstract class AbstractController extends MiddlewareController {
           err.redirectToSourceRegistry = this.sourceRegistry;
         }
       } else {
-        // syncMode = all/exist
+        // syncMode = all/exist/admin
         if (allowSync && this.syncNotFound) {
           // ErrorHandler will use syncPackage to create sync task
           err.syncPackage = {

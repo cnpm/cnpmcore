@@ -20,7 +20,8 @@ export default (appInfo: EggAppConfig) => {
     sourceRegistrySyncTimeout: 180000,
     taskQueueHighWaterSize: 100,
     // sync mode
-    //  - none: don't sync npm package, just redirect it to sourceRegistry
+    //  - none: don't sync npm package
+    //  - admin: only admin can use sync contorller.(in most of case,you need to disable syncNotFound & enableCheckRecentlyUpdated)
     //  - all: sync all npm packages
     //  - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
     syncMode: SyncMode.none,
@@ -82,7 +83,7 @@ export default (appInfo: EggAppConfig) => {
     enableStoreFullPackageVersionManifestsToDatabase: false,
     // only support npm as client and npm >= 7.0.0 allow publish action
     enableNpmClientAndVersionCheck: true,
-    // sync when package not found, only effect when syncMode = all/exist
+    // sync when package not found, only effect when syncMode = all/exist/admin
     syncNotFound: false,
     // redirect to source registry when package not found
     redirectNotFound: true,
