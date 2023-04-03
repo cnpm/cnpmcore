@@ -308,7 +308,7 @@ export class PackageSyncerService extends AbstractService {
   // 1. 其次从 task.data.registryId (创建单包同步任务时传入)
   // 2. 接着根据 scope 进行计算 (作为子包依赖同步时候，无 registryId)
   // 3. 最后返回 default registryId (可能 default registry 也不存在)
-  public async initSpecRegistry(task: Task, pkg: Package | null = null): Promise<Registry | null> {
+  public async initSpecRegistry(task: Task, pkg: Package | null = null, scope?: string): Promise<Registry | null> {
     const registryId = pkg?.registryId || (task.data as SyncPackageTaskOptions).registryId;
     let targetHost: string = this.config.cnpmcore.sourceRegistry;
     let registry: Registry | null = null;
@@ -317,8 +317,8 @@ export class PackageSyncerService extends AbstractService {
     // 历史 Task 可能没有配置 registryId
     if (registryId) {
       registry = await this.registryManagerService.findByRegistryId(registryId);
-    } else if (pkg?.scope) {
-      const scopeModel = await this.scopeManagerService.findByName(pkg?.scope);
+    } else if (scope) {
+      const scopeModel = await this.scopeManagerService.findByName(scope);
       if (scopeModel?.registryId) {
         registry = await this.registryManagerService.findByRegistryId(scopeModel?.registryId);
       }
@@ -349,7 +349,7 @@ export class PackageSyncerService extends AbstractService {
     const [ scope, name ] = getScopeAndName(fullname);
     const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
     let pkg = await this.packageRepository.findPackage(scope, name);
-    const registry = await this.initSpecRegistry(task, pkg);
+    const registry = await this.initSpecRegistry(task, pkg, scope);
     const registryHost = this.npmRegistry.registry;
     let logs: string[] = [];
     if (tips) {
