@@ -21,7 +21,7 @@ export default (appInfo: EggAppConfig) => {
     taskQueueHighWaterSize: 100,
     // sync mode
     //  - none: don't sync npm package
-    //  - admin: only admin can use sync contorller.(in most of case,you need to disable syncNotFound & enableCheckRecentlyUpdated)
+    //  - admin: don't sync npm package,only admin can create sync task by sync contorller.
     //  - all: sync all npm packages
     //  - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
     syncMode: SyncMode.none,
@@ -83,7 +83,7 @@ export default (appInfo: EggAppConfig) => {
     enableStoreFullPackageVersionManifestsToDatabase: false,
     // only support npm as client and npm >= 7.0.0 allow publish action
     enableNpmClientAndVersionCheck: true,
-    // sync when package not found, only effect when syncMode = all/exist/admin
+    // sync when package not found, only effect when syncMode = all/exist
     syncNotFound: false,
     // redirect to source registry when package not found
     redirectNotFound: true,
