@@ -21,6 +21,23 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.error === '[FORBIDDEN] Not allow to sync package');
     });
 
+    it('should 403 when syncMode = admin', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'admin');
+      const res = await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .expect(403);
+      assert(res.body.error === '[FORBIDDEN] Only admin allow to sync package');
+    });
+
+    it('should 201 when syncMode = admin & login as admin', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'admin');
+      const adminUser = await TestUtil.createAdmin();
+      await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .set('authorization', adminUser.authorization)
+        .expect(201);
+    });
+
     it('should 401 if user not login when alwaysAuth = true', async () => {
       mock(app.config.cnpmcore, 'alwaysAuth', true);
       const res = await app.httpRequest()
@@ -313,6 +330,23 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .put('/koa/sync')
         .expect(403);
       assert(res.body.error === '[FORBIDDEN] Not allow to sync package');
+    });
+
+    it('should 403 when syncMode = admin', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'admin');
+      const res = await app.httpRequest()
+        .put('/koa/sync')
+        .expect(403);
+      assert(res.body.error === '[FORBIDDEN] Only admin allow to sync package');
+    });
+
+    it('should 201 when syncMode = admin & login as admin', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'admin');
+      const adminUser = await TestUtil.createAdmin();
+      await app.httpRequest()
+        .put('/koa/sync')
+        .set('authorization', adminUser.authorization)
+        .expect(201);
     });
 
     it('should 201', async () => {
