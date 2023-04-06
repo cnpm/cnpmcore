@@ -17,3 +17,8 @@ export enum PresetRegistryName {
   default = 'default',
   self = 'self',
 }
+
+export enum PackageAccessLevel {
+  write = 'write',
+  read = 'read',
+}
