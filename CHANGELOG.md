@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.12.0](https://github.com/cnpm/npmcore/compare/v3.11.2...v3.12.0) (2023-04-06)
+
+
+### Features
+
+* allow admin to sync package only ([#434](https://github.com/cnpm/npmcore/issues/434)) ([c5ac715](https://github.com/cnpm/npmcore/commit/c5ac715b2b48af8a353a0374631f35f46c66a740)), closes [#412](https://github.com/cnpm/npmcore/issues/412)
+
 ## [3.11.2](https://github.com/cnpm/npmcore/compare/v3.11.1...v3.11.2) (2023-04-03)
 
 
