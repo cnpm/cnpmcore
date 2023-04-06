@@ -8,7 +8,7 @@ describe('test/port/controller/AccessController/listPackagesByUser.test.ts', () 
     it('should work', async () => {
       const { pkg } = await TestUtil.createPackage({ version: '1.0.0' }, { name: 'banana' });
       const res = await app.httpRequest()
-        .get(`/-/org/banana/package`)
+        .get('/-/org/banana/package')
         .expect(200);
 
       assert.equal(res.body[pkg.name], 'write');

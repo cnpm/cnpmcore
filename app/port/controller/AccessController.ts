@@ -33,7 +33,7 @@ export class AccessController extends AbstractController {
   }
 
   @HTTPMethod({
-    path: `/-/org/:username/package`,
+    path: '/-/org/:username/package',
     method: HTTPMethodEnum.GET,
   })
   async listPackagesByUser(@HTTPParam() username: string) {

@@ -27,7 +27,7 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
 
 
       // create pkg
-      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/banana'});
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/banana' });
       const createRes = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', owner.authorization)
@@ -40,15 +40,15 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
 
       // updateMaintainers
       await app.httpRequest()
-      .put(`/${pkg.name}/-rev/${rev}`)
-      .set('authorization', owner.authorization)
-      .set('user-agent', owner.ua)
-      .set('npm-command', 'owner')
-      .send({
-        ...pkg,
-        maintainers: [{ name: maintainer.name, email: maintainer.email }, { name: owner.name, email: owner.email }],
-      })
-      .expect(200);
+        .put(`/${pkg.name}/-rev/${rev}`)
+        .set('authorization', owner.authorization)
+        .set('user-agent', owner.ua)
+        .set('npm-command', 'owner')
+        .send({
+          ...pkg,
+          maintainers: [{ name: maintainer.name, email: maintainer.email }, { name: owner.name, email: owner.email }],
+        })
+        .expect(200);
 
       const res = await app.httpRequest()
         .get(`/-/package/${pkg.name}/collaborators`)
