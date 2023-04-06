@@ -2,6 +2,7 @@ import { EggAppConfig, EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import { PackageSyncerService } from '../../core/service/PackageSyncerService';
+import { SyncMode } from '../../common/constants';
 
 
 let executingCount = 0;
@@ -23,7 +24,7 @@ export class SyncPackageWorker {
   private readonly logger: EggLogger;
 
   async subscribe() {
-    if (this.config.cnpmcore.syncMode === 'none') return;
+    if (this.config.cnpmcore.syncMode === SyncMode.none) return;
     if (executingCount >= this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks) return;
 
     executingCount++;

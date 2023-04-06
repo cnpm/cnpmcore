@@ -18,6 +18,7 @@ import { PackageSyncerService } from '../../core/service/PackageSyncerService';
 import { RegistryManagerService } from '../../core/service/RegistryManagerService';
 import { TaskState } from '../../common/enum/Task';
 import { SyncPackageTaskRule, SyncPackageTaskType } from '../typebox';
+import { SyncMode } from '../../common/constants';
 
 @HTTPController()
 export class PackageSyncController extends AbstractController {
@@ -59,6 +60,10 @@ export class PackageSyncController extends AbstractController {
     }
     const tips = data.tips || `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
     const isAdmin = await this.userRoleManager.isAdmin(ctx);
+
+    if (this.config.cnpmcore.syncMode === SyncMode.admin && !isAdmin) {
+      throw new ForbiddenError('Only admin allow to sync package');
+    }
 
     const params = {
       fullname,

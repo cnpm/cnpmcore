@@ -4,6 +4,7 @@ import { Inject } from '@eggjs/tegg';
 import { PackageSyncerService } from '../../core/service/PackageSyncerService';
 import { PackageRepository } from '../../repository/PackageRepository';
 import { getScopeAndName } from '../../common/PackageUtil';
+import { SyncMode } from '../../common/constants';
 
 // https://github.com/cnpm/cnpmcore/issues/9
 @Schedule<IntervalParams>({
@@ -29,7 +30,8 @@ export class CheckRecentlyUpdatedPackages {
   private readonly httpclient: EggHttpClient;
 
   async subscribe() {
-    if (this.config.cnpmcore.syncMode === 'none' || !this.config.cnpmcore.enableCheckRecentlyUpdated) return;
+    const notAllowUpdateModeList = [ SyncMode.none, SyncMode.admin ];
+    if (notAllowUpdateModeList.includes(this.config.cnpmcore.syncMode) || !this.config.cnpmcore.enableCheckRecentlyUpdated) return;
     const pageSize = 36;
     const pageCount = this.config.env === 'unittest' ? 2 : 5;
     for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {

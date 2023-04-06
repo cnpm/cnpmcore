@@ -20,7 +20,8 @@ export default (appInfo: EggAppConfig) => {
     sourceRegistrySyncTimeout: 180000,
     taskQueueHighWaterSize: 100,
     // sync mode
-    //  - none: don't sync npm package, just redirect it to sourceRegistry
+    //  - none: don't sync npm package
+    //  - admin: don't sync npm package,only admin can create sync task by sync contorller.
     //  - all: sync all npm packages
     //  - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
     syncMode: SyncMode.none,
