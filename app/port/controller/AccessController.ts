@@ -5,10 +5,9 @@ import {
   HTTPParam,
 } from '@eggjs/tegg';
 import { AbstractController } from './AbstractController';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil';
+import { FULLNAME_REG_STRING, getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { PackageAccessLevel } from '../../common/constants';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
-
 
 @HTTPController()
 export class AccessController extends AbstractController {
@@ -19,7 +18,6 @@ export class AccessController extends AbstractController {
   async listCollaborators(@HTTPParam() fullname: string) {
     const [ scope, name ] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
-
     // return 403 if pkg not exists
     if (!pkg) {
       throw new ForbiddenError('Forbidden');
@@ -38,18 +36,16 @@ export class AccessController extends AbstractController {
     path: `/-/org/:username/package`,
     method: HTTPMethodEnum.GET,
   })
-  async listUserPackages(@HTTPParam() username: string) {
+  async listPackagesByUser(@HTTPParam() username: string) {
     const user = await this.userRepository.findUserByName(username);
     if (!user) {
       throw new NotFoundError(`User "${username}" not found`);
     }
 
     const pkgs = await this.packageRepository.listPackagesByUserId(user.userId);
-
     const res: Record<string, string> = {};
-
     pkgs.forEach(pkg => {
-      res[pkg.name] = PackageAccessLevel.write;
+      res[getFullname(pkg.scope, pkg.name)] = PackageAccessLevel.write;
     });
 
     return res;
