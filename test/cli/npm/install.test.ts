@@ -17,22 +17,22 @@ describe('test/cli/npm/install.test.ts', () => {
     fooPkgDir = TestUtil.getFixtures('@cnpm/foo');
     demoDir = TestUtil.getFixtures('demo');
     userconfig = path.join(fooPkgDir, '.npmrc');
-    TestUtil.rm(userconfig);
-    TestUtil.rm(path.join(demoDir, 'node_modules'));
+    await TestUtil.rm(userconfig);
+    await TestUtil.rm(path.join(demoDir, 'node_modules'));
 
-    return new Promise(resolve => {
+    await new Promise(resolve => {
       server = app.listen(0, () => {
         registry = `http://localhost:${server.address().port}`;
         console.log(`registry ${registry} ready`);
-        resolve();
+        resolve(void 0);
       });
     });
   });
 
-  after(() => {
-    TestUtil.rm(userconfig);
-    TestUtil.rm(cacheDir);
-    TestUtil.rm(path.join(demoDir, 'node_modules'));
+  after(async () => {
+    await TestUtil.rm(userconfig);
+    await TestUtil.rm(cacheDir);
+    await TestUtil.rm(path.join(demoDir, 'node_modules'));
     server && server.close();
   });
 
