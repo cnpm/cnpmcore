@@ -50,6 +50,18 @@ describe('test/cli/npm/install.test.ts', () => {
       .debug()
       .expect('code', 0)
       .end();
+    await coffee
+      .spawn('npm', [
+        'publish',
+        `--registry=${registry}`,
+        `--userconfig=${userconfig}`,
+        `--cache=${cacheDir}`,
+      ], {
+        cwd: TestUtil.getFixtures('@cnpm/foo-2.0.0'),
+      })
+      .debug()
+      .expect('code', 0)
+      .end();
   });
 
   describe('npm install', () => {
@@ -82,7 +94,7 @@ describe('test/cli/npm/install.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /\/@cnpm\/foo\/\-\/foo-1.0.0.tgz/)
+        .expect('stdout', /\/@cnpm\/foo\/\-\/foo-2.0.0.tgz/)
         .expect('code', 0)
         .end();
 
@@ -99,7 +111,7 @@ describe('test/cli/npm/install.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /latest: 1\.0\.0/)
+        .expect('stdout', /latest: 2\.0\.0/)
         .expect('code', 0)
         .end();
 
@@ -124,11 +136,11 @@ describe('test/cli/npm/install.test.ts', () => {
         .spawn('npm', [
           'unpublish',
           '-f',
-          '@cnpm/foo',
+          '@cnpm/foo@1.0.0',
           `--registry=${registry}`,
           `--userconfig=${userconfig}`,
           `--cache=${cacheDir}`,
-          // '--json',
+          '--verbose',
         ], {
           cwd: demoDir,
         })
@@ -136,6 +148,26 @@ describe('test/cli/npm/install.test.ts', () => {
         .expect('stdout', /\- \@cnpm\/foo/)
         .expect('code', 0)
         .end();
+      await coffee
+        .spawn('npm', [
+          'unpublish',
+          '-f',
+          '@cnpm/foo@2.0.0',
+          `--registry=${registry}`,
+          `--userconfig=${userconfig}`,
+          `--cache=${cacheDir}`,
+          '--verbose',
+        ], {
+          cwd: demoDir,
+        })
+        .debug()
+        .expect('stdout', /\- \@cnpm\/foo/)
+        .expect('code', 0)
+        .end();
+      const res = await app.httpclient.request(`${registry}/@cnpm%2ffoo`, { dataType: 'json' });
+      assert.equal(res.status, 200);
+      assert(res.data.time.unpublished);
+      assert.equal(res.data.versions, undefined);
     });
   });
 });
