@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.12.1](https://github.com/cnpm/npmcore/compare/v3.12.0...v3.12.1) (2023-04-07)
+
+
+### Bug Fixes
+
+* allow to remove the package entity ([#437](https://github.com/cnpm/npmcore/issues/437)) ([613e0a1](https://github.com/cnpm/npmcore/commit/613e0a11db65d6222eefb18462fceaf1023231d3))
+
 ## [3.12.0](https://github.com/cnpm/npmcore/compare/v3.11.2...v3.12.0) (2023-04-06)
 
 
