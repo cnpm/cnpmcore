@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import coffee from 'coffee';
 import { tmpdir } from 'os';
 import { rmSync, mkdtempSync } from 'fs';
 import { Readable } from 'stream';
@@ -52,6 +53,11 @@ export class TestUtil {
 
   static getDatabase() {
     return process.env.MYSQL_DATABASE || 'cnpmcore_unittest';
+  }
+
+  static async getNpmVersion() {
+    const res = await coffee.spawn('npm', [ '-v' ]).end();
+    return semver.clean(res.stdout);
   }
 
   static async getTableSqls(): Promise<string> {

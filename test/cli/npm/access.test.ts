@@ -2,6 +2,7 @@
 import path from 'path';
 import { app } from 'egg-mock/bootstrap';
 import coffee from 'coffee';
+import semver from 'semver';
 import { TestUtil } from 'test/TestUtil';
 import { npmLogin } from '../CliUtil';
 
@@ -12,6 +13,7 @@ describe('test/cli/npm/access.test.ts', () => {
   let demoDir;
   let userconfig;
   let cacheDir;
+  let useLegacyCommands;
   before(async () => {
     cacheDir = TestUtil.mkdtemp();
     fooPkgDir = TestUtil.getFixtures('@cnpm/foo');
@@ -19,7 +21,8 @@ describe('test/cli/npm/access.test.ts', () => {
     userconfig = path.join(fooPkgDir, '.npmrc');
     TestUtil.rm(userconfig);
     TestUtil.rm(path.join(demoDir, 'node_modules'));
-
+    const npmVersion = await TestUtil.getNpmVersion();
+    useLegacyCommands = semver.lt(String(npmVersion), '9.0.0');
     return new Promise(resolve => {
       server = app.listen(0, () => {
         registry = `http://localhost:${server.address().port}`;
@@ -55,11 +58,11 @@ describe('test/cli/npm/access.test.ts', () => {
   describe('npm access', () => {
 
     it('should work for list collaborators', async () => {
+      const subCommands = useLegacyCommands ? [ 'ls-collaborators' ] : [ 'list', 'collaborators' ];
       await coffee
         .spawn('npm', [
           'access',
-          'list',
-          'collaborators',
+          ...subCommands,
           '@cnpm/foo',
           `--registry=${registry}`,
           `--userconfig=${userconfig}`,
@@ -76,11 +79,11 @@ describe('test/cli/npm/access.test.ts', () => {
     });
 
     it('should work for list all packages', async () => {
+      const subCommands = useLegacyCommands ? [ 'ls-packages' ] : [ 'list', 'packages' ];
       await coffee
         .spawn('npm', [
           'access',
-          'list',
-          'packages',
+          ...subCommands,
           'testuser',
           `--registry=${registry}`,
           `--userconfig=${userconfig}`,
@@ -97,6 +100,12 @@ describe('test/cli/npm/access.test.ts', () => {
     });
 
     it('should work for list single package', async () => {
+
+      // not support in npm7 * 8
+      if (useLegacyCommands) {
+        console.log('npm list packages user package not implement lt 9.0.0, just skip');
+        return;
+      }
       await coffee
         .spawn('npm', [
           'access',
