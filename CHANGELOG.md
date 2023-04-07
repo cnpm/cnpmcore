@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.13.0](https://github.com/cnpm/npmcore/compare/v3.12.1...v3.13.0) (2023-04-07)
+
+
+### Features
+
+* support npm access command ([#436](https://github.com/cnpm/npmcore/issues/436)) ([0ffb614](https://github.com/cnpm/npmcore/commit/0ffb61484eed78e1a819cb2a3af3f225183246cb))
+
 ## [3.12.1](https://github.com/cnpm/npmcore/compare/v3.12.0...v3.12.1) (2023-04-07)
 
 
