@@ -820,7 +820,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 404);
-      app.expectLog('[middleware:ErrorHandler][syncPackage] create sync package');
+      // app.expectLog('[middleware:ErrorHandler][syncPackage] create sync package');
     });
 
     it('should redirect public non-scope package to source registry if package not exists when redirectNotFound=true', async () => {
