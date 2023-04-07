@@ -19,23 +19,23 @@ describe('test/cli/npm/access.test.ts', () => {
     fooPkgDir = TestUtil.getFixtures('@cnpm/foo');
     demoDir = TestUtil.getFixtures('demo');
     userconfig = path.join(fooPkgDir, '.npmrc');
-    TestUtil.rm(userconfig);
-    TestUtil.rm(path.join(demoDir, 'node_modules'));
+    await TestUtil.rm(userconfig);
+    await TestUtil.rm(path.join(demoDir, 'node_modules'));
     const npmVersion = await TestUtil.getNpmVersion();
     useLegacyCommands = semver.lt(String(npmVersion), '9.0.0');
-    return new Promise(resolve => {
+    await new Promise(resolve => {
       server = app.listen(0, () => {
         registry = `http://localhost:${server.address().port}`;
         console.log(`registry ${registry} ready`);
-        resolve();
+        resolve(void 0);
       });
     });
   });
 
-  after(() => {
-    TestUtil.rm(userconfig);
-    TestUtil.rm(cacheDir);
-    TestUtil.rm(path.join(demoDir, 'node_modules'));
+  after(async () => {
+    await TestUtil.rm(userconfig);
+    await TestUtil.rm(cacheDir);
+    await TestUtil.rm(path.join(demoDir, 'node_modules'));
     server && server.close();
   });
 
@@ -72,7 +72,7 @@ describe('test/cli/npm/access.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /testuser: read-write/)
+        .expect('stdout', /testuser:\sread-write|\"testuser\":\s\"read-write\"/)
         .expect('code', 0)
         .end();
 
@@ -93,7 +93,7 @@ describe('test/cli/npm/access.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /@cnpm\/foo: read-write/)
+        .expect('stdout', /@cnpm\/foo: read-write|\"@cnpm\/foo\":\s\"read-write"/)
         .expect('code', 0)
         .end();
 

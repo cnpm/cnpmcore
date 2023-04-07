@@ -1,7 +1,8 @@
 import fs from 'fs/promises';
+// 统一通过 coffee 执行 child_process，获取运行时的一些环境信息
 import coffee from 'coffee';
 import { tmpdir } from 'os';
-import { rmSync, mkdtempSync } from 'fs';
+import { mkdtempSync } from 'fs';
 import { Readable } from 'stream';
 import mysql from 'mysql';
 import path from 'path';
@@ -55,11 +56,16 @@ export class TestUtil {
     return process.env.MYSQL_DATABASE || 'cnpmcore_unittest';
   }
 
+  // 不同的 npm 版本 cli 命令不同
+  // 通过 coffee 运行时获取对应版本号
   static async getNpmVersion() {
     const res = await coffee.spawn('npm', [ '-v' ]).end();
     return semver.clean(res.stdout);
   }
 
+  // 获取当前所有 sql 脚本内容
+  // 目前统一放置在 ../sql 文件夹中
+  // 默认根据版本号排序，确保向后兼容
   static async getTableSqls(): Promise<string> {
     const dirents = await fs.readdir(path.join(__dirname, '../sql'));
     let versions = dirents.filter(t => path.extname(t) === '.sql').map(t => path.basename(t, '.sql'));
@@ -126,8 +132,12 @@ export class TestUtil {
     return this._app;
   }
 
-  static rm(filepath) {
-    rmSync(filepath, { recursive: true, force: true });
+  static async rm(filepath: string) {
+    try {
+      await fs.unlink(filepath);
+    } catch (e) {
+      // ignore
+    }
   }
 
   static mkdtemp() {
