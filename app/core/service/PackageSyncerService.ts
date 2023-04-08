@@ -5,12 +5,11 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
-import {
-  EggContextHttpClient,
-} from 'egg';
+import { EggHttpClient } from 'egg';
 import { setTimeout } from 'timers/promises';
-import { rm } from 'fs/promises';
+import { rm, stat } from 'fs/promises';
 import semver from 'semver';
+import semverRcompare from 'semver/functions/rcompare';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -73,7 +72,7 @@ export class PackageSyncerService extends AbstractService {
   @Inject()
   private readonly cacheService: CacheService;
   @Inject()
-  private readonly httpclient: EggContextHttpClient;
+  private readonly httpclient: EggHttpClient;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
@@ -347,7 +346,7 @@ export class PackageSyncerService extends AbstractService {
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const [ scope, name ] = getScopeAndName(fullname);
-    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, specificVersion, tempFilePath } = task.data as SyncPackageTaskOptions;
     let pkg = await this.packageRepository.findPackage(scope, name);
     const registry = await this.initSpecRegistry(task, pkg, scope);
     const registryHost = this.npmRegistry.registry;
@@ -361,9 +360,12 @@ export class PackageSyncerService extends AbstractService {
     const skipDependencies = taskQueueInHighWaterState ? true : !!originSkipDependencies;
     const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
-    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
-      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
+    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, specific version: %s, log: %s',
+      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, !!specificVersion, logUrl);
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
+    if (specificVersion) {
+      logs.push(`[${isoNow()}] 👉 syncing specific version: ${specificVersion} 👈`);
+    }
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
     if (pkg && pkg?.registryId !== registry?.registryId) {
@@ -527,7 +529,18 @@ export class PackageSyncerService extends AbstractService {
     const existsVersionCount = Object.keys(existsVersionMap).length;
     const abbreviatedVersionMap = abbreviatedManifests?.versions ?? {};
     // 2. save versions
-    const versions = Object.values<any>(versionMap);
+    //check is specific version exists.
+    if (specificVersion && versionMap[specificVersion] === undefined) {
+      task.error = `specific version is not exist:${specificVersion}.`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ${failEnd}`);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail-invalid-specific-version] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
+      return;
+    }
+
+    const versions = specificVersion ? [ versionMap[specificVersion] ] : Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     const updateVersions: string[] = [];
     const differentMetas: any[] = [];
@@ -616,19 +629,37 @@ export class PackageSyncerService extends AbstractService {
       const delay = Date.now() - publishTime.getTime();
       logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
       let localFile: string;
-      try {
-        const { tmpfile, headers, timing } =
-          await downloadToTempfile(this.httpclient, this.config.dataDir, tarball);
-        localFile = tmpfile;
-        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
-      } catch (err: any) {
-        this.logger.error('Download tarball %s error: %s', tarball, err);
-        lastErrorMessage = `download tarball error: ${err}`;
-        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
-        await this.taskService.appendTaskLog(task, logs.join('\n'));
-        logs = [];
-        continue;
+      // 下载的临时文件可能被清理
+      let isTempFileExist = false;
+      // tempFilePath仅在同步指定版本模式时作为可选参数传入
+      if (tempFilePath && specificVersion) {
+        try {
+          await stat(tempFilePath);
+          isTempFileExist = true;
+          logs.push(`[${isoNow()}] 🚧 [${syncIndex}] reuse tempFile => ${tempFilePath}`);
+        } catch (err) {
+          isTempFileExist = false;
+        }
       }
+
+      if (!tempFilePath || !isTempFileExist) {
+        try {
+          const { tmpfile, headers, timing } =
+            await downloadToTempfile(this.httpclient, this.config.dataDir, tarball);
+          localFile = tmpfile;
+          logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
+        } catch (err: any) {
+          this.logger.error('Download tarball %s error: %s', tarball, err);
+          lastErrorMessage = `download tarball error: ${err}`;
+          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
+          await this.taskService.appendTaskLog(task, logs.join('\n'));
+          logs = [];
+          continue;
+        }
+      } else {
+        localFile = tempFilePath;
+      }
+
       if (!pkg) {
         pkg = await this.packageRepository.findPackage(scope, name);
       }
@@ -763,6 +794,18 @@ export class PackageSyncerService extends AbstractService {
           changedTags.push({ action: 'remove', tag });
           shouldRefreshDistTags = false;
         }
+      }
+    }
+    // 3.2 shoud add latest tag
+    // 在同步sepcific version时可能会出现latest tag丢失或指向版本不正确的情况
+    // 如果没有latest tag则将仓库中已有的最高版本标记为latest,保证依赖的latest标签存在.
+    if (specificVersion) {
+      const existsVersionList: string[] = Object.keys(existsVersionMap);
+      existsVersionList.push(specificVersion);
+      const currentLatestVersion = existsVersionList.sort(semverRcompare)[0];
+      if (currentLatestVersion !== existsDistTags.latest) {
+        changedTags.push({ action: 'change', tag: 'latest', version: currentLatestVersion });
+        await this.packageManagerService.savePackageTag(pkg, 'latest', currentLatestVersion);
       }
     }
     if (changedTags.length > 0) {
