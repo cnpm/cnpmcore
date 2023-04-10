@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.13.1](https://github.com/cnpm/npmcore/compare/v3.13.0...v3.13.1) (2023-04-10)
+
+
+### Bug Fixes
+
+* update webauth default URL to registry ([#432](https://github.com/cnpm/npmcore/issues/432)) ([cf95d7d](https://github.com/cnpm/npmcore/commit/cf95d7dce4d7a05056eadc09024958e9b35df9b9))
+
 ## [3.13.0](https://github.com/cnpm/npmcore/compare/v3.12.1...v3.13.0) (2023-04-07)
 
 
