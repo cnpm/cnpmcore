@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `package_tags` (
   `gmt_modified` datetime(3) NOT NULL COMMENT 'modified time',
   `package_id` varchar(24) NOT NULL COMMENT 'package id',
   `package_tag_id` varchar(24) NOT NULL COMMENT 'package tag id',
-  `tag` varchar(214) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'package tag',
+  `tag` varchar(214) NOT NULL COMMENT 'package tag',
   `version` varchar(256) NOT NULL COMMENT 'package version',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_package_tag_id` (`package_tag_id`),
