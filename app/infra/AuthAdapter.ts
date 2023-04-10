@@ -32,9 +32,12 @@ export class AuthAdapter implements AuthClient {
   async getAuthUrl(ctx: EggContext): Promise<AuthUrlResult> {
     const sessionId = randomUUID();
     await this.redis.setex(sessionId, ONE_DAY, '');
+
+    // INTEGRATE.md
+    const registry = ctx.app.config.cnpmcore.registry;
     return {
-      loginUrl: `${ctx.href}/request/session/${sessionId}`,
-      doneUrl: `${ctx.href}/done/session/${sessionId}`,
+      loginUrl: `${registry}/-/v1/login/request/session/${sessionId}`,
+      doneUrl: `${registry}/-/v1/login/done/session/${sessionId}`,
     };
   }
 
