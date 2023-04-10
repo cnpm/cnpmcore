@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.13.2](https://github.com/cnpm/npmcore/compare/v3.13.1...v3.13.2) (2023-04-10)
+
+
+### Bug Fixes
+
+* skip tag name out of utf8mb3 ([#440](https://github.com/cnpm/npmcore/issues/440)) ([a64c90b](https://github.com/cnpm/npmcore/commit/a64c90b28de658f9933fa95ff89d272a8a97f95d))
+
 ## [3.13.1](https://github.com/cnpm/npmcore/compare/v3.13.0...v3.13.1) (2023-04-10)
 
 
