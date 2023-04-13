@@ -529,7 +529,7 @@ export class PackageSyncerService extends AbstractService {
     const existsVersionCount = Object.keys(existsVersionMap).length;
     const abbreviatedVersionMap = abbreviatedManifests?.versions ?? {};
     // 2. save versions
-    //check is specific version exists.
+    // check is specific version exists.
     if (specificVersion && versionMap[specificVersion] === undefined) {
       task.error = `specific version is not exist:${specificVersion}.`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
@@ -723,6 +723,20 @@ export class PackageSyncerService extends AbstractService {
       this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package not exists',
         task.taskId, task.targetName);
       return;
+    }
+
+    if (specificVersion) {
+      const specificPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, specificVersion);
+      if (!specificPkgVersion) {
+        // sync specific version fail.
+        logs.push(`[${isoNow()}] ❌ Specific version: ${specificVersion} sync fail, package version not exists, log: ${logUrl}`);
+        logs.push(`[${isoNow()}] ${failEnd}`);
+        task.error = lastErrorMessage;
+        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+        this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package version not exists',
+          task.taskId, task.targetName);
+        return;
+      }
     }
 
     // 2.1 save differentMetas
