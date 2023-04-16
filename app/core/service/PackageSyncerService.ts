@@ -347,7 +347,7 @@ export class PackageSyncerService extends AbstractService {
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const [ scope, name ] = getScopeAndName(fullname);
-    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory } = task.data as SyncPackageTaskOptions;
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, remoteAuthToken } = task.data as SyncPackageTaskOptions;
     let pkg = await this.packageRepository.findPackage(scope, name);
     const registry = await this.initSpecRegistry(task, pkg, scope);
     const registryHost = this.npmRegistry.registry;
@@ -410,7 +410,7 @@ export class PackageSyncerService extends AbstractService {
 
     let registryFetchResult: RegistryResponse;
     try {
-      registryFetchResult = await this.npmRegistry.getFullManifests(fullname);
+      registryFetchResult = await this.npmRegistry.getFullManifests(fullname, { remoteAuthToken });
     } catch (err: any) {
       const status = err.status || 'unknown';
       task.error = `request manifests error: ${err}, status: ${status}`;
@@ -618,7 +618,7 @@ export class PackageSyncerService extends AbstractService {
       let localFile: string;
       try {
         const { tmpfile, headers, timing } =
-          await downloadToTempfile(this.httpclient, this.config.dataDir, tarball);
+          await downloadToTempfile(this.httpclient, this.config.dataDir, tarball, { remoteAuthToken });
         localFile = tmpfile;
         logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
       } catch (err: any) {
