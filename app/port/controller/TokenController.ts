@@ -34,7 +34,7 @@ const GranularTokenOptionsRule = Type.Object({
   description: Type.Optional(Type.String({ maxLength: 255 })),
   allowedScopes: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })),
   allowedPackages: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })),
-  expires: Type.Number({ minimum: 0, maximum: 365}),
+  expires: Type.Number({ minimum: 1, maximum: 365}),
 });
 type GranularTokenOptions = Static<typeof GranularTokenOptionsRule>;
 
@@ -114,17 +114,18 @@ export class TokenController extends AbstractController {
     //   "total": 2,
     //   "urls": {}
     // }
-    const objects = tokens.map(token => {
-      return {
-        token: token.tokenMark,
-        key: token.tokenKey,
-        cidr_whitelist: token.cidrWhitelist,
-        readonly: token.isReadonly,
-        automation: token.isAutomation,
-        created: token.createdAt,
-        updated: token.updatedAt,
-      };
-    });
+    const objects = tokens.filter(token => token.type === TokenType.classic)
+      .map(token => {
+        return {
+          token: token.tokenMark,
+          key: token.tokenKey,
+          cidr_whitelist: token.cidrWhitelist,
+          readonly: token.isReadonly,
+          automation: token.isAutomation,
+          created: token.createdAt,
+          updated: token.updatedAt,
+        };
+      });
     // TODO: paging, urls: { next: string }
     return { objects, total: objects.length, urls: {} };
   }
@@ -143,7 +144,7 @@ export class TokenController extends AbstractController {
     ctx.tValidate(GranularTokenOptionsRule, tokenOptions);
     const userRes = await this.authAdapter.ensureCurrentUser();
     if (!userRes?.name || !userRes?.email) {
-      throw new ForbiddenError('invalid user info');
+      throw new ForbiddenError('need login first');
     }
 
     const user = await this.userService.findUserByName(userRes.name);

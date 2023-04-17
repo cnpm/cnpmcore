@@ -49,11 +49,11 @@ export class Token extends Bone {
   @Attribute(DataTypes.STRING(255))
   description: string;
 
-  @Attribute(DataTypes.STRING(255 * 50))
-  allowedPackages: string;
+  @Attribute(DataTypes.JSONB)
+  allowedPackages: string[];
 
-  @Attribute(DataTypes.STRING(255 * 50))
-  allowedScopes: string;
+  @Attribute(DataTypes.JSONB)
+  allowedScopes: string[];
 
   @Attribute(DataTypes.INTEGER())
   expires: number;

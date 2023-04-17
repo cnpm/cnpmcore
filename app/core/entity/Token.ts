@@ -4,9 +4,9 @@ import { EasyData, EntityUtil } from '../util/EntityUtil';
 
 export enum TokenType {
   granular = 'granular',
-  legacy = 'legacy',
+  classic = 'classic',
 }
-interface LegacyTokenData extends EntityData {
+interface ClassicTokenData extends EntityData {
   tokenId: string;
   tokenMark: string;
   tokenKey: string;
@@ -17,7 +17,7 @@ interface LegacyTokenData extends EntityData {
   type?: TokenType;
 }
 
-interface GranularTokenData extends LegacyTokenData {
+interface GranularTokenData extends ClassicTokenData {
   name: string;
   description?: string;
   allowedScopes?: string[];
@@ -25,9 +25,9 @@ interface GranularTokenData extends LegacyTokenData {
   expires: number;
 }
 
-type TokenData = LegacyTokenData | GranularTokenData;
+type TokenData = ClassicTokenData | GranularTokenData;
 
-function isGranularToken (data: LegacyTokenData): data is GranularTokenData {
+function isGranularToken (data: ClassicTokenData): data is GranularTokenData {
   return data.type === TokenType.granular;
 }
 
@@ -56,7 +56,7 @@ export class Token extends Entity {
     this.cidrWhitelist = data.cidrWhitelist || [];
     this.isReadonly = data.isReadonly || false;
     this.isAutomation = data.isAutomation || false;
-    this.type = data.type || TokenType.legacy;
+    this.type = data.type || TokenType.classic;
 
     if (isGranularToken(data)) {
       this.name = data.name;
