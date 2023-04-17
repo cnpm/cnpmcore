@@ -12,7 +12,7 @@ import {
 } from '@eggjs/tegg';
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
-import { TokenType } from 'app/core/entity/Token';
+import { TokenType, isGranularToken } from '../../core/entity/Token';
 
 // Creating and viewing access tokens
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#viewing-access-tokens
@@ -114,7 +114,7 @@ export class TokenController extends AbstractController {
     //   "total": 2,
     //   "urls": {}
     // }
-    const objects = tokens.filter(token => token.type === TokenType.classic)
+    const objects = tokens.filter(token => !isGranularToken(token))
       .map(token => {
         return {
           token: token.tokenMark,

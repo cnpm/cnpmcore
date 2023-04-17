@@ -27,7 +27,7 @@ interface GranularTokenData extends ClassicTokenData {
 
 type TokenData = ClassicTokenData | GranularTokenData;
 
-function isGranularToken (data: ClassicTokenData): data is GranularTokenData {
+export function isGranularToken (data: ClassicTokenData): data is GranularTokenData {
   return data.type === TokenType.granular;
 }
 

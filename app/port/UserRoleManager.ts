@@ -10,7 +10,7 @@ import { UserRepository } from '../repository/UserRepository';
 import { PackageRepository } from '../repository/PackageRepository';
 import { Package as PackageEntity } from '../core/entity/Package';
 import { User as UserEntity } from '../core/entity/User';
-import { Token as TokenEntity } from '../core/entity/Token';
+import { Token as TokenEntity, isGranularToken } from '../core/entity/Token';
 import { sha512 } from '../common/UserUtil';
 import { getScopeAndName } from '../common/PackageUtil';
 import { RegistryManagerService } from '../core/service/RegistryManagerService';
@@ -53,25 +53,28 @@ export class UserRoleManager {
       return user;
     }
 
-    // 2. has published in current registry
+    // 2. check for checkGranularTokenAccess
+    await this.checkGranularTokenAccess(ctx, fullname);
+
+    // 3. has published in current registry
     const [ scope, name ] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
     const selfRegistry = await this.registryManagerService.ensureSelfRegistry();
     const inSelfRegistry = pkg?.registryId === selfRegistry.registryId;
     if (inSelfRegistry) {
-      // 2.1 check in Maintainers table
+      // 3.1 check in Maintainers table
       // Higher priority than scope check
       await this.requiredPackageMaintainer(pkg, user);
       return user;
     }
 
     if (pkg && !scope && !inSelfRegistry) {
-      // 2.2 public package can't publish in other registry
+      // 3.2 public package can't publish in other registry
       // scope package can be migrated into self registry
       throw new ForbiddenError(`Can\'t modify npm public package "${fullname}"`);
     }
 
-    // 3 check scope is allowed to publish
+    // 4 check scope is allowed to publish
     await this.requiredPackageScope(scope, user);
     if (pkg) {
       // published scoped package
@@ -115,6 +118,39 @@ export class UserRoleManager {
       ctx.userId = authorizedUserAndToken.user.userId;
     }
     return authorizedUserAndToken;
+  }
+
+  public async checkGranularTokenAccess(ctx: EggContext, fullname: string) {
+    const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
+    const { token } = authorizedUserAndToken!;
+    // skip classic token
+    if (isGranularToken(token)) {
+      return true;
+    }
+
+    // check for expires
+    if (token.createdAt.getTime() + token.expires! * 1000 * 60 * 60 * 24 < Date.now()) {
+      throw new UnauthorizedError('Token expired');
+    }
+
+    // check for scope & packages access
+    if (!token.allowedPackages && !token.allowedScopes) {
+      return true;
+    }
+
+    // check for packages whitelist
+    const existPkgConfig = token.allowedPackages?.find(pkg => pkg === fullname);
+    if (existPkgConfig) {
+      return true;
+    }
+
+    // check for scope whitelist
+    const [ scope ] = getScopeAndName(fullname);
+    const existScopeConfig = token.allowedScopes?.find(s => s === scope);
+    if (existScopeConfig) {
+      return true;
+    }
+
   }
 
   public async requiredAuthorizedUser(ctx: EggContext, role: TokenRole) {
