@@ -72,7 +72,7 @@ export const SyncPackageTaskRule = Type.Object({
     Type.String({
       transform: [ 'trim' ],
       maxLength: 1024,
-    })
+    }),
   ),
   tips: Type.String({
     transform: [ 'trim' ],

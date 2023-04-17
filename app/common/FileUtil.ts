@@ -26,7 +26,7 @@ export async function createTempfile(dataDir: string, filename: string) {
 
 export async function downloadToTempfile(httpclient: EggContextHttpClient,
   dataDir: string, url: string, optionalConfig?: DownloadToTempfileOptionalConfig) {
-  let retries = optionalConfig?.retries || 3
+  let retries = optionalConfig?.retries || 3;
   let lastError: any;
   while (retries > 0) {
     try {
@@ -56,9 +56,10 @@ async function _downloadToTempfile(httpclient: EggContextHttpClient,
   try {
     // max 10 mins to download
     // FIXME: should show download progress
+    const authorization = optionalConfig?.remoteAuthToken ? `Bearer ${optionalConfig?.remoteAuthToken}` : '';
     const { status, headers, res } = await httpclient.request(url, {
       timeout: 60000 * 10,
-      headers: {'authorization':optionalConfig?.remoteAuthToken},
+      headers: { authorization },
       writeStream,
       timing: true,
       followRedirect: true,
