@@ -47,7 +47,7 @@ export class UserRoleManager {
 
     const user = await this.requiredAuthorizedUser(ctx, 'publish');
 
-    // 1. admin chas all access
+    // 1. admin has all access
     const isAdmin = await this.isAdmin(ctx);
     if (isAdmin) {
       return user;

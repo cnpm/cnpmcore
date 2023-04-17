@@ -7,7 +7,7 @@ import {
 import { NotFoundError, ForbiddenError } from 'egg-errors';
 import { UserRepository } from '../../repository/UserRepository';
 import { User as UserEntity } from '../entity/User';
-import { Token as TokenEntity } from '../entity/Token';
+import { Token as TokenEntity, TokenType } from '../entity/Token';
 import { WebauthnCredential as WebauthnCredentialEntity } from '../entity/WebauthnCredential';
 import { LoginResultCode } from '../../common/enum/User';
 import { integrity, checkIntegrity, randomToken, sha512 } from '../../common/UserUtil';
@@ -28,7 +28,18 @@ type LoginResult = {
   token?: TokenEntity;
 };
 
-type CreateTokenOptions = {
+type CreateTokenOption = CreateLegacyTokenOptions | CreateGranularTokenOptions;
+
+type CreateGranularTokenOptions = CreateLegacyTokenOptions & {
+  type: TokenType.granular;
+  name: string;
+  description?: string;
+  allowedScopes?: string[];
+  allowedPackages?: string[];
+  expires: number;
+}
+
+type CreateLegacyTokenOptions = {
   isReadonly?: boolean;
   isAutomation?: boolean;
   cidrWhitelist?: string[];
@@ -126,9 +137,10 @@ export class UserService extends AbstractService {
     return { changed: true, user };
   }
 
-  async createToken(userId: string, options: CreateTokenOptions = {}) {
+  async createToken(userId: string, options: CreateTokenOption = {}) {
     // https://github.blog/2021-09-23-announcing-npms-new-access-token-format/
     // https://github.blog/2021-04-05-behind-githubs-new-authentication-token-formats/
+    // https://github.blog/changelog/2022-12-06-limit-scope-of-npm-tokens-with-the-new-granular-access-tokens/
     const token = randomToken(this.config.cnpmcore.name);
     const tokenKey = sha512(token);
     const tokenMark = token.substring(0, token.indexOf('_') + 4);
@@ -136,9 +148,7 @@ export class UserService extends AbstractService {
       tokenKey,
       tokenMark,
       userId,
-      cidrWhitelist: options.cidrWhitelist ?? [],
-      isReadonly: options.isReadonly ?? false,
-      isAutomation: options.isAutomation ?? false,
+      ...options,
     });
     await this.userRepository.saveToken(tokenEntity);
     tokenEntity.token = token;

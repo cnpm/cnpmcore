@@ -1,4 +1,5 @@
-import { UnauthorizedError } from 'egg-errors';
+import { ForbiddenError, UnauthorizedError } from 'egg-errors';
+import { AuthAdapter } from '../../infra/AuthAdapter';
 import {
   HTTPController,
   HTTPMethod,
@@ -7,9 +8,11 @@ import {
   HTTPParam,
   Context,
   EggContext,
+  Inject,
 } from '@eggjs/tegg';
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
+import { TokenType } from 'app/core/entity/Token';
 
 // Creating and viewing access tokens
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#viewing-access-tokens
@@ -23,8 +26,22 @@ const TokenOptionsRule = Type.Object({
 });
 type TokenOptions = Static<typeof TokenOptionsRule>;
 
+const GranularTokenOptionsRule = Type.Object({
+  automation: Type.Optional(Type.Boolean()),
+  readonly: Type.Optional(Type.Boolean()),
+  cidr_whitelist: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 10 })),
+  name: Type.String({ maxLength: 255 }),
+  description: Type.Optional(Type.String({ maxLength: 255 })),
+  allowedScopes: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })),
+  allowedPackages: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })),
+  expires: Type.Number({ minimum: 0, maximum: 365}),
+});
+type GranularTokenOptions = Static<typeof GranularTokenOptionsRule>;
+
 @HTTPController()
 export class TokenController extends AbstractController {
+  @Inject()
+  private readonly authAdapter: AuthAdapter;
   // https://github.com/npm/npm-profile/blob/main/lib/index.js#L233
   @HTTPMethod({
     path: '/-/npm/v1/tokens',
@@ -110,5 +127,55 @@ export class TokenController extends AbstractController {
     });
     // TODO: paging, urls: { next: string }
     return { objects, total: objects.length, urls: {} };
+  }
+
+  @HTTPMethod({
+    path: '/-/npm/v1/tokens/new-gat',
+    method: HTTPMethodEnum.POST,
+  })
+  // 通过 http 接口创建 granular access token
+  // https://docs.npmjs.com/about-access-tokens#about-granular-access-tokens
+  // 主要有如下限制:
+  // 需要提交 token name、expires
+  // 可选提交 description, allowScopes, allowPackages 信息
+  // 需要在 AuthAdapter 中实现 ensureCurrentUser 方法，或传入 this.user
+  async createGranularToken(@Context() ctx: EggContext, @HTTPBody() tokenOptions: GranularTokenOptions) {
+    ctx.tValidate(GranularTokenOptionsRule, tokenOptions);
+    const userRes = await this.authAdapter.ensureCurrentUser();
+    if (!userRes?.name || !userRes?.email) {
+      throw new ForbiddenError('invalid user info');
+    }
+
+    const user = await this.userService.findUserByName(userRes.name);
+    if (!user?.userId) {
+      throw new ForbiddenError('invalid user info');
+    }
+
+    // 生成 Token
+    const { name, description, allowedPackages, allowedScopes, cidr_whitelist, automation, readonly, expires } = tokenOptions;
+    const token = await this.userService.createToken(user.userId, {
+      name,
+      type: TokenType.granular,
+      description,
+      allowedPackages,
+      allowedScopes,
+      isAutomation: automation,
+      isReadonly: readonly,
+      cidrWhitelist: cidr_whitelist,
+      expires,
+    });
+
+    return {
+      name: token.name,
+      token: token.token,
+      key: token.tokenKey,
+      cidr_whitelist: token.cidrWhitelist,
+      readonly: token.isReadonly,
+      automation: token.isAutomation,
+      allowedPackages: token.allowedPackages,
+      allowedScopes: token.allowedScopes,
+      created: token.createdAt,
+      updated: token.updatedAt,
+    };
   }
 }

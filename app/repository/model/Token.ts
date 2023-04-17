@@ -39,4 +39,22 @@ export class Token extends Bone {
 
   @Attribute(DataTypes.BOOLEAN)
   isAutomation: boolean;
+
+  @Attribute(DataTypes.STRING(255))
+  type: string;
+
+  @Attribute(DataTypes.STRING(255))
+  name: string;
+
+  @Attribute(DataTypes.STRING(255))
+  description: string;
+
+  @Attribute(DataTypes.STRING(255 * 50))
+  allowedPackages: string;
+
+  @Attribute(DataTypes.STRING(255 * 50))
+  allowedScopes: string;
+
+  @Attribute(DataTypes.INTEGER())
+  expires: number;
 }
