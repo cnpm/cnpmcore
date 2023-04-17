@@ -130,7 +130,7 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
 
   describe('[DELETE /-/npm/v1/tokens/gat/:tokenKey] removeGranularToken()', () => {
     let token: Token;
-    beforeEach(async() => {
+    beforeEach(async () => {
       const { name, email } = await TestUtil.createUser();
       const userService = await app.getEggObject(UserService);
       const user = await userService.findUserByName(name);
@@ -138,8 +138,8 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
       token = await userService.createToken(user.userId, {
         name: 'good',
         type: TokenType.granular,
-        allowedPackages: ['@dnpm/foo'],
-        allowedScopes: ['@cnpm', '@cnpmjs'],
+        allowedPackages: [ '@dnpm/foo' ],
+        allowedScopes: [ '@cnpm', '@cnpmjs' ],
         expires: 1,
       });
 
@@ -153,7 +153,7 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
 
     it('should 200', async () => {
       let res = await app.httpRequest()
-        .get(`/-/npm/v1/tokens/gat`)
+        .get('/-/npm/v1/tokens/gat')
         .expect(200);
 
       assert.equal(res.body.objects.length, 1);
@@ -163,7 +163,7 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
         .expect(204);
 
       res = await app.httpRequest()
-        .get(`/-/npm/v1/tokens/gat`)
+        .get('/-/npm/v1/tokens/gat')
         .expect(200);
 
       assert.equal(res.body.objects.length, 0);

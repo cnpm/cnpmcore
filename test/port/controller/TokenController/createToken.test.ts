@@ -103,18 +103,18 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
     });
   });
 
-  describe('[POST /-/npm/v1/tokens/new-gat] createGranularToken()', () => {
+  describe('[POST /-/npm/v1/tokens/gat] createGranularToken()', () => {
     it('should 422 when invalid options', async () => {
       let res = await app.httpRequest()
-        .post('/-/npm/v1/tokens/new-gat')
+        .post('/-/npm/v1/tokens/gat')
         .send({
-          name: 'banana'
+          name: 'banana',
         })
         .expect(422);
       assert.match(res.body.error, /\[INVALID_PARAM\] must have required property 'expires'/);
 
       res = await app.httpRequest()
-        .post('/-/npm/v1/tokens/new-gat')
+        .post('/-/npm/v1/tokens/gat')
         .send({
           name: 'banana',
           expires: 366,
@@ -125,7 +125,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
 
     it('should 403 when no login', async () => {
       const res = await app.httpRequest()
-        .post('/-/npm/v1/tokens/new-gat')
+        .post('/-/npm/v1/tokens/gat')
         .send({
           name: 'banana',
           expires: 30,
@@ -142,7 +142,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         };
       });
       const res = await app.httpRequest()
-        .post('/-/npm/v1/tokens/new-gat')
+        .post('/-/npm/v1/tokens/gat')
         .send({
           name: 'banana',
           expires: 30,
@@ -153,8 +153,8 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
 
     describe('should 200', () => {
       let authorization: string;
-      beforeEach(async() => {
-        const { name, email, authorization: createRes } = await TestUtil.createUser({name: 'banana'});
+      beforeEach(async () => {
+        const { name, email, authorization: createRes } = await TestUtil.createUser({ name: 'banana' });
         authorization = createRes;
         mock(AuthAdapter.prototype, 'ensureCurrentUser', async () => {
           return {
@@ -166,15 +166,15 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
 
       it('should work', async () => {
         await app.httpRequest()
-        .post('/-/npm/v1/tokens/gat')
-        .send({
-          name: 'apple',
-          description: 'lets play',
-          allowedPackages: ['banana'],
-          allowedScopes: ['@cnpm', '@banana'],
-          expires: 30,
-        })
-        .expect(200);
+          .post('/-/npm/v1/tokens/gat')
+          .send({
+            name: 'apple',
+            description: 'lets play',
+            allowedPackages: [ 'banana' ],
+            allowedScopes: [ '@cnpm', '@banana' ],
+            expires: 30,
+          })
+          .expect(200);
 
         const userRepository = await app.getEggObject(UserRepository);
         const user = await userRepository.findUserByName('banana');
@@ -184,42 +184,42 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
 
         assert(granularToken);
         assert.equal(granularToken.name, 'apple');
-        assert.deepEqual(granularToken.allowedPackages, ['banana']);
-        assert.deepEqual(granularToken.allowedScopes, ['@cnpm', '@banana']);
+        assert.deepEqual(granularToken.allowedPackages, [ 'banana' ]);
+        assert.deepEqual(granularToken.allowedScopes, [ '@cnpm', '@banana' ]);
         assert.equal(granularToken.expires, 30);
 
         // should ignore granularToken when use v1 query
         const res = await app.httpRequest()
-        .get('/-/npm/v1/tokens')
-        .set('authorization', authorization)
-        .expect(200);
+          .get('/-/npm/v1/tokens')
+          .set('authorization', authorization)
+          .expect(200);
 
         assert(res.body.objects.length > 0);
         assert(res.body.objects.every((token: Token) => token.type !== TokenType.granular));
 
       });
 
-      it('should check for uniq name', async() => {
+      it('should check for uniq name', async () => {
         await app.httpRequest()
-        .post('/-/npm/v1/tokens/new-gat')
-        .send({
-          name: 'apple',
-          description: 'lets play',
-          allowedPackages: ['banana'],
-          allowedScopes: ['@cnpm', '@banana'],
-          expires: 30,
-        })
-        .expect(200);
+          .post('/-/npm/v1/tokens/gat')
+          .send({
+            name: 'apple',
+            description: 'lets play',
+            allowedPackages: [ 'banana' ],
+            allowedScopes: [ '@cnpm', '@banana' ],
+            expires: 30,
+          })
+          .expect(200);
 
         const res = await app.httpRequest()
-        .post('/-/npm/v1/tokens/new-gat')
-        .send({
-          name: 'apple',
-          description: 'lets play',
-          allowedPackages: ['banana'],
-          allowedScopes: ['@cnpm', '@banana'],
-          expires: 30,
-        });
+          .post('/-/npm/v1/tokens/gat')
+          .send({
+            name: 'apple',
+            description: 'lets play',
+            allowedPackages: [ 'banana' ],
+            allowedScopes: [ '@cnpm', '@banana' ],
+            expires: 30,
+          });
 
         assert.match(res.body.error, /ER_DUP_ENTRY/);
       });

@@ -34,7 +34,7 @@ const GranularTokenOptionsRule = Type.Object({
   description: Type.Optional(Type.String({ maxLength: 255 })),
   allowedScopes: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })),
   allowedPackages: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })),
-  expires: Type.Number({ minimum: 1, maximum: 365}),
+  expires: Type.Number({ minimum: 1, maximum: 365 }),
 });
 type GranularTokenOptions = Static<typeof GranularTokenOptionsRule>;
 
@@ -146,12 +146,12 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens/gat',
     method: HTTPMethodEnum.POST,
   })
-  // 通过 http 接口创建 granular access token
+  // Create granular access token through HTTP interface
   // https://docs.npmjs.com/about-access-tokens#about-granular-access-tokens
-  // 主要有如下限制:
-  // 需要提交 token name、expires
-  // 可选提交 description, allowScopes, allowPackages 信息
-  // 需要在 AuthAdapter 中实现 ensureCurrentUser 方法，或传入 this.user
+  // Mainly has the following limitations:
+  // 1. Need to submit token name and expires
+  // 2. Optional to submit description, allowScopes, allowPackages information
+  // 3. Need to implement ensureCurrentUser method in AuthAdapter, or pass in this.user
   async createGranularToken(@Context() ctx: EggContext, @HTTPBody() tokenOptions: GranularTokenOptions) {
     ctx.tValidate(GranularTokenOptionsRule, tokenOptions);
     const user = await this.ensureWebUser();
@@ -193,7 +193,7 @@ export class TokenController extends AbstractController {
     const tokens = await this.userRepository.listTokens(user.userId);
     const objects = tokens.filter(token => isGranularToken(token))
       .map(token => {
-        const { name, description, expires, allowedPackages, allowedScopes} = token;
+        const { name, description, expires, allowedPackages, allowedScopes } = token;
         return {
           name,
           description,

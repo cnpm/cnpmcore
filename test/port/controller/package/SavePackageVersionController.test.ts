@@ -945,7 +945,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       let userService: UserService;
       let user: User | null;
 
-      beforeEach(async() => {
+      beforeEach(async () => {
         userService = await app.getEggObject(UserService);
 
         user = await userService.findUserByName(publisher.name);
@@ -953,8 +953,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         token = await userService.createToken(user.userId, {
           name: publisher.name,
           type: TokenType.granular,
-          allowedPackages: ['@dnpm/foo'],
-          allowedScopes: ['@cnpm', '@cnpmjs'],
+          allowedPackages: [ '@dnpm/foo' ],
+          allowedScopes: [ '@cnpm', '@cnpmjs' ],
           expires: 1,
         });
 
@@ -1011,13 +1011,13 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           .send(pkg);
 
         assert.equal(res.status, 201);
-      })
+      });
 
       it('should 200 when allowedScopes', async () => {
         token = await userService.createToken(user!.userId, {
           name: 'new-token',
           type: TokenType.granular,
-          allowedScopes: ['@cnpm'],
+          allowedScopes: [ '@cnpm' ],
           expires: 1,
         });
 
@@ -1030,13 +1030,13 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           .send(pkg);
 
         assert.equal(res.status, 201);
-      })
+      });
 
       it('should 200 when allowedPackages', async () => {
         token = await userService.createToken(user!.userId, {
           name: 'new-token',
           type: TokenType.granular,
-          allowedPackages: ['@cnpm/other_new_pkg'],
+          allowedPackages: [ '@cnpm/other_new_pkg' ],
           expires: 1,
         });
 
@@ -1049,7 +1049,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           .send(pkg);
 
         assert.equal(res.status, 201);
-      })
-    })
+      });
+    });
   });
 });

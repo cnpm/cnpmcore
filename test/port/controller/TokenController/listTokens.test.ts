@@ -46,7 +46,7 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
   });
 
   describe('[GET /-/npm/v1/tokens/gat] listGranularTokens()', () => {
-    beforeEach(async() => {
+    beforeEach(async () => {
       const { name, email } = await TestUtil.createUser();
       const userService = await app.getEggObject(UserService);
       const user = await userService.findUserByName(name);
@@ -54,8 +54,8 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
       await userService.createToken(user.userId, {
         name: 'good',
         type: TokenType.granular,
-        allowedPackages: ['@dnpm/foo'],
-        allowedScopes: ['@cnpm', '@cnpmjs'],
+        allowedPackages: [ '@dnpm/foo' ],
+        allowedScopes: [ '@cnpm', '@cnpmjs' ],
         expires: 1,
       });
 
@@ -67,15 +67,15 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
       });
     });
 
-    it('should 200', async() => {
+    it('should 200', async () => {
       const res = await app.httpRequest()
-      .get('/-/npm/v1/tokens/gat')
-      .expect(200);
+        .get('/-/npm/v1/tokens/gat')
+        .expect(200);
 
       assert.equal(res.body.objects.length, 1);
       assert.equal(res.body.objects[0].name, 'good');
-      assert.deepEqual(res.body.objects[0].allowedScopes, ['@cnpm', '@cnpmjs']);
-      assert.deepEqual(res.body.objects[0].allowedPackages, ['@dnpm/foo']);
+      assert.deepEqual(res.body.objects[0].allowedScopes, [ '@cnpm', '@cnpmjs' ]);
+      assert.deepEqual(res.body.objects[0].allowedPackages, [ '@dnpm/foo' ]);
     });
-  })
+  });
 });

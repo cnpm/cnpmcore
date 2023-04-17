@@ -37,7 +37,7 @@ type CreateGranularTokenOptions = CreateLegacyTokenOptions & {
   allowedScopes?: string[];
   allowedPackages?: string[];
   expires: number;
-}
+};
 
 type CreateLegacyTokenOptions = {
   isReadonly?: boolean;
