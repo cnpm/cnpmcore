@@ -166,7 +166,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
 
       it('should work', async () => {
         await app.httpRequest()
-        .post('/-/npm/v1/tokens/new-gat')
+        .post('/-/npm/v1/tokens/gat')
         .send({
           name: 'apple',
           description: 'lets play',
