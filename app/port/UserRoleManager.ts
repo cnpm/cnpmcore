@@ -124,7 +124,7 @@ export class UserRoleManager {
     const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
     const { token } = authorizedUserAndToken!;
     // skip classic token
-    if (isGranularToken(token)) {
+    if (!isGranularToken(token)) {
       return true;
     }
 
@@ -150,6 +150,8 @@ export class UserRoleManager {
     if (existScopeConfig) {
       return true;
     }
+
+    throw new ForbiddenError(`can't access package "${fullname}"`);
 
   }
 

@@ -5,6 +5,10 @@ import { UserRepository } from 'app/repository/UserRepository';
 import { calculateIntegrity } from 'app/common/PackageUtil';
 import { PackageRepository } from 'app/repository/PackageRepository';
 import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
+import { UserService } from 'app/core/service/UserService';
+import { Token, TokenType } from 'app/core/entity/Token';
+import { Token as TokenModel } from 'app/repository/model/Token';
+import { User } from 'app/core/entity/User';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let userRepository: UserRepository;
@@ -935,5 +939,117 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert(res.status === 403);
       assert(res.body.error === '[FORBIDDEN] npm unstar is not allowed');
     });
+
+    describe('granular token', async () => {
+      let token:Token;
+      let userService: UserService;
+      let user: User | null;
+
+      beforeEach(async() => {
+        userService = await app.getEggObject(UserService);
+
+        user = await userService.findUserByName(publisher.name);
+        assert(user);
+        token = await userService.createToken(user.userId, {
+          name: publisher.name,
+          type: TokenType.granular,
+          allowedPackages: ['@dnpm/foo'],
+          allowedScopes: ['@cnpm', '@cnpmjs'],
+          expires: 1,
+        });
+
+      });
+
+      it('should 401 when expired', async () => {
+        await TokenModel.update({
+          tokenId: token.tokenId,
+        }, {
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24),
+        });
+
+        const name = '@cnpm/new_pkg';
+        const pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
+        const res = await app.httpRequest()
+          .put(`/${name}`)
+          .set('authorization', `Bearer ${token.token}`)
+          .set('user-agent', publisher.ua)
+          .send(pkg);
+
+        assert.equal(res.body.error, '[UNAUTHORIZED] Token expired');
+        assert.equal(res.status, 401);
+
+      });
+
+      it('should 403 when publish pkg no access', async () => {
+
+        const name = '@enpm/new_pkg';
+        const pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
+        const res = await app.httpRequest()
+          .put(`/${name}`)
+          .set('authorization', `Bearer ${token.token}`)
+          .set('user-agent', publisher.ua)
+          .send(pkg);
+
+        assert.equal(res.status, 403);
+        assert.equal(res.body.error, `[FORBIDDEN] can't access package "${name}"`);
+
+      });
+
+      it('should 200 when token has no limit', async () => {
+        token = await userService.createToken(user!.userId, {
+          name: 'new-token',
+          type: TokenType.granular,
+          expires: 1,
+        });
+
+        const name = '@cnpm/new_pkg';
+        const pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
+        const res = await app.httpRequest()
+          .put(`/${name}`)
+          .set('authorization', `Bearer ${token.token}`)
+          .set('user-agent', publisher.ua)
+          .send(pkg);
+
+        assert.equal(res.status, 201);
+      })
+
+      it('should 200 when allowedScopes', async () => {
+        token = await userService.createToken(user!.userId, {
+          name: 'new-token',
+          type: TokenType.granular,
+          allowedScopes: ['@cnpm'],
+          expires: 1,
+        });
+
+        const name = '@cnpm/new_pkg';
+        const pkg = await TestUtil.getFullPackage({ name, version: '3.0.0' });
+        const res = await app.httpRequest()
+          .put(`/${name}`)
+          .set('authorization', `Bearer ${token.token}`)
+          .set('user-agent', publisher.ua)
+          .send(pkg);
+
+        assert.equal(res.status, 201);
+      })
+
+      it('should 200 when allowedPackages', async () => {
+        token = await userService.createToken(user!.userId, {
+          name: 'new-token',
+          type: TokenType.granular,
+          allowedPackages: ['@cnpm/other_new_pkg'],
+          expires: 1,
+        });
+
+        const name = '@cnpm/other_new_pkg';
+        const pkg = await TestUtil.getFullPackage({ name, version: '3.0.0' });
+        const res = await app.httpRequest()
+          .put(`/${name}`)
+          .set('authorization', `Bearer ${token.token}`)
+          .set('user-agent', publisher.ua)
+          .send(pkg);
+
+        assert.equal(res.status, 201);
+      })
+    })
   });
 });

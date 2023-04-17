@@ -130,8 +130,20 @@ export class TokenController extends AbstractController {
     return { objects, total: objects.length, urls: {} };
   }
 
+  private async ensureWebUser() {
+    const userRes = await this.authAdapter.ensureCurrentUser();
+    if (!userRes?.name || !userRes?.email) {
+      throw new ForbiddenError('need login first');
+    }
+    const user = await this.userService.findUserByName(userRes.name);
+    if (!user?.userId) {
+      throw new ForbiddenError('invalid user info');
+    }
+    return user;
+  }
+
   @HTTPMethod({
-    path: '/-/npm/v1/tokens/new-gat',
+    path: '/-/npm/v1/tokens/gat',
     method: HTTPMethodEnum.POST,
   })
   // 通过 http 接口创建 granular access token
@@ -142,15 +154,7 @@ export class TokenController extends AbstractController {
   // 需要在 AuthAdapter 中实现 ensureCurrentUser 方法，或传入 this.user
   async createGranularToken(@Context() ctx: EggContext, @HTTPBody() tokenOptions: GranularTokenOptions) {
     ctx.tValidate(GranularTokenOptionsRule, tokenOptions);
-    const userRes = await this.authAdapter.ensureCurrentUser();
-    if (!userRes?.name || !userRes?.email) {
-      throw new ForbiddenError('need login first');
-    }
-
-    const user = await this.userService.findUserByName(userRes.name);
-    if (!user?.userId) {
-      throw new ForbiddenError('invalid user info');
-    }
+    const user = await this.ensureWebUser();
 
     // 生成 Token
     const { name, description, allowedPackages, allowedScopes, cidr_whitelist, automation, readonly, expires } = tokenOptions;
@@ -178,5 +182,42 @@ export class TokenController extends AbstractController {
       created: token.createdAt,
       updated: token.updatedAt,
     };
+  }
+
+  @HTTPMethod({
+    path: '/-/npm/v1/tokens/gat',
+    method: HTTPMethodEnum.GET,
+  })
+  async listGranularTokens() {
+    const user = await this.ensureWebUser();
+    const tokens = await this.userRepository.listTokens(user.userId);
+    const objects = tokens.filter(token => isGranularToken(token))
+      .map(token => {
+        const { name, description, expires, allowedPackages, allowedScopes} = token;
+        return {
+          name,
+          description,
+          allowedPackages,
+          allowedScopes,
+          expires,
+          token: token.tokenMark,
+          key: token.tokenKey,
+          cidr_whitelist: token.cidrWhitelist,
+          readonly: token.isReadonly,
+          automation: token.isAutomation,
+          created: token.createdAt,
+          updated: token.updatedAt,
+        };
+      });
+    return { objects, total: objects.length, urls: {} };
+  }
+
+  @HTTPMethod({
+    path: '/-/npm/v1/tokens/gat/:tokenKey',
+    method: HTTPMethodEnum.DELETE,
+  })
+  async removeGranularToken(@HTTPParam() tokenKey: string) {
+    const user = await this.ensureWebUser();
+    await this.userService.removeToken(user.userId, tokenKey);
   }
 }
