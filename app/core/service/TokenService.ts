@@ -3,6 +3,7 @@ import {
   SingletonProto,
   Inject,
 } from '@eggjs/tegg';
+import { isEmpty } from 'lodash';
 import { AbstractService } from '../../common/AbstractService';
 import { Token, isGranularToken } from '../entity/Token';
 import { TokenPackage as TokenPackageModel } from '../../../app/repository/model/TokenPackage';
@@ -10,7 +11,7 @@ import { Package as PackageModel } from '../../../app/repository/model/Package';
 import { ModelConvertor } from '../../../app/repository/util/ModelConvertor';
 import { Package as PackageEntity } from '../entity/Package';
 import { ForbiddenError, UnauthorizedError } from 'egg-errors';
-import { getScopeAndName } from 'app/common/PackageUtil';
+import { getScopeAndName } from '../../../app/common/PackageUtil';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -41,15 +42,16 @@ export class TokenService extends AbstractService {
       throw new UnauthorizedError('Token expired');
     }
 
-    // check for scope & packages access
-    if (!token.allowedPackages && !token.allowedScopes) {
-      return true;
-    }
-
     // check for scope whitelist
     const [ scope, name ] = getScopeAndName(fullname);
     // check for packages whitelist
     const allowedPackages = await this.listTokenPackages(token);
+
+    // check for scope & packages access
+    if (isEmpty(allowedPackages) && isEmpty(token.allowedScopes)) {
+      return true;
+    }
+
     const existPkgConfig = allowedPackages?.find(pkg => pkg.scope === scope && pkg.name === name);
     if (existPkgConfig) {
       return true;

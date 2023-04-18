@@ -14,7 +14,7 @@ import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
 import { TokenType, isGranularToken } from '../../core/entity/Token';
 import { TokenService } from '../../../app/core/service/TokenService';
-import { getFullname } from 'app/common/PackageUtil';
+import { getFullname } from '../../../app/common/PackageUtil';
 
 // Creating and viewing access tokens
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#viewing-access-tokens

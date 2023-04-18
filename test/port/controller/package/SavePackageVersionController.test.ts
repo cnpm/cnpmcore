@@ -1033,6 +1033,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       });
 
       it('should 200 when allowedPackages', async () => {
+        await TestUtil.createPackage({ name: '@cnpm/other_new_pkg' }, { name: user!.name });
         token = await userService.createToken(user!.userId, {
           name: 'new-token',
           type: TokenType.granular,

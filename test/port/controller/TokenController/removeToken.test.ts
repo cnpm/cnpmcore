@@ -1,6 +1,7 @@
 import { Token, TokenType } from 'app/core/entity/Token';
 import { UserService } from 'app/core/service/UserService';
 import { AuthAdapter } from 'app/infra/AuthAdapter';
+import { TokenPackage } from 'app/repository/model/TokenPackage';
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
@@ -135,11 +136,12 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
       const userService = await app.getEggObject(UserService);
       const user = await userService.findUserByName(name);
       assert(user);
+      await TestUtil.createPackage({ name: '@cnpm/foo' }, { name: user.name });
       token = await userService.createToken(user.userId, {
         name: 'good',
         type: TokenType.granular,
-        allowedPackages: [ '@dnpm/foo' ],
-        allowedScopes: [ '@cnpm', '@cnpmjs' ],
+        allowedPackages: [ '@cnpm/foo' ],
+        allowedScopes: [ '@cnpmjs' ],
         expires: 1,
       });
 
@@ -157,6 +159,8 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
         .expect(200);
 
       assert.equal(res.body.objects.length, 1);
+      let pkgsCount = await TokenPackage.find({ tokenId: token.tokenId }).count();
+      assert.equal(pkgsCount, 1);
 
       await app.httpRequest()
         .delete(`/-/npm/v1/tokens/gat/${token.tokenKey}`)
@@ -167,6 +171,9 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
         .expect(200);
 
       assert.equal(res.body.objects.length, 0);
+
+      pkgsCount = await TokenPackage.find({ tokenId: token.tokenId }).count();
+      assert.equal(pkgsCount, 0);
     });
 
   });

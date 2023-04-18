@@ -8,7 +8,7 @@ import { Token as TokenEntity, isGranularToken } from '../core/entity/Token';
 import { WebauthnCredential as WebauthnCredentialEntity } from '../core/entity/WebauthnCredential';
 import { AbstractRepository } from './AbstractRepository';
 import { TokenPackage as TokenPackageModel } from './model/TokenPackage';
-import { getScopeAndName } from 'app/common/PackageUtil';
+import { getScopeAndName } from '../common/PackageUtil';
 import { PackageRepository } from './PackageRepository';
 
 @SingletonProto({
@@ -101,9 +101,12 @@ export class UserRepository extends AbstractRepository {
   }
 
   async removeToken(tokenId: string) {
-    const removeCount = await this.Token.remove({ tokenId });
-    this.logger.info('[UserRepository:removeToken:remove] %d rows, tokenId: %s',
-      removeCount, tokenId);
+    await this.Token.transaction(async transaction => {
+      const removeCount = await this.Token.remove({ tokenId }, true, transaction);
+      await this.TokenPackage.remove({ tokenId }, true, transaction);
+      this.logger.info('[UserRepository:removeToken:remove] %d rows, tokenId: %s',
+        removeCount, tokenId);
+    });
   }
 
   async listTokens(userId: string): Promise<TokenEntity[]> {
