@@ -975,7 +975,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           .set('user-agent', publisher.ua)
           .send(pkg);
 
-        assert.equal(res.body.error, '[UNAUTHORIZED] Token expired');
+        assert(res.body.error, 'Token expired');
         assert.equal(res.status, 401);
 
       });

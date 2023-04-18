@@ -204,7 +204,6 @@ export class TokenController extends AbstractController {
           key: token.tokenKey,
           cidr_whitelist: token.cidrWhitelist,
           readonly: token.isReadonly,
-          automation: token.isAutomation,
           created: token.createdAt,
           updated: token.updatedAt,
         };

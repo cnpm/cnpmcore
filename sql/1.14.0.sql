@@ -1,7 +1,16 @@
-ALTER TABLE `tokens` ADD COLUMN `name` varchar(255) NULL COMMENT 'token name';
-ALTER TABLE `tokens` ADD COLUMN `type` varchar(255) NULL COMMENT 'token type, granular or legacy';
-ALTER TABLE `tokens` ADD COLUMN `description` varchar(255) NULL COMMENT 'token description';
-ALTER TABLE `tokens` ADD COLUMN `allowed_packages` json NULL COMMENT 'package whitelist associated with token';
-ALTER TABLE `tokens` ADD COLUMN `allowed_scopes` json NULL COMMENT 'scope whitelist associated with token';
-ALTER TABLE `tokens` ADD COLUMN `expires` int unsigned NULL COMMENT 'token expiration time, in days.';
-ALTER TABLE `tokens` ADD UNIQUE KEY `uk_user_name` (`user_id`, `name`);
+ALTER TABLE
+  `tokens`
+ADD
+  COLUMN `name` varchar(255) DEFAULT NULL COMMENT 'token name',
+ADD
+  COLUMN `type` varchar(255) DEFAULT NULL COMMENT 'token type, granular or legacy',
+ADD
+  COLUMN `description` varchar(255) DEFAULT NULL COMMENT 'token description',
+ADD
+  COLUMN `allowed_packages` TEXT DEFAULT NULL COMMENT 'package allowed list',
+ADD
+  COLUMN `allowed_scopes` TEXT DEFAULT NULL COMMENT 'scope allowed list',
+ADD
+  COLUMN `expires` int unsigned DEFAULT NULL COMMENT 'token expiration time, in days',
+ADD
+  UNIQUE KEY `uk_user_id_name` (`user_id`, `name`);
