@@ -13,6 +13,8 @@ import {
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
 import { TokenType, isGranularToken } from '../../core/entity/Token';
+import { TokenService } from '../../../app/core/service/TokenService';
+import { getFullname } from 'app/common/PackageUtil';
 
 // Creating and viewing access tokens
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#viewing-access-tokens
@@ -42,6 +44,8 @@ type GranularTokenOptions = Static<typeof GranularTokenOptionsRule>;
 export class TokenController extends AbstractController {
   @Inject()
   private readonly authAdapter: AuthAdapter;
+  @Inject()
+  private readonly tokenService: TokenService;
   // https://github.com/npm/npm-profile/blob/main/lib/index.js#L233
   @HTTPMethod({
     path: '/-/npm/v1/tokens',
@@ -191,24 +195,31 @@ export class TokenController extends AbstractController {
   async listGranularTokens() {
     const user = await this.ensureWebUser();
     const tokens = await this.userRepository.listTokens(user.userId);
-    const objects = tokens.filter(token => isGranularToken(token))
-      .map(token => {
-        const { name, description, expires, allowedPackages, allowedScopes } = token;
-        return {
-          name,
-          description,
-          allowedPackages,
-          allowedScopes,
-          expires,
-          token: token.tokenMark,
-          key: token.tokenKey,
-          cidr_whitelist: token.cidrWhitelist,
-          readonly: token.isReadonly,
-          created: token.createdAt,
-          updated: token.updatedAt,
-        };
-      });
-    return { objects, total: objects.length, urls: {} };
+    const granularTokens = tokens.filter(token => isGranularToken(token));
+
+    for (const token of granularTokens) {
+      const packages = await this.tokenService.listTokenPackages(token);
+      if (Array.isArray(packages)) {
+        token.allowedPackages = packages.map(p => getFullname(p.scope, p.name));
+      }
+    }
+    const objects = granularTokens.map(token => {
+      const { name, description, expires, allowedPackages, allowedScopes } = token;
+      return {
+        name,
+        description,
+        allowedPackages,
+        allowedScopes,
+        expires,
+        token: token.tokenMark,
+        key: token.tokenKey,
+        cidr_whitelist: token.cidrWhitelist,
+        readonly: token.isReadonly,
+        created: token.createdAt,
+        updated: token.updatedAt,
+      };
+    });
+    return { objects, total: granularTokens.length, urls: {} };
   }
 
   @HTTPMethod({

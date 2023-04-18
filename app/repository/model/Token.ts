@@ -50,9 +50,6 @@ export class Token extends Bone {
   description: string;
 
   @Attribute(DataTypes.JSONB)
-  allowedPackages: string[];
-
-  @Attribute(DataTypes.JSONB)
   allowedScopes: string[];
 
   @Attribute(DataTypes.INTEGER())

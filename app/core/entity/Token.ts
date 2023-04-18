@@ -1,7 +1,5 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
-import { getScopeAndName } from '../../common/PackageUtil';
-import { ForbiddenError, UnauthorizedError } from 'egg-errors';
 
 export enum TokenType {
   granular = 'granular',
@@ -46,8 +44,8 @@ export class Token extends Entity {
   readonly name?: string;
   readonly description?: string;
   readonly allowedScopes?: string[];
-  readonly allowedPackages?: string[];
   readonly expires?: number;
+  allowedPackages?: string[];
   token?: string;
 
   constructor(data: TokenData) {
@@ -64,8 +62,8 @@ export class Token extends Entity {
       this.name = data.name;
       this.description = data.description;
       this.allowedScopes = data.allowedScopes;
-      this.allowedPackages = data.allowedPackages;
       this.expires = data.expires;
+      this.allowedPackages = data.allowedPackages;
     } else {
       this.isAutomation = data.isAutomation || false;
     }
@@ -76,36 +74,4 @@ export class Token extends Entity {
     return new Token(newData);
   }
 
-  static checkGranularTokenAccess(token: Token, fullname: string) {
-    // skip classic token
-    if (!isGranularToken(token)) {
-      return true;
-    }
-
-    // check for expires
-    if (token.createdAt.getTime() + token.expires! * 1000 * 60 * 60 * 24 < Date.now()) {
-      throw new UnauthorizedError('Token expired');
-    }
-
-    // check for scope & packages access
-    if (!token.allowedPackages && !token.allowedScopes) {
-      return true;
-    }
-
-    // check for packages whitelist
-    const existPkgConfig = token.allowedPackages?.find(pkg => pkg === fullname);
-    if (existPkgConfig) {
-      return true;
-    }
-
-    // check for scope whitelist
-    const [ scope ] = getScopeAndName(fullname);
-    const existScopeConfig = token.allowedScopes?.find(s => s === scope);
-    if (existScopeConfig) {
-      return true;
-    }
-
-    throw new ForbiddenError(`can't access package "${fullname}"`);
-
-  }
 }

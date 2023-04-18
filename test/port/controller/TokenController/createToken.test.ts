@@ -165,13 +165,14 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
       });
 
       it('should work', async () => {
+        await TestUtil.createPackage({ name: '@cnpm/banana' });
         await app.httpRequest()
           .post('/-/npm/v1/tokens/gat')
           .send({
             name: 'apple',
             description: 'lets play',
-            allowedPackages: [ 'banana' ],
-            allowedScopes: [ '@cnpm', '@banana' ],
+            allowedPackages: [ '@cnpm/banana' ],
+            allowedScopes: [ '@banana' ],
             expires: 30,
           })
           .expect(200);
@@ -184,8 +185,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
 
         assert(granularToken);
         assert.equal(granularToken.name, 'apple');
-        assert.deepEqual(granularToken.allowedPackages, [ 'banana' ]);
-        assert.deepEqual(granularToken.allowedScopes, [ '@cnpm', '@banana' ]);
+        assert.deepEqual(granularToken.allowedScopes, [ '@banana' ]);
         assert.equal(granularToken.expires, 30);
 
         // should ignore granularToken when use v1 query
@@ -200,13 +200,14 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
       });
 
       it('should check for uniq name', async () => {
+        await TestUtil.createPackage({ name: '@cnpm/banana' });
         await app.httpRequest()
           .post('/-/npm/v1/tokens/gat')
           .send({
             name: 'apple',
             description: 'lets play',
-            allowedPackages: [ 'banana' ],
-            allowedScopes: [ '@cnpm', '@banana' ],
+            allowedPackages: [ '@cnpm/banana' ],
+            allowedScopes: [ '@banana' ],
             expires: 30,
           })
           .expect(200);
@@ -216,8 +217,8 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
           .send({
             name: 'apple',
             description: 'lets play',
-            allowedPackages: [ 'banana' ],
-            allowedScopes: [ '@cnpm', '@banana' ],
+            allowedPackages: [ '@cnpm/banana' ],
+            allowedScopes: [ '@banana' ],
             expires: 30,
           });
 

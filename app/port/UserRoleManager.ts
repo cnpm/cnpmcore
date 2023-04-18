@@ -10,10 +10,11 @@ import { UserRepository } from '../repository/UserRepository';
 import { PackageRepository } from '../repository/PackageRepository';
 import { Package as PackageEntity } from '../core/entity/Package';
 import { User as UserEntity } from '../core/entity/User';
-import { Token, Token as TokenEntity } from '../core/entity/Token';
+import { Token as TokenEntity } from '../core/entity/Token';
 import { sha512 } from '../common/UserUtil';
 import { getScopeAndName } from '../common/PackageUtil';
 import { RegistryManagerService } from '../core/service/RegistryManagerService';
+import { TokenService } from '../core/service/TokenService';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
@@ -33,6 +34,8 @@ export class UserRoleManager {
   protected logger: EggLogger;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
+  @Inject()
+  private readonly tokenService: TokenService;
 
   private handleAuthorized = false;
   private currentAuthorizedUser: UserEntity;
@@ -56,7 +59,7 @@ export class UserRoleManager {
     // 2. check for checkGranularTokenAccess
     const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
     const { token } = authorizedUserAndToken!;
-    Token.checkGranularTokenAccess(token, fullname);
+    await this.tokenService.checkGranularTokenAccess(token, fullname);
 
     // 3. has published in current registry
     const [ scope, name ] = getScopeAndName(fullname);

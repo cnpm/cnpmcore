@@ -28,18 +28,20 @@ type LoginResult = {
   token?: TokenEntity;
 };
 
-type CreateTokenOption = CreateLegacyTokenOptions | CreateGranularTokenOptions;
+type CreateTokenOption = CreateClassicTokenOptions | CreateGranularTokenOptions;
 
-type CreateGranularTokenOptions = CreateLegacyTokenOptions & {
+type CreateGranularTokenOptions = {
   type: TokenType.granular;
   name: string;
   description?: string;
   allowedScopes?: string[];
   allowedPackages?: string[];
+  isReadonly?: boolean;
+  cidrWhitelist?: string[];
   expires: number;
 };
 
-type CreateLegacyTokenOptions = {
+type CreateClassicTokenOptions = {
   isReadonly?: boolean;
   isAutomation?: boolean;
   cidrWhitelist?: string[];
