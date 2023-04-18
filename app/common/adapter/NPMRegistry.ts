@@ -40,8 +40,8 @@ export class NPMRegistry {
     this.registryHost = registryHost;
   }
 
-  public async getFullManifests(fullname: string, optionalConfig?): Promise<RegistryResponse> {
-    let retries = optionalConfig.retries || 3;
+  public async getFullManifests(fullname: string, optionalConfig?: {retries?:number, remoteAuthToken?:string}): Promise<RegistryResponse> {
+    let retries = optionalConfig?.retries || 3;
     // set query t=timestamp, make sure CDN cache disable
     // cache=0 is sync worker request flag
     const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
@@ -50,7 +50,7 @@ export class NPMRegistry {
       try {
         // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
         // https://r.cnpmjs.org/intraactive-sdk-ui 44s
-        const authorization = optionalConfig?.remoteAuthToken ? `Bearer ${optionalConfig?.remoteAuthToken}` : undefined;
+        const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
         return await this.request('GET', url, undefined, { timeout: 120000, headers: { authorization } });
       } catch (err: any) {
         if (err.name === 'ResponseTimeoutError') throw err;
@@ -67,25 +67,28 @@ export class NPMRegistry {
   }
 
   // app.put('/:name/sync', sync.sync);
-  public async createSyncTask(fullname: string): Promise<RegistryResponse> {
+  public async createSyncTask(fullname: string, optionalConfig?: { remoteAuthToken?:string}): Promise<RegistryResponse> {
+    const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync?sync_upstream=true&nodeps=true`;
     // {
     //   ok: true,
     //   logId: logId
     // };
-    return await this.request('PUT', url);
+    return await this.request('PUT', url, undefined, { authorization });
   }
 
   // app.get('/:name/sync/log/:id', sync.getSyncLog);
-  public async getSyncTask(fullname: string, id: string, offset: number): Promise<RegistryResponse> {
+  public async getSyncTask(fullname: string, id: string, offset: number, optionalConfig?:{ remoteAuthToken?:string }): Promise<RegistryResponse> {
+    const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync/log/${id}?offset=${offset}`;
     // { ok: true, syncDone: syncDone, log: log }
-    return await this.request('GET', url);
+    return await this.request('GET', url, undefined, { authorization });
   }
 
-  public async getDownloadRanges(registry: string, fullname: string, start: string, end: string): Promise<RegistryResponse> {
+  public async getDownloadRanges(registry: string, fullname: string, start: string, end: string, optionalConfig?:{ remoteAuthToken?:string }): Promise<RegistryResponse> {
+    const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
     const url = `${registry}/downloads/range/${start}:${end}/${encodeURIComponent(fullname)}`;
-    return await this.request('GET', url);
+    return await this.request('GET', url, undefined, { authorization });
   }
 
   private async request(method: HttpMethod, url: string, params?: object, options?: object): Promise<RegistryResponse> {
@@ -104,5 +107,9 @@ export class NPMRegistry {
       method,
       ...res,
     };
+  }
+
+  private genAuthorizationHeader(remoteAuthToken?:string) {
+    return remoteAuthToken ? `Bearer ${remoteAuthToken}` : '';
   }
 }

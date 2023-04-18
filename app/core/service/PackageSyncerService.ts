@@ -125,7 +125,8 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}][DownloadData] 🚧🚧🚧🚧🚧 Syncing "${fullname}" download data "${start}:${end}" on ${registry} 🚧🚧🚧🚧🚧`);
     const failEnd = '❌❌❌❌❌ 🚮 give up 🚮 ❌❌❌❌❌';
     try {
-      const { data, status, res } = await this.npmRegistry.getDownloadRanges(registry, fullname, start, end);
+      const { remoteAuthToken } = task.data as SyncPackageTaskOptions;
+      const { data, status, res } = await this.npmRegistry.getDownloadRanges(registry, fullname, start, end, { remoteAuthToken });
       downloads = data.downloads || [];
       logs.push(`[${isoNow()}][DownloadData] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, downloads: ${downloads.length}`);
     } catch (err: any) {
@@ -161,12 +162,13 @@ export class PackageSyncerService extends AbstractService {
   private async syncUpstream(task: Task) {
     const registry = this.npmRegistry.registry;
     const fullname = task.targetName;
+    const { remoteAuthToken } = task.data as SyncPackageTaskOptions;
     let logs: string[] = [];
     let logId = '';
     logs.push(`[${isoNow()}][UP] 🚧🚧🚧🚧🚧 Waiting sync "${fullname}" task on ${registry} 🚧🚧🚧🚧🚧`);
     const failEnd = `❌❌❌❌❌ Sync ${registry}/${fullname} 🚮 give up 🚮 ❌❌❌❌❌`;
     try {
-      const { data, status, res } = await this.npmRegistry.createSyncTask(fullname);
+      const { data, status, res } = await this.npmRegistry.createSyncTask(fullname, { remoteAuthToken });
       logs.push(`[${isoNow()}][UP] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, data: ${JSON.stringify(data)}`);
       logId = data.logId;
     } catch (err: any) {
@@ -192,7 +194,7 @@ export class PackageSyncerService extends AbstractService {
       const delay = process.env.NODE_ENV === 'test' ? 100 : 1000 + Math.random() * 5000;
       await setTimeout(delay);
       try {
-        const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset);
+        const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset, { remoteAuthToken });
         useTime = Date.now() - startTime;
         if (!logUrl) {
           logUrl = url;

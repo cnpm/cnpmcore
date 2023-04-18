@@ -71,7 +71,7 @@ export const SyncPackageTaskRule = Type.Object({
   remoteAuthToken: Type.Optional(
     Type.String({
       transform: [ 'trim' ],
-      maxLength: 1024,
+      maxLength: 200,
     }),
   ),
   tips: Type.String({
