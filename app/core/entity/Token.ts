@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 
@@ -24,6 +25,7 @@ interface GranularTokenData extends BaseTokenData {
   allowedScopes?: string[];
   allowedPackages?: string[];
   expires: number;
+  expiredAt: Date;
 }
 
 type TokenData = ClassicTokenData | GranularTokenData;
@@ -44,6 +46,7 @@ export class Token extends Entity {
   readonly name?: string;
   readonly description?: string;
   readonly allowedScopes?: string[];
+  readonly expiredAt?: Date;
   readonly expires?: number;
   allowedPackages?: string[];
   token?: string;
@@ -62,7 +65,7 @@ export class Token extends Entity {
       this.name = data.name;
       this.description = data.description;
       this.allowedScopes = data.allowedScopes;
-      this.expires = data.expires;
+      this.expiredAt = data.expiredAt;
       this.allowedPackages = data.allowedPackages;
     } else {
       this.isAutomation = data.isAutomation || false;
@@ -71,6 +74,9 @@ export class Token extends Entity {
 
   static create(data: EasyData<TokenData, 'tokenId'>): Token {
     const newData = EntityUtil.defaultData(data, 'tokenId');
+    if (isGranularToken(newData) && !newData.expiredAt) {
+      newData.expiredAt = dayjs(newData.createdAt).add(newData.expires, 'days').toDate();
+    }
     return new Token(newData);
   }
 

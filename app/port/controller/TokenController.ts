@@ -204,13 +204,13 @@ export class TokenController extends AbstractController {
       }
     }
     const objects = granularTokens.map(token => {
-      const { name, description, expires, allowedPackages, allowedScopes } = token;
+      const { name, description, expiredAt, allowedPackages, allowedScopes } = token;
       return {
         name,
         description,
         allowedPackages,
         allowedScopes,
-        expires,
+        expiredAt,
         token: token.tokenMark,
         key: token.tokenKey,
         cidr_whitelist: token.cidrWhitelist,

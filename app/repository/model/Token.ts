@@ -52,6 +52,6 @@ export class Token extends Bone {
   @Attribute(DataTypes.JSONB)
   allowedScopes: string[];
 
-  @Attribute(DataTypes.INTEGER())
-  expires: number;
+  @Attribute(DataTypes.DATE)
+  expiredAt: Date;
 }

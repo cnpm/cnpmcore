@@ -9,6 +9,7 @@ import { UserService } from 'app/core/service/UserService';
 import { Token, TokenType } from 'app/core/entity/Token';
 import { Token as TokenModel } from 'app/repository/model/Token';
 import { User } from 'app/core/entity/User';
+import dayjs from 'dayjs';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let userRepository: UserRepository;
@@ -964,7 +965,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         await TokenModel.update({
           tokenId: token.tokenId,
         }, {
-          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24),
+          expiredAt: dayjs(token.createdAt).add(1, 'millisecond').toDate(),
         });
 
         const name = '@cnpm/new_pkg';

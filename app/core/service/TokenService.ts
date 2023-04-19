@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import {
   AccessLevel,
   SingletonProto,
@@ -38,7 +39,7 @@ export class TokenService extends AbstractService {
     }
 
     // check for expires
-    if (token.createdAt.getTime() + token.expires! * 1000 * 60 * 60 * 24 < Date.now()) {
+    if (dayjs(token.expiredAt).isBefore(new Date())) {
       throw new UnauthorizedError('Token expired');
     }
 

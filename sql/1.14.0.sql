@@ -9,7 +9,7 @@ ADD
 ADD
   COLUMN `allowed_scopes` TEXT DEFAULT NULL COMMENT 'scope allowed list',
 ADD
-  COLUMN `expires` int unsigned DEFAULT NULL COMMENT 'token expiration time, in days',
+  COLUMN `expired_at` datetime(3) DEFAULT NULL COMMENT 'token expiration time',
 ADD
   UNIQUE KEY `uk_user_id_name` (`user_id`, `name`);
 

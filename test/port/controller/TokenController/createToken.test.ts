@@ -2,6 +2,7 @@ import { Token, TokenType } from 'app/core/entity/Token';
 import { AuthAdapter } from 'app/infra/AuthAdapter';
 import { UserRepository } from 'app/repository/UserRepository';
 import assert from 'assert';
+import dayjs from 'dayjs';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
@@ -186,7 +187,9 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         assert(granularToken);
         assert.equal(granularToken.name, 'apple');
         assert.deepEqual(granularToken.allowedScopes, [ '@banana' ]);
-        assert.equal(granularToken.expires, 30);
+        const expiredDate = dayjs(granularToken.expiredAt);
+        assert(expiredDate.isAfter(dayjs().add(29, 'days')));
+        assert(expiredDate.isBefore(dayjs().add(30, 'days')));
 
         // should ignore granularToken when use v1 query
         const res = await app.httpRequest()
