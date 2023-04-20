@@ -1,5 +1,8 @@
+import { TokenType } from 'app/core/entity/Token';
+import { UserService } from 'app/core/service/UserService';
+import { AuthAdapter } from 'app/infra/AuthAdapter';
 import assert from 'assert';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/TokenController/listTokens.test.ts', () => {
@@ -39,6 +42,41 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
         .set('authorization', authorization)
         .expect(403);
       assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token \"cnpm_\w+\" can\'t setting/);
+    });
+  });
+
+  describe('[GET /-/npm/v1/tokens/gat] listGranularTokens()', () => {
+    beforeEach(async () => {
+      await TestUtil.createPackage({ name: '@cnpm/a', isPrivate: true });
+      const { name, email } = await TestUtil.createUser();
+      const userService = await app.getEggObject(UserService);
+      const user = await userService.findUserByName(name);
+      assert(user);
+      await userService.createToken(user.userId, {
+        name: 'good',
+        type: TokenType.granular,
+        allowedPackages: [ '@cnpm/a' ],
+        allowedScopes: [ '@cnpmjs' ],
+        expires: 1,
+      });
+
+      mock(AuthAdapter.prototype, 'ensureCurrentUser', async () => {
+        return {
+          name,
+          email,
+        };
+      });
+    });
+
+    it('should 200', async () => {
+      const res = await app.httpRequest()
+        .get('/-/npm/v1/tokens/gat')
+        .expect(200);
+
+      assert.equal(res.body.objects.length, 1);
+      assert.equal(res.body.objects[0].name, 'good');
+      assert.deepEqual(res.body.objects[0].allowedScopes, [ '@cnpmjs' ]);
+      assert.deepEqual(res.body.objects[0].allowedPackages, [ '@cnpm/a' ]);
     });
   });
 });

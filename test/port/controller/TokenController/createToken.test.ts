@@ -1,5 +1,9 @@
+import { Token, TokenType } from 'app/core/entity/Token';
+import { AuthAdapter } from 'app/infra/AuthAdapter';
+import { UserRepository } from 'app/repository/UserRepository';
 import assert from 'assert';
-import { app } from 'egg-mock/bootstrap';
+import dayjs from 'dayjs';
+import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/TokenController/createToken.test.ts', () => {
@@ -98,5 +102,132 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         .expect(403);
       assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token \"cnpm_\w+\" can\'t setting/);
     });
+  });
+
+  describe('[POST /-/npm/v1/tokens/gat] createGranularToken()', () => {
+    it('should 422 when invalid options', async () => {
+      let res = await app.httpRequest()
+        .post('/-/npm/v1/tokens/gat')
+        .send({
+          name: 'banana',
+        })
+        .expect(422);
+      assert.match(res.body.error, /\[INVALID_PARAM\] must have required property 'expires'/);
+
+      res = await app.httpRequest()
+        .post('/-/npm/v1/tokens/gat')
+        .send({
+          name: 'banana',
+          expires: 366,
+        })
+        .expect(422);
+      assert.match(res.body.error, /\[INVALID_PARAM\] expires: must be <= 365/);
+    });
+
+    it('should 403 when no login', async () => {
+      const res = await app.httpRequest()
+        .post('/-/npm/v1/tokens/gat')
+        .send({
+          name: 'banana',
+          expires: 30,
+        })
+        .expect(403);
+      assert.match(res.body.error, /\[FORBIDDEN\] need login first/);
+    });
+
+    it('should 403 when no user info', async () => {
+      mock(AuthAdapter.prototype, 'ensureCurrentUser', async () => {
+        return {
+          name: 'banana',
+          email: 'banana@fruits.com',
+        };
+      });
+      const res = await app.httpRequest()
+        .post('/-/npm/v1/tokens/gat')
+        .send({
+          name: 'banana',
+          expires: 30,
+        })
+        .expect(403);
+      assert.match(res.body.error, /\[FORBIDDEN\] invalid user info/);
+    });
+
+    describe('should 200', () => {
+      let authorization: string;
+      beforeEach(async () => {
+        const { name, email, authorization: createRes } = await TestUtil.createUser({ name: 'banana' });
+        authorization = createRes;
+        mock(AuthAdapter.prototype, 'ensureCurrentUser', async () => {
+          return {
+            name,
+            email,
+          };
+        });
+      });
+
+      it('should work', async () => {
+        await TestUtil.createPackage({ name: '@cnpm/banana' });
+        await app.httpRequest()
+          .post('/-/npm/v1/tokens/gat')
+          .send({
+            name: 'apple',
+            description: 'lets play',
+            allowedPackages: [ '@cnpm/banana' ],
+            allowedScopes: [ '@banana' ],
+            expires: 30,
+          })
+          .expect(200);
+
+        const userRepository = await app.getEggObject(UserRepository);
+        const user = await userRepository.findUserByName('banana');
+        const tokens = await userRepository.listTokens(user!.userId);
+
+        const granularToken = tokens.find(token => token.type === TokenType.granular);
+
+        assert(granularToken);
+        assert.equal(granularToken.name, 'apple');
+        assert.deepEqual(granularToken.allowedScopes, [ '@banana' ]);
+        const expiredDate = dayjs(granularToken.expiredAt);
+        assert(expiredDate.isAfter(dayjs().add(29, 'days')));
+        assert(expiredDate.isBefore(dayjs().add(30, 'days')));
+
+        // should ignore granularToken when use v1 query
+        const res = await app.httpRequest()
+          .get('/-/npm/v1/tokens')
+          .set('authorization', authorization)
+          .expect(200);
+
+        assert(res.body.objects.length > 0);
+        assert(res.body.objects.every((token: Token) => token.type !== TokenType.granular));
+
+      });
+
+      it('should check for uniq name', async () => {
+        await TestUtil.createPackage({ name: '@cnpm/banana' });
+        await app.httpRequest()
+          .post('/-/npm/v1/tokens/gat')
+          .send({
+            name: 'apple',
+            description: 'lets play',
+            allowedPackages: [ '@cnpm/banana' ],
+            allowedScopes: [ '@banana' ],
+            expires: 30,
+          })
+          .expect(200);
+
+        const res = await app.httpRequest()
+          .post('/-/npm/v1/tokens/gat')
+          .send({
+            name: 'apple',
+            description: 'lets play',
+            allowedPackages: [ '@cnpm/banana' ],
+            allowedScopes: [ '@banana' ],
+            expires: 30,
+          });
+
+        assert.match(res.body.error, /ER_DUP_ENTRY/);
+      });
+    });
+
   });
 });

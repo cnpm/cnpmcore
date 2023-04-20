@@ -40,7 +40,6 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
             { name: user.name, email: user.email },
           ],
         });
-      console.log(res.headers);
       assert.equal(res.statusCode, 404);
     });
 

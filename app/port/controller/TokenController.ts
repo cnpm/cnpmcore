@@ -1,4 +1,5 @@
-import { UnauthorizedError } from 'egg-errors';
+import { ForbiddenError, UnauthorizedError } from 'egg-errors';
+import { AuthAdapter } from '../../infra/AuthAdapter';
 import {
   HTTPController,
   HTTPMethod,
@@ -7,9 +8,13 @@ import {
   HTTPParam,
   Context,
   EggContext,
+  Inject,
 } from '@eggjs/tegg';
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
+import { TokenType, isGranularToken } from '../../core/entity/Token';
+import { TokenService } from '../../../app/core/service/TokenService';
+import { getFullname } from '../../../app/common/PackageUtil';
 
 // Creating and viewing access tokens
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#viewing-access-tokens
@@ -23,8 +28,24 @@ const TokenOptionsRule = Type.Object({
 });
 type TokenOptions = Static<typeof TokenOptionsRule>;
 
+const GranularTokenOptionsRule = Type.Object({
+  automation: Type.Optional(Type.Boolean()),
+  readonly: Type.Optional(Type.Boolean()),
+  cidr_whitelist: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 10 })),
+  name: Type.String({ maxLength: 255 }),
+  description: Type.Optional(Type.String({ maxLength: 255 })),
+  allowedScopes: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })),
+  allowedPackages: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })),
+  expires: Type.Number({ minimum: 1, maximum: 365 }),
+});
+type GranularTokenOptions = Static<typeof GranularTokenOptionsRule>;
+
 @HTTPController()
 export class TokenController extends AbstractController {
+  @Inject()
+  private readonly authAdapter: AuthAdapter;
+  @Inject()
+  private readonly tokenService: TokenService;
   // https://github.com/npm/npm-profile/blob/main/lib/index.js#L233
   @HTTPMethod({
     path: '/-/npm/v1/tokens',
@@ -97,18 +118,116 @@ export class TokenController extends AbstractController {
     //   "total": 2,
     //   "urls": {}
     // }
-    const objects = tokens.map(token => {
+    const objects = tokens.filter(token => !isGranularToken(token))
+      .map(token => {
+        return {
+          token: token.tokenMark,
+          key: token.tokenKey,
+          cidr_whitelist: token.cidrWhitelist,
+          readonly: token.isReadonly,
+          automation: token.isAutomation,
+          created: token.createdAt,
+          updated: token.updatedAt,
+        };
+      });
+    // TODO: paging, urls: { next: string }
+    return { objects, total: objects.length, urls: {} };
+  }
+
+  private async ensureWebUser() {
+    const userRes = await this.authAdapter.ensureCurrentUser();
+    if (!userRes?.name || !userRes?.email) {
+      throw new ForbiddenError('need login first');
+    }
+    const user = await this.userService.findUserByName(userRes.name);
+    if (!user?.userId) {
+      throw new ForbiddenError('invalid user info');
+    }
+    return user;
+  }
+
+  @HTTPMethod({
+    path: '/-/npm/v1/tokens/gat',
+    method: HTTPMethodEnum.POST,
+  })
+  // Create granular access token through HTTP interface
+  // https://docs.npmjs.com/about-access-tokens#about-granular-access-tokens
+  // Mainly has the following limitations:
+  // 1. Need to submit token name and expires
+  // 2. Optional to submit description, allowScopes, allowPackages information
+  // 3. Need to implement ensureCurrentUser method in AuthAdapter, or pass in this.user
+  async createGranularToken(@Context() ctx: EggContext, @HTTPBody() tokenOptions: GranularTokenOptions) {
+    ctx.tValidate(GranularTokenOptionsRule, tokenOptions);
+    const user = await this.ensureWebUser();
+
+    // 生成 Token
+    const { name, description, allowedPackages, allowedScopes, cidr_whitelist, automation, readonly, expires } = tokenOptions;
+    const token = await this.userService.createToken(user.userId, {
+      name,
+      type: TokenType.granular,
+      description,
+      allowedPackages,
+      allowedScopes,
+      isAutomation: automation,
+      isReadonly: readonly,
+      cidrWhitelist: cidr_whitelist,
+      expires,
+    });
+
+    return {
+      name: token.name,
+      token: token.token,
+      key: token.tokenKey,
+      cidr_whitelist: token.cidrWhitelist,
+      readonly: token.isReadonly,
+      automation: token.isAutomation,
+      allowedPackages: token.allowedPackages,
+      allowedScopes: token.allowedScopes,
+      created: token.createdAt,
+      updated: token.updatedAt,
+    };
+  }
+
+  @HTTPMethod({
+    path: '/-/npm/v1/tokens/gat',
+    method: HTTPMethodEnum.GET,
+  })
+  async listGranularTokens() {
+    const user = await this.ensureWebUser();
+    const tokens = await this.userRepository.listTokens(user.userId);
+    const granularTokens = tokens.filter(token => isGranularToken(token));
+
+    for (const token of granularTokens) {
+      const packages = await this.tokenService.listTokenPackages(token);
+      if (Array.isArray(packages)) {
+        token.allowedPackages = packages.map(p => getFullname(p.scope, p.name));
+      }
+    }
+    const objects = granularTokens.map(token => {
+      const { name, description, expiredAt, allowedPackages, allowedScopes } = token;
       return {
+        name,
+        description,
+        allowedPackages,
+        allowedScopes,
+        expiredAt,
         token: token.tokenMark,
         key: token.tokenKey,
         cidr_whitelist: token.cidrWhitelist,
         readonly: token.isReadonly,
-        automation: token.isAutomation,
         created: token.createdAt,
         updated: token.updatedAt,
       };
     });
-    // TODO: paging, urls: { next: string }
-    return { objects, total: objects.length, urls: {} };
+    return { objects, total: granularTokens.length, urls: {} };
+  }
+
+  @HTTPMethod({
+    path: '/-/npm/v1/tokens/gat/:tokenKey',
+    method: HTTPMethodEnum.DELETE,
+  })
+  async removeGranularToken(@HTTPParam() tokenKey: string) {
+    const user = await this.ensureWebUser();
+    await this.userService.removeToken(user.userId, tokenKey);
   }
 }
