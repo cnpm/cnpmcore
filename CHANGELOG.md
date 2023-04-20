@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.14.0](https://github.com/cnpm/npmcore/compare/v3.13.2...v3.14.0) (2023-04-20)
+
+
+### Features
+
+* support granular token ([#443](https://github.com/cnpm/npmcore/issues/443)) ([92ddf2c](https://github.com/cnpm/npmcore/commit/92ddf2c8c35fbf9dee458926e7a6d505fbbe06f1))
+
 ## [3.13.2](https://github.com/cnpm/npmcore/compare/v3.13.1...v3.13.2) (2023-04-10)
 
 
