@@ -4,9 +4,12 @@ import type { User as UserModel } from './model/User';
 import type { Token as TokenModel } from './model/Token';
 import type { WebauthnCredential as WebauthnCredentialModel } from './model/WebauthnCredential';
 import { User as UserEntity } from '../core/entity/User';
-import { Token as TokenEntity } from '../core/entity/Token';
+import { Token as TokenEntity, isGranularToken } from '../core/entity/Token';
 import { WebauthnCredential as WebauthnCredentialEntity } from '../core/entity/WebauthnCredential';
 import { AbstractRepository } from './AbstractRepository';
+import { TokenPackage as TokenPackageModel } from './model/TokenPackage';
+import { getScopeAndName } from '../common/PackageUtil';
+import { PackageRepository } from './PackageRepository';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -17,6 +20,12 @@ export class UserRepository extends AbstractRepository {
 
   @Inject()
   private readonly Token: typeof TokenModel;
+
+  @Inject()
+  private readonly TokenPackage: typeof TokenPackageModel;
+
+  @Inject()
+  private readonly packageRepository: PackageRepository;
 
   @Inject()
   private readonly WebauthnCredential: typeof WebauthnCredentialModel;
@@ -62,20 +71,42 @@ export class UserRepository extends AbstractRepository {
   }
 
   async saveToken(token: TokenEntity): Promise<void> {
+    // create
+    let model: TokenModel;
+    // update
     if (token.id) {
-      const model = await this.Token.findOne({ id: token.id });
-      if (!model) return;
+      const res = await this.Token.findOne({ id: token.id });
+      if (!res) return;
+      model = res;
       await ModelConvertor.saveEntityToModel(token, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(token, this.Token);
-      this.logger.info('[UserRepository:saveToken:new] id: %s, tokenId: %s', model.id, model.tokenId);
+      if (isGranularToken(token)) {
+        await this.TokenPackage.transaction(async transaction => {
+          model = await ModelConvertor.convertEntityToModel(token, this.Token, transaction);
+          if (Array.isArray(token.allowedPackages)) {
+            for (const packageName of token.allowedPackages) {
+              const [ scope, name ] = getScopeAndName(packageName);
+              const packageId = await this.packageRepository.findPackageId(scope, name);
+              if (packageId) {
+                await this.TokenPackage.create({ packageId, tokenId: token.tokenId }, transaction);
+              }
+            }
+          }
+        });
+      } else {
+        model = await ModelConvertor.convertEntityToModel(token, this.Token);
+      }
+      this.logger.info('[UserRepository:saveToken:new] id: %s, tokenId: %s', model!.id, model!.tokenId);
     }
   }
 
   async removeToken(tokenId: string) {
-    const removeCount = await this.Token.remove({ tokenId });
-    this.logger.info('[UserRepository:removeToken:remove] %d rows, tokenId: %s',
-      removeCount, tokenId);
+    await this.Token.transaction(async transaction => {
+      const removeCount = await this.Token.remove({ tokenId }, true, transaction);
+      await this.TokenPackage.remove({ tokenId }, true, transaction);
+      this.logger.info('[UserRepository:removeToken:remove] %d rows, tokenId: %s',
+        removeCount, tokenId);
+    });
   }
 
   async listTokens(userId: string): Promise<TokenEntity[]> {
