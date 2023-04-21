@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.15.0](https://github.com/cnpm/npmcore/compare/v3.14.0...v3.15.0) (2023-04-21)
+
+
+### Features
+
+* create sync task with auth header ([#442](https://github.com/cnpm/npmcore/issues/442)) ([d95c58b](https://github.com/cnpm/npmcore/commit/d95c58b5ce1f6c3137f3d8b09c10a12ed3a8af5e))
+
 ## [3.14.0](https://github.com/cnpm/npmcore/compare/v3.13.2...v3.14.0) (2023-04-20)
 
 
