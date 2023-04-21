@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.16.0](https://github.com/cnpm/npmcore/compare/v3.15.0...v3.16.0) (2023-04-21)
+
+
+### Features
+
+* add health checker for slb ([#445](https://github.com/cnpm/npmcore/issues/445)) ([4dcfe89](https://github.com/cnpm/npmcore/commit/4dcfe89575bd2bedbd34228020e3f7f9dfdf38b9))
+
 ## [3.15.0](https://github.com/cnpm/npmcore/compare/v3.14.0...v3.15.0) (2023-04-21)
 
 
