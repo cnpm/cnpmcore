@@ -52,6 +52,10 @@ const plugin: EggPlugin = {
     enable: true,
     package: 'egg-cors',
   },
+  status: {
+    enable: true,
+    package: 'egg-status',
+  },
 };
 
 export default plugin;
