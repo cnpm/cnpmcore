@@ -51,8 +51,8 @@
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "npm run clean && tsc -p ./tsconfig.prod.json",
     "prepublishOnly": "npm run tsc:prod",
-    "start": "eggctl start --daemon",
-    "stop": "eggctl stop"
+    "start": "eggctl start --daemon && touch egg.status",
+    "stop": "rm -f egg.status && sleep 15 && eggctl stop"
   },
   "repository": {
     "type": "git",
@@ -88,6 +88,7 @@
     "egg-errors": "^2.3.0",
     "egg-redis": "^2.4.0",
     "egg-scripts": "^2.15.2",
+    "egg-status": "^1.0.0",
     "egg-tracer": "^1.1.0",
     "egg-typebox-validate": "^2.0.0",
     "egg-view-nunjucks": "^2.3.0",
