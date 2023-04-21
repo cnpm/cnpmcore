@@ -31,6 +31,7 @@ export interface TaskData<T = TaskBaseData> extends EntityData {
 export type SyncPackageTaskOptions = {
   authorId?: string;
   authorIp?: string;
+  remoteAuthToken?: string;
   tips?: string;
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
@@ -50,6 +51,7 @@ export interface TriggerHookTaskData extends TaskBaseData {
 }
 
 export interface CreateSyncPackageTaskData extends TaskBaseData {
+  remoteAuthToken?: string;
   tips?: string;
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
@@ -129,6 +131,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       data: {
         // task execute worker
         taskWorker: '',
+        remoteAuthToken: options?.remoteAuthToken,
         tips: options?.tips,
         registryId: options?.registryId ?? '',
         skipDependencies: options?.skipDependencies,

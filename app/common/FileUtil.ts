@@ -7,6 +7,12 @@ import { randomBytes } from 'crypto';
 import { EggContextHttpClient, HttpClientResponse } from 'egg';
 import dayjs from './dayjs';
 
+interface DownloadToTempfileOptionalConfig {
+  retries?: number,
+  ignoreDownloadStatuses?: number[],
+  remoteAuthToken?: string
+}
+
 export async function createTempfile(dataDir: string, filename: string) {
   // will auto clean on CleanTempDir Schedule
   const tmpdir = path.join(dataDir, 'downloads', dayjs().format('YYYY/MM/DD'));
@@ -19,11 +25,12 @@ export async function createTempfile(dataDir: string, filename: string) {
 }
 
 export async function downloadToTempfile(httpclient: EggContextHttpClient,
-  dataDir: string, url: string, ignoreDownloadStatuses?: number[], retries = 3) {
+  dataDir: string, url: string, optionalConfig?: DownloadToTempfileOptionalConfig) {
+  let retries = optionalConfig?.retries || 3;
   let lastError: any;
   while (retries > 0) {
     try {
-      return await _downloadToTempfile(httpclient, dataDir, url, ignoreDownloadStatuses);
+      return await _downloadToTempfile(httpclient, dataDir, url, optionalConfig);
     } catch (err: any) {
       if (err.name === 'DownloadNotFoundError') throw err;
       lastError = err;
@@ -43,19 +50,21 @@ export interface Tempfile {
   timing: HttpClientResponse['res']['timing'];
 }
 async function _downloadToTempfile(httpclient: EggContextHttpClient,
-  dataDir: string, url: string, ignoreDownloadStatuses?: number[]): Promise<Tempfile> {
+  dataDir: string, url: string, optionalConfig?: DownloadToTempfileOptionalConfig): Promise<Tempfile> {
   const tmpfile = await createTempfile(dataDir, url);
   const writeStream = createWriteStream(tmpfile);
   try {
     // max 10 mins to download
     // FIXME: should show download progress
+    const authorization = optionalConfig?.remoteAuthToken ? `Bearer ${optionalConfig?.remoteAuthToken}` : '';
     const { status, headers, res } = await httpclient.request(url, {
       timeout: 60000 * 10,
+      headers: { authorization },
       writeStream,
       timing: true,
       followRedirect: true,
     }) as HttpClientResponse;
-    if (status === 404 || (ignoreDownloadStatuses && ignoreDownloadStatuses.includes(status))) {
+    if (status === 404 || (optionalConfig?.ignoreDownloadStatuses && optionalConfig.ignoreDownloadStatuses.includes(status))) {
       const err = new Error(`Not found, status(${status})`);
       err.name = 'DownloadNotFoundError';
       throw err;

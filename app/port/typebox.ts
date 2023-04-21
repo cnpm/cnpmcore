@@ -68,6 +68,12 @@ export const TagWithVersionRule = Type.Object({
 
 export const SyncPackageTaskRule = Type.Object({
   fullname: Name,
+  remoteAuthToken: Type.Optional(
+    Type.String({
+      transform: [ 'trim' ],
+      maxLength: 200,
+    }),
+  ),
   tips: Type.String({
     transform: [ 'trim' ],
     maxLength: 1024,
