@@ -237,7 +237,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const versionOne = pkg.versions['1.0.0'];
       assert(versionOne.dist.unpackedSize === 6497043);
       assert(versionOne._cnpmcore_publish_time);
-      assert.equal(typeof versionOne._cnpmcore_publish_time, 'string');
+      assert.equal(typeof versionOne._cnpmcore_publish_time, 'number');
       assert(versionOne.publish_time);
       assert.equal(typeof versionOne.publish_time, 'number');
       assert(pkg._id === scopedName);

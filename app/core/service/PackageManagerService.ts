@@ -134,8 +134,8 @@ export class PackageManagerService extends AbstractService {
     const publishTime = cmd.publishTime || new Date();
 
     // add _cnpmcore_publish_time field to cmd.packageJson
-    if (!cmd.packageJson._cnpmcore_publish_time) {
-      cmd.packageJson._cnpmcore_publish_time = publishTime;
+    if (typeof cmd.packageJson._cnpmcore_publish_time !== 'number') {
+      cmd.packageJson._cnpmcore_publish_time = publishTime.getTime();
     }
     if (!cmd.packageJson.publish_time) {
       cmd.packageJson.publish_time = publishTime.getTime();
