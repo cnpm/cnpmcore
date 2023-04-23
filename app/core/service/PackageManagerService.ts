@@ -37,6 +37,8 @@ import {
 } from '../event';
 import { BugVersionService } from './BugVersionService';
 import { BugVersion } from '../entity/BugVersion';
+import { RegistryManagerService } from './RegistryManagerService';
+import { Registry } from '../entity/Registry';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
@@ -85,6 +87,8 @@ export class PackageManagerService extends AbstractService {
   private readonly bugVersionStore: BugVersionStore;
   @Inject()
   private readonly distRepository: DistRepository;
+  @Inject()
+  private readonly registryManagerService: RegistryManagerService;
 
   private static downloadCounters = {};
 
@@ -139,6 +143,19 @@ export class PackageManagerService extends AbstractService {
     }
     if (!cmd.packageJson.publish_time) {
       cmd.packageJson.publish_time = publishTime.getTime();
+    }
+
+    // add _registry_name field to cmd.packageJson
+    if (!cmd.packageJson._source_registry_name) {
+      let registry: Registry | null;
+      if (cmd.registryId) {
+        registry = await this.registryManagerService.findByRegistryId(cmd.registryId);
+      } else {
+        registry = await this.registryManagerService.ensureDefaultRegistry();
+      }
+      if (registry) {
+        cmd.packageJson._source_registry_name = registry.name;
+      }
     }
 
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
@@ -759,8 +776,15 @@ export class PackageManagerService extends AbstractService {
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
       const data = await this.distRepository.readDistBytesToJSON(dist);
-      if (bugVersion) {
-        await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
+      const needPatch = bugVersion || !data._source_registry_name;
+      if (needPatch) {
+        if (bugVersion) {
+          await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
+        }
+        // patch source registry name
+        if (!data._source_registry_name) {
+          data._source_registry_name = (await this.registryManagerService.getSourceRegistryByPkg(pkg))?.name;
+        }
         const distBytes = Buffer.from(JSON.stringify(data));
         const distIntegrity = await calculateIntegrity(distBytes);
         etag = `"${distIntegrity.shasum}"`;
