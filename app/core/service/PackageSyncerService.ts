@@ -531,6 +531,7 @@ export class PackageSyncerService extends AbstractService {
     const existsVersionCount = Object.keys(existsVersionMap).length;
     const abbreviatedVersionMap = abbreviatedManifests?.versions ?? {};
     // 2. save versions
+
     // check is specific version exists.
     if (specificVersion && versionMap[specificVersion] === undefined) {
       task.error = `specific version is not exist:${specificVersion}.`;
@@ -757,14 +758,18 @@ export class PackageSyncerService extends AbstractService {
 
     const removeVersions: string[] = [];
     // 2.3 find out remove versions
-    for (const existsVersion in existsVersionMap) {
-      if (!(existsVersion in versionMap)) {
-        const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsVersion);
-        if (pkgVersion) {
-          await this.packageManagerService.removePackageVersion(pkg, pkgVersion, true);
-          logs.push(`[${isoNow()}] 🟢 Removed version ${existsVersion} success`);
+
+    // should not remove packageVersion in specific version mode.
+    if (!specificVersion) {
+      for (const existsVersion in existsVersionMap) {
+        if (!(existsVersion in versionMap)) {
+          const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsVersion);
+          if (pkgVersion) {
+            await this.packageManagerService.removePackageVersion(pkg, pkgVersion, true);
+            logs.push(`[${isoNow()}] 🟢 Removed version ${existsVersion} success`);
+          }
+          removeVersions.push(existsVersion);
         }
-        removeVersions.push(existsVersion);
       }
     }
 
