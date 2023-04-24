@@ -67,6 +67,7 @@ export class PackageSyncController extends AbstractController {
 
     const params = {
       fullname,
+      remoteAuthToken: data.remoteAuthToken,
       tips,
       skipDependencies: !!data.skipDependencies,
       syncDownloadData: !!data.syncDownloadData,
@@ -96,6 +97,7 @@ export class PackageSyncController extends AbstractController {
     const task = await this.packageSyncerService.createTask(params.fullname, {
       authorIp: ctx.ip,
       authorId: authorized?.user.userId,
+      remoteAuthToken: params.remoteAuthToken,
       tips: params.tips,
       skipDependencies: params.skipDependencies,
       syncDownloadData: params.syncDownloadData,

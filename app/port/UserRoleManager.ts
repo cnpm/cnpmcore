@@ -14,6 +14,7 @@ import { Token as TokenEntity } from '../core/entity/Token';
 import { sha512 } from '../common/UserUtil';
 import { getScopeAndName } from '../common/PackageUtil';
 import { RegistryManagerService } from '../core/service/RegistryManagerService';
+import { TokenService } from '../core/service/TokenService';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
@@ -33,6 +34,8 @@ export class UserRoleManager {
   protected logger: EggLogger;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
+  @Inject()
+  private readonly tokenService: TokenService;
 
   private handleAuthorized = false;
   private currentAuthorizedUser: UserEntity;
@@ -47,31 +50,36 @@ export class UserRoleManager {
 
     const user = await this.requiredAuthorizedUser(ctx, 'publish');
 
-    // 1. admin chas all access
+    // 1. admin has all access
     const isAdmin = await this.isAdmin(ctx);
     if (isAdmin) {
       return user;
     }
 
-    // 2. has published in current registry
+    // 2. check for checkGranularTokenAccess
+    const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
+    const { token } = authorizedUserAndToken!;
+    await this.tokenService.checkGranularTokenAccess(token, fullname);
+
+    // 3. has published in current registry
     const [ scope, name ] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
     const selfRegistry = await this.registryManagerService.ensureSelfRegistry();
     const inSelfRegistry = pkg?.registryId === selfRegistry.registryId;
     if (inSelfRegistry) {
-      // 2.1 check in Maintainers table
+      // 3.1 check in Maintainers table
       // Higher priority than scope check
       await this.requiredPackageMaintainer(pkg, user);
       return user;
     }
 
     if (pkg && !scope && !inSelfRegistry) {
-      // 2.2 public package can't publish in other registry
+      // 3.2 public package can't publish in other registry
       // scope package can be migrated into self registry
       throw new ForbiddenError(`Can\'t modify npm public package "${fullname}"`);
     }
 
-    // 3 check scope is allowed to publish
+    // 4 check scope is allowed to publish
     await this.requiredPackageScope(scope, user);
     if (pkg) {
       // published scoped package

@@ -124,7 +124,8 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}][DownloadData] 🚧🚧🚧🚧🚧 Syncing "${fullname}" download data "${start}:${end}" on ${registry} 🚧🚧🚧🚧🚧`);
     const failEnd = '❌❌❌❌❌ 🚮 give up 🚮 ❌❌❌❌❌';
     try {
-      const { data, status, res } = await this.npmRegistry.getDownloadRanges(registry, fullname, start, end);
+      const { remoteAuthToken } = task.data as SyncPackageTaskOptions;
+      const { data, status, res } = await this.npmRegistry.getDownloadRanges(registry, fullname, start, end, { remoteAuthToken });
       downloads = data.downloads || [];
       logs.push(`[${isoNow()}][DownloadData] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, downloads: ${downloads.length}`);
     } catch (err: any) {
@@ -160,12 +161,13 @@ export class PackageSyncerService extends AbstractService {
   private async syncUpstream(task: Task) {
     const registry = this.npmRegistry.registry;
     const fullname = task.targetName;
+    const { remoteAuthToken } = task.data as SyncPackageTaskOptions;
     let logs: string[] = [];
     let logId = '';
     logs.push(`[${isoNow()}][UP] 🚧🚧🚧🚧🚧 Waiting sync "${fullname}" task on ${registry} 🚧🚧🚧🚧🚧`);
     const failEnd = `❌❌❌❌❌ Sync ${registry}/${fullname} 🚮 give up 🚮 ❌❌❌❌❌`;
     try {
-      const { data, status, res } = await this.npmRegistry.createSyncTask(fullname);
+      const { data, status, res } = await this.npmRegistry.createSyncTask(fullname, { remoteAuthToken });
       logs.push(`[${isoNow()}][UP] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, data: ${JSON.stringify(data)}`);
       logId = data.logId;
     } catch (err: any) {
@@ -191,7 +193,7 @@ export class PackageSyncerService extends AbstractService {
       const delay = process.env.NODE_ENV === 'test' ? 100 : 1000 + Math.random() * 5000;
       await setTimeout(delay);
       try {
-        const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset);
+        const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset, { remoteAuthToken });
         useTime = Date.now() - startTime;
         if (!logUrl) {
           logUrl = url;
@@ -346,7 +348,7 @@ export class PackageSyncerService extends AbstractService {
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const [ scope, name ] = getScopeAndName(fullname);
-    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, specificVersion, tempFilePath } = task.data as SyncPackageTaskOptions;
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, remoteAuthToken, specificVersion, tempFilePath } = task.data as SyncPackageTaskOptions;
     let pkg = await this.packageRepository.findPackage(scope, name);
     const registry = await this.initSpecRegistry(task, pkg, scope);
     const registryHost = this.npmRegistry.registry;
@@ -412,7 +414,7 @@ export class PackageSyncerService extends AbstractService {
 
     let registryFetchResult: RegistryResponse;
     try {
-      registryFetchResult = await this.npmRegistry.getFullManifests(fullname);
+      registryFetchResult = await this.npmRegistry.getFullManifests(fullname, { remoteAuthToken });
     } catch (err: any) {
       const status = err.status || 'unknown';
       task.error = `request manifests error: ${err}, status: ${status}`;
@@ -645,7 +647,7 @@ export class PackageSyncerService extends AbstractService {
       if (!tempFilePath || !isTempFileExist) {
         try {
           const { tmpfile, headers, timing } =
-            await downloadToTempfile(this.httpclient, this.config.dataDir, tarball);
+            await downloadToTempfile(this.httpclient, this.config.dataDir, tarball, { remoteAuthToken });
           localFile = tmpfile;
           logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
         } catch (err: any) {

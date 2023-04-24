@@ -1,5 +1,9 @@
+import { Token, TokenType } from 'app/core/entity/Token';
+import { UserService } from 'app/core/service/UserService';
+import { AuthAdapter } from 'app/infra/AuthAdapter';
+import { TokenPackage } from 'app/repository/model/TokenPackage';
 import assert from 'assert';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 
 describe('test/port/controller/TokenController/removeToken.test.ts', () => {
@@ -123,5 +127,54 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
         .expect(403);
       assert.equal(res.body.error, `[FORBIDDEN] Not authorized to remove token "${tokens[1].key}"`);
     });
+  });
+
+  describe('[DELETE /-/npm/v1/tokens/gat/:tokenKey] removeGranularToken()', () => {
+    let token: Token;
+    beforeEach(async () => {
+      const { name, email } = await TestUtil.createUser();
+      const userService = await app.getEggObject(UserService);
+      const user = await userService.findUserByName(name);
+      assert(user);
+      await TestUtil.createPackage({ name: '@cnpm/foo' }, { name: user.name });
+      token = await userService.createToken(user.userId, {
+        name: 'good',
+        type: TokenType.granular,
+        allowedPackages: [ '@cnpm/foo' ],
+        allowedScopes: [ '@cnpmjs' ],
+        expires: 1,
+      });
+
+      mock(AuthAdapter.prototype, 'ensureCurrentUser', async () => {
+        return {
+          name,
+          email,
+        };
+      });
+    });
+
+    it('should 200', async () => {
+      let res = await app.httpRequest()
+        .get('/-/npm/v1/tokens/gat')
+        .expect(200);
+
+      assert.equal(res.body.objects.length, 1);
+      let pkgsCount = await TokenPackage.find({ tokenId: token.tokenId }).count();
+      assert.equal(pkgsCount, 1);
+
+      await app.httpRequest()
+        .delete(`/-/npm/v1/tokens/gat/${token.tokenKey}`)
+        .expect(204);
+
+      res = await app.httpRequest()
+        .get('/-/npm/v1/tokens/gat')
+        .expect(200);
+
+      assert.equal(res.body.objects.length, 0);
+
+      pkgsCount = await TokenPackage.find({ tokenId: token.tokenId }).count();
+      assert.equal(pkgsCount, 0);
+    });
+
   });
 });
