@@ -9,6 +9,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { getScopeAndName } from '../app/common/PackageUtil';
 import semver from 'semver';
+import { PackageJSONType } from 'app/core/service/PackageManagerService';
 
 type PackageOptions = {
   name?: string;
@@ -157,7 +158,7 @@ export class TestUtil {
     return JSON.parse(bytes.toString());
   }
 
-  static async getFullPackage(options?: PackageOptions): Promise<any> {
+  static async getFullPackage(options?: PackageOptions): Promise<PackageJSONType & { versions: PackageJSONType[] }> {
     const fullJSONFile = this.getFixtures('exampleFullPackage.json');
     const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
     if (options) {

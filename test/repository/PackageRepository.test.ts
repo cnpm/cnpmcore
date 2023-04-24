@@ -3,6 +3,7 @@ import { app } from 'egg-mock/bootstrap';
 import { PackageRepository } from 'app/repository/PackageRepository';
 import { PackageManagerService } from 'app/core/service/PackageManagerService';
 import { UserService } from 'app/core/service/UserService';
+import { TestUtil } from 'test/TestUtil';
 
 describe('test/repository/PackageRepository.test.ts', () => {
   let packageRepository: PackageRepository;
@@ -32,7 +33,7 @@ describe('test/repository/PackageRepository.test.ts', () => {
         scope: '',
         name: 'foo',
         description: 'foo description',
-        packageJson: {},
+        packageJson: await TestUtil.getFullPackage({ name: 'foo' }),
         readme: '',
         version: '1.0.0',
         isPrivate: true,

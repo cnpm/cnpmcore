@@ -3,7 +3,7 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { PackageRepository } from '../../../../app/repository/PackageRepository';
 import { BugVersion } from '../../../../app/core/entity/BugVersion';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
+import { PackageManagerService, PackageManifestType } from '../../../../app/core/service/PackageManagerService';
 import { CacheService } from '../../../../app/core/service/CacheService';
 import { DistRepository } from '../../../../app/repository/DistRepository';
 
@@ -772,6 +772,20 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(orginalVersion.dist.tarball === 'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz');
       assert(!orginalVersion.deprecated);
       assert(orginalVersion.version === '2.0.0');
+    });
+
+    it('should show _source_registry_name', async () => {
+      mock(CacheService.prototype, 'getPackageEtag', async () => {
+        return null;
+      });
+      const res = await app.httpRequest()
+        .get(`/${name}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+
+      const data = res.body as PackageManifestType;
+      assert.equal(data._source_registry_name, 'self');
+      assert(Object.values(data.versions).every(v => v!._source_registry_name === 'self'));
     });
 
     it('should not throw error if no versions', async () => {

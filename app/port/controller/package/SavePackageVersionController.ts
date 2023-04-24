@@ -18,7 +18,7 @@ import validateNpmPackageName from 'validate-npm-package-name';
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
-import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { PackageJSONType, PackageManagerService } from '../../../core/service/PackageManagerService';
 import {
   VersionRule,
   TagWithVersionRule,
@@ -181,7 +181,7 @@ export class SavePackageVersionController extends AbstractController {
       name,
       version: packageVersion.version,
       description: packageVersion.description,
-      packageJson: packageVersion,
+      packageJson: packageVersion as PackageJSONType,
       readme,
       dist: {
         content: tarballBytes,

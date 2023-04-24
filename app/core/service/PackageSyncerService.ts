@@ -537,8 +537,8 @@ export class PackageSyncerService extends AbstractService {
     for (const item of versions) {
       const version: string = item.version;
       if (!version) continue;
-      let existsItem = existsVersionMap[version];
-      let existsAbbreviatedItem = abbreviatedVersionMap[version];
+      let existsItem: typeof existsVersionMap[string] | undefined = existsVersionMap[version];
+      let existsAbbreviatedItem: typeof abbreviatedVersionMap[string] | undefined = abbreviatedVersionMap[version];
       const shouldDeleteReadme = !!(existsItem && 'readme' in existsItem);
       if (pkg) {
         if (existsItem) {

@@ -40,6 +40,135 @@ import { BugVersion } from '../entity/BugVersion';
 import { RegistryManagerService } from './RegistryManagerService';
 import { Registry } from '../entity/Registry';
 
+type PackageJSONPickKey = 'name' | 'author' | 'bugs' | 'description' | 'homepage' | 'keywords' | 'license' | 'readme' | 'readmeFilename' | 'repository' | 'versions';
+
+export type PackageManifestType = Pick<PackageJSONType, PackageJSONPickKey> & {
+  _id: string;
+  _rev: string;
+  'dist-tags': Record<string, string>;
+  versions: Record<string, PackageJSONType | undefined>;
+  maintainers: AuthorType[];
+  time: {
+    created: Date;
+    modified: Date;
+    [key: string]: Date;
+  };
+} & CnpmcorePatchInfo;
+
+export type AbbreviatedPackageManifestType = Pick<PackageManifestType, 'dist-tags' | 'name'> & {
+  modified: Date;
+  versions: Record<string, AbbreviatedPackageJSONType | undefined>;
+  time?: PackageManifestType['time'];
+} & CnpmcorePatchInfo;
+
+
+type CnpmcorePatchInfo = {
+  _cnpmcore_publish_time?: Date;
+  publish_time?: number;
+  _source_registry_name?: string;
+  block?: string;
+};
+
+export type PackageJSONType = CnpmcorePatchInfo & {
+  name: string;
+  version: string;
+  readme?: string;
+  description?: string;
+  keywords?: string[];
+  homepage?: string;
+  bugs?: {
+    url?: string;
+    email?: string;
+  };
+  license?: string;
+  author?: AuthorType | string;
+  contributors?: ContributorType[] | string[];
+  maintainers?: ContributorType[] | string[];
+  files?: string[];
+  main?: string;
+  bin?: string | {
+    [key: string]: string;
+  };
+  man?: string | string[];
+  directories?: DirectoriesType;
+  repository?: RepositoryType;
+  scripts?: Record<string, string>;
+  config?: Record<string, unknown>;
+  dependencies?: DepInfo;
+  devDependencies?: DepInfo;
+  peerDependencies?: DepInfo;
+  peerDependenciesMeta?: {
+    [key: string]: {
+      optional?: boolean;
+      required?: string;
+      version?: string;
+      [key: string]: unknown;
+    };
+  };
+  bundleDependencies?: string[];
+  bundledDependencies?: string[];
+  optionalDependencies?: DepInfo;
+  engines?: {
+    node?: string;
+    npm?: string;
+    [key: string]: string | undefined;
+  };
+  os?: string[];
+  cpu?: string[];
+  preferGlobal?: boolean;
+  private?: boolean;
+  publishConfig?: {
+    access?: 'public' | 'restricted';
+    [key: string]: unknown;
+  };
+  _hasShrinkwrap?: boolean;
+  hasInstallScript?: boolean;
+  dist?: DistType;
+  workspace?: string[];
+  [key: string]: unknown;
+};
+
+type AbbreviatedKey = 'name' | 'version' | 'deprecated' | 'dependencies' | 'optionalDependencies' | 'devDependencies' | 'bundleDependencies' | 'peerDependencies' | 'peerDependenciesMeta' | 'bin' | 'os' | 'cpu' | 'libc' | 'workspaces' | 'directories' | 'dist' | 'engines' | 'hasInstallScript' | 'publish_time' | 'block' | '_hasShrinkwrap';
+export type AbbreviatedPackageJSONType = Pick<PackageJSONType, AbbreviatedKey> & CnpmcorePatchInfo;
+
+type DistType = {
+  tarball: string,
+  size: number,
+  shasum: string,
+  integrity: string,
+  [key: string]: unknown,
+};
+
+type AuthorType = {
+  name: string;
+  email?: string;
+  url?: string;
+};
+
+type ContributorType = {
+  name?: string;
+  email?: string;
+  url?: string;
+  [key: string]: unknown;
+};
+
+type DirectoriesType = {
+  lib?: string;
+  bin?: string;
+  man?: string;
+  test?: string;
+  [key: string]: string | undefined;
+};
+
+type RepositoryType = {
+  type: string;
+  url: string;
+  [key: string]: unknown;
+};
+
+type DepInfo = Record<string, string>;
+
+
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
   scope: string;
@@ -47,7 +176,7 @@ export interface PublishPackageCmd {
   name: string;
   version: string;
   description: string;
-  packageJson: any;
+  packageJson: PackageJSONType;
   registryId?: string;
   readme: string;
   // require content or localFile field
@@ -214,7 +343,7 @@ export class PackageManagerService extends AbstractService {
       // https://github.com/cnpm/npminstall/blob/13efc7eec21a61e509226e3772bfb75cd5605612/lib/install_package.js#L176
       // npminstall require publish time to show the recently update versions
       publish_time: cmd.packageJson.publish_time,
-    });
+    } as AbbreviatedPackageJSONType);
     const abbreviatedDistBytes = Buffer.from(abbreviated);
     const abbreviatedDistIntegrity = await calculateIntegrity(abbreviatedDistBytes);
     const readmeDistBytes = Buffer.from(cmd.readme);
@@ -279,15 +408,15 @@ export class PackageManagerService extends AbstractService {
     }
     await this.packageVersionBlockRepository.savePackageVersionBlock(block);
     if (pkg.manifestsDist && pkg.abbreviatedsDist) {
-      const fullManifests = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist);
+      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
       if (fullManifests) {
         fullManifests.block = reason;
       }
-      const abbreviatedManifests = await this.distRepository.readDistBytesToJSON(pkg.abbreviatedsDist);
+      const abbreviatedManifests = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(pkg.abbreviatedsDist);
       if (abbreviatedManifests) {
         abbreviatedManifests.block = reason;
       }
-      await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+      await this._updatePackageManifestsToDists(pkg, fullManifests || null, abbreviatedManifests || null);
       this.eventBus.emit(PACKAGE_BLOCKED, pkg.fullname);
       this.logger.info('[packageManagerService.blockPackage:success] packageId: %s, reason: %j',
         pkg.packageId, reason);
@@ -301,15 +430,15 @@ export class PackageManagerService extends AbstractService {
       await this.packageVersionBlockRepository.removePackageVersionBlock(block.packageVersionBlockId);
     }
     if (pkg.manifestsDist && pkg.abbreviatedsDist) {
-      const fullManifests = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist);
+      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
       if (fullManifests) {
         fullManifests.block = undefined;
       }
-      const abbreviatedManifests = await this.distRepository.readDistBytesToJSON(pkg.abbreviatedsDist);
+      const abbreviatedManifests = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(pkg.abbreviatedsDist);
       if (abbreviatedManifests) {
         abbreviatedManifests.block = undefined;
       }
-      await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+      await this._updatePackageManifestsToDists(pkg, fullManifests || null, abbreviatedManifests || null);
       this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
       this.logger.info('[packageManagerService.unblockPackage:success] packageId: %s',
         pkg.packageId);
@@ -351,7 +480,7 @@ export class PackageManagerService extends AbstractService {
   }
 
   async listPackageFullManifests(scope: string, name: string, isSync = false) {
-    return await this._listPackageFullOrAbbreviatedManifests(scope, name, true, isSync);
+    return await this._listPackageFullOrAbbreviatedManifests<PackageManifestType>(scope, name, true, isSync);
   }
 
   async listPackageAbbreviatedManifests(scope: string, name: string, isSync = false) {
@@ -454,9 +583,9 @@ export class PackageManagerService extends AbstractService {
     this.logger.info('[packageManagerService.savePackageVersionCounters:saved] %d total', total);
   }
 
-  public async saveDeprecatedVersions(pkg: Package, deprecateds: { version: string; deprecated: string }[]) {
+  public async saveDeprecatedVersions(pkg: Package, deprecatedList: { version: string; deprecated: string }[]) {
     const updateVersions: string[] = [];
-    for (const { version, deprecated } of deprecateds) {
+    for (const { version, deprecated } of deprecatedList) {
       const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
       if (!pkgVersion) continue;
       const message = deprecated === '' ? undefined : deprecated;
@@ -466,7 +595,7 @@ export class PackageManagerService extends AbstractService {
       updateVersions.push(version);
     }
     await this.refreshPackageChangeVersionsToDists(pkg, updateVersions);
-    this.eventBus.emit(PACKAGE_META_CHANGED, pkg.fullname, { deprecateds });
+    this.eventBus.emit(PACKAGE_META_CHANGED, pkg.fullname, { deprecateds: deprecatedList });
   }
 
   public async savePackageVersionManifest(pkgVersion: PackageVersion, mergeManifest: object, mergeAbbreviated: object) {
@@ -577,9 +706,9 @@ export class PackageManagerService extends AbstractService {
     if (!pkg.manifestsDist?.distId || !pkg.abbreviatedsDist?.distId) {
       return await this._refreshPackageManifestsToDists(pkg);
     }
-    const fullManifests = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist);
-    const abbreviatedManifests = await this.distRepository.readDistBytesToJSON(pkg.abbreviatedsDist);
-    if (!fullManifests.versions || !abbreviatedManifests.versions) {
+    const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
+    const abbreviatedManifests = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(pkg.abbreviatedsDist);
+    if (!fullManifests?.versions || !abbreviatedManifests?.versions) {
       // is unpublished, refresh all again
       return await this._refreshPackageManifestsToDists(pkg);
     }
@@ -588,7 +717,7 @@ export class PackageManagerService extends AbstractService {
       for (const version of updateVersions) {
         const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
         if (packageVersion) {
-          const manifest = await this.distRepository.readDistBytesToJSON(packageVersion.manifestDist);
+          const manifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist);
           if (!manifest) continue;
           if ('readme' in manifest) {
             delete manifest.readme;
@@ -596,8 +725,10 @@ export class PackageManagerService extends AbstractService {
           fullManifests.versions[packageVersion.version] = manifest;
           fullManifests.time[packageVersion.version] = packageVersion.publishTime;
 
-          const abbreviatedManifest = await this.distRepository.readDistBytesToJSON(packageVersion.abbreviatedDist);
-          abbreviatedManifests.versions[packageVersion.version] = abbreviatedManifest;
+          const abbreviatedManifest = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageJSONType>(packageVersion.abbreviatedDist);
+          if (abbreviatedManifest) {
+            abbreviatedManifests.versions[packageVersion.version] = abbreviatedManifest;
+          }
         }
       }
     }
@@ -624,9 +755,9 @@ export class PackageManagerService extends AbstractService {
     if (!tag) return;
     let bugVersion = this.bugVersionStore.getBugVersion(tag!.version);
     if (!bugVersion) {
-      const packageVersionJson = await this.distRepository.findPackageVersionManifest(pkg!.packageId, tag!.version);
+      const packageVersionJson = (await this.distRepository.findPackageVersionManifest(pkg!.packageId, tag!.version)) as PackageJSONType;
       if (!packageVersionJson) return;
-      const data = packageVersionJson.config['bug-versions'];
+      const data = packageVersionJson.config?.['bug-versions'];
       bugVersion = new BugVersion(data);
       this.bugVersionStore.setBugVersion(bugVersion, tag!.version);
     }
@@ -657,19 +788,25 @@ export class PackageManagerService extends AbstractService {
   // only refresh root attributes only, e.g.: dist-tags, maintainers
   private async _refreshPackageManifestRootAttributeOnlyToDists(pkg: Package, refreshAttr: 'dist-tags' | 'maintainers') {
     if (refreshAttr === 'maintainers') {
-      const fullManifests = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist!);
+      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist!);
       const maintainers = await this._listPackageMaintainers(pkg);
-      fullManifests.maintainers = maintainers;
-      await this._updatePackageManifestsToDists(pkg, fullManifests, null);
+      if (fullManifests) {
+        fullManifests.maintainers = maintainers;
+        await this._updatePackageManifestsToDists(pkg, fullManifests, null);
+      }
     } else if (refreshAttr === 'dist-tags') {
-      const fullManifests = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist!);
-      const abbreviatedManifests = await this.distRepository.readDistBytesToJSON(pkg.abbreviatedsDist!);
-      await this._setPackageDistTagsAndLatestInfos(pkg, fullManifests, abbreviatedManifests);
-      await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist!);
+      if (fullManifests) {
+        const abbreviatedManifests = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(pkg.abbreviatedsDist!);
+        if (abbreviatedManifests) {
+          await this._setPackageDistTagsAndLatestInfos(pkg, fullManifests, abbreviatedManifests);
+        }
+        await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests || null);
+      }
     }
   }
 
-  private _mergeLatestManifestFields(fullManifests: object, latestManifest: object) {
+  private _mergeLatestManifestFields(fullManifests: PackageManifestType, latestManifest: PackageJSONType | null) {
     if (!latestManifest) return;
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const fieldsFromLatestManifest = [
@@ -682,14 +819,14 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  private async _setPackageDistTagsAndLatestInfos(pkg: Package, fullManifests: any, abbreviatedManifests: any) {
+  private async _setPackageDistTagsAndLatestInfos(pkg: Package, fullManifests: PackageManifestType, abbreviatedManifests: AbbreviatedPackageManifestType) {
     const distTags = await this._listPackageDistTags(pkg);
     if (distTags.latest) {
       const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, distTags.latest);
       if (packageVersion) {
         fullManifests.readme = await this.distRepository.readDistBytesToString(packageVersion.readmeDist);
-        const latestManifest = await this.distRepository.readDistBytesToJSON(packageVersion.manifestDist);
-        this._mergeLatestManifestFields(fullManifests, latestManifest);
+        const latestManifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist);
+        this._mergeLatestManifestFields(fullManifests, latestManifest || null);
       }
     }
     fullManifests['dist-tags'] = distTags;
@@ -697,8 +834,8 @@ export class PackageManagerService extends AbstractService {
   }
 
   private async _mergeManifestDist(manifestDist: Dist, mergeData?: any, replaceData?: any) {
-    let manifest = await this.distRepository.readDistBytesToJSON(manifestDist);
-    if (mergeData) {
+    let manifest = await this.distRepository.readDistBytesToJSON<PackageManifestType>(manifestDist);
+    if (mergeData && manifest) {
       Object.assign(manifest, mergeData);
     }
     if (replaceData) {
@@ -712,7 +849,7 @@ export class PackageManagerService extends AbstractService {
     await this.distRepository.saveDist(manifestDist, manifestBytes);
   }
 
-  private async _updatePackageManifestsToDists(pkg: Package, fullManifests: any | null, abbreviatedManifests: any | null): Promise<void> {
+  private async _updatePackageManifestsToDists(pkg: Package, fullManifests: PackageManifestType | null, abbreviatedManifests: AbbreviatedPackageManifestType | null): Promise<void> {
     const modified = new Date();
     if (fullManifests) {
       fullManifests.time.modified = modified;
@@ -753,7 +890,7 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  private async _listPackageFullOrAbbreviatedManifests(scope: string, name: string, isFullManifests: boolean, isSync: boolean) {
+  private async _listPackageFullOrAbbreviatedManifests<T extends PackageManifestType | AbbreviatedPackageManifestType>(scope: string, name: string, isFullManifests: boolean, isSync: boolean) {
     let etag = '';
     let blockReason = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
@@ -775,7 +912,7 @@ export class PackageManagerService extends AbstractService {
     // read from dist
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
-      const data = await this.distRepository.readDistBytesToJSON(dist);
+      const data = (await this.distRepository.readDistBytesToJSON(dist)) as T;
       const needPatch = bugVersion || !data._source_registry_name;
       if (needPatch) {
         if (bugVersion) {
@@ -800,7 +937,7 @@ export class PackageManagerService extends AbstractService {
       return { etag, data: null, blockReason };
     }
     await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
-    const manifests = (fullManifests || abbreviatedManifests)!;
+    const manifests = (fullManifests || abbreviatedManifests)! as T;
     /* c8 ignore next 5 */
     if (bugVersion) {
       await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, (manifests as any).versions);
@@ -819,7 +956,7 @@ export class PackageManagerService extends AbstractService {
     return users.map(({ displayName, email }) => ({ name: displayName, email }));
   }
 
-  private async _listPackageFullManifests(pkg: Package): Promise<object | null> {
+  private async _listPackageFullManifests(pkg: Package): Promise<PackageManifestType | null> {
     // read all verions from db
     const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     if (packageVersions.length === 0) return null;
@@ -827,7 +964,7 @@ export class PackageManagerService extends AbstractService {
     const distTags = await this._listPackageDistTags(pkg);
     const maintainers = await this._listPackageMaintainers(pkg);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const data = {
+    const data:PackageManifestType = {
       _id: `${pkg.fullname}`,
       _rev: `${pkg.id}-${pkg.packageId}`,
       'dist-tags': distTags,
@@ -862,22 +999,22 @@ export class PackageManagerService extends AbstractService {
       // users: an object whose keys are the npm user names of people who have starred this package
     };
 
-    let lastestTagVersion = '';
+    let latestTagVersion = '';
     if (distTags.latest) {
-      lastestTagVersion = distTags.latest;
+      latestTagVersion = distTags.latest;
     }
 
     let latestManifest: any;
     let latestPackageVersion = packageVersions[0];
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
-      const manifest = await this.distRepository.readDistBytesToJSON(packageVersion.manifestDist);
+      const manifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist);
       if (!manifest) continue;
       /* c8 ignore next 3 */
       if ('readme' in manifest) {
         delete manifest.readme;
       }
-      if (lastestTagVersion && packageVersion.version === lastestTagVersion) {
+      if (latestTagVersion && packageVersion.version === latestTagVersion) {
         latestManifest = manifest;
         latestPackageVersion = packageVersion;
       }
@@ -893,7 +1030,7 @@ export class PackageManagerService extends AbstractService {
     return data;
   }
 
-  private async _listPackageAbbreviatedManifests(pkg: Package): Promise<object | null> {
+  private async _listPackageAbbreviatedManifests(pkg: Package): Promise<AbbreviatedPackageManifestType | null> {
     // read all verions from db
     const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     if (packageVersions.length === 0) return null;
@@ -901,7 +1038,7 @@ export class PackageManagerService extends AbstractService {
     const distTags = await this._listPackageDistTags(pkg);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     // tiny-tarball is a small package with only one version and no dependencies.
-    const data = {
+    const data: AbbreviatedPackageManifestType = {
       'dist-tags': distTags,
       modified: pkg.updatedAt,
       name: pkg.fullname,
@@ -909,8 +1046,10 @@ export class PackageManagerService extends AbstractService {
     };
 
     for (const packageVersion of packageVersions) {
-      const manifest = await this.distRepository.readDistBytesToJSON(packageVersion.abbreviatedDist);
-      data.versions[packageVersion.version] = manifest;
+      const manifest = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageJSONType>(packageVersion.abbreviatedDist);
+      if (manifest) {
+        data.versions[packageVersion.version] = manifest;
+      }
     }
     return data;
   }
