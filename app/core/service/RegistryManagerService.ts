@@ -13,7 +13,6 @@ import { TaskService } from './TaskService';
 import { Task } from '../entity/Task';
 import { PresetRegistryName } from '../../common/constants';
 import { RegistryType } from '../../common/enum/Registry';
-import { Package } from '../entity/Package';
 
 export interface CreateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'userPrefix' | 'type' | 'name'> {
   operatorId?: string;
@@ -157,18 +156,4 @@ export class RegistryManagerService extends AbstractService {
 
   }
 
-  async getSourceRegistryByPkg(pkg: Package): Promise<Registry | null> {
-    const { registryId, isPrivate } = pkg;
-    let registry: Registry | null = null;
-    if (registryId) {
-      registry = await this.findByRegistryId(registryId);
-    } else if (isPrivate) {
-      registry = await this.ensureSelfRegistry();
-    } else {
-      registry = await this.ensureDefaultRegistry();
-    }
-
-    return registry;
-
-  }
 }

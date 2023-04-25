@@ -784,7 +784,20 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect('content-type', 'application/json; charset=utf-8');
 
       const data = res.body as PackageManifestType;
-      assert.equal(data._source_registry_name, 'self');
+      assert(Object.values(data.versions).every(v => v!._source_registry_name === 'self'));
+    });
+
+    it('should show _source_registry_name for abbreviated', async () => {
+      mock(CacheService.prototype, 'getPackageEtag', async () => {
+        return null;
+      });
+      const res = await app.httpRequest()
+        .get(`/${name}`)
+        .set('accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+
+      const data = res.body as PackageManifestType;
       assert(Object.values(data.versions).every(v => v!._source_registry_name === 'self'));
     });
 

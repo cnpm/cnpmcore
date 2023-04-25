@@ -215,6 +215,7 @@ export class PackageManagerService extends AbstractService {
       // https://github.com/cnpm/npminstall/blob/13efc7eec21a61e509226e3772bfb75cd5605612/lib/install_package.js#L176
       // npminstall require publish time to show the recently update versions
       publish_time: cmd.packageJson.publish_time,
+      _source_registry_name: cmd.packageJson._source_registry_name,
     } as AbbreviatedPackageJSONType);
     const abbreviatedDistBytes = Buffer.from(abbreviated);
     const abbreviatedDistIntegrity = await calculateIntegrity(abbreviatedDistBytes);
@@ -785,19 +786,12 @@ export class PackageManagerService extends AbstractService {
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
       const data = (await this.distRepository.readDistBytesToJSON(dist)) as T;
-      const needPatch = bugVersion || !data._source_registry_name;
-      if (needPatch) {
-        if (bugVersion) {
-          await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
-        }
-        // patch source registry name
-        if (!data._source_registry_name) {
-          data._source_registry_name = (await this.registryManagerService.getSourceRegistryByPkg(pkg))?.name;
-        }
-        const distBytes = Buffer.from(JSON.stringify(data));
-        const distIntegrity = await calculateIntegrity(distBytes);
-        etag = `"${distIntegrity.shasum}"`;
+      if (bugVersion) {
+        await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
       }
+      const distBytes = Buffer.from(JSON.stringify(data));
+      const distIntegrity = await calculateIntegrity(distBytes);
+      etag = `"${distIntegrity.shasum}"`;
       return { etag, data, blockReason };
     }
 
