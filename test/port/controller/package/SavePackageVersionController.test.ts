@@ -470,6 +470,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
     it('should add new version without dist success', async () => {
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/without-dist', version: '0.0.0' });
+      assert(pkg.versions);
       const version = Object.keys(pkg.versions)[0];
       pkg.versions[version].dist = undefined;
       let res = await app.httpRequest()
@@ -528,6 +529,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
     it('should add new version without readme(object type) success', async () => {
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/with-readme-object', version: '0.0.0' });
+      assert(pkg.versions);
       const version = Object.keys(pkg.versions)[0];
       pkg.versions[version].readme = { foo: 'bar' };
       let res = await app.httpRequest()
@@ -546,9 +548,9 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     });
 
     it('should add new version without description(object type) success', async () => {
-      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/with-description-object', version: '0.0.0' });
+      const pkg = (await TestUtil.getFullPackage({ name: '@cnpm/with-description-object', version: '0.0.0' })) as any;
       const version = Object.keys(pkg.versions)[0];
-      pkg.versions[version].description = { foo: 'bar' };
+      (pkg.versions[version] as any).description = { foo: 'bar' };
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)

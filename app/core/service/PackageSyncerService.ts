@@ -32,7 +32,7 @@ import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
 import { ScopeManagerService } from './ScopeManagerService';
 import { EventCorkAdvice } from './EventCorkerAdvice';
-import { PresetRegistryName, SyncDeleteMode } from '../../common/constants';
+import { SyncDeleteMode } from '../../common/constants';
 
 type syncDeletePkgOptions = {
   task: Task,
@@ -328,7 +328,7 @@ export class PackageSyncerService extends AbstractService {
 
     // 采用默认的 registry
     if (!registry) {
-      registry = await this.registryManagerService.findByRegistryName(PresetRegistryName.default);
+      registry = await this.registryManagerService.ensureDefaultRegistry();
     }
 
     // 更新 targetHost 地址
@@ -537,8 +537,8 @@ export class PackageSyncerService extends AbstractService {
     for (const item of versions) {
       const version: string = item.version;
       if (!version) continue;
-      let existsItem = existsVersionMap[version];
-      let existsAbbreviatedItem = abbreviatedVersionMap[version];
+      let existsItem: typeof existsVersionMap[string] | undefined = existsVersionMap[version];
+      let existsAbbreviatedItem: typeof abbreviatedVersionMap[string] | undefined = abbreviatedVersionMap[version];
       const shouldDeleteReadme = !!(existsItem && 'readme' in existsItem);
       if (pkg) {
         if (existsItem) {

@@ -134,4 +134,26 @@ export class RegistryManagerService extends AbstractService {
     return newRegistry;
 
   }
+
+  async ensureDefaultRegistry(): Promise<Registry> {
+    const existRegistry = await this.registryRepository.findRegistry(PresetRegistryName.default);
+    if (existRegistry) {
+      return existRegistry;
+    }
+
+    // 从配置文件默认生成
+    const { changesStreamRegistryMode, changesStreamRegistry: changesStreamHost, sourceRegistry: host } = this.config.cnpmcore;
+    const type = changesStreamRegistryMode === 'json' ? RegistryType.Cnpmcore : RegistryType.Npm;
+    const registry = await this.createRegistry({
+      name: PresetRegistryName.default,
+      type,
+      userPrefix: 'npm:',
+      host,
+      changeStream: `${changesStreamHost}/_changes`,
+    });
+
+    return registry;
+
+  }
+
 }

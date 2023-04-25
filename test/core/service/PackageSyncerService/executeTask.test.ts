@@ -80,10 +80,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const manifests = await packageManagerService.listPackageFullManifests('', 'foobar');
       // console.log(JSON.stringify(manifests, null, 2));
       // should have 2 maintainers
-      assert(manifests.data.maintainers.length >= 1);
+      assert(manifests.data!.maintainers.length >= 1);
       const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', 'foobar');
       // console.log(JSON.stringify(abbreviatedManifests, null, 2));
-      assert.equal(abbreviatedManifests.data.name, manifests.data.name);
+      assert.equal(abbreviatedManifests.data!.name, manifests.data!.name);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -177,9 +177,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // assert.equal(manifests.data.maintainers.length, 2);
       const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('@node-rs', 'xxhash');
       // console.log(JSON.stringify(abbreviatedManifests, null, 2));
-      assert.equal(abbreviatedManifests.data.name, manifests.data.name);
-      assert(abbreviatedManifests.data.versions['1.0.0']);
-      assert(abbreviatedManifests.data.versions['1.0.0'].optionalDependencies);
+      assert.equal(abbreviatedManifests.data!.name, manifests.data!.name);
+      assert(abbreviatedManifests.data!.versions['1.0.0']);
+      assert(abbreviatedManifests.data!.versions['1.0.0'].optionalDependencies);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -198,11 +198,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(task);
       await packageSyncerService.executeTask(task);
       let manifests = await packageManagerService.listPackageFullManifests('', name);
+      assert(manifests.data);
+      assert(manifests!.data!.versions['0.0.0']);
+
       assert.equal(manifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
       let abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert.equal(abbreviatedManifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
-      assert.equal(abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap, false);
+      assert.equal(abbreviatedManifests!.data!.versions['0.0.0']!.deprecated, 'only test for cnpmcore');
+      assert.equal(abbreviatedManifests!.data!.versions['0.0.0']!._hasShrinkwrap, false);
       app.mockAgent().assertNoPendingInterceptors();
 
       // mock 404 and unpublished
@@ -222,9 +225,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
 
       manifests = await packageManagerService.listPackageFullManifests('', name);
+      assert(manifests.data);
       assert(manifests.data.time.unpublished);
       abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(abbreviatedManifests.data.time.unpublished);
+      assert(abbreviatedManifests.data!.time!.unpublished);
       app.mockAgent().assertNoPendingInterceptors();
 
       // sync again
@@ -245,13 +249,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       manifests = await packageManagerService.listPackageFullManifests('', name);
-      assert(!manifests.data.time.unpublished);
-      assert.equal(manifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
-      assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
+      assert(!manifests.data!.time.unpublished);
+      assert.equal(manifests.data!.versions['0.0.0']!.deprecated, 'only test for cnpmcore');
+      assert.equal(manifests.data!.versions['0.0.0']!._hasShrinkwrap, false);
       abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(!abbreviatedManifests.data.time?.unpublished);
-      assert.equal(abbreviatedManifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
-      assert.equal(abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap, false);
+      assert(!abbreviatedManifests.data!.time?.unpublished);
+      assert.equal(abbreviatedManifests.data!.versions['0.0.0']!.deprecated, 'only test for cnpmcore');
+      assert.equal(abbreviatedManifests.data!.versions['0.0.0']!._hasShrinkwrap, false);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -579,6 +583,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         // Avoid: Can't modify pre-existing version: 1.0.0
         const scopedAndName = getScopeAndName(name);
         const manifests = await packageManagerService.listPackageFullManifests(scopedAndName[0], scopedAndName[1]);
+        assert(manifests.data);
         delete manifests.data.versions['1.0.0'];
         mock.data(PackageManagerService.prototype, 'listPackageFullManifests', manifests);
 
@@ -602,6 +607,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           persist: false,
         });
         const abbrs = await packageManagerService.listPackageAbbreviatedManifests(scopedAndName[0], scopedAndName[1]);
+        assert(abbrs.data);
         delete abbrs.data.versions['1.0.0'];
         mock.data(PackageManagerService.prototype, 'listPackageAbbreviatedManifests', abbrs);
 
@@ -707,6 +713,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         assert(log.includes('] 🚧 Syncing versions 1 => 2'));
 
         const fullManifests = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
+        assert(fullManifests.data);
         assert(fullManifests.data.versions['2.0.0']);
 
       });
@@ -930,8 +937,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 🟢 Synced updated 0 versions, removed 1 versions'));
       assert(log.includes('] 🟢 Removed version 1.0.0 success'));
       const r = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
-      assert(Object.keys(r.data.versions).length === 1);
-      assert(!r.data.versions['1.0.0'], '1.0.0 should not exists');
+      assert(Object.keys(r.data!.versions).length === 1);
+      assert(!r.data!.versions['1.0.0'], '1.0.0 should not exists');
     });
 
     it('should work on unpublished package', async () => {
@@ -974,8 +981,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 🟢 Synced '));
       data = await packageManagerService.listPackageFullManifests('', name);
       // console.log(data.data);
-      assert(!data.data.time.unpublished);
-      assert(data.data.maintainers);
+      assert(!data.data!.time.unpublished);
+      assert(data.data!.maintainers);
       app.mockAgent().assertNoPendingInterceptors();
 
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
@@ -993,8 +1000,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
       data = await packageManagerService.listPackageFullManifests('', name);
       // console.log(data.data);
-      assert(data.data.time.unpublished);
-      assert(!data.data.maintainers);
+      assert(data.data!.time.unpublished);
+      assert(!data.data!.maintainers);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -1020,7 +1027,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
       const { data } = await packageManagerService.listPackageFullManifests('', name);
-      assert.equal(data.readme, '');
+      assert.equal(data!.readme, '');
     });
 
     it('should auto sync missing hasInstallScript property', async () => {
@@ -1044,7 +1051,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(log.includes('🚧 Syncing versions 0 => 1'));
       let res = await packageManagerService.listPackageFullManifests('', name);
-      assert(res.data.versions[res.data['dist-tags'].latest].hasInstallScript === undefined);
+      assert(res.data);
+      assert(res.data.versions);
+      assert((res.data as any).versions[res.data['dist-tags'].latest].hasInstallScript === undefined);
       app.mockAgent().assertNoPendingInterceptors();
 
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
@@ -1060,10 +1069,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('🚧 Syncing versions 1 => 1'));
+      assert(res.data);
       res = await packageManagerService.listPackageFullManifests('', name);
-      assert(res.data.versions[res.data['dist-tags'].latest].hasInstallScript === true);
-      res = await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(res.data.versions[res.data['dist-tags'].latest].hasInstallScript === true);
+      assert(res.data!.versions?.[res.data!['dist-tags'].latest]?.hasInstallScript === true);
+      const abbrRes = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert(abbrRes.data!.versions[abbrRes.data!['dist-tags'].latest]?.hasInstallScript === true);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -1087,8 +1097,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert(log.includes('] 🟢🟢🟢🟢🟢 https://registry.npmjs.org/cnpmcore-test-sync-deprecated'));
       const { data } = await packageManagerService.listPackageFullManifests('', name);
-      assert(data.readme === 'mock readme content');
-      assert(data.versions['0.0.0'].readme === undefined);
+      assert(data!.readme === 'mock readme content');
+      assert(data!.versions['0.0.0']!.readme === undefined);
     });
 
     it('should work on mock package.readme is object', async () => {
@@ -1108,7 +1118,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
       const data = await packageManagerService.listPackageFullManifests('', name);
-      assert.equal(data.data.readme, '{"foo":"mock readme is object"}');
+      assert.equal(data!.data!.readme, '{"foo":"mock readme is object"}');
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -1133,7 +1143,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('[1] Synced version 0.0.0 success'));
       assert(log.includes('🟢 Synced 1 tags: [{"action":"change","tag":"latest","version":"0.0.0"}]'));
       let data = await packageManagerService.listPackageFullManifests('', name);
-      assert.deepEqual(data.data['dist-tags'], { latest: '0.0.0' });
+      assert.deepEqual(data!.data!['dist-tags'], { latest: '0.0.0' });
 
       // update tags, add beta tag
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
@@ -1152,6 +1162,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(!log.includes('[1] Synced version 0.0.0 success'));
       assert(log.includes('🟢 Synced 1 tags: [{"action":"change","tag":"beta","version":"0.0.0"}]'));
       data = await packageManagerService.listPackageFullManifests('', name);
+      assert(data.data);
       assert.deepEqual(data.data['dist-tags'], { latest: '0.0.0', beta: '0.0.0' });
 
       // all tags exists
@@ -1170,7 +1181,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(!log.includes('[1] Synced version 0.0.0 success'));
       assert(!log.includes('🟢 Synced 1 tags: '));
       data = await packageManagerService.listPackageFullManifests('', name);
-      assert.deepEqual(data.data['dist-tags'], { latest: '0.0.0', beta: '0.0.0' });
+      assert.deepEqual(data!.data!['dist-tags'], { latest: '0.0.0', beta: '0.0.0' });
 
       // sync remove beta tags
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
@@ -1188,6 +1199,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(!log.includes('[1] Synced version 0.0.0 success'));
       assert(log.includes('Synced 1 tags: [{"action":"remove","tag":"beta"}]'));
       data = await packageManagerService.listPackageFullManifests('', name);
+      assert(data.data);
       assert.deepEqual(data.data['dist-tags'], { latest: '0.0.0' });
       app.mockAgent().assertNoPendingInterceptors();
     });
@@ -1734,16 +1746,18 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('Z] 👉👉👉👉👉 Tips: sync test tips here 👈👈👈👈👈'));
       assert(log.includes(', skipDependencies: false'));
       let manifests = await packageManagerService.listPackageFullManifests('', name);
-      assert.equal(manifests.data.versions['2.0.0'].peerDependenciesMeta.bufferutil.optional, true);
-      assert.equal(manifests.data.versions['2.0.0'].os[0], 'linux');
-      assert.equal(manifests.data.versions['2.0.0'].cpu[0], 'x64');
+      assert(manifests.data?.versions['2.0.0']);
+      assert.equal(manifests.data.versions['2.0.0'].peerDependenciesMeta?.bufferutil.optional, true);
+      assert.equal(manifests.data.versions['2.0.0'].os?.[0], 'linux');
+      assert.equal(manifests.data.versions['2.0.0'].cpu?.[0], 'x64');
       // publishTime
       assert.equal(manifests.data.time['1.0.0'], '2021-09-27T08:10:48.747Z');
       let abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
       // console.log(JSON.stringify(abbreviatedManifests.data, null, 2));
-      assert.equal(abbreviatedManifests.data.versions['2.0.0'].peerDependenciesMeta.bufferutil.optional, true);
-      assert.equal(abbreviatedManifests.data.versions['2.0.0'].os[0], 'linux');
-      assert.equal(abbreviatedManifests.data.versions['2.0.0'].cpu[0], 'x64');
+      assert(abbreviatedManifests.data?.versions['2.0.0']);
+      assert.equal(abbreviatedManifests.data!.versions['2.0.0'].peerDependenciesMeta?.bufferutil.optional, true);
+      assert.equal(abbreviatedManifests.data!.versions['2.0.0'].os?.[0], 'linux');
+      assert.equal(abbreviatedManifests.data!.versions['2.0.0'].cpu?.[0], 'x64');
       app.mockAgent().assertNoPendingInterceptors();
 
       // again should skip sync different metas
@@ -1781,6 +1795,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
       await mock.restore();
       manifests = await packageManagerService.listPackageFullManifests('', name);
+      assert(manifests.data?.versions['2.0.0']);
       assert(manifests.data.versions['2.0.0'].readme === undefined);
 
       // should sync missing cpu on abbreviated manifests
@@ -1790,8 +1805,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageManagerService.savePackageVersionManifest(pkgVersion, {}, { cpu: undefined, libc: [ 'glibc' ] });
       await packageManagerService.refreshPackageChangeVersionsToDists(pkg!, [ '2.0.0' ]);
       abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(!abbreviatedManifests.data.versions['2.0.0'].cpu);
-      assert.deepStrictEqual(abbreviatedManifests.data.versions['2.0.0'].libc, [ 'glibc' ]);
+      assert(!abbreviatedManifests.data!.versions['2.0.0'].cpu);
+      assert.deepStrictEqual(abbreviatedManifests.data!.versions['2.0.0'].libc, [ 'glibc' ]);
 
       app.mockHttpclient('https://registry.npmjs.org/mk2test-module-cnpmsync', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/mk2test-module-cnpmsync.json'),
@@ -1809,8 +1824,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
       await mock.restore();
       abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert.equal(abbreviatedManifests.data.versions['2.0.0'].cpu[0], 'x64');
-      assert(!abbreviatedManifests.data.versions['2.0.0'].libc);
+      assert(abbreviatedManifests.data?.versions['2.0.0']);
+      assert.equal(abbreviatedManifests.data.versions['2.0.0'].cpu?.[0], 'x64');
+      assert(!abbreviatedManifests.data!.versions['2.0.0'].libc);
     });
 
     it('should sync download data work on enableSyncDownloadData = true', async () => {
@@ -2182,6 +2198,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
         const manifests = await packageManagerService.listPackageFullManifests('', 'foobar');
         assert(manifests.blockReason === 'Removed in remote registry');
+        assert(manifests.data);
         assert(manifests.data.block === 'Removed in remote registry');
         const pkg = await packageRepository.findPackage('', 'foobar');
         assert(pkg);

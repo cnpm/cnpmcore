@@ -26,6 +26,7 @@ import {
   Description as DescriptionType,
 } from '../../typebox';
 import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
+import { PackageJSONType } from '../../../repository/PackageRepository';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -181,7 +182,7 @@ export class SavePackageVersionController extends AbstractController {
       name,
       version: packageVersion.version,
       description: packageVersion.description,
-      packageJson: packageVersion,
+      packageJson: packageVersion as PackageJSONType,
       readme,
       dist: {
         content: tarballBytes,
