@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.0](https://github.com/cnpm/npmcore/compare/v3.16.0...v3.17.0) (2023-04-25)
+
+
+### Features
+
+* add source registry name in manifest ([#448](https://github.com/cnpm/npmcore/issues/448)) ([f891aed](https://github.com/cnpm/npmcore/commit/f891aedea822eeef6e5ffa7956423bda845fc696))
+
 ## [3.16.0](https://github.com/cnpm/npmcore/compare/v3.15.0...v3.16.0) (2023-04-21)
 
 
