@@ -1,9 +1,9 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
-import { PackageRepository } from '../../../../app/repository/PackageRepository';
+import { PackageManifestType, PackageRepository } from '../../../../app/repository/PackageRepository';
 import { BugVersion } from '../../../../app/core/entity/BugVersion';
-import { PackageManagerService, PackageManifestType } from '../../../../app/core/service/PackageManagerService';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
 import { CacheService } from '../../../../app/core/service/CacheService';
 import { DistRepository } from '../../../../app/repository/DistRepository';
 

@@ -9,7 +9,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { getScopeAndName } from '../app/common/PackageUtil';
 import semver from 'semver';
-import { PackageJSONType } from 'app/core/service/PackageManagerService';
+import { PackageJSONType } from '../app/repository/PackageRepository';
 
 type PackageOptions = {
   name?: string;

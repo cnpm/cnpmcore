@@ -18,6 +18,134 @@ import { AbstractRepository } from './AbstractRepository';
 import { EggAppConfig } from 'egg';
 import { Bone } from 'leoric';
 
+export type PackageManifestType = Pick<PackageJSONType, PackageJSONPickKey> & {
+  _id: string;
+  _rev: string;
+  'dist-tags': Record<string, string>;
+  versions: Record<string, PackageJSONType | undefined>;
+  maintainers: AuthorType[];
+  time: {
+    created: Date;
+    modified: Date;
+    [key: string]: Date;
+  };
+} & CnpmcorePatchInfo;
+
+export type AbbreviatedPackageJSONType = Pick<PackageJSONType, AbbreviatedKey> & CnpmcorePatchInfo;
+
+export type AbbreviatedPackageManifestType = Pick<PackageManifestType, 'dist-tags' | 'name'> & {
+  modified: Date;
+  versions: Record<string, AbbreviatedPackageJSONType | undefined>;
+  time?: PackageManifestType['time'];
+} & CnpmcorePatchInfo;
+
+export type PackageJSONType = CnpmcorePatchInfo & {
+  name: string;
+  version: string;
+  readme?: string;
+  description?: string;
+  keywords?: string[];
+  homepage?: string;
+  bugs?: {
+    url?: string;
+    email?: string;
+  };
+  license?: string;
+  author?: AuthorType | string;
+  contributors?: ContributorType[] | string[];
+  maintainers?: ContributorType[] | string[];
+  files?: string[];
+  main?: string;
+  bin?: string | {
+    [key: string]: string;
+  };
+  man?: string | string[];
+  directories?: DirectoriesType;
+  repository?: RepositoryType;
+  scripts?: Record<string, string>;
+  config?: Record<string, unknown>;
+  dependencies?: DepInfo;
+  devDependencies?: DepInfo;
+  peerDependencies?: DepInfo;
+  peerDependenciesMeta?: {
+    [key: string]: {
+      optional?: boolean;
+      required?: string;
+      version?: string;
+      [key: string]: unknown;
+    };
+  };
+  bundleDependencies?: string[];
+  bundledDependencies?: string[];
+  optionalDependencies?: DepInfo;
+  engines?: {
+    node?: string;
+    npm?: string;
+    [key: string]: string | undefined;
+  };
+  os?: string[];
+  cpu?: string[];
+  preferGlobal?: boolean;
+  private?: boolean;
+  publishConfig?: {
+    access?: 'public' | 'restricted';
+    [key: string]: unknown;
+  };
+  _hasShrinkwrap?: boolean;
+  hasInstallScript?: boolean;
+  dist?: DistType;
+  workspace?: string[];
+  [key: string]: unknown;
+};
+
+type PackageJSONPickKey = 'name' | 'author' | 'bugs' | 'description' | 'homepage' | 'keywords' | 'license' | 'readme' | 'readmeFilename' | 'repository' | 'versions';
+
+type CnpmcorePatchInfo = {
+  _cnpmcore_publish_time?: Date;
+  publish_time?: number;
+  _source_registry_name?: string;
+  block?: string;
+};
+
+type AbbreviatedKey = 'name' | 'version' | 'deprecated' | 'dependencies' | 'optionalDependencies' | 'devDependencies' | 'bundleDependencies' | 'peerDependencies' | 'peerDependenciesMeta' | 'bin' | 'os' | 'cpu' | 'libc' | 'workspaces' | 'directories' | 'dist' | 'engines' | 'hasInstallScript' | 'publish_time' | 'block' | '_hasShrinkwrap';
+
+type DistType = {
+  tarball: string,
+  size: number,
+  shasum: string,
+  integrity: string,
+  [key: string]: unknown,
+};
+
+type AuthorType = {
+  name: string;
+  email?: string;
+  url?: string;
+};
+
+type ContributorType = {
+  name?: string;
+  email?: string;
+  url?: string;
+  [key: string]: unknown;
+};
+
+type DirectoriesType = {
+  lib?: string;
+  bin?: string;
+  man?: string;
+  test?: string;
+  [key: string]: string | undefined;
+};
+
+type RepositoryType = {
+  type: string;
+  url: string;
+  [key: string]: unknown;
+};
+
+type DepInfo = Record<string, string>;
+
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })

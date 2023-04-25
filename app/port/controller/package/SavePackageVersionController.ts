@@ -18,7 +18,7 @@ import validateNpmPackageName from 'validate-npm-package-name';
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
-import { PackageJSONType, PackageManagerService } from '../../../core/service/PackageManagerService';
+import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import {
   VersionRule,
   TagWithVersionRule,
@@ -26,6 +26,7 @@ import {
   Description as DescriptionType,
 } from '../../typebox';
 import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
+import { PackageJSONType } from '../../../repository/PackageRepository';
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
