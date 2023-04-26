@@ -315,5 +315,22 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .expect('location', 'https://registry.npmjs.org/foonot-exists/1.0.40000404?t=123')
         .expect(302);
     });
+
+    it('should show _source_registry_name in version manifest', async () => {
+      await TestUtil.createPackage({ name: '@cnpm/foo', version: '1.0.0' });
+      const res = await app.httpRequest()
+        .get('/@cnpm/foo/1.0.0')
+        .expect(200);
+      assert(res.body._source_registry_name === 'self');
+    });
+
+    it('should show _source_registry_name in version manifest for abbreviated', async () => {
+      await TestUtil.createPackage({ name: '@cnpm/foo', version: '1.0.0' });
+      const res = await app.httpRequest()
+        .get('/@cnpm/foo/1.0.0')
+        .set('accept', 'application/vnd.npm.install-v1+json')
+        .expect(200);
+      assert(res.body._source_registry_name === 'self');
+    });
   });
 });

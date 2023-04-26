@@ -47,7 +47,7 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
       });
 
       const taskRegistry = await packageSyncerService.initSpecRegistry(task, null, '@cnpm');
-      assert(taskRegistry === null);
+      assert(taskRegistry!.name === 'default');
     });
   });
 });

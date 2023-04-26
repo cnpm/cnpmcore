@@ -1,6 +1,6 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { NFSAdapter } from '../common/adapter/NFSAdapter';
-import { PackageRepository } from './PackageRepository';
+import { PackageJSONType, PackageRepository } from './PackageRepository';
 import { Dist } from '../core/entity/Dist';
 
 @SingletonProto({
@@ -17,10 +17,12 @@ export class DistRepository {
     const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       const [ packageVersionJson, readme ] = await Promise.all([
-        this.readDistBytesToJSON(packageVersion.manifestDist),
+        this.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist),
         this.readDistBytesToString(packageVersion.readmeDist),
       ]);
-      packageVersionJson.readme = readme;
+      if (packageVersionJson) {
+        packageVersionJson.readme = readme;
+      }
       return packageVersionJson;
     }
   }
@@ -32,10 +34,10 @@ export class DistRepository {
     }
   }
 
-  async readDistBytesToJSON(dist: Dist) {
+  async readDistBytesToJSON<T>(dist: Dist) {
     const str = await this.readDistBytesToString(dist);
     if (str) {
-      return JSON.parse(str);
+      return JSON.parse(str) as T;
     }
   }
 

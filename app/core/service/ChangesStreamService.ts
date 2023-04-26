@@ -13,12 +13,11 @@ import { HOST_NAME, ChangesStreamTask, Task } from '../entity/Task';
 import { PackageSyncerService, RegistryNotMatchError } from './PackageSyncerService';
 import { TaskService } from './TaskService';
 import { RegistryManagerService } from './RegistryManagerService';
-import { RegistryType } from '../../common/enum/Registry';
 import { E500 } from 'egg-errors';
 import { Registry } from '../entity/Registry';
 import { AbstractChangeStream } from '../../common/adapter/changesStream/AbstractChangesStream';
 import { getScopeAndName } from '../../common/PackageUtil';
-import { GLOBAL_WORKER, PresetRegistryName } from '../../common/constants';
+import { GLOBAL_WORKER } from '../../common/constants';
 import { ScopeManagerService } from './ScopeManagerService';
 import { PackageRepository } from '../../repository/PackageRepository';
 
@@ -123,16 +122,7 @@ export class ChangesStreamService extends AbstractService {
       return registry;
     }
 
-    // 从配置文件默认生成
-    const { changesStreamRegistryMode, changesStreamRegistry: changesStreamHost, sourceRegistry: host } = this.config.cnpmcore;
-    const type = changesStreamRegistryMode === 'json' ? RegistryType.Cnpmcore : RegistryType.Npm;
-    const registry = await this.registryManagerService.createRegistry({
-      name: PresetRegistryName.default,
-      type,
-      userPrefix: 'npm:',
-      host,
-      changeStream: `${changesStreamHost}/_changes`,
-    });
+    const registry = await this.registryManagerService.ensureDefaultRegistry();
     task.data = {
       ...(task.data || {}),
       registryId: registry.registryId,

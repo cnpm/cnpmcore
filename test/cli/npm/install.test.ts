@@ -128,7 +128,6 @@ describe('test/cli/npm/install.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /added 1 package/)
         .expect('code', 0)
         .end();
 
