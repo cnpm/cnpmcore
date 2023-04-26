@@ -534,7 +534,7 @@ export class PackageSyncerService extends AbstractService {
 
     // check is specific version exists.
     if (specificVersion && versionMap[specificVersion] === undefined) {
-      task.error = `specific version is not exist:${specificVersion}.`;
+      task.error = `specific package version does not exist:${specificVersion}.`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
