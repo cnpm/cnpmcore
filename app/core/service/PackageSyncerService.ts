@@ -729,10 +729,12 @@ export class PackageSyncerService extends AbstractService {
     }
 
     if (specificVersion) {
+      // 执行多个相同依赖不同版本时可能会出现ER_DUP_ENTRY错误导致依赖发布成功但是写入数据库失败，继续之前需要保证指定版本已同步成功
+      // https://github.com/cnpm/cnpmcore/issues/329
       const specificPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, specificVersion);
       if (!specificPkgVersion) {
         // sync specific version fail.
-        logs.push(`[${isoNow()}] ❌ Specific version: ${specificVersion} sync fail, package version not exists, log: ${logUrl}`);
+        logs.push(`[${isoNow()}] ❌ Specific version: ${specificVersion} sync failed, package version dose not exist, log: ${logUrl}`);
         logs.push(`[${isoNow()}] ${failEnd}`);
         task.error = lastErrorMessage;
         await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
@@ -760,6 +762,7 @@ export class PackageSyncerService extends AbstractService {
     // 2.3 find out remove versions
 
     // should not remove packageVersion in specific version mode.
+    // 同时执行多个指定版本同步任务时若包括移除不存在版本的步骤会误移除刚刚同步的版本。
     if (!specificVersion) {
       for (const existsVersion in existsVersionMap) {
         if (!(existsVersion in versionMap)) {
