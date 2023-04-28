@@ -1,4 +1,6 @@
 import { createReadStream } from 'fs';
+import tar from 'tar';
+import stream from 'node:stream';
 import * as ssri from 'ssri';
 
 // /@cnpm%2ffoo
@@ -56,4 +58,41 @@ export function detectInstallScript(manifest: any) {
     }
   }
   return hasInstallScript;
+}
+
+/** 判断一个版本压缩包中是否包含 npm-shrinkwrap.json */
+export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Promise<boolean> {
+  let readable: stream.Readable;
+  if (typeof contentOrFile === 'string') {
+    readable = createReadStream(contentOrFile);
+  } else {
+    readable = new stream.Readable({
+      read() {
+        this.push(contentOrFile);
+        this.push(null);
+      },
+    });
+  }
+
+  return new Promise<boolean>((resolve, reject) => {
+    const parser = new tar.Parse();
+
+    parser.on('entry', entry => {
+      if (entry.path === 'package/npm-shrinkwrap.json') {
+        parser.end();
+        resolve(true);
+      } else {
+        // 继续解析下一个文件
+        // 详见 https://github.com/isaacs/node-tar#class-tarparse
+        entry.resume();
+      }
+    });
+
+    parser.once('end', () => resolve(false));
+    // 忽略 tgz 文件解析错误，此时我们认为不包含 shrinkwrap 文件
+    parser.once('error', () => resolve(false));
+    readable.once('error', reject);
+
+    readable.pipe(parser);
+  });
 }

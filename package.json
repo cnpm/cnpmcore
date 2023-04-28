@@ -79,6 +79,7 @@
     "@node-rs/crc32": "^1.2.2",
     "@simplewebauthn/server": "^7.0.1",
     "@sinclair/typebox": "^0.23.0",
+    "@types/tar": "^6.1.4",
     "base-x": "^3.0.9",
     "base64url": "^3.0.1",
     "bson-objectid": "^2.0.1",
@@ -102,6 +103,7 @@
     "p-map": "^4.0.0",
     "semver": "^7.3.5",
     "ssri": "^8.0.1",
+    "tar": "^6.1.13",
     "type-fest": "^2.5.3",
     "ua-parser-js": "^1.0.34",
     "validate-npm-package-name": "^3.0.0"
