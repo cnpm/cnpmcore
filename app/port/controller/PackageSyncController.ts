@@ -103,7 +103,7 @@ export class PackageSyncController extends AbstractController {
       syncDownloadData: params.syncDownloadData,
       forceSyncHistory: params.forceSyncHistory,
       registryId: registry?.registryId,
-      specificVersion: data.specificVersion,
+      specificVersion: params.specificVersion,
     });
     ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
       task.taskId, fullname);
