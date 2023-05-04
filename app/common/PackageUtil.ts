@@ -1,6 +1,6 @@
 import { createReadStream } from 'fs';
 import tar from 'tar';
-import stream from 'node:stream';
+import stream from 'stream';
 import * as ssri from 'ssri';
 
 // /@cnpm%2ffoo
@@ -74,25 +74,22 @@ export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Pr
     });
   }
 
-  return new Promise<boolean>((resolve, reject) => {
-    const parser = new tar.Parse();
-
-    parser.on('entry', entry => {
+  let hasShrinkWrap = false;
+  const abortController = new AbortController()
+  const parser = new tar.Parse({
+    onentry(entry) {
       if (entry.path === 'package/npm-shrinkwrap.json') {
-        parser.end();
-        resolve(true);
+        hasShrinkWrap = true;
+        abortController.abort();
       } else {
         // 继续解析下一个文件
         // 详见 https://github.com/isaacs/node-tar#class-tarparse
         entry.resume();
       }
-    });
-
-    parser.once('end', () => resolve(false));
-    // 忽略 tgz 文件解析错误，此时我们认为不包含 shrinkwrap 文件
-    parser.once('error', () => resolve(false));
-    readable.once('error', reject);
-
-    readable.pipe(parser);
+    },
   });
+
+  return stream.promises.pipeline(readable, parser, { signal: abortController.signal })
+    .then(() => hasShrinkWrap)
+    .catch(() => hasShrinkWrap);
 }
