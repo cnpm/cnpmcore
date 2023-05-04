@@ -8,7 +8,14 @@ import {
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import semver from 'semver';
-import { calculateIntegrity, detectInstallScript, formatTarball, getFullname, getScopeAndName } from '../../common/PackageUtil';
+import {
+  calculateIntegrity,
+  detectInstallScript,
+  formatTarball,
+  getFullname,
+  getScopeAndName,
+  hasShrinkWrapInTgz,
+} from '../../common/PackageUtil';
 import { AbstractService } from '../../common/AbstractService';
 import { BugVersionStore } from '../../common/adapter/BugVersionStore';
 import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants';
@@ -144,6 +151,9 @@ export class PackageManagerService extends AbstractService {
     }
     if (!cmd.packageJson.publish_time) {
       cmd.packageJson.publish_time = publishTime.getTime();
+    }
+    if (cmd.packageJson._hasShrinkwrap === undefined) {
+      cmd.packageJson._hasShrinkwrap = await hasShrinkWrapInTgz(cmd.dist.content || cmd.dist.localFile!);
     }
 
     // add _registry_name field to cmd.packageJson
