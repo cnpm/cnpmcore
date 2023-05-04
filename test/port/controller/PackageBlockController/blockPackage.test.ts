@@ -76,7 +76,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0`);
-      assert(res.status === 451);
+      assert.equal(res.status, 451);
       assert(!res.headers.etag);
       assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
       assert(res.body.error);

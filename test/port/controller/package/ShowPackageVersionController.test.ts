@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { BugVersion } from 'app/core/entity/BugVersion';
@@ -213,10 +213,10 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
 
       // 404 when tag not exists
       res = await app.httpRequest()
-        .get(`/${pkg.name}/beta-not-exists`)
-        .expect(404);
+        .get(`/${pkg.name}/beta-not-exists`);
+      assert.equal(res.status, 404);
       assert(!res.headers.etag);
-      assert(res.body.error === `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`);
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`);
     });
 
     it('should 404 when version not exists', async () => {
@@ -238,7 +238,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .get(`/${pkg.name}/1.0.40000404`)
         .expect(404);
       assert(!res.headers.etag);
-      assert(res.body.error === `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
 
       // should 404 on syncMode=all when package exists
       mock(app.config.cnpmcore, 'syncMode', 'all');
@@ -254,7 +254,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .get('/@cnpm/foonot-exists/1.0.40000404')
         .expect(404);
       assert(!res.headers.etag);
-      assert(res.body.error === '[NOT_FOUND] @cnpm/foonot-exists not found');
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
 
     it('should not redirect public package version to source registry when syncMode=all', async () => {
@@ -269,7 +269,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       res = await app.httpRequest()
         .get('/foo-exists/1.0.40000404?t=123')
         .expect(404);
-      assert(res.body.error === '[NOT_FOUND] foo-exists@1.0.40000404 not found');
+      assert.equal(res.body.error, '[NOT_FOUND] foo-exists@1.0.40000404 not found');
     });
 
     it('should not redirect private scope package to source registry when syncMode=all', async () => {
@@ -277,7 +277,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       const res = await app.httpRequest()
         .get('/@cnpm/foonot-exists/1.0.40000404')
         .expect(404);
-      assert(res.body.error === '[NOT_FOUND] @cnpm/foonot-exists not found');
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
 
     it('should not redirect private scope package to source registry when syncMode=none', async () => {

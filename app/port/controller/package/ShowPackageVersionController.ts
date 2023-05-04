@@ -7,11 +7,11 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
+import { NotFoundError } from 'egg-errors';
 import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
-import { NotFoundError } from 'egg-errors';
 
 @HTTPController()
 export class ShowPackageVersionController extends AbstractController {

@@ -87,6 +87,8 @@ export default (appInfo: EggAppConfig) => {
     syncNotFound: false,
     // redirect to source registry when package not found
     redirectNotFound: true,
+    // enable unpkg features, https://github.com/cnpm/cnpmcore/issues/452
+    enableUnpkg: true,
   };
 
   // override config from framework / plugin

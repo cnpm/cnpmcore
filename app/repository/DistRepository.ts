@@ -8,7 +8,7 @@ import { Dist } from '../core/entity/Dist';
 })
 export class DistRepository {
   @Inject()
-  private packageRepository: PackageRepository;
+  private readonly packageRepository: PackageRepository;
 
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
@@ -51,7 +51,11 @@ export class DistRepository {
     return await this.nfsAdapter.getBytes(dist.path);
   }
 
-  async saveDist(dist: Dist, buf: Buffer | Uint8Array | string) {
+  async getDistStream(dist: Dist) {
+    return await this.nfsAdapter.getStream(dist.path);
+  }
+
+  async saveDist(dist: Dist, buf: Uint8Array | string) {
     if (typeof buf === 'string') {
       return await this.nfsAdapter.uploadFile(dist.path, buf);
     }
