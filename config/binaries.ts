@@ -101,12 +101,12 @@ const binaries = {
     distUrl: 'https://journeyapps-node-binary.s3.amazonaws.com',
   },
   // PuppeteerBinary
-  'chromium-browser-snapshots': {
-    category: 'chromium-browser-snapshots',
-    description: 'chromium-browser-snapshots sync for puppeteer',
+  chrome: {
+    category: 'chrome-for-testing',
+    description: 'chrome-for-testing for puppeteer',
     type: BinaryType.Puppeteer,
     repo: 'puppeteer/puppeteer',
-    distUrl: 'https://chromium-browser-snapshots.storage.googleapis.com/?delimiter=/&prefix=',
+    distUrl: 'https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/',
   },
   // NodePreGypBinary
   'grpc-tools': {
