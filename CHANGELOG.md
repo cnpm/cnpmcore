@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.1](https://github.com/cnpm/npmcore/compare/v3.17.0...v3.17.1) (2023-05-04)
+
+
+### Bug Fixes
+
+* calculate _hasShrinkwrap on server-side if not present ([#450](https://github.com/cnpm/npmcore/issues/450)) ([db59bd6](https://github.com/cnpm/npmcore/commit/db59bd6cd9ebf678ea16d739b1d7ef11c5349f2f))
+
 ## [3.17.0](https://github.com/cnpm/npmcore/compare/v3.16.0...v3.17.0) (2023-04-25)
 
 
