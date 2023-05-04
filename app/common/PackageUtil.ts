@@ -75,21 +75,25 @@ export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Pr
   }
 
   let hasShrinkWrap = false;
-  const abortController = new AbortController()
-  const parser = new tar.Parse({
+  const abortController = new AbortController();
+  const parser = tar.t({
+    // options.strict 默认为 false，会忽略 Recoverable errors，例如 tar 解析失败
+    // 详见 https://github.com/isaacs/node-tar#warnings-and-errors
     onentry(entry) {
       if (entry.path === 'package/npm-shrinkwrap.json') {
         hasShrinkWrap = true;
         abortController.abort();
-      } else {
-        // 继续解析下一个文件
-        // 详见 https://github.com/isaacs/node-tar#class-tarparse
-        entry.resume();
       }
     },
   });
 
-  return stream.promises.pipeline(readable, parser, { signal: abortController.signal })
-    .then(() => hasShrinkWrap)
-    .catch(() => hasShrinkWrap);
+  try {
+    await stream.promises.pipeline(readable, parser, { signal: abortController.signal });
+    return hasShrinkWrap;
+  } catch (e) {
+    if (e.code === 'ABORT_ERR') {
+      return hasShrinkWrap;
+    }
+    throw Object.assign(new Error('[hasShrinkWrapInTgz] Fail to parse input file'), { cause: e });
+  }
 }
