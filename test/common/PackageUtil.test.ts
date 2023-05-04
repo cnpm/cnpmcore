@@ -1,5 +1,4 @@
 import assert from 'assert';
-import urllib from 'urllib';
 import { formatTarball, hasShrinkWrapInTgz } from '../../app/common/PackageUtil';
 import { TestUtil } from '../TestUtil';
 
@@ -23,7 +22,7 @@ describe('test/common/PackageUtil.test.ts', () => {
       assert.equal(await hasShrinkWrapInTgz(brokenTgz), false);
 
       const bigTarballUrl = 'https://r.cnpmjs.org/monaco-editor/-/monaco-editor-0.37.1.tgz';
-      const bigBufferResult = await urllib.request(bigTarballUrl, { dataType: 'buffer' });
+      const bigBufferResult = await TestUtil.app.httpclient.request(bigTarballUrl, { dataType: 'buffer' });
       assert.equal(bigBufferResult.data.length, /* ~16MB */ 16035586);
       assert.equal(await hasShrinkWrapInTgz(bigBufferResult.data), false);
     });
