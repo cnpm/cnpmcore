@@ -11,4 +11,5 @@ export enum BinaryType {
   Playwright = 'playwright',
   Puppeteer = 'puppeteer',
   Sqlcipher = 'sqlcipher',
+  ChromeForTesting = 'chromeForTesting',
 }

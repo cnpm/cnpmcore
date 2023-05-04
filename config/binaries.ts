@@ -100,11 +100,19 @@ const binaries = {
     repo: 'journeyapps/node-sqlcipher',
     distUrl: 'https://journeyapps-node-binary.s3.amazonaws.com',
   },
-  // PuppeteerBinary
-  chrome: {
+  // puppeteer binary
+  'chromium-browser-snapshots': {
+    category: 'chromium-browser-snapshots',
+    description: 'chromium-browser-snapshots sync for puppeteer',
+    type: BinaryType.Puppeteer,
+    repo: 'puppeteer/puppeteer',
+    distUrl: 'https://chromium-browser-snapshots.storage.googleapis.com/?delimiter=/&prefix=',
+  },
+  // ChromeBinary
+  'chrome-for-testing': {
     category: 'chrome-for-testing',
     description: 'chrome-for-testing for puppeteer',
-    type: BinaryType.Puppeteer,
+    type: BinaryType.ChromeForTesting,
     repo: 'puppeteer/puppeteer',
     distUrl: 'https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/',
   },
