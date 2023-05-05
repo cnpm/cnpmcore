@@ -110,6 +110,7 @@ const WHITE_FILENAME_CONTENT_TYPES = {
 export function mimeLookup(filepath: string) {
   const filename = path.basename(filepath).toLowerCase();
   if (filename.endsWith('.ts')) return PLAIN_TEXT;
+  if (filename.endsWith('.lock')) return PLAIN_TEXT;
   return mime.lookup(filename) ||
     WHITE_FILENAME_CONTENT_TYPES[filename] ||
     DEFAULT_CONTENT_TYPE;

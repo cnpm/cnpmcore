@@ -70,6 +70,8 @@ export class PackageVersionFileService extends AbstractService {
         cwd: tmpdir,
         strip: 1,
         onentry: entry => {
+          if (entry.type !== 'File') return;
+          if (!entry.path.startsWith('package/')) return;
           paths.push(entry.path.replace(/^package\//i, '/'));
         },
       });
@@ -105,7 +107,10 @@ export class PackageVersionFileService extends AbstractService {
     if (file) return file;
     const stat = await fs.stat(localFile);
     const distIntegrity = await calculateIntegrity(localFile);
-    const dist = pkg.createPackageVersionFile(path, pkgVersion.version, {
+    // make sure dist.path store to ascii, e.g. '/resource/ToOneFromχ.js' => '/resource/ToOneFrom%CF%87.js'
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
+    const distPath = encodeURI(path);
+    const dist = pkg.createPackageVersionFile(distPath, pkgVersion.version, {
       size: stat.size,
       shasum: distIntegrity.shasum,
       integrity: distIntegrity.integrity,

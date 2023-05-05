@@ -22,6 +22,7 @@ describe('test/common/FileUtil.test.ts', () => {
       assert.equal(mimeLookup('/index.ts'), 'text/plain');
       assert.equal(mimeLookup('/index.d.ts'), 'text/plain');
       assert.equal(mimeLookup('/index.txt'), 'text/plain');
+      assert.equal(mimeLookup('pkg-yarn.lock'), 'text/plain');
     });
   });
 });
