@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.19.2](https://github.com/cnpm/npmcore/compare/v3.19.1...v3.19.2) (2023-05-05)
+
+
+### Bug Fixes
+
+* ignore non-file on tar entry filter ([#458](https://github.com/cnpm/npmcore/issues/458)) ([7e63e7f](https://github.com/cnpm/npmcore/commit/7e63e7f0eb2d324275d72293c40d3d7ac060bf73))
+
 ## [3.19.1](https://github.com/cnpm/npmcore/compare/v3.19.0...v3.19.1) (2023-05-05)
 
 
