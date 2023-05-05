@@ -94,21 +94,23 @@ async function _downloadToTempfile(httpclient: EggContextHttpClient,
 }
 
 const DEFAULT_CONTENT_TYPE = 'application/octet-stream';
+const PLAIN_TEXT = 'text/plain';
 const WHITE_FILENAME_CONTENT_TYPES = {
-  license: 'text/plain',
-  readme: 'text/plain',
-  history: 'text/plain',
-  changelog: 'text/plain',
-  '.npmignore': 'text/plain',
-  '.jshintignore': 'text/plain',
+  license: PLAIN_TEXT,
+  readme: PLAIN_TEXT,
+  history: PLAIN_TEXT,
+  changelog: PLAIN_TEXT,
+  '.npmignore': PLAIN_TEXT,
+  '.jshintignore': PLAIN_TEXT,
+  '.eslintignore': PLAIN_TEXT,
   '.jshintrc': 'application/json',
-  '.eslintignore': 'text/plain',
   '.eslintrc': 'application/json',
 };
 
 export function mimeLookup(filepath: string) {
-  const filename = path.basename(filepath);
+  const filename = path.basename(filepath).toLowerCase();
+  if (filename.endsWith('.ts')) return PLAIN_TEXT;
   return mime.lookup(filename) ||
-    WHITE_FILENAME_CONTENT_TYPES[filename.toLowerCase()] ||
+    WHITE_FILENAME_CONTENT_TYPES[filename] ||
     DEFAULT_CONTENT_TYPE;
 }
