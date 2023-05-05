@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.19.1](https://github.com/cnpm/npmcore/compare/v3.19.0...v3.19.1) (2023-05-05)
+
+
+### Bug Fixes
+
+* download tgz file to local file before untar it ([#457](https://github.com/cnpm/npmcore/issues/457)) ([90d5046](https://github.com/cnpm/npmcore/commit/90d504622a6ed911e3df3f0c4204ef82b75be714))
+
 ## [3.19.0](https://github.com/cnpm/npmcore/compare/v3.18.0...v3.19.0) (2023-05-05)
 
 
