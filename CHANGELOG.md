@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.18.0](https://github.com/cnpm/npmcore/compare/v3.17.1...v3.18.0) (2023-05-05)
+
+
+### Features
+
+* sync chrome-for-testing binary ([#455](https://github.com/cnpm/npmcore/issues/455)) ([dd7d73e](https://github.com/cnpm/npmcore/commit/dd7d73e871659401e14d528b9e31b7caa01e66fa))
+
 ## [3.17.1](https://github.com/cnpm/npmcore/compare/v3.17.0...v3.17.1) (2023-05-04)
 
 
