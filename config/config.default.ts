@@ -103,6 +103,7 @@ export default (appInfo: EggAppConfig) => {
     password: process.env.MYSQL_PASSWORD,
     charset: 'utf8mb4',
   };
+  /* c8 ignore next 8 */
   if (process.env.DEBUG_LOCAL_SQL) {
     config.orm.logger = {
       // TODO: try to save SQL log into ctx logger or app logger
@@ -139,6 +140,7 @@ export default (appInfo: EggAppConfig) => {
     client: null,
     dir: join(config.dataDir, 'nfs'),
   };
+  /* c8 ignore next 17 */
   // enable oss nfs store by env values
   if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
     assert(process.env.CNPMCORE_NFS_OSS_BUCKET, 'require env CNPMCORE_NFS_OSS_BUCKET');
