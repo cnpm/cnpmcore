@@ -1,7 +1,6 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { Orm } from '@eggjs/tegg-orm-plugin/lib/SingletonORM';
 import { EggAppConfig } from 'egg';
-import semver from 'semver';
 import { Bone } from 'leoric';
 import { Package as PackageModel } from './model/Package';
 import { Package as PackageEntity } from '../core/entity/Package';
@@ -178,9 +177,7 @@ export class PackageRepository extends AbstractRepository {
   @Inject()
   private readonly orm: Orm;
 
-  async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
-    const model = await this.Package.findOne({ scope, name });
-    if (!model) return null;
+  async #convertPackageModelToEntity(model: PackageModel) {
     const manifestsDistModel = model.manifestsDistId ? await this.Dist.findOne({ distId: model.manifestsDistId }) : null;
     const abbreviatedsDistModel = model.abbreviatedsDistId ? await this.Dist.findOne({ distId: model.abbreviatedsDistId }) : null;
     const data = {
@@ -189,6 +186,18 @@ export class PackageRepository extends AbstractRepository {
     };
     const entity = ModelConvertor.convertModelToEntity(model, PackageEntity, data);
     return entity;
+  }
+
+  async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
+    const model = await this.Package.findOne({ scope, name });
+    if (!model) return null;
+    return await this.#convertPackageModelToEntity(model);
+  }
+
+  async findPackageByPackageId(packageId: string): Promise<PackageEntity | null> {
+    const model = await this.Package.findOne({ packageId });
+    if (!model) return null;
+    return await this.#convertPackageModelToEntity(model);
   }
 
   async findPackageId(scope: string, name: string) {
@@ -323,18 +332,6 @@ export class PackageRepository extends AbstractRepository {
     const pkgVersionModel = await this.PackageVersion.findOne({ packageId, version });
     if (!pkgVersionModel) return null;
     return await this.fillPackageVersionEntityData(pkgVersionModel);
-  }
-
-  async findPackageVersionByVersionOrTag(packageId: string, versionOrTag: string): Promise<PackageVersionEntity | null> {
-    let version = versionOrTag;
-    if (!semver.valid(versionOrTag)) {
-      // invalid version, versionOrTag is a tag
-      const packageTag = await this.findPackageTag(packageId, versionOrTag);
-      if (packageTag) {
-        version = packageTag.version;
-      }
-    }
-    return await this.findPackageVersion(packageId, version);
   }
 
   async listPackageVersions(packageId: string): Promise<PackageVersionEntity[]> {

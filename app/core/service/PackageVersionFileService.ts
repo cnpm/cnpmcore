@@ -21,11 +21,14 @@ import { DistRepository } from '../../repository/DistRepository';
 import { PackageVersionFile } from '../entity/PackageVersionFile';
 import { PackageVersion } from '../entity/PackageVersion';
 import { Package } from '../entity/Package';
+import { PackageManagerService } from './PackageManagerService';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class PackageVersionFileService extends AbstractService {
+  @Inject()
+  private readonly packageManagerService: PackageManagerService;
   @Inject()
   private readonly packageRepository: PackageRepository;
   @Inject()
@@ -33,36 +36,36 @@ export class PackageVersionFileService extends AbstractService {
   @Inject()
   private readonly distRepository: DistRepository;
 
-  async listPackageVersionFiles(scope: string, name: string, versionOrTag: string, directory: string) {
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return null;
-    const pkgVersion = await this.packageRepository.findPackageVersionByVersionOrTag(pkg.packageId, versionOrTag);
+  async listPackageVersionFiles(scope: string, packageName: string, versionOrTag: string, directory: string) {
+    const pkgVersion = await this.packageManagerService.showPackageVersionByVersionOrTag(
+      scope, packageName, versionOrTag);
     if (!pkgVersion) return null;
-    await this.#ensurePackageVersionFilesSync(pkg, pkgVersion);
+    await this.#ensurePackageVersionFilesSync(pkgVersion);
     return await this.packageVersionFileRepository.listPackageVersionFiles(pkgVersion.packageVersionId, directory);
   }
 
   async showPackageVersionFile(scope: string, packageName: string, versionOrTag: string, path: string) {
-    const pkg = await this.packageRepository.findPackage(scope, packageName);
-    if (!pkg) return null;
-    const pkgVersion = await this.packageRepository.findPackageVersionByVersionOrTag(pkg.packageId, versionOrTag);
+    const pkgVersion = await this.packageManagerService.showPackageVersionByVersionOrTag(
+      scope, packageName, versionOrTag);
     if (!pkgVersion) return null;
-    await this.#ensurePackageVersionFilesSync(pkg, pkgVersion);
+    await this.#ensurePackageVersionFilesSync(pkgVersion);
     const { directory, name } = this.#getDirectoryAndName(path);
     return await this.packageVersionFileRepository.findPackageVersionFile(
       pkgVersion.packageVersionId, directory, name);
   }
 
-  async #ensurePackageVersionFilesSync(pkg: Package, pkgVersion: PackageVersion) {
+  async #ensurePackageVersionFilesSync(pkgVersion: PackageVersion) {
     const hasFiles = await this.packageVersionFileRepository.hasPackageVersionFiles(pkgVersion.packageVersionId);
     if (!hasFiles) {
-      await this.#syncPackageVersionFiles(pkg, pkgVersion);
+      await this.syncPackageVersionFiles(pkgVersion);
     }
   }
 
-  async #syncPackageVersionFiles(pkg: Package, pkgVersion: PackageVersion) {
+  async syncPackageVersionFiles(pkgVersion: PackageVersion) {
     const tarStream = await this.distRepository.getDistStream(pkgVersion.tarDist);
     if (!tarStream) return;
+    const pkg = await this.packageRepository.findPackageByPackageId(pkgVersion.packageId);
+    if (!pkg) return;
     const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${pkgVersion.version}_${randomUUID()}`;
     const tmpdir = await createTempDir(this.config.dataDir, dirname);
     const paths: string[] = [];

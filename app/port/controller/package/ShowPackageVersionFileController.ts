@@ -71,7 +71,7 @@ export class ShowPackageVersionFileController extends AbstractController {
     ctx.vary(this.config.cnpmcore.cdnVaryHeader);
     const [ scope, name ] = getScopeAndName(fullname);
     if (!semver.valid(versionOrTag)) {
-      const pkgVersion = await this.packageManagerService.showPackageVersionByTag(scope, name, versionOrTag);
+      const pkgVersion = await this.packageManagerService.showPackageVersionByVersionOrTag(scope, name, versionOrTag);
       if (!pkgVersion) {
         throw new NotFoundError(`${fullname}@${versionOrTag} not found`);
       }
@@ -103,7 +103,7 @@ export class ShowPackageVersionFileController extends AbstractController {
     path = `/${path}`;
     const hasMeta = typeof meta === 'string';
     if (!semver.valid(versionOrTag)) {
-      const pkgVersion = await this.packageManagerService.showPackageVersionByTag(scope, name, versionOrTag);
+      const pkgVersion = await this.packageManagerService.showPackageVersionByVersionOrTag(scope, name, versionOrTag);
       if (!pkgVersion) {
         throw new NotFoundError(`${fullname}@${versionOrTag}${path} not found`);
       }

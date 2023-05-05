@@ -369,20 +369,27 @@ export class PackageManagerService extends AbstractService {
     return await this._listPackageFullOrAbbreviatedManifests(scope, name, false, isSync);
   }
 
-  async showPackageVersionByTag(scope: string, name: string, versionOrTag: string) {
+  async showPackageVersionByVersionOrTag(scope: string, name: string, versionOrTag: string) {
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return null;
-    return await this.packageRepository.findPackageVersionByVersionOrTag(pkg.packageId, versionOrTag);
+    let version = versionOrTag;
+    if (!semver.valid(versionOrTag)) {
+      // invalid version, versionOrTag is a tag
+      const packageTag = await this.packageRepository.findPackageTag(pkg.packageId, versionOrTag);
+      if (packageTag) {
+        version = packageTag.version;
+      }
+    }
+    return await this.packageRepository.findPackageVersion(pkg.packageId, version);
   }
 
   async showPackageVersionManifest(scope: string, name: string, versionOrTag: string, isSync = false) {
     let blockReason = '';
     let manifest;
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    const pkgId = pkg?.packageId;
-    let packageVersion: PackageVersion | null = null;
-    if (pkg) {
-      const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
+    const packageVersion = await this.showPackageVersionByVersionOrTag(scope, name, versionOrTag);
+    const pkgId = packageVersion?.packageId;
+    if (pkgId) {
+      const block = await this.packageVersionBlockRepository.findPackageBlock(pkgId);
       if (block) {
         blockReason = block.reason;
         return {
@@ -391,7 +398,6 @@ export class PackageManagerService extends AbstractService {
           pkgId,
         };
       }
-      packageVersion = await this.packageRepository.findPackageVersionByVersionOrTag(pkg.packageId, versionOrTag);
     }
     if (!packageVersion) return { manifest: null, blockReason, pkgId };
     manifest = await this.distRepository.findPackageVersionManifest(packageVersion.packageId, packageVersion.version);
