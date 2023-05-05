@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import { createWriteStream } from 'node:fs';
 import { join, dirname, basename } from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import { randomUUID } from 'node:crypto';
@@ -60,15 +61,18 @@ export class PackageVersionFileService extends AbstractService {
     if (!pkg) return files;
     const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${pkgVersion.version}_${randomUUID()}`;
     const tmpdir = await createTempDir(this.config.dataDir, dirname);
+    const tarFile = `${tmpdir}.tgz`;
     const paths: string[] = [];
     try {
-      await pipeline(tarStream, tar.extract({
+      await pipeline(tarStream, createWriteStream(tarFile));
+      await tar.extract({
+        file: tarFile,
         cwd: tmpdir,
         strip: 1,
         onentry: entry => {
           paths.push(entry.path.replace(/^package\//i, '/'));
         },
-      }));
+      });
       for (const path of paths) {
         const localFile = join(tmpdir, path);
         const file = await this.#savePackageVersionFile(pkg, pkgVersion, path, localFile);
@@ -78,13 +82,19 @@ export class PackageVersionFileService extends AbstractService {
         pkgVersion.packageVersionId, paths.length, files.length, tmpdir);
       return files;
     } catch (err) {
-      this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:error] packageVersionId: %s, %d paths, error: %s, tmpdir: %s',
-        pkgVersion.packageVersionId, paths.length, err, tmpdir);
+      this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:error] packageVersionId: %s, %d paths, tmpdir: %s, error: %s',
+        pkgVersion.packageVersionId, paths.length, tmpdir, err);
       // ignore TAR_BAD_ARCHIVE error
       if (err.code === 'TAR_BAD_ARCHIVE') return files;
       throw err;
     } finally {
-      await fs.rm(tmpdir, { recursive: true, force: true });
+      try {
+        await fs.rm(tarFile, { force: true });
+        await fs.rm(tmpdir, { recursive: true, force: true });
+      } catch (err) {
+        this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:warn] remove tmpdir: %s, error: %s',
+          tmpdir, err);
+      }
     }
   }
 

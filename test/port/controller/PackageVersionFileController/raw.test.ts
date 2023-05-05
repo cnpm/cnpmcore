@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { calculateIntegrity } from 'app/common/PackageUtil';
@@ -143,6 +144,8 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .set('user-agent', publisher.ua)
         .send(pkg);
       assert.equal(res.status, 201);
+      // wait for sync event finish
+      await setTimeout(3000);
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.status, 200);
