@@ -108,7 +108,8 @@ export class PackageVersionFileService extends AbstractService {
     const stat = await fs.stat(localFile);
     const distIntegrity = await calculateIntegrity(localFile);
     // make sure dist.path store to ascii, e.g. '/resource/ToOneFromχ.js' => '/resource/ToOneFrom%CF%87.js'
-    const distPath = encodeURIComponent(path).replace(/%2F/g, '/');
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
+    const distPath = encodeURI(path);
     const dist = pkg.createPackageVersionFile(distPath, pkgVersion.version, {
       size: stat.size,
       shasum: distIntegrity.shasum,
