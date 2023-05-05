@@ -107,7 +107,9 @@ export class PackageVersionFileService extends AbstractService {
     if (file) return file;
     const stat = await fs.stat(localFile);
     const distIntegrity = await calculateIntegrity(localFile);
-    const dist = pkg.createPackageVersionFile(path, pkgVersion.version, {
+    // make sure dist.path store to ascii, e.g. '/resource/ToOneFromχ.js' => '/resource/ToOneFrom%CF%87.js'
+    const distPath = encodeURIComponent(path).replace(/%2F/g, '/');
+    const dist = pkg.createPackageVersionFile(distPath, pkgVersion.version, {
       size: stat.size,
       shasum: distIntegrity.shasum,
       integrity: distIntegrity.integrity,
