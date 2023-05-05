@@ -82,8 +82,8 @@ export class PackageVersionFileService extends AbstractService {
         pkgVersion.packageVersionId, paths.length, files.length, tmpdir);
       return files;
     } catch (err) {
-      this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:error] packageVersionId: %s, %d paths, error: %s, tmpdir: %s',
-        pkgVersion.packageVersionId, paths.length, err, tmpdir);
+      this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:error] packageVersionId: %s, %d paths, tmpdir: %s, error: %s',
+        pkgVersion.packageVersionId, paths.length, tmpdir, err);
       // ignore TAR_BAD_ARCHIVE error
       if (err.code === 'TAR_BAD_ARCHIVE') return files;
       throw err;
@@ -92,7 +92,8 @@ export class PackageVersionFileService extends AbstractService {
         await fs.rm(tarFile, { force: true });
         await fs.rm(tmpdir, { recursive: true, force: true });
       } catch (err) {
-        this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:warn] remove tmpdir: %s, error: %s', err);
+        this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:warn] remove tmpdir: %s, error: %s',
+          tmpdir, err);
       }
     }
   }
