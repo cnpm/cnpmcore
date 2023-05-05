@@ -106,5 +106,4 @@ export class RegistryController extends AbstractController {
     await this.registryManagerService.remove({ registryId: id, operatorId: authorizedUser.userId });
     return { ok: true };
   }
-
 }

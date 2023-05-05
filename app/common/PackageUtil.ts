@@ -1,7 +1,8 @@
-import { createReadStream } from 'fs';
-import tar from 'tar';
-import stream from 'stream';
+import { createReadStream } from 'node:fs';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import * as ssri from 'ssri';
+import tar from 'tar';
 
 // /@cnpm%2ffoo
 // /@cnpm%2Ffoo
@@ -62,11 +63,11 @@ export function detectInstallScript(manifest: any) {
 
 /** 判断一个版本压缩包中是否包含 npm-shrinkwrap.json */
 export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Promise<boolean> {
-  let readable: stream.Readable;
+  let readable: Readable;
   if (typeof contentOrFile === 'string') {
     readable = createReadStream(contentOrFile);
   } else {
-    readable = new stream.Readable({
+    readable = new Readable({
       read() {
         this.push(contentOrFile);
         this.push(null);
@@ -88,7 +89,7 @@ export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Pr
   });
 
   try {
-    await stream.promises.pipeline(readable, parser, { signal: abortController.signal });
+    await pipeline(readable, parser, { signal: abortController.signal });
     return hasShrinkWrap;
   } catch (e) {
     if (e.code === 'ABORT_ERR') {

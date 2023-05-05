@@ -81,12 +81,12 @@ describe('test/port/controller/PackageBlockController/unblockPackage.test.ts', (
         .delete(`/-/package/${pkg.name}/blocks`)
         .set('authorization', user.authorization);
       assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] Not allow to unblock package');
+      assert(res.body.error === '[FORBIDDEN] Not allow to access');
 
       res = await app.httpRequest()
         .delete(`/-/package/${pkg.name}/blocks`);
       assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] Not allow to unblock package');
+      assert(res.body.error === '[FORBIDDEN] Not allow to access');
     });
   });
 });

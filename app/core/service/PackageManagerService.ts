@@ -47,7 +47,6 @@ import { BugVersion } from '../entity/BugVersion';
 import { RegistryManagerService } from './RegistryManagerService';
 import { Registry } from '../entity/Registry';
 
-
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
   scope: string;
@@ -370,21 +369,16 @@ export class PackageManagerService extends AbstractService {
     return await this._listPackageFullOrAbbreviatedManifests(scope, name, false, isSync);
   }
 
-  async showPackageVersionManifest(scope: string, name: string, versionOrTag: string, isSync = false) {
-    let blockReason = '';
-    let manifest;
+  async showPackageVersionByVersionOrTag(scope: string, name: string, versionOrTag: string): Promise<{
+    blockReason?: string,
+    pkg?: Package,
+    packageVersion?: PackageVersion | null,
+  }> {
     const pkg = await this.packageRepository.findPackage(scope, name);
-    const pkgId = pkg?.packageId;
-    if (!pkg) return { manifest: null, blockReason, pkgId };
-
+    if (!pkg) return {};
     const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
-      blockReason = block.reason;
-      return {
-        blockReason,
-        manifest,
-        pkgId,
-      };
+      return { blockReason: block.reason, pkg };
     }
     let version = versionOrTag;
     if (!semver.valid(versionOrTag)) {
@@ -395,8 +389,21 @@ export class PackageManagerService extends AbstractService {
       }
     }
     const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
-    if (!packageVersion) return { manifest: null, blockReason, pkgId };
-    manifest = await this.distRepository.findPackageVersionManifest(packageVersion.packageId, version);
+    return { packageVersion, pkg };
+  }
+
+  async showPackageVersionManifest(scope: string, name: string, versionOrTag: string, isSync = false) {
+    let manifest;
+    const { blockReason, packageVersion, pkg } = await this.showPackageVersionByVersionOrTag(scope, name, versionOrTag);
+    if (blockReason) {
+      return {
+        blockReason,
+        manifest,
+        pkg,
+      };
+    }
+    if (!packageVersion) return { manifest: null, blockReason, pkg };
+    manifest = await this.distRepository.findPackageVersionManifest(packageVersion.packageId, packageVersion.version);
     let bugVersion: BugVersion | undefined;
     // sync mode response no bug version fixed
     if (!isSync) {
@@ -406,8 +413,7 @@ export class PackageManagerService extends AbstractService {
       const fullname = getFullname(scope, name);
       manifest = await this.bugVersionService.fixPackageBugVersion(bugVersion, fullname, manifest);
     }
-    return { manifest, blockReason, pkgId };
-
+    return { manifest, blockReason, pkg };
   }
 
   async downloadPackageVersionTar(packageVersion: PackageVersion) {
