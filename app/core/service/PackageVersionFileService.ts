@@ -74,12 +74,14 @@ export class PackageVersionFileService extends AbstractService {
         const file = await this.#savePackageVersionFile(pkg, pkgVersion, path, localFile);
         files.push(file);
       }
-      this.logger.info('[PackageVersionFileService.syncPackageVersionFiles:success] packageVersionId: %s, %d files, tmpdir: %s',
-        pkgVersion.packageVersionId, files.length, tmpdir);
+      this.logger.info('[PackageVersionFileService.syncPackageVersionFiles:success] packageVersionId: %s, %d paths, %d files, tmpdir: %s',
+        pkgVersion.packageVersionId, paths.length, files.length, tmpdir);
       return files;
     } catch (err) {
-      this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:error] packageVersionId: %s, error: %s, tmpdir: %s',
-        pkgVersion.packageVersionId, err, tmpdir);
+      this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:error] packageVersionId: %s, %d paths, error: %s, tmpdir: %s',
+        pkgVersion.packageVersionId, paths.length, err, tmpdir);
+      // ignore TAR_BAD_ARCHIVE error
+      if (err.code === 'TAR_BAD_ARCHIVE') return files;
       throw err;
     } finally {
       await fs.rm(tmpdir, { recursive: true, force: true });
@@ -107,9 +109,15 @@ export class PackageVersionFileService extends AbstractService {
       contentType: mimeLookup(path),
       mtime: stat.mtime,
     });
-    await this.packageVersionFileRepository.createPackageVersionFile(file);
-    this.logger.info('[PackageVersionFileService.#savePackageVersionFile:success] fileId: %s, size: %s, path: %s',
-      file.packageVersionFileId, dist.size, file.path);
+    try {
+      await this.packageVersionFileRepository.createPackageVersionFile(file);
+      this.logger.info('[PackageVersionFileService.#savePackageVersionFile:success] fileId: %s, size: %s, path: %s',
+        file.packageVersionFileId, dist.size, file.path);
+    } catch (err) {
+      // ignore Duplicate entry
+      if (err.code === 'ER_DUP_ENTRY') return file;
+      throw err;
+    }
     return file;
   }
 
