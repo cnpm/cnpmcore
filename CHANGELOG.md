@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.19.0](https://github.com/cnpm/npmcore/compare/v3.18.0...v3.19.0) (2023-05-05)
+
+
+### Features
+
+* support unpkg features ([#456](https://github.com/cnpm/npmcore/issues/456)) ([8ec081a](https://github.com/cnpm/npmcore/commit/8ec081acd675e9738647f5b8791c89aa905dee5d))
+
 ## [3.18.0](https://github.com/cnpm/npmcore/compare/v3.17.1...v3.18.0) (2023-05-05)
 
 
