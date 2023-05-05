@@ -74,8 +74,12 @@ export class PackageVersionFileService extends AbstractService {
         const file = await this.#savePackageVersionFile(pkg, pkgVersion, path, localFile);
         files.push(file);
       }
+      this.logger.info('[PackageVersionFileService.syncPackageVersionFiles:success] packageVersionId: %s, %d files, tmpdir: %s',
+        pkgVersion.packageVersionId, files.length, tmpdir);
       return files;
     } catch (err) {
+      this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:error] packageVersionId: %s, error: %s, tmpdir: %s',
+        pkgVersion.packageVersionId, err, tmpdir);
       throw err;
     } finally {
       await fs.rm(tmpdir, { recursive: true, force: true });
