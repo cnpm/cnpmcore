@@ -70,6 +70,8 @@ export class PackageVersionFileService extends AbstractService {
         cwd: tmpdir,
         strip: 1,
         onentry: entry => {
+          if (entry.type !== 'File') return;
+          if (!entry.path.startsWith('package/')) return;
           paths.push(entry.path.replace(/^package\//i, '/'));
         },
       });

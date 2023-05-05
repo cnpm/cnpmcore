@@ -1,5 +1,4 @@
 import { strict as assert } from 'node:assert';
-import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { calculateIntegrity } from 'app/common/PackageUtil';
@@ -120,6 +119,35 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.body.error, `[NOT_FOUND] File ${pkg.name}@1.0.0/package2.json not found`);
     });
 
+    it('should ignore not exists file on tar onentry', async () => {
+      const tarball = await TestUtil.readFixturesFile('unpkg.com/ide-metrics-api-grpc-0.0.1-main-gha.8962.tgz');
+      const { integrity } = await calculateIntegrity(tarball);
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/foo-tag-latest',
+        version: '1.0.0',
+        versionObject: {
+          description: 'foo latest description',
+        },
+        attachment: {
+          data: tarball.toString('base64'),
+          length: tarball.length,
+        },
+        dist: {
+          integrity,
+        },
+        main: './lib/index.js',
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg);
+      assert.equal(res.status, 201);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/`);
+      assert.equal(res.status, 200);
+    });
+
     it('should handle big tgz file', async () => {
       const tarball = await TestUtil.readFixturesFile('unpkg.com/pouchdb-3.2.1.tgz');
       const { integrity } = await calculateIntegrity(tarball);
@@ -144,8 +172,6 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .set('user-agent', publisher.ua)
         .send(pkg);
       assert.equal(res.status, 201);
-      // wait for sync event finish
-      await setTimeout(3000);
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.status, 200);
