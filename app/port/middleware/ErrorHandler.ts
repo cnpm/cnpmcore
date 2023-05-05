@@ -25,6 +25,9 @@ export async function ErrorHandler(ctx: EggContext, next: Next) {
         ctx.redirect(`${err.redirectToSourceRegistry}${ctx.url}`);
         return;
       }
+    } else if (err.name === 'ControllerRedirectError' && err.location) {
+      ctx.redirect(err.location);
+      return;
     }
 
     // http status, default is DEFAULT_SERVER_ERROR_STATUS

@@ -56,7 +56,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/latest`);
-      assert(res.status === 451);
+      assert.equal(res.status, 451);
       assert(!res.headers.etag);
       assert(!res.headers['cache-control']);
       assert(res.body.error);
@@ -106,7 +106,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
           reason: 'only for tests',
         });
       assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] Not allow to block package');
+      assert(res.body.error === '[FORBIDDEN] Not allow to access');
 
       res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/blocks`)
@@ -114,7 +114,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
           reason: 'only for tests',
         });
       assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] Not allow to block package');
+      assert(res.body.error === '[FORBIDDEN] Not allow to access');
     });
   });
 });

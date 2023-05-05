@@ -3,214 +3,12 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { calculateIntegrity } from 'app/common/PackageUtil';
 
-describe('test/port/controller/package/ShowPackageVersionFileController.test.ts', () => {
+describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => {
   let publisher;
+  let adminUser;
   beforeEach(async () => {
+    adminUser = await TestUtil.createAdmin();
     publisher = await TestUtil.createUser();
-  });
-
-  describe('[GET /:fullname/:versionOrTag/files] listFiles()', () => {
-    it('should 404 when enableUnpkg = false', async () => {
-      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
-      mock(app.config.cnpmcore, 'enableUnpkg', false);
-      const pkg = await TestUtil.getFullPackage({
-        name: 'foo',
-        version: '1.0.0',
-        versionObject: {
-          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
-        },
-      });
-      await app.httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(201);
-      let res = await app.httpRequest()
-        .get('/foo/1.0.0/files')
-        .expect(404)
-        .expect('content-type', 'application/json; charset=utf-8');
-      assert.equal(res.body.error, '[NOT_FOUND] Not Found');
-      res = await app.httpRequest()
-        .get('/foo/1.0.0/files/package.json')
-        .expect(404)
-        .expect('content-type', 'application/json; charset=utf-8');
-      assert.equal(res.body.error, '[NOT_FOUND] Not Found');
-    });
-
-    it('should list one package version files', async () => {
-      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
-      const pkg = await TestUtil.getFullPackage({
-        name: 'foo',
-        version: '1.0.0',
-        versionObject: {
-          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
-        },
-      });
-      await app.httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(201);
-      let res = await app.httpRequest()
-        .get('/foo/1.0.0/files')
-        .expect(200)
-        .expect('content-type', 'application/json; charset=utf-8');
-      // console.log(res.body);
-      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
-      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
-      assert.deepEqual(res.body, {
-        path: '/',
-        type: 'directory',
-        files: [
-          {
-            path: '/package.json',
-            type: 'file',
-            contentType: 'application/json',
-            integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-            lastModified: '2014-02-25T10:53:34.000Z',
-            size: 209,
-          },
-        ],
-      });
-
-      // again should work
-      res = await app.httpRequest()
-        .get('/foo/1.0.0/files')
-        .expect(200)
-        .expect('content-type', 'application/json; charset=utf-8');
-      // console.log(res.body);
-      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
-      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
-      assert.deepEqual(res.body, {
-        path: '/',
-        type: 'directory',
-        files: [
-          {
-            path: '/package.json',
-            type: 'file',
-            contentType: 'application/json',
-            integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-            lastModified: '2014-02-25T10:53:34.000Z',
-            size: 209,
-          },
-        ],
-      });
-    });
-
-    it('should latest tag with scoped package', async () => {
-      const pkg = await TestUtil.getFullPackage({
-        name: '@cnpm/foo-tag-latest',
-        version: '1.0.0',
-        versionObject: {
-          description: 'foo latest description',
-        },
-      });
-      let res = await app.httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg);
-      assert.equal(res.status, 201);
-      res = await app.httpRequest()
-        .get(`/${pkg.name}/latest/files`);
-      assert.equal(res.status, 302);
-      assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files`);
-      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
-      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
-      res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0/files`);
-      assert.equal(res.status, 200);
-      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
-      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
-      assert.deepEqual(res.body, {
-        path: '/',
-        type: 'directory',
-        files: [
-          {
-            path: '/package.json',
-            type: 'file',
-            contentType: 'application/json',
-            integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-            lastModified: '2014-02-25T10:53:34.000Z',
-            size: 209,
-          },
-        ],
-      });
-      res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0/files/`);
-      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
-      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
-      assert.deepEqual(res.body, {
-        path: '/',
-        type: 'directory',
-        files: [
-          {
-            path: '/package.json',
-            type: 'file',
-            contentType: 'application/json',
-            integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-            lastModified: '2014-02-25T10:53:34.000Z',
-            size: 209,
-          },
-        ],
-      });
-    });
-
-    it('should list sub dir files', async () => {
-      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
-      const pkg = await TestUtil.getFullPackage({
-        name: 'foo',
-        version: '1.0.0',
-        versionObject: {
-          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
-        },
-      });
-      await app.httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(201);
-      const res = await app.httpRequest()
-        .get('/foo/1.0.0/files/foo/')
-        .expect(404)
-        .expect('content-type', 'application/json; charset=utf-8');
-      assert.equal(res.body.error, '[NOT_FOUND] foo@1.0.0/files/foo not found');
-    });
-
-    it('should 404 when version not exists', async () => {
-      const pkg = await TestUtil.getFullPackage({
-        name: '@cnpm/foo',
-        version: '1.0.0',
-        versionObject: {
-          description: 'foo description',
-        },
-      });
-      await app.httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(201);
-
-      const res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.40000404/files`)
-        .expect(404);
-      assert(!res.headers.etag);
-      assert(!res.headers['cache-control']);
-      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404/files not found`);
-    });
-
-    it('should 404 when package not exists', async () => {
-      const res = await app.httpRequest()
-        .get('/@cnpm/foonot-exists/1.0.40000404/files')
-        .expect(404);
-      assert(!res.headers.etag);
-      assert(!res.headers['cache-control']);
-      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists@1.0.40000404/files not found');
-    });
   });
 
   describe('[GET /:fullname/:versionOrTag/files/:path] raw()', () => {
@@ -306,9 +104,9 @@ describe('test/port/controller/package/ShowPackageVersionFileController.test.ts'
       });
 
       res = await app.httpRequest()
-        .get(`/${pkg.name}/latest/files/package.json?meta=1`);
+        .get(`/${pkg.name}/latest/files/package.json?meta=2`);
       assert.equal(res.status, 302);
-      assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files/package.json?meta`);
+      assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files/package.json?meta=2`);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
 
@@ -337,6 +135,7 @@ describe('test/port/controller/package/ShowPackageVersionFileController.test.ts'
         dist: {
           integrity,
         },
+        main: './lib/index.js',
       });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
@@ -345,24 +144,58 @@ describe('test/port/controller/package/ShowPackageVersionFileController.test.ts'
         .send(pkg);
       assert.equal(res.status, 201);
       res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0/files`);
+        .get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.status, 200);
       // console.log('%o', res.body);
       assert(res.body.files.find(file => file.path === '/CONTRIBUTING.md'));
-      const testDir = res.body.files.find(file => file.path === '/tests');
+      let testDir = res.body.files.find(file => file.path === '/tests');
       assert(testDir);
       assert(testDir.files.length > 0);
-      const integrationDir1 = testDir.files.find(file => file.path === '/tests/integration');
+      let integrationDir1 = testDir.files.find(file => file.path === '/tests/integration');
       assert(integrationDir1);
       assert(integrationDir1.files.length > 0);
       assert.equal(integrationDir1.type, 'directory');
       assert(integrationDir1.files.find(file => file.path === '/tests/integration/test.replication.js'));
-
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.body.path, '/');
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files?meta=true`);
+      assert.equal(res.status, 200);
+      // console.log('%o', res.body);
+      assert(res.body.files.find(file => file.path === '/CONTRIBUTING.md'));
+      testDir = res.body.files.find(file => file.path === '/tests');
+      assert(testDir);
+      assert(testDir.files.length > 0);
+      integrationDir1 = testDir.files.find(file => file.path === '/tests/integration');
+      assert(integrationDir1);
+      assert(integrationDir1.files.length > 0);
+      assert.equal(integrationDir1.type, 'directory');
+      assert(integrationDir1.files.find(file => file.path === '/tests/integration/test.replication.js'));
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.body.path, '/');
+
+      // redirect to main file
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files`);
+      assert.equal(res.status, 302);
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files/lib/index.js`);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/lib/index.js`);
+      assert.equal(res.status, 200);
+      assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['content-type'], 'application/javascript; charset=utf-8');
+      assert.equal(res.headers['transfer-encoding'], 'chunked');
+
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/docs/_site/getting-started.html`);
+      assert.equal(res.status, 200);
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['content-type'], 'text/html; charset=utf-8');
@@ -372,6 +205,7 @@ describe('test/port/controller/package/ShowPackageVersionFileController.test.ts'
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/docs/_site/getting-started.html?meta`);
+      assert.equal(res.status, 200);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
@@ -384,6 +218,11 @@ describe('test/port/controller/package/ShowPackageVersionFileController.test.ts'
         lastModified: '2015-01-05T21:14:06.000Z',
         size: 26716,
       });
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/tests`);
+      assert.equal(res.status, 404);
+      assert.equal(res.body.error, '[NOT_FOUND] File @cnpm/foo-tag-latest@1.0.0/tests not found');
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/tests/`);
@@ -485,6 +324,22 @@ describe('test/port/controller/package/ShowPackageVersionFileController.test.ts'
       assert.match(res.text, /CACHE MANIFEST/);
     });
 
+    it('should 451 when package block', async () => {
+      const { pkg } = await TestUtil.createPackage({ isPrivate: false });
+      let res = await app.httpRequest()
+        .put(`/-/package/${pkg.name}/blocks`)
+        .set('authorization', adminUser.authorization)
+        .send({
+          reason: 'only for tests again',
+        });
+      assert.equal(res.status, 201);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/index.js`)
+        .expect(451)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert.match(res.body.error, /\[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm\/testmodule@1.0.0 was blocked, reason: only for tests again/);
+    });
+
     it('should 404 when version not exists', async () => {
       const pkg = await TestUtil.getFullPackage({
         name: '@cnpm/foo',
@@ -505,14 +360,14 @@ describe('test/port/controller/package/ShowPackageVersionFileController.test.ts'
         .expect(404);
       assert(!res.headers.etag);
       assert(!res.headers['cache-control']);
-      assert.equal(res.body.error, `[NOT_FOUND] File ${pkg.name}@1.0.40000404/foo.json not found`);
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.40000404/files/bin/foo/bar.js`)
         .expect(404);
       assert(!res.headers.etag);
       assert(!res.headers['cache-control']);
-      assert.equal(res.body.error, `[NOT_FOUND] File ${pkg.name}@1.0.40000404/bin/foo/bar.js not found`);
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
     });
   });
 });

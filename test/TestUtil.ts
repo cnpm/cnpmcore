@@ -24,6 +24,7 @@ type PackageOptions = {
   libc?: string[];
   description?: string;
   registryId?: string;
+  main?: string;
 };
 
 type UserOptions = {
@@ -207,6 +208,9 @@ export class TestUtil {
         pkg['dist-tags'] = options.distTags;
       } else {
         pkg['dist-tags'].latest = version.version;
+      }
+      if ('main' in options) {
+        version.main = options.main;
       }
     }
     return pkg;

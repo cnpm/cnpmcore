@@ -23,7 +23,17 @@ import {
 } from '../typebox';
 import { SyncMode } from '../../common/constants';
 
-class PackageNotFoundError extends NotFoundError {}
+class PackageNotFoundError extends NotFoundError {
+  redirectToSourceRegistry?: string;
+}
+
+class ControllerRedirectError extends NotFoundError {
+  location: string;
+  constructor(location: string) {
+    super();
+    this.location = location;
+  }
+}
 
 export abstract class AbstractController extends MiddlewareController {
   @Inject()
@@ -91,6 +101,10 @@ export abstract class AbstractController extends MiddlewareController {
 
     allowSync = true;
     return allowSync;
+  }
+
+  protected createControllerRedirectError(location: string) {
+    return new ControllerRedirectError(location);
   }
 
   protected createPackageNotFoundError(fullname: string, version?: string) {

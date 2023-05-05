@@ -21,14 +21,11 @@ import { DistRepository } from '../../repository/DistRepository';
 import { PackageVersionFile } from '../entity/PackageVersionFile';
 import { PackageVersion } from '../entity/PackageVersion';
 import { Package } from '../entity/Package';
-import { PackageManagerService } from './PackageManagerService';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class PackageVersionFileService extends AbstractService {
-  @Inject()
-  private readonly packageManagerService: PackageManagerService;
   @Inject()
   private readonly packageRepository: PackageRepository;
   @Inject()
@@ -36,18 +33,12 @@ export class PackageVersionFileService extends AbstractService {
   @Inject()
   private readonly distRepository: DistRepository;
 
-  async listPackageVersionFiles(scope: string, packageName: string, versionOrTag: string, directory: string) {
-    const pkgVersion = await this.packageManagerService.showPackageVersionByVersionOrTag(
-      scope, packageName, versionOrTag);
-    if (!pkgVersion) return null;
+  async listPackageVersionFiles(pkgVersion: PackageVersion, directory: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
     return await this.packageVersionFileRepository.listPackageVersionFiles(pkgVersion.packageVersionId, directory);
   }
 
-  async showPackageVersionFile(scope: string, packageName: string, versionOrTag: string, path: string) {
-    const pkgVersion = await this.packageManagerService.showPackageVersionByVersionOrTag(
-      scope, packageName, versionOrTag);
-    if (!pkgVersion) return null;
+  async showPackageVersionFile(pkgVersion: PackageVersion, path: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
     const { directory, name } = this.#getDirectoryAndName(path);
     return await this.packageVersionFileRepository.findPackageVersionFile(
@@ -62,10 +53,11 @@ export class PackageVersionFileService extends AbstractService {
   }
 
   async syncPackageVersionFiles(pkgVersion: PackageVersion) {
+    const files: PackageVersionFile[] = [];
     const tarStream = await this.distRepository.getDistStream(pkgVersion.tarDist);
-    if (!tarStream) return;
+    if (!tarStream) return files;
     const pkg = await this.packageRepository.findPackageByPackageId(pkgVersion.packageId);
-    if (!pkg) return;
+    if (!pkg) return files;
     const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${pkgVersion.version}_${randomUUID()}`;
     const tmpdir = await createTempDir(this.config.dataDir, dirname);
     const paths: string[] = [];
@@ -79,8 +71,10 @@ export class PackageVersionFileService extends AbstractService {
       }));
       for (const path of paths) {
         const localFile = join(tmpdir, path);
-        await this.#savePackageVersionFile(pkg, pkgVersion, path, localFile);
+        const file = await this.#savePackageVersionFile(pkg, pkgVersion, path, localFile);
+        files.push(file);
       }
+      return files;
     } catch (err) {
       throw err;
     } finally {
