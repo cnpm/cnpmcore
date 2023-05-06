@@ -1,7 +1,5 @@
 import fs from 'node:fs/promises';
-import { createWriteStream } from 'node:fs';
 import { join, dirname, basename } from 'node:path';
-import { pipeline } from 'node:stream/promises';
 import { randomUUID } from 'node:crypto';
 import tar from 'tar';
 import {
@@ -55,8 +53,6 @@ export class PackageVersionFileService extends AbstractService {
 
   async syncPackageVersionFiles(pkgVersion: PackageVersion) {
     const files: PackageVersionFile[] = [];
-    const tarStream = await this.distRepository.getDistStream(pkgVersion.tarDist);
-    if (!tarStream) return files;
     const pkg = await this.packageRepository.findPackageByPackageId(pkgVersion.packageId);
     if (!pkg) return files;
     const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${pkgVersion.version}_${randomUUID()}`;
@@ -64,7 +60,10 @@ export class PackageVersionFileService extends AbstractService {
     const tarFile = `${tmpdir}.tgz`;
     const paths: string[] = [];
     try {
-      await pipeline(tarStream, createWriteStream(tarFile));
+      this.logger.info('[PackageVersionFileService.syncPackageVersionFiles:download-start] dist:%s(path:%s, size:%s) => tarFile:%s',
+        pkgVersion.tarDist.distId, pkgVersion.tarDist.path, pkgVersion.tarDist.size, tarFile);
+      await this.distRepository.downloadDistToFile(pkgVersion.tarDist, tarFile);
+      this.logger.info('[PackageVersionFileService.syncPackageVersionFiles:extract-start] tmpdir:%s', tmpdir);
       await tar.extract({
         file: tarFile,
         cwd: tmpdir,

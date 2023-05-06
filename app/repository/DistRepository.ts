@@ -69,4 +69,9 @@ export class DistRepository {
   async downloadDist(dist: Dist) {
     return await this.nfsAdapter.getDownloadUrlOrStream(dist.path);
   }
+
+  async downloadDistToFile(dist: Dist, file: string) {
+    // max up to 5mins
+    return await this.nfsAdapter.downloadFile(dist.path, file, 60000 * 5);
+  }
 }
