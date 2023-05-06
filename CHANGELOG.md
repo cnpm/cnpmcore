@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.20.0](https://github.com/cnpm/npmcore/compare/v3.19.3...v3.20.0) (2023-05-06)
+
+
+### Features
+
+* enable sql logger ([#460](https://github.com/cnpm/npmcore/issues/460)) ([51cd044](https://github.com/cnpm/npmcore/commit/51cd0447425ca0a96f328bd05d21168206274289))
+
 ## [3.19.3](https://github.com/cnpm/npmcore/compare/v3.19.2...v3.19.3) (2023-05-06)
 
 
