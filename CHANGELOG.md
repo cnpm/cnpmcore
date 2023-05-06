@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.19.3](https://github.com/cnpm/npmcore/compare/v3.19.2...v3.19.3) (2023-05-06)
+
+
+### Bug Fixes
+
+* ignore hidden dir files ([#459](https://github.com/cnpm/npmcore/issues/459)) ([637e8ad](https://github.com/cnpm/npmcore/commit/637e8ad9a04d36370ce6044b67c7a3ba4f89dd1b))
+
 ## [3.19.2](https://github.com/cnpm/npmcore/compare/v3.19.1...v3.19.2) (2023-05-05)
 
 
