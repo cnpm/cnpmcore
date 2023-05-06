@@ -1,5 +1,4 @@
 import { strict as assert } from 'node:assert';
-import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { calculateIntegrity } from 'app/common/PackageUtil';
@@ -174,7 +173,6 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .set('user-agent', publisher.ua)
         .send(pkg);
       assert.equal(res.status, 201);
-      await setTimeout(1000);
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/resource/`);
       assert.equal(res.status, 200);
@@ -188,6 +186,39 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers['content-type'], 'application/javascript; charset=utf-8');
       // console.log(res.text);
       assert.match(res.text, /ToOneFromχ/);
+    });
+
+    it('should ignore "." hidden dir', async () => {
+      // https://unpkg.com/browse/bovo-ui@0.0.4-36/
+      const tarball = await TestUtil.readFixturesFile('unpkg.com/bovo-ui-0.0.4-36.tgz');
+      const { integrity } = await calculateIntegrity(tarball);
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/bovo-ui',
+        version: '1.0.0',
+        versionObject: {
+          description: 'foo latest description',
+        },
+        attachment: {
+          data: tarball.toString('base64'),
+          length: tarball.length,
+        },
+        dist: {
+          integrity,
+        },
+        main: './lib/index.js',
+      });
+      let res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg);
+      assert.equal(res.status, 201);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/`);
+      assert.equal(res.status, 200);
+      // console.log(res.body);
+      assert.equal(res.body.files.find(file => file.path === '/.'), undefined);
+      assert(res.body.files.find(file => file.path === '/dist'));
     });
 
     it('should handle big tgz file', async () => {
@@ -214,7 +245,6 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .set('user-agent', publisher.ua)
         .send(pkg);
       assert.equal(res.status, 201);
-      await setTimeout(5000);
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.status, 200);

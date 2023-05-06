@@ -193,6 +193,26 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(res.body.error, '[NOT_FOUND] foo@1.0.0/files/foo not found');
     });
 
+    it('should auto sync after version publish', async () => {
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/unittest-unpkg-demo',
+        version: '1.0.0',
+        versionObject: {
+          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+        },
+      });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+    });
+
     it('should 451 when package block', async () => {
       const { pkg } = await TestUtil.createPackage({ isPrivate: false });
       let res = await app.httpRequest()
