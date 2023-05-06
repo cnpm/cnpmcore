@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.20.2](https://github.com/cnpm/npmcore/compare/v3.20.1...v3.20.2) (2023-05-06)
+
+
+### Bug Fixes
+
+* set cache-control default value to "public, max-age=300" ([#462](https://github.com/cnpm/npmcore/issues/462)) ([adda725](https://github.com/cnpm/npmcore/commit/adda72566d270171cad18f3fabe203cae2e6e34f))
+
 ## [3.20.1](https://github.com/cnpm/npmcore/compare/v3.20.0...v3.20.1) (2023-05-06)
 
 
