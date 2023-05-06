@@ -36,7 +36,7 @@
   },
   "scripts": {
     "contributor": "git-contributor",
-    "dev": "DEBUG_LOCAL_SQL=true egg-bin dev",
+    "dev": "egg-bin dev",
     "lint": "eslint --cache --ext .ts .",
     "lint:fix": "eslint --cache --ext .ts --fix .",
     "test": "npm run lint:fix && npm run test-local",

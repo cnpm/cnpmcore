@@ -425,6 +425,20 @@ export class PackageSyncerService extends AbstractService {
     }
 
     const { url, data, headers, res, status } = registryFetchResult;
+    if (status >= 500 || !data) {
+      // GET https://registry.npmjs.org/%40modern-js%2Fstyle-compiler?t=1683348626499&cache=0, status: 522
+      // registry will response status 522 and data will be null
+      // > TypeError: Cannot read properties of null (reading 'readme')
+      task.error = `request manifests response error, status: ${status}, data: ${JSON.stringify(data)}`;
+      logs.push(`[${isoNow()}] ❌ response headers: ${JSON.stringify(headers)}`);
+      logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+      this.logger.info('[PackageSyncerService.executeTask:fail-request-error] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
+      await this.taskService.retryTask(task, logs.join('\n'));
+      return;
+    }
+
     let readme = data.readme || '';
     if (typeof readme !== 'string') {
       readme = JSON.stringify(readme);

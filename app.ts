@@ -16,6 +16,18 @@ export default class CnpmcoreAppHook {
     this.app.binaryHTML = '';
   }
 
+  async configWillLoad() {
+    const app = this.app;
+    // https://github.com/eggjs/tegg/blob/master/plugin/orm/app.ts#L37
+    // store query sql to log
+    app.config.orm.logger = {
+      ...app.config.orm.logger,
+      logQuery(sql: string, duration: number) {
+        app.getLogger('sqlLogger').info('[%s] %s', duration, sql);
+      },
+    };
+  }
+
   // https://eggjs.org/zh-cn/basics/app-start.html
   async didReady() {
     // ready binary.html and replace registry
