@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.20.1](https://github.com/cnpm/npmcore/compare/v3.20.0...v3.20.1) (2023-05-06)
+
+
+### Bug Fixes
+
+* use nfs download api ([#461](https://github.com/cnpm/npmcore/issues/461)) ([bb16957](https://github.com/cnpm/npmcore/commit/bb169577e2be56c2ac3e9ca509b6a3cfb2d28cdc))
+
 ## [3.20.0](https://github.com/cnpm/npmcore/compare/v3.19.3...v3.20.0) (2023-05-06)
 
 
