@@ -50,8 +50,15 @@ export class NFSAdapter {
   }
 
   @Pointcut(AsyncTimer)
+  async downloadFile(storeKey: string, file: string, timeout: number) {
+    this.logger.info('[%s:downloadFile] key: %s, file: %s, timeout: %s',
+      INSTANCE_NAME, storeKey, file, timeout);
+    await this.nfsClient.download(storeKey, file, { timeout });
+  }
+
+  @Pointcut(AsyncTimer)
   async remove(storeKey: string) {
-    this.logger.info('[%s:remove] key: %s, file: %s', INSTANCE_NAME, storeKey);
+    this.logger.info('[%s:remove] key: %s', INSTANCE_NAME, storeKey);
     await this.nfsClient.remove(storeKey);
   }
 

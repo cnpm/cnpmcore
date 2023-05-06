@@ -21,6 +21,10 @@ export interface AppendOptions {
   headers?: IncomingHttpHeaders,
 }
 
+export interface DownloadOptions {
+  timeout: number;
+}
+
 export interface NFSClient {
   uploadBytes(bytes: Uint8Array, options: UploadOptions): Promise<UploadResult>;
 
@@ -33,6 +37,8 @@ export interface NFSClient {
   readBytes(key: string): Promise<Uint8Array | undefined>;
 
   createDownloadStream(key: string): Promise<Readable | undefined>;
+
+  download(key: string, filepath: string, options: DownloadOptions): Promise<void>;
 
   url?(key: string): string;
 }
