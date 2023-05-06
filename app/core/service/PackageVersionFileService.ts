@@ -72,6 +72,8 @@ export class PackageVersionFileService extends AbstractService {
         onentry: entry => {
           if (entry.type !== 'File') return;
           if (!entry.path.startsWith('package/')) return;
+          // ignore hidden dir
+          if (entry.path.includes('/./')) return;
           paths.push(entry.path.replace(/^package\//i, '/'));
         },
       });
