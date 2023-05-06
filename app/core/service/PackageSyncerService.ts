@@ -425,6 +425,7 @@ export class PackageSyncerService extends AbstractService {
     }
 
     const { url, data, headers, res, status } = registryFetchResult;
+    /* c8 ignore next 13 */
     if (status >= 500 || !data) {
       // GET https://registry.npmjs.org/%40modern-js%2Fstyle-compiler?t=1683348626499&cache=0, status: 522
       // registry will response status 522 and data will be null
