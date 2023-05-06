@@ -174,8 +174,8 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .get(`/${pkg.name}/latest`);
       assert(res.status === 200);
       assert(res.body.version === '1.0.0');
-      assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
-      assert(res.headers.vary === 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cache-control'], 'public, max-age=300');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
     });
 
     it('should latest tag with not scoped package', async () => {

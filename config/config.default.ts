@@ -74,9 +74,9 @@ export default (appInfo: EggAppConfig) => {
     enableWebAuthn: false,
     // http response cache control header
     enableCDN: false,
-    // if you are using CDN, can set it to 'max-age=0, s-maxage=120, must-revalidate'
-    // it meaning cache 10s on CDN server and no cache on client side.
-    cdnCacheControlHeader: 'max-age=0, s-maxage=120, must-revalidate',
+    // if you are using CDN, can override it
+    // it meaning cache 300s on CDN server and client side.
+    cdnCacheControlHeader: 'public, max-age=300',
     // if you are using CDN, can set it to 'Accept, Accept-Encoding'
     cdnVaryHeader: 'Accept, Accept-Encoding',
     // store full package version manifests data to database table(package_version_manifests), default is false
