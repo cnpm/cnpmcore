@@ -69,7 +69,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
         .get(`/${pkg.name}`);
       assert(res.status === 451);
       assert(!res.headers.etag);
-      assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
+      assert.equal(res.headers['cache-control'], 'public, max-age=300');
       assert(res.body.error);
       assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule was blocked, reason: '));
       assert(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
@@ -78,7 +78,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
         .get(`/${pkg.name}/1.0.0`);
       assert.equal(res.status, 451);
       assert(!res.headers.etag);
-      assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
+      assert.equal(res.headers['cache-control'], 'public, max-age=300');
       assert(res.body.error);
       assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@1.0.0 was blocked, reason: '));
       assert(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
