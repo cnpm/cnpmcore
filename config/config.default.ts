@@ -102,16 +102,8 @@ export default (appInfo: EggAppConfig) => {
     user: process.env.MYSQL_USER || 'root',
     password: process.env.MYSQL_PASSWORD,
     charset: 'utf8mb4',
+    logger: {},
   };
-  /* c8 ignore next 8 */
-  if (process.env.DEBUG_LOCAL_SQL) {
-    config.orm.logger = {
-      // TODO: try to save SQL log into ctx logger or app logger
-      logQuery(sql: string, duration: number) {
-        console.log('[sql-debug] [%sms] %s', duration, sql);
-      },
-    };
-  }
 
   config.redis = {
     client: {
@@ -186,6 +178,12 @@ export default (appInfo: EggAppConfig) => {
   config.view = {
     root: join(appInfo.baseDir, 'app/port'),
     defaultViewEngine: 'nunjucks',
+  };
+
+  config.customLogger = {
+    sqlLogger: {
+      file: 'sql.log',
+    },
   };
 
   return config;
