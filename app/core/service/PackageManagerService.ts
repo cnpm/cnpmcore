@@ -504,10 +504,10 @@ export class PackageManagerService extends AbstractService {
     await this.packageRepository.removePackageVersion(pkgVersion);
   }
 
-  public async unpublishPackage(pkg: Package, forceRefresh = false) {
+  public async unpublishPackage(pkg: Package) {
     const pkgVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     // already unpublished
-    if (pkgVersions.length === 0 && !forceRefresh) {
+    if (pkgVersions.length === 0) {
       this.logger.info(`[packageManagerService.unpublishPackage:skip] ${pkg.packageId} already unpublished`);
       return;
     }
@@ -533,8 +533,14 @@ export class PackageManagerService extends AbstractService {
   }
 
   public async removePackageVersion(pkg: Package, pkgVersion: PackageVersion, skipRefreshPackageManifests = false) {
+    const currentVersions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
+    // only one version, unpublish the package
+    if (currentVersions.length === 1 && currentVersions[0] === pkgVersion.version) {
+      await this.unpublishPackage(pkg);
+      return;
+    }
+    // remove version & update tags
     await this._removePackageVersionAndDist(pkgVersion);
-    // all versions removed
     const versions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
     if (versions.length > 0) {
       let updateTag: string | undefined;
@@ -555,8 +561,6 @@ export class PackageManagerService extends AbstractService {
       }
       return;
     }
-    // unpublish
-    await this.unpublishPackage(pkg, true);
   }
 
   public async savePackageTag(pkg: Package, tag: string, version: string, skipEvent = false) {
