@@ -2242,7 +2242,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         task = await packageSyncerService.findExecuteTask();
         await packageSyncerService.executeTask(task);
         assert(task);
-        app.expectLog('[packageManagerService.unpublishPackage:skip] already unpublished');
+        const pkg = await packageRepository.findPackage('', 'foobar');
+        app.expectLog(`[packageManagerService.unpublishPackage:skip] ${pkg?.packageId} already unpublished`);
 
 
       });

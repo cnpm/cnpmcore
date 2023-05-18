@@ -508,7 +508,7 @@ export class PackageManagerService extends AbstractService {
     const pkgVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     // already unpublished
     if (pkgVersions.length === 0) {
-      this.logger.info('[packageManagerService.unpublishPackage:skip] already unpublished');
+      this.logger.info(`[packageManagerService.unpublishPackage:skip] ${pkg.packageId} already unpublished`);
       return;
     }
     for (const pkgVersion of pkgVersions) {
