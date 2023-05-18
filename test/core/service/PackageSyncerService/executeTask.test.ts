@@ -2215,6 +2215,38 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           .expect(200);
 
       });
+
+      it('unpublish package idempotent', async () => {
+        app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/security-holding-package.json'),
+        });
+        await packageSyncerService.createTask('foobar', { skipDependencies: true });
+        let task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        await packageSyncerService.executeTask(task);
+        assert(!await TaskModel.findOne({ taskId: task.taskId }));
+        assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log);
+        // console.log(log);
+        const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
+        assert(model);
+        const versions = await PackageVersion.find({ packageId: model.packageId });
+        assert(versions.length === 0);
+
+        // resync
+        app.mockLog();
+        await packageSyncerService.createTask('foobar', { skipDependencies: true });
+        task = await packageSyncerService.findExecuteTask();
+        await packageSyncerService.executeTask(task);
+        assert(task);
+        const pkg = await packageRepository.findPackage('', 'foobar');
+        app.expectLog(`[packageManagerService.unpublishPackage:skip] ${pkg?.packageId} already unpublished`);
+
+
+      });
     });
   });
 });
