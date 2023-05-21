@@ -1,3 +1,4 @@
+import { cnpmcoreConfig } from '../port/config';
 import { Readable } from 'stream';
 import { IncomingHttpHeaders } from 'http';
 import { EggContext } from '@eggjs/tegg';
@@ -61,4 +62,13 @@ export interface userResult {
 export interface AuthClient {
   getAuthUrl(ctx: EggContext): Promise<AuthUrlResult>;
   ensureCurrentUser(): Promise<userResult | null>;
+}
+
+declare module 'egg' {
+  // eslint-disable-next-line
+  // @ts-ignore
+  // avoid TS2310 Type 'EggAppConfig' recursively references itself as a base type.
+  interface EggAppConfig {
+    cnpmcore: typeof cnpmcoreConfig;
+  }
 }

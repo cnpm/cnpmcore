@@ -27,7 +27,7 @@ type LegacyInfo = {
 
 type SiteEnvInfo = {
   sync_model: string;
-  sync_binary: string;
+  sync_binary: boolean;
   instance_start_time: Date;
   node_version: string;
   app_version: string;

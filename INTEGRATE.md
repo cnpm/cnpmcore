@@ -76,7 +76,21 @@
     }
     ```
 
-3. 修改 `config.default.ts` 文件，可以直接复制 cnpmcore 中的内容
+3. 修改 `config.default.ts` 文件，可以直接覆盖默认配置
+```typescript
+import { SyncMode } from 'cnpmcore/common/constants';
+import { cnpmcoreConfig } from 'cnpmcore/common/config';
+
+export default () => {
+  const config = {};
+  config.cnpmcore = {
+    ...cnpmcoreConfig,
+    enableChangesStream: false,
+    syncMode: SyncMode.all,
+  };
+  return config;
+}
+```
 
 ### 🧑‍🤝‍🧑 集成 cnpmcore
 
