@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.21.0](https://github.com/cnpm/npmcore/compare/v3.20.3...v3.21.0) (2023-05-21)
+
+
+### Features
+
+* easy config ([#468](https://github.com/cnpm/npmcore/issues/468)) ([9208392](https://github.com/cnpm/npmcore/commit/92083924eaa3fbcd5f3c651d0ddc056d9affba30))
+
 ## [3.20.3](https://github.com/cnpm/npmcore/compare/v3.20.2...v3.20.3) (2023-05-18)
 
 
