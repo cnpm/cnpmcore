@@ -1,7 +1,7 @@
-import { cnpmcoreConfig } from '../port/config';
-import { Readable } from 'stream';
-import { IncomingHttpHeaders } from 'http';
-import { EggContext } from '@eggjs/tegg';
+import type { Readable } from 'node:stream';
+import type { IncomingHttpHeaders } from 'node:http';
+import type { EggContext } from '@eggjs/tegg';
+import type { cnpmcoreConfig } from '../port/config';
 
 export interface UploadResult {
   key: string;
@@ -65,9 +65,6 @@ export interface AuthClient {
 }
 
 declare module 'egg' {
-  // eslint-disable-next-line
-  // @ts-ignore
-  // avoid TS2310 Type 'EggAppConfig' recursively references itself as a base type.
   interface EggAppConfig {
     cnpmcore: typeof cnpmcoreConfig;
   }

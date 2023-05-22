@@ -1,6 +1,6 @@
-import assert from 'assert';
-import { join } from 'path';
-import { EggAppConfig, PowerPartial } from 'egg';
+import assert from 'node:assert';
+import { join } from 'node:path';
+import type { EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
 import { patchAjv } from '../app/port/typebox';
 import { SyncDeleteMode, SyncMode } from '../app/common/constants';
