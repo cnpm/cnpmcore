@@ -43,7 +43,7 @@ export const cnpmcoreConfig = {
    * - all: sync all npm packages
    * - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
    */
-  syncMode: SyncMode.none,
+  syncMode: SyncMode.none as SyncMode | string,
   syncDeleteMode: SyncDeleteMode.delete,
   syncPackageWorkerMaxConcurrentTasks: 10,
   triggerHookWorkerMaxConcurrentTasks: 10,
