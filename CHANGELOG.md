@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.1](https://github.com/cnpm/npmcore/compare/v3.22.0...v3.22.1) (2023-05-25)
+
+
+### Bug Fixes
+
+* refactor config type ([#476](https://github.com/cnpm/npmcore/issues/476)) ([ebc8c98](https://github.com/cnpm/npmcore/commit/ebc8c98fa48c589657cade62d4f88bb7e52b62d1))
+
 ## [3.22.0](https://github.com/cnpm/npmcore/compare/v3.21.0...v3.22.0) (2023-05-25)
 
 
