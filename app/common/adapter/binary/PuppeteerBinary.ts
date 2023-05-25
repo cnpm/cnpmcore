@@ -9,7 +9,7 @@ export class PuppeteerBinary extends AbstractBinary {
     [key: string]: BinaryItem[];
   };
 
-  async init() {
+  async initFetch() {
     this.dirItems = undefined;
   }
 

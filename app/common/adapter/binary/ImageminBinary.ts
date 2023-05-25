@@ -6,7 +6,7 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.Imagemin)
 export class ImageminBinary extends AbstractBinary {
-  async init() {
+  async initFetch() {
     // do nothing
     return;
   }

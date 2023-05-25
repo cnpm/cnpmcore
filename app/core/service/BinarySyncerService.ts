@@ -287,7 +287,7 @@ export class BinarySyncerService extends AbstractService {
     } else {
       binaryAdapter = await this.eggObjectFactory.getEggObject(AbstractBinary, binaryConfig.type);
     }
-    await binaryAdapter.init(binaryName);
+    await binaryAdapter.initFetch(binaryName);
     return binaryAdapter;
   }
 }

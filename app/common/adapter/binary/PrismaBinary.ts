@@ -7,11 +7,11 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.Prisma)
 export class PrismaBinary extends AbstractBinary {
-  private dirItems?: {
+  private dirItems: {
     [key: string]: BinaryItem[];
-  } | null;
+  } = {};
 
-  async init() {
+  async initFetch() {
     // https://github.com/cnpm/cnpmcore/issues/473#issuecomment-1562115738
     const pkgUrl = 'https://registry.npmjs.com/@prisma/engines';
     const data = await this.requestJSON(pkgUrl);
@@ -27,6 +27,7 @@ export class PrismaBinary extends AbstractBinary {
       },
     ];
     this.dirItems['/all_commits/'] = [];
+    const commitIdMap: Record<string, boolean> = {};
     // https://list-binaries.prisma-orm.workers.dev/?delimiter=/&prefix=all_commits/61023c35d2c8762f66f09bc4183d2f630b541d08/
     for (const version in data.versions) {
       const major = parseInt(version.split('.', 1)[0]);
@@ -40,6 +41,8 @@ export class PrismaBinary extends AbstractBinary {
       const matched = /\.(\w{30,})$/.exec(enginesVersion);
       if (!matched) continue;
       const commitId = matched[1];
+      if (commitIdMap[commitId]) continue;
+      commitIdMap[commitId] = true;
       this.dirItems['/all_commits/'].push({
         name: `${commitId}/`,
         date,
@@ -51,6 +54,10 @@ export class PrismaBinary extends AbstractBinary {
   }
 
   async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
+    const existsItems = this.dirItems[dir];
+    if (existsItems) {
+      return { items: existsItems, nextParams: null };
+    }
     // /foo/ => foo/
     const binaryConfig = binaries[binaryName];
     const subDir = dir.substring(1);

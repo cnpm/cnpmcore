@@ -150,7 +150,7 @@ const DOWNLOAD_PATHS = {
 @BinaryAdapter(BinaryType.Playwright)
 export class PlaywrightBinary extends AbstractBinary {
   private dirItems?: Record<string, BinaryItem[]>;
-  async init() {
+  async initFetch() {
     this.dirItems = undefined;
   }
 
