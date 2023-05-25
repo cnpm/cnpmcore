@@ -1,4 +1,4 @@
-import { cnpmcoreConfig } from '../port/config';
+import { CnpmcoreConfig } from '../port/config';
 import { Readable } from 'stream';
 import { IncomingHttpHeaders } from 'http';
 import { EggContext } from '@eggjs/tegg';
@@ -69,6 +69,6 @@ declare module 'egg' {
   // @ts-ignore
   // avoid TS2310 Type 'EggAppConfig' recursively references itself as a base type.
   interface EggAppConfig {
-    cnpmcore: typeof cnpmcoreConfig;
+    cnpmcore: CnpmcoreConfig;
   }
 }
