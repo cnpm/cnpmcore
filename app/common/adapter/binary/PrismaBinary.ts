@@ -105,10 +105,8 @@ export class PrismaBinary extends AbstractBinary {
       items.push({
         name,
         isDir: false,
-        // should use S3 download url
-        // https://prisma-builds.s3-eu-west-1.amazonaws.com/all_commits/2452cc6313d52b8b9a96999ac0e974d0aedf88db/darwin-arm64/prisma-fmt.gz/all_commits/2452cc6313d52b8b9a96999ac0e974d0aedf88db/darwin-arm64/prisma-fmt.gz
-        // see https://github.com/cnpm/cnpmcore/issues/472#issuecomment-1562452369
-        url: `https://prisma-builds.s3-eu-west-1.amazonaws.com/${fullname}`,
+        // https://binaries.prisma.sh/all_commits/2452cc6313d52b8b9a96999ac0e974d0aedf88db/darwin-arm64/prisma-fmt.gz
+        url: `https://binaries.prisma.sh/${fullname}`,
         size: o.size,
         date: o.uploaded,
       });
