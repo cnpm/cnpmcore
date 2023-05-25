@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.0](https://github.com/cnpm/npmcore/compare/v3.21.0...v3.22.0) (2023-05-25)
+
+
+### Features
+
+* sync prisma binary from R2 ([#474](https://github.com/cnpm/npmcore/issues/474)) ([ce4e868](https://github.com/cnpm/npmcore/commit/ce4e8681aeab9f3a45b467806e3c0dcc035db587))
+
 ## [3.21.0](https://github.com/cnpm/npmcore/compare/v3.20.3...v3.21.0) (2023-05-21)
 
 
