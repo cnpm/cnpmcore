@@ -69,12 +69,12 @@ describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
       assert(result);
       assert.equal(result.items.length, 20);
       assert.equal(result.items[0].name, 'libquery_engine.dylib.node.gz.sha256');
-      assert.equal(result.items[0].url, 'https://list-binaries.prisma-orm.workers.dev/all_commits/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/libquery_engine.dylib.node.gz.sha256');
+      assert.equal(result.items[0].url, 'https://prisma-builds.s3-eu-west-1.amazonaws.com/all_commits/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/libquery_engine.dylib.node.gz.sha256');
       assert.equal(result.items[0].isDir, false);
       assert.equal(result.items[0].size, 96);
       assert.equal(result.items[0].date, '2023-05-23T15:41:33.861Z');
       assert.equal(result.items[1].name, 'libquery_engine.dylib.node.gz.sig');
-      assert.equal(result.items[1].url, 'https://list-binaries.prisma-orm.workers.dev/all_commits/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/libquery_engine.dylib.node.gz.sig');
+      assert.equal(result.items[1].url, 'https://prisma-builds.s3-eu-west-1.amazonaws.com/all_commits/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/libquery_engine.dylib.node.gz.sig');
       assert.equal(result.items[1].isDir, false);
       assert.equal(result.items[1].size, 566);
       assert.equal(result.items[1].date, '2023-05-23T15:41:39.035Z');

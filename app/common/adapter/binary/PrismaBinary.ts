@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
-import binaries, { BinaryName, BinaryTaskConfig } from '../../../../config/binaries';
+import binaries, { BinaryName } from '../../../../config/binaries';
 import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 
 @SingletonProto()
@@ -63,10 +63,10 @@ export class PrismaBinary extends AbstractBinary {
     const subDir = dir.substring(1);
     const url = `${binaryConfig.distUrl}?delimiter=/&prefix=${encodeURIComponent(subDir)}`;
     const result = await this.requestJSON(url);
-    return { items: this.#parseItems(result, binaryConfig), nextParams: null };
+    return { items: this.#parseItems(result), nextParams: null };
   }
 
-  #parseItems(result: any, binaryConfig: BinaryTaskConfig): BinaryItem[] {
+  #parseItems(result: any): BinaryItem[] {
     const items: BinaryItem[] = [];
     // objects": [
     //   {
@@ -105,7 +105,10 @@ export class PrismaBinary extends AbstractBinary {
       items.push({
         name,
         isDir: false,
-        url: `${binaryConfig.distUrl}${fullname}`,
+        // should use S3 download url
+        // https://prisma-builds.s3-eu-west-1.amazonaws.com/all_commits/2452cc6313d52b8b9a96999ac0e974d0aedf88db/darwin-arm64/prisma-fmt.gz/all_commits/2452cc6313d52b8b9a96999ac0e974d0aedf88db/darwin-arm64/prisma-fmt.gz
+        // see https://github.com/cnpm/cnpmcore/issues/472#issuecomment-1562452369
+        url: `https://prisma-builds.s3-eu-west-1.amazonaws.com/${fullname}`,
         size: o.size,
         date: o.uploaded,
       });
