@@ -9,7 +9,7 @@ export class ChromeForTestingBinary extends AbstractBinary {
     [key: string]: BinaryItem[];
   };
 
-  async init() {
+  async initFetch() {
     this.dirItems = undefined;
   }
 

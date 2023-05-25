@@ -7,7 +7,7 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.Bucket)
 export class BucketBinary extends AbstractBinary {
-  async init() {
+  async initFetch() {
     // do nothing
     return;
   }

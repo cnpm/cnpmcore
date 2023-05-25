@@ -9,7 +9,7 @@ export class ApiBinary extends AbstractBinary {
   @Inject()
   private readonly config: EggAppConfig;
 
-  async init() {
+  async initFetch() {
     // do nothing
     return;
   }

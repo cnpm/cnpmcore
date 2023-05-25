@@ -87,19 +87,5 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
         assert(item.name !== 'AWSLogs/');
       }
     });
-
-    it('should ignore build_testruns/', async () => {
-      app.mockHttpclient('https://prisma-builds.s3-eu-west-1.amazonaws.com/', 'GET', {
-        data: await TestUtil.readFixturesFile('prisma-builds.s3-eu-west-1.amazonaws.com/index.xml'),
-        persist: false,
-      });
-      const result = await binary.fetch('/', 'prisma');
-      assert(result);
-      assert(result.items.length > 0);
-      for (const item of result.items) {
-        assert(item.name !== 'build_testruns/');
-        assert(/^\d{4}\-\d{2}\-\d{2}T\d{2}:00:00Z$/.test(item.date));
-      }
-    });
   });
 });

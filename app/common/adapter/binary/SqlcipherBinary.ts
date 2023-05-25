@@ -5,7 +5,7 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @SingletonProto()
 @BinaryAdapter(BinaryType.Sqlcipher)
 export class SqlcipherBinary extends AbstractBinary {
-  async init() {
+  async initFetch() {
     // do nothing
     return;
   }
