@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.2](https://github.com/cnpm/npmcore/compare/v3.22.1...v3.22.2) (2023-05-25)
+
+
+### Bug Fixes
+
+* use S3 url to download file ([#477](https://github.com/cnpm/npmcore/issues/477)) ([9bed829](https://github.com/cnpm/npmcore/commit/9bed8296285bdb2f4273f77f89ddb9ec6c31693b)), closes [/github.com/cnpm/cnpmcore/issues/472#issuecomment-1562452369](https://github.com/cnpm//github.com/cnpm/cnpmcore/issues/472/issues/issuecomment-1562452369)
+
 ## [3.22.1](https://github.com/cnpm/npmcore/compare/v3.22.0...v3.22.1) (2023-05-25)
 
 
