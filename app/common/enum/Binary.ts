@@ -10,6 +10,7 @@ export enum BinaryType {
   Nwjs = 'nwjs',
   Playwright = 'playwright',
   Puppeteer = 'puppeteer',
+  Prisma = 'prisma',
   Sqlcipher = 'sqlcipher',
   ChromeForTesting = 'chromeForTesting',
 }

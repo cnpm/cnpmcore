@@ -220,26 +220,10 @@ const binaries = {
   },
   prisma: {
     category: 'prisma',
-    description: 'Next-generation ORM for Node.js & TypeScript | PostgreSQL, MySQL, MariaDB, SQL Server, SQLite & MongoDB (Preview) https://www.prisma.io/',
-    type: BinaryType.Bucket,
+    description: 'Next-generation Node.js and TypeScript ORM https://www.prisma.io/',
+    type: BinaryType.Prisma,
     repo: 'prisma/prisma',
-    distUrl: 'https://prisma-builds.s3-eu-west-1.amazonaws.com/',
-    ignoreDirs: [
-      // https://prisma-builds.s3-eu-west-1.amazonaws.com/?delimiter=/&prefix=
-      // https://github.com/cnpm/cnpmcore/issues/209
-      // need all_commits dir on 3.12.0
-      // '/all_commits/',
-      '/build_testruns/',
-      '/bump_engineer/',
-      '/m1_builds/',
-      '/master/',
-      '/ci/',
-      '/unreverse/',
-      '/signature_test_run/',
-      '/sql-server-char-collation-fix/',
-      '/test-ldd-output-on-release/',
-      '/windows-mysql-ci/',
-    ],
+    distUrl: 'https://list-binaries.prisma-orm.workers.dev/',
   },
   // ImageminBinary
   'jpegtran-bin': {
