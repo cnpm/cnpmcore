@@ -11,7 +11,7 @@ import { PageOptions, PageResult } from '../util/EntityUtil';
 import { ScopeManagerService } from './ScopeManagerService';
 import { TaskService } from './TaskService';
 import { Task } from '../entity/Task';
-import { PresetRegistryName } from '../../common/constants';
+import { ChangesStreamMode, PresetRegistryName } from '../../common/constants';
 import { RegistryType } from '../../common/enum/Registry';
 
 export interface CreateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'userPrefix' | 'type' | 'name'> {
@@ -143,7 +143,7 @@ export class RegistryManagerService extends AbstractService {
 
     // 从配置文件默认生成
     const { changesStreamRegistryMode, changesStreamRegistry: changesStreamHost, sourceRegistry: host } = this.config.cnpmcore;
-    const type = changesStreamRegistryMode === 'json' ? RegistryType.Cnpmcore : RegistryType.Npm;
+    const type = changesStreamRegistryMode === ChangesStreamMode.json ? RegistryType.Cnpmcore : RegistryType.Npm;
     const registry = await this.createRegistry({
       name: PresetRegistryName.default,
       type,
