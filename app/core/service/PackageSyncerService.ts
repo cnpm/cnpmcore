@@ -9,7 +9,8 @@ import { EggHttpClient } from 'egg';
 import { setTimeout } from 'timers/promises';
 import { rm, stat } from 'fs/promises';
 import semver from 'semver';
-import semverRcompare from 'semver/functions/rcompare';
+import semverCompare from 'semver/functions/compare';
+import semverPrerelease from 'semver/functions/prerelease';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -842,16 +843,14 @@ export class PackageSyncerService extends AbstractService {
     }
     // 3.2 shoud add latest tag
     // 在同步sepcific version时可能会出现latest tag丢失或指向版本不正确的情况
-    // 如果没有latest tag则将仓库中已有的最高版本标记为latest,保证依赖的latest标签存在.
-    if (specificVersion) {
-      const existsVersionList: string[] = Object.keys(existsVersionMap);
-      existsVersionList.push(specificVersion);
-      const currentLatestVersion = existsVersionList.sort(semverRcompare)[0];
-      if (currentLatestVersion !== existsDistTags.latest) {
-        changedTags.push({ action: 'change', tag: 'latest', version: currentLatestVersion });
-        await this.packageManagerService.savePackageTag(pkg, 'latest', currentLatestVersion);
+    // 如果同步的版本高于latestTag,且为稳定版本则更新latestTag,保证依赖的latest标签存在.
+    if (specificVersion && semverCompare(specificVersion, existsDistTags.latest || '') === 1) {
+      if (!semverPrerelease(specificVersion)) {
+        changedTags.push({ action: 'change', tag: 'latest', version: specificVersion });
+        await this.packageManagerService.savePackageTag(pkg, 'latest', specificVersion);
       }
     }
+
     if (changedTags.length > 0) {
       logs.push(`[${isoNow()}] 🟢 Synced ${changedTags.length} tags: ${JSON.stringify(changedTags)}`);
     }
