@@ -9,7 +9,7 @@ export class CypressBinary extends AbstractBinary {
     [key: string]: BinaryItem[];
   } | null;
 
-  async init() {
+  async initFetch() {
     this.dirItems = undefined;
   }
 

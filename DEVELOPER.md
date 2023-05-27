@@ -97,6 +97,32 @@ PaaS 环境实现自己的 infra module。
 - QueueAdapter.ts
 - AuthAdapter.ts
 
+## 架构分层依赖图
+
+```txt
++--------------------------------+  +--------+  +----------+
+|            Controller          |  |        |  |          |
++----^-------------^-------------+  |        |  |          |
+     |             |                |        |  |          |
+     | inject      | inject         |        |  |          |
+     |             |                |        |  |          |
+     |  +----------+-------------+  |        |  |          |
+     |  |        Service         |  | Entity |  |          |
+     |  +-----------^------------+  |        |  |          |
+     |              |               |        |  |  Common  |
+     |              | inject        |        |  |          |
+     |              |               |        |  |          |
++----+--------------+------------+  |        |  |          |
+|          Repository            |  |        |  |          |
++-------------------^------------+  +---^----|  |          |
+                    |                   |       |          |
+                    | inject        ORM |       |          |
+                    |                   |       |          |
+        +-----------+------------+      |       |          |
+        |         Model          +<-----+       |          |
+        +------------------------+              +----------+
+```
+
 ## Controller 开发指南
 
 目前只支持 HTTP 协议的 Controller，代码在 `app/port/controller` 目录下。
@@ -104,7 +130,7 @@ PaaS 环境实现自己的 infra module。
 
 ```txt
 +----------------------+   +----------------------+   +---------------+
-| PackageController.ts |   | PackageTagController |   | XxxController |
+| PackageController    |   | PackageTagController |   | XxxController |
 +---------------+------+   +---+------------------+   +--+------------+
                 |              |                         |
                 | extends      | extends                 | extends
@@ -197,7 +223,33 @@ const { pkg } = await this.ensurePublishAccess(ctx, fullname);
 
 ## Service 开发指南
 
+Service 依赖 Repository，然后被 Controller 依赖
+
+```txt
++---------------------------+   +----------------------+   +-------------+
+| PackageVersionFileService |   | PackageSyncerService |   | XxxService  |
++---------------^-----------+   +---^------------------+   +--^----------+
+                |                   |                         |
+                | inject            | inject                  | inject
+                |                   |                         |
+            +---+-------------------+-------------------------+--+
+            |               PackageManagerService                |
+            +-----------------------^----------------------------+
+                                    |
+                                    | inject
+                                    |
+                          +---------+--------+
+                          |   XxxRepository  |
+                          +------------------+
+```
+
+### PackageManagerService 管理所有包以及版本信息
+
+它会被其他 Service 依赖
+
 ## Repository 开发指南
+
+Repository 依赖 Model，然后被 Service 和 Controller 依赖
 
 ### Repository 类方法命名规则
 

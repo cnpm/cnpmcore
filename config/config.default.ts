@@ -3,91 +3,61 @@ import { join } from 'path';
 import { EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
 import { patchAjv } from '../app/port/typebox';
-import { SyncDeleteMode, SyncMode } from '../app/common/constants';
+import { ChangesStreamMode, SyncDeleteMode, SyncMode } from '../app/common/constants';
+import { CnpmcoreConfig } from '../app/port/config';
+
+export const cnpmcoreConfig: CnpmcoreConfig = {
+  name: 'cnpm',
+  hookEnable: false,
+  hooksLimit: 20,
+  sourceRegistry: 'https://registry.npmjs.org',
+  sourceRegistryIsCNpm: false,
+  syncUpstreamFirst: false,
+  sourceRegistrySyncTimeout: 180000,
+  taskQueueHighWaterSize: 100,
+  syncMode: SyncMode.none,
+  syncDeleteMode: SyncDeleteMode.delete,
+  syncPackageWorkerMaxConcurrentTasks: 10,
+  triggerHookWorkerMaxConcurrentTasks: 10,
+  createTriggerHookWorkerMaxConcurrentTasks: 10,
+  syncPackageBlockList: [],
+  enableCheckRecentlyUpdated: true,
+  enableSyncBinary: false,
+  syncBinaryFromAPISource: '',
+  enableSyncDownloadData: false,
+  syncDownloadDataSourceRegistry: '',
+  syncDownloadDataMaxDate: '',
+  enableChangesStream: false,
+  checkChangesStreamInterval: 500,
+  changesStreamRegistry: 'https://replicate.npmjs.com',
+  changesStreamRegistryMode: ChangesStreamMode.streaming,
+  registry: 'http://localhost:7001',
+  alwaysAuth: false,
+  allowScopes: [
+    '@cnpm',
+    '@cnpmcore',
+    '@example',
+  ],
+  allowPublishNonScopePackage: false,
+  allowPublicRegistration: true,
+  admins: {
+    cnpmcore_admin: 'admin@cnpmjs.org',
+  },
+  enableWebAuthn: false,
+  enableCDN: false,
+  cdnCacheControlHeader: 'public, max-age=300',
+  cdnVaryHeader: 'Accept, Accept-Encoding',
+  enableStoreFullPackageVersionManifestsToDatabase: false,
+  enableNpmClientAndVersionCheck: true,
+  syncNotFound: false,
+  redirectNotFound: true,
+  enableUnpkg: true,
+};
 
 export default (appInfo: EggAppConfig) => {
   const config = {} as PowerPartial<EggAppConfig>;
 
-  config.cnpmcore = {
-    name: 'cnpm',
-    hooksLimit: 20,
-    sourceRegistry: 'https://registry.npmjs.org',
-    // upstream registry is base on `cnpmcore` or not
-    // if your upstream is official npm registry, please turn it off
-    sourceRegistryIsCNpm: false,
-    syncUpstreamFirst: false,
-    // 3 mins
-    sourceRegistrySyncTimeout: 180000,
-    taskQueueHighWaterSize: 100,
-    // sync mode
-    //  - none: don't sync npm package
-    //  - admin: don't sync npm package,only admin can create sync task by sync contorller.
-    //  - all: sync all npm packages
-    //  - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
-    syncMode: SyncMode.none,
-    syncDeleteMode: SyncDeleteMode.delete,
-    hookEnable: false,
-    syncPackageWorkerMaxConcurrentTasks: 10,
-    triggerHookWorkerMaxConcurrentTasks: 10,
-    createTriggerHookWorkerMaxConcurrentTasks: 10,
-    // stop syncing these packages in future
-    syncPackageBlockList: [],
-    // check recently from https://www.npmjs.com/browse/updated, if use set changesStreamRegistry to cnpmcore,
-    // maybe you should disable it
-    enableCheckRecentlyUpdated: true,
-    // mirror binary, default is false
-    enableSyncBinary: false,
-    // cnpmcore api: https://r.cnpmjs.org/-/binary
-    syncBinaryFromAPISource: '',
-    // enable sync downloads data from source registry https://github.com/cnpm/cnpmcore/issues/108
-    // all three parameters must be configured at the same time to take effect
-    enableSyncDownloadData: false,
-    syncDownloadDataSourceRegistry: '',
-    syncDownloadDataMaxDate: '', // should be YYYY-MM-DD format
-    // https://github.com/npm/registry-follower-tutorial
-    enableChangesStream: false,
-    checkChangesStreamInterval: 500,
-    changesStreamRegistry: 'https://replicate.npmjs.com',
-    // handle _changes request mode, default is 'streaming', please set it to 'json' when on cnpmcore registry
-    changesStreamRegistryMode: 'streaming',
-    registry: 'http://localhost:7001',
-    // https://docs.npmjs.com/cli/v6/using-npm/config#always-auth npm <= 6
-    // if `alwaysAuth=true`, all api request required access token
-    alwaysAuth: false,
-    // white scope list
-    allowScopes: [
-      '@cnpm',
-      '@cnpmcore',
-      '@example',
-    ],
-    // allow publish non-scope package, disable by default
-    allowPublishNonScopePackage: false,
-    // Public registration is allowed, otherwise only admins can login
-    allowPublicRegistration: true,
-    // default system admins
-    admins: {
-      // name: email
-      cnpmcore_admin: 'admin@cnpmjs.org',
-    },
-    // use webauthn for login, https://webauthn.guide/
-    // only support platform authenticators, browser support: https://webauthn.me/browser-support
-    enableWebAuthn: false,
-    // http response cache control header
-    enableCDN: false,
-    // if you are using CDN, can set it to 'max-age=0, s-maxage=120, must-revalidate'
-    // it meaning cache 10s on CDN server and no cache on client side.
-    cdnCacheControlHeader: 'max-age=0, s-maxage=120, must-revalidate',
-    // if you are using CDN, can set it to 'Accept, Accept-Encoding'
-    cdnVaryHeader: 'Accept, Accept-Encoding',
-    // store full package version manifests data to database table(package_version_manifests), default is false
-    enableStoreFullPackageVersionManifestsToDatabase: false,
-    // only support npm as client and npm >= 7.0.0 allow publish action
-    enableNpmClientAndVersionCheck: true,
-    // sync when package not found, only effect when syncMode = all/exist
-    syncNotFound: false,
-    // redirect to source registry when package not found
-    redirectNotFound: true,
-  };
+  config.cnpmcore = cnpmcoreConfig;
 
   // override config from framework / plugin
   config.dataDir = join(appInfo.root, '.cnpmcore');
@@ -100,15 +70,8 @@ export default (appInfo: EggAppConfig) => {
     user: process.env.MYSQL_USER || 'root',
     password: process.env.MYSQL_PASSWORD,
     charset: 'utf8mb4',
+    logger: {},
   };
-  if (process.env.DEBUG_LOCAL_SQL) {
-    config.orm.logger = {
-      // TODO: try to save SQL log into ctx logger or app logger
-      logQuery(sql: string, duration: number) {
-        console.log('[sql-debug] [%sms] %s', duration, sql);
-      },
-    };
-  }
 
   config.redis = {
     client: {
@@ -137,6 +100,7 @@ export default (appInfo: EggAppConfig) => {
     client: null,
     dir: join(config.dataDir, 'nfs'),
   };
+  /* c8 ignore next 17 */
   // enable oss nfs store by env values
   if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
     assert(process.env.CNPMCORE_NFS_OSS_BUCKET, 'require env CNPMCORE_NFS_OSS_BUCKET');
@@ -182,6 +146,12 @@ export default (appInfo: EggAppConfig) => {
   config.view = {
     root: join(appInfo.baseDir, 'app/port'),
     defaultViewEngine: 'nunjucks',
+  };
+
+  config.customLogger = {
+    sqlLogger: {
+      file: 'sql.log',
+    },
   };
 
   return config;

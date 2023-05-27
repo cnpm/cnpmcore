@@ -1,5 +1,103 @@
 # Changelog
 
+## [3.22.2](https://github.com/cnpm/npmcore/compare/v3.22.1...v3.22.2) (2023-05-25)
+
+
+### Bug Fixes
+
+* use S3 url to download file ([#477](https://github.com/cnpm/npmcore/issues/477)) ([9bed829](https://github.com/cnpm/npmcore/commit/9bed8296285bdb2f4273f77f89ddb9ec6c31693b)), closes [/github.com/cnpm/cnpmcore/issues/472#issuecomment-1562452369](https://github.com/cnpm//github.com/cnpm/cnpmcore/issues/472/issues/issuecomment-1562452369)
+
+## [3.22.1](https://github.com/cnpm/npmcore/compare/v3.22.0...v3.22.1) (2023-05-25)
+
+
+### Bug Fixes
+
+* refactor config type ([#476](https://github.com/cnpm/npmcore/issues/476)) ([ebc8c98](https://github.com/cnpm/npmcore/commit/ebc8c98fa48c589657cade62d4f88bb7e52b62d1))
+
+## [3.22.0](https://github.com/cnpm/npmcore/compare/v3.21.0...v3.22.0) (2023-05-25)
+
+
+### Features
+
+* sync prisma binary from R2 ([#474](https://github.com/cnpm/npmcore/issues/474)) ([ce4e868](https://github.com/cnpm/npmcore/commit/ce4e8681aeab9f3a45b467806e3c0dcc035db587))
+
+## [3.21.0](https://github.com/cnpm/npmcore/compare/v3.20.3...v3.21.0) (2023-05-21)
+
+
+### Features
+
+* easy config ([#468](https://github.com/cnpm/npmcore/issues/468)) ([9208392](https://github.com/cnpm/npmcore/commit/92083924eaa3fbcd5f3c651d0ddc056d9affba30))
+
+## [3.20.3](https://github.com/cnpm/npmcore/compare/v3.20.2...v3.20.3) (2023-05-18)
+
+
+### Bug Fixes
+
+* unpublish idempotent ([#466](https://github.com/cnpm/npmcore/issues/466)) ([2a7eacf](https://github.com/cnpm/npmcore/commit/2a7eacf27c38ca5443f8b04b0c6abfd500869807))
+
+## [3.20.2](https://github.com/cnpm/npmcore/compare/v3.20.1...v3.20.2) (2023-05-06)
+
+
+### Bug Fixes
+
+* set cache-control default value to "public, max-age=300" ([#462](https://github.com/cnpm/npmcore/issues/462)) ([adda725](https://github.com/cnpm/npmcore/commit/adda72566d270171cad18f3fabe203cae2e6e34f))
+
+## [3.20.1](https://github.com/cnpm/npmcore/compare/v3.20.0...v3.20.1) (2023-05-06)
+
+
+### Bug Fixes
+
+* use nfs download api ([#461](https://github.com/cnpm/npmcore/issues/461)) ([bb16957](https://github.com/cnpm/npmcore/commit/bb169577e2be56c2ac3e9ca509b6a3cfb2d28cdc))
+
+## [3.20.0](https://github.com/cnpm/npmcore/compare/v3.19.3...v3.20.0) (2023-05-06)
+
+
+### Features
+
+* enable sql logger ([#460](https://github.com/cnpm/npmcore/issues/460)) ([51cd044](https://github.com/cnpm/npmcore/commit/51cd0447425ca0a96f328bd05d21168206274289))
+
+## [3.19.3](https://github.com/cnpm/npmcore/compare/v3.19.2...v3.19.3) (2023-05-06)
+
+
+### Bug Fixes
+
+* ignore hidden dir files ([#459](https://github.com/cnpm/npmcore/issues/459)) ([637e8ad](https://github.com/cnpm/npmcore/commit/637e8ad9a04d36370ce6044b67c7a3ba4f89dd1b))
+
+## [3.19.2](https://github.com/cnpm/npmcore/compare/v3.19.1...v3.19.2) (2023-05-05)
+
+
+### Bug Fixes
+
+* ignore non-file on tar entry filter ([#458](https://github.com/cnpm/npmcore/issues/458)) ([7e63e7f](https://github.com/cnpm/npmcore/commit/7e63e7f0eb2d324275d72293c40d3d7ac060bf73))
+
+## [3.19.1](https://github.com/cnpm/npmcore/compare/v3.19.0...v3.19.1) (2023-05-05)
+
+
+### Bug Fixes
+
+* download tgz file to local file before untar it ([#457](https://github.com/cnpm/npmcore/issues/457)) ([90d5046](https://github.com/cnpm/npmcore/commit/90d504622a6ed911e3df3f0c4204ef82b75be714))
+
+## [3.19.0](https://github.com/cnpm/npmcore/compare/v3.18.0...v3.19.0) (2023-05-05)
+
+
+### Features
+
+* support unpkg features ([#456](https://github.com/cnpm/npmcore/issues/456)) ([8ec081a](https://github.com/cnpm/npmcore/commit/8ec081acd675e9738647f5b8791c89aa905dee5d))
+
+## [3.18.0](https://github.com/cnpm/npmcore/compare/v3.17.1...v3.18.0) (2023-05-05)
+
+
+### Features
+
+* sync chrome-for-testing binary ([#455](https://github.com/cnpm/npmcore/issues/455)) ([dd7d73e](https://github.com/cnpm/npmcore/commit/dd7d73e871659401e14d528b9e31b7caa01e66fa))
+
+## [3.17.1](https://github.com/cnpm/npmcore/compare/v3.17.0...v3.17.1) (2023-05-04)
+
+
+### Bug Fixes
+
+* calculate _hasShrinkwrap on server-side if not present ([#450](https://github.com/cnpm/npmcore/issues/450)) ([db59bd6](https://github.com/cnpm/npmcore/commit/db59bd6cd9ebf678ea16d739b1d7ef11c5349f2f))
+
 ## [3.17.0](https://github.com/cnpm/npmcore/compare/v3.16.0...v3.17.0) (2023-04-25)
 
 

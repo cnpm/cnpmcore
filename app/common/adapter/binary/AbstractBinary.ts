@@ -26,12 +26,12 @@ export abstract class AbstractBinary {
   @Inject()
   protected httpclient: EggHttpClient;
 
-  abstract init(binaryName: BinaryName): Promise<void>;
+  abstract initFetch(binaryName: BinaryName): Promise<void>;
   abstract fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined>;
 
   protected async requestXml(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {
-      timeout: 20000,
+      timeout: 30000,
       followRedirect: true,
       gzip: true,
     });
@@ -45,7 +45,7 @@ export abstract class AbstractBinary {
 
   protected async requestJSON(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {
-      timeout: 20000,
+      timeout: 30000,
       dataType: 'json',
       followRedirect: true,
       gzip: true,

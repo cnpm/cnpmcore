@@ -1,10 +1,11 @@
-import { mkdir, rm } from 'fs/promises';
-import { createWriteStream } from 'fs';
-import { setTimeout } from 'timers/promises';
-import path from 'path';
-import url from 'url';
-import { randomBytes } from 'crypto';
+import { mkdir, rm } from 'node:fs/promises';
+import { createWriteStream } from 'node:fs';
+import { setTimeout } from 'node:timers/promises';
+import path from 'node:path';
+import url from 'node:url';
+import { randomBytes } from 'node:crypto';
 import { EggContextHttpClient, HttpClientResponse } from 'egg';
+import mime from 'mime-types';
 import dayjs from './dayjs';
 
 interface DownloadToTempfileOptionalConfig {
@@ -13,11 +14,18 @@ interface DownloadToTempfileOptionalConfig {
   remoteAuthToken?: string
 }
 
-export async function createTempfile(dataDir: string, filename: string) {
+export async function createTempDir(dataDir: string, dirname?: string) {
   // will auto clean on CleanTempDir Schedule
-  const tmpdir = path.join(dataDir, 'downloads', dayjs().format('YYYY/MM/DD'));
+  let tmpdir = path.join(dataDir, 'downloads', dayjs().format('YYYY/MM/DD'));
+  if (dirname) {
+    tmpdir = path.join(tmpdir, dirname);
+  }
   await mkdir(tmpdir, { recursive: true });
+  return tmpdir;
+}
 
+export async function createTempfile(dataDir: string, filename: string) {
+  const tmpdir = await createTempDir(dataDir);
   // The filename is a URL (from dist.tarball), which needs to be truncated, (`getconf NAME_MAX /` # max filename length: 255 bytes)
   // https://github.com/cnpm/cnpmjs.org/pull/1345
   const tmpfile = path.join(tmpdir, `${randomBytes(10).toString('hex')}-${path.basename(url.parse(filename).pathname!)}`);
@@ -83,4 +91,27 @@ async function _downloadToTempfile(httpclient: EggContextHttpClient,
     await rm(tmpfile, { force: true });
     throw err;
   }
+}
+
+const DEFAULT_CONTENT_TYPE = 'application/octet-stream';
+const PLAIN_TEXT = 'text/plain';
+const WHITE_FILENAME_CONTENT_TYPES = {
+  license: PLAIN_TEXT,
+  readme: PLAIN_TEXT,
+  history: PLAIN_TEXT,
+  changelog: PLAIN_TEXT,
+  '.npmignore': PLAIN_TEXT,
+  '.jshintignore': PLAIN_TEXT,
+  '.eslintignore': PLAIN_TEXT,
+  '.jshintrc': 'application/json',
+  '.eslintrc': 'application/json',
+};
+
+export function mimeLookup(filepath: string) {
+  const filename = path.basename(filepath).toLowerCase();
+  if (filename.endsWith('.ts')) return PLAIN_TEXT;
+  if (filename.endsWith('.lock')) return PLAIN_TEXT;
+  return mime.lookup(filename) ||
+    WHITE_FILENAME_CONTENT_TYPES[filename] ||
+    DEFAULT_CONTENT_TYPE;
 }

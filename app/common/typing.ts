@@ -1,3 +1,4 @@
+import { CnpmcoreConfig } from '../port/config';
 import { Readable } from 'stream';
 import { IncomingHttpHeaders } from 'http';
 import { EggContext } from '@eggjs/tegg';
@@ -21,6 +22,10 @@ export interface AppendOptions {
   headers?: IncomingHttpHeaders,
 }
 
+export interface DownloadOptions {
+  timeout: number;
+}
+
 export interface NFSClient {
   uploadBytes(bytes: Uint8Array, options: UploadOptions): Promise<UploadResult>;
 
@@ -33,6 +38,8 @@ export interface NFSClient {
   readBytes(key: string): Promise<Uint8Array | undefined>;
 
   createDownloadStream(key: string): Promise<Readable | undefined>;
+
+  download(key: string, filepath: string, options: DownloadOptions): Promise<void>;
 
   url?(key: string): string;
 }
@@ -55,4 +62,13 @@ export interface userResult {
 export interface AuthClient {
   getAuthUrl(ctx: EggContext): Promise<AuthUrlResult>;
   ensureCurrentUser(): Promise<userResult | null>;
+}
+
+declare module 'egg' {
+  // eslint-disable-next-line
+  // @ts-ignore
+  // avoid TS2310 Type 'EggAppConfig' recursively references itself as a base type.
+  interface EggAppConfig {
+    cnpmcore: CnpmcoreConfig;
+  }
 }

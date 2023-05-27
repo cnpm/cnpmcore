@@ -84,6 +84,11 @@ export class Package extends Entity {
     return this.createDist(DIST_NAMES.ABBREVIATED_MANIFESTS, info);
   }
 
+  createPackageVersionFile(path: string, version: string, info: FileInfo) {
+    // path should starts with `/`, e.g.: '/foo/bar/index.js'
+    return this.createDist(`files${path}`, info, version);
+  }
+
   private distDir(filename: string, version?: string) {
     if (version) {
       return `/packages/${this.fullname}/${version}/${filename}`;

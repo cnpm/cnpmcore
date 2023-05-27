@@ -7,6 +7,10 @@ export enum SyncMode {
   exist = 'exist',
   all = 'all',
 }
+export enum ChangesStreamMode {
+  json = 'json',
+  streaming = 'streaming',
+}
 export enum SyncDeleteMode {
   ignore = 'ignore',
   block = 'block',

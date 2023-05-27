@@ -7,6 +7,7 @@ import {
   Context,
   EggContext,
   Inject,
+  Middleware,
 } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
@@ -14,6 +15,7 @@ import { FULLNAME_REG_STRING } from '../../common/PackageUtil';
 import { PackageManagerService } from '../../core/service/PackageManagerService';
 import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
 import { BlockPackageRule, BlockPackageType } from '../typebox';
+import { AdminAccess } from '../middleware/AdminAccess';
 
 @HTTPController()
 export class PackageBlockController extends AbstractController {
@@ -27,11 +29,8 @@ export class PackageBlockController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/blocks`,
     method: HTTPMethodEnum.PUT,
   })
+  @Middleware(AdminAccess)
   async blockPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: BlockPackageType) {
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    if (!isAdmin) {
-      throw new ForbiddenError('Not allow to block package');
-    }
     const params = { fullname, reason: data.reason };
     ctx.tValidate(BlockPackageRule, params);
     const packageEntity = await this.getPackageEntityByFullname(params.fullname);
@@ -57,11 +56,8 @@ export class PackageBlockController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/blocks`,
     method: HTTPMethodEnum.DELETE,
   })
+  @Middleware(AdminAccess)
   async unblockPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    if (!isAdmin) {
-      throw new ForbiddenError('Not allow to unblock package');
-    }
     const packageEntity = await this.getPackageEntityByFullname(fullname);
     if (packageEntity.isPrivate) {
       throw new ForbiddenError(`Can\'t unblock private package "${fullname}"`);

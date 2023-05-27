@@ -8,7 +8,14 @@ import {
 import { ForbiddenError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import semver from 'semver';
-import { calculateIntegrity, detectInstallScript, formatTarball, getFullname, getScopeAndName } from '../../common/PackageUtil';
+import {
+  calculateIntegrity,
+  detectInstallScript,
+  formatTarball,
+  getFullname,
+  getScopeAndName,
+  hasShrinkWrapInTgz,
+} from '../../common/PackageUtil';
 import { AbstractService } from '../../common/AbstractService';
 import { BugVersionStore } from '../../common/adapter/BugVersionStore';
 import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants';
@@ -39,7 +46,6 @@ import { BugVersionService } from './BugVersionService';
 import { BugVersion } from '../entity/BugVersion';
 import { RegistryManagerService } from './RegistryManagerService';
 import { Registry } from '../entity/Registry';
-
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
@@ -144,6 +150,9 @@ export class PackageManagerService extends AbstractService {
     }
     if (!cmd.packageJson.publish_time) {
       cmd.packageJson.publish_time = publishTime.getTime();
+    }
+    if (cmd.packageJson._hasShrinkwrap === undefined) {
+      cmd.packageJson._hasShrinkwrap = await hasShrinkWrapInTgz(cmd.dist.content || cmd.dist.localFile!);
     }
 
     // add _registry_name field to cmd.packageJson
@@ -360,21 +369,16 @@ export class PackageManagerService extends AbstractService {
     return await this._listPackageFullOrAbbreviatedManifests(scope, name, false, isSync);
   }
 
-  async showPackageVersionManifest(scope: string, name: string, versionOrTag: string, isSync = false) {
-    let blockReason = '';
-    let manifest;
+  async showPackageVersionByVersionOrTag(scope: string, name: string, versionOrTag: string): Promise<{
+    blockReason?: string,
+    pkg?: Package,
+    packageVersion?: PackageVersion | null,
+  }> {
     const pkg = await this.packageRepository.findPackage(scope, name);
-    const pkgId = pkg?.packageId;
-    if (!pkg) return { manifest: null, blockReason, pkgId };
-
+    if (!pkg) return {};
     const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
-      blockReason = block.reason;
-      return {
-        blockReason,
-        manifest,
-        pkgId,
-      };
+      return { blockReason: block.reason, pkg };
     }
     let version = versionOrTag;
     if (!semver.valid(versionOrTag)) {
@@ -385,8 +389,21 @@ export class PackageManagerService extends AbstractService {
       }
     }
     const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
-    if (!packageVersion) return { manifest: null, blockReason, pkgId };
-    manifest = await this.distRepository.findPackageVersionManifest(packageVersion.packageId, version);
+    return { packageVersion, pkg };
+  }
+
+  async showPackageVersionManifest(scope: string, name: string, versionOrTag: string, isSync = false) {
+    let manifest;
+    const { blockReason, packageVersion, pkg } = await this.showPackageVersionByVersionOrTag(scope, name, versionOrTag);
+    if (blockReason) {
+      return {
+        blockReason,
+        manifest,
+        pkg,
+      };
+    }
+    if (!packageVersion) return { manifest: null, blockReason, pkg };
+    manifest = await this.distRepository.findPackageVersionManifest(packageVersion.packageId, packageVersion.version);
     let bugVersion: BugVersion | undefined;
     // sync mode response no bug version fixed
     if (!isSync) {
@@ -396,8 +413,7 @@ export class PackageManagerService extends AbstractService {
       const fullname = getFullname(scope, name);
       manifest = await this.bugVersionService.fixPackageBugVersion(bugVersion, fullname, manifest);
     }
-    return { manifest, blockReason, pkgId };
-
+    return { manifest, blockReason, pkg };
   }
 
   async downloadPackageVersionTar(packageVersion: PackageVersion) {
@@ -490,6 +506,11 @@ export class PackageManagerService extends AbstractService {
 
   public async unpublishPackage(pkg: Package) {
     const pkgVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
+    // already unpublished
+    if (pkgVersions.length === 0) {
+      this.logger.info(`[packageManagerService.unpublishPackage:skip] ${pkg.packageId} already unpublished`);
+      return;
+    }
     for (const pkgVersion of pkgVersions) {
       await this._removePackageVersionAndDist(pkgVersion);
     }
@@ -512,8 +533,14 @@ export class PackageManagerService extends AbstractService {
   }
 
   public async removePackageVersion(pkg: Package, pkgVersion: PackageVersion, skipRefreshPackageManifests = false) {
+    const currentVersions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
+    // only one version, unpublish the package
+    if (currentVersions.length === 1 && currentVersions[0] === pkgVersion.version) {
+      await this.unpublishPackage(pkg);
+      return;
+    }
+    // remove version & update tags
     await this._removePackageVersionAndDist(pkgVersion);
-    // all versions removed
     const versions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
     if (versions.length > 0) {
       let updateTag: string | undefined;
@@ -534,8 +561,6 @@ export class PackageManagerService extends AbstractService {
       }
       return;
     }
-    // unpublish
-    await this.unpublishPackage(pkg);
   }
 
   public async savePackageTag(pkg: Package, tag: string, version: string, skipEvent = false) {

@@ -8,7 +8,7 @@ import {
 } from '@eggjs/tegg';
 import { EggAppConfig, EggLogger } from 'egg';
 import FSClient from 'fs-cnpm';
-import { AppendResult, NFSClient, UploadOptions, UploadResult } from '../common/typing';
+import { AppendResult, NFSClient, UploadOptions, UploadResult, DownloadOptions } from '../common/typing';
 import { Readable } from 'stream';
 
 @SingletonProto({
@@ -78,5 +78,9 @@ export class NFSClientAdapter implements EggObjectLifecycle, NFSClient {
       return await this._client.uploadBytes(bytes, options);
     }
     return await this._client.uploadBuffer(bytes, options);
+  }
+
+  async download(key: string, filePath: string, options: DownloadOptions): Promise<void> {
+    return await this._client.download(key, filePath, options);
   }
 }

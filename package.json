@@ -1,6 +1,6 @@
 {
   "name": "cnpmcore",
-  "version": "3.17.0",
+  "version": "3.22.2",
   "description": "npm core",
   "files": [
     "dist/**/*"
@@ -36,7 +36,7 @@
   },
   "scripts": {
     "contributor": "git-contributor",
-    "dev": "DEBUG_LOCAL_SQL=true egg-bin dev",
+    "dev": "egg-bin dev",
     "lint": "eslint --cache --ext .ts .",
     "lint:fix": "eslint --cache --ext .ts --fix .",
     "test": "npm run lint:fix && npm run test-local",
@@ -96,12 +96,14 @@
     "ioredis": "^5.3.1",
     "leoric": "^2.6.2",
     "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.0",
     "oss-cnpm": "^4.0.0",
     "p-map": "^4.0.0",
     "semver": "^7.3.5",
     "ssri": "^8.0.1",
+    "tar": "^6.1.13",
     "type-fest": "^2.5.3",
     "ua-parser-js": "^1.0.34",
     "validate-npm-package-name": "^3.0.0"
@@ -112,13 +114,14 @@
     "@types/mocha": "^10.0.1",
     "@types/mysql": "^2.15.21",
     "@types/semver": "^7.3.12",
+    "@types/tar": "^6.1.4",
     "coffee": "^5.4.0",
     "egg-bin": "^6.0.0",
     "egg-mock": "^5.10.4",
     "eslint": "^8.29.0",
     "eslint-config-egg": "^12.1.0",
     "git-contributor": "2",
-    "typescript": "^4.9.4"
+    "typescript": "^5.0.4"
   },
   "author": "killagu",
   "license": "MIT",

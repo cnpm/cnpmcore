@@ -195,7 +195,9 @@ export class BinarySyncerService extends AbstractService {
             const { tmpfile, headers, timing } =
               await downloadToTempfile(
                 this.httpclient, this.config.dataDir, item.sourceUrl!, { ignoreDownloadStatuses: item.ignoreDownloadStatuses });
-            logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)}, ${item.sourceUrl} => ${tmpfile}`);
+            const log = `[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)}, ${item.sourceUrl} => ${tmpfile}`;
+            logs.push(log);
+            this.logger.info('[BinarySyncerService.syncDir:downloadToTempfile] %s', log);
             localFile = tmpfile;
             const binary = await this.saveBinaryItem(item, tmpfile);
             logs.push(`[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] Synced file success, binaryId: ${binary.binaryId}`);
@@ -287,7 +289,7 @@ export class BinarySyncerService extends AbstractService {
     } else {
       binaryAdapter = await this.eggObjectFactory.getEggObject(AbstractBinary, binaryConfig.type);
     }
-    await binaryAdapter.init(binaryName);
+    await binaryAdapter.initFetch(binaryName);
     return binaryAdapter;
   }
 }

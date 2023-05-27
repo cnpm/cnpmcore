@@ -56,7 +56,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/latest`);
-      assert(res.status === 451);
+      assert.equal(res.status, 451);
       assert(!res.headers.etag);
       assert(!res.headers['cache-control']);
       assert(res.body.error);
@@ -69,16 +69,16 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
         .get(`/${pkg.name}`);
       assert(res.status === 451);
       assert(!res.headers.etag);
-      assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
+      assert.equal(res.headers['cache-control'], 'public, max-age=300');
       assert(res.body.error);
       assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule was blocked, reason: '));
       assert(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0`);
-      assert(res.status === 451);
+      assert.equal(res.status, 451);
       assert(!res.headers.etag);
-      assert(res.headers['cache-control'] === 'max-age=0, s-maxage=120, must-revalidate');
+      assert.equal(res.headers['cache-control'], 'public, max-age=300');
       assert(res.body.error);
       assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@1.0.0 was blocked, reason: '));
       assert(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
@@ -106,7 +106,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
           reason: 'only for tests',
         });
       assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] Not allow to block package');
+      assert(res.body.error === '[FORBIDDEN] Not allow to access');
 
       res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/blocks`)
@@ -114,7 +114,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
           reason: 'only for tests',
         });
       assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] Not allow to block package');
+      assert(res.body.error === '[FORBIDDEN] Not allow to access');
     });
   });
 });

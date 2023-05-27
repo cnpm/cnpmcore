@@ -1,5 +1,7 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { Orm } from '@eggjs/tegg-orm-plugin/lib/SingletonORM';
+import { EggAppConfig } from 'egg';
+import { Bone } from 'leoric';
 import { Package as PackageModel } from './model/Package';
 import { Package as PackageEntity } from '../core/entity/Package';
 import { ModelConvertor } from './util/ModelConvertor';
@@ -15,8 +17,6 @@ import type { Maintainer as MaintainerModel } from './model/Maintainer';
 import type { User as UserModel } from './model/User';
 import { User as UserEntity } from '../core/entity/User';
 import { AbstractRepository } from './AbstractRepository';
-import { EggAppConfig } from 'egg';
-import { Bone } from 'leoric';
 
 export type PackageManifestType = Pick<PackageJSONType, PackageJSONPickKey> & {
   _id: string;
@@ -177,9 +177,7 @@ export class PackageRepository extends AbstractRepository {
   @Inject()
   private readonly orm: Orm;
 
-  async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
-    const model = await this.Package.findOne({ scope, name });
-    if (!model) return null;
+  async #convertPackageModelToEntity(model: PackageModel) {
     const manifestsDistModel = model.manifestsDistId ? await this.Dist.findOne({ distId: model.manifestsDistId }) : null;
     const abbreviatedsDistModel = model.abbreviatedsDistId ? await this.Dist.findOne({ distId: model.abbreviatedsDistId }) : null;
     const data = {
@@ -188,6 +186,18 @@ export class PackageRepository extends AbstractRepository {
     };
     const entity = ModelConvertor.convertModelToEntity(model, PackageEntity, data);
     return entity;
+  }
+
+  async findPackage(scope: string, name: string): Promise<PackageEntity | null> {
+    const model = await this.Package.findOne({ scope, name });
+    if (!model) return null;
+    return await this.#convertPackageModelToEntity(model);
+  }
+
+  async findPackageByPackageId(packageId: string): Promise<PackageEntity | null> {
+    const model = await this.Package.findOne({ packageId });
+    if (!model) return null;
+    return await this.#convertPackageModelToEntity(model);
   }
 
   async findPackageId(scope: string, name: string) {
@@ -321,7 +331,7 @@ export class PackageRepository extends AbstractRepository {
   async findPackageVersion(packageId: string, version: string): Promise<PackageVersionEntity | null> {
     const pkgVersionModel = await this.PackageVersion.findOne({ packageId, version });
     if (!pkgVersionModel) return null;
-    return await this.fillPackageVersionEntitiyData(pkgVersionModel);
+    return await this.fillPackageVersionEntityData(pkgVersionModel);
   }
 
   async listPackageVersions(packageId: string): Promise<PackageVersionEntity[]> {
@@ -329,7 +339,7 @@ export class PackageRepository extends AbstractRepository {
     const models = await this.PackageVersion.find({ packageId }).order('id desc');
     const entities: PackageVersionEntity[] = [];
     for (const model of models) {
-      entities.push(await this.fillPackageVersionEntitiyData(model));
+      entities.push(await this.fillPackageVersionEntityData(model));
     }
     return entities;
   }
@@ -425,7 +435,7 @@ export class PackageRepository extends AbstractRepository {
     };
   }
 
-  private async fillPackageVersionEntitiyData(model: PackageVersionModel): Promise<PackageVersionEntity> {
+  private async fillPackageVersionEntityData(model: PackageVersionModel): Promise<PackageVersionEntity> {
     const [
       tarDistModel,
       readmeDistModel,
