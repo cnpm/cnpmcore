@@ -13,6 +13,8 @@ import { ModelConvertor } from '../../../app/repository/util/ModelConvertor';
 import { Package as PackageEntity } from '../entity/Package';
 import { ForbiddenError, UnauthorizedError } from 'egg-errors';
 import { getScopeAndName } from '../../../app/common/PackageUtil';
+import { sha512 } from '../../../app/common/UserUtil';
+import { UserRepository } from '../../../app/repository/UserRepository';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -22,6 +24,8 @@ export class TokenService extends AbstractService {
   private readonly TokenPackage: typeof TokenPackageModel;
   @Inject()
   private readonly Package: typeof PackageModel;
+  @Inject()
+  private readonly userRepository: UserRepository;
 
   public async listTokenPackages(token: Token) {
     if (isGranularToken(token)) {
@@ -65,6 +69,16 @@ export class TokenService extends AbstractService {
 
     throw new ForbiddenError(`can't access package "${fullname}"`);
 
+  }
+
+  async getUserAndToken(authorization: string) {
+    if (!authorization) return null;
+    const matchs = /^Bearer ([\w\.]+?)$/.exec(authorization);
+    if (!matchs) return null;
+    const tokenValue = matchs[1];
+    const tokenKey = sha512(tokenValue);
+    const authorizedUserAndToken = await this.userRepository.findUserAndTokenByTokenKey(tokenKey);
+    return authorizedUserAndToken;
   }
 
 }
