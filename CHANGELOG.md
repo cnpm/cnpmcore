@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.3](https://github.com/cnpm/npmcore/compare/v3.22.2...v3.22.3) (2023-05-29)
+
+
+### Bug Fixes
+
+* unpkg redirect ([#479](https://github.com/cnpm/npmcore/issues/479)) ([c395c79](https://github.com/cnpm/npmcore/commit/c395c7906b8ab355743f04f0a1edce2ff3571979))
+
 ## [3.22.2](https://github.com/cnpm/npmcore/compare/v3.22.1...v3.22.2) (2023-05-25)
 
 
