@@ -39,6 +39,35 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(res.body.error, '[NOT_FOUND] Not Found');
     });
 
+    it('should 404 when empty entry', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      mock(app.config.cnpmcore, 'enableUnpkg', true);
+      const pkg = await TestUtil.getFullPackage({
+        name: 'foo',
+        version: '1.0.0',
+        versionObject: {
+          main: '',
+          description: 'empty main',
+        },
+      });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      let res = await app.httpRequest()
+        .get('/foo/1.0.0/files')
+        .expect(302)
+        .expect('location', '/foo/1.0.0/files/index.js');
+
+      res = await app.httpRequest()
+        .get('/foo/1.0.0/files/index.js')
+        .expect(404)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert.equal(res.body.error, '[NOT_FOUND] File foo@1.0.0/index.js not found');
+    });
+
     it('should list one package version files', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkg = await TestUtil.getFullPackage({
