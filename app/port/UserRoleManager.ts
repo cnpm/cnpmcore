@@ -1,17 +1,15 @@
 import {
   AccessLevel,
-  ContextProto,
   Inject,
   EggContext,
+  ContextProto,
 } from '@eggjs/tegg';
 import { EggAppConfig, EggLogger } from 'egg';
 import { UnauthorizedError, ForbiddenError } from 'egg-errors';
-import { UserRepository } from '../repository/UserRepository';
 import { PackageRepository } from '../repository/PackageRepository';
 import { Package as PackageEntity } from '../core/entity/Package';
 import { User as UserEntity } from '../core/entity/User';
 import { Token as TokenEntity } from '../core/entity/Token';
-import { sha512 } from '../common/UserUtil';
 import { getScopeAndName } from '../common/PackageUtil';
 import { RegistryManagerService } from '../core/service/RegistryManagerService';
 import { TokenService } from '../core/service/TokenService';
@@ -24,8 +22,6 @@ export type TokenRole = 'read' | 'publish' | 'setting';
   accessLevel: AccessLevel.PRIVATE,
 })
 export class UserRoleManager {
-  @Inject()
-  private readonly userRepository: UserRepository;
   @Inject()
   private readonly packageRepository: PackageRepository;
   @Inject()
@@ -108,20 +104,16 @@ export class UserRoleManager {
         user: this.currentAuthorizedUser,
       };
     }
-
     this.handleAuthorized = true;
     const authorization = ctx.get('authorization');
     if (!authorization) return null;
-    const matchs = /^Bearer ([\w\.]+?)$/.exec(authorization);
-    if (!matchs) return null;
-    const tokenValue = matchs[1];
-    const tokenKey = sha512(tokenValue);
-    const authorizedUserAndToken = await this.userRepository.findUserAndTokenByTokenKey(tokenKey);
-    if (authorizedUserAndToken) {
-      this.currentAuthorizedToken = authorizedUserAndToken.token;
-      this.currentAuthorizedUser = authorizedUserAndToken.user;
-      ctx.userId = authorizedUserAndToken.user.userId;
+    const authorizedUserAndToken = await this.tokenService.getUserAndToken(authorization);
+    if (!authorizedUserAndToken) {
+      return null;
     }
+    this.currentAuthorizedToken = authorizedUserAndToken.token;
+    this.currentAuthorizedUser = authorizedUserAndToken.user;
+    ctx.userId = authorizedUserAndToken.user.userId;
     return authorizedUserAndToken;
   }
 

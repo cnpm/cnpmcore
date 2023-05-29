@@ -194,4 +194,5 @@ export class UserService extends AbstractService {
       await this.userRepository.removeCredential(credential.wancId);
     }
   }
+
 }
