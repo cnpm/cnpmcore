@@ -32,7 +32,7 @@ export class NFSClientAdapter implements NFSClient {
   url?(key: string): string;
 
   @LifecycleInit()
-  protected async _init() {
+  protected async init() {
     // NFS interface https://github.com/cnpm/cnpmjs.org/wiki/NFS-Guide
     if (this.config.nfs.client) {
       this._client = this.config.nfs.client;
