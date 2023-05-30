@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.23.1](https://github.com/cnpm/cnpmcore/compare/v3.23.0...v3.23.1) (2023-05-30)
+
+
+### Bug Fixes
+
+* use package version publishTime instead of file mtime ([#483](https://github.com/cnpm/cnpmcore/issues/483)) ([68f6b6b](https://github.com/cnpm/cnpmcore/commit/68f6b6b94406c446f639161fc995efe11d1aeb6d))
+
 ## [3.23.0](https://github.com/cnpm/cnpmcore/compare/v3.22.3...v3.23.0) (2023-05-29)
 
 
