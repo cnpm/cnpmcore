@@ -84,6 +84,10 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .send(pkg)
         .expect(201);
       let res = await app.httpRequest()
+        .get('/foo/1.0.0')
+        .expect(200);
+      const publishTime = new Date(res.body.publish_time).toISOString();
+      res = await app.httpRequest()
         .get('/foo/1.0.0/files/')
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
@@ -99,7 +103,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             type: 'file',
             contentType: 'application/json',
             integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-            lastModified: '2014-02-25T10:53:34.000Z',
+            lastModified: publishTime,
             size: 209,
           },
         ],
@@ -122,7 +126,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             type: 'file',
             contentType: 'application/json',
             integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-            lastModified: '2014-02-25T10:53:34.000Z',
+            lastModified: publishTime,
             size: 209,
           },
         ],
@@ -143,6 +147,10 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .set('user-agent', publisher.ua)
         .send(pkg);
       assert.equal(res.status, 201);
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/latest`)
+        .expect(200);
+      const publishTime = new Date(res.body.publish_time).toISOString();
       res = await app.httpRequest()
         .get(`/${pkg.name}/latest/files`);
       assert.equal(res.status, 302);
@@ -175,7 +183,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             type: 'file',
             contentType: 'application/json',
             integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-            lastModified: '2014-02-25T10:53:34.000Z',
+            lastModified: publishTime,
             size: 209,
           },
         ],
@@ -193,7 +201,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             type: 'file',
             contentType: 'application/json',
             integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-            lastModified: '2014-02-25T10:53:34.000Z',
+            lastModified: publishTime,
             size: 209,
           },
         ],

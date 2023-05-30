@@ -123,7 +123,7 @@ export class PackageVersionFileService extends AbstractService {
       name,
       dist,
       contentType: mimeLookup(path),
-      mtime: stat.mtime,
+      mtime: pkgVersion.publishTime,
     });
     try {
       await this.packageVersionFileRepository.createPackageVersionFile(file);
