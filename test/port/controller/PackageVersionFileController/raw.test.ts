@@ -88,7 +88,11 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .send(pkg)
         .expect(201);
       let res = await app.httpRequest()
-        .get('/foo/1.0.0/files/package.json?meta')
+        .get(`/${pkg.name}/1.0.0`)
+        .expect(200);
+      const publishTime = new Date(res.body.publish_time).toISOString();
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json?meta`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       // console.log(res.body);
@@ -99,7 +103,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         type: 'file',
         contentType: 'application/json',
         integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-        lastModified: '2014-02-25T10:53:34.000Z',
+        lastModified: publishTime,
         size: 209,
       });
 
@@ -246,6 +250,10 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .send(pkg);
       assert.equal(res.status, 201);
       res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`)
+        .expect(200);
+      const publishTime = new Date(res.body.publish_time).toISOString();
+      res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.status, 200);
       // console.log('%o', res.body);
@@ -317,7 +325,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         type: 'file',
         contentType: 'text/html',
         integrity: 'sha512-o/nCeU2MBJpIWhA8gIbf6YW49Ss3Spga5M70LJjjyRMlALQDmeh8IVMXagAe79l1Yznci/otKtNjWhVMOM38hg==',
-        lastModified: '2015-01-05T21:14:06.000Z',
+        lastModified: publishTime,
         size: 26716,
       });
 
@@ -360,7 +368,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         type: 'file',
         contentType: 'application/javascript',
         integrity: 'sha512-yysF4V48yKDI9yWuROuPd9cn9dn3nFQaAGkGMe46l6htQ6ZsoX4SAw9+FkhmmPez2VjxW/lYhWy21R1oOOu8Fw==',
-        lastModified: '2014-12-29T16:20:41.000Z',
+        lastModified: publishTime,
         size: 1917,
       });
 
