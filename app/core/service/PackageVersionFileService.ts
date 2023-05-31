@@ -70,10 +70,11 @@ export class PackageVersionFileService extends AbstractService {
         strip: 1,
         onentry: entry => {
           if (entry.type !== 'File') return;
-          if (!entry.path.startsWith('package/')) return;
           // ignore hidden dir
           if (entry.path.includes('/./')) return;
-          paths.push(entry.path.replace(/^package\//i, '/'));
+          // https://github.com/cnpm/cnpmcore/issues/452#issuecomment-1570077310
+          // strip first dir, e.g.: 'package/', 'lodash-es/'
+          paths.push('/' + entry.path.split('/').slice(1).join('/'));
         },
       });
       for (const path of paths) {
