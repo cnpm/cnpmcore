@@ -51,6 +51,10 @@ describe('test/port/controller/PackageVersionFileController/sync.test.ts', () =>
         .send(pkg)
         .expect(201);
       let res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`)
+        .expect(200);
+      const publishTime = new Date(res.body.publish_time).toISOString();
+      res = await app.httpRequest()
         .put('/foo/1.0.0/files')
         .set('authorization', adminUser.authorization)
         .expect(200)
@@ -61,7 +65,7 @@ describe('test/port/controller/PackageVersionFileController/sync.test.ts', () =>
           type: 'file',
           contentType: 'application/json',
           integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-          lastModified: '2014-02-25T10:53:34.000Z',
+          lastModified: publishTime,
           size: 209,
         },
       ]);
@@ -77,7 +81,7 @@ describe('test/port/controller/PackageVersionFileController/sync.test.ts', () =>
           type: 'file',
           contentType: 'application/json',
           integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
-          lastModified: '2014-02-25T10:53:34.000Z',
+          lastModified: publishTime,
           size: 209,
         },
       ]);
