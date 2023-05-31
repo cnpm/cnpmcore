@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.23.2](https://github.com/cnpm/cnpmcore/compare/v3.23.1...v3.23.2) (2023-05-31)
+
+
+### Bug Fixes
+
+* unpkg support non-npm publish tgz file ([#485](https://github.com/cnpm/cnpmcore/issues/485)) ([5fe883f](https://github.com/cnpm/cnpmcore/commit/5fe883f878014639d9978aadec152d54e1d9ff3e)), closes [/github.com/cnpm/cnpmcore/issues/452#issuecomment-1570077310](https://github.com/cnpm//github.com/cnpm/cnpmcore/issues/452/issues/issuecomment-1570077310)
+
 ## [3.23.1](https://github.com/cnpm/cnpmcore/compare/v3.23.0...v3.23.1) (2023-05-30)
 
 
