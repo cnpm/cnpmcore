@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.23.0](https://github.com/cnpm/cnpmcore/compare/v3.22.3...v3.23.0) (2023-05-29)
+
+
+### Features
+
+* export getUserAndToken ([#480](https://github.com/cnpm/cnpmcore/issues/480)) ([aa4fdd3](https://github.com/cnpm/cnpmcore/commit/aa4fdd3545caeca7ad80c9fee3d2e1b7862ebef3))
+
+## [3.22.3](https://github.com/cnpm/npmcore/compare/v3.22.2...v3.22.3) (2023-05-29)
+
+
+### Bug Fixes
+
+* unpkg redirect ([#479](https://github.com/cnpm/npmcore/issues/479)) ([c395c79](https://github.com/cnpm/npmcore/commit/c395c7906b8ab355743f04f0a1edce2ff3571979))
+
 ## [3.22.2](https://github.com/cnpm/npmcore/compare/v3.22.1...v3.22.2) (2023-05-25)
 
 

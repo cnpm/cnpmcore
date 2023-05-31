@@ -1,6 +1,6 @@
 {
   "name": "cnpmcore",
-  "version": "3.22.2",
+  "version": "3.23.0",
   "description": "npm core",
   "files": [
     "dist/**/*"
@@ -56,7 +56,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cnpm/npmcore.git"
+    "url": "git@github.com:cnpm/cnpmcore.git"
   },
   "egg": {
     "typescript": true
