@@ -38,8 +38,7 @@ export type SyncPackageTaskOptions = {
   // force sync history version
   forceSyncHistory?: boolean;
   registryId?: string;
-  specificVersion?: string;
-  tempFilePath?: string;
+  specificVersions?: Array<string>;
 };
 
 export interface CreateHookTaskData extends TaskBaseData {
@@ -58,8 +57,7 @@ export interface CreateSyncPackageTaskData extends TaskBaseData {
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
   forceSyncHistory?: boolean;
-  specificVersion?: string;
-  tempFilePath?: string;
+  specificVersions?: Array<string>;
 }
 
 export interface ChangesStreamTaskData extends TaskBaseData {
@@ -141,8 +139,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
         skipDependencies: options?.skipDependencies,
         syncDownloadData: options?.syncDownloadData,
         forceSyncHistory: options?.forceSyncHistory,
-        specificVersion: options?.specificVersion,
-        tempFilePath: options?.tempFilePath,
+        specificVersions: options?.specificVersions,
       },
     };
     const task = this.create(data);

@@ -7,9 +7,9 @@ import {
 import { Pointcut } from '@eggjs/tegg/aop';
 import { EggHttpClient } from 'egg';
 import { setTimeout } from 'timers/promises';
-import { rm, stat } from 'fs/promises';
+import { rm } from 'fs/promises';
 import semver from 'semver';
-import semverCompare from 'semver/functions/compare';
+import semverRcompare from 'semver/functions/rcompare';
 import semverPrerelease from 'semver/functions/prerelease';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
@@ -349,7 +349,7 @@ export class PackageSyncerService extends AbstractService {
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const [ scope, name ] = getScopeAndName(fullname);
-    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, remoteAuthToken, specificVersion, tempFilePath } = task.data as SyncPackageTaskOptions;
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, remoteAuthToken, specificVersions } = task.data as SyncPackageTaskOptions;
     let pkg = await this.packageRepository.findPackage(scope, name);
     const registry = await this.initSpecRegistry(task, pkg, scope);
     const registryHost = this.npmRegistry.registry;
@@ -363,11 +363,11 @@ export class PackageSyncerService extends AbstractService {
     const skipDependencies = taskQueueInHighWaterState ? true : !!originSkipDependencies;
     const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
-    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, specific version: %s, log: %s',
-      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, !!specificVersion, logUrl);
+    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
+      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
-    if (specificVersion) {
-      logs.push(`[${isoNow()}] 👉 syncing specific version: ${specificVersion} 👈`);
+    if (specificVersions) {
+      logs.push(`[${isoNow()}] 👉 syncing specific versions: ${specificVersions} 👈`);
     }
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
@@ -547,19 +547,7 @@ export class PackageSyncerService extends AbstractService {
     const existsVersionCount = Object.keys(existsVersionMap).length;
     const abbreviatedVersionMap = abbreviatedManifests?.versions ?? {};
     // 2. save versions
-
-    // check is specific version exists.
-    if (specificVersion && versionMap[specificVersion] === undefined) {
-      task.error = `specific package version does not exist:${specificVersion}.`;
-      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
-      logs.push(`[${isoNow()}] ${failEnd}`);
-      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:fail-invalid-specific-version] taskId: %s, targetName: %s, %s',
-        task.taskId, task.targetName, task.error);
-      return;
-    }
-
-    const versions = specificVersion ? [ versionMap[specificVersion] ] : Object.values<any>(versionMap);
+    const versions = specificVersions ? Object.values<any>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) : Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     const updateVersions: string[] = [];
     const differentMetas: any[] = [];
@@ -648,37 +636,19 @@ export class PackageSyncerService extends AbstractService {
       const delay = Date.now() - publishTime.getTime();
       logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
       let localFile: string;
-      // 下载的临时文件可能被清理
-      let isTempFileExist = false;
-      // tempFilePath仅在同步指定版本模式时作为可选参数传入
-      if (tempFilePath && specificVersion) {
-        try {
-          await stat(tempFilePath);
-          isTempFileExist = true;
-          logs.push(`[${isoNow()}] 🚧 [${syncIndex}] reuse tempFile => ${tempFilePath}`);
-        } catch (err) {
-          isTempFileExist = false;
-        }
+      try {
+        const { tmpfile, headers, timing } =
+          await downloadToTempfile(this.httpclient, this.config.dataDir, tarball, { remoteAuthToken });
+        localFile = tmpfile;
+        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
+      } catch (err: any) {
+        this.logger.error('Download tarball %s error: %s', tarball, err);
+        lastErrorMessage = `download tarball error: ${err}`;
+        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
+        await this.taskService.appendTaskLog(task, logs.join('\n'));
+        logs = [];
+        continue;
       }
-
-      if (!tempFilePath || !isTempFileExist) {
-        try {
-          const { tmpfile, headers, timing } =
-            await downloadToTempfile(this.httpclient, this.config.dataDir, tarball, { remoteAuthToken });
-          localFile = tmpfile;
-          logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
-        } catch (err: any) {
-          this.logger.error('Download tarball %s error: %s', tarball, err);
-          lastErrorMessage = `download tarball error: ${err}`;
-          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
-          await this.taskService.appendTaskLog(task, logs.join('\n'));
-          logs = [];
-          continue;
-        }
-      } else {
-        localFile = tempFilePath;
-      }
-
       if (!pkg) {
         pkg = await this.packageRepository.findPackage(scope, name);
       }
@@ -744,22 +714,6 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    if (specificVersion) {
-      // 执行多个相同依赖不同版本时可能会出现ER_DUP_ENTRY错误导致依赖发布成功但是写入数据库失败，继续之前需要保证指定版本已同步成功
-      // https://github.com/cnpm/cnpmcore/issues/329
-      const specificPkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, specificVersion);
-      if (!specificPkgVersion) {
-        // sync specific version fail.
-        logs.push(`[${isoNow()}] ❌ Specific version: ${specificVersion} sync failed, package version dose not exist, log: ${logUrl}`);
-        logs.push(`[${isoNow()}] ${failEnd}`);
-        task.error = lastErrorMessage;
-        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package version not exists',
-          task.taskId, task.targetName);
-        return;
-      }
-    }
-
     // 2.1 save differentMetas
     for (const [ existsItem, diffMeta ] of differentMetas) {
       const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsItem.version);
@@ -776,19 +730,14 @@ export class PackageSyncerService extends AbstractService {
 
     const removeVersions: string[] = [];
     // 2.3 find out remove versions
-
-    // should not remove packageVersion in specific version mode.
-    // 同时执行多个指定版本同步任务时若包括移除不存在版本的步骤会误移除刚刚同步的版本。
-    if (!specificVersion) {
-      for (const existsVersion in existsVersionMap) {
-        if (!(existsVersion in versionMap)) {
-          const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsVersion);
-          if (pkgVersion) {
-            await this.packageManagerService.removePackageVersion(pkg, pkgVersion, true);
-            logs.push(`[${isoNow()}] 🟢 Removed version ${existsVersion} success`);
-          }
-          removeVersions.push(existsVersion);
+    for (const existsVersion in existsVersionMap) {
+      if (!(existsVersion in versionMap)) {
+        const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsVersion);
+        if (pkgVersion) {
+          await this.packageManagerService.removePackageVersion(pkg, pkgVersion, true);
+          logs.push(`[${isoNow()}] 🟢 Removed version ${existsVersion} success`);
         }
+        removeVersions.push(existsVersion);
       }
     }
 
@@ -842,12 +791,19 @@ export class PackageSyncerService extends AbstractService {
       }
     }
     // 3.2 shoud add latest tag
-    // 在同步sepcific version时可能会出现latest tag丢失或指向版本不正确的情况
+    // 在同步sepcific version时如果没有同步latestTag的版本会出现latestTag丢失或指向版本不正确的情况
     // 如果同步的版本高于latestTag,且为稳定版本则更新latestTag,保证依赖的latest标签存在.
-    if (specificVersion && semverCompare(specificVersion, existsDistTags.latest || '') === 1) {
-      if (!semverPrerelease(specificVersion)) {
-        changedTags.push({ action: 'change', tag: 'latest', version: specificVersion });
-        await this.packageManagerService.savePackageTag(pkg, 'latest', specificVersion);
+    if (specificVersions) {
+      let latestStabelVersion;
+      const sortedVersionList = specificVersions.sort(semverRcompare);
+      latestStabelVersion = sortedVersionList.filter(i => !semverPrerelease(i))[0];
+      // 所有版本都不是稳定版本则指向非稳定版本保证latest存在
+      if (!latestStabelVersion) {
+        latestStabelVersion = sortedVersionList[0];
+      }
+      if (!existsDistTags.latest || semverRcompare(existsDistTags.latest, latestStabelVersion) === 1) {
+        changedTags.push({ action: 'change', tag: 'latest', version: latestStabelVersion });
+        await this.packageManagerService.savePackageTag(pkg, 'latest', latestStabelVersion);
       }
     }
 
