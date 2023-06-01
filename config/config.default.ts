@@ -68,11 +68,11 @@ export default (appInfo: EggAppConfig) => {
 
   config.orm = {
     client: 'mysql',
-    database: process.env.MYSQL_DATABASE || process.env.CNPMCORE_MYSQL_DATABASE || 'cnpmcore',
-    host: process.env.MYSQL_HOST || process.env.CNPMCORE_MYSQL_HOST || '127.0.0.1',
-    port: process.env.MYSQL_PORT || process.env.CNPMCORE_MYSQL_PORT || 3306,
-    user: process.env.MYSQL_USER || process.env.CNPMCORE_MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD || process.env.CNPMCORE_MYSQL_PASSWORD,
+    database: process.env.CNPMCORE_MYSQL_DATABASE || process.env.MYSQL_DATABASE || 'cnpmcore',
+    host: process.env.CNPMCORE_MYSQL_HOST || process.env.MYSQL_HOST || '127.0.0.1',
+    port: process.env.CNPMCORE_MYSQL_PORT || process.env.MYSQL_PORT || 3306,
+    user: process.env.CNPMCORE_MYSQL_USER || process.env.MYSQL_USER || 'root',
+    password: process.env.CNPMCORE_MYSQL_PASSWORD || process.env.MYSQL_PASSWORD,
     charset: 'utf8mb4',
     logger: {},
   };
