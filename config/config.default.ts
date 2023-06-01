@@ -5,7 +5,6 @@ import OSSClient from 'oss-cnpm';
 import { patchAjv } from '../app/port/typebox';
 import { ChangesStreamMode, SyncDeleteMode, SyncMode } from '../app/common/constants';
 import { CnpmcoreConfig } from '../app/port/config';
-import { LoggerLevel } from 'egg-logger';
 
 export const cnpmcoreConfig: CnpmcoreConfig = {
   name: 'cnpm',
@@ -133,7 +132,6 @@ export default (appInfo: EggAppConfig) => {
     agentLogName: process.env.CNPMCORE_AGENT_LOG_NAME || 'egg-agent.log',
     errorLogName: process.env.CNPMCORE_ERROR_LOG_NAME || 'common-error.log',
     outputJSON: Boolean(process.env.CNPMCORE_LOG_JSON_OUTPUT || false),
-    consoleLevel: (process.env.CNPMCORE_LOG_CONSOLE_LEVEL || 'INFO') as LoggerLevel,
   };
 
   config.logrotator = {
