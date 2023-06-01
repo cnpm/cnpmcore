@@ -36,7 +36,7 @@ export class TokenService extends AbstractService {
     return null;
   }
 
-  public async checkGranularTokenAccess(token: Token, fullname: string) {
+  public async checkTokenExpired(token: Token) {
     // skip classic token
     if (!isGranularToken(token)) {
       return true;
@@ -47,6 +47,11 @@ export class TokenService extends AbstractService {
       throw new UnauthorizedError('Token expired');
     }
 
+    token.lastUsedAt = new Date();
+    this.userRepository.saveToken(token);
+  }
+
+  public async checkGranularTokenAccess(token: Token, fullname: string) {
     // check for scope whitelist
     const [ scope, name ] = getScopeAndName(fullname);
     // check for packages whitelist

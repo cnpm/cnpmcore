@@ -153,10 +153,8 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
     });
 
     describe('should 200', () => {
-      let authorization: string;
       beforeEach(async () => {
-        const { name, email, authorization: createRes } = await TestUtil.createUser({ name: 'banana' });
-        authorization = createRes;
+        const { name, email } = await TestUtil.createUser({ name: 'banana' });
         mock(AuthAdapter.prototype, 'ensureCurrentUser', async () => {
           return {
             name,
@@ -166,8 +164,9 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
       });
 
       it('should work', async () => {
+        const start = Date.now();
         await TestUtil.createPackage({ name: '@cnpm/banana' });
-        await app.httpRequest()
+        let res = await app.httpRequest()
           .post('/-/npm/v1/tokens/gat')
           .send({
             name: 'apple',
@@ -182,9 +181,10 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         const user = await userRepository.findUserByName('banana');
         const tokens = await userRepository.listTokens(user!.userId);
 
-        const granularToken = tokens.find(token => token.type === TokenType.granular);
+        let granularToken = tokens.find(token => token.type === TokenType.granular);
 
         assert(granularToken);
+        assert(granularToken.lastUsedAt === null);
         assert.equal(granularToken.name, 'apple');
         assert.deepEqual(granularToken.allowedScopes, [ '@banana' ]);
         const expiredDate = dayjs(granularToken.expiredAt);
@@ -192,13 +192,21 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         assert(expiredDate.isBefore(dayjs().add(30, 'days')));
 
         // should ignore granularToken when use v1 query
-        const res = await app.httpRequest()
+        res = await app.httpRequest()
           .get('/-/npm/v1/tokens')
-          .set('authorization', authorization)
-          .expect(200);
+          .set('authorization', 'Bearer ' + res.body.token);
 
         assert(res.body.objects.length > 0);
         assert(res.body.objects.every((token: Token) => token.type !== TokenType.granular));
+
+        // should update lastUsedAt
+        res = await app.httpRequest()
+          .get('/-/npm/v1/tokens/gat')
+          .expect(200);
+
+        granularToken = res.body.objects.find(token => token.type === TokenType.granular);
+        assert(granularToken?.lastUsedAt);
+        assert(dayjs(granularToken?.lastUsedAt).isAfter(start));
 
       });
 
