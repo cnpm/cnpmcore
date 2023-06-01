@@ -7,8 +7,6 @@ import { ChangesStreamMode, SyncDeleteMode, SyncMode } from '../app/common/const
 import { CnpmcoreConfig } from '../app/port/config';
 import { LoggerLevel } from 'egg-logger';
 
-console.log(process.env);
-
 export const cnpmcoreConfig: CnpmcoreConfig = {
   name: 'cnpm',
   hookEnable: false,
