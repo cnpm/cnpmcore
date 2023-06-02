@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.25.0](https://github.com/cnpm/cnpmcore/compare/v3.24.0...v3.25.0) (2023-06-02)
+
+
+### Features
+
+* add _npmUser ([#491](https://github.com/cnpm/cnpmcore/issues/491)) ([f7b5d5a](https://github.com/cnpm/cnpmcore/commit/f7b5d5af12b5fcdeaab041061479cc2890101bd2))
+
 ## [3.24.0](https://github.com/cnpm/cnpmcore/compare/v3.23.2...v3.24.0) (2023-06-01)
 
 
