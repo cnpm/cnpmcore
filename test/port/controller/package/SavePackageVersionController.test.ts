@@ -20,6 +20,51 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
   });
 
   describe('[PUT /:fullname] save()', () => {
+    it('should set registry filed after publish', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const { pkg, user } = await TestUtil.createPackage({ name: 'non_scope_pkg', version: '1.0.0' });
+      const pkg2 = await TestUtil.getFullPackage({ name: pkg.name, version: '2.0.0' });
+      let res = await app.httpRequest()
+        .put(`/${pkg2.name}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .send(pkg2);
+
+      assert.equal(res.status, 201);
+
+      res = await app.httpRequest()
+        .get(`/${pkg2.name}`)
+        .expect(200);
+
+      const fullManifest = res.body;
+
+      res = await app.httpRequest()
+        .get(`/${pkg2.name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(200);
+
+      const abbreviatedManifest = res.body;
+
+      [ fullManifest, abbreviatedManifest ].forEach(manifest => {
+        Object.keys(manifest.versions).forEach(v => {
+          const version = manifest.versions[v];
+          assert(version);
+          assert.equal(version._source_registry_name, 'self');
+          assert(version.publish_time);
+        });
+      });
+
+      Object.keys(fullManifest.versions).forEach(v => {
+        const version = fullManifest.versions[v];
+        assert(version);
+        assert(version._cnpmcore_publish_time);
+        assert.deepEqual(version._npmUser, {
+          name: user.name,
+          email: user.email,
+        });
+      });
+
+    });
     it('should 200 when package in current registry', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const { pkg, user } = await TestUtil.createPackage({ name: 'non_scope_pkg', version: '1.0.0' });
