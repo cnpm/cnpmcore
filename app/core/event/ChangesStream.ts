@@ -29,7 +29,7 @@ class ChangesStreamEvent {
   protected readonly config: EggAppConfig;
 
   protected get hookEnable() {
-    return this.config.hookEnable;
+    return this.config.cnpmcore.hookEnable;
   }
 
   protected async addChange(type: string, fullname: string, data: object): Promise<Change> {
