@@ -1256,6 +1256,27 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(app.mockAgent().pendingInterceptors().length === 0);
     });
 
+    it('should append specific version to waiting task.', async () => {
+      const name = '@cnpmcore/test-sync-package-has-two-versions';
+      await packageSyncerService.createTask(name, { specificVersions: [ '1.0.0' ] });
+      await packageSyncerService.createTask(name, { specificVersions: [ '2.0.0' ] });
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      assert(task.data.specificVersions);
+      assert(task.data.specificVersions.length === 2);
+    });
+
+    it('should remove specific version, switch waiting task to sync all versions.', async () => {
+      const name = '@cnpmcore/test-sync-package-has-two-versions';
+      await packageSyncerService.createTask(name, { specificVersions: [ '1.0.0' ] });
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      assert.equal(task.targetName, name);
+      assert(task.data.specificVersions === undefined);
+    });
+
 
     // 有任务积压，不一定能够同步完
     it.skip('should sync sourceRegistryIsCNpm = true && syncUpstreamFirst = true', async () => {
