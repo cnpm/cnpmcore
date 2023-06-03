@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.25.1](https://github.com/cnpm/cnpmcore/compare/v3.25.0...v3.25.1) (2023-06-03)
+
+
+### Bug Fixes
+
+* hook enable ([#492](https://github.com/cnpm/cnpmcore/issues/492)) ([40e2f92](https://github.com/cnpm/cnpmcore/commit/40e2f92b944583d609c7eece2391ec5b563866f7))
+
 ## [3.25.0](https://github.com/cnpm/cnpmcore/compare/v3.24.0...v3.25.0) (2023-06-02)
 
 
