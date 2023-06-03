@@ -164,12 +164,7 @@ export class PackageManagerService extends AbstractService {
 
     // add _registry_name field to cmd.packageJson
     if (!cmd.packageJson._source_registry_name) {
-      let registry: Registry | null;
-      if (cmd.registryId) {
-        registry = await this.registryManagerService.findByRegistryId(cmd.registryId);
-      } else {
-        registry = await this.registryManagerService.ensureDefaultRegistry();
-      }
+      const registry = await this.getSourceRegistry(pkg);
       if (registry) {
         cmd.packageJson._source_registry_name = registry.name;
       }
@@ -669,6 +664,16 @@ export class PackageManagerService extends AbstractService {
     return bugVersion;
   }
 
+  async getSourceRegistry(pkg: Package): Promise<Registry | null> {
+    let registry: Registry | null;
+    if (pkg.registryId) {
+      registry = await this.registryManagerService.findByRegistryId(pkg.registryId);
+    } else {
+      registry = await this.registryManagerService.ensureDefaultRegistry();
+    }
+    return registry;
+  }
+
   private async _listPackageDistTags(pkg: Package) {
     const tags = await this.packageRepository.listPackageTags(pkg.packageId);
     const distTags: { [key: string]: string } = {};
@@ -800,6 +805,7 @@ export class PackageManagerService extends AbstractService {
     let blockReason = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return { etag, data: null, blockReason };
+    const registry = await this.getSourceRegistry(pkg);
 
     const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
@@ -820,6 +826,12 @@ export class PackageManagerService extends AbstractService {
       const data = (await this.distRepository.readDistBytesToJSON(dist)) as T;
       if (bugVersion) {
         await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
+      }
+      // set _source_registry_name in full manifestDist
+      if (!data._source_registry_name && isFullManifests) {
+        if (registry) {
+          data._source_registry_name = registry?.name;
+        }
       }
       const distBytes = Buffer.from(JSON.stringify(data));
       const distIntegrity = await calculateIntegrity(distBytes);
@@ -861,6 +873,7 @@ export class PackageManagerService extends AbstractService {
 
     const distTags = await this._listPackageDistTags(pkg);
     const maintainers = await this._listPackageMaintainers(pkg);
+    const registry = await this.getSourceRegistry(pkg);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const data:PackageManifestType = {
       _id: `${pkg.fullname}`,
@@ -895,6 +908,7 @@ export class PackageManagerService extends AbstractService {
       // as given in package.json, for the latest version
       repository: undefined,
       // users: an object whose keys are the npm user names of people who have starred this package
+      _source_registry_name: registry?.name,
     };
 
     let latestTagVersion = '';
