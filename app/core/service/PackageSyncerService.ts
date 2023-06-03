@@ -367,7 +367,7 @@ export class PackageSyncerService extends AbstractService {
       task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
     if (specificVersions) {
-      logs.push(`[${isoNow()}] 👉 syncing specific versions: ${specificVersions} 👈`);
+      logs.push(`[${isoNow()}] 👉 syncing specific versions: ${specificVersions.join(' | ')} 👈`);
     }
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
@@ -549,6 +549,14 @@ export class PackageSyncerService extends AbstractService {
     // 2. save versions
     const versions = specificVersions ? Object.values<any>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) : Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
+    if (specificVersions) {
+      const availableVersionList = versions.map(item => item.version);
+      let notAvailableVersionList = specificVersions.filter(i => !availableVersionList.includes(i));
+      if (notAvailableVersionList.length > 0) {
+        notAvailableVersionList = Array.from(new Set(notAvailableVersionList));
+        logs.push(`[${isoNow()}] 🚧 Some specific versions are not available: 👉 ${notAvailableVersionList.join(' | ')} 👈`);
+      }
+    }
     const updateVersions: string[] = [];
     const differentMetas: any[] = [];
     let syncIndex = 0;

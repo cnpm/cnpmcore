@@ -67,6 +67,21 @@ export class TaskRepository extends AbstractRepository {
     await model.remove();
   }
 
+  async updateSpecificVersionsOfWaitingTask(task: TaskEntity, specificVersions?: Array<string>): Promise<void> {
+    const model = await this.Task.findOne({ id: task.id });
+    if (!model || !model.data.specificVersions) return;
+    if (specificVersions) {
+      const data = model.data;
+      const combinedVersions = Array.from(new Set(data.specificVersions.concat(specificVersions)));
+      data.specificVersions = combinedVersions;
+      await model.update({ data });
+    } else {
+      const data = model.data;
+      Reflect.deleteProperty(data, 'specificVersions');
+      await model.update({ data });
+    }
+  }
+
   async findTask(taskId: string) {
     const task = await this.Task.findOne({ taskId });
     if (task) {

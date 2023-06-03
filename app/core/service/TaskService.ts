@@ -7,7 +7,7 @@ import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
-import { Task } from '../entity/Task';
+import { Task, CreateSyncPackageTaskData } from '../entity/Task';
 import { QueueAdapter } from '../../common/typing';
 
 @SingletonProto({
@@ -31,6 +31,21 @@ export class TaskService extends AbstractService {
       // 如果任务还未被触发，就不继续重复创建
       // 如果任务正在执行，可能任务状态已更新，这种情况需要继续创建
       if (existsTask.state === TaskState.Waiting) {
+        if (task.type === TaskType.SyncPackage) {
+          // 如果是specificVersions的任务则可能可以和存量任务进行合并
+          const specificVersions = (task as Task<CreateSyncPackageTaskData>).data?.specificVersions;
+          const existsTaskSpecificVersions = (existsTask as Task<CreateSyncPackageTaskData>).data?.specificVersions;
+          if (existsTaskSpecificVersions) {
+            if (specificVersions) {
+              // 存量的任务和新增任务都是同步指定版本的任务，合并两者版本至存量任务
+              await this.taskRepository.updateSpecificVersionsOfWaitingTask(existsTask, specificVersions);
+            } else {
+              // 新增任务是全量同步任务，移除存量任务中的指定版本使其成为全量同步任务
+              await this.taskRepository.updateSpecificVersionsOfWaitingTask(existsTask);
+            }
+          }
+          // 存量任务是全量同步任务，直接提高任务优先级
+        }
         // 提高任务的优先级
         if (addTaskQueueOnExists) {
           const queueLength = await this.getTaskQueueLength(task.type);
