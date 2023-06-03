@@ -13,7 +13,7 @@ interface BaseTokenData extends EntityData {
   cidrWhitelist?: string[];
   userId: string;
   isReadonly?: boolean;
-  type?: TokenType;
+  type?: TokenType | string;
   lastUsedAt?: Date;
 }
 
@@ -61,7 +61,7 @@ export class Token extends Entity {
     this.tokenKey = data.tokenKey;
     this.cidrWhitelist = data.cidrWhitelist || [];
     this.isReadonly = data.isReadonly || false;
-    this.type = data.type || TokenType.classic;
+    this.type = (data.type as TokenType) || TokenType.classic;
     this.lastUsedAt = data.lastUsedAt || null;
 
     if (isGranularToken(data)) {
