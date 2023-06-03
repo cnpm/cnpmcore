@@ -127,6 +127,7 @@ export class TokenController extends AbstractController {
           readonly: token.isReadonly,
           automation: token.isAutomation,
           created: token.createdAt,
+          lastUsedAt: token.lastUsedAt,
           updated: token.updatedAt,
         };
       });
@@ -204,12 +205,13 @@ export class TokenController extends AbstractController {
       }
     }
     const objects = granularTokens.map(token => {
-      const { name, description, expiredAt, allowedPackages, allowedScopes } = token;
+      const { name, description, expiredAt, allowedPackages, allowedScopes, lastUsedAt, type } = token;
       return {
         name,
         description,
         allowedPackages,
         allowedScopes,
+        lastUsedAt,
         expiredAt,
         token: token.tokenMark,
         key: token.tokenKey,
@@ -217,6 +219,7 @@ export class TokenController extends AbstractController {
         readonly: token.isReadonly,
         created: token.createdAt,
         updated: token.updatedAt,
+        type,
       };
     });
     return { objects, total: granularTokens.length, urls: {} };

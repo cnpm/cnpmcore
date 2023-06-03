@@ -155,6 +155,13 @@ export class PackageManagerService extends AbstractService {
       cmd.packageJson._hasShrinkwrap = await hasShrinkWrapInTgz(cmd.dist.content || cmd.dist.localFile!);
     }
 
+    // set _npmUser field to cmd.packageJson
+    cmd.packageJson._npmUser = {
+      // clean user scope prefix
+      name: publisher.displayName,
+      email: publisher.email,
+    };
+
     // add _registry_name field to cmd.packageJson
     if (!cmd.packageJson._source_registry_name) {
       let registry: Registry | null;

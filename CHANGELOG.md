@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.25.0](https://github.com/cnpm/cnpmcore/compare/v3.24.0...v3.25.0) (2023-06-02)
+
+
+### Features
+
+* add _npmUser ([#491](https://github.com/cnpm/cnpmcore/issues/491)) ([f7b5d5a](https://github.com/cnpm/cnpmcore/commit/f7b5d5af12b5fcdeaab041061479cc2890101bd2))
+
+## [3.24.0](https://github.com/cnpm/cnpmcore/compare/v3.23.2...v3.24.0) (2023-06-01)
+
+
+### Features
+
+* token last used at ([#488](https://github.com/cnpm/cnpmcore/issues/488)) ([3a8a91a](https://github.com/cnpm/cnpmcore/commit/3a8a91ae0b7370e2f38534e75db75132dcb08151))
+
 ## [3.23.2](https://github.com/cnpm/cnpmcore/compare/v3.23.1...v3.23.2) (2023-05-31)
 
 

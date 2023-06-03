@@ -54,4 +54,7 @@ export class Token extends Bone {
 
   @Attribute(DataTypes.DATE)
   expiredAt: Date;
+
+  @Attribute(DataTypes.DATE)
+  lastUsedAt: Date;
 }
