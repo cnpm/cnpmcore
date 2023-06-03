@@ -1,10 +1,8 @@
 import {
   AccessLevel,
-  EggObjectLifecycle,
+  LifecycleInit,
   Inject,
   SingletonProto,
-  EggQualifier,
-  EggType,
 } from '@eggjs/tegg';
 import { EggAppConfig, EggLogger } from 'egg';
 import FSClient from 'fs-cnpm';
@@ -15,9 +13,8 @@ import { Readable } from 'stream';
   name: 'nfsClient',
   accessLevel: AccessLevel.PUBLIC,
 })
-export class NFSClientAdapter implements EggObjectLifecycle, NFSClient {
+export class NFSClientAdapter implements NFSClient {
   @Inject()
-  @EggQualifier(EggType.APP)
   private logger: EggLogger;
 
   @Inject()
@@ -31,7 +28,8 @@ export class NFSClientAdapter implements EggObjectLifecycle, NFSClient {
 
   url?(key: string): string;
 
-  async init() {
+  @LifecycleInit()
+  protected async init() {
     // NFS interface https://github.com/cnpm/cnpmjs.org/wiki/NFS-Guide
     if (this.config.nfs.client) {
       this._client = this.config.nfs.client;
