@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.26.0](https://github.com/cnpm/cnpmcore/compare/v3.25.1...v3.26.0) (2023-06-04)
+
+
+### Features
+
+* whoami return granular token info ([#494](https://github.com/cnpm/cnpmcore/issues/494)) ([d0d2f78](https://github.com/cnpm/cnpmcore/commit/d0d2f78d7bf53bcf5b4b75409598f0f7f1625f1a))
+
 ## [3.25.1](https://github.com/cnpm/cnpmcore/compare/v3.25.0...v3.25.1) (2023-06-03)
 
 
