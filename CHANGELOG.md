@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.27.0](https://github.com/cnpm/cnpmcore/compare/v3.26.0...v3.27.0) (2023-06-04)
+
+
+### Features
+
+* source registry manifest ([#493](https://github.com/cnpm/cnpmcore/issues/493)) ([bbec9a3](https://github.com/cnpm/cnpmcore/commit/bbec9a38bd2a8291913d1e21df1a49c7eb77783a))
+
 ## [3.26.0](https://github.com/cnpm/cnpmcore/compare/v3.25.1...v3.26.0) (2023-06-04)
 
 
