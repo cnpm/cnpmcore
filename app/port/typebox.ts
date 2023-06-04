@@ -85,7 +85,7 @@ export const SyncPackageTaskRule = Type.Object({
   }),
   skipDependencies: Type.Boolean(),
   specificVersions: Type.Optional(VersionStringArray),
-  allowAutoSyncLatest: Type.Optional(Type.Boolean()),
+  forbiddenAutoSyncLatestVersion: Type.Optional(Type.Boolean()),
   syncDownloadData: Type.Boolean(),
   // force sync immediately, only allow by admin
   force: Type.Boolean(),

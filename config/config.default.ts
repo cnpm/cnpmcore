@@ -15,7 +15,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   syncUpstreamFirst: false,
   sourceRegistrySyncTimeout: 180000,
   taskQueueHighWaterSize: 100,
-  syncMode: SyncMode.none,
+  syncMode: SyncMode.admin,
   syncDeleteMode: SyncDeleteMode.delete,
   syncPackageWorkerMaxConcurrentTasks: 10,
   triggerHookWorkerMaxConcurrentTasks: 10,

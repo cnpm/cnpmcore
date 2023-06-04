@@ -349,7 +349,7 @@ export class PackageSyncerService extends AbstractService {
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const [ scope, name ] = getScopeAndName(fullname);
-    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, remoteAuthToken, specificVersions, allowAutoSyncLatest } = task.data as SyncPackageTaskOptions;
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, remoteAuthToken, specificVersions, forbiddenAutoSyncLatestVersion } = task.data as SyncPackageTaskOptions;
     let pkg = await this.packageRepository.findPackage(scope, name);
     const registry = await this.initSpecRegistry(task, pkg, scope);
     const registryHost = this.npmRegistry.registry;
@@ -803,7 +803,7 @@ export class PackageSyncerService extends AbstractService {
     // 如果同步的版本高于latestTag,且为稳定版本则更新latestTag,保证依赖的latest标签存在.
     if (specificVersions) {
       // 不允许自动同步latest版本，从已同步版本中选出latest
-      if (allowAutoSyncLatest === false) {
+      if (forbiddenAutoSyncLatestVersion === true) {
         let latestStabelVersion;
         const sortedVersionList = specificVersions.sort(semverRcompare);
         latestStabelVersion = sortedVersionList.filter(i => !semverPrerelease(i))[0];
@@ -818,7 +818,7 @@ export class PackageSyncerService extends AbstractService {
         }
       } else {
         // auto sync latest tag version.
-        if (distTags.latest) {
+        if (distTags.latest && !specificVersions.includes(distTags.latest)) {
           const tips = `Sync cause by "${fullname}" lack of latest tag: "${distTags.latest}", parent task: ${task.taskId}`;
           const latestTagVersionTask = await this.createTask(fullname, {
             authorId: task.authorId,
@@ -826,6 +826,7 @@ export class PackageSyncerService extends AbstractService {
             tips,
             specificVersions: [ distTags.latest ],
             remoteAuthToken,
+            skipDependencies,
           });
           logs.push(`[${isoNow()}] 📦 Add latest tag version "${fullname}: ${distTags.latest}" sync task: ${latestTagVersionTask.taskId}, db id: ${latestTagVersionTask.id}`);
         }

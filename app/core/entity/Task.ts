@@ -39,7 +39,7 @@ export type SyncPackageTaskOptions = {
   forceSyncHistory?: boolean;
   registryId?: string;
   specificVersions?: Array<string>;
-  allowAutoSyncLatest?: boolean;
+  forbiddenAutoSyncLatestVersion?: boolean;
 };
 
 export interface CreateHookTaskData extends TaskBaseData {
@@ -59,7 +59,7 @@ export interface CreateSyncPackageTaskData extends TaskBaseData {
   syncDownloadData?: boolean;
   forceSyncHistory?: boolean;
   specificVersions?: Array<string>;
-  allowAutoSyncLatest?: boolean;
+  forbiddenAutoSyncLatestVersion?: boolean;
 }
 
 export interface ChangesStreamTaskData extends TaskBaseData {
@@ -142,7 +142,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
         syncDownloadData: options?.syncDownloadData,
         forceSyncHistory: options?.forceSyncHistory,
         specificVersions: options?.specificVersions,
-        allowAutoSyncLatest: options?.allowAutoSyncLatest,
+        forbiddenAutoSyncLatestVersion: options?.forbiddenAutoSyncLatestVersion,
       },
     };
     const task = this.create(data);
