@@ -75,6 +75,7 @@ export class PackageSyncController extends AbstractController {
       // only admin allow to sync history version
       forceSyncHistory: !!data.forceSyncHistory && isAdmin,
       specificVersions: data.specificVersions,
+      allowAutoSyncLatest: data.allowAutoSyncLatest,
     };
     ctx.tValidate(SyncPackageTaskRule, params);
     const [ scope, name ] = getScopeAndName(params.fullname);
@@ -104,6 +105,7 @@ export class PackageSyncController extends AbstractController {
       forceSyncHistory: params.forceSyncHistory,
       registryId: registry?.registryId,
       specificVersions: params.specificVersions && JSON.parse(params.specificVersions),
+      allowAutoSyncLatest: params.allowAutoSyncLatest,
     });
     ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
       task.taskId, fullname);
