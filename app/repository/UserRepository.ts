@@ -1,6 +1,7 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { User as UserModel } from './model/User';
+import type { Package as PackageModel } from './model/Package';
 import type { Token as TokenModel } from './model/Token';
 import type { WebauthnCredential as WebauthnCredentialModel } from './model/WebauthnCredential';
 import { User as UserEntity } from '../core/entity/User';
@@ -8,7 +9,7 @@ import { Token as TokenEntity, isGranularToken } from '../core/entity/Token';
 import { WebauthnCredential as WebauthnCredentialEntity } from '../core/entity/WebauthnCredential';
 import { AbstractRepository } from './AbstractRepository';
 import { TokenPackage as TokenPackageModel } from './model/TokenPackage';
-import { getScopeAndName } from '../common/PackageUtil';
+import { getFullname, getScopeAndName } from '../common/PackageUtil';
 import { PackageRepository } from './PackageRepository';
 
 @SingletonProto({
@@ -23,6 +24,9 @@ export class UserRepository extends AbstractRepository {
 
   @Inject()
   private readonly TokenPackage: typeof TokenPackageModel;
+
+  @Inject()
+  private readonly Package: typeof PackageModel;
 
   @Inject()
   private readonly packageRepository: PackageRepository;
@@ -58,6 +62,7 @@ export class UserRepository extends AbstractRepository {
     if (!token) return null;
     const userModel = await this.User.findOne({ userId: token.userId });
     if (!userModel) return null;
+
     return {
       token,
       user: ModelConvertor.convertModelToEntity(userModel, UserEntity),
@@ -67,7 +72,19 @@ export class UserRepository extends AbstractRepository {
   async findTokenByTokenKey(tokenKey: string) {
     const model = await this.Token.findOne({ tokenKey });
     if (!model) return null;
-    return ModelConvertor.convertModelToEntity(model, TokenEntity);
+    const token = ModelConvertor.convertModelToEntity(model, TokenEntity);
+    await this._injectTokenPackages(token);
+    return token;
+  }
+
+  private async _injectTokenPackages(token: TokenEntity) {
+    if (isGranularToken(token)) {
+      const models = await this.TokenPackage.find({ tokenId: token.tokenId });
+      const packages = await this.Package.find({ packageId: models.map(m => m.packageId) });
+      if (Array.isArray(packages)) {
+        token.allowedPackages = packages.map(p => getFullname(p.scope, p.name));
+      }
+    }
   }
 
   async saveToken(token: TokenEntity): Promise<void> {
@@ -111,7 +128,11 @@ export class UserRepository extends AbstractRepository {
 
   async listTokens(userId: string): Promise<TokenEntity[]> {
     const models = await this.Token.find({ userId });
-    return models.map(model => ModelConvertor.convertModelToEntity(model, TokenEntity));
+    const tokens = models.map(model => ModelConvertor.convertModelToEntity(model, TokenEntity));
+    for (const token of tokens) {
+      await this._injectTokenPackages(token);
+    }
+    return tokens;
   }
 
   async saveCredential(credential: WebauthnCredentialEntity): Promise<void> {

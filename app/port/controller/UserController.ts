@@ -17,6 +17,7 @@ import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from './AbstractController';
 import { LoginResultCode } from '../../common/enum/User';
 import { sha512 } from '../../common/UserUtil';
+import { isGranularToken } from '../../core/entity/Token';
 
 // body: {
 //   _id: 'org.couchdb.user:dddd',
@@ -157,10 +158,34 @@ export class UserController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async whoami(@Context() ctx: EggContext) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+    await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+    const authorizedRes = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    const { token, user } = authorizedRes!;
+
+    if (isGranularToken(token)) {
+      const { name, description, expiredAt, allowedPackages, allowedScopes, lastUsedAt, type } = token;
+      return {
+        username: user.displayName,
+        name,
+        description,
+        allowedPackages,
+        allowedScopes,
+        lastUsedAt,
+        expiredAt,
+        // do not return token value
+        // token: token.token,
+        key: token.tokenKey,
+        cidr_whitelist: token.cidrWhitelist,
+        readonly: token.isReadonly,
+        created: token.createdAt,
+        updated: token.updatedAt,
+        type,
+      };
+    }
     return {
-      username: authorizedUser.displayName,
+      username: user.displayName,
     };
+
   }
 
   // https://github.com/cnpm/cnpmcore/issues/64
