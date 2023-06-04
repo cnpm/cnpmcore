@@ -784,6 +784,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect('content-type', 'application/json; charset=utf-8');
 
       const data = res.body as PackageManifestType;
+      assert(data._source_registry_name === 'self');
       assert(Object.values(data.versions).every(v => v!._source_registry_name === 'self'));
     });
 
