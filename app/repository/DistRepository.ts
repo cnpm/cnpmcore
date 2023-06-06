@@ -13,7 +13,7 @@ export class DistRepository {
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
 
-  async findPackageVersionManifest(packageId: string, version: string) {
+  async findPackageVersionManifest(packageId: string, version: string): Promise<PackageJSONType | undefined> {
     const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       const [ packageVersionJson, readme ] = await Promise.all([
@@ -27,7 +27,7 @@ export class DistRepository {
     }
   }
 
-  async findPackageAbbreviatedManifest(packageId: string, version: string) {
+  async findPackageAbbreviatedManifest(packageId: string, version: string): Promise<PackageJSONType | undefined> {
     const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       return await this.readDistBytesToJSON(packageVersion.abbreviatedDist);
