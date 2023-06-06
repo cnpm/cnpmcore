@@ -158,6 +158,19 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       res = await app.httpRequest()
+        .get(`/${pkg.name}/^1.0.0/files`);
+      assert.equal(res.status, 302);
+      assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files`);
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/%5E1.0.0/files`);
+      assert.equal(res.status, 302);
+      assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files`);
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+
+      res = await app.httpRequest()
         .get(`/${pkg.name}/latest/files?meta&foo=bar`);
       assert.equal(res.status, 302);
       assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files?meta&foo=bar`);
