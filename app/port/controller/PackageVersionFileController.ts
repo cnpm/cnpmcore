@@ -169,7 +169,8 @@ export class PackageVersionFileController extends AbstractController {
     }
     if (packageVersion.version !== versionOrTag) {
       ctx.set('cache-control', META_CACHE_CONTROL);
-      const location = ctx.url.replace(new RegExp(`^/${fullname}/(${versionOrTag}|${encodeURIComponent(versionOrTag)})/files`), `/${fullname}/${packageVersion.version}/files`);
+      let location = ctx.url.replace(`/${fullname}/${versionOrTag}/files`, `/${fullname}/${packageVersion.version}/files`);
+      location = location.replace(`/${fullname}/${encodeURIComponent(versionOrTag)}/files`, `/${fullname}/${packageVersion.version}/files`);
       throw this.createControllerRedirectError(location);
     }
     return packageVersion;

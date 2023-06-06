@@ -178,7 +178,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
     });
 
-    it.only('should latest tag with not scoped package', async () => {
+    it('should latest tag with not scoped package', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkg = await TestUtil.getFullPackage({
         name: 'foo-tag-latest',
