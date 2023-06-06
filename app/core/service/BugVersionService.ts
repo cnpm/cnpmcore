@@ -2,10 +2,12 @@ import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { EggLogger } from 'egg';
 import pMap from 'p-map';
 import { BugVersion } from '../entity/BugVersion';
-import { PackageRepository } from '../../repository/PackageRepository';
+import { PackageJSONType, PackageRepository } from '../../repository/PackageRepository';
 import { DistRepository } from '../../repository/DistRepository';
 import { getScopeAndName } from '../../common/PackageUtil';
 import { CacheService } from './CacheService';
+import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants';
+import { BugVersionStore } from '../../common/adapter/BugVersionStore';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -22,6 +24,27 @@ export class BugVersionService {
 
   @Inject()
   private readonly cacheService: CacheService;
+
+  @Inject()
+  private readonly bugVersionStore: BugVersionStore;
+
+  async getBugVersion(): Promise<BugVersion | undefined> {
+    // TODO performance problem, cache bugVersion and update with schedule
+    const pkg = await this.packageRepository.findPackage('', BUG_VERSIONS);
+    if (!pkg) return;
+    /* c8 ignore next 10 */
+    const tag = await this.packageRepository.findPackageTag(pkg!.packageId, LATEST_TAG);
+    if (!tag) return;
+    let bugVersion = this.bugVersionStore.getBugVersion(tag!.version);
+    if (!bugVersion) {
+      const packageVersionJson = (await this.distRepository.findPackageVersionManifest(pkg!.packageId, tag!.version)) as PackageJSONType;
+      if (!packageVersionJson) return;
+      const data = packageVersionJson.config?.['bug-versions'];
+      bugVersion = new BugVersion(data);
+      this.bugVersionStore.setBugVersion(bugVersion, tag!.version);
+    }
+    return bugVersion;
+  }
 
   async cleanBugVersionPackageCaches(bugVersion: BugVersion) {
     const fullnames = bugVersion.listAllPackagesHasBugs();

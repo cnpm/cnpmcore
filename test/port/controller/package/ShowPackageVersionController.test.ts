@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from 'test/TestUtil';
 import { BugVersion } from 'app/core/entity/BugVersion';
-import { PackageManagerService } from 'app/core/service/PackageManagerService';
+import { BugVersionService } from '../../../../app/core/service/BugVersionService';
 
 describe('test/port/controller/package/ShowPackageVersionController.test.ts', () => {
   let publisher;
@@ -74,7 +74,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
           },
         },
       });
-      mock(PackageManagerService.prototype, 'getBugVersion', async () => {
+      mock(BugVersionService.prototype, 'getBugVersion', async () => {
         return bugVersion;
       });
       await app.httpRequest()
