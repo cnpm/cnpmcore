@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.29.0](https://github.com/cnpm/cnpmcore/compare/v3.28.0...v3.29.0) (2023-06-06)
+
+
+### Features
+
+* infer userPrefix when update maintainers  ([#496](https://github.com/cnpm/cnpmcore/issues/496)) ([e02ea2a](https://github.com/cnpm/cnpmcore/commit/e02ea2a3e54b393ffa46cc10e5fc6e29f452e5eb))
+
 ## [3.28.0](https://github.com/cnpm/cnpmcore/compare/v3.27.0...v3.28.0) (2023-06-06)
 
 
