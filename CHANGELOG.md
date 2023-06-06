@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.28.0](https://github.com/cnpm/cnpmcore/compare/v3.27.0...v3.28.0) (2023-06-06)
+
+
+### Features
+
+* impl fast semver search ([#495](https://github.com/cnpm/cnpmcore/issues/495)) ([a7fd3a8](https://github.com/cnpm/cnpmcore/commit/a7fd3a8c8ac8692667a3010e3e66f9c139ead0d9))
+
 ## [3.27.0](https://github.com/cnpm/cnpmcore/compare/v3.26.0...v3.27.0) (2023-06-04)
 
 
