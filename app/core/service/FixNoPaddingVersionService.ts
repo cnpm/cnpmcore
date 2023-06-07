@@ -28,8 +28,13 @@ export class FixNoPaddingVersionService {
       await pMap(packageVersions, async packageVersion => {
         // ignore invalid version, e.g.: '1000000000000000000.0.0' on https://registry.npmjs.com/latentflip-test
         if (!semver.valid(packageVersion.version)) return;
-        const paddingSemver = new PaddingSemVer(packageVersion.version);
-        await this.packageVersionRepository.fixPaddingVersion(packageVersion.packageVersionId, paddingSemver);
+        try {
+          const paddingSemver = new PaddingSemVer(packageVersion.version);
+          await this.packageVersionRepository.fixPaddingVersion(packageVersion.packageVersionId, paddingSemver);
+        } catch (err) {
+          this.logger.error('[FixNoPaddingVersionService:error] package_version_id: %s, version: %j, error: %s', packageVersion.packageVersionId, packageVersion.version, err);
+          throw err;
+        }
       }, { concurrency: 30 });
     }
   }
