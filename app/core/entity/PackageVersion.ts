@@ -12,6 +12,8 @@ interface PackageVersionData extends EntityData {
   tarDist: Dist;
   readmeDist: Dist;
   publishTime: Date;
+  paddingVersion: string;
+  isPreRelease: boolean;
 }
 
 export class PackageVersion extends Entity {
@@ -36,9 +38,14 @@ export class PackageVersion extends Entity {
     this.tarDist = data.tarDist;
     this.readmeDist = data.readmeDist;
     this.publishTime = data.publishTime;
-    const paddingSemVer = new PaddingSemVer(this.version);
-    this.paddingVersion = paddingSemVer.paddingVersion;
-    this.isPreRelease = paddingSemVer.isPreRelease;
+    if (!data.paddingVersion) {
+      this.paddingVersion = data.paddingVersion;
+      this.isPreRelease = data.isPreRelease;
+    } else {
+      const paddingSemVer = new PaddingSemVer(this.version);
+      this.paddingVersion = paddingSemVer.paddingVersion;
+      this.isPreRelease = paddingSemVer.isPreRelease;
+    }
   }
 
   static create(data: EasyData<PackageVersionData, 'packageVersionId'>): PackageVersion {

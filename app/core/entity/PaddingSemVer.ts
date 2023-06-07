@@ -1,4 +1,4 @@
-import { SemVer } from 'semver';
+import { SemVer, valid } from 'semver';
 
 export class PaddingSemVer {
   private readonly semver: SemVer;
@@ -7,6 +7,12 @@ export class PaddingSemVer {
   readonly isPreRelease: boolean;
 
   constructor(semver: string | SemVer) {
+    // ignore invalid version, e.g.: '1000000000000000000.0.0' on https://registry.npmjs.com/latentflip-test
+    if (!valid(semver)) {
+      this.isPreRelease = true;
+      this._paddingVersion = PaddingSemVer.anyVersion();
+      return;
+    }
     this.semver = new SemVer(semver);
     if ((this.semver as any).includePrerelease) {
       this.isPreRelease = true;
