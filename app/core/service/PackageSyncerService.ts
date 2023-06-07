@@ -10,6 +10,7 @@ import {
 } from 'egg';
 import { setTimeout } from 'timers/promises';
 import { rm } from 'fs/promises';
+import { isEqual } from 'lodash';
 import semver from 'semver';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
@@ -812,6 +813,15 @@ export class PackageSyncerService extends AbstractService {
     }
     if (removedMaintainers.length > 0) {
       logs.push(`[${isoNow()}] 🟢 Removed ${removedMaintainers.length} maintainers: ${JSON.stringify(removedMaintainers)}`);
+    }
+
+    // 4.2 update package maintainers in dist
+    // The event is initialized in the repository and distributed after uncork.
+    // maintainers' information is updated in bulk to ensure consistency.
+    if (!isEqual(maintainers, existsMaintainers)) {
+      logs.push(`[${isoNow()}] 🚧 Syncing maintainers to package manifest, from: ${JSON.stringify(maintainers)} to: ${JSON.stringify(existsMaintainers)}`);
+      await this.packageManagerService.refreshPackageMaintainersToDists(pkg);
+      logs.push(`[${isoNow()}] 🟢 Syncing maintainers to package manifest done`);
     }
 
     // 5. add deps sync task
