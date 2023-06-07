@@ -1,15 +1,15 @@
 import assert from 'assert';
 import { Readable } from 'node:stream';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
-import { TaskService } from 'app/core/service/TaskService';
-import { ChangesStreamTask, Task } from 'app/core/entity/Task';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
-import { RegistryType } from 'app/common/enum/Registry';
-import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
-import { Registry } from 'app/core/entity/Registry';
-import { RedisQueueAdapter } from 'app/infra/QueueAdapter';
+import { TestUtil } from '../../../test/TestUtil';
+import { ChangesStreamService } from '../../../app/core/service/ChangesStreamService';
+import { TaskService } from '../../../app/core/service/TaskService';
+import { ChangesStreamTask, Task } from '../../../app/core/entity/Task';
+import { RegistryManagerService } from '../../../app/core/service/RegistryManagerService';
+import { RegistryType } from '../../../app/common/enum/Registry';
+import { ScopeManagerService } from '../../../app/core/service/ScopeManagerService';
+import { Registry } from '../../../app/core/entity/Registry';
+import { RedisQueueAdapter } from '../../../app/infra/QueueAdapter';
 
 describe('test/core/service/ChangesStreamService.test.ts', () => {
   let changesStreamService: ChangesStreamService;

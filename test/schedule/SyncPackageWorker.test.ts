@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
-import { TestUtil } from 'test/TestUtil';
+import { PackageSyncerService } from '../../app/core/service/PackageSyncerService';
+import { TestUtil } from '../../test/TestUtil';
 
 const SyncPackageWorkerPath = require.resolve('../../app/port/schedule/SyncPackageWorker');
 

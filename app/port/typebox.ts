@@ -135,7 +135,9 @@ export function patchAjv(ajv: any) {
     type: 'string',
     validate: (spec: string) => {
       try {
-        return !!npa(spec);
+        // do not support alias
+        // exp: https://unpkg.com/good@npm:cnpmcore@3.17.1/dist/app.js
+        return [ 'tag', 'version', 'range' ].includes(npa(spec).type);
       } catch (e) {
         return false;
       }

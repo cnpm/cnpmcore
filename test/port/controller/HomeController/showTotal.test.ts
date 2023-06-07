@@ -1,15 +1,15 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { PackageVersionDownload } from 'app/repository/model/PackageVersionDownload';
-import dayjs from 'app/common/dayjs';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
-import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
-import { TaskRepository } from 'app/repository/TaskRepository';
-import { TaskType } from 'app/common/enum/Task';
-import { ChangesStreamTask } from 'app/core/entity/Task';
-import { RegistryType } from 'app/common/enum/Registry';
-import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
+import { TestUtil } from '../../../../test/TestUtil';
+import { PackageVersionDownload } from '../../../../app/repository/model/PackageVersionDownload';
+import dayjs from '../../../../app/common/dayjs';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
+import { ChangesStreamService } from '../../../../app/core/service/ChangesStreamService';
+import { TaskRepository } from '../../../../app/repository/TaskRepository';
+import { TaskType } from '../../../../app/common/enum/Task';
+import { ChangesStreamTask } from '../../../../app/core/entity/Task';
+import { RegistryType } from '../../../../app/common/enum/Registry';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService';
 
 const SavePackageVersionDownloadCounterPath = require.resolve('../../../../app/port/schedule/SavePackageVersionDownloadCounter');
 const UpdateTotalDataPath = require.resolve('../../../../app/port/schedule/UpdateTotalData');

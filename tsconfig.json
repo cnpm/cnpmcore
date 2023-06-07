@@ -6,7 +6,6 @@
     "moduleResolution": "Node",
     "declaration": false,
     "resolveJsonModule": true,
-    "baseUrl": "./",
     "useUnknownInCatchVariables": false
   },
   "exclude": [

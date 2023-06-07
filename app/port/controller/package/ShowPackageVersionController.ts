@@ -12,7 +12,7 @@ import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
-import { Spec } from 'app/port/typebox';
+import { Spec } from '../../../port/typebox';
 
 @HTTPController()
 export class ShowPackageVersionController extends AbstractController {

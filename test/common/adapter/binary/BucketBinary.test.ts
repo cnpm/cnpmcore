@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { BucketBinary } from 'app/common/adapter/binary/BucketBinary';
-import { TestUtil } from 'test/TestUtil';
+import { BucketBinary } from '../../../../app/common/adapter/binary/BucketBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
   let binary: BucketBinary;

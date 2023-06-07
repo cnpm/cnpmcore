@@ -1,9 +1,9 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { TaskRepository } from 'app/repository/TaskRepository';
-import { TaskState } from 'app/common/enum/Task';
-import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
+import { TestUtil } from '../../../../test/TestUtil';
+import { TaskRepository } from '../../../../app/repository/TaskRepository';
+import { TaskState } from '../../../../app/common/enum/Task';
+import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter';
 
 describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', () => {
   let publisher;

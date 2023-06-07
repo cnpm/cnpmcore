@@ -1,7 +1,7 @@
 import { mkdir } from 'fs/promises';
 import path from 'path';
 import { app } from 'egg-mock/bootstrap';
-import dayjs from 'app/common/dayjs';
+import dayjs from '../../app/common/dayjs';
 
 const CleanTempDirPath = require.resolve('../../app/port/schedule/CleanTempDir');
 

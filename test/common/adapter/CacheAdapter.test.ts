@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { setTimeout } from 'timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
-import { CacheAdapter } from 'app/common/adapter/CacheAdapter';
+import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter';
 
 describe('test/common/adapter/CacheAdapter.test.ts', () => {
   let cache: CacheAdapter;

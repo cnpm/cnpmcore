@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { ApiBinary } from 'app/common/adapter/binary/ApiBinary';
-import { TestUtil } from 'test/TestUtil';
+import { ApiBinary } from '../../../../app/common/adapter/binary/ApiBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
   let binary: ApiBinary;

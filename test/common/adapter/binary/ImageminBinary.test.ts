@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { ImageminBinary } from 'app/common/adapter/binary/ImageminBinary';
-import { TestUtil } from 'test/TestUtil';
+import { ImageminBinary } from '../../../../app/common/adapter/binary/ImageminBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
   let binary: ImageminBinary;

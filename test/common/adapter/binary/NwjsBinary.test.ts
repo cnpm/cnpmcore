@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { NwjsBinary } from 'app/common/adapter/binary/NwjsBinary';
-import { TestUtil } from 'test/TestUtil';
+import { NwjsBinary } from '../../../../app/common/adapter/binary/NwjsBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
   let binary: NwjsBinary;

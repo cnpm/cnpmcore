@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { app } from 'egg-mock/bootstrap';
-import { PrismaBinary } from 'app/common/adapter/binary/PrismaBinary';
-import { TestUtil } from 'test/TestUtil';
+import { PrismaBinary } from '../../../../app/common/adapter/binary/PrismaBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
   let binary: PrismaBinary;

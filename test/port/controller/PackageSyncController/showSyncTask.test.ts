@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
+import { TestUtil } from '../../../../test/TestUtil';
 import { TaskRepository } from '../../../../app/repository/TaskRepository';
 import { TaskState } from '../../../../app/common/enum/Task';
 

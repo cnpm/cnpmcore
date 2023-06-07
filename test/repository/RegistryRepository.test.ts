@@ -1,8 +1,8 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { RegistryRepository } from 'app/repository/RegistryRepository';
-import { Registry } from 'app/core/entity/Registry';
-import { RegistryType } from 'app/common/enum/Registry';
+import { RegistryRepository } from '../../app/repository/RegistryRepository';
+import { Registry } from '../../app/core/entity/Registry';
+import { RegistryType } from '../../app/common/enum/Registry';
 
 describe('test/repository/RegistryRepository.test.ts', () => {
   let registryRepository: RegistryRepository;

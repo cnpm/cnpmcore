@@ -1,8 +1,8 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
 import { setTimeout } from 'timers/promises';
-import { TaskRepository } from 'app/repository/TaskRepository';
-import { Task as TaskModel } from 'app/repository/model/Task';
+import { TaskRepository } from '../../app/repository/TaskRepository';
+import { Task as TaskModel } from '../../app/repository/model/Task';
 import { ChangesStreamTaskData, Task, TaskData } from '../../app/core/entity/Task';
 import { TaskState, TaskType } from '../../app/common/enum/Task';
 import os from 'os';

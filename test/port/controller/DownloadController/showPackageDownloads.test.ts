@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import dayjs from 'app/common/dayjs';
-import { TestUtil } from 'test/TestUtil';
+import dayjs from '../../../../app/common/dayjs';
+import { TestUtil } from '../../../../test/TestUtil';
 
 const SavePackageVersionDownloadCounterPath = require.resolve('../../../../app/port/schedule/SavePackageVersionDownloadCounter');
 

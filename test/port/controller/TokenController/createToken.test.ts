@@ -1,10 +1,10 @@
-import { Token, TokenType } from 'app/core/entity/Token';
-import { AuthAdapter } from 'app/infra/AuthAdapter';
-import { UserRepository } from 'app/repository/UserRepository';
+import { Token, TokenType } from '../../../../app/core/entity/Token';
+import { AuthAdapter } from '../../../../app/infra/AuthAdapter';
+import { UserRepository } from '../../../../app/repository/UserRepository';
 import assert from 'assert';
 import dayjs from 'dayjs';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/port/controller/TokenController/createToken.test.ts', () => {
   describe('[POST /-/npm/v1/tokens] createToken()', () => {

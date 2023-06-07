@@ -1,11 +1,11 @@
 import { Readable, Duplex } from 'node:stream';
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
-import { NpmChangesStream } from 'app/common/adapter/changesStream/NpmChangesStream';
-import { RegistryType } from 'app/common/enum/Registry';
-import { Registry } from 'app/core/entity/Registry';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
+import { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream';
+import { NpmChangesStream } from '../../../../app/common/adapter/changesStream/NpmChangesStream';
+import { RegistryType } from '../../../../app/common/enum/Registry';
+import { Registry } from '../../../../app/core/entity/Registry';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
 
 describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
   let npmChangesStream: NpmChangesStream;

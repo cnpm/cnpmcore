@@ -1,9 +1,9 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { BUG_VERSIONS } from 'app/common/constants';
-import { CacheService } from 'app/core/service/CacheService';
-import { BugVersionFixHandler } from 'app/core/event/BugVersionFixHandler';
-import { BugVersion } from 'app/core/entity/BugVersion';
+import { BUG_VERSIONS } from '../../../app/common/constants';
+import { CacheService } from '../../../app/core/service/CacheService';
+import { BugVersionFixHandler } from '../../../app/core/event/BugVersionFixHandler';
+import { BugVersion } from '../../../app/core/entity/BugVersion';
 import { BugVersionService } from '../../../app/core/service/BugVersionService';
 
 describe('test/core/event/BugVersionFixHandler.test.ts', () => {

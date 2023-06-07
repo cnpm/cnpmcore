@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { ChangeRepository } from 'app/repository/ChangeRepository';
-import { Change as ChangeModel } from 'app/repository/model/Change';
+import { ChangeRepository } from '../../app/repository/ChangeRepository';
+import { Change as ChangeModel } from '../../app/repository/model/Change';
 
 describe('test/repository/ChangeRepository.test.ts', () => {
   let changeRepository: ChangeRepository;

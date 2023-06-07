@@ -1,10 +1,10 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { HookManageService } from 'app/core/service/HookManageService';
-import { Hook } from 'app/core/entity/Hook';
-import { UserRepository } from 'app/repository/UserRepository';
-import { HookType } from 'app/common/enum/Hook';
+import { TestUtil } from '../../../../test/TestUtil';
+import { HookManageService } from '../../../../app/core/service/HookManageService';
+import { Hook } from '../../../../app/core/entity/Hook';
+import { UserRepository } from '../../../../app/repository/UserRepository';
+import { HookType } from '../../../../app/common/enum/Hook';
 
 describe('test/port/controller/hook/HookController.test.ts', () => {
   let hookManageService: HookManageService;

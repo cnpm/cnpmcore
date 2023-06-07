@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
+import { NPMRegistry } from '../../../app/common/adapter/NPMRegistry';
 
 describe('test/common/adapter/CacheAdapter.test.ts', () => {
   let npmRegistry: NPMRegistry;
