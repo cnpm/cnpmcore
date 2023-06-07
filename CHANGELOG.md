@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.29.3](https://github.com/cnpm/cnpmcore/compare/v3.29.2...v3.29.3) (2023-06-07)
+
+
+### Bug Fixes
+
+* auto fix invalid version to any version ([#499](https://github.com/cnpm/cnpmcore/issues/499)) ([0cf6470](https://github.com/cnpm/cnpmcore/commit/0cf6470993bba77e978be08f234f841efc1c47e9))
+
 ## [3.29.2](https://github.com/cnpm/cnpmcore/compare/v3.29.1...v3.29.2) (2023-06-07)
 
 
