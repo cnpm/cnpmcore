@@ -819,7 +819,9 @@ export class PackageSyncerService extends AbstractService {
     // The event is initialized in the repository and distributed after uncork.
     // maintainers' information is updated in bulk to ensure consistency.
     if (!isEqual(maintainers, existsMaintainers)) {
+      logs.push(`[${isoNow()}] 🚧 Syncing maintainers to package manifest, from: ${JSON.stringify(maintainers)} to: ${JSON.stringify(existsMaintainers)}`);
       await this.packageManagerService.refreshPackageMaintainersToDists(pkg);
+      logs.push(`[${isoNow()}] 🟢 Syncing maintainers to package manifest done`);
     }
 
     // 5. add deps sync task
