@@ -72,7 +72,7 @@ export class PackageVersionFileController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async sync(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() versionSpec: string) {
-    ctx.tValidate(Spec, versionSpec);
+    ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     this.#requireUnpkgEnable();
     const [ scope, name ] = getScopeAndName(fullname);
     const { packageVersion } = await this.packageManagerService.showPackageVersionByVersionOrTag(
@@ -96,7 +96,7 @@ export class PackageVersionFileController extends AbstractController {
       @HTTPParam() versionSpec: string,
       @HTTPQuery() meta: string) {
     this.#requireUnpkgEnable();
-    ctx.tValidate(Spec, versionSpec);
+    ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     ctx.vary(this.config.cnpmcore.cdnVaryHeader);
     const [ scope, name ] = getScopeAndName(fullname);
     const packageVersion = await this.#getPackageVersion(ctx, fullname, scope, name, versionSpec);
@@ -129,7 +129,7 @@ export class PackageVersionFileController extends AbstractController {
       @HTTPParam() path: string,
       @HTTPQuery() meta: string) {
     this.#requireUnpkgEnable();
-    ctx.tValidate(Spec, versionSpec);
+    ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     ctx.vary(this.config.cnpmcore.cdnVaryHeader);
     const [ scope, name ] = getScopeAndName(fullname);
     path = `/${path}`;

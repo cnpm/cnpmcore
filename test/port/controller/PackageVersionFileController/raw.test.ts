@@ -140,7 +140,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
     it('should 422 when invalid spec', async () => {
       mock(app.config.cnpmcore, 'enableUnpkg', true);
       const res = await app.httpRequest()
-        .get(`/foo/@invalid-spec/files/package.json?meta`)
+        .get('/foo/@invalid-spec/files/package.json?meta')
         .expect(422);
 
       assert.equal(res.body.error, '[INVALID_PARAM] must match format "semver-spec"');

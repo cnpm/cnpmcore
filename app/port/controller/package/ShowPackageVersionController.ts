@@ -26,7 +26,7 @@ export class ShowPackageVersionController extends AbstractController {
   })
   async show(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() versionSpec: string) {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    ctx.tValidate(Spec, versionSpec);
+    ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     const [ scope, name ] = getScopeAndName(fullname);
     const isSync = isSyncWorkerRequest(ctx);
     const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';

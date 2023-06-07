@@ -1,6 +1,7 @@
 import { Type, Static } from '@sinclair/typebox';
 import { RegistryType } from '../common/enum/Registry';
 import semver from 'semver';
+import npa from 'npm-package-arg';
 import { HookType } from '../common/enum/Hook';
 import binaryConfig from '../../config/binaries';
 
@@ -134,12 +135,12 @@ export function patchAjv(ajv: any) {
     type: 'string',
     validate: (spec: string) => {
       try {
-        return !!semver.parse(spec);
+        return !!npa(spec);
       } catch (e) {
         return false;
       }
-    }
-  })
+    },
+  });
   ajv.addFormat('binary-name', {
     type: 'string',
     validate: (binaryName: string) => {

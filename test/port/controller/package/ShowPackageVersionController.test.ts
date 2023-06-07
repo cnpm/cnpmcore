@@ -37,6 +37,15 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.body.dist.integrity, 'sha512-n+4CQg0Rp1Qo0p9a0R5E5io67T9iD3Lcgg6exmpmt0s8kd4XcOoHu2kiu6U7xd69cGq0efkNGWUBP229ObfRSA==');
       assert.equal(res.body.dist.size, 251);
       assert.equal(res.body.description, 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻');
+
+      // support semver spec
+      await app.httpRequest()
+        .get('/foo/%5E1.0')
+        .expect(200);
+
+      await app.httpRequest()
+        .get('/foo/^1.0')
+        .expect(200);
     });
 
     it('should fix bug version', async () => {
