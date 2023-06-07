@@ -53,6 +53,11 @@ export const Version = Type.String({
   maxLength: 256,
 });
 
+export const Spec = Type.String({
+  format: 'semver-spec',
+  minLength: 1,
+});
+
 export const Description = Type.String({ maxLength: 10240, transform: [ 'trim' ] });
 
 export const TagRule = Type.Object({
@@ -125,6 +130,16 @@ export function patchAjv(ajv: any) {
       return !semver.validRange(tag);
     },
   });
+  ajv.addFormat('semver-spec', {
+    type: 'string',
+    validate: (spec: string) => {
+      try {
+        return !!semver.parse(spec);
+      } catch (e) {
+        return false;
+      }
+    }
+  })
   ajv.addFormat('binary-name', {
     type: 'string',
     validate: (binaryName: string) => {

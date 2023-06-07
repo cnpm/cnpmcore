@@ -10,7 +10,7 @@ describe('test/port/controller/PackageVersionFileController/sync.test.ts', () =>
     adminUser = await TestUtil.createAdmin();
   });
 
-  describe('[PUT /:fullname/:versionOrTag/files] sync()', () => {
+  describe('[PUT /:fullname/:versionSpec/files] sync()', () => {
     it('should 404 when enableUnpkg = false', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       mock(app.config.cnpmcore, 'enableUnpkg', false);

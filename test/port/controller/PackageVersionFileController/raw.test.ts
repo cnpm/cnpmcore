@@ -11,7 +11,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
     publisher = await TestUtil.createUser();
   });
 
-  describe('[GET /:fullname/:versionOrTag/files/:path] raw()', () => {
+  describe('[GET /:fullname/:versionSpec/files/:path] raw()', () => {
     it('should show one package version raw file', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkg = await TestUtil.getFullPackage({
@@ -135,6 +135,15 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert(!res.headers.etag);
       assert(!res.headers['cache-control']);
       assert.equal(res.body.error, `[NOT_FOUND] File ${pkg.name}@1.0.0/package2.json not found`);
+    });
+
+    it('should 422 when invalid spec', async () => {
+      mock(app.config.cnpmcore, 'enableUnpkg', true);
+      const res = await app.httpRequest()
+        .get(`/foo/@invalid-spec/files/package.json?meta`)
+        .expect(422);
+
+      assert.equal(res.body.error, '[INVALID_PARAM] must match format "semver-spec"');
     });
 
     it('should ignore not exists file on tar onentry', async () => {
