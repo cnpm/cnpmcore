@@ -1,9 +1,9 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
-import { Task as TaskModel } from 'app/repository/model/Task';
-import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
-import { TaskService } from 'app/core/service/TaskService';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
+import { Task as TaskModel } from '../../../../app/repository/model/Task';
+import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask';
+import { TaskService } from '../../../../app/core/service/TaskService';
 
 describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () => {
   let packageSyncerService: PackageSyncerService;

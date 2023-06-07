@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { NodePreGypBinary } from 'app/common/adapter/binary/NodePreGypBinary';
-import { TestUtil } from 'test/TestUtil';
+import { NodePreGypBinary } from '../../../../app/common/adapter/binary/NodePreGypBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
   let binary: NodePreGypBinary;

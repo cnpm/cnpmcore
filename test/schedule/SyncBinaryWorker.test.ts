@@ -1,6 +1,6 @@
 import { app, mock } from 'egg-mock/bootstrap';
-import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
-import { TestUtil } from 'test/TestUtil';
+import { NodeBinary } from '../../app/common/adapter/binary/NodeBinary';
+import { TestUtil } from '../../test/TestUtil';
 
 const CreateSyncBinaryTaskPath = require.resolve('../../app/port/schedule/CreateSyncBinaryTask');
 const SyncBinaryWorkerPath = require.resolve('../../app/port/schedule/SyncBinaryWorker');

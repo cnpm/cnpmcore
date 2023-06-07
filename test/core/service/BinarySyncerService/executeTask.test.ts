@@ -1,11 +1,11 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
-import { Task as TaskModel } from 'app/repository/model/Task';
-import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
-import { NodeBinary } from 'app/common/adapter/binary/NodeBinary';
-import { ApiBinary } from 'app/common/adapter/binary/ApiBinary';
+import { TestUtil } from '../../../../test/TestUtil';
+import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService';
+import { Task as TaskModel } from '../../../../app/repository/model/Task';
+import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask';
+import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary';
+import { ApiBinary } from '../../../../app/common/adapter/binary/ApiBinary';
 
 describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
   let binarySyncerService: BinarySyncerService;

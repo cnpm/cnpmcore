@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { PackageRepository } from 'app/repository/PackageRepository';
+import { TestUtil } from '../../../../test/TestUtil';
+import { PackageRepository } from '../../../../app/repository/PackageRepository';
 
 describe('test/port/controller/package/RemovePackageVersionController.test.ts', () => {
   let packageRepository: PackageRepository;

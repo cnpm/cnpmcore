@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { SqlcipherBinary } from 'app/common/adapter/binary/SqlcipherBinary';
-import { TestUtil } from 'test/TestUtil';
+import { SqlcipherBinary } from '../../../../app/common/adapter/binary/SqlcipherBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
   let binary: SqlcipherBinary;

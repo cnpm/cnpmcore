@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { PlaywrightBinary } from 'app/common/adapter/binary/PlaywrightBinary';
-import { TestUtil } from 'test/TestUtil';
+import { PlaywrightBinary } from '../../../../app/common/adapter/binary/PlaywrightBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
   let binary: PlaywrightBinary;

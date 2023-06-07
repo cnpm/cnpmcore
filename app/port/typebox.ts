@@ -1,7 +1,6 @@
 import { Type, Static } from '@sinclair/typebox';
 import { RegistryType } from '../common/enum/Registry';
 import semver from 'semver';
-import assert from 'assert';
 import npa from 'npm-package-arg';
 import { HookType } from '../common/enum/Hook';
 import binaryConfig from '../../config/binaries';
@@ -138,8 +137,7 @@ export function patchAjv(ajv: any) {
       try {
         // do not support alias
         // exp: https://unpkg.com/good@npm:cnpmcore@3.17.1/dist/app.js
-        assert(['tag', 'version', 'range'].includes(npa(spec).type));
-        return true;
+        return [ 'tag', 'version', 'range' ].includes(npa(spec).type);
       } catch (e) {
         return false;
       }

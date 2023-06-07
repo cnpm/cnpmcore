@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
+import { TestUtil } from '../../../../test/TestUtil';
 import { PackageManifestType, PackageRepository } from '../../../../app/repository/PackageRepository';
 import { BugVersion } from '../../../../app/core/entity/BugVersion';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';

@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { NFSClientAdapter } from 'app/infra/NFSClientAdapter';
+import { TestUtil } from '../../../../test/TestUtil';
+import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let publisher: any;

@@ -1,9 +1,9 @@
 import assert from 'assert';
-import { RegistryType } from 'app/common/enum/Registry';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
+import { RegistryType } from '../../../../app/common/enum/Registry';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
 import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../TestUtil';
-import { Scope } from 'app/core/entity/Scope';
+import { Scope } from '../../../../app/core/entity/Scope';
 
 describe('test/port/controller/ScopeController/index.test.ts', () => {
   let adminUser: any;

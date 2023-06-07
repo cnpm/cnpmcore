@@ -1,10 +1,10 @@
-import { Token, TokenType } from 'app/core/entity/Token';
-import { UserService } from 'app/core/service/UserService';
-import { AuthAdapter } from 'app/infra/AuthAdapter';
-import { TokenPackage } from 'app/repository/model/TokenPackage';
+import { Token, TokenType } from '../../../../app/core/entity/Token';
+import { UserService } from '../../../../app/core/service/UserService';
+import { AuthAdapter } from '../../../../app/infra/AuthAdapter';
+import { TokenPackage } from '../../../../app/repository/model/TokenPackage';
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/port/controller/TokenController/removeToken.test.ts', () => {
   describe('[DELETE /-/npm/v1/tokens/token/:tokenKey] removeToken()', () => {

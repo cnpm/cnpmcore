@@ -1,8 +1,8 @@
-import { RegistryType } from 'app/common/enum/Registry';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
+import { RegistryType } from '../../../../app/common/enum/Registry';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
   let publisher;

@@ -1,4 +1,4 @@
-import { EntityUtil } from 'app/core/util/EntityUtil';
+import { EntityUtil } from '../../../app/core/util/EntityUtil';
 import assert from 'assert';
 
 describe('test/core/util/EntityUtil.test.ts', () => {

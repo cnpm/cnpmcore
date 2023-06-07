@@ -1,14 +1,14 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { UserRepository } from 'app/repository/UserRepository';
-import { calculateIntegrity } from 'app/common/PackageUtil';
-import { PackageRepository } from 'app/repository/PackageRepository';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
-import { UserService } from 'app/core/service/UserService';
-import { Token, TokenType } from 'app/core/entity/Token';
-import { Token as TokenModel } from 'app/repository/model/Token';
-import { User } from 'app/core/entity/User';
+import { TestUtil } from '../../../../test/TestUtil';
+import { UserRepository } from '../../../../app/repository/UserRepository';
+import { calculateIntegrity } from '../../../../app/common/PackageUtil';
+import { PackageRepository } from '../../../../app/repository/PackageRepository';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
+import { UserService } from '../../../../app/core/service/UserService';
+import { Token, TokenType } from '../../../../app/core/entity/Token';
+import { Token as TokenModel } from '../../../../app/repository/model/Token';
+import { User } from '../../../../app/core/entity/User';
 import dayjs from 'dayjs';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {

@@ -1,12 +1,12 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
-import { RegistryType } from 'app/common/enum/Registry';
-import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
-import { Registry } from 'app/core/entity/Registry';
-import { TaskRepository } from 'app/repository/TaskRepository';
-import { TaskType } from 'app/common/enum/Task';
-import { ChangesStreamTaskData } from 'app/core/entity/Task';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
+import { RegistryType } from '../../../../app/common/enum/Registry';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService';
+import { Registry } from '../../../../app/core/entity/Registry';
+import { TaskRepository } from '../../../../app/repository/TaskRepository';
+import { TaskType } from '../../../../app/common/enum/Task';
+import { ChangesStreamTaskData } from '../../../../app/core/entity/Task';
 
 describe('test/core/service/RegistryManagerService/index.test.ts', () => {
   let registryManagerService: RegistryManagerService;

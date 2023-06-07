@@ -1,12 +1,12 @@
 import assert from 'assert';
 import { setTimeout } from 'timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
-import { Task } from 'app/core/entity/Task';
-import { TaskState } from 'app/common/enum/Task';
-import { TaskRepository } from 'app/repository/TaskRepository';
-import { TaskService } from 'app/core/service/TaskService';
+import { TestUtil } from '../../../../test/TestUtil';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
+import { Task } from '../../../../app/core/entity/Task';
+import { TaskState } from '../../../../app/common/enum/Task';
+import { TaskRepository } from '../../../../app/repository/TaskRepository';
+import { TaskService } from '../../../../app/core/service/TaskService';
 
 describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
   const pkgName = '@cnpmcore/foo';

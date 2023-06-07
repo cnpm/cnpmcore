@@ -1,4 +1,4 @@
-import { PackageVersionAdded } from 'app/core/event/ChangesStream';
+import { PackageVersionAdded } from '../../../app/core/event/ChangesStream';
 import { app, mock } from 'egg-mock/bootstrap';
 
 describe('test/core/event/BugVersionFixHandler.test.ts', () => {

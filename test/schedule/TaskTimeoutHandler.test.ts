@@ -1,6 +1,6 @@
 import { app, mock } from 'egg-mock/bootstrap';
-import { TaskState } from 'app/common/enum/Task';
-import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
+import { TaskState } from '../../app/common/enum/Task';
+import { PackageSyncerService } from '../../app/core/service/PackageSyncerService';
 import { HistoryTask } from '../../app/repository/model/HistoryTask';
 import { ModelConvertor } from '../../app/repository/util/ModelConvertor';
 import { Task as TaskModel } from '../../app/repository/model/Task';

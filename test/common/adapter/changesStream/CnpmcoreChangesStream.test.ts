@@ -1,10 +1,10 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { ChangesStreamChange } from 'app/common/adapter/changesStream/AbstractChangesStream';
-import { CnpmcoreChangesStream } from 'app/common/adapter/changesStream/CnpmcoreChangesStream';
-import { RegistryType } from 'app/common/enum/Registry';
-import { Registry } from 'app/core/entity/Registry';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
+import { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream';
+import { CnpmcoreChangesStream } from '../../../../app/common/adapter/changesStream/CnpmcoreChangesStream';
+import { RegistryType } from '../../../../app/common/enum/Registry';
+import { Registry } from '../../../../app/core/entity/Registry';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
 
 describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () => {
   let cnpmcoreChangesStream: CnpmcoreChangesStream;

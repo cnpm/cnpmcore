@@ -3,7 +3,7 @@ import path from 'path';
 import { app } from 'egg-mock/bootstrap';
 import coffee from 'coffee';
 import semver from 'semver';
-import { TestUtil } from 'test/TestUtil';
+import { TestUtil } from '../../../test/TestUtil';
 import { npmLogin } from '../CliUtil';
 
 describe('test/cli/npm/access.test.ts', () => {

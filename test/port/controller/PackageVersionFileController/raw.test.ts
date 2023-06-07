@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { calculateIntegrity } from 'app/common/PackageUtil';
+import { TestUtil } from '../../../../test/TestUtil';
+import { calculateIntegrity } from '../../../../app/common/PackageUtil';
 
 describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => {
   let publisher;

@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { BinarySyncerService } from 'app/core/service/BinarySyncerService';
-import { BinaryName } from 'config/binaries';
+import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService';
+import { BinaryName } from '../../../../config/binaries';
 
 describe('test/core/service/BinarySyncerService/createTask.test.ts', () => {
   let binarySyncerService: BinarySyncerService;
