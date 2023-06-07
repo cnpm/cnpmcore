@@ -1,6 +1,7 @@
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { EggLogger } from 'egg';
 import pMap from 'p-map';
+import semver from 'semver';
 import { PackageVersionRepository } from '../../repository/PackageVersionRepository';
 import { PaddingSemVer } from '../entity/PaddingSemVer';
 
@@ -25,6 +26,8 @@ export class FixNoPaddingVersionService {
       this.logger.info('[FixNoPaddingVersionService] fix padding version ids %j', packageVersions.map(t => t.id));
 
       await pMap(packageVersions, async packageVersion => {
+        // ignore invalid version, e.g.: '1000000000000000000.0.0' on https://registry.npmjs.com/latentflip-test
+        if (!semver.valid(packageVersion.version)) return;
         const paddingSemver = new PaddingSemVer(packageVersion.version);
         await this.packageVersionRepository.fixPaddingVersion(packageVersion.packageVersionId, paddingSemver);
       }, { concurrency: 30 });
