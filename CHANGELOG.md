@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.30.1](https://github.com/cnpm/cnpmcore/compare/v3.30.0...v3.30.1) (2023-06-07)
+
+
+### Bug Fixes
+
+* type import ([#502](https://github.com/cnpm/cnpmcore/issues/502)) ([27ee3d6](https://github.com/cnpm/cnpmcore/commit/27ee3d61a3a2a555c44e832ca1fdcdd6556cb63b))
+
 ## [3.30.0](https://github.com/cnpm/cnpmcore/compare/v3.29.4...v3.30.0) (2023-06-07)
 
 
