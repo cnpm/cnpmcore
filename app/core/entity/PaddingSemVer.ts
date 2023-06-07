@@ -28,7 +28,7 @@ export class PaddingSemVer {
 
   // 版本信息中为纯数字, JS 中支持的最大整型为 16 位
   // 因此填充成 16 位对齐，如果版本号超过 16 位，则抛出异常
-  static paddingVersion(v) {
+  static paddingVersion(v: number) {
     const t = String(v);
     if (t.length <= 16) {
       const padding = new Array(16 - t.length).fill(0)
