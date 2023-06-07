@@ -46,6 +46,15 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       await app.httpRequest()
         .get('/foo/^1.0')
         .expect(200);
+
+      // not support alias
+      await app.httpRequest()
+        .get('/alias-a-pkg/npm:foo@^1.0')
+        .expect(422)
+
+      await app.httpRequest()
+        .get('/npm/@babel%2fhelper-compilation-targets ')
+        .expect(422);
     });
 
     it('should fix bug version', async () => {
