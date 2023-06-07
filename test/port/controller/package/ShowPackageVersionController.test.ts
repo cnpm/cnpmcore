@@ -198,6 +198,16 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .expect(200);
       assert.equal(res.body.version, '2.0.0');
 
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/^2.0.0`)
+        .expect(200);
+      assert.equal(res.body.version, '2.0.0');
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/%5E2.0.0`)
+        .expect(200);
+      assert.equal(res.body.version, '2.0.0');
+
       // new beta tag
       res = await app.httpRequest()
         .put(`/-/package/${pkg.name}/dist-tags/beta`)
