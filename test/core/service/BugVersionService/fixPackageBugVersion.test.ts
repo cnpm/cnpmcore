@@ -101,6 +101,8 @@ describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () 
         tarDist: dist,
         readmeDist: dist,
         publishTime: new Date(),
+        paddingVersion: null,
+        isPreRelease: null,
       });
     });
   });

@@ -12,8 +12,8 @@ interface PackageVersionData extends EntityData {
   tarDist: Dist;
   readmeDist: Dist;
   publishTime: Date;
-  paddingVersion: string;
-  isPreRelease: boolean;
+  paddingVersion?: string | null;
+  isPreRelease?: boolean | null;
 }
 
 export class PackageVersion extends Entity {
@@ -38,7 +38,7 @@ export class PackageVersion extends Entity {
     this.tarDist = data.tarDist;
     this.readmeDist = data.readmeDist;
     this.publishTime = data.publishTime;
-    if (!data.paddingVersion) {
+    if (data.paddingVersion && typeof data.isPreRelease === 'boolean') {
       this.paddingVersion = data.paddingVersion;
       this.isPreRelease = data.isPreRelease;
     } else {
