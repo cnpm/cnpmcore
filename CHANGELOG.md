@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.29.1](https://github.com/cnpm/cnpmcore/compare/v3.29.0...v3.29.1) (2023-06-07)
+
+
+### Bug Fixes
+
+* fix encoded semver spec ([#497](https://github.com/cnpm/cnpmcore/issues/497)) ([aa39ced](https://github.com/cnpm/cnpmcore/commit/aa39cedf35734528af820e19dab2554ff0c6a125))
+
 ## [3.29.0](https://github.com/cnpm/cnpmcore/compare/v3.28.0...v3.29.0) (2023-06-06)
 
 
