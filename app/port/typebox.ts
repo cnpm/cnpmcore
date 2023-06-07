@@ -1,6 +1,7 @@
 import { Type, Static } from '@sinclair/typebox';
 import { RegistryType } from '../common/enum/Registry';
 import semver from 'semver';
+import npa from 'npm-package-arg';
 import { HookType } from '../common/enum/Hook';
 import binaryConfig from '../../config/binaries';
 
@@ -51,6 +52,11 @@ export const Version = Type.String({
   transform: [ 'trim' ],
   minLength: 5,
   maxLength: 256,
+});
+
+export const Spec = Type.String({
+  format: 'semver-spec',
+  minLength: 1,
 });
 
 export const Description = Type.String({ maxLength: 10240, transform: [ 'trim' ] });
@@ -123,6 +129,16 @@ export function patchAjv(ajv: any) {
     type: 'string',
     validate: (tag: string) => {
       return !semver.validRange(tag);
+    },
+  });
+  ajv.addFormat('semver-spec', {
+    type: 'string',
+    validate: (spec: string) => {
+      try {
+        return !!npa(spec);
+      } catch (e) {
+        return false;
+      }
     },
   });
   ajv.addFormat('binary-name', {

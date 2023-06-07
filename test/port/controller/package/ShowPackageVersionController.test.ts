@@ -10,7 +10,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
     publisher = await TestUtil.createUser();
   });
 
-  describe('[GET /:fullname/:versionOrTag] show()', () => {
+  describe('[GET /:fullname/:versionSpec] show()', () => {
     it('should show one package version', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkg = await TestUtil.getFullPackage({
@@ -37,6 +37,15 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.body.dist.integrity, 'sha512-n+4CQg0Rp1Qo0p9a0R5E5io67T9iD3Lcgg6exmpmt0s8kd4XcOoHu2kiu6U7xd69cGq0efkNGWUBP229ObfRSA==');
       assert.equal(res.body.dist.size, 251);
       assert.equal(res.body.description, 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻');
+
+      // support semver spec
+      await app.httpRequest()
+        .get('/foo/%5E1.0')
+        .expect(200);
+
+      await app.httpRequest()
+        .get('/foo/^1.0')
+        .expect(200);
     });
 
     it('should fix bug version', async () => {
@@ -123,6 +132,14 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-2.0.0.tgz');
       assert(!res.body.deprecated);
       assert(res.body.version === '2.0.0');
+    });
+
+    it('should 422 with invalid spec', async () => {
+      const res = await app.httpRequest()
+        .get('/foo/@invalid-spec')
+        .expect(422)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert(res.error, '[INVALID_PARAM] must match format "semver-spec"');
     });
 
     it('should work with scoped package', async () => {
