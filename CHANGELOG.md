@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.30.0](https://github.com/cnpm/cnpmcore/compare/v3.29.4...v3.30.0) (2023-06-07)
+
+
+### Features
+
+* bulk update maintainers ([#501](https://github.com/cnpm/cnpmcore/issues/501)) ([1b6dce6](https://github.com/cnpm/cnpmcore/commit/1b6dce65acb870c6bb0540b90c5f3c7a5af13a5e))
+
 ## [3.29.4](https://github.com/cnpm/cnpmcore/compare/v3.29.3...v3.29.4) (2023-06-07)
 
 
