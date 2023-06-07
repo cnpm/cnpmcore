@@ -64,7 +64,7 @@ export class UpdatePackageController extends AbstractController {
       users.push(user);
     }
 
-    await this.packageManagerService.replacePackageMaintainers(pkg, users);
+    await this.packageManagerService.replacePackageMaintainersAndDist(pkg, users);
     return { ok: true };
   }
 

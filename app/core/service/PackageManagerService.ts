@@ -329,9 +329,9 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  async replacePackageMaintainers(pkg: Package, maintainers: User[]) {
+  async replacePackageMaintainersAndDist(pkg: Package, maintainers: User[]) {
     await this.packageRepository.replacePackageMaintainers(pkg.packageId, maintainers.map(m => m.userId));
-    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
+    await this.refreshPackageMaintainersToDists(pkg);
     this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname, maintainers);
   }
 
@@ -344,14 +344,12 @@ export class PackageManagerService extends AbstractService {
       }
     }
     if (hasNewRecord) {
-      await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
       this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname, maintainers);
     }
   }
 
   async removePackageMaintainer(pkg: Package, maintainer: User) {
     await this.packageRepository.removePackageMaintainer(pkg.packageId, maintainer.userId);
-    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
     this.eventBus.emit(PACKAGE_MAINTAINER_REMOVED, pkg.fullname, maintainer.name);
   }
 
