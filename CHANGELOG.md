@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.29.4](https://github.com/cnpm/cnpmcore/compare/v3.29.3...v3.29.4) (2023-06-07)
+
+
+### Bug Fixes
+
+* validate pkg@version spec ([#500](https://github.com/cnpm/cnpmcore/issues/500)) ([a9d2ff7](https://github.com/cnpm/cnpmcore/commit/a9d2ff7e542b2250dc0e9c9431bb0b8bc97f504d))
+
 ## [3.29.3](https://github.com/cnpm/cnpmcore/compare/v3.29.2...v3.29.3) (2023-06-07)
 
 
