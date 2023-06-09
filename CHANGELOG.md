@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.30.2](https://github.com/cnpm/cnpmcore/compare/v3.30.1...v3.30.2) (2023-06-09)
+
+
+### Bug Fixes
+
+* sync DOWNLOAD_PATHS code update ([#506](https://github.com/cnpm/cnpmcore/issues/506)) ([bf2bf64](https://github.com/cnpm/cnpmcore/commit/bf2bf64532521b7fa78985cf99e7d48efe5261f0))
+
 ## [3.30.1](https://github.com/cnpm/cnpmcore/compare/v3.30.0...v3.30.1) (2023-06-07)
 
 
