@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { RedisQueueAdapter } from 'app/infra/QueueAdapter';
+import { RedisQueueAdapter } from '../../app/infra/QueueAdapter';
 
 describe('test/infra/QueueAdapter.test.ts', () => {
   let queueAdapter: RedisQueueAdapter;

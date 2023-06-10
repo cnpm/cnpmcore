@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { GithubBinary } from 'app/common/adapter/binary/GithubBinary';
-import { TestUtil } from 'test/TestUtil';
+import { GithubBinary } from '../../../../app/common/adapter/binary/GithubBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
   let binary: GithubBinary;

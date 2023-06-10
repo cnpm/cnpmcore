@@ -1,6 +1,6 @@
 {
   "name": "cnpmcore",
-  "version": "3.27.0",
+  "version": "3.30.2",
   "description": "npm core",
   "files": [
     "dist/**/*"
@@ -99,6 +99,7 @@
     "mime-types": "^2.1.35",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.0",
+    "npm-package-arg": "^10.1.0",
     "oss-cnpm": "^4.0.0",
     "p-map": "^4.0.0",
     "semver": "^7.3.5",

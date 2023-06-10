@@ -1,17 +1,17 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { HookManageService } from 'app/core/service/HookManageService';
-import { HookType } from 'app/common/enum/Hook';
-import { UserRepository } from 'app/repository/UserRepository';
-import { PACKAGE_VERSION_ADDED } from 'app/core/event';
-import { Change } from 'app/core/entity/Change';
-import { ChangeRepository } from 'app/repository/ChangeRepository';
-import { Task } from 'app/core/entity/Task';
-import { HookEvent } from 'app/core/entity/HookEvent';
-import { CreateHookTriggerService } from 'app/core/service/CreateHookTriggerService';
-import { TaskRepository } from 'app/repository/TaskRepository';
-import { Hook } from 'app/core/entity/Hook';
+import { TestUtil } from '../../../test/TestUtil';
+import { HookManageService } from '../../../app/core/service/HookManageService';
+import { HookType } from '../../../app/common/enum/Hook';
+import { UserRepository } from '../../../app/repository/UserRepository';
+import { PACKAGE_VERSION_ADDED } from '../../../app/core/event';
+import { Change } from '../../../app/core/entity/Change';
+import { ChangeRepository } from '../../../app/repository/ChangeRepository';
+import { Task } from '../../../app/core/entity/Task';
+import { HookEvent } from '../../../app/core/entity/HookEvent';
+import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService';
+import { TaskRepository } from '../../../app/repository/TaskRepository';
+import { Hook } from '../../../app/core/entity/Hook';
 
 describe('test/core/service/CreateHookTriggerService.test.ts', () => {
   let hookManageService: HookManageService;

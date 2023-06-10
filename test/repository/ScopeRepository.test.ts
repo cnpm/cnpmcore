@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { ScopeRepository } from 'app/repository/ScopeRepository';
-import { Scope } from 'app/core/entity/Scope';
+import { ScopeRepository } from '../../app/repository/ScopeRepository';
+import { Scope } from '../../app/core/entity/Scope';
 
 describe('test/repository/ScopeRepository.test.ts', () => {
   let scopeRepository: ScopeRepository;

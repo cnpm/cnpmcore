@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { PuppeteerBinary } from 'app/common/adapter/binary/PuppeteerBinary';
-import { TestUtil } from 'test/TestUtil';
+import { PuppeteerBinary } from '../../../../app/common/adapter/binary/PuppeteerBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
   let binary: PuppeteerBinary;

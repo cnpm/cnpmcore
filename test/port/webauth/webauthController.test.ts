@@ -2,11 +2,11 @@ import assert from 'assert';
 import crypto from 'crypto';
 import { basename } from 'path';
 import { app, mock } from 'egg-mock/bootstrap';
-import { AuthAdapter } from 'app/infra/AuthAdapter';
-import { CacheAdapter } from 'app/common/adapter/CacheAdapter';
-import { UserService } from 'app/core/service/UserService';
-import { UserRepository } from 'app/repository/UserRepository';
-import { genRSAKeys, encryptRSA } from 'app/common/CryptoUtil';
+import { AuthAdapter } from '../../../app/infra/AuthAdapter';
+import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter';
+import { UserService } from '../../../app/core/service/UserService';
+import { UserRepository } from '../../../app/repository/UserRepository';
+import { genRSAKeys, encryptRSA } from '../../../app/common/CryptoUtil';
 
 describe('test/port/webauth/webauthController.test.ts', () => {
   describe('/-/v1/login', () => {

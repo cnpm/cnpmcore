@@ -1,24 +1,25 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
-import { PackageManagerService } from 'app/core/service/PackageManagerService';
-import { Package as PackageModel } from 'app/repository/model/Package';
-import { Task as TaskModel } from 'app/repository/model/Task';
-import { Task as TaskEntity } from 'app/core/entity/Task';
-import { HistoryTask as HistoryTaskModel } from 'app/repository/model/HistoryTask';
-import { NPMRegistry } from 'app/common/adapter/NPMRegistry';
-import { NFSAdapter } from 'app/common/adapter/NFSAdapter';
-import { getScopeAndName } from 'app/common/PackageUtil';
-import { PackageRepository } from 'app/repository/PackageRepository';
-import { RegistryManagerService } from 'app/core/service/RegistryManagerService';
-import { Registry } from 'app/core/entity/Registry';
-import { RegistryType } from 'app/common/enum/Registry';
-import { TaskService } from 'app/core/service/TaskService';
-import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
-import { UserService } from 'app/core/service/UserService';
-import { ChangeRepository } from 'app/repository/ChangeRepository';
-import { PackageVersion } from 'app/repository/model/PackageVersion';
+import { TestUtil } from '../../../../test/TestUtil';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
+import { Package as PackageModel } from '../../../../app/repository/model/Package';
+import { Task as TaskModel } from '../../../../app/repository/model/Task';
+import { Task as TaskEntity } from '../../../../app/core/entity/Task';
+import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask';
+import { NPMRegistry } from '../../../../app/common/adapter/NPMRegistry';
+import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter';
+import { getScopeAndName } from '../../../../app/common/PackageUtil';
+import { PackageRepository } from '../../../../app/repository/PackageRepository';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
+import { Registry } from '../../../../app/core/entity/Registry';
+import { RegistryType } from '../../../../app/common/enum/Registry';
+import { TaskService } from '../../../../app/core/service/TaskService';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService';
+import { UserService } from '../../../../app/core/service/UserService';
+import { ChangeRepository } from '../../../../app/repository/ChangeRepository';
+import { PackageVersion } from '../../../../app/repository/model/PackageVersion';
+import { TaskState } from '../../../../app/common/enum/Task';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let packageSyncerService: PackageSyncerService;
@@ -855,6 +856,29 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
         // 任务结束后一起触发
         assert(firstChangeDate.getTime() - taskFinishedDate.getTime() > 0);
+
+      });
+
+      it('should bulk update maintainer dist', async () => {
+        // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
+        const name = '@cnpmcore/test-sync-package-has-two-versions';
+        await packageSyncerService.createTask(name);
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        assert.equal(task.targetName, name);
+        let called = 0;
+
+        mock(packageManagerService, 'refreshPackageMaintainersToDists', async () => {
+          called++;
+        });
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+
+        const finishedTask = await taskService.findTask(task.taskId) as TaskEntity;
+
+        assert.equal(finishedTask.state, TaskState.Success);
+        assert.equal(called, 1);
 
       });
 

@@ -1,10 +1,10 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { TaskType } from 'app/common/enum/Task';
-import { Registry } from 'app/core/entity/Registry';
-import { ChangesStreamTaskData } from 'app/core/entity/Task';
-import { TaskService } from 'app/core/service/TaskService';
-import { TestUtil } from 'test/TestUtil';
+import { TaskType } from '../../../../app/common/enum/Task';
+import { Registry } from '../../../../app/core/entity/Registry';
+import { ChangesStreamTaskData } from '../../../../app/core/entity/Task';
+import { TaskService } from '../../../../app/core/service/TaskService';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/port/controller/RegistryController/index.test.ts', () => {
   let adminUser: any;

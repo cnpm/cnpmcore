@@ -1,9 +1,9 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { PackageManagerService } from 'app/core/service/PackageManagerService';
-import { UserService } from 'app/core/service/UserService';
-import { PackageRepository } from 'app/repository/PackageRepository';
+import { TestUtil } from '../../../../test/TestUtil';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
+import { UserService } from '../../../../app/core/service/UserService';
+import { PackageRepository } from '../../../../app/repository/PackageRepository';
 
 describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   let packageManagerService: PackageManagerService;

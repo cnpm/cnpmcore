@@ -1,6 +1,7 @@
 import { Dist } from './Dist';
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
+import { PaddingSemVer } from './PaddingSemVer';
 
 interface PackageVersionData extends EntityData {
   packageId: string;
@@ -11,6 +12,8 @@ interface PackageVersionData extends EntityData {
   tarDist: Dist;
   readmeDist: Dist;
   publishTime: Date;
+  paddingVersion?: string | null;
+  isPreRelease?: boolean | null;
 }
 
 export class PackageVersion extends Entity {
@@ -22,6 +25,8 @@ export class PackageVersion extends Entity {
   tarDist: Dist;
   readmeDist: Dist;
   publishTime: Date;
+  paddingVersion: string;
+  isPreRelease: boolean;
 
   constructor(data: PackageVersionData) {
     super(data);
@@ -33,6 +38,14 @@ export class PackageVersion extends Entity {
     this.tarDist = data.tarDist;
     this.readmeDist = data.readmeDist;
     this.publishTime = data.publishTime;
+    if (data.paddingVersion && typeof data.isPreRelease === 'boolean') {
+      this.paddingVersion = data.paddingVersion;
+      this.isPreRelease = data.isPreRelease;
+    } else {
+      const paddingSemVer = new PaddingSemVer(this.version);
+      this.paddingVersion = paddingSemVer.paddingVersion;
+      this.isPreRelease = paddingSemVer.isPreRelease;
+    }
   }
 
   static create(data: EasyData<PackageVersionData, 'packageVersionId'>): PackageVersion {

@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { ChromeForTestingBinary } from 'app/common/adapter/binary/ChromeForTestingBinary';
+import { ChromeForTestingBinary } from '../../../../app/common/adapter/binary/ChromeForTestingBinary';
 
 describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
   let binary: ChromeForTestingBinary;

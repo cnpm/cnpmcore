@@ -50,17 +50,21 @@ export class UpdatePackageController extends AbstractController {
     ctx.tValidate(MaintainerDataRule, data);
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
     const pkg = ensureRes.pkg!;
+    const registry = await this.packageManagerService.getSourceRegistry(pkg);
     // make sure all maintainers exists
     const users: UserEntity[] = [];
     for (const maintainer of data.maintainers) {
-      // TODO check userPrefix
+      if (registry?.userPrefix && !maintainer.name.startsWith(registry.userPrefix)) {
+        maintainer.name = `${registry?.userPrefix}${maintainer.name}`;
+      }
       const user = await this.userRepository.findUserByName(maintainer.name);
       if (!user) {
         throw new UnprocessableEntityError(`Maintainer "${maintainer.name}" not exists`);
       }
       users.push(user);
     }
-    await this.packageManagerService.replacePackageMaintainers(pkg, users);
+
+    await this.packageManagerService.replacePackageMaintainersAndDist(pkg, users);
     return { ok: true };
   }
 

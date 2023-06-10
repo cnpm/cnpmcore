@@ -1,9 +1,9 @@
 import assert from 'assert';
 import { setTimeout } from 'timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { Task as TaskModel } from 'app/repository/model/Task';
-import { PackageSyncerService } from 'app/core/service/PackageSyncerService';
+import { TestUtil } from '../../../../test/TestUtil';
+import { Task as TaskModel } from '../../../../app/repository/model/Task';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
 
 describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', () => {
   let publisher: any;

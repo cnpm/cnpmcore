@@ -1,6 +1,8 @@
+import { RegistryType } from '../../../../app/common/enum/Registry';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
   let publisher;
@@ -114,6 +116,45 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         .expect(200);
       assert.equal(res.statusCode, 200);
       assert.deepEqual(res.body, { ok: true });
+    });
+
+    it('should 200 when without userPrefix', async () => {
+      const user = await TestUtil.createUser();
+      await TestUtil.createUser({
+        name: 'dnpm:banana',
+      });
+
+      const registryManagerService = await app.getEggObject(RegistryManagerService);
+      const registry = await registryManagerService.createRegistry({
+        name: 'dnpmcore',
+        changeStream: 'https://d.cnpmjs.org/_changes',
+        host: 'https://registry.dnpmmirror.com',
+        userPrefix: 'dnpm:',
+        type: RegistryType.Cnpmcore,
+      });
+
+      await TestUtil.createPackage({
+        name: '@cnpm/banana',
+        isPrivate: false,
+        registryId: registry.registryId,
+      });
+
+      mock(app.config.cnpmcore, 'admins', { [user.name]: user.email });
+      const updateRes = await app.httpRequest()
+        .put('/@cnpm/banana/-rev/1')
+        .set('authorization', user.authorization)
+        .set('user-agent', publisher.ua)
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: 'banana', email: user.email },
+          ],
+        });
+
+      assert.equal(updateRes.statusCode, 200);
+      assert.deepEqual(updateRes.body, { ok: true });
     });
 
     it('should 400 when npm-command invalid', async () => {

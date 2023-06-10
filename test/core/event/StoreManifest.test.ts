@@ -1,8 +1,8 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { getScopeAndName } from 'app/common/PackageUtil';
-import { PackageRepository } from 'app/repository/PackageRepository';
+import { TestUtil } from '../../../test/TestUtil';
+import { getScopeAndName } from '../../../app/common/PackageUtil';
+import { PackageRepository } from '../../../app/repository/PackageRepository';
 
 describe('test/core/event/StoreManifest.test.ts', () => {
   let packageRepository: PackageRepository;

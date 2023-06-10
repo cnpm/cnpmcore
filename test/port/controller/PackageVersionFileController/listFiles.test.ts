@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let publisher;
@@ -10,7 +10,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
     publisher = await TestUtil.createUser();
   });
 
-  describe('[GET /:fullname/:versionOrTag/files] listFiles()', () => {
+  describe('[GET /:fullname/:versionSpec/files] listFiles()', () => {
     it('should 404 when enableUnpkg = false', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       mock(app.config.cnpmcore, 'enableUnpkg', false);
@@ -66,6 +66,15 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .expect(404)
         .expect('content-type', 'application/json; charset=utf-8');
       assert.equal(res.body.error, '[NOT_FOUND] File foo@1.0.0/index.js not found');
+    });
+
+    it('should 422 when invalid spec', async () => {
+      mock(app.config.cnpmcore, 'enableUnpkg', true);
+      const res = await app.httpRequest()
+        .get('/foo/@invalid-spec/files')
+        .expect(422);
+
+      assert.equal(res.body.error, '[INVALID_PARAM] must match format "semver-spec"');
     });
 
     it('should list one package version files', async () => {
@@ -157,6 +166,19 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files`);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/^1.0.0/files`);
+      assert.equal(res.status, 302);
+      assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files`);
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/%5E1.0.0/files`);
+      assert.equal(res.status, 302);
+      assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files`);
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+
       res = await app.httpRequest()
         .get(`/${pkg.name}/latest/files?meta&foo=bar`);
       assert.equal(res.status, 302);

@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { ScopeManagerService } from 'app/core/service/ScopeManagerService';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService';
 
 describe('test/core/service/ScopeManagerService/index.test.ts', () => {
   let scopeManagerService: ScopeManagerService;

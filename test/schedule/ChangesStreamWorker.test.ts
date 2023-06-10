@@ -1,9 +1,9 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { ChangesStreamService } from 'app/core/service/ChangesStreamService';
-import { TaskService } from 'app/core/service/TaskService';
-import { Task } from 'app/repository/model/Task';
-import { TestUtil } from 'test/TestUtil';
+import { ChangesStreamService } from '../../app/core/service/ChangesStreamService';
+import { TaskService } from '../../app/core/service/TaskService';
+import { Task } from '../../app/repository/model/Task';
+import { TestUtil } from '../../test/TestUtil';
 
 const ChangesStreamWorkerPath = require.resolve('../../app/port/schedule/ChangesStreamWorker');
 

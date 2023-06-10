@@ -1,8 +1,8 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { HookManageService } from 'app/core/service/HookManageService';
-import { HookType } from 'app/common/enum/Hook';
+import { TestUtil } from '../../../../test/TestUtil';
+import { HookManageService } from '../../../../app/core/service/HookManageService';
+import { HookType } from '../../../../app/common/enum/Hook';
 
 describe('test/core/service/HookManageService/createHook.test.ts', () => {
   let hookManageService: HookManageService;

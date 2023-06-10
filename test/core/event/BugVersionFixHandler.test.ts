@@ -1,24 +1,24 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { BUG_VERSIONS } from 'app/common/constants';
-import { CacheService } from 'app/core/service/CacheService';
-import { BugVersionFixHandler } from 'app/core/event/BugVersionFixHandler';
-import { PackageManagerService } from 'app/core/service/PackageManagerService';
-import { BugVersion } from 'app/core/entity/BugVersion';
+import { BUG_VERSIONS } from '../../../app/common/constants';
+import { CacheService } from '../../../app/core/service/CacheService';
+import { BugVersionFixHandler } from '../../../app/core/event/BugVersionFixHandler';
+import { BugVersion } from '../../../app/core/entity/BugVersion';
+import { BugVersionService } from '../../../app/core/service/BugVersionService';
 
 describe('test/core/event/BugVersionFixHandler.test.ts', () => {
   let cacheService: CacheService;
-  let packageManagerService: PackageManagerService;
+  let bugVersionService: BugVersionService;
   const fullnames: string[] = [];
 
   beforeEach(async () => {
     cacheService = await app.getEggObject(CacheService);
-    packageManagerService = await app.getEggObject(PackageManagerService);
+    bugVersionService = await app.getEggObject(BugVersionService);
     mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
     mock(cacheService, 'removeCache', async fullname => {
       fullnames.push(fullname);
     });
-    mock(packageManagerService, 'getBugVersion', async () => {
+    mock(bugVersionService, 'getBugVersion', async () => {
       return new BugVersion({
         faker: {
           '6.6.6': {

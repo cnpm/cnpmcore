@@ -1,13 +1,13 @@
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from 'test/TestUtil';
-import { BugVersionService } from 'app/core/service/BugVersionService';
-import { DistRepository } from 'app/repository/DistRepository';
-import { PackageRepository } from 'app/repository/PackageRepository';
-import { BugVersion } from 'app/core/entity/BugVersion';
-import { Package } from 'app/core/entity/Package';
-import { PackageVersion } from 'app/core/entity/PackageVersion';
-import { Dist } from 'app/core/entity/Dist';
+import { TestUtil } from '../../../../test/TestUtil';
+import { BugVersionService } from '../../../../app/core/service/BugVersionService';
+import { DistRepository } from '../../../../app/repository/DistRepository';
+import { PackageRepository } from '../../../../app/repository/PackageRepository';
+import { BugVersion } from '../../../../app/core/entity/BugVersion';
+import { Package } from '../../../../app/core/entity/Package';
+import { PackageVersion } from '../../../../app/core/entity/PackageVersion';
+import { Dist } from '../../../../app/core/entity/Dist';
 
 describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () => {
   let bugVersionService: BugVersionService;
@@ -101,6 +101,8 @@ describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () 
         tarDist: dist,
         readmeDist: dist,
         publishTime: new Date(),
+        paddingVersion: null,
+        isPreRelease: null,
       });
     });
   });

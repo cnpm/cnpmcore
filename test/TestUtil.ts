@@ -7,7 +7,7 @@ import { Readable } from 'stream';
 import mysql from 'mysql';
 import path from 'path';
 import crypto from 'crypto';
-import { getScopeAndName } from '../app/common/PackageUtil';
+import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil';
 import semver from 'semver';
 import { PackageJSONType } from '../app/repository/PackageRepository';
 
@@ -242,7 +242,7 @@ export class TestUtil {
       user.name = `testuser-${crypto.randomBytes(20).toString('hex')}`;
     }
     const password = user.password ?? 'password-is-here';
-    const email = user.email ?? `${user.name}@example.com`;
+    const email = cleanUserPrefix(user.email ?? `${user.name}@example.com`);
     let res = await this.app.httpRequest()
       .put(`/-/user/org.couchdb.user:${user.name}`)
       .send({
@@ -266,6 +266,7 @@ export class TestUtil {
     }
     return {
       name: user.name,
+      displayName: cleanUserPrefix(user.name),
       token,
       authorization: `Bearer ${token}`,
       password,

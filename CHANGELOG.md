@@ -1,5 +1,68 @@
 # Changelog
 
+## [3.30.2](https://github.com/cnpm/cnpmcore/compare/v3.30.1...v3.30.2) (2023-06-09)
+
+
+### Bug Fixes
+
+* sync DOWNLOAD_PATHS code update ([#506](https://github.com/cnpm/cnpmcore/issues/506)) ([bf2bf64](https://github.com/cnpm/cnpmcore/commit/bf2bf64532521b7fa78985cf99e7d48efe5261f0))
+
+## [3.30.1](https://github.com/cnpm/cnpmcore/compare/v3.30.0...v3.30.1) (2023-06-07)
+
+
+### Bug Fixes
+
+* type import ([#502](https://github.com/cnpm/cnpmcore/issues/502)) ([27ee3d6](https://github.com/cnpm/cnpmcore/commit/27ee3d61a3a2a555c44e832ca1fdcdd6556cb63b))
+
+## [3.30.0](https://github.com/cnpm/cnpmcore/compare/v3.29.4...v3.30.0) (2023-06-07)
+
+
+### Features
+
+* bulk update maintainers ([#501](https://github.com/cnpm/cnpmcore/issues/501)) ([1b6dce6](https://github.com/cnpm/cnpmcore/commit/1b6dce65acb870c6bb0540b90c5f3c7a5af13a5e))
+
+## [3.29.4](https://github.com/cnpm/cnpmcore/compare/v3.29.3...v3.29.4) (2023-06-07)
+
+
+### Bug Fixes
+
+* validate pkg@version spec ([#500](https://github.com/cnpm/cnpmcore/issues/500)) ([a9d2ff7](https://github.com/cnpm/cnpmcore/commit/a9d2ff7e542b2250dc0e9c9431bb0b8bc97f504d))
+
+## [3.29.3](https://github.com/cnpm/cnpmcore/compare/v3.29.2...v3.29.3) (2023-06-07)
+
+
+### Bug Fixes
+
+* auto fix invalid version to any version ([#499](https://github.com/cnpm/cnpmcore/issues/499)) ([0cf6470](https://github.com/cnpm/cnpmcore/commit/0cf6470993bba77e978be08f234f841efc1c47e9))
+
+## [3.29.2](https://github.com/cnpm/cnpmcore/compare/v3.29.1...v3.29.2) (2023-06-07)
+
+
+### Bug Fixes
+
+* ignore fix invalid version ([#498](https://github.com/cnpm/cnpmcore/issues/498)) ([f5607c0](https://github.com/cnpm/cnpmcore/commit/f5607c0a8723f5ef500cf88399f04b16b5491179))
+
+## [3.29.1](https://github.com/cnpm/cnpmcore/compare/v3.29.0...v3.29.1) (2023-06-07)
+
+
+### Bug Fixes
+
+* fix encoded semver spec ([#497](https://github.com/cnpm/cnpmcore/issues/497)) ([aa39ced](https://github.com/cnpm/cnpmcore/commit/aa39cedf35734528af820e19dab2554ff0c6a125))
+
+## [3.29.0](https://github.com/cnpm/cnpmcore/compare/v3.28.0...v3.29.0) (2023-06-06)
+
+
+### Features
+
+* infer userPrefix when update maintainers  ([#496](https://github.com/cnpm/cnpmcore/issues/496)) ([e02ea2a](https://github.com/cnpm/cnpmcore/commit/e02ea2a3e54b393ffa46cc10e5fc6e29f452e5eb))
+
+## [3.28.0](https://github.com/cnpm/cnpmcore/compare/v3.27.0...v3.28.0) (2023-06-06)
+
+
+### Features
+
+* impl fast semver search ([#495](https://github.com/cnpm/cnpmcore/issues/495)) ([a7fd3a8](https://github.com/cnpm/cnpmcore/commit/a7fd3a8c8ac8692667a3010e3e66f9c139ead0d9))
+
 ## [3.27.0](https://github.com/cnpm/cnpmcore/compare/v3.26.0...v3.27.0) (2023-06-04)
 
 

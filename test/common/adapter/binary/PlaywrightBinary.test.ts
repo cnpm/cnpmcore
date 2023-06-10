@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { app } from 'egg-mock/bootstrap';
-import { PlaywrightBinary } from 'app/common/adapter/binary/PlaywrightBinary';
-import { TestUtil } from 'test/TestUtil';
+import { PlaywrightBinary } from '../../../../app/common/adapter/binary/PlaywrightBinary';
+import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
   let binary: PlaywrightBinary;
@@ -28,7 +28,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       for (const item of result.items) {
         if (item.name === 'builds/') {
           assert(item.date);
-          assert(item.isDir === true);
+          assert.equal(item.isDir, true);
           assert(item.size === '-');
           matchDir1 = true;
         }
@@ -51,17 +51,21 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       let result = await binary.fetch('/builds/');
       assert(result);
       // console.log(result.items);
-      assert(result.items.length === 7);
-      assert(result.items[0].name === 'chromium/');
-      assert(result.items[1].name === 'chromium-tip-of-tree/');
-      assert(result.items[2].name === 'chromium-with-symbols/');
-      assert(result.items[3].name === 'firefox/');
-      assert(result.items[4].name === 'firefox-beta/');
-      assert(result.items[5].name === 'webkit/');
-      assert(result.items[6].name === 'ffmpeg/');
-      assert(result.items[0].isDir);
+      assert.equal(result.items.length, 8);
+      assert.equal(result.items[0].name, 'chromium/');
+      assert.equal(result.items[1].name, 'chromium-tip-of-tree/');
+      assert.equal(result.items[2].name, 'chromium-with-symbols/');
+      assert.equal(result.items[3].name, 'firefox/');
+      assert.equal(result.items[4].name, 'firefox-beta/');
+      assert.equal(result.items[5].name, 'webkit/');
+      assert.equal(result.items[6].name, 'ffmpeg/');
+      assert.equal(result.items[7].name, 'android/');
+      assert.equal(result.items[0].isDir, true);
 
-      const names = [ 'chromium', 'chromium-tip-of-tree', 'chromium-with-symbols', 'firefox', 'firefox-beta', 'webkit', 'ffmpeg' ];
+      const names = [
+        'chromium', 'chromium-tip-of-tree', 'chromium-with-symbols', 'firefox', 'firefox-beta',
+        'webkit', 'ffmpeg',
+      ];
       for (const dirname of names) {
         result = await binary.fetch(`/builds/${dirname}/`);
         assert(result);
