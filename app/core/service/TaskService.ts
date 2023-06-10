@@ -56,8 +56,8 @@ export class TaskService extends AbstractService {
               task.type, task.targetName, task.taskId, queueLength);
           }
         }
-        return existsTask;
       }
+      return existsTask;
     }
     await this.taskRepository.saveTask(task);
     await this.queueAdapter.push<string>(task.type, task.taskId);
