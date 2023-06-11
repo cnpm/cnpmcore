@@ -52,6 +52,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   syncNotFound: false,
   redirectNotFound: true,
   enableUnpkg: true,
+  strictSyncSpecivicVersion: false,
 };
 
 export default (appInfo: EggAppConfig) => {

@@ -54,6 +54,11 @@ export const Version = Type.String({
   maxLength: 256,
 });
 
+export const VersionStringArray = Type.String({
+  format: 'semver-version-array',
+  transform: [ 'trim' ],
+});
+
 export const Spec = Type.String({
   format: 'semver-spec',
   minLength: 1,
@@ -85,6 +90,7 @@ export const SyncPackageTaskRule = Type.Object({
     maxLength: 1024,
   }),
   skipDependencies: Type.Boolean(),
+  specificVersions: Type.Optional(VersionStringArray),
   syncDownloadData: Type.Boolean(),
   // force sync immediately, only allow by admin
   force: Type.Boolean(),
@@ -147,6 +153,21 @@ export function patchAjv(ajv: any) {
     type: 'string',
     validate: (binaryName: string) => {
       return !!binaryConfig[binaryName];
+    },
+  });
+  ajv.addFormat('semver-version-array', {
+    type: 'string',
+    validate: (versionStringList: string) => {
+      let versionList;
+      try {
+        versionList = JSON.parse(versionStringList);
+      } catch (error) {
+        return false;
+      }
+      if (versionList instanceof Array) {
+        return versionList.every(version => !!semver.valid(version));
+      }
+      return false;
     },
   });
 }
