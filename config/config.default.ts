@@ -118,7 +118,7 @@ export default (appInfo: EggAppConfig) => {
       },
     });
   }
-  
+
   config.logger = {
     enablePerformanceTimer: true,
     enableFastContextLogger: true,
