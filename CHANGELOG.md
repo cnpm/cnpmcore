@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.32.0](https://github.com/cnpm/cnpmcore/compare/v3.31.0...v3.32.0) (2023-06-11)
+
+
+### Features
+
+* sync specified versions ([#487](https://github.com/cnpm/cnpmcore/issues/487)) ([a9bb81a](https://github.com/cnpm/cnpmcore/commit/a9bb81adfb0d4eb2ff8b755995272dda22511e58))
+
 ## [3.31.0](https://github.com/cnpm/cnpmcore/compare/v3.30.2...v3.31.0) (2023-06-11)
 
 
