@@ -54,10 +54,6 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   enableUnpkg: true,
 };
 
-function getUserHome():string {
-  return process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'] || '';
-}
-
 export default (appInfo: EggAppConfig) => {
   const config = {} as PowerPartial<EggAppConfig>;
 
