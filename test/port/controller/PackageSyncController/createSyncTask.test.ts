@@ -60,6 +60,13 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.error === '[FORBIDDEN] Can\'t sync private package "@cnpm/koa"');
     });
 
+    it('should 422 if specificVersions cannot parse is not valideted', async () => {
+      await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .send({ specificVersions: '1.0.0' })
+        .expect(422);
+    });
+
     it('should 201 if user login when alwaysAuth = true', async () => {
       mock(app.config.cnpmcore, 'alwaysAuth', true);
       const res = await app.httpRequest()
