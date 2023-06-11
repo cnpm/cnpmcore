@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.31.0](https://github.com/cnpm/cnpmcore/compare/v3.30.2...v3.31.0) (2023-06-11)
+
+
+### Features
+
+* Support environment variable for config :rocket:  ([#489](https://github.com/cnpm/cnpmcore/issues/489)) ([d4d7a3d](https://github.com/cnpm/cnpmcore/commit/d4d7a3d7c8bb089cd6e00050a9849749a089ae64))
+
 ## [3.30.2](https://github.com/cnpm/cnpmcore/compare/v3.30.1...v3.30.2) (2023-06-09)
 
 
