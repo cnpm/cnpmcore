@@ -60,25 +60,25 @@ export default (appInfo: EggAppConfig) => {
   config.cnpmcore = cnpmcoreConfig;
 
   // override config from framework / plugin
-  config.dataDir = join(appInfo.root, '.cnpmcore');
+  config.dataDir = process.env.CNPMCORE_DATA_DIR || join(appInfo.root, '.cnpmcore');
 
   config.orm = {
     client: 'mysql',
-    database: process.env.MYSQL_DATABASE || 'cnpmcore',
-    host: process.env.MYSQL_HOST || '127.0.0.1',
-    port: process.env.MYSQL_PORT || 3306,
-    user: process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD,
+    database: process.env.CNPMCORE_MYSQL_DATABASE || process.env.MYSQL_DATABASE || 'cnpmcore',
+    host: process.env.CNPMCORE_MYSQL_HOST || process.env.MYSQL_HOST || '127.0.0.1',
+    port: process.env.CNPMCORE_MYSQL_PORT || process.env.MYSQL_PORT || 3306,
+    user: process.env.CNPMCORE_MYSQL_USER || process.env.MYSQL_USER || 'root',
+    password: process.env.CNPMCORE_MYSQL_PASSWORD || process.env.MYSQL_PASSWORD,
     charset: 'utf8mb4',
     logger: {},
   };
 
   config.redis = {
     client: {
-      port: 6379,
-      host: '127.0.0.1',
-      password: '',
-      db: 0,
+      port: Number(process.env.CNPMCORE_REDIS_PORT || 6379),
+      host: process.env.CNPMCORE_REDIS_HOST || '127.0.0.1',
+      password: process.env.CNPMCORE_REDIS_PASSWORD || '',
+      db: Number(process.env.CNPMCORE_REDIS_DB || 0),
     },
   };
 
@@ -98,7 +98,7 @@ export default (appInfo: EggAppConfig) => {
 
   config.nfs = {
     client: null,
-    dir: join(config.dataDir, 'nfs'),
+    dir: process.env.CNPMCORE_NFS_DIR || join(config.dataDir, 'nfs'),
   };
   /* c8 ignore next 17 */
   // enable oss nfs store by env values
@@ -122,7 +122,18 @@ export default (appInfo: EggAppConfig) => {
   config.logger = {
     enablePerformanceTimer: true,
     enableFastContextLogger: true,
+    appLogName: process.env.CNPMCORE_APP_LOG_NAME || `${appInfo.name}-web.log`,
+    coreLogName: process.env.CNPMCORE_CORE_LOG_NAME || 'egg-web.log',
+    agentLogName: process.env.CNPMCORE_AGENT_LOG_NAME || 'egg-agent.log',
+    errorLogName: process.env.CNPMCORE_ERROR_LOG_NAME || 'common-error.log',
+    outputJSON: Boolean(process.env.CNPMCORE_LOG_JSON_OUTPUT || false),
   };
+  if (process.env.CNPMCORE_LOG_DIR) {
+    config.logger.dir = process.env.CNPMCORE_LOG_DIR;
+  }
+  if (process.env.CNPMCORE_LOG_JSON_OUTPUT) {
+    config.logger.outputJSON = Boolean(process.env.CNPMCORE_LOG_JSON_OUTPUT);
+  }
 
   config.logrotator = {
     // only keep 1 days log files
