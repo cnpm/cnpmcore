@@ -150,20 +150,20 @@ docker run -p 7001:7001 -it --rm \
 
 ## 演示地址
 
-https://registry-demo.fengmk2.com
+https://registry-demo.fengmk2.com:9443
 
 管理员账号：cnpmcore_admin/12345678
 
 通过 npm login 可以登录
 
 ```bash
-npm login --registry=https://registry-demo.fengmk2.com
+npm login --registry=https://registry-demo.fengmk2.com:9443
 ```
 
 查看当前登录用户
 
 ```bash
-npm whoami --registry=https://registry-demo.fengmk2.com
+npm whoami --registry=https://registry-demo.fengmk2.com:9443
 ```
 
 ## fengmk2/cnpmcore 镜像
