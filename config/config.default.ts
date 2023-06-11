@@ -132,7 +132,7 @@ export default (appInfo: EggAppConfig) => {
     config.logger.dir = process.env.CNPMCORE_LOG_DIR;
   }
   if (process.env.CNPMCORE_LOG_JSON_OUTPUT) {
-    config.logger.outputJSON = Boolean(process.env.CNPMCORE_LOG_JSON_OUTPUT),
+    config.logger.outputJSON = Boolean(process.env.CNPMCORE_LOG_JSON_OUTPUT);
   }
 
   config.logrotator = {
