@@ -72,6 +72,58 @@ CNPMCORE_LOG_DIR=/var/log/cnpmcore
 CNPMCORE_CONFIG_REGISTRY=https://your-registry.com
 ```
 
+### 使用 `config.prod.js` 覆盖
+
+直接覆盖 `/usr/src/app/config/config.prod.js` 文件也可以实现生产配置自定义。
+
+```js
+module.exports = {
+  cnpmcore: {
+    registry: 'https://your-registry.com',
+    enableWebAuthn: true,
+  },
+  orm: {
+    database: 'cnpmcore',
+    host: '127.0.0.1',
+    port: 3306,
+    user: 'your-db-user-name',
+    password: 'your-db-user-password',
+  },
+  redis: {
+    client: {
+      port: 6379,
+      host: '127.0.0.1',
+      password: 'your-redis-password',
+      db: 1,
+    },
+  },
+  nfs: {
+    client: new (require('s3-cnpmcore'))({
+      region: 'default',
+      endpoint: 'https://your-s3-endpoint',
+      credentials: {
+        accessKeyId: 's3-ak',
+        secretAccessKey: 's3-sk',
+      },
+      bucket: 'your-bucket-name',
+      forcePathStyle: true,
+      disableURL: true,
+    }),
+  },
+  logger: {
+    dir: '/var/log/cnpmcore',
+  },
+};
+```
+
+通过 docker volumes 设置配置文件
+
+```bash
+docker run -p 7001:7001 -it --rm \
+  -v /path-to/config.prod.js:/usr/src/app/config/config.prod.js \
+  --name cnpmcore-prod cnpmcore
+```
+
 ## 运行容器
 
 ```bash

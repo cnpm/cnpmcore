@@ -44,7 +44,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   admins: {
     cnpmcore_admin: 'admin@cnpmjs.org',
   },
-  enableWebAuthn: process.env.CNPMCORE_CONFIG_ENABLE_WEB_AUTHN === 'true',
+  enableWebAuthn: !!process.env.CNPMCORE_CONFIG_ENABLE_WEB_AUTHN,
   enableCDN: false,
   cdnCacheControlHeader: 'public, max-age=300',
   cdnVaryHeader: 'Accept, Accept-Encoding',
