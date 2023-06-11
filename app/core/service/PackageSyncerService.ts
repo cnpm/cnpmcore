@@ -350,7 +350,7 @@ export class PackageSyncerService extends AbstractService {
   public async executeTask(task: Task) {
     const fullname = task.targetName;
     const [ scope, name ] = getScopeAndName(fullname);
-    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, remoteAuthToken, specificVersions, forbiddenAutoSyncLatestVersion } = task.data as SyncPackageTaskOptions;
+    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, remoteAuthToken, specificVersions } = task.data as SyncPackageTaskOptions;
     let pkg = await this.packageRepository.findPackage(scope, name);
     const registry = await this.initSpecRegistry(task, pkg, scope);
     const registryHost = this.npmRegistry.registry;
@@ -548,7 +548,7 @@ export class PackageSyncerService extends AbstractService {
     const existsVersionCount = Object.keys(existsVersionMap).length;
     const abbreviatedVersionMap = abbreviatedManifests?.versions ?? {};
     // 2. save versions
-    if (specificVersions && !forbiddenAutoSyncLatestVersion && !specificVersions.includes(distTags.latest)) {
+    if (specificVersions && !this.config.cnpmcore.strictSyncSpecivicVersion && !specificVersions.includes(distTags.latest)) {
       logs.push(`[${isoNow()}] 📦 Add latest tag version "${fullname}: ${distTags.latest}"`);
       specificVersions.push(distTags.latest);
     }
@@ -805,7 +805,7 @@ export class PackageSyncerService extends AbstractService {
     }
     // 3.2 shoud add latest tag
     // 在同步sepcific version时如果没有同步latestTag的版本会出现latestTag丢失或指向版本不正确的情况
-    if (specificVersions && forbiddenAutoSyncLatestVersion) {
+    if (specificVersions && this.config.cnpmcore.strictSyncSpecivicVersion) {
       // 不允许自动同步latest版本，从已同步版本中选出latest
       let latestStabelVersion;
       const sortedVersionList = specificVersions.sort(semverRcompare);

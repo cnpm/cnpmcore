@@ -76,8 +76,8 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
 
   it('should append specific version to waiting task.', async () => {
     const name = '@cnpmcore/test-sync-package-has-two-versions';
-    await packageSyncerService.createTask(name, { specificVersions: [ '1.0.0' ], forbiddenAutoSyncLatestVersion: true });
-    await packageSyncerService.createTask(name, { specificVersions: [ '2.0.0' ], forbiddenAutoSyncLatestVersion: true });
+    await packageSyncerService.createTask(name, { specificVersions: [ '1.0.0' ] });
+    await packageSyncerService.createTask(name, { specificVersions: [ '2.0.0' ] });
     const task = await packageSyncerService.findExecuteTask();
     assert(task);
     assert.equal(task.targetName, name);
