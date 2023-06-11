@@ -1,0 +1,6 @@
+logs
+node_modules
+run
+typings
+.cnpmcore*
+coverage

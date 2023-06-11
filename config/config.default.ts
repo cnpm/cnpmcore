@@ -1,4 +1,5 @@
 import assert from 'assert';
+import { randomUUID } from 'crypto';
 import { join } from 'path';
 import { EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
@@ -10,8 +11,8 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   name: 'cnpm',
   hookEnable: false,
   hooksLimit: 20,
-  sourceRegistry: 'https://registry.npmjs.org',
-  sourceRegistryIsCNpm: false,
+  sourceRegistry: 'https://registry.npmmirror.com',
+  sourceRegistryIsCNpm: true,
   syncUpstreamFirst: false,
   sourceRegistrySyncTimeout: 180000,
   taskQueueHighWaterSize: 100,
@@ -29,9 +30,9 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   syncDownloadDataMaxDate: '',
   enableChangesStream: false,
   checkChangesStreamInterval: 500,
-  changesStreamRegistry: 'https://replicate.npmjs.com',
-  changesStreamRegistryMode: ChangesStreamMode.streaming,
-  registry: 'http://localhost:7001',
+  changesStreamRegistry: 'https://registry.npmmirror.com',
+  changesStreamRegistryMode: ChangesStreamMode.json,
+  registry: process.env.CNPMCORE_CONFIG_REGISTRY || 'http://localhost:7001',
   alwaysAuth: false,
   allowScopes: [
     '@cnpm',
@@ -58,6 +59,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
 export default (appInfo: EggAppConfig) => {
   const config = {} as PowerPartial<EggAppConfig>;
 
+  config.keys = process.env.CNPMCORE_EGG_KEYS || randomUUID();
   config.cnpmcore = cnpmcoreConfig;
 
   // override config from framework / plugin
@@ -117,6 +119,24 @@ export default (appInfo: EggAppConfig) => {
       defaultHeaders: {
         'Cache-Control': 'max-age=0, s-maxage=60',
       },
+    });
+  } else if (process.env.CNPMCORE_NFS_TYPE === 's3') {
+    assert(process.env.CNPMCORE_NFS_S3_CLIENT_ENDPOINT, 'require env CNPMCORE_NFS_S3_CLIENT_ENDPOINT');
+    assert(process.env.CNPMCORE_NFS_S3_CLIENT_ID, 'require env CNPMCORE_NFS_S3_CLIENT_ID');
+    assert(process.env.CNPMCORE_NFS_S3_CLIENT_SECRET, 'require env CNPMCORE_NFS_S3_CLIENT_SECRET');
+    assert(process.env.CNPMCORE_NFS_S3_CLIENT_BUCKET, 'require env CNPMCORE_NFS_S3_CLIENT_BUCKET');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const S3Client = require('s3-cnpmcore');
+    config.nfs.client = new S3Client({
+      region: process.env.CNPMCORE_NFS_S3_CLIENT_REGION || 'default',
+      endpoint: process.env.CNPMCORE_NFS_S3_CLIENT_ENDPOINT,
+      credentials: {
+        accessKeyId: process.env.CNPMCORE_NFS_S3_CLIENT_ID,
+        secretAccessKey: process.env.CNPMCORE_NFS_S3_CLIENT_SECRET,
+      },
+      bucket: process.env.CNPMCORE_NFS_S3_CLIENT_BUCKET,
+      forcePathStyle: !!process.env.CNPMCORE_NFS_S3_CLIENT_FORCE_PATH_STYLE,
+      disableURL: !!process.env.CNPMCORE_NFS_S3_CLIENT_DISABLE_URL,
     });
   }
 
