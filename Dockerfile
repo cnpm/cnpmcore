@@ -1,4 +1,5 @@
-FROM node:18
+# https://stackoverflow.com/questions/65612411/forcing-docker-to-use-linux-amd64-platform-by-default-on-macos/69636473#69636473
+FROM --platform=linux/amd64 node:18
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -15,4 +16,4 @@ ENV NODE_ENV=production
 ENV EGG_SERVER_ENV=prod
 
 EXPOSE 7001
-CMD ["node", "node_modules/egg-scripts/bin/egg-scripts.js", "start"]
+CMD ["npm", "run", "start:foreground"]
