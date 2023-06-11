@@ -15,4 +15,4 @@ ENV NODE_ENV=production
 ENV EGG_SERVER_ENV=prod
 
 EXPOSE 7001
-CMD ["npm", "run", "start:foreground"]
+CMD ["node", "node_modules/egg-scripts/bin/egg-scripts.js", "start"]
