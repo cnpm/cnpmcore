@@ -122,17 +122,22 @@ export default (appInfo: EggAppConfig) => {
       },
     });
   }
-
+  
   config.logger = {
     enablePerformanceTimer: true,
     enableFastContextLogger: true,
-    dir: process.env.CNPMCORE_LOG_DIR || join(getUserHome(), 'log1'),
     appLogName: process.env.CNPMCORE_APP_LOG_NAME || `${appInfo.name}-web.log`,
     coreLogName: process.env.CNPMCORE_CORE_LOG_NAME || 'egg-web.log',
     agentLogName: process.env.CNPMCORE_AGENT_LOG_NAME || 'egg-agent.log',
     errorLogName: process.env.CNPMCORE_ERROR_LOG_NAME || 'common-error.log',
     outputJSON: Boolean(process.env.CNPMCORE_LOG_JSON_OUTPUT || false),
   };
+  if (process.env.CNPMCORE_LOG_DIR) {
+    config.logger.dir = process.env.CNPMCORE_LOG_DIR;
+  }
+  if (process.env.CNPMCORE_LOG_JSON_OUTPUT) {
+    config.logger.outputJSON = Boolean(process.env.CNPMCORE_LOG_JSON_OUTPUT),
+  }
 
   config.logrotator = {
     // only keep 1 days log files
