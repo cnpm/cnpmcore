@@ -20,6 +20,7 @@ import { DistRepository } from '../../repository/DistRepository';
 import { PackageVersionFile } from '../entity/PackageVersionFile';
 import { PackageVersion } from '../entity/PackageVersion';
 import { Package } from '../entity/Package';
+import { PackageManagerService } from './PackageManagerService';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -31,6 +32,8 @@ export class PackageVersionFileService extends AbstractService {
   private readonly packageVersionFileRepository: PackageVersionFileRepository;
   @Inject()
   private readonly distRepository: DistRepository;
+  @Inject()
+  private readonly packageManagerService: PackageManagerService;
 
   async listPackageVersionFiles(pkgVersion: PackageVersion, directory: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
@@ -59,6 +62,7 @@ export class PackageVersionFileService extends AbstractService {
     const tmpdir = await createTempDir(this.config.dataDir, dirname);
     const tarFile = `${tmpdir}.tgz`;
     const paths: string[] = [];
+    let readmeFilename = '';
     try {
       this.logger.info('[PackageVersionFileService.syncPackageVersionFiles:download-start] dist:%s(path:%s, size:%s) => tarFile:%s',
         pkgVersion.tarDist.distId, pkgVersion.tarDist.path, pkgVersion.tarDist.size, tarFile);
@@ -74,7 +78,13 @@ export class PackageVersionFileService extends AbstractService {
           if (entry.path.includes('/./')) return;
           // https://github.com/cnpm/cnpmcore/issues/452#issuecomment-1570077310
           // strip first dir, e.g.: 'package/', 'lodash-es/'
-          paths.push('/' + entry.path.split('/').slice(1).join('/'));
+          const filename = entry.path.split('/').slice(1).join('/');
+          paths.push('/' + filename);
+          if (!readmeFilename) {
+            if (filename === 'README.md' || filename === 'readme.md' || filename === 'Readme.md') {
+              readmeFilename = filename;
+            }
+          }
         },
       });
       for (const path of paths) {
@@ -84,6 +94,10 @@ export class PackageVersionFileService extends AbstractService {
       }
       this.logger.info('[PackageVersionFileService.syncPackageVersionFiles:success] packageVersionId: %s, %d paths, %d files, tmpdir: %s',
         pkgVersion.packageVersionId, paths.length, files.length, tmpdir);
+      if (readmeFilename) {
+        const readmeFile = join(tmpdir, readmeFilename);
+        await this.packageManagerService.savePackageVersionReadme(pkgVersion, readmeFile);
+      }
       return files;
     } catch (err) {
       this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:error] packageVersionId: %s, %d paths, tmpdir: %s, error: %s',

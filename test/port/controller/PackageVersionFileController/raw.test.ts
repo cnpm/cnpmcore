@@ -316,6 +316,8 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .get(`/${pkg.name}/1.0.0`)
         .expect(200);
       const publishTime = new Date(res.body.publish_time).toISOString();
+      const oldReadme = res.body.readme;
+
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.status, 200);
@@ -332,6 +334,19 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.body.path, '/');
+
+      // pkg version readme should change
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`)
+        .expect(200);
+      assert.notEqual(res.body.readme, oldReadme);
+      assert.match(res.body.readme, /The Javascript Database that Syncs/);
+      // pkg version change too
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`)
+        .expect(200);
+      assert.notEqual(res.body.readme, oldReadme);
+      assert.match(res.body.readme, /The Javascript Database that Syncs/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files?meta=true`);
