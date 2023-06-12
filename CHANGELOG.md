@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.33.0](https://github.com/cnpm/cnpmcore/compare/v3.32.0...v3.33.0) (2023-06-12)
+
+
+### Features
+
+* support Dockerfile and S3 nfs ([#509](https://github.com/cnpm/cnpmcore/issues/509)) ([f61ef1c](https://github.com/cnpm/cnpmcore/commit/f61ef1c0586f668c7c67ca30356e82026afc234d))
+
 ## [3.32.0](https://github.com/cnpm/cnpmcore/compare/v3.31.0...v3.32.0) (2023-06-11)
 
 
