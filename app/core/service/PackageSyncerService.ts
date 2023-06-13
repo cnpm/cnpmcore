@@ -804,20 +804,20 @@ export class PackageSyncerService extends AbstractService {
       }
     }
     // 3.2 shoud add latest tag
-    // 在同步sepcific version时如果没有同步latestTag的版本会出现latestTag丢失或指向版本不正确的情况
+    // 在同步 sepcific version 时如果没有同步 latestTag 的版本会出现 latestTag 丢失或指向版本不正确的情况
     if (specificVersions && this.config.cnpmcore.strictSyncSpecivicVersion) {
-      // 不允许自动同步latest版本，从已同步版本中选出latest
-      let latestStabelVersion;
+      // 不允许自动同步 latest 版本，从已同步版本中选出 latest
+      let latestStableVersion: string;
       const sortedVersionList = specificVersions.sort(semverRcompare);
-      latestStabelVersion = sortedVersionList.filter(i => !semverPrerelease(i))[0];
-      // 所有版本都不是稳定版本则指向非稳定版本保证latest存在
-      if (!latestStabelVersion) {
-        latestStabelVersion = sortedVersionList[0];
+      latestStableVersion = sortedVersionList.filter(i => !semverPrerelease(i))[0];
+      // 所有版本都不是稳定版本则指向非稳定版本保证 latest 存在
+      if (!latestStableVersion) {
+        latestStableVersion = sortedVersionList[0];
       }
-      if (!existsDistTags.latest || semverRcompare(existsDistTags.latest, latestStabelVersion) === 1) {
+      if (!existsDistTags.latest || semverRcompare(existsDistTags.latest, latestStableVersion) === 1) {
         logs.push(`[${isoNow()}] 🚧 patch latest tag from specific versions 🚧`);
-        changedTags.push({ action: 'change', tag: 'latest', version: latestStabelVersion });
-        await this.packageManagerService.savePackageTag(pkg, 'latest', latestStabelVersion);
+        changedTags.push({ action: 'change', tag: 'latest', version: latestStableVersion });
+        await this.packageManagerService.savePackageTag(pkg, 'latest', latestStableVersion);
       }
     }
 

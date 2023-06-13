@@ -480,24 +480,22 @@ export class PackageManagerService extends AbstractService {
   }
 
   /**
-   * save package version readme and auto update package full manifests readme if the package version is latest
+   * save package version readme
    */
-  async savePackageVersionReadme(pkgVersion: PackageVersion, readmeFile: string) {
+  public async savePackageVersionReadme(pkgVersion: PackageVersion, readmeFile: string) {
     await this.distRepository.saveDist(pkgVersion.readmeDist, readmeFile);
     this.logger.info('[PackageManagerService.savePackageVersionReadme] save packageVersionId:%s readme:%s to dist:%s',
       pkgVersion.packageVersionId, readmeFile, pkgVersion.readmeDist.distId);
-    const latestTag = await this.packageRepository.findPackageTag(pkgVersion.packageId, 'latest');
-    if (latestTag?.version === pkgVersion.version) {
-      // update package readme dist
-      const pkg = await this.packageRepository.findPackageByPackageId(pkgVersion.packageId);
-      if (!pkg || !pkg.manifestsDist) return;
-      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
-      if (!fullManifests) return;
-      fullManifests.readme = await readFile(readmeFile, 'utf-8');
-      await this._updatePackageManifestsToDists(pkg, fullManifests, null);
-      this.logger.info('[PackageManagerService.savePackageVersionReadme] save packageId:%s readme, size: %s',
-        pkg.packageId, fullManifests.readme.length);
-    }
+  }
+
+  public async savePackageReadme(pkg: Package, readmeFile: string) {
+    if (!pkg.manifestsDist) return;
+    const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
+    if (!fullManifests) return;
+    fullManifests.readme = await readFile(readmeFile, 'utf-8');
+    await this._updatePackageManifestsToDists(pkg, fullManifests, null);
+    this.logger.info('[PackageManagerService.savePackageReadme] save packageId:%s readme, size: %s',
+      pkg.packageId, fullManifests.readme.length);
   }
 
   private async _removePackageVersionAndDist(pkgVersion: PackageVersion) {
