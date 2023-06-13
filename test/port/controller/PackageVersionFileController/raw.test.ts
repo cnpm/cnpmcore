@@ -2,6 +2,7 @@ import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil';
+import { PackageTagChanged, PackageTagAdded } from '../../../../app/core/event/SyncPackageVersionFile';
 
 describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => {
   let publisher;
@@ -286,6 +287,17 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       // console.log(res.body);
       assert.equal(res.body.files.find(file => file.path === '/.'), undefined);
       assert(res.body.files.find(file => file.path === '/dist'));
+      const packageTagAdded = await app.getEggObject(PackageTagAdded);
+      await packageTagAdded.handle(pkg.name, 'foo');
+      await packageTagAdded.handle(pkg.name, 'latest');
+      res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`);
+      const readme = res.body.readme;
+      assert.match(readme, /# bovo-ui/);
+      // pkg readme change to latest
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`);
+      assert.equal(res.body.readme, readme);
     });
 
     it('should handle big tgz file', async () => {
@@ -341,11 +353,13 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .expect(200);
       assert.notEqual(res.body.readme, oldReadme);
       assert.match(res.body.readme, /The Javascript Database that Syncs/);
+      const packageTagChanged = await app.getEggObject(PackageTagChanged);
+      await packageTagChanged.handle(pkg.name, 'foo');
+      await packageTagChanged.handle(pkg.name, 'latest');
       // pkg version change too
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
         .expect(200);
-      assert.notEqual(res.body.readme, oldReadme);
       assert.match(res.body.readme, /The Javascript Database that Syncs/);
 
       res = await app.httpRequest()
