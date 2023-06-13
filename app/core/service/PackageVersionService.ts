@@ -5,7 +5,7 @@ import { PackageVersionRepository } from '../../repository/PackageVersionReposit
 import { getScopeAndName } from '../../common/PackageUtil';
 import { SqlRange } from '../entity/SqlRange';
 import { BugVersionService } from './BugVersionService';
-import { PackageJSONType } from '../../repository/PackageRepository';
+import type { PackageJSONType } from '../../repository/PackageRepository';
 import { DistRepository } from '../../repository/DistRepository';
 import { BugVersionAdvice } from '../entity/BugVersion';
 

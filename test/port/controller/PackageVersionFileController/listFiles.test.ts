@@ -96,6 +96,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .get('/foo/1.0.0')
         .expect(200);
       const publishTime = new Date(res.body.publish_time).toISOString();
+      const oldReadme = res.body.readme;
       res = await app.httpRequest()
         .get('/foo/1.0.0/files/')
         .expect(200)
@@ -117,6 +118,11 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           },
         ],
       });
+      // not found README.md file, readme not change
+      res = await app.httpRequest()
+        .get('/foo/1.0.0')
+        .expect(200);
+      assert.equal(res.body.readme, oldReadme);
 
       // again should work
       res = await app.httpRequest()

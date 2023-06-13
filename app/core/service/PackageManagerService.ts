@@ -1,4 +1,4 @@
-import { stat } from 'fs/promises';
+import { stat, readFile } from 'node:fs/promises';
 import {
   AccessLevel,
   SingletonProto,
@@ -477,6 +477,27 @@ export class PackageManagerService extends AbstractService {
   public async savePackageVersionManifest(pkgVersion: PackageVersion, mergeManifest: object, mergeAbbreviated: object) {
     await this._mergeManifestDist(pkgVersion.manifestDist, mergeManifest);
     await this._mergeManifestDist(pkgVersion.abbreviatedDist, mergeAbbreviated);
+  }
+
+  /**
+   * save package version readme and auto update package full manifests readme if the package version is latest
+   */
+  async savePackageVersionReadme(pkgVersion: PackageVersion, readmeFile: string) {
+    await this.distRepository.saveDist(pkgVersion.readmeDist, readmeFile);
+    this.logger.info('[PackageManagerService.savePackageVersionReadme] save packageVersionId:%s readme:%s to dist:%s',
+      pkgVersion.packageVersionId, readmeFile, pkgVersion.readmeDist.distId);
+    const latestTag = await this.packageRepository.findPackageTag(pkgVersion.packageId, 'latest');
+    if (latestTag?.version === pkgVersion.version) {
+      // update package readme dist
+      const pkg = await this.packageRepository.findPackageByPackageId(pkgVersion.packageId);
+      if (!pkg || !pkg.manifestsDist) return;
+      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
+      if (!fullManifests) return;
+      fullManifests.readme = await readFile(readmeFile, 'utf-8');
+      await this._updatePackageManifestsToDists(pkg, fullManifests, null);
+      this.logger.info('[PackageManagerService.savePackageVersionReadme] save packageId:%s readme, size: %s',
+        pkg.packageId, fullManifests.readme.length);
+    }
   }
 
   private async _removePackageVersionAndDist(pkgVersion: PackageVersion) {
