@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.34.0](https://github.com/cnpm/cnpmcore/compare/v3.33.0...v3.34.0) (2023-06-13)
+
+
+### Features
+
+* sync package readme ([#512](https://github.com/cnpm/cnpmcore/issues/512)) ([f64e273](https://github.com/cnpm/cnpmcore/commit/f64e27356691417c2323f9e0951e4f110bae3c6b))
+* use unpkg README.md to update package version readme property ([#511](https://github.com/cnpm/cnpmcore/issues/511)) ([56d8e1a](https://github.com/cnpm/cnpmcore/commit/56d8e1ad877c456042f891b76ff4fe2a771522c4))
+
 ## [3.33.0](https://github.com/cnpm/cnpmcore/compare/v3.32.0...v3.33.0) (2023-06-12)
 
 
