@@ -5,7 +5,7 @@ import {
   EventBus,
   Inject,
 } from '@eggjs/tegg';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError, NotFoundError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import npa from 'npm-package-arg';
 import semver from 'semver';
@@ -279,6 +279,24 @@ export class PackageManagerService extends AbstractService {
     return pkgVersion;
   }
 
+  async blockPackageByPackageId(packageId: string, reason: string) {
+    const pkg = await this.packageRepository.findPackageByPackageId(packageId);
+    if (!pkg) {
+      throw new NotFoundError(`Package packageId(${packageId}) not found`);
+    }
+    return await this.blockPackage(pkg, reason);
+  }
+
+  async blockPackageByName(name: string, reason: string) {
+    const [ scope, pkgName ] = getScopeAndName(name);
+    const pkg = await this.packageRepository.findPackage(scope, pkgName);
+    if (!pkg) {
+      throw new NotFoundError(`Package name(${name}) not found`);
+    }
+    return await this.blockPackage(pkg, reason);
+  }
+
+
   async blockPackage(pkg: Package, reason: string) {
     let block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
@@ -306,6 +324,23 @@ export class PackageManagerService extends AbstractService {
         pkg.packageId, reason);
     }
     return block;
+  }
+
+  async unblockPackageByPackageId(packageId: string) {
+    const pkg = await this.packageRepository.findPackageByPackageId(packageId);
+    if (!pkg) {
+      throw new NotFoundError(`Package packageId(${packageId}) not found`);
+    }
+    return await this.unblockPackage(pkg);
+  }
+
+  async unblockPackageByName(name: string) {
+    const [ scope, pkgName ] = getScopeAndName(name);
+    const pkg = await this.packageRepository.findPackage(scope, pkgName);
+    if (!pkg) {
+      throw new NotFoundError(`Package name(${name}) not found`);
+    }
+    return await this.unblockPackage(pkg);
   }
 
   async unblockPackage(pkg: Package) {
@@ -861,7 +896,7 @@ export class PackageManagerService extends AbstractService {
     const maintainers = await this._listPackageMaintainers(pkg);
     const registry = await this.getSourceRegistry(pkg);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const data:PackageManifestType = {
+    const data: PackageManifestType = {
       _id: `${pkg.fullname}`,
       _rev: `${pkg.id}-${pkg.packageId}`,
       'dist-tags': distTags,
