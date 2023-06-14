@@ -43,5 +43,15 @@ describe('test/repository/PackageRepository.test.ts', () => {
       assert(res.packageCount > packageCount);
       assert(res.packageVersionCount > packageVersionCount);
     });
+
+    it('should work with scope and registryId', async () => {
+      await TestUtil.createPackage({
+        isPrivate: false,
+        registryId: 'mock_registry_id',
+      });
+
+      const model = await packageRepository.listPackagesByScopeRegistryId('@cnpm', 'mock_registry_id');
+      assert(model.length === 1);
+    });
   });
 });

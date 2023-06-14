@@ -297,6 +297,17 @@ export class PackageRepository extends AbstractRepository {
     return packageModels.map(pkg => ModelConvertor.convertModelToEntity(pkg, PackageEntity));
   }
 
+  /**
+   * used for list all internal packages
+   * @param scope scop name
+   * @param registryId registry ID
+   * @returns PackageEntity[]
+   */
+  async listPackagesByScopeRegistryId(scope: string, registryId: string): Promise<PackageEntity[]> {
+    const packages = await this.Package.find({ scope, registryId });
+    return packages.map(pkg => ModelConvertor.convertModelToEntity(pkg, PackageEntity));
+  }
+
   async createPackageVersion(pkgVersionEntity: PackageVersionEntity) {
     await this.PackageVersion.transaction(async transaction => {
       await Promise.all([
@@ -388,7 +399,7 @@ export class PackageRepository extends AbstractRepository {
     return ModelConvertor.convertModelToEntity(model, this.PackageVersionManifest);
   }
 
-  private getCountSql(model: typeof Bone):string {
+  private getCountSql(model: typeof Bone): string {
     const { database } = this.config.orm;
     const sql = `
       SELECT
