@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.34.1](https://github.com/cnpm/cnpmcore/compare/v3.34.0...v3.34.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* add block package by packageId and name function ([#514](https://github.com/cnpm/cnpmcore/issues/514)) ([b81b2a0](https://github.com/cnpm/cnpmcore/commit/b81b2a03f85010bb8e94c334e2338ecc8064e833))
+
 ## [3.34.0](https://github.com/cnpm/cnpmcore/compare/v3.33.0...v3.34.0) (2023-06-13)
 
 
