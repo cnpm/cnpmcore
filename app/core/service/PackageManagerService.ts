@@ -279,15 +279,7 @@ export class PackageManagerService extends AbstractService {
     return pkgVersion;
   }
 
-  async blockPackageByPackageId(packageId: string, reason: string) {
-    const pkg = await this.packageRepository.findPackageByPackageId(packageId);
-    if (!pkg) {
-      throw new NotFoundError(`Package packageId(${packageId}) not found`);
-    }
-    return await this.blockPackage(pkg, reason);
-  }
-
-  async blockPackageByName(name: string, reason: string) {
+  async blockPackageByFullname(name: string, reason: string) {
     const [ scope, pkgName ] = getScopeAndName(name);
     const pkg = await this.packageRepository.findPackage(scope, pkgName);
     if (!pkg) {
@@ -295,7 +287,6 @@ export class PackageManagerService extends AbstractService {
     }
     return await this.blockPackage(pkg, reason);
   }
-
 
   async blockPackage(pkg: Package, reason: string) {
     let block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
@@ -326,15 +317,7 @@ export class PackageManagerService extends AbstractService {
     return block;
   }
 
-  async unblockPackageByPackageId(packageId: string) {
-    const pkg = await this.packageRepository.findPackageByPackageId(packageId);
-    if (!pkg) {
-      throw new NotFoundError(`Package packageId(${packageId}) not found`);
-    }
-    return await this.unblockPackage(pkg);
-  }
-
-  async unblockPackageByName(name: string) {
+  async unblockPackageByFullname(name: string) {
     const [ scope, pkgName ] = getScopeAndName(name);
     const pkg = await this.packageRepository.findPackage(scope, pkgName);
     if (!pkg) {
