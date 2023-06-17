@@ -33,15 +33,17 @@ export class DownloadPackageVersionTarController extends AbstractController {
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const storeKey = `/packages/${fullname}/${version}/${filenameWithVersion}.tgz`;
     const downloadUrl = await this.nfsAdapter.getDownloadUrl(storeKey);
+    // check package version in database
+    const pkg = await this.getPackageEntityByFullname(fullname);
+    const packageVersion = await this.getPackageVersionEntity(pkg, version);
+
+    // read by nfs url
     if (downloadUrl) {
       this.packageManagerService.plusPackageVersionCounter(fullname, version);
       ctx.redirect(downloadUrl);
       return;
     }
-
     // read from database
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    const packageVersion = await this.getPackageVersionEntity(pkg, version);
     ctx.logger.info('[PackageController:downloadVersionTar] %s@%s, packageVersionId: %s',
       pkg.fullname, version, packageVersion.packageVersionId);
     const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(packageVersion);
