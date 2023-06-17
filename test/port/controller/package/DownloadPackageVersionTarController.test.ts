@@ -177,6 +177,25 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         });
     });
 
+    it('should redirect to source registry when package version not exists', async () => {
+      mock(nfsClientAdapter, 'url', async () => {
+        return 'http://foo.com/foo.tgz';
+      });
+
+      await app.httpRequest()
+        .get(`/${name}/-/${name}-1.0.404404.tgz`)
+        .expect(302)
+        .expect('location', `https://registry.npmjs.org/${name}/-/${name}-1.0.404404.tgz`);
+
+      // not redirect the private package
+      await app.httpRequest()
+        .get(`/${scopedName}/-/${name}-1.0.404404.tgz`)
+        .expect(404)
+        .expect({
+          error: `[NOT_FOUND] ${scopedName}@1.0.404404 not found`,
+        });
+    });
+
     it('should not redirect public package to source registry when syncMode=all', async () => {
       if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
         mock(nfsClientAdapter, 'url', async () => {
