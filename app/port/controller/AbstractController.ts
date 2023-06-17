@@ -164,7 +164,7 @@ export abstract class AbstractController extends MiddlewareController {
   protected async getPackageVersionEntity(pkg: PackageEntity, version: string): Promise<PackageVersionEntity> {
     const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
     if (!packageVersion) {
-      throw new NotFoundError(`${pkg.fullname}@${version} not found`);
+      throw this.createPackageNotFoundErrorWithRedirect(pkg.fullname, version);
     }
     return packageVersion;
   }
