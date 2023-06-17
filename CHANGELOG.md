@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.34.3](https://github.com/cnpm/cnpmcore/compare/v3.34.2...v3.34.3) (2023-06-17)
+
+
+### Bug Fixes
+
+* merge docker ENV into one layer ([#523](https://github.com/cnpm/cnpmcore/issues/523)) ([eb91b83](https://github.com/cnpm/cnpmcore/commit/eb91b834c0edb65248073573840fc8c0511a0ce0))
+
 ## [3.34.2](https://github.com/cnpm/cnpmcore/compare/v3.34.1...v3.34.2) (2023-06-17)
 
 
