@@ -155,6 +155,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     });
 
     it('should 404 when package version not exists', async () => {
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
       if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
         mock(nfsClientAdapter, 'url', async () => {
           return undefined;
@@ -222,6 +223,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .expect(302)
         .expect('location', 'https://registry.npmjs.org/foo/-/foo-1.0.404404.tgz?t=123');
 
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
       // not redirect when package exists
       await app.httpRequest()
         .get(`/${name}/-/${name}-1.0.404404.tgz`)
