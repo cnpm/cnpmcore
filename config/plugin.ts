@@ -58,4 +58,11 @@ const plugin: EggPlugin = {
   },
 };
 
+if (process.env.EZM_ENABLE) {
+  plugin.xtransit = {
+    enable: true,
+    package: 'egg-xtransit',
+  };
+}
+
 export default plugin;

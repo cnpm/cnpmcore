@@ -186,5 +186,13 @@ export default (appInfo: EggAppConfig) => {
     },
   };
 
+  if (process.env.EZM_ENABLE) {
+    config.xtransit = {
+      server: process.env.EZM_SERVER,
+      appId: process.env.EZM_APP_ID,
+      appSecret: process.env.EZM_APP_SECRET,
+    };
+  }
+
   return config;
 };
