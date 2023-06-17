@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.34.2](https://github.com/cnpm/cnpmcore/compare/v3.34.1...v3.34.2) (2023-06-17)
+
+
+### Bug Fixes
+
+* should redirect when nfs adapter support url ([#522](https://github.com/cnpm/cnpmcore/issues/522)) ([3d6864c](https://github.com/cnpm/cnpmcore/commit/3d6864c713c3c59905cdf0a4287e0ca2ad291398))
+
 ## [3.34.1](https://github.com/cnpm/cnpmcore/compare/v3.34.0...v3.34.1) (2023-06-14)
 
 
