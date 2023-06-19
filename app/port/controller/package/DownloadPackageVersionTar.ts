@@ -28,14 +28,15 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async download(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
-    // try nfs url first, avoid db query
+    // can not try nfs url first, pnpm project with lock will try to get tgz file path directly.
     // tgz file storeKey: `/packages/${this.fullname}/${version}/${filename}`
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const storeKey = `/packages/${fullname}/${version}/${filenameWithVersion}.tgz`;
     const downloadUrl = await this.nfsAdapter.getDownloadUrl(storeKey);
     // check package version in database
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    const packageVersion = await this.getPackageVersionEntity(pkg, version);
+    const allowSync = this.getAllowSync(ctx);
+    const pkg = await this.getPackageEntityByFullname(fullname, allowSync);
+    const packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
 
     // read by nfs url
     if (downloadUrl) {
