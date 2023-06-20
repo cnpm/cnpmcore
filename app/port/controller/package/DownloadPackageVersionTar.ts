@@ -29,7 +29,6 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async download(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
-    // can not try nfs url first, pnpm project with lock will try to get tgz file path directly.
     // tgz file storeKey: `/packages/${this.fullname}/${version}/${filename}`
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const storeKey = `/packages/${fullname}/${version}/${filenameWithVersion}.tgz`;
