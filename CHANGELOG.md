@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.34.4](https://github.com/cnpm/cnpmcore/compare/v3.34.3...v3.34.4) (2023-06-20)
+
+
+### Bug Fixes
+
+* avoid db query on sync mode all ([#527](https://github.com/cnpm/cnpmcore/issues/527)) ([49855d9](https://github.com/cnpm/cnpmcore/commit/49855d97e5dd08a747f6e999b7eef03362399634)), closes [/github.com/cnpm/cnpmcore/pull/522/files#r1234655574](https://github.com/cnpm//github.com/cnpm/cnpmcore/pull/522/files/issues/r1234655574)
+
 ## [3.34.3](https://github.com/cnpm/cnpmcore/compare/v3.34.2...v3.34.3) (2023-06-17)
 
 
