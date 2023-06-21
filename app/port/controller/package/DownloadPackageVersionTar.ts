@@ -41,8 +41,9 @@ export class DownloadPackageVersionTarController extends AbstractController {
     }
 
     // check package version in database
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    const packageVersion = await this.getPackageVersionEntity(pkg, version);
+    const allowSync = this.getAllowSync(ctx);
+    const pkg = await this.getPackageEntityByFullname(fullname, allowSync);
+    const packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
 
     // read by nfs url
     if (downloadUrl) {

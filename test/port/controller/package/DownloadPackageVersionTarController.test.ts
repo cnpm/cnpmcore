@@ -257,6 +257,31 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
           error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
         });
     });
+
+    it('should not create sync task when package version tgz not exists and syncNotFound=false', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'exist');
+      mock(app.config.cnpmcore, 'syncNotFound', false);
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
+      const res = await app.httpRequest()
+        .get('/lodash/-/lodash-1.404.404.tgz')
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res.status === 404);
+      app.notExpectLog('[middleware:ErrorHandler][syncPackage] create sync package');
+    });
+
+    it('should create sync task when package version tgz not exists and syncNotFound=true', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'exist');
+      mock(app.config.cnpmcore, 'syncNotFound', true);
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
+      const res = await app.httpRequest()
+        .get('/lodash/-/lodash-1.404.404.tgz')
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res.status === 404);
+      app.expectLog('[middleware:ErrorHandler][syncPackage] create sync package');
+    });
+
   });
 
   describe('[GET /:fullname/download/:fullname-:version.tgz] deprecatedDownload()', () => {
