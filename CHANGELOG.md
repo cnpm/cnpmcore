@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.34.5](https://github.com/cnpm/cnpmcore/compare/v3.34.4...v3.34.5) (2023-06-21)
+
+
+### Bug Fixes
+
+* create sync task by 'GET /:fullname/-/:filenameWithVersion.tgz' ([#526](https://github.com/cnpm/cnpmcore/issues/526)) ([5ceaa6b](https://github.com/cnpm/cnpmcore/commit/5ceaa6b8dd43aee907e00ac979b55f02a08dba62))
+
 ## [3.34.4](https://github.com/cnpm/cnpmcore/compare/v3.34.3...v3.34.4) (2023-06-20)
 
 
