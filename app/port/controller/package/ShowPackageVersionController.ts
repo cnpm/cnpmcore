@@ -12,12 +12,16 @@ import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { ProxyModeService } from '../../../core/service/ProxyModeService';
 import { Spec } from '../../../port/typebox';
+import { SyncMode } from '../../../common/constants';
 
 @HTTPController()
 export class ShowPackageVersionController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
+  @Inject()
+  private proxyModeService: ProxyModeService;
 
   @HTTPMethod({
     // GET /:fullname/:versionSpec
@@ -32,17 +36,25 @@ export class ShowPackageVersionController extends AbstractController {
     const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
     const isFullManifests = ctx.accepts([ 'json', abbreviatedMetaType ]) !== abbreviatedMetaType;
 
-    const { blockReason, manifest, pkg } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionSpec, isSync, isFullManifests);
+    let { blockReason, manifest, pkg } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionSpec, isSync, isFullManifests);
     if (!pkg) {
-      const allowSync = this.getAllowSync(ctx);
-      throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
+      if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
+        manifest = await this.proxyModeService.getPackageVersionOrTagManifest(fullname, versionSpec);
+      } else {
+        const allowSync = this.getAllowSync(ctx);
+        throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
+      }
     }
     if (blockReason) {
       this.setCDNHeaders(ctx);
       throw this.createPackageBlockError(blockReason, fullname, versionSpec);
     }
     if (!manifest) {
-      throw new NotFoundError(`${fullname}@${versionSpec} not found`);
+      if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
+        manifest = await this.proxyModeService.getPackageVersionOrTagManifest(fullname, versionSpec);
+      } else {
+        throw new NotFoundError(`${fullname}@${versionSpec} not found`);
+      }
     }
     this.setCDNHeaders(ctx);
     return manifest;
