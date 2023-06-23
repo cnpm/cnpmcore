@@ -14,12 +14,18 @@ import { AbstractController } from '../AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil';
 import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { ProxyModeService } from '../../../core/service/ProxyModeService';
+import { PackageSyncerService } from '../../../core/service/PackageSyncerService';
 import { SyncMode } from '../../../common/constants';
 
 @HTTPController()
 export class DownloadPackageVersionTarController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
+  @Inject()
+  private proxyModeService: ProxyModeService;
+  @Inject()
+  private packageSyncerService: PackageSyncerService;
   @Inject()
   private nfsAdapter: NFSAdapter;
 
@@ -54,8 +60,21 @@ export class DownloadPackageVersionTarController extends AbstractController {
 
     // check package version in database
     const allowSync = this.getAllowSync(ctx);
-    const pkg = await this.getPackageEntityByFullname(fullname, allowSync);
-    const packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
+    let pkg;
+    let packageVersion;
+    try {
+      pkg = await this.getPackageEntityByFullname(fullname, allowSync);
+      packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
+    } catch (error) {
+      if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
+        // proxy mode package version not found.
+        const tgzBuffer = await this.#getTgzBuffer(ctx, fullname, version);
+        this.packageManagerService.plusPackageVersionCounter(fullname, version);
+        ctx.attachment(`${filenameWithVersion}.tgz`);
+        return tgzBuffer;
+      }
+      throw error;
+    }
 
     // read by nfs url
     if (downloadUrl) {
@@ -84,10 +103,25 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/download/:fullnameWithVersion+.tgz`,
     method: HTTPMethodEnum.GET,
   })
+
   async deprecatedDownload(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() fullnameWithVersion: string) {
     // /@emotion/utils/download/@emotion/utils-0.11.3.tgz
     // => /@emotion/utils/-/utils-0.11.3.tgz
     const filenameWithVersion = getScopeAndName(fullnameWithVersion)[1];
     return await this.download(ctx, fullname, filenameWithVersion);
+  }
+
+  async #getTgzBuffer(ctx: EggContext, fullname: string, version: string) {
+    const { tgzBuffer } = await this.proxyModeService.getPackageVersionTarAndTempFilePath(fullname, ctx.url);
+    const task = await this.packageSyncerService.createTask(fullname, {
+      authorIp: ctx.ip,
+      authorId: `pid_${process.pid}`,
+      tips: `Sync specific version in proxy mode cause by "${ctx.href}"`,
+      skipDependencies: true,
+      specificVersions: [ version ],
+    });
+    ctx.logger.info('[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
+      task.taskId, fullname);
+    return tgzBuffer;
   }
 }
