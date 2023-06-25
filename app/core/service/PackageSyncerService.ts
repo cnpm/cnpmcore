@@ -33,7 +33,7 @@ import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
 import { ScopeManagerService } from './ScopeManagerService';
 import { EventCorkAdvice } from './EventCorkerAdvice';
-import { SyncDeleteMode } from '../../common/constants';
+import { PresetRegistryName, SyncDeleteMode } from '../../common/constants';
 
 type syncDeletePkgOptions = {
   task: Task,
@@ -371,6 +371,14 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] 👉 syncing specific versions: ${specificVersions.join(' | ')} 👈`);
     }
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
+
+    if (registry?.name === PresetRegistryName.self) {
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} has been published to the self registry, skip sync ❌❌❌❌❌`);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid registryId',
+        task.taskId, task.targetName);
+      return;
+    }
 
     if (pkg && pkg?.registryId !== registry?.registryId) {
       if (pkg.registryId) {
