@@ -111,6 +111,9 @@
     "ua-parser-js": "^1.0.34",
     "validate-npm-package-name": "^3.0.0"
   },
+  "optionalDependencies": {
+    "s3-cnpmcore": "^1.1.2"
+  },
   "devDependencies": {
     "@cnpmjs/npm-cli-login": "^1.1.0",
     "@simplewebauthn/typescript-types": "^7.0.0",
