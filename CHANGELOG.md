@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.34.7](https://github.com/cnpm/cnpmcore/compare/v3.34.6...v3.34.7) (2023-06-25)
+
+
+### Bug Fixes
+
+* sync self pkg ([#532](https://github.com/cnpm/cnpmcore/issues/532)) ([ada3e22](https://github.com/cnpm/cnpmcore/commit/ada3e220a11b6ee0b09b4630ccaf31e5918138c3))
+
 ## [3.34.6](https://github.com/cnpm/cnpmcore/compare/v3.34.5...v3.34.6) (2023-06-25)
 
 
