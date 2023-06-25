@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.34.6](https://github.com/cnpm/cnpmcore/compare/v3.34.5...v3.34.6) (2023-06-25)
+
+
+### Bug Fixes
+
+* only auto install s3-cnpmcore on Node.js 18+ ([#531](https://github.com/cnpm/cnpmcore/issues/531)) ([c9d9ce8](https://github.com/cnpm/cnpmcore/commit/c9d9ce8205b115a68a2b7b7184ec58b97721a152))
+
 ## [3.34.5](https://github.com/cnpm/cnpmcore/compare/v3.34.4...v3.34.5) (2023-06-21)
 
 
