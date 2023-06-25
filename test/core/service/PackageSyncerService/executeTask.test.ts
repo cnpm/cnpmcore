@@ -719,6 +719,48 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
       });
 
+      it('should skip self registry', async () => {
+        const name = '@cnpmcore/test-self-sync';
+        const { user } = await userService.create({
+          name: 'test-user',
+          password: 'this-is-password',
+          email: 'hello@example.com',
+          ip: '127.0.0.1',
+        });
+
+        const registry = await registryManagerService.ensureSelfRegistry();
+
+        const publishCmd = {
+          scope: '@cnpmcore',
+          name: 'test-self-sync',
+          version: '1.0.0',
+          description: '1.0.0',
+          readme: '',
+          registryId: registry.registryId,
+          packageJson: { name, test: 'test', version: '1.0.0' },
+          dist: {
+            content: Buffer.alloc(0),
+          },
+          isPrivate: false,
+          publishTime: new Date(),
+          skipRefreshPackageManifests: false,
+        };
+        const pkgVersion = await packageManagerService.publish(publishCmd, user);
+        assert(pkgVersion.version === '1.0.0');
+
+        await packageSyncerService.createTask(name);
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        await packageSyncerService.executeTask(task);
+
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert(log.includes(`${name} has been published to the self registry, skip sync ❌❌❌❌❌`));
+
+      });
+
       it('should updated package manifests when version insert duplicated', async () => {
         // https://www.npmjs.com/package/@cnpmcore/test-sync-package-has-two-versions
         const name = '@cnpmcore/test-sync-package-has-two-versions';
