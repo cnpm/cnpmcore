@@ -10,6 +10,7 @@ import { Token, TokenType } from '../../../../app/core/entity/Token';
 import { Token as TokenModel } from '../../../../app/repository/model/Token';
 import { User } from '../../../../app/core/entity/User';
 import dayjs from 'dayjs';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let userRepository: UserRepository;
@@ -709,6 +710,37 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg);
       assert(res.status === 422);
       assert(res.body.error === '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters, name can no longer contain capital letters');
+    });
+
+    it('should allow to publish exists pkg', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const packageManagerService = await app.getEggObject(PackageManagerService);
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/LegacyName',
+      });
+      const user = await userRepository.findUserByName(publisher.name);
+      await packageManagerService.publish({
+        scope: '@cnpm',
+        name: 'LegacyName',
+        version: '1.0.0',
+        description: '-',
+        packageJson: pkg,
+        readme: '',
+        dist: {
+          content: Buffer.from('', 'base64'),
+        },
+        tag: 'latest',
+        isPrivate: true,
+      }, user!);
+
+
+      const res = await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg);
+      assert(res.status === 201);
+
     });
 
     it('should 422 when attachment data format invalid', async () => {

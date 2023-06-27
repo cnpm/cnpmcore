@@ -87,11 +87,18 @@ export class SavePackageVersionController extends AbstractController {
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
     }
+
     // Using https://github.com/npm/validate-npm-package-name to validate package name
     const validateResult = validateNpmPackageName(pkg.name);
     if (!validateResult.validForNewPackages) {
-      const errors = (validateResult.errors || validateResult.warnings).join(', ');
-      throw new UnprocessableEntityError(`package.name invalid, errors: ${errors}`);
+      // if pkg already exists, still allow to publish
+      const [ scope, name ] = getScopeAndName(fullname);
+      const pkg = await this.packageRepository.findPackage(scope, name);
+      console.log('pkg', pkg);
+      if (!pkg) {
+        const errors = (validateResult.errors || validateResult.warnings).join(', ');
+        throw new UnprocessableEntityError(`package.name invalid, errors: ${errors}`);
+      }
     }
     const versions = Object.values(pkg.versions);
     if (versions.length === 0) {
