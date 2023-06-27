@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.34.9](https://github.com/cnpm/cnpmcore/compare/v3.34.8...v3.34.9) (2023-06-27)
+
+
+### Bug Fixes
+
+* console ([#534](https://github.com/cnpm/cnpmcore/issues/534)) ([4141003](https://github.com/cnpm/cnpmcore/commit/4141003e136c82a3a4e68db406b03b3242a1f1fd))
+
 ## [3.34.8](https://github.com/cnpm/cnpmcore/compare/v3.34.7...v3.34.8) (2023-06-27)
 
 
