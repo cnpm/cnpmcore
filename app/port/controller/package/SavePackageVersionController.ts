@@ -94,7 +94,6 @@ export class SavePackageVersionController extends AbstractController {
       // if pkg already exists, still allow to publish
       const [ scope, name ] = getScopeAndName(fullname);
       const pkg = await this.packageRepository.findPackage(scope, name);
-      console.log('pkg', pkg);
       if (!pkg) {
         const errors = (validateResult.errors || validateResult.warnings).join(', ');
         throw new UnprocessableEntityError(`package.name invalid, errors: ${errors}`);
