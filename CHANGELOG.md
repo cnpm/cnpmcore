@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.34.8](https://github.com/cnpm/cnpmcore/compare/v3.34.7...v3.34.8) (2023-06-27)
+
+
+### Bug Fixes
+
+* legacy pkg publish ([#533](https://github.com/cnpm/cnpmcore/issues/533)) ([20ffba8](https://github.com/cnpm/cnpmcore/commit/20ffba8d4115923ddbc9a5407db2110a3c684806))
+
 ## [3.34.7](https://github.com/cnpm/cnpmcore/compare/v3.34.6...v3.34.7) (2023-06-25)
 
 
