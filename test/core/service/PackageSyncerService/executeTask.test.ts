@@ -2120,6 +2120,37 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         });
       });
 
+      it('should ignore syncUpstreamFirst', async () => {
+        await scopeManagerService.createScope({
+          name: '@dnpm',
+          registryId: registry.registryId,
+        });
+        app.mockHttpclient('https://custom.npmjs.com/@dnpm/banana', 'GET', {
+          data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
+          persist: false,
+        });
+        app.mockHttpclient('https://custom.npmjs.com/@dnpm/banana/-/banana-0.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        });
+        mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
+        mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
+        mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
+
+        const name = '@dnpm/banana';
+        await packageSyncerService.createTask(name);
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        assert.equal(task.targetName, name);
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert(log.includes('syncUpstream: false'));
+
+      });
+
       it('should sync from target registry & default registry', async () => {
         await packageSyncerService.createTask('cnpm-pkg', { registryId: registry.registryId });
         await packageSyncerService.createTask('npm-pkg');

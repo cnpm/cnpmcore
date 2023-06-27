@@ -311,7 +311,7 @@ export class PackageSyncerService extends AbstractService {
   // 1. 其次从 task.data.registryId (创建单包同步任务时传入)
   // 2. 接着根据 scope 进行计算 (作为子包依赖同步时候，无 registryId)
   // 3. 最后返回 default registryId (可能 default registry 也不存在)
-  public async initSpecRegistry(task: Task, pkg: Package | null = null, scope?: string): Promise<Registry | null> {
+  public async initSpecRegistry(task: Task, pkg: Package | null = null, scope?: string): Promise<Registry> {
     const registryId = pkg?.registryId || (task.data as SyncPackageTaskOptions).registryId;
     let targetHost: string = this.config.cnpmcore.sourceRegistry;
     let registry: Registry | null = null;
@@ -362,7 +362,7 @@ export class PackageSyncerService extends AbstractService {
     const taskQueueHighWaterSize = this.config.cnpmcore.taskQueueHighWaterSize;
     const taskQueueInHighWaterState = taskQueueLength >= taskQueueHighWaterSize;
     const skipDependencies = taskQueueInHighWaterState ? true : !!originSkipDependencies;
-    const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst);
+    const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst && registry.name === PresetRegistryName.default);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
       task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
