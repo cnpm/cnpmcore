@@ -150,4 +150,8 @@ export type CnpmcoreConfig = {
    * in most cases, you should set to false to keep the same behavior as source registry.
    */
   strictSyncSpecivicVersion: boolean,
+  /**
+  * enable elastic search
+  */
+  enableESSearch: boolean,
 };

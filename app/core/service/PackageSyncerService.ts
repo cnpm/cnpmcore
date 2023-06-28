@@ -116,6 +116,8 @@ export class PackageSyncerService extends AbstractService {
     if (!this.allowSyncDownloadData) {
       return;
     }
+    // TODO Sync Download data to ES
+
     const fullname = pkg.fullname;
     const start = '2011-01-01';
     const end = this.config.cnpmcore.syncDownloadDataMaxDate;

@@ -54,6 +54,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   redirectNotFound: true,
   enableUnpkg: true,
   strictSyncSpecivicVersion: false,
+  enableESSearch: true,
 };
 
 export default (appInfo: EggAppConfig) => {
@@ -183,6 +184,13 @@ export default (appInfo: EggAppConfig) => {
   config.customLogger = {
     sqlLogger: {
       file: 'sql.log',
+    },
+  };
+
+  // more options: https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/configuration.html
+  config.elasticsearch = {
+    client: {
+      node: 'http://localhost:9200',
     },
   };
 
