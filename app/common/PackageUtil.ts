@@ -27,6 +27,10 @@ export function cleanUserPrefix(username: string): string {
   return username.replace(/^.*:/, '');
 }
 
+export function getPrefixedName(prefix: string, username: string): string {
+  return prefix ? `${prefix}${username}` : username;
+}
+
 export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
   let integrityObj;
   if (typeof contentOrFile === 'string') {
