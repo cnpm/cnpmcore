@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.34.10](https://github.com/cnpm/cnpmcore/compare/v3.34.9...v3.34.10) (2023-06-28)
+
+
+### Bug Fixes
+
+* only syncUpstream in default registry ([#535](https://github.com/cnpm/cnpmcore/issues/535)) ([bb5d993](https://github.com/cnpm/cnpmcore/commit/bb5d9930301426e300ba47d360ab4c92543ab05a))
+
 ## [3.34.9](https://github.com/cnpm/cnpmcore/compare/v3.34.8...v3.34.9) (2023-06-27)
 
 
