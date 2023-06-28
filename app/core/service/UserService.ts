@@ -13,6 +13,8 @@ import { LoginResultCode } from '../../common/enum/User';
 import { integrity, checkIntegrity, randomToken, sha512 } from '../../common/UserUtil';
 import { AbstractService } from '../../common/AbstractService';
 import { RegistryManagerService } from './RegistryManagerService';
+import { getPrefixedName } from '../../common/PackageUtil';
+import { Registry } from '../entity/Registry';
 
 type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
 
@@ -75,16 +77,19 @@ export class UserService extends AbstractService {
     }
 
     const selfRegistry = await this.registryManagerService.ensureSelfRegistry();
-    const defaultRegistry = await this.registryManagerService.ensureDefaultRegistry();
-
-    const selfUser = await this.findUserByName(`${selfRegistry.name}:${name}`);
-    const defaultUser = await this.findUserByName(`${defaultRegistry.name}:${name}`);
-
-    if (selfUser && defaultUser) {
-      throw new ForbiddenError(`${name} is ambiguous, please use ${selfUser.name} or ${defaultUser.name}}`);
+    const selfUser = await this.findUserByName(getPrefixedName(selfRegistry.userPrefix, name));
+    if (selfUser) {
+      return selfUser;
     }
 
-    return selfUser || defaultUser;
+    const defaultRegistry = await this.registryManagerService.ensureDefaultRegistry();
+    const defaultUser = await this.findUserByName(getPrefixedName(defaultRegistry.userPrefix, name));
+
+    return defaultUser;
+  }
+
+  async findInRegistry(registry:Registry, name: string): Promise<UserEntity | null> {
+    return await this.findUserByName(getPrefixedName(registry.userPrefix, name));
   }
 
   async findUserByName(name: string): Promise<UserEntity | null> {

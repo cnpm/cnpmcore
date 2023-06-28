@@ -17,6 +17,31 @@ describe('test/port/controller/UserController/showUser.test.ts', () => {
       });
     });
 
+    it('should clean prefix info', async () => {
+      const { authorization, email } = await TestUtil.createUser({ name: 'npm:banana' });
+      const res = await app.httpRequest()
+        .get(`/-/user/org.couchdb.user:${encodeURIComponent('npm:banana')}`)
+        .set('authorization', authorization)
+        .expect(200);
+      assert.deepEqual(res.body, {
+        _id: 'org.couchdb.user:banana',
+        name: 'banana',
+        email,
+      });
+    });
+
+    it('should return self user first', async () => {
+      const { authorization, email } = await TestUtil.createUser({ name: 'npm:apple' });
+      await TestUtil.createUser({ name: 'apple' });
+      const res = await app.httpRequest()
+        .get('/-/user/org.couchdb.user:apple')
+        .set('authorization', authorization)
+        .expect(200);
+
+      assert.equal(res.body.email, email);
+    });
+
+
     it('should 404 when user not exists', async () => {
       const { authorization, name } = await TestUtil.createUser();
       let res = await app.httpRequest()
