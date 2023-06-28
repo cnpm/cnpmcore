@@ -12,6 +12,7 @@ import { WebauthnCredential as WebauthnCredentialEntity } from '../entity/Webaut
 import { LoginResultCode } from '../../common/enum/User';
 import { integrity, checkIntegrity, randomToken, sha512 } from '../../common/UserUtil';
 import { AbstractService } from '../../common/AbstractService';
+import { RegistryManagerService } from './RegistryManagerService';
 
 type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
 
@@ -59,10 +60,31 @@ type CreateWebauthnCredentialOptions = {
 export class UserService extends AbstractService {
   @Inject()
   private readonly userRepository: UserRepository;
+  @Inject()
+  private readonly registryManagerService: RegistryManagerService;
 
   checkPassword(user: UserEntity, password: string): boolean {
     const plain = `${user.passwordSalt}${password}`;
     return checkIntegrity(plain, user.passwordIntegrity);
+  }
+
+  async findUserByNameOrDisplayName(name: string) {
+    const hasPrefix = name.includes(':');
+    if (hasPrefix) {
+      return await this.findUserByName(name);
+    }
+
+    const selfRegistry = await this.registryManagerService.ensureSelfRegistry();
+    const defaultRegistry = await this.registryManagerService.ensureDefaultRegistry();
+
+    const selfUser = await this.findUserByName(`${selfRegistry.name}:${name}`);
+    const defaultUser = await this.findUserByName(`${defaultRegistry.name}:${name}`);
+
+    if (selfUser && defaultUser) {
+      throw new ForbiddenError(`${name} is ambiguous, please use ${selfUser.name} or ${defaultUser.name}}`);
+    }
+
+    return selfUser || defaultUser;
   }
 
   async findUserByName(name: string): Promise<UserEntity | null> {
