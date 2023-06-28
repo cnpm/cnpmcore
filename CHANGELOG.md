@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.35.0](https://github.com/cnpm/cnpmcore/compare/v3.34.10...v3.35.0) (2023-06-28)
+
+
+### Features
+
+* adaptive username ([#536](https://github.com/cnpm/cnpmcore/issues/536)) ([dd69606](https://github.com/cnpm/cnpmcore/commit/dd696063652467f7ad1cc94d202f001cdb637906)), closes [/github.com/npm/cli/blob/latest/lib/commands/owner.js#L151](https://github.com/cnpm//github.com/npm/cli/blob/latest/lib/commands/owner.js/issues/L151)
+
 ## [3.34.10](https://github.com/cnpm/cnpmcore/compare/v3.34.9...v3.34.10) (2023-06-28)
 
 
