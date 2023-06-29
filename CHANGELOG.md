@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.35.1](https://github.com/cnpm/cnpmcore/compare/v3.35.0...v3.35.1) (2023-06-29)
+
+
+### Bug Fixes
+
+* update source registry ([#537](https://github.com/cnpm/cnpmcore/issues/537)) ([ab2fde7](https://github.com/cnpm/cnpmcore/commit/ab2fde7c809720b1e9692ce2aaf383a9db64e957))
+
 ## [3.35.0](https://github.com/cnpm/cnpmcore/compare/v3.34.10...v3.35.0) (2023-06-28)
 
 
