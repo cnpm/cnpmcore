@@ -163,11 +163,9 @@ export class PackageManagerService extends AbstractService {
     };
 
     // add _registry_name field to cmd.packageJson
-    if (!cmd.packageJson._source_registry_name) {
-      const registry = await this.getSourceRegistry(pkg);
-      if (registry) {
-        cmd.packageJson._source_registry_name = registry.name;
-      }
+    const registry = await this.getSourceRegistry(pkg);
+    if (registry) {
+      cmd.packageJson._source_registry_name = registry.name;
     }
 
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
@@ -832,11 +830,10 @@ export class PackageManagerService extends AbstractService {
         await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
       }
       // set _source_registry_name in full manifestDist
-      if (!data._source_registry_name && isFullManifests) {
-        if (registry) {
-          data._source_registry_name = registry?.name;
-        }
+      if (registry) {
+        data._source_registry_name = registry?.name;
       }
+
       const distBytes = Buffer.from(JSON.stringify(data));
       const distIntegrity = await calculateIntegrity(distBytes);
       etag = `"${distIntegrity.shasum}"`;

@@ -179,6 +179,10 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       pkgEntity.registryId = '';
       await packageRepository.savePackage(pkgEntity!);
 
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`);
+      assert.equal(res.body._source_registry_name, 'default');
+
       pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
       res = await app.httpRequest()
         .put(`/${pkg.name}`)
@@ -189,6 +193,10 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
       pkgEntity = await packageRepository.findPackage('@cnpm', 'publish-package-test');
       assert(pkgEntity?.registryId);
+
+      res = await app.httpRequest()
+        .get(`/${pkg.name}`);
+      assert.equal(res.body._source_registry_name, 'self');
     });
 
     it('should publish on user custom scopes', async () => {
