@@ -62,7 +62,8 @@ export class ProxyModeService extends AbstractService {
     }
 
     // not in NFS
-    const responseResult = await this.npmRegistry.getPackageVersionManifest(fullname, version);
+    let responseResult;
+    // const responseResult = await this.npmRegistry.getPackageVersionManifest(fullname, version);
     if (responseResult.status !== 200) {
       throw new HttpError({
         status: responseResult.status,
@@ -114,7 +115,8 @@ export class ProxyModeService extends AbstractService {
     if (isFullManifests) {
       responseResult = await this.npmRegistry.getFullManifests(fullname);
     } else {
-      responseResult = await this.npmRegistry.getAbbreviatedManifests(fullname);
+      responseResult = await this.npmRegistry.getFullManifests(fullname);
+      // responseResult = await this.npmRegistry.getAbbreviatedManifests(fullname);
     }
     if (responseResult.status !== 200) {
       throw new HttpError({
