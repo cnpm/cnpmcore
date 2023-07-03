@@ -43,7 +43,7 @@ export class ProxyModeService extends AbstractService {
   }
 
   // used by GET /:fullname/:versionOrTag
-  async getPackageVersionOrTagManifest(fullname: string, versionOrTag: string) {
+  async getPackageVersionOrTagManifest(fullname: string, versionOrTag: string, isFullManifests: boolean) {
     const { data: manifest } = await this.getPackageAbbreviatedManifests(fullname);
     const distTags = manifest['dist-tags'] || {};
     const version = distTags[versionOrTag] ? distTags[versionOrTag] : versionOrTag;
@@ -62,8 +62,7 @@ export class ProxyModeService extends AbstractService {
     }
 
     // not in NFS
-    let responseResult;
-    // const responseResult = await this.npmRegistry.getPackageVersionManifest(fullname, version);
+    const responseResult = isFullManifests ? await this.npmRegistry.getPackageVersionManifest(fullname, version) : await this.npmRegistry.getAbbreviatedPackageVersionManifest(fullname, version);
     if (responseResult.status !== 200) {
       throw new HttpError({
         status: responseResult.status,
@@ -115,8 +114,7 @@ export class ProxyModeService extends AbstractService {
     if (isFullManifests) {
       responseResult = await this.npmRegistry.getFullManifests(fullname);
     } else {
-      responseResult = await this.npmRegistry.getFullManifests(fullname);
-      // responseResult = await this.npmRegistry.getAbbreviatedManifests(fullname);
+      responseResult = await this.npmRegistry.getAbbreviatedManifests(fullname);
     }
     if (responseResult.status !== 200) {
       throw new HttpError({

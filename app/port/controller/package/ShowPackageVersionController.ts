@@ -39,7 +39,7 @@ export class ShowPackageVersionController extends AbstractController {
     let { blockReason, manifest, pkg } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionSpec, isSync, isFullManifests);
     if (!pkg) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        manifest = await this.proxyModeService.getPackageVersionOrTagManifest(fullname, versionSpec);
+        manifest = await this.proxyModeService.getPackageVersionOrTagManifest(fullname, versionSpec, isFullManifests);
       } else {
         const allowSync = this.getAllowSync(ctx);
         throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
@@ -51,7 +51,7 @@ export class ShowPackageVersionController extends AbstractController {
     }
     if (!manifest) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        manifest = await this.proxyModeService.getPackageVersionOrTagManifest(fullname, versionSpec);
+        manifest = await this.proxyModeService.getPackageVersionOrTagManifest(fullname, versionSpec, isFullManifests);
       } else {
         throw new NotFoundError(`${fullname}@${versionSpec} not found`);
       }
