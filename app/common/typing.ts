@@ -50,10 +50,13 @@ export interface QueueAdapter {
   length(key: string): Promise<number>;
 }
 
+export type JobData = {
+  taskId: string;
+  targetName: string;
+};
+
 export interface MQAdapterType {
-  addJobs(key: string, taskId: string): Promise<boolean>;
-  pause(key: string): void;
-  resume(key: string): void;
+  addJobs(key: string, data: JobData): Promise<boolean>;
 }
 
 export interface AuthUrlResult {

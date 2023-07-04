@@ -14,6 +14,9 @@ import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTr
 import { TaskRepository } from '../../../app/repository/TaskRepository';
 import { Hook } from '../../../app/core/entity/Hook';
 import { HookTriggerService } from '../../../app/core/service/HookTriggerService';
+import { MQAdapter } from '../../../app/infra/MQAdapter';
+import { TaskType } from '../../../app/common/enum/Task';
+import { Queue } from 'bullmq';
 
 describe('test/core/service/HookTriggerService.test.ts', () => {
   let hookManageService: HookManageService;
@@ -21,9 +24,22 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
   let createHookTriggerService: CreateHookTriggerService;
   let taskRepository: TaskRepository;
   let hookTriggerService: HookTriggerService;
+  let mqAdapter: MQAdapter;
+  let queue: Queue;
   const pkgName = '@cnpmcore/foo';
   const username = 'mock_username';
   let userId: string;
+
+  before(async () => {
+    mqAdapter = await app.getEggObject(MQAdapter);
+    queue = mqAdapter.initQueue(TaskType.TriggerHook);
+    await queue.drain();
+    await queue.pause();
+  });
+
+  after(async () => {
+    await queue.resume();
+  });
 
   beforeEach(async () => {
     hookManageService = await app.getEggObject(HookManageService);

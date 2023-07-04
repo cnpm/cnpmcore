@@ -10,6 +10,7 @@ import crypto from 'crypto';
 import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil';
 import semver from 'semver';
 import { PackageJSONType } from '../app/repository/PackageRepository';
+import { Queue } from 'bullmq';
 
 type PackageOptions = {
   name?: string;
@@ -232,6 +233,17 @@ export class TestUtil {
       await PackageModel.update({ scope, name }, { isPrivate: false, registryId: options?.registryId });
     }
     return { user, pkg };
+  }
+
+  static async waitUntilQueueClean(queue: Queue) {
+    return new Promise(async resolve => {
+      const count = await queue.count();
+      if (count === 0) {
+        resolve(0);
+      } else {
+        queue.on('cleaned', resolve);
+      }
+    });
   }
 
   static async createUser(user?: UserOptions) {

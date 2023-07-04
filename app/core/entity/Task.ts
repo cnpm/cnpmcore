@@ -215,6 +215,10 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
+  public static useMQ(task: Task) {
+    return task.type === TaskType.TriggerHook;
+  }
+
   public static createSyncBinary(targetName: string, lastData: any): Task {
     const data = {
       type: TaskType.SyncBinary,

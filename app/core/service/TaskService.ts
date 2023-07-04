@@ -29,8 +29,9 @@ export class TaskService extends AbstractService {
     return await this.queueAdapter.length(taskType);
   }
 
-  public async createTask(task: Task, addTaskQueueOnExists: boolean, useMQ = false) {
+  public async createTask(task: Task, addTaskQueueOnExists: boolean) {
     const existsTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type);
+    const useMQ = Task.useMQ(task);
     if (existsTask) {
       // 如果任务还未被触发，就不继续重复创建
       // 如果任务正在执行，可能任务状态已更新，这种情况需要继续创建
@@ -66,7 +67,7 @@ export class TaskService extends AbstractService {
     await this.taskRepository.saveTask(task);
 
     if (useMQ) {
-      await this.mqAdapter.addJobs(task.type, task.taskId);
+      await this.mqAdapter.addJobs(task.type, task);
     } else {
       await this.queueAdapter.push<string>(task.type, task.taskId);
       const queueLength = await this.getTaskQueueLength(task.type);
