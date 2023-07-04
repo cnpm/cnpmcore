@@ -18,7 +18,7 @@ export class MQAdapter implements MQAdapterType {
   @Inject()
   private readonly redis: Redis; // 由 redis 插件引入
 
-  private queueMap: Record<string, Queue>;
+  private queueMap: Record<string, Queue> = {};
 
   private getQueueName(key: string) {
     return `CNPMCORE_MQ_V1_${key}`;

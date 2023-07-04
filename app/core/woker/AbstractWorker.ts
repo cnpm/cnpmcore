@@ -17,7 +17,6 @@ export abstract class AbstractWorker {
   @Inject()
   private readonly logger: EggLogger;
 
-  @Inject()
   protected worker: Worker;
 
   queueKey: string;
@@ -30,7 +29,7 @@ export abstract class AbstractWorker {
 
   @LifecycleInit()
   protected async init() {
-    this.initWorker();
+    await this.initWorker();
     const queue = this.queueAdapter.initQueue(this.queueKey);
     this.worker = new Worker(
       queue.name,
@@ -53,6 +52,7 @@ export abstract class AbstractWorker {
       },
       {
         concurrency: this.config.cnpmcore[this.configKey],
+        autorun: true,
       },
     );
 
