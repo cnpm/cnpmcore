@@ -72,7 +72,7 @@ export class CreateHookTriggerService extends AbstractService {
   private async createTriggerTasks(hooks: Array<Hook>, hookEvent: HookEvent) {
     await pMap(hooks, async hook => {
       const triggerHookTask = Task.createTriggerHookTask(hookEvent, hook.hookId);
-      await this.taskService.createTask(triggerHookTask, false, true);
+      await this.taskService.createTask(triggerHookTask, true);
     }, { concurrency: 5 });
   }
 }

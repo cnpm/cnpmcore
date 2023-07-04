@@ -56,7 +56,7 @@ export class HookTriggerService {
       e.message = 'trigger hook failed: ' + e.message;
       task.error = e.message;
       await this.taskService.finishTask(task, TaskState.Fail, `[${isoNow()}][TriggerHooks] ${e.stack} \n`);
-      return;
+      throw e;
     }
   }
 

@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { app } from 'egg-mock/bootstrap';
+import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../test/TestUtil';
 import { HookManageService } from '../../../app/core/service/HookManageService';
 import { HookType } from '../../../app/common/enum/Hook';
@@ -21,6 +21,10 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
   const pkgName = '@cnpmcore/foo';
   const username = 'mock_username';
   let userId: string;
+
+  before(async () => {
+    mock(app.config.cnpmcore, 'triggerHookWorkerMaxConcurrentTasks', 0);
+  });
 
   beforeEach(async () => {
     hookManageService = await app.getEggObject(HookManageService);

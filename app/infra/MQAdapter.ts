@@ -5,7 +5,7 @@ import {
 } from '@eggjs/tegg';
 import { Redis } from 'ioredis';
 import { JobsOptions, Queue } from 'bullmq';
-import { MQAdapterType } from '../common/typing';
+import { JobData, MQAdapterType } from '../common/typing';
 
 /**
  * Use sort set to keep queue in order and keep same value only insert once
@@ -39,10 +39,10 @@ export class MQAdapter implements MQAdapterType {
    * If queue has the same item, return false
    * If queue not has the same item, return true
    */
-  async addJobs(key: string, taskId: string, options?: JobsOptions): Promise<boolean> {
+  async addJobs(key: string, { taskId, targetName } : JobData, options?: JobsOptions): Promise<boolean> {
     try {
       const queue = this.initQueue(key);
-      await queue.add(key, { jobId: taskId },
+      await queue.add(key, { taskId, targetName },
         {
           removeOnComplete: true,
           removeOnFail: true,
@@ -51,6 +51,8 @@ export class MQAdapter implements MQAdapterType {
             type: 'exponential',
             delay: 1000,
           },
+          // remove duplicate job
+          jobId: taskId,
           ...options,
         },
       );
@@ -59,13 +61,4 @@ export class MQAdapter implements MQAdapterType {
       return false;
     }
   }
-
-  async pause(key: string) {
-    await this.initQueue(key).pause();
-  }
-
-  async resume(key: string) {
-    await this.initQueue(key).pause();
-  }
-
 }

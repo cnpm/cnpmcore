@@ -1,63 +1,74 @@
-import { Inject, LifecycleDestroy, LifecycleInit } from '@eggjs/tegg';
 import { MQAdapter } from '../../infra/MQAdapter';
 import { Job, UnrecoverableError, Worker } from 'bullmq';
-import { EggAppConfig, EggLogger } from 'egg';
+import { Application } from 'egg';
 import { TaskService } from '../service/TaskService';
 
 export abstract class AbstractWorker {
-  @Inject()
-  private readonly queueAdapter: MQAdapter;
-
-  @Inject()
-  private readonly config: EggAppConfig;
-
-  @Inject()
-  private readonly taskService: TaskService;
-
-  @Inject()
-  private readonly logger: EggLogger;
+  constructor(app: Application) {
+    this.app = app;
+    this.registerWorker();
+  }
 
   protected worker: Worker;
 
+  app: Application;
   queueKey: string;
   configKey: string;
-  service;
+
+  queueAdapter: MQAdapter;
+  taskService: TaskService;
+  serviceClass: any;
+  service: any;
 
   async initWorker() {
-    throw new Error('should implements in subclass');
+    await this.initWorkerInfo();
+    this.queueAdapter = await this.app.getEggObject(MQAdapter);
+    this.taskService = await this.app.getEggObject(TaskService);
+    this.service = await this.app.getEggObject(this.serviceClass);
   }
 
-  @LifecycleInit()
-  protected async init() {
+  async initWorkerInfo() {
+    throw new Error('not implement');
+  }
+
+  async registerWorker() {
     await this.initWorker();
+    if (this.app.config.cnpmcore[this.configKey] === 0) {
+      return;
+    }
     const queue = this.queueAdapter.initQueue(this.queueKey);
     this.worker = new Worker(
       queue.name,
       async (job: Job) => {
-        const startTime = Date.now();
-        const task = await this.taskService.findTask(job.data.taskId);
-        if (!task) {
-          throw new UnrecoverableError('task not found');
-        }
+        await this.app.runInAnonymousContextScope(async ctx => {
+          await ctx.beginModuleScope(async () => {
 
-        this.logger.info(`[${this.queueKey}Worker:subscribe:executeTask:start][%s] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms`,
-          this.worker.concurrency, task.taskId, task.targetName, task.attempts, task.data, task.updatedAt,
-          startTime - task.updatedAt.getTime());
-        if (this.worker.concurrency !== this.config.cnpmcore[this.configKey]) {
-          this.worker.concurrency = this.config.cnpmcore[this.configKey];
-        }
+            console.log('!'.repeat(20), this.app.config.cnpmcore[this.configKey]);
+            const startTime = Date.now();
+            const task = await this.taskService.findTask(job.data.taskId);
+            if (!task) {
+              throw new UnrecoverableError('task not found');
+            }
 
-        // TODO bullmq 移除了 timeout 配置，需要自己实现一个 promise.race 执行 timeout
-        await this.service.executeTask(job.data);
+            if (this.worker.concurrency !== this.app.config.cnpmcore[this.configKey]) {
+              this.worker.concurrency = this.app.config.cnpmcore[this.configKey];
+            }
+            this.app.logger.info(`[${this.queueKey}_worker:subscribe:executeTask:start] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms`,
+              task.taskId, task.targetName, task.attempts, task.data, task.updatedAt,
+              startTime - task.updatedAt.getTime());
+
+            // TODO bullmq 移除了 timeout 配置，需要自己实现一个 promise.race 执行 timeout
+            await this.service.executeTask(task as any);
+          });
+        });
       },
       {
-        concurrency: this.config.cnpmcore[this.configKey],
-        autorun: true,
+        concurrency: this.app.config.cnpmcore[this.configKey],
       },
     );
 
     this.worker.on('completed', (job: Job) => {
-      this.logger.info(`[${this.queueKey}Worker:subscribe:executeTask:success][%s] taskId: %s, targetName: %s, use %sms`,
+      this.app.logger.info(`[${this.queueKey}_worker:subscribe:executeTask:success] taskId: %s, targetName: %s, use %sms`,
         job.data.taskId, job.data.targetName, Date.now() - job.timestamp);
     });
 
@@ -65,15 +76,10 @@ export abstract class AbstractWorker {
       if (!job) {
         return;
       }
-      this.logger.info(`[${this.queueKey}Worker:subscribe:executeTask:failed][%s] taskId: %s, targetName: %s, attemptsMade %s`,
+      this.app.logger.info(`[${this.queueKey}_worker:subscribe:executeTask:failed] taskId: %s, targetName: %s, attemptsMade %s`,
         job.data.taskId, job.data.targetName, job.attemptsMade);
     });
 
-  }
-
-  @LifecycleDestroy()
-  protected async destroy() {
-    await this.worker.close();
   }
 
 }

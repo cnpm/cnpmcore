@@ -66,7 +66,7 @@ export class TaskService extends AbstractService {
     await this.taskRepository.saveTask(task);
 
     if (useMQ) {
-      await this.mqAdapter.addJobs(task.type, task.taskId);
+      await this.mqAdapter.addJobs(task.type, task);
     } else {
       await this.queueAdapter.push<string>(task.type, task.taskId);
       const queueLength = await this.getTaskQueueLength(task.type);

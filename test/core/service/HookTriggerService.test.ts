@@ -25,6 +25,10 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
   const username = 'mock_username';
   let userId: string;
 
+  before(async () => {
+    mock(app.config.cnpmcore, 'triggerHookWorkerMaxConcurrentTasks', 0);
+  });
+
   beforeEach(async () => {
     hookManageService = await app.getEggObject(HookManageService);
     changeRepository = await app.getEggObject(ChangeRepository);
