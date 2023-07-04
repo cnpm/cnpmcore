@@ -9,6 +9,7 @@ import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { Task, CreateSyncPackageTaskData } from '../entity/Task';
 import { QueueAdapter } from '../../common/typing';
+import { MQAdapter } from '../../infra/MQAdapter';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -21,11 +22,14 @@ export class TaskService extends AbstractService {
   @Inject()
   private readonly queueAdapter: QueueAdapter;
 
+  @Inject()
+  private readonly mqAdapter: MQAdapter;
+
   public async getTaskQueueLength(taskType: TaskType) {
     return await this.queueAdapter.length(taskType);
   }
 
-  public async createTask(task: Task, addTaskQueueOnExists: boolean) {
+  public async createTask(task: Task, addTaskQueueOnExists: boolean, useMQ = false) {
     const existsTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type);
     if (existsTask) {
       // 如果任务还未被触发，就不继续重复创建
@@ -60,10 +64,15 @@ export class TaskService extends AbstractService {
       return existsTask;
     }
     await this.taskRepository.saveTask(task);
-    await this.queueAdapter.push<string>(task.type, task.taskId);
-    const queueLength = await this.getTaskQueueLength(task.type);
-    this.logger.info('[TaskService.createTask:new] taskType: %s, targetName: %s, taskId: %s, queue size: %s',
-      task.type, task.targetName, task.taskId, queueLength);
+
+    if (useMQ) {
+      await this.mqAdapter.addJobs(task.type, task.taskId);
+    } else {
+      await this.queueAdapter.push<string>(task.type, task.taskId);
+      const queueLength = await this.getTaskQueueLength(task.type);
+      this.logger.info('[TaskService.createTask:new] taskType: %s, targetName: %s, taskId: %s, queue size: %s',
+        task.type, task.targetName, task.taskId, queueLength);
+    }
     return task;
   }
 
