@@ -30,7 +30,7 @@ export class CheckRecentlyUpdatedPackages {
   private readonly httpclient: EggHttpClient;
 
   async subscribe() {
-    const notAllowUpdateModeList = [ SyncMode.none, SyncMode.admin ];
+    const notAllowUpdateModeList = [ SyncMode.none, SyncMode.admin, SyncMode.proxy ];
     if (notAllowUpdateModeList.includes(this.config.cnpmcore.syncMode) || !this.config.cnpmcore.enableCheckRecentlyUpdated) return;
     const pageSize = 36;
     const pageCount = this.config.env === 'unittest' ? 2 : 5;

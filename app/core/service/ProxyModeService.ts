@@ -47,12 +47,16 @@ export class ProxyModeService extends AbstractService {
     const { data: manifest } = await this.getPackageAbbreviatedManifests(fullname);
     const distTags = manifest['dist-tags'] || {};
     const version = distTags[versionOrTag] ? distTags[versionOrTag] : versionOrTag;
-    const storeKey = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${DIST_NAMES.MANIFEST}`;
+    const storeKey = isFullManifests ?
+      `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${DIST_NAMES.MANIFEST}` :
+      `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${DIST_NAMES.ABBREVIATED}`; //
     const nfsBytes = await this.nfsAdapter.getBytes(storeKey);
     if (nfsBytes) {
       let nfsPkgVersionManifgest = {};
       try {
-        nfsPkgVersionManifgest = JSON.parse(Buffer.from(nfsBytes).toString('utf8'));
+        const decoder = new TextDecoder();
+        const nfsString = decoder.decode(nfsBytes);
+        nfsPkgVersionManifgest = JSON.parse(nfsString);
       } catch {
         // JSON parse error
         await this.nfsAdapter.remove(storeKey);
@@ -62,7 +66,9 @@ export class ProxyModeService extends AbstractService {
     }
 
     // not in NFS
-    const responseResult = isFullManifests ? await this.npmRegistry.getPackageVersionManifest(fullname, version) : await this.npmRegistry.getAbbreviatedPackageVersionManifest(fullname, version);
+    const responseResult = isFullManifests ?
+      await this.npmRegistry.getPackageVersionManifest(fullname, version) :
+      await this.npmRegistry.getAbbreviatedPackageVersionManifest(fullname, version);
     if (responseResult.status !== 200) {
       throw new HttpError({
         status: responseResult.status,
@@ -92,7 +98,8 @@ export class ProxyModeService extends AbstractService {
     }
 
     const storeKey = isFullManifests ?
-      `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${DIST_NAMES.FULL_MANIFESTS}` : `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${DIST_NAMES.ABBREVIATED_MANIFESTS}`;
+      `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${DIST_NAMES.FULL_MANIFESTS}` :
+      `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${DIST_NAMES.ABBREVIATED_MANIFESTS}`;
     const nfsBytes = await this.nfsAdapter.getBytes(storeKey);
     if (nfsBytes) {
       let nfsPkgManifgest = {};
@@ -129,7 +136,7 @@ export class ProxyModeService extends AbstractService {
     const versionMap = pkgManifest.versions || {};
     for (const key in versionMap) {
       const versionItem = versionMap[key];
-      if (versionItem.dist && versionItem.dist.tarball && typeof versionItem.dist.tarball === 'string') {
+      if (versionItem?.dist?.tarball && typeof versionItem.dist.tarball === 'string') {
         versionItem.dist.tarball = versionItem.dist.tarball.replace(sourceRegistry, registry);
       }
     }
