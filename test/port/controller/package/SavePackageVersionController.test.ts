@@ -21,7 +21,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
   });
 
   describe('[PUT /:fullname] save()', () => {
-    it('should set registry filed after publish', async () => {
+    it('should set registry field after publish', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const { pkg, user } = await TestUtil.createPackage({ name: 'non_scope_pkg', version: '1.0.0' });
       const pkg2 = await TestUtil.getFullPackage({ name: pkg.name, version: '2.0.0' });
@@ -85,6 +85,21 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
       assert(pkgEntity);
       assert.equal(pkgEntity.registryId, selfRegistry.registryId);
+    });
+    it('should verify tgz and manifest', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const { pkg, user } = await TestUtil.createPackage({ name: 'non_scope_pkg', version: '1.0.0' });
+      const pkg2 = await TestUtil.getFullPackage({ name: pkg.name, version: '2.0.0' });
+
+      mock(app.config.cnpmcore, 'strictValidateTarballPkg', true);
+      const res = await app.httpRequest()
+        .put(`/${pkg2.name}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .send(pkg2)
+        .expect(422);
+
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] name mismatch between tarball and manifest');
     });
 
     it('should add new version success on scoped package', async () => {
