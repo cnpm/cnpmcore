@@ -3,6 +3,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import * as ssri from 'ssri';
 import tar from 'tar';
+import { PackageJSONType } from '../repository/PackageRepository';
 
 // /@cnpm%2ffoo
 // /@cnpm%2Ffoo
@@ -101,4 +102,25 @@ export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Pr
     }
     throw Object.assign(new Error('[hasShrinkWrapInTgz] Fail to parse input file'), { cause: e });
   }
+}
+
+export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJSONType> {
+  return new Promise((resolve, reject) => {
+    Readable.from(tarballBytes)
+      .pipe(tar.t({
+        filter: name => name === 'package/package.json',
+        onentry: async entry => {
+          const chunks: Buffer[] = [];
+          for await (const chunk of entry) {
+            chunks.push(chunk);
+          }
+          try {
+            const data = Buffer.concat(chunks);
+            return resolve(JSON.parse(data.toString()));
+          } catch (err) {
+            reject(new Error('Error parsing package.json'));
+          }
+        },
+      }));
+  });
 }

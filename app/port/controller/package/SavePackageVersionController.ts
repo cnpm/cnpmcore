@@ -1,4 +1,5 @@
 import { PackageJson, Simplify } from 'type-fest';
+import { isEqual } from 'lodash';
 import {
   UnprocessableEntityError,
   ForbiddenError,
@@ -17,7 +18,7 @@ import * as ssri from 'ssri';
 import validateNpmPackageName from 'validate-npm-package-name';
 import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from '../AbstractController';
-import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
+import { getScopeAndName, FULLNAME_REG_STRING, extractPackageJSON } from '../../../common/PackageUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import {
   VersionRule,
@@ -27,6 +28,8 @@ import {
 } from '../../typebox';
 import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
 import { PackageJSONType } from '../../../repository/PackageRepository';
+
+const STRICT_CHECK_TARBALL_FIELDS: (keyof PackageJson)[] = [ 'name', 'version', 'scripts', 'dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies', 'license', 'licenses', 'bin' ];
 
 type PackageVersion = Simplify<PackageJson.PackageJsonStandard & {
   name: 'string';
@@ -168,6 +171,19 @@ export class SavePackageVersionController extends AbstractController {
       if (packageVersion.dist?.shasum && packageVersion.dist.shasum !== shasum) {
         // if integrity not exists, check shasum
         throw new UnprocessableEntityError('dist.shasum invalid');
+      }
+    }
+
+    // https://github.com/cnpm/cnpmcore/issues/542
+    // check tgz & manifests
+    if (this.config.cnpmcore.strictValidateTarballPkg) {
+      const tarballPkg = await extractPackageJSON(tarballBytes);
+      const versionManifest = pkg.versions[tarballPkg.version];
+      const diffKeys = STRICT_CHECK_TARBALL_FIELDS.filter(key => {
+        return !isEqual(tarballPkg[key], versionManifest[key]);
+      });
+      if (diffKeys.length > 0) {
+        throw new UnprocessableEntityError(`${diffKeys} mismatch between tarball and manifest`);
       }
     }
 
