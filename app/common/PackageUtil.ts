@@ -109,18 +109,17 @@ export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJ
     Readable.from(tarballBytes)
       .pipe(tar.t({
         filter: name => name === 'package/package.json',
-        onentry: entry => {
-          let json = '';
-          entry.on('data', data => {
-            json += data.toString();
-          });
-          entry.on('end', () => {
-            try {
-              resolve(JSON.parse(json));
-            } catch (err) {
-              reject(new Error('Error parsing package.json'));
-            }
-          });
+        onentry: async entry => {
+          let chunks: Buffer[] = [];
+          for await (let chunk of entry) {
+            chunks.push(chunk);
+          }
+          try {
+            const data = Buffer.concat(chunks);
+            return resolve(JSON.parse(data.toString()));
+          } catch (err) {
+            reject(new Error('Error parsing package.json'));
+          }
         },
       }));
   });
