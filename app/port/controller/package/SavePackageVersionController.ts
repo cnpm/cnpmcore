@@ -179,11 +179,11 @@ export class SavePackageVersionController extends AbstractController {
     if (this.config.cnpmcore.strictValidateTarballPkg) {
       const tarballPkg = await extractPackageJSON(tarballBytes);
       const versionManifest = pkg.versions[tarballPkg.version];
-      const diffKey = STRICT_CHECK_TARBALL_FIELDS.find(key => {
+      const diffKeys = STRICT_CHECK_TARBALL_FIELDS.filter(key => {
         return !isEqual(tarballPkg[key], versionManifest[key]);
       });
-      if (diffKey) {
-        throw new UnprocessableEntityError(`${diffKey} mismatch between tarball and manifest`);
+      if (diffKeys.length > 0) {
+        throw new UnprocessableEntityError(`${diffKeys} mismatch between tarball and manifest`);
       }
     }
 

@@ -110,8 +110,8 @@ export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJ
       .pipe(tar.t({
         filter: name => name === 'package/package.json',
         onentry: async entry => {
-          let chunks: Buffer[] = [];
-          for await (let chunk of entry) {
+          const chunks: Buffer[] = [];
+          for await (const chunk of entry) {
             chunks.push(chunk);
           }
           try {
