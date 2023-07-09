@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.36.0](https://github.com/cnpm/cnpmcore/compare/v3.35.1...v3.36.0) (2023-07-09)
+
+
+### Features
+
+* support strictValidateTarballPkg ([#546](https://github.com/cnpm/cnpmcore/issues/546)) ([dd3438f](https://github.com/cnpm/cnpmcore/commit/dd3438f470a87ee4f7be058345bbaaa914ea8b2e)), closes [#542](https://github.com/cnpm/cnpmcore/issues/542)
+
 ## [3.35.1](https://github.com/cnpm/cnpmcore/compare/v3.35.0...v3.35.1) (2023-06-29)
 
 
