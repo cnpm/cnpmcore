@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.37.0](https://github.com/cnpm/cnpmcore/compare/v3.36.0...v3.37.0) (2023-07-12)
+
+
+### Features
+
+* add lastUsedAt for classic token ([#547](https://github.com/cnpm/cnpmcore/issues/547)) ([e061685](https://github.com/cnpm/cnpmcore/commit/e0616859ffd64f1f273b1dfff711f0d1796b9ec4))
+
 ## [3.36.0](https://github.com/cnpm/cnpmcore/compare/v3.35.1...v3.36.0) (2023-07-09)
 
 
