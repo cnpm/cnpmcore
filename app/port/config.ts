@@ -2,7 +2,7 @@ import { SyncDeleteMode, SyncMode, ChangesStreamMode } from '../common/constants
 
 export { cnpmcoreConfig } from '../../config/config.default';
 
-export type CnpmcoreConfig = {
+export type _CnpmcoreConfig = {
   name: string,
   /**
    * enable hook or not
@@ -171,3 +171,8 @@ export type CnpmcoreConfig = {
    */
   strictValidateTarballPkg?: boolean,
 };
+
+// `redirectNotFound` must be false when syncMode is `proxy`.
+type proxyModeConfine = Omit<_CnpmcoreConfig, 'syncMode' | 'redirectNotFound'> & {'syncMode': SyncMode.proxy, redirectNotFound: false };
+
+export type CnpmcoreConfig = _CnpmcoreConfig extends { syncMode: infer U } ? U extends SyncMode.proxy ? proxyModeConfine : _CnpmcoreConfig : _CnpmcoreConfig;
