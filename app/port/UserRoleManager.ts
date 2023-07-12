@@ -113,7 +113,7 @@ export class UserRoleManager {
     }
 
     // check token expired & set lastUsedAt
-    await this.tokenService.checkTokenExpired(authorizedUserAndToken.token);
+    await this.tokenService.checkTokenStatus(authorizedUserAndToken.token);
     this.currentAuthorizedToken = authorizedUserAndToken.token;
     this.currentAuthorizedUser = authorizedUserAndToken.user;
     ctx.userId = authorizedUserAndToken.user.userId;
