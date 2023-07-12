@@ -103,7 +103,6 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/download/:fullnameWithVersion+.tgz`,
     method: HTTPMethodEnum.GET,
   })
-
   async deprecatedDownload(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() fullnameWithVersion: string) {
     // /@emotion/utils/download/@emotion/utils-0.11.3.tgz
     // => /@emotion/utils/-/utils-0.11.3.tgz
