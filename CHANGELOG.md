@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.37.1](https://github.com/cnpm/cnpmcore/compare/v3.37.0...v3.37.1) (2023-07-13)
+
+
+### Bug Fixes
+
+* playwright bianry sync config ([#548](https://github.com/cnpm/cnpmcore/issues/548)) ([166e334](https://github.com/cnpm/cnpmcore/commit/166e3341f424fe514fd7c8c62d0530ac51ef6c12))
+
 ## [3.37.0](https://github.com/cnpm/cnpmcore/compare/v3.36.0...v3.37.0) (2023-07-12)
 
 
