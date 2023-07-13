@@ -20,18 +20,28 @@ export class ProxyModeCachedFilesRepository extends AbstractRepository {
     }
   }
 
-  public async getPackageVersionStoreKey(targetName, isFullManifests): Promise<string| null> {
+  public async findPackageStoreKey(targetName, isFullManifests): Promise<string| null> {
+    const fileType = isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS;
+    const model = await this.ProxyModeCachedFiles.findOne({ targetName, fileType });
+    if (model) return ModelConvertor.convertModelToEntity(model, ProxyModeCachedFilesEntity).filePath;
+    return null;
+  }
+
+  public async findPackageVersionStoreKey(targetName, isFullManifests): Promise<string| null> {
     const fileType = isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED;
     const model = await this.ProxyModeCachedFiles.findOne({ targetName, fileType });
     if (model) return ModelConvertor.convertModelToEntity(model, ProxyModeCachedFilesEntity).filePath;
     return null;
   }
 
-  public async getPackageStoreKey(targetName, isFullManifests): Promise<string| null> {
+  public async removePackageStoreKey(targetName, isFullManifests) {
     const fileType = isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS;
-    const model = await this.ProxyModeCachedFiles.findOne({ targetName, fileType });
-    if (model) return ModelConvertor.convertModelToEntity(model, ProxyModeCachedFilesEntity).filePath;
-    return null;
+    await this.ProxyModeCachedFiles.remove({ targetName, fileType });
+  }
+
+  public async removePackageVersionStoreKey(targetName, isFullManifests) {
+    const fileType = isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED;
+    await this.ProxyModeCachedFiles.remove({ targetName, fileType });
   }
 
 }
