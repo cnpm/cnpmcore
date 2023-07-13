@@ -36,22 +36,12 @@ export class ProxyModeService extends AbstractService {
     return { tgzBuffer };
   }
 
-  // used by GET /:fullname
-  async getPackageFullManifests(fullname: string) {
-    return await this._getPackageFullOrAbbreviatedManifest(fullname, true);
-  }
-
-  // used by GET /:fullname | GET /:fullname/:versionOrTag | GET /-/package/:fullname/dist-tags
-  async getPackageAbbreviatedManifests(fullname: string) {
-    return await this._getPackageFullOrAbbreviatedManifest(fullname, false);
-  }
-
   // used by GET /:fullname/:versionOrTag
-  async getPackageVersionOrTagManifest(fullname: string, versionOrTag: string, isFullManifests: boolean) {
-    const { data: manifest } = await this.getPackageAbbreviatedManifests(fullname);
+  async getPackageVersionManifestAndCache(fullname: string, versionOrTag: string, isFullManifests: boolean) {
+    const { data: manifest } = await this.getPackageManifestAndCache(fullname, false);
     const distTags = manifest['dist-tags'] || {};
     const version = distTags[versionOrTag] ? distTags[versionOrTag] : versionOrTag;
-    const cachedStoreKey = await this.proxyModeCachedFiles.getPackageVersionStoreKey(`${fullname}/${version}`, isFullManifests);
+    const cachedStoreKey = await this.proxyModeCachedFiles.findPackageVersionStoreKey(`${fullname}/${version}`, isFullManifests);
     if (cachedStoreKey) {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
       if (nfsBytes) {
@@ -63,7 +53,7 @@ export class ProxyModeService extends AbstractService {
         } catch {
           // JSON parse error
           await this.nfsAdapter.remove(cachedStoreKey);
-          // TODO: remove
+          await this.proxyModeCachedFiles.removePackageVersionStoreKey(fullname, isFullManifests);
           throw new InternalServerError('manifest in NFS JSON parse error');
         }
         return nfsPkgVersionManifgest;
@@ -98,7 +88,7 @@ export class ProxyModeService extends AbstractService {
     return pkgVerisonManifest;
   }
 
-  private async _getPackageFullOrAbbreviatedManifest(fullname: string, isFullManifests: boolean) {
+  async getPackageManifestAndCache(fullname: string, isFullManifests: boolean) {
     // check package is blocked
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
       const error = `stop cache by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`;
@@ -108,7 +98,7 @@ export class ProxyModeService extends AbstractService {
     }
 
 
-    const cachedStoreKey = await this.proxyModeCachedFiles.getPackageStoreKey(fullname, isFullManifests);
+    const cachedStoreKey = await this.proxyModeCachedFiles.findPackageStoreKey(fullname, isFullManifests);
     if (cachedStoreKey) {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
       if (nfsBytes) {
@@ -126,7 +116,7 @@ export class ProxyModeService extends AbstractService {
         const { shasum: etag } = await calculateIntegrity(nfsBytes);
         return { data: nfsPkgManifgest, etag, blockReason: '' };
       }
-      // TODO: remove
+      this.proxyModeCachedFiles.removePackageStoreKey(fullname, isFullManifests);
     }
 
     // not in database or NFS

@@ -70,11 +70,7 @@ export class ShowPackageController extends AbstractController {
     let result: { etag: string; data: any, blockReason: string };
     if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
       // proxy mode
-      if (isFullManifests) {
-        result = await this.proxyModeService.getPackageFullManifests(fullname);
-      } else {
-        result = await this.proxyModeService.getPackageAbbreviatedManifests(fullname);
-      }
+      result = await this.proxyModeService.getPackageManifestAndCache(fullname, isFullManifests);
     } else {
       // sync mode
       if (isFullManifests) {
