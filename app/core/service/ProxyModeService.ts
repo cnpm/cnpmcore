@@ -5,7 +5,7 @@ import { calculateIntegrity } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { ProxyModeCachedFiles } from '../entity/ProxyModeCachedFiles';
-import { ProxyModeCachedFilesRepository } from '../../repository/ProxyModeRepository';
+import { ProxyModeCachedFilesRepository } from '../../repository/ProxyModeCachedFilesRepository';
 import { AbstractService } from '../../common/AbstractService';
 import { readFile, rm } from 'node:fs/promises';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
@@ -41,7 +41,8 @@ export class ProxyModeService extends AbstractService {
     const { data: manifest } = await this.getPackageManifestAndCache(fullname, false);
     const distTags = manifest['dist-tags'] || {};
     const version = distTags[versionOrTag] ? distTags[versionOrTag] : versionOrTag;
-    const cachedStoreKey = await this.proxyModeCachedFiles.findPackageVersionStoreKey(`${fullname}/${version}`, isFullManifests);
+    const cachedFileInfo = await this.proxyModeCachedFiles.findCachedPackageVersionManifest(fullname, version, isFullManifests);
+    const cachedStoreKey = cachedFileInfo?.filePath;
     if (cachedStoreKey) {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
       if (nfsBytes) {
@@ -83,7 +84,12 @@ export class ProxyModeService extends AbstractService {
       `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${DIST_NAMES.MANIFEST}` :
       `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${DIST_NAMES.ABBREVIATED}`;
     await this.nfsAdapter.uploadBytes(storeKey, proxyBytes);
-    const cachedFiles = await ProxyModeCachedFiles.create({ targetName: `${fullname}/${version}`, fileType: isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED, filePath: storeKey });
+    let cachedFiles;
+    if (!cachedStoreKey) {
+      cachedFiles = await ProxyModeCachedFiles.create({ targetName: fullname, version, fileType: isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED, filePath: storeKey });
+    } else {
+      cachedFiles = await ProxyModeCachedFiles.update(cachedFileInfo);
+    }
     this.proxyModeCachedFiles.savePackageManifests(cachedFiles);
     return pkgVerisonManifest;
   }
@@ -98,7 +104,8 @@ export class ProxyModeService extends AbstractService {
     }
 
 
-    const cachedStoreKey = await this.proxyModeCachedFiles.findPackageStoreKey(fullname, isFullManifests);
+    const cachedFileInfo = await this.proxyModeCachedFiles.findCachedPackageManifest(fullname, isFullManifests);
+    const cachedStoreKey = cachedFileInfo?.filePath;
     if (cachedStoreKey) {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
       if (nfsBytes) {
@@ -148,7 +155,12 @@ export class ProxyModeService extends AbstractService {
       `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${DIST_NAMES.FULL_MANIFESTS}` :
       `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${DIST_NAMES.ABBREVIATED_MANIFESTS}`;
     await this.nfsAdapter.uploadBytes(storeKey, proxyBytes);
-    const cachedFiles = await ProxyModeCachedFiles.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
+    let cachedFiles;
+    if (!cachedStoreKey) {
+      cachedFiles = await ProxyModeCachedFiles.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
+    } else {
+      cachedFiles = await ProxyModeCachedFiles.update(cachedFileInfo);
+    }
     this.proxyModeCachedFiles.savePackageManifests(cachedFiles);
     const { shasum: etag } = await calculateIntegrity(proxyBytes);
     return { data: pkgManifest, etag, blockReason: '' };
