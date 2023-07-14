@@ -18,12 +18,18 @@ export class ProxyModeCachedFiles extends Bone {
   @Attribute(DataTypes.STRING(214))
   targetName: string;
 
-  @Attribute(DataTypes.STRING(20))
+  @Attribute(DataTypes.STRING(30))
   fileType: string;
 
   @Attribute(DataTypes.STRING(512), {
     unique: true,
   })
   filePath: string;
+
+  @Attribute(DataTypes.STRING(214))
+  version: string;
+
+  @Attribute(DataTypes.STRING(214))
+  lastErrorMessage: string;
 
 }
