@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.38.0](https://github.com/cnpm/cnpmcore/compare/v3.37.1...v3.38.0) (2023-07-17)
+
+
+### Features
+
+* misc router ([#552](https://github.com/cnpm/cnpmcore/issues/552)) ([e9e3a7b](https://github.com/cnpm/cnpmcore/commit/e9e3a7b70f78a13dd7ded2795c62f4d6fcbbe431)), closes [#551](https://github.com/cnpm/cnpmcore/issues/551)
+
 ## [3.37.1](https://github.com/cnpm/cnpmcore/compare/v3.37.0...v3.37.1) (2023-07-13)
 
 
