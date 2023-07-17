@@ -9,8 +9,11 @@ import {
 } from '@eggjs/tegg';
 import { AbstractController } from './AbstractController';
 import { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService';
+import { NotFoundError, NotImplementedError } from 'egg-errors';
 
 const startTime = new Date();
+
+const NOT_IMPLEMENTED = [ '/-/npm/v1/security/audits/quick', '/-/npm/v1/security/advisories/bulk' ];
 
 // registry 站点信息数据 SiteTotalData
 // SiteEnvInfo: 环境、运行时相关信息，实时查询
@@ -96,5 +99,19 @@ export class HomeController extends AbstractController {
       pong: true,
       use: performance.now() - ctx.performanceStarttime!,
     };
+  }
+
+  @HTTPMethod({
+    path: '/*',
+    method: HTTPMethodEnum.POST,
+    priority: -Infinity,
+  })
+  async misc(@Context() ctx: EggContext) {
+    const { path } = ctx;
+    if (NOT_IMPLEMENTED.includes(path)) {
+      throw new NotImplementedError(`${ctx.path} not implemented yet`);
+    }
+
+    throw new NotFoundError(`${ctx.path} not found`);
   }
 }
