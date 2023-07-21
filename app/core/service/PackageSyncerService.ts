@@ -605,9 +605,8 @@ export class PackageSyncerService extends AbstractService {
         // check metaDataKeys, if different value, override exists one
         // https://github.com/cnpm/cnpmjs.org/issues/1667
         // need libc field https://github.com/cnpm/cnpmcore/issues/187
-        const metaDataKeys = [
-          'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated',
-        ];
+        // fix _npmUser field since https://github.com/cnpm/cnpmcore/issues/553
+        const metaDataKeys = [ 'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated', '_npmUser' ];
         let diffMeta: any;
         for (const key of metaDataKeys) {
           let remoteItemValue = item[key];
@@ -691,7 +690,8 @@ export class PackageSyncerService extends AbstractService {
       };
       try {
         // 当 version 记录已经存在时，还需要校验一下 pkg.manifests 是否存在
-        const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
+        const publisher = users.find(user => user.name === item._npmUser?.name) || users[0];
+        const pkgVersion = await this.packageManagerService.publish(publishCmd, publisher);
         updateVersions.push(pkgVersion.version);
         logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
       } catch (err: any) {
