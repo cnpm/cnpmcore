@@ -64,12 +64,13 @@ export class CacheAdapter {
 
   async usingLock(key: string, seconds: number, func: () => Promise<void>) {
     const lockTimestamp = await this.lock(key, seconds);
-    if (!lockTimestamp) return;
+    if (!lockTimestamp) return false;
     try {
       await func();
     } finally {
       await this.unlock(key, lockTimestamp);
     }
+    return true;
   }
 
   private getLockName(key: string) {
