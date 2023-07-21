@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.38.1](https://github.com/cnpm/cnpmcore/compare/v3.38.0...v3.38.1) (2023-07-21)
+
+
+### Bug Fixes
+
+* publish lock ([#555](https://github.com/cnpm/cnpmcore/issues/555)) ([ec90ab8](https://github.com/cnpm/cnpmcore/commit/ec90ab85fa529a9666f7f3f03e54d063ddeebc0b))
+
 ## [3.38.0](https://github.com/cnpm/cnpmcore/compare/v3.37.1...v3.38.0) (2023-07-17)
 
 
