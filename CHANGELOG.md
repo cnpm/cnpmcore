@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.38.2](https://github.com/cnpm/cnpmcore/compare/v3.38.1...v3.38.2) (2023-07-21)
+
+
+### Bug Fixes
+
+* _npmUser info in fullManifest ([#554](https://github.com/cnpm/cnpmcore/issues/554)) ([4455295](https://github.com/cnpm/cnpmcore/commit/44552959eb8052ac534cc60c1c2820962deed5b8)), closes [#553](https://github.com/cnpm/cnpmcore/issues/553)
+
 ## [3.38.1](https://github.com/cnpm/cnpmcore/compare/v3.38.0...v3.38.1) (2023-07-21)
 
 
