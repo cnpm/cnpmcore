@@ -1,7 +1,6 @@
 import { InternalServerError, ForbiddenError, HttpError } from 'egg-errors';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { EggHttpClient } from 'egg';
-import { calculateIntegrity } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { ProxyModeCachedFiles } from '../entity/ProxyModeCachedFiles';
@@ -11,6 +10,7 @@ import { readFile, rm } from 'node:fs/promises';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../common/constants';
 import { DIST_NAMES } from '../entity/Package';
+import type { PackageJSONType } from '../../repository/PackageRepository';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -37,8 +37,8 @@ export class ProxyModeService extends AbstractService {
   }
 
   // used by GET /:fullname/:versionOrTag
-  async getPackageVersionManifestAndCache(fullname: string, versionOrTag: string, isFullManifests: boolean) {
-    const { data: manifest } = await this.getPackageManifestAndCache(fullname, false);
+  async getPackageVersionManifest(fullname: string, versionOrTag: string, isFullManifests: boolean): Promise<PackageJSONType> {
+    const manifest = await this.getPackageManifestAndCache(fullname, false);
     const distTags = manifest['dist-tags'] || {};
     const version = distTags[versionOrTag] ? distTags[versionOrTag] : versionOrTag;
     const cachedFileInfo = await this.proxyModeCachedFiles.findCachedPackageVersionManifest(fullname, version, isFullManifests);
@@ -46,7 +46,7 @@ export class ProxyModeService extends AbstractService {
     if (cachedStoreKey) {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
       if (nfsBytes) {
-        let nfsPkgVersionManifgest = {};
+        let nfsPkgVersionManifgest: PackageJSONType;
         try {
           const decoder = new TextDecoder();
           const nfsString = decoder.decode(nfsBytes);
@@ -62,6 +62,51 @@ export class ProxyModeService extends AbstractService {
     }
 
     // not in NFS
+    const { storeKey, pkgVerisonManifest } = await this.getPackageVersionManifestFromSourceAndCache(fullname, version, isFullManifests);
+
+    const cachedFiles = await ProxyModeCachedFiles.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
+    this.proxyModeCachedFiles.savePackageManifests(cachedFiles);
+    return pkgVerisonManifest;
+  }
+
+  async getPackageManifestAndCache(fullname: string, isFullManifests: boolean): Promise<PackageJSONType> {
+    // check package is blocked
+    if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
+      const error = `stop cache by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`;
+      this.logger.info('[ProxyPackageAndPublishService.cacheManifests:fail-block-list] targetName: %s, %s',
+        fullname, error);
+      throw new ForbiddenError('this package is in block list');
+    }
+
+
+    const cachedFileInfo = await this.proxyModeCachedFiles.findCachedPackageManifest(fullname, isFullManifests);
+    const cachedStoreKey = cachedFileInfo?.filePath;
+    if (cachedStoreKey) {
+      const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
+      if (nfsBytes) {
+        let nfsPkgManifgest :PackageJSONType;
+        try {
+          const decoder = new TextDecoder();
+          const nfsString = decoder.decode(nfsBytes);
+          nfsPkgManifgest = JSON.parse(nfsString);
+        } catch {
+          // JSON parse error
+          await this.nfsAdapter.remove(cachedStoreKey);
+          // TODO: remove
+          throw new InternalServerError('manifest in NFS JSON parse error');
+        }
+        return nfsPkgManifgest;
+      }
+      this.proxyModeCachedFiles.removePackageStoreKey(fullname, isFullManifests);
+    }
+
+    const { storeKey, pkgManifest } = await this.getPackageManifestFromSourceAndCache(fullname, isFullManifests);
+    const cachedFiles = await ProxyModeCachedFiles.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
+    this.proxyModeCachedFiles.savePackageManifests(cachedFiles);
+    return pkgManifest;
+  }
+
+  async getPackageVersionManifestFromSourceAndCache(fullname: string, version: string, isFullManifests: boolean): Promise<{ storeKey: string, proxyBytes: Buffer, pkgVerisonManifest: PackageJSONType }> {
     const responseResult = isFullManifests ?
       await this.npmRegistry.getPackageVersionManifest(fullname, version) :
       await this.npmRegistry.getAbbreviatedPackageVersionManifest(fullname, version);
@@ -84,49 +129,10 @@ export class ProxyModeService extends AbstractService {
       `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${DIST_NAMES.MANIFEST}` :
       `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${DIST_NAMES.ABBREVIATED}`;
     await this.nfsAdapter.uploadBytes(storeKey, proxyBytes);
-    let cachedFiles;
-    if (!cachedStoreKey) {
-      cachedFiles = await ProxyModeCachedFiles.create({ targetName: fullname, version, fileType: isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED, filePath: storeKey });
-    } else {
-      cachedFiles = await ProxyModeCachedFiles.update(cachedFileInfo);
-    }
-    this.proxyModeCachedFiles.savePackageManifests(cachedFiles);
-    return pkgVerisonManifest;
+    return { storeKey, proxyBytes, pkgVerisonManifest };
   }
 
-  async getPackageManifestAndCache(fullname: string, isFullManifests: boolean) {
-    // check package is blocked
-    if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
-      const error = `stop cache by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`;
-      this.logger.info('[ProxyPackageAndPublishService.cacheManifests:fail-block-list] targetName: %s, %s',
-        fullname, error);
-      throw new ForbiddenError('this package is in block list');
-    }
-
-
-    const cachedFileInfo = await this.proxyModeCachedFiles.findCachedPackageManifest(fullname, isFullManifests);
-    const cachedStoreKey = cachedFileInfo?.filePath;
-    if (cachedStoreKey) {
-      const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
-      if (nfsBytes) {
-        let nfsPkgManifgest = {};
-        try {
-          const decoder = new TextDecoder();
-          const nfsString = decoder.decode(nfsBytes);
-          nfsPkgManifgest = JSON.parse(nfsString);
-        } catch {
-          // JSON parse error
-          await this.nfsAdapter.remove(cachedStoreKey);
-          // TODO: remove
-          throw new InternalServerError('manifest in NFS JSON parse error');
-        }
-        const { shasum: etag } = await calculateIntegrity(nfsBytes);
-        return { data: nfsPkgManifgest, etag, blockReason: '' };
-      }
-      this.proxyModeCachedFiles.removePackageStoreKey(fullname, isFullManifests);
-    }
-
-    // not in database or NFS
+  async getPackageManifestFromSourceAndCache(fullname:string, isFullManifests: boolean): Promise<{ storeKey: string, proxyBytes: Buffer, pkgManifest: PackageJSONType }> {
     let responseResult: RegistryResponse;
     if (isFullManifests) {
       responseResult = await this.npmRegistry.getFullManifests(fullname);
@@ -155,15 +161,8 @@ export class ProxyModeService extends AbstractService {
       `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${DIST_NAMES.FULL_MANIFESTS}` :
       `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${DIST_NAMES.ABBREVIATED_MANIFESTS}`;
     await this.nfsAdapter.uploadBytes(storeKey, proxyBytes);
-    let cachedFiles;
-    if (!cachedStoreKey) {
-      cachedFiles = await ProxyModeCachedFiles.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
-    } else {
-      cachedFiles = await ProxyModeCachedFiles.update(cachedFileInfo);
-    }
-    this.proxyModeCachedFiles.savePackageManifests(cachedFiles);
-    const { shasum: etag } = await calculateIntegrity(proxyBytes);
-    return { data: pkgManifest, etag, blockReason: '' };
+
+    return { storeKey, proxyBytes, pkgManifest };
   }
 
 }
