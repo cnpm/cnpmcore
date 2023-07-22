@@ -14,6 +14,7 @@ import { PackageManagerService } from '../../../core/service/PackageManagerServi
 import { CacheService } from '../../../core/service/CacheService';
 import { SyncMode } from '../../../common/constants';
 import { ProxyModeService } from '../../../core/service/ProxyModeService';
+import { calculateIntegrity } from '../../../common/PackageUtil';
 
 @HTTPController()
 export class ShowPackageController extends AbstractController {
@@ -70,7 +71,10 @@ export class ShowPackageController extends AbstractController {
     let result: { etag: string; data: any, blockReason: string };
     if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
       // proxy mode
-      result = await this.proxyModeService.getPackageManifestAndCache(fullname, isFullManifests);
+      const { pkgManifest } = await this.proxyModeService.getPackageManifestFromSourceAndCache(fullname, isFullManifests);
+      const nfsBytes = Buffer.from(JSON.stringify(pkgManifest));
+      const { shasum: etag } = await calculateIntegrity(nfsBytes);
+      result = { data: pkgManifest, etag, blockReason: '' };
     } else {
       // sync mode
       if (isFullManifests) {

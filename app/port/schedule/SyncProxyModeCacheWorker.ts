@@ -3,7 +3,8 @@ import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import { ProxyModeCachedFilesRepository } from '../../repository/ProxyModeCachedFilesRepository';
 import { SyncMode } from '../../common/constants';
-import { DIST_NAMES } from '../../core/entity/Package';
+// import { DIST_NAMES } from '../../core/entity/Package';
+// import { ProxyModeService } from '../../core/service/ProxyModeService';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.ALL,
@@ -15,6 +16,9 @@ export class SyncProxyModeCacheWorker {
 
   @Inject()
   private readonly config: EggAppConfig;
+
+  // @Inject()
+  // private proxyModeService: ProxyModeService;
 
   // @Inject()
   // private readonly logger: EggLogger;
@@ -31,13 +35,11 @@ export class SyncProxyModeCacheWorker {
     // const pageCount = this.config.env === 'unittest' ? 2 : 5;
     let pageIndex = 0;
     let { data: list } = await this.proxyModeCachedFilesRepository.listCachedFiles({ pageSize: 5, pageIndex });
-    while (list.length === 5) {
+    while (list.length !== 0) {
       // TODO
       const requestList = list.map(item => {
-        if (item.fileType === DIST_NAMES.ABBREVIATED || item.fileType === DIST_NAMES.MANIFEST) {
-          // TODO
-        }
-        return [];
+        console.log(item.targetName, item.version);
+        return Promise.resolve('');
       });
       await Promise.allSettled(requestList);
       pageIndex++;
