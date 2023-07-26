@@ -1,0 +1,1177 @@
+{
+    "_id": "libpg-query",
+    "_rev": "21-ea88ad3ee9b71082e79df0b03684a4c5",
+    "name": "libpg-query",
+    "dist-tags": { "latest": "15.0.2" },
+    "versions": {
+      "13.0.0": {
+        "name": "libpg-query",
+        "version": "13.0.0",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-gyp configure",
+          "build": "node-gyp configure build",
+          "rebuild": "node-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "preinstall": "script/buildAddon.sh",
+          "postinstall": "node-gyp rebuild"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "node-addon-api": "^1.6.3", "node-gyp": "^3.3.1" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "gitHead": "4e4de4f645b78d6975f5d2eb5b8f41daf78d4b10",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.0.0",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-SKS52M5DcMXKCDUsTGHSGf72y+oY7pNP6wUgF2K2UDfNJwX/HJ4eDFMomWYfBP0pAcZTsNR66/3g26tLeIxuoQ==",
+          "shasum": "af9771d6845bd29752e7e643b7ef5247b0591737",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.0.0.tgz",
+          "fileCount": 25,
+          "unpackedSize": 26316,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJgVG2hCRA9TVsSAnZWagAAiYQP/ixoP4lvnIf//SQjdtLJ\nSE6H+kpK4djHyKxJXx5t8EhTUHResxDbUNO7Wlb4CDlrBYthETCOPUeTBNKi\nwdeuLwIM3wunqOtXv2QimgPxGTK2qFyGcDdh2sHyr2YziPTs2nHM30/J8ykb\nSxF2Nzy3NIHiGIEymc9GrGxM4hOizjBdJ2v+yaYfz3yjRwbFaXB7ZTj3BaTi\nxS6xXhaC6sExWfUKlV4A7uEm6zLVUH0CKMJTPAc/DDj4rcxlMyzRCy/tqwRD\nNNLnDJr/iOWdmhH60ro/DT8K8uysiPjn8MNji7a3pLhlZscTFtLy6DZwJlvG\nPNi3jLJ6InMOj3t9yHtbZjsv71ZWrB5C+Ghk9GBkxsD7Kf7KVdZUSgC1PtNp\nw+Fb8V3U7dWeE961kg/U6qOE43f6ig6OLBEeJCn01O+zc0/WLqe32ttJ8Bo5\ncp8YFbMFJAXl5xEq0/sWNy+En97dlprPVidIJcg6P0uvAKpRy72gQgUg7aev\nSs20DSfNlPYr/ElFZPyocgrNgxe3+GgdHpoy0Djtko3vNnIGSHmQW5UdFAyj\n/EBSsOLEVx4fj5XbqvEHPchxZEBexceyMLPnzgM8bC1MHM2IsxI+7E4hnlHX\nyLkY4dxChg609O7hTU6V4TFn6yepnO3Wr3gf75UiF5h2FmJBRcCEQgu/Ak/J\njuVl\r\n=Mztp\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEYCIQDsS9vVH+HggNGCa6ecPcAfOM13HQY+KENlmJzspQT+ZwIhAOQqc3JElJpxOKQuyllpKlwysNobJkzo0ftZTkhqifv5"
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.0.0_1616145824728_0.08569855233427348"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.0.1": {
+        "name": "libpg-query",
+        "version": "13.0.1",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-gyp configure",
+          "build": "node-gyp configure build",
+          "rebuild": "node-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "preinstall": "script/buildAddon.sh",
+          "postinstall": "node-gyp rebuild"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "node-addon-api": "^1.6.3", "node-gyp": "^3.3.1" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "gitHead": "4e4de4f645b78d6975f5d2eb5b8f41daf78d4b10",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.0.1",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-LGERs4fZbEDrYem+iMuKcDgtKLqRF0HzIfpf7TjjcLgUVAFL8tkKpVyB5ODi2XsqV4NLOaXDiLz7uItXP2Ot5w==",
+          "shasum": "1bcf0c29513d5d4a7f57e044648eae0e829e3f84",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.0.1.tgz",
+          "fileCount": 25,
+          "unpackedSize": 26316,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJgVHFxCRA9TVsSAnZWagAAoBUP+QGjoWq7wQPsrCdSL8HP\n6KQbI7u0yyXFq8ZGPlr7d4DKXeX9tCmQAjTXfFOvor1mJ83xEodizsretnPn\n3HDBg1VwmMTnQhLUrj5CyDjFL6SVV5Yp3QB6j9N7pGO0sryVJ7BUkzvshCim\nnvXGQp3dppG4Y3irM9QAToSYIZs08DBjid6MIk323xDfQJJ/zS89ZIzGIax2\nNIDA0t1cqTj0dX66lc997gRDG2ZNIV3gZHdBuotf00MTgb1D1uChNObhvLhR\nxVkiiY1dtEq/vVpQvxuUaIuH4E1mbfvXZ3k8FFdAwh8JjyqXNNJb+/HCtmLj\ntGu7hQdWThWTE7t9GNU6aBNSjpJJgeTZVyOEeP5q1OA1REASSgJvTe/naEgu\n/rIQvlH4RE4NKTAtSxteENJPWOUZq4lZFRsNDBeD4/LmjmJhSfvySjR4eH0m\nUf83B2Qzsah/RCymbofh/oh5ejaXwh7XE+zA6dwlQ/Hfs/H+xoTJg4uMJ0Et\n+kC5tN9ikFqGIDDNiBvHxAzf0m55FGM406BjdSEuYVuu03zgiWzyj6ol6jHm\n1JyRz6sN9Ma3wkmQUT2m2zqtkscmbS5mK8IdkAd8NF1dEWsYe1lXJ/UrMpKb\nsnnGusSW4nYqr4tbYnoVoLclM+dcjOXxcar1tm/JzPPBEYzW+b6eGD5J7oBL\nQHNT\r\n=/MF2\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEYCIQCIW7HngDYK3x+vXKnw01CtxNMHb2kqABCQiwU3+1ofmAIhAOjnfc9fujP16of3AQFHSJD7X8Ca5hKTOMoL3OLi/G64"
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.0.1_1616146800798_0.5030036643524463"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.1.0": {
+        "name": "libpg-query",
+        "version": "13.1.0",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-gyp configure",
+          "build": "node-gyp configure build",
+          "rebuild": "node-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "preinstall": "script/buildAddon.sh",
+          "postinstall": "node-gyp rebuild"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "gitHead": "a9f5e5586bdb1f1b8ab22e4bea993e9a765e3513",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.1.0",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-bVvw8yD7GtQDAT8guJ4EnNcjw16OyAebLCL/IrY3NrN2+8GDIC6B6bFCjz087fDE+VZ2OLo1GlGiBGWbFHud1A==",
+          "shasum": "958379602f9f08392cde6f7910ee9e3416becc8b",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.1.0.tgz",
+          "fileCount": 25,
+          "unpackedSize": 26481,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJgbM3fCRA9TVsSAnZWagAA1qcP/2YWKYb16xiJbDqWNPRP\nfEtY1ggMDhXxXCQ+/WrCzm7uminIjr1QR0/9fnm31DLiEQ/FWPlep+XRt2LR\nzMH77VqOiKJqucWXY7/7pc/izSkvaZUE4uO5CypEP4jzJFQtC0Nppjqx2xpX\nF1dHeX1ZsSoppajFiKnUiD5mNZGUfDZ63dnjVf5IGsbwBZ3DzYgLRSDaTm6t\n9Nml4/cJg/0SpIJQa/jzhV1ZVKVmg8iVvMGx7Lvivq2ixTdNCr+ylJVV2c7I\nmZW3d794PNyxDQop7Zft52OHP9zDkAbVe9qfWjcpUbFdgihXp8AWtwojC16l\nxzvZZr6TU6QL1NTkhwJiQdiz1adjtGOKqtMNBhAZysjYRAny1I7+wwTQzKGg\njNkwvIoOZDVC6N8MgmxsGqMiRHDf2YNbS0AzlFHd78Ir/F9Qz4+dPLl49EaX\n7TfjS/D3GX/DRRuYmDbzK5MHuNCdjsXFBklWDfBvU1JYp2orw4xtB75fdzeN\ng8zU5+66YC5sAV5cHDYwf8OT/X75n7yXkA5GZLmFX5NtMJbRlqfGYwYEHU/K\nDRQcQfjEv/1rCvBsZkw/JXbSrDZOoDkF97uwzyNmNK996VPINewVP8XbUO8q\nEPPpIHMBr29+SUjdn47ektWYjAtn+YrGAd2N7z+BZItPINcML0ylbyM2zfYg\nBFKC\r\n=l/mu\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIQD6X1bTMGQkqfqB3u61HY5HnCHnFFbdRGH6SaCPAxvQQwIgffQvR4ytJUnqwSmFGPjC3avAIV/nvYD3M2yGBFOFizM="
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.1.0_1617743326988_0.2221893892675122"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.1.1": {
+        "name": "libpg-query",
+        "version": "13.1.1",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-gyp configure",
+          "build": "node-gyp configure build",
+          "rebuild": "node-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "preinstall": "script/buildAddon.sh",
+          "postinstall": "node-gyp rebuild"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "gitHead": "a9dae1fc6c2c1a0f7b715365a3f01b1409af790c",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.1.1",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-sjpn0V/PlPR5RitmdQiBqXo6kFz4oGQf3LZk7ViRn/iQZqvuHAk7bVCPnPSdIYyqL9ZVRAEDE5GhGMyJwbU3Fg==",
+          "shasum": "daba0e2090f66a74198e696dc989471393f889c8",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.1.1.tgz",
+          "fileCount": 25,
+          "unpackedSize": 26489,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJguAMHCRA9TVsSAnZWagAAPX8P/A00CSnzsCtusPdvfvta\nXCBMPOS50Q6XSgpw+i13LZ5sdpNdWbQMGXJUaTNmbGWJCvD4lpPnjhsctU1U\n9XL3NGqmbEfRKVwiZ7H62Ak5fNsk+pI5q68qGPLD1sSe3Vm+YtR7HBeLPAZM\n3kSk33LLs9KTda8qmNYBNa+sxQrSd3j0o8JrwNVwai74zkWF5pSr2VavK9gA\nxud/ZLPHupWl4H0fWckueMA6aZ3SrKv1I+HeovkyRFHKbFHsfqF6uORc8fBC\nY7z2dSBb258gfSI6aaSxkpyI0j2nbXGcCdZwzFxdNv76FVV7dIWMdZerOFmI\ne+Q0Hd4BXowv+wqzws28eHxh0MX/aNvskzqxDpKqzNgRjzsgkKQFFvxfW0HZ\nE/pdgKQmYJM9yKmvdqyL7c1t03OJyCSMEH3+3xAmqZgz49O+e29VZvG3NjCW\nZUm3Ux07diP7/L8BF0NeB97Rfe/Xd6U7evI20EIEUgA9zBf/e1QHwde3/WSt\nipUrqPBFt6JZBeQba3pxcfghf/izqGK/Qr1TgyYz328gAX1C4MAhHSUpAfR5\n0D++WR7hHRefI9Zi7kYNWl/LnyjBpb8JSLSDcITFTAz9YC7ElJYzBD8jBRnK\nDliq/j4YH4ADU065DEFMGpb5SlXEEofiPJJv8LL0KF31M0hgsh7WDNaX57q/\n+9dI\r\n=pDrF\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIC78GG+F82UqMHI+5tMuyQRg8J6/DXDOXsbkhXN/E0XrAiEAt+7UMEtM5EB33h4mICIO7h63xFtbuXJPFUGwELdYaZs="
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.1.1_1622672135781_0.392617287616319"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.1.2": {
+        "name": "libpg-query",
+        "version": "13.1.2",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-gyp configure",
+          "build": "node-gyp configure build",
+          "rebuild": "node-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "preinstall": "script/buildAddon.sh",
+          "postinstall": "node-gyp rebuild"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "gitHead": "1e2dd051c35e70a6746d669fcb3fbb2f8951153a",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.1.2",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-Pe0MMYuneKrSJHAepRJrirhdDJT7hL8ghxoeRdC+0ERGTgAzi/sLUnzkGsWN4kRhJP+pJGXy4oFHedaztLsEng==",
+          "shasum": "e7d8ac9f36d526a46c2cfd3d1539741b0f6bf3e4",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.1.2.tgz",
+          "fileCount": 25,
+          "unpackedSize": 30442,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.13\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJhOZ8+CRA9TVsSAnZWagAAXuMP/R6u++uVt/MZrx5PnUUH\nCHdn9NXoYim4YcaFVuwvC8/V4/xTd0I4YsLZrNRN6PSxzydB1e8ECPQJIc0K\njQUKFqPuU4273zK0FX8l0VbrqNIpj+IZvSsfRsyXYrqwx/M6EH7SRX8KEhYR\nIlFUjfcqbueT6RWowLgHwBqiK4bBHScLNiBj85DhTJ7J7OAIvGFjTQCw07ug\nk01HvultLSGpdikclnImuLdyn2vih5u9wF7Le8C14HhXXe2AIF+tCD/e0ktV\nA8NJZEDXNebnjKp0TOHlGp83lphRS5LFty3fqQnPto0FtrHnb1xL9t/TDdv3\nlLC4ed0jWJcmP6cxXaoG7F2uLEZW4aE1DD9JCiH0p+khz680BLrQFo64I8cF\nY7Y9sF0opQ1nQHE8h9IflLMn2KDfeHjkWOALBQs5ZZrQkKNV5XjW41BILl7D\nf+WccGA8h+vtWGGND+VDO8R5cSbe5hY7/225qnl+6kQ7cpW/0CIYfoKhgMss\n0OYDtg4VmZI1fZXekkg0FpBct06AsWQegHnC7VoFFoGO2XMRG0MX1sOLihAt\n2i+iZj+ooVNrjhHo3HU5mMSZquJWiDEREOu9n2fvbsqU7VfAWSLKZgyBtKd1\nbb0729DGmFjhlNsW11dHUjUHkEMiHAvAW6/J5FL64cU/zjo1pxs1JJ5OCRGB\ncUD3\r\n=JnOF\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEQCIG6PF38lxCk6oOv7bXXx+DYekCDCKZR+cqdF0DcJXeT7AiAQ/NcNw1qYX9zVHf8iTMn2Nv3/qGcF+SzhlpQhk6WK5w=="
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.1.2_1631166269956_0.011516399096044738"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.2.0": {
+        "name": "libpg-query",
+        "version": "13.2.0",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-gyp configure",
+          "build": "node-gyp configure build",
+          "rebuild": "node-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "preinstall": "script/buildAddon.sh",
+          "postinstall": "node-gyp rebuild"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "gitHead": "ad52ae685454f278bd0217f1070a1e5e24848982",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.2.0",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-oDDh0e6MuhyUN0AOGnZlRNDfE3y0n09GaqSzwyHU2SkYkjlDJaTAPZ/c/VnReK6Y2zeMMbyAXCtw8Jo1aRGSIw==",
+          "shasum": "4049ce93da3193ce020784ef9e86f2fa7b88709a",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.2.0.tgz",
+          "fileCount": 25,
+          "unpackedSize": 30499,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJiFtNOACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmpOFA//RQAN9KojlWfz0H/EOcu9WrYQ1AdsVGIDu2oCpRnPkc3zlEW6\r\n0d5xOSjnKxGpMtXoZVJYDU29iQSImN6/hU9R3FG+zL6CD6JiuSsbzca8HNqr\r\ntDipx88oCsfFktmDsvv/4+a5obIuv4mNtWT3MejR7Th3mhHA2fWd6/2aUaKc\r\n1Rq0haiZIQHPhj5yH8SIvZ9ghg38m+gH7v0jWDmYr+W7cZP8A80BKzZWkAMe\r\nfoVqMoWVkxbKp7ZbnDTi1EVIXOqmpeTzaAoia0DFDzclPAfrjB/1DwEHGNY3\r\nYYFAVL2WBS43+6QXNBJt8Q0rsFMWcn+nWdzYlE4cRkBMxkbgVejfxvl2wGzF\r\nM4Qj4WzWyRTknZJcLcZWYjxSHAdatqEXhQjnxyRMU25mu800anPKT+W13XVR\r\ncw2PjtoNBacrT9+jqr89FYQgl+soMUXAcwnJ4jlImgMmRs7TVIXPYuZ8m1tZ\r\nBx+tpuc4AhSv2OBdZZ+mJo8FFG7z2w/aPlMvowJ4+RLw9ty3xyYM7hBpoleI\r\nviszHW8Lv2ywwvXPUDZ+7qu1QH9ToQn3O4tgZwOTpzRcQXpkm5Z+luo3EYwX\r\n3cwz6LXN5PjjNrY/TrEayS1NkSXZFFu+cIIxcAw30OiZ+OF8DY8otiZ/pUEx\r\nZ/Gaz/VOrrLUolKH52lxOduRhXf3trSrCws=\r\n=EEBk\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIQDLTpZqPZaSCFIGZnoVE+ARHJUdMOBOI9S9sIcOB+6tswIgZD19YB62PlR7YOiQesqSphfkXY3MovpK5kGvQcTPxIg="
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.2.0_1645663054842_0.35617773750023374"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.2.1": {
+        "name": "libpg-query",
+        "version": "13.2.1",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": {
+          "@mapbox/node-pre-gyp": "^1.0.8",
+          "aws-sdk": "^2.1076.0",
+          "node-addon-api": "^1.6.3",
+          "node-gyp": "^8.0.0"
+        },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "a7183d9fe11a98dec6a58370436ff5e9e4ca9c02",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.2.1",
+        "_nodeVersion": "16.14.0",
+        "_npmVersion": "8.3.1",
+        "dist": {
+          "integrity": "sha512-8vwJiW/mJaXqpUeYPWSvYu8wR3OpTMtU4K1HjMdMqzORrfXl9PZdnRhJ6e3xf8DGBfxh0ufuNYgEtw9IpmzYKw==",
+          "shasum": "4ce9ed1b0efafcfe8043478cab1dd09cfce23022",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.2.1.tgz",
+          "fileCount": 25,
+          "unpackedSize": 30856,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJiKpyyACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmoaTQ//UXwQBC4flhxX09BAqZo612UE2pw48L8kqQatpvmQ/8SWjLWv\r\nR1Orb5K3qnl27vERJ+VPft4OgqEL1mqf1FGT26yPQRrwO4wOnUSpoRzqXWQh\r\n//GSsigVpHuPmYO8tmkJ6+ruyb1gJqay0mkR+snHDTVFc5/usAdexblEw+Lt\r\n57VfimEmpqxd3UZuiZXkdx3WDd4BJSXaMee0+apPg2quSZ0segq6UEEyrUCS\r\nU4TmIMdEmddKxduSglE0fJNXK6a6KiEAt1u4Nr1RAxIDx4jryZzyIfR4KLo3\r\n7Rk9eZlcwSGMfamUGqvoOxCfZ6tsquflKDQDOhc59C9PXuN5Q0bKZs9pmmhH\r\nODac1Pg2PY44WXAv5YY523UFrmNVWffpHPUCBt7SiOlZriO4GwyAG6xD+Sbo\r\nzini4FhfDNWpu/G/1KyBzRCa7j/44tFgbemZvJSggUGaPQREaMLJsn9gQov1\r\nXJcRC2es9kLxtyY3x2LjSrEfuNHs26M5eTSsJJjm729PjHZg4QM80qoLv1Hr\r\nSh1vb9x++NDn9VK4p4oDL1u9Z4LMRLwo+2wVbhuG7i6RZMzORpdS4L0FDsLv\r\nbVn3qOxDJg/q+p/RP3w3RaCGl9UAl0TIz2T43s8uV11LcA+3bLjpPhTTs1+D\r\nf7/OyP60/kwj/ppW/2yCMOU9JJAHjwCvM5Y=\r\n=q1J9\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEQCICf6j0UqP+AF13YNvm7NSLiHDU5BymVOirB691FGfHtuAiAs+udSnLcuOn//UBjdYO8ZGhVvN36CbhlzLf8Ue2GqYA=="
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.2.1_1646959793901_0.4992646823372584"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.2.2": {
+        "name": "libpg-query",
+        "version": "13.2.2",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": {
+          "@mapbox/node-pre-gyp": "^1.0.8",
+          "aws-sdk": "^2.1076.0",
+          "node-addon-api": "^1.6.3",
+          "node-gyp": "^8.0.0"
+        },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "a14cf79379c0581a1846c382e3b5c31b7e75b7bd",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.2.2",
+        "_nodeVersion": "16.14.0",
+        "_npmVersion": "8.3.1",
+        "dist": {
+          "integrity": "sha512-W+n35Mkoz/NN9/4szrmN5Uo/bHuHkINlIccx9Pj744BEjXDlQvh2JxaCyyoUq/s0uTd02L4OQbQPo6Z9dqeQmg==",
+          "shasum": "bc669dca36c82fc9d5328d9f94060e665c396926",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.2.2.tgz",
+          "fileCount": 25,
+          "unpackedSize": 8194915,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJiKp87ACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmrbGw/+J6okp096vf0jsswyU83lpbkf2tJScdw2yH7MbGyQ1KQY+VeL\r\npeFCnu0uol5G7w28FI2I6ckxGEVu9DUlQrXpfxBJqWWH4HOVGTJ/T5TM0JyN\r\nbLGHivaqG0zP/ZUnGBUE2UPDeGqxA+YYlTKZPwb3B3O2bS/e7BYNfwBeW3YG\r\niQzV8Ov/P5/8ORLMCL7E4DzGQk+kKPUIpAWJBjD8qr/gMDI7UOqh8TzOXmfe\r\nOvjrSZZac5oaq244zQfr/N0dcS8oa5/DNZJmzp5WrRGEJP+LbT76j47eNdI6\r\nrmyi0+C/QWYzV5Z5yTaO+zExtWmyh+VNmYccu0GUGfsgdjx3TWot6md2osGx\r\nWp3aKT8p275j16n9O0PB/1VyRMGMqWteq168Bbt2/EaROKH3Dkm5tbSS1lUw\r\n/yRMPPWw29ytfotILEGjD0JTcIRqWYxQgqU/q4swbfHtbkl1uTE3U2UbPVFy\r\ngNNah++F/5ht3cIfgaKwcX34UvrgCL2KuPJJDSeZ0xKJs2crMc2W4JEcLmAA\r\nCkpesSNY37bet/e191lPJ7gob1uhY6im4Rhw3KBnLZHf7c0yGAlRobnlIS6L\r\n5AwsF3F1PvGt9uZDoUvRAQpwjIrrExyNKY+lV4MitPB1T3kNCkptJNDn1x54\r\ngad+TOlKPXGTR0vfXRpPaRLavFCRjb+fo58=\r\n=DX0N\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIEY5Hj86hIC6AZGu8Fsfh85MifjU0EuBGGINdz5LK62BAiEAhvtamTM5iB1GWJn67fP43TQZCWNhOd7vSuGugwx4cbo="
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.2.2_1646960443236_0.8810805542881088"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.2.3": {
+        "name": "libpg-query",
+        "version": "13.2.3",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": {
+          "@mapbox/node-pre-gyp": "^1.0.8",
+          "aws-sdk": "^2.1076.0",
+          "node-addon-api": "^1.6.3",
+          "node-gyp": "^8.0.0"
+        },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "18714145722ba58259f881cafb0aa20613db4e74",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.2.3",
+        "_nodeVersion": "16.14.0",
+        "_npmVersion": "8.3.1",
+        "dist": {
+          "integrity": "sha512-3qKEuLlKpUwIidkEkaXnZMZ5TG8ZqO31GaGaLbuf/AMFQuRglHgGJW1Do3TWD2INOJ1LNE4O3LRzWhHV7oBGtQ==",
+          "shasum": "d1fe00afda8e16f43a36ceed85e35ef3bb0c8893",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.2.3.tgz",
+          "fileCount": 23,
+          "unpackedSize": 29230,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJiKp/kACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2Vmplog//XuIQSnOgeHneMyqW5m3S3B2zcAYQ3sO8EGyZw8nBEyCtEV2z\r\n9mWDqkKRMQhIsbfbGRgcgswGEPn2556LgytK+vXlJs9cCJwVT9t8FUoBmiBZ\r\nsGD4TEvoLRdv2v7bAL0ldwHciVntTr3chQG9AT6FXfHuiDi5TpaNe5sl3dx6\r\nDO9tlMQF5RiEhkLCtftTuL1w8ZfSu5nn1ybjXZFvr3PXavrnRf+AwcDLK7lE\r\nnudiffwUPtSFr53lLZMhn7Dad2AAsw1+Y4tqiN6ITG4Adjqr3MKgz5mbH4Lp\r\nW6/NXlByzo9IFwUAprnccaWreDnUrrf1SfATHUT3zwlJLXnOsGZrU3pQ22T5\r\nVxc+PBfCYUcRR9gYVcXmFVQu/BD9azkEuJeCPGOejqKs3PNDsjbQZa5XCQJM\r\nYdixOOR4H7EP0yU6WP6h0eZx6DXAJzKg8zvGPaxLlgdyyl+HxfX/OdDs0ieN\r\nthcuZpz1BoHesgZHS7NJpnYVmE+2SBd3Xv1GzUclKoPSDN77QNDLhzY4tH3c\r\n9k4pYge8D6xTTSMDm9+70CXsU1GewOTZvGoJXWzUQGUy8g8L7KjKNFr1LyFT\r\ndfAXA9+r9rrSIk6OlCLhTJSJOY3wzQAdJ9jr2EZkFxmDNihYWxbR4u+UoBYS\r\ndhKoQOqKLGcwYbQzCapkiqsrr3HOimZI6pE=\r\n=Dx1e\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEQCIGA/GY7hM1O+ZpYCmqJYiuX729yNjLbmzEluVf+Pp5MMAiBc9vPdwTK8Zp/U3ZJsE+lJQ49LGdAL9Hi5iN0ihvP+bA=="
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.2.3_1646960612489_0.44775805133486535"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.2.4-rc0": {
+        "name": "libpg-query",
+        "version": "13.2.4-rc0",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": {
+          "@mapbox/node-pre-gyp": "^1.0.8",
+          "aws-sdk": "^2.1076.0",
+          "node-addon-api": "^1.6.3",
+          "node-gyp": "^8.0.0"
+        },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "745b1b21eea9db37b16ba287ecb39543603e6ae6",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.2.4-rc0",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-1b3eqDom2q+b1qc/WgZ9K9hPtTf3wEsOH8wvD+jwvJomfGsD/KWz8k8myO5IDZPp/UZqxHO+CXPpi67d6XiMJA==",
+          "shasum": "c55fb3611111637d2b22b897c1e683ff3e1766b0",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.2.4-rc0.tgz",
+          "fileCount": 26,
+          "unpackedSize": 17519279,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJiKqM5ACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmqFtQ//aL9BdI9wJezmeC9PLjvXDcGDafav0ql2VlUyCic+85RSJa7D\r\no872xwq21azm7djzPr8BkctlEfxIHq2uGUFLElLZGxRyVLt7i6+XSy1Uj0kg\r\nZna5SVysvBzDDHw6iWAoy42cF/te1s/CfMu5cB2PfXt7C14jnw2GMCHP0QEL\r\no1xqrBKdZAcsPGKez43hMMrQVQQlqFnUBZMsF6ntJvQhCBviiATZk2RictHX\r\nVgXJoU+QaITn9PodOX4IF8suYQZWpcRyX5nBdIZYr9ojBqP6pKYaKuUga3lp\r\nYiz49/HzUZ3UNxFddJbrg22MTaEjikKS01GOs4RPiSiGRqX25gmBayAzGGUw\r\nKdTk9IZYFDOcgLWJzsQIyIUWMTqM/C4WzDTB6lWwJhPAisfZz+/l4VKkGRks\r\nDZ8tTQH458yTyxIMvFTasD8yIrgwUAnpyT0rFFmCJZ8HYaMbRMHXLZsvKbh7\r\nDFxuj0L3UNcMmfcKStAJs1q/p/6wLucmgtYyEmLfpoCD7hmQ0wQ5Y6F2wYaE\r\nFeMzV6TznykFOKv4Ns9ap0WqRnWZbF/VGUDMx0unnhScPo3IYcgtD6Y42zYx\r\nQMYQpis2wmL7acbKUDWiw/0ZqAuDGMOMHLh5ztlN+SbYzYwv2hFs0M0ZmorH\r\nBawP4+QB2R5Qlw9YpopzHjmMFqfQqlvZ/74=\r\n=yFpF\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIHHRB2zyZY4ztEe469/fwCHSkyGl8KJLuP1e9uQU0IkRAiEA87XA+C7PRXClrLvJM2eQA+11gg8vGRyuU2rSFrWqypM="
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.2.4-rc0_1646961465276_0.5981694339883554"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.2.4-rc1": {
+        "name": "libpg-query",
+        "version": "13.2.4-rc1",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": {
+          "@mapbox/node-pre-gyp": "^1.0.8",
+          "aws-sdk": "^2.1076.0",
+          "node-addon-api": "^1.6.3",
+          "node-gyp": "^8.0.0"
+        },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "10211ab419bf474b23dd296a8ccb479c8e4c5466",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.2.4-rc1",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-Hw6NrvZmUMWEnvwRSjtgJvfZcGTDOjyuKi6CnYMmJUrD7pbxWR3R3W9LfzKbCaouPhiQNQ+QZQ5ek2kEemYO3g==",
+          "shasum": "27fb5e6f385af2f02c3b85959843c7add5d228e3",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.2.4-rc1.tgz",
+          "fileCount": 17,
+          "unpackedSize": 24545,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJiKqQxACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmraqRAAoR2RFZSyoBGDeeJhR/fmyxdOygTYNbnTPDGzEwcnDW+aaNMK\r\n/mKk5rq0ihO1hpjast0xGtQIkshDM+HYgSA9Q6q8hhMpUE7W8ARZrURGRjVH\r\nkZo9z0vbV1aBgu/av/Z3pE0v4DQgmLF7/JIlG5oUhvM3PlqOI55Vm0zDl8mI\r\n8KsiZTPLOlavLz3teV6/wheFc+NhR9RbC+/35hfE3GUuGnhDHTL+EEkAqYCH\r\nm/1gBAlHQEQ3hUqVOXhKHliKNrj4YgjkXEIkXyQdSYW/95MdA1+XsnERkYmG\r\nJe8mtsQfG+zx2n/rbge8ZyeojoXQz7JUWNdgSs/EfUdfQvNTUdnLzLMJ94+i\r\nqPaiUYVhJX+nHM8iunLc9R4d3f9iWoPg9oQAhdpL8edFWvQ6q7o2fjebvPBk\r\naZCZ2Z+QmOGQdgAiePJSYYyq8NTVU9BJoSvcjDeNChvew09OOGzFPN/CvopS\r\n6LsPgOvb9XXIQzb5akzGF6EeZwSkOP5EJ73BlpdGpfDIP82xJjSEIoheBQ1N\r\nn7rS0Dw2ZkhCVx5ODCm12VPIU0sRDrSWZAgqXqbrM99i0ZgHc69WQOkWUXs6\r\nCN7kU1H5zyy63qENbmEvgu6XWG2xlFyg+TZz22jkacC78SXbMvpmAUJzIIdE\r\nH6yOhWN88nMxI58PP/0Pc8GnGto9HGe820A=\r\n=L0rF\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIQDpQmodb7rYoNZnBiXBxwpHhfc77qBOw4Sl6/IeoBqzQgIgHpFCfT98UfWCCrPLmCbOrN/45yzTIRid5LiMoUeV2EA="
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.2.4-rc1_1646961712980_0.2409519657457313"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.2.4-rc2": {
+        "name": "libpg-query",
+        "version": "13.2.4-rc2",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": {
+          "@mapbox/node-pre-gyp": "^1.0.8",
+          "aws-sdk": "^2.1076.0",
+          "node-addon-api": "^1.6.3",
+          "node-gyp": "^8.0.0"
+        },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "e53a18da8275d05a825b46668a921d88d9f1f0ce",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.2.4-rc2",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-wPYqqTkPzvQITxWy1155GZwShI9y0KHNDnDSSFq/yNnq42jiM779fzinRlLjCkYFo/jI23kGhvfrR/0KK9L7/g==",
+          "shasum": "c523597f9b194878309d1fc2ddbb48c67ef04dc6",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.2.4-rc2.tgz",
+          "fileCount": 21,
+          "unpackedSize": 24545,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJiKqW6ACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2Vmrcxw//dIEBTAJDKVPyXdiGLvQfHCZFBcIXOy2n/B32oXW5VoMUy5lN\r\ncYbUhDBjxDmTCRchvwNIImurRuiZtDXJRp2SwirTqdKB7+meDlYCPzZMLAkz\r\nFIDfJdY7wkSp1vOIJFUyAt39GCO8ZcP4WcxmM4iCjb9bLfZlyWBmwYRkqnar\r\nYS+PsLx9G6n9lT5zYN6HnekE/9MWACZOz/QRfWlgAc3A5ZFd7yn7EnjlmYDR\r\ngfOnWc+tkLC7coy3ZT0jD7QpDu9oRLZoH5KrTgvXgxEpyUKdWrJlPnAd6Lc5\r\nrpYD/kMFj4o4nv0DBSQtwmRI3+lPAUeZuehSQqBPuxnNUJm1HDsqewMJdJEC\r\n6cbP4jR8uE5RlX/zbGl6zs832YI3ri+P0gYcSYSCmjupWScr8yVnvdoHGH0T\r\nT0FeFmjJT0XA1V1Cz7o2CotdVILj3qD4zb9hCeZnfmx6oxuBEcm/VtGy447V\r\nfABjXdFDypNiFSuVHdpSEAEOUdvNOHb3S3NSfJi26sd7CyyVoegxeUG5k6Re\r\nMlV5TcBBIuWYn7g+voT96Tx012mcdtptypHbYXEnviXBvEnvgwtI6BibRJFs\r\nNKS+UDnytol6TwSCDN56hUh6R5rIZlT9hGvlFoTHNHrh3IxKiWDvaAV24bvH\r\nARje2xrgMz9FcYeH6/071fk10V9lcaAMBrw=\r\n=ywbj\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIQCA2csAnpytUuddZx7sRQV1LQXtvJsGsoub6l6ThCgXDAIgZZ+gRHrd/xxREJnP5R+CVjfjZd/ru5fKhbF1h5pt0r0="
+            }
+          ]
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [{ "name": "pyramation", "email": "pyramation@gmail.com" }],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.2.4-rc2_1646962106587_0.3489919072869576"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.2.4": {
+        "name": "libpg-query",
+        "version": "13.2.4",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "binary:build": "node-pre-gyp rebuild package",
+          "binary:publish": "AWS_PROFILE=supabase-dev node-pre-gyp publish"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": {
+          "@mapbox/node-pre-gyp": "^1.0.8",
+          "aws-sdk": "^2.1076.0",
+          "node-addon-api": "^1.6.3",
+          "node-gyp": "^8.0.0"
+        },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "23526c7db6f20885bf8a5bfb1c306a098bc1f313",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.2.4",
+        "_nodeVersion": "12.22.3",
+        "_npmVersion": "6.14.13",
+        "dist": {
+          "integrity": "sha512-Tqg/9av8vzBYIpf9nuNnZnPepVtynFGqhGVpFP8nzc5fK2EFHs0kJfRZiFqhkswxj0gXV0esc37sfGoYLBgJUQ==",
+          "shasum": "cc0a14b1bd0dc41b0144c0001b4d2202408730b0",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.2.4.tgz",
+          "fileCount": 21,
+          "unpackedSize": 24745,
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJiKq3yACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmrdAQ//d2MZIUnCCkQ2LPsY6MJUzkbOBXmCPe+v3ZWI+YxgN+pmg+Wq\r\n2ikHjWjm2lz3gAThsu1UpsabCF+XedyjOOnekRTZZDL2ce6CQ56uB53FL4sb\r\n3krwUP6yOz2rHFgVKE0HKInteDQOHvGjbKteKwHae/9geX75CGcbVRuSURZx\r\nwBwu/eHPgW/t3BvL/Zbqjlmx7kEUf8fgD3AJw2r0Si/s0J+JgtrcHMUIRCUU\r\nAnAgCcL2zXirF8QrKP26N3bejxBqNwWXWzrLKwCBZ9fv46MN5UfxGpAXL4aC\r\n7TA1KrVy4Kik1wN2Nrr8WiBFY2Jxg5Y0B5/xJV4MbNODT6kC9dtX8LUtkw+g\r\n3QxMiTYsGgVkg+gq5nHNWaaId46oA2qa6gIkKaVZ1hHK0EWqVQfT3fSQsXEX\r\nW//mZ9jmN6GHCrxG/QKEP8pEflHGNX/l3MxPAykfkfo1l5xiFeNJ0t+ebLUu\r\ny0+VHzrhQq6sADFpGEr6Anm/DLLAC2PYJP7/vgZXo+zPWi8Mn+sfatnE3iPb\r\nGZDcQ/l+Cj76bWTbLyCChCmniJhV3/B7fcM1L9Q7q2f0g0uCDKQF91LHPY0C\r\nJxpsH3izovRRAb3wo3rYoxwRzLHdK9NQYDTGKBoGe3+oI2/dbAAli4v7jpGB\r\nEknBoCE8StbgUSve7y2Hqw9PVPBm7RjUd0M=\r\n=lFDd\r\n-----END PGP SIGNATURE-----\r\n",
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIA1umRc8mNUjlqHPNNy2HMfNUCZwd/Gg+fdoW6KsK1LcAiEA2qyrMdy+DZMpaT8yRMG1MYt1lskDEAEkkir8boX3FzA="
+            }
+          ]
+        },
+        "_npmUser": { "name": "div.arora", "email": "root@darora.com" },
+        "directories": {},
+        "maintainers": [
+          { "name": "pyramation", "email": "pyramation@gmail.com" },
+          { "name": "div.arora", "email": "root@darora.com" }
+        ],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.2.4_1646964210803_0.07343047071546671"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.2.5": {
+        "name": "libpg-query",
+        "version": "13.2.5",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "binary:build": "node-pre-gyp rebuild package",
+          "binary:publish": "AWS_PROFILE=supabase-dev node-pre-gyp publish"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "@mapbox/node-pre-gyp": "^1.0.8", "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "d87364613e623e24715da134c841434e5075909a",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.2.5",
+        "_nodeVersion": "16.14.0",
+        "_npmVersion": "8.3.1",
+        "dist": {
+          "integrity": "sha512-Y0IHcZyxbX4WHwWNa5KFDufYSiVIb+uPyZQDdom1ODxCfqko/ubLj+rzHeSDeaRRsEzgKc22x/jBRka7BMT2vQ==",
+          "shasum": "f3d93f21b64caa904e67bbad767b7f039b951c87",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.2.5.tgz",
+          "fileCount": 21,
+          "unpackedSize": 24717,
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIQD6vq9Hk71ESb4cZnDYm+VHHMF4Vv9Yk2Vffl5ZG3BHpAIgOR+ZyO3iYf6e8Hi6T52tuKHOg0vtaKghkuRRxCsBpgg="
+            }
+          ],
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJiVnS9ACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmrPBQ//XhJAvvA0iUXvWb8obTIyIEPGYkVFTHwRSv9ppQLHktozxrfG\r\nTUPq4hXNTn0CY7rVn426xBCSNWTuY81xIX/ztvo1v0ej4OMyPnDeGrAdS3UF\r\nW8/orww5Tdc3a7QpyMyrbKsGr3ngBOgexiBJagMUZ78OFSDaWpYqfygHWXsX\r\nFZ07jhkSQd1UZlalu86I8wad+BAE59dDbJ9pJ4+WjpPPDpiR52m+CWePCfhb\r\nJXDrl/6tDPTpe+tiCrZEFiMgnR30RwNLt0mxC7O/CDQWsGFSAtUtHlQW4Bch\r\nFFQTE44cRMNPvnGZ9Z89CoJxwJ8tdDeH0FrNPG2yD4CH/h4XCoKRUyThzFdP\r\nFc0KFSQQGsfeyGt1F63qxavpzDj1rrj2oYmi0fFoKXwmvDd8bGJVwayhz9Xo\r\nKg+faDzMytLD9LQaVaFhsqlLymRzqK63XHzsoewvZk6DjyNTDBXbNEPDD/cN\r\n0VcI4oeOarXdj2F/U3s3hv6GSr1q0YeAGLMA1LHwtjsUUb8s8mYfjkBEuEAp\r\no+Rtxdo+lsl5EjulrljnvCQFE9U8VxHjZ/R2ooyb7gsHiA7aLKyGUK2NGCKy\r\ntrAX7GKLE1nlnvt1DhFEXopfcjIFPyC4wW7wZdOcyZ5ksz6PO6SRsGhIZrln\r\nhKdkNVpS+BuFBAK2DZv6hbGHJxzxPvH5RR8=\r\n=DU2B\r\n-----END PGP SIGNATURE-----\r\n"
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [
+          { "name": "pyramation", "email": "pyramation@gmail.com" },
+          { "name": "div.arora", "email": "root@darora.com" }
+        ],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.2.5_1649833148904_0.6695664939579178"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.3.0": {
+        "name": "libpg-query",
+        "version": "13.3.0",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "binary:build": "node-pre-gyp rebuild package",
+          "binary:publish": "AWS_PROFILE=supabase-dev node-pre-gyp publish"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "@mapbox/node-pre-gyp": "^1.0.8", "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "d87364613e623e24715da134c841434e5075909a",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.3.0",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-9PKW8iRWnSCw+IW5LlZYq+bLMmAhKsAIR2en8iRYnoRLBg4x+HKHBb+PQyqFy8+jC7AmzV65A+DsUO7tiZddEQ==",
+          "shasum": "c362285373c17619cc775870c0a36aed963fd149",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.3.0.tgz",
+          "fileCount": 21,
+          "unpackedSize": 24717,
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIQC3vUQEPWkA73uUMskGPBreOo6yrrDnTZw2eI6LSqNfzwIgLf0Z9y50FhEx+twArSkexI2r4dL14HrgZuEgowVW0Ng="
+            }
+          ],
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJjaaxlACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmoPtQ/9EACZwbBWM82zu4uGnuWBpVHNGXgxBObPWGqS1YeYRx51nuPN\r\nQyMCN8RNLdhj6SmDTnrKzwS3jNRMIt87iVhDEURtfUkHJNXfiCv7wGMRSyWb\r\n6pFJV9SjZqANmV/l4Oc4cuiJlvJjINyLN1QU5d4+Toz5CCl+5kS5nc7BqS50\r\nPZbb1ZO8VEuF3UP1dnZIN8gBs1Oss1S9aaIABgvRRZ9kbYRjFcnJTWn6kf0L\r\nqKozpg7sESvZcpjMoRlxfkHvGgiRf53HHx0rdiDfZyoSA4pF4U3dseOGXq+m\r\nRtkjPj0MuJDfi6REppBjD+WQvgD/NMjNq2nIuPE+m3KS0LVuUmUjH2jfgp10\r\nT9FH/nQKN68Xtx4drt+Zb63GKkSfekx9dFDHs6fNNz9eixfGFw0ooz3Gablm\r\niAtJohSd7XZXeg4VQ6xI94h6gWeJA/DzBu9P1zkS3zMKHl4KMBuytedtExww\r\nv7P+2KrKIohbK6/zw1qseazq8to1QUHzB+tHanl9xlPi2hSJ/RMZQ0fi3POs\r\nCXg+/WrN8xHpBxFCS662BjCPGUPkXM73kFYKWqxe16fPilsxc1r7Q5l+/RGe\r\nFN2RMIery+CJIVubwmyWQCo4VkRRvF6scyv89CPwtrSDUbJzIJdNL7zmfS1C\r\nMJwVC6GWY2ls0SUTVAVFO/VBZLXqSwFilcI=\r\n=Sy0Q\r\n-----END PGP SIGNATURE-----\r\n"
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [
+          { "name": "pyramation", "email": "pyramation@gmail.com" },
+          { "name": "div.arora", "email": "root@darora.com" }
+        ],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.3.0_1667869797643_0.1049444599177185"
+        },
+        "_hasShrinkwrap": false
+      },
+      "13.3.1": {
+        "name": "libpg-query",
+        "version": "13.3.1",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "binary:build": "node-pre-gyp rebuild package",
+          "binary:publish": "AWS_PROFILE=supabase-dev node-pre-gyp publish"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "@mapbox/node-pre-gyp": "^1.0.8", "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "0aaa0404a768f8e44b0e0608a0f1f4e77bb06bba",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@13.3.1",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-RLvnKPLWngNR7bNep/Q9euPcfFJVFfDg/iP13lYGxcSI01emS/1vbTw6EBd8UordweWFdvUuK+31sHp104dukA==",
+          "shasum": "1403a58c67ea5fc3ca7087b3e12dec9dc4ea8b89",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-13.3.1.tgz",
+          "fileCount": 21,
+          "unpackedSize": 24717,
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEQCIBIcPFXFFPiBKCdRmZPUYvaz8AsjoyxXXahU4YzLFV20AiBIWxgYdCdqamFL6J5S7rilAK6A+Wj6SbHeL1U8//3NKw=="
+            }
+          ],
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJjo6hOACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmqT2xAAmLDAUObqZA7cq9QNKvtVelt8d5P4heysBFcFIHF7Y8mxlz6g\r\nNVm3apKINw67RxCb7/Adr1/slj7v7hVAm5nSoFWsOL7qdU+hfActqbBea8PF\r\nFcdcyOEBeZD7+xC3cnOStgrVBfNqc4HTzVrasYbNqoRg6KB3IiXqAL/+ckiY\r\n1+GRHbStShe1lw9cljNSXBrH7Otwt4LFgKTj9S+z1VgIpfC7hLVZmOLD7QY3\r\nTCYfxWDi1pAHbyw19AqdPsjbNpkgyZRro1sK1h/mamK0whF67knfOQJKbblv\r\nDY1lrCcE4nnppmQY2lZau+ecx+Upxsjd7mpnyv9ltrXeP2AgsKN4IT7pqOi+\r\ndsqRRFFR1j6CXy+fxchGN9ZLPLaa/fn0y8lWTj7znpLSKE5EjF8GNvDOdMU5\r\nAjApSWc798XfnUuLdbc36z63d0JVUstCO+XK1tBtYCXIpQWAixkNeNfdY0VG\r\ndO7bThxKaw2pkRm/d9n4CcCoT1RnFBc0QcMKCzChObSWHMUjS/B4xp6nXt8R\r\nEXIwJ3NiBUPTc8Goq8XD6S2GpYfzwuPM30T2+z+FxbhvJ3ziO8hVJs03XpCy\r\n6z9xNxkP+z25RrfwsA0QKo+O4+Tu3okuPQw59UekCMkJ3rkz+EHxUWCO4Z6v\r\nviuRREZ9Z5ErZGvowO77yaMwzZJuzh7kFEQ=\r\n=Z5UH\r\n-----END PGP SIGNATURE-----\r\n"
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [
+          { "name": "pyramation", "email": "pyramation@gmail.com" },
+          { "name": "div.arora", "email": "root@darora.com" }
+        ],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_13.3.1_1671669837891_0.4888219528230786"
+        },
+        "_hasShrinkwrap": false
+      },
+      "14.0.0": {
+        "name": "libpg-query",
+        "version": "14.0.0",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "binary:build": "node-pre-gyp rebuild package",
+          "binary:publish": "AWS_PROFILE=supabase-dev node-pre-gyp publish"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "@mapbox/node-pre-gyp": "^1.0.8", "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "5c2fe84983d29eed10eef459b2ce1ccdace424ca",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@14.0.0",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-B8ek2PuJmAM3QcMCoykSpxc7b8kYXibcxMllNPGLFZTYSxK957Y7ufK0Sw1DF3vID6DKQrTCqyy1KWjsaabfFg==",
+          "shasum": "8c115ccb331572f9caddb763be3a5c3595042ba9",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-14.0.0.tgz",
+          "fileCount": 21,
+          "unpackedSize": 24717,
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEYCIQDknUZ4lvErIPn0q9/VoQfoY/A/ny0KI0xvZ4P3HjSN3AIhAPxaDxqV7zcldHe5bbet2phvoiQjNssUmQwDcC0ozk7x"
+            }
+          ],
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJjo7j8ACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmpAtA//f11cBmUqtolOjUZiyfC4YDAqNeFX4nrh3AgMROXcnfWGAsox\r\n1TIiGLZjtw1HV3VIje441TuBnsF0M9lG/bW0BR6PRuR8E6+7Vv8kNk4PXIvZ\r\n9bZRjJKk6oR/P3jOMSGdvS4IwAM+iKOgRURmTO6eJ/fqJXVZ1cS6MDJl0C2Z\r\nKiCQXH+v8FgyAGTNjaLed9UpDtPql7r6aMYIDC6MS7vsGzJLtfbLyNFj5YTb\r\noVjHDqfy5gSHY6GZ4pS8LyQDQqUlgP69xkNRJAaiPZHPUES2UtNIg71maea8\r\nB0joJcRy9X+4tVSXPX2bzADptcDoL7jp5/aRc0Nb+9RmaYc43mhE/9VG8/Nb\r\nuwx4FRTcKI2zKapj/W8Ti/PPLFbkbK783acDKT3ZQsyqeOHlq53DHdywWG2f\r\n8Qd4IVSkUpHxcIf4TpYfepQ2Fi2btJE7V/hmxG0q/Qb2FLUFwpc9OhftBp6f\r\nqv8DPwIt8jRUveoVbPbB7/K+9XVeN9IVYuY8QJ7grPzM4B2URkrBNpA0I7ka\r\nuUYjRQHHNYGl5MndYCm7vjPPOk8C/kP3YGh1ZYD0gOWQQgOtvfM3EBwGKfEq\r\ntaQCFXDiWpnmH6jBWFEG6SWcF2dcPGfUUJgOdVctY73Vhk9EvRtTCf8NoUY6\r\nTpeTXBhDV3kFbSikMGyNXIa9GUtJb/fiNeE=\r\n=3Jy/\r\n-----END PGP SIGNATURE-----\r\n"
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [
+          { "name": "pyramation", "email": "pyramation@gmail.com" },
+          { "name": "div.arora", "email": "root@darora.com" }
+        ],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_14.0.0_1671674108551_0.7343738536406912"
+        },
+        "_hasShrinkwrap": false
+      },
+      "15.0.0": {
+        "name": "libpg-query",
+        "version": "15.0.0",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/git-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "binary:build": "node-pre-gyp rebuild package",
+          "binary:publish": "AWS_PROFILE=supabase-dev node-pre-gyp publish"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "@mapbox/node-pre-gyp": "^1.0.8", "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "0db8bf077b8382886e309dc736cea27edc54d160",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@15.0.0",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-mKVQFkUnOF3aV7bMqYcpZ3cRgZ8KO8QD5FNpTW7KyStXqbAep2MveTTMVVdR2JI6hjGBDVOO5AmRlCDgBv8zZg==",
+          "shasum": "1a035d3846facc5b7907aaa477f6c493dbc08101",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-15.0.0.tgz",
+          "fileCount": 21,
+          "unpackedSize": 24709,
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEMCH2gd26Fk8khYQ/Y/oWN5ZlU5kzE+V3gaGrpkqp7VZkICIF5Div1DFwk+L38DqtF19l1xI+8/KTzvHhx6qgN4+Yjl"
+            }
+          ],
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJjo8WNACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmoMcA//Wg5KOQp7wV1ynCllcDyfe6lQE3d6U0pFrguCVWrgFFeGD+yw\r\nMQuFpvuOS4HkdHpGGVGWjQxRsWD8JdQDXS3BPmzcWpLjpVI6spdSmBO51BDH\r\nFnNirtQXWBhhjluDrUWLw1Z3CcQ8upb/1Sh9BMKnXlUeM3olKBV34ltD6xWb\r\n1f6ZiOW8f3VwKx2QJdzy4gzHPC6QLVWofEf/e3v+UrbO7AdOMqk0Zq6drIoi\r\nfXCGBJjf6QZBKhnEwLTLNV8GaKNd3nGyhcSRSsf6cLBLcoxLghaFw/7jbJlT\r\ndZ3Z2ba6ggXJDNHTJRAxxSWm+gBUr9OYk/jKhC/a5Ng6e65TiFjwcG2ifxz3\r\nu76UnOG3eJM4ljD7h+wNtfzhaWx9kEWYLSlljTdr/vSfEjFKnj5aAy9j9860\r\namIk8oMUwyjB1740O1FA2wY3XsULuDbbxHSs0+MX2XbSNXs2v6vnfPcrHIAu\r\nLYuN+17pi8VNCPXHMHdlsvmGRNG+BqYm3y11WK2E/vn1+/pKTHlpYRzH2dKK\r\nDPk6z0suX+Zhe1wWAwhytjNoXe1gez7/MNTmy8LV2yx3eCikwkizaWSUO0kk\r\nLZSop18+/VgPQgm4noHHOQtrLukP6lglXOAfG9jeZ8OHCkTbV76hejavYTV7\r\nbCOZuKeCGITwCC9saPG6dVuO53GK0dHKcHU=\r\n=RJXX\r\n-----END PGP SIGNATURE-----\r\n"
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [
+          { "name": "pyramation", "email": "pyramation@gmail.com" },
+          { "name": "div.arora", "email": "root@darora.com" }
+        ],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_15.0.0_1671677324895_0.16905519169180483"
+        },
+        "_hasShrinkwrap": false
+      },
+      "15.0.1": {
+        "name": "libpg-query",
+        "version": "15.0.1",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "binary:build": "node-pre-gyp rebuild package",
+          "binary:publish": "AWS_PROFILE=supabase-dev node-pre-gyp publish"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "@mapbox/node-pre-gyp": "^1.0.8", "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "0db8bf077b8382886e309dc736cea27edc54d160",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@15.0.1",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-KUX1fXDKcMaLRpInju9Zs6DqtKSPFlWjBN/QCIHLI3IyoBScOalg3l2eMwgOBZDHCIcqX0ZKV3ax3JOLQ3Ls6Q==",
+          "shasum": "bee6e6c05e8a8a2618492500fb2950f01200575c",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-15.0.1.tgz",
+          "fileCount": 21,
+          "unpackedSize": 25670,
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEUCIDV3uz3/L7+82OxgHzPDnsudUeYgc10I2P/jda+4LODJAiEAo88cEbKXYChqI4tEbvke+Qpy6h/e8RFu9p40CFBgF9g="
+            }
+          ],
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJjo8fHACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmrfmxAAnIJVnhjjgh8FXvKTDGgEUejBaSUqHQvTKOzJsPVzwA55jqom\r\nhO4om+3gMB2pMKj30mHv1z1cnAuzRUBkGaNQFo5TSvgseGpvKfWFYnhe9Mwo\r\noEsEXExPA1lEByq5sJ2ZiDp3MKU6rLCMti5z/r2gbZEAq7x8jtguJkdrXRw5\r\nyzCB/rWbMAs1TZZ4cJ6DHNXBcGqkF6zQBD/PEJyKvfVcHgx6RQtaXiYrT7YV\r\n62bb1G6L29KMXupm/j50HBwbNCaz2HVxV/k3wYA8QElD9DKtFsQrBmvsvO6V\r\n4E4igV1+WD/J9AMkCeib6iIvxZgd/N7LWr11eDETTX0OnRDG4oOLDnr7ZlFH\r\n3b0lLZ16mexz4JBnam3WCti0Y4BIZ8jA/WlLzdlXQb6EwOk7Z+ikM9ie9BDF\r\nk9U7jbDqxDAJW1pe1rG+HVzhODXpYpyS3rW6mCCEZwSAfNTWKKkXJv2giIC7\r\nzKuF93QlK99gJ7C+3KSILZsTS7VcGzNN95v19GC7atC9VNoVkRNrT+XUmlvm\r\naFinSkQkPtQ3f06DCQkXw5I92Tbx39I1fZ0KdzG4qYd1FJ8/9wj+WswRrTC4\r\n01tRp+u6LiEP36JvoETYbzBP7lhIRvSquMdbRSFd+XXjRM5rQX0XQ5MsR5CG\r\nvrTW05V693LuPoY/ToPBOsGak3hLQxAEUjU=\r\n=YAVV\r\n-----END PGP SIGNATURE-----\r\n"
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [
+          { "name": "pyramation", "email": "pyramation@gmail.com" },
+          { "name": "div.arora", "email": "root@darora.com" }
+        ],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_15.0.1_1671677895348_0.18476175413585216"
+        },
+        "_hasShrinkwrap": false
+      },
+      "15.0.2": {
+        "name": "libpg-query",
+        "version": "15.0.2",
+        "description": "The real PostgreSQL query parser",
+        "homepage": "https://github.com/pyramation/libpg-query-node",
+        "main": "index.js",
+        "typings": "index.d.ts",
+        "publishConfig": { "access": "public" },
+        "scripts": {
+          "configure": "node-pre-gyp configure",
+          "install": "node-pre-gyp install --fallback-to-build",
+          "rebuild": "node-pre-gyp configure rebuild",
+          "test": "mocha --timeout 5000",
+          "binary:build": "node-pre-gyp rebuild package",
+          "binary:publish": "AWS_PROFILE=supabase-dev node-pre-gyp publish"
+        },
+        "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+        "license": "LICENSE IN LICENSE",
+        "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+        "devDependencies": { "chai": "^3.5.0", "lodash": "^4.17.15", "mocha": "^5.2.0" },
+        "dependencies": { "@mapbox/node-pre-gyp": "^1.0.8", "node-addon-api": "^1.6.3", "node-gyp": "^8.0.0" },
+        "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+        "binary": {
+          "module_name": "queryparser",
+          "module_path": "./build/Release/",
+          "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+          "remote_path": "./libpg-query-node/"
+        },
+        "gitHead": "0db8bf077b8382886e309dc736cea27edc54d160",
+        "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+        "_id": "libpg-query@15.0.2",
+        "_nodeVersion": "12.18.2",
+        "_npmVersion": "6.14.5",
+        "dist": {
+          "integrity": "sha512-Nj+gQJPbvthDCfLb+NEcnhfUUW76N1otzD8xBxmr6kY4292GWJwhANse3SwGFGn5xl76WWAVW+IM7Wk5uyb9hg==",
+          "shasum": "4126adb13579e172aec22da33614965dc54552d7",
+          "tarball": "https://registry.npmjs.org/libpg-query/-/libpg-query-15.0.2.tgz",
+          "fileCount": 21,
+          "unpackedSize": 25658,
+          "signatures": [
+            {
+              "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              "sig": "MEYCIQDGFznv3ssKYpg/mtVpATGSzN2NHcH8Nc2J9jc7Ec0mLwIhAPFKuBBPTkxpIHOLH+EBsxWTguXS8EGw5eiMCMoe1zE2"
+            }
+          ],
+          "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v4.10.10\r\nComment: https://openpgpjs.org\r\n\r\nwsFzBAEBCAAGBQJjo8fsACEJED1NWxICdlZqFiEECWMYAoorWMhJKdjhPU1b\r\nEgJ2VmrPAQ/9Ei2HSQfpjHiI+8tejn20nLUR6ixTD5AbPnfUiOfR2sAhqe/3\r\n4kTq1fga7KI5KpM8jWqh3HMFDa1C6/6fwIkkURIN25F7eZhhR+zbclL6Q0gw\r\nUD5brJbn9B8E3AFQhDAoqqi8vCqIVUSzDhPFf39+FKBNKrZju1K3WMc3QtRb\r\nslSEGVoDceT135hJGghpDqYB1x0MjincSWovY5HtlCUNzi1Xpalq2EmZjj32\r\nlvmOoWjfRE0v/3wTtzRJGZsBZ1rjjgIoVPd+NjCzF5DZCyl5sFLOe+2ytGu/\r\nYAbpZ3Z9/Z1cUF23K14jpjt/DoUoHJZXZIqZT6tnuXidZkxncaFVfw501k65\r\nbvVXh913VvGvXcTn/g8vzt9A9Pl0qw27hzSxQxolxMPyHLoEfhC7Tubn9m1q\r\nwOJcADenDilhHXSu7EDzVf4Uc5iIv1FjZbszQQHx+oZMl2dgD2YR93C8vrnl\r\n2uqWFjNLsXGvMiow2UHEij8fKLO8p6oxt+vS6Ogs/3nC62u4mhMYbccslSTP\r\nCD32SAJtJWMK6JQOwasQVkdXBl/b/AE/kfpElS5IdvnL/LDEaAIeTCqyTQR3\r\nqrshVJAlQZfufQZy0oNozxDaHnS3AALiPQkGZc3N7cYPy8w0Bsvm9wgGVP9j\r\nwSTzXA+5F03WsOfrxG9UigM9qbxEgZ30dKM=\r\n=uhvU\r\n-----END PGP SIGNATURE-----\r\n"
+        },
+        "_npmUser": { "name": "pyramation", "email": "pyramation@gmail.com" },
+        "directories": {},
+        "maintainers": [
+          { "name": "pyramation", "email": "pyramation@gmail.com" },
+          { "name": "div.arora", "email": "root@darora.com" }
+        ],
+        "_npmOperationalInternal": {
+          "host": "s3://npm-registry-packages",
+          "tmp": "tmp/libpg-query_15.0.2_1671677932104_0.37600966222827514"
+        },
+        "_hasShrinkwrap": false
+      }
+    },
+    "time": {
+      "created": "2021-03-19T09:23:44.668Z",
+      "13.0.0": "2021-03-19T09:23:44.916Z",
+      "modified": "2022-12-22T02:58:52.386Z",
+      "13.0.1": "2021-03-19T09:40:01.024Z",
+      "13.1.0": "2021-04-06T21:08:47.203Z",
+      "13.1.1": "2021-06-02T22:15:35.934Z",
+      "13.1.2": "2021-09-09T05:44:30.136Z",
+      "13.2.0": "2022-02-24T00:37:34.978Z",
+      "13.2.1": "2022-03-11T00:49:54.060Z",
+      "13.2.2": "2022-03-11T01:00:43.418Z",
+      "13.2.3": "2022-03-11T01:03:32.653Z",
+      "13.2.4-rc0": "2022-03-11T01:17:45.649Z",
+      "13.2.4-rc1": "2022-03-11T01:21:53.144Z",
+      "13.2.4-rc2": "2022-03-11T01:28:26.761Z",
+      "13.2.4": "2022-03-11T02:03:30.954Z",
+      "13.2.5": "2022-04-13T06:59:09.029Z",
+      "13.3.0": "2022-11-08T01:09:57.883Z",
+      "13.3.1": "2022-12-22T00:43:58.077Z",
+      "14.0.0": "2022-12-22T01:55:08.733Z",
+      "15.0.0": "2022-12-22T02:48:45.039Z",
+      "15.0.1": "2022-12-22T02:58:15.548Z",
+      "15.0.2": "2022-12-22T02:58:52.300Z"
+    },
+    "maintainers": [
+      { "name": "pyramation", "email": "pyramation@gmail.com" },
+      { "name": "div.arora", "email": "root@darora.com" }
+    ],
+    "description": "The real PostgreSQL query parser",
+    "homepage": "https://github.com/pyramation/libpg-query-node",
+    "keywords": ["sql", "postgres", "postgresql", "pg", "query", "plpgsql", "database"],
+    "repository": { "type": "git", "url": "git://github.com/pyramation/libpg-query-node.git" },
+    "author": { "name": "Dan Lynch", "email": "pyramation@gmail.com", "url": "http://github.com/pyramation" },
+    "bugs": { "url": "https://github.com/pyramation/libpg-query-node/issues" },
+    "license": "LICENSE IN LICENSE",
+    "readme": "# libpg-query\n\nThe real PostgreSQL parser, exposed for nodejs.\n\nPrimarily used for the node.js parser and deparser [pgsql-parser](https://github.com/pyramation/pgsql-parser)\n\n## Building a binary distribution\n\n- Install requirements (`npm i`)\n- `npx node-pre-gyp rebuild package`\n- With appropriate AWS credentials configured, `npx node-pre-gyp publish`\n\nOr you can run the scripts\n\n```\nnpm run binary:build\nnpm run binary:publish\n```\n\n## Installation\n\n```sh\nnpm install libpg-query\n```\n\n### Documentation\n\n### `query.parseQuery(sql)`/`parseQuerySync`\n\nParses the sql and returns a Promise for the parse tree (or returns the parse tree directly in the sync version). May reject with/throw a parse error.\n\nThe return value is an array, as multiple queries may be provided in a single string (semicolon-delimited, as Postgres expects).\n\n### `query.parsePlPgSQL(funcsSql)`/`query.parsePlPgSQLSync(funcsSql)`\n\nParses the contents of a PL/PGSql function, from a `CREATE FUNCTION` declaration, and returns a Promise for the parse tree (or returns the parse tree directly in the sync version). May reject with/throw a parse error.\n\n## Example\n\n```js\nconst parser = require('libpg-query');\nparser.parseQuery('select 1').then(console.log);\n```\n\n## Versions\n\nOur latest is built with `15-latest` branch from libpg_query\n\n| PostgreSQL Major Version | libpg_query | Status              | npm \n|--------------------------|-------------|---------------------|---------|\n| 15                       | 15-latest   | Supported           | [`latest`](https://www.npmjs.com/package/libpg-query/v/latest)\n| 14                       | 14-latest   | Supported           | [`libpg-query@14.0.0`](https://www.npmjs.com/package/libpg-query/v/14.0.0)\n| 13                       | 13-latest   | Supported           | [`libpg-query@13.3.1`](https://www.npmjs.com/package/libpg-query/v/13.3.1)\n| 12                       | (n/a)       | Not supported       |\n| 11                       | (n/a)       | Not supported       |\n| 10                       | 10-latest   | Not supported       | `@1.3.1` ([tree](https://github.com/pyramation/pgsql-parser/tree/39b7b1adc8914253226e286a48105785219a81ca))      | \n\n\n## Related\n\n* [libpg_query](https://github.com/pganalyze/libpg_query)\n* [pgsql-parser](https://github.com/pyramation/pgsql-parser)\n* [pg_query](https://github.com/lfittl/pg_query)\n* [pg_query.go](https://github.com/lfittl/pg_query.go)\n\n## Credit\n\nThis is based on the output of [libpg_query](https://github.com/pganalyze/libpg_query). This wraps the static library output and links it into a node module for use in js.\n\nAll credit for the hard problems goes to [Lukas Fittl](https://github.com/lfittl).\n\nAdditional thanks for node binding [Ethan Resnick](github.com/ethanresnick).\n\nOriginal [Code](https://github.com/zhm/node-pg-query-native) and [License](https://github.com/zhm/node-pg-query-native/blob/master/LICENSE.md)\n",
+    "readmeFilename": "README.md"
+  }
+  
