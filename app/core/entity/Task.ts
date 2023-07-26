@@ -243,6 +243,26 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return [ TaskType.SyncBinary, TaskType.SyncPackage ].includes(type);
   }
 
+  public static createUpdateProxyCache(targetName: string, options: CreateUpdateProxyCacheTaskData):CreateUpdateProxyCacheTask {
+    const data = {
+      type: TaskType.UpdateProxyCache,
+      state: TaskState.Waiting,
+      targetName,
+      authorId: `pid_${PID}`,
+      authorIp: HOST_NAME,
+      data: {
+        taskWorker: '',
+        targetName,
+        version: options?.version,
+        fileType: options.fileType,
+        filePath: options.filePath,
+      },
+    };
+    const task = this.create(data);
+    task.logPath = `/packages/${targetName}/update-manifests/${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
+    return task;
+  }
+
   start(): TaskUpdateCondition {
     const condition = {
       taskId: this.taskId,

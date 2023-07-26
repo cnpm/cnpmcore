@@ -5,12 +5,16 @@ import { downloadToTempfile } from '../../common/FileUtil';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { ProxyModeCachedFiles } from '../entity/ProxyModeCachedFiles';
 import { ProxyModeCachedFilesRepository } from '../../repository/ProxyModeCachedFilesRepository';
+import { TaskRepository } from '../../repository/TaskRepository';
 import { AbstractService } from '../../common/AbstractService';
+import { TaskService } from './TaskService';
 import { readFile, rm } from 'node:fs/promises';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../common/constants';
 import { DIST_NAMES } from '../entity/Package';
 import type { PackageJSONType } from '../../repository/PackageRepository';
+import { TaskType, TaskState } from '../../common/enum/Task';
+import { Task } from '../entity/Task';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -24,6 +28,10 @@ export class ProxyModeService extends AbstractService {
   private readonly nfsAdapter: NFSAdapter;
   @Inject()
   private readonly proxyModeCachedFiles: ProxyModeCachedFilesRepository;
+  @Inject()
+  private readonly taskRepository: TaskRepository;
+  @Inject()
+  private readonly taskService: TaskService;
 
   async getPackageVersionTarAndTempFilePath(fullname: string, url: string): Promise<{ tgzBuffer:Buffer| null }> {
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
@@ -163,6 +171,70 @@ export class ProxyModeService extends AbstractService {
     await this.nfsAdapter.uploadBytes(storeKey, proxyBytes);
 
     return { storeKey, proxyBytes, pkgManifest };
+  }
+
+  public async createTask(targetName, options) {
+    const existsTask = await this.taskRepository.findTaskByTargetName(targetName, TaskType.UpdateProxyCache);
+    if (existsTask) {
+      return existsTask;
+    }
+    try {
+      return await this.taskService.createTask(Task.createSyncBinary(targetName, options), false);
+    } catch (e) {
+      this.logger.error('[ProxyModeService.createTask] targetName: %s, error: %s', targetName, e);
+    }
+  }
+
+  public async findTask(taskId: string) {
+    return await this.taskService.findTask(taskId);
+  }
+
+  public async findTaskLog(task: Task) {
+    return await this.taskService.findTaskLog(task);
+  }
+
+  public async findExecuteTask() {
+    return await this.taskService.findExecuteTask(TaskType.UpdateProxyCache);
+  }
+
+  public async executeTask(task: Task) {
+    const logs: string[] = [];
+    await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+    //   const binaryName = task.targetName as BinaryName;
+    //   const binaryAdapter = await this.getBinaryAdapter(binaryName);
+    //   const logUrl = `${this.config.cnpmcore.registry}/-/binary/${binaryName}/syncs/${task.taskId}/log`;
+    //   let logs: string[] = [];
+    //   logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync binary "${binaryName}" 🚧🚧🚧🚧🚧`);
+    //   if (!binaryAdapter) {
+    //     task.error = 'unknow binaryName';
+    //     logs.push(`[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`);
+    //     logs.push(`[${isoNow()}] ❌❌❌❌❌ "${binaryName}" ❌❌❌❌❌`);
+    //     this.logger.error('[BinarySyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
+    //       task.taskId, task.targetName, task.error);
+    //     await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+    //     return;
+    //   }
+
+  //   await this.taskService.appendTaskLog(task, logs.join('\n'));
+  //   logs = [];
+  //   this.logger.info('[BinarySyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
+  //     task.taskId, task.targetName, logUrl);
+  //   try {
+  //     await this.syncDir(binaryAdapter, task, '/');
+  //     logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
+  //     logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 "${binaryName}" 🟢🟢🟢🟢🟢`);
+  //     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+  //     this.logger.info('[BinarySyncerService.executeTask:success] taskId: %s, targetName: %s, log: %s',
+  //       task.taskId, task.targetName, logUrl);
+  //   } catch (err: any) {
+  //     task.error = err.message;
+  //     logs.push(`[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`);
+  //     logs.push(`[${isoNow()}] ❌❌❌❌❌ "${binaryName}" ❌❌❌❌❌`);
+  //     this.logger.error('[BinarySyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
+  //       task.taskId, task.targetName, task.error);
+  //     this.logger.error(err);
+  //     await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+  //   }
   }
 
 }
