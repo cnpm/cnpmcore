@@ -250,10 +250,10 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
 
     it('should fetch libpg-query', async () => {
       app.mockHttpclient('https://registry.npmjs.com/libpg-query', 'GET', {
-        data: await TestUtil.readFixturesFile('registry.npmjs.com/libpg-query.json')
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/libpg-query.json'),
       });
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
-        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json')
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
       const result = await binary.fetch('/', 'libpg-query');
       assert(result);
@@ -271,7 +271,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert(item.size === '-');
           assert(
             item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-darwin-arm64.tar.gz'
+              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-darwin-arm64.tar.gz',
           );
           matchFile1 = true;
         }
@@ -280,7 +280,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert(item.size === '-');
           assert(
             item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-darwin-x64.tar.gz'
+              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-darwin-x64.tar.gz',
           );
           matchFile2 = true;
         }
@@ -289,7 +289,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert(item.size === '-');
           assert(
             item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-linux-arm.tar.gz'
+              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-linux-arm.tar.gz',
           );
           matchFile3 = true;
         }
@@ -298,7 +298,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert(item.size === '-');
           assert(
             item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-linux-x64.tar.gz'
+              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-linux-x64.tar.gz',
           );
           matchFile4 = true;
         }
@@ -307,7 +307,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert(item.size === '-');
           assert(
             item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-win32-x64.tar.gz'
+              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-win32-x64.tar.gz',
           );
           matchFile5 = true;
         }
