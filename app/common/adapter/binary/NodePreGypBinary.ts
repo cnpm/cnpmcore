@@ -41,7 +41,7 @@ export class NodePreGypBinary extends AbstractBinary {
 
       let currentDir = dirItems['/'];
       let versionPrefix = '';
-      let remotePath = pkgVersion.binary.remote_path;
+      let remotePath = pkgVersion.binary.remote_path ?? '';
       const napiVersions = pkgVersion.binary.napi_versions ?? [];
       if (binaryConfig.options?.requiredNapiVersions && napiVersions.length === 0) continue;
       if (remotePath?.includes('{version}')) {
