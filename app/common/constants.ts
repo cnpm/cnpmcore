@@ -1,6 +1,7 @@
 export const BUG_VERSIONS = 'bug-versions';
 export const LATEST_TAG = 'latest';
 export const GLOBAL_WORKER = 'GLOBAL_WORKER';
+export const NOT_IMPLEMENTED_PATH = [ '/-/npm/v1/security/audits/quick', '/-/npm/v1/security/advisories/bulk' ];
 export enum SyncMode {
   none = 'none',
   admin = 'admin',
