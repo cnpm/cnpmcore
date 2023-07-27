@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.39.1](https://github.com/cnpm/cnpmcore/compare/v3.39.0...v3.39.1) (2023-07-27)
+
+
+### Bug Fixes
+
+* body parser ignore ([#558](https://github.com/cnpm/cnpmcore/issues/558)) ([81d6455](https://github.com/cnpm/cnpmcore/commit/81d6455ff811b53618c622df74b1f04cf99af3e4))
+
 ## [3.39.0](https://github.com/cnpm/cnpmcore/compare/v3.38.2...v3.39.0) (2023-07-27)
 
 
