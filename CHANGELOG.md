@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.39.1](https://github.com/cnpm/cnpmcore/compare/v3.39.0...v3.39.1) (2023-07-27)
+
+
+### Bug Fixes
+
+* body parser ignore ([#558](https://github.com/cnpm/cnpmcore/issues/558)) ([81d6455](https://github.com/cnpm/cnpmcore/commit/81d6455ff811b53618c622df74b1f04cf99af3e4))
+
+## [3.39.0](https://github.com/cnpm/cnpmcore/compare/v3.38.2...v3.39.0) (2023-07-27)
+
+
+### Features
+
+* Sync libpg-query binary ([#557](https://github.com/cnpm/cnpmcore/issues/557)) ([8556b5f](https://github.com/cnpm/cnpmcore/commit/8556b5f92f3a6525dd6dde2661a24de9137122d4))
+
 ## [3.38.2](https://github.com/cnpm/cnpmcore/compare/v3.38.1...v3.38.2) (2023-07-21)
 
 
