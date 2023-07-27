@@ -95,6 +95,17 @@ export class NodePreGypBinary extends AbstractBinary {
       } else if (binaryFile.includes('{node_abi}')
         && binaryFile.includes('{platform}')
         && binaryFile.includes('{arch}')) {
+
+        // libpg-query
+        // https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.3.0-node-v93-darwin-x64.tar.gz
+        // https://github.com/pyramation/libpg-query-node/blob/master/package.json
+        // "binary": {
+        //   "module_name": "queryparser",
+        //   "module_path": "./build/Release/",
+        //   "host": "https://supabase-public-artifacts-bucket.s3.amazonaws.com",
+        //   "remote_path": "./libpg-query-node/"
+        // }
+
         for (const nodeAbi of nodeABIVersions) {
           for (const platform of nodePlatforms) {
             const archs = nodeArchs[platform];
@@ -102,12 +113,13 @@ export class NodePreGypBinary extends AbstractBinary {
               const name = binaryFile.replace('{node_abi}', `node-v${nodeAbi}`)
                 .replace('{platform}', platform)
                 .replace('{arch}', arch);
+              const binaryFilePath = join(remotePath, name);
               currentDir.push({
                 name,
                 date,
                 size: '-',
                 isDir: false,
-                url: `${binaryConfig.distUrl}/${binaryName}${versionPrefix}/${name}`,
+                url: new URL(binaryFilePath, binaryConfig.distUrl).toString(),
                 ignoreDownloadStatuses: [ 404 ],
               });
             }

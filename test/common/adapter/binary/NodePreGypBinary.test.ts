@@ -260,63 +260,47 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       assert(result.items.length > 0);
       let matchFile1 = false;
       let matchFile2 = false;
-      let matchFile3 = false;
-      let matchFile4 = false;
-      let matchFile5 = false;
       for (const item of result.items) {
         assert(item.isDir === false);
         assert.deepEqual(item.ignoreDownloadStatuses, [ 404 ]);
-        if (item.name === 'queryparser-v13.2.1-node-v108-darwin-arm64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
+
+        // https://supabase-public-artifacts-bucket.s3.amazonaws.com/
+        // <Contents>
+        // <Key>libpg-query-node/queryparser-v13.2.5-node-v83-darwin-x64.tar.gz</Key>
+        // <LastModified>2022-04-15T04:03:26.000Z</LastModified>
+        // <ETag>"9997d5bfbc7ba7ee431235ad38bda708"</ETag>
+        // <Size>843810</Size>
+        // <StorageClass>STANDARD</StorageClass>
+        // </Contents>
+        // <Contents>
+        // <Key>libpg-query-node/queryparser-v13.2.5-node-v83-linux-x64.tar.gz</Key>
+        // <LastModified>2022-04-15T04:07:04.000Z</LastModified>
+        // <ETag>"d5195b9bdc5d7dfe089c6bdf87bebe09"</ETag>
+        // <Size>4596361</Size>
+        // <StorageClass>STANDARD</StorageClass>
+        // </Contents>
+
+        if (item.name === 'queryparser-v13.2.5-node-v83-darwin-x64.tar.gz') {
+          assert(item.date === '2022-04-13T06:59:09.029Z');
           assert(item.size === '-');
           assert(
             item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-darwin-arm64.tar.gz',
+              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.5-node-v83-darwin-x64.tar.gz',
           );
           matchFile1 = true;
         }
-        if (item.name === 'queryparser-v13.2.1-node-v108-darwin-x64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
+        if (item.name === 'queryparser-v13.2.5-node-v83-linux-x64.tar.gz') {
+          assert(item.date === '2022-04-13T06:59:09.029Z');
           assert(item.size === '-');
           assert(
             item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-darwin-x64.tar.gz',
+              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.5-node-v83-linux-x64.tar.gz',
           );
           matchFile2 = true;
-        }
-        if (item.name === 'queryparser-v13.2.1-node-v108-linux-arm.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
-          assert(item.size === '-');
-          assert(
-            item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-linux-arm.tar.gz',
-          );
-          matchFile3 = true;
-        }
-        if (item.name === 'queryparser-v13.2.1-node-v108-linux-x64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
-          assert(item.size === '-');
-          assert(
-            item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-linux-x64.tar.gz',
-          );
-          matchFile4 = true;
-        }
-        if (item.name === 'queryparser-v13.2.1-node-v108-win32-x64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
-          assert(item.size === '-');
-          assert(
-            item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-win32-x64.tar.gz',
-          );
-          matchFile5 = true;
         }
       }
       assert(matchFile1);
       assert(matchFile2);
-      assert(matchFile3);
-      assert(matchFile4);
-      assert(matchFile5);
     });
   });
 });

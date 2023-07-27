@@ -153,7 +153,7 @@ const binaries = {
     description: 'Native Node bindings to Git.',
     type: BinaryType.NodePreGyp,
     repo: 'nodegit/nodegit',
-    distUrl: 'https://axonodegit.s3.amazonaws.com/nodegit',
+    distUrl: 'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/', // https://github.com/nodegit/nodegit/blob/master/package.json#L67C3-L67C3
     options: {
       nodeArchs: {
         linux: [ 'x64' ],
