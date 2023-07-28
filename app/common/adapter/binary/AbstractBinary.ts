@@ -2,6 +2,7 @@ import { ImplDecorator, Inject, QualifierImplDecoratorUtil } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
 import { EggHttpClient, EggLogger } from 'egg';
 import { BinaryName, BinaryTaskConfig } from '../../../../config/binaries';
+import crossObjs from '@mapbox/node-pre-gyp/lib/util/abi_crosswalk.json';
 
 export type BinaryItem = {
   name: string;
@@ -70,6 +71,10 @@ export abstract class AbstractBinary {
       }
     }
     return nodeABIVersions;
+  }
+
+  protected listTargetVersions() {
+    return Object.keys(crossObjs);
   }
 
   protected listNodePlatforms() {

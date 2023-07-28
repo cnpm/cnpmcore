@@ -16,39 +16,33 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      let result = await binary.fetch('/', 'grpc');
+      const result = await binary.fetch('/', 'grpc');
       assert(result);
       assert(result.items.length > 0);
       let matchDir1 = false;
       let matchDir2 = false;
       for (const item of result.items) {
-        if (item.name === 'v1.24.11/') {
+        if (item.url.includes('v1.24.11/') && item.name === 'node-v93-darwin-x64-unknown.tar.gz') {
           assert(item.date === '2021-07-23T18:07:10.297Z');
-          assert(item.isDir === true);
+          assert(
+            item.url ===
+              'https://node-precompiled-binaries.grpc.io/grpc/v1.24.11/node-v93-darwin-x64-unknown.tar.gz',
+          );
           assert(item.size === '-');
           matchDir1 = true;
         }
-        if (item.name === 'v1.14.0/') {
-          assert(item.date === '2018-08-10T16:59:52.551Z');
-          assert(item.isDir === true);
+        if (item.url.includes('v1.24.11/') && item.name === 'node-v93-linux-x64-glibc.tar.gz') {
+          assert(item.date === '2021-07-23T18:07:10.297Z');
+          assert(
+            item.url ===
+              'https://node-precompiled-binaries.grpc.io/grpc/v1.24.11/node-v93-linux-x64-glibc.tar.gz',
+          );
           assert(item.size === '-');
           matchDir2 = true;
         }
       }
       assert(matchDir1);
       assert(matchDir2);
-
-      result = await binary.fetch('/v1.24.11/', 'grpc');
-      assert(result);
-      assert(result.items.length > 0);
-      // console.log(JSON.stringify(result.items, null, 2));
-      for (const item of result.items) {
-        assert(item.isDir === false);
-        assert(item.name);
-        assert(item.date);
-        assert(item.url.includes('/v1.24.11/'));
-        assert.deepEqual(item.ignoreDownloadStatuses, [ 404 ]);
-      }
     });
 
     it('should fetch grpc-tools', async () => {
@@ -58,40 +52,27 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      let result = await binary.fetch('/', 'grpc-tools');
+      const result = await binary.fetch('/', 'grpc-tools');
       assert(result);
       assert(result.items.length > 0);
-      // console.log(JSON.stringify(result.items, null, 2));
       let matchDir1 = false;
       let matchDir2 = false;
       for (const item of result.items) {
-        if (item.name === 'v1.11.2/') {
+        if (item.url.includes('v1.11.2/') && item.name === 'linux-x64.tar.gz') {
           assert(item.date === '2021-06-18T17:01:49.917Z');
-          assert(item.isDir === true);
+          assert(item.url === 'https://node-precompiled-binaries.grpc.io/grpc-tools/v1.11.2/linux-x64.tar.gz');
           assert(item.size === '-');
           matchDir1 = true;
         }
-        if (item.name === 'v0.14.1/') {
-          assert(item.date === '2016-05-11T22:54:25.492Z');
-          assert(item.isDir === true);
+        if (item.url.includes('v1.11.2/') && item.name === 'darwin-x64.tar.gz') {
+          assert(item.date === '2021-06-18T17:01:49.917Z');
+          assert(item.url === 'https://node-precompiled-binaries.grpc.io/grpc-tools/v1.11.2/darwin-x64.tar.gz');
           assert(item.size === '-');
           matchDir2 = true;
         }
       }
       assert(matchDir1);
       assert(matchDir2);
-
-      result = await binary.fetch('/v1.11.2/', 'grpc-tools');
-      assert(result);
-      assert(result.items.length > 0);
-      // console.log(JSON.stringify(result.items, null, 2));
-      for (const item of result.items) {
-        assert(item.isDir === false);
-        assert(item.name);
-        assert(item.date);
-        assert(item.url.includes('/v1.11.2/'));
-        assert.deepEqual(item.ignoreDownloadStatuses, [ 404 ]);
-      }
     });
 
     it('should fetch nodegit', async () => {
@@ -104,7 +85,6 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       const result = await binary.fetch('/', 'nodegit');
       assert(result);
       assert(result.items.length > 0);
-      // console.log(JSON.stringify(result.items, null, 2));
       let matchFile1 = false;
       let matchFile2 = false;
       let matchFile3 = false;
@@ -113,19 +93,26 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
         if (item.name === 'nodegit-v0.27.0-node-v64-linux-x64.tar.gz') {
           assert(item.date === '2020-07-28T19:27:28.363Z');
           assert(item.size === '-');
-          assert(item.url === 'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.27.0-node-v64-linux-x64.tar.gz');
+          assert(
+            item.url === 'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.27.0-node-v64-linux-x64.tar.gz',
+          );
           matchFile1 = true;
         }
         if (item.name === 'nodegit-v0.25.0-node-v64-darwin-x64.tar.gz') {
           assert(item.date === '2019-08-09T16:46:10.709Z');
           assert(item.size === '-');
-          assert(item.url === 'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.25.0-node-v64-darwin-x64.tar.gz');
+          assert(
+            item.url ===
+              'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.25.0-node-v64-darwin-x64.tar.gz',
+          );
           matchFile2 = true;
         }
         if (item.name === 'nodegit-v0.26.0-node-v57-win32-x64.tar.gz') {
           assert(item.date === '2019-09-11T15:47:20.192Z');
           assert(item.size === '-');
-          assert(item.url === 'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.26.0-node-v57-win32-x64.tar.gz');
+          assert(
+            item.url === 'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.26.0-node-v57-win32-x64.tar.gz',
+          );
           matchFile3 = true;
         }
         if (item.name === 'nodegit-v0.27.0-node-v64-linux-ia32.tar.gz') {
@@ -144,48 +131,34 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      let result = await binary.fetch('/', 'skia-canvas');
+      const result = await binary.fetch('/', 'skia-canvas');
       assert(result);
       assert(result.items.length > 0);
-      // console.log(JSON.stringify(result.items, null, 2));
-      let matchDir = false;
-      for (const item of result.items) {
-        assert(item.isDir === true);
-        if (item.name === 'v0.9.30/') {
-          matchDir = true;
-        }
-      }
-      assert(matchDir);
-
-      result = await binary.fetch('/v0.9.24/', 'skia-canvas');
-      assert(result?.items.every(item => !/{.*}/.test(item.url)));
-
-      result = await binary.fetch('/v0.9.30/', 'skia-canvas');
-      assert(result);
-      assert(result.items.length > 0);
-      // console.log(JSON.stringify(result.items, null, 2));
       let matchFile1 = false;
       let matchFile2 = false;
       let matchFile3 = false;
       for (const item of result.items) {
-        assert(item.isDir === false);
-        assert.deepEqual(item.ignoreDownloadStatuses, [ 404, 403 ]);
-        if (item.name === 'darwin-arm64-napi-v6-unknown.tar.gz') {
+        assert.deepEqual(item.ignoreDownloadStatuses, [ 404 ]);
+        if (item.url.includes('v0.9.30/') && item.name === 'darwin-arm64-napi-v6-unknown.tar.gz') {
           assert(item.date === '2022-06-08T01:53:43.908Z');
           assert(item.size === '-');
-          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/darwin-arm64-napi-v6-unknown.tar.gz');
+          assert(
+            item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/darwin-arm64-napi-v6-unknown.tar.gz',
+          );
           matchFile1 = true;
         }
-        if (item.name === 'linux-arm-napi-v6-glibc.tar.gz') {
+        if (item.url.includes('v0.9.30/') && item.name === 'linux-arm-napi-v6-glibc.tar.gz') {
           assert(item.date === '2022-06-08T01:53:43.908Z');
           assert(item.size === '-');
           assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/linux-arm-napi-v6-glibc.tar.gz');
           matchFile2 = true;
         }
-        if (item.name === 'win32-x64-napi-v6-unknown.tar.gz') {
+        if (item.url.includes('v0.9.30/') && item.name === 'win32-x64-napi-v6-unknown.tar.gz') {
           assert(item.date === '2022-06-08T01:53:43.908Z');
           assert(item.size === '-');
-          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/win32-x64-napi-v6-unknown.tar.gz');
+          assert(
+            item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/win32-x64-napi-v6-unknown.tar.gz',
+          );
           matchFile3 = true;
         }
       }
@@ -201,42 +174,27 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
-      let result = await binary.fetch('/', 'wrtc');
+      const result = await binary.fetch('/', 'wrtc');
       assert(result);
       assert(result.items.length > 0);
-      // console.log(JSON.stringify(result.items, null, 2));
-      let matchDir = false;
-      for (const item of result.items) {
-        assert(item.isDir === true);
-        if (item.name === 'v0.4.7/') {
-          matchDir = true;
-        }
-      }
-      assert(matchDir);
-
-      result = await binary.fetch('/v0.4.7/', 'wrtc');
-      assert(result);
-      assert(result.items.length > 0);
-      // console.log(JSON.stringify(result.items, null, 2));
       let matchFile1 = false;
       let matchFile2 = false;
       let matchFile3 = false;
       for (const item of result.items) {
-        assert(item.isDir === false);
         assert.deepEqual(item.ignoreDownloadStatuses, [ 404 ]);
-        if (item.name === 'linux-arm64.tar.gz') {
+        if (item.url.includes('v0.4.7/') && item.name === 'linux-arm64.tar.gz') {
           assert(item.date === '2021-01-10T15:43:35.384Z');
           assert(item.size === '-');
           assert(item.url === 'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/linux-arm64.tar.gz');
           matchFile1 = true;
         }
-        if (item.name === 'linux-x64.tar.gz') {
+        if (item.url.includes('v0.4.7/') && item.name === 'linux-x64.tar.gz') {
           assert(item.date === '2021-01-10T15:43:35.384Z');
           assert(item.size === '-');
           assert(item.url === 'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/linux-x64.tar.gz');
           matchFile2 = true;
         }
-        if (item.name === 'darwin-x64.tar.gz') {
+        if (item.url.includes('v0.4.7/') && item.name === 'darwin-x64.tar.gz') {
           assert(item.date === '2021-01-10T15:43:35.384Z');
           assert(item.size === '-');
           assert(item.url === 'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/darwin-x64.tar.gz');
@@ -260,63 +218,47 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       assert(result.items.length > 0);
       let matchFile1 = false;
       let matchFile2 = false;
-      let matchFile3 = false;
-      let matchFile4 = false;
-      let matchFile5 = false;
       for (const item of result.items) {
         assert(item.isDir === false);
         assert.deepEqual(item.ignoreDownloadStatuses, [ 404 ]);
-        if (item.name === 'queryparser-v13.2.1-node-v108-darwin-arm64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
+
+        // https://supabase-public-artifacts-bucket.s3.amazonaws.com/
+        // <Contents>
+        // <Key>libpg-query-node/queryparser-v13.2.5-node-v83-darwin-x64.tar.gz</Key>
+        // <LastModified>2022-04-15T04:03:26.000Z</LastModified>
+        // <ETag>"9997d5bfbc7ba7ee431235ad38bda708"</ETag>
+        // <Size>843810</Size>
+        // <StorageClass>STANDARD</StorageClass>
+        // </Contents>
+        // <Contents>
+        // <Key>libpg-query-node/queryparser-v13.2.5-node-v83-linux-x64.tar.gz</Key>
+        // <LastModified>2022-04-15T04:07:04.000Z</LastModified>
+        // <ETag>"d5195b9bdc5d7dfe089c6bdf87bebe09"</ETag>
+        // <Size>4596361</Size>
+        // <StorageClass>STANDARD</StorageClass>
+        // </Contents>
+
+        if (item.name === 'queryparser-v13.2.5-node-v83-darwin-x64.tar.gz') {
+          assert(item.date === '2022-04-13T06:59:09.029Z');
           assert(item.size === '-');
           assert(
             item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-darwin-arm64.tar.gz',
+              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.5-node-v83-darwin-x64.tar.gz',
           );
           matchFile1 = true;
         }
-        if (item.name === 'queryparser-v13.2.1-node-v108-darwin-x64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
+        if (item.name === 'queryparser-v13.2.5-node-v83-linux-x64.tar.gz') {
+          assert(item.date === '2022-04-13T06:59:09.029Z');
           assert(item.size === '-');
           assert(
             item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-darwin-x64.tar.gz',
+              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.5-node-v83-linux-x64.tar.gz',
           );
           matchFile2 = true;
-        }
-        if (item.name === 'queryparser-v13.2.1-node-v108-linux-arm.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
-          assert(item.size === '-');
-          assert(
-            item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-linux-arm.tar.gz',
-          );
-          matchFile3 = true;
-        }
-        if (item.name === 'queryparser-v13.2.1-node-v108-linux-x64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
-          assert(item.size === '-');
-          assert(
-            item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-linux-x64.tar.gz',
-          );
-          matchFile4 = true;
-        }
-        if (item.name === 'queryparser-v13.2.1-node-v108-win32-x64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
-          assert(item.size === '-');
-          assert(
-            item.url ===
-              'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query/queryparser-v13.2.1-node-v108-win32-x64.tar.gz',
-          );
-          matchFile5 = true;
         }
       }
       assert(matchFile1);
       assert(matchFile2);
-      assert(matchFile3);
-      assert(matchFile4);
-      assert(matchFile5);
     });
   });
 });
