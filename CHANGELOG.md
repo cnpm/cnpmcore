@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.39.2](https://github.com/cnpm/cnpmcore/compare/v3.39.1...v3.39.2) (2023-07-29)
+
+
+### Bug Fixes
+
+* rename libpg-query to libpg-query-node ([#561](https://github.com/cnpm/cnpmcore/issues/561)) ([9483a46](https://github.com/cnpm/cnpmcore/commit/9483a460a395e34c68cb9273ec2e52add4ed1962))
+
 ## [3.39.1](https://github.com/cnpm/cnpmcore/compare/v3.39.0...v3.39.1) (2023-07-27)
 
 
