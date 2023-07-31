@@ -3,6 +3,7 @@ import path from 'path';
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 import { TaskType, TaskState } from '../../common/enum/Task';
+import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../common/constants';
 import dayjs from '../../common/dayjs';
 import { HookEvent } from './HookEvent';
 
@@ -40,6 +41,12 @@ export type SyncPackageTaskOptions = {
   specificVersions?: Array<string>;
 };
 
+export type UpdateProxyCacheTaskOptions = {
+  version?: string,
+  fileType: string,
+  filePath: string
+};
+
 export interface CreateHookTaskData extends TaskBaseData {
   hookEvent: HookEvent;
 }
@@ -59,7 +66,6 @@ export interface CreateSyncPackageTaskData extends TaskBaseData {
 }
 
 export interface CreateUpdateProxyCacheTaskData extends TaskBaseData {
-  targetName: string,
   version?: string,
   fileType: string,
   filePath: string
@@ -243,7 +249,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return [ TaskType.SyncBinary, TaskType.SyncPackage ].includes(type);
   }
 
-  public static createUpdateProxyCache(targetName: string, options: CreateUpdateProxyCacheTaskData):CreateUpdateProxyCacheTask {
+  public static createUpdateProxyCache(targetName: string, options: UpdateProxyCacheTaskOptions):CreateUpdateProxyCacheTask {
     const data = {
       type: TaskType.UpdateProxyCache,
       state: TaskState.Waiting,
@@ -252,14 +258,13 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       authorIp: HOST_NAME,
       data: {
         taskWorker: '',
-        targetName,
         version: options?.version,
         fileType: options.fileType,
         filePath: options.filePath,
       },
     };
     const task = this.create(data);
-    task.logPath = `/packages/${targetName}/update-manifests/${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
+    task.logPath = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${targetName}/update-manifest-log/${options.fileType}-${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
     return task;
   }
 

@@ -2,7 +2,7 @@ import { Attribute, Model } from '@eggjs/tegg/orm';
 import { DataTypes, Bone } from 'leoric';
 
 @Model()
-export class ProxyModeCachedFiles extends Bone {
+export class ProxyCache extends Bone {
   @Attribute(DataTypes.BIGINT, {
     primary: true,
     autoIncrement: true,
@@ -28,8 +28,5 @@ export class ProxyModeCachedFiles extends Bone {
 
   @Attribute(DataTypes.STRING(214))
   version: string;
-
-  @Attribute(DataTypes.STRING(214))
-  lastErrorMessage: string;
 
 }

@@ -12,7 +12,7 @@ import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
-import { ProxyModeService } from '../../../core/service/ProxyModeService';
+import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
 import { Spec } from '../../../port/typebox';
 import { SyncMode } from '../../../common/constants';
 
@@ -21,7 +21,7 @@ export class ShowPackageVersionController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
   @Inject()
-  private proxyModeService: ProxyModeService;
+  private proxyCacheService: ProxyCacheService;
 
   @HTTPMethod({
     // GET /:fullname/:versionSpec
@@ -39,7 +39,7 @@ export class ShowPackageVersionController extends AbstractController {
     let { blockReason, manifest, pkg } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionSpec, isSync, isFullManifests);
     if (!pkg) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        manifest = await this.proxyModeService.getPackageVersionManifest(fullname, versionSpec, isFullManifests);
+        manifest = await this.proxyCacheService.getPackageVersionManifest(fullname, versionSpec, isFullManifests);
       } else {
         const allowSync = this.getAllowSync(ctx);
         throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
@@ -51,7 +51,7 @@ export class ShowPackageVersionController extends AbstractController {
     }
     if (!manifest) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        manifest = await this.proxyModeService.getPackageVersionManifest(fullname, versionSpec, isFullManifests);
+        manifest = await this.proxyCacheService.getPackageVersionManifest(fullname, versionSpec, isFullManifests);
       } else {
         throw new NotFoundError(`${fullname}@${versionSpec} not found`);
       }
