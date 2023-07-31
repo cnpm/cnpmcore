@@ -14,7 +14,7 @@ import { AbstractController } from '../AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil';
 import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
-import { ProxyModeService } from '../../../core/service/ProxyModeService';
+import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
 import { PackageSyncerService } from '../../../core/service/PackageSyncerService';
 import { SyncMode } from '../../../common/constants';
 
@@ -23,7 +23,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
   @Inject()
-  private proxyModeService: ProxyModeService;
+  private proxyCacheService: ProxyCacheService;
   @Inject()
   private packageSyncerService: PackageSyncerService;
   @Inject()
@@ -111,7 +111,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
   }
 
   async #getTgzBuffer(ctx: EggContext, fullname: string, version: string) {
-    const { tgzBuffer } = await this.proxyModeService.getPackageVersionTarAndTempFilePath(fullname, ctx.url);
+    const { tgzBuffer } = await this.proxyCacheService.getPackageVersionTarAndTempFilePath(fullname, ctx.url);
     const task = await this.packageSyncerService.createTask(fullname, {
       authorIp: ctx.ip,
       authorId: `pid_${process.pid}`,

@@ -1,23 +1,21 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData } from '../util/EntityUtil';
-interface ProxyModeData extends EntityData {
+interface ProxyCacheData extends EntityData {
   targetName: string;
   fileType: string;
   filePath: string;
   version?: string;
-  lastErrorMessage?: string;
 }
 
-export type CreateProxyModeData = Omit<EasyData<ProxyModeData, 'id'>, 'id'>;
+export type CreateProxyCacheData = Omit<EasyData<ProxyCacheData, 'id'>, 'id'>;
 
-export class ProxyModeCachedFiles extends Entity {
+export class ProxyCache extends Entity {
   readonly targetName: string;
   readonly fileType: string;
   readonly filePath: string;
   readonly version?: string;
-  lastErrorMessage?: string;
 
-  constructor(data: ProxyModeData) {
+  constructor(data: ProxyCacheData) {
     super(data);
     this.targetName = data.targetName;
     this.fileType = data.fileType;
@@ -25,12 +23,12 @@ export class ProxyModeCachedFiles extends Entity {
     this.version = data.version;
   }
 
-  public static create(data: CreateProxyModeData): ProxyModeCachedFiles {
+  public static create(data: CreateProxyCacheData): ProxyCache {
     const newData = { ...data, createdAt: new Date(), updatedAt: new Date() };
-    return new ProxyModeCachedFiles(newData);
+    return new ProxyCache(newData);
   }
 
-  public static update(data: ProxyModeCachedFiles): ProxyModeCachedFiles {
+  public static update(data: ProxyCache): ProxyCache {
     data.updatedAt = new Date();
     return data;
   }

@@ -13,7 +13,7 @@ import { isSyncWorkerRequest } from '../../../common/SyncUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import { CacheService } from '../../../core/service/CacheService';
 import { SyncMode } from '../../../common/constants';
-import { ProxyModeService } from '../../../core/service/ProxyModeService';
+import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
 import { calculateIntegrity } from '../../../common/PackageUtil';
 
 @HTTPController()
@@ -23,7 +23,7 @@ export class ShowPackageController extends AbstractController {
   @Inject()
   private cacheService: CacheService;
   @Inject()
-  private proxyModeService: ProxyModeService;
+  private proxyCacheService: ProxyCacheService;
 
   @HTTPMethod({
     // GET /:fullname
@@ -71,7 +71,7 @@ export class ShowPackageController extends AbstractController {
     let result: { etag: string; data: any, blockReason: string };
     if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
       // proxy mode
-      const { pkgManifest } = await this.proxyModeService.getPackageManifestFromSourceAndCache(fullname, isFullManifests);
+      const { pkgManifest } = await this.proxyCacheService.getPackageManifestFromSourceAndCache(fullname, isFullManifests);
       const nfsBytes = Buffer.from(JSON.stringify(pkgManifest));
       const { shasum: etag } = await calculateIntegrity(nfsBytes);
       result = { data: pkgManifest, etag, blockReason: '' };

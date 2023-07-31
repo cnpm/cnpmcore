@@ -3,9 +3,9 @@ import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { EggHttpClient } from 'egg';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
-import { ProxyModeCachedFiles } from '../entity/ProxyModeCachedFiles';
-import { ProxyModeCachedFilesRepository } from '../../repository/ProxyModeCachedFilesRepository';
-import { TaskRepository } from '../../repository/TaskRepository';
+import { ProxyCache } from '../entity/ProxyCache';
+import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
+// import { TaskRepository } from '../../repository/TaskRepository';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskService } from './TaskService';
 import { readFile, rm } from 'node:fs/promises';
@@ -14,12 +14,16 @@ import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../common/constants';
 import { DIST_NAMES } from '../entity/Package';
 import type { PackageJSONType } from '../../repository/PackageRepository';
 import { TaskType, TaskState } from '../../common/enum/Task';
-import { Task } from '../entity/Task';
+import { Task, UpdateProxyCacheTaskOptions, CreateUpdateProxyCacheTask } from '../entity/Task';
+
+function isoNow() {
+  return new Date().toISOString();
+}
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
-export class ProxyModeService extends AbstractService {
+export class ProxyCacheService extends AbstractService {
   @Inject()
   private readonly httpclient: EggHttpClient;
   @Inject()
@@ -27,9 +31,7 @@ export class ProxyModeService extends AbstractService {
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
   @Inject()
-  private readonly proxyModeCachedFiles: ProxyModeCachedFilesRepository;
-  @Inject()
-  private readonly taskRepository: TaskRepository;
+  private readonly proxyCacheRepository: ProxyCacheRepository;
   @Inject()
   private readonly taskService: TaskService;
 
@@ -49,7 +51,7 @@ export class ProxyModeService extends AbstractService {
     const manifest = await this.getPackageManifestAndCache(fullname, false);
     const distTags = manifest['dist-tags'] || {};
     const version = distTags[versionOrTag] ? distTags[versionOrTag] : versionOrTag;
-    const cachedFileInfo = await this.proxyModeCachedFiles.findCachedPackageVersionManifest(fullname, version, isFullManifests);
+    const cachedFileInfo = await this.proxyCacheRepository.findCachedPackageVersionManifest(fullname, version, isFullManifests);
     const cachedStoreKey = cachedFileInfo?.filePath;
     if (cachedStoreKey) {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
@@ -62,7 +64,7 @@ export class ProxyModeService extends AbstractService {
         } catch {
           // JSON parse error
           await this.nfsAdapter.remove(cachedStoreKey);
-          await this.proxyModeCachedFiles.removePackageVersionStoreKey(fullname, isFullManifests);
+          await this.proxyCacheRepository.removePackageVersionStoreKey(fullname, isFullManifests);
           throw new InternalServerError('manifest in NFS JSON parse error');
         }
         return nfsPkgVersionManifgest;
@@ -72,8 +74,8 @@ export class ProxyModeService extends AbstractService {
     // not in NFS
     const { storeKey, pkgVerisonManifest } = await this.getPackageVersionManifestFromSourceAndCache(fullname, version, isFullManifests);
 
-    const cachedFiles = await ProxyModeCachedFiles.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
-    this.proxyModeCachedFiles.savePackageManifests(cachedFiles);
+    const cachedFiles = await ProxyCache.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
+    this.proxyCacheRepository.savePackageManifests(cachedFiles);
     return pkgVerisonManifest;
   }
 
@@ -87,7 +89,7 @@ export class ProxyModeService extends AbstractService {
     }
 
 
-    const cachedFileInfo = await this.proxyModeCachedFiles.findCachedPackageManifest(fullname, isFullManifests);
+    const cachedFileInfo = await this.proxyCacheRepository.findCachedPackageManifest(fullname, isFullManifests);
     const cachedStoreKey = cachedFileInfo?.filePath;
     if (cachedStoreKey) {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
@@ -100,17 +102,17 @@ export class ProxyModeService extends AbstractService {
         } catch {
           // JSON parse error
           await this.nfsAdapter.remove(cachedStoreKey);
-          // TODO: remove
+          await this.proxyCacheRepository.removePackageVersionStoreKey(fullname, isFullManifests);
           throw new InternalServerError('manifest in NFS JSON parse error');
         }
         return nfsPkgManifgest;
       }
-      this.proxyModeCachedFiles.removePackageStoreKey(fullname, isFullManifests);
+      this.proxyCacheRepository.removePackageStoreKey(fullname, isFullManifests);
     }
 
     const { storeKey, pkgManifest } = await this.getPackageManifestFromSourceAndCache(fullname, isFullManifests);
-    const cachedFiles = await ProxyModeCachedFiles.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
-    this.proxyModeCachedFiles.savePackageManifests(cachedFiles);
+    const cachedFiles = await ProxyCache.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
+    this.proxyCacheRepository.savePackageManifests(cachedFiles);
     return pkgManifest;
   }
 
@@ -173,16 +175,8 @@ export class ProxyModeService extends AbstractService {
     return { storeKey, proxyBytes, pkgManifest };
   }
 
-  public async createTask(targetName, options) {
-    const existsTask = await this.taskRepository.findTaskByTargetName(targetName, TaskType.UpdateProxyCache);
-    if (existsTask) {
-      return existsTask;
-    }
-    try {
-      return await this.taskService.createTask(Task.createSyncBinary(targetName, options), false);
-    } catch (e) {
-      this.logger.error('[ProxyModeService.createTask] targetName: %s, error: %s', targetName, e);
-    }
+  public async createTask(targetName: string, options: UpdateProxyCacheTaskOptions): Promise<CreateUpdateProxyCacheTask> {
+    return await this.taskService.createTask(Task.createUpdateProxyCache(targetName, options), false) as CreateUpdateProxyCacheTask;
   }
 
   public async findTask(taskId: string) {
@@ -199,42 +193,27 @@ export class ProxyModeService extends AbstractService {
 
   public async executeTask(task: Task) {
     const logs: string[] = [];
-    await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-    //   const binaryName = task.targetName as BinaryName;
-    //   const binaryAdapter = await this.getBinaryAdapter(binaryName);
-    //   const logUrl = `${this.config.cnpmcore.registry}/-/binary/${binaryName}/syncs/${task.taskId}/log`;
-    //   let logs: string[] = [];
-    //   logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync binary "${binaryName}" 🚧🚧🚧🚧🚧`);
-    //   if (!binaryAdapter) {
-    //     task.error = 'unknow binaryName';
-    //     logs.push(`[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`);
-    //     logs.push(`[${isoNow()}] ❌❌❌❌❌ "${binaryName}" ❌❌❌❌❌`);
-    //     this.logger.error('[BinarySyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
-    //       task.taskId, task.targetName, task.error);
-    //     await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-    //     return;
-    //   }
-
-  //   await this.taskService.appendTaskLog(task, logs.join('\n'));
-  //   logs = [];
-  //   this.logger.info('[BinarySyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
-  //     task.taskId, task.targetName, logUrl);
-  //   try {
-  //     await this.syncDir(binaryAdapter, task, '/');
-  //     logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
-  //     logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 "${binaryName}" 🟢🟢🟢🟢🟢`);
-  //     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-  //     this.logger.info('[BinarySyncerService.executeTask:success] taskId: %s, targetName: %s, log: %s',
-  //       task.taskId, task.targetName, logUrl);
-  //   } catch (err: any) {
-  //     task.error = err.message;
-  //     logs.push(`[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`);
-  //     logs.push(`[${isoNow()}] ❌❌❌❌❌ "${binaryName}" ❌❌❌❌❌`);
-  //     this.logger.error('[BinarySyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
-  //       task.taskId, task.targetName, task.error);
-  //     this.logger.error(err);
-  //     await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-  //   }
+    const targetName = task.targetName;
+    const { fileType, version } = (task as CreateUpdateProxyCacheTask).data;
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start update "${targetName}-${fileType}" 🚧🚧🚧🚧🚧`);
+    try {
+      if (fileType === DIST_NAMES.ABBREVIATED || fileType === DIST_NAMES.MANIFEST) {
+        const isFull = fileType === DIST_NAMES.MANIFEST;
+        await this.getPackageVersionManifestFromSourceAndCache(targetName, version!, isFull);
+      } else {
+        const isFull = fileType === DIST_NAMES.FULL_MANIFESTS;
+        await this.getPackageManifestFromSourceAndCache(targetName, isFull);
+      }
+    } catch (error) {
+      task.error = error;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${task.logPath}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${targetName}-${fileType} ${version} ❌❌❌❌❌`);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
+      return;
+    }
+    await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
   }
 
 }
