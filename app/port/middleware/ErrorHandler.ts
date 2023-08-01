@@ -32,7 +32,8 @@ export async function ErrorHandler(ctx: EggContext, next: Next) {
 
     // http status, default is DEFAULT_SERVER_ERROR_STATUS
     ctx.status = err.status || DEFAULT_SERVER_ERROR_STATUS;
-    if (ctx.status >= DEFAULT_SERVER_ERROR_STATUS) {
+    // don't log NotImplementedError
+    if (ctx.status >= DEFAULT_SERVER_ERROR_STATUS && err.name !== 'NotImplementedError') {
       ctx.logger.error(err);
     }
     let message = err.message;
