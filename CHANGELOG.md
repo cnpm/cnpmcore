@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.39.3](https://github.com/cnpm/cnpmcore/compare/v3.39.2...v3.39.3) (2023-08-01)
+
+
+### Bug Fixes
+
+* don't log NotImplementedError to error log ([#563](https://github.com/cnpm/cnpmcore/issues/563)) ([bcf3547](https://github.com/cnpm/cnpmcore/commit/bcf3547ff2ee5830fc8cd61bd21b5629d73de316))
+
 ## [3.39.2](https://github.com/cnpm/cnpmcore/compare/v3.39.1...v3.39.2) (2023-07-29)
 
 
