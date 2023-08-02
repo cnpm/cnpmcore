@@ -191,6 +191,7 @@ export default (appInfo: EggAppConfig) => {
   config.elasticsearch = {
     client: {
       node: 'http://localhost:9200',
+      index: 'cnpmcore_packages',
     },
   };
 
