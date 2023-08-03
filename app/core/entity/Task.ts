@@ -42,6 +42,7 @@ export type SyncPackageTaskOptions = {
 };
 
 export type UpdateProxyCacheTaskOptions = {
+  fullname: string,
   version?: string,
   fileType: string,
   filePath: string
@@ -66,6 +67,7 @@ export interface CreateSyncPackageTaskData extends TaskBaseData {
 }
 
 export interface CreateUpdateProxyCacheTaskData extends TaskBaseData {
+  fullname: string,
   version?: string,
   fileType: string,
   filePath: string
@@ -258,13 +260,14 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       authorIp: HOST_NAME,
       data: {
         taskWorker: '',
+        fullname: options.fullname,
         version: options?.version,
         fileType: options.fileType,
         filePath: options.filePath,
       },
     };
     const task = this.create(data);
-    task.logPath = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${targetName}/update-manifest-log/${options.fileType}-${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
+    task.logPath = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${options.fullname}/update-manifest-log/${options.fileType}-${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
     return task;
   }
 

@@ -48,7 +48,7 @@ export class SyncProxyCacheWorker {
         task = await this.proxyCacheService.findExecuteTask();
       }
     } catch (err) {
-      this.logger.error('[SyncPackageWorker:subscribe:executeTask:error][%s] %s', executingCount, err);
+      this.logger.error('[SyncProxyCacheWorker:subscribe:executeTask:error][%s] %s', executingCount, err);
     } finally {
       executingCount--;
     }

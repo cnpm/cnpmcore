@@ -16,7 +16,7 @@ export class ProxyCache extends Bone {
   updatedAt: Date;
 
   @Attribute(DataTypes.STRING(214))
-  targetName: string;
+  fullname: string;
 
   @Attribute(DataTypes.STRING(30))
   fileType: string;

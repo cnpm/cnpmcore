@@ -15,6 +15,7 @@ import { PackageManagerService } from '../../../core/service/PackageManagerServi
 import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
 import { Spec } from '../../../port/typebox';
 import { SyncMode } from '../../../common/constants';
+import { DIST_NAMES } from '../../../core/entity/Package';
 
 @HTTPController()
 export class ShowPackageVersionController extends AbstractController {
@@ -37,9 +38,10 @@ export class ShowPackageVersionController extends AbstractController {
     const isFullManifests = ctx.accepts([ 'json', abbreviatedMetaType ]) !== abbreviatedMetaType;
 
     let { blockReason, manifest, pkg } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionSpec, isSync, isFullManifests);
+    const fileType = isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED;
     if (!pkg) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        manifest = await this.proxyCacheService.getPackageVersionManifest(fullname, versionSpec, isFullManifests);
+        manifest = (await this.proxyCacheService.getSourceManifestAndCache(fullname, fileType, versionSpec)).manifest;
       } else {
         const allowSync = this.getAllowSync(ctx);
         throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
@@ -51,7 +53,7 @@ export class ShowPackageVersionController extends AbstractController {
     }
     if (!manifest) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        manifest = await this.proxyCacheService.getPackageVersionManifest(fullname, versionSpec, isFullManifests);
+        manifest = await this.proxyCacheService.getPackageVersionManifest(fullname, fileType, versionSpec);
       } else {
         throw new NotFoundError(`${fullname}@${versionSpec} not found`);
       }

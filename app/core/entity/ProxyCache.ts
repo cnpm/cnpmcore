@@ -1,7 +1,7 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData } from '../util/EntityUtil';
 interface ProxyCacheData extends EntityData {
-  targetName: string;
+  fullname: string;
   fileType: string;
   filePath: string;
   version?: string;
@@ -10,14 +10,14 @@ interface ProxyCacheData extends EntityData {
 export type CreateProxyCacheData = Omit<EasyData<ProxyCacheData, 'id'>, 'id'>;
 
 export class ProxyCache extends Entity {
-  readonly targetName: string;
+  readonly fullname: string;
   readonly fileType: string;
   readonly filePath: string;
   readonly version?: string;
 
   constructor(data: ProxyCacheData) {
     super(data);
-    this.targetName = data.targetName;
+    this.fullname = data.fullname;
     this.fileType = data.fileType;
     this.filePath = data.filePath;
     this.version = data.version;
