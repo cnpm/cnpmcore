@@ -2,7 +2,7 @@ import { InternalServerError, ForbiddenError, HttpError } from 'egg-errors';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { EggHttpClient } from 'egg';
 import { downloadToTempfile } from '../../common/FileUtil';
-import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
+import { NPMRegistry } from '../../common/adapter/NPMRegistry';
 import { ProxyCache } from '../entity/ProxyCache';
 import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
 // import { TaskRepository } from '../../repository/TaskRepository';
@@ -47,12 +47,11 @@ export class ProxyCacheService extends AbstractService {
   }
 
   // used by GET /:fullname/:versionOrTag
-  async getPackageVersionManifest(fullname: string, versionOrTag: string, isFullManifests: boolean): Promise<PackageJSONType> {
-    const manifest = await this.getPackageManifestAndCache(fullname, false);
-    const distTags = manifest['dist-tags'] || {};
+  async getPackageVersionManifest(fullname: string, fileType: DIST_NAMES, versionOrTag: string): Promise<PackageJSONType> {
+    const sourceManifest = await this.getSourceManifestAndCache(fullname, fileType, versionOrTag);
+    const distTags = sourceManifest['dist-tags'] || {};
     const version = distTags[versionOrTag] ? distTags[versionOrTag] : versionOrTag;
-    const cachedFileInfo = await this.proxyCacheRepository.findCachedPackageVersionManifest(fullname, version, isFullManifests);
-    const cachedStoreKey = cachedFileInfo?.filePath;
+    const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType, version))?.filePath;
     if (cachedStoreKey) {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
       if (nfsBytes) {
@@ -64,33 +63,29 @@ export class ProxyCacheService extends AbstractService {
         } catch {
           // JSON parse error
           await this.nfsAdapter.remove(cachedStoreKey);
-          await this.proxyCacheRepository.removePackageVersionStoreKey(fullname, isFullManifests);
+          await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
           throw new InternalServerError('manifest in NFS JSON parse error');
         }
         return nfsPkgVersionManifgest;
       }
     }
-
     // not in NFS
-    const { storeKey, pkgVerisonManifest } = await this.getPackageVersionManifestFromSourceAndCache(fullname, version, isFullManifests);
+    const { storeKey, manifest } = await this.getSourceManifestAndCache(fullname, fileType, version);
 
-    const cachedFiles = await ProxyCache.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
-    this.proxyCacheRepository.savePackageManifests(cachedFiles);
-    return pkgVerisonManifest;
+    const cachedFiles = await ProxyCache.create({ fullname, fileType, filePath: storeKey });
+    this.proxyCacheRepository.saveProxyCache(cachedFiles);
+    return manifest;
   }
 
   async getPackageManifestAndCache(fullname: string, isFullManifests: boolean): Promise<PackageJSONType> {
-    // check package is blocked
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
       const error = `stop cache by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`;
-      this.logger.info('[ProxyPackageAndPublishService.cacheManifests:fail-block-list] targetName: %s, %s',
+      this.logger.info('[ProxyCacheService.cacheManifests:fail-block-list] targetName: %s, %s',
         fullname, error);
       throw new ForbiddenError('this package is in block list');
     }
-
-
-    const cachedFileInfo = await this.proxyCacheRepository.findCachedPackageManifest(fullname, isFullManifests);
-    const cachedStoreKey = cachedFileInfo?.filePath;
+    const fileType = isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS;
+    const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType))?.filePath;
     if (cachedStoreKey) {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
       if (nfsBytes) {
@@ -102,52 +97,36 @@ export class ProxyCacheService extends AbstractService {
         } catch {
           // JSON parse error
           await this.nfsAdapter.remove(cachedStoreKey);
-          await this.proxyCacheRepository.removePackageVersionStoreKey(fullname, isFullManifests);
+          await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
           throw new InternalServerError('manifest in NFS JSON parse error');
         }
         return nfsPkgManifgest;
       }
-      this.proxyCacheRepository.removePackageStoreKey(fullname, isFullManifests);
     }
 
-    const { storeKey, pkgManifest } = await this.getPackageManifestFromSourceAndCache(fullname, isFullManifests);
-    const cachedFiles = await ProxyCache.create({ targetName: fullname, fileType: isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS, filePath: storeKey });
-    this.proxyCacheRepository.savePackageManifests(cachedFiles);
-    return pkgManifest;
+    const { storeKey, manifest } = await this.getSourceManifestAndCache(fullname, fileType);
+    const cachedFiles = await ProxyCache.create({ fullname, fileType, filePath: storeKey });
+    this.proxyCacheRepository.saveProxyCache(cachedFiles);
+    return manifest;
   }
 
-  async getPackageVersionManifestFromSourceAndCache(fullname: string, version: string, isFullManifests: boolean): Promise<{ storeKey: string, proxyBytes: Buffer, pkgVerisonManifest: PackageJSONType }> {
-    const responseResult = isFullManifests ?
-      await this.npmRegistry.getPackageVersionManifest(fullname, version) :
-      await this.npmRegistry.getAbbreviatedPackageVersionManifest(fullname, version);
-    if (responseResult.status !== 200) {
-      throw new HttpError({
-        status: responseResult.status,
-        message: responseResult.data || responseResult.statusText,
-      });
-    }
-
-    // get version manifest success
-    const pkgVerisonManifest = responseResult.data;
-    const { sourceRegistry, registry } = this.config.cnpmcore;
-    const pkgVerisonManifestDist = pkgVerisonManifest.dist;
-    if (pkgVerisonManifestDist && pkgVerisonManifestDist.tarball) {
-      pkgVerisonManifestDist.tarball = pkgVerisonManifestDist.tarball.replace(sourceRegistry, registry);
-    }
-    const proxyBytes = Buffer.from(JSON.stringify(pkgVerisonManifest));
-    const storeKey = isFullManifests ?
-      `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${DIST_NAMES.MANIFEST}` :
-      `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${DIST_NAMES.ABBREVIATED}`;
-    await this.nfsAdapter.uploadBytes(storeKey, proxyBytes);
-    return { storeKey, proxyBytes, pkgVerisonManifest };
-  }
-
-  async getPackageManifestFromSourceAndCache(fullname:string, isFullManifests: boolean): Promise<{ storeKey: string, proxyBytes: Buffer, pkgManifest: PackageJSONType }> {
-    let responseResult: RegistryResponse;
-    if (isFullManifests) {
-      responseResult = await this.npmRegistry.getFullManifests(fullname);
-    } else {
-      responseResult = await this.npmRegistry.getAbbreviatedManifests(fullname);
+  async getSourceManifestAndCache(fullname:string, fileType: DIST_NAMES, version?:string): Promise<{ storeKey: string, proxyBytes: Buffer, manifest: PackageJSONType }> {
+    let responseResult;
+    switch (fileType) {
+      case DIST_NAMES.FULL_MANIFESTS:
+        responseResult = await this.npmRegistry.getFullManifests(fullname);
+        break;
+      case DIST_NAMES.ABBREVIATED_MANIFESTS:
+        responseResult = await this.npmRegistry.getAbbreviatedManifests(fullname);
+        break;
+      case DIST_NAMES.MANIFEST:
+        responseResult = await this.npmRegistry.getPackageVersionManifest(fullname, version!);
+        break;
+      case DIST_NAMES.ABBREVIATED:
+        responseResult = await this.npmRegistry.getAbbreviatedPackageVersionManifest(fullname, version!);
+        break;
+      default:
+        break;
     }
     if (responseResult.status !== 200) {
       throw new HttpError({
@@ -156,23 +135,27 @@ export class ProxyCacheService extends AbstractService {
       });
     }
 
-    // get manifest success
-    const pkgManifest = responseResult.data;
+    // replace tarball url
+    const manifest = responseResult.data;
     const { sourceRegistry, registry } = this.config.cnpmcore;
-    const versionMap = pkgManifest.versions || {};
-    for (const key in versionMap) {
-      const versionItem = versionMap[key];
-      if (versionItem?.dist?.tarball && typeof versionItem.dist.tarball === 'string') {
-        versionItem.dist.tarball = versionItem.dist.tarball.replace(sourceRegistry, registry);
+    if (fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED) {
+      const versionMap = manifest.versions || {};
+      for (const key in versionMap) {
+        const versionItem = versionMap[key];
+        if (versionItem?.dist?.tarball) {
+          versionItem.dist.tarball = versionItem.dist.tarball.replace(sourceRegistry, registry);
+        }
+      }
+    } else {
+      const distItem = manifest.dist || {};
+      if (distItem.tarball) {
+        distItem.tarball = distItem.tarball.replace(sourceRegistry, registry);
       }
     }
-    const proxyBytes = Buffer.from(JSON.stringify(pkgManifest));
-    const storeKey = isFullManifests ?
-      `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${DIST_NAMES.FULL_MANIFESTS}` :
-      `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${DIST_NAMES.ABBREVIATED_MANIFESTS}`;
+    const proxyBytes = Buffer.from(JSON.stringify(manifest));
+    const storeKey = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${fileType}`;
     await this.nfsAdapter.uploadBytes(storeKey, proxyBytes);
-
-    return { storeKey, proxyBytes, pkgManifest };
+    return { storeKey, proxyBytes, manifest };
   }
 
   public async createTask(targetName: string, options: UpdateProxyCacheTaskOptions): Promise<CreateUpdateProxyCacheTask> {
@@ -193,26 +176,31 @@ export class ProxyCacheService extends AbstractService {
 
   public async executeTask(task: Task) {
     const logs: string[] = [];
-    const targetName = task.targetName;
+    const fullname = (task as CreateUpdateProxyCacheTask).data.fullname;
     const { fileType, version } = (task as CreateUpdateProxyCacheTask).data;
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start update "${targetName}-${fileType}" 🚧🚧🚧🚧🚧`);
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start update "${fullname}-${fileType}" 🚧🚧🚧🚧🚧`);
     try {
-      if (fileType === DIST_NAMES.ABBREVIATED || fileType === DIST_NAMES.MANIFEST) {
-        const isFull = fileType === DIST_NAMES.MANIFEST;
-        await this.getPackageVersionManifestFromSourceAndCache(targetName, version!, isFull);
+      if (fileType === DIST_NAMES.ABBREVIATED_MANIFESTS || fileType === DIST_NAMES.FULL_MANIFESTS) {
+        await this.getSourceManifestAndCache(fullname, fileType);
       } else {
-        const isFull = fileType === DIST_NAMES.FULL_MANIFESTS;
-        await this.getPackageManifestFromSourceAndCache(targetName, isFull);
+        task.error = 'Unacceptable file type.';
+        logs.push(`[${isoNow()}] ❌ ${task.error}`);
+        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname}-${fileType} ${version} ❌❌❌❌❌`);
+        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+        this.logger.info('[ProxyCacheService.executeTask:fail] taskId: %s, targetName: %s, %s',
+          task.taskId, task.targetName, task.error);
+        return;
       }
     } catch (error) {
       task.error = error;
-      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${task.logPath}`);
-      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${targetName}-${fileType} ${version} ❌❌❌❌❌`);
+      logs.push(`[${isoNow()}] ❌ ${task.error}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname}-${fileType} ${version} ❌❌❌❌❌`);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
+      this.logger.info('[ProxyCacheService.executeTask:fail] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);
       return;
     }
+    logs.push(`[${isoNow()}] 🟢 Update Success.`);
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
   }
 

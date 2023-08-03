@@ -71,7 +71,7 @@ export class ShowPackageController extends AbstractController {
     let result: { etag: string; data: any, blockReason: string };
     if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
       // proxy mode
-      const { pkgManifest } = await this.proxyCacheService.getPackageManifestFromSourceAndCache(fullname, isFullManifests);
+      const pkgManifest = await this.proxyCacheService.getPackageManifestAndCache(fullname, isFullManifests);
       const nfsBytes = Buffer.from(JSON.stringify(pkgManifest));
       const { shasum: etag } = await calculateIntegrity(nfsBytes);
       result = { data: pkgManifest, etag, blockReason: '' };

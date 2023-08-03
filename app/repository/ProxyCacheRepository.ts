@@ -12,7 +12,7 @@ export class ProxyCacheRepository extends AbstractRepository {
   @Inject()
   private readonly ProxyCache: typeof ProxyModeCachedFilesModel;
 
-  async savePackageManifests(proxyModeCachedFiles: ProxyModeCachedFilesEntity) {
+  async saveProxyCache(proxyModeCachedFiles: ProxyModeCachedFilesEntity) {
     try {
       await ModelConvertor.convertEntityToModel(proxyModeCachedFiles, this.ProxyCache);
     } catch (e) {
@@ -21,28 +21,14 @@ export class ProxyCacheRepository extends AbstractRepository {
     }
   }
 
-  async findCachedPackageManifest(targetName, isFullManifests): Promise<ProxyModeCachedFilesEntity | null> {
-    const fileType = isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS;
-    const model = await this.ProxyCache.findOne({ targetName, fileType });
+  async findProxyCache(fullname: string, fileType: DIST_NAMES, version?: string): Promise<ProxyModeCachedFilesEntity | null> {
+    const model = version ? await this.ProxyCache.findOne({ fullname, version, fileType }) : await this.ProxyCache.findOne({ fullname, fileType });
     if (model) return ModelConvertor.convertModelToEntity(model, ProxyModeCachedFilesEntity);
     return null;
   }
 
-  async findCachedPackageVersionManifest(targetName, version, isFullManifests): Promise<ProxyModeCachedFilesEntity | null> {
-    const fileType = isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED;
-    const model = await this.ProxyCache.findOne({ targetName, version, fileType });
-    if (model) return ModelConvertor.convertModelToEntity(model, ProxyModeCachedFilesEntity);
-    return null;
-  }
-
-  async removePackageStoreKey(targetName, isFullManifests) {
-    const fileType = isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS;
-    await this.ProxyCache.remove({ targetName, fileType });
-  }
-
-  async removePackageVersionStoreKey(targetName, isFullManifests) {
-    const fileType = isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED;
-    await this.ProxyCache.remove({ targetName, fileType });
+  async removeProxyCache(fullname: string, fileType: string) {
+    await this.ProxyCache.remove({ fullname, fileType });
   }
 
   async listCachedFiles(page: PageOptions): Promise<PageResult<ProxyModeCachedFilesEntity>> {
