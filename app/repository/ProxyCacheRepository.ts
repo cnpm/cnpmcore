@@ -16,13 +16,13 @@ export class ProxyCacheRepository extends AbstractRepository {
     try {
       await ModelConvertor.convertEntityToModel(proxyModeCachedFiles, this.ProxyCache);
     } catch (e) {
-      e.message = '[ProxyModeRepository] insert ProxyCache failed: ' + e.message;
+      e.message = '[ProxyCacheRepository] insert ProxyCache failed: ' + e.message;
       throw e;
     }
   }
 
-  async findProxyCache(fullname: string, fileType: DIST_NAMES, version?: string): Promise<ProxyModeCachedFilesEntity | null> {
-    const model = version ? await this.ProxyCache.findOne({ fullname, version, fileType }) : await this.ProxyCache.findOne({ fullname, fileType });
+  async findProxyCache(fullname: string, fileType: DIST_NAMES, versionOrTag?: string): Promise<ProxyModeCachedFilesEntity | null> {
+    const model = versionOrTag ? await this.ProxyCache.findOne({ fullname, versionOrTag, fileType }) : await this.ProxyCache.findOne({ fullname, fileType });
     if (model) return ModelConvertor.convertModelToEntity(model, ProxyModeCachedFilesEntity);
     return null;
   }

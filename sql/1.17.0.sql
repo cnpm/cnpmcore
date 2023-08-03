@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `proxy_caches` (
   `gmt_create` datetime(3) NOT NULL COMMENT 'create time',
   `gmt_modified` datetime(3) NOT NULL COMMENT 'modify time',
   `fullname` varchar(214) NOT NULL DEFAULT '' COMMENT '@scope/package name',
-  `version` varchar(214) NULL DEFAULT '' COMMENT 'package version',
+  `version_or_tag` varchar(214) NULL DEFAULT '' COMMENT 'package version',
   `file_type` varchar(30) NOT NULL DEFAULT '' COMMENT 'file type',
   `file_path` varchar(512) NOT NULL DEFAULT '' COMMENT 'nfs file path',
   PRIMARY KEY (`id`),

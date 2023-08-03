@@ -15,6 +15,7 @@ import { CacheService } from '../../../core/service/CacheService';
 import { SyncMode } from '../../../common/constants';
 import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
 import { calculateIntegrity } from '../../../common/PackageUtil';
+import { DIST_NAMES } from '../../../core/entity/Package';
 
 @HTTPController()
 export class ShowPackageController extends AbstractController {
@@ -71,7 +72,8 @@ export class ShowPackageController extends AbstractController {
     let result: { etag: string; data: any, blockReason: string };
     if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
       // proxy mode
-      const pkgManifest = await this.proxyCacheService.getPackageManifestAndCache(fullname, isFullManifests);
+      const fileType = isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS;
+      const pkgManifest = await this.proxyCacheService.getPackageManifest(fullname, fileType);
       const nfsBytes = Buffer.from(JSON.stringify(pkgManifest));
       const { shasum: etag } = await calculateIntegrity(nfsBytes);
       result = { data: pkgManifest, etag, blockReason: '' };
