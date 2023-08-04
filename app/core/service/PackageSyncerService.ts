@@ -8,7 +8,7 @@ import { Pointcut } from '@eggjs/tegg/aop';
 import { EggHttpClient } from 'egg';
 import { setTimeout } from 'timers/promises';
 import { rm } from 'fs/promises';
-import { isEqual } from 'lodash';
+import { isEqual, isEmpty } from 'lodash';
 import semver from 'semver';
 import semverRcompare from 'semver/functions/rcompare';
 import semverPrerelease from 'semver/functions/prerelease';
@@ -607,8 +607,8 @@ export class PackageSyncerService extends AbstractService {
         // need libc field https://github.com/cnpm/cnpmcore/issues/187
         // fix _npmUser field since https://github.com/cnpm/cnpmcore/issues/553
         const metaDataKeys = [ 'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated', '_npmUser' ];
-        const ignoreInAbbreviated = ['_npmUser'];
-        let diffMeta: Partial<PackageJSONType>;
+        const ignoreInAbbreviated = [ '_npmUser' ];
+        const diffMeta: Partial<PackageJSONType> = {};
         for (const key of metaDataKeys) {
           let remoteItemValue = item[key];
           // make sure hasInstallScript exists
@@ -617,22 +617,18 @@ export class PackageSyncerService extends AbstractService {
               remoteItemValue = true;
             }
           }
-          const remoteItemDiffValue = JSON.stringify(remoteItemValue);
-          if (remoteItemDiffValue !== JSON.stringify(existsItem[key])) {
-            if (!diffMeta) diffMeta = {};
+          if (!isEqual(remoteItemValue, existsItem[key])) {
             diffMeta[key] = remoteItemValue;
-          } else if (!ignoreInAbbreviated.includes(key) && existsAbbreviatedItem && remoteItemDiffValue !== JSON.stringify(existsAbbreviatedItem[key])) {
+          } else if (!ignoreInAbbreviated.includes(key) && existsAbbreviatedItem && !isEqual(remoteItemValue, existsAbbreviatedItem[key])) {
             // should diff exists abbreviated item too
-            if (!diffMeta) diffMeta = {};
             diffMeta[key] = remoteItemValue;
           }
         }
         // should delete readme
         if (shouldDeleteReadme) {
-          if (!diffMeta) diffMeta = {};
           diffMeta.readme = undefined;
         }
-        if (diffMeta) {
+        if (!isEmpty(diffMeta)) {
           differentMetas.push([ existsItem, diffMeta ]);
         }
         continue;
