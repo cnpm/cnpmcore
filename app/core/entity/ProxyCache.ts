@@ -1,8 +1,9 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData } from '../util/EntityUtil';
+import { DIST_NAMES } from './Package';
 interface ProxyCacheData extends EntityData {
   fullname: string;
-  fileType: string;
+  fileType: DIST_NAMES;
   filePath: string;
   version?: string;
 }
@@ -11,7 +12,7 @@ export type CreateProxyCacheData = Omit<EasyData<ProxyCacheData, 'id'>, 'id'>;
 
 export class ProxyCache extends Entity {
   readonly fullname: string;
-  readonly fileType: string;
+  readonly fileType: DIST_NAMES;
   readonly filePath: string;
   readonly version?: string;
 

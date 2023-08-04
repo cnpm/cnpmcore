@@ -20,6 +20,10 @@ function isoNow() {
   return new Date().toISOString();
 }
 
+export function isPkgManifest(fileType: DIST_NAMES) {
+  return fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED_MANIFESTS;
+}
+
 type GetSourceManifestAndCacheReturnType<T> = { storeKey: string, proxyBytes: Buffer,
   manifest: T extends DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST ? AbbreviatedPackageJSONType| PackageJSONType :
     T extends DIST_NAMES.FULL_MANIFESTS | DIST_NAMES.ABBREVIATED_MANIFESTS ? AbbreviatedPackageManifestType|PackageManifestType : never;
@@ -121,7 +125,7 @@ export class ProxyCacheService extends AbstractService {
     return manifest as AbbreviatedPackageJSONType|PackageJSONType;
   }
 
-  async getSourceManifestAndCache<T>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
+  async getSourceManifestAndCache<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
     let responseResult;
     switch (fileType) {
       case DIST_NAMES.FULL_MANIFESTS:
@@ -149,7 +153,7 @@ export class ProxyCacheService extends AbstractService {
     // replace tarball url
     const manifest = responseResult.data;
     const { sourceRegistry, registry } = this.config.cnpmcore;
-    if (fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED_MANIFESTS) {
+    if (isPkgManifest(fileType)) {
       // pkg manifest
       const versionMap = manifest.versions || {};
       for (const key in versionMap) {
@@ -167,7 +171,7 @@ export class ProxyCacheService extends AbstractService {
     }
     const proxyBytes = Buffer.from(JSON.stringify(manifest));
     let storeKey;
-    if (fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED_MANIFESTS) {
+    if (isPkgManifest(fileType)) {
       storeKey = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${fileType}`;
     } else {
       const version = manifest.version;
@@ -191,7 +195,7 @@ export class ProxyCacheService extends AbstractService {
     const { fileType, version } = (task as CreateUpdateProxyCacheTask).data;
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start update "${fullname}-${fileType}" 🚧🚧🚧🚧🚧`);
     try {
-      if (fileType === DIST_NAMES.ABBREVIATED_MANIFESTS || fileType === DIST_NAMES.FULL_MANIFESTS) {
+      if (isPkgManifest(fileType)) {
         const cachedFiles = await this.proxyCacheRepository.findProxyCache(fullname, fileType);
         if (!cachedFiles) throw new Error('task params error, can not found record in repo.');
         await this.getSourceManifestAndCache<typeof fileType>(fullname, fileType);
