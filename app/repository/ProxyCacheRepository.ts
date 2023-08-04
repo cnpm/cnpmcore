@@ -13,16 +13,24 @@ export class ProxyCacheRepository extends AbstractRepository {
   private readonly ProxyCache: typeof ProxyModeCachedFilesModel;
 
   async saveProxyCache(proxyModeCachedFiles: ProxyModeCachedFilesEntity) {
-    try {
-      await ModelConvertor.convertEntityToModel(proxyModeCachedFiles, this.ProxyCache);
-    } catch (e) {
-      e.message = '[ProxyCacheRepository] insert ProxyCache failed: ' + e.message;
-      throw e;
+    let model = await this.ProxyCache.findOne({ fullname: proxyModeCachedFiles.fullname, version: proxyModeCachedFiles.version, fileType: proxyModeCachedFiles.fileType });
+    if (model) {
+      model.updatedAt = proxyModeCachedFiles.updatedAt;
+      model.save();
+    } else {
+      try {
+        model = await ModelConvertor.convertEntityToModel(proxyModeCachedFiles, this.ProxyCache);
+        this.logger.info('[ProxyCacheRepository:saveProxyCache:new] id: %s, packageFullname: %s',
+          model.id, model.fullname);
+      } catch (e) {
+        e.message = '[ProxyCacheRepository] insert ProxyCache failed: ' + e.message;
+        throw e;
+      }
     }
   }
 
-  async findProxyCache(fullname: string, fileType: DIST_NAMES, versionOrTag?: string): Promise<ProxyModeCachedFilesEntity | null> {
-    const model = versionOrTag ? await this.ProxyCache.findOne({ fullname, versionOrTag, fileType }) : await this.ProxyCache.findOne({ fullname, fileType });
+  async findProxyCache(fullname: string, fileType: DIST_NAMES, version?: string): Promise<ProxyModeCachedFilesEntity | null> {
+    const model = version ? await this.ProxyCache.findOne({ fullname, version, fileType }) : await this.ProxyCache.findOne({ fullname, fileType });
     if (model) return ModelConvertor.convertModelToEntity(model, ProxyModeCachedFilesEntity);
     return null;
   }

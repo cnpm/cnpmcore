@@ -267,7 +267,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       },
     };
     const task = this.create(data);
-    task.logPath = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${options.fullname}/update-manifest-log/${options.fileType}-${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
+    task.logPath = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${options.fullname}/update-manifest-log/${options.fileType.split('.json')[0]}-${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
     return task;
   }
 

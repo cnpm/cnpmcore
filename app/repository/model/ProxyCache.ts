@@ -27,6 +27,6 @@ export class ProxyCache extends Bone {
   filePath: string;
 
   @Attribute(DataTypes.STRING(214))
-  versionOrTag: string;
+  version: string;
 
 }
