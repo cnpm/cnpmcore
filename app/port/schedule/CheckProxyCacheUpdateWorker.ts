@@ -3,8 +3,7 @@ import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
 import { SyncMode } from '../../common/constants';
-import { DIST_NAMES } from '../../core/entity/Package';
-import { ProxyCacheService } from '../../core/service/ProxyCacheService';
+import { ProxyCacheService, isPkgManifest } from '../../core/service/ProxyCacheService';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.ALL,
@@ -33,7 +32,7 @@ export class CheckProxyCacheUpdateWorker {
     while (list.length !== 0) {
       for (const item of list) {
         try {
-          if (item.fileType === DIST_NAMES.ABBREVIATED_MANIFESTS || item.fileType === DIST_NAMES.FULL_MANIFESTS) {
+          if (isPkgManifest(item.fileType)) {
             // 仅manifests需要更新，指定版本的package.json文件发布后不会改变
             const task = await this.proxyCacheService.createTask(`${item.fullname}/${item.fileType}`, {
               fullname: item.fullname,
