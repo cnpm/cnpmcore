@@ -571,7 +571,7 @@ export class PackageSyncerService extends AbstractService {
       }
     }
     const updateVersions: string[] = [];
-    const differentMetas: any[] = [];
+    const differentMetas: [PackageJSONType, Partial<PackageJSONType>][] = [];
     let syncIndex = 0;
     for (const item of versions) {
       const version: string = item.version;
@@ -608,7 +608,7 @@ export class PackageSyncerService extends AbstractService {
         // fix _npmUser field since https://github.com/cnpm/cnpmcore/issues/553
         const metaDataKeys = [ 'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated', '_npmUser' ];
         const ignoreInAbbreviated = ['_npmUser'];
-        let diffMeta: any;
+        let diffMeta: Partial<PackageJSONType>;
         for (const key of metaDataKeys) {
           let remoteItemValue = item[key];
           // make sure hasInstallScript exists
