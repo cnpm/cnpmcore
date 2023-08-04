@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.39.4](https://github.com/cnpm/cnpmcore/compare/v3.39.3...v3.39.4) (2023-08-04)
+
+
+### Bug Fixes
+
+* publisher info ([#565](https://github.com/cnpm/cnpmcore/issues/565)) ([94bcc1a](https://github.com/cnpm/cnpmcore/commit/94bcc1a37ec621a292937b21699ee007c2994974))
+
 ## [3.39.3](https://github.com/cnpm/cnpmcore/compare/v3.39.2...v3.39.3) (2023-08-01)
 
 
