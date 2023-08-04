@@ -4,7 +4,7 @@ interface ProxyCacheData extends EntityData {
   fullname: string;
   fileType: string;
   filePath: string;
-  versionOrTag?: string;
+  version?: string;
 }
 
 export type CreateProxyCacheData = Omit<EasyData<ProxyCacheData, 'id'>, 'id'>;
@@ -13,14 +13,14 @@ export class ProxyCache extends Entity {
   readonly fullname: string;
   readonly fileType: string;
   readonly filePath: string;
-  readonly versionOrTag?: string;
+  readonly version?: string;
 
   constructor(data: ProxyCacheData) {
     super(data);
     this.fullname = data.fullname;
     this.fileType = data.fileType;
     this.filePath = data.filePath;
-    this.versionOrTag = data.versionOrTag;
+    this.version = data.version;
   }
 
   public static create(data: CreateProxyCacheData): ProxyCache {

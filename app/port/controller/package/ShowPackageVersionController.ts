@@ -41,7 +41,7 @@ export class ShowPackageVersionController extends AbstractController {
     const fileType = isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED;
     if (!pkg) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        manifest = (await this.proxyCacheService.getSourceManifestAndCache(fullname, fileType, versionSpec)).manifest;
+        manifest = await this.proxyCacheService.getPackageVersionManifest(fullname, fileType, versionSpec);
       } else {
         const allowSync = this.getAllowSync(ctx);
         throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
