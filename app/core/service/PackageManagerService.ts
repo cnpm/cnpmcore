@@ -53,7 +53,7 @@ export interface PublishPackageCmd {
   // name don't include scope
   name: string;
   version: string;
-  description: string;
+  description?: string;
   packageJson: PackageJSONType;
   registryId?: string;
   readme: string;
@@ -107,14 +107,14 @@ export class PackageManagerService extends AbstractService {
         scope: cmd.scope,
         name: cmd.name,
         isPrivate: cmd.isPrivate,
-        description: cmd.description,
+        description: cmd.description || '',
         registryId: cmd.registryId,
       });
     } else {
       // update description
       // will read database twice to update description by model to entity and entity to model
       if (pkg.description !== cmd.description) {
-        pkg.description = cmd.description;
+        pkg.description = cmd.description || '';
       }
 
       /* c8 ignore next 3 */

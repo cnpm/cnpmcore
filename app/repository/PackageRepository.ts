@@ -95,6 +95,10 @@ export type PackageJSONType = CnpmcorePatchInfo & {
   hasInstallScript?: boolean;
   dist?: DistType;
   workspace?: string[];
+  _npmUser?: {
+    name: string;
+    email: string;
+  };
   [key: string]: unknown;
 };
 

@@ -2419,8 +2419,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       });
 
       it('should resync history version if forceSyncHistory is true', async () => {
+        const manifest = JSON.parse((await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json')).toString());
+        manifest.versions['1.0.0']._npmUser = { name: 'apple', email: 'apple@cnpmjs.org' };
+        manifest.maintainers = [ ...manifest.maintainers, { name: 'apple', email: 'apple@cnpmjs.org' }];
         app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
-          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
+          data: manifest,
           persist: false,
           repeats: 1,
         });
@@ -2439,9 +2442,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         assert(task);
         await packageSyncerService.executeTask(task);
 
+        // should sync publisher
+        const syncInfo = await packageManagerService.listPackageFullManifests('', 'foobar');
+        assert.equal(syncInfo.data?.versions['1.0.0']?._npmUser?.name, 'apple');
 
         // resync
-        const manifest = JSON.parse((await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json')).toString());
         manifest.versions['1.0.0']._npmUser = { name: 'banana', email: 'banana@cnpmjs.org' };
         app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
           data: manifest,

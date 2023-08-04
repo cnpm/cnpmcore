@@ -18,7 +18,7 @@ import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
-import { PackageRepository } from '../../repository/PackageRepository';
+import { PackageJSONType, PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { UserRepository } from '../../repository/UserRepository';
 import { Task, SyncPackageTaskOptions, CreateSyncPackageTask } from '../entity/Task';
@@ -560,7 +560,7 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] 📦 Add latest tag version "${fullname}: ${distTags.latest}"`);
       specificVersions.push(distTags.latest);
     }
-    const versions = specificVersions ? Object.values<any>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) : Object.values<any>(versionMap);
+    const versions: PackageJSONType[] = specificVersions ? Object.values<any>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) : Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     if (specificVersions) {
       const availableVersionList = versions.map(item => item.version);
@@ -607,6 +607,7 @@ export class PackageSyncerService extends AbstractService {
         // need libc field https://github.com/cnpm/cnpmcore/issues/187
         // fix _npmUser field since https://github.com/cnpm/cnpmcore/issues/553
         const metaDataKeys = [ 'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated', '_npmUser' ];
+        const ignoreInAbbreviated = ['_npmUser'];
         let diffMeta: any;
         for (const key of metaDataKeys) {
           let remoteItemValue = item[key];
@@ -620,7 +621,7 @@ export class PackageSyncerService extends AbstractService {
           if (remoteItemDiffValue !== JSON.stringify(existsItem[key])) {
             if (!diffMeta) diffMeta = {};
             diffMeta[key] = remoteItemValue;
-          } else if (existsAbbreviatedItem && remoteItemDiffValue !== JSON.stringify(existsAbbreviatedItem[key])) {
+          } else if (!ignoreInAbbreviated.includes(key) && existsAbbreviatedItem && remoteItemDiffValue !== JSON.stringify(existsAbbreviatedItem[key])) {
             // should diff exists abbreviated item too
             if (!diffMeta) diffMeta = {};
             diffMeta[key] = remoteItemValue;
@@ -637,13 +638,13 @@ export class PackageSyncerService extends AbstractService {
         continue;
       }
       syncIndex++;
-      const description: string = item.description;
+      const description = item.description;
       // "dist": {
       //   "shasum": "943e0ec03df00ebeb6273a5b94b916ba54b47581",
       //   "tarball": "https://registry.npmjs.org/foo/-/foo-1.0.0.tgz"
       // },
       const dist = item.dist;
-      const tarball: string = dist && dist.tarball;
+      const tarball = dist && dist.tarball;
       if (!tarball) {
         lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
         logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
@@ -690,7 +691,7 @@ export class PackageSyncerService extends AbstractService {
       };
       try {
         // 当 version 记录已经存在时，还需要校验一下 pkg.manifests 是否存在
-        const publisher = users.find(user => user.name === item._npmUser?.name) || users[0];
+        const publisher = users.find(user => user.displayName === item._npmUser?.name) || users[0];
         const pkgVersion = await this.packageManagerService.publish(publishCmd, publisher);
         updateVersions.push(pkgVersion.version);
         logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
