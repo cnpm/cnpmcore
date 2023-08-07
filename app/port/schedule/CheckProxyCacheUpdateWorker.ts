@@ -6,9 +6,9 @@ import { SyncMode } from '../../common/constants';
 import { ProxyCacheService, isPkgManifest } from '../../core/service/ProxyCacheService';
 
 @Schedule<IntervalParams>({
-  type: ScheduleType.ALL,
+  type: ScheduleType.WORKER,
   scheduleData: {
-    interval: 60000,
+    interval: 216000000, // 1000 * 60 * 3600 every hour.
   },
 })
 export class CheckProxyCacheUpdateWorker {
@@ -48,7 +48,7 @@ export class CheckProxyCacheUpdateWorker {
         }
       }
       pageIndex++;
-      ({ data: list } = await this.proxyCacheRepository.listCachedFiles({ pageSize: 5, pageIndex }));
+      list = (await this.proxyCacheRepository.listCachedFiles({ pageSize: 5, pageIndex })).data;
     }
 
   }
