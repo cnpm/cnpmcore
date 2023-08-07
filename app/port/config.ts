@@ -173,6 +173,6 @@ export type _CnpmcoreConfig = {
 };
 
 // `redirectNotFound` must be false when syncMode is `proxy`.
-type proxyModeConfine = Omit<_CnpmcoreConfig, 'syncMode' | 'redirectNotFound'> & {'syncMode': SyncMode.proxy, redirectNotFound: false };
+type ProxyModeRestrict = {'syncMode': SyncMode.proxy, redirectNotFound: false };
 
-export type CnpmcoreConfig = _CnpmcoreConfig extends { syncMode: infer U } ? U extends SyncMode.proxy ? proxyModeConfine : _CnpmcoreConfig : _CnpmcoreConfig;
+export type CnpmcoreConfig = _CnpmcoreConfig extends { syncMode: infer U } ? U extends SyncMode.proxy ? _CnpmcoreConfig & ProxyModeRestrict : _CnpmcoreConfig : _CnpmcoreConfig;
