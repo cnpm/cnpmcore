@@ -47,7 +47,7 @@ export class PackageVersionRepository {
         scope,
         name,
         tag,
-      } as object);
+      } as object) as { version: string }[];
     const tagModel = tags && tags[0];
     return tagModel?.version;
   }
@@ -64,7 +64,7 @@ export class PackageVersionRepository {
         'packages.name': name,
         ...sqlRange.condition,
       } as object)
-      .order('packageVersions.paddingVersion', 'desc');
+      .order('packageVersions.paddingVersion', 'desc') as { version: string }[];
     return versions?.[0]?.version;
   }
 
@@ -78,6 +78,6 @@ export class PackageVersionRepository {
         ...sqlRange.condition,
       } as object);
     return (versions as any).toObject()
-      .map(t => t.version);
+      .map((t: { version: string }) => t.version);
   }
 }

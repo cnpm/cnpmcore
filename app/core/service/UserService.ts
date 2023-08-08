@@ -199,14 +199,14 @@ export class UserService extends AbstractService {
     await this.userRepository.removeToken(token.tokenId);
   }
 
-  async findWebauthnCredential(userId: string, browserType?: string) {
+  async findWebauthnCredential(userId: string, browserType: string | undefined | null) {
     const credential = await this.userRepository.findCredentialByUserIdAndBrowserType(userId, browserType || null);
     return credential;
   }
 
-  async createWebauthnCredential(userId: string, options: CreateWebauthnCredentialOptions) {
+  async createWebauthnCredential(userId: string | undefined, options: CreateWebauthnCredentialOptions) {
     const credentialEntity = WebauthnCredentialEntity.create({
-      userId,
+      userId: userId as string,
       credentialId: options.credentialId,
       publicKey: options.publicKey,
       browserType: options.browserType,
@@ -215,7 +215,7 @@ export class UserService extends AbstractService {
     return credentialEntity;
   }
 
-  async removeWebauthnCredential(userId: string, browserType?: string) {
+  async removeWebauthnCredential(userId?: string, browserType?: string) {
     const credential = await this.userRepository.findCredentialByUserIdAndBrowserType(userId, browserType || null);
     if (credential) {
       await this.userRepository.removeCredential(credential.wancId);

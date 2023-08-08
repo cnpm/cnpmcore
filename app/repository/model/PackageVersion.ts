@@ -55,7 +55,7 @@ export class PackageVersion extends Bone {
   @Attribute(DataTypes.BOOLEAN)
   isPreRelease: boolean;
 
-  static beforeCreate(instance) {
+  static beforeCreate(instance: { version: string; paddingVersion: string; isPreRelease: boolean }) {
     if (!instance.paddingVersion) {
       const paddingSemVer = new PaddingSemVer(instance.version);
       instance.paddingVersion = paddingSemVer.paddingVersion;

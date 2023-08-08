@@ -34,7 +34,7 @@ export function integrity(plain: string): string {
 }
 
 export function checkIntegrity(plain: string, expectedIntegrity: string): boolean {
-  return ssri.checkData(plain, expectedIntegrity);
+  return !!ssri.checkData(plain, expectedIntegrity);
 }
 
 export function sha512(plain: string): string {

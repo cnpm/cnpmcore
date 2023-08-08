@@ -79,8 +79,8 @@ export class UpdateTotalData {
       for (const row of rows) {
         for (let i = 1; i <= 31; i++) {
           const day = String(i).padStart(2, '0');
-          const field = `d${day}`;
-          const counter = row[field];
+          const field = `d${day}` as keyof typeof row;
+          const counter = row[field] as number;
           if (!counter) continue;
           const dayInt = row.yearMonth * 100 + i;
           if (dayInt === todayInt) download.today += counter;

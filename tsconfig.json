@@ -1,14 +1,16 @@
 {
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
+    "strict": true,
     "target": "ES2021",
     "module": "Node16",
     "moduleResolution": "Node",
     "declaration": false,
     "resolveJsonModule": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
   },
   "exclude": [
+    "test",
     "node_modules"
   ],
 }

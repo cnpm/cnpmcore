@@ -8,7 +8,7 @@ export type BugVersionPackages = Record<string, BugVersionPackage>;
 export class BugVersion {
   private readonly data: BugVersionPackages;
 
-  constructor(data) {
+  constructor(data: BugVersionPackages) {
     this.data = data;
   }
 

@@ -8,13 +8,16 @@ const CREATED_AT = 'createdAt';
 const UPDATED_AT = 'updatedAt';
 const ID = 'id';
 
+type BonePatchInfo = { id?: bigint, updatedAt?: Date, createdAt?: Date };
+type PatchedBone = Bone & BonePatchInfo;
+
 export class ModelConvertor {
-  static async convertEntityToModel<T extends Bone>(entity: object, ModelClazz: EggProtoImplClass<T>, options?): Promise<T> {
+  static async convertEntityToModel<T extends(PatchedBone)>(entity: object, ModelClazz: EggProtoImplClass<T>, options?: object): Promise<T> {
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);
     }
-    const attributes = {};
+    const attributes: Record<string, unknown> = {};
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
@@ -22,17 +25,17 @@ export class ModelConvertor {
       const attributeValue = _.get(entity, entityPropertyName);
       attributes[modelPropertyName] = attributeValue;
     }
-    const model = await (ModelClazz as unknown as typeof Bone).create(attributes, options);
+    const model = await (ModelClazz as unknown as typeof Bone).create(attributes, options) as PatchedBone;
     // auto set entity id to model id
-    entity[ID] = model[ID];
+    (entity as Record<string, unknown>)[ID] = model[ID];
     // use model dates
-    entity[UPDATED_AT] = model[UPDATED_AT];
-    entity[CREATED_AT] = model[CREATED_AT];
+    (entity as Record<string, unknown>)[UPDATED_AT] = model[UPDATED_AT];
+    (entity as Record<string, unknown>)[CREATED_AT] = model[CREATED_AT];
     return model as T;
   }
 
   static convertEntityToChanges<T extends Bone>(entity: object, ModelClazz: EggProtoImplClass<T>) {
-    const changes = {};
+    const changes: Record<string, unknown> = {};
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);
@@ -45,13 +48,13 @@ export class ModelConvertor {
       changes[modelPropertyName] = attributeValue;
     }
     changes[UPDATED_AT] = new Date();
-    entity[UPDATED_AT] = changes[UPDATED_AT];
+    (entity as Record<string, unknown>)[UPDATED_AT] = changes[UPDATED_AT];
     return changes;
   }
 
   // TODO: options is QueryOptions, should let leoric export it to use
   // Find out which attributes changed and set `updatedAt` to now
-  static async saveEntityToModel<T extends Bone>(entity: object, model: T, options?): Promise<boolean> {
+  static async saveEntityToModel<T extends Bone>(entity: object, model: T & PatchedBone, options?: object): Promise<boolean> {
     const ModelClazz = model.constructor as EggProtoImplClass<T>;
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
@@ -64,14 +67,14 @@ export class ModelConvertor {
       // Restricted updates to the primary key
       if (entityPropertyName === ID && model[ID]) continue;
       const attributeValue = _.get(entity, entityPropertyName);
-      model[modelPropertyName] = attributeValue;
+      (model as unknown as Record<string, unknown>)[modelPropertyName] = attributeValue;
     }
 
     // Restricted updates to the UPDATED_AT
     // Leoric will set by default
     model[UPDATED_AT] = undefined;
     await model.save(options);
-    entity[UPDATED_AT] = model[UPDATED_AT];
+    (entity as Record<string, unknown>)[UPDATED_AT] = model[UPDATED_AT];
     return true;
   }
 
@@ -85,7 +88,7 @@ export class ModelConvertor {
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
       const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz as EggProtoImplClass, modelPropertyName);
-      const attributeValue = bone[attributeMeta.propertyName];
+      const attributeValue = bone[attributeMeta.propertyName as keyof Bone];
       _.set(data, entityPropertyName, attributeValue);
     }
     const model = Reflect.construct(entityClazz, [ data ]);

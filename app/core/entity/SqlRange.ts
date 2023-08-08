@@ -38,7 +38,7 @@ export class SqlRange {
       };
     }
     const paddingSemver = new PaddingSemVer(comparator.semver);
-    const operator = OPERATOR_MAP[comparator.operator];
+    const operator = OPERATOR_MAP[comparator.operator as keyof typeof OPERATOR_MAP];
     if (!operator) {
       throw new Error(`unknown operator ${comparator.operator}`);
     }

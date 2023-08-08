@@ -15,9 +15,9 @@ export class BinaryRepository extends AbstractRepository {
     if (binary.id) {
       const model = await this.Binary.findOne({ id: binary.id });
       if (!model) return;
-      await ModelConvertor.saveEntityToModel(binary, model);
+      await ModelConvertor.saveEntityToModel<BinaryModel>(binary as unknown as Record<string, unknown>, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(binary, this.Binary);
+      const model = await ModelConvertor.convertEntityToModel(binary as unknown as Record<string, unknown>, this.Binary);
       this.logger.info('[BinaryRepository:saveBinary:new] id: %s, binaryId: %s', model.id, model.binaryId);
     }
   }

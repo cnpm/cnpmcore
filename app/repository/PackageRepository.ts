@@ -17,6 +17,7 @@ import type { Maintainer as MaintainerModel } from './model/Maintainer';
 import type { User as UserModel } from './model/User';
 import { User as UserEntity } from '../core/entity/User';
 import { AbstractRepository } from './AbstractRepository';
+import { BugVersionPackages } from '../core/entity/BugVersion';
 
 export type PackageManifestType = Pick<PackageJSONType, PackageJSONPickKey> & {
   _id: string;
@@ -63,7 +64,9 @@ export type PackageJSONType = CnpmcorePatchInfo & {
   directories?: DirectoriesType;
   repository?: RepositoryType;
   scripts?: Record<string, string>;
-  config?: Record<string, unknown>;
+  config?: {
+    'bug-versions'?: BugVersionPackages;
+  };
   dependencies?: DepInfo;
   devDependencies?: DepInfo;
   peerDependencies?: DepInfo;
@@ -102,7 +105,7 @@ export type PackageJSONType = CnpmcorePatchInfo & {
   [key: string]: unknown;
 };
 
-type PackageJSONPickKey = 'name' | 'author' | 'bugs' | 'description' | 'homepage' | 'keywords' | 'license' | 'readme' | 'readmeFilename' | 'repository' | 'versions';
+type PackageJSONPickKey = 'name' | 'author' | 'bugs' | 'description' | 'homepage' | 'keywords' | 'license' | 'readme' | 'readmeFilename' | 'repository' | 'versions' | 'contributors';
 
 type CnpmcorePatchInfo = {
   _cnpmcore_publish_time?: Date;

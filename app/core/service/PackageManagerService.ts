@@ -425,7 +425,7 @@ export class PackageManagerService extends AbstractService {
 
   public plusPackageVersionCounter(fullname: string, version: string) {
     // set counter + 1, schedule will store them into database
-    const counters = PackageManagerService.downloadCounters;
+    const counters: Record<string, Record<string, number>> = PackageManagerService.downloadCounters;
     if (!counters[fullname]) counters[fullname] = {};
     counters[fullname][version] = (counters[fullname][version] || 0) + 1;
     // Total
@@ -444,7 +444,7 @@ export class PackageManagerService extends AbstractService {
   // will be call by schedule/SavePackageVersionDownloadCounter.ts
   async savePackageVersionCounters() {
     // { [fullname]: { [version]: number } }
-    const counters = PackageManagerService.downloadCounters;
+    const counters: Record<string, Record<string, number>> = PackageManagerService.downloadCounters;
     const fullnames = Object.keys(counters);
     if (fullnames.length === 0) return;
 
@@ -724,12 +724,15 @@ export class PackageManagerService extends AbstractService {
     const fieldsFromLatestManifest = [
       'author', 'bugs', 'contributors', 'description', 'homepage', 'keywords', 'license',
       'readmeFilename', 'repository',
-    ];
+    ] as const;
     // the latest version metas
     for (const field of fieldsFromLatestManifest) {
-      fullManifests[field] = latestManifest[field];
+      if (latestManifest[field]) {
+        (fullManifests as Record<string, unknown>)[field] = latestManifest[field];
+      }
     }
   }
+
 
   private async _setPackageDistTagsAndLatestInfos(pkg: Package, fullManifests: PackageManifestType, abbreviatedManifests: AbbreviatedPackageManifestType) {
     const distTags = await this._listPackageDistTags(pkg);
