@@ -106,19 +106,23 @@ export class UserService extends AbstractService {
     return { code: LoginResultCode.Success, user, token };
   }
 
-  async ensureTokenByUser({ name, email, password = crypto.randomUUID(), ip }: Optional<CreateUser, 'password'>) {
+  async findOrCreateUser({ name, email, ip, password = crypto.randomUUID() }: Optional<CreateUser, 'password'>) {
     let user = await this.userRepository.findUserByName(name);
     if (!user) {
       const createRes = await this.create({
         name,
         email,
-        // Authentication via sso
-        // should use token instead of password
         password,
         ip,
       });
       user = createRes.user;
     }
+
+    return user;
+  }
+
+  async ensureTokenByUser(opts: Optional<CreateUser, 'password'>) {
+    const user = await this.findOrCreateUser(opts);
     const token = await this.createToken(user.userId);
     return { user, token };
   }
