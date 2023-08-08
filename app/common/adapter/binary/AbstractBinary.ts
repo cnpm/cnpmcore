@@ -17,6 +17,8 @@ export type FetchResult = {
   nextParams?: any;
 };
 
+const platforms = [ 'darwin', 'linux', 'win32' ] as const;
+
 export const BINARY_ADAPTER_ATTRIBUTE = Symbol('BINARY_ADAPTER_ATTRIBUTE');
 
 export abstract class AbstractBinary {
@@ -74,7 +76,7 @@ export abstract class AbstractBinary {
 
   protected listNodePlatforms() {
     // https://nodejs.org/api/os.html#osplatform
-    return [ 'darwin', 'linux', 'win32' ];
+    return platforms;
   }
 
   protected listNodeArchs(binaryConfig?: BinaryTaskConfig) {
@@ -87,11 +89,11 @@ export abstract class AbstractBinary {
     };
   }
 
-  protected listNodeLibcs() {
+  protected listNodeLibcs(): Record<typeof platforms[number], string[]> {
     // https://github.com/lovell/detect-libc/blob/master/lib/detect-libc.js#L42
     return {
-      linux: [ 'glibc', 'musl' ],
       darwin: [ 'unknown' ],
+      linux: [ 'glibc', 'musl' ],
       win32: [ 'unknown' ],
     };
   }

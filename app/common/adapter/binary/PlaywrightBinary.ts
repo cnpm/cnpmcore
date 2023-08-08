@@ -189,7 +189,7 @@ const DOWNLOAD_PATHS = {
   'android': {
     '<unknown>': 'builds/android/%s/android.zip',
   },
-};
+} as const;
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Playwright)
@@ -215,7 +215,7 @@ export class PlaywrightBinary extends AbstractBinary {
         .filter(version => version.match(/^(?:\d+\.\d+\.\d+)(?:-beta-\d+)?$/))
         // select recently update 20 items
         .slice(-20);
-      const browsers: { name: string; revision: string; browserVersion: string; revisionOverrides?: Record<string, string> }[] = [];
+      const browsers: { name: keyof typeof DOWNLOAD_PATHS; revision: string; browserVersion: string; revisionOverrides?: Record<string, string> }[] = [];
       await Promise.all(
         packageVersions.map(version =>
           this.requestJSON(

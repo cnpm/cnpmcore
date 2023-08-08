@@ -29,7 +29,7 @@ export class PackageTagController extends AbstractController {
   async showTags(@HTTPParam() fullname: string) {
     const packageEntity = await this.getPackageEntityByFullname(fullname);
     const tagEntities = await this.packageRepository.listPackageTags(packageEntity.packageId);
-    const tags = {};
+    const tags: Record<string, string> = {};
     for (const entity of tagEntities) {
       tags[entity.tag] = entity.version;
     }

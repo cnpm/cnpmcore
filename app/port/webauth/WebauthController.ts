@@ -22,6 +22,8 @@ import {
   verifyRegistrationResponse,
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
+  VerifyRegistrationResponseOpts,
+  VerifyAuthenticationResponseOpts,
 } from '@simplewebauthn/server';
 import type { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/typescript-types';
 import { LoginResultCode, WanStatusCode } from '../../common/enum/User';
@@ -42,6 +44,17 @@ type LoginPrepareResult = {
   wanStatus: number;
   wanCredentialRegiOption?: PublicKeyCredentialCreationOptionsJSON;
   wanCredentialAuthOption?: PublicKeyCredentialRequestOptionsJSON;
+};
+
+type LoginImplementRequest = {
+  accData: {
+    username: string;
+    password: string;
+  };
+  wanCredentialRegiData: unknown;
+  wanCredentialAuthData: unknown;
+  needUnbindWan: boolean;
+
 };
 
 const UserRule = Type.Object({
@@ -102,7 +115,7 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login/request/session/:sessionId',
     method: HTTPMethodEnum.POST,
   })
-  async loginImplement(@Context() ctx: EggContext, @HTTPParam() sessionId: string, @HTTPBody() loginImplementRequest) {
+  async loginImplement(@Context() ctx: EggContext, @HTTPParam() sessionId: string, @HTTPBody() loginImplementRequest: LoginImplementRequest) {
     ctx.tValidate(SessionRule, { sessionId });
     const sessionToken = await this.cacheAdapter.get(sessionId);
     if (typeof sessionToken !== 'string') {
@@ -123,7 +136,7 @@ export class WebauthController extends MiddlewareController {
       }
     }
 
-    const browserType = getBrowserTypeForWebauthn(ctx.headers['user-agent']);
+    const browserType = getBrowserTypeForWebauthn(ctx.headers['user-agent']) || undefined;
     const expectedChallenge = (await this.cacheAdapter.get(`${sessionId}_challenge`)) || '';
     const expectedOrigin = this.config.cnpmcore.registry;
     const expectedRPID = new URL(expectedOrigin).hostname;
@@ -139,7 +152,7 @@ export class WebauthController extends MiddlewareController {
       }
       try {
         const verification = await verifyAuthenticationResponse({
-          response: wanCredentialAuthData,
+          response: wanCredentialAuthData as VerifyAuthenticationResponseOpts['response'],
           expectedChallenge,
           expectedOrigin,
           expectedRPID,
@@ -193,7 +206,7 @@ export class WebauthController extends MiddlewareController {
       user = result.user;
       // need unbind webauthn credential
       if (needUnbindWan) {
-        await this.userService.removeWebauthnCredential(user.userId, browserType);
+        await this.userService.removeWebauthnCredential(user?.userId, browserType);
       }
     } else {
       // others: LoginResultCode.UserNotFound
@@ -215,7 +228,7 @@ export class WebauthController extends MiddlewareController {
     if (enableWebAuthn && isSupportWebAuthn && wanCredentialRegiData) {
       try {
         const verification = await verifyRegistrationResponse({
-          response: wanCredentialRegiData,
+          response: wanCredentialRegiData as VerifyRegistrationResponseOpts['response'],
           expectedChallenge,
           expectedOrigin,
           expectedRPID,
@@ -225,7 +238,7 @@ export class WebauthController extends MiddlewareController {
           const { credentialPublicKey, credentialID } = registrationInfo;
           const base64CredentialPublicKey = base64url.encode(Buffer.from(new Uint8Array(credentialPublicKey)));
           const base64CredentialID = base64url.encode(Buffer.from(new Uint8Array(credentialID)));
-          this.userService.createWebauthnCredential(user.userId, {
+          this.userService.createWebauthnCredential(user?.userId, {
             credentialId: base64CredentialID,
             publicKey: base64CredentialPublicKey,
             browserType,

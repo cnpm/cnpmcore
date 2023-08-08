@@ -2,5 +2,8 @@
   "name": "cnpmcore-repository",
   "eggModule": {
     "name": "cnpmcoreRepository"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.196"
   }
 }

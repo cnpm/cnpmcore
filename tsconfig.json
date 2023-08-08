@@ -6,7 +6,9 @@
     "moduleResolution": "Node",
     "declaration": false,
     "resolveJsonModule": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
   },
   "exclude": [
     "node_modules"

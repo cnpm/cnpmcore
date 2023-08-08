@@ -3,7 +3,7 @@ import { RegistryType } from '../common/enum/Registry';
 import semver from 'semver';
 import npa from 'npm-package-arg';
 import { HookType } from '../common/enum/Hook';
-import binaryConfig from '../../config/binaries';
+import binaryConfig, { BinaryName } from '../../config/binaries';
 
 export const Name = Type.String({
   transform: [ 'trim' ],
@@ -151,8 +151,8 @@ export function patchAjv(ajv: any) {
   });
   ajv.addFormat('binary-name', {
     type: 'string',
-    validate: (binaryName: string) => {
-      return !!binaryConfig[binaryName];
+    validate: (binaryName: BinaryName) => {
+      return binaryConfig[binaryName];
     },
   });
   ajv.addFormat('semver-version-array', {

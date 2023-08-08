@@ -6,7 +6,7 @@
   },
   "exclude": [
     "node_modules",
-    "test"
+    "test",
   ],
   "include": [
     "app/**/*.ts",

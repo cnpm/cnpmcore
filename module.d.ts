@@ -4,4 +4,7 @@ declare module "egg" {
   export interface EggContextModule {
     cnpmcoreCore: ContextCnpmcore;
   }
+};
+
+declare module 'ssri' {
 }

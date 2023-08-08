@@ -18,7 +18,7 @@ import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
-import { PackageJSONType, PackageRepository } from '../../repository/PackageRepository';
+import { PackageJSONType, PackageManifestType, PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { UserRepository } from '../../repository/UserRepository';
 import { Task, SyncPackageTaskOptions, CreateSyncPackageTask } from '../entity/Task';
@@ -484,7 +484,7 @@ export class PackageSyncerService extends AbstractService {
     //   { name: 'jasonlaster11', email: 'jason.laster.11@gmail.com' }
     // ],
     let maintainers = data.maintainers;
-    const maintainersMap = {};
+    const maintainersMap: Record<string, PackageManifestType['maintainers']> = {};
     const users: User[] = [];
     let changedUserCount = 0;
     if (!Array.isArray(maintainers) || maintainers.length === 0) {
@@ -619,7 +619,7 @@ export class PackageSyncerService extends AbstractService {
           }
           if (!isEqual(remoteItemValue, existsItem[key])) {
             diffMeta[key] = remoteItemValue;
-          } else if (!ignoreInAbbreviated.includes(key) && existsAbbreviatedItem && !isEqual(remoteItemValue, existsAbbreviatedItem[key])) {
+          } else if (!ignoreInAbbreviated.includes(key) && existsAbbreviatedItem && !isEqual(remoteItemValue, (existsAbbreviatedItem as Record<string, unknown>)[key])) {
             // should diff exists abbreviated item too
             diffMeta[key] = remoteItemValue;
           }

@@ -105,13 +105,13 @@ const WHITE_FILENAME_CONTENT_TYPES = {
   '.eslintignore': PLAIN_TEXT,
   '.jshintrc': 'application/json',
   '.eslintrc': 'application/json',
-};
+} as const;
 
 export function mimeLookup(filepath: string) {
   const filename = path.basename(filepath).toLowerCase();
   if (filename.endsWith('.ts')) return PLAIN_TEXT;
   if (filename.endsWith('.lock')) return PLAIN_TEXT;
   return mime.lookup(filename) ||
-    WHITE_FILENAME_CONTENT_TYPES[filename] ||
+    WHITE_FILENAME_CONTENT_TYPES[filename as keyof typeof WHITE_FILENAME_CONTENT_TYPES] ||
     DEFAULT_CONTENT_TYPE;
 }

@@ -103,7 +103,7 @@ export class SavePackageVersionController extends AbstractController {
       const [ scope, name ] = getScopeAndName(fullname);
       const pkg = await this.packageRepository.findPackage(scope, name);
       if (!pkg) {
-        const errors = (validateResult.errors || validateResult.warnings).join(', ');
+        const errors = (validateResult.errors || validateResult.warnings || []).join(', ');
         throw new UnprocessableEntityError(`package.name invalid, errors: ${errors}`);
       }
     }
@@ -184,8 +184,9 @@ export class SavePackageVersionController extends AbstractController {
     if (this.config.cnpmcore.strictValidateTarballPkg) {
       const tarballPkg = await extractPackageJSON(tarballBytes);
       const versionManifest = pkg.versions[tarballPkg.version];
-      const diffKeys = STRICT_CHECK_TARBALL_FIELDS.filter(key => {
-        return !isEqual(tarballPkg[key], versionManifest[key]);
+      const diffKeys = STRICT_CHECK_TARBALL_FIELDS.filter((key) => {
+        const targetKey = key as unknown as keyof typeof versionManifest;
+        return !isEqual(tarballPkg[key], versionManifest[targetKey]);
       });
       if (diffKeys.length > 0) {
         throw new UnprocessableEntityError(`${diffKeys} mismatch between tarball and manifest`);

@@ -2,5 +2,9 @@
   "name": "cnpmcore-core",
   "eggModule": {
     "name": "cnpmcoreCore"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.196",
+    "@types/npm-package-arg": "^6.1.1"
   }
 }

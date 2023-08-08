@@ -6,6 +6,16 @@ import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesSt
 
 const MAX_LIMIT = 10000;
 
+type FetchResults = {
+  results: {
+    seq: number;
+    type: string;
+    id: string;
+    changes: Record<string, string>[];
+    gmt_modified: Date,
+  }[];
+};
+
 @SingletonProto()
 @RegistryChangesStream(RegistryType.Cnpmjsorg)
 export class CnpmjsorgChangesStream extends AbstractChangeStream {
@@ -18,13 +28,13 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
     return since;
   }
 
-  private async tryFetch(registry: Registry, since: string, limit = 1000) {
+  private async tryFetch(registry: Registry, since: string, limit = 1000): Promise<{ data: FetchResults }> {
     if (limit > MAX_LIMIT) {
       throw new E500(`limit too large, current since: ${since}, limit: ${limit}`);
     }
     const db = this.getChangesStreamUrl(registry, since, limit);
     // json mode
-    const res = await this.httpclient.request(db, {
+    const res = await this.httpclient.request<FetchResults>(db, {
       followRedirect: true,
       timeout: 30000,
       dataType: 'json',
