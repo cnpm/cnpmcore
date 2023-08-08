@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.40.0](https://github.com/cnpm/cnpmcore/compare/v3.39.5...v3.40.0) (2023-08-08)
+
+
+### Features
+
+* signup on auth ([#567](https://github.com/cnpm/cnpmcore/issues/567)) ([c710600](https://github.com/cnpm/cnpmcore/commit/c7106008d9e5da1760919010899f7a0e24acd051))
+
 ## [3.39.5](https://github.com/cnpm/cnpmcore/compare/v3.39.4...v3.39.5) (2023-08-08)
 
 
