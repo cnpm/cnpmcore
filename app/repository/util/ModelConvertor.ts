@@ -12,7 +12,7 @@ type BonePatchInfo = { id?: bigint, updatedAt?: Date, createdAt?: Date };
 type PatchedBone = Bone & BonePatchInfo;
 
 export class ModelConvertor {
-  static async convertEntityToModel<T extends (PatchedBone)>(entity: object, ModelClazz: EggProtoImplClass<T>, options?: object): Promise<T> {
+  static async convertEntityToModel<T extends(PatchedBone)>(entity: object, ModelClazz: EggProtoImplClass<T>, options?: object): Promise<T> {
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);

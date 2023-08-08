@@ -185,7 +185,7 @@ export class SavePackageVersionController extends AbstractController {
     if (this.config.cnpmcore.strictValidateTarballPkg) {
       const tarballPkg = await extractPackageJSON(tarballBytes);
       const versionManifest = pkg.versions[tarballPkg.version];
-      const diffKeys = STRICT_CHECK_TARBALL_FIELDS.filter((key) => {
+      const diffKeys = STRICT_CHECK_TARBALL_FIELDS.filter(key => {
         const targetKey = key as unknown as keyof typeof versionManifest;
         return !isEqual(tarballPkg[key], versionManifest[targetKey]);
       });

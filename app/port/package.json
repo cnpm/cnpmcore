@@ -2,11 +2,5 @@
   "name": "cnpmcore-port",
   "eggModule": {
     "name": "cnpmcorePort"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.14.196",
-    "@types/npm-package-arg": "^6.1.1",
-    "@types/ssri": "^7.1.1",
-    "@types/validate-npm-package-name": "^4.0.0"
   }
 }
