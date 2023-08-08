@@ -21,6 +21,7 @@ import { Static, Type } from '@sinclair/typebox';
 import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING, extractPackageJSON } from '../../../common/PackageUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { PackageVersion as PackageVersionEntity } from '../../../core/entity/PackageVersion';
 import {
   VersionRule,
   TagWithVersionRule,
@@ -206,7 +207,7 @@ export class SavePackageVersionController extends AbstractController {
 
     const registry = await this.registryManagerService.ensureSelfRegistry();
 
-    let packageVersionEntity;
+    let packageVersionEntity: PackageVersionEntity | undefined;
     const lockRes = await this.cacheAdapter.usingLock(`${pkg.name}:publish`, 60, async () => {
       packageVersionEntity = await this.packageManagerService.publish({
         scope,
@@ -231,12 +232,12 @@ export class SavePackageVersionController extends AbstractController {
     }
 
     this.logger.info('[package:version:add] %s@%s, packageVersionId: %s, tag: %s, userId: %s',
-      packageVersion.name, packageVersion.version, packageVersionEntity.packageVersionId,
-      tagWithVersion.tag, user.userId);
+      packageVersion.name, packageVersion.version, packageVersionEntity?.packageVersionId,
+      tagWithVersion.tag, user?.userId);
     ctx.status = 201;
     return {
       ok: true,
-      rev: `${packageVersionEntity.id}-${packageVersionEntity.packageVersionId}`,
+      rev: `${packageVersionEntity?.id}-${packageVersionEntity?.packageVersionId}`,
     };
   }
 

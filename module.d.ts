@@ -5,6 +5,3 @@ declare module "egg" {
     cnpmcoreCore: ContextCnpmcore;
   }
 };
-
-declare module 'ssri' {
-}
