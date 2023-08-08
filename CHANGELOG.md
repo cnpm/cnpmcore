@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.39.5](https://github.com/cnpm/cnpmcore/compare/v3.39.4...v3.39.5) (2023-08-08)
+
+
+### Bug Fixes
+
+* noImplicitAny ts ([#568](https://github.com/cnpm/cnpmcore/issues/568)) ([1932bb9](https://github.com/cnpm/cnpmcore/commit/1932bb9713187bcd4d7e0b0dde410cb0118ab607))
+
 ## [3.39.4](https://github.com/cnpm/cnpmcore/compare/v3.39.3...v3.39.4) (2023-08-04)
 
 
