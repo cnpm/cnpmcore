@@ -131,15 +131,12 @@ export class TokenController extends AbstractController {
     return { objects, total: objects.length, urls: {} };
   }
 
-  private async ensureWebUser() {
+  private async ensureWebUser(ip = '') {
     const userRes = await this.authAdapter.ensureCurrentUser();
     if (!userRes?.name || !userRes?.email) {
       throw new ForbiddenError('need login first');
     }
-    const user = await this.userService.findUserByName(userRes.name);
-    if (!user?.userId) {
-      throw new ForbiddenError('invalid user info');
-    }
+    const user = await this.userService.findOrCreateUser({ name: userRes.name, email: userRes.email, ip });
     return user;
   }
 
@@ -155,7 +152,7 @@ export class TokenController extends AbstractController {
   // 3. Need to implement ensureCurrentUser method in AuthAdapter, or pass in this.user
   async createGranularToken(@Context() ctx: EggContext, @HTTPBody() tokenOptions: GranularTokenOptions) {
     ctx.tValidate(GranularTokenOptionsRule, tokenOptions);
-    const user = await this.ensureWebUser();
+    const user = await this.ensureWebUser(ctx.ip);
 
     // 生成 Token
     const { name, description, allowedPackages, allowedScopes, cidr_whitelist, automation, readonly, expires } = tokenOptions;
