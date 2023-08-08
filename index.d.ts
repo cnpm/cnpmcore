@@ -6,7 +6,6 @@ declare module 'fs-cnpm' {
   }
 }
 
-
 declare module 'ssri' {
   export interface Integrity {
     algorithm: string;
