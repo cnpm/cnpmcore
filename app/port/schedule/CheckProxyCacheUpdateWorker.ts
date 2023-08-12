@@ -38,7 +38,6 @@ export class CheckProxyCacheUpdateWorker {
               fullname: item.fullname,
               version: item.version,
               fileType: item.fileType,
-              filePath: item.filePath,
             });
             this.logger.info('[CheckProxyCacheUpdateWorker.subscribe:createTask][%s] taskId: %s, targetName: %s',
               pageIndex, task.taskId, task.targetName);

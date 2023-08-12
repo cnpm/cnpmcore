@@ -1,4 +1,4 @@
-import { InternalServerError, ForbiddenError, HttpError } from 'egg-errors';
+import { InternalServerError, ForbiddenError, HttpError, NotFoundError } from 'egg-errors';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { EggHttpClient } from 'egg';
 import { valid as semverValid } from 'semver';
@@ -44,7 +44,7 @@ export class ProxyCacheService extends AbstractService {
   @Inject()
   private readonly taskService: TaskService;
 
-  async getPackageVersionTarAndTempFilePath(fullname: string, url: string): Promise<{ tgzBuffer:Buffer| null }> {
+  async getPackageVersionTarBuffer(fullname: string, url: string): Promise<Buffer| null> {
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
       throw new ForbiddenError(`stop proxy by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`);
     }
@@ -52,16 +52,10 @@ export class ProxyCacheService extends AbstractService {
     const { tmpfile } = await downloadToTempfile(this.httpclient, this.config.dataDir, requestTgzURL);
     const tgzBuffer = await readFile(tmpfile);
     await rm(tmpfile, { force: true });
-    return { tgzBuffer };
+    return tgzBuffer;
   }
 
   async getPackageManifest(fullname: string, fileType: DIST_NAMES.FULL_MANIFESTS| DIST_NAMES.ABBREVIATED_MANIFESTS): Promise<AbbreviatedPackageManifestType|PackageManifestType> {
-    if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
-      const error = `stop cache by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`;
-      this.logger.info('[ProxyCacheService.cacheManifests:fail-block-list] targetName: %s, %s',
-        fullname, error);
-      throw new ForbiddenError('this package is in block list');
-    }
     const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType))?.filePath;
     if (cachedStoreKey) {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
@@ -75,26 +69,22 @@ export class ProxyCacheService extends AbstractService {
           // JSON parse error
           await this.nfsAdapter.remove(cachedStoreKey);
           await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
-          throw new InternalServerError('manifest in NFS JSON parse error');
+          throw new InternalServerError('manifest JSON in NFS parse error');
         }
         return nfsPkgManifgest;
       }
+      await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
+      throw new NotFoundError('can not found manifest in NFS.');
     }
 
-    const { storeKey, manifest } = await this.getSourceManifestAndCache<typeof fileType>(fullname, fileType);
-    const cachedFiles = await ProxyCache.create({ fullname, fileType, filePath: storeKey });
-    this.proxyCacheRepository.saveProxyCache(cachedFiles);
+    const { manifest } = await this.getSourceManifestAndCache<typeof fileType>(fullname, fileType);
+    const cachedFiles = ProxyCache.create({ fullname, fileType });
+    await this.proxyCacheRepository.saveProxyCache(cachedFiles);
     return manifest as AbbreviatedPackageManifestType|PackageManifestType;
   }
 
   // used by GET /:fullname/:versionOrTag
   async getPackageVersionManifest(fullname: string, fileType: DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST, versionOrTag: string): Promise<AbbreviatedPackageJSONType|PackageJSONType> {
-    if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
-      const error = `stop cache by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`;
-      this.logger.info('[ProxyCacheService.cacheManifests:fail-block-list] targetName: %s, %s',
-        fullname, error);
-      throw new ForbiddenError('this package is in block list');
-    }
     let version;
     if (semverValid(versionOrTag)) {
       version = versionOrTag;
@@ -119,9 +109,9 @@ export class ProxyCacheService extends AbstractService {
         }
       }
     }
-    const { storeKey, manifest } = await this.getSourceManifestAndCache(fullname, fileType, versionOrTag);
-    const cachedFiles = await ProxyCache.create({ fullname, fileType, filePath: storeKey, version });
-    this.proxyCacheRepository.saveProxyCache(cachedFiles);
+    const { manifest } = await this.getSourceManifestAndCache(fullname, fileType, versionOrTag);
+    const cachedFiles = ProxyCache.create({ fullname, fileType, version });
+    await this.proxyCacheRepository.saveProxyCache(cachedFiles);
     return manifest as AbbreviatedPackageJSONType|PackageJSONType;
   }
 
@@ -213,7 +203,7 @@ export class ProxyCacheService extends AbstractService {
     } catch (error) {
       task.error = error;
       logs.push(`[${isoNow()}] ❌ ${task.error}`);
-      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname}-${fileType} ${version} ❌❌❌❌❌`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname}-${fileType} ${version ?? ''} ❌❌❌❌❌`);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       this.logger.info('[ProxyCacheService.executeTask:fail] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);

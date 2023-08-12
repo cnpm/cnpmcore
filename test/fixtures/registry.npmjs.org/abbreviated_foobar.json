@@ -1,0 +1,42 @@
+{
+    "dist-tags": {
+        "latest": "1.1.0"
+    },
+    "modified": "2022-01-26T20:31:13.648Z",
+    "name": "foobar",
+    "versions": {
+        "1.0.0": {
+            "name": "foobar",
+            "version": "1.0.0",
+            "dependencies": {},
+            "devDependencies": {},
+            "directories": {},
+            "dist": {
+                "shasum": "116ff82f61ce1e9545c5ba302ead651f5bb31247",
+                "tarball": "https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz",
+                "size": 10240,
+                "integrity": "sha512-ojyo6LOnMwMDfdEjVgzMpZ4UdV4iXauePAsYEZU746H95qF/PDQ8Q8lrACnuTp/5otZPabr2mFivvLacbXLyMg=="
+            },
+            "engines": {
+                "node": "~0.4.12"
+            }
+        },
+        "1.1.0": {
+            "name": "foobar",
+            "version": "1.1.0",
+            "dependencies": {},
+            "devDependencies": {},
+            "directories": {},
+            "dist": {
+                "shasum": "0b76cc4e6c5b8d592db598fb870414c290511df2",
+                "tarball": "https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz",
+                "size": 10240,
+                "integrity": "sha512-Tgp9F/BvfxSOVik+cgMFLn5GUo0mjOrUeWsSwa1TgjZtuglfpIUpP5OaIYbyI8R2q8NVcnfYRGd5OuNxVC+o+g=="
+            },
+            "engines": {
+                "node": "~0.4.12"
+            }
+        }
+    },
+    "_source_registry_name": "default"
+}

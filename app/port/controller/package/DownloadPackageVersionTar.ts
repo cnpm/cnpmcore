@@ -111,7 +111,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
   }
 
   async #getTgzBuffer(ctx: EggContext, fullname: string, version: string) {
-    const { tgzBuffer } = await this.proxyCacheService.getPackageVersionTarAndTempFilePath(fullname, ctx.url);
+    const tgzBuffer = await this.proxyCacheService.getPackageVersionTarBuffer(fullname, ctx.url);
     const task = await this.packageSyncerService.createTask(fullname, {
       authorIp: ctx.ip,
       authorId: `pid_${process.pid}`,
