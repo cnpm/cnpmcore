@@ -1,5 +1,6 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 import { DataTypes, Bone } from 'leoric';
+import { DIST_NAMES } from '../../core/entity/Package';
 
 @Model()
 export class ProxyCache extends Bone {
@@ -19,7 +20,7 @@ export class ProxyCache extends Bone {
   fullname: string;
 
   @Attribute(DataTypes.STRING(30))
-  fileType: string;
+  fileType: DIST_NAMES;
 
   @Attribute(DataTypes.STRING(512), {
     unique: true,

@@ -7,6 +7,8 @@ import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../common/constants';
 import dayjs from '../../common/dayjs';
 import { HookEvent } from './HookEvent';
 import { DIST_NAMES } from './Package';
+import { isPkgManifest } from '../service/ProxyCacheService';
+import { InternalServerError } from 'egg-errors';
 
 export const HOST_NAME = os.hostname();
 export const PID = process.pid;
@@ -46,7 +48,6 @@ export type UpdateProxyCacheTaskOptions = {
   fullname: string,
   version?: string,
   fileType: DIST_NAMES,
-  filePath: string
 };
 
 export interface CreateHookTaskData extends TaskBaseData {
@@ -253,6 +254,10 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
   }
 
   public static createUpdateProxyCache(targetName: string, options: UpdateProxyCacheTaskOptions):CreateUpdateProxyCacheTask {
+    if (!isPkgManifest(options.fileType)) {
+      throw new InternalServerError('should not update package version manifest.');
+    }
+    const filePath = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${options.fullname}/${options.fileType}`;
     const data = {
       type: TaskType.UpdateProxyCache,
       state: TaskState.Waiting,
@@ -264,7 +269,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
         fullname: options.fullname,
         version: options?.version,
         fileType: options.fileType,
-        filePath: options.filePath,
+        filePath,
       },
     };
     const task = this.create(data);

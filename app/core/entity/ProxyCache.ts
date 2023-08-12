@@ -1,14 +1,15 @@
 import { Entity, EntityData } from './Entity';
 import { EasyData } from '../util/EntityUtil';
 import { DIST_NAMES } from './Package';
+import { isPkgManifest } from '../service/ProxyCacheService';
+import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../common/constants';
 interface ProxyCacheData extends EntityData {
   fullname: string;
   fileType: DIST_NAMES;
-  filePath: string;
   version?: string;
 }
 
-export type CreateProxyCacheData = Omit<EasyData<ProxyCacheData, 'id'>, 'id'>;
+export type CreateProxyCacheData = Omit<EasyData<ProxyCacheData, 'id'>, 'id'| 'filePath'>;
 
 export class ProxyCache extends Entity {
   readonly fullname: string;
@@ -20,8 +21,12 @@ export class ProxyCache extends Entity {
     super(data);
     this.fullname = data.fullname;
     this.fileType = data.fileType;
-    this.filePath = data.filePath;
     this.version = data.version;
+    if (isPkgManifest(data.fileType)) {
+      this.filePath = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${data.fullname}/${data.fileType}`;
+    } else {
+      this.filePath = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${data.fullname}/${data.version}/${data.fileType}`;
+    }
   }
 
   public static create(data: CreateProxyCacheData): ProxyCache {
