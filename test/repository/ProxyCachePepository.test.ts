@@ -3,7 +3,6 @@ import { app } from 'egg-mock/bootstrap';
 import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository';
 import { ProxyCache } from '../../app/core/entity/ProxyCache';
 import { DIST_NAMES } from '../../app/core/entity/Package';
-import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../app/common/constants';
 
 describe('test/repository/ProxyCacheRepository.test.ts', () => {
   let proxyCacheRepository: ProxyCacheRepository;
@@ -14,7 +13,6 @@ describe('test/repository/ProxyCacheRepository.test.ts', () => {
     proxyCacheModel = await proxyCacheRepository.saveProxyCache(ProxyCache.create({
       fullname: 'foo-bar',
       fileType: DIST_NAMES.FULL_MANIFESTS,
-      filePath: `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foo-bar/${DIST_NAMES.FULL_MANIFESTS}`,
     }));
   });
 
@@ -24,7 +22,6 @@ describe('test/repository/ProxyCacheRepository.test.ts', () => {
       const newProxyCache = await proxyCacheRepository.saveProxyCache(ProxyCache.create({
         fullname: 'foo-bar-new',
         fileType: DIST_NAMES.FULL_MANIFESTS,
-        filePath: `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foo-bar-new/${DIST_NAMES.FULL_MANIFESTS}`,
       }));
       assert(newProxyCache);
       assert(newProxyCache.fullname === 'foo-bar-new');
