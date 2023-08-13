@@ -1,20 +1,22 @@
 import { InternalServerError, ForbiddenError, HttpError, NotFoundError } from 'egg-errors';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { EggHttpClient } from 'egg';
+import { readFile, rm } from 'node:fs/promises';
 import { valid as semverValid } from 'semver';
-import { downloadToTempfile } from '../../common/FileUtil';
-import { NPMRegistry } from '../../common/adapter/NPMRegistry';
-import { ProxyCache } from '../entity/ProxyCache';
-import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskService } from './TaskService';
-import { readFile, rm } from 'node:fs/promises';
+import { CacheService } from './CacheService';
+import { NPMRegistry } from '../../common/adapter/NPMRegistry';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
-import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../common/constants';
-import { DIST_NAMES } from '../entity/Package';
-import type { AbbreviatedPackageManifestType, AbbreviatedPackageJSONType, PackageManifestType, PackageJSONType } from '../../repository/PackageRepository';
-import { TaskType, TaskState } from '../../common/enum/Task';
+import { ProxyCache } from '../entity/ProxyCache';
 import { Task, UpdateProxyCacheTaskOptions, CreateUpdateProxyCacheTask } from '../entity/Task';
+import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
+import { TaskType, TaskState } from '../../common/enum/Task';
+import { downloadToTempfile } from '../../common/FileUtil';
+import { calculateIntegrity } from '../../common/PackageUtil';
+import { DIST_NAMES } from '../entity/Package';
+import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../common/constants';
+import type { AbbreviatedPackageManifestType, AbbreviatedPackageJSONType, PackageManifestType, PackageJSONType } from '../../repository/PackageRepository';
 
 function isoNow() {
   return new Date().toISOString();
@@ -24,8 +26,10 @@ export function isPkgManifest(fileType: DIST_NAMES) {
   return fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED_MANIFESTS;
 }
 
-type GetSourceManifestAndCacheReturnType<T> = { storeKey: string, proxyBytes: Buffer,
-  manifest: T extends DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST ? AbbreviatedPackageJSONType| PackageJSONType :
+type GetSourceManifestAndCacheReturnType<T> = {
+  storeKey: string,
+  proxyBytes: Buffer,
+  manifest: T extends DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST ? AbbreviatedPackageJSONType | PackageJSONType :
     T extends DIST_NAMES.FULL_MANIFESTS | DIST_NAMES.ABBREVIATED_MANIFESTS ? AbbreviatedPackageManifestType|PackageManifestType : never;
 };
 
@@ -43,6 +47,8 @@ export class ProxyCacheService extends AbstractService {
   private readonly proxyCacheRepository: ProxyCacheRepository;
   @Inject()
   private readonly taskService: TaskService;
+  @Inject()
+  private readonly cacheService: CacheService;
 
   async getPackageVersionTarBuffer(fullname: string, url: string): Promise<Buffer| null> {
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
@@ -183,18 +189,19 @@ export class ProxyCacheService extends AbstractService {
     const logs: string[] = [];
     const fullname = (task as CreateUpdateProxyCacheTask).data.fullname;
     const { fileType, version } = (task as CreateUpdateProxyCacheTask).data;
+    let cacheBytes;
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start update "${fullname}-${fileType}" 🚧🚧🚧🚧🚧`);
     try {
       if (isPkgManifest(fileType)) {
         const cachedFiles = await this.proxyCacheRepository.findProxyCache(fullname, fileType);
         if (!cachedFiles) throw new Error('task params error, can not found record in repo.');
-        await this.getSourceManifestAndCache<typeof fileType>(fullname, fileType);
+        cacheBytes = (await this.getSourceManifestAndCache<typeof fileType>(fullname, fileType)).proxyBytes;
         ProxyCache.update(cachedFiles);
         await this.proxyCacheRepository.saveProxyCache(cachedFiles);
       } else {
         task.error = 'Unacceptable file type.';
         logs.push(`[${isoNow()}] ❌ ${task.error}`);
-        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname}-${fileType} ${version} ❌❌❌❌❌`);
+        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname}-${fileType} ${version ?? ''} ❌❌❌❌❌`);
         await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
         this.logger.info('[ProxyCacheService.executeTask:fail] taskId: %s, targetName: %s, %s',
           task.taskId, task.targetName, task.error);
@@ -210,6 +217,13 @@ export class ProxyCacheService extends AbstractService {
       return;
     }
     logs.push(`[${isoNow()}] 🟢 Update Success.`);
+    const isFullManifests = fileType === DIST_NAMES.FULL_MANIFESTS;
+    const cachedKey = await this.cacheService.getPackageEtag(fullname, isFullManifests);
+    if (cachedKey) {
+      const { shasum: etag } = await calculateIntegrity(cacheBytes);
+      await this.cacheService.savePackageEtagAndManifests(fullname, isFullManifests, etag, cacheBytes);
+      logs.push(`[${isoNow()}] 🟢 Update Cache Success.`);
+    }
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
   }
 

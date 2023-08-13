@@ -3,6 +3,7 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { BugVersion } from '../../../../app/core/entity/BugVersion';
 import { BugVersionService } from '../../../../app/core/service/BugVersionService';
+import { SyncMode } from '../../../../app/common/constants';
 
 describe('test/port/controller/package/ShowPackageVersionController.test.ts', () => {
   let publisher;
@@ -367,6 +368,23 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .set('accept', 'application/vnd.npm.install-v1+json')
         .expect(200);
       assert(res.body._source_registry_name === 'self');
+    });
+
+    it('should read package version manifest from source in proxy mode', async () => {
+      mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
+      const data = await TestUtil.readJSONFile(TestUtil.getFixtures('registry.npmjs.org/foobar/1.0.0/abbreviated.json'));
+      app.mockHttpclient('https://registry.npmjs.org/foobar/1.0.0', 'GET', {
+        data,
+        persist: false,
+      });
+      const res = await app.httpRequest()
+        .get('/foobar/1.0.0')
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res.status === 200);
+      assert(res.headers.location === app.config.cnpmcore.registry);
+      assert(res.body.data.dist.tarball.includes(app.config.cnpmcore.registry));
     });
   });
 });
