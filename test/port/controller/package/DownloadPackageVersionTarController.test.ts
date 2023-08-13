@@ -2,6 +2,7 @@ import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter';
+import { SyncMode } from '../../../../app/common/constants';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let publisher: any;
@@ -297,6 +298,17 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 404);
       app.expectLog('[middleware:ErrorHandler][syncPackage] create sync package');
+    });
+
+    it('should create sync specific version task when package version tgz not found in proxy mode ', async () => {
+      mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
+      const res = await app.httpRequest()
+        .get('/foobar/-/foobar-1.0.0.tgz')
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res.status === 200);
+      app.expectLog('[DownloadPackageVersionTarController.createSyncTask:success]');
     });
 
   });

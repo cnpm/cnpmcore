@@ -4,6 +4,7 @@
     },
     "modified": "2022-01-26T20:31:13.648Z",
     "name": "foobar",
+    "description": "cnpmcore mock json",
     "versions": {
         "1.0.0": {
             "name": "foobar",
