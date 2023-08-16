@@ -49,12 +49,11 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           data,
         };
       });
-      const { manifest, storeKey } = await proxyCacheService.getSourceManifestAndCache('foobar', DIST_NAMES.FULL_MANIFESTS);
+      const { manifest } = await proxyCacheService.getSourceManifestAndCache('foobar', DIST_NAMES.FULL_MANIFESTS);
       const versionArr = Object.values(manifest.versions);
       for (const i of versionArr) {
         assert(i.dist.tarball.includes('http://localhost:7001'));
       }
-      assert.equal(storeKey, `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foobar/${DIST_NAMES.FULL_MANIFESTS}`);
     });
 
     it('should get abbreviated package manifest', async () => {
@@ -65,12 +64,11 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           data,
         };
       });
-      const { manifest, storeKey } = await proxyCacheService.getSourceManifestAndCache('foobar', DIST_NAMES.ABBREVIATED_MANIFESTS);
+      const { manifest } = await proxyCacheService.getSourceManifestAndCache('foobar', DIST_NAMES.ABBREVIATED_MANIFESTS);
       const versionArr = Object.values(manifest.versions);
       for (const i of versionArr) {
         assert(i.dist.tarball.includes('http://localhost:7001'));
       }
-      assert.equal(storeKey, `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foobar/${DIST_NAMES.ABBREVIATED_MANIFESTS}`);
     });
 
 
@@ -82,10 +80,9 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           data,
         };
       });
-      const { manifest, storeKey } = await proxyCacheService.getSourceManifestAndCache('foobar', DIST_NAMES.MANIFEST, '1.0.0');
+      const { manifest } = await proxyCacheService.getSourceManifestAndCache('foobar', DIST_NAMES.MANIFEST, '1.0.0');
       assert(manifest.dist);
       assert(manifest.dist.tarball.includes('http://localhost:7001'));
-      assert.equal(storeKey, `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foobar/1.0.0/${DIST_NAMES.MANIFEST}`);
     });
 
     it('should get abbreviated package version manifest', async () => {
@@ -96,10 +93,9 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           data,
         };
       });
-      const { manifest, storeKey } = await proxyCacheService.getSourceManifestAndCache('foobar', DIST_NAMES.ABBREVIATED, '1.0.0');
+      const { manifest } = await proxyCacheService.getSourceManifestAndCache('foobar', DIST_NAMES.ABBREVIATED, '1.0.0');
       assert(manifest.dist);
       assert(manifest.dist.tarball.includes('http://localhost:7001'));
-      assert.equal(storeKey, `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foobar/1.0.0/${DIST_NAMES.ABBREVIATED}`);
     });
   });
 
@@ -107,7 +103,6 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
     it('should invoke getSourceManifestAndCache first.', async () => {
       mock(proxyCacheService, 'getSourceManifestAndCache', async () => {
         return {
-          storeKey: `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foobar/${DIST_NAMES.FULL_MANIFESTS}`,
           manifest: { name: 'mock info' },
         };
       });

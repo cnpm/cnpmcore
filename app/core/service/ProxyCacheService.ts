@@ -27,7 +27,6 @@ export function isPkgManifest(fileType: DIST_NAMES) {
 }
 
 type GetSourceManifestAndCacheReturnType<T> = {
-  storeKey: string,
   proxyBytes: Buffer,
   manifest: T extends DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST ? AbbreviatedPackageJSONType | PackageJSONType :
     T extends DIST_NAMES.FULL_MANIFESTS | DIST_NAMES.ABBREVIATED_MANIFESTS ? AbbreviatedPackageManifestType|PackageManifestType : never;
@@ -86,7 +85,7 @@ export class ProxyCacheService extends AbstractService {
     const { manifest } = await this.getSourceManifestAndCache<typeof fileType>(fullname, fileType);
     const cachedFiles = ProxyCache.create({ fullname, fileType });
     await this.proxyCacheRepository.saveProxyCache(cachedFiles);
-    return manifest as AbbreviatedPackageManifestType|PackageManifestType;
+    return manifest;
   }
 
   // used by GET /:fullname/:versionOrTag
@@ -118,7 +117,7 @@ export class ProxyCacheService extends AbstractService {
     const { manifest } = await this.getSourceManifestAndCache(fullname, fileType, versionOrTag);
     const cachedFiles = ProxyCache.create({ fullname, fileType, version });
     await this.proxyCacheRepository.saveProxyCache(cachedFiles);
-    return manifest as AbbreviatedPackageJSONType|PackageJSONType;
+    return manifest;
   }
 
   async getSourceManifestAndCache<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
@@ -166,7 +165,7 @@ export class ProxyCacheService extends AbstractService {
       }
     }
     const proxyBytes = Buffer.from(JSON.stringify(manifest));
-    let storeKey;
+    let storeKey: string;
     if (isPkgManifest(fileType)) {
       storeKey = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${fileType}`;
     } else {
@@ -174,7 +173,7 @@ export class ProxyCacheService extends AbstractService {
       storeKey = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${fileType}`;
     }
     await this.nfsAdapter.uploadBytes(storeKey, proxyBytes);
-    return { storeKey, proxyBytes, manifest };
+    return { proxyBytes, manifest };
   }
 
   public async createTask(targetName: string, options: UpdateProxyCacheTaskOptions): Promise<CreateUpdateProxyCacheTask> {
