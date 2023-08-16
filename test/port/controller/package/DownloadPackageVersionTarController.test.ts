@@ -155,6 +155,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     });
 
     it('should 404 when package version not exists', async () => {
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
       if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
         mock(nfsClientAdapter, 'url', async () => {
           return undefined;
@@ -173,6 +174,25 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .expect(404)
         .expect({
           error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
+        });
+    });
+
+    it('should redirect to source registry when package version not exists', async () => {
+      mock(nfsClientAdapter, 'url', async () => {
+        return 'http://foo.com/foo.tgz';
+      });
+
+      await app.httpRequest()
+        .get(`/${name}/-/${name}-1.0.404404.tgz`)
+        .expect(302)
+        .expect('location', `https://registry.npmjs.org/${name}/-/${name}-1.0.404404.tgz`);
+
+      // not redirect the private package
+      await app.httpRequest()
+        .get(`/${scopedName}/-/${name}-1.0.404404.tgz`)
+        .expect(404)
+        .expect({
+          error: `[NOT_FOUND] ${scopedName}@1.0.404404 not found`,
         });
     });
 
@@ -222,6 +242,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .expect(302)
         .expect('location', 'https://registry.npmjs.org/foo/-/foo-1.0.404404.tgz?t=123');
 
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
       // not redirect when package exists
       await app.httpRequest()
         .get(`/${name}/-/${name}-1.0.404404.tgz`)
@@ -236,6 +257,31 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
           error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
         });
     });
+
+    it('should not create sync task when package version tgz not exists and syncNotFound=false', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'exist');
+      mock(app.config.cnpmcore, 'syncNotFound', false);
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
+      const res = await app.httpRequest()
+        .get('/lodash/-/lodash-1.404.404.tgz')
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res.status === 404);
+      app.notExpectLog('[middleware:ErrorHandler][syncPackage] create sync package');
+    });
+
+    it('should create sync task when package version tgz not exists and syncNotFound=true', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'exist');
+      mock(app.config.cnpmcore, 'syncNotFound', true);
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
+      const res = await app.httpRequest()
+        .get('/lodash/-/lodash-1.404.404.tgz')
+        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('Accept', 'application/vnd.npm.install-v1+json');
+      assert(res.status === 404);
+      app.expectLog('[middleware:ErrorHandler][syncPackage] create sync package');
+    });
+
   });
 
   describe('[GET /:fullname/download/:fullname-:version.tgz] deprecatedDownload()', () => {

@@ -4,6 +4,7 @@ import { AuthAdapter } from '../../../../app/infra/AuthAdapter';
 import assert from 'assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
+import dayjs from 'dayjs';
 
 describe('test/port/controller/TokenController/listTokens.test.ts', () => {
   describe('[GET /-/npm/v1/tokens] listTokens()', () => {
@@ -33,6 +34,24 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
       assert.equal(tokens[0].automation, false);
       assert(tokens[0].created);
       assert(tokens[0].updated);
+    });
+
+    it('should update lastUsedAt', async () => {
+      const { authorization } = await TestUtil.createUser();
+      const now = Date.now();
+
+      let res = await app.httpRequest()
+        .get('/-/whoami')
+        .set('authorization', authorization)
+        .expect(200);
+
+      res = await app.httpRequest()
+        .get('/-/npm/v1/tokens')
+        .set('authorization', authorization)
+        .expect(200);
+
+      const lastUsedAt = res.body.objects[0].lastUsedAt;
+      assert(dayjs(lastUsedAt).isAfter(now));
     });
 
     it('should 401 when readonly token access', async () => {

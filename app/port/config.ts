@@ -158,4 +158,8 @@ export type CnpmcoreConfig = {
   * elasticsearch index. if enableElasticsearch is true, you must set a index to write es doc.
   */
   elasticsearchIndex: string,
+  /**
+   * strictly enforces/validates manifest and tgz when publish, https://github.com/cnpm/cnpmcore/issues/542
+   */
+  strictValidateTarballPkg?: boolean,
 };

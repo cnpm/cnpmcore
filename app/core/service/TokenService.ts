@@ -36,14 +36,9 @@ export class TokenService extends AbstractService {
     return null;
   }
 
-  public async checkTokenExpired(token: Token) {
-    // skip classic token
-    if (!isGranularToken(token)) {
-      return true;
-    }
-
+  public async checkTokenStatus(token: Token) {
     // check for expires
-    if (dayjs(token.expiredAt).isBefore(new Date())) {
+    if (isGranularToken(token) && dayjs(token.expiredAt).isBefore(new Date())) {
       throw new UnauthorizedError('Token expired');
     }
 

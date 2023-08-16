@@ -28,15 +28,15 @@ export class DownloadController extends AbstractController {
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) throw new NotFoundError(`${fullname} not found`);
     const entities = await this.packageVersionDownloadRepository.query(pkg.packageId, startDate.toDate(), endDate.toDate());
-    const days = {};
-    const versions = {};
+    const days: Record<string, number> = {};
+    const versions: Record<string, { day: string, downloads: number }[]> = {};
     for (const entity of entities) {
       const yearMonth = String(entity.yearMonth);
       const prefix = yearMonth.substring(0, 4) + '-' + yearMonth.substring(4, 6);
       for (let i = 1; i <= 31; i++) {
         const day = String(i).padStart(2, '0');
-        const field = `d${day}`;
-        const counter = entity[field];
+        const field = `d${day}` as keyof typeof entity;
+        const counter = entity[field] as number;
         if (!counter) continue;
         const date = `${prefix}-${day}`;
         days[date] = (days[date] || 0) + counter;
@@ -66,14 +66,14 @@ export class DownloadController extends AbstractController {
   async showTotalDownloads(@HTTPParam() scope: string, @HTTPParam() range: string) {
     const [ startDate, endDate ] = this.checkAndGetRange(range);
     const entities = await this.packageVersionDownloadRepository.query(scope, startDate.toDate(), endDate.toDate());
-    const days = {};
+    const days: Record<string, number> = {};
     for (const entity of entities) {
       const yearMonth = String(entity.yearMonth);
       const prefix = yearMonth.substring(0, 4) + '-' + yearMonth.substring(4, 6);
       for (let i = 1; i <= 31; i++) {
         const day = String(i).padStart(2, '0');
-        const field = `d${day}`;
-        const counter = entity[field];
+        const field = `d${day}` as keyof typeof entity;
+        const counter = entity[field] as number;
         if (!counter) continue;
         const date = `${prefix}-${day}`;
         days[date] = (days[date] || 0) + counter;
@@ -115,4 +115,3 @@ export class DownloadController extends AbstractController {
     return [ startDate, endDate ];
   }
 }
-

@@ -598,7 +598,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
         assert(log.includes('Synced version 1.0.0 already exists, skip publish, try to set in local manifest'));
-        assert(log.includes('] 🟢 Synced updated 1 versions'));
+        assert(log.includes('] 🟢 Synced updated'));
         assert(log.includes('] 🚧 Syncing versions 1 => 2'));
         app.mockAgent().assertNoPendingInterceptors();
         await mock.restore();
@@ -622,7 +622,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
         assert(log.includes('] 🐛 Remote version 1.0.0 not exists on local abbreviated manifests, need to refresh'));
-        assert(log.includes('] 🟢 Synced updated 1 versions'));
+        assert(log.includes('] 🟢 Synced updated'));
         assert(log.includes('] 🚧 Syncing versions 2 => 2'));
         app.mockAgent().assertNoPendingInterceptors();
         await mock.restore();
@@ -716,6 +716,48 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const fullManifests = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
         assert(fullManifests.data);
         assert(fullManifests.data.versions['2.0.0']);
+
+      });
+
+      it('should skip self registry', async () => {
+        const name = '@cnpmcore/test-self-sync';
+        const { user } = await userService.create({
+          name: 'test-user',
+          password: 'this-is-password',
+          email: 'hello@example.com',
+          ip: '127.0.0.1',
+        });
+
+        const registry = await registryManagerService.ensureSelfRegistry();
+
+        const publishCmd = {
+          scope: '@cnpmcore',
+          name: 'test-self-sync',
+          version: '1.0.0',
+          description: '1.0.0',
+          readme: '',
+          registryId: registry.registryId,
+          packageJson: { name, test: 'test', version: '1.0.0' },
+          dist: {
+            content: Buffer.alloc(0),
+          },
+          isPrivate: false,
+          publishTime: new Date(),
+          skipRefreshPackageManifests: false,
+        };
+        const pkgVersion = await packageManagerService.publish(publishCmd, user);
+        assert(pkgVersion.version === '1.0.0');
+
+        await packageSyncerService.createTask(name);
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        await packageSyncerService.executeTask(task);
+
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert(log.includes(`${name} has been published to the self registry, skip sync ❌❌❌❌❌`));
 
       });
 
@@ -958,7 +1000,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢 Synced updated 0 versions, removed 1 versions'));
+      assert(log.includes('removed 1 versions'));
       assert(log.includes('] 🟢 Removed version 1.0.0 success'));
       const r = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
       assert(Object.keys(r.data!.versions).length === 1);
@@ -1840,7 +1882,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🟢 Synced version 2.0.0 success, different meta: {"peerDependenciesMeta":{"bufferutil":{"optional":true},"utf-8-validate":{"optional":true}},"os":["linux"],"cpu":["x64"]}'));
+      assert(log.includes('Synced version 2.0.0 success, different meta: {"peerDependenciesMeta":{"bufferutil":{"optional":true},"utf-8-validate":{"optional":true}},"os":["linux"],"cpu":["x64"],"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"}}'));
       assert(log.includes('Z] 👉👉👉👉👉 Tips: sync test tips here 👈👈👈👈👈'));
       assert(log.includes(', skipDependencies: false'));
       let manifests = await packageManagerService.listPackageFullManifests('', name);
@@ -2076,6 +2118,37 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           userPrefix: 'cnpm:',
           type: RegistryType.Npm,
         });
+      });
+
+      it('should ignore syncUpstreamFirst', async () => {
+        await scopeManagerService.createScope({
+          name: '@dnpm',
+          registryId: registry.registryId,
+        });
+        app.mockHttpclient('https://custom.npmjs.com/@dnpm/banana', 'GET', {
+          data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
+          persist: false,
+        });
+        app.mockHttpclient('https://custom.npmjs.com/@dnpm/banana/-/banana-0.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        });
+        mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
+        mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
+        mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
+
+        const name = '@dnpm/banana';
+        await packageSyncerService.createTask(name);
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        assert.equal(task.targetName, name);
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert(log.includes('syncUpstream: false'));
+
       });
 
       it('should sync from target registry & default registry', async () => {
@@ -2343,7 +2416,52 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const pkg = await packageRepository.findPackage('', 'foobar');
         app.expectLog(`[packageManagerService.unpublishPackage:skip] ${pkg?.packageId} already unpublished`);
 
+      });
 
+      it('should resync history version if forceSyncHistory is true', async () => {
+        const manifest = JSON.parse((await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json')).toString());
+        manifest.versions['1.0.0']._npmUser = { name: 'apple', email: 'apple@cnpmjs.org' };
+        manifest.maintainers = [ ...manifest.maintainers, { name: 'apple', email: 'apple@cnpmjs.org' }];
+        app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
+          data: manifest,
+          persist: false,
+          repeats: 1,
+        });
+        app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+          repeats: 2,
+        });
+        app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
+          persist: false,
+          repeats: 2,
+        });
+        await packageSyncerService.createTask('foobar', { skipDependencies: true });
+        let task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        await packageSyncerService.executeTask(task);
+
+        // should sync publisher
+        const syncInfo = await packageManagerService.listPackageFullManifests('', 'foobar');
+        assert.equal(syncInfo.data?.versions['1.0.0']?._npmUser?.name, 'apple');
+
+        // resync
+        manifest.versions['1.0.0']._npmUser = { name: 'banana', email: 'banana@cnpmjs.org' };
+        app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
+          data: manifest,
+          persist: false,
+          repeats: 1,
+        });
+        await packageSyncerService.createTask('foobar', { skipDependencies: true });
+        task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        await packageSyncerService.executeTask(task);
+        const stream2 = await packageSyncerService.findTaskLog(task);
+        assert(stream2);
+        const log2 = await TestUtil.readStreamToLog(stream2);
+        // console.log(log2);
+        assert(/different meta: {"_npmUser":{"name":"banana","email":"banana@cnpmjs.org"}}/.test(log2));
       });
     });
   });

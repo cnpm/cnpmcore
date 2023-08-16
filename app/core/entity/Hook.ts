@@ -48,7 +48,7 @@ export class Hook extends Entity {
   }
 
   // payload 可能会特别大，如果做多次 stringify 浪费太多 cpu
-  signPayload(payload: object): { digest, payloadStr } {
+  signPayload(payload: object) {
     const payloadStr = JSON.stringify(payload);
     const digest = crypto.createHmac('sha256', this.secret)
       .update(JSON.stringify(payload))

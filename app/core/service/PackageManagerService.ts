@@ -5,7 +5,7 @@ import {
   EventBus,
   Inject,
 } from '@eggjs/tegg';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError, NotFoundError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import npa from 'npm-package-arg';
 import semver from 'semver';
@@ -53,7 +53,7 @@ export interface PublishPackageCmd {
   // name don't include scope
   name: string;
   version: string;
-  description: string;
+  description?: string;
   packageJson: PackageJSONType;
   registryId?: string;
   readme: string;
@@ -107,14 +107,14 @@ export class PackageManagerService extends AbstractService {
         scope: cmd.scope,
         name: cmd.name,
         isPrivate: cmd.isPrivate,
-        description: cmd.description,
+        description: cmd.description || '',
         registryId: cmd.registryId,
       });
     } else {
       // update description
       // will read database twice to update description by model to entity and entity to model
       if (pkg.description !== cmd.description) {
-        pkg.description = cmd.description;
+        pkg.description = cmd.description || '';
       }
 
       /* c8 ignore next 3 */
@@ -163,11 +163,9 @@ export class PackageManagerService extends AbstractService {
     };
 
     // add _registry_name field to cmd.packageJson
-    if (!cmd.packageJson._source_registry_name) {
-      const registry = await this.getSourceRegistry(pkg);
-      if (registry) {
-        cmd.packageJson._source_registry_name = registry.name;
-      }
+    const registry = await this.getSourceRegistry(pkg);
+    if (registry) {
+      cmd.packageJson._source_registry_name = registry.name;
     }
 
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
@@ -279,6 +277,15 @@ export class PackageManagerService extends AbstractService {
     return pkgVersion;
   }
 
+  async blockPackageByFullname(name: string, reason: string) {
+    const [ scope, pkgName ] = getScopeAndName(name);
+    const pkg = await this.packageRepository.findPackage(scope, pkgName);
+    if (!pkg) {
+      throw new NotFoundError(`Package name(${name}) not found`);
+    }
+    return await this.blockPackage(pkg, reason);
+  }
+
   async blockPackage(pkg: Package, reason: string) {
     let block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
@@ -306,6 +313,15 @@ export class PackageManagerService extends AbstractService {
         pkg.packageId, reason);
     }
     return block;
+  }
+
+  async unblockPackageByFullname(name: string) {
+    const [ scope, pkgName ] = getScopeAndName(name);
+    const pkg = await this.packageRepository.findPackage(scope, pkgName);
+    if (!pkg) {
+      throw new NotFoundError(`Package name(${name}) not found`);
+    }
+    return await this.unblockPackage(pkg);
   }
 
   async unblockPackage(pkg: Package) {
@@ -409,7 +425,7 @@ export class PackageManagerService extends AbstractService {
 
   public plusPackageVersionCounter(fullname: string, version: string) {
     // set counter + 1, schedule will store them into database
-    const counters = PackageManagerService.downloadCounters;
+    const counters: Record<string, Record<string, number>> = PackageManagerService.downloadCounters;
     if (!counters[fullname]) counters[fullname] = {};
     counters[fullname][version] = (counters[fullname][version] || 0) + 1;
     // Total
@@ -428,7 +444,7 @@ export class PackageManagerService extends AbstractService {
   // will be call by schedule/SavePackageVersionDownloadCounter.ts
   async savePackageVersionCounters() {
     // { [fullname]: { [version]: number } }
-    const counters = PackageManagerService.downloadCounters;
+    const counters: Record<string, Record<string, number>> = PackageManagerService.downloadCounters;
     const fullnames = Object.keys(counters);
     if (fullnames.length === 0) return;
 
@@ -708,12 +724,15 @@ export class PackageManagerService extends AbstractService {
     const fieldsFromLatestManifest = [
       'author', 'bugs', 'contributors', 'description', 'homepage', 'keywords', 'license',
       'readmeFilename', 'repository',
-    ];
+    ] as const;
     // the latest version metas
     for (const field of fieldsFromLatestManifest) {
-      fullManifests[field] = latestManifest[field];
+      if (latestManifest[field]) {
+        (fullManifests as Record<string, unknown>)[field] = latestManifest[field];
+      }
     }
   }
+
 
   private async _setPackageDistTagsAndLatestInfos(pkg: Package, fullManifests: PackageManifestType, abbreviatedManifests: AbbreviatedPackageManifestType) {
     const distTags = await this._listPackageDistTags(pkg);
@@ -814,11 +833,10 @@ export class PackageManagerService extends AbstractService {
         await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
       }
       // set _source_registry_name in full manifestDist
-      if (!data._source_registry_name && isFullManifests) {
-        if (registry) {
-          data._source_registry_name = registry?.name;
-        }
+      if (registry) {
+        data._source_registry_name = registry?.name;
       }
+
       const distBytes = Buffer.from(JSON.stringify(data));
       const distIntegrity = await calculateIntegrity(distBytes);
       etag = `"${distIntegrity.shasum}"`;
@@ -861,7 +879,7 @@ export class PackageManagerService extends AbstractService {
     const maintainers = await this._listPackageMaintainers(pkg);
     const registry = await this.getSourceRegistry(pkg);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
-    const data:PackageManifestType = {
+    const data: PackageManifestType = {
       _id: `${pkg.fullname}`,
       _rev: `${pkg.id}-${pkg.packageId}`,
       'dist-tags': distTags,

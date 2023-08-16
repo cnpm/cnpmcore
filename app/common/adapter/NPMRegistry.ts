@@ -11,6 +11,7 @@ import {
   HttpClientRequestOptions,
   HttpClientResponse,
 } from 'egg';
+import { PackageManifestType } from '../../repository/PackageRepository';
 
 type HttpMethod = HttpClientRequestOptions['method'];
 
@@ -40,7 +41,7 @@ export class NPMRegistry {
     this.registryHost = registryHost;
   }
 
-  public async getFullManifests(fullname: string, optionalConfig?: {retries?:number, remoteAuthToken?:string}): Promise<RegistryResponse> {
+  public async getFullManifests(fullname: string, optionalConfig?: { retries?: number, remoteAuthToken?: string }): Promise<{ method: HttpMethod } & HttpClientResponse<PackageManifestType>> {
     let retries = optionalConfig?.retries || 3;
     // set query t=timestamp, make sure CDN cache disable
     // cache=0 is sync worker request flag

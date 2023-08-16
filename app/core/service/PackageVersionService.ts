@@ -49,7 +49,7 @@ export class PackageVersionService {
     if (isFullManifests) {
       manifest = await this.distRepository.findPackageVersionManifest(pkgId, version);
     } else {
-      manifest = this.distRepository.findPackageAbbreviatedManifest(pkgId, version);
+      manifest = await this.distRepository.findPackageAbbreviatedManifest(pkgId, version);
     }
     if (manifest && bugVersionAdvice) {
       manifest.deprecated = `[WARNING] Use ${bugVersionAdvice.advice.version} instead of ${bugVersionAdvice.version}, reason: ${bugVersionAdvice.advice.reason}`;

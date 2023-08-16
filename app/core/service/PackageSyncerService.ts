@@ -8,7 +8,7 @@ import { Pointcut } from '@eggjs/tegg/aop';
 import { EggHttpClient } from 'egg';
 import { setTimeout } from 'timers/promises';
 import { rm } from 'fs/promises';
-import { isEqual } from 'lodash';
+import { isEqual, isEmpty } from 'lodash';
 import semver from 'semver';
 import semverRcompare from 'semver/functions/rcompare';
 import semverPrerelease from 'semver/functions/prerelease';
@@ -18,7 +18,7 @@ import { downloadToTempfile } from '../../common/FileUtil';
 import { TaskState, TaskType } from '../../common/enum/Task';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
-import { PackageRepository } from '../../repository/PackageRepository';
+import { PackageJSONType, PackageManifestType, PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { UserRepository } from '../../repository/UserRepository';
 import { Task, SyncPackageTaskOptions, CreateSyncPackageTask } from '../entity/Task';
@@ -33,7 +33,7 @@ import { Registry } from '../entity/Registry';
 import { BadRequestError } from 'egg-errors';
 import { ScopeManagerService } from './ScopeManagerService';
 import { EventCorkAdvice } from './EventCorkerAdvice';
-import { SyncDeleteMode } from '../../common/constants';
+import { PresetRegistryName, SyncDeleteMode } from '../../common/constants';
 
 type syncDeletePkgOptions = {
   task: Task,
@@ -312,7 +312,7 @@ export class PackageSyncerService extends AbstractService {
   // 1. 其次从 task.data.registryId (创建单包同步任务时传入)
   // 2. 接着根据 scope 进行计算 (作为子包依赖同步时候，无 registryId)
   // 3. 最后返回 default registryId (可能 default registry 也不存在)
-  public async initSpecRegistry(task: Task, pkg: Package | null = null, scope?: string): Promise<Registry | null> {
+  public async initSpecRegistry(task: Task, pkg: Package | null = null, scope?: string): Promise<Registry> {
     const registryId = pkg?.registryId || (task.data as SyncPackageTaskOptions).registryId;
     let targetHost: string = this.config.cnpmcore.sourceRegistry;
     let registry: Registry | null = null;
@@ -363,7 +363,7 @@ export class PackageSyncerService extends AbstractService {
     const taskQueueHighWaterSize = this.config.cnpmcore.taskQueueHighWaterSize;
     const taskQueueInHighWaterState = taskQueueLength >= taskQueueHighWaterSize;
     const skipDependencies = taskQueueInHighWaterState ? true : !!originSkipDependencies;
-    const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst);
+    const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst && registry.name === PresetRegistryName.default);
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
     this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
       task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
@@ -372,6 +372,14 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] 👉 syncing specific versions: ${specificVersions.join(' | ')} 👈`);
     }
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
+
+    if (registry?.name === PresetRegistryName.self) {
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} has been published to the self registry, skip sync ❌❌❌❌❌`);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid registryId',
+        task.taskId, task.targetName);
+      return;
+    }
 
     if (pkg && pkg?.registryId !== registry?.registryId) {
       if (pkg.registryId) {
@@ -477,7 +485,7 @@ export class PackageSyncerService extends AbstractService {
     //   { name: 'jasonlaster11', email: 'jason.laster.11@gmail.com' }
     // ],
     let maintainers = data.maintainers;
-    const maintainersMap = {};
+    const maintainersMap: Record<string, PackageManifestType['maintainers']> = {};
     const users: User[] = [];
     let changedUserCount = 0;
     if (!Array.isArray(maintainers) || maintainers.length === 0) {
@@ -553,7 +561,7 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] 📦 Add latest tag version "${fullname}: ${distTags.latest}"`);
       specificVersions.push(distTags.latest);
     }
-    const versions = specificVersions ? Object.values<any>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) : Object.values<any>(versionMap);
+    const versions: PackageJSONType[] = specificVersions ? Object.values<any>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) : Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
     if (specificVersions) {
       const availableVersionList = versions.map(item => item.version);
@@ -564,7 +572,7 @@ export class PackageSyncerService extends AbstractService {
       }
     }
     const updateVersions: string[] = [];
-    const differentMetas: any[] = [];
+    const differentMetas: [PackageJSONType, Partial<PackageJSONType>][] = [];
     let syncIndex = 0;
     for (const item of versions) {
       const version: string = item.version;
@@ -598,10 +606,10 @@ export class PackageSyncerService extends AbstractService {
         // check metaDataKeys, if different value, override exists one
         // https://github.com/cnpm/cnpmjs.org/issues/1667
         // need libc field https://github.com/cnpm/cnpmcore/issues/187
-        const metaDataKeys = [
-          'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated',
-        ];
-        let diffMeta: any;
+        // fix _npmUser field since https://github.com/cnpm/cnpmcore/issues/553
+        const metaDataKeys = [ 'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated', '_npmUser' ];
+        const ignoreInAbbreviated = [ '_npmUser' ];
+        const diffMeta: Partial<PackageJSONType> = {};
         for (const key of metaDataKeys) {
           let remoteItemValue = item[key];
           // make sure hasInstallScript exists
@@ -610,34 +618,30 @@ export class PackageSyncerService extends AbstractService {
               remoteItemValue = true;
             }
           }
-          const remoteItemDiffValue = JSON.stringify(remoteItemValue);
-          if (remoteItemDiffValue !== JSON.stringify(existsItem[key])) {
-            if (!diffMeta) diffMeta = {};
+          if (!isEqual(remoteItemValue, existsItem[key])) {
             diffMeta[key] = remoteItemValue;
-          } else if (existsAbbreviatedItem && remoteItemDiffValue !== JSON.stringify(existsAbbreviatedItem[key])) {
+          } else if (!ignoreInAbbreviated.includes(key) && existsAbbreviatedItem && !isEqual(remoteItemValue, (existsAbbreviatedItem as Record<string, unknown>)[key])) {
             // should diff exists abbreviated item too
-            if (!diffMeta) diffMeta = {};
             diffMeta[key] = remoteItemValue;
           }
         }
         // should delete readme
         if (shouldDeleteReadme) {
-          if (!diffMeta) diffMeta = {};
           diffMeta.readme = undefined;
         }
-        if (diffMeta) {
+        if (!isEmpty(diffMeta)) {
           differentMetas.push([ existsItem, diffMeta ]);
         }
         continue;
       }
       syncIndex++;
-      const description: string = item.description;
+      const description = item.description;
       // "dist": {
       //   "shasum": "943e0ec03df00ebeb6273a5b94b916ba54b47581",
       //   "tarball": "https://registry.npmjs.org/foo/-/foo-1.0.0.tgz"
       // },
       const dist = item.dist;
-      const tarball: string = dist && dist.tarball;
+      const tarball = dist && dist.tarball;
       if (!tarball) {
         lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
         logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
@@ -684,7 +688,8 @@ export class PackageSyncerService extends AbstractService {
       };
       try {
         // 当 version 记录已经存在时，还需要校验一下 pkg.manifests 是否存在
-        const pkgVersion = await this.packageManagerService.publish(publishCmd, users[0]);
+        const publisher = users.find(user => user.displayName === item._npmUser?.name) || users[0];
+        const pkgVersion = await this.packageManagerService.publish(publishCmd, publisher);
         updateVersions.push(pkgVersion.version);
         logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
       } catch (err: any) {

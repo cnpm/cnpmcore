@@ -1,5 +1,180 @@
 # Changelog
 
+## [3.40.0](https://github.com/cnpm/cnpmcore/compare/v3.39.5...v3.40.0) (2023-08-08)
+
+
+### Features
+
+* signup on auth ([#567](https://github.com/cnpm/cnpmcore/issues/567)) ([c710600](https://github.com/cnpm/cnpmcore/commit/c7106008d9e5da1760919010899f7a0e24acd051))
+
+## [3.39.5](https://github.com/cnpm/cnpmcore/compare/v3.39.4...v3.39.5) (2023-08-08)
+
+
+### Bug Fixes
+
+* noImplicitAny ts ([#568](https://github.com/cnpm/cnpmcore/issues/568)) ([1932bb9](https://github.com/cnpm/cnpmcore/commit/1932bb9713187bcd4d7e0b0dde410cb0118ab607))
+
+## [3.39.4](https://github.com/cnpm/cnpmcore/compare/v3.39.3...v3.39.4) (2023-08-04)
+
+
+### Bug Fixes
+
+* publisher info ([#565](https://github.com/cnpm/cnpmcore/issues/565)) ([94bcc1a](https://github.com/cnpm/cnpmcore/commit/94bcc1a37ec621a292937b21699ee007c2994974))
+
+## [3.39.3](https://github.com/cnpm/cnpmcore/compare/v3.39.2...v3.39.3) (2023-08-01)
+
+
+### Bug Fixes
+
+* don't log NotImplementedError to error log ([#563](https://github.com/cnpm/cnpmcore/issues/563)) ([bcf3547](https://github.com/cnpm/cnpmcore/commit/bcf3547ff2ee5830fc8cd61bd21b5629d73de316))
+
+## [3.39.2](https://github.com/cnpm/cnpmcore/compare/v3.39.1...v3.39.2) (2023-07-29)
+
+
+### Bug Fixes
+
+* rename libpg-query to libpg-query-node ([#561](https://github.com/cnpm/cnpmcore/issues/561)) ([9483a46](https://github.com/cnpm/cnpmcore/commit/9483a460a395e34c68cb9273ec2e52add4ed1962))
+
+## [3.39.1](https://github.com/cnpm/cnpmcore/compare/v3.39.0...v3.39.1) (2023-07-27)
+
+
+### Bug Fixes
+
+* body parser ignore ([#558](https://github.com/cnpm/cnpmcore/issues/558)) ([81d6455](https://github.com/cnpm/cnpmcore/commit/81d6455ff811b53618c622df74b1f04cf99af3e4))
+
+## [3.39.0](https://github.com/cnpm/cnpmcore/compare/v3.38.2...v3.39.0) (2023-07-27)
+
+
+### Features
+
+* Sync libpg-query binary ([#557](https://github.com/cnpm/cnpmcore/issues/557)) ([8556b5f](https://github.com/cnpm/cnpmcore/commit/8556b5f92f3a6525dd6dde2661a24de9137122d4))
+
+## [3.38.2](https://github.com/cnpm/cnpmcore/compare/v3.38.1...v3.38.2) (2023-07-21)
+
+
+### Bug Fixes
+
+* _npmUser info in fullManifest ([#554](https://github.com/cnpm/cnpmcore/issues/554)) ([4455295](https://github.com/cnpm/cnpmcore/commit/44552959eb8052ac534cc60c1c2820962deed5b8)), closes [#553](https://github.com/cnpm/cnpmcore/issues/553)
+
+## [3.38.1](https://github.com/cnpm/cnpmcore/compare/v3.38.0...v3.38.1) (2023-07-21)
+
+
+### Bug Fixes
+
+* publish lock ([#555](https://github.com/cnpm/cnpmcore/issues/555)) ([ec90ab8](https://github.com/cnpm/cnpmcore/commit/ec90ab85fa529a9666f7f3f03e54d063ddeebc0b))
+
+## [3.38.0](https://github.com/cnpm/cnpmcore/compare/v3.37.1...v3.38.0) (2023-07-17)
+
+
+### Features
+
+* misc router ([#552](https://github.com/cnpm/cnpmcore/issues/552)) ([e9e3a7b](https://github.com/cnpm/cnpmcore/commit/e9e3a7b70f78a13dd7ded2795c62f4d6fcbbe431)), closes [#551](https://github.com/cnpm/cnpmcore/issues/551)
+
+## [3.37.1](https://github.com/cnpm/cnpmcore/compare/v3.37.0...v3.37.1) (2023-07-13)
+
+
+### Bug Fixes
+
+* playwright bianry sync config ([#548](https://github.com/cnpm/cnpmcore/issues/548)) ([166e334](https://github.com/cnpm/cnpmcore/commit/166e3341f424fe514fd7c8c62d0530ac51ef6c12))
+
+## [3.37.0](https://github.com/cnpm/cnpmcore/compare/v3.36.0...v3.37.0) (2023-07-12)
+
+
+### Features
+
+* add lastUsedAt for classic token ([#547](https://github.com/cnpm/cnpmcore/issues/547)) ([e061685](https://github.com/cnpm/cnpmcore/commit/e0616859ffd64f1f273b1dfff711f0d1796b9ec4))
+
+## [3.36.0](https://github.com/cnpm/cnpmcore/compare/v3.35.1...v3.36.0) (2023-07-09)
+
+
+### Features
+
+* support strictValidateTarballPkg ([#546](https://github.com/cnpm/cnpmcore/issues/546)) ([dd3438f](https://github.com/cnpm/cnpmcore/commit/dd3438f470a87ee4f7be058345bbaaa914ea8b2e)), closes [#542](https://github.com/cnpm/cnpmcore/issues/542)
+
+## [3.35.1](https://github.com/cnpm/cnpmcore/compare/v3.35.0...v3.35.1) (2023-06-29)
+
+
+### Bug Fixes
+
+* update source registry ([#537](https://github.com/cnpm/cnpmcore/issues/537)) ([ab2fde7](https://github.com/cnpm/cnpmcore/commit/ab2fde7c809720b1e9692ce2aaf383a9db64e957))
+
+## [3.35.0](https://github.com/cnpm/cnpmcore/compare/v3.34.10...v3.35.0) (2023-06-28)
+
+
+### Features
+
+* adaptive username ([#536](https://github.com/cnpm/cnpmcore/issues/536)) ([dd69606](https://github.com/cnpm/cnpmcore/commit/dd696063652467f7ad1cc94d202f001cdb637906)), closes [/github.com/npm/cli/blob/latest/lib/commands/owner.js#L151](https://github.com/cnpm//github.com/npm/cli/blob/latest/lib/commands/owner.js/issues/L151)
+
+## [3.34.10](https://github.com/cnpm/cnpmcore/compare/v3.34.9...v3.34.10) (2023-06-28)
+
+
+### Bug Fixes
+
+* only syncUpstream in default registry ([#535](https://github.com/cnpm/cnpmcore/issues/535)) ([bb5d993](https://github.com/cnpm/cnpmcore/commit/bb5d9930301426e300ba47d360ab4c92543ab05a))
+
+## [3.34.9](https://github.com/cnpm/cnpmcore/compare/v3.34.8...v3.34.9) (2023-06-27)
+
+
+### Bug Fixes
+
+* console ([#534](https://github.com/cnpm/cnpmcore/issues/534)) ([4141003](https://github.com/cnpm/cnpmcore/commit/4141003e136c82a3a4e68db406b03b3242a1f1fd))
+
+## [3.34.8](https://github.com/cnpm/cnpmcore/compare/v3.34.7...v3.34.8) (2023-06-27)
+
+
+### Bug Fixes
+
+* legacy pkg publish ([#533](https://github.com/cnpm/cnpmcore/issues/533)) ([20ffba8](https://github.com/cnpm/cnpmcore/commit/20ffba8d4115923ddbc9a5407db2110a3c684806))
+
+## [3.34.7](https://github.com/cnpm/cnpmcore/compare/v3.34.6...v3.34.7) (2023-06-25)
+
+
+### Bug Fixes
+
+* sync self pkg ([#532](https://github.com/cnpm/cnpmcore/issues/532)) ([ada3e22](https://github.com/cnpm/cnpmcore/commit/ada3e220a11b6ee0b09b4630ccaf31e5918138c3))
+
+## [3.34.6](https://github.com/cnpm/cnpmcore/compare/v3.34.5...v3.34.6) (2023-06-25)
+
+
+### Bug Fixes
+
+* only auto install s3-cnpmcore on Node.js 18+ ([#531](https://github.com/cnpm/cnpmcore/issues/531)) ([c9d9ce8](https://github.com/cnpm/cnpmcore/commit/c9d9ce8205b115a68a2b7b7184ec58b97721a152))
+
+## [3.34.5](https://github.com/cnpm/cnpmcore/compare/v3.34.4...v3.34.5) (2023-06-21)
+
+
+### Bug Fixes
+
+* create sync task by 'GET /:fullname/-/:filenameWithVersion.tgz' ([#526](https://github.com/cnpm/cnpmcore/issues/526)) ([5ceaa6b](https://github.com/cnpm/cnpmcore/commit/5ceaa6b8dd43aee907e00ac979b55f02a08dba62))
+
+## [3.34.4](https://github.com/cnpm/cnpmcore/compare/v3.34.3...v3.34.4) (2023-06-20)
+
+
+### Bug Fixes
+
+* avoid db query on sync mode all ([#527](https://github.com/cnpm/cnpmcore/issues/527)) ([49855d9](https://github.com/cnpm/cnpmcore/commit/49855d97e5dd08a747f6e999b7eef03362399634)), closes [/github.com/cnpm/cnpmcore/pull/522/files#r1234655574](https://github.com/cnpm//github.com/cnpm/cnpmcore/pull/522/files/issues/r1234655574)
+
+## [3.34.3](https://github.com/cnpm/cnpmcore/compare/v3.34.2...v3.34.3) (2023-06-17)
+
+
+### Bug Fixes
+
+* merge docker ENV into one layer ([#523](https://github.com/cnpm/cnpmcore/issues/523)) ([eb91b83](https://github.com/cnpm/cnpmcore/commit/eb91b834c0edb65248073573840fc8c0511a0ce0))
+
+## [3.34.2](https://github.com/cnpm/cnpmcore/compare/v3.34.1...v3.34.2) (2023-06-17)
+
+
+### Bug Fixes
+
+* should redirect when nfs adapter support url ([#522](https://github.com/cnpm/cnpmcore/issues/522)) ([3d6864c](https://github.com/cnpm/cnpmcore/commit/3d6864c713c3c59905cdf0a4287e0ca2ad291398))
+
+## [3.34.1](https://github.com/cnpm/cnpmcore/compare/v3.34.0...v3.34.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* add block package by packageId and name function ([#514](https://github.com/cnpm/cnpmcore/issues/514)) ([b81b2a0](https://github.com/cnpm/cnpmcore/commit/b81b2a03f85010bb8e94c334e2338ecc8064e833))
+
 ## [3.34.0](https://github.com/cnpm/cnpmcore/compare/v3.33.0...v3.34.0) (2023-06-13)
 
 

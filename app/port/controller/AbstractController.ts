@@ -146,25 +146,25 @@ export abstract class AbstractController extends MiddlewareController {
     return new UnavailableForLegalReasonsError(`${message}, reason: ${reason}`);
   }
 
-  protected async getPackageEntityByFullname(fullname: string): Promise<PackageEntity> {
+  protected async getPackageEntityByFullname(fullname: string, allowSync?: boolean): Promise<PackageEntity> {
     const [ scope, name ] = getScopeAndName(fullname);
-    return await this.getPackageEntity(scope, name);
+    return await this.getPackageEntity(scope, name, allowSync);
   }
 
   // try to get package entity, throw NotFoundError when package not exists
-  protected async getPackageEntity(scope: string, name: string): Promise<PackageEntity> {
+  protected async getPackageEntity(scope: string, name: string, allowSync?:boolean): Promise<PackageEntity> {
     const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (!packageEntity) {
       const fullname = getFullname(scope, name);
-      throw this.createPackageNotFoundErrorWithRedirect(fullname);
+      throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
     }
     return packageEntity;
   }
 
-  protected async getPackageVersionEntity(pkg: PackageEntity, version: string): Promise<PackageVersionEntity> {
+  protected async getPackageVersionEntity(pkg: PackageEntity, version: string, allowSync?: boolean): Promise<PackageVersionEntity> {
     const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
     if (!packageVersion) {
-      throw new NotFoundError(`${pkg.fullname}@${version} not found`);
+      throw this.createPackageNotFoundErrorWithRedirect(pkg.fullname, version, allowSync);
     }
     return packageVersion;
   }

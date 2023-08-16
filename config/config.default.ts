@@ -4,7 +4,7 @@ import { join } from 'path';
 import { EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
 import { patchAjv } from '../app/port/typebox';
-import { ChangesStreamMode, SyncDeleteMode, SyncMode } from '../app/common/constants';
+import { ChangesStreamMode, NOT_IMPLEMENTED_PATH, SyncDeleteMode, SyncMode } from '../app/common/constants';
 import { CnpmcoreConfig } from '../app/port/config';
 
 export const cnpmcoreConfig: CnpmcoreConfig = {
@@ -56,6 +56,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   strictSyncSpecivicVersion: false,
   enableElasticsearch: false,
   elasticsearchIndex: 'cnpmcore_packages',
+  strictValidateTarballPkg: false,
 };
 
 export default (appInfo: EggAppConfig) => {
@@ -168,6 +169,8 @@ export default (appInfo: EggAppConfig) => {
     strict: false,
     // set default limit to 10mb, see https://github.com/npm/npm/issues/12750
     jsonLimit: '10mb',
+    // https://github.com/cnpm/cnpmcore/issues/551
+    ignore: NOT_IMPLEMENTED_PATH,
   };
 
   // https://github.com/xiekw2010/egg-typebox-validate#%E5%A6%82%E4%BD%95%E5%86%99%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%A1%E9%AA%8C%E8%A7%84%E5%88%99

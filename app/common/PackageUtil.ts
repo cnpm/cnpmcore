@@ -3,7 +3,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import * as ssri from 'ssri';
 import tar from 'tar';
-import { AuthorType } from '../repository/PackageRepository';
+import { AuthorType, PackageJSONType } from '../repository/Package
 
 // /@cnpm%2ffoo
 // /@cnpm%2Ffoo
@@ -26,6 +26,10 @@ export function getFullname(scope: string, name: string): string {
 
 export function cleanUserPrefix(username: string): string {
   return username.replace(/^.*:/, '');
+}
+
+export function getPrefixedName(prefix: string, username: string): string {
+  return prefix ? `${prefix}${username}` : username;
 }
 
 export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
@@ -116,4 +120,25 @@ export function formatAuthor(author: string | AuthorType | undefined): AuthorTyp
     ret = author;
   }
   return ret;
+}
+
+export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJSONType> {
+  return new Promise((resolve, reject) => {
+    Readable.from(tarballBytes)
+      .pipe(tar.t({
+        filter: name => name === 'package/package.json',
+        onentry: async entry => {
+          const chunks: Buffer[] = [];
+          for await (const chunk of entry) {
+            chunks.push(chunk);
+          }
+          try {
+            const data = Buffer.concat(chunks);
+            return resolve(JSON.parse(data.toString()));
+          } catch (err) {
+            reject(new Error('Error parsing package.json'));
+          }
+        },
+      }));
+  });
 }

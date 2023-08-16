@@ -146,7 +146,7 @@ export class UserRepository extends AbstractRepository {
     }
   }
 
-  async findCredentialByUserIdAndBrowserType(userId: string, browserType: string | null) {
+  async findCredentialByUserIdAndBrowserType(userId: string | undefined, browserType: string | null) {
     const model = await this.WebauthnCredential.findOne({
       userId,
       browserType,

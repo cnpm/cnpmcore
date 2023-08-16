@@ -135,21 +135,20 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
       assert.match(res.body.error, /\[FORBIDDEN\] need login first/);
     });
 
-    it('should 403 when no user info', async () => {
+    it('should auto create when no user info', async () => {
       mock(AuthAdapter.prototype, 'ensureCurrentUser', async () => {
         return {
           name: 'banana',
           email: 'banana@fruits.com',
         };
       });
-      const res = await app.httpRequest()
+      await app.httpRequest()
         .post('/-/npm/v1/tokens/gat')
         .send({
           name: 'banana',
           expires: 30,
         })
-        .expect(403);
-      assert.match(res.body.error, /\[FORBIDDEN\] invalid user info/);
+        .expect(200);
     });
 
     describe('should 200', () => {

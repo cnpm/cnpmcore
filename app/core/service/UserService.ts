@@ -12,6 +12,9 @@ import { WebauthnCredential as WebauthnCredentialEntity } from '../entity/Webaut
 import { LoginResultCode } from '../../common/enum/User';
 import { integrity, checkIntegrity, randomToken, sha512 } from '../../common/UserUtil';
 import { AbstractService } from '../../common/AbstractService';
+import { RegistryManagerService } from './RegistryManagerService';
+import { getPrefixedName } from '../../common/PackageUtil';
+import { Registry } from '../entity/Registry';
 
 type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
 
@@ -59,10 +62,34 @@ type CreateWebauthnCredentialOptions = {
 export class UserService extends AbstractService {
   @Inject()
   private readonly userRepository: UserRepository;
+  @Inject()
+  private readonly registryManagerService: RegistryManagerService;
 
   checkPassword(user: UserEntity, password: string): boolean {
     const plain = `${user.passwordSalt}${password}`;
     return checkIntegrity(plain, user.passwordIntegrity);
+  }
+
+  async findUserByNameOrDisplayName(name: string) {
+    const hasPrefix = name.includes(':');
+    if (hasPrefix) {
+      return await this.findUserByName(name);
+    }
+
+    const selfRegistry = await this.registryManagerService.ensureSelfRegistry();
+    const selfUser = await this.findUserByName(getPrefixedName(selfRegistry.userPrefix, name));
+    if (selfUser) {
+      return selfUser;
+    }
+
+    const defaultRegistry = await this.registryManagerService.ensureDefaultRegistry();
+    const defaultUser = await this.findUserByName(getPrefixedName(defaultRegistry.userPrefix, name));
+
+    return defaultUser;
+  }
+
+  async findInRegistry(registry:Registry, name: string): Promise<UserEntity | null> {
+    return await this.findUserByName(getPrefixedName(registry.userPrefix, name));
   }
 
   async findUserByName(name: string): Promise<UserEntity | null> {
@@ -79,19 +106,23 @@ export class UserService extends AbstractService {
     return { code: LoginResultCode.Success, user, token };
   }
 
-  async ensureTokenByUser({ name, email, password = crypto.randomUUID(), ip }: Optional<CreateUser, 'password'>) {
+  async findOrCreateUser({ name, email, ip, password = crypto.randomUUID() }: Optional<CreateUser, 'password'>) {
     let user = await this.userRepository.findUserByName(name);
     if (!user) {
       const createRes = await this.create({
         name,
         email,
-        // Authentication via sso
-        // should use token instead of password
         password,
         ip,
       });
       user = createRes.user;
     }
+
+    return user;
+  }
+
+  async ensureTokenByUser(opts: Optional<CreateUser, 'password'>) {
+    const user = await this.findOrCreateUser(opts);
     const token = await this.createToken(user.userId);
     return { user, token };
   }
@@ -172,14 +203,14 @@ export class UserService extends AbstractService {
     await this.userRepository.removeToken(token.tokenId);
   }
 
-  async findWebauthnCredential(userId: string, browserType?: string) {
+  async findWebauthnCredential(userId: string, browserType: string | undefined | null) {
     const credential = await this.userRepository.findCredentialByUserIdAndBrowserType(userId, browserType || null);
     return credential;
   }
 
-  async createWebauthnCredential(userId: string, options: CreateWebauthnCredentialOptions) {
+  async createWebauthnCredential(userId: string | undefined, options: CreateWebauthnCredentialOptions) {
     const credentialEntity = WebauthnCredentialEntity.create({
-      userId,
+      userId: userId as string,
       credentialId: options.credentialId,
       publicKey: options.publicKey,
       browserType: options.browserType,
@@ -188,7 +219,7 @@ export class UserService extends AbstractService {
     return credentialEntity;
   }
 
-  async removeWebauthnCredential(userId: string, browserType?: string) {
+  async removeWebauthnCredential(userId?: string, browserType?: string) {
     const credential = await this.userRepository.findCredentialByUserIdAndBrowserType(userId, browserType || null);
     if (credential) {
       await this.userRepository.removeCredential(credential.wancId);

@@ -40,7 +40,7 @@ export class BugVersionService {
       const packageVersionJson = (await this.distRepository.findPackageVersionManifest(pkg!.packageId, tag!.version)) as PackageJSONType;
       if (!packageVersionJson) return;
       const data = packageVersionJson.config?.['bug-versions'];
-      bugVersion = new BugVersion(data);
+      bugVersion = new BugVersion(data || {});
       this.bugVersionStore.setBugVersion(bugVersion, tag!.version);
     }
     return bugVersion;

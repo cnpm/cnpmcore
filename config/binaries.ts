@@ -871,6 +871,16 @@ const binaries = {
       },
     },
   },
+  'libpg-query-node': {
+    category: 'libpg-query-node',
+    description: 'libpg-query is a real PostgreSQL query parser',
+    type: BinaryType.NodePreGyp,
+    repo: 'pyramation/libpg-query-node',
+    distUrl: 'https://supabase-public-artifacts-bucket.s3.amazonaws.com',
+    options: {
+      npmPackageName: 'libpg-query',
+    },
+  },
 } as const;
 
 export type BinaryName = keyof typeof binaries;

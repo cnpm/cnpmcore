@@ -65,7 +65,7 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
     }
     for (const [ date, counter ] of counters) {
       const field = `d${date}`;
-      model[field] = counter;
+      (model as unknown as Record<string, number>)[field] = counter;
     }
     await model.save();
   }

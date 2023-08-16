@@ -9,6 +9,7 @@ import {
 } from '@eggjs/tegg';
 import { AbstractController } from './AbstractController';
 import { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService';
+import { HomeService } from '../../core/service/HomeService';
 
 const startTime = new Date();
 
@@ -50,6 +51,9 @@ type TotalInfo = {
 export class HomeController extends AbstractController {
   @Inject()
   private readonly cacheService: CacheService;
+
+  @Inject()
+  private readonly homeService: HomeService;
 
   @HTTPMethod({
     // GET /
@@ -97,4 +101,23 @@ export class HomeController extends AbstractController {
       use: performance.now() - ctx.performanceStarttime!,
     };
   }
+
+  @HTTPMethod({
+    path: '/*',
+    method: HTTPMethodEnum.POST,
+    priority: -Infinity,
+  })
+  async miscPost(@Context() ctx: EggContext) {
+    await this.homeService.misc(ctx.path);
+  }
+
+  @HTTPMethod({
+    path: '/*',
+    method: HTTPMethodEnum.GET,
+    priority: -Infinity,
+  })
+  async miscGet(@Context() ctx: EggContext) {
+    await this.homeService.misc(ctx.path);
+  }
+
 }

@@ -14,6 +14,7 @@ import { AbstractController } from '../AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil';
 import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { SyncMode } from '../../../common/constants';
 
 @HTTPController()
 export class DownloadPackageVersionTarController extends AbstractController {
@@ -28,20 +29,29 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async download(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
-    // try nfs url first, avoid db query
     // tgz file storeKey: `/packages/${this.fullname}/${version}/${filename}`
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const storeKey = `/packages/${fullname}/${version}/${filenameWithVersion}.tgz`;
     const downloadUrl = await this.nfsAdapter.getDownloadUrl(storeKey);
-    if (downloadUrl) {
+    if (this.config.cnpmcore.syncMode === SyncMode.all && downloadUrl) {
+      // try nfs url first, avoid db query
       this.packageManagerService.plusPackageVersionCounter(fullname, version);
       ctx.redirect(downloadUrl);
       return;
     }
 
+    // check package version in database
+    const allowSync = this.getAllowSync(ctx);
+    const pkg = await this.getPackageEntityByFullname(fullname, allowSync);
+    const packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
+
+    // read by nfs url
+    if (downloadUrl) {
+      this.packageManagerService.plusPackageVersionCounter(fullname, version);
+      ctx.redirect(downloadUrl);
+      return;
+    }
     // read from database
-    const pkg = await this.getPackageEntityByFullname(fullname);
-    const packageVersion = await this.getPackageVersionEntity(pkg, version);
     ctx.logger.info('[PackageController:downloadVersionTar] %s@%s, packageVersionId: %s',
       pkg.fullname, version, packageVersion.packageVersionId);
     const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(packageVersion);
