@@ -23,7 +23,7 @@ export class ESSearchAdapter implements SearchAdapter {
   private readonly elasticsearch: ElasticsearchClient; // 由 elasticsearch 插件引入
 
   async search<T>(query: any): Promise<estypes.SearchHitsMetadata<T>> {
-    const { elasticsearch: { index } } = this.config;
+    const { cnpmcore: { elasticsearchIndex: index } } = this.config;
     const result = await this.elasticsearch.search<T>({
       index,
       ...query,
@@ -32,7 +32,7 @@ export class ESSearchAdapter implements SearchAdapter {
   }
 
   async upsert<T>(id: string, document: T): Promise<string> {
-    const { elasticsearch: { index } } = this.config;
+    const { cnpmcore: { elasticsearchIndex: index } } = this.config;
     const res = await this.elasticsearch.index({
       id,
       index,
@@ -42,7 +42,7 @@ export class ESSearchAdapter implements SearchAdapter {
   }
 
   async delete(id: string): Promise<string> {
-    const { elasticsearch: { index } } = this.config;
+    const { cnpmcore: { elasticsearchIndex: index } } = this.config;
     const res = await this.elasticsearch.delete({
       index,
       id,

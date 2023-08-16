@@ -117,7 +117,7 @@ type DistType = {
   [key: string]: unknown,
 };
 
-type AuthorType = {
+export type AuthorType = {
   name: string;
   email?: string;
   url?: string;

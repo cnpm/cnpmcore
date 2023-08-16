@@ -2,26 +2,43 @@ import {
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
-  Context,
-  EggContext,
+  HTTPParam,
   HTTPQuery,
   Inject,
 } from '@eggjs/tegg';
+import { Static } from 'egg-typebox-validate/typebox';
 import { AbstractController } from '../AbstractController';
-import { Client as ElasticsearchClient } from '@elastic/elasticsearch';
+import { SearchQueryOptions } from '../../typebox';
+import { PackageSearchService } from '../../../core/service/PackageSearchService';
+import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 
 @HTTPController()
 export class SearchPackageController extends AbstractController {
   @Inject()
-  private readonly elasticsearch: ElasticsearchClient;
+  private readonly packageSearchService: PackageSearchService;
+
   @HTTPMethod({
     // GET /-/v1/search?text=react&size=20&from=0&quality=0.65&popularity=0.98&maintenance=0.5
     path: '/-/v1/search',
     method: HTTPMethodEnum.GET,
   })
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async search(@Context() _ctx: EggContext, @HTTPQuery() _text: string) {
-    console.log(this.elasticsearch);
-    return null;
+  async search(
+    @HTTPQuery() text: Static<typeof SearchQueryOptions>['text'],
+    @HTTPQuery() from: Static<typeof SearchQueryOptions>['from'],
+    @HTTPQuery() size: Static<typeof SearchQueryOptions>['size'],
+  ) {
+    if (!this.config.cnpmcore.enableElasticsearch) return;
+    const data = await this.packageSearchService.searchPackage(text, from, size);
+    return data;
+  }
+
+  @HTTPMethod({
+    path: `/-/v1/search/sync/:fullname(${FULLNAME_REG_STRING})`,
+    method: HTTPMethodEnum.GET,
+  })
+  async sync(@HTTPParam() fullname: string) {
+    if (!this.config.cnpmcore.enableElasticsearch) return;
+    const data = await this.packageSearchService.syncPackage(fullname, true);
+    return data;
   }
 }

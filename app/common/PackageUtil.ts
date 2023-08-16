@@ -3,6 +3,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import * as ssri from 'ssri';
 import tar from 'tar';
+import { AuthorType } from '../repository/PackageRepository';
 
 // /@cnpm%2ffoo
 // /@cnpm%2Ffoo
@@ -97,4 +98,22 @@ export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Pr
     }
     throw Object.assign(new Error('[hasShrinkWrapInTgz] Fail to parse input file'), { cause: e });
   }
+}
+
+/** 写入 ES 时，格式化 author */
+export function formatAuthor(author: string | AuthorType | undefined): AuthorType | undefined {
+  if (author === undefined) {
+    return author;
+  }
+
+  let ret = {
+    name: '',
+  };
+
+  if (typeof author === 'string') {
+    ret.name = author;
+  } else {
+    ret = author;
+  }
+  return ret;
 }

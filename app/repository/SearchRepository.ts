@@ -1,9 +1,22 @@
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { SearchAdapter } from '../common/typing';
-import { PackageManifestType } from './PackageRepository';
+import { AuthorType, PackageManifestType } from './PackageRepository';
+
+export type SearchJSONPickKey = '_rev' | 'name' | 'description' | 'keywords' | 'license' | 'maintainers' | 'dist-tags';
+
+export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> & {
+  scope: string;
+  version: string;
+  versions: string[];
+  date: Date;
+  created: Date;
+  modified: Date;
+  author?: AuthorType | undefined;
+};
+
 
 export type SearchManifestType = {
-  package: PackageManifestType;
+  package: SearchMappingType;
   downloads: {
     all: number;
   };
@@ -22,10 +35,10 @@ export class SearchRepository {
   }
 
   async upsertPackage(document: SearchManifestType) {
-    return await this.searchAdapter.upsert(document.package._id, document);
+    return await this.searchAdapter.upsert(document.package.name, document);
   }
 
-  async remotePackage(fullname: string) {
+  async removePackage(fullname: string) {
     return await this.searchAdapter.delete(fullname);
   }
 }

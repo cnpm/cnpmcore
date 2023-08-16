@@ -1,8 +1,14 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import type { estypes } from '@elastic/elasticsearch';
+import dayjs from 'dayjs';
+
 import { AbstractService } from '../../common/AbstractService';
-import { getScopeAndName } from '../../common/PackageUtil';
+import { formatAuthor, getScopeAndName } from '../../common/PackageUtil';
 import { PackageManagerService } from './PackageManagerService';
-import { SearchManifestType, SearchRepository } from '../../repository/SearchRepository';
+import { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository';
+import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
+import { PackageRepository } from '../../repository/PackageRepository';
+
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -12,7 +18,10 @@ export class PackageSearchService extends AbstractService {
   private readonly packageManagerService: PackageManagerService;
   @Inject()
   private readonly searchRepository: SearchRepository;
-
+  @Inject()
+  private packageVersionDownloadRepository: PackageVersionDownloadRepository;
+  @Inject()
+  protected packageRepository: PackageRepository;
 
   async syncPackage(fullname: string, isSync = true) {
     const [ scope, name ] = getScopeAndName(fullname);
@@ -22,18 +31,61 @@ export class PackageSearchService extends AbstractService {
       this.logger.warn('[PackageSearchService.syncPackage] save package:%s not found', fullname);
       return;
     }
+
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) {
+      this.logger.warn('[PackageSearchService.syncPackage] findPackage:%s not found', fullname);
+      return;
+    }
+
+    // get last year download data
+    const startDate = dayjs().subtract(1, 'year');
+    const endDate = dayjs();
+
+    const entities = await this.packageVersionDownloadRepository.query(pkg.packageId, startDate.toDate(), endDate.toDate());
+    let downloadsAll = 0;
+    for (const entity of entities) {
+      for (let i = 1; i <= 31; i++) {
+        const day = String(i).padStart(2, '0');
+        const field = `d${day}`;
+        const counter = entity[field];
+        if (!counter) continue;
+        downloadsAll += counter;
+      }
+    }
+
+    const { data: manifest } = fullManifests;
+
+    const latestVersion = manifest['dist-tags'].latest;
+
+    const packageDoc: SearchMappingType = {
+      name: manifest.name,
+      version: latestVersion,
+      _rev: manifest._rev,
+      scope: scope ? scope.replace('@', '') : 'unscoped',
+      keywords: manifest.keywords || [],
+      versions: Object.keys(manifest.versions),
+      description: manifest.description,
+      license: manifest.license,
+      maintainers: manifest.maintainers,
+      author: formatAuthor(manifest.author),
+      'dist-tags': manifest['dist-tags'],
+      date: manifest.time?.[latestVersion],
+      created: manifest.time.created,
+      modified: manifest.time.modified,
+    };
+
     const document: SearchManifestType = {
-      package: fullManifests.data,
-      // TODO get download data from internal data
+      package: packageDoc,
       downloads: {
-        all: 0,
+        all: downloadsAll,
       },
     };
 
     return await this.searchRepository.upsertPackage(document);
   }
 
-  async searchPackage(text: string | undefined, from: number, size: number): Promise<(SearchManifestType | undefined)[]> {
+  async searchPackage(text: string | undefined, from: number, size: number): Promise<{ objects: (SearchManifestType | undefined)[], total: number }> {
     const matchQueries = this._buildMatchQueries(text);
     const scriptScore = this._buildScriptScore({
       text,
@@ -41,7 +93,6 @@ export class PackageSearchService extends AbstractService {
     });
 
     const res = await this.searchRepository.searchPackage({
-      type: 'score',
       body: {
         size,
         from,
@@ -59,14 +110,17 @@ export class PackageSearchService extends AbstractService {
         },
       },
     });
-    const data = res.hits.map(item => {
-      return item._source;
-    });
-    return data;
+    const { hits, total } = res;
+    return {
+      objects: hits?.map(item => {
+        return item._source;
+      }),
+      total: (total as estypes.SearchTotalHits).value,
+    };
   }
 
   async removePackage(fullname: string) {
-    return await this.searchRepository.remotePackage(fullname);
+    return await this.searchRepository.removePackage(fullname);
   }
 
   // https://github.com/npms-io/queries/blob/master/lib/search.js#L8C1-L78C2
@@ -145,8 +199,7 @@ export class PackageSearchService extends AbstractService {
   private _buildScriptScore(params: { text: string | undefined, scoreEffect: number }) {
     // keep search simple, only download(popularity)
     const downloads = 'doc["downloads.all"].value';
-    const source = `doc["package.name.raw"].value.equals(params.text) ? 100000 + ${downloads} : _score * Math.pow(${downloads}, params.scoreEffect)`;
-
+    const source = `doc["package.name.raw"].value.equals("${params.text}") ? 100000 + ${downloads} : _score * Math.pow(${downloads}, ${params.scoreEffect})`;
     return {
       script: {
         source,

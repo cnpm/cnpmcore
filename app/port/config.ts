@@ -151,7 +151,11 @@ export type CnpmcoreConfig = {
    */
   strictSyncSpecivicVersion: boolean,
   /**
-  * enable elastic search
+  * enable elasticsearch
   */
-  enableESSearch: boolean,
+  enableElasticsearch: boolean,
+  /**
+  * elasticsearch index. if enableElasticsearch is true, you must set a index to write es doc.
+  */
+  elasticsearchIndex: string,
 };

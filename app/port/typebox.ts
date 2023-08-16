@@ -271,3 +271,19 @@ export const ScopeUpdateOptions = Type.Object({
     maxLength: 256,
   }),
 });
+
+export const SearchQueryOptions = Type.Object({
+  from: Type.Number({
+    transform: [ 'trim' ],
+    minimum: 0,
+  }),
+  size: Type.Number({
+    transform: [ 'trim' ],
+    minimum: 1,
+  }),
+  text: Type.Optional(Type.String({
+    transform: [ 'trim' ],
+    minLength: 1,
+    maxLength: 256,
+  })),
+});

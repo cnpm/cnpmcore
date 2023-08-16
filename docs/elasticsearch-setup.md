@@ -61,8 +61,8 @@ ES 可以通过 Kibana devtool 进行数据的写入和查询操作。下面创�
 ```json
 PUT cnpmcore_packages
 {
-  "settings": settings // copy 下方 settings
-  "mappings": mappings // copy 下方 settings
+  "settings": ${settings} // copy 下方 settings
+  "mappings": ${mappings} // copy 下方 settings
 }
 ```
 
@@ -164,12 +164,12 @@ PUT cnpmcore_packages
         "autocomplete": {
           "max_gram": "15",
           "min_gram": "1",
-          "type": "edgeNGram"
+          "type": "edge_ngram"
         },
         "edge_ngram": {
           "max_gram": "15",
           "min_gram": "4",
-          "type": "edgeNGram"
+          "type": "edge_ngram"
         },
         "non_alfanum_to_space": {
           "pattern": "(?i)[^a-z0-9]+",
@@ -211,7 +211,7 @@ PUT cnpmcore_packages
             "letter",
             "digit"
           ],
-          "type": "edgeNGram"
+          "type": "edge_ngram"
         }
       }
     }
@@ -258,8 +258,8 @@ PUT cnpmcore_packages
             }
           }
         },
-        "createdAt": {
-          "type": "long"
+        "created": {
+          "type": "date"
         },
         "description": {
           "fields": {
@@ -288,9 +288,6 @@ PUT cnpmcore_packages
           "enabled": false,
           "type": "object"
         },
-        "isBnpmPrivate": {
-          "type": "boolean"
-        },
         "keywords": {
           "fields": {
             "edge_ngram": {
@@ -317,12 +314,6 @@ PUT cnpmcore_packages
           },
           "type": "text"
         },
-        "lastestVersionTime": {
-          "type": "long"
-        },
-        "latestVersionTime": {
-          "type": "long"
-        },
         "license": {
           "type": "keyword"
         },
@@ -338,8 +329,8 @@ PUT cnpmcore_packages
             }
           }
         },
-        "modifiedAt": {
-          "type": "long"
+        "modified": {
+          "type": "date"
         },
         "name": {
           "fields": {
@@ -397,6 +388,359 @@ PUT cnpmcore_packages
 }
 ```
 
-## TODO 开启 cnpmcore 中的 ES 服务
+### 在 kibana 操作
 
-## TODO 查询
+```json
+PUT /cnpmcore_packages
+{
+  "settings": {
+  "index": {
+    "analysis": {
+      "analyzer": {
+        "package": {
+          "filter": [
+            "asciifolding",
+            "split_word",
+            "lowercase",
+            "unique_on_same_position"
+          ],
+          "tokenizer": "standard"
+        },
+        "package_autocomplete": {
+          "filter": [
+            "asciifolding",
+            "split_word",
+            "lowercase",
+            "autocomplete",
+            "unique_on_same_position"
+          ],
+          "tokenizer": "standard"
+        },
+        "package_autocomplete_highlight": {
+          "filter": [
+            "asciifolding",
+            "non_alfanum_to_space",
+            "lowercase",
+            "trim"
+          ],
+          "tokenizer": "autocomplete"
+        },
+        "package_autocomplete_keyword": {
+          "filter": [
+            "asciifolding",
+            "non_alfanum_to_space",
+            "lowercase",
+            "autocomplete",
+            "trim",
+            "unique_on_same_position"
+          ],
+          "tokenizer": "keyword"
+        },
+        "package_autocomplete_keyword_search": {
+          "filter": [
+            "asciifolding",
+            "non_alfanum_to_space",
+            "lowercase",
+            "trim"
+          ],
+          "tokenizer": "keyword"
+        },
+        "package_edge_ngram": {
+          "filter": [
+            "asciifolding",
+            "split_word",
+            "lowercase",
+            "edge_ngram",
+            "unique_on_same_position"
+          ],
+          "tokenizer": "standard"
+        },
+        "package_english": {
+          "filter": [
+            "asciifolding",
+            "split_word",
+            "lowercase",
+            "kstem",
+            "unique_on_same_position"
+          ],
+          "tokenizer": "standard"
+        },
+        "package_english_aggressive": {
+          "filter": [
+            "asciifolding",
+            "split_word",
+            "lowercase",
+            "porter_stem",
+            "unique_on_same_position"
+          ],
+          "tokenizer": "standard"
+        },
+        "raw": {
+          "filter": [
+            "asciifolding",
+            "lowercase",
+            "trim"
+          ],
+          "tokenizer": "keyword"
+        }
+      },
+      "filter": {
+        "autocomplete": {
+          "max_gram": "15",
+          "min_gram": "1",
+          "type": "edge_ngram"
+        },
+        "edge_ngram": {
+          "max_gram": "15",
+          "min_gram": "4",
+          "type": "edge_ngram"
+        },
+        "non_alfanum_to_space": {
+          "pattern": "(?i)[^a-z0-9]+",
+          "replacement": " ",
+          "type": "pattern_replace"
+        },
+        "split_word": {
+          "catenate_all": "false",
+          "catenate_numbers": "false",
+          "catenate_words": "false",
+          "generate_number_parts": "true",
+          "generate_word_parts": "true",
+          "preserve_original": "true",
+          "split_on_case_change": "true",
+          "split_on_numerics": "true",
+          "stem_english_possessive": "true",
+          "type": "word_delimiter"
+        },
+        "unique_on_same_position": {
+          "only_on_same_position": "false",
+          "type": "unique"
+        }
+      },
+      "normalizer": {
+        "raw": {
+          "filter": [
+            "asciifolding",
+            "lowercase",
+            "trim"
+          ],
+          "type": "custom"
+        }
+      },
+      "tokenizer": {
+        "autocomplete": {
+          "max_gram": "15",
+          "min_gram": "1",
+          "token_chars": [
+            "letter",
+            "digit"
+          ],
+          "type": "edge_ngram"
+        }
+      }
+    }
+  }
+},
+  "mappings": {
+  "dynamic": "false",
+  "properties": {
+    "downloads": {
+      "properties": {
+        "all": {
+          "type": "long"
+        }
+      }
+    },
+    "package": {
+      "properties": {
+        "_rev": {
+          "index": false,
+          "type": "text"
+        },
+        "author": {
+          "properties": {
+            "email": {
+              "normalizer": "raw",
+              "type": "keyword"
+            },
+            "name": {
+              "normalizer": "raw",
+              "type": "keyword"
+            },
+            "url": {
+              "index": false,
+              "type": "text"
+            },
+            "username": {
+              "normalizer": "raw",
+              "type": "keyword"
+            }
+          }
+        },
+        "created": {
+          "type": "date"
+        },
+        "description": {
+          "fields": {
+            "edge_ngram": {
+              "analyzer": "package_edge_ngram",
+              "search_analyzer": "package",
+              "type": "text"
+            },
+            "english": {
+              "analyzer": "package_english",
+              "type": "text"
+            },
+            "english_aggressive": {
+              "analyzer": "package_english_aggressive",
+              "type": "text"
+            },
+            "standard": {
+              "analyzer": "standard",
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "dist-tags": {
+          "dynamic": "true",
+          "enabled": false,
+          "type": "object"
+        },
+        "keywords": {
+          "fields": {
+            "edge_ngram": {
+              "analyzer": "package_edge_ngram",
+              "search_analyzer": "package",
+              "type": "text"
+            },
+            "english": {
+              "analyzer": "package_english",
+              "type": "text"
+            },
+            "english_aggressive": {
+              "analyzer": "package_english_aggressive",
+              "type": "text"
+            },
+            "raw": {
+              "analyzer": "raw",
+              "type": "text"
+            },
+            "standard": {
+              "analyzer": "standard",
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "lastestVersionTime": {
+          "type": "long"
+        },
+        "latestVersionTime": {
+          "type": "long"
+        },
+        "license": {
+          "type": "keyword"
+        },
+        "maintainers": {
+          "properties": {
+            "email": {
+              "normalizer": "raw",
+              "type": "keyword"
+            },
+            "name": {
+              "normalizer": "raw",
+              "type": "keyword"
+            }
+          }
+        },
+        "modified": {
+          "type": "date"
+        },
+        "name": {
+          "fields": {
+            "autocomplete": {
+              "analyzer": "package_autocomplete",
+              "search_analyzer": "package",
+              "type": "text"
+            },
+            "autocomplete_highlight": {
+              "analyzer": "package_autocomplete_highlight",
+              "index_options": "offsets",
+              "search_analyzer": "package",
+              "type": "text"
+            },
+            "autocomplete_keyword": {
+              "analyzer": "package_autocomplete_keyword",
+              "search_analyzer": "package_autocomplete_keyword_search",
+              "type": "text"
+            },
+            "edge_ngram": {
+              "analyzer": "package_edge_ngram",
+              "search_analyzer": "package",
+              "type": "text"
+            },
+            "english": {
+              "analyzer": "package_english",
+              "type": "text"
+            },
+            "english_aggressive": {
+              "analyzer": "package_english_aggressive",
+              "type": "text"
+            },
+            "raw": {
+              "normalizer": "raw",
+              "type": "keyword"
+            },
+            "standard": {
+              "analyzer": "standard",
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "scope": {
+          "normalizer": "raw",
+          "type": "keyword"
+        },
+        "versions": {
+          "index": false,
+          "type": "text"
+        }
+      }
+    }
+  }
+}
+}
+```
+
+## 开启 cnpmcore 中的 ES 服务
+
+```ts
+// config.default.ts
+config: {
+  enableElasticsearch: true,
+  // 写入索引，与上述创建索引一致
+  elasticsearchIndex: 'cnpmcore_packages',
+}
+```
+
+### 尝试写入或同步一条数据
+
+1. 手动写入
+
+```bash
+$ curl --location --request GET http://localhost:7001/-/v1/search/sync/colors
+```
+
+2. 开启同步
+
+```bash
+$ curl --location --request PUT 'http://localhost:7001/-/package/colors/syncs'
+```bash
+
+### 查询
+
+```bash
+$ npm search colors --registry http://localhost:7001
+```

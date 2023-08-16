@@ -54,7 +54,8 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   redirectNotFound: true,
   enableUnpkg: true,
   strictSyncSpecivicVersion: false,
-  enableESSearch: true,
+  enableElasticsearch: false,
+  elasticsearchIndex: 'cnpmcore_packages',
 };
 
 export default (appInfo: EggAppConfig) => {
@@ -188,12 +189,15 @@ export default (appInfo: EggAppConfig) => {
   };
 
   // more options: https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/configuration.html
-  config.elasticsearch = {
+  config.elasticsearch = cnpmcoreConfig.enableElasticsearch ? {
     client: {
       node: 'http://localhost:9200',
-      index: 'cnpmcore_packages',
+      auth: {
+        username: 'elastic',
+        password: 'abcdef',
+      },
     },
-  };
+  } : undefined;
 
   return config;
 };
