@@ -383,8 +383,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 200);
-      assert(res.headers.location === app.config.cnpmcore.registry);
-      assert(res.body.data.dist.tarball.includes(app.config.cnpmcore.registry));
+      assert(res.body.dist.tarball.includes(app.config.cnpmcore.registry));
     });
   });
 });

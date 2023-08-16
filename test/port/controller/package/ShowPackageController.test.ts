@@ -878,9 +878,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 200);
-      assert(res.headers.location === app.config.cnpmcore.registry);
-      assert(res.body.data.description === 'cnpmcore mock json');
-      assert(res.body.data.versions['1.0.0'].dist.tarball.includes(app.config.cnpmcore.registry));
+      assert(res.body.description === 'cnpmcore mock json');
+      assert(res.body.versions['1.0.0'].dist.tarball.includes(app.config.cnpmcore.registry));
     });
   });
 });
