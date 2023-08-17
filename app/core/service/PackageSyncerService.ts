@@ -203,8 +203,8 @@ export class PackageSyncerService extends AbstractService {
         const log = data && data.log || '';
         offset += log.length;
         if (data && data.syncDone) {
-          logs.push(`[${isoNow()}][UP] 🟢 Sync ${fullname} success [${useTime}ms], log: ${logUrl}, offset: ${offset}`);
-          logs.push(`[${isoNow()}][UP] 🟢🟢🟢🟢🟢 ${registry}/${fullname} 🟢🟢🟢🟢🟢`);
+          logs.push(`[${isoNow()}][UP] 🎉 Sync ${fullname} success [${useTime}ms], log: ${logUrl}, offset: ${offset}`);
+          logs.push(`[${isoNow()}][UP] 🔗 ${registry}/${fullname}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           return;
         }
@@ -298,8 +298,8 @@ export class PackageSyncerService extends AbstractService {
     }
 
     // update log
-    logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
-    logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
+    logs.push(`[${isoNow()}] 📝 Log URL: ${logUrl}`);
+    logs.push(`[${isoNow()}] 🔗 ${url}`);
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
     this.logger.info('[PackageSyncerService.executeTask:remove-package] taskId: %s, targetName: %s',
       task.taskId, task.targetName);
@@ -690,7 +690,7 @@ export class PackageSyncerService extends AbstractService {
         const publisher = users.find(user => user.displayName === item._npmUser?.name) || users[0];
         const pkgVersion = await this.packageManagerService.publish(publishCmd, publisher);
         updateVersions.push(pkgVersion.version);
-        logs.push(`[${isoNow()}] 🟢 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
+        logs.push(`[${isoNow()}] 🎉 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
       } catch (err: any) {
         if (err.name === 'ForbiddenError') {
           logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`);
@@ -885,9 +885,9 @@ export class PackageSyncerService extends AbstractService {
 
     // clean cache
     await this.cacheService.removeCache(fullname);
-    logs.push(`[${isoNow()}] 🟢 Clean cache`);
-    logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
-    logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 ${url} 🟢🟢🟢🟢🟢`);
+    logs.push(`[${isoNow()}] 🗑️ Clean cache`);
+    logs.push(`[${isoNow()}] 📝 Log URL: ${logUrl}`);
+    logs.push(`[${isoNow()}] 🔗 ${url}`);
     task.error = lastErrorMessage;
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
     this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
