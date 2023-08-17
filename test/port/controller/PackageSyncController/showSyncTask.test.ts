@@ -103,7 +103,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
         assert.equal(res.status, 302);
         log = await TestUtil.readStreamToLog(res.headers.location);
       }
-      assert.match(log, /🟢🟢🟢🟢🟢/);
+      assert.match(log, /🔗/);
 
       // check hasInstallScript
       res = await app.httpRequest()
