@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.41.0](https://github.com/cnpm/cnpmcore/compare/v3.40.0...v3.41.0) (2023-08-17)
+
+
+### Features
+
+* improved readability of emoji in sync logs ([#572](https://github.com/cnpm/cnpmcore/issues/572)) ([0ac275a](https://github.com/cnpm/cnpmcore/commit/0ac275a348080822e26c66ede81f56c0d3ac94d2))
+
 ## [3.40.0](https://github.com/cnpm/cnpmcore/compare/v3.39.5...v3.40.0) (2023-08-08)
 
 
