@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.42.0](https://github.com/cnpm/cnpmcore/compare/v3.41.0...v3.42.0) (2023-08-22)
+
+
+### Features
+
+* revalidate latest version ([#573](https://github.com/cnpm/cnpmcore/issues/573)) ([73b4383](https://github.com/cnpm/cnpmcore/commit/73b4383f5c0805c65abed9c5ac50758402321a53)), closes [#376](https://github.com/cnpm/cnpmcore/issues/376)
+
 ## [3.41.0](https://github.com/cnpm/cnpmcore/compare/v3.40.0...v3.41.0) (2023-08-17)
 
 
