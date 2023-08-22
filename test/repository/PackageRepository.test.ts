@@ -29,7 +29,7 @@ describe('test/repository/PackageRepository.test.ts', () => {
         dist: {
           content: Buffer.alloc(0),
         },
-        tag: '',
+        tags: [ '' ],
         scope: '',
         name: 'foo',
         description: 'foo description',

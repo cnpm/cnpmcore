@@ -138,11 +138,25 @@ export class SavePackageVersionController extends AbstractController {
 
     const attachment = attachments[attachmentFilename];
     const distTags = pkg['dist-tags'] ?? {};
-    const tagName = Object.keys(distTags)[0];
-    if (!tagName) {
+    let tagNames = Object.keys(distTags);
+    if (tagNames.length === 0) {
       throw new UnprocessableEntityError('dist-tags is empty');
     }
-    const tagWithVersion = { tag: tagName, version: distTags[tagName] };
+
+    const [ scope, name ] = getScopeAndName(fullname);
+    // see @https://github.com/cnpm/cnpmcore/issues/574
+    // add default latest tag
+    if (!pkg['dist-tags']!.latest) {
+      const existsPkg = await this.packageRepository.findPackage(scope, name);
+      const existsLatestTag = existsPkg && await this.packageRepository.findPackageTag(existsPkg?.packageId, 'latest');
+      if (!existsPkg || !existsLatestTag) {
+        this.logger.warn('[package:version:add] add default latest tag');
+        pkg['dist-tags']!.latest = pkg['dist-tags']![tagNames[0]];
+        tagNames = [ ...tagNames, 'latest' ];
+      }
+    }
+
+    const tagWithVersion = { tag: tagNames[0], version: distTags[tagNames[0]] };
     ctx.tValidate(TagWithVersionRule, tagWithVersion);
     if (tagWithVersion.version !== packageVersion.version) {
       throw new UnprocessableEntityError(`dist-tags version "${tagWithVersion.version}" not match package version "${packageVersion.version}"`);
@@ -194,7 +208,6 @@ export class SavePackageVersionController extends AbstractController {
       }
     }
 
-    const [ scope, name ] = getScopeAndName(fullname);
 
     // make sure readme is string
     const readme = typeof packageVersion.readme === 'string' ? packageVersion.readme : '';
@@ -219,7 +232,7 @@ export class SavePackageVersionController extends AbstractController {
         dist: {
           content: tarballBytes,
         },
-        tag: tagWithVersion.tag,
+        tags: tagNames,
         registryId: registry.registryId,
         isPrivate: true,
       }, user);
