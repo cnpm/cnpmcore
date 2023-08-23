@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.42.1](https://github.com/cnpm/cnpmcore/compare/v3.42.0...v3.42.1) (2023-08-23)
+
+
+### Bug Fixes
+
+* default latest tag ([#575](https://github.com/cnpm/cnpmcore/issues/575)) ([ffe8fa7](https://github.com/cnpm/cnpmcore/commit/ffe8fa7d190550d9ca340fe62b31397ff018f5d2)), closes [#574](https://github.com/cnpm/cnpmcore/issues/574)
+
 ## [3.42.0](https://github.com/cnpm/cnpmcore/compare/v3.41.0...v3.42.0) (2023-08-22)
 
 
