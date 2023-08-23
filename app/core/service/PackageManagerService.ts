@@ -64,7 +64,7 @@ export interface PublishPackageCmd {
     // sync worker will use localFile field
     localFile?: string;
   }, 'content' | 'localFile'>;
-  tag?: string;
+  tags?: string[];
   isPrivate: boolean;
   // only use on sync package
   publishTime?: Date;
@@ -270,10 +270,15 @@ export class PackageManagerService extends AbstractService {
     if (cmd.skipRefreshPackageManifests !== true) {
       await this.refreshPackageChangeVersionsToDists(pkg, [ pkgVersion.version ]);
     }
-    if (cmd.tag) {
-      await this.savePackageTag(pkg, cmd.tag, cmd.version, true);
+    if (cmd.tags) {
+      for (const tag of cmd.tags) {
+        await this.savePackageTag(pkg, tag, cmd.version, true);
+        this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, tag);
+      }
+    } else {
+      this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, undefined);
     }
-    this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, cmd.tag);
+
     return pkgVersion;
   }
 

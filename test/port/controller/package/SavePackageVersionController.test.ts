@@ -813,7 +813,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         dist: {
           content: Buffer.from('', 'base64'),
         },
-        tag: 'latest',
+        tags: [ 'latest' ],
         isPrivate: true,
       }, user!);
 
@@ -1214,6 +1214,34 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           .send(pkg);
 
         assert.equal(res.status, 201);
+      });
+
+      it('should 200 add default latest tag', async () => {
+        const name = '@cnpm/default_latest_tag';
+        token = await userService.createToken(user!.userId, {
+          name: 'new-token',
+          type: TokenType.granular,
+          allowedPackages: [ name ],
+          expires: 1,
+        });
+
+        const pkg = await TestUtil.getFullPackage({ name, version: '3.0.0' });
+        pkg['dist-tags'] = {
+          beta: '3.0.0',
+        };
+        const res = await app.httpRequest()
+          .put(`/${name}`)
+          .set('authorization', `Bearer ${token.token}`)
+          .set('user-agent', publisher.ua)
+          .send(pkg);
+
+        assert.equal(res.status, 201);
+
+        const queryRes = await app.httpRequest()
+          .get(`/${name}/latest`);
+
+        assert.equal(queryRes.body.version, '3.0.0');
+
       });
     });
   });
