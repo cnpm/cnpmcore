@@ -1,10 +1,10 @@
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { SearchAdapter } from '../common/typing';
-import { AuthorType, PackageManifestType } from './PackageRepository';
+import { AuthorType, CnpmcorePatchInfo, PackageManifestType } from './PackageRepository';
 
-export type SearchJSONPickKey = '_rev' | 'name' | 'description' | 'keywords' | 'license' | 'maintainers' | 'dist-tags';
+export type SearchJSONPickKey = '_rev' | 'name' | 'description' | 'keywords' | 'license' | 'maintainers' | 'dist-tags' | '_source_registry_name';
 
-export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> & {
+export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> & CnpmcorePatchInfo & {
   scope: string;
   version: string;
   versions: string[];
@@ -12,6 +12,10 @@ export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> & {
   created: Date;
   modified: Date;
   author?: AuthorType | undefined;
+  _npmUser?: {
+    name: string;
+    email: string;
+  }
 };
 
 

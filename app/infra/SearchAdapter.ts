@@ -36,7 +36,7 @@ export class ESSearchAdapter implements SearchAdapter {
     const res = await this.elasticsearch.index({
       id,
       index,
-      body: document,
+      document,
     });
     return res._id;
   }

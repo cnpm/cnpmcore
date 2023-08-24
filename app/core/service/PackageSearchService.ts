@@ -57,6 +57,7 @@ export class PackageSearchService extends AbstractService {
     const { data: manifest } = fullManifests;
 
     const latestVersion = manifest['dist-tags'].latest;
+    const latestManifest = manifest.versions[latestVersion];
 
     const packageDoc: SearchMappingType = {
       name: manifest.name,
@@ -70,9 +71,15 @@ export class PackageSearchService extends AbstractService {
       maintainers: manifest.maintainers,
       author: formatAuthor(manifest.author),
       'dist-tags': manifest['dist-tags'],
-      date: manifest.time?.[latestVersion],
+      date: manifest.time[latestVersion],
       created: manifest.time.created,
       modified: manifest.time.modified,
+      // 归属 registry，keywords 枚举值
+      _source_registry_name: manifest._source_registry_name,
+      // 最新版本发布人 _npmUser:
+      _npmUser: latestManifest?._npmUser,
+      // 最新版本发布信息
+      publish_time: latestManifest?.publish_time,
     };
 
     const document: SearchManifestType = {
@@ -85,7 +92,7 @@ export class PackageSearchService extends AbstractService {
     return await this.searchRepository.upsertPackage(document);
   }
 
-  async searchPackage(text: string | undefined, from: number, size: number): Promise<{ objects: (SearchManifestType | undefined)[], total: number }> {
+  async searchPackage(text: string, from: number, size: number): Promise<{ objects: (SearchManifestType | undefined)[], total: number }> {
     const matchQueries = this._buildMatchQueries(text);
     const scriptScore = this._buildScriptScore({
       text,
@@ -124,11 +131,7 @@ export class PackageSearchService extends AbstractService {
   }
 
   // https://github.com/npms-io/queries/blob/master/lib/search.js#L8C1-L78C2
-  private _buildMatchQueries(text: string | undefined) {
-    if (!text) {
-      return [];
-    }
-
+  private _buildMatchQueries(text: string) {
     return [
       // Standard match using cross_fields
       {

@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { formatTarball, hasShrinkWrapInTgz } from '../../app/common/PackageUtil';
+import { formatAuthor, formatTarball, hasShrinkWrapInTgz } from '../../app/common/PackageUtil';
 import { TestUtil } from '../TestUtil';
 
 describe('test/common/PackageUtil.test.ts', () => {
@@ -25,6 +25,15 @@ describe('test/common/PackageUtil.test.ts', () => {
       const bigBufferResult = await TestUtil.app.httpclient.request(bigTarballUrl, { dataType: 'buffer' });
       assert.equal(bigBufferResult.data.length, /* ~16MB */ 16035586);
       assert.equal(await hasShrinkWrapInTgz(bigBufferResult.data), false);
+    });
+  });
+
+  describe('formatAuthor()', () => {
+    it('should work', () => {
+      const mockedAuthor = { name: 'cnpmcore', email: 'cnpmcore@example.com' };
+      assert.equal(formatAuthor(undefined), undefined);
+      assert.deepEqual(formatAuthor(mockedAuthor.name), { name: mockedAuthor.name });
+      assert.deepEqual(formatAuthor(mockedAuthor), mockedAuthor);
     });
   });
 });

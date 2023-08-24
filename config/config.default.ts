@@ -192,15 +192,17 @@ export default (appInfo: EggAppConfig) => {
   };
 
   // more options: https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/configuration.html
-  config.elasticsearch = cnpmcoreConfig.enableElasticsearch ? {
-    client: {
-      node: 'http://localhost:9200',
-      auth: {
-        username: 'elastic',
-        password: 'abcdef',
+  if (config.cnpmcore.enableElasticsearch) {
+    config.elasticsearch = {
+      client: {
+        node: 'http://localhost:9200',
+        auth: {
+          username: 'elastic',
+          password: 'abcdef',
+        },
       },
-    },
-  } : undefined;
+    };
+  }
 
   return config;
 };

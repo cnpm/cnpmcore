@@ -3,7 +3,8 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import * as ssri from 'ssri';
 import tar from 'tar';
-import { AuthorType, PackageJSONType } from '../repository/Package
+import { AuthorType, PackageJSONType } from '../repository/PackageRepository';
+
 
 // /@cnpm%2ffoo
 // /@cnpm%2Ffoo
@@ -110,16 +111,11 @@ export function formatAuthor(author: string | AuthorType | undefined): AuthorTyp
     return author;
   }
 
-  let ret = {
-    name: '',
-  };
-
   if (typeof author === 'string') {
-    ret.name = author;
-  } else {
-    ret = author;
+    return { name: author };
   }
-  return ret;
+
+  return author;
 }
 
 export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJSONType> {

@@ -118,6 +118,7 @@
   },
   "devDependencies": {
     "@cnpmjs/npm-cli-login": "^1.1.0",
+    "@elastic/elasticsearch-mock": "^2.0.0",
     "@simplewebauthn/typescript-types": "^7.0.0",
     "@types/mime-types": "^2.1.1",
     "@types/mocha": "^10.0.1",
