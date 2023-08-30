@@ -195,10 +195,10 @@ export default (appInfo: EggAppConfig) => {
   if (config.cnpmcore.enableElasticsearch) {
     config.elasticsearch = {
       client: {
-        node: 'http://localhost:9200',
+        node: process.env.CNPMCORE_CONFIG_ES_CLIENT_NODE,
         auth: {
-          username: 'elastic',
-          password: 'abcdef',
+          username: process.env.CNPMCORE_CONFIG_ES_CLIENT_AUTH_USERNAME,
+          password: process.env.CNPMCORE_CONFIG_ES_CLIENT_AUTH_PASSWORD,
         },
       },
     };
