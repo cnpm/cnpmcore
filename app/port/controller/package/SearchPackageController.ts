@@ -5,13 +5,16 @@ import {
   HTTPParam,
   HTTPQuery,
   Inject,
+  Middleware,
 } from '@eggjs/tegg';
 import { Static } from 'egg-typebox-validate/typebox';
+import { E451 } from 'egg-errors';
+
 import { AbstractController } from '../AbstractController';
 import { SearchQueryOptions } from '../../typebox';
 import { PackageSearchService } from '../../../core/service/PackageSearchService';
 import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
-import { E451 } from 'egg-errors';
+import { AdminAccess } from '../../middleware/AdminAccess';
 
 @HTTPController()
 export class SearchPackageController extends AbstractController {
@@ -51,6 +54,7 @@ export class SearchPackageController extends AbstractController {
     path: `/-/v1/search/sync/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.DELETE,
   })
+  @Middleware(AdminAccess)
   async delete(@HTTPParam() fullname: string) {
     if (!this.config.cnpmcore.enableElasticsearch) {
       throw new E451('search feature not enabled in `config.cnpmcore.enableElasticsearch`');
