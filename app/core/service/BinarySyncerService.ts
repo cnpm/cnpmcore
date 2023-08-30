@@ -21,6 +21,7 @@ import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/Abstract
 import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { BinaryType } from '../../common/enum/Binary';
+import { sortBy } from 'lodash';
 
 function isoNow() {
   return new Date().toISOString();
@@ -152,7 +153,7 @@ export class BinarySyncerService extends AbstractService {
     }
   }
 
-  private async syncDir(binaryAdapter: AbstractBinary, task: Task, dir: string, parentIndex = '') {
+  private async syncDir(binaryAdapter: AbstractBinary, task: Task, dir: string, parentIndex = '', latestVersionParent = '/') {
     const binaryName = task.targetName as BinaryName;
     const result = await binaryAdapter.fetch(dir, binaryName);
     let hasDownloadError = false;
@@ -160,14 +161,15 @@ export class BinarySyncerService extends AbstractService {
     if (result && result.items.length > 0) {
       hasItems = true;
       let logs: string[] = [];
-      const newItems = await this.diff(binaryName, dir, result.items);
+      const { newItems, latestVersionDir } = await this.diff(binaryName, dir, result.items, latestVersionParent);
       logs.push(`[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryAdapter.constructor.name}`);
+      // re-check latest version
       for (const [ index, { item, reason }] of newItems.entries()) {
         if (item.isDir) {
           logs.push(`[${isoNow()}][${dir}] 🚧 [${parentIndex}${index}] Start sync dir ${JSON.stringify(item)}, reason: ${reason}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
-          const [ hasError, hasSubItems ] = await this.syncDir(binaryAdapter, task, `${dir}${item.name}`, `${parentIndex}${index}.`);
+          const [ hasError, hasSubItems ] = await this.syncDir(binaryAdapter, task, `${dir}${item.name}`, `${parentIndex}${index}.`, latestVersionDir);
           if (hasError) {
             hasDownloadError = true;
           } else {
@@ -231,7 +233,12 @@ export class BinarySyncerService extends AbstractService {
     return [ hasDownloadError, hasItems ];
   }
 
-  private async diff(binaryName: BinaryName, dir: string, fetchItems: BinaryItem[]) {
+
+  // see https://github.com/cnpm/cnpmcore/issues/556
+  // 上游可能正在发布新版本、同步流程中断，导致同步的时候，文件列表不一致
+  // 如果的当前目录命中 latestVersionParent 父目录，那么就再校验一下当前目录
+  // 如果 existsItems 为空或者经过修改，那么就不需要 revalidate 了
+  private async diff(binaryName: BinaryName, dir: string, fetchItems: BinaryItem[], latestVersionParent = '/') {
     const existsItems = await this.binaryRepository.listBinaries(binaryName, dir);
     const existsMap = new Map<string, Binary>();
     for (const item of existsItems) {
@@ -262,9 +269,23 @@ export class BinarySyncerService extends AbstractService {
         existsItem.sourceUrl = item.url;
         existsItem.ignoreDownloadStatuses = item.ignoreDownloadStatuses;
         existsItem.date = item.date;
+      } else if (dir.endsWith(latestVersionParent)) {
+        const isLatestItem = sortBy(fetchItems, [ 'date' ]).pop()?.name === item.name;
+        if (isLatestItem && existsItem.isDir) {
+          diffItems.push({
+            item: existsItem,
+            reason: `revalidate latest version, latest parent dir is ${latestVersionParent}, current dir is ${dir}, current name is ${existsItem.name}`,
+          });
+          latestVersionParent = `${latestVersionParent}${existsItem.name}`;
+        }
       }
     }
-    return diffItems;
+
+
+    return {
+      newItems: diffItems,
+      latestVersionDir: latestVersionParent,
+    };
   }
 
   private async saveBinaryItem(binary: Binary, tmpfile?: string) {

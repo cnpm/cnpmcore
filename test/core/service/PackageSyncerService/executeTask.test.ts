@@ -304,7 +304,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢🟢🟢🟢🟢'));
+      assert(log.includes('] 🔗'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -333,7 +333,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢🟢🟢🟢🟢'));
+      assert(log.includes('] 🔗'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -1161,7 +1161,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢🟢🟢🟢🟢 https://registry.npmjs.org/cnpmcore-test-sync-deprecated'));
+      assert(log.includes('] 🔗 https://registry.npmjs.org/cnpmcore-test-sync-deprecated'));
       const { data } = await packageManagerService.listPackageFullManifests('', name);
       assert(data!.readme === 'mock readme content');
       assert(data!.versions['0.0.0']!.readme === undefined);
@@ -1633,7 +1633,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('📖 Use the latest version(0.0.0) maintainers instead'));
-      assert(log.includes('] 🟢🟢🟢🟢🟢 '));
+      assert(log.includes('] 🔗'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -1716,7 +1716,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('🚧🚧🚧🚧🚧 Syncing from https://registry.npmjs.org/D, '));
-      assert(log.includes('🟢🟢🟢🟢🟢'));
+      assert(log.includes('🔗'));
       const res = await app.httpRequest()
         .get(`/${name}`)
         .expect(200)
@@ -1748,7 +1748,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('🚧🚧🚧🚧🚧 Syncing from https://registry.npmjs.org/Buffer, '));
-      assert(log.includes('🟢🟢🟢🟢🟢'));
+      assert(log.includes('🔗'));
       const res = await app.httpRequest()
         .get(`/${name}`)
         .expect(200)

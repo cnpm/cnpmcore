@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.42.1](https://github.com/cnpm/cnpmcore/compare/v3.42.0...v3.42.1) (2023-08-23)
+
+
+### Bug Fixes
+
+* default latest tag ([#575](https://github.com/cnpm/cnpmcore/issues/575)) ([ffe8fa7](https://github.com/cnpm/cnpmcore/commit/ffe8fa7d190550d9ca340fe62b31397ff018f5d2)), closes [#574](https://github.com/cnpm/cnpmcore/issues/574)
+
+## [3.42.0](https://github.com/cnpm/cnpmcore/compare/v3.41.0...v3.42.0) (2023-08-22)
+
+
+### Features
+
+* revalidate latest version ([#573](https://github.com/cnpm/cnpmcore/issues/573)) ([73b4383](https://github.com/cnpm/cnpmcore/commit/73b4383f5c0805c65abed9c5ac50758402321a53)), closes [#376](https://github.com/cnpm/cnpmcore/issues/376)
+
+## [3.41.0](https://github.com/cnpm/cnpmcore/compare/v3.40.0...v3.41.0) (2023-08-17)
+
+
+### Features
+
+* improved readability of emoji in sync logs ([#572](https://github.com/cnpm/cnpmcore/issues/572)) ([0ac275a](https://github.com/cnpm/cnpmcore/commit/0ac275a348080822e26c66ede81f56c0d3ac94d2))
+
 ## [3.40.0](https://github.com/cnpm/cnpmcore/compare/v3.39.5...v3.40.0) (2023-08-08)
 
 

@@ -37,7 +37,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
         dist: {
           content: Buffer.alloc(0),
         },
-        tag: '',
+        tags: [ '' ],
         scope: '',
         name: 'foo',
         description: 'foo description',
@@ -54,7 +54,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
         dist: {
           content: Buffer.alloc(0),
         },
-        tag: '',
+        tags: [ '' ],
         scope: '',
         name: 'foo',
         description: 'foo description new',
@@ -77,7 +77,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
         dist: {
           content: Buffer.alloc(0),
         },
-        tag: '',
+        tags: [ '' ],
         scope: '',
         name: 'foo',
         description: '~'.repeat(1100 * 100),
@@ -98,7 +98,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
         dist: {
           localFile: TestUtil.getFixtures('registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'),
         },
-        tag: '',
+        tags: [ '' ],
         scope: '',
         name: 'pedding',
         description: 'pedding description',
