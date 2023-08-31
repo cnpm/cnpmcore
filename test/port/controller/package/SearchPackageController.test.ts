@@ -58,7 +58,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   describe('[PUT /-/v1/search/sync/:fullname] sync()', async () => {
     it('should throw 451 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
-      await await app.httpRequest()
+      await app.httpRequest()
         .put('/-/v1/search/sync/example')
         .expect(451);
     });
@@ -92,14 +92,19 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   });
 
   describe('[DELETE /-/v1/search/sync/:fullname] delete()', async () => {
+    let admin:Awaited<ReturnType<typeof TestUtil.createAdmin>>;
+    beforeEach(async () => {
+      admin = await TestUtil.createAdmin();
+    });
     it('should throw 451 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
-      await await app.httpRequest()
+      await app.httpRequest()
         .delete('/-/v1/search/sync/example')
+        .set('authorization', admin.authorization)
         .expect(451);
     });
 
-    it('should upsert a example package', async () => {
+    it('should delete a example package', async () => {
       const name = 'testmodule-search-package';
       mockES.add({
         method: 'DELETE',
@@ -110,9 +115,12 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
         };
       });
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      mock(app.config.cnpmcore, 'enableElasticsearch', true);
       mock(app.config.cnpmcore, 'registry', 'https://registry.example.com');
+
       const res = await app.httpRequest()
-        .delete(`/-/v1/search/sync/${name}`);
+        .delete(`/-/v1/search/sync/${name}`)
+        .set('authorization', admin.authorization);
       assert.equal(res.body.package, name);
     });
   });

@@ -197,8 +197,8 @@ export default (appInfo: EggAppConfig) => {
       client: {
         node: process.env.CNPMCORE_CONFIG_ES_CLIENT_NODE,
         auth: {
-          username: process.env.CNPMCORE_CONFIG_ES_CLIENT_AUTH_USERNAME,
-          password: process.env.CNPMCORE_CONFIG_ES_CLIENT_AUTH_PASSWORD,
+          username: process.env.CNPMCORE_CONFIG_ES_CLIENT_AUTH_USERNAME as string,
+          password: process.env.CNPMCORE_CONFIG_ES_CLIENT_AUTH_PASSWORD as string,
         },
       },
     };
