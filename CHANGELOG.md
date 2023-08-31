@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.42.2](https://github.com/cnpm/cnpmcore/compare/v3.42.1...v3.42.2) (2023-08-31)
+
+
+### Bug Fixes
+
+* should use NodeNext on module and moduleResolution tsconfig ([#578](https://github.com/cnpm/cnpmcore/issues/578)) ([10d7a84](https://github.com/cnpm/cnpmcore/commit/10d7a8499e5f53663f087e132642018c77783948))
+
 ## [3.42.1](https://github.com/cnpm/cnpmcore/compare/v3.42.0...v3.42.1) (2023-08-23)
 
 
