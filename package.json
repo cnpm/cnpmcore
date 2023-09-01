@@ -77,6 +77,7 @@
     "@eggjs/tegg-plugin": "^3.12.0",
     "@eggjs/tegg-schedule-plugin": "^3.12.0",
     "@eggjs/tsconfig": "^1.0.0",
+    "@elastic/elasticsearch": "^8.8.1",
     "@node-rs/crc32": "^1.2.2",
     "@simplewebauthn/server": "^7.0.1",
     "@sinclair/typebox": "^0.23.0",
@@ -93,6 +94,7 @@
     "egg-tracer": "^1.1.0",
     "egg-typebox-validate": "^2.0.0",
     "egg-view-nunjucks": "^2.3.0",
+    "eggjs-elasticsearch": "^0.0.6",
     "fs-cnpm": "^2.4.0",
     "ioredis": "^5.3.1",
     "leoric": "^2.6.2",
@@ -116,6 +118,7 @@
   },
   "devDependencies": {
     "@cnpmjs/npm-cli-login": "^1.1.0",
+    "@elastic/elasticsearch-mock": "^2.0.0",
     "@simplewebauthn/typescript-types": "^7.0.0",
     "@types/mime-types": "^2.1.1",
     "@types/mocha": "^10.0.1",

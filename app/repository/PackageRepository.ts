@@ -107,7 +107,7 @@ export type PackageJSONType = CnpmcorePatchInfo & {
 
 type PackageJSONPickKey = 'name' | 'author' | 'bugs' | 'description' | 'homepage' | 'keywords' | 'license' | 'readme' | 'readmeFilename' | 'repository' | 'versions' | 'contributors';
 
-type CnpmcorePatchInfo = {
+export type CnpmcorePatchInfo = {
   _cnpmcore_publish_time?: Date;
   publish_time?: number;
   _source_registry_name?: string;
@@ -124,7 +124,7 @@ type DistType = {
   [key: string]: unknown,
 };
 
-type AuthorType = {
+export type AuthorType = {
   name: string;
   email?: string;
   url?: string;

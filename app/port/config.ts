@@ -150,7 +150,14 @@ export type CnpmcoreConfig = {
    * in most cases, you should set to false to keep the same behavior as source registry.
    */
   strictSyncSpecivicVersion: boolean,
-
+  /**
+  * enable elasticsearch
+  */
+  enableElasticsearch: boolean,
+  /**
+  * elasticsearch index. if enableElasticsearch is true, you must set a index to write es doc.
+  */
+  elasticsearchIndex: string,
   /**
    * strictly enforces/validates manifest and tgz when publish, https://github.com/cnpm/cnpmcore/issues/542
    */

@@ -56,6 +56,10 @@ const plugin: EggPlugin = {
     enable: true,
     package: 'egg-status',
   },
+  elasticsearch: {
+    enable: true,
+    package: 'eggjs-elasticsearch',
+  },
 };
 
 export default plugin;

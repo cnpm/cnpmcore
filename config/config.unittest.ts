@@ -1,5 +1,8 @@
 import { join } from 'path';
 import { EggAppConfig, PowerPartial } from 'egg';
+import Mock from '@elastic/elasticsearch-mock';
+
+export const mockES = new Mock();
 
 export default (appInfo: EggAppConfig) => {
   const config = {} as PowerPartial<EggAppConfig>;
@@ -16,5 +19,13 @@ export default (appInfo: EggAppConfig) => {
   config.cnpmcore = {
     checkChangesStreamInterval: 10,
   };
+
+  config.elasticsearch = {
+    client: {
+      node: 'http://localhost:9200',
+      Connection: mockES.getConnection(),
+    },
+  };
+
   return config;
 };
