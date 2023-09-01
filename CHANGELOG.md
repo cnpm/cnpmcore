@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.43.1](https://github.com/cnpm/cnpmcore/compare/v3.43.0...v3.43.1) (2023-09-01)
+
+
+### Bug Fixes
+
+* use env.CNPMCORE_CONFIG_ENABLE_ES to enable ([#580](https://github.com/cnpm/cnpmcore/issues/580)) ([bcf67c4](https://github.com/cnpm/cnpmcore/commit/bcf67c4cea675793c4804d1892c4a12a2e25c0b8))
+
 ## [3.43.0](https://github.com/cnpm/cnpmcore/compare/v3.42.2...v3.43.0) (2023-09-01)
 
 
