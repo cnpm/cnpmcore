@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.43.2](https://github.com/cnpm/cnpmcore/compare/v3.43.1...v3.43.2) (2023-09-01)
+
+
+### Bug Fixes
+
+* author info ([#581](https://github.com/cnpm/cnpmcore/issues/581)) ([6dd241d](https://github.com/cnpm/cnpmcore/commit/6dd241d6900bfcebab17aa7814f3c750994a337e))
+
 ## [3.43.1](https://github.com/cnpm/cnpmcore/compare/v3.43.0...v3.43.1) (2023-09-01)
 
 
