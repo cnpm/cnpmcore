@@ -80,7 +80,15 @@ export class PackageSearchService extends AbstractService {
       _npmUser: latestManifest?._npmUser,
       // 最新版本发布信息
       publish_time: latestManifest?.publish_time,
+      // 最新版本的发布人，用于 npm cli 展示
     };
+
+    if (latestManifest?._npmUser) {
+      packageDoc.publisher = {
+        username: latestManifest._npmUser.name,
+        email: latestManifest._npmUser.email,
+      };
+    }
 
     const document: SearchManifestType = {
       package: packageDoc,

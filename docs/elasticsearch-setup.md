@@ -796,6 +796,18 @@ PUT /cnpmcore_packages
             }
           }
         },
+        "publisher": {
+          "properties": {
+            "email": {
+              "normalizer": "raw",
+              "type": "keyword"
+            },
+            "username": {
+              "normalizer": "raw",
+              "type": "keyword"
+            }
+          }
+        },
         "created": {
           "type": "date"
         },
@@ -969,19 +981,20 @@ config: {
 }
 ```
 
-### 尝试写入或同步一条数据
-
-1. 手动写入
-
-```bash
-$ curl --location --request GET http://localhost:7001/-/v1/search/sync/colors
-```
-
-2. 开启同步
+### 尝试同步一条数据
 
 ```bash
 $ curl --location --request PUT 'http://localhost:7001/-/package/colors/syncs'
 ```
+
+### 尝试删除一条数据
+
+注意需要添加管理员 token，管理员在本地进行登录后，可通过查询 `~/.npmrc` 查看
+```bash
+$ curl --location --request DELETE -H 'Authorization: Bearer ${token}' 'http://localhost:7001/-/package/colors/syncs'
+```
+
+###
 
 ### 查询
 
