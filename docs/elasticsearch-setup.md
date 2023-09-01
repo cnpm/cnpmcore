@@ -527,6 +527,10 @@ PUT cnpmcore_packages
             "name": {
               "normalizer": "raw",
               "type": "keyword"
+            },
+            "username": {
+              "normalizer": "raw",
+              "type": "keyword"
             }
           }
         },
@@ -796,18 +800,6 @@ PUT /cnpmcore_packages
             }
           }
         },
-        "publisher": {
-          "properties": {
-            "email": {
-              "normalizer": "raw",
-              "type": "keyword"
-            },
-            "username": {
-              "normalizer": "raw",
-              "type": "keyword"
-            }
-          }
-        },
         "created": {
           "type": "date"
         },
@@ -981,23 +973,25 @@ config: {
 }
 ```
 
-### 尝试同步一条数据
+### 同步一条数据
 
 ```bash
-$ curl --location --request PUT 'http://localhost:7001/-/package/colors/syncs'
+$ curl -X PUT https://r.cnpmjs.org/-/v1/search/sync/${pkgName}
 ```
 
-### 尝试删除一条数据
+### 删除一条数据
 
 注意需要添加管理员 token，管理员在本地进行登录后，可通过查询 `~/.npmrc` 查看
 ```bash
-$ curl --location --request DELETE -H 'Authorization: Bearer ${token}' 'http://localhost:7001/-/package/colors/syncs'
+$ curl -X DELETE -H 'Authorization: Bearer ${token}' http://localhost:7001/-/v1/search/${pkgName}
 ```
 
-###
+### 修改数据
+
+创建同步任务即可，会自动进行覆盖式同步
 
 ### 查询
 
 ```bash
-$ npm search colors --registry http://localhost:7001
+$ npm search colors --registry=http://localhost:7001
 ```

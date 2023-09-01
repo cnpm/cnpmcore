@@ -126,6 +126,7 @@ type DistType = {
 
 export type AuthorType = {
   name: string;
+  username?: string;
   email?: string;
   url?: string;
 };
