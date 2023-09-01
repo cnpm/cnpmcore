@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.43.0](https://github.com/cnpm/cnpmcore/compare/v3.42.2...v3.43.0) (2023-09-01)
+
+
+### Features
+
+* support npm search command like npmio ([#513](https://github.com/cnpm/cnpmcore/issues/513)) ([7f85848](https://github.com/cnpm/cnpmcore/commit/7f858482f7c26457a37d4e99fb84bd4b9f0ca5da))
+
 ## [3.42.2](https://github.com/cnpm/cnpmcore/compare/v3.42.1...v3.42.2) (2023-08-31)
 
 
