@@ -545,7 +545,7 @@ PUT cnpmcore_packages
             "name": {
               "normalizer": "raw",
               "type": "keyword"
-            },
+            }
           }
         },
         "publish_time": {
