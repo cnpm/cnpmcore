@@ -6,6 +6,8 @@ import {
   HTTPQuery,
   Inject,
   Middleware,
+  Context,
+  EggContext,
 } from '@eggjs/tegg';
 import { Static } from 'egg-typebox-validate/typebox';
 import { E451 } from 'egg-errors';
@@ -27,6 +29,7 @@ export class SearchPackageController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async search(
+    @Context() ctx: EggContext,
     @HTTPQuery() text: Static<typeof SearchQueryOptions>['text'],
     @HTTPQuery() from: Static<typeof SearchQueryOptions>['from'],
     @HTTPQuery() size: Static<typeof SearchQueryOptions>['size'],
@@ -35,6 +38,7 @@ export class SearchPackageController extends AbstractController {
       throw new E451('search feature not enabled in `config.cnpmcore.enableElasticsearch`');
     }
     const data = await this.packageSearchService.searchPackage(text, from, size);
+    this.setCDNHeaders(ctx);
     return data;
   }
 
