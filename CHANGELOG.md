@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.43.4](https://github.com/cnpm/cnpmcore/compare/v3.43.3...v3.43.4) (2023-09-02)
+
+
+### Bug Fixes
+
+* add CDN cache header on search api ([#583](https://github.com/cnpm/cnpmcore/issues/583)) ([89f6b98](https://github.com/cnpm/cnpmcore/commit/89f6b989c18e714ddd8a1c81fc96778ac53214d7))
+
 ## [3.43.3](https://github.com/cnpm/cnpmcore/compare/v3.43.2...v3.43.3) (2023-09-01)
 
 
