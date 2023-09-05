@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.43.5](https://github.com/cnpm/cnpmcore/compare/v3.43.4...v3.43.5) (2023-09-05)
+
+
+### Bug Fixes
+
+* the license may be an object ([#587](https://github.com/cnpm/cnpmcore/issues/587)) ([88b6afb](https://github.com/cnpm/cnpmcore/commit/88b6afb66e77c825d24189f904c448a9cbb86fab)), closes [/github.com/cnpm/cnpmcore/issues/585#issuecomment-1706009496](https://github.com/cnpm//github.com/cnpm/cnpmcore/issues/585/issues/issuecomment-1706009496)
+
 ## [3.43.4](https://github.com/cnpm/cnpmcore/compare/v3.43.3...v3.43.4) (2023-09-02)
 
 
