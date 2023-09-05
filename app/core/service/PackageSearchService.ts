@@ -67,7 +67,7 @@ export class PackageSearchService extends AbstractService {
       keywords: manifest.keywords || [],
       versions: Object.keys(manifest.versions),
       description: manifest.description,
-      license: manifest.license,
+      license: typeof manifest.license === 'object' ? manifest.license?.type : manifest.license,
       maintainers: manifest.maintainers,
       author: formatAuthor(manifest.author),
       'dist-tags': manifest['dist-tags'],

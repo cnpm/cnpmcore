@@ -51,7 +51,7 @@ export type PackageJSONType = CnpmcorePatchInfo & {
     url?: string;
     email?: string;
   };
-  license?: string;
+  license?: LicenseType | string;
   author?: AuthorType | string;
   contributors?: ContributorType[] | string[];
   maintainers?: ContributorType[] | string[];
@@ -129,6 +129,11 @@ export type AuthorType = {
   username?: string;
   email?: string;
   url?: string;
+};
+
+type LicenseType = {
+  type: string;
+  url: string;
 };
 
 type ContributorType = {
