@@ -10,7 +10,6 @@
     "useUnknownInCatchVariables": false,
   },
   "exclude": [
-    "test",
     "node_modules"
   ],
 }
