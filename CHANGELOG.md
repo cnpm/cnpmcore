@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.44.0](https://github.com/cnpm/cnpmcore/compare/v3.43.5...v3.44.0) (2023-09-19)
+
+
+### Features
+
+* sync all crhome for test binaries ([#592](https://github.com/cnpm/cnpmcore/issues/592)) ([4596b21](https://github.com/cnpm/cnpmcore/commit/4596b2127119f7c3c31f5fbe786504a7972d62a9))
+
 ## [3.43.5](https://github.com/cnpm/cnpmcore/compare/v3.43.4...v3.43.5) (2023-09-05)
 
 
