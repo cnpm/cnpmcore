@@ -109,15 +109,15 @@ export class RegistryController extends AbstractController {
   }
 
   @HTTPMethod({
-    path: '/-/registry/:id/auth',
+    path: '/-/registry/:id',
     method: HTTPMethodEnum.PATCH,
   })
-  async updateRegistryAuthToken(@HTTPParam() id: string, @HTTPBody() updateTokenOptions: Static<typeof RegistryUpdateOptions>) {
+  async updateRegistry(@HTTPParam() id: string, @HTTPBody() updateTokenOptions: Partial<Static<typeof RegistryUpdateOptions>>) {
     const registry = await this.registryManagerService.findByRegistryId(id);
     if (!registry) {
       throw new NotFoundError('registry not found');
     } else {
-      registry.authToken = updateTokenOptions?.authToken || '';
+      Object.assign(registry, updateTokenOptions);
       await this.registryManagerService.updateRegistry(registry);
     }
     return { ok: true };
