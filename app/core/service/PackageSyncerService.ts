@@ -196,7 +196,7 @@ export class PackageSyncerService extends AbstractService {
       const delay = process.env.NODE_ENV === 'test' ? 100 : 1000 + Math.random() * 5000;
       await setTimeout(delay);
       try {
-        const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset);
+        const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset, { remoteAuthToken });
         useTime = Date.now() - startTime;
         if (!logUrl) {
           logUrl = url;
@@ -355,7 +355,7 @@ export class PackageSyncerService extends AbstractService {
     let pkg = await this.packageRepository.findPackage(scope, name);
     const registry = await this.initSpecRegistry(task, pkg, scope);
     const registryHost = this.npmRegistry.registry;
-    const authorization = await this.registryManagerService.getAuthTokenByRegistryHost(registryHost);
+    const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(registryHost);
     let logs: string[] = [];
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
@@ -426,7 +426,7 @@ export class PackageSyncerService extends AbstractService {
 
     let registryFetchResult: RegistryResponse;
     try {
-      registryFetchResult = await this.npmRegistry.getFullManifests(fullname);
+      registryFetchResult = await this.npmRegistry.getFullManifests(fullname, { remoteAuthToken });
     } catch (err: any) {
       const status = err.status || 'unknown';
       task.error = `request manifests error: ${err}, status: ${status}`;
@@ -657,7 +657,7 @@ export class PackageSyncerService extends AbstractService {
       let localFile: string;
       try {
         const { tmpfile, headers, timing } =
-          await downloadToTempfile(this.httpclient, this.config.dataDir, tarball, { authorization });
+          await downloadToTempfile(this.httpclient, this.config.dataDir, tarball, { remoteAuthToken });
         localFile = tmpfile;
         logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
       } catch (err: any) {

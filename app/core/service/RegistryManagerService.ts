@@ -110,7 +110,7 @@ export class RegistryManagerService extends AbstractService {
   }
 
   async findByRegistryHost(host?: string): Promise<Registry | null> {
-    return await this.registryRepository.findRegistry(host);
+    return host ? await this.registryRepository.findRegistryByRegistryHost(host) : null;
   }
 
   // 删除 Registry 方法
