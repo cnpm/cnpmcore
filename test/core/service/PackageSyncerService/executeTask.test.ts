@@ -428,46 +428,6 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 📦 Add dependency "@resvg/resvg-js-win32-x64-msvc" sync task: '));
     });
 
-    it('should bring auth token when set remoteAuthToken', async () => {
-      const testToken = 'test-auth-token';
-      const fullManifests = await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json');
-      const tgzBuffer1_0_0 = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz');
-      const tgzBuffer1_1_0 = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz');
-
-      let fullManifestsHeader;
-      let tgzBuffer1_0_0Header;
-      let tgzBuffer1_1_0Header;
-      app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', (_, opts) => {
-        fullManifestsHeader = opts.headers;
-        return {
-          data: fullManifests,
-          persist: false,
-          repeats: 2,
-        };
-      });
-      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', (_, opts) => {
-        tgzBuffer1_0_0Header = opts.headers;
-        return {
-          data: tgzBuffer1_0_0,
-          persist: false,
-        };
-      });
-      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', (_, opts) => {
-        tgzBuffer1_1_0Header = opts.headers;
-        return {
-          data: tgzBuffer1_1_0,
-          persist: false,
-        };
-      });
-      await packageSyncerService.createTask('foobar', { skipDependencies: true, remoteAuthToken: testToken });
-      const task = await packageSyncerService.findExecuteTask();
-      assert(task);
-      await packageSyncerService.executeTask(task);
-      assert.equal(fullManifestsHeader?.authorization, `Bearer ${testToken}`);
-      assert.equal(tgzBuffer1_0_0Header?.authorization, `Bearer ${testToken}`);
-      assert.equal(tgzBuffer1_1_0Header?.authorization, `Bearer ${testToken}`);
-    });
-
     it('should ignore publish error on sync task', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),

@@ -16,7 +16,7 @@ import { Static } from 'egg-typebox-validate/typebox';
 import { RegistryManagerService } from '../../core/service/RegistryManagerService';
 import { AdminAccess } from '../middleware/AdminAccess';
 import { ScopeManagerService } from '../../core/service/ScopeManagerService';
-import { RegistryCreateOptions, QueryPageOptions, RegistryCreateSyncOptions } from '../typebox';
+import { RegistryCreateOptions, QueryPageOptions, RegistryCreateSyncOptions, RegistryUpdateOptions } from '../typebox';
 
 @HTTPController()
 export class RegistryController extends AbstractController {
@@ -67,7 +67,7 @@ export class RegistryController extends AbstractController {
   async createRegistry(@Context() ctx: EggContext, @HTTPBody() registryOptions: Static<typeof RegistryCreateOptions>) {
     ctx.tValidate(RegistryCreateOptions, registryOptions);
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    const { name, changeStream, host, userPrefix = '', type } = registryOptions;
+    const { name, changeStream, host, userPrefix = '', type, authToken = '' } = registryOptions;
     await this.registryManagerService.createRegistry({
       name,
       changeStream,
@@ -75,6 +75,7 @@ export class RegistryController extends AbstractController {
       userPrefix,
       operatorId: authorizedUser.userId,
       type,
+      authToken,
     });
     return { ok: true };
   }
@@ -104,6 +105,21 @@ export class RegistryController extends AbstractController {
   async removeRegistry(@Context() ctx: EggContext, @HTTPParam() id: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     await this.registryManagerService.remove({ registryId: id, operatorId: authorizedUser.userId });
+    return { ok: true };
+  }
+
+  @HTTPMethod({
+    path: '/-/registry/:id/auth',
+    method: HTTPMethodEnum.PATCH,
+  })
+  async updateRegistryAuthToken(@HTTPParam() id: string, @HTTPBody() updateTokenOptions: Static<typeof RegistryUpdateOptions>) {
+    const registry = await this.registryManagerService.findByRegistryId(id);
+    if (!registry) {
+      throw new NotFoundError('registry not found');
+    } else {
+      registry.authToken = updateTokenOptions?.authToken || '';
+      await this.registryManagerService.updateRegistry(registry);
+    }
     return { ok: true };
   }
 }

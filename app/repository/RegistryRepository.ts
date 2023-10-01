@@ -38,6 +38,14 @@ export class RegistryRepository extends AbstractRepository {
     return null;
   }
 
+  async findRegistryByRegistryHost(host: string): Promise<RegistryEntity | null> {
+    const model = await this.Registry.findOne({ host });
+    if (model) {
+      return ModelConvertor.convertModelToEntity(model, RegistryEntity);
+    }
+    return null;
+  }
+
   async saveRegistry(registry: Registry) {
     if (registry.id) {
       const model = await this.Registry.findOne({ id: registry.id });

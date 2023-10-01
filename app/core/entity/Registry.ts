@@ -9,6 +9,7 @@ interface RegistryData extends EntityData {
   changeStream: string;
   userPrefix: string;
   type: RegistryType;
+  authToken: string;
 }
 
 export type CreateRegistryData = Omit<EasyData<RegistryData, 'registryId'>, 'id'>;
@@ -20,6 +21,7 @@ export class Registry extends Entity {
   changeStream: string;
   userPrefix: string;
   type: RegistryType;
+  authToken: string;
 
   constructor(data: RegistryData) {
     super(data);
@@ -29,6 +31,7 @@ export class Registry extends Entity {
     this.changeStream = data.changeStream;
     this.userPrefix = data.userPrefix;
     this.type = data.type;
+    this.authToken = data.authToken;
   }
 
   public static create(data: CreateRegistryData): Registry {

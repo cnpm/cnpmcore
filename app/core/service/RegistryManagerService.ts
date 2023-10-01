@@ -14,10 +14,12 @@ import { Task } from '../entity/Task';
 import { ChangesStreamMode, PresetRegistryName } from '../../common/constants';
 import { RegistryType } from '../../common/enum/Registry';
 
-export interface CreateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'userPrefix' | 'type' | 'name'> {
+export interface CreateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'userPrefix' | 'type' | 'name' > {
+  authToken?: string;
   operatorId?: string;
 }
-export interface UpdateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'userPrefix' | 'type' | 'name' | 'registryId'> {
+export interface UpdateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'userPrefix' | 'type' | 'name' | 'registryId' > {
+  authToken?: string;
   operatorId?: string;
 }
 export interface RemoveRegistryCmd extends Pick<Registry, 'registryId'> {
@@ -61,7 +63,7 @@ export class RegistryManagerService extends AbstractService {
   }
 
   async createRegistry(createCmd: CreateRegistryCmd): Promise<Registry> {
-    const { name, changeStream = '', host, userPrefix = '', type, operatorId = '-' } = createCmd;
+    const { name, changeStream = '', host, userPrefix = '', type, operatorId = '-', authToken = '' } = createCmd;
     this.logger.info('[RegistryManagerService.createRegistry:prepare] operatorId: %s, createCmd: %j', operatorId, createCmd);
     const registry = Registry.create({
       name,
@@ -69,6 +71,7 @@ export class RegistryManagerService extends AbstractService {
       host,
       userPrefix,
       type,
+      authToken,
     });
     await this.registryRepository.saveRegistry(registry);
     return registry;
@@ -77,7 +80,7 @@ export class RegistryManagerService extends AbstractService {
   // 更新部分 registry 信息
   // 不允许 userPrefix 字段变更
   async updateRegistry(updateCmd: UpdateRegistryCmd) {
-    const { name, changeStream, host, type, registryId, operatorId = '-' } = updateCmd;
+    const { name, changeStream, host, type, registryId, operatorId = '-', authToken = '' } = updateCmd;
     this.logger.info('[RegistryManagerService.updateRegistry:prepare] operatorId: %s, updateCmd: %j', operatorId, updateCmd);
     const registry = await this.registryRepository.findRegistryByRegistryId(registryId);
     if (!registry) {
@@ -88,6 +91,7 @@ export class RegistryManagerService extends AbstractService {
       changeStream,
       host,
       type,
+      authToken,
     });
     await this.registryRepository.saveRegistry(registry);
   }
@@ -103,6 +107,10 @@ export class RegistryManagerService extends AbstractService {
 
   async findByRegistryName(registryName?: string): Promise<Registry | null> {
     return await this.registryRepository.findRegistry(registryName);
+  }
+
+  async findByRegistryHost(host?: string): Promise<Registry | null> {
+    return await this.registryRepository.findRegistry(host);
   }
 
   // 删除 Registry 方法
@@ -129,6 +137,7 @@ export class RegistryManagerService extends AbstractService {
       type: RegistryType.Cnpmcore,
       changeStream: '',
       userPrefix: '',
+      authToken: '',
     });
 
     return newRegistry;
@@ -144,16 +153,26 @@ export class RegistryManagerService extends AbstractService {
     // 从配置文件默认生成
     const { changesStreamRegistryMode, changesStreamRegistry: changesStreamHost, sourceRegistry: host } = this.config.cnpmcore;
     const type = changesStreamRegistryMode === ChangesStreamMode.json ? RegistryType.Cnpmcore : RegistryType.Npm;
+    const authToken = '';
     const registry = await this.createRegistry({
       name: PresetRegistryName.default,
       type,
       userPrefix: 'npm:',
       host,
       changeStream: `${changesStreamHost}/_changes`,
+      authToken,
     });
 
     return registry;
 
+  }
+
+  async getAuthTokenByRegistryHost(host: string): Promise<string> {
+    const registry = await this.findByRegistryHost(host);
+    if (!registry) {
+      return '';
+    }
+    return registry.authToken || '';
   }
 
 }
