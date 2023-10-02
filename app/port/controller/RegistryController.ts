@@ -112,6 +112,7 @@ export class RegistryController extends AbstractController {
     path: '/-/registry/:id',
     method: HTTPMethodEnum.PATCH,
   })
+  @Middleware(AdminAccess)
   async updateRegistry(@HTTPParam() id: string, @HTTPBody() updateTokenOptions: Partial<Static<typeof RegistryUpdateOptions>>) {
     const registry = await this.registryManagerService.findByRegistryId(id);
     if (!registry) {
