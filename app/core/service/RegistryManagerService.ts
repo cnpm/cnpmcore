@@ -153,14 +153,13 @@ export class RegistryManagerService extends AbstractService {
     // 从配置文件默认生成
     const { changesStreamRegistryMode, changesStreamRegistry: changesStreamHost, sourceRegistry: host } = this.config.cnpmcore;
     const type = changesStreamRegistryMode === ChangesStreamMode.json ? RegistryType.Cnpmcore : RegistryType.Npm;
-    const authToken = '';
     const registry = await this.createRegistry({
       name: PresetRegistryName.default,
       type,
       userPrefix: 'npm:',
       host,
       changeStream: `${changesStreamHost}/_changes`,
-      authToken,
+      authToken: '',
     });
 
     return registry;

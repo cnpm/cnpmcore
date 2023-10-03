@@ -204,11 +204,12 @@ export const RegistryCreateOptions = Type.Object({
     maxLength: 256,
   })),
   type: Type.Enum(RegistryType),
-  authToken: Type.Optional(Type.String({
-    transform: [ 'trim' ],
-    minLength: 1,
-    maxLength: 256,
-  })),
+  authToken: Type.Optional(
+    Type.String({
+      transform: [ 'trim' ],
+      maxLength: 256,
+    }),
+  ),
 });
 
 export const RegistryUpdateOptions = Type.Object({
