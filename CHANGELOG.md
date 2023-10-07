@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.45.1](https://github.com/cnpm/cnpmcore/compare/v3.45.0...v3.45.1) (2023-10-07)
+
+
+### Bug Fixes
+
+* use oss-cnpm@5.0.1 ([#597](https://github.com/cnpm/cnpmcore/issues/597)) ([413ec56](https://github.com/cnpm/cnpmcore/commit/413ec5685ee54dd90fcfcd5cb59a9b732ec73d84))
+
 ## [3.44.0](https://github.com/cnpm/cnpmcore/compare/v3.43.5...v3.44.0) (2023-10-07)
 
 
