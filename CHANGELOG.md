@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.44.0](https://github.com/cnpm/cnpmcore/compare/v3.43.5...v3.44.0) (2023-10-07)
+
+
+### Features
+
+* sync all crhome for test binaries ([#592](https://github.com/cnpm/cnpmcore/issues/592)) ([4596b21](https://github.com/cnpm/cnpmcore/commit/4596b2127119f7c3c31f5fbe786504a7972d62a9))
+* use oss-client v2 ([#596](https://github.com/cnpm/cnpmcore/issues/596)) ([d24e3bd](https://github.com/cnpm/cnpmcore/commit/d24e3bd235fb73b1c145ff3b06dcc168d65b0f9f))
+
 ## [3.44.0](https://github.com/cnpm/cnpmcore/compare/v3.43.5...v3.44.0) (2023-09-19)
 
 
