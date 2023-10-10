@@ -431,7 +431,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
     it('should bring auth token which in registry database.', async () => {
       const testToken = 'test-auth-token';
       const registry = await registryManagerService.ensureDefaultRegistry();
-      await registryManagerService.updateRegistry({ ...registry, authToken: testToken });
+      await registryManagerService.updateRegistry(registry.registryId, { ...registry, authToken: testToken });
       const fullManifests = await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json');
       const tgzBuffer1_0_0 = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz');
       const tgzBuffer1_1_0 = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz');

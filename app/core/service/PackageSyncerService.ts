@@ -355,7 +355,7 @@ export class PackageSyncerService extends AbstractService {
     let pkg = await this.packageRepository.findPackage(scope, name);
     const registry = await this.initSpecRegistry(task, pkg, scope);
     const registryHost = this.npmRegistry.registry;
-    const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(registryHost);
+    const remoteAuthToken = registry.authToken;
     let logs: string[] = [];
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
