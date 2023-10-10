@@ -74,7 +74,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       let queryRes = await registryManagerService.listRegistries({});
       const [ registry ] = queryRes.data;
 
-      await registryManagerService.updateRegistry({
+      await registryManagerService.updateRegistry(registry.registryId, {
         ...registry,
         name: 'custom3',
       });
@@ -89,9 +89,8 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       assert(queryRes.count === 1);
       const [ registry ] = queryRes.data;
       await assert.rejects(
-        registryManagerService.updateRegistry({
+        registryManagerService.updateRegistry('not_exist', {
           ...registry,
-          registryId: 'not_exist',
           name: 'boo',
         }),
         /not found/,
