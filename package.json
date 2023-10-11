@@ -1,6 +1,6 @@
 {
   "name": "cnpmcore",
-  "version": "3.45.1",
+  "version": "3.46.0",
   "description": "npm core",
   "files": [
     "dist/**/*"

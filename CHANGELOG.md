@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.46.0](https://github.com/cnpm/cnpmcore/compare/v3.45.1...v3.46.0) (2023-10-11)
+
+
+### Features
+
+* read remote auth token from database ([#595](https://github.com/cnpm/cnpmcore/issues/595)) ([707a1d3](https://github.com/cnpm/cnpmcore/commit/707a1d3809f14cc9a7d613a16f8bea4e5baa7127))
+
 ## [3.45.1](https://github.com/cnpm/cnpmcore/compare/v3.45.0...v3.45.1) (2023-10-07)
 
 
