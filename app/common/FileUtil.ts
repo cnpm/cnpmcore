@@ -64,7 +64,7 @@ async function _downloadToTempfile(httpclient: EggContextHttpClient,
   try {
     // max 10 mins to download
     // FIXME: should show download progress
-    const authorization = optionalConfig?.remoteAuthToken ? `Bearer ${optionalConfig?.remoteAuthToken}` : '';
+    const authorization = optionalConfig?.remoteAuthToken ? `Bearer ${optionalConfig.remoteAuthToken}` : '';
     const { status, headers, res } = await httpclient.request(url, {
       timeout: 60000 * 10,
       headers: { authorization },

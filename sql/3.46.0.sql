@@ -1,0 +1,1 @@
+ALTER TABLE `registries` ADD COLUMN `auth_token` varchar(256) DEFAULT NULL COMMENT 'registry auth token';

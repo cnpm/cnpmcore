@@ -245,4 +245,36 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
     });
   });
 
+  describe('[PATCH /-/registry/:id] updateRegistry()', () => {
+    it('should 403', async () => {
+      await app.httpRequest()
+        .patch(`/-/registry/${registry.registryId}`)
+        .expect(403);
+    });
+
+    it('should 404 when not found', async () => {
+      await app.httpRequest()
+        .patch('/-/registry/registry-not-exists')
+        .set('authorization', adminUser.authorization)
+        .expect(404);
+    });
+
+    it('should update auth token success', async () => {
+      await app.httpRequest()
+        .patch(`/-/registry/${registry.registryId}`)
+        .set('authorization', adminUser.authorization)
+        .send({
+          authToken: 'testAuthToekn',
+        })
+        .expect(200);
+
+      const registList = await app.httpRequest()
+        .get('/-/registry')
+        .expect(200);
+
+      const latestToken = await registList.body.data[0].authToken;
+      assert.equal(latestToken, 'testAuthToekn');
+    });
+  });
+
 });

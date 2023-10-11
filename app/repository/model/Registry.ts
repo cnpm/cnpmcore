@@ -36,4 +36,7 @@ export class Registry extends Bone {
   @Attribute(DataTypes.STRING(256))
   type: RegistryType;
 
+  @Attribute(DataTypes.STRING(256), { name: 'auth_token' })
+  authToken?: string;
+
 }

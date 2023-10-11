@@ -79,12 +79,6 @@ export const TagWithVersionRule = Type.Object({
 
 export const SyncPackageTaskRule = Type.Object({
   fullname: Name,
-  remoteAuthToken: Type.Optional(
-    Type.String({
-      transform: [ 'trim' ],
-      maxLength: 200,
-    }),
-  ),
   tips: Type.String({
     transform: [ 'trim' ],
     maxLength: 1024,
@@ -210,35 +204,44 @@ export const RegistryCreateOptions = Type.Object({
     maxLength: 256,
   })),
   type: Type.Enum(RegistryType),
+  authToken: Type.Optional(
+    Type.String({
+      transform: [ 'trim' ],
+      maxLength: 256,
+    }),
+  ),
 });
 
 export const RegistryUpdateOptions = Type.Object({
-  name: Type.String({
-    transform: [ 'trim' ],
-    minLength: 1,
-    maxLength: 256,
-  }),
-  host: Type.String({
-    transform: [ 'trim' ],
-    minLength: 1,
-    maxLength: 4096,
-  }),
-  changeStream: Type.String({
-    transform: [ 'trim' ],
-    minLength: 1,
-    maxLength: 4096,
-  }),
-  userPrefix: Type.Optional(Type.String({
-    transform: [ 'trim' ],
-    minLength: 1,
-    maxLength: 256,
-  })),
-  type: Type.Enum(RegistryType),
-  registryId: Type.String({
-    transform: [ 'trim' ],
-    minLength: 1,
-    maxLength: 256,
-  }),
+  name: Type.Optional(
+    Type.String({
+      transform: [ 'trim' ],
+      minLength: 1,
+      maxLength: 256,
+    }),
+  ),
+  host: Type.Optional(
+    Type.String({
+      transform: [ 'trim' ],
+      minLength: 1,
+      maxLength: 4096,
+    }),
+  ),
+  changeStream: Type.Optional(
+    Type.String({
+      transform: [ 'trim' ],
+      minLength: 1,
+      maxLength: 4096,
+    }),
+  ),
+  type: Type.Optional(Type.Enum(RegistryType)),
+  authToken: Type.Optional(
+    Type.String({
+      transform: [ 'trim' ],
+      minLength: 1,
+      maxLength: 256,
+    }),
+  ),
 });
 
 export const ScopeCreateOptions = Type.Object({

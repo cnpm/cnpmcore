@@ -16,6 +16,7 @@ describe('test/repository/RegistryRepository.test.ts', () => {
       changeStream: 'https://r.npmjs.com/_changes',
       host: 'https://registry.npmjs.org',
       type: 'cnpmcore' as RegistryType,
+      authToken: '',
     })) as Registry;
   });
 
@@ -27,6 +28,7 @@ describe('test/repository/RegistryRepository.test.ts', () => {
         changeStream: 'https://ra.npmjs.com/_changes',
         host: 'https://registry.npmjs.org',
         type: 'cnpmcore' as RegistryType,
+        authToken: '',
       })) as Registry;
       assert(newRegistry);
       assert(newRegistry.type === 'cnpmcore');

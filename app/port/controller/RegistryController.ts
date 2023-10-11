@@ -13,10 +13,10 @@ import {
 import { NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { Static } from 'egg-typebox-validate/typebox';
-import { RegistryManagerService } from '../../core/service/RegistryManagerService';
+import { RegistryManagerService, UpdateRegistryCmd } from '../../core/service/RegistryManagerService';
 import { AdminAccess } from '../middleware/AdminAccess';
 import { ScopeManagerService } from '../../core/service/ScopeManagerService';
-import { RegistryCreateOptions, QueryPageOptions, RegistryCreateSyncOptions } from '../typebox';
+import { RegistryCreateOptions, QueryPageOptions, RegistryCreateSyncOptions, RegistryUpdateOptions } from '../typebox';
 
 @HTTPController()
 export class RegistryController extends AbstractController {
@@ -67,7 +67,7 @@ export class RegistryController extends AbstractController {
   async createRegistry(@Context() ctx: EggContext, @HTTPBody() registryOptions: Static<typeof RegistryCreateOptions>) {
     ctx.tValidate(RegistryCreateOptions, registryOptions);
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    const { name, changeStream, host, userPrefix = '', type } = registryOptions;
+    const { name, changeStream, host, userPrefix = '', type, authToken } = registryOptions;
     await this.registryManagerService.createRegistry({
       name,
       changeStream,
@@ -75,6 +75,7 @@ export class RegistryController extends AbstractController {
       userPrefix,
       operatorId: authorizedUser.userId,
       type,
+      authToken,
     });
     return { ok: true };
   }
@@ -104,6 +105,31 @@ export class RegistryController extends AbstractController {
   async removeRegistry(@Context() ctx: EggContext, @HTTPParam() id: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     await this.registryManagerService.remove({ registryId: id, operatorId: authorizedUser.userId });
+    return { ok: true };
+  }
+
+  @HTTPMethod({
+    path: '/-/registry/:id',
+    method: HTTPMethodEnum.PATCH,
+  })
+  @Middleware(AdminAccess)
+  async updateRegistry(@Context() ctx: EggContext, @HTTPParam() id: string, @HTTPBody() updateRegistryOptions: Partial<UpdateRegistryCmd>) {
+    ctx.tValidate(RegistryUpdateOptions, updateRegistryOptions);
+    const registry = await this.registryManagerService.findByRegistryId(id);
+    if (!registry) {
+      throw new NotFoundError('registry not found');
+    } else {
+      const { name, changeStream, host, type, authToken } = registry;
+      const _updateRegistryOptions = {
+        name,
+        changeStream,
+        host,
+        type,
+        authToken,
+        ...updateRegistryOptions,
+      };
+      await this.registryManagerService.updateRegistry(registry.registryId, _updateRegistryOptions);
+    }
     return { ok: true };
   }
 }
