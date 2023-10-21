@@ -67,8 +67,7 @@ export class ProxyCacheService extends AbstractService {
       if (nfsBytes) {
         let nfsPkgManifgest;
         try {
-          const decoder = new TextDecoder();
-          const nfsString = decoder.decode(nfsBytes);
+          const nfsString = Buffer.from(nfsBytes).toString();
           nfsPkgManifgest = JSON.parse(nfsString);
         } catch {
           // JSON parse error
@@ -103,8 +102,7 @@ export class ProxyCacheService extends AbstractService {
       const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
       if (nfsBytes) {
         try {
-          const decoder = new TextDecoder();
-          const nfsString = decoder.decode(nfsBytes);
+          const nfsString = Buffer.from(nfsBytes).toString();
           return JSON.parse(nfsString) as PackageJSONType | AbbreviatedPackageJSONType;
         } catch {
           // JSON parse error
