@@ -881,6 +881,13 @@ const binaries = {
       npmPackageName: 'libpg-query',
     },
   },
+  'fuse-t': {
+    category: 'fuse-t',
+    description: 'FUSE-T is a kext-less implementation of FUSE for macOS that uses NFS v4 local server instead of a kernel extension.',
+    type: BinaryType.GitHub,
+    repo: 'macos-fuse-t/fuse-t',
+    distUrl: 'https://github.com/macos-fuse-t/fuse-t/releases',
+  },
 } as const;
 
 export type BinaryName = keyof typeof binaries;
