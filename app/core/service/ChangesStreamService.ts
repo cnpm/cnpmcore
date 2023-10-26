@@ -101,8 +101,12 @@ export class ChangesStreamService extends AbstractService {
         await setTimeout(this.config.cnpmcore.checkChangesStreamInterval);
       }
     } catch (err) {
-      this.logger.error('[ChangesStreamService.executeTask:error] %s, exit now', err);
-      this.logger.error(err);
+      this.logger.warn('[ChangesStreamService.executeTask:error] %s, exit now', err.message);
+      if (err.name === 'HttpClientRequestTimeoutError') {
+        this.logger.warn(err);
+      } else {
+        this.logger.error(err);
+      }
       task.error = `${err}`;
       await this.taskRepository.saveTask(task);
       await this.suspendSync();
