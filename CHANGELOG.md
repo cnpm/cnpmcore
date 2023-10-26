@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.47.0](https://github.com/cnpm/cnpmcore/compare/v3.46.0...v3.47.0) (2023-10-26)
+
+
+### Features
+
+* ignore network error to error log ([#600](https://github.com/cnpm/cnpmcore/issues/600)) ([22d401e](https://github.com/cnpm/cnpmcore/commit/22d401ee1f103a9702448d4749f0028a676eddc0))
+
 ## [3.46.0](https://github.com/cnpm/cnpmcore/compare/v3.45.1...v3.46.0) (2023-10-11)
 
 
