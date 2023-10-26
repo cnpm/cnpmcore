@@ -148,7 +148,13 @@ export class BinarySyncerService extends AbstractService {
       logs.push(`[${isoNow()}] ❌❌❌❌❌ "${binaryName}" ❌❌❌❌❌`);
       this.logger.error('[BinarySyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);
-      this.logger.error(err);
+      if (err.name === 'HttpClientRequestTimeoutError'
+        || err.name === 'ConnectionError'
+        || err.name === 'ConnectTimeoutError') {
+        this.logger.warn(err);
+      } else {
+        this.logger.error(err);
+      }
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
     }
   }
@@ -210,7 +216,11 @@ export class BinarySyncerService extends AbstractService {
               this.logger.info('Not found %s, skip it', item.sourceUrl);
               logs.push(`[${isoNow()}][${dir}] 🧪️ [${parentIndex}${index}] Download ${item.sourceUrl} not found, skip it`);
             } else {
-              this.logger.error('Download binary %s %s', item.sourceUrl, err);
+              if (err.name === 'DownloadStatusInvalidError') {
+                this.logger.warn('Download binary %s %s', item.sourceUrl, err);
+              } else {
+                this.logger.error('Download binary %s %s', item.sourceUrl, err);
+              }
               hasDownloadError = true;
               logs.push(`[${isoNow()}][${dir}] ❌ [${parentIndex}${index}] Download ${item.sourceUrl} error: ${err}`);
             }

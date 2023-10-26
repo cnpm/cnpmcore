@@ -661,7 +661,11 @@ export class PackageSyncerService extends AbstractService {
         localFile = tmpfile;
         logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
       } catch (err: any) {
-        this.logger.error('Download tarball %s error: %s', tarball, err);
+        if (err.name === 'DownloadNotFoundError' || err.name === 'DownloadStatusInvalidError') {
+          this.logger.warn('Download tarball %s error: %s', tarball, err);
+        } else {
+          this.logger.error('Download tarball %s error: %s', tarball, err);
+        }
         lastErrorMessage = `download tarball error: ${err}`;
         logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
         await this.taskService.appendTaskLog(task, logs.join('\n'));
