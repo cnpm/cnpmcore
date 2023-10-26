@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.47.1](https://github.com/cnpm/cnpmcore/compare/v3.47.0...v3.47.1) (2023-10-26)
+
+
+### Bug Fixes
+
+* ignore HttpClientRequestTimeoutError on change stream worker ([#601](https://github.com/cnpm/cnpmcore/issues/601)) ([0791769](https://github.com/cnpm/cnpmcore/commit/079176926dd00c14cbf937d19a8e21dba8376a46))
+
 ## [3.47.0](https://github.com/cnpm/cnpmcore/compare/v3.46.0...v3.47.0) (2023-10-26)
 
 
