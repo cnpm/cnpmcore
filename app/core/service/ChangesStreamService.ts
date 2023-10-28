@@ -102,7 +102,9 @@ export class ChangesStreamService extends AbstractService {
       }
     } catch (err) {
       this.logger.warn('[ChangesStreamService.executeTask:error] %s, exit now', err.message);
-      if (err.name === 'HttpClientRequestTimeoutError') {
+      if (err.name === 'HttpClientRequestTimeoutError'
+        || err.name === 'ConnectTimeoutError'
+        || err.name === 'BodyTimeoutError') {
         this.logger.warn(err);
       } else {
         this.logger.error(err);
