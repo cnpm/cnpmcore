@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.47.2](https://github.com/cnpm/cnpmcore/compare/v3.47.1...v3.47.2) (2023-10-28)
+
+
+### Bug Fixes
+
+* ignore BodyTimeoutError ([#603](https://github.com/cnpm/cnpmcore/issues/603)) ([cde4f03](https://github.com/cnpm/cnpmcore/commit/cde4f03c30dea074a32dc32f22f16c16c08fbe0d))
+
 ## [3.47.1](https://github.com/cnpm/cnpmcore/compare/v3.47.0...v3.47.1) (2023-10-26)
 
 
