@@ -7,11 +7,12 @@ describe('test/port/controller/HomeController/cors.test.ts', () => {
       const res = await app.httpRequest()
         .get('/-/ping')
         .set('origin', 'https://www.test-cors.org');
-      assert(res.status === 200);
-      assert(res.body.pong === true);
-      assert(res.headers.vary === 'Origin');
-      assert(res.headers['access-control-allow-origin'] === 'https://www.test-cors.org');
-      assert(res.headers['access-control-allow-credentials'] === 'true');
+      assert.equal(res.status, 200);
+      assert.equal(res.body.pong, true);
+      assert.equal(res.headers.vary, 'Origin');
+      assert.equal(res.headers['access-control-allow-origin'], 'https://www.test-cors.org');
+      assert.equal(res.headers['access-control-allow-credentials'], 'true');
+      assert(!res.headers['access-control-allow-methods']);
     });
 
     it('should OPTIONS work', async () => {
@@ -20,11 +21,12 @@ describe('test/port/controller/HomeController/cors.test.ts', () => {
         .set('origin', 'https://www.test-cors.org/foo')
         .set('Access-Control-Request-Method', 'OPTIONS')
         .set('Access-Control-Request-Headers', 'authorization');
-      assert(res.status === 204);
-      assert(res.headers.vary === 'Origin');
-      assert(res.headers['access-control-allow-origin'] === 'https://www.test-cors.org/foo');
-      assert(res.headers['access-control-allow-credentials'] === 'true');
-      assert(res.headers['access-control-allow-headers'] === 'authorization');
+      assert.equal(res.status, 204);
+      assert.equal(res.headers.vary, 'Origin');
+      assert.equal(res.headers['access-control-allow-origin'], 'https://www.test-cors.org/foo');
+      assert.equal(res.headers['access-control-allow-credentials'], 'true');
+      assert.equal(res.headers['access-control-allow-headers'], 'authorization');
+      assert.equal(res.headers['access-control-allow-methods'], 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS');
     });
   });
 });
