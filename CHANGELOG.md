@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.48.2](https://github.com/cnpm/cnpmcore/compare/v3.48.1...v3.48.2) (2023-11-03)
+
+
+### Bug Fixes
+
+* should set OPTIONS on access-control-allow-methods ([#608](https://github.com/cnpm/cnpmcore/issues/608)) ([0179ef3](https://github.com/cnpm/cnpmcore/commit/0179ef364a5bc6aac5eafafee7136bf61405ee43))
+
 ## [3.48.1](https://github.com/cnpm/cnpmcore/compare/v3.48.0...v3.48.1) (2023-11-03)
 
 
