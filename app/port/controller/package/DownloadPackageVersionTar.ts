@@ -30,6 +30,8 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.OPTIONS,
   })
   async downloadForOptions(@Context() ctx: EggContext) {
+    ctx.set('access-control-allow-origin', '*');
+    ctx.set('access-control-allow-methods', 'GET,HEAD');
     ctx.status = 204;
   }
 
