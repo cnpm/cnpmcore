@@ -61,9 +61,13 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       let res = await app.httpRequest()
         .options(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`);
       assert.equal(res.status, 204);
+      assert.equal(res.headers['access-control-allow-origin'], '*');
+      assert.equal(res.headers['access-control-allow-methods'], 'GET,HEAD');
       res = await app.httpRequest()
         .options(`/${scopedName}/-/testmodule-download-version-tar-1.0.0.tgz`);
       assert.equal(res.status, 204);
+      assert.equal(res.headers['access-control-allow-origin'], '*');
+      assert.equal(res.headers['access-control-allow-methods'], 'GET,HEAD');
     });
 
     if (process.env.CNPMCORE_NFS_TYPE !== 'oss') {
