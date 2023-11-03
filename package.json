@@ -97,7 +97,7 @@
     "eggjs-elasticsearch": "^0.0.6",
     "fs-cnpm": "^2.4.0",
     "ioredis": "^5.3.1",
-    "leoric": "^2.6.2",
+    "leoric": "^2.11.5",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
     "mysql": "^2.18.1",
