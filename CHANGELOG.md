@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.48.0](https://github.com/cnpm/cnpmcore/compare/v3.47.2...v3.48.0) (2023-11-03)
+
+
+### Features
+
+* allow OPTIONS request on tgz downlaod url ([#605](https://github.com/cnpm/cnpmcore/issues/605)) ([5bedb25](https://github.com/cnpm/cnpmcore/commit/5bedb25f9dd29d684add0e1f4b827db0c8e0e818))
+
 ## [3.47.2](https://github.com/cnpm/cnpmcore/compare/v3.47.1...v3.47.2) (2023-10-28)
 
 
