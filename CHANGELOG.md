@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.48.1](https://github.com/cnpm/cnpmcore/compare/v3.48.0...v3.48.1) (2023-11-03)
+
+
+### Bug Fixes
+
+* should set access-control-allow-origin and headers ([#606](https://github.com/cnpm/cnpmcore/issues/606)) ([18ef7f4](https://github.com/cnpm/cnpmcore/commit/18ef7f49affd2656cdba26fe21078f46ca1e0cc5))
+
 ## [3.48.0](https://github.com/cnpm/cnpmcore/compare/v3.47.2...v3.48.0) (2023-11-03)
 
 
