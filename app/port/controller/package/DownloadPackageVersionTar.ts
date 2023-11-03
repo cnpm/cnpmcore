@@ -23,6 +23,16 @@ export class DownloadPackageVersionTarController extends AbstractController {
   @Inject()
   private nfsAdapter: NFSAdapter;
 
+  // Support OPTIONS Request on tgz download
+  @HTTPMethod({
+    // GET /:fullname/-/:filenameWithVersion.tgz
+    path: `/:fullname(${FULLNAME_REG_STRING})/-/:filenameWithVersion.tgz`,
+    method: HTTPMethodEnum.OPTIONS,
+  })
+  async downloadForOptions(@Context() ctx: EggContext) {
+    ctx.status = 204;
+  }
+
   @HTTPMethod({
     // GET /:fullname/-/:filenameWithVersion.tgz
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:filenameWithVersion.tgz`,
