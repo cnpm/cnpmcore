@@ -100,6 +100,8 @@ export default (appInfo: EggAppConfig) => {
       return ctx.get('Origin');
     },
     credentials: true,
+    // https://github.com/koajs/cors/blob/master/index.js#L10C57-L10C64
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
   };
 
   config.nfs = {
