@@ -6,6 +6,7 @@ import type { HistoryTask as HistoryTaskModel } from './model/HistoryTask';
 import { Task as TaskEntity, TaskUpdateCondition } from '../core/entity/Task';
 import { AbstractRepository } from './AbstractRepository';
 import { TaskType, TaskState } from '../../app/common/enum/Task';
+import { uniq } from 'lodash';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -72,7 +73,7 @@ export class TaskRepository extends AbstractRepository {
     if (!model || !model.data.specificVersions) return;
     if (specificVersions) {
       const data = model.data;
-      const combinedVersions = Array.from(new Set(data.specificVersions.concat(specificVersions)));
+      const combinedVersions = uniq<string>(data.specificVersions.concat(specificVersions));
       data.specificVersions = combinedVersions;
       await model.update({ data });
     } else {

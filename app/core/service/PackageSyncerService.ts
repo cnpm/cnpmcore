@@ -564,12 +564,22 @@ export class PackageSyncerService extends AbstractService {
     }
     const versions: PackageJSONType[] = specificVersions ? Object.values<any>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) : Object.values<any>(versionMap);
     logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
+    // specific versions may not in manifest.
     if (specificVersions) {
       const availableVersionList = versions.map(item => item.version);
-      let notAvailableVersionList = specificVersions.filter(i => !availableVersionList.includes(i));
+      const notAvailableVersionList = specificVersions.filter(i => !availableVersionList.includes(i));
       if (notAvailableVersionList.length > 0) {
-        notAvailableVersionList = Array.from(new Set(notAvailableVersionList));
         logs.push(`[${isoNow()}] 🚧 Some specific versions are not available: 👉 ${notAvailableVersionList.join(' | ')} 👈`);
+      }
+      if (availableVersionList.length === 0) {
+        logs.push(`[${isoNow()}] ❌ `);
+        task.error = 'There is no available specific versions, stop task.';
+        logs.push(`[${isoNow()}]  ${task.error}, log: ${logUrl}`);
+        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+        this.logger.info('[PackageSyncerService.executeTask:fail-empty-list] taskId: %s, targetName: %s, %s',
+          task.taskId, task.targetName, task.error);
+        return;
       }
     }
     const updateVersions: string[] = [];
@@ -819,7 +829,8 @@ export class PackageSyncerService extends AbstractService {
     if (specificVersions && this.config.cnpmcore.strictSyncSpecivicVersion) {
       // 不允许自动同步 latest 版本，从已同步版本中选出 latest
       let latestStableVersion: string;
-      const sortedVersionList = specificVersions.sort(semverRcompare);
+      const availableVersionList = versions.map(item => item.version);
+      const sortedVersionList = availableVersionList.sort(semverRcompare);
       latestStableVersion = sortedVersionList.filter(i => !semverPrerelease(i))[0];
       // 所有版本都不是稳定版本则指向非稳定版本保证 latest 存在
       if (!latestStableVersion) {

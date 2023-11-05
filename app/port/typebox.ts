@@ -4,6 +4,7 @@ import semver from 'semver';
 import npa from 'npm-package-arg';
 import { HookType } from '../common/enum/Hook';
 import binaryConfig, { BinaryName } from '../../config/binaries';
+import { uniq } from 'lodash';
 
 export const Name = Type.String({
   transform: [ 'trim' ],
@@ -55,7 +56,7 @@ export const Version = Type.String({
 });
 
 export const VersionStringArray = Type.String({
-  format: 'semver-version-array',
+  format: 'unique-semver-version-array',
   transform: [ 'trim' ],
 });
 
@@ -149,7 +150,7 @@ export function patchAjv(ajv: any) {
       return binaryConfig[binaryName];
     },
   });
-  ajv.addFormat('semver-version-array', {
+  ajv.addFormat('unique-semver-version-array', {
     type: 'string',
     validate: (versionStringList: string) => {
       let versionList;
@@ -158,8 +159,10 @@ export function patchAjv(ajv: any) {
       } catch (error) {
         return false;
       }
-      if (versionList instanceof Array) {
-        return versionList.every(version => !!semver.valid(version));
+      if (Array.isArray(versionList)) {
+        const isSemver = versionList.every(version => !!semver.valid(version));
+        const isUnique = uniq(versionList).length === versionList.length;
+        return isSemver && isUnique;
       }
       return false;
     },
