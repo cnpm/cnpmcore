@@ -1,5 +1,5 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { estypes } from '@elastic/elasticsearch';
+import { estypes, errors } from '@elastic/elasticsearch';
 import dayjs from 'dayjs';
 
 import { AbstractService } from '../../common/AbstractService';
@@ -138,7 +138,16 @@ export class PackageSearchService extends AbstractService {
   }
 
   async removePackage(fullname: string) {
-    return await this.searchRepository.removePackage(fullname);
+    try {
+      return await this.searchRepository.removePackage(fullname);
+    } catch (error) {
+      // if the package does not exist, returns success
+      if (error instanceof errors.ResponseError && error?.statusCode === 404) {
+        this.logger.warn('[PackageSearchService.removePackage] remove package:%s not found', fullname);
+        return fullname;
+      }
+      throw error;
+    }
   }
 
   // https://github.com/npms-io/queries/blob/master/lib/search.js#L8C1-L78C2
@@ -213,7 +222,7 @@ export class PackageSearchService extends AbstractService {
   private _buildScriptScore(params: { text: string | undefined, scoreEffect: number }) {
     // keep search simple, only download(popularity)
     const downloads = 'doc["downloads.all"].value';
-    const source = `doc["package.name.raw"].value.equals("${params.text}") ? 100000 + ${downloads} : _score * Math.pow(${downloads}, ${params.scoreEffect})`;
+    const source = `doc["package.name.raw"].value.equals(params.text) ? 100000 + ${downloads} : _score * Math.pow(${downloads}, params.scoreEffect)`;
     return {
       script: {
         source,
