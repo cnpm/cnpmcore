@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.48.3](https://github.com/cnpm/cnpmcore/compare/v3.48.2...v3.48.3) (2023-11-06)
+
+
+### Bug Fixes
+
+* es query script score syntax fix and add error handler for 404 error ([#607](https://github.com/cnpm/cnpmcore/issues/607)) ([8e1f4ca](https://github.com/cnpm/cnpmcore/commit/8e1f4ca880c6ad09f766807e6a751b5ae960b550))
+
 ## [3.48.2](https://github.com/cnpm/cnpmcore/compare/v3.48.1...v3.48.2) (2023-11-03)
 
 
