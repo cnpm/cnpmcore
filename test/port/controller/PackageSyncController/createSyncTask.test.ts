@@ -60,10 +60,15 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert(res.body.error === '[FORBIDDEN] Can\'t sync private package "@cnpm/koa"');
     });
 
-    it('should 422 if specificVersions cannot parse is not valideted', async () => {
+    it('should 422 if specificVersions cannot parse or not valideted', async () => {
       await app.httpRequest()
         .put('/-/package/koa/syncs')
         .send({ specificVersions: '1.0.0' })
+        .expect(422);
+
+      await app.httpRequest()
+        .put('/-/package/koa/syncs')
+        .send({ specificVersions: '["1.0.0", "1.0.0"]' })
         .expect(422);
     });
 
