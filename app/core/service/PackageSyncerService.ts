@@ -560,9 +560,9 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] 📦 Add latest tag version "${fullname}: ${distTags.latest}"`);
       specificVersions.push(distTags.latest);
     }
-    const versions: PackageJSONType[] = specificVersions ?
-      Object.values<any>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) :
-      Object.values<any>(versionMap);
+    const versions = specificVersions ?
+      Object.values<PackageJSONType>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) :
+      Object.values<PackageJSONType>(versionMap);
     // 全量同步时跳过排序
     const sortedAvailableVersions = specificVersions ?
       versions.map(item => item.version).sort(semver.rcompare) : [];
