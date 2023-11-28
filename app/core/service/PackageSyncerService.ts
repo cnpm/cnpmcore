@@ -10,8 +10,6 @@ import { setTimeout } from 'timers/promises';
 import { rm } from 'fs/promises';
 import { isEqual, isEmpty } from 'lodash';
 import semver from 'semver';
-import semverRcompare from 'semver/functions/rcompare';
-import semverPrerelease from 'semver/functions/prerelease';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
 import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil';
 import { downloadToTempfile } from '../../common/FileUtil';
@@ -562,16 +560,34 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] 📦 Add latest tag version "${fullname}: ${distTags.latest}"`);
       specificVersions.push(distTags.latest);
     }
-    const versions: PackageJSONType[] = specificVersions ? Object.values<any>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) : Object.values<any>(versionMap);
-    logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
-    if (specificVersions) {
-      const availableVersionList = versions.map(item => item.version);
-      let notAvailableVersionList = specificVersions.filter(i => !availableVersionList.includes(i));
-      if (notAvailableVersionList.length > 0) {
-        notAvailableVersionList = Array.from(new Set(notAvailableVersionList));
-        logs.push(`[${isoNow()}] 🚧 Some specific versions are not available: 👉 ${notAvailableVersionList.join(' | ')} 👈`);
-      }
+    const versions = specificVersions ?
+      Object.values<PackageJSONType>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) :
+      Object.values<PackageJSONType>(versionMap);
+    // 全量同步时跳过排序
+    const sortedAvailableVersions = specificVersions ?
+      versions.map(item => item.version).sort(semver.rcompare) : [];
+    // 在strictSyncSpecivicVersion模式下（不同步latest）且所有传入的version均不可用
+    if (specificVersions && sortedAvailableVersions.length === 0) {
+      logs.push(`[${isoNow()}] ❌ `);
+      task.error = 'There is no available specific versions, stop task.';
+      logs.push(`[${isoNow()}]  ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info('[PackageSyncerService.executeTask:fail-empty-list] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
+      return;
     }
+    if (specificVersions) {
+      // specific versions may not in manifest.
+      const notAvailableVersionList = specificVersions.filter(i => !sortedAvailableVersions.includes(i));
+      logs.push(`[${isoNow()}] 🚧 Syncing specific versions: ${sortedAvailableVersions.join(' | ')}`);
+      if (notAvailableVersionList.length > 0) {
+        logs.push(`🚧 Some specific versions are not available: 👉 ${notAvailableVersionList.join(' | ')} 👈`);
+      }
+    } else {
+      logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
+    }
+
     const updateVersions: string[] = [];
     const differentMetas: [PackageJSONType, Partial<PackageJSONType>][] = [];
     let syncIndex = 0;
@@ -818,14 +834,12 @@ export class PackageSyncerService extends AbstractService {
     // 在同步 sepcific version 时如果没有同步 latestTag 的版本会出现 latestTag 丢失或指向版本不正确的情况
     if (specificVersions && this.config.cnpmcore.strictSyncSpecivicVersion) {
       // 不允许自动同步 latest 版本，从已同步版本中选出 latest
-      let latestStableVersion: string;
-      const sortedVersionList = specificVersions.sort(semverRcompare);
-      latestStableVersion = sortedVersionList.filter(i => !semverPrerelease(i))[0];
+      let latestStableVersion = semver.maxSatisfying(sortedAvailableVersions, '*');
       // 所有版本都不是稳定版本则指向非稳定版本保证 latest 存在
       if (!latestStableVersion) {
-        latestStableVersion = sortedVersionList[0];
+        latestStableVersion = sortedAvailableVersions[0];
       }
-      if (!existsDistTags.latest || semverRcompare(existsDistTags.latest, latestStableVersion) === 1) {
+      if (!existsDistTags.latest || semver.rcompare(existsDistTags.latest, latestStableVersion) === 1) {
         logs.push(`[${isoNow()}] 🚧 patch latest tag from specific versions 🚧`);
         changedTags.push({ action: 'change', tag: 'latest', version: latestStableVersion });
         await this.packageManagerService.savePackageTag(pkg, 'latest', latestStableVersion);
