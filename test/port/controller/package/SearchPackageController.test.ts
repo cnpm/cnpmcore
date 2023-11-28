@@ -19,11 +19,11 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   });
 
   describe('[GET /-/v1/search] search()', async () => {
-    it('should throw 451 when enableElasticsearch is false', async () => {
+    it('should throw 501 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
       await app.httpRequest()
         .get('/-/v1/search?text=example&from=0&size=1')
-        .expect(451);
+        .expect(501);
     });
 
     it('should get example package', async () => {
@@ -57,11 +57,11 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   });
 
   describe('[PUT /-/v1/search/sync/:fullname] sync()', async () => {
-    it('should throw 451 when enableElasticsearch is false', async () => {
+    it('should throw 501 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
       await app.httpRequest()
         .put('/-/v1/search/sync/example')
-        .expect(451);
+        .expect(501);
     });
 
     it('should upsert a example package', async () => {
@@ -97,12 +97,12 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
     beforeEach(async () => {
       admin = await TestUtil.createAdmin();
     });
-    it('should throw 451 when enableElasticsearch is false', async () => {
+    it('should throw 501 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
       await app.httpRequest()
         .delete('/-/v1/search/sync/example')
         .set('authorization', admin.authorization)
-        .expect(451);
+        .expect(501);
     });
 
     it('should delete a example package', async () => {
