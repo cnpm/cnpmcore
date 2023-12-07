@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.48.4](https://github.com/cnpm/cnpmcore/compare/v3.48.3...v3.48.4) (2023-12-07)
+
+
+### Bug Fixes
+
+* incorrect latest tag in strict specific version ([#610](https://github.com/cnpm/cnpmcore/issues/610)) ([acfd667](https://github.com/cnpm/cnpmcore/commit/acfd66748fee84f5a1fdf40755a96323cf4f15ef))
+
 ## [3.48.4](https://github.com/cnpm/cnpmcore/compare/v3.48.3...v3.48.4) (2023-11-28)
 
 
