@@ -135,7 +135,7 @@
     "eslint": "^8.29.0",
     "eslint-config-egg": "^13.0.0",
     "git-contributor": "2",
-    "typescript": "^5.2.2"
+    "typescript": "5.2.2"
   },
   "author": "killagu",
   "license": "MIT",
