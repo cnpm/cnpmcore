@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.49.0](https://github.com/cnpm/cnpmcore/compare/v3.48.4...v3.49.0) (2023-12-12)
+
+
+### Features
+
+* use egg-cors@3 ([#620](https://github.com/cnpm/cnpmcore/issues/620)) ([fcca3c3](https://github.com/cnpm/cnpmcore/commit/fcca3c30ce34efe870670659bac7e51993e31b02))
+
 ## [3.48.4](https://github.com/cnpm/cnpmcore/compare/v3.48.3...v3.48.4) (2023-12-07)
 
 
