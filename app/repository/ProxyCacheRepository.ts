@@ -36,8 +36,9 @@ export class ProxyCacheRepository extends AbstractRepository {
     return null;
   }
 
-  async removeProxyCache(fullname: string, fileType: string) {
-    await this.ProxyCache.remove({ fullname, fileType });
+  async findProxyCaches(fullname: string, version?: string) {
+    const models = version ? await this.ProxyCache.find({ fullname, version }) : await this.ProxyCache.find({ fullname });
+    return models;
   }
 
   async listCachedFiles(page: PageOptions): Promise<PageResult<ProxyCacheEntity>> {
@@ -50,4 +51,11 @@ export class ProxyCacheRepository extends AbstractRepository {
     };
   }
 
+  async removeProxyCache(fullname: string, fileType: string, version?: string) {
+    version ? await this.ProxyCache.remove({ fullname, version, fileType }) : await this.ProxyCache.remove({ fullname, fileType });
+  }
+
+  async truncateProxyCache() {
+    await this.ProxyCache.truncate();
+  }
 }
