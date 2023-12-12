@@ -36,7 +36,6 @@ export class CheckProxyCacheUpdateWorker {
             // 仅manifests需要更新，指定版本的package.json文件发布后不会改变
             const task = await this.proxyCacheService.createTask(`${item.fullname}/${item.fileType}`, {
               fullname: item.fullname,
-              version: item.version,
               fileType: item.fileType,
             });
             this.logger.info('[CheckProxyCacheUpdateWorker.subscribe:createTask][%s] taskId: %s, targetName: %s',

@@ -174,15 +174,23 @@ export class ProxyCacheService extends AbstractService {
     return { proxyBytes, manifest };
   }
 
-  public async createTask(targetName: string, options: UpdateProxyCacheTaskOptions): Promise<CreateUpdateProxyCacheTask> {
+  async removeProxyCaches(fullname: string, fileType: DIST_NAMES, version?: string) {
+    const storeKey = isPkgManifest(fileType)
+      ? `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${fileType}`
+      : `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${fileType}`;
+    await this.nfsAdapter.remove(storeKey);
+    await this.proxyCacheRepository.removeProxyCache(fullname, fileType, version);
+  }
+
+  async createTask(targetName: string, options: UpdateProxyCacheTaskOptions): Promise<CreateUpdateProxyCacheTask> {
     return await this.taskService.createTask(Task.createUpdateProxyCache(targetName, options), false) as CreateUpdateProxyCacheTask;
   }
 
-  public async findExecuteTask() {
+  async findExecuteTask() {
     return await this.taskService.findExecuteTask(TaskType.UpdateProxyCache);
   }
 
-  public async executeTask(task: Task) {
+  async executeTask(task: Task) {
     const logs: string[] = [];
     const fullname = (task as CreateUpdateProxyCacheTask).data.fullname;
     const { fileType, version } = (task as CreateUpdateProxyCacheTask).data;
