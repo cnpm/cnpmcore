@@ -152,6 +152,9 @@ export class PackageSearchService extends AbstractService {
 
   // https://github.com/npms-io/queries/blob/master/lib/search.js#L8C1-L78C2
   private _buildMatchQueries(text: string) {
+    if (!text) {
+      return [];
+    }
     return [
       // Standard match using cross_fields
       {

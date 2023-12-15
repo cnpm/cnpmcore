@@ -54,6 +54,33 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
       assert.equal(res.body.total, 1);
     });
 
+    it('should get example package when search text is empty', async () => {
+      mockES.add({
+        method: 'POST',
+        path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+      }, () => {
+        return {
+          hits: {
+            total: { value: 1, relation: 'eq' },
+            hits: [{
+              _source: {
+                downloads: {
+                  all: 0,
+                },
+                package: {
+                  name: 'example',
+                  description: 'example package',
+                },
+              },
+            }],
+          },
+        };
+      });
+      const res = await app.httpRequest()
+        .get('/-/v1/search?from=0&size=1');
+      assert.equal(res.body.objects[0].package.name, 'example');
+      assert.equal(res.body.total, 1);
+    });
   });
 
   describe('[PUT /-/v1/search/sync/:fullname] sync()', async () => {
