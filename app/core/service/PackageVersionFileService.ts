@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { join, dirname, basename } from 'node:path';
 import { randomUUID } from 'node:crypto';
-import tar from 'tar';
+import tar from '@fengmk2/tar';
 import {
   AccessLevel,
   SingletonProto,

@@ -78,6 +78,7 @@
     "@eggjs/tegg-schedule-plugin": "^3.12.0",
     "@eggjs/tsconfig": "^1.0.0",
     "@elastic/elasticsearch": "^8.8.1",
+    "@fengmk2/tar": "^6.2.0",
     "@node-rs/crc32": "^1.2.2",
     "@simplewebauthn/server": "^7.0.1",
     "@sinclair/typebox": "^0.23.0",
@@ -108,7 +109,6 @@
     "s3-cnpmcore": "^1.1.2",
     "semver": "^7.3.5",
     "ssri": "^8.0.1",
-    "tar": "^6.1.13",
     "type-fest": "^2.5.3",
     "ua-parser-js": "^1.0.34",
     "validate-npm-package-name": "^3.0.0"
