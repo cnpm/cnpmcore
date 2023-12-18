@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.49.1](https://github.com/cnpm/cnpmcore/compare/v3.49.0...v3.49.1) (2023-12-18)
+
+
+### Bug Fixes
+
+* use tar fork version to fix memory leak ([#625](https://github.com/cnpm/cnpmcore/issues/625)) ([6c519f7](https://github.com/cnpm/cnpmcore/commit/6c519f73ce453b40bd2f7c9b2bd92fd0a1f6836b))
+
 ## [3.49.0](https://github.com/cnpm/cnpmcore/compare/v3.48.4...v3.49.0) (2023-12-12)
 
 
