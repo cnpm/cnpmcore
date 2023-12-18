@@ -18,7 +18,6 @@ describe('test/repository/ProxyCacheRepository.test.ts', () => {
 
   describe('ProxyCacheRepository', () => {
     it('create work', async () => {
-      proxyCacheRepository;
       const newProxyCache = await proxyCacheRepository.saveProxyCache(ProxyCache.create({
         fullname: 'foo-bar-new',
         fileType: DIST_NAMES.FULL_MANIFESTS,
@@ -54,6 +53,16 @@ describe('test/repository/ProxyCacheRepository.test.ts', () => {
 
     it('remove work', async () => {
       await proxyCacheRepository.removeProxyCache('foo-bar', DIST_NAMES.FULL_MANIFESTS);
+      const emptyRes = await proxyCacheRepository.listCachedFiles({});
+      assert.deepEqual(emptyRes.data, []);
+    });
+
+    it('truncate work', async () => {
+      await proxyCacheRepository.saveProxyCache(ProxyCache.create({
+        fullname: 'foo-bar-new',
+        fileType: DIST_NAMES.FULL_MANIFESTS,
+      }));
+      await proxyCacheRepository.truncateProxyCache();
       const emptyRes = await proxyCacheRepository.listCachedFiles({});
       assert.deepEqual(emptyRes.data, []);
     });

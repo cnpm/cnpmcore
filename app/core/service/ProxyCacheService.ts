@@ -174,7 +174,7 @@ export class ProxyCacheService extends AbstractService {
     return { proxyBytes, manifest };
   }
 
-  async removeProxyCaches(fullname: string, fileType: DIST_NAMES, version?: string) {
+  async removeProxyCache(fullname: string, fileType: DIST_NAMES, version?: string) {
     const storeKey = isPkgManifest(fileType)
       ? `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${fileType}`
       : `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${fileType}`;
