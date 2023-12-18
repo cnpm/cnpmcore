@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.49.2](https://github.com/cnpm/cnpmcore/compare/v3.49.1...v3.49.2) (2023-12-18)
+
+
+### Bug Fixes
+
+* should search default packages when text is empty ([#623](https://github.com/cnpm/cnpmcore/issues/623)) ([0c4a52d](https://github.com/cnpm/cnpmcore/commit/0c4a52d220e7206a767423be9deec249c58458b2))
+
 ## [3.49.1](https://github.com/cnpm/cnpmcore/compare/v3.49.0...v3.49.1) (2023-12-18)
 
 
