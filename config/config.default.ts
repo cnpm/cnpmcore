@@ -76,7 +76,11 @@ export default (appInfo: EggAppConfig) => {
     user: process.env.CNPMCORE_MYSQL_USER || process.env.MYSQL_USER || 'root',
     password: process.env.CNPMCORE_MYSQL_PASSWORD || process.env.MYSQL_PASSWORD,
     charset: 'utf8mb4',
-    logger: {},
+    logger: {
+      // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror
+      // ignore query error
+      logQueryError() {},
+    },
   };
 
   config.redis = {
