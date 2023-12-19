@@ -1,14 +1,14 @@
 import { EggAppConfig, EggLogger } from 'egg';
-import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import { CronParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
 import { SyncMode } from '../../common/constants';
 import { ProxyCacheService, isPkgManifest } from '../../core/service/ProxyCacheService';
 
-@Schedule<IntervalParams>({
+@Schedule<CronParams>({
   type: ScheduleType.WORKER,
   scheduleData: {
-    interval: 216000000, // 1000 * 60 * 3600 every hour.
+    cron: '0 3 * * *', // run every day at 03:00
   },
 })
 export class CheckProxyCacheUpdateWorker {
