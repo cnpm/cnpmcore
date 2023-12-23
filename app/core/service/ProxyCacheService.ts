@@ -15,7 +15,7 @@ import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { calculateIntegrity } from '../../common/PackageUtil';
 import { DIST_NAMES } from '../entity/Package';
-import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../common/constants';
+import { PROXY_CACHE_DIR_NAME } from '../../common/constants';
 import type { AbbreviatedPackageManifestType, AbbreviatedPackageJSONType, PackageManifestType, PackageJSONType } from '../../repository/PackageRepository';
 
 function isoNow() {
@@ -165,10 +165,10 @@ export class ProxyCacheService extends AbstractService {
     const proxyBytes = Buffer.from(JSON.stringify(manifest));
     let storeKey: string;
     if (isPkgManifest(fileType)) {
-      storeKey = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${fileType}`;
+      storeKey = `/${PROXY_CACHE_DIR_NAME}/${fullname}/${fileType}`;
     } else {
       const version = manifest.version;
-      storeKey = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${fileType}`;
+      storeKey = `/${PROXY_CACHE_DIR_NAME}/${fullname}/${version}/${fileType}`;
     }
     await this.nfsAdapter.uploadBytes(storeKey, proxyBytes);
     return { proxyBytes, manifest };
@@ -176,8 +176,8 @@ export class ProxyCacheService extends AbstractService {
 
   async removeProxyCache(fullname: string, fileType: DIST_NAMES, version?: string) {
     const storeKey = isPkgManifest(fileType)
-      ? `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${fileType}`
-      : `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${fullname}/${version}/${fileType}`;
+      ? `/${PROXY_CACHE_DIR_NAME}/${fullname}/${fileType}`
+      : `/${PROXY_CACHE_DIR_NAME}/${fullname}/${version}/${fileType}`;
     await this.nfsAdapter.remove(storeKey);
     await this.proxyCacheRepository.removeProxyCache(fullname, fileType, version);
   }
