@@ -39,6 +39,8 @@ export type _CnpmcoreConfig = {
    * - admin: don't sync npm package,only admin can create sync task by sync contorller.
    * - all: sync all npm packages
    * - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
+   * - proxy: don't sync npm package, create sync task when package requested, like nexus. `redirectNotFound` must be false when syncMode is `proxy`.
+   *          @see https://help.sonatype.com/repomanager3/using-nexus-repository/repository-manager-concepts/proxy-repository-concepts
    */
   syncMode: SyncMode,
   syncDeleteMode: SyncDeleteMode,
