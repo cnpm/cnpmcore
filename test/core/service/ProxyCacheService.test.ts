@@ -4,7 +4,7 @@ import { TestUtil } from '../../TestUtil';
 import { ProxyCacheService } from '../../../app/core/service/ProxyCacheService';
 import { ProxyCacheRepository } from '../../../app/repository/ProxyCacheRepository';
 import { DIST_NAMES } from '../../../app/core/entity/Package';
-import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../../app/common/constants';
+import { PROXY_CACHE_DIR_NAME } from '../../../app/common/constants';
 import { NPMRegistry } from '../../../app/common/adapter/NPMRegistry';
 import { NFSAdapter } from '../../../app/common/adapter/NFSAdapter';
 import { ProxyCache } from '../../../app/core/entity/ProxyCache';
@@ -75,7 +75,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       const nfsAdapter = await app.getEggObject(NFSAdapter);
       mock(proxyCacheService, 'getSourceManifestAndCache', async () => {
         return {
-          storeKey: `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foo/${DIST_NAMES.FULL_MANIFESTS}`,
+          storeKey: `/${PROXY_CACHE_DIR_NAME}/foo/${DIST_NAMES.FULL_MANIFESTS}`,
           manifest: { name: 'foo remote mock info' },
         };
       });
@@ -100,7 +100,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
     it('should invoke getSourceManifestAndCache first.', async () => {
       mock(proxyCacheService, 'getSourceManifestAndCache', async () => {
         return {
-          storeKey: `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foobar/1.0.0/${DIST_NAMES.MANIFEST}`,
+          storeKey: `/${PROXY_CACHE_DIR_NAME}/foobar/1.0.0/${DIST_NAMES.MANIFEST}`,
           manifest: { name: 'mock package version info' },
         };
       });
@@ -116,7 +116,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       const nfsAdapter = await app.getEggObject(NFSAdapter);
       mock(proxyCacheService, 'getSourceManifestAndCache', async () => {
         return {
-          storeKey: `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/foo/1.0.0/${DIST_NAMES.FULL_MANIFESTS}`,
+          storeKey: `/${PROXY_CACHE_DIR_NAME}/foo/1.0.0/${DIST_NAMES.FULL_MANIFESTS}`,
           manifest: { name: 'foo remote mock info' },
         };
       });

@@ -3,7 +3,7 @@ import path from 'path';
 import { Entity, EntityData } from './Entity';
 import { EasyData, EntityUtil } from '../util/EntityUtil';
 import { TaskType, TaskState } from '../../common/enum/Task';
-import { PROXY_MODE_CACHED_PACKAGE_DIR_NAME } from '../../common/constants';
+import { PROXY_CACHE_DIR_NAME } from '../../common/constants';
 import dayjs from '../../common/dayjs';
 import { HookEvent } from './HookEvent';
 import { DIST_NAMES } from './Package';
@@ -257,7 +257,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     if (!isPkgManifest(options.fileType)) {
       throw new InternalServerError('should not update package version manifest.');
     }
-    const filePath = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${options.fullname}/${options.fileType}`;
+    const filePath = `/${PROXY_CACHE_DIR_NAME}/${options.fullname}/${options.fileType}`;
     const data = {
       type: TaskType.UpdateProxyCache,
       state: TaskState.Waiting,
@@ -273,7 +273,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
       },
     };
     const task = this.create(data);
-    task.logPath = `/${PROXY_MODE_CACHED_PACKAGE_DIR_NAME}/${options.fullname}/update-manifest-log/${options.fileType.split('.json')[0]}-${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
+    task.logPath = `/${PROXY_CACHE_DIR_NAME}/${options.fullname}/update-manifest-log/${options.fileType.split('.json')[0]}-${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
     return task;
   }
 
