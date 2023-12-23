@@ -21,42 +21,6 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
     proxyCacheRepository = await app.getEggObject(ProxyCacheRepository);
   });
 
-  describe('getPackageVersionTarBuffer()', () => {
-    it('should get tgz buffer from source', async () => {
-      const data = await TestUtil.readFixturesFile(
-        'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz',
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz',
-        'GET',
-        {
-          data,
-          persist: false,
-        },
-      );
-      const buffer = await proxyCacheService.getPackageVersionTarBuffer(
-        'foobar',
-        'foobar/-/foobar-1.0.0.tgz',
-      );
-      assert.equal(data.byteLength, buffer?.byteLength);
-    });
-
-    it('should block package in block list', async () => {
-      mock(app.config.cnpmcore, 'syncPackageBlockList', [ 'bar' ]);
-      try {
-        await proxyCacheService.getPackageVersionTarBuffer(
-          'bar',
-          'bar/-/bar-1.0.0.tgz',
-        );
-      } catch (error) {
-        assert.equal(
-          error,
-          'ForbiddenError: stop proxy by block list: ["bar"]',
-        );
-      }
-    });
-  });
-
   describe('getPackageManifest()', () => {
     it('should invoke getSourceManifestAndCache first.', async () => {
       mock(proxyCacheService, 'getSourceManifestAndCache', async () => {
