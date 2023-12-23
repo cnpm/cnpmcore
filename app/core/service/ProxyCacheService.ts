@@ -53,7 +53,7 @@ export class ProxyCacheService extends AbstractService {
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
       throw new ForbiddenError(`stop proxy by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`);
     }
-    const requestTgzURL = `${this.npmRegistry.registry}/${url}`;
+    const requestTgzURL = `${this.npmRegistry.registry}${url}`;
     const { tmpfile } = await downloadToTempfile(this.httpclient, this.config.dataDir, requestTgzURL);
     const tgzBuffer = await readFile(tmpfile);
     await rm(tmpfile, { force: true });
