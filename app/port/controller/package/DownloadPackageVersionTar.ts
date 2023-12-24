@@ -17,11 +17,14 @@ import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
 import { NPMRegistry } from '../../../common/adapter/NPMRegistry';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import { PackageSyncerService } from '../../../core/service/PackageSyncerService';
+import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
 
 @HTTPController()
 export class DownloadPackageVersionTarController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
+  @Inject()
+  registryManagerService: RegistryManagerService;
   @Inject()
   private readonly npmRegistry: NPMRegistry;
   @Inject()
@@ -80,10 +83,15 @@ export class DownloadPackageVersionTarController extends AbstractController {
           task.taskId, fullname);
 
         const requestTgzURL = `${this.npmRegistry.registry}${ctx.url}`;
+        const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(this.npmRegistry.registry);
+        const authorization = remoteAuthToken ? `Bearer ${remoteAuthToken}` : '';
         const urlObj = new URL(requestTgzURL);
         return ctx.proxyRequest(urlObj.host, {
           rewrite() {
             return urlObj;
+          },
+          headers: {
+            authorization,
           },
         });
       }
