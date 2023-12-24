@@ -1,6 +1,8 @@
 import { strict as assert } from 'node:assert';
+import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
+import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let publisher;
@@ -330,6 +332,25 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert(!res.headers.etag);
       assert(!res.headers['cache-control']);
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists@1.0.40000404 not found');
+    });
+
+    it('should conflict when syncing', async () => {
+      mock(app.config.cnpmcore, 'enableUnpkg', true);
+      const { pkg } = await TestUtil.createPackage({
+        name: '@cnpm/banana',
+        version: '1.0.0',
+        versionObject: {
+          description: 'mock mock',
+        },
+      });
+      let called = 0;
+      mock(PackageVersionFileService.prototype, 'syncPackageVersionFiles', async () => {
+        called++;
+        await setTimeout(50);
+      });
+      const resList = await Promise.all([ 0, 1 ].map(() => app.httpRequest().get(`/${pkg.name}/1.0.0/files/`)));
+      assert.equal(called, 1);
+      assert.equal(resList.filter(res => res.status === 409 && res.body.error === '[CONFLICT] Package version file sync is currently in progress. Please try again later.').length, 1);
     });
   });
 });

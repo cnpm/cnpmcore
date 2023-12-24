@@ -21,6 +21,8 @@ import { PackageVersionFile } from '../entity/PackageVersionFile';
 import { PackageVersion } from '../entity/PackageVersion';
 import { Package } from '../entity/Package';
 import { PackageManagerService } from './PackageManagerService';
+import { CacheAdapter } from '../../common/adapter/CacheAdapter';
+import { ConflictError } from 'egg-errors';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -34,6 +36,8 @@ export class PackageVersionFileService extends AbstractService {
   private readonly distRepository: DistRepository;
   @Inject()
   private readonly packageManagerService: PackageManagerService;
+  @Inject()
+  private readonly cacheAdapter: CacheAdapter;
 
   async listPackageVersionFiles(pkgVersion: PackageVersion, directory: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
@@ -50,8 +54,16 @@ export class PackageVersionFileService extends AbstractService {
   async #ensurePackageVersionFilesSync(pkgVersion: PackageVersion) {
     const hasFiles = await this.packageVersionFileRepository.hasPackageVersionFiles(pkgVersion.packageVersionId);
     if (!hasFiles) {
-      await this.syncPackageVersionFiles(pkgVersion);
+      const lockRes = await this.cacheAdapter.usingLock(`${pkgVersion.packageVersionId}:syncFiles`, 60, async () => {
+        await this.syncPackageVersionFiles(pkgVersion);
+      });
+      // lock fail
+      if (!lockRes) {
+        this.logger.warn('[package:version:syncPackageVersionFiles] check lock fail');
+        throw new ConflictError('Package version file sync is currently in progress. Please try again later.');
+      }
     }
+
   }
 
   // 基于 latest version 同步 package readme
