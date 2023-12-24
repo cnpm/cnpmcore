@@ -7,8 +7,6 @@ import {
   HTTPParam,
   Context,
   EggContext,
-  // Context,
-  // EggContext,
 } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError, UnauthorizedError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
@@ -20,16 +18,17 @@ import {
   ProxyCacheService,
   isPkgManifest,
 } from '../../core/service/ProxyCacheService';
-import { SyncMode } from '../../common/constants';
-// import { DIST_NAMES } from '../../../core/entity/Package';
+import { SyncMode, PROXY_CACHE_DIR_NAME } from '../../common/constants';
+import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 
 @HTTPController()
 export class ProxyCacheController extends AbstractController {
   @Inject()
   private readonly proxyCacheRepository: ProxyCacheRepository;
-
   @Inject()
   private readonly proxyCacheService: ProxyCacheService;
+  @Inject()
+  private readonly nfsAdapter: NFSAdapter;
 
   @HTTPMethod({
     method: HTTPMethodEnum.GET,
@@ -141,9 +140,15 @@ export class ProxyCacheController extends AbstractController {
       throw new ForbiddenError('proxy mode is not enabled');
     }
 
-    // 需要手动清除对象存储上的缓存
     await this.proxyCacheRepository.truncateProxyCache();
-
+    // 尝试删除proxy cache目录，若失败可手动管理
+    ctx.runInBackground(async () => {
+      try {
+        await this.nfsAdapter.remove(`/${PROXY_CACHE_DIR_NAME}`);
+      } catch (err) {
+        this.logger.error('[ProxyCacheService.truncateProxyCaches] remove proxy cache dir error: %s', err);
+      }
+    });
     return {
       ok: true,
     };
