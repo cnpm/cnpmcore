@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.49.3](https://github.com/cnpm/cnpmcore/compare/v3.49.2...v3.49.3) (2023-12-25)
+
+
+### Bug Fixes
+
+* unpkg lock ([#629](https://github.com/cnpm/cnpmcore/issues/629)) ([5a8a4eb](https://github.com/cnpm/cnpmcore/commit/5a8a4eb10c42c66dcbd1d3924457b3c43308231a))
+
 ## [3.49.2](https://github.com/cnpm/cnpmcore/compare/v3.49.1...v3.49.2) (2023-12-19)
 
 
