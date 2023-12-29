@@ -1,4 +1,5 @@
-import { strict as assert } from 'node:assert';
+import { strict as assert } from 'assert';
+import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter';
@@ -308,6 +309,8 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 200);
+      // run in background
+      await setTimeout(1000);
       app.expectLog('[DownloadPackageVersionTarController.createSyncTask:success]');
     });
 
