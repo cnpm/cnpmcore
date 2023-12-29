@@ -41,7 +41,13 @@ export class ShowPackageVersionController extends AbstractController {
     const fileType = isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED;
     if (!pkg) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        manifest = await this.proxyCacheService.getPackageVersionManifest(fullname, fileType, versionSpec);
+        try {
+          manifest = await this.proxyCacheService.getPackageVersionManifest(fullname, fileType, versionSpec);
+        } catch (error) {
+          // 缓存manifest错误，创建刷新缓存任务
+          await this.proxyCacheService.createTask(`${fullname}/${fileType}`, { fullname, fileType });
+          throw error;
+        }
       } else {
         const allowSync = this.getAllowSync(ctx);
         throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
