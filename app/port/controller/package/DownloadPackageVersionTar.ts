@@ -70,17 +70,18 @@ export class DownloadPackageVersionTarController extends AbstractController {
       packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
     } catch (error) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        this.packageManagerService.plusPackageVersionCounter(fullname, version);
-        // create sync task
-        const task = await this.packageSyncerService.createTask(fullname, {
-          authorIp: ctx.ip,
-          authorId: `pid_${process.pid}`,
-          tips: `Sync specific version in proxy mode cause by "${ctx.href}"`,
-          skipDependencies: true,
-          specificVersions: [ version ],
+        ctx.runInBackground(async () => {
+          // create sync task
+          const task = await this.packageSyncerService.createTask(fullname, {
+            authorIp: ctx.ip,
+            authorId: `pid_${process.pid}`,
+            tips: `Sync specific version in proxy mode cause by "${ctx.href}"`,
+            skipDependencies: true,
+            specificVersions: [ version ],
+          });
+          ctx.logger.info('[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
+            task.taskId, fullname);
         });
-        ctx.logger.info('[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
-          task.taskId, fullname);
 
         const requestTgzURL = `${this.npmRegistry.registry}${ctx.url}`;
         const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(this.npmRegistry.registry);

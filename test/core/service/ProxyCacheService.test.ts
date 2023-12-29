@@ -221,7 +221,6 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
         DIST_NAMES.ABBREVIATED,
         '1.0.0',
       );
-      console.log(resultAfter);
       assert.equal(resultAfter, undefined);
     });
   });
