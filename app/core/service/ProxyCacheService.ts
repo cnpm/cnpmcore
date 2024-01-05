@@ -1,5 +1,6 @@
 import { InternalServerError, HttpError, NotFoundError } from 'egg-errors';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
+import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { valid as semverValid } from 'semver';
 import { AbstractService } from '../../common/AbstractService';
 import { TaskService } from './TaskService';
@@ -43,6 +44,8 @@ export class ProxyCacheService extends AbstractService {
   private readonly taskService: TaskService;
   @Inject()
   private readonly cacheService: CacheService;
+  @Inject()
+  private readonly backgroundTaskHelper:BackgroundTaskHelper;
 
   async getPackageManifest(fullname: string, fileType: DIST_NAMES.FULL_MANIFESTS| DIST_NAMES.ABBREVIATED_MANIFESTS): Promise<AbbreviatedPackageManifestType|PackageManifestType> {
     const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType))?.filePath;
@@ -66,8 +69,10 @@ export class ProxyCacheService extends AbstractService {
     }
 
     const { manifest } = await this.getSourceManifestAndCache<typeof fileType>(fullname, fileType);
-    const cachedFiles = ProxyCache.create({ fullname, fileType });
-    await this.proxyCacheRepository.saveProxyCache(cachedFiles);
+    this.backgroundTaskHelper.run(async () => {
+      const cachedFiles = ProxyCache.create({ fullname, fileType });
+      await this.proxyCacheRepository.saveProxyCache(cachedFiles);
+    });
     return manifest;
   }
 
@@ -97,8 +102,10 @@ export class ProxyCacheService extends AbstractService {
       }
     }
     const { manifest } = await this.getSourceManifestAndCache(fullname, fileType, versionOrTag);
-    const cachedFiles = ProxyCache.create({ fullname, fileType, version });
-    await this.proxyCacheRepository.saveProxyCache(cachedFiles);
+    this.backgroundTaskHelper.run(async () => {
+      const cachedFiles = ProxyCache.create({ fullname, fileType, version });
+      await this.proxyCacheRepository.saveProxyCache(cachedFiles);
+    });
     return manifest;
   }
 
