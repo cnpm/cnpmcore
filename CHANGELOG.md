@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.49.5](https://github.com/cnpm/cnpmcore/compare/v3.49.4...v3.49.5) (2024-01-06)
+
+
+### Bug Fixes
+
+* read @prisma/engines-version from dependencies ([#633](https://github.com/cnpm/cnpmcore/issues/633)) ([a009668](https://github.com/cnpm/cnpmcore/commit/a0096685fc2513e63fdf90bf73d26e5b7b45bef7))
+
 ## [3.49.4](https://github.com/cnpm/cnpmcore/compare/v3.49.3...v3.49.4) (2024-01-06)
 
 
@@ -1246,4 +1253,3 @@ Co-authored-by: killagu <killa123@126.com>
 
 **others**
   * [[`5cadbf4`](http://github.com/cnpm/cnpmcore/commit/5cadbf4b22bee7d85cd14526f5d6c6e2cd3a2e4b)] - refactor: add infra module (#245) (killa <<killa123@126.com>>),fatal: No names found, cannot describe anything.
-
