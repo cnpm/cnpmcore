@@ -36,8 +36,11 @@ export class PrismaBinary extends AbstractBinary {
       const date = data.time[version];
       const pkg = data.versions[version];
       // https://registry.npmjs.com/@prisma/engines/4.14.1
-      const enginesVersion = pkg.devDependencies['@prisma/engines-version'] || '';
+      // https://registry.npmjs.com/@prisma/engines/5.7.0 should read from dependencies
+      const enginesVersion = pkg.devDependencies?.['@prisma/engines-version']
+        || pkg.dependencies?.['@prisma/engines-version'] || '';
       // "@prisma/engines-version": "4.14.0-67.d9a4c5988f480fa576d43970d5a23641aa77bc9c"
+      // "@prisma/engines-version": "5.7.0-41.79fb5193cf0a8fdbef536e4b4a159cad677ab1b9"
       const matched = /\.(\w{30,})$/.exec(enginesVersion);
       if (!matched) continue;
       const commitId = matched[1];
