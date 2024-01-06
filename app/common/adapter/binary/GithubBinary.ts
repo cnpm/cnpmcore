@@ -40,10 +40,13 @@ export class GithubBinary extends AbstractBinary {
 
   protected formatItems(releaseItem: any, binaryConfig: BinaryTaskConfig) {
     const items: BinaryItem[] = [];
-    // 200MB
-    const maxFileSize = 1024 * 1024 * 200;
+    // 250MB
+    const maxFileSize = 1024 * 1024 * 250;
     for (const asset of releaseItem.assets) {
-      if (asset.size > maxFileSize) continue;
+      if (asset.size > maxFileSize) {
+        this.logger.info('[GithubBinary.formatItems] asset reach max file size(> 250MB), ignore download it, asset: %j', asset);
+        continue;
+      }
       items.push({
         name: asset.name,
         isDir: false,
