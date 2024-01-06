@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.49.4](https://github.com/cnpm/cnpmcore/compare/v3.49.3...v3.49.4) (2024-01-06)
+
+
+### Bug Fixes
+
+* github file size limit increased to 250mb ([#632](https://github.com/cnpm/cnpmcore/issues/632)) ([d5bf9ce](https://github.com/cnpm/cnpmcore/commit/d5bf9ceb1bf5b4c67c43a77dfce300acc4674180))
+
 ## [3.49.3](https://github.com/cnpm/cnpmcore/compare/v3.49.2...v3.49.3) (2023-12-25)
 
 
