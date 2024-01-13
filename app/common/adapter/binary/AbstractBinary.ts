@@ -45,12 +45,13 @@ export abstract class AbstractBinary {
     return xml;
   }
 
-  protected async requestJSON(url: string) {
+  protected async requestJSON(url: string, requestHeaders?: Record<string, string>) {
     const { status, data, headers } = await this.httpclient.request(url, {
       timeout: 30000,
       dataType: 'json',
       followRedirect: true,
       gzip: true,
+      headers: requestHeaders,
     });
     if (status !== 200) {
       this.logger.warn('[AbstractBinary.requestJSON:non-200-status] url: %s, status: %s, headers: %j', url, status, headers);
