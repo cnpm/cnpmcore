@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.50.0](https://github.com/cnpm/cnpmcore/compare/v3.49.5...v3.50.0) (2024-01-13)
+
+
+### Features
+
+* mirror ant-design-charts releases ([#638](https://github.com/cnpm/cnpmcore/issues/638)) ([ad86be3](https://github.com/cnpm/cnpmcore/commit/ad86be312ef22e4a203c0c31e02ef7359b21b79c))
+
 ## [3.49.5](https://github.com/cnpm/cnpmcore/compare/v3.49.4...v3.49.5) (2024-01-06)
 
 
