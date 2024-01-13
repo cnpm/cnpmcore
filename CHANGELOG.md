@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.51.0](https://github.com/cnpm/cnpmcore/compare/v3.50.0...v3.51.0) (2024-01-13)
+
+
+### Features
+
+* support GITHUB_TOKEN to increae github api request rate ([#639](https://github.com/cnpm/cnpmcore/issues/639)) ([0f7aa4a](https://github.com/cnpm/cnpmcore/commit/0f7aa4a50f8925f6b182c42b2f6849410d7ef71e))
+
 ## [3.50.0](https://github.com/cnpm/cnpmcore/compare/v3.49.5...v3.50.0) (2024-01-13)
 
 
