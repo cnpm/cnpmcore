@@ -10,7 +10,7 @@ Reimplementation based on [cnpmjs.org](https://github.com/cnpm/cnpmjs.org) with 
 
 ## Registry HTTP API
 
-See https://github.com/cnpm/cnpmjs.org/blob/master/docs/registry-api.md#npm-registry-api
+See [registry-api.md](docs/registry-api.md)
 
 ## How to contribute
 
