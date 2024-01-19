@@ -12,14 +12,23 @@ import {
 } from '@eggjs/tegg';
 import { AbstractController } from '../AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil';
-import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
-import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import { SyncMode } from '../../../common/constants';
+import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
+import { NPMRegistry } from '../../../common/adapter/NPMRegistry';
+import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { PackageSyncerService } from '../../../core/service/PackageSyncerService';
+import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
 
 @HTTPController()
 export class DownloadPackageVersionTarController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
+  @Inject()
+  registryManagerService: RegistryManagerService;
+  @Inject()
+  private readonly npmRegistry: NPMRegistry;
+  @Inject()
+  private packageSyncerService: PackageSyncerService;
   @Inject()
   private nfsAdapter: NFSAdapter;
 
@@ -54,8 +63,41 @@ export class DownloadPackageVersionTarController extends AbstractController {
 
     // check package version in database
     const allowSync = this.getAllowSync(ctx);
-    const pkg = await this.getPackageEntityByFullname(fullname, allowSync);
-    const packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
+    let pkg;
+    let packageVersion;
+    try {
+      pkg = await this.getPackageEntityByFullname(fullname, allowSync);
+      packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
+    } catch (error) {
+      if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
+        ctx.runInBackground(async () => {
+          // create sync task
+          const task = await this.packageSyncerService.createTask(fullname, {
+            authorIp: ctx.ip,
+            authorId: `pid_${process.pid}`,
+            tips: `Sync specific version in proxy mode cause by "${ctx.href}"`,
+            skipDependencies: true,
+            specificVersions: [ version ],
+          });
+          ctx.logger.info('[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
+            task.taskId, fullname);
+        });
+
+        const requestTgzURL = `${this.npmRegistry.registry}${ctx.url}`;
+        const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(this.npmRegistry.registry);
+        const authorization = remoteAuthToken ? `Bearer ${remoteAuthToken}` : '';
+        const urlObj = new URL(requestTgzURL);
+        return ctx.proxyRequest(urlObj.host, {
+          rewrite() {
+            return urlObj;
+          },
+          headers: {
+            authorization,
+          },
+        });
+      }
+      throw error;
+    }
 
     // read by nfs url
     if (downloadUrl) {

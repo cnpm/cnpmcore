@@ -60,6 +60,10 @@ const plugin: EggPlugin = {
     enable: true,
     package: 'eggjs-elasticsearch',
   },
+  httpProxy: {
+    enable: true,
+    package: '@eggjs/http-proxy',
+  },
 };
 
 export default plugin;
