@@ -231,6 +231,10 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
+  public static needMergeWhenWaiting(type: TaskType) {
+    return [ TaskType.SyncBinary, TaskType.SyncPackage ].includes(type);
+  }
+
   start(): TaskUpdateCondition {
     const condition = {
       taskId: this.taskId,
