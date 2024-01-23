@@ -5,7 +5,7 @@ import { TestUtil } from '../../../test/TestUtil';
 import { HookManageService } from '../../../app/core/service/HookManageService';
 import { HookType } from '../../../app/common/enum/Hook';
 import { UserRepository } from '../../../app/repository/UserRepository';
-import { PACKAGE_VERSION_ADDED } from '../../../app/core/event';
+import { PACKAGE_TAG_ADDED, PACKAGE_VERSION_ADDED } from '../../../app/core/event';
 import { Change } from '../../../app/core/entity/Change';
 import { ChangeRepository } from '../../../app/repository/ChangeRepository';
 import { Task, TriggerHookTask } from '../../../app/core/entity/Task';
@@ -42,20 +42,32 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
   });
 
   describe('executeTask', () => {
-    let change: Change;
+    let versionChange: Change;
+    let tagChange: Change;
     let hook: Hook;
     let callEndpoint: string;
     let callOptions: HttpClientRequestOptions;
 
     beforeEach(async () => {
-      change = Change.create({
+      versionChange = Change.create({
+        type: PACKAGE_TAG_ADDED,
+        targetName: pkgName,
+        data: {
+          tag: 'latest',
+        },
+      });
+      tagChange = Change.create({
         type: PACKAGE_VERSION_ADDED,
         targetName: pkgName,
         data: {
           version: '1.0.0',
         },
       });
-      await changeRepository.addChange(change);
+      await Promise.all([
+        changeRepository.addChange(versionChange),
+        changeRepository.addChange(tagChange),
+      ]);
+
       hook = await hookManageService.createHook({
         type: HookType.Package,
         ownerId: userId,
@@ -63,8 +75,13 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
         endpoint: 'http://foo.com',
         secret: 'mock_secret',
       });
-      const task = Task.createCreateHookTask(HookEvent.createPublishEvent(pkgName, change.changeId, '1.0.0', 'latest'));
-      await createHookTriggerService.executeTask(task);
+      const versionTask = Task.createCreateHookTask(HookEvent.createPublishEvent(pkgName, versionChange.changeId, '1.0.0', 'latest'));
+      const tagTask = Task.createCreateHookTask(HookEvent.createPublishEvent(pkgName, tagChange.changeId, '1.0.0', 'latest'));
+
+      await Promise.all([
+        createHookTriggerService.executeTask(versionTask),
+        createHookTriggerService.executeTask(tagTask),
+      ]);
 
       mock(app.httpclient, 'request', async (url, options) => {
         callEndpoint = url;
@@ -76,7 +93,7 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
     });
 
     it('should execute trigger', async () => {
-      const pushTask = await taskRepository.findTaskByBizId(`TriggerHook:${change.changeId}:${hook.hookId}`) as TriggerHookTask;
+      const pushTask = await taskRepository.findTaskByBizId(`TriggerHook:${versionChange.changeId}:${hook.hookId}`) as TriggerHookTask;
       await hookTriggerService.executeTask(pushTask);
       assert(callEndpoint === hook.endpoint);
       assert(callOptions);
@@ -96,6 +113,11 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
         'dist-tag': 'latest',
       });
       assert(data.time === pushTask.data.hookEvent.time);
+    });
+
+    it('should create each event', async () => {
+      const tasks = await Promise.all([ taskRepository.findTaskByBizId(`TriggerHook:${versionChange.changeId}:${hook.hookId}`), taskRepository.findTaskByBizId(`TriggerHook:${tagChange.changeId}:${hook.hookId}`) ]);
+      assert.equal(tasks.filter(Boolean).length, 2);
     });
   });
 });

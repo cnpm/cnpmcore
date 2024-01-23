@@ -27,8 +27,10 @@ export class TaskService extends AbstractService {
 
   public async createTask(task: Task, addTaskQueueOnExists: boolean) {
     const existsTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type);
-    if (existsTask) {
-      // 如果任务还未被触发，就不继续重复创建
+
+    // 只在包同步场景下做任务合并，其余场景通过 bizId 来进行任务幂等
+    if (existsTask && Task.needMergeWhenWaiting(task.type)) {
+      // 在包同步场景，如果任务还未被触发，就不继续重复创建
       // 如果任务正在执行，可能任务状态已更新，这种情况需要继续创建
       if (existsTask.state === TaskState.Waiting) {
         if (task.type === TaskType.SyncPackage) {

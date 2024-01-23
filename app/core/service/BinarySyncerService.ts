@@ -19,7 +19,6 @@ import { Binary } from '../entity/Binary';
 import { TaskService } from './TaskService';
 import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
 import { AbstractService } from '../../common/AbstractService';
-import { TaskRepository } from '../../repository/TaskRepository';
 import { BinaryType } from '../../common/enum/Binary';
 import { sortBy } from 'lodash';
 
@@ -35,8 +34,6 @@ export class BinarySyncerService extends AbstractService {
   private readonly binaryRepository: BinaryRepository;
   @Inject()
   private readonly taskService: TaskService;
-  @Inject()
-  private readonly taskRepository: TaskRepository;
   @Inject()
   private readonly httpclient: EggHttpClient;
   @Inject()
@@ -89,13 +86,7 @@ export class BinarySyncerService extends AbstractService {
     return await this.nfsAdapter.getDownloadUrlOrStream(binary.storePath);
   }
 
-  // SyncBinary 由定时任务每台单机定时触发，手动去重
-  // 添加 bizId 在 db 防止重复，记录 id 错误
   public async createTask(binaryName: BinaryName, lastData?: any) {
-    const existsTask = await this.taskRepository.findTaskByTargetName(binaryName, TaskType.SyncBinary);
-    if (existsTask) {
-      return existsTask;
-    }
     try {
       return await this.taskService.createTask(Task.createSyncBinary(binaryName, lastData), false);
     } catch (e) {
