@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.51.1](https://github.com/cnpm/cnpmcore/compare/v3.51.0...v3.51.1) (2024-01-23)
+
+
+### Bug Fixes
+
+* hooks triggers ([#641](https://github.com/cnpm/cnpmcore/issues/641)) ([838eecf](https://github.com/cnpm/cnpmcore/commit/838eecff2d59e4f43587c1a1dad6523d4bb685c8))
+
 ## [3.51.0](https://github.com/cnpm/cnpmcore/compare/v3.50.0...v3.51.0) (2024-01-13)
 
 
