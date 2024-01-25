@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.52.0](https://github.com/cnpm/cnpmcore/compare/v3.51.1...v3.52.0) (2024-01-25)
+
+
+### Features
+
+* mirror pkg-fetch from yao-pkg/pkg-fetch ([#644](https://github.com/cnpm/cnpmcore/issues/644)) ([6e32679](https://github.com/cnpm/cnpmcore/commit/6e326790c4f63b43a214ff260d60f0afc9361a06))
+
 ## [3.51.1](https://github.com/cnpm/cnpmcore/compare/v3.51.0...v3.51.1) (2024-01-23)
 
 
