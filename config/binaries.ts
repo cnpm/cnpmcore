@@ -895,6 +895,14 @@ const binaries = {
     repo: 'ant-design/ant-design-charts',
     distUrl: 'https://github.com/ant-design/ant-design-charts/releases',
   },
+  'pkg-fetch': {
+    category: 'pkg-fetch',
+    description:
+      'pkg-fetch provides prebuilt node binaries used by pkg. yao-pkg/pkg-fetch is currently the most actively maintained fork of vercel/pkg-fetch.',
+    type: BinaryType.GitHub,
+    repo: 'yao-pkg/pkg-fetch',
+    distUrl: 'https://github.com/yao-pkg/pkg-fetch/releases',
+  },
 } as const;
 
 export type BinaryName = keyof typeof binaries;
