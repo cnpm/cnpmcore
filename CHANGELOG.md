@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.53.0](https://github.com/cnpm/cnpmcore/compare/v3.52.0...v3.53.0) (2024-01-27)
+
+
+### Features
+
+* mirror bun ([#645](https://github.com/cnpm/cnpmcore/issues/645)) ([26d2ef2](https://github.com/cnpm/cnpmcore/commit/26d2ef212440f81388c5996ac73bf4bf4331f1ab))
+
 ## [3.52.0](https://github.com/cnpm/cnpmcore/compare/v3.51.1...v3.52.0) (2024-01-25)
 
 
