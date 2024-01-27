@@ -903,6 +903,14 @@ const binaries = {
     repo: 'yao-pkg/pkg-fetch',
     distUrl: 'https://github.com/yao-pkg/pkg-fetch/releases',
   },
+  bun: {
+    category: 'bun',
+    description:
+      'Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one',
+    type: BinaryType.GitHub,
+    repo: 'oven-sh/bun',
+    distUrl: 'https://github.com/oven-sh/bun/releases',
+  },
 } as const;
 
 export type BinaryName = keyof typeof binaries;
