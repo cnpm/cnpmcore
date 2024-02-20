@@ -60,6 +60,9 @@
     "url": "git@github.com:cnpm/cnpmcore.git"
   },
   "egg": {
+    "revert": [
+      "CVE-2023-46809"
+    ],
     "typescript": true
   },
   "keywords": [
@@ -90,7 +93,7 @@
     "egg-cors": "^3.0.0",
     "egg-errors": "^2.3.0",
     "egg-redis": "^2.4.0",
-    "egg-scripts": "^2.15.2",
+    "egg-scripts": "^3.0.0",
     "egg-status": "^1.0.0",
     "egg-tracer": "^1.1.0",
     "egg-typebox-validate": "^2.0.0",
