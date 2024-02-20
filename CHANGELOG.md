@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.53.1](https://github.com/cnpm/cnpmcore/compare/v3.53.0...v3.53.1) (2024-02-20)
+
+
+### Bug Fixes
+
+* fix breaking change about RSA_PKCS1_PADDING ([#650](https://github.com/cnpm/cnpmcore/issues/650)) ([a6737e6](https://github.com/cnpm/cnpmcore/commit/a6737e615066b10ca5a1894f4676581119b2ccdd))
+
 ## [3.53.0](https://github.com/cnpm/cnpmcore/compare/v3.52.0...v3.53.0) (2024-01-27)
 
 
