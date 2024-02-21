@@ -72,6 +72,14 @@ CNPMCORE_LOG_DIR=/var/log/cnpmcore
 CNPMCORE_CONFIG_REGISTRY=https://your-registry.com
 ```
 
+### 时区
+
+时区可以通过环境变量`TZ`来设置，可以使用地区标识符如`Asia/Shanghai`，也可以使用时区标识符如`Etc/GMT-8`（东八区）、`Etc/GMT+8`（西八区），具体TZ列表见[List](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)。
+
+```bash
+TZ=Asia/Shanghai
+```
+
 ### 使用 `config.prod.js` 覆盖
 
 直接覆盖 `/usr/src/app/config/config.prod.js` 文件也可以实现生产配置自定义。
@@ -145,6 +153,7 @@ docker run -p 7001:7001 -it --rm \
   -e CNPMCORE_REDIS_PORT=6379 \
   -e CNPMCORE_REDIS_PASSWORD=your-redis-password \
   -e CNPMCORE_REDIS_DB=1 \
+  -e TZ=Asia/Shanghai \
   --name cnpmcore-prod cnpmcore
 ```
 
