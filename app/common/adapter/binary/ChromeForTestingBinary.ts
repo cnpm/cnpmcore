@@ -32,7 +32,7 @@ export class ChromeForTestingBinary extends AbstractBinary {
       return;
     }
     const hasNewData = data.timestamp !== ChromeForTestingBinary.lastTimestamp;
-    this.logger.warn('[ChromeForTestingBinary] remote data timestamp: %j, last timestamp: %j, hasNewData: %s',
+    this.logger.info('[ChromeForTestingBinary] remote data timestamp: %j, last timestamp: %j, hasNewData: %s',
       data.timestamp, ChromeForTestingBinary.lastTimestamp, hasNewData);
     if (!hasNewData) {
       return;
