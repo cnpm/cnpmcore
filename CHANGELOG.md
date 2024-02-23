@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.53.3](https://github.com/cnpm/cnpmcore/compare/v3.53.2...v3.53.3) (2024-02-23)
+
+
+### Bug Fixes
+
+* dont set empty string authorization header ([#654](https://github.com/cnpm/cnpmcore/issues/654)) ([64bb78c](https://github.com/cnpm/cnpmcore/commit/64bb78cf8a2c766b35a7072d033430d2ef38d492))
+
 ## [3.53.2](https://github.com/cnpm/cnpmcore/compare/v3.53.1...v3.53.2) (2024-02-23)
 
 
