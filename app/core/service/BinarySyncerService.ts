@@ -229,7 +229,7 @@ export class BinarySyncerService extends AbstractService {
       if (hasDownloadError) {
         logs.push(`[${isoNow()}][${dir}] ❌ Synced dir fail`);
       } else {
-        logs.push(`[${isoNow()}][${dir}] 🟢 Synced dir success`);
+        logs.push(`[${isoNow()}][${dir}] 🟢 Synced dir success, hasItems: ${hasItems}`);
       }
       await this.taskService.appendTaskLog(task, logs.join('\n'));
     }
