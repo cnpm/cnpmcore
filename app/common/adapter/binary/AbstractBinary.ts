@@ -31,6 +31,11 @@ export abstract class AbstractBinary {
   abstract initFetch(binaryName: BinaryName): Promise<void>;
   abstract fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined>;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async finishFetch(_success: boolean, _binaryName: BinaryName): Promise<void> {
+    // do not thing by default
+  }
+
   protected async requestXml(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {
       timeout: 30000,

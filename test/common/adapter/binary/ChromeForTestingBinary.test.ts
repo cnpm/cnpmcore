@@ -36,6 +36,7 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
         assert.match(versionRes?.items[1].name, /^chromedriver\-/);
         assert.match(versionRes?.items[2].name, /^chrome\-headless\-shell\-/);
       }
+      await binary.finishFetch(true);
       assert(ChromeForTestingBinary.lastTimestamp);
     });
 

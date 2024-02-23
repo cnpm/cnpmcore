@@ -7,6 +7,7 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @BinaryAdapter(BinaryType.ChromeForTesting)
 export class ChromeForTestingBinary extends AbstractBinary {
   static lastTimestamp = '';
+  #timestamp = '';
 
   private dirItems?: {
     [key: string]: BinaryItem[];
@@ -14,6 +15,12 @@ export class ChromeForTestingBinary extends AbstractBinary {
 
   async initFetch() {
     this.dirItems = undefined;
+  }
+
+  async finishFetch(success: boolean) {
+    if (success && this.#timestamp && ChromeForTestingBinary.lastTimestamp !== this.#timestamp) {
+      ChromeForTestingBinary.lastTimestamp = this.#timestamp;
+    }
   }
 
   async #syncDirItems() {
@@ -31,9 +38,10 @@ export class ChromeForTestingBinary extends AbstractBinary {
         jsonApiEndpoint, status, headers, data);
       return;
     }
-    const hasNewData = data.timestamp !== ChromeForTestingBinary.lastTimestamp;
+    this.#timestamp = data.timestamp;
+    const hasNewData = this.#timestamp !== ChromeForTestingBinary.lastTimestamp;
     this.logger.info('[ChromeForTestingBinary] remote data timestamp: %j, last timestamp: %j, hasNewData: %s',
-      data.timestamp, ChromeForTestingBinary.lastTimestamp, hasNewData);
+      this.#timestamp, ChromeForTestingBinary.lastTimestamp, hasNewData);
     if (!hasNewData) {
       return;
     }
@@ -114,7 +122,6 @@ export class ChromeForTestingBinary extends AbstractBinary {
         }
       }
     }
-    ChromeForTestingBinary.lastTimestamp = data.timestamp;
   }
 
   async fetch(dir: string): Promise<FetchResult | undefined> {
