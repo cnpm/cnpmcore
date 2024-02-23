@@ -8,6 +8,7 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
   beforeEach(async () => {
     binary = await app.getEggObject(ChromeForTestingBinary);
   });
+
   describe('fetch()', () => {
     it('should work for chrome binary', async () => {
       assert.equal(ChromeForTestingBinary.lastTimestamp, '');

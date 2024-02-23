@@ -20,13 +20,23 @@ export class ChromeForTestingBinary extends AbstractBinary {
     this.dirItems = {};
     this.dirItems['/'] = [];
     const jsonApiEndpoint = 'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json';
-    const { data } = await this.httpclient.request(jsonApiEndpoint, {
+    const { data, status, headers } = await this.httpclient.request(jsonApiEndpoint, {
       dataType: 'json',
       timeout: 30000,
       followRedirect: true,
       gzip: true,
     });
-    if (data.timestamp === ChromeForTestingBinary.lastTimestamp) return;
+    if (status !== 200) {
+      this.logger.warn('[ChromeForTestingBinary.request:non-200-status] url: %s, status: %s, headers: %j, data: %j',
+        jsonApiEndpoint, status, headers, data);
+      return;
+    }
+    const hasNewData = data.timestamp !== ChromeForTestingBinary.lastTimestamp;
+    this.logger.warn('[ChromeForTestingBinary] remote data timestamp: %j, last timestamp: %j, hasNewData: %s',
+      data.timestamp, ChromeForTestingBinary.lastTimestamp, hasNewData);
+    if (!hasNewData) {
+      return;
+    }
 
     // "timestamp": "2023-09-16T00:21:21.964Z",
     // "versions": [
