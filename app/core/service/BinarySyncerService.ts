@@ -127,13 +127,14 @@ export class BinarySyncerService extends AbstractService {
     this.logger.info('[BinarySyncerService.executeTask:start] taskId: %s, targetName: %s, log: %s',
       task.taskId, task.targetName, logUrl);
     try {
-      await this.syncDir(binaryAdapter, task, '/');
+      const [ hasDownloadError ] = await this.syncDir(binaryAdapter, task, '/');
       logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
       logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 "${binaryName}" 🟢🟢🟢🟢🟢`);
       await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-      await binaryAdapter.finishFetch(true, binaryName);
-      this.logger.info('[BinarySyncerService.executeTask:success] taskId: %s, targetName: %s, log: %s',
-        task.taskId, task.targetName, logUrl);
+      // 确保没有下载异常才算 success
+      await binaryAdapter.finishFetch(!hasDownloadError, binaryName);
+      this.logger.info('[BinarySyncerService.executeTask:success] taskId: %s, targetName: %s, log: %s, hasDownloadError: %s',
+        task.taskId, task.targetName, logUrl, hasDownloadError);
     } catch (err: any) {
       task.error = err.message;
       logs.push(`[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`);
