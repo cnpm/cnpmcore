@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.53.2](https://github.com/cnpm/cnpmcore/compare/v3.53.1...v3.53.2) (2024-02-23)
+
+
+### Bug Fixes
+
+* only set chrome-for-testing data timestamp after sync task finish ([#653](https://github.com/cnpm/cnpmcore/issues/653)) ([4bc0c9c](https://github.com/cnpm/cnpmcore/commit/4bc0c9ca59cc63a4698413f2c2c2ecb506e096fc))
+
 ## [3.53.1](https://github.com/cnpm/cnpmcore/compare/v3.53.0...v3.53.1) (2024-02-20)
 
 
