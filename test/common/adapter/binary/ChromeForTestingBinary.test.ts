@@ -8,6 +8,7 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
   beforeEach(async () => {
     binary = await app.getEggObject(ChromeForTestingBinary);
   });
+
   describe('fetch()', () => {
     it('should work for chrome binary', async () => {
       assert.equal(ChromeForTestingBinary.lastTimestamp, '');
@@ -35,6 +36,7 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
         assert.match(versionRes?.items[1].name, /^chromedriver\-/);
         assert.match(versionRes?.items[2].name, /^chrome\-headless\-shell\-/);
       }
+      await binary.finishFetch(true);
       assert(ChromeForTestingBinary.lastTimestamp);
     });
 

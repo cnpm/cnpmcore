@@ -131,6 +131,7 @@ export class BinarySyncerService extends AbstractService {
       logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
       logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 "${binaryName}" 🟢🟢🟢🟢🟢`);
       await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+      await binaryAdapter.finishFetch(true, binaryName);
       this.logger.info('[BinarySyncerService.executeTask:success] taskId: %s, targetName: %s, log: %s',
         task.taskId, task.targetName, logUrl);
     } catch (err: any) {
@@ -148,6 +149,7 @@ export class BinarySyncerService extends AbstractService {
           task.taskId, task.targetName, task.error);
         this.logger.error(err);
       }
+      await binaryAdapter.finishFetch(false, binaryName);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
     }
   }
@@ -229,7 +231,7 @@ export class BinarySyncerService extends AbstractService {
       if (hasDownloadError) {
         logs.push(`[${isoNow()}][${dir}] ❌ Synced dir fail`);
       } else {
-        logs.push(`[${isoNow()}][${dir}] 🟢 Synced dir success`);
+        logs.push(`[${isoNow()}][${dir}] 🟢 Synced dir success, hasItems: ${hasItems}`);
       }
       await this.taskService.appendTaskLog(task, logs.join('\n'));
     }

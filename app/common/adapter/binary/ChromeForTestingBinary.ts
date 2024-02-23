@@ -7,6 +7,7 @@ import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './Abstra
 @BinaryAdapter(BinaryType.ChromeForTesting)
 export class ChromeForTestingBinary extends AbstractBinary {
   static lastTimestamp = '';
+  #timestamp = '';
 
   private dirItems?: {
     [key: string]: BinaryItem[];
@@ -16,17 +17,34 @@ export class ChromeForTestingBinary extends AbstractBinary {
     this.dirItems = undefined;
   }
 
+  async finishFetch(success: boolean) {
+    if (success && this.#timestamp && ChromeForTestingBinary.lastTimestamp !== this.#timestamp) {
+      ChromeForTestingBinary.lastTimestamp = this.#timestamp;
+    }
+  }
+
   async #syncDirItems() {
     this.dirItems = {};
     this.dirItems['/'] = [];
     const jsonApiEndpoint = 'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json';
-    const { data } = await this.httpclient.request(jsonApiEndpoint, {
+    const { data, status, headers } = await this.httpclient.request(jsonApiEndpoint, {
       dataType: 'json',
       timeout: 30000,
       followRedirect: true,
       gzip: true,
     });
-    if (data.timestamp === ChromeForTestingBinary.lastTimestamp) return;
+    if (status !== 200) {
+      this.logger.warn('[ChromeForTestingBinary.request:non-200-status] url: %s, status: %s, headers: %j, data: %j',
+        jsonApiEndpoint, status, headers, data);
+      return;
+    }
+    this.#timestamp = data.timestamp;
+    const hasNewData = this.#timestamp !== ChromeForTestingBinary.lastTimestamp;
+    this.logger.info('[ChromeForTestingBinary] remote data timestamp: %j, last timestamp: %j, hasNewData: %s',
+      this.#timestamp, ChromeForTestingBinary.lastTimestamp, hasNewData);
+    if (!hasNewData) {
+      return;
+    }
 
     // "timestamp": "2023-09-16T00:21:21.964Z",
     // "versions": [
@@ -104,7 +122,6 @@ export class ChromeForTestingBinary extends AbstractBinary {
         }
       }
     }
-    ChromeForTestingBinary.lastTimestamp = data.timestamp;
   }
 
   async fetch(dir: string): Promise<FetchResult | undefined> {
