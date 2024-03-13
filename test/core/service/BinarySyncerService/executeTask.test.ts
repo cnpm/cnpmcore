@@ -288,6 +288,14 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
         persist: false,
       });
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks_old.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+        persist: false,
+      });
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks_old2.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+        persist: false,
+      });
       await binarySyncerService.createTask('node', {});
       let task = await binarySyncerService.findExecuteTask();
       assert(task);
@@ -296,7 +304,36 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
           return {
             items: [
               { name: 'latest/', isDir: true, url: '', size: '-', date: '17-Dec-2021 23:17' },
+              { name: 'old/', isDir: true, url: '', size: '-', date: '15-Dec-2021 23:17' },
+              // old2 使用 yyyy-mm-dd 日期格式，用于检查 diff 的日期排序
+              { name: 'old2/', isDir: true, url: '', size: '-', date: '2021-11-10T05:49:35.321Z' },
               { name: 'index.json', isDir: false, url: 'https://nodejs.org/dist/index.json', size: '219862', date: '17-Dec-2021 23:16' },
+            ],
+          };
+        }
+        if (dir === '/old/') {
+          return {
+            items: [
+              {
+                name: 'apilinks_old.json',
+                isDir: false,
+                url: 'https://nodejs.org/dist/latest/docs/apilinks_old.json',
+                size: '61606',
+                date: '17-Dec-2021 21:29',
+              },
+            ],
+          };
+        }
+        if (dir === '/old2/') {
+          return {
+            items: [
+              {
+                name: 'apilinks_old2.json',
+                isDir: false,
+                url: 'https://nodejs.org/dist/latest/docs/apilinks_old2.json',
+                size: '61606',
+                date: '17-Dec-2021 21:29',
+              },
             ],
           };
         }
@@ -324,7 +361,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('Syncing diff: 2 => 2'));
+      assert(log.includes('Syncing diff: 4 => 4'));
       assert(log.includes('[/] 🟢 Synced dir success'));
       assert(log.includes('[/latest/] 🟢 Synced dir success'));
       assert(log.includes('[/latest/docs/] 🟢 Synced dir success'));
@@ -339,9 +376,9 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes('reason: revalidate latest version'));
-      assert(log.includes('Syncing diff: 2 => 1'));
+      assert(log.includes('Syncing diff: 4 => 1'));
       assert(log.includes('[/] 🟢 Synced dir success'));
-
+      assert(log.includes('[/latest/] 🟢 Synced dir success'));
       // mock version change
       // console.log(binaryRepository.findBinary('node'));
 
