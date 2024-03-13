@@ -389,5 +389,89 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert(BinaryItems.length === 2);
 
     });
+    it('should full diff all dir', async () => {
+      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
+        persist: false,
+      });
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+        persist: false,
+      });
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks_old.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+        persist: false,
+      });
+      await binarySyncerService.createTask('node', {});
+      let task = await binarySyncerService.findExecuteTask();
+      assert(task);
+      mock(NodeBinary.prototype, 'fetch', async (dir: string) => {
+        if (dir === '/') {
+          return {
+            items: [
+              { name: 'latest/', isDir: true, url: '', size: '-', date: '17-Dec-2021 23:17' },
+              { name: 'old/', isDir: true, url: '', size: '-', date: '15-Dec-2021 23:17' },
+              { name: 'index.json', isDir: false, url: 'https://nodejs.org/dist/index.json', size: '219862', date: '17-Dec-2021 23:16' },
+            ],
+          };
+        }
+        if (dir === '/latest/') {
+          return {
+            items: [
+              { name: 'docs/', isDir: true, url: '', size: '-', date: '17-Dec-2021 21:31' },
+            ],
+          };
+        }
+        if (dir === '/old/') {
+          return {
+            items: [
+              {
+                name: 'apilinks_old.json',
+                isDir: false,
+                url: 'https://nodejs.org/dist/latest/docs/apilinks_old.json',
+                size: '61606',
+                date: '17-Dec-2021 21:29',
+              },
+            ],
+          };
+        }
+        if (dir === '/latest/docs/') {
+          return {
+            items: [
+              { name: 'apilinks.json', isDir: false, url: 'https://nodejs.org/dist/latest/docs/apilinks.json', size: '61606', date: '17-Dec-2021 21:29' },
+            ],
+          };
+        }
+        return { items: [] };
+      });
+      await binarySyncerService.executeTask(task);
+      app.mockAgent().assertNoPendingInterceptors();
+      assert(!await TaskModel.findOne({ taskId: task.taskId }));
+      assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+      let stream = await binarySyncerService.findTaskLog(task);
+      assert(stream);
+      let log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('Syncing diff: 3 => 3'));
+      assert(log.includes('[/] 🟢 Synced dir success'));
+      assert(log.includes('[/latest/] 🟢 Synced dir success'));
+      assert(log.includes('[/latest/docs/] 🟢 Synced dir success'));
+      assert(log.includes('[/old/] 🟢 Synced dir success'));
+      // sync again
+      await binarySyncerService.createTask('node', { fullDiff: true });
+      task = await binarySyncerService.findExecuteTask();
+      assert(task);
+      await binarySyncerService.executeTask(task);
+      stream = await binarySyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('reason: full diff'));
+      assert([ ...log.matchAll(/reason: full diff/g) ].length === 3);
+      assert(log.includes('Syncing diff: 3 => 2'));
+      assert(log.includes('[/] 🟢 Synced dir success'));
+      assert(log.includes('[/latest/] 🟢 Synced dir success'));
+      assert(log.includes('[/old/] 🟢 Synced dir success'));
+    });
   });
 });
