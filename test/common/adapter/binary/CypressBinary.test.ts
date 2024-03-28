@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import { app } from 'egg-mock/bootstrap';
 import { CypressBinary } from '../../../../app/common/adapter/binary/CypressBinary';
 import { TestUtil } from '../../../../test/TestUtil';
@@ -8,6 +8,7 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
   beforeEach(async () => {
     binary = await app.getEggObject(CypressBinary);
   });
+
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/cypress', 'GET', {
@@ -44,11 +45,12 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
       });
       let result = await binary.fetch('/4.0.0/');
       assert(result);
-      assert(result.items.length === 4);
-      assert(result.items[0].name === 'darwin-x64/');
-      assert(result.items[1].name === 'darwin-arm64/');
-      assert(result.items[2].name === 'linux-x64/');
-      assert(result.items[3].name === 'win32-x64/');
+      assert.equal(result.items.length, 5);
+      assert.equal(result.items[0].name, 'darwin-x64/');
+      assert.equal(result.items[1].name, 'darwin-arm64/');
+      assert.equal(result.items[2].name, 'linux-x64/');
+      assert.equal(result.items[3].name, 'linux-arm64/');
+      assert.equal(result.items[4].name, 'win32-x64/');
       assert(result.items[0].isDir);
 
       result = await binary.fetch('/4.0.0/darwin-x64/');
@@ -70,6 +72,13 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
       assert(result.items.length === 1);
       assert(result.items[0].name === 'cypress.zip');
       assert(result.items[0].url === 'https://cdn.cypress.io/desktop/4.0.0/linux-x64/cypress.zip');
+      assert(!result.items[0].isDir);
+
+      result = await binary.fetch('/4.0.0/linux-arm64/');
+      assert(result);
+      assert(result.items.length === 1);
+      assert(result.items[0].name === 'cypress.zip');
+      assert(result.items[0].url === 'https://cdn.cypress.io/desktop/4.0.0/linux-arm64/cypress.zip');
       assert(!result.items[0].isDir);
 
       result = await binary.fetch('/4.0.0/win32-x64/');

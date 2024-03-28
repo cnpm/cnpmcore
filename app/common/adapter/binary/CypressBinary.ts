@@ -42,8 +42,21 @@ export class CypressBinary extends AbstractBinary {
         // "https://cdn.cypress.io/desktop/9.2.0/darwin-arm64/cypress.zip"
         // "https://cdn.cypress.io/desktop/9.2.0/darwin-x64/cypress.zip"
         // "https://cdn.cypress.io/desktop/9.2.0/linux-x64/cypress.zip"
+        // "https://cdn.cypress.io/desktop/9.2.0/linux-arm64/cypress.zip"
         // "https://cdn.cypress.io/desktop/9.2.0/win32-x64/cypress.zip"
-        const platforms = [ 'darwin-x64', 'darwin-arm64', 'linux-x64', 'win32-x64' ];
+        // https://github.com/cypress-io/cypress/blob/develop/scripts/binary/index.js#L146
+        // const systems = [
+        //   { platform: 'linux', arch: 'x64' },
+        //   { platform: 'linux', arch: 'arm64' },
+        //   { platform: 'darwin', arch: 'x64' },
+        //   { platform: 'darwin', arch: 'arm64' },
+        //   { platform: 'win32', arch: 'x64' },
+        // ]
+        const platforms = [
+          'darwin-x64', 'darwin-arm64',
+          'linux-x64', 'linux-arm64',
+          'win32-x64',
+        ];
         for (const platform of platforms) {
           this.dirItems[subDir].push({
             name: `${platform}/`,
