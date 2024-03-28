@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.53.4](https://github.com/cnpm/cnpmcore/compare/v3.53.3...v3.53.4) (2024-03-28)
+
+
+### Bug Fixes
+
+* sync cypress linux-arm64 binary ([#662](https://github.com/cnpm/cnpmcore/issues/662)) ([049b186](https://github.com/cnpm/cnpmcore/commit/049b186a0edd28744922e7e007d2813b352e7b18))
+
 ## [3.53.3](https://github.com/cnpm/cnpmcore/compare/v3.53.2...v3.53.3) (2024-02-23)
 
 
