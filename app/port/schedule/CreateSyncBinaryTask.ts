@@ -30,7 +30,7 @@ export class CreateSyncBinaryTask {
       // 例如 canvas 只同步 binaryName 为 canvas 的二进制，不同步 category 为 node-canvas-prebuilt 的二进制
       // node-canvas-prebuilt 的二进制会在 node-canvas-prebuilt 的任务中同步
       await this.binarySyncerService.createTask(binaryName as BinaryName, {
-        fullDiff: isBetween2and205AM(),
+        fullDiff: isBetween2and205AM() && binary.enableFullDiff,
       });
     }
   }

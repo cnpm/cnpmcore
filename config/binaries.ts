@@ -23,6 +23,7 @@ export type BinaryTaskConfig = {
     ignoreDownloadStatuses?: number[],
   },
   disable?: boolean;
+  enableFullDiff?: boolean;
 };
 
 const binaries = {
@@ -41,6 +42,7 @@ const binaries = {
     type: BinaryType.Node,
     repo: 'nodejs/node',
     distUrl: 'https://nodejs.org/dist',
+    enableFullDiff: true,
   },
   'node-rc': {
     category: 'node-rc',
@@ -107,6 +109,7 @@ const binaries = {
     type: BinaryType.Puppeteer,
     repo: 'puppeteer/puppeteer',
     distUrl: 'https://chromium-browser-snapshots.storage.googleapis.com/?delimiter=/&prefix=',
+    enableFullDiff: true,
   },
   // ChromeBinary
   'chrome-for-testing': {
@@ -910,6 +913,7 @@ const binaries = {
     type: BinaryType.GitHub,
     repo: 'oven-sh/bun',
     distUrl: 'https://github.com/oven-sh/bun/releases',
+    enableFullDiff: true,
   },
 } as const;
 
