@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.54.0](https://github.com/cnpm/cnpmcore/compare/v3.53.4...v3.54.0) (2024-04-13)
+
+
+### Features
+
+* use mysql2@^3.9.4 ([#669](https://github.com/cnpm/cnpmcore/issues/669)) ([468f9e4](https://github.com/cnpm/cnpmcore/commit/468f9e4e36717ffb984be38199988beaa5ef4bb4))
+
+
+### Bug Fixes
+
+* remove unuse mysql2 deps ([#670](https://github.com/cnpm/cnpmcore/issues/670)) ([c71d185](https://github.com/cnpm/cnpmcore/commit/c71d185ee1bb5149fed12701453daf2b4df3420f))
+
 ## [3.53.4](https://github.com/cnpm/cnpmcore/compare/v3.53.3...v3.53.4) (2024-03-28)
 
 
