@@ -4,7 +4,7 @@ import coffee from 'coffee';
 import { tmpdir } from 'os';
 import { mkdtempSync } from 'fs';
 import { Readable } from 'stream';
-import mysql from 'mysql';
+import mysql from 'mysql2';
 import path from 'path';
 import crypto from 'crypto';
 import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil';
