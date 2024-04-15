@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.55.0](https://github.com/cnpm/cnpmcore/compare/v3.54.0...v3.55.0) (2024-04-15)
+
+
+### Features
+
+* use mysql2 ([#671](https://github.com/cnpm/cnpmcore/issues/671)) ([58d19b1](https://github.com/cnpm/cnpmcore/commit/58d19b17f037c5fc4684e04b18aee81aa102d07c))
+
 ## [3.54.0](https://github.com/cnpm/cnpmcore/compare/v3.53.4...v3.54.0) (2024-04-13)
 
 
