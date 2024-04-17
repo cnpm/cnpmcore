@@ -98,6 +98,7 @@ export class NPMRegistry {
       data: params,
       dataType: 'json',
       timing: true,
+      retry: 3,
       timeout: this.timeout,
       followRedirect: true,
       gzip: true,
