@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.55.1](https://github.com/cnpm/cnpmcore/compare/v3.55.0...v3.55.1) (2024-04-17)
+
+
+### Bug Fixes
+
+* add logs fro aggregate errors ([#672](https://github.com/cnpm/cnpmcore/issues/672)) ([c0f96d7](https://github.com/cnpm/cnpmcore/commit/c0f96d72e5ca0a4171528e298daa146257e1c5dc))
+
 ## [3.55.0](https://github.com/cnpm/cnpmcore/compare/v3.54.0...v3.55.0) (2024-04-15)
 
 
