@@ -16,6 +16,7 @@ import { SyncMode } from '../../../common/constants';
 import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
 import { NPMRegistry } from '../../../common/adapter/NPMRegistry';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
 import { PackageSyncerService } from '../../../core/service/PackageSyncerService';
 import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
 
@@ -25,6 +26,8 @@ export class DownloadPackageVersionTarController extends AbstractController {
   private packageManagerService: PackageManagerService;
   @Inject()
   registryManagerService: RegistryManagerService;
+  @Inject()
+  private proxyCacheService: ProxyCacheService;
   @Inject()
   private readonly npmRegistry: NPMRegistry;
   @Inject()
@@ -70,31 +73,11 @@ export class DownloadPackageVersionTarController extends AbstractController {
       packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
     } catch (error) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        ctx.runInBackground(async () => {
-          // create sync task
-          const task = await this.packageSyncerService.createTask(fullname, {
-            authorIp: ctx.ip,
-            authorId: `pid_${process.pid}`,
-            tips: `Sync specific version in proxy mode cause by "${ctx.href}"`,
-            skipDependencies: true,
-            specificVersions: [ version ],
-          });
-          ctx.logger.info('[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
-            task.taskId, fullname);
-        });
-
-        const requestTgzURL = `${this.npmRegistry.registry}${ctx.url}`;
-        const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(this.npmRegistry.registry);
-        const authorization = remoteAuthToken ? `Bearer ${remoteAuthToken}` : '';
-        const urlObj = new URL(requestTgzURL);
-        return ctx.proxyRequest(urlObj.host, {
-          rewrite() {
-            return urlObj;
-          },
-          headers: {
-            authorization,
-          },
-        });
+        // proxy mode package version not found.
+        const tgzBuffer = await this.#getTgzBuffer(ctx, fullname, version);
+        this.packageManagerService.plusPackageVersionCounter(fullname, version);
+        ctx.attachment(`${filenameWithVersion}.tgz`);
+        return tgzBuffer;
       }
       throw error;
     }
@@ -131,5 +114,22 @@ export class DownloadPackageVersionTarController extends AbstractController {
     // => /@emotion/utils/-/utils-0.11.3.tgz
     const filenameWithVersion = getScopeAndName(fullnameWithVersion)[1];
     return await this.download(ctx, fullname, filenameWithVersion);
+  }
+
+  async #getTgzBuffer(ctx: EggContext, fullname: string, version: string) {
+    const tgzBuffer = await this.proxyCacheService.getPackageVersionTarBuffer(fullname, ctx.url);
+    ctx.runInBackground(async () => {
+      // create sync task
+      const task = await this.packageSyncerService.createTask(fullname, {
+        authorIp: ctx.ip,
+        authorId: `pid_${process.pid}`,
+        tips: `Sync specific version in proxy mode cause by "${ctx.href}"`,
+        skipDependencies: true,
+        specificVersions: [ version ],
+      });
+      ctx.logger.info('[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
+        task.taskId, fullname);
+    });
+    return tgzBuffer;
   }
 }
