@@ -14,7 +14,6 @@ import { AbstractController } from '../AbstractController';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil';
 import { SyncMode } from '../../../common/constants';
 import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
-import { NPMRegistry } from '../../../common/adapter/NPMRegistry';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
 import { PackageSyncerService } from '../../../core/service/PackageSyncerService';
@@ -28,8 +27,6 @@ export class DownloadPackageVersionTarController extends AbstractController {
   registryManagerService: RegistryManagerService;
   @Inject()
   private proxyCacheService: ProxyCacheService;
-  @Inject()
-  private readonly npmRegistry: NPMRegistry;
   @Inject()
   private packageSyncerService: PackageSyncerService;
   @Inject()
