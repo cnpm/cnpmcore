@@ -1,5 +1,4 @@
-import { readFile, rm } from 'node:fs/promises';
-import { EggHttpClient } from 'egg';
+import { EggHttpClient, HttpClientResponse } from 'egg';
 import { InternalServerError, ForbiddenError, HttpError, NotFoundError } from 'egg-errors';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
@@ -13,7 +12,6 @@ import { ProxyCache } from '../entity/ProxyCache';
 import { Task, UpdateProxyCacheTaskOptions, CreateUpdateProxyCacheTask } from '../entity/Task';
 import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
 import { TaskType, TaskState } from '../../common/enum/Task';
-import { downloadToTempfile } from '../../common/FileUtil';
 import { calculateIntegrity } from '../../common/PackageUtil';
 import { PROXY_CACHE_DIR_NAME } from '../../common/constants';
 import { DIST_NAMES } from '../entity/Package';
@@ -52,15 +50,17 @@ export class ProxyCacheService extends AbstractService {
   @Inject()
   private readonly backgroundTaskHelper:BackgroundTaskHelper;
 
-  async getPackageVersionTarBuffer(fullname: string, url: string): Promise<Buffer| null> {
+  async getPackageVersionTarResponse(fullname: string, url: string): Promise<HttpClientResponse> {
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
       throw new ForbiddenError(`stop proxy by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`);
     }
     const requestTgzURL = `${this.npmRegistry.registry}${url}`;
-    const { tmpfile } = await downloadToTempfile(this.httpclient, this.config.dataDir, requestTgzURL);
-    const tgzBuffer = await readFile(tmpfile);
-    await rm(tmpfile, { force: true });
-    return tgzBuffer;
+    return await this.httpclient.request(requestTgzURL, {
+      timeout: 60000 * 10,
+      streaming: true,
+      timing: true,
+      followRedirect: true,
+    }) as HttpClientResponse;
   }
 
   async getPackageManifest(fullname: string, fileType: DIST_NAMES.FULL_MANIFESTS| DIST_NAMES.ABBREVIATED_MANIFESTS): Promise<AbbreviatedPackageManifestType|PackageManifestType> {
