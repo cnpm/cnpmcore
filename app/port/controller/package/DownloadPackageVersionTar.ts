@@ -71,10 +71,9 @@ export class DownloadPackageVersionTarController extends AbstractController {
     } catch (error) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
         // proxy mode package version not found.
-        const tgzBuffer = await this.#getTgzBuffer(ctx, fullname, version);
+        const tgzStream = await this.#getTgzStream(ctx, fullname, version);
         this.packageManagerService.plusPackageVersionCounter(fullname, version);
-        ctx.attachment(`${filenameWithVersion}.tgz`);
-        return tgzBuffer;
+        return tgzStream;
       }
       throw error;
     }
@@ -113,10 +112,11 @@ export class DownloadPackageVersionTarController extends AbstractController {
     return await this.download(ctx, fullname, filenameWithVersion);
   }
 
-  async #getTgzBuffer(ctx: EggContext, fullname: string, version: string) {
-    const tgzBuffer = await this.proxyCacheService.getPackageVersionTarBuffer(fullname, ctx.url);
+  async #getTgzStream(ctx: EggContext, fullname: string, version: string) {
+    const { res: tgzStream, headers, status } = await this.proxyCacheService.getPackageVersionTarResponse(fullname, ctx.url);
+    ctx.status = status;
+    ctx.set(headers as { [key: string]: string | string[] });
     ctx.runInBackground(async () => {
-      // create sync task
       const task = await this.packageSyncerService.createTask(fullname, {
         authorIp: ctx.ip,
         authorId: `pid_${process.pid}`,
@@ -127,6 +127,6 @@ export class DownloadPackageVersionTarController extends AbstractController {
       ctx.logger.info('[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
         task.taskId, fullname);
     });
-    return tgzBuffer;
+    return tgzStream;
   }
 }
