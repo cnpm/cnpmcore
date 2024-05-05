@@ -11,6 +11,7 @@ import {
   HttpClientRequestOptions,
   HttpClientResponse,
 } from 'egg';
+import { ABBREVIATED_META_TYPE } from '../constants';
 
 type HttpMethod = HttpClientRequestOptions['method'];
 
@@ -118,7 +119,7 @@ export class NPMRegistry {
         // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
         // https://r.cnpmjs.org/intraactive-sdk-ui 44s
         const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
-        const accept = optionalConfig?.isAbbreviated ? 'application/vnd.npm.install-v1+json' : '';
+        const accept = optionalConfig?.isAbbreviated ? ABBREVIATED_META_TYPE : '';
         return await this.request('GET', url, undefined, { timeout: 120000, headers: { authorization, accept } });
       } catch (err: any) {
         if (err.name === 'ResponseTimeoutError') throw err;

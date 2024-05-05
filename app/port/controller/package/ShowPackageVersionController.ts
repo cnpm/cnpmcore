@@ -7,14 +7,13 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { NotFoundError } from 'egg-errors';
 import { AbstractController } from '../AbstractController';
 import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
 import { Spec } from '../../../port/typebox';
-import { SyncMode } from '../../../common/constants';
+import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants';
 import { DIST_NAMES } from '../../../core/entity/Package';
 
 @HTTPController()
@@ -34,35 +33,25 @@ export class ShowPackageVersionController extends AbstractController {
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     const [ scope, name ] = getScopeAndName(fullname);
     const isSync = isSyncWorkerRequest(ctx);
-    const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
-    const isFullManifests = ctx.accepts([ 'json', abbreviatedMetaType ]) !== abbreviatedMetaType;
+    const isFullManifests = ctx.accepts([ 'json', ABBREVIATED_META_TYPE ]) !== ABBREVIATED_META_TYPE;
 
-    let { blockReason, manifest, pkg } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionSpec, isSync, isFullManifests);
-    const fileType = isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED;
-    if (!pkg) {
-      if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        try {
-          manifest = await this.proxyCacheService.getPackageVersionManifest(fullname, fileType, versionSpec);
-        } catch (error) {
-          // 缓存manifest错误，创建刷新缓存任务
-          await this.proxyCacheService.createTask(`${fullname}/${fileType}`, { fullname, fileType });
-          throw error;
-        }
-      } else {
-        const allowSync = this.getAllowSync(ctx);
-        throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
-      }
+    const { blockReason, manifest, pkg } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionSpec, isSync, isFullManifests);
+    const allowSync = this.getAllowSync(ctx);
+
+    if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
+      const fileType = isFullManifests ? DIST_NAMES.MANIFEST : DIST_NAMES.ABBREVIATED;
+      return await this.proxyCacheService.getPackageVersionManifest(fullname, fileType, versionSpec);
     }
+
     if (blockReason) {
       this.setCDNHeaders(ctx);
       throw this.createPackageBlockError(blockReason, fullname, versionSpec);
     }
+    if (!pkg) {
+      throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
+    }
     if (!manifest) {
-      if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
-        manifest = await this.proxyCacheService.getPackageVersionManifest(fullname, fileType, versionSpec);
-      } else {
-        throw new NotFoundError(`${fullname}@${versionSpec} not found`);
-      }
+      throw this.createPackageNotFoundErrorWithRedirect(fullname, versionSpec, allowSync);
     }
     this.setCDNHeaders(ctx);
     return manifest;

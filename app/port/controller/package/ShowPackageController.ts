@@ -12,7 +12,7 @@ import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUti
 import { isSyncWorkerRequest } from '../../../common/SyncUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import { CacheService } from '../../../core/service/CacheService';
-import { SyncMode } from '../../../common/constants';
+import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants';
 import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
 import { calculateIntegrity } from '../../../common/PackageUtil';
 import { DIST_NAMES } from '../../../core/entity/Package';
@@ -35,8 +35,7 @@ export class ShowPackageController extends AbstractController {
   async show(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
     const [ scope, name ] = getScopeAndName(fullname);
     const isSync = isSyncWorkerRequest(ctx);
-    const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
-    const isFullManifests = ctx.accepts([ 'json', abbreviatedMetaType ]) !== abbreviatedMetaType;
+    const isFullManifests = ctx.accepts([ 'json', ABBREVIATED_META_TYPE ]) !== ABBREVIATED_META_TYPE;
 
     // handle cache
     // fallback to db when cache error
