@@ -113,7 +113,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
   }
 
   async #getTgzStream(ctx: EggContext, fullname: string, version: string) {
-    const { res: tgzStream, headers, status } = await this.proxyCacheService.getPackageVersionTarResponse(fullname, ctx.url);
+    const { res: tgzStream, headers, status } = await this.proxyCacheService.getPackageVersionTarResponse(fullname, ctx);
     ctx.status = status;
     ctx.set(headers as { [key: string]: string | string[] });
     ctx.runInBackground(async () => {
