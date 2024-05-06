@@ -11,7 +11,7 @@ import {
   HttpClientRequestOptions,
   HttpClientResponse,
 } from 'egg';
-import { ABBREVIATED_META_TYPE } from '../constants';
+import { PackageManifestType } from '../../repository/PackageRepository';
 
 type HttpMethod = HttpClientRequestOptions['method'];
 
@@ -41,26 +41,30 @@ export class NPMRegistry {
     this.registryHost = registryHost;
   }
 
-  public async getFullManifests(fullname: string, optionalConfig?: {retries?:number, remoteAuthToken?:string}): Promise<RegistryResponse> {
+  public async getFullManifests(fullname: string, optionalConfig?: { retries?: number, remoteAuthToken?: string }): Promise<{ method: HttpMethod } & HttpClientResponse<PackageManifestType>> {
+    let retries = optionalConfig?.retries || 3;
     // set query t=timestamp, make sure CDN cache disable
     // cache=0 is sync worker request flag
     const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
-    return await this.getManifest(url, optionalConfig);
-  }
-
-  public async getAbbreviatedManifests(fullname: string, optionalConfig?: {retries?:number, remoteAuthToken?:string}): Promise<RegistryResponse> {
-    const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
-    return await this.getManifest(url, { ...optionalConfig, isAbbreviated: true });
-  }
-
-  public async getPackageVersionManifest(fullname: string, versionOrTag: string, optionalConfig?: {retries?:number, remoteAuthToken?:string}) {
-    const url = `${this.registry}/${encodeURIComponent(fullname)}/${versionOrTag}`;
-    return await this.getManifest(url, optionalConfig);
-  }
-
-  public async getAbbreviatedPackageVersionManifest(fullname: string, versionOrTag: string, optionalConfig?: {retries?:number, remoteAuthToken?:string}) {
-    const url = `${this.registry}/${encodeURIComponent(fullname)}/${versionOrTag}`;
-    return await this.getManifest(url, { ...optionalConfig, isAbbreviated: true });
+    let lastError: any;
+    while (retries > 0) {
+      try {
+        // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
+        // https://r.cnpmjs.org/intraactive-sdk-ui 44s
+        const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
+        return await this.request('GET', url, undefined, { timeout: 120000, headers: { authorization } });
+      } catch (err: any) {
+        if (err.name === 'ResponseTimeoutError') throw err;
+        lastError = err;
+      }
+      retries--;
+      if (retries > 0) {
+        // sleep 1s ~ 4s in random
+        const delay = process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
+        await setTimeout(delay);
+      }
+    }
+    throw lastError;
   }
 
   // app.put('/:name/sync', sync.sync);
@@ -107,31 +111,7 @@ export class NPMRegistry {
     };
   }
 
-  private genAuthorizationHeader(remoteAuthToken?:string) {
+  public genAuthorizationHeader(remoteAuthToken?:string) {
     return remoteAuthToken ? `Bearer ${remoteAuthToken}` : '';
-  }
-
-  private async getManifest(url, optionalConfig?: {retries?:number, remoteAuthToken?:string, isAbbreviated?:boolean}) {
-    let retries = optionalConfig?.retries || 3;
-    let lastError: any;
-    while (retries > 0) {
-      try {
-        // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
-        // https://r.cnpmjs.org/intraactive-sdk-ui 44s
-        const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
-        const accept = optionalConfig?.isAbbreviated ? ABBREVIATED_META_TYPE : '';
-        return await this.request('GET', url, undefined, { timeout: 120000, headers: { authorization, accept } });
-      } catch (err: any) {
-        if (err.name === 'ResponseTimeoutError') throw err;
-        lastError = err;
-      }
-      retries--;
-      if (retries > 0) {
-        // sleep 1s ~ 4s in random
-        const delay = process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
-        await setTimeout(delay);
-      }
-    }
-    throw lastError;
   }
 }
