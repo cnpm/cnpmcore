@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.56.0](https://github.com/cnpm/cnpmcore/compare/v3.55.1...v3.56.0) (2024-05-11)
+
+
+### Features
+
+* mirror edgewebdriver ([#676](https://github.com/cnpm/cnpmcore/issues/676)) ([21cbc18](https://github.com/cnpm/cnpmcore/commit/21cbc1849fd8be8f04ebf730b3b66e1f9f936c42))
+
 ## [3.55.1](https://github.com/cnpm/cnpmcore/compare/v3.55.0...v3.55.1) (2024-04-17)
 
 
