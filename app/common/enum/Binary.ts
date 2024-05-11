@@ -13,4 +13,5 @@ export enum BinaryType {
   Prisma = 'prisma',
   Sqlcipher = 'sqlcipher',
   ChromeForTesting = 'chromeForTesting',
+  Edgedriver = 'edgedriver',
 }
