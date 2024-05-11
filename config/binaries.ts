@@ -911,6 +911,13 @@ const binaries = {
     repo: 'oven-sh/bun',
     distUrl: 'https://github.com/oven-sh/bun/releases',
   },
+  edgedriver: {
+    category: 'edgedriver',
+    description: 'Microsofts\' EdgeDriver',
+    type: BinaryType.Edgedriver,
+    repo: 'webdriverio-community/node-edgedriver',
+    distUrl: 'https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/',
+  },
 } as const;
 
 export type BinaryName = keyof typeof binaries;
