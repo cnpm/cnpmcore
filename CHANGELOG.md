@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.56.2](https://github.com/cnpm/cnpmcore/compare/v3.56.1...v3.56.2) (2024-05-14)
+
+
+### Bug Fixes
+
+* allow to disable sync unpkg files ([#679](https://github.com/cnpm/cnpmcore/issues/679)) ([101c9b3](https://github.com/cnpm/cnpmcore/commit/101c9b30b5e3c45b251e847a4bd562782fbd8152))
+
 ## [3.56.1](https://github.com/cnpm/cnpmcore/compare/v3.56.0...v3.56.1) (2024-05-14)
 
 
