@@ -53,6 +53,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   syncNotFound: false,
   redirectNotFound: true,
   enableUnpkg: true,
+  enableSyncUnpkgFiles: true,
   strictSyncSpecivicVersion: false,
   enableElasticsearch: !!process.env.CNPMCORE_CONFIG_ENABLE_ES,
   elasticsearchIndex: 'cnpmcore_packages',
