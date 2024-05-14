@@ -352,5 +352,41 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(called, 1);
       assert.equal(resList.filter(res => res.status === 409 && res.body.error === '[CONFLICT] Package version file sync is currently in progress. Please try again later.').length, 1);
     });
+    it('should redirect to possible entry', async () => {
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/test-find-entry',
+        version: '1.0.0',
+        versionObject: {
+          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+        },
+      });
+
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/es/array/at`)
+        .expect(302)
+        .expect('location', `/${pkg.name}/1.0.0/files/es/array/at.js`);
+
+      await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/es/array`)
+        .expect(302)
+        .expect('location', `/${pkg.name}/1.0.0/files/es/array/index.js`);
+
+      await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/es/json/test`)
+        .expect(302)
+        .expect('location', `/${pkg.name}/1.0.0/files/es/json/test.json`);
+
+      await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/es/json`)
+        .expect(302)
+        .expect('location', `/${pkg.name}/1.0.0/files/es/json/index.json`);
+    });
   });
 });
