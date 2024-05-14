@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.56.1](https://github.com/cnpm/cnpmcore/compare/v3.56.0...v3.56.1) (2024-05-14)
+
+
+### Bug Fixes
+
+* only set err.status on statusCode >= 200 ([#677](https://github.com/cnpm/cnpmcore/issues/677)) ([668eed2](https://github.com/cnpm/cnpmcore/commit/668eed2d50aa061343aa2b3fbd7ad3b46d574d0c))
+
 ## [3.56.0](https://github.com/cnpm/cnpmcore/compare/v3.55.1...v3.56.0) (2024-05-11)
 
 
