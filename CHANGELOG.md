@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.57.0](https://github.com/cnpm/cnpmcore/compare/v3.56.2...v3.57.0) (2024-05-14)
+
+
+### Features
+
+* update playwright config ([#681](https://github.com/cnpm/cnpmcore/issues/681)) ([6bfbe35](https://github.com/cnpm/cnpmcore/commit/6bfbe35c657100c4450677b0d6d121fddc2fbfc9))
+
 ## [3.56.2](https://github.com/cnpm/cnpmcore/compare/v3.56.1...v3.56.2) (2024-05-14)
 
 
