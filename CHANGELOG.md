@@ -1,5 +1,59 @@
 # Changelog
 
+## [3.57.0](https://github.com/cnpm/cnpmcore/compare/v3.56.2...v3.57.0) (2024-05-14)
+
+
+### Features
+
+* update playwright config ([#681](https://github.com/cnpm/cnpmcore/issues/681)) ([6bfbe35](https://github.com/cnpm/cnpmcore/commit/6bfbe35c657100c4450677b0d6d121fddc2fbfc9))
+
+## [3.56.2](https://github.com/cnpm/cnpmcore/compare/v3.56.1...v3.56.2) (2024-05-14)
+
+
+### Bug Fixes
+
+* allow to disable sync unpkg files ([#679](https://github.com/cnpm/cnpmcore/issues/679)) ([101c9b3](https://github.com/cnpm/cnpmcore/commit/101c9b30b5e3c45b251e847a4bd562782fbd8152))
+
+## [3.56.1](https://github.com/cnpm/cnpmcore/compare/v3.56.0...v3.56.1) (2024-05-14)
+
+
+### Bug Fixes
+
+* only set err.status on statusCode >= 200 ([#677](https://github.com/cnpm/cnpmcore/issues/677)) ([668eed2](https://github.com/cnpm/cnpmcore/commit/668eed2d50aa061343aa2b3fbd7ad3b46d574d0c))
+
+## [3.56.0](https://github.com/cnpm/cnpmcore/compare/v3.55.1...v3.56.0) (2024-05-11)
+
+
+### Features
+
+* mirror edgewebdriver ([#676](https://github.com/cnpm/cnpmcore/issues/676)) ([21cbc18](https://github.com/cnpm/cnpmcore/commit/21cbc1849fd8be8f04ebf730b3b66e1f9f936c42))
+
+## [3.55.1](https://github.com/cnpm/cnpmcore/compare/v3.55.0...v3.55.1) (2024-04-17)
+
+
+### Bug Fixes
+
+* add logs fro aggregate errors ([#672](https://github.com/cnpm/cnpmcore/issues/672)) ([c0f96d7](https://github.com/cnpm/cnpmcore/commit/c0f96d72e5ca0a4171528e298daa146257e1c5dc))
+
+## [3.55.0](https://github.com/cnpm/cnpmcore/compare/v3.54.0...v3.55.0) (2024-04-15)
+
+
+### Features
+
+* use mysql2 ([#671](https://github.com/cnpm/cnpmcore/issues/671)) ([58d19b1](https://github.com/cnpm/cnpmcore/commit/58d19b17f037c5fc4684e04b18aee81aa102d07c))
+
+## [3.54.0](https://github.com/cnpm/cnpmcore/compare/v3.53.4...v3.54.0) (2024-04-13)
+
+
+### Features
+
+* use mysql2@^3.9.4 ([#669](https://github.com/cnpm/cnpmcore/issues/669)) ([468f9e4](https://github.com/cnpm/cnpmcore/commit/468f9e4e36717ffb984be38199988beaa5ef4bb4))
+
+
+### Bug Fixes
+
+* remove unuse mysql2 deps ([#670](https://github.com/cnpm/cnpmcore/issues/670)) ([c71d185](https://github.com/cnpm/cnpmcore/commit/c71d185ee1bb5149fed12701453daf2b4df3420f))
+
 ## [3.53.4](https://github.com/cnpm/cnpmcore/compare/v3.53.3...v3.53.4) (2024-03-28)
 
 

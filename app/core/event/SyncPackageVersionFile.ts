@@ -16,7 +16,9 @@ class SyncPackageVersionFileEvent {
   private readonly packageVersionFileService: PackageVersionFileService;
 
   protected async syncPackageVersionFile(fullname: string, version: string) {
+    // must set enableUnpkg and enableSyncUnpkgFiles = true both
     if (!this.config.cnpmcore.enableUnpkg) return;
+    if (!this.config.cnpmcore.enableSyncUnpkgFiles) return;
     // ignore sync on unittest
     if (this.config.env === 'unittest' && fullname !== '@cnpm/unittest-unpkg-demo') return;
     const [ scope, name ] = getScopeAndName(fullname);

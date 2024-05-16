@@ -173,7 +173,9 @@ export class PackageSyncerService extends AbstractService {
       logId = data.logId;
     } catch (err: any) {
       const status = err.status || 'unknow';
-      logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, create sync task error: ${err}, status: ${status}`);
+      // 可能会抛出 AggregateError 异常
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError
+      logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, create sync task error: ${err}, status: ${status} ${err instanceof AggregateError ? err.errors : ''}`);
       logs.push(`[${isoNow()}][UP] ${failEnd}`);
       await this.taskService.appendTaskLog(task, logs.join('\n'));
       return;

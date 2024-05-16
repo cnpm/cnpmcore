@@ -53,6 +53,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   syncNotFound: false,
   redirectNotFound: true,
   enableUnpkg: true,
+  enableSyncUnpkgFiles: true,
   strictSyncSpecivicVersion: false,
   enableElasticsearch: !!process.env.CNPMCORE_CONFIG_ENABLE_ES,
   elasticsearchIndex: 'cnpmcore_packages',
@@ -69,7 +70,7 @@ export default (appInfo: EggAppConfig) => {
   config.dataDir = process.env.CNPMCORE_DATA_DIR || join(appInfo.root, '.cnpmcore');
 
   config.orm = {
-    client: 'mysql',
+    client: 'mysql2',
     database: process.env.CNPMCORE_MYSQL_DATABASE || process.env.MYSQL_DATABASE || 'cnpmcore',
     host: process.env.CNPMCORE_MYSQL_HOST || process.env.MYSQL_HOST || '127.0.0.1',
     port: process.env.CNPMCORE_MYSQL_PORT || process.env.MYSQL_PORT || 3306,
