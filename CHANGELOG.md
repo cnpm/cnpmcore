@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.58.0](https://github.com/cnpm/cnpmcore/compare/v3.57.0...v3.58.0) (2024-05-16)
+
+
+### Features
+
+* support unpkg alias path access entry file [#674](https://github.com/cnpm/cnpmcore/issues/674) ([#675](https://github.com/cnpm/cnpmcore/issues/675)) ([a51891d](https://github.com/cnpm/cnpmcore/commit/a51891d3b9866aa12414005c52e6b8475b0f74ba))
+
 ## [3.57.0](https://github.com/cnpm/cnpmcore/compare/v3.56.2...v3.57.0) (2024-05-14)
 
 
