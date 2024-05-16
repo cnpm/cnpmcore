@@ -145,10 +145,22 @@ export class PackageVersionFileController extends AbstractController {
     }
 
     const file = await this.packageVersionFileService.showPackageVersionFile(packageVersion, path);
+    const hasMeta = typeof meta === 'string';
+
     if (!file) {
+      const possibleFile = await this.#searchPossibleEntries(packageVersion, path);
+
+      if (possibleFile) {
+        const route = `/${fullname}/${versionSpec}/files${possibleFile.path}${hasMeta ? '?meta' : ''}`;
+
+        ctx.redirect(route);
+
+        return;
+      }
+
       throw new NotFoundError(`File ${fullname}@${versionSpec}${path} not found`);
     }
-    const hasMeta = typeof meta === 'string';
+
     if (hasMeta) {
       ctx.set('cache-control', META_CACHE_CONTROL);
       return formatFileItem(file);
@@ -159,6 +171,26 @@ export class PackageVersionFileController extends AbstractController {
       ctx.attachment(file.path);
     }
     return await this.distRepository.getDistStream(file.dist);
+  }
+
+  /**
+   * compatibility with unpkg
+   * 1. try to match alias entry. e.g. accessing `index.js` or `index.json` using /index
+   * 2. if given path is directory and has `index.js` file, redirect to it. e.g. using `lib` alias to access `lib/index.js` or `lib/index.json`
+   * @param {PackageVersion} packageVersion packageVersion
+   * @param {String} path  filepath
+   * @return {Promise<PackageVersionFile | undefined>} return packageVersionFile or null
+   */
+  async #searchPossibleEntries(packageVersion: PackageVersion, path: string) {
+    const possiblePath = [ `${path}.js`, `${path}.json`, `${path}/index.js`, `${path}/index.json` ];
+
+    for (const pathItem of possiblePath) {
+      const file = await this.packageVersionFileService.showPackageVersionFile(packageVersion, pathItem);
+
+      if (file) {
+        return file;
+      }
+    }
   }
 
   async #getPackageVersion(ctx: EggContext, fullname: string, scope: string, name: string, versionSpec: string) {
