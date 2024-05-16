@@ -60,9 +60,6 @@
     "url": "git@github.com:cnpm/cnpmcore.git"
   },
   "egg": {
-    "revert": [
-      "CVE-2023-46809"
-    ],
     "typescript": true
   },
   "keywords": [
@@ -105,6 +102,7 @@
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
     "mysql2": "^3.9.4",
+    "node-rsa": "^1.1.1",
     "npm-package-arg": "^10.1.0",
     "oss-cnpm": "^5.0.1",
     "p-map": "^4.0.0",
@@ -126,6 +124,7 @@
     "@types/mime-types": "^2.1.1",
     "@types/mocha": "^10.0.1",
     "@types/mysql": "^2.15.21",
+    "@types/node-rsa": "^1.1.4",
     "@types/npm-package-arg": "^6.1.1",
     "@types/semver": "^7.3.12",
     "@types/tar": "^6.1.4",
