@@ -3,6 +3,8 @@ import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService';
+import { calculateIntegrity } from '../../../../app/common/PackageUtil';
+
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let publisher;
@@ -353,11 +355,20 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(resList.filter(res => res.status === 409 && res.body.error === '[CONFLICT] Package version file sync is currently in progress. Please try again later.').length, 1);
     });
     it('should redirect to possible entry', async () => {
+      const tarball = await TestUtil.readFixturesFile('@cnpm/cnpm-test-find-entry-1.0.0.tgz');
+      const { integrity } = await calculateIntegrity(tarball);
       const pkg = await TestUtil.getFullPackage({
         name: '@cnpm/test-find-entry',
         version: '1.0.0',
         versionObject: {
-          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          description: 'test find entry description',
+        },
+        attachment: {
+          data: tarball.toString('base64'),
+          length: tarball.length,
+        },
+        dist: {
+          integrity,
         },
       });
 
