@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.58.1](https://github.com/cnpm/cnpmcore/compare/v3.58.0...v3.58.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* remove CVE-2023-46809 revert config ([#683](https://github.com/cnpm/cnpmcore/issues/683)) ([ff00e42](https://github.com/cnpm/cnpmcore/commit/ff00e426685207ce292a3c47170be2f3910ee304))
+
 ## [3.58.0](https://github.com/cnpm/cnpmcore/compare/v3.57.0...v3.58.0) (2024-05-16)
 
 
