@@ -16,7 +16,6 @@ describe('test/common/CryptoUtil.test.ts', () => {
       // const plainText = 'hello world 中文😄';
       const plainText = 'hello world 中文';
       const encryptText = encryptRSA(keys.publicKey, plainText);
-      // console.log(encryptText);
       assert.equal(decryptRSA(keys.privateKey, encryptText), plainText);
     });
   });
