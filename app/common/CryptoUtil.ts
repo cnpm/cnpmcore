@@ -1,4 +1,5 @@
-import { generateKeyPairSync, publicEncrypt, privateDecrypt, constants } from 'crypto';
+import { generateKeyPairSync } from 'crypto';
+import NodeRSA from 'node-rsa';
 
 // generate rsa key pair
 export function genRSAKeys(): { publicKey: string, privateKey: string } {
@@ -17,17 +18,19 @@ export function genRSAKeys(): { publicKey: string, privateKey: string } {
 }
 
 // encrypt rsa private key
-export function encryptRSA(publicKey: string, data: string): string {
-  return publicEncrypt({
-    key: publicKey,
-    padding: constants.RSA_PKCS1_PADDING,
-  }, Buffer.from(data, 'utf8')).toString('base64');
+export function encryptRSA(publicKey: string, plainText: string): string {
+  const key = new NodeRSA(publicKey, 'pkcs1-public-pem', {
+    encryptionScheme: 'pkcs1',
+    environment: 'browser',
+  });
+  return key.encrypt(plainText, 'base64');
 }
 
 // decrypt rsa private key
-export function decryptRSA(privateKey: string, data: string) {
-  return privateDecrypt({
-    key: privateKey,
-    padding: constants.RSA_PKCS1_PADDING,
-  }, Buffer.from(data, 'base64')).toString('utf8');
+export function decryptRSA(privateKey: string, encryptedBase64: string): string {
+  const key = new NodeRSA(privateKey, 'pkcs1-private-pem', {
+    encryptionScheme: 'pkcs1',
+    environment: 'browser',
+  });
+  return key.decrypt(encryptedBase64, 'utf8');
 }
