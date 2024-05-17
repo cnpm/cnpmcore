@@ -7,7 +7,6 @@ describe('test/common/CryptoUtil.test.ts', () => {
       const keys = genRSAKeys();
       assert(keys.publicKey);
       assert(keys.privateKey);
-      // console.log(keys);
     });
   });
 
