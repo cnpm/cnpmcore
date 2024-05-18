@@ -7,27 +7,34 @@ import {
   SingletonProto,
   Inject,
 } from '@eggjs/tegg';
+import { ConflictError, ForbiddenError } from 'egg-errors';
+import semver from 'semver';
 import { AbstractService } from '../../common/AbstractService';
 import {
   calculateIntegrity,
+  getFullname,
 } from '../../common/PackageUtil';
 import { createTempDir, mimeLookup } from '../../common/FileUtil';
 import {
   PackageRepository,
 } from '../../repository/PackageRepository';
 import { PackageVersionFileRepository } from '../../repository/PackageVersionFileRepository';
+import { PackageVersionRepository } from '../../repository/PackageVersionRepository';
 import { DistRepository } from '../../repository/DistRepository';
 import { PackageVersionFile } from '../entity/PackageVersionFile';
 import { PackageVersion } from '../entity/PackageVersion';
 import { Package } from '../entity/Package';
 import { PackageManagerService } from './PackageManagerService';
 import { CacheAdapter } from '../../common/adapter/CacheAdapter';
-import { ConflictError } from 'egg-errors';
+
+const unpkgWhiteListUrl = 'https://github.com/cnpm/unpkg-white-list';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class PackageVersionFileService extends AbstractService {
+  @Inject()
+  private readonly packageVersionRepository: PackageVersionRepository;
   @Inject()
   private readonly packageRepository: PackageRepository;
   @Inject()
@@ -38,6 +45,12 @@ export class PackageVersionFileService extends AbstractService {
   private readonly packageManagerService: PackageManagerService;
   @Inject()
   private readonly cacheAdapter: CacheAdapter;
+
+  #unpkgWhiteListCurrentVersion: string = '';
+  #unpkgWhiteListAllowPackages: Record<string, {
+    version: string;
+  }> = {};
+  #unpkgWhiteListAllowScopes: string[] = [];
 
   async listPackageVersionFiles(pkgVersion: PackageVersion, directory: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
@@ -54,16 +67,58 @@ export class PackageVersionFileService extends AbstractService {
   async #ensurePackageVersionFilesSync(pkgVersion: PackageVersion) {
     const hasFiles = await this.packageVersionFileRepository.hasPackageVersionFiles(pkgVersion.packageVersionId);
     if (!hasFiles) {
-      const lockRes = await this.cacheAdapter.usingLock(`${pkgVersion.packageVersionId}:syncFiles`, 60, async () => {
+      const lockName = `${pkgVersion.packageVersionId}:syncFiles`;
+      const lockRes = await this.cacheAdapter.usingLock(lockName, 60, async () => {
         await this.syncPackageVersionFiles(pkgVersion);
       });
       // lock fail
       if (!lockRes) {
-        this.logger.warn('[package:version:syncPackageVersionFiles] check lock fail');
+        this.logger.warn('[package:version:syncPackageVersionFiles] check lock:%s fail', lockName);
         throw new ConflictError('Package version file sync is currently in progress. Please try again later.');
       }
     }
+  }
 
+  async #updateUnpkgWhiteList() {
+    if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return;
+    const whiteListScope = '';
+    const whiteListPackageName = 'unpkg-white-list';
+    const whiteListPackageVersion = await this.packageVersionRepository.findVersionByTag(
+      whiteListScope, whiteListPackageName, 'latest');
+    if (!whiteListPackageVersion) return;
+    // same version, skip update for performance
+    if (this.#unpkgWhiteListCurrentVersion === whiteListPackageVersion) return;
+
+    // update the new version white list
+    const { manifest } = await this.packageManagerService.showPackageVersionManifest(
+      whiteListScope, whiteListPackageName, whiteListPackageVersion, false, true);
+    if (!manifest) return;
+    this.#unpkgWhiteListCurrentVersion = manifest.version;
+    this.#unpkgWhiteListAllowPackages = manifest.allowPackages ?? {} as any;
+    this.#unpkgWhiteListAllowScopes = manifest.allowScopes ?? [] as any;
+    this.logger.info('[PackageVersionFileService.updateUnpkgWhiteList] version:%s, total %s packages, %s scopes',
+      whiteListPackageVersion,
+      Object.keys(this.#unpkgWhiteListAllowPackages).length,
+      this.#unpkgWhiteListAllowScopes.length,
+    );
+  }
+
+  async #checkPackageVersionInUnpkgWhiteList(pkgScope: string, pkgName: string, pkgVersion: string) {
+    if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return;
+    await this.#updateUnpkgWhiteList();
+
+    // check allow scopes
+    if (this.#unpkgWhiteListAllowScopes.includes(pkgScope)) return;
+
+    // check allow packages
+    const fullname = getFullname(pkgScope, pkgName);
+    const pkgConfig = this.#unpkgWhiteListAllowPackages[fullname];
+    if (!pkgConfig) {
+      throw new ForbiddenError(`"${fullname}" is not allow to unpkg files, see ${unpkgWhiteListUrl}`);
+    }
+    if (!pkgConfig.version || !semver.satisfies(pkgVersion, pkgConfig.version)) {
+      throw new ForbiddenError(`"${fullname}@${pkgVersion}" not satisfies "${pkgConfig.version}" to unpkg files, see ${unpkgWhiteListUrl}`);
+    }
   }
 
   // 基于 latest version 同步 package readme
@@ -113,8 +168,16 @@ export class PackageVersionFileService extends AbstractService {
 
   async syncPackageVersionFiles(pkgVersion: PackageVersion) {
     const files: PackageVersionFile[] = [];
+    // must set enableUnpkg and enableSyncUnpkgFiles = true both
+    if (!this.config.cnpmcore.enableUnpkg) return files;
+    if (!this.config.cnpmcore.enableSyncUnpkgFiles) return files;
+
     const pkg = await this.packageRepository.findPackageByPackageId(pkgVersion.packageId);
     if (!pkg) return files;
+
+    // check unpkg white list
+    await this.#checkPackageVersionInUnpkgWhiteList(pkg.scope, pkg.name, pkgVersion.version);
+
     const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${pkgVersion.version}_${randomUUID()}`;
     const tmpdir = await createTempDir(this.config.dataDir, dirname);
     const tarFile = `${tmpdir}.tgz`;

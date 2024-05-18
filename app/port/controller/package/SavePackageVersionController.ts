@@ -221,6 +221,7 @@ export class SavePackageVersionController extends AbstractController {
     const registry = await this.registryManagerService.ensureSelfRegistry();
 
     let packageVersionEntity: PackageVersionEntity | undefined;
+    const lockName = `${pkg.name}:publish`;
     const lockRes = await this.cacheAdapter.usingLock(`${pkg.name}:publish`, 60, async () => {
       packageVersionEntity = await this.packageManagerService.publish({
         scope,
@@ -240,7 +241,7 @@ export class SavePackageVersionController extends AbstractController {
 
     // lock fail
     if (!lockRes) {
-      this.logger.warn('[package:version:add] check lock fail');
+      this.logger.warn('[package:version:add] check lock:%s fail', lockName);
       throw new ConflictError('Unable to create the publication lock, please try again later.');
     }
 

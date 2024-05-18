@@ -149,12 +149,9 @@ export class PackageVersionFileController extends AbstractController {
 
     if (!file) {
       const possibleFile = await this.#searchPossibleEntries(packageVersion, path);
-
       if (possibleFile) {
         const route = `/${fullname}/${versionSpec}/files${possibleFile.path}${hasMeta ? '?meta' : ''}`;
-
         ctx.redirect(route);
-
         return;
       }
 

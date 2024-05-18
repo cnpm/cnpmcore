@@ -5,7 +5,6 @@ import { TestUtil } from '../../../../test/TestUtil';
 import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil';
 
-
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let publisher;
   let adminUser;
@@ -354,6 +353,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(called, 1);
       assert.equal(resList.filter(res => res.status === 409 && res.body.error === '[CONFLICT] Package version file sync is currently in progress. Please try again later.').length, 1);
     });
+
     it('should redirect to possible entry', async () => {
       const tarball = await TestUtil.readFixturesFile('@cnpm/cnpm-test-find-entry-1.0.0.tgz');
       const { integrity } = await calculateIntegrity(tarball);
@@ -398,6 +398,219 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .get(`/${pkg.name}/1.0.0/files/es/json`)
         .expect(302)
         .expect('location', `/${pkg.name}/1.0.0/files/es/json/index.json`);
+    });
+
+    describe('enableSyncUnpkgFilesWhiteList = true', () => {
+      it('should 403 package name not in white list', async () => {
+        mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+        mock(app.config.cnpmcore, 'enableUnpkg', true);
+        mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+
+        const pkg = await TestUtil.getFullPackage({
+          name: 'foo',
+          version: '1.0.0',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        const res = await app.httpRequest()
+          .get('/foo/1.0.0/files/index.js')
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert.equal(res.status, 403);
+        assert.equal(res.body.error, '[FORBIDDEN] "foo" is not allow to unpkg files, see https://github.com/cnpm/unpkg-white-list');
+      });
+
+      it('should 403 package version not match', async () => {
+        mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+        mock(app.config.cnpmcore, 'enableUnpkg', true);
+        mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+
+        let pkg = await TestUtil.getFullPackage({
+          name: 'unpkg-white-list',
+          version: '0.0.0',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            allowPackages: {
+              foo: {
+                version: '0.0.0',
+              },
+            },
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        pkg = await TestUtil.getFullPackage({
+          name: 'foo',
+          version: '1.0.0',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        const res = await app.httpRequest()
+          .get('/foo/1.0.0/files/index.js')
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert.equal(res.status, 403);
+        assert.equal(res.body.error, '[FORBIDDEN] "foo@1.0.0" not satisfies "0.0.0" to unpkg files, see https://github.com/cnpm/unpkg-white-list');
+      });
+
+      it('should 200 when scope in white list', async () => {
+        mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+        mock(app.config.cnpmcore, 'enableUnpkg', true);
+        mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+
+        let pkg = await TestUtil.getFullPackage({
+          name: 'unpkg-white-list',
+          version: '1.0.0',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            allowScopes: [ '@cnpm' ],
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        pkg = await TestUtil.getFullPackage({
+          name: '@cnpm/foo',
+          version: '1.0.0',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        const res = await app.httpRequest()
+          .get('/@cnpm/foo/1.0.0/files/package.json')
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert.equal(res.status, 200);
+        assert(res.body.name);
+      });
+
+      it('should 200 when package version in white list', async () => {
+        mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+        mock(app.config.cnpmcore, 'enableUnpkg', true);
+        mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+
+        let pkg = await TestUtil.getFullPackage({
+          name: 'unpkg-white-list',
+          version: '2.0.0',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            allowScopes: [ '@cnpm' ],
+            allowPackages: {
+              foo: {
+                version: '*',
+              },
+            },
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        pkg = await TestUtil.getFullPackage({
+          name: 'foo',
+          version: '1.0.0',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+
+        let res = await app.httpRequest()
+          .get('/foo/1.0.0/files/package.json')
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert.equal(res.status, 200);
+        assert(res.body.name);
+
+        pkg = await TestUtil.getFullPackage({
+          name: 'foo',
+          version: '1.0.1',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        res = await app.httpRequest()
+          .get('/foo/1.0.1/files/package.json')
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert.equal(res.status, 200);
+        assert(res.body.name);
+
+        // unpkg-white-list change
+        pkg = await TestUtil.getFullPackage({
+          name: 'unpkg-white-list',
+          version: '2.0.1',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            allowScopes: [ '@cnpm' ],
+            allowPackages: {
+              foo: {
+                version: '3',
+              },
+            },
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        pkg = await TestUtil.getFullPackage({
+          name: 'foo',
+          version: '1.0.2',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+
+        res = await app.httpRequest()
+          .get('/foo/1.0.2/files/package.json')
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert.equal(res.status, 403);
+        assert.equal(res.body.error, '[FORBIDDEN] "foo@1.0.2" not satisfies "3" to unpkg files, see https://github.com/cnpm/unpkg-white-list');
+      });
     });
   });
 });
