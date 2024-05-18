@@ -79,13 +79,14 @@ export class PackageVersionFileService extends AbstractService {
     }
   }
 
-  async updateUnpkgWhiteList() {
+  async #updateUnpkgWhiteList() {
     if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return;
     const whiteListScope = '';
     const whiteListPackageName = 'unpkg-white-list';
     const whiteListPackageVersion = await this.packageVersionRepository.findVersionByTag(
       whiteListScope, whiteListPackageName, 'latest');
     if (!whiteListPackageVersion) return;
+    // same version, skip update for performance
     if (this.#unpkgWhiteListCurrentVersion === whiteListPackageVersion) return;
 
     // update the new version white list
@@ -104,7 +105,7 @@ export class PackageVersionFileService extends AbstractService {
 
   async #checkPackageVersionInUnpkgWhiteList(pkgScope: string, pkgName: string, pkgVersion: string) {
     if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return;
-    await this.updateUnpkgWhiteList();
+    await this.#updateUnpkgWhiteList();
 
     // check allow scopes
     if (this.#unpkgWhiteListAllowScopes.includes(pkgScope)) return;

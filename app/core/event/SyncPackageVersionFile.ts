@@ -1,6 +1,6 @@
 import { Event, Inject } from '@eggjs/tegg';
 import {
-  EggAppConfig,
+  EggAppConfig, EggLogger,
 } from 'egg';
 import { ForbiddenError } from 'egg-errors';
 import { PACKAGE_VERSION_ADDED, PACKAGE_TAG_ADDED, PACKAGE_TAG_CHANGED } from './index';
@@ -11,6 +11,8 @@ import { PackageVersionFileService } from '../service/PackageVersionFileService'
 class SyncPackageVersionFileEvent {
   @Inject()
   protected readonly config: EggAppConfig;
+  @Inject()
+  protected readonly logger: EggLogger;
   @Inject()
   private readonly packageManagerService: PackageManagerService;
   @Inject()
@@ -30,7 +32,9 @@ class SyncPackageVersionFileEvent {
       await this.packageVersionFileService.syncPackageVersionFiles(packageVersion);
     } catch (err) {
       if (err instanceof ForbiddenError) {
-        // ignore it
+        this.logger.info('[SyncPackageVersionFileEvent.syncPackageVersionFile] ignore sync files, cause: %s',
+          err.message,
+        );
         return;
       }
       throw err;
