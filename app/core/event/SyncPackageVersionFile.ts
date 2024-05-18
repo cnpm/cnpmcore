@@ -2,6 +2,7 @@ import { Event, Inject } from '@eggjs/tegg';
 import {
   EggAppConfig,
 } from 'egg';
+import { ForbiddenError } from 'egg-errors';
 import { PACKAGE_VERSION_ADDED, PACKAGE_TAG_ADDED, PACKAGE_TAG_CHANGED } from './index';
 import { getScopeAndName } from '../../common/PackageUtil';
 import { PackageManagerService } from '../service/PackageManagerService';
@@ -25,7 +26,15 @@ class SyncPackageVersionFileEvent {
     const { packageVersion } = await this.packageManagerService.showPackageVersionByVersionOrTag(
       scope, name, version);
     if (!packageVersion) return;
-    await this.packageVersionFileService.syncPackageVersionFiles(packageVersion);
+    try {
+      await this.packageVersionFileService.syncPackageVersionFiles(packageVersion);
+    } catch (err) {
+      if (err instanceof ForbiddenError) {
+        // ignore it
+        return;
+      }
+      throw err;
+    }
   }
 
   protected async syncPackageReadmeToLatestVersion(fullname: string) {

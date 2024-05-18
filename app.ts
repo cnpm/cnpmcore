@@ -2,6 +2,7 @@ import path from 'path';
 import { readFile } from 'fs/promises';
 import { Application } from 'egg';
 import { ChangesStreamService } from './app/core/service/ChangesStreamService';
+
 declare module 'egg' {
   interface Application {
     binaryHTML: string;
