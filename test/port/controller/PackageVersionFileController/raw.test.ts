@@ -337,12 +337,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert(res.body.files.find(file => file.path === '/CONTRIBUTING.md'));
       let testDir = res.body.files.find(file => file.path === '/tests');
       assert(testDir);
-      assert(testDir.files.length > 0);
-      let integrationDir1 = testDir.files.find(file => file.path === '/tests/integration');
-      assert(integrationDir1);
-      assert(integrationDir1.files.length > 0);
-      assert.equal(integrationDir1.type, 'directory');
-      assert(integrationDir1.files.find(file => file.path === '/tests/integration/test.replication.js'));
+      assert.equal(testDir.files.length, 0);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.body.path, '/');
@@ -369,12 +364,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert(res.body.files.find(file => file.path === '/CONTRIBUTING.md'));
       testDir = res.body.files.find(file => file.path === '/tests');
       assert(testDir);
-      assert(testDir.files.length > 0);
-      integrationDir1 = testDir.files.find(file => file.path === '/tests/integration');
-      assert(integrationDir1);
-      assert(integrationDir1.files.length > 0);
-      assert.equal(integrationDir1.type, 'directory');
-      assert(integrationDir1.files.find(file => file.path === '/tests/integration/test.replication.js'));
+      assert.equal(testDir.files.length, 0);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.body.path, '/');
@@ -436,9 +426,8 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       // make sure sub dirs exists
       const integrationDir = res.body.files.find(file => file.path === '/tests/integration');
       assert(integrationDir);
-      assert(integrationDir.files.length > 0);
+      assert.equal(integrationDir.files.length, 0);
       assert.equal(integrationDir.type, 'directory');
-      assert(integrationDir.files.find(file => file.path === '/tests/integration/test.replication.js'));
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/tests/integration/test.http.js`);

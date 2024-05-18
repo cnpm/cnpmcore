@@ -210,32 +210,24 @@ export class PackageVersionFileController extends AbstractController {
   }
 
   async #listFilesByDirectory(packageVersion: PackageVersion, directory: string) {
-    const files = await this.packageVersionFileService.listPackageVersionFiles(packageVersion, directory);
-    if (!files || files.length === 0) return null;
-    // convert files to directory and file
-    const directories = new Map<string, DirectoryItem>();
+    const { files, directories } = await this.packageVersionFileService.listPackageVersionFiles(packageVersion, directory);
+    if (files.length === 0 && directories.length === 0) return null;
+
+    const info: DirectoryItem = {
+      path: directory,
+      type: 'directory',
+      files: [],
+    };
     for (const file of files) {
-      // make sure parent directories exists
-      const splits = file.directory.split('/');
-      for (const [ index, name ] of splits.entries()) {
-        const parentPath = index === 0 ? '' : `/${splits.slice(1, index).join('/')}`;
-        const directoryPath = parentPath !== '/' ? `${parentPath}/${name}` : `/${name}`;
-        let directoryItem = directories.get(directoryPath);
-        if (!directoryItem) {
-          directoryItem = {
-            path: directoryPath,
-            type: 'directory',
-            files: [],
-          };
-          directories.set(directoryPath, directoryItem);
-          if (parentPath) {
-            // only set the first time
-            directories.get(parentPath!)!.files.push(directoryItem);
-          }
-        }
-      }
-      directories.get(file.directory)!.files.push(formatFileItem(file));
+      info.files.push(formatFileItem(file));
     }
-    return directories.get(directory);
+    for (const name of directories) {
+      info.files.push({
+        path: name,
+        type: 'directory',
+        files: [],
+      } as DirectoryItem);
+    }
+    return info;
   }
 }
