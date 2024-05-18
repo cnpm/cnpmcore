@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.59.0](https://github.com/cnpm/cnpmcore/compare/v3.58.1...v3.59.0) (2024-05-18)
+
+
+### Features
+
+* add unpkg-white-list to detect sync unpkg files or not ([#686](https://github.com/cnpm/cnpmcore/issues/686)) ([0530116](https://github.com/cnpm/cnpmcore/commit/05301166a2aa1819429f10a60652e9b7b6eb93c6))
+
 ## [3.58.1](https://github.com/cnpm/cnpmcore/compare/v3.58.0...v3.58.1) (2024-05-17)
 
 
