@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.59.1](https://github.com/cnpm/cnpmcore/compare/v3.59.0...v3.59.1) (2024-05-19)
+
+
+### Bug Fixes
+
+* files meta only return currrent files and sub directory ([#687](https://github.com/cnpm/cnpmcore/issues/687)) ([e442580](https://github.com/cnpm/cnpmcore/commit/e442580b81d3591649b03e43caef3a328f5414f8))
+
 ## [3.59.0](https://github.com/cnpm/cnpmcore/compare/v3.58.1...v3.59.0) (2024-05-18)
 
 
