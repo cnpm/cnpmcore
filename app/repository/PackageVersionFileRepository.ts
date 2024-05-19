@@ -33,20 +33,39 @@ export class PackageVersionFileRepository extends AbstractRepository {
   }
 
   async listPackageVersionFiles(packageVersionId: string, directory: string) {
-    const where = directory === '/' ? { packageVersionId } :
+    const isRoot = directory === '/';
+    const where = isRoot ? { packageVersionId } :
       { packageVersionId, directory: { $or: [{ $eq: directory }, { $like: `${directory}/%` }] } };
+    // only return current directory's files and directories
+    // https://github.com/cnpm/cnpmcore/issues/680
     const models = await this.PackageVersionFile.find(where);
-    const distIds = models.map(model => model.distId);
+    const distIds: string[] = [];
+    const prefix = isRoot ? directory : `${directory}/`;
+    const subDirectories = new Set<string>();
+    const needModels: PackageVersionFileModel[] = [];
+    for (const item of models) {
+      if (item.directory === directory) {
+        // sub file
+        distIds.push(item.distId);
+        needModels.push(item);
+      } else {
+        // only keep directory = '/' or sub directory like `/dist` but not `/dist/foo`
+        // sub directory
+        const subDirectoryName = item.directory.substring(prefix.length).split('/')[0];
+        subDirectories.add(`${prefix}${subDirectoryName}`);
+      }
+    }
     const distModels = await this.Dist.find({ distId: distIds });
     const distEntitiesMap = new Map<string, DistEntity>();
     for (const distModel of distModels) {
       const dist = ModelConvertor.convertModelToEntity(distModel, DistEntity);
       distEntitiesMap.set(distModel.distId, dist);
     }
-    return models.map(model => {
+    const files = needModels.map(model => {
       const dist = distEntitiesMap.get(model.distId);
       return ModelConvertor.convertModelToEntity(model, PackageVersionFileEntity, { dist });
     });
+    return { files, directories: Array.from(subDirectories) };
   }
 
   async hasPackageVersionFiles(packageVersionId: string) {
