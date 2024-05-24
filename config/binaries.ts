@@ -918,6 +918,13 @@ const binaries = {
     repo: 'webdriverio-community/node-edgedriver',
     distUrl: 'https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/',
   },
+  'homebrew-macos-cross-toolchains': {
+    category: 'homebrew-macos-cross-toolchains',
+    description: 'macOS cross compiler toolchains',
+    type: BinaryType.GitHub,
+    repo: 'messense/homebrew-macos-cross-toolchains',
+    distUrl: 'https://github.com/messense/homebrew-macos-cross-toolchains/releases',
+  },
 } as const;
 
 export type BinaryName = keyof typeof binaries;
