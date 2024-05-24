@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.60.0](https://github.com/cnpm/cnpmcore/compare/v3.59.1...v3.60.0) (2024-05-24)
+
+
+### Features
+
+* mirror homebrew-macos-cross-toolchains ([#690](https://github.com/cnpm/cnpmcore/issues/690)) ([a247065](https://github.com/cnpm/cnpmcore/commit/a2470650d5df9b0bf08bba0178ce5ebbb1d996ee))
+
 ## [3.59.1](https://github.com/cnpm/cnpmcore/compare/v3.59.0...v3.59.1) (2024-05-19)
 
 
