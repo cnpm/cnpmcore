@@ -201,26 +201,30 @@ export class PackageManagerService extends AbstractService {
       integrity: tarDistIntegrity.integrity,
     };
 
+    // https://github.com/npm/registry/blob/main/docs/responses/package-metadata.md#abbreviated-version-object
+    // Abbreviated version object
     const abbreviated = JSON.stringify({
       name: cmd.packageJson.name,
       version: cmd.packageJson.version,
       deprecated: cmd.packageJson.deprecated,
       dependencies: cmd.packageJson.dependencies,
+      acceptDependencies: cmd.packageJson.acceptDependencies,
       optionalDependencies: cmd.packageJson.optionalDependencies,
       devDependencies: cmd.packageJson.devDependencies,
       bundleDependencies: cmd.packageJson.bundleDependencies,
       peerDependencies: cmd.packageJson.peerDependencies,
       peerDependenciesMeta: cmd.packageJson.peerDependenciesMeta,
       bin: cmd.packageJson.bin,
+      directories: cmd.packageJson.directories,
       os: cmd.packageJson.os,
       cpu: cmd.packageJson.cpu,
       libc: cmd.packageJson.libc,
       workspaces: cmd.packageJson.workspaces,
-      directories: cmd.packageJson.directories,
       dist: cmd.packageJson.dist,
       engines: cmd.packageJson.engines,
       _hasShrinkwrap: cmd.packageJson._hasShrinkwrap,
       hasInstallScript,
+      funding: cmd.packageJson.funding,
       // https://github.com/cnpm/npminstall/blob/13efc7eec21a61e509226e3772bfb75cd5605612/lib/install_package.js#L176
       // npminstall require publish time to show the recently update versions
       publish_time: cmd.packageJson.publish_time,
