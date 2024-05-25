@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.61.0](https://github.com/cnpm/cnpmcore/compare/v3.60.0...v3.61.0) (2024-05-25)
+
+
+### Features
+
+* sync missing acceptDependencies on abbreviated format ([#691](https://github.com/cnpm/cnpmcore/issues/691)) ([96648fd](https://github.com/cnpm/cnpmcore/commit/96648fddaf5b608dac6403b1955cff07934f2155))
+
 ## [3.60.0](https://github.com/cnpm/cnpmcore/compare/v3.59.1...v3.60.0) (2024-05-24)
 
 
