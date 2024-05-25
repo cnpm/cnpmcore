@@ -68,6 +68,7 @@ export type PackageJSONType = CnpmcorePatchInfo & {
     'bug-versions'?: BugVersionPackages;
   };
   dependencies?: DepInfo;
+  acceptDependencies?: DepInfo;
   devDependencies?: DepInfo;
   peerDependencies?: DepInfo;
   peerDependenciesMeta?: {
@@ -105,7 +106,8 @@ export type PackageJSONType = CnpmcorePatchInfo & {
   [key: string]: unknown;
 };
 
-type PackageJSONPickKey = 'name' | 'author' | 'bugs' | 'description' | 'homepage' | 'keywords' | 'license' | 'readme' | 'readmeFilename' | 'repository' | 'versions' | 'contributors';
+type PackageJSONPickKey = 'name' | 'author' | 'bugs' | 'description' | 'homepage' | 'keywords' |
+'license' | 'readme' | 'readmeFilename' | 'repository' | 'versions' | 'contributors';
 
 export type CnpmcorePatchInfo = {
   _cnpmcore_publish_time?: Date;
@@ -114,7 +116,10 @@ export type CnpmcorePatchInfo = {
   block?: string;
 };
 
-type AbbreviatedKey = 'name' | 'version' | 'deprecated' | 'dependencies' | 'optionalDependencies' | 'devDependencies' | 'bundleDependencies' | 'peerDependencies' | 'peerDependenciesMeta' | 'bin' | 'os' | 'cpu' | 'libc' | 'workspaces' | 'directories' | 'dist' | 'engines' | 'hasInstallScript' | 'publish_time' | 'block' | '_hasShrinkwrap';
+type AbbreviatedKey = 'name' | 'version' | 'deprecated' | 'dependencies' | 'optionalDependencies' |
+'devDependencies' | 'bundleDependencies' | 'peerDependencies' | 'peerDependenciesMeta' | 'bin' |
+'os' | 'cpu' | 'libc' | 'workspaces' | 'directories' | 'dist' | 'engines' | 'hasInstallScript' |
+'publish_time' | 'block' | '_hasShrinkwrap' | 'acceptDependencies' | 'funding';
 
 type DistType = {
   tarball: string,

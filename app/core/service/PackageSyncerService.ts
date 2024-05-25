@@ -1,4 +1,6 @@
-import os from 'os';
+import os from 'node:os';
+import { setTimeout } from 'node:timers/promises';
+import { rm } from 'node:fs/promises';
 import {
   AccessLevel,
   SingletonProto,
@@ -6,8 +8,6 @@ import {
 } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
 import { EggHttpClient } from 'egg';
-import { setTimeout } from 'timers/promises';
-import { rm } from 'fs/promises';
 import { isEqual, isEmpty } from 'lodash';
 import semver from 'semver';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry';
@@ -626,7 +626,12 @@ export class PackageSyncerService extends AbstractService {
         // https://github.com/cnpm/cnpmjs.org/issues/1667
         // need libc field https://github.com/cnpm/cnpmcore/issues/187
         // fix _npmUser field since https://github.com/cnpm/cnpmcore/issues/553
-        const metaDataKeys = [ 'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript', 'deprecated', '_npmUser' ];
+        const metaDataKeys = [
+          'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript',
+          'deprecated', '_npmUser', 'funding',
+          // https://github.com/cnpm/cnpmcore/issues/689
+          'acceptDependencies',
+        ];
         const ignoreInAbbreviated = [ '_npmUser' ];
         const diffMeta: Partial<PackageJSONType> = {};
         for (const key of metaDataKeys) {

@@ -1996,6 +1996,67 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(!abbreviatedManifests.data!.versions['2.0.0'].libc);
     });
 
+    it('should sync missing acceptDependencies with different metas', async () => {
+      app.mockHttpclient('https://registry.npmjs.org/accept-dependencies-module-cnpmsync', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/accept-dependencies-module-cnpmsync.json'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/accept-dependencies-module-cnpmsync/-/accept-dependencies-module-cnpmsync-1.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/accept-dependencies-module-cnpmsync/-/accept-dependencies-module-cnpmsync-3.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+
+      const name = 'accept-dependencies-module-cnpmsync';
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      await TestUtil.createPackage({ name, version: '2.0.0', isPrivate: false });
+      await packageSyncerService.createTask(name, { tips: 'sync test tips here' });
+      let task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      let stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      let log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(log.includes('Synced version 2.0.0 success, different meta: {"peerDependenciesMeta":{"bufferutil":{"optional":true},"utf-8-validate":{"optional":true}},"os":["linux"],"cpu":["x64"],"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"acceptDependencies":{"webpack":"^4.46.x"}}'));
+      assert(log.includes('Z] 👉👉👉👉👉 Tips: sync test tips here 👈👈👈👈👈'));
+      assert(log.includes(', skipDependencies: false'));
+      const manifests = await packageManagerService.listPackageFullManifests('', name);
+      assert(manifests.data?.versions['2.0.0']);
+      assert.equal(manifests.data.versions['2.0.0'].peerDependenciesMeta?.bufferutil.optional, true);
+      assert.equal(manifests.data.versions['2.0.0'].os?.[0], 'linux');
+      assert.equal(manifests.data.versions['2.0.0'].cpu?.[0], 'x64');
+      // publishTime
+      assert.equal(manifests.data.time['1.0.0'], '2021-09-27T08:10:48.747Z');
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      // console.log(JSON.stringify(abbreviatedManifests.data, null, 2));
+      assert(abbreviatedManifests.data?.versions['2.0.0']);
+      assert.equal(abbreviatedManifests.data!.versions['2.0.0'].peerDependenciesMeta?.bufferutil.optional, true);
+      assert.equal(abbreviatedManifests.data!.versions['2.0.0'].os?.[0], 'linux');
+      assert.equal(abbreviatedManifests.data!.versions['2.0.0'].cpu?.[0], 'x64');
+      assert.equal(abbreviatedManifests.data!.versions['2.0.0'].acceptDependencies?.webpack, '^4.46.x');
+      app.mockAgent().assertNoPendingInterceptors();
+
+      // again should skip sync different metas
+      app.mockHttpclient('https://registry.npmjs.org/accept-dependencies-module-cnpmsync', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/accept-dependencies-module-cnpmsync.json'),
+        persist: false,
+      });
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(!log.includes('🟢 Synced version 2.0.0 success, different meta:'));
+      app.mockAgent().assertNoPendingInterceptors();
+    });
+
     it('should sync download data work on enableSyncDownloadData = true', async () => {
       mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
       mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
