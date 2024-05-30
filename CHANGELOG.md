@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.61.2](https://github.com/cnpm/cnpmcore/compare/v3.61.1...v3.61.2) (2024-05-30)
+
+
+### Bug Fixes
+
+* support + wildcast ([#694](https://github.com/cnpm/cnpmcore/issues/694)) ([c8f5ee8](https://github.com/cnpm/cnpmcore/commit/c8f5ee82f14515e60cd1514f958676193f4cc056)), closes [#692](https://github.com/cnpm/cnpmcore/issues/692)
+
 ## [3.61.1](https://github.com/cnpm/cnpmcore/compare/v3.61.0...v3.61.1) (2024-05-30)
 
 
