@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.61.3](https://github.com/cnpm/cnpmcore/compare/v3.61.2...v3.61.3) (2024-05-30)
+
+
+### Bug Fixes
+
+* force detect unpkg-white-list ([#695](https://github.com/cnpm/cnpmcore/issues/695)) ([9664504](https://github.com/cnpm/cnpmcore/commit/96645041519e88544c73ebc63c1da0a923aa2093))
+
 ## [3.61.2](https://github.com/cnpm/cnpmcore/compare/v3.61.1...v3.61.2) (2024-05-30)
 
 
