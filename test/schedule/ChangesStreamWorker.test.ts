@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { ChangesStreamService } from '../../app/core/service/ChangesStreamService';
 import { TaskService } from '../../app/core/service/TaskService';

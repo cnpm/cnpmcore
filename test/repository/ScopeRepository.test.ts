@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app } from 'egg-mock/bootstrap';
 import { ScopeRepository } from '../../app/repository/ScopeRepository';
 import { Scope } from '../../app/core/entity/Scope';

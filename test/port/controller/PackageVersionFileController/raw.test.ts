@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil';
@@ -90,7 +91,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
     it('should block raw file when package not in white list', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       let pkg = await TestUtil.getFullPackage({
-        name: 'foo',
+        name: 'foo-block-again',
         version: '1.0.0',
         versionObject: {
           description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
@@ -103,7 +104,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .send(pkg)
         .expect(201);
       let res = await app.httpRequest()
-        .get('/foo/1.0.0/files/package.json')
+        .get('/foo-block-again/1.0.0/files/package.json')
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       // console.log(res.body);
@@ -119,14 +120,15 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         license: 'ISC',
       });
 
+      await setTimeout(1);
       mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
       // should block
       res = await app.httpRequest()
-        .get('/foo/1.0.0/files/package.json')
+        .get('/foo-block-again/1.0.0/files/package.json')
         .expect(403)
         .expect('content-type', 'application/json; charset=utf-8');
       assert.equal(res.body.error,
-        '[FORBIDDEN] "foo" is not allow to unpkg files, see https://github.com/cnpm/unpkg-white-list');
+        '[FORBIDDEN] "foo-block-again" is not allow to unpkg files, see https://github.com/cnpm/unpkg-white-list');
 
       // add white list
       pkg = await TestUtil.getFullPackage({
@@ -135,7 +137,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         versionObject: {
           description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           allowPackages: {
-            foo: {
+            'foo-block-again': {
               version: '*',
             },
           },
@@ -147,13 +149,14 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
+      await setTimeout(1);
       res = await app.httpRequest()
-        .get('/foo/1.0.0/files/package.json')
-        // .expect(200)
+        .get('/foo-block-again/1.0.0/files/package.json')
+        .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
-      console.log(res.body);
-      // assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
-      // assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      // console.log(res.body);
+      assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.deepEqual(res.body, {
         name: 'mk2testmodule',
         version: '0.0.1',

@@ -1,5 +1,5 @@
 import { Readable, Duplex } from 'node:stream';
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream';
 import { NpmChangesStream } from '../../../../app/common/adapter/changesStream/NpmChangesStream';

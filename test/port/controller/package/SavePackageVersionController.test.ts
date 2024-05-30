@@ -1,6 +1,8 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
+import { ForbiddenError } from 'egg-errors';
+import dayjs from 'dayjs';
 import { TestUtil } from '../../../../test/TestUtil';
 import { UserRepository } from '../../../../app/repository/UserRepository';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil';
@@ -10,9 +12,7 @@ import { UserService } from '../../../../app/core/service/UserService';
 import { Token, TokenType } from '../../../../app/core/entity/Token';
 import { Token as TokenModel } from '../../../../app/repository/model/Token';
 import { User } from '../../../../app/core/entity/User';
-import dayjs from 'dayjs';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
-import { ForbiddenError } from 'egg-errors';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let userRepository: UserRepository;

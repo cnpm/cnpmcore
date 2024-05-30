@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { BUG_VERSIONS } from '../../../app/common/constants';
 import { CacheService } from '../../../app/core/service/CacheService';

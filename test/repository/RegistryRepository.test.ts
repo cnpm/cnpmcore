@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app } from 'egg-mock/bootstrap';
 import { RegistryRepository } from '../../app/repository/RegistryRepository';
 import { Registry } from '../../app/core/entity/Registry';

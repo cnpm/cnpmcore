@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app } from 'egg-mock/bootstrap';
 import { ChangeRepository } from '../../app/repository/ChangeRepository';
 import { Change as ChangeModel } from '../../app/repository/model/Change';

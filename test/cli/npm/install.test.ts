@@ -1,5 +1,5 @@
-import assert from 'assert';
-import path from 'path';
+import { strict as assert } from 'node:assert';
+import path from 'node:path';
 import { app } from 'egg-mock/bootstrap';
 import coffee from 'coffee';
 import { TestUtil } from '../../../test/TestUtil';

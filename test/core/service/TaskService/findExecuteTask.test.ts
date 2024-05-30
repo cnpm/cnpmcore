@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app, mm } from 'egg-mock/bootstrap';
 import { TaskService } from '../../../../app/core/service/TaskService';
 import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';

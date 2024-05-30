@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app } from 'egg-mock/bootstrap';
 import { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream';
 import { CnpmjsorgChangesStream } from '../../../../app/common/adapter/changesStream/CnpmjsorgChangesStream';

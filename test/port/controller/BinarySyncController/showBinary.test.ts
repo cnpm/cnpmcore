@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService';
 import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary';

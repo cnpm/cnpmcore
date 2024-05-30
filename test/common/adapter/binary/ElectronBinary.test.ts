@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app } from 'egg-mock/bootstrap';
 import { ElectronBinary } from '../../../../app/common/adapter/binary/ElectronBinary';
 import { TestUtil } from '../../../../test/TestUtil';

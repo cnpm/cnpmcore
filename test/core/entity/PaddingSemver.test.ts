@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { PaddingSemVer } from '../../../app/core/entity/PaddingSemVer';
 
 describe('test/npm/core/entity/PaddingSemver.test.ts', () => {

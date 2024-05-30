@@ -1,7 +1,7 @@
-import { AuthAdapter } from '../../../../app/infra/AuthAdapter';
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import dayjs from 'dayjs';
 import { app, mock } from 'egg-mock/bootstrap';
+import { AuthAdapter } from '../../../../app/infra/AuthAdapter';
 import { TestUtil } from '../../../../test/TestUtil';
 
 describe('test/port/controller/UserController/whoami.test.ts', () => {

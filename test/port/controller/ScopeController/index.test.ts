@@ -1,7 +1,7 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
+import { app } from 'egg-mock/bootstrap';
 import { RegistryType } from '../../../../app/common/enum/Registry';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
-import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../TestUtil';
 import { Scope } from '../../../../app/core/entity/Scope';
 

@@ -1,5 +1,4 @@
-// import assert from 'assert';
-import path from 'path';
+import path from 'node:path';
 import { app } from 'egg-mock/bootstrap';
 import coffee from 'coffee';
 import semver from 'semver';

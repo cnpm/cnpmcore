@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 
 describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => {
