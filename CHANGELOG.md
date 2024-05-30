@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.61.1](https://github.com/cnpm/cnpmcore/compare/v3.61.0...v3.61.1) (2024-05-30)
+
+
+### Bug Fixes
+
+* rc version should match `*` version ([#692](https://github.com/cnpm/cnpmcore/issues/692)) ([0b62238](https://github.com/cnpm/cnpmcore/commit/0b6223882e4fcba817343d5c5fc6d4ae41ce7641))
+
 ## [3.61.0](https://github.com/cnpm/cnpmcore/compare/v3.60.0...v3.61.0) (2024-05-25)
 
 
