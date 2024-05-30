@@ -64,7 +64,7 @@ describe('test/repository/RegistryRepository.test.ts', () => {
     it('remove work', async () => {
       await registryRepository.removeRegistry(registryModel.registryId);
       const emptyRes = await registryRepository.listRegistries({});
-      assert.deepEqual(emptyRes.data, []);
+      assert.deepEqual(Array.from(emptyRes.data), []);
     });
   });
 });
