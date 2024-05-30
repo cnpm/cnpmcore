@@ -1,6 +1,6 @@
-import assert from 'assert';
-import { randomUUID } from 'crypto';
-import { join } from 'path';
+import { strict as assert } from 'node:assert';
+import { randomUUID } from 'node:crypto';
+import { join } from 'node:path';
 import { EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
 import { patchAjv } from '../app/port/typebox';

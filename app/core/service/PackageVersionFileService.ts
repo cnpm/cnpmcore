@@ -28,6 +28,7 @@ import { PackageManagerService } from './PackageManagerService';
 import { CacheAdapter } from '../../common/adapter/CacheAdapter';
 
 const unpkgWhiteListUrl = 'https://github.com/cnpm/unpkg-white-list';
+const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60000;
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -46,6 +47,7 @@ export class PackageVersionFileService extends AbstractService {
   @Inject()
   private readonly cacheAdapter: CacheAdapter;
 
+  #unpkgWhiteListCheckTime: number = 0;
   #unpkgWhiteListCurrentVersion: string = '';
   #unpkgWhiteListAllowPackages: Record<string, {
     version: string;
@@ -81,6 +83,11 @@ export class PackageVersionFileService extends AbstractService {
 
   async #updateUnpkgWhiteList() {
     if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return;
+    if (Date.now() - this.#unpkgWhiteListCheckTime <= CHECK_TIMEOUT) {
+      // check update every 60s
+      return;
+    }
+    this.#unpkgWhiteListCheckTime = Date.now();
     const whiteListScope = '';
     const whiteListPackageName = 'unpkg-white-list';
     const whiteListPackageVersion = await this.packageVersionRepository.findVersionByTag(
@@ -103,7 +110,7 @@ export class PackageVersionFileService extends AbstractService {
     );
   }
 
-  async #checkPackageVersionInUnpkgWhiteList(pkgScope: string, pkgName: string, pkgVersion: string) {
+  async checkPackageVersionInUnpkgWhiteList(pkgScope: string, pkgName: string, pkgVersion: string) {
     if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return;
     await this.#updateUnpkgWhiteList();
 
@@ -180,7 +187,7 @@ export class PackageVersionFileService extends AbstractService {
     if (!pkg) return files;
 
     // check unpkg white list
-    await this.#checkPackageVersionInUnpkgWhiteList(pkg.scope, pkg.name, pkgVersion.version);
+    await this.checkPackageVersionInUnpkgWhiteList(pkg.scope, pkg.name, pkgVersion.version);
 
     const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${pkgVersion.version}_${randomUUID()}`;
     const tmpdir = await createTempDir(this.config.dataDir, dirname);

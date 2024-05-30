@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil';
@@ -85,6 +86,86 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files/package.json`);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+    });
+
+    it('should block raw file when package not in white list', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      let pkg = await TestUtil.getFullPackage({
+        name: 'foo-block-again',
+        version: '1.0.0',
+        versionObject: {
+          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+        },
+      });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      let res = await app.httpRequest()
+        .get('/foo-block-again/1.0.0/files/package.json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      // console.log(res.body);
+      assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.deepEqual(res.body, {
+        name: 'mk2testmodule',
+        version: '0.0.1',
+        description: '',
+        main: 'index.js',
+        scripts: { test: 'echo "Error: no test specified" && exit 1' },
+        author: '',
+        license: 'ISC',
+      });
+
+      await setTimeout(1);
+      mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+      // should block
+      res = await app.httpRequest()
+        .get('/foo-block-again/1.0.0/files/package.json')
+        .expect(403)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert.equal(res.body.error,
+        '[FORBIDDEN] "foo-block-again" is not allow to unpkg files, see https://github.com/cnpm/unpkg-white-list');
+
+      // add white list
+      pkg = await TestUtil.getFullPackage({
+        name: 'unpkg-white-list',
+        version: '2.0.1111',
+        versionObject: {
+          description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          allowPackages: {
+            'foo-block-again': {
+              version: '*',
+            },
+          },
+        },
+      });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      await setTimeout(1);
+      res = await app.httpRequest()
+        .get('/foo-block-again/1.0.0/files/package.json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      // console.log(res.body);
+      assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.deepEqual(res.body, {
+        name: 'mk2testmodule',
+        version: '0.0.1',
+        description: '',
+        main: 'index.js',
+        scripts: { test: 'echo "Error: no test specified" && exit 1' },
+        author: '',
+        license: 'ISC',
+      });
     });
 
     it('should show one package version file meta', async () => {

@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { Task as TaskModel } from './model/Task';

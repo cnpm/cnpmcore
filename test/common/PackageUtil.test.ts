@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { formatAuthor, formatTarball, hasShrinkWrapInTgz } from '../../app/common/PackageUtil';
 import { TestUtil } from '../TestUtil';
 

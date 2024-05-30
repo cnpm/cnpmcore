@@ -1,10 +1,10 @@
+import { strict as assert } from 'node:assert';
+import { app, mock } from 'egg-mock/bootstrap';
+import dayjs from 'dayjs';
 import { TokenType } from '../../../../app/core/entity/Token';
 import { UserService } from '../../../../app/core/service/UserService';
 import { AuthAdapter } from '../../../../app/infra/AuthAdapter';
-import assert from 'assert';
-import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
-import dayjs from 'dayjs';
 
 describe('test/port/controller/TokenController/listTokens.test.ts', () => {
   describe('[GET /-/npm/v1/tokens] listTokens()', () => {

@@ -1,5 +1,5 @@
-import assert from 'assert';
-import { setTimeout } from 'timers/promises';
+import { strict as assert } from 'node:assert';
+import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter';
 

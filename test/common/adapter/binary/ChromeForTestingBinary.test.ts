@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app } from 'egg-mock/bootstrap';
 import { ChromeForTestingBinary } from '../../../../app/common/adapter/binary/ChromeForTestingBinary';
 import { TestUtil } from '../../../../test/TestUtil';

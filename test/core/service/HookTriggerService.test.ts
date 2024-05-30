@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { HttpClientRequestOptions } from 'egg';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../test/TestUtil';

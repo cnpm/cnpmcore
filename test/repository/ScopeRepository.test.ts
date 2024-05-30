@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { app } from 'egg-mock/bootstrap';
 import { ScopeRepository } from '../../app/repository/ScopeRepository';
 import { Scope } from '../../app/core/entity/Scope';
@@ -32,7 +32,8 @@ describe('test/repository/ScopeRepository.test.ts', () => {
         registryId: '1',
       })) as Scope;
       const scopeRes = await scopeRepository.listScopes({});
-      assert.deepEqual([ cnpmjsScope.name, cnpmScope.name ], scopeRes.data.map(scope => scope.name));
+      assert.deepEqual([ cnpmjsScope.name, cnpmScope.name ],
+        Array.from(scopeRes.data.map(scope => scope.name)));
     });
 
     it('update work', async () => {
@@ -56,10 +57,11 @@ describe('test/repository/ScopeRepository.test.ts', () => {
       })) as Scope;
       await scopeRepository.removeScope(cnpmjsScope.scopeId);
       const scopesAfterRemove = await scopeRepository.listScopes({});
-      assert.deepEqual(scopesAfterRemove.data.map(scope => scope.name), [ cnpmScope.name ]);
+      assert.deepEqual(Array.from(scopesAfterRemove.data.map(scope => scope.name)),
+        [ cnpmScope.name ]);
       await scopeRepository.removeScopeByRegistryId(cnpmjsScope.registryId);
       const emptyRes = await scopeRepository.listScopes({});
-      assert.deepEqual(emptyRes.data, []);
+      assert.deepEqual(Array.from(emptyRes.data), []);
     });
   });
 });

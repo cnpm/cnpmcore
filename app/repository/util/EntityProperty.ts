@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { strict as assert } from 'node:assert';
 import { EggProtoImplClass } from '@eggjs/tegg';
 import { ModelConvertorUtil } from './ModelConvertorUtil';
 
