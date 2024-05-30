@@ -920,6 +920,94 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         assert.equal(res.status, 403);
         assert.equal(res.body.error, '[FORBIDDEN] "foo@1.0.2" not satisfies "3" to unpkg files, see https://github.com/cnpm/unpkg-white-list');
       });
+
+      it('bugfix: should support rc version', async () => {
+        // https://github.com/cnpm/unpkg-white-list/issues/63
+        mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+        mock(app.config.cnpmcore, 'enableUnpkg', true);
+        mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+
+        let pkg = await TestUtil.getFullPackage({
+          name: 'unpkg-white-list',
+          version: '2.0.0',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            allowScopes: [ '@cnpm' ],
+            allowPackages: {
+              foo: {
+                version: '*',
+              },
+              bar: {
+                version: '1.0.0',
+              },
+            },
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        pkg = await TestUtil.getFullPackage({
+          name: 'foo',
+          version: '0.0.0',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+
+        let res = await app.httpRequest()
+          .get('/foo/0.0.0/files/package.json')
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert.equal(res.status, 200);
+        assert(res.body.name);
+
+        pkg = await TestUtil.getFullPackage({
+          name: 'foo',
+          version: '0.3.0-rc15',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        res = await app.httpRequest()
+          .get('/foo/0.3.0-rc15/files/package.json')
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert.equal(res.status, 200);
+        assert(res.body.name);
+
+        pkg = await TestUtil.getFullPackage({
+          name: 'bar',
+          version: '0.3.0-rc15',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        res = await app.httpRequest()
+          .get('/bar/0.3.0-rc15/files/package.json')
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert.equal(res.status, 403);
+        assert.equal(res.body.error,
+          '[FORBIDDEN] "bar@0.3.0-rc15" not satisfies "1.0.0" to unpkg files, see https://github.com/cnpm/unpkg-white-list');
+      });
     });
   });
 });
