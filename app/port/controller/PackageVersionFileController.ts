@@ -144,6 +144,7 @@ export class PackageVersionFileController extends AbstractController {
       return files;
     }
 
+    await this.packageVersionFileService.checkPackageVersionInUnpkgWhiteList(scope, name, packageVersion.version);
     const file = await this.packageVersionFileService.showPackageVersionFile(packageVersion, path);
     const hasMeta = typeof meta === 'string';
 
