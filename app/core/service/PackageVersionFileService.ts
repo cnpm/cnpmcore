@@ -113,10 +113,10 @@ export class PackageVersionFileService extends AbstractService {
     // check allow packages
     const fullname = getFullname(pkgScope, pkgName);
     const pkgConfig = this.#unpkgWhiteListAllowPackages[fullname];
-    if (!pkgConfig) {
+    if (!pkgConfig?.version) {
       throw new ForbiddenError(`"${fullname}" is not allow to unpkg files, see ${unpkgWhiteListUrl}`);
     }
-    if (!pkgConfig.version || !semver.satisfies(pkgVersion, pkgConfig.version)) {
+    if (pkgConfig.version !== '*' && !semver.satisfies(pkgVersion, pkgConfig.version)) {
       throw new ForbiddenError(`"${fullname}@${pkgVersion}" not satisfies "${pkgConfig.version}" to unpkg files, see ${unpkgWhiteListUrl}`);
     }
   }
