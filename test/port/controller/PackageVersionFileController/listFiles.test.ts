@@ -940,6 +940,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
               bar: {
                 version: '1.0.0',
               },
+              baz: {
+                version: '*',
+              },
             },
           },
         });
@@ -984,6 +987,25 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .expect(201);
         res = await app.httpRequest()
           .get('/foo/0.3.0-rc15/files/package.json')
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert.equal(res.status, 200);
+        assert(res.body.name);
+
+        pkg = await TestUtil.getFullPackage({
+          name: 'baz',
+          version: '0.3.0-rc15',
+          versionObject: {
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+          },
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+        res = await app.httpRequest()
+          .get('/baz/0.3.0-rc15/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 200);
         assert(res.body.name);

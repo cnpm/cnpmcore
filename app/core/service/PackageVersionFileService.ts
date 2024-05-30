@@ -116,7 +116,11 @@ export class PackageVersionFileService extends AbstractService {
     if (!pkgConfig?.version) {
       throw new ForbiddenError(`"${fullname}" is not allow to unpkg files, see ${unpkgWhiteListUrl}`);
     }
-    if (pkgConfig.version !== '*' && !semver.satisfies(pkgVersion, pkgConfig.version)) {
+
+    // satisfies 默认不会包含 prerelease 版本
+    // https://docs.npmjs.com/about-semantic-versioning#using-semantic-versioning-to-specify-update-types-your-package-can-accept
+    // [x, *] 代表任意版本，这里统一通过 semver 来判断
+    if (!semver.satisfies(pkgVersion, pkgConfig.version, { includePrerelease: true })) {
       throw new ForbiddenError(`"${fullname}@${pkgVersion}" not satisfies "${pkgConfig.version}" to unpkg files, see ${unpkgWhiteListUrl}`);
     }
   }
