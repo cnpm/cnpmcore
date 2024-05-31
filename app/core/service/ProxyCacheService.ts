@@ -158,7 +158,7 @@ export class ProxyCacheService extends AbstractService {
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
   }
 
-  private async getSourceManifestAndCache<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
+  async getSourceManifestAndCache<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
     let responseResult;
     switch (fileType) {
       case DIST_NAMES.FULL_MANIFESTS:
@@ -203,7 +203,8 @@ export class ProxyCacheService extends AbstractService {
       const version = manifest.version;
       storeKey = `/${PROXY_CACHE_DIR_NAME}/${fullname}/${version}/${fileType}`;
     }
-    await this.nfsAdapter.uploadFile(storeKey, JSON.stringify(manifest));
+    const nfsBytes = Buffer.from(JSON.stringify(manifest));
+    await this.nfsAdapter.uploadBytes(storeKey, nfsBytes);
     return manifest;
   }
 
@@ -243,11 +244,11 @@ export class ProxyCacheService extends AbstractService {
     return await this.getProxyResponse({ url, headers: { accept: ABBREVIATED_META_TYPE } }, { dataType: 'json' });
   }
   private async getUpstreamPackageVersionManifest(fullname: string, versionOrTag: string): Promise<HttpClientResponse> {
-    const url = `/${encodeURIComponent(fullname + '/' + versionOrTag)}?t=${Date.now()}&cache=0`;
+    const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag)}?t=${Date.now()}&cache=0`;
     return await this.getProxyResponse({ url }, { dataType: 'json' });
   }
   private async getUpstreamAbbreviatedPackageVersionManifest(fullname: string, versionOrTag: string): Promise<HttpClientResponse> {
-    const url = `/${encodeURIComponent(fullname + '/' + versionOrTag)}?t=${Date.now()}&cache=0`;
+    const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag)}?t=${Date.now()}&cache=0`;
     return await this.getProxyResponse({ url, headers: { accept: ABBREVIATED_META_TYPE } }, { dataType: 'json' });
   }
 

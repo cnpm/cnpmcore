@@ -4,29 +4,23 @@ import { TestUtil } from '../../TestUtil';
 import { ProxyCacheService } from '../../../app/core/service/ProxyCacheService';
 import { ProxyCacheRepository } from '../../../app/repository/ProxyCacheRepository';
 import { DIST_NAMES } from '../../../app/core/entity/Package';
-import { PROXY_CACHE_DIR_NAME } from '../../../app/common/constants';
-import { NPMRegistry } from '../../../app/common/adapter/NPMRegistry';
 import { NFSAdapter } from '../../../app/common/adapter/NFSAdapter';
 import { ProxyCache } from '../../../app/core/entity/ProxyCache';
 import { TaskService } from '../../../app/core/service/TaskService';
 
 describe('test/core/service/ProxyCacheService/index.test.ts', () => {
   let proxyCacheService: ProxyCacheService;
-  let npmRegistry: NPMRegistry;
   let proxyCacheRepository: ProxyCacheRepository;
 
   beforeEach(async () => {
     proxyCacheService = await app.getEggObject(ProxyCacheService);
-    npmRegistry = await app.getEggObject(NPMRegistry);
     proxyCacheRepository = await app.getEggObject(ProxyCacheRepository);
   });
 
   describe('getPackageManifest()', () => {
     it('should invoke getSourceManifestAndCache first.', async () => {
       mock(proxyCacheService, 'getSourceManifestAndCache', async () => {
-        return {
-          manifest: { name: 'mock info' },
-        };
+        return { name: 'mock info' };
       });
       const manifest = await proxyCacheService.getPackageManifest(
         'foo',
@@ -38,10 +32,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
     it('should read data from nfs when cached.', async () => {
       const nfsAdapter = await app.getEggObject(NFSAdapter);
       mock(proxyCacheService, 'getSourceManifestAndCache', async () => {
-        return {
-          storeKey: `/${PROXY_CACHE_DIR_NAME}/foo/${DIST_NAMES.FULL_MANIFESTS}`,
-          manifest: { name: 'foo remote mock info' },
-        };
+        return { name: 'foo remote mock info' };
       });
       await proxyCacheRepository.saveProxyCache(
         ProxyCache.create({
@@ -63,10 +54,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
   describe('getPackageVersionManifest()', () => {
     it('should invoke getSourceManifestAndCache first.', async () => {
       mock(proxyCacheService, 'getSourceManifestAndCache', async () => {
-        return {
-          storeKey: `/${PROXY_CACHE_DIR_NAME}/foobar/1.0.0/${DIST_NAMES.MANIFEST}`,
-          manifest: { name: 'mock package version info' },
-        };
+        return { name: 'mock package version info' };
       });
       const manifest = await proxyCacheService.getPackageVersionManifest(
         'foo',
@@ -79,10 +67,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
     it('should read data from nfs when cached.', async () => {
       const nfsAdapter = await app.getEggObject(NFSAdapter);
       mock(proxyCacheService, 'getSourceManifestAndCache', async () => {
-        return {
-          storeKey: `/${PROXY_CACHE_DIR_NAME}/foo/1.0.0/${DIST_NAMES.FULL_MANIFESTS}`,
-          manifest: { name: 'foo remote mock info' },
-        };
+        return { name: 'foo remote mock info' };
       });
       await proxyCacheRepository.saveProxyCache(
         ProxyCache.create({
@@ -103,6 +88,15 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
     });
 
     it('should get correct verison via tag and cache the pkg manifest', async () => {
+      const data = await TestUtil.readJSONFile(
+        TestUtil.getFixtures('registry.npmjs.org/foobar/1.0.0/package.json'),
+      );
+      mock(proxyCacheService, 'getUpstreamPackageVersionManifest', async () => {
+        return {
+          status: 200,
+          data,
+        };
+      });
       // get manifest by http
       const pkgVersionManifest =
         await proxyCacheService.getPackageVersionManifest(
@@ -111,7 +105,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           'latest',
         );
       assert(pkgVersionManifest);
-      assert.equal(pkgVersionManifest.version, '1.1.0');
+      assert.equal(pkgVersionManifest.version, '1.0.0');
       const pkgManifest = proxyCacheRepository.findProxyCache(
         'foobar',
         DIST_NAMES.ABBREVIATED_MANIFESTS,
@@ -125,13 +119,13 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       const data = await TestUtil.readJSONFile(
         TestUtil.getFixtures('registry.npmjs.org/foobar.json'),
       );
-      mock(npmRegistry, 'getFullManifests', async () => {
+      mock(proxyCacheService, 'getUpstreamFullManifests', async () => {
         return {
           status: 200,
           data,
         };
       });
-      const { manifest } = await proxyCacheService.getSourceManifestAndCache(
+      const manifest = await proxyCacheService.getSourceManifestAndCache(
         'foobar',
         DIST_NAMES.FULL_MANIFESTS,
       );
@@ -145,13 +139,13 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       const data = await TestUtil.readJSONFile(
         TestUtil.getFixtures('registry.npmjs.org/abbreviated_foobar.json'),
       );
-      mock(npmRegistry, 'getAbbreviatedManifests', async () => {
+      mock(proxyCacheService, 'getUpstreamAbbreviatedManifests', async () => {
         return {
           status: 200,
           data,
         };
       });
-      const { manifest } = await proxyCacheService.getSourceManifestAndCache(
+      const manifest = await proxyCacheService.getSourceManifestAndCache(
         'foobar',
         DIST_NAMES.ABBREVIATED_MANIFESTS,
       );
@@ -165,13 +159,13 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       const data = await TestUtil.readJSONFile(
         TestUtil.getFixtures('registry.npmjs.org/foobar/1.0.0/package.json'),
       );
-      mock(npmRegistry, 'getPackageVersionManifest', async () => {
+      mock(proxyCacheService, 'getUpstreamPackageVersionManifest', async () => {
         return {
           status: 200,
           data,
         };
       });
-      const { manifest } = await proxyCacheService.getSourceManifestAndCache(
+      const manifest = await proxyCacheService.getSourceManifestAndCache(
         'foobar',
         DIST_NAMES.MANIFEST,
         '1.0.0',
@@ -186,13 +180,13 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           'registry.npmjs.org/foobar/1.0.0/abbreviated.json',
         ),
       );
-      mock(npmRegistry, 'getAbbreviatedPackageVersionManifest', async () => {
+      mock(proxyCacheService, 'getUpstreamAbbreviatedPackageVersionManifest', async () => {
         return {
           status: 200,
           data,
         };
       });
-      const { manifest } = await proxyCacheService.getSourceManifestAndCache(
+      const manifest = await proxyCacheService.getSourceManifestAndCache(
         'foobar',
         DIST_NAMES.ABBREVIATED,
         '1.0.0',
