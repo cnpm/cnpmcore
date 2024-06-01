@@ -306,7 +306,6 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .get('/foobar/-/foobar-1.0.0.tgz')
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
-      console.log(res.status);
       assert(res.status === 200);
       // run in background
       await setTimeout(1000);

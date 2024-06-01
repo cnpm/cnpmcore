@@ -224,7 +224,8 @@ export class ProxyCacheService extends AbstractService {
       compressed: true,
       ...options,
       headers: {
-        ...ctx.headers,
+        accept: ctx.header?.accept,
+        'user-agent': ctx.header?.['user-agent'],
         authorization,
         'x-forwarded-for': ctx?.ip,
         via: `1.1, ${this.config.cnpmcore.registry}`,
