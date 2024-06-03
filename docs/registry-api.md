@@ -8,6 +8,8 @@
 * [Package](/docs/registry-api.md#package)
 * [User](/docs/registry-api.md#user)
 * [Search](/docs/registry-api.md#search)
+* [Token](/docs/registry-api.md#token)
+* [Trend](/docs/registry-api.md#trend)
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/f6c8cb46358039bcd689#?env%5BRegistry%5D=W3sia2V5IjoicmVnaXN0cnkiLCJ0eXBlIjoidGV4dCIsInZhbHVlIjoiaHR0cHM6Ly9yZWdpc3RyeS5ucG0udGFvYmFvLm9yZyIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoicGFja2FnZSIsInZhbHVlIjoiY25wbSIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX1d)
 
@@ -1036,3 +1038,32 @@ GET /-/npm/v1/tokens/token/:UUID
 ```
 
 #### Response 204
+
+## Trend
+
+### get download trends for a package
+
+```
+GET /downloads/range/:start::end/:pkgName
+```
+
+#### Response 200
+
+```json
+HTTP/1.1 200 OK
+
+// /downloads/range/2024-01-01:2024-12-31/cnpmcore
+{
+  "downloads": [
+    // ...
+    { "day": "2024-01-03", "downloads": 2 },
+    { "day": "2024-05-30", "downloads": 16 }
+  ],
+  "versions": {
+    // ...
+    "3.61.1": [{ "day": "2024-05-30", "downloads": 5 }],
+    "3.61.2": [{ "day": "2024-05-30", "downloads": 5 }],
+    "3.61.3": [{ "day": "2024-05-30", "downloads": 6 }]
+  }
+}
+```
