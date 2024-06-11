@@ -280,6 +280,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     it('should not create sync task when package version tgz not exists and syncNotFound=false', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'exist');
       mock(app.config.cnpmcore, 'syncNotFound', false);
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
       const res = await app.httpRequest()
         .get('/lodash/-/lodash-1.404.404.tgz')
         .set('user-agent', publisher.ua + ' node/16.0.0')
@@ -302,13 +303,14 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
 
     it('should create sync specific version task when package version tgz not found in proxy mode ', async () => {
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
+      mock(app.config.cnpmcore, 'redirectNotFound', false);
       const res = await app.httpRequest()
         .get('/foobar/-/foobar-1.0.0.tgz')
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 200);
       // run in background
-      await setTimeout(1000);
+      await setTimeout(500);
       app.expectLog('[DownloadPackageVersionTarController.createSyncTask:success]');
     });
 
