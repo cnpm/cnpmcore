@@ -18,6 +18,7 @@ import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
 import { Spec } from '../../../port/typebox';
 import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants';
 import { DIST_NAMES } from '../../../core/entity/Package';
+import { NotFoundError } from 'egg-errors';
 
 @HTTPController()
 export class ShowPackageVersionController extends AbstractController {
@@ -53,6 +54,11 @@ export class ShowPackageVersionController extends AbstractController {
       );
     const allowSync = this.getAllowSync(ctx);
 
+    if (blockReason) {
+      this.setCDNHeaders(ctx);
+      throw this.createPackageBlockError(blockReason, fullname, versionSpec);
+    }
+
     if (!pkg || !manifest) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
         const fileType = isFullManifests
@@ -65,18 +71,12 @@ export class ShowPackageVersionController extends AbstractController {
         );
       }
 
-      if (!manifest) {
-        throw this.createPackageNotFoundErrorWithRedirect(fullname, versionSpec, allowSync);
-      }
-
       if (!pkg) {
         throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
       }
-    }
-
-    if (blockReason) {
-      this.setCDNHeaders(ctx);
-      throw this.createPackageBlockError(blockReason, fullname, versionSpec);
+      if (!manifest) {
+        throw new NotFoundError(`${fullname}@${versionSpec} not found`);
+      }
     }
 
     this.setCDNHeaders(ctx);
