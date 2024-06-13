@@ -251,6 +251,7 @@ export class BinarySyncerService extends AbstractService {
       existsMap.set(item.name, item);
     }
     const diffItems: { item: Binary; reason: string }[] = [];
+    let latestItem: BinaryItem | undefined;
     for (const item of fetchItems) {
       const existsItem = existsMap.get(item.name);
       if (!existsItem) {
@@ -276,7 +277,10 @@ export class BinarySyncerService extends AbstractService {
         existsItem.ignoreDownloadStatuses = item.ignoreDownloadStatuses;
         existsItem.date = item.date;
       } else if (dir.endsWith(latestVersionParent)) {
-        const isLatestItem = sortBy(fetchItems, [ 'date' ]).pop()?.name === item.name;
+        if (!latestItem) {
+          latestItem = sortBy(fetchItems, [ 'date' ]).pop();
+        }
+        const isLatestItem = latestItem?.name === item.name;
         if (isLatestItem && existsItem.isDir) {
           diffItems.push({
             item: existsItem,
