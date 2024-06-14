@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.61.4](https://github.com/cnpm/cnpmcore/compare/v3.61.3...v3.61.4) (2024-06-14)
+
+
+### Bug Fixes
+
+* perf diff ([#699](https://github.com/cnpm/cnpmcore/issues/699)) ([753e519](https://github.com/cnpm/cnpmcore/commit/753e519f1719ed0e43bcf2dba1d6b4bf546ffd54)), closes [#698](https://github.com/cnpm/cnpmcore/issues/698)
+
 ## [3.61.3](https://github.com/cnpm/cnpmcore/compare/v3.61.2...v3.61.3) (2024-05-30)
 
 
