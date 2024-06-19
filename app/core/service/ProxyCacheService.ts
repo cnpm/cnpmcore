@@ -67,7 +67,7 @@ export class ProxyCacheService extends AbstractService {
       return nfsPkgManifgest;
     }
 
-    const manifest = await this.getSourceManifestAndCache<typeof fileType>(fullname, fileType);
+    const manifest = await this.rewriteManifestAndStore<typeof fileType>(fullname, fileType);
     this.backgroundTaskHelper.run(async () => {
       const cachedFiles = ProxyCache.create({ fullname, fileType });
       await this.proxyCacheRepository.saveProxyCache(cachedFiles);
@@ -91,7 +91,7 @@ export class ProxyCacheService extends AbstractService {
       const nfsString = Buffer.from(nfsBytes!).toString();
       return JSON.parse(nfsString) as PackageJSONType | AbbreviatedPackageJSONType;
     }
-    const manifest = await this.getSourceManifestAndCache(fullname, fileType, versionOrTag);
+    const manifest = await this.rewriteManifestAndStore(fullname, fileType, versionOrTag);
     this.backgroundTaskHelper.run(async () => {
       const cachedFiles = ProxyCache.create({ fullname, fileType, version });
       await this.proxyCacheRepository.saveProxyCache(cachedFiles);
@@ -125,7 +125,7 @@ export class ProxyCacheService extends AbstractService {
       if (isPkgManifest(fileType)) {
         const cachedFiles = await this.proxyCacheRepository.findProxyCache(fullname, fileType);
         if (!cachedFiles) throw new Error('task params error, can not found record in repo.');
-        cachedManifest = await this.getSourceManifestAndCache<typeof fileType>(fullname, fileType);
+        cachedManifest = await this.rewriteManifestAndStore<typeof fileType>(fullname, fileType);
         ProxyCache.update(cachedFiles);
         await this.proxyCacheRepository.saveProxyCache(cachedFiles);
       } else {
@@ -158,7 +158,7 @@ export class ProxyCacheService extends AbstractService {
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
   }
 
-  async getSourceManifestAndCache<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
+  async rewriteManifestAndStore<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
     let responseResult;
     switch (fileType) {
       case DIST_NAMES.FULL_MANIFESTS:
