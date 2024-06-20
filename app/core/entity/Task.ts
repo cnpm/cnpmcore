@@ -50,6 +50,9 @@ export interface TriggerHookTaskData extends TaskBaseData {
   responseStatus?: number;
 }
 
+export interface CreateSyncBinaryTaskData extends TaskBaseData {
+  fullDiff?: boolean;
+}
 export interface CreateSyncPackageTaskData extends TaskBaseData {
   tips?: string;
   skipDependencies?: boolean;
@@ -74,6 +77,7 @@ export interface TaskUpdateCondition {
 export type CreateHookTask = Task<CreateHookTaskData>;
 export type TriggerHookTask = Task<TriggerHookTaskData>;
 export type CreateSyncPackageTask = Task<CreateSyncPackageTaskData>;
+export type CreateSyncBinaryTask = Task<CreateSyncBinaryTaskData>;
 export type ChangesStreamTask = Task<ChangesStreamTaskData>;
 
 export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
