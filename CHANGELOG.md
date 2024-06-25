@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.61.5](https://github.com/cnpm/cnpmcore/compare/v3.61.4...v3.61.5) (2024-06-25)
+
+
+### Bug Fixes
+
+* auto remove blocked package on sync process ([#700](https://github.com/cnpm/cnpmcore/issues/700)) ([ca6ce4e](https://github.com/cnpm/cnpmcore/commit/ca6ce4e8605db226216bef394ac527a04c8b9ec4))
+
 ## [3.61.4](https://github.com/cnpm/cnpmcore/compare/v3.61.3...v3.61.4) (2024-06-14)
 
 
