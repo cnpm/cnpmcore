@@ -12,6 +12,8 @@ import {
   PACKAGE_MAINTAINER_CHANGED,
   PACKAGE_MAINTAINER_REMOVED,
   PACKAGE_META_CHANGED,
+  PACKAGE_BLOCKED,
+  PACKAGE_UNBLOCKED,
 } from './index';
 
 import { PackageSearchService } from '../service/PackageSearchService';
@@ -30,6 +32,7 @@ class SyncESPackage {
 }
 
 @Event(PACKAGE_UNPUBLISHED)
+@Event(PACKAGE_BLOCKED)
 export class PackageUnpublished extends SyncESPackage {
   async handle(fullname: string) {
     if (!this.config.cnpmcore.enableElasticsearch) return;
@@ -38,56 +41,15 @@ export class PackageUnpublished extends SyncESPackage {
 }
 
 @Event(PACKAGE_VERSION_ADDED)
-export class PackageVersionAdded extends SyncESPackage {
-  async handle(fullname: string) {
-    await this.syncPackage(fullname);
-  }
-}
-
-@Event(PACKAGE_VERSION_REMOVED)
-export class PackageVersionRemoved extends SyncESPackage {
-  async handle(fullname: string) {
-    await this.syncPackage(fullname);
-  }
-}
-
-@Event(PACKAGE_TAG_ADDED)
-export class PackageTagAdded extends SyncESPackage {
-  async handle(fullname: string) {
-    await this.syncPackage(fullname);
-  }
-}
-
-@Event(PACKAGE_TAG_CHANGED)
-export class PackageTagChanged extends SyncESPackage {
-  async handle(fullname: string) {
-    await this.syncPackage(fullname);
-  }
-}
-
-@Event(PACKAGE_TAG_REMOVED)
-export class PackageTagRemoved extends SyncESPackage {
-  async handle(fullname: string) {
-    await this.syncPackage(fullname);
-  }
-}
-
-@Event(PACKAGE_MAINTAINER_CHANGED)
-export class PackageMaintainerChanged extends SyncESPackage {
-  async handle(fullname: string) {
-    await this.syncPackage(fullname);
-  }
-}
-
-@Event(PACKAGE_MAINTAINER_REMOVED)
-export class PackageMaintainerRemoved extends SyncESPackage {
-  async handle(fullname: string) {
-    await this.syncPackage(fullname);
-  }
-}
-
 @Event(PACKAGE_META_CHANGED)
-export class PackageMetaChanged extends SyncESPackage {
+@Event(PACKAGE_VERSION_REMOVED)
+@Event(PACKAGE_TAG_ADDED)
+@Event(PACKAGE_TAG_CHANGED)
+@Event(PACKAGE_TAG_REMOVED)
+@Event(PACKAGE_MAINTAINER_CHANGED)
+@Event(PACKAGE_MAINTAINER_REMOVED)
+@Event(PACKAGE_UNBLOCKED)
+export class PackageVersionAdded extends SyncESPackage {
   async handle(fullname: string) {
     await this.syncPackage(fullname);
   }

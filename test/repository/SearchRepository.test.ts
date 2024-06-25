@@ -2,14 +2,19 @@ import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import { SearchManifestType, SearchRepository } from '../../app/repository/SearchRepository';
 import { mockES } from '../../config/config.unittest';
+import { PackageManagerService } from '../../app/core/service/PackageManagerService';
+import { TestUtil } from '../TestUtil';
+import { PackageSearchService } from '../../app/core/service/PackageSearchService';
 
 describe('test/repository/SearchRepository.test.ts', () => {
   let searchRepository: SearchRepository;
+  let packageManagerService: PackageManagerService;
 
   beforeEach(async () => {
     mock(app.config.cnpmcore, 'enableElasticsearch', true);
     mock(app.config.cnpmcore, 'elasticsearchIndex', 'cnpmcore_packages');
     searchRepository = await app.getEggObject(SearchRepository);
+    packageManagerService = await app.getEggObject(PackageManagerService);
   });
 
   afterEach(async () => {
@@ -106,6 +111,72 @@ describe('test/repository/SearchRepository.test.ts', () => {
       });
       const id = await searchRepository.removePackage(mockedPackageName);
       assert.equal(id, mockedPackageName);
+    });
+
+    it('should clear blocked pkg', async () => {
+
+      await TestUtil.createPackage({
+        name: '@cnpm/example',
+      });
+
+      const _source = {
+        downloads: {
+          all: 0,
+        },
+        package: {
+          name: '@cnpm/example',
+          description: 'example package',
+        },
+      };
+
+      mockES.add({
+        method: 'POST',
+        path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+      }, () => {
+        return {
+          hits: {
+            total: { value: 1, relation: 'eq' },
+            hits: [{
+              _source,
+            }],
+          },
+        };
+      });
+
+
+      let res = await searchRepository.searchPackage({
+        body: {
+          query: {
+            match: {
+              'package.name': '@cnpm/example',
+            },
+          },
+        },
+      });
+
+      assert.deepEqual(res.hits.length, 1);
+
+      res = await searchRepository.searchPackage({
+        body: {
+          query: {
+            match: {
+              'package.name': '@cnpm/example',
+            },
+          },
+        },
+      });
+
+      let called = false;
+
+      mock(PackageSearchService.prototype, 'removePackage', async (fullname: string) => {
+        if (fullname === '@cnpm/example') {
+          called = true;
+        }
+      });
+
+      await packageManagerService.blockPackageByFullname('@cnpm/example', 'test');
+      assert(called);
+
     });
   });
 });

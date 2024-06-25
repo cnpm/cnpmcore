@@ -8,6 +8,7 @@ import { PackageManagerService } from './PackageManagerService';
 import { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { PackageRepository } from '../../repository/PackageRepository';
+import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
 
 
 @SingletonProto({
@@ -22,6 +23,8 @@ export class PackageSearchService extends AbstractService {
   private packageVersionDownloadRepository: PackageVersionDownloadRepository;
   @Inject()
   protected packageRepository: PackageRepository;
+  @Inject()
+  protected packageVersionBlockRepository: PackageVersionBlockRepository;
 
   async syncPackage(fullname: string, isSync = true) {
     const [ scope, name ] = getScopeAndName(fullname);
@@ -35,6 +38,13 @@ export class PackageSearchService extends AbstractService {
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) {
       this.logger.warn('[PackageSearchService.syncPackage] findPackage:%s not found', fullname);
+      return;
+    }
+
+    const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
+    if (block) {
+      this.logger.warn('[PackageSearchService.syncPackage] package:%s is blocked, try to remove es', fullname);
+      await this.removePackage(fullname);
       return;
     }
 
