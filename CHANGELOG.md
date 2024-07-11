@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.61.6](https://github.com/cnpm/cnpmcore/compare/v3.61.5...v3.61.6) (2024-07-11)
+
+
+### Bug Fixes
+
+* ignore hook when disable ([#702](https://github.com/cnpm/cnpmcore/issues/702)) ([bd49917](https://github.com/cnpm/cnpmcore/commit/bd49917b865689795b8d69a49b9ef954902cf95b))
+
 ## [3.61.5](https://github.com/cnpm/cnpmcore/compare/v3.61.4...v3.61.5) (2024-06-25)
 
 
