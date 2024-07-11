@@ -27,6 +27,7 @@ export class TriggerHookWorker {
   private readonly taskService: TaskService;
 
   async subscribe() {
+    if (!this.config.cnpmcore.hookEnable) return;
     if (executingCount >= this.config.cnpmcore.triggerHookWorkerMaxConcurrentTasks) return;
 
     executingCount++;
