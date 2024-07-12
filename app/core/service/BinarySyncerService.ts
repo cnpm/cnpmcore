@@ -14,7 +14,7 @@ import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { TaskType, TaskState } from '../../common/enum/Task';
 import { downloadToTempfile } from '../../common/FileUtil';
 import { BinaryRepository } from '../../repository/BinaryRepository';
-import { Task } from '../entity/Task';
+import { CreateSyncBinaryTask, Task } from '../entity/Task';
 import { Binary } from '../entity/Binary';
 import { TaskService } from './TaskService';
 import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
@@ -106,12 +106,15 @@ export class BinarySyncerService extends AbstractService {
     return await this.taskService.findExecuteTask(TaskType.SyncBinary);
   }
 
-  public async executeTask(task: Task) {
+  public async executeTask(task: CreateSyncBinaryTask) {
     const binaryName = task.targetName as BinaryName;
     const binaryAdapter = await this.getBinaryAdapter(binaryName);
     const logUrl = `${this.config.cnpmcore.registry}/-/binary/${binaryName}/syncs/${task.taskId}/log`;
     let logs: string[] = [];
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start sync binary "${binaryName}" 🚧🚧🚧🚧🚧`);
+    if (task.data?.fullDiff) {
+      logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 full diff 🚧🚧🚧🚧🚧`);
+    }
     if (!binaryAdapter) {
       task.error = 'unknow binaryName';
       logs.push(`[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`);
@@ -155,7 +158,7 @@ export class BinarySyncerService extends AbstractService {
     }
   }
 
-  private async syncDir(binaryAdapter: AbstractBinary, task: Task, dir: string, parentIndex = '', latestVersionParent = '/') {
+  private async syncDir(binaryAdapter: AbstractBinary, task: CreateSyncBinaryTask, dir: string, parentIndex = '', latestVersionParent = '/') {
     const binaryName = task.targetName as BinaryName;
     const result = await binaryAdapter.fetch(dir, binaryName);
     let hasDownloadError = false;
@@ -163,7 +166,7 @@ export class BinarySyncerService extends AbstractService {
     if (result && result.items.length > 0) {
       hasItems = true;
       let logs: string[] = [];
-      const { newItems, latestVersionDir } = await this.diff(binaryName, dir, result.items, latestVersionParent);
+      const { newItems, latestVersionDir } = await this.diff(binaryName, dir, result.items, latestVersionParent, task.data?.fullDiff);
       logs.push(`[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryAdapter.constructor.name}`);
       // re-check latest version
       for (const [ index, { item, reason }] of newItems.entries()) {
@@ -244,7 +247,7 @@ export class BinarySyncerService extends AbstractService {
   // 上游可能正在发布新版本、同步流程中断，导致同步的时候，文件列表不一致
   // 如果的当前目录命中 latestVersionParent 父目录，那么就再校验一下当前目录
   // 如果 existsItems 为空或者经过修改，那么就不需要 revalidate 了
-  private async diff(binaryName: BinaryName, dir: string, fetchItems: BinaryItem[], latestVersionParent = '/') {
+  private async diff(binaryName: BinaryName, dir: string, fetchItems: BinaryItem[], latestVersionParent = '/', fullDiff: boolean | undefined) {
     const existsItems = await this.binaryRepository.listBinaries(binaryName, dir);
     const existsMap = new Map<string, Binary>();
     for (const item of existsItems) {
@@ -272,6 +275,14 @@ export class BinarySyncerService extends AbstractService {
         diffItems.push({
           item: existsItem,
           reason: `date diff, local: ${JSON.stringify(existsItem.date)}, remote: ${JSON.stringify(item.date)}`,
+        });
+        existsItem.sourceUrl = item.url;
+        existsItem.ignoreDownloadStatuses = item.ignoreDownloadStatuses;
+        existsItem.date = item.date;
+      } else if (fullDiff && item.isDir) {
+        diffItems.push({
+          item: existsItem,
+          reason: `full diff, local: ${JSON.stringify(existsItem.date)}, remote: ${JSON.stringify(item.date)}`,
         });
         existsItem.sourceUrl = item.url;
         existsItem.ignoreDownloadStatuses = item.ignoreDownloadStatuses;
