@@ -272,6 +272,8 @@ PUT cnpmcore_packages
 ```json
 {
   "index": {
+    "sort.field": "package.modified", 
+    "sort.order": "desc",
     "analysis": {
       "analyzer": {
         "package": {
