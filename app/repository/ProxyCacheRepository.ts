@@ -36,15 +36,16 @@ export class ProxyCacheRepository extends AbstractRepository {
     return null;
   }
 
+  // used by update & delete all cache
   async findProxyCaches(fullname: string, version?: string) {
     const models = version ? await this.ProxyCache.find({ fullname, version }) : await this.ProxyCache.find({ fullname });
     return models;
   }
 
-  async listCachedFiles(page: PageOptions): Promise<PageResult<ProxyCacheEntity>> {
+  async listCachedFiles(page: PageOptions, fullname?: string): Promise<PageResult<ProxyCacheEntity>> {
     const { offset, limit } = EntityUtil.convertPageOptionsToLimitOption(page);
-    const count = await this.ProxyCache.find().count();
-    const models = await this.ProxyCache.find().offset(offset).limit(limit);
+    const count = fullname ? await this.ProxyCache.find({ fullname }).count() : await this.ProxyCache.find().count();
+    const models = fullname ? await this.ProxyCache.find({ fullname }).offset(offset).limit(limit) : await this.ProxyCache.find().offset(offset).limit(limit);
     return {
       count,
       data: models.map(model => ModelConvertor.convertModelToEntity(model, ProxyCacheEntity)),

@@ -51,15 +51,15 @@ export class ProxyCacheController extends AbstractController {
     method: HTTPMethodEnum.GET,
     path: `/-/proxy-cache/:fullname(${FULLNAME_REG_STRING})`,
   })
-  async showProxyCaches(@HTTPParam() fullname: string) {
+  async showProxyCaches(@HTTPQuery() pageSize: Static<typeof QueryPageOptions>['pageSize'],
+  @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex'], @HTTPParam() fullname: string) {
     if (this.config.cnpmcore.syncMode !== SyncMode.proxy) {
       throw new ForbiddenError('proxy mode is not enabled');
     }
-    const result = await this.proxyCacheRepository.findProxyCaches(fullname);
-    if (result.length === 0) {
-      throw new NotFoundError();
-    }
-    return result;
+    return await this.proxyCacheRepository.listCachedFiles({
+      pageSize,
+      pageIndex,
+    }, fullname);
   }
 
   @HTTPMethod({

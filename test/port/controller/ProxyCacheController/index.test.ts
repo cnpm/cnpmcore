@@ -76,13 +76,14 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
       const res = await app.httpRequest().get('/-/proxy-cache/foo-bar').expect(200);
-      assert(res.body.length === 2);
+      assert(res.body.count === 2);
     });
 
     it('should 404 when not found', async () => {
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
-      await app.httpRequest().get('/-/proxy-cache/foo-bar-xxx').expect(404);
+      const res = await app.httpRequest().get('/-/proxy-cache/foo-bar-xxx').expect(200);
+      assert(res.body.count === 0);
     });
   });
 

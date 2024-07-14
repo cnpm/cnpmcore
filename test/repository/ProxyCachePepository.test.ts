@@ -53,8 +53,8 @@ describe('test/repository/ProxyCacheRepository.test.ts', () => {
 
     it('remove work', async () => {
       await proxyCacheRepository.removeProxyCache('foo-bar', DIST_NAMES.FULL_MANIFESTS);
-      const emptyRes = await proxyCacheRepository.listCachedFiles({});
-      assert.deepEqual(emptyRes.data, []);
+      const { count } = await proxyCacheRepository.listCachedFiles({});
+      assert.equal(count, 0);
     });
 
     it('truncate work', async () => {
@@ -63,8 +63,8 @@ describe('test/repository/ProxyCacheRepository.test.ts', () => {
         fileType: DIST_NAMES.FULL_MANIFESTS,
       }));
       await proxyCacheRepository.truncateProxyCache();
-      const emptyRes = await proxyCacheRepository.listCachedFiles({});
-      assert.deepEqual(emptyRes.data, []);
+      const { count } = await proxyCacheRepository.listCachedFiles({});
+      assert.equal(count, 0);
     });
   });
 });
