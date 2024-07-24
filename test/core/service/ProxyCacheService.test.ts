@@ -17,6 +17,18 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
     proxyCacheRepository = await app.getEggObject(ProxyCacheRepository);
   });
 
+  describe('getPackageVersionTarResponse()', () => {
+    it('should stop proxy when hit block list', async () => {
+      const name = 'cnpmcore-test-sync-blocklist';
+      mock(app.config.cnpmcore, 'syncPackageBlockList', [ name ]);
+      try {
+        await proxyCacheService.getPackageVersionTarResponse(name, app.mockContext());
+      } catch (error) {
+        assert(error.options.message.includes('block list'));
+      }
+    });
+  });
+
   describe('getPackageManifest()', () => {
     it('should invoke rewriteManifestAndStore first.', async () => {
       mock(proxyCacheService, 'rewriteManifestAndStore', async () => {
@@ -88,13 +100,19 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
     });
 
     it('should get correct verison via tag and cache the pkg manifest', async () => {
-      const data = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('registry.npmjs.org/foobar/1.0.0/package.json'),
-      );
-      mock(proxyCacheService, 'getUpstreamPackageVersionManifest', async () => {
+      app.mockHttpclient('https://registry.npmjs.org/foobar/latest', 'GET', {
+        data: await TestUtil.readFixturesFile(
+          'registry.npmjs.org/foobar/1.0.0/abbreviated.json',
+        ),
+        persist: false,
+      });
+
+      mock(proxyCacheService, 'getUpstreamAbbreviatedManifests', async () => {
         return {
           status: 200,
-          data,
+          data: await TestUtil.readJSONFile(
+            TestUtil.getFixtures('registry.npmjs.org/abbreviated_foobar.json'),
+          ),
         };
       });
       // get manifest by http
@@ -106,11 +124,6 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
         );
       assert(pkgVersionManifest);
       assert.equal(pkgVersionManifest.version, '1.0.0');
-      const pkgManifest = proxyCacheRepository.findProxyCache(
-        'foobar',
-        DIST_NAMES.ABBREVIATED_MANIFESTS,
-      );
-      assert(pkgManifest);
     });
   });
 
@@ -180,12 +193,16 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           'registry.npmjs.org/foobar/1.0.0/abbreviated.json',
         ),
       );
-      mock(proxyCacheService, 'getUpstreamAbbreviatedPackageVersionManifest', async () => {
-        return {
-          status: 200,
-          data,
-        };
-      });
+      mock(
+        proxyCacheService,
+        'getUpstreamAbbreviatedPackageVersionManifest',
+        async () => {
+          return {
+            status: 200,
+            data,
+          };
+        },
+      );
       const manifest = await proxyCacheService.rewriteManifestAndStore(
         'foobar',
         DIST_NAMES.ABBREVIATED,
@@ -198,11 +215,13 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
 
   describe('removeProxyCache()', () => {
     it('should remove cache', async () => {
-      await proxyCacheRepository.saveProxyCache(ProxyCache.create({
-        fullname: 'foo-bar',
-        fileType: DIST_NAMES.ABBREVIATED,
-        version: '1.0.0',
-      }));
+      await proxyCacheRepository.saveProxyCache(
+        ProxyCache.create({
+          fullname: 'foo-bar',
+          fileType: DIST_NAMES.ABBREVIATED,
+          version: '1.0.0',
+        }),
+      );
 
       await proxyCacheService.removeProxyCache(
         'foobar',
@@ -233,6 +252,20 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       const task2 = await proxyCacheService.findExecuteTask();
       assert.equal(task.id, task2?.id);
     });
+
+    it('should be 500 when file type is package version manifest.', async () => {
+      try {
+        await proxyCacheService.createTask(
+          `foobar/${DIST_NAMES.FULL_MANIFESTS}`,
+          {
+            fullname: 'foo',
+            fileType: DIST_NAMES.MANIFEST,
+          },
+        );
+      } catch (error) {
+        assert.equal(error.status, 500);
+      }
+    });
   });
 
   describe('executeTask()', () => {
@@ -256,17 +289,25 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       const taskService = await app.getEggObject(TaskService);
       await proxyCacheRepository.saveProxyCache(
         ProxyCache.create({
-          fullname: 'foo',
+          fullname: 'foobar',
           fileType: DIST_NAMES.FULL_MANIFESTS,
         }),
       );
       const task = await proxyCacheService.createTask(
         `foobar/${DIST_NAMES.FULL_MANIFESTS}`,
         {
-          fullname: 'foo',
+          fullname: 'foobar',
           fileType: DIST_NAMES.FULL_MANIFESTS,
         },
       );
+      mock(proxyCacheService, 'getUpstreamFullManifests', async () => {
+        return {
+          status: 200,
+          data: await TestUtil.readJSONFile(
+            TestUtil.getFixtures('registry.npmjs.org/foobar.json'),
+          ),
+        };
+      });
       await proxyCacheService.executeTask(task);
       const stream = await taskService.findTaskLog(task);
       assert(stream);

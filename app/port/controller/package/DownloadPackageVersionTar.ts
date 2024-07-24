@@ -71,7 +71,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     } catch (error) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
         // proxy mode package version not found.
-        const tgzStream = await this.#getTgzStream(ctx, fullname, version);
+        const tgzStream = await this.getTgzProxyStream(ctx, fullname, version);
         this.packageManagerService.plusPackageVersionCounter(fullname, version);
         return tgzStream;
       }
@@ -112,7 +112,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     return await this.download(ctx, fullname, filenameWithVersion);
   }
 
-  async #getTgzStream(ctx: EggContext, fullname: string, version: string) {
+  private async getTgzProxyStream(ctx: EggContext, fullname: string, version: string) {
     const { res: tgzStream, headers, status } = await this.proxyCacheService.getPackageVersionTarResponse(fullname, ctx);
     ctx.status = status;
     ctx.set(headers as { [key: string]: string | string[] });

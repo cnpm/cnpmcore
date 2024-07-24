@@ -122,21 +122,11 @@ export class ProxyCacheService extends AbstractService {
     let cachedManifest;
     logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start update "${fullname}-${fileType}" 🚧🚧🚧🚧🚧`);
     try {
-      if (isPkgManifest(fileType)) {
-        const cachedFiles = await this.proxyCacheRepository.findProxyCache(fullname, fileType);
-        if (!cachedFiles) throw new Error('task params error, can not found record in repo.');
-        cachedManifest = await this.rewriteManifestAndStore<typeof fileType>(fullname, fileType);
-        ProxyCache.update(cachedFiles);
-        await this.proxyCacheRepository.saveProxyCache(cachedFiles);
-      } else {
-        task.error = 'Unacceptable file type.';
-        logs.push(`[${isoNow()}] ❌ ${task.error}`);
-        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname}-${fileType} ${version ?? ''} ❌❌❌❌❌`);
-        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-        this.logger.info('[ProxyCacheService.executeTask:fail] taskId: %s, targetName: %s, %s',
-          task.taskId, task.targetName, task.error);
-        return;
-      }
+      const cachedFiles = await this.proxyCacheRepository.findProxyCache(fullname, fileType);
+      if (!cachedFiles) throw new Error('task params error, can not found record in repo.');
+      cachedManifest = await this.rewriteManifestAndStore<typeof fileType>(fullname, fileType);
+      ProxyCache.update(cachedFiles);
+      await this.proxyCacheRepository.saveProxyCache(cachedFiles);
     } catch (error) {
       task.error = error;
       logs.push(`[${isoNow()}] ❌ ${task.error}`);
@@ -245,11 +235,11 @@ export class ProxyCacheService extends AbstractService {
     return await this.getProxyResponse({ url, headers: { accept: ABBREVIATED_META_TYPE } }, { dataType: 'json' });
   }
   private async getUpstreamPackageVersionManifest(fullname: string, versionOrTag: string): Promise<HttpClientResponse> {
-    const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag)}?t=${Date.now()}&cache=0`;
+    const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag)}`;
     return await this.getProxyResponse({ url }, { dataType: 'json' });
   }
   private async getUpstreamAbbreviatedPackageVersionManifest(fullname: string, versionOrTag: string): Promise<HttpClientResponse> {
-    const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag)}?t=${Date.now()}&cache=0`;
+    const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag)}`;
     return await this.getProxyResponse({ url, headers: { accept: ABBREVIATED_META_TYPE } }, { dataType: 'json' });
   }
 

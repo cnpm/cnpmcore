@@ -304,6 +304,11 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     it('should create sync specific version task when package version tgz not found in proxy mode ', async () => {
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
+      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+        repeats: 2,
+      });
       const res = await app.httpRequest()
         .get('/foobar/-/foobar-1.0.0.tgz')
         .set('user-agent', publisher.ua + ' node/16.0.0')
