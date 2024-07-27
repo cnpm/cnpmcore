@@ -67,8 +67,9 @@ export class ProxyCacheService extends AbstractService {
       return nfsPkgManifgest;
     }
 
-    const manifest = await this.rewriteManifestAndStore<typeof fileType>(fullname, fileType);
+    const manifest = await this.getRewrittenManifest<typeof fileType>(fullname, fileType);
     this.backgroundTaskHelper.run(async () => {
+      await this.storeRewrittenManifest(manifest, fullname, fileType);
       const cachedFiles = ProxyCache.create({ fullname, fileType });
       await this.proxyCacheRepository.saveProxyCache(cachedFiles);
     });
@@ -91,8 +92,9 @@ export class ProxyCacheService extends AbstractService {
       const nfsString = Buffer.from(nfsBytes!).toString();
       return JSON.parse(nfsString) as PackageJSONType | AbbreviatedPackageJSONType;
     }
-    const manifest = await this.rewriteManifestAndStore(fullname, fileType, versionOrTag);
+    const manifest = await this.getRewrittenManifest(fullname, fileType, versionOrTag);
     this.backgroundTaskHelper.run(async () => {
+      await this.storeRewrittenManifest(manifest, fullname, fileType);
       const cachedFiles = ProxyCache.create({ fullname, fileType, version });
       await this.proxyCacheRepository.saveProxyCache(cachedFiles);
     });
@@ -124,7 +126,8 @@ export class ProxyCacheService extends AbstractService {
     try {
       const cachedFiles = await this.proxyCacheRepository.findProxyCache(fullname, fileType);
       if (!cachedFiles) throw new Error('task params error, can not found record in repo.');
-      cachedManifest = await this.rewriteManifestAndStore<typeof fileType>(fullname, fileType);
+      cachedManifest = await this.getRewrittenManifest<typeof fileType>(fullname, fileType);
+      await this.storeRewrittenManifest(cachedManifest, fullname, fileType);
       ProxyCache.update(cachedFiles);
       await this.proxyCacheRepository.saveProxyCache(cachedFiles);
     } catch (error) {
@@ -148,7 +151,7 @@ export class ProxyCacheService extends AbstractService {
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
   }
 
-  async rewriteManifestAndStore<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
+  async getRewrittenManifest<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
     let responseResult;
     switch (fileType) {
       case DIST_NAMES.FULL_MANIFESTS:
@@ -186,6 +189,10 @@ export class ProxyCacheService extends AbstractService {
         distItem.tarball = distItem.tarball.replace(sourceRegistry, registry);
       }
     }
+    return manifest;
+  }
+
+  private async storeRewrittenManifest(manifest, fullname: string, fileType: DIST_NAMES) {
     let storeKey: string;
     if (isPkgManifest(fileType)) {
       storeKey = `/${PROXY_CACHE_DIR_NAME}/${fullname}/${fileType}`;
@@ -195,7 +202,6 @@ export class ProxyCacheService extends AbstractService {
     }
     const nfsBytes = Buffer.from(JSON.stringify(manifest));
     await this.nfsAdapter.uploadBytes(storeKey, nfsBytes);
-    return manifest;
   }
 
   private async getProxyResponse(ctx: Partial<EggContext>, options?: HttpClientRequestOptions): Promise<HttpClientResponse> {
