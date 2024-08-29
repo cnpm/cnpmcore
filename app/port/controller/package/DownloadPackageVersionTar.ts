@@ -1,3 +1,5 @@
+import { PassThrough } from 'node:stream';
+import { pipeline } from 'node:stream';
 import {
   NotFoundError,
 } from 'egg-errors';
@@ -73,7 +75,13 @@ export class DownloadPackageVersionTarController extends AbstractController {
         // proxy mode package version not found.
         const tgzStream = await this.getTgzProxyStream(ctx, fullname, version);
         this.packageManagerService.plusPackageVersionCounter(fullname, version);
-        return tgzStream;
+        const passThroughRemoteStream = new PassThrough();
+        pipeline(
+          tgzStream,
+          passThroughRemoteStream,
+        );
+        ctx.attachment(`${filenameWithVersion}.tgz`);
+        return passThroughRemoteStream;
       }
       throw error;
     }
@@ -113,7 +121,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
   }
 
   private async getTgzProxyStream(ctx: EggContext, fullname: string, version: string) {
-    const { res: tgzStream, headers, status } = await this.proxyCacheService.getPackageVersionTarResponse(fullname, ctx);
+    const { headers, status, res } = await this.proxyCacheService.getPackageVersionTarResponse(fullname, ctx);
     ctx.status = status;
     ctx.set(headers as { [key: string]: string | string[] });
     ctx.runInBackground(async () => {
@@ -127,6 +135,6 @@ export class DownloadPackageVersionTarController extends AbstractController {
       ctx.logger.info('[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
         task.taskId, fullname);
     });
-    return tgzStream;
+    return res;
   }
 }
