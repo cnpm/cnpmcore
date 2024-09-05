@@ -1,5 +1,4 @@
 import { PassThrough } from 'node:stream';
-import { pipeline } from 'node:stream';
 import {
   NotFoundError,
 } from 'egg-errors';
@@ -76,10 +75,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
         const tgzStream = await this.getTgzProxyStream(ctx, fullname, version);
         this.packageManagerService.plusPackageVersionCounter(fullname, version);
         const passThroughRemoteStream = new PassThrough();
-        pipeline(
-          tgzStream,
-          passThroughRemoteStream,
-        );
+        tgzStream.pipe(passThroughRemoteStream);
         ctx.attachment(`${filenameWithVersion}.tgz`);
         return passThroughRemoteStream;
       }
