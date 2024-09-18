@@ -214,7 +214,8 @@ export class ProxyCacheService extends AbstractService {
     const res = await this.httpclient.request(url, {
       timing: true,
       followRedirect: true,
-      retry: 3,
+      // once redirection is also count as a retry
+      retry: 7,
       dataType: 'stream',
       timeout: 10000,
       compressed: true,
