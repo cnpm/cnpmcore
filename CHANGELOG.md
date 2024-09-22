@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.62.0](https://github.com/cnpm/cnpmcore/compare/v3.61.6...v3.62.0) (2024-09-22)
+
+
+### Features
+
+* set allowH2 to true and require Node.js >= 18 ([#705](https://github.com/cnpm/cnpmcore/issues/705)) ([9a79940](https://github.com/cnpm/cnpmcore/commit/9a7994090b18df0847eb7552ceff273eab80dea9))
+
 ## [3.61.6](https://github.com/cnpm/cnpmcore/compare/v3.61.5...v3.61.6) (2024-07-11)
 
 
