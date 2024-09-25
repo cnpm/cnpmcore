@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.62.1](https://github.com/cnpm/cnpmcore/compare/v3.62.0...v3.62.1) (2024-09-25)
+
+
+### Reverts
+
+* Revert "feat: set allowH2 to true and require Node.js >= 18 (#705)" (#707) ([526b66a](https://github.com/cnpm/cnpmcore/commit/526b66a93c30c092d7e938b7b9e25d273282d5e3)), closes [#705](https://github.com/cnpm/cnpmcore/issues/705) [#707](https://github.com/cnpm/cnpmcore/issues/707)
+
 ## [3.62.0](https://github.com/cnpm/cnpmcore/compare/v3.61.6...v3.62.0) (2024-09-22)
 
 
