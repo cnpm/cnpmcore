@@ -134,12 +134,9 @@ const binaries = {
   'skia-canvas': {
     category: 'skia-canvas',
     description: 'A canvas environment for Node',
-    type: BinaryType.NodePreGyp,
+    type: BinaryType.GitHub,
     repo: 'samizdatco/skia-canvas',
-    distUrl: 'https://skia-canvas.s3.us-east-1.amazonaws.com',
-    options: {
-      requiredNapiVersions: true,
-    },
+    distUrl: 'https://github.com/samizdatco/skia-canvas/releases',
   },
   wrtc: {
     category: 'wrtc',
