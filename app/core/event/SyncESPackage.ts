@@ -33,7 +33,7 @@ class SyncESPackage {
 
 @Event(PACKAGE_UNPUBLISHED)
 @Event(PACKAGE_BLOCKED)
-export class PackageUnpublished extends SyncESPackage {
+export class PackageUnpublishedSyncESEvent extends SyncESPackage {
   async handle(fullname: string) {
     if (!this.config.cnpmcore.enableElasticsearch) return;
     await this.packageSearchService.removePackage(fullname);
@@ -49,7 +49,7 @@ export class PackageUnpublished extends SyncESPackage {
 @Event(PACKAGE_MAINTAINER_CHANGED)
 @Event(PACKAGE_MAINTAINER_REMOVED)
 @Event(PACKAGE_UNBLOCKED)
-export class PackageVersionAdded extends SyncESPackage {
+export class PackageVersionAddedSyncESEvent extends SyncESPackage {
   async handle(fullname: string) {
     await this.syncPackage(fullname);
   }

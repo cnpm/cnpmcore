@@ -1,11 +1,11 @@
-import { PackageVersionAdded } from '../../../app/core/event/ChangesStream';
+import { PackageVersionAddedChangesStreamEvent } from '../../../app/core/event/ChangesStream';
 import { app, mock } from 'egg-mock/bootstrap';
 
 describe('test/core/event/BugVersionFixHandler.test.ts', () => {
   let packageVersionAdded: PackageVersionAdded;
 
   before(async () => {
-    packageVersionAdded = await app.getEggObject(PackageVersionAdded);
+    packageVersionAdded = await app.getEggObject(PackageVersionAddedChangesStreamEvent);
   });
 
   it('should trigger hook', async () => {
