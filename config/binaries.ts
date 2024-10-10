@@ -136,9 +136,9 @@ const binaries = {
     description: 'A canvas environment for Node',
     type: BinaryType.NodePreGyp,
     repo: 'samizdatco/skia-canvas',
-    distUrl: 'https://skia-canvas.s3.us-east-1.amazonaws.com',
+    distUrl: 'https://github.com/samizdatco/skia-canvas/releases',
     options: {
-      requiredNapiVersions: true,
+      // requiredNapiVersions: true,
     },
   },
   wrtc: {
