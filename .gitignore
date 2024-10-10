@@ -120,3 +120,5 @@ dist
 .DS_Store
 run
 !test/ctx_register.js
+
+.egg/
