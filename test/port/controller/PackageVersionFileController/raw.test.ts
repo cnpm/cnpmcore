@@ -3,7 +3,7 @@ import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil';
-import { PackageTagChanged, PackageTagAdded } from '../../../../app/core/event/SyncPackageVersionFile';
+import { PackageTagChangedSyncPackageVersionFileEvent, PackageTagAddedSyncPackageVersionFileEvent } from '../../../../app/core/event/SyncPackageVersionFile';
 
 describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => {
   let publisher;
@@ -368,7 +368,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       // console.log(res.body);
       assert.equal(res.body.files.find(file => file.path === '/.'), undefined);
       assert(res.body.files.find(file => file.path === '/dist'));
-      const packageTagAdded = await app.getEggObject(PackageTagAdded);
+      const packageTagAdded = await app.getEggObject(PackageTagAddedSyncPackageVersionFileEvent);
       await packageTagAdded.handle(pkg.name, 'foo');
       await packageTagAdded.handle(pkg.name, 'latest');
       res = await app.httpRequest()
@@ -429,7 +429,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .expect(200);
       assert.notEqual(res.body.readme, oldReadme);
       assert.match(res.body.readme, /The Javascript Database that Syncs/);
-      const packageTagChanged = await app.getEggObject(PackageTagChanged);
+      const packageTagChanged = await app.getEggObject(PackageTagChangedSyncPackageVersionFileEvent);
       await packageTagChanged.handle(pkg.name, 'foo');
       await packageTagChanged.handle(pkg.name, 'latest');
       // pkg version change too

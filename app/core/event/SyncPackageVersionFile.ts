@@ -66,7 +66,7 @@ export class PackageTagAddedSyncPackageVersionFileEvent extends SyncPackageVersi
 }
 
 @Event(PACKAGE_TAG_CHANGED)
-export class PackageTagChanged extends SyncPackageVersionFileEvent {
+export class PackageTagChangedSyncPackageVersionFileEvent extends SyncPackageVersionFileEvent {
   async handle(fullname: string, tag: string) {
     if (tag !== 'latest') return;
     await this.syncPackageReadmeToLatestVersion(fullname);
