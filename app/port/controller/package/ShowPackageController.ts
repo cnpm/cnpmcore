@@ -12,6 +12,10 @@ import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUti
 import { isSyncWorkerRequest } from '../../../common/SyncUtil';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
 import { CacheService } from '../../../core/service/CacheService';
+import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants';
+import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
+import { calculateIntegrity } from '../../../common/PackageUtil';
+import { DIST_NAMES } from '../../../core/entity/Package';
 
 @HTTPController()
 export class ShowPackageController extends AbstractController {
@@ -19,6 +23,8 @@ export class ShowPackageController extends AbstractController {
   private packageManagerService: PackageManagerService;
   @Inject()
   private cacheService: CacheService;
+  @Inject()
+  private proxyCacheService: ProxyCacheService;
 
   @HTTPMethod({
     // GET /:fullname
@@ -29,8 +35,7 @@ export class ShowPackageController extends AbstractController {
   async show(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
     const [ scope, name ] = getScopeAndName(fullname);
     const isSync = isSyncWorkerRequest(ctx);
-    const abbreviatedMetaType = 'application/vnd.npm.install-v1+json';
-    const isFullManifests = ctx.accepts([ 'json', abbreviatedMetaType ]) !== abbreviatedMetaType;
+    const isFullManifests = ctx.accepts([ 'json', ABBREVIATED_META_TYPE ]) !== ABBREVIATED_META_TYPE;
 
     // handle cache
     // fallback to db when cache error
@@ -64,10 +69,21 @@ export class ShowPackageController extends AbstractController {
 
     // handle cache miss
     let result: { etag: string; data: any, blockReason: string };
-    if (isFullManifests) {
-      result = await this.packageManagerService.listPackageFullManifests(scope, name, isSync);
+    if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
+      // proxy mode
+      const fileType = isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS;
+      const pkgManifest = await this.proxyCacheService.getPackageManifest(fullname, fileType);
+
+      const nfsBytes = Buffer.from(JSON.stringify(pkgManifest));
+      const { shasum: etag } = await calculateIntegrity(nfsBytes);
+      result = { data: pkgManifest, etag, blockReason: '' };
     } else {
-      result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, isSync);
+      // sync mode
+      if (isFullManifests) {
+        result = await this.packageManagerService.listPackageFullManifests(scope, name, isSync);
+      } else {
+        result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, isSync);
+      }
     }
     const { etag, data, blockReason } = result;
     // 404, no data
