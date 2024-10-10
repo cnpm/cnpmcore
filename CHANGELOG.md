@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.62.2](https://github.com/cnpm/cnpmcore/compare/v3.62.1...v3.62.2) (2024-10-10)
+
+
+### Bug Fixes
+
+* dup clz name ([#711](https://github.com/cnpm/cnpmcore/issues/711)) ([f7c49e5](https://github.com/cnpm/cnpmcore/commit/f7c49e55fa34dee7c38b18677676100b49a91f15))
+
 ## [3.62.1](https://github.com/cnpm/cnpmcore/compare/v3.62.0...v3.62.1) (2024-09-25)
 
 
