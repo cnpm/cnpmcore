@@ -24,77 +24,77 @@ class CacheCleanerEvent {
 }
 
 @Event(PACKAGE_UNPUBLISHED)
-export class PackageUnpublished extends CacheCleanerEvent {
+export class PackageUnpublishedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }
 }
 
 @Event(PACKAGE_BLOCKED)
-export class PackageBlocked extends CacheCleanerEvent {
+export class PackageBlockedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }
 }
 
 @Event(PACKAGE_UNBLOCKED)
-export class PackageUnblocked extends CacheCleanerEvent {
+export class PackageUnblockedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }
 }
 
 @Event(PACKAGE_VERSION_ADDED)
-export class PackageVersionAdded extends CacheCleanerEvent {
+export class PackageVersionAddedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }
 }
 
 @Event(PACKAGE_VERSION_REMOVED)
-export class PackageVersionRemoved extends CacheCleanerEvent {
+export class PackageVersionRemovedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }
 }
 
 @Event(PACKAGE_TAG_ADDED)
-export class PackageTagAdded extends CacheCleanerEvent {
+export class PackageTagAddedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }
 }
 
 @Event(PACKAGE_TAG_CHANGED)
-export class PackageTagChanged extends CacheCleanerEvent {
+export class PackageTagChangedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }
 }
 
 @Event(PACKAGE_TAG_REMOVED)
-export class PackageTagRemoved extends CacheCleanerEvent {
+export class PackageTagRemovedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }
 }
 
 @Event(PACKAGE_MAINTAINER_CHANGED)
-export class PackageMaintainerChanged extends CacheCleanerEvent {
+export class PackageMaintainerChangedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }
 }
 
 @Event(PACKAGE_MAINTAINER_REMOVED)
-export class PackageMaintainerRemoved extends CacheCleanerEvent {
+export class PackageMaintainerRemovedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }
 }
 
 @Event(PACKAGE_META_CHANGED)
-export class PackageMetaChanged extends CacheCleanerEvent {
+export class PackageMetaChangedCacheCleanEvent extends CacheCleanerEvent {
   async handle(fullname: string) {
     await this.removeCache(fullname);
   }

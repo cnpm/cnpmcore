@@ -44,7 +44,7 @@ class ChangesStreamEvent {
 }
 
 @Event(PACKAGE_UNPUBLISHED)
-export class PackageUnpublished extends ChangesStreamEvent {
+export class PackageUnpublishedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string) {
     const change = await this.addChange(PACKAGE_UNPUBLISHED, fullname, {});
     if (this.hookEnable) {
@@ -55,7 +55,7 @@ export class PackageUnpublished extends ChangesStreamEvent {
 }
 
 @Event(PACKAGE_VERSION_ADDED)
-export class PackageVersionAdded extends ChangesStreamEvent {
+export class PackageVersionAddedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, version: string, tag?: string) {
     const change = await this.addChange(PACKAGE_VERSION_ADDED, fullname, { version });
     if (this.hookEnable) {
@@ -66,7 +66,7 @@ export class PackageVersionAdded extends ChangesStreamEvent {
 }
 
 @Event(PACKAGE_VERSION_REMOVED)
-export class PackageVersionRemoved extends ChangesStreamEvent {
+export class PackageVersionRemovedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, version: string, tag?: string) {
     const change = await this.addChange(PACKAGE_VERSION_REMOVED, fullname, { version });
     if (this.hookEnable) {
@@ -77,7 +77,7 @@ export class PackageVersionRemoved extends ChangesStreamEvent {
 }
 
 @Event(PACKAGE_TAG_ADDED)
-export class PackageTagAdded extends ChangesStreamEvent {
+export class PackageTagAddedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, tag: string) {
     const change = await this.addChange(PACKAGE_TAG_ADDED, fullname, { tag });
     if (this.hookEnable) {
@@ -88,7 +88,7 @@ export class PackageTagAdded extends ChangesStreamEvent {
 }
 
 @Event(PACKAGE_TAG_CHANGED)
-export class PackageTagChanged extends ChangesStreamEvent {
+export class PackageTagChangedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, tag: string) {
     const change = await this.addChange(PACKAGE_TAG_CHANGED, fullname, { tag });
     if (this.hookEnable) {
@@ -99,7 +99,7 @@ export class PackageTagChanged extends ChangesStreamEvent {
 }
 
 @Event(PACKAGE_TAG_REMOVED)
-export class PackageTagRemoved extends ChangesStreamEvent {
+export class PackageTagRemovedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, tag: string) {
     const change = await this.addChange(PACKAGE_TAG_REMOVED, fullname, { tag });
     if (this.hookEnable) {
@@ -110,7 +110,7 @@ export class PackageTagRemoved extends ChangesStreamEvent {
 }
 
 @Event(PACKAGE_MAINTAINER_CHANGED)
-export class PackageMaintainerChanged extends ChangesStreamEvent {
+export class PackageMaintainerChangedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, maintainers: User[]) {
     const change = await this.addChange(PACKAGE_MAINTAINER_CHANGED, fullname, {});
     // TODO 应该比较差值，而不是全量推送
@@ -124,7 +124,7 @@ export class PackageMaintainerChanged extends ChangesStreamEvent {
 }
 
 @Event(PACKAGE_MAINTAINER_REMOVED)
-export class PackageMaintainerRemoved extends ChangesStreamEvent {
+export class PackageMaintainerRemovedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, maintainer: string) {
     const change = await this.addChange(PACKAGE_MAINTAINER_REMOVED, fullname, { maintainer });
     if (this.hookEnable) {
@@ -135,7 +135,7 @@ export class PackageMaintainerRemoved extends ChangesStreamEvent {
 }
 
 @Event(PACKAGE_META_CHANGED)
-export class PackageMetaChanged extends ChangesStreamEvent {
+export class PackageMetaChangedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, meta: PackageMetaChange) {
     const change = await this.addChange(PACKAGE_META_CHANGED, fullname, { ...meta });
     const { deprecateds } = meta;
