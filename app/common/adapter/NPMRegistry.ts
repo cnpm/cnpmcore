@@ -111,7 +111,7 @@ export class NPMRegistry {
     };
   }
 
-  private genAuthorizationHeader(remoteAuthToken?:string) {
+  public genAuthorizationHeader(remoteAuthToken?:string) {
     return remoteAuthToken ? `Bearer ${remoteAuthToken}` : '';
   }
 }
