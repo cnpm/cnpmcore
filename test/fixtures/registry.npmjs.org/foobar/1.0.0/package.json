@@ -1,0 +1,16 @@
+{
+    "name": "foobar",
+    "version": "1.0.0",
+    "dependencies": {},
+    "devDependencies": {},
+    "directories": {},
+    "dist": {
+        "shasum": "116ff82f61ce1e9545c5ba302ead651f5bb31247",
+        "tarball": "https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz",
+        "size": 10240,
+        "integrity": "sha512-ojyo6LOnMwMDfdEjVgzMpZ4UdV4iXauePAsYEZU746H95qF/PDQ8Q8lrACnuTp/5otZPabr2mFivvLacbXLyMg=="
+    },
+    "engines": {
+        "node": "~0.4.12"
+    }
+}
