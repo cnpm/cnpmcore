@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.63.1](https://github.com/cnpm/cnpmcore/compare/v3.63.0...v3.63.1) (2024-10-13)
+
+
+### Bug Fixes
+
+* change skia-canvas to github release ([#715](https://github.com/cnpm/cnpmcore/issues/715)) ([99a8660](https://github.com/cnpm/cnpmcore/commit/99a86600db8252bd0ad06d79a3201d15396c270a))
+
 ## [3.63.0](https://github.com/cnpm/cnpmcore/compare/v3.62.2...v3.63.0) (2024-10-13)
 
 
