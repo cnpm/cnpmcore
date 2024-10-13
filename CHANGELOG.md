@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.63.0](https://github.com/cnpm/cnpmcore/compare/v3.62.2...v3.63.0) (2024-10-13)
+
+
+### Features
+
+* proxy mode [sql changed] ([#571](https://github.com/cnpm/cnpmcore/issues/571)) ([91aea0f](https://github.com/cnpm/cnpmcore/commit/91aea0f1068f533dce5c649a87c607871f8a224c))
+
 ## [3.62.2](https://github.com/cnpm/cnpmcore/compare/v3.62.1...v3.62.2) (2024-10-10)
 
 
