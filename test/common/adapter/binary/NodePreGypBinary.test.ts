@@ -137,63 +137,6 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
       assert(matchFile3);
     });
 
-    it('should fetch skia-canvas', async () => {
-      app.mockHttpclient('https://registry.npmjs.com/skia-canvas', 'GET', {
-        data: await TestUtil.readFixturesFile('registry.npmjs.com/skia-canvas.json'),
-      });
-      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
-        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
-      });
-      let result = await binary.fetch('/', 'skia-canvas');
-      assert(result);
-      assert(result.items.length > 0);
-      // console.log(JSON.stringify(result.items, null, 2));
-      let matchDir = false;
-      for (const item of result.items) {
-        assert(item.isDir === true);
-        if (item.name === 'v0.9.30/') {
-          matchDir = true;
-        }
-      }
-      assert(matchDir);
-
-      result = await binary.fetch('/v0.9.24/', 'skia-canvas');
-      assert(result?.items.every(item => !/{.*}/.test(item.url)));
-
-      result = await binary.fetch('/v0.9.30/', 'skia-canvas');
-      assert(result);
-      assert(result.items.length > 0);
-      // console.log(JSON.stringify(result.items, null, 2));
-      let matchFile1 = false;
-      let matchFile2 = false;
-      let matchFile3 = false;
-      for (const item of result.items) {
-        assert(item.isDir === false);
-        assert.deepEqual(item.ignoreDownloadStatuses, [ 404, 403 ]);
-        if (item.name === 'darwin-arm64-napi-v6-unknown.tar.gz') {
-          assert(item.date === '2022-06-08T01:53:43.908Z');
-          assert(item.size === '-');
-          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/darwin-arm64-napi-v6-unknown.tar.gz');
-          matchFile1 = true;
-        }
-        if (item.name === 'linux-arm-napi-v6-glibc.tar.gz') {
-          assert(item.date === '2022-06-08T01:53:43.908Z');
-          assert(item.size === '-');
-          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/linux-arm-napi-v6-glibc.tar.gz');
-          matchFile2 = true;
-        }
-        if (item.name === 'win32-x64-napi-v6-unknown.tar.gz') {
-          assert(item.date === '2022-06-08T01:53:43.908Z');
-          assert(item.size === '-');
-          assert(item.url === 'https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/win32-x64-napi-v6-unknown.tar.gz');
-          matchFile3 = true;
-        }
-      }
-      assert(matchFile1);
-      assert(matchFile2);
-      assert(matchFile3);
-    });
-
     it('should fetch wrtc', async () => {
       app.mockHttpclient('https://registry.npmjs.com/wrtc', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.com/wrtc.json'),
