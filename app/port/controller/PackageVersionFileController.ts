@@ -170,6 +170,18 @@ export class PackageVersionFileController extends AbstractController {
     }
     return await this.distRepository.getDistStream(file.dist);
   }
+  
+  @HTTPMethod({
+    path: `/:fullname@versionSpec/:path(.+)`,
+    method: HTTPMethodEnum.GET,
+  })
+  async rawNpm(@Context() ctx: EggContext,
+      @HTTPParam() fullname: string,
+      @HTTPParam() versionSpec: string,
+      @HTTPParam() path: string,
+      @HTTPQuery() meta: string) {
+    return await this.raw(ctx, fullname, versionSpec, filepath, meta);
+  }
 
   /**
    * compatibility with unpkg
