@@ -180,7 +180,7 @@ export class PackageVersionFileController extends AbstractController {
       @HTTPParam() versionSpec: string,
       @HTTPParam() path: string,
       @HTTPQuery() meta: string) {
-    return await this.raw(ctx, fullname, versionSpec, filepath, meta);
+    return await this.raw(ctx, fullname, versionSpec, path, meta);
   }
 
   /**
