@@ -172,7 +172,7 @@ export class PackageVersionFileController extends AbstractController {
   }
   
   @HTTPMethod({
-    path: `/:fullname@versionSpec/:path(.+)`,
+    path: `/:fullname@:versionSpec/:path(.+)`,
     method: HTTPMethodEnum.GET,
   })
   async rawNpm(@Context() ctx: EggContext,
