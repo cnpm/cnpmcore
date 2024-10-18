@@ -138,6 +138,13 @@ const binaries = {
     repo: 'samizdatco/skia-canvas',
     distUrl: 'https://github.com/samizdatco/skia-canvas/releases',
   },
+  protobuf: {
+    category: 'protobuf',
+    description: 'Protocol Buffers - Google\'s data interchange format',
+    type: BinaryType.GitHub,
+    repo: 'protocolbuffers/protobuf',
+    distUrl: 'https://github.com/protocolbuffers/protobuf/releases',
+  },
   wrtc: {
     category: 'wrtc',
     description: 'node-webrtc is a Node.js Native Addon that provides bindings to WebRTC M87.',
