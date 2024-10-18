@@ -90,5 +90,43 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
       assert(matchFile2);
       assert(matchFile3);
     });
+
+    it('should fetch protobuf', async () => {
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('protobuf-releases.json'));
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/protocolbuffers\/protobuf\/releases/, 'GET', {
+        data: response,
+        status: 200,
+      });
+      let result = await binary.fetch('/', 'protobuf');
+      assert(result);
+      assert(result.items.length > 0);
+      let matchDir = false;
+      for (const item of result.items) {
+        assert(item.isDir === true);
+        if (item.name === 'v28.2/') {
+          matchDir = true;
+        }
+      }
+      assert(matchDir);
+
+      result = await binary.fetch('/v28.2/', 'protobuf');
+      assert(result?.items.every(item => !/{.*}/.test(item.url)));
+
+      result = await binary.fetch('/v28.2/', 'protobuf');
+      assert(result);
+      assert(result.items.length > 0);
+      console.log(JSON.stringify(result.items, null, 2));
+      let matchFile1 = false;
+      for (const item of result.items) {
+        assert(item.isDir === false);
+        if (item.name === 'protoc-28.2-linux-aarch_64.zip') {
+          assert(item.date === '2024-09-18T21:02:40Z');
+          assert(item.size === 3218760);
+          assert.equal(item.url, 'https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-aarch_64.zip');
+          matchFile1 = true;
+        }
+      }
+      assert(matchFile1);
+    });
   });
 });
