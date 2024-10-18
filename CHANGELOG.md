@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.64.0](https://github.com/cnpm/cnpmcore/compare/v3.63.1...v3.64.0) (2024-10-18)
+
+
+### Features
+
+* mirror protobuf binary ([#717](https://github.com/cnpm/cnpmcore/issues/717)) ([d6f0e1d](https://github.com/cnpm/cnpmcore/commit/d6f0e1d866e737ec2e4b362c4d7bca8ea3762a36))
+
 ## [3.63.1](https://github.com/cnpm/cnpmcore/compare/v3.63.0...v3.63.1) (2024-10-13)
 
 
