@@ -172,10 +172,10 @@ export class PackageVersionFileController extends AbstractController {
   }
   
   @HTTPMethod({
-    path: `/:fullname@:versionSpec/:path(.+)`,
+    path: `/npm/:fullname@:versionSpec/:path(.+)`,
     method: HTTPMethodEnum.GET,
   })
-  async rawNpm(@Context() ctx: EggContext,
+  async rawNpmVer(@Context() ctx: EggContext,
       @HTTPParam() fullname: string,
       @HTTPParam() versionSpec: string,
       @HTTPParam() path: string,
@@ -183,6 +183,17 @@ export class PackageVersionFileController extends AbstractController {
     return await this.raw(ctx, fullname, versionSpec, path, meta);
   }
 
+  @HTTPMethod({
+    path: `/npm/:fullname/:path(.+)`,
+    method: HTTPMethodEnum.GET,
+  })
+  async rawNpm(@Context() ctx: EggContext,
+      @HTTPParam() fullname: string,
+      @HTTPParam() path: string,
+      @HTTPQuery() meta: string) {
+    return await this.raw(ctx, fullname, "latest", path, meta);
+  }
+  
   /**
    * compatibility with unpkg
    * 1. try to match alias entry. e.g. accessing `index.js` or `index.json` using /index
