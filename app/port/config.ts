@@ -170,4 +170,9 @@ export type CnpmcoreConfig = {
    * strictly enforces/validates manifest and tgz when publish, https://github.com/cnpm/cnpmcore/issues/542
    */
   strictValidateTarballPkg?: boolean,
+
+  /**
+   * strictly enforces/validates dependencies version when publish or sync
+   */
+  strictValidatePackageDeps?: boolean,
 };

@@ -1,11 +1,12 @@
 import { stat, readFile } from 'node:fs/promises';
+import { strict as assert } from 'node:assert';
 import {
   AccessLevel,
   SingletonProto,
   EventBus,
   Inject,
 } from '@eggjs/tegg';
-import { ForbiddenError, NotFoundError } from 'egg-errors';
+import { BadRequestError, ForbiddenError, NotFoundError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import npa from 'npm-package-arg';
 import semver from 'semver';
@@ -46,6 +47,7 @@ import { BugVersion } from '../entity/BugVersion';
 import { RegistryManagerService } from './RegistryManagerService';
 import { Registry } from '../entity/Registry';
 import { PackageVersionService } from './PackageVersionService';
+import pMap from 'p-map';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
@@ -101,6 +103,9 @@ export class PackageManagerService extends AbstractService {
 
   // support user publish private package and sync worker publish public package
   async publish(cmd: PublishPackageCmd, publisher: User) {
+    if (this.config.cnpmcore.strictValidatePackageDeps) {
+      await this._checkPackageDepsVersion(cmd.packageJson);
+    }
     let pkg = await this.packageRepository.findPackage(cmd.scope, cmd.name);
     if (!pkg) {
       pkg = Package.create({
@@ -977,5 +982,26 @@ export class PackageManagerService extends AbstractService {
       }
     }
     return data;
+  }
+
+  private async _checkPackageDepsVersion(pkgJSON: PackageJSONType) {
+    // 只校验 dependencies
+    // devDependencies、optionalDependencies、peerDependencies 不会影响依赖安装 不在这里进行校验
+    const { dependencies } = pkgJSON;
+    await pMap(Object.entries(dependencies || {}), async ([ fullname, spec ]) => {
+      try {
+        const specResult = npa(`${fullname}@${spec}`);
+        // 对于 git、alias、file 等类型的依赖，不进行版本校验
+        if (![ 'range', 'tag', 'version' ].includes(specResult.type)) {
+          return;
+        }
+        const pkgVersion = await this.packageVersionService.getVersion(npa(`${fullname}@${spec}`));
+        assert(pkgVersion);
+      } catch (e) {
+        throw new BadRequestError(`deps ${fullname}@${spec} not found`);
+      }
+    }, {
+      concurrency: 12,
+    });
   }
 }

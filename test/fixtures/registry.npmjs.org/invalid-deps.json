@@ -1,0 +1,49 @@
+{
+  "_id": "invalid-deps",
+  "name": "invalid-deps",
+  "dist-tags": { "latest": "1.0.0" },
+  "versions": {
+    "1.0.0": {
+      "name": "invalid-deps",
+      "version": "1.0.0",
+      "main": "index.js",
+      "dependencies": { "invalid-semver": "@*(5895jk!", "invalid-tag": "gutu" },
+      "scripts": { "test": "echo \"Error: no test specified\" && exit 1" },
+      "author": "",
+      "license": "ISC",
+      "_id": "invalid-deps@1.0.0",
+      "_nodeVersion": "20.15.0",
+      "_npmVersion": "9.9.3",
+      "dist": {
+        "integrity": "sha512-wSjs5WIvZr78mkV8FHCKR59VVDNTupV8wylWHj05RFdB/apXroctfRe44opTO3PTGLdAFPrIUU1q7oJSebkr6w==",
+        "shasum": "588f41db968dbff87fc554d43f4af78b0eb35156",
+        "tarball": "https://registry.npmjs.org/invalid-deps/-/invalid-deps-1.0.0.tgz",
+        "fileCount": 2,
+        "unpackedSize": 295,
+        "signatures": [
+          {
+            "keyid": "SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+            "sig": "MEUCIQCxErdGOYMudvChG6AOp/bNv7fHKFhAYGJ2F62Cry48twIgFpnYMFxw6qXinx2mL3hSEsyV07n2TkKPy20gA3RQxU0="
+          }
+        ]
+      },
+      "_npmUser": { "name": "elrtmp", "email": "elrrrrrrr+npm@gmail.com" },
+      "directories": {},
+      "maintainers": [{ "name": "elrtmp", "email": "elrrrrrrr+npm@gmail.com" }],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages",
+        "tmp": "tmp/invalid-deps_1.0.0_1729738458514_0.507393390991969"
+      },
+      "_hasShrinkwrap": false
+    }
+  },
+  "time": {
+    "created": "2024-10-24T02:54:18.513Z",
+    "1.0.0": "2024-10-24T02:54:18.686Z",
+    "modified": "2024-10-24T02:54:18.896Z"
+  },
+  "maintainers": [{ "name": "elrtmp", "email": "elrrrrrrr+npm@gmail.com" }],
+  "license": "ISC",
+  "readme": "ERROR: No README data found!",
+  "readmeFilename": ""
+}
