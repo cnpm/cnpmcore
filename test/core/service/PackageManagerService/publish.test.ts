@@ -132,7 +132,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
           version: '1.1.0',
           isPrivate: false,
         }, publisher);
-      }, /Package invalid-pkg@some-semver-not-exits not found/);
+      }, /deps invalid-pkg@some-semver-not-exits not found/);
 
       assert(checked);
     });

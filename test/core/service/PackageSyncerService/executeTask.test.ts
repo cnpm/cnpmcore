@@ -2582,7 +2582,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const log = await TestUtil.readStreamToLog(stream);
         assert(log);
         // console.log(log);
-        const model = await PackageModel.findOne({ scope: '', name: 'invalid-pkgs' });
+        const model = await PackageModel.findOne({ scope: '', name: 'invalid-deps' });
         assert(!model);
 
         // shoud requeue
