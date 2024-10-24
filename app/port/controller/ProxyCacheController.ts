@@ -19,7 +19,6 @@ import {
   isPkgManifest,
 } from '../../core/service/ProxyCacheService';
 import { SyncMode } from '../../common/constants';
-import { NFSAdapter } from '../../common/adapter/NFSAdapter';
 import { CacheService } from '../../core/service/CacheService';
 
 @HTTPController()
@@ -28,8 +27,6 @@ export class ProxyCacheController extends AbstractController {
   private readonly proxyCacheRepository: ProxyCacheRepository;
   @Inject()
   private readonly proxyCacheService: ProxyCacheService;
-  @Inject()
-  private readonly nfsAdapter: NFSAdapter;
   @Inject()
   private readonly cacheService: CacheService;
 
