@@ -72,7 +72,8 @@ export class ShowPackageController extends AbstractController {
     if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
       // proxy mode
       const fileType = isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS;
-      const pkgManifest = await this.proxyCacheService.getPackageManifest(fullname, fileType);
+      const { data: sourceManifest } = await this.proxyCacheService.getProxyResponse(ctx, { dataType: 'json' });
+      const pkgManifest = this.proxyCacheService.replaceTarballUrl(sourceManifest, fileType);
 
       const nfsBytes = Buffer.from(JSON.stringify(pkgManifest));
       const { shasum: etag } = await calculateIntegrity(nfsBytes);

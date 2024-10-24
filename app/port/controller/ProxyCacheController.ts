@@ -18,8 +18,9 @@ import {
   ProxyCacheService,
   isPkgManifest,
 } from '../../core/service/ProxyCacheService';
-import { SyncMode, PROXY_CACHE_DIR_NAME } from '../../common/constants';
+import { SyncMode } from '../../common/constants';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter';
+import { CacheService } from '../../core/service/CacheService';
 
 @HTTPController()
 export class ProxyCacheController extends AbstractController {
@@ -29,6 +30,8 @@ export class ProxyCacheController extends AbstractController {
   private readonly proxyCacheService: ProxyCacheService;
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
+  @Inject()
+  private readonly cacheService: CacheService;
 
   @HTTPMethod({
     method: HTTPMethodEnum.GET,
@@ -77,6 +80,7 @@ export class ProxyCacheController extends AbstractController {
     if (refreshList.length === 0) {
       throw new NotFoundError();
     }
+    await this.cacheService.removeCache(fullname);
     const taskList = refreshList
       // 仅manifests需要更新，指定版本的package.json文件发布后不会改变
       .filter(i => isPkgManifest(i.fileType))
@@ -116,6 +120,7 @@ export class ProxyCacheController extends AbstractController {
     if (proxyCachesList.length === 0) {
       throw new NotFoundError();
     }
+    await this.cacheService.removeCache(fullname);
     const removingList = proxyCachesList.map(item => {
       return this.proxyCacheService.removeProxyCache(item.fullname, item.fileType, item.version);
     });
@@ -123,34 +128,6 @@ export class ProxyCacheController extends AbstractController {
     return {
       ok: true,
       result: proxyCachesList,
-    };
-  }
-
-  @HTTPMethod({
-    method: HTTPMethodEnum.DELETE,
-    path: '/-/proxy-cache',
-  })
-  async truncateProxyCaches(@Context() ctx: EggContext) {
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    if (!isAdmin) {
-      throw new UnauthorizedError('only admin can do this');
-    }
-
-    if (this.config.cnpmcore.syncMode !== SyncMode.proxy) {
-      throw new ForbiddenError('proxy mode is not enabled');
-    }
-
-    await this.proxyCacheRepository.truncateProxyCache();
-    // 尝试删除proxy cache目录，若失败可手动管理
-    ctx.runInBackground(async () => {
-      try {
-        await this.nfsAdapter.remove(`/${PROXY_CACHE_DIR_NAME}`);
-      } catch (err) {
-        this.logger.error('[ProxyCacheService.truncateProxyCaches] remove proxy cache dir error: %s', err);
-      }
-    });
-    return {
-      ok: true,
     };
   }
 }
