@@ -127,92 +127,6 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
     });
   });
 
-  describe('getRewrittenManifest()', () => {
-    it('should get full package manifest', async () => {
-      const data = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('registry.npmjs.org/foobar.json'),
-      );
-      mock(proxyCacheService, 'getUpstreamFullManifests', async () => {
-        return {
-          status: 200,
-          data,
-        };
-      });
-      const manifest = await proxyCacheService.getRewrittenManifest(
-        'foobar',
-        DIST_NAMES.FULL_MANIFESTS,
-      );
-      const versionArr = Object.values(manifest.versions);
-      for (const i of versionArr) {
-        assert(i.dist.tarball.includes('http://localhost:7001'));
-      }
-    });
-
-    it('should get abbreviated package manifest', async () => {
-      const data = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('registry.npmjs.org/abbreviated_foobar.json'),
-      );
-      mock(proxyCacheService, 'getUpstreamAbbreviatedManifests', async () => {
-        return {
-          status: 200,
-          data,
-        };
-      });
-      const manifest = await proxyCacheService.getRewrittenManifest(
-        'foobar',
-        DIST_NAMES.ABBREVIATED_MANIFESTS,
-      );
-      const versionArr = Object.values(manifest.versions);
-      for (const i of versionArr) {
-        assert(i.dist.tarball.includes('http://localhost:7001'));
-      }
-    });
-
-    it('should get full package version manifest', async () => {
-      const data = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('registry.npmjs.org/foobar/1.0.0/package.json'),
-      );
-      mock(proxyCacheService, 'getUpstreamPackageVersionManifest', async () => {
-        return {
-          status: 200,
-          data,
-        };
-      });
-      const manifest = await proxyCacheService.getRewrittenManifest(
-        'foobar',
-        DIST_NAMES.MANIFEST,
-        '1.0.0',
-      );
-      assert(manifest.dist);
-      assert(manifest.dist.tarball.includes('http://localhost:7001'));
-    });
-
-    it('should get abbreviated package version manifest', async () => {
-      const data = await TestUtil.readJSONFile(
-        TestUtil.getFixtures(
-          'registry.npmjs.org/foobar/1.0.0/abbreviated.json',
-        ),
-      );
-      mock(
-        proxyCacheService,
-        'getUpstreamAbbreviatedPackageVersionManifest',
-        async () => {
-          return {
-            status: 200,
-            data,
-          };
-        },
-      );
-      const manifest = await proxyCacheService.getRewrittenManifest(
-        'foobar',
-        DIST_NAMES.ABBREVIATED,
-        '1.0.0',
-      );
-      assert(manifest.dist);
-      assert(manifest.dist.tarball.includes('http://localhost:7001'));
-    });
-  });
-
   describe('removeProxyCache()', () => {
     it('should remove cache', async () => {
       await proxyCacheRepository.saveProxyCache(
@@ -300,7 +214,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           fileType: DIST_NAMES.FULL_MANIFESTS,
         },
       );
-      mock(proxyCacheService, 'getUpstreamFullManifests', async () => {
+      mock(proxyCacheService, 'getPackageVersionManifest', async () => {
         return {
           status: 200,
           data: await TestUtil.readJSONFile(
