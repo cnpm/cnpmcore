@@ -112,5 +112,29 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
       assert.equal(pkgVersion.version, '1.1.0');
       assert.equal(pkgVersion.tarDist.size, 2672);
     });
+
+    it('should strict validate deps', async () => {
+      let checked = false;
+      mock(app.config.cnpmcore, 'strictValidatePackageDeps', true);
+
+      await assert.rejects(async () => {
+        checked = true;
+        await packageManagerService.publish({
+          dist: {
+            localFile: TestUtil.getFixtures('registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'),
+          },
+          tags: [ '' ],
+          scope: '',
+          name: 'pedding',
+          description: 'pedding description',
+          packageJson: { name: 'pedding', test: 'test', version: '1.1.0', dependencies: { 'invalid-pkg': 'some-semver-not-exits' } },
+          readme: '',
+          version: '1.1.0',
+          isPrivate: false,
+        }, publisher);
+      }, /Package invalid-pkg@some-semver-not-exits not found/);
+
+      assert(checked);
+    });
   });
 });
