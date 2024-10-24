@@ -1,5 +1,30 @@
-version: '3.6'
+version: '3.8'
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/workspaces:cached
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity    
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - cnpm
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    # networks:
+    #   - cnpm
+
+    # Uncomment the next line to use a non-root user for all processes.
+    # user: node
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
   redis:
     image: redis:6-alpine
     # command: redis-server --appendonly yes --requirepass cnpm
@@ -7,7 +32,7 @@ services:
     volumes:
       - cnpm-redis:/data
     ports:
-      - 6379:6379
+      - 6379
     networks:
       - cnpm
 
@@ -16,7 +41,7 @@ services:
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD:
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
       # MYSQL_DATABASE: 'cnpmcore_unittest'
       MYSQL_USER: user
@@ -25,32 +50,29 @@ services:
       - cnpm-mysql:/var/lib/mysql
       # - ./conf.d/mysql/:/etc/mysql/conf.d
       # - ./init.d/mysql/:/docker-entrypoint-initdb.d
+      - ./sql:/docker-entrypoint-initdb.d/sql
+      - ./prepare-database.sh:/docker-entrypoint-initdb.d/init.sh
     ports:
-      - 3306:3306
+      - 3306
     networks:
       - cnpm
 
   # database explorer
-  phpmyadmin:
-    image: phpmyadmin
+  adminer:
+    image: adminer
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-      MYSQL_USER: user
-      MYSQL_PASSWORD: pass
-      PMA_HOST: 'mysql'
-    ports:
-      - 8080:80
-    networks:
-      - cnpm
+      ADMINER_DEFAULT_DB_HOST: 'mysql'  
     depends_on:
       - mysql
+    ports:
+      - 8080
+    networks:
+      - cnpm
 
 volumes:
   cnpm-redis:
   cnpm-mysql:
-
 
 networks:
   cnpm:
