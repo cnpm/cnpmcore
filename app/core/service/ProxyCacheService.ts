@@ -61,10 +61,16 @@ export class ProxyCacheService extends AbstractService {
   async getPackageManifest(fullname: string, fileType: DIST_NAMES.FULL_MANIFESTS| DIST_NAMES.ABBREVIATED_MANIFESTS): Promise<AbbreviatedPackageManifestType|PackageManifestType> {
     const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType))?.filePath;
     if (cachedStoreKey) {
-      const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
-      const nfsString = Buffer.from(nfsBytes!).toString();
-      const nfsPkgManifgest = JSON.parse(nfsString);
-      return nfsPkgManifgest;
+      try {
+        const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
+        const nfsString = Buffer.from(nfsBytes!).toString();
+        const nfsPkgManifgest = JSON.parse(nfsString);
+        return nfsPkgManifgest;
+      } catch (error) {
+        await this.nfsAdapter.remove(cachedStoreKey);
+        await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
+        throw error;
+      }
     }
 
     const manifest = await this.getRewrittenManifest<typeof fileType>(fullname, fileType);
@@ -88,9 +94,15 @@ export class ProxyCacheService extends AbstractService {
     }
     const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType, version))?.filePath;
     if (cachedStoreKey) {
-      const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
-      const nfsString = Buffer.from(nfsBytes!).toString();
-      return JSON.parse(nfsString) as PackageJSONType | AbbreviatedPackageJSONType;
+      try {
+        const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
+        const nfsString = Buffer.from(nfsBytes!).toString();
+        return JSON.parse(nfsString) as PackageJSONType | AbbreviatedPackageJSONType;
+      } catch (error) {
+        await this.nfsAdapter.remove(cachedStoreKey);
+        await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
+        throw error;
+      }
     }
     const manifest = await this.getRewrittenManifest(fullname, fileType, versionOrTag);
     this.backgroundTaskHelper.run(async () => {
@@ -129,6 +141,7 @@ export class ProxyCacheService extends AbstractService {
     }
     return manifest;
   }
+
   async createTask(targetName: string, options: UpdateProxyCacheTaskOptions): Promise<CreateUpdateProxyCacheTask> {
     return await this.taskService.createTask(Task.createUpdateProxyCache(targetName, options), false) as CreateUpdateProxyCacheTask;
   }

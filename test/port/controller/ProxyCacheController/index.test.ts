@@ -9,8 +9,6 @@ import { SyncMode } from '../../../../app/common/constants';
 import { TestUtil } from '../../../TestUtil';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
-  //   let publisher;
-  //   let adminUser;
   let proxyCacheRepository: ProxyCacheRepository;
   beforeEach(async () => {
     proxyCacheRepository = await app.getEggObject(ProxyCacheRepository);

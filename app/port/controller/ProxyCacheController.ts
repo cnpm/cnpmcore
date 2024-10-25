@@ -8,7 +8,7 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { ForbiddenError, NotFoundError, UnauthorizedError } from 'egg-errors';
+import { ForbiddenError, NotFoundError, UnauthorizedError, NotImplementedError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
 import { Static } from 'egg-typebox-validate/typebox';
@@ -79,10 +79,10 @@ export class ProxyCacheController extends AbstractController {
     }
     await this.cacheService.removeCache(fullname);
     const taskList = refreshList
-      // 仅manifests需要更新，指定版本的package.json文件发布后不会改变
+      // only refresh package.json and abbreviated.json
       .filter(i => isPkgManifest(i.fileType))
-      .map(async item => {
-        const task = await this.proxyCacheService.createTask(
+      .map(item => {
+        const task = this.proxyCacheService.createTask(
           `${item.fullname}/${item.fileType}`,
           {
             fullname: item.fullname,
@@ -91,9 +91,10 @@ export class ProxyCacheController extends AbstractController {
         );
         return task;
       });
+    const tasks = await Promise.all(taskList);
     return {
       ok: true,
-      tasks: await Promise.all(taskList),
+      tasks,
     };
   }
 
@@ -101,12 +102,7 @@ export class ProxyCacheController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
     path: `/-/proxy-cache/:fullname(${FULLNAME_REG_STRING})`,
   })
-  async removeProxyCaches(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    if (!isAdmin) {
-      throw new UnauthorizedError('only admin can do this');
-    }
-
+  async removeProxyCaches(@HTTPParam() fullname: string) {
     if (this.config.cnpmcore.syncMode !== SyncMode.proxy) {
       throw new ForbiddenError('proxy mode is not enabled');
     }
@@ -126,5 +122,22 @@ export class ProxyCacheController extends AbstractController {
       ok: true,
       result: proxyCachesList,
     };
+  }
+
+  @HTTPMethod({
+    method: HTTPMethodEnum.DELETE,
+    path: '/-/proxy-cache',
+  })
+  async truncateProxyCaches(@Context() ctx: EggContext) {
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
+    if (!isAdmin) {
+      throw new UnauthorizedError('only admin can do this');
+    }
+
+    if (this.config.cnpmcore.syncMode !== SyncMode.proxy) {
+      throw new ForbiddenError('proxy mode is not enabled');
+    }
+
+    throw new NotImplementedError('not implemented yet');
   }
 }
