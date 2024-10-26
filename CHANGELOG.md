@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.65.0](https://github.com/cnpm/cnpmcore/compare/v3.64.0...v3.65.0) (2024-10-26)
+
+
+### Features
+
+* strict validate deps ([#720](https://github.com/cnpm/cnpmcore/issues/720)) ([12650ac](https://github.com/cnpm/cnpmcore/commit/12650acf72bba3a7cf7d95e7746f08c6ae8bab84))
+
 ## [3.64.0](https://github.com/cnpm/cnpmcore/compare/v3.63.1...v3.64.0) (2024-10-18)
 
 
