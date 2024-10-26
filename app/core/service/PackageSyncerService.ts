@@ -360,6 +360,7 @@ export class PackageSyncerService extends AbstractService {
     if (tips) {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
     }
+
     const taskQueueLength = await this.taskService.getTaskQueueLength(task.type);
     const taskQueueHighWaterSize = this.config.cnpmcore.taskQueueHighWaterSize;
     const taskQueueInHighWaterState = taskQueueLength >= taskQueueHighWaterSize;
@@ -730,6 +731,14 @@ export class PackageSyncerService extends AbstractService {
           this.logger.error(err);
           lastErrorMessage = `publish error: ${err}`;
           logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} error, ${lastErrorMessage}`);
+          if (err.name === 'BadRequestError') {
+            // 由于当前版本的依赖不满足，尝试重试
+            // 默认会在当前队列最后重试
+            this.logger.info('[PackageSyncerService.executeTask:fail-validate-deps] taskId: %s, targetName: %s, %s',
+              task.taskId, task.targetName, task.error);
+            await this.taskService.retryTask(task, logs.join('\n'));
+            return;
+          }
         }
       }
       await this.taskService.appendTaskLog(task, logs.join('\n'));

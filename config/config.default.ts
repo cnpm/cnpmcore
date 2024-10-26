@@ -59,6 +59,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   enableElasticsearch: !!process.env.CNPMCORE_CONFIG_ENABLE_ES,
   elasticsearchIndex: 'cnpmcore_packages',
   strictValidateTarballPkg: false,
+  strictValidatePackageDeps: false,
 };
 
 export default (appInfo: EggAppConfig) => {
