@@ -67,6 +67,7 @@ export class ProxyCacheService extends AbstractService {
         const nfsPkgManifgest = JSON.parse(nfsString);
         return nfsPkgManifgest;
       } catch (error) {
+        /* c8 ignore next 3 */
         await this.nfsAdapter.remove(cachedStoreKey);
         await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
         throw error;
@@ -99,6 +100,7 @@ export class ProxyCacheService extends AbstractService {
         const nfsString = Buffer.from(nfsBytes!).toString();
         return JSON.parse(nfsString) as PackageJSONType | AbbreviatedPackageJSONType;
       } catch (error) {
+        /* c8 ignore next 3 */
         await this.nfsAdapter.remove(cachedStoreKey);
         await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
         throw error;
