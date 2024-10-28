@@ -2552,5 +2552,45 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         assert(/different meta: {"_npmUser":{"name":"banana","email":"banana@cnpmjs.org"}}/.test(log2));
       });
     });
+
+    describe('strictValidatePackageDeps = true', async () => {
+
+      // already synced pkg
+      beforeEach(async () => {
+        app.mockHttpclient(/^https:\/\/registry\.npmjs\.org\/invalid\-deps/, 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/invalid-deps.json'),
+          persist: false,
+        });
+
+        app.mockHttpclient('https://registry.npmjs.org/invalid-deps/-/invalid-deps-1.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        });
+      });
+
+      it('should not create pkg when invalid deps', async () => {
+        // removed in remote
+        mock(app.config.cnpmcore, 'strictValidatePackageDeps', true);
+        await packageSyncerService.createTask('invalid-deps', { skipDependencies: true });
+        const task = await packageSyncerService.findExecuteTask();
+        assert(task);
+        await packageSyncerService.executeTask(task);
+        // assert(!await TaskModel.findOne({ taskId: task.taskId }));
+        // assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert(log);
+        // console.log(log);
+        const model = await PackageModel.findOne({ scope: '', name: 'invalid-deps' });
+        assert(!model);
+
+        // shoud requeue
+        const reTask = await packageSyncerService.findExecuteTask();
+        assert(reTask.attempts === 2);
+
+      });
+
+    });
   });
 });
