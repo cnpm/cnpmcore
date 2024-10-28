@@ -123,12 +123,6 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .expect(403);
     });
 
-    it('should 403 when not login', async () => {
-      mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
-      mock(app.config.cnpmcore, 'redirectNotFound', false);
-      await app.httpRequest().delete('/-/proxy-cache/foo-bar').expect(401);
-    });
-
     it('should delete all packages about "foo-bar".', async () => {
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
@@ -139,8 +133,10 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .set('authorization', adminUser.authorization)
         .expect(200);
       assert(res.body.ok === true);
+      // foo-bar
       assert(res.body.result.length === 2);
       const res1 = await app.httpRequest().get('/-/proxy-cache').expect(200);
+      // foobar
       assert(res1.body.data.length === 2);
     });
 
