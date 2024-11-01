@@ -133,4 +133,24 @@ export class DownloadPackageVersionTarController extends AbstractController {
     });
     return res;
   }
+
+  // Compatible Verdaccio path style
+
+  @HTTPMethod({
+    // GET /:fullname/-/:scope/:filenameWithVersion.tgz
+    path: `/:fullname(${FULLNAME_REG_STRING})/-/:scope/:filenameWithVersion.tgz`,
+    method: HTTPMethodEnum.OPTIONS,
+  })
+  async downloadVerdaccioPathStyleorOptions(@Context() ctx: EggContext) {
+    return this.downloadForOptions(ctx);
+  }
+
+  @HTTPMethod({
+    // GET /:fullname/-/:scope/:filenameWithVersion.tgz
+    path: `/:fullname(${FULLNAME_REG_STRING})/-/:scope/:filenameWithVersion.tgz`,
+    method: HTTPMethodEnum.GET,
+  })
+  async downloadVerdaccioPathStyle(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+    return this.download(ctx, fullname, filenameWithVersion);
+  }
 }
