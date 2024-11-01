@@ -380,7 +380,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       assert(res.status === 302);
       assert(res.headers.location === `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
       res = await app.httpRequest()
-        .get(`/${scopedName}/-/${scope}/${scopedName}-1.0.0.tgz`);
+        .get(`/${scopedName}/-/${scope}/${name}-1.0.0.tgz`);
       assert(res.status === 302);
       assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
     });
@@ -394,7 +394,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
 
       await app.httpRequest()
-        .get(`/${scopedName}/-/${scope}/${scopedName}-1.0.0.tgz`);
+        .get(`/${scopedName}/-/${scope}/${name}-1.0.0.tgz`);
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/octet-stream');
       assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
