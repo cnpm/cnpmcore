@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.66.0](https://github.com/cnpm/cnpmcore/compare/v3.65.0...v3.66.0) (2024-11-03)
+
+
+### Features
+
+* compatible verdaccio path style ([#723](https://github.com/cnpm/cnpmcore/issues/723)) ([7158e66](https://github.com/cnpm/cnpmcore/commit/7158e66c9f09af76144beff28aa1899510080f4b))
+
 ## [3.65.0](https://github.com/cnpm/cnpmcore/compare/v3.64.0...v3.65.0) (2024-10-26)
 
 
