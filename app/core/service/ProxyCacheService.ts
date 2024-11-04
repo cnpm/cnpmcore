@@ -59,17 +59,26 @@ export class ProxyCacheService extends AbstractService {
   }
 
   async getPackageManifest(fullname: string, fileType: DIST_NAMES.FULL_MANIFESTS| DIST_NAMES.ABBREVIATED_MANIFESTS): Promise<AbbreviatedPackageManifestType|PackageManifestType> {
+    const isFullManifests = fileType === DIST_NAMES.FULL_MANIFESTS;
     const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType))?.filePath;
     if (cachedStoreKey) {
       try {
         const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
-        const nfsString = Buffer.from(nfsBytes!).toString();
-        const nfsPkgManifgest = JSON.parse(nfsString);
-        return nfsPkgManifgest;
+        if (!nfsBytes) throw new Error('not found proxy cache, try again later.');
+
+        const nfsBuffer = Buffer.from(nfsBytes);
+        const { shasum: etag } = await calculateIntegrity(nfsBytes);
+        await this.cacheService.savePackageEtagAndManifests(fullname, isFullManifests, etag, nfsBuffer);
+
+        const nfsString = nfsBuffer.toString();
+        const nfsPkgManifest = JSON.parse(nfsString);
+        return nfsPkgManifest as AbbreviatedPackageManifestType|PackageManifestType;
       } catch (error) {
-        /* c8 ignore next 3 */
-        await this.nfsAdapter.remove(cachedStoreKey);
-        await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
+        /* c8 ignore next 6 */
+        if (error.message.includes('not found proxy cache') || error.message.includes('Unexpected token : in JSON at')) {
+          await this.nfsAdapter.remove(cachedStoreKey);
+          await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
+        }
         throw error;
       }
     }
@@ -97,12 +106,15 @@ export class ProxyCacheService extends AbstractService {
     if (cachedStoreKey) {
       try {
         const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
+        if (!nfsBytes) throw new Error('not found proxy cache, try again later.');
         const nfsString = Buffer.from(nfsBytes!).toString();
         return JSON.parse(nfsString) as PackageJSONType | AbbreviatedPackageJSONType;
       } catch (error) {
-        /* c8 ignore next 3 */
-        await this.nfsAdapter.remove(cachedStoreKey);
-        await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
+        /* c8 ignore next 6 */
+        if (error.message.includes('not found proxy cache') || error.message.includes('Unexpected token : in JSON at')) {
+          await this.nfsAdapter.remove(cachedStoreKey);
+          await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
+        }
         throw error;
       }
     }
