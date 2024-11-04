@@ -13,8 +13,9 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
   });
 
-  const scopedName = '@cnpm/testmodule-download-version-tar';
+  const scope = '@cnpm';
   const name = 'testmodule-download-version-tar';
+  const scopedName = `${scope}/${name}`;
   beforeEach(async () => {
     mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
     let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
@@ -362,6 +363,54 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       }
       const res = await app.httpRequest()
         .get(`/${name}/download/${name}-1.0.0.tgz`);
+      assert(res.status === 404);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      assert(res.body.error === `[NOT_FOUND] "${name}-1.0.0.tgz" not found`);
+    });
+  });
+
+  describe('[GET /:fullname/-/:scope/:name-:version.tgz] download()', () => {
+    it('should download a version tar redirect to mock cdn success', async () => {
+      mock(nfsClientAdapter, 'url', async (storeKey: string) => {
+        // console.log('call url: ', storeKey);
+        return `https://cdn.mock.com${storeKey}`;
+      });
+      let res = await app.httpRequest()
+        .get(`/${name}/-/${scope}/${name}-1.0.0.tgz`);
+      assert(res.status === 302);
+      assert(res.headers.location === `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
+      res = await app.httpRequest()
+        .get(`/${scopedName}/-/${scope}/${name}-1.0.0.tgz`);
+      assert(res.status === 302);
+      assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
+    });
+
+    it('should download a version tar with streaming success', async () => {
+      mock(nfsClientAdapter, 'url', 'not-function');
+      const res = await app.httpRequest()
+        .get(`/${name}/-/${scope}/${name}-1.0.0.tgz`);
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/octet-stream');
+      assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
+
+      await app.httpRequest()
+        .get(`/${scopedName}/-/${scope}/${name}-1.0.0.tgz`);
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/octet-stream');
+      assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
+    });
+
+    it('should mock getDownloadUrlOrStream return undefined', async () => {
+      mock(nfsClientAdapter, 'createDownloadStream', async () => {
+        return undefined;
+      });
+      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
+        mock(nfsClientAdapter, 'url', async () => {
+          return undefined;
+        });
+      }
+      const res = await app.httpRequest()
+        .get(`/${name}/-/${scope}/${name}-1.0.0.tgz`);
       assert(res.status === 404);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
       assert(res.body.error === `[NOT_FOUND] "${name}-1.0.0.tgz" not found`);
