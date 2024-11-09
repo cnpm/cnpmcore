@@ -63,13 +63,6 @@ const binaries = {
     repo: 'nodejs/unofficial-builds',
     distUrl: 'https://unofficial-builds.nodejs.org/download/release',
   },
-  alinode: {
-    category: 'alinode',
-    description: 'Node.js 性能平台（Node.js Performance Platform）是面向中大型 Node.js 应用提供性能监控、安全提醒、故障排查、性能优化等服务的整体性解决方案。凭借对 Node.js 内核深入的理解，我们提供完善的工具链和服务，协助客户主动、快速发现和定位线上问题。',
-    type: BinaryType.Node,
-    repo: '',
-    distUrl: 'http://alinode.aliyun.com/dist/new-alinode',
-  },
   python: {
     category: 'python',
     description: 'The Python programming language https://www.python.org/',
