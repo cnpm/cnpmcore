@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.67.0](https://github.com/cnpm/cnpmcore/compare/v3.66.0...v3.67.0) (2024-11-09)
+
+
+### Features
+
+* say goodbye to alinode ([#726](https://github.com/cnpm/cnpmcore/issues/726)) ([99a5ef1](https://github.com/cnpm/cnpmcore/commit/99a5ef1715b0575007e83304000afe09b40b44d4))
+
 ## [3.66.0](https://github.com/cnpm/cnpmcore/compare/v3.65.0...v3.66.0) (2024-11-03)
 
 

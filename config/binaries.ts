@@ -69,6 +69,7 @@ const binaries = {
     type: BinaryType.Node,
     repo: '',
     distUrl: 'http://alinode.aliyun.com/dist/new-alinode',
+    disable: true,
   },
   python: {
     category: 'python',
