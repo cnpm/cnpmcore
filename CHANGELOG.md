@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.67.1](https://github.com/cnpm/cnpmcore/compare/v3.67.0...v3.67.1) (2024-11-14)
+
+
+### Bug Fixes
+
+* adapter new html format on nodejs.org/dist ([#728](https://github.com/cnpm/cnpmcore/issues/728)) ([914b59c](https://github.com/cnpm/cnpmcore/commit/914b59c7efde9dac5aca5fc6b8ceef0f25a73040))
+
 ## [3.67.0](https://github.com/cnpm/cnpmcore/compare/v3.66.0...v3.67.0) (2024-11-09)
 
 
