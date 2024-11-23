@@ -35,8 +35,8 @@ export class SearchRepository {
   private readonly searchAdapter: SearchAdapter;
 
 
-  async searchPackage(query) {
-    return await this.searchAdapter.search<SearchManifestType>(query) as estypes.SearchHitsMetadata<SearchManifestType>;
+  async searchPackage(query): Promise<estypes.SearchHitsMetadata<SearchManifestType>> {
+    return await this.searchAdapter.search<SearchManifestType>(query);
   }
 
   async upsertPackage(document: SearchManifestType) {
