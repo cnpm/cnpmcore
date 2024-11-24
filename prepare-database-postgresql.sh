@@ -3,10 +3,10 @@
 # set -ex
 
 # read variables from environment
-db_host=${CNPMCORE_DATABASE_HOST:-}
-db_port=${CNPMCORE_DATABASE_PORT:-}
-db_username=${CNPMCORE_DATABASE_USER:-}
-db_password=${CNPMCORE_DATABASE_PASSWORD:-} # default to empty password
+db_host=${POSTGRES_HOST:-}
+db_port=${POSTGRES_PORT:-}
+db_username=${POSTGRES_USER:-}
+db_password=${POSTGRES_PASSWORD:-} # default to empty password
 db_name=${CNPMCORE_DATABASE_NAME:-cnpmcore_unittest}
 
 # prepare PostgreSQL param

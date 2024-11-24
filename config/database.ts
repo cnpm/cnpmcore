@@ -24,6 +24,7 @@ if (dbType === DATABASE_TYPE.MySQL) {
   dialect = 'postgres';
   dbHost = dbHost ?? process.env.CNPMCORE_POSTGRES_HOST ?? process.env.POSTGRES_HOST;
   dbPort = dbPort ?? process.env.CNPMCORE_POSTGRES_PORT ?? process.env.POSTGRES_PORT ?? '5432';
+  dbUser = dbUser ?? process.env.CNPMCORE_POSTGRES_USER ?? process.env.POSTGRES_USER;
   dbPassword = dbPassword ?? process.env.CNPMCORE_POSTGRES_PASSWORD ?? process.env.POSTGRES_PASSWORD;
 } else if (dbType === DATABASE_TYPE.SQLite) {
   // TODO
