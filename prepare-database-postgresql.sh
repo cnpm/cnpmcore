@@ -25,15 +25,11 @@ if [ -n "$db_password" ]; then
   export PGPASSWORD=$db_password
 fi
 
-if [ "$CI" ]; then
-  echo "⛷️ Skipping database creation in CI environment."
-else
-  # reset database
-  echo "️😈 Reset database $db_name in local"
-  dropdb $db_name
-  # http://www.postgres.cn/docs/15/app-createdb.html
-  createdb $param --echo --encoding=UTF8 $db_name
-fi
+# reset database
+echo "️😈 Reset database $db_name in local"
+dropdb $db_name
+# http://www.postgres.cn/docs/15/app-createdb.html
+createdb $param --echo --encoding=UTF8 $db_name
 
 # find all sql files and sort
 sql_files=$(ls sql/postgresql/*.sql | sort)
