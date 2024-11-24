@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # read variables from environment
-db_host=${CNPMCORE_DATABASE_HOST:-127.0.0.1}
-db_port=${CNPMCORE_DATABASE_PORT:-3306}
-db_username=${CNPMCORE_DATABASE_USER:-root}
-db_password=${CNPMCORE_DATABASE_PASSWORD:-} # default to empty password
+db_host=${POSTGRES_HOST:-127.0.0.1}
+db_port=${POSTGRES_PORT:-3306}
+db_username=${POSTGRES_USER:-root}
+db_password=${POSTGRES_PASSWORD:-} # default to empty password
 db_name=${CNPMCORE_DATABASE_NAME:-cnpmcore_unittest}
 
 # prepare MySQL param
