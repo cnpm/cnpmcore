@@ -21,7 +21,8 @@ if [ -n "$db_username" ]; then
   param="$param --username=$db_username"
 fi
 if [ -n "$db_password" ]; then
-  param="$param --password=$db_password"
+  # https://stackoverflow.com/questions/6405127/how-do-i-specify-a-password-to-psql-non-interactively
+  export PGPASSWORD=$db_password
 fi
 
 if [ "$CI" ]; then
