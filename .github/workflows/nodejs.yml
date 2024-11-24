@@ -28,6 +28,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
       redis:
         # https://docs.github.com/en/actions/using-containerized-services/about-service-containers#example-mapping-redis-ports
         image: redis
@@ -54,11 +57,12 @@ jobs:
       run: npm i -g npminstall && npminstall
 
     - name: Continuous Integration
-      run: npm run ci
+      run: npm run ci:postgresql
       # Environment variables used by the `client.js` script to create a new PostgreSQL table.
       env:
         # The hostname used to communicate with the PostgreSQL service container
         POSTGRES_HOST: postgres
+        POSTGRES_PASSWORD: postgres
         # The default PostgreSQL port
         POSTGRES_PORT: 5432
 
