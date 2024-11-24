@@ -18,6 +18,7 @@ import type { User as UserModel } from './model/User';
 import { User as UserEntity } from '../core/entity/User';
 import { AbstractRepository } from './AbstractRepository';
 import { BugVersionPackages } from '../core/entity/BugVersion';
+import { DATABASE_TYPE } from '../../config/database';
 
 export type PackageManifestType = Pick<PackageJSONType, PackageJSONPickKey> & {
   _id: string;
@@ -406,18 +407,25 @@ export class PackageRepository extends AbstractRepository {
     return ModelConvertor.convertModelToEntity(model, this.PackageVersionManifest);
   }
 
-  private getCountSql(model: typeof Bone):string {
-    const { database } = this.config.orm;
-    const sql = `
-      SELECT
-          TABLE_ROWS
-        FROM
-          information_schema.tables
-        WHERE
-          table_schema = '${database}'
-          AND table_name = '${model.table}'
-    `;
-    return sql;
+  private async getTotalCountByModel(model: typeof Bone): Promise<number> {
+    if (this.config.cnpmcore.database.type === DATABASE_TYPE.MySQL) {
+      const { database } = this.config.orm as { database: string };
+      const sql = `
+        SELECT
+            TABLE_ROWS as table_rows
+          FROM
+            information_schema.tables
+          WHERE
+            table_schema = '${database}'
+            AND table_name = '${model.table}';
+      `;
+      const result = await this.orm.client.query(sql);
+      return result.rows?.[0].table_rows as number;
+    }
+    const sql = `SELECT count(id) as total FROM ${model.table};`;
+    const result = await this.orm.client.query(sql);
+    const total = Number(result.rows?.[0].total);
+    return total;
   }
 
   public async queryTotal() {
@@ -432,8 +440,7 @@ export class PackageRepository extends AbstractRepository {
       lastPackage = lastPkg.scope ? `${lastPkg.scope}/${lastPkg.name}` : lastPkg.name;
       // FIXME: id will be out of range number
       // 可能存在 id 增长不连续的情况，通过 count 查询
-      const queryRes = await this.orm.client.query(this.getCountSql(PackageModel));
-      packageCount = queryRes.rows?.[0].TABLE_ROWS as number;
+      packageCount = await this.getTotalCountByModel(PackageModel);
     }
 
     if (lastVersion) {
@@ -442,8 +449,7 @@ export class PackageRepository extends AbstractRepository {
         const fullname = pkg.scope ? `${pkg.scope}/${pkg.name}` : pkg.name;
         lastPackageVersion = `${fullname}@${lastVersion.version}`;
       }
-      const queryRes = await this.orm.client.query(this.getCountSql(PackageVersionModel));
-      packageVersionCount = queryRes.rows?.[0].TABLE_ROWS as number;
+      packageVersionCount = await this.getTotalCountByModel(PackageVersionModel);
     }
     return {
       packageCount,

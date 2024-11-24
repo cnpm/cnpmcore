@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+# set -ex
 
 # read variables from environment
 db_host=${POSTGRES_HOST:-}
