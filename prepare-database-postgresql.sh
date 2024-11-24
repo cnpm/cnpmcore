@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set -ex
+set -ex
 
 # read variables from environment
 db_host=${POSTGRES_HOST:-}
@@ -27,7 +27,7 @@ fi
 
 # reset database
 echo "️😈 Reset database $db_name in local"
-dropdb $db_name
+dropdb $param $db_name
 # http://www.postgres.cn/docs/15/app-createdb.html
 createdb $param --echo --encoding=UTF8 $db_name
 
@@ -43,5 +43,5 @@ for file in $sql_files; do
 done
 
 echo "🎉 prepare database $db_name done"
-# psql --dbname=$db_name -c "SELECT * FROM pg_catalog.pg_tables where schemaname = 'public';"
-psql --dbname=$db_name -c "\dt"
+# psql $param --dbname=$db_name -c "SELECT * FROM pg_catalog.pg_tables where schemaname = 'public';"
+psql $param --dbname=$db_name -c "\dt"
