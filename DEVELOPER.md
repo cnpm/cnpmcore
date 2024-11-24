@@ -2,7 +2,7 @@
 
 ## 环境初始化
 
-本项目的外部服务依赖有：MySQL 数据服务、Redis 缓存服务。
+本项目的外部服务依赖有：MySQL 数据库或 PostgreSQL 数据库、Redis 缓存服务。
 
 可以通过 Docker 来快速启动本地开发环境：
 
@@ -24,11 +24,11 @@ docker-compose down
 npm install
 ```
 
-### 开发运行
+### 开发运行 - MySQL
 
 ```bash
-# 初始化数据库
-MYSQL_DATABASE=cnpmcore bash ./prepare-database.sh
+# 初始化数据库 MySQL
+CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
 
 # 启动 Web 服务
 npm run dev
@@ -37,10 +37,31 @@ npm run dev
 curl -v http://127.0.0.1:7001
 ```
 
+### 开发运行 - PostgreSQL
+
+```bash
+# 初始化数据库 MySQL
+CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-postgresql.sh
+
+# 启动 Web 服务
+npm run dev:postgresql
+
+# 访问
+curl -v http://127.0.0.1:7001
+```
+
 ### 单元测试
+
+MySQL
 
 ```bash
 npm run test
+```
+
+PostgreSQL
+
+```bash
+npm run test:postgresql
 ```
 
 ## 项目结构

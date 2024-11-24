@@ -1,7 +1,7 @@
 {
   "name": "cnpmcore",
   "version": "3.69.0",
-  "description": "npm core",
+  "description": "Private NPM Registry for Enterprise",
   "files": [
     "dist/**/*"
   ],
@@ -35,17 +35,22 @@
     }
   },
   "scripts": {
-    "contributor": "git-contributor",
     "dev": "egg-bin dev",
+    "dev:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin dev",
     "lint": "eslint --cache --ext .ts .",
     "lint:fix": "eslint --cache --ext .ts --fix .",
-    "test": "npm run lint:fix && npm run test-local",
-    "pretest-local": "bash ./prepare-database.sh",
-    "test-local": "egg-bin test",
-    "pret": "bash ./prepare-database.sh",
+    "test:postgresql": "npm run lint:fix && npm run test:local",
+    "pretest:local:postgresql": "bash prepare-database-postgresql.sh",
+    "test:local:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin test",
+    "test": "npm run lint:fix && npm run test:local",
+    "pretest:local": "bash prepare-database-mysql.sh",
+    "test:local": "egg-bin test",
+    "pret": "bash prepare-database-mysql.sh",
     "t": "npm run lint:fix && egg-bin test --changed",
-    "precov": "bash ./prepare-database.sh",
+    "precov": "bash prepare-database-mysql.sh",
     "cov": "egg-bin cov",
+    "precov:postgresql": "bash prepare-database-postgresql.sh",
+    "cov:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin cov",
     "ci": "npm run lint && npm run cov && npm run tsc:prod",
     "clean": "tsc -b --clean && rm -rf dist",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
@@ -115,7 +120,8 @@
     "validate-npm-package-name": "^3.0.0"
   },
   "optionalDependencies": {
-    "s3-cnpmcore": "^1.1.2"
+    "s3-cnpmcore": "^1.1.2",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@cnpmjs/npm-cli-login": "^1.1.0",
@@ -136,7 +142,6 @@
     "egg-mock": "^5.10.4",
     "eslint": "^8.29.0",
     "eslint-config-egg": "^13.0.0",
-    "git-contributor": "2",
     "typescript": "5.2.2"
   },
   "author": "killagu",

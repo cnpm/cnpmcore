@@ -2,6 +2,12 @@ import { SyncDeleteMode, SyncMode, ChangesStreamMode } from '../common/constants
 
 export { cnpmcoreConfig } from '../../config/config.default';
 
+export enum DATABASE_TYPE {
+  MySQL = 'MySQL',
+  PostgreSQL = 'PostgreSQL',
+  SQLite = 'SQLite',
+}
+
 export type CnpmcoreConfig = {
   name: string,
   /**
@@ -175,4 +181,11 @@ export type CnpmcoreConfig = {
    * strictly enforces/validates dependencies version when publish or sync
    */
   strictValidatePackageDeps?: boolean,
+
+  /**
+   * database config
+   */
+  database: {
+    type: DATABASE_TYPE | string,
+  },
 };
