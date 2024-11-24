@@ -27,7 +27,7 @@ fi
 
 # reset database
 echo "️😈 Reset database $db_name in local"
-dropdb $param $db_name
+dropdb $param $db_name || echo "ignore database not exists"
 # http://www.postgres.cn/docs/15/app-createdb.html
 createdb $param --echo --encoding=UTF8 $db_name
 
