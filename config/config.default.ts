@@ -81,10 +81,10 @@ export default (appInfo: EggAppConfig) => {
     logger: {
       // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror
       // ignore query error
-      // logQueryError() {},
-      logQueryError(...args: any[]) {
-        console.log(args);
-      },
+      logQueryError() {},
+      // logQueryError(...args: any[]) {
+      //   console.log(args);
+      // },
     },
   };
 
