@@ -4,7 +4,7 @@
 
 # read variables from environment
 db_host=${POSTGRES_HOST:-}
-db_port=${POSTGRES_PORT:-}
+db_port=${POSTGRES_PORT:-5432}
 db_username=${POSTGRES_USER:-}
 db_password=${POSTGRES_PASSWORD:-} # default to empty password
 db_name=${CNPMCORE_DATABASE_NAME:-cnpmcore_unittest}

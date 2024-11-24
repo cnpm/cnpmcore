@@ -14,7 +14,7 @@ docker-compose up -d
 docker-compose down
 ```
 
-> 手动初始化依赖服务参见[文档](./docs/setup.md)
+> 手动初始化依赖服务参见[本地开发环境 - MySQL](./docs/setup.md) 或 [本地开发环境 - PostgreSQL](./docs/setup-with-postgresql.md)
 
 ## 本地开发
 
@@ -27,7 +27,7 @@ npm install
 ### 开发运行 - MySQL
 
 ```bash
-# 初始化数据库 MySQL
+# 初始化数据库
 CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
 
 # 启动 Web 服务
@@ -40,7 +40,7 @@ curl -v http://127.0.0.1:7001
 ### 开发运行 - PostgreSQL
 
 ```bash
-# 初始化数据库 MySQL
+# 初始化数据库
 CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-postgresql.sh
 
 # 启动 Web 服务
@@ -289,9 +289,9 @@ Repository 依赖 Model，然后被 Service 和 Controller 依赖
 
 可能需要涉及3个地方的修改：
 
-1. sql/*.sql
-2. repository/model/*.ts
-3. core/entity/*.ts
+1. `sql/mysql/*.sql`, `sql/postgresql/*.sql`
+2. `repository/model/*.ts`
+3. `core/entity/*.ts`
 
 目前还不会做 Model 到 SQL 的自动转换生成，核心原因有：
 

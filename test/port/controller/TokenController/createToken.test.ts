@@ -232,7 +232,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
             expires: 30,
           });
 
-        assert.match(res.body.error, /ER_DUP_ENTRY/);
+        assert.match(res.body.error, /ER_DUP_ENTRY|duplicate key value violates unique constraint/);
       });
     });
 

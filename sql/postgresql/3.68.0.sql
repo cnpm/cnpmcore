@@ -145,7 +145,7 @@ COMMENT ON COLUMN hooks.enable IS 'hook is enable not, 1: true, other: false';
 
 CREATE TABLE maintainers (
   id BIGSERIAL PRIMARY KEY,
-  gmt_create timestamp NOT NULL,
+  gmt_create timestamp(3) NOT NULL,
   gmt_modified timestamp(3) NOT NULL,
   package_id varchar(24) NOT NULL,
   user_id varchar(24) NOT NULL
