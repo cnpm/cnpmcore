@@ -41,7 +41,8 @@ echo "🤖 Running the following SQL files:"
 # execute sql files
 for file in $sql_files; do
   echo "🔖 Running $file..."
-  psql $param --dbname=$db_name --file=$file --echo-all
+  # psql $param --dbname=$db_name --file=$file --echo-all
+  psql $param --dbname=$db_name --file=$file --quiet
 done
 
 echo "🎉 prepare database $db_name done"

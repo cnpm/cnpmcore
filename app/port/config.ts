@@ -1,12 +1,7 @@
 import { SyncDeleteMode, SyncMode, ChangesStreamMode } from '../common/constants';
+import { DATABASE_TYPE } from '../../config/database';
 
 export { cnpmcoreConfig } from '../../config/config.default';
-
-export enum DATABASE_TYPE {
-  MySQL = 'MySQL',
-  PostgreSQL = 'PostgreSQL',
-  SQLite = 'SQLite',
-}
 
 export type CnpmcoreConfig = {
   name: string,
@@ -100,7 +95,7 @@ export type CnpmcoreConfig = {
   /**
    * white scope list
    */
-  allowScopes: string [],
+  allowScopes: string[],
   /**
    * allow publish non-scope package, disable by default
    */

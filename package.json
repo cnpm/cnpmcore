@@ -39,7 +39,7 @@
     "dev:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin dev",
     "lint": "eslint --cache --ext .ts .",
     "lint:fix": "eslint --cache --ext .ts --fix .",
-    "test:postgresql": "npm run lint:fix && npm run test:local",
+    "test:postgresql": "npm run lint:fix && npm run test:local:postgresql",
     "pretest:local:postgresql": "bash prepare-database-postgresql.sh",
     "test:local:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin test",
     "test": "npm run lint:fix && npm run test:local",
@@ -52,6 +52,7 @@
     "precov:postgresql": "bash prepare-database-postgresql.sh",
     "cov:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin cov",
     "ci": "npm run lint && npm run cov && npm run tsc:prod",
+    "ci:postgresql": "npm run lint && npm run cov:postgresql && npm run tsc:prod",
     "clean": "tsc -b --clean && rm -rf dist",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "npm run clean && tsc -p ./tsconfig.prod.json",
@@ -108,6 +109,7 @@
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
     "mysql2": "^3.9.4",
+    "pg": "^8.13.1",
     "node-rsa": "^1.1.1",
     "npm-package-arg": "^10.1.0",
     "oss-cnpm": "^5.0.1",
@@ -120,8 +122,7 @@
     "validate-npm-package-name": "^3.0.0"
   },
   "optionalDependencies": {
-    "s3-cnpmcore": "^1.1.2",
-    "pg": "^8.13.1"
+    "s3-cnpmcore": "^1.1.2"
   },
   "devDependencies": {
     "@cnpmjs/npm-cli-login": "^1.1.0",
@@ -133,6 +134,7 @@
     "@types/mysql": "^2.15.21",
     "@types/node-rsa": "^1.1.4",
     "@types/npm-package-arg": "^6.1.1",
+    "@types/pg": "^8.11.10",
     "@types/semver": "^7.3.12",
     "@types/tar": "^6.1.4",
     "@types/ua-parser-js": "^0.7.36",

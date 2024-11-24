@@ -6,14 +6,14 @@ CREATE TABLE binaries (
   category varchar(50) NOT NULL,
   parent varchar(500) NOT NULL,
   name varchar(200) NOT NULL,
-  is_dir smallint NOT NULL DEFAULT 0,
+  is_dir boolean NOT NULL DEFAULT false,
   size integer NOT NULL,
   date varchar(100) NOT NULL
 );
 
-CREATE UNIQUE INDEX uk_binary_id ON binaries (binary_id);
-CREATE UNIQUE INDEX uk_category_parent_name ON binaries (category, parent, name);
-CREATE INDEX idx_category_parent ON binaries (category, parent);
+CREATE UNIQUE INDEX binaries_uk_binary_id ON binaries (binary_id);
+CREATE UNIQUE INDEX binaries_uk_category_parent_name ON binaries (category, parent, name);
+CREATE INDEX binaries_idx_category_parent ON binaries (category, parent);
 
 COMMENT ON TABLE binaries IS 'binary info';
 COMMENT ON COLUMN binaries.id IS 'primary key';
@@ -38,7 +38,7 @@ CREATE TABLE changes (
   data json DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX uk_change_id ON changes (change_id);
+CREATE UNIQUE INDEX changes_uk_change_id ON changes (change_id);
 
 COMMENT ON TABLE changes IS 'change info';
 COMMENT ON COLUMN changes.id IS 'primary key';
@@ -62,7 +62,7 @@ CREATE TABLE dists (
   integrity varchar(512) NOT NULL
 );
 
-CREATE UNIQUE INDEX uk_dist_id ON dists (dist_id);
+CREATE UNIQUE INDEX dists_uk_dist_id ON dists (dist_id);
 
 COMMENT ON TABLE dists IS 'dist info';
 COMMENT ON COLUMN dists.id IS 'primary key';
@@ -93,7 +93,7 @@ CREATE TABLE history_tasks (
   error text
 );
 
-CREATE UNIQUE INDEX uk_task_id ON history_tasks (task_id);
+CREATE UNIQUE INDEX history_tasks_uk_task_id ON history_tasks (task_id);
 
 COMMENT ON TABLE history_tasks IS 'history task info';
 COMMENT ON COLUMN history_tasks.id IS 'primary key';
@@ -123,11 +123,11 @@ CREATE TABLE hooks (
   endpoint varchar(2048) NOT NULL,
   secret varchar(200) NOT NULL,
   latest_task_id varchar(24) DEFAULT NULL,
-  enable smallint NOT NULL DEFAULT 0
+  enable boolean NOT NULL DEFAULT false
 );
 
-CREATE UNIQUE INDEX uk_type_name_owner_id ON hooks (type, name, owner_id);
-CREATE INDEX idx_type_name_id ON hooks (type, name, id);
+CREATE UNIQUE INDEX hooks_uk_type_name_owner_id ON hooks (type, name, owner_id);
+CREATE INDEX hooks_idx_type_name_id ON hooks (type, name, id);
 
 COMMENT ON TABLE hooks IS 'task info';
 COMMENT ON COLUMN hooks.id IS 'primary key';
@@ -151,9 +151,9 @@ CREATE TABLE maintainers (
   user_id varchar(24) NOT NULL
 );
 
-CREATE UNIQUE INDEX uk_package_id_user_id ON maintainers (package_id, user_id);
-CREATE INDEX idx_package_id ON maintainers (package_id);
-CREATE INDEX idx_user_id ON maintainers (user_id);
+CREATE UNIQUE INDEX maintainers_uk_package_id_user_id ON maintainers (package_id, user_id);
+CREATE INDEX maintainers_idx_package_id ON maintainers (package_id);
+CREATE INDEX maintainers_idx_user_id ON maintainers (user_id);
 
 COMMENT ON TABLE maintainers IS 'package maintainers';
 COMMENT ON COLUMN maintainers.id IS 'primary key';
@@ -174,8 +174,8 @@ CREATE TABLE package_deps (
   spec varchar(100) NOT NULL
 );
 
-CREATE UNIQUE INDEX uk_package_dep_id ON package_deps (package_dep_id);
-CREATE UNIQUE INDEX uk_package_version_id_scope_name ON package_deps (package_version_id, scope, name);
+CREATE UNIQUE INDEX package_deps_uk_package_dep_id ON package_deps (package_dep_id);
+CREATE UNIQUE INDEX package_deps_uk_package_version_id_scope_name ON package_deps (package_version_id, scope, name);
 
 COMMENT ON TABLE package_deps IS 'package dependency info';
 COMMENT ON COLUMN package_deps.id IS 'primary key';
@@ -198,8 +198,8 @@ CREATE TABLE package_tags (
   version varchar(256) NOT NULL
 );
 
-CREATE UNIQUE INDEX uk_package_tag_id ON package_tags (package_tag_id);
-CREATE UNIQUE INDEX uk_package_tag ON package_tags (package_id, tag);
+CREATE UNIQUE INDEX package_tags_uk_package_tag_id ON package_tags (package_tag_id);
+CREATE UNIQUE INDEX package_tags_uk_package_tag ON package_tags (package_id, tag);
 
 COMMENT ON TABLE package_tags IS 'package tag info';
 COMMENT ON COLUMN package_tags.id IS 'primary key';
@@ -221,8 +221,8 @@ CREATE TABLE package_version_blocks (
   reason text NOT NULL
 );
 
-CREATE UNIQUE INDEX uk_package_version_block_id ON package_version_blocks (package_version_block_id);
-CREATE UNIQUE INDEX uk_name_version ON package_version_blocks (package_id, version);
+CREATE UNIQUE INDEX package_version_blocks_uk_package_version_block_id ON package_version_blocks (package_version_block_id);
+CREATE UNIQUE INDEX package_version_blocks_uk_name_version ON package_version_blocks (package_id, version);
 
 COMMENT ON TABLE package_version_blocks IS 'blocklist package versions';
 COMMENT ON COLUMN package_version_blocks.id IS 'primary key';
@@ -274,9 +274,9 @@ CREATE TABLE package_version_downloads (
   d31 integer NOT NULL DEFAULT 0
 );
 
-CREATE UNIQUE INDEX uk_year_month_package_id_version ON package_version_downloads (year_month, package_id, version);
-CREATE INDEX idx_year_month ON package_version_downloads (year_month);
-CREATE INDEX idx_packageid_yearmonth ON package_version_downloads (package_id, year_month);
+CREATE UNIQUE INDEX package_version_downloads_uk_year_month_package_id_version ON package_version_downloads (year_month, package_id, version);
+CREATE INDEX package_version_downloads_idx_year_month ON package_version_downloads (year_month);
+CREATE INDEX package_version_downloads_idx_packageid_yearmonth ON package_version_downloads (package_id, year_month);
 
 COMMENT ON TABLE package_version_downloads IS 'package version download total info';
 COMMENT ON COLUMN package_version_downloads.id IS 'primary key';
@@ -331,8 +331,8 @@ CREATE TABLE package_version_files (
   mtime timestamp(3) NOT NULL
 );
 
-CREATE UNIQUE INDEX uk_package_version_file_id ON package_version_files (package_version_file_id);
-CREATE UNIQUE INDEX ux_package_version_id_directory_name ON package_version_files (package_version_id, directory, name);
+CREATE UNIQUE INDEX package_version_files_uk_package_version_file_id ON package_version_files (package_version_file_id);
+CREATE UNIQUE INDEX package_version_files_ux_package_version_id_directory_name ON package_version_files (package_version_id, directory, name);
 
 COMMENT ON TABLE package_version_files IS 'package version file';
 COMMENT ON COLUMN package_version_files.id IS 'primary key';
@@ -357,9 +357,9 @@ CREATE TABLE package_version_manifests (
   manifest json NOT NULL
 );
 
-CREATE UNIQUE INDEX uk_package_version_manifest_id ON package_version_manifests (package_version_manifest_id);
-CREATE UNIQUE INDEX uk_package_version_id ON package_version_manifests (package_version_id);
-CREATE INDEX idx_package_id ON package_version_manifests (package_id);
+CREATE UNIQUE INDEX package_version_manifests_uk_package_version_manifest_id ON package_version_manifests (package_version_manifest_id);
+CREATE UNIQUE INDEX package_version_manifests_uk_package_version_id ON package_version_manifests (package_version_id);
+CREATE INDEX package_version_manifests_idx_package_id ON package_version_manifests (package_id);
 
 COMMENT ON TABLE package_version_manifests IS 'package version manifest';
 COMMENT ON COLUMN package_version_manifests.id IS 'primary key';
@@ -384,12 +384,12 @@ CREATE TABLE package_versions (
   readme_dist_id varchar(24) NOT NULL,
   publish_time timestamp(3) NOT NULL,
   padding_version varchar(255) DEFAULT NULL,
-  is_pre_release smallint DEFAULT NULL
+  is_pre_release boolean DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX uk_package_version_id ON package_versions (package_version_id);
-CREATE UNIQUE INDEX uk_package_id_version ON package_versions (package_id, version);
-CREATE INDEX idx_pkg_id_is_pre_release_padding_version ON package_versions (package_id, padding_version, is_pre_release, version);
+CREATE UNIQUE INDEX package_versions_uk_package_version_id ON package_versions (package_version_id);
+CREATE UNIQUE INDEX package_versions_uk_package_id_version ON package_versions (package_id, version);
+CREATE INDEX package_versions_idx_pkg_id_is_pre_release_padding_version ON package_versions (package_id, padding_version, is_pre_release, version);
 
 COMMENT ON TABLE package_versions IS 'package version info';
 COMMENT ON COLUMN package_versions.id IS 'primary key';
@@ -412,7 +412,7 @@ CREATE TABLE packages (
   gmt_create timestamp(3) NOT NULL,
   gmt_modified timestamp(3) NOT NULL,
   package_id varchar(24) NOT NULL,
-  is_private smallint NOT NULL DEFAULT 0,
+  is_private boolean NOT NULL DEFAULT false,
   name varchar(214) NOT NULL,
   scope varchar(214) NOT NULL,
   description varchar(10240) DEFAULT NULL,
@@ -421,8 +421,8 @@ CREATE TABLE packages (
   registry_id varchar(24) DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX uk_package_id ON packages (package_id);
-CREATE UNIQUE INDEX uk_scope_name ON packages (scope, name);
+CREATE UNIQUE INDEX packages_uk_package_id ON packages (package_id);
+CREATE UNIQUE INDEX packages_uk_scope_name ON packages (scope, name);
 
 COMMENT ON TABLE packages IS 'package info';
 COMMENT ON COLUMN packages.id IS 'primary key';
@@ -448,8 +448,8 @@ CREATE TABLE proxy_caches (
   file_path varchar(512) NOT NULL DEFAULT ''
 );
 
-CREATE UNIQUE INDEX uk_package_version_path_name ON proxy_caches (file_path);
-CREATE UNIQUE INDEX ux_package_version_file_name ON proxy_caches (fullname, file_type, version);
+CREATE UNIQUE INDEX proxy_caches_uk_package_version_path_name ON proxy_caches (file_path);
+CREATE UNIQUE INDEX proxy_caches_ux_package_version_file_name ON proxy_caches (fullname, file_type, version);
 
 COMMENT ON TABLE proxy_caches IS 'proxy mode cached files index';
 COMMENT ON COLUMN proxy_caches.id IS 'primary key';
@@ -474,7 +474,7 @@ CREATE TABLE registries (
   auth_token varchar(256) DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX uk_name ON registries (name);
+CREATE UNIQUE INDEX registries_uk_name ON registries (name);
 
 COMMENT ON TABLE registries IS 'registry info';
 COMMENT ON COLUMN registries.id IS 'primary key';
@@ -498,7 +498,7 @@ CREATE TABLE scopes (
   registry_id varchar(24) NOT NULL
 );
 
-CREATE UNIQUE INDEX uk_name ON scopes (name);
+CREATE UNIQUE INDEX scopes_uk_name ON scopes (name);
 
 COMMENT ON TABLE scopes IS 'scope info';
 COMMENT ON COLUMN scopes.id IS 'primary key';
@@ -527,11 +527,11 @@ CREATE TABLE tasks (
   biz_id varchar(100) DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX uk_task_id ON tasks (task_id);
-CREATE UNIQUE INDEX uk_biz_id ON tasks (biz_id);
-CREATE INDEX idx_type_state_target_name ON tasks (target_name, type, state);
-CREATE INDEX idx_type_state_gmt_modified ON tasks (type, state, gmt_modified);
-CREATE INDEX idx_gmt_modified ON tasks (gmt_modified);
+CREATE UNIQUE INDEX tasks_uk_task_id ON tasks (task_id);
+CREATE UNIQUE INDEX tasks_uk_biz_id ON tasks (biz_id);
+CREATE INDEX tasks_idx_type_state_target_name ON tasks (target_name, type, state);
+CREATE INDEX tasks_idx_type_state_gmt_modified ON tasks (type, state, gmt_modified);
+CREATE INDEX tasks_idx_gmt_modified ON tasks (gmt_modified);
 
 COMMENT ON TABLE tasks IS 'task info';
 COMMENT ON COLUMN tasks.id IS 'primary key';
@@ -559,9 +559,9 @@ CREATE TABLE token_packages (
   package_id varchar(24) NOT NULL
 );
 
-CREATE UNIQUE INDEX uk_token_id_package_id ON token_packages (token_id, package_id);
-CREATE INDEX idx_token_id ON token_packages (token_id);
-CREATE INDEX idx_package_id ON token_packages (package_id);
+CREATE UNIQUE INDEX token_packages_uk_token_id_package_id ON token_packages (token_id, package_id);
+CREATE INDEX token_packages_idx_token_id ON token_packages (token_id);
+CREATE INDEX token_packages_idx_package_id ON token_packages (package_id);
 
 COMMENT ON TABLE token_packages IS 'token allowed packages';
 COMMENT ON COLUMN token_packages.id IS 'primary key';
@@ -578,8 +578,8 @@ CREATE TABLE tokens (
   token_id varchar(24) NOT NULL,
   token_mark varchar(20) NOT NULL,
   token_key varchar(200) NOT NULL,
-  is_readonly smallint NOT NULL DEFAULT 0,
-  is_automation smallint NOT NULL DEFAULT 0,
+  is_readonly boolean NOT NULL DEFAULT false,
+  is_automation boolean NOT NULL DEFAULT false,
   cidr_whitelist json NOT NULL,
   user_id varchar(24) NOT NULL,
   name varchar(255) DEFAULT NULL,
@@ -590,10 +590,10 @@ CREATE TABLE tokens (
   last_used_at timestamp(3) DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX uk_token_id ON tokens (token_id);
-CREATE UNIQUE INDEX uk_token_key ON tokens (token_key);
-CREATE UNIQUE INDEX uk_user_id_name ON tokens (user_id, name);
-CREATE INDEX idx_user_id ON tokens (user_id);
+CREATE UNIQUE INDEX tokens_uk_token_id ON tokens (token_id);
+CREATE UNIQUE INDEX tokens_uk_token_key ON tokens (token_key);
+CREATE UNIQUE INDEX tokens_uk_user_id_name ON tokens (user_id, name);
+CREATE INDEX tokens_idx_user_id ON tokens (user_id);
 
 COMMENT ON TABLE tokens IS 'token info';
 COMMENT ON COLUMN tokens.id IS 'primary key';
@@ -630,7 +630,7 @@ CREATE TABLE total (
   change_stream_seq varchar(100) DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX uk_total_id ON total (total_id);
+CREATE UNIQUE INDEX total_uk_total_id ON total (total_id);
 
 COMMENT ON TABLE total IS 'total info';
 COMMENT ON COLUMN total.id IS 'primary key';
@@ -658,12 +658,12 @@ CREATE TABLE users (
   password_salt varchar(100) NOT NULL,
   password_integrity varchar(512) NOT NULL,
   ip varchar(100) NOT NULL,
-  is_private smallint NOT NULL DEFAULT 1,
+  is_private boolean NOT NULL DEFAULT true,
   scopes json DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX uk_user_id ON users (user_id);
-CREATE UNIQUE INDEX uk_name ON users (name);
+CREATE UNIQUE INDEX users_uk_user_id ON users (user_id);
+CREATE UNIQUE INDEX users_uk_name ON users (name);
 
 COMMENT ON TABLE users IS 'user info';
 COMMENT ON COLUMN users.id IS 'primary key';
@@ -690,8 +690,8 @@ CREATE TABLE webauthn_credentials (
   browser_type varchar(20) DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX uk_wanc_id ON webauthn_credentials (wanc_id);
-CREATE INDEX idx_user_id ON webauthn_credentials (user_id);
+CREATE UNIQUE INDEX webauthn_credentials_uk_wanc_id ON webauthn_credentials (wanc_id);
+CREATE INDEX webauthn_credentials_idx_user_id ON webauthn_credentials (user_id);
 
 COMMENT ON TABLE webauthn_credentials IS 'webauthn credential info';
 COMMENT ON COLUMN webauthn_credentials.id IS 'primary key';

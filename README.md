@@ -5,7 +5,7 @@
 [![CodeQL](https://github.com/cnpm/cnpmcore/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/cnpm/cnpmcore/actions/workflows/codeql-analysis.yml)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore?ref=badge_shield)
 
-Refactor based on [cnpmjs.org](https://github.com/cnpm/cnpmjs.org) with TypeScript.
+Reimplement based on [cnpmjs.org](https://github.com/cnpm/cnpmjs.org) with TypeScript.
 
 ## Registry HTTP API
 

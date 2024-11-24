@@ -5,7 +5,8 @@ import { EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
 import { patchAjv } from '../app/port/typebox';
 import { ChangesStreamMode, NOT_IMPLEMENTED_PATH, SyncDeleteMode, SyncMode } from '../app/common/constants';
-import { CnpmcoreConfig, DATABASE_TYPE } from '../app/port/config';
+import type { CnpmcoreConfig } from '../app/port/config';
+import { database } from './database';
 
 export const cnpmcoreConfig: CnpmcoreConfig = {
   name: 'cnpm',
@@ -61,7 +62,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   strictValidateTarballPkg: false,
   strictValidatePackageDeps: false,
   database: {
-    type: process.env.CNPMCORE_DATABASE_TYPE ?? DATABASE_TYPE.MySQL,
+    type: database.type,
   },
 };
 
@@ -73,41 +74,17 @@ export default (appInfo: EggAppConfig) => {
 
   // override config from framework / plugin
   config.dataDir = process.env.CNPMCORE_DATA_DIR || join(appInfo.root, '.cnpmcore');
-
-  let dbName = process.env.CNPMCORE_DATABASE_NAME;
-  let dbHost = process.env.CNPMCORE_DATABASE_HOST;
-  let dbPort = process.env.CNPMCORE_DATABASE_PORT;
-  let dbUser = process.env.CNPMCORE_DATABASE_USER;
-  let dbPassword = process.env.CNPMCORE_DATABASE_PASSWORD;
-  let dialect = 'mysql';
-  let dbClient = 'mysql2';
-  if (config.cnpmcore.database?.type === DATABASE_TYPE.MySQL) {
-    // Compatible mysql configurations
-    dbName = dbName ?? process.env.CNPMCORE_MYSQL_DATABASE ?? process.env.MYSQL_DATABASE;
-    dbHost = dbHost ?? process.env.CNPMCORE_MYSQL_HOST ?? process.env.MYSQL_HOST ?? '127.0.0.1';
-    dbPort = dbPort ?? process.env.CNPMCORE_MYSQL_PORT ?? process.env.MYSQL_PORT ?? '3306';
-    dbUser = dbUser ?? process.env.CNPMCORE_MYSQL_USER ?? process.env.MYSQL_USER ?? 'root';
-    dbPassword = dbPassword ?? process.env.CNPMCORE_MYSQL_PASSWORD ?? process.env.MYSQL_PASSWORD;
-  } else if (config.cnpmcore.database?.type === DATABASE_TYPE.PostgreSQL) {
-    dbClient = 'pg';
-    dialect = 'postgres';
-  } else if (config.cnpmcore.database?.type === DATABASE_TYPE.SQLite) {
-    dbClient = 'sqlite';
-    dialect = 'sqlite';
-  }
   config.orm = {
-    dialect,
-    client: dbClient,
-    database: dbName ?? 'cnpmcore',
-    host: dbHost,
-    port: dbPort,
-    user: dbUser,
-    password: dbPassword,
+    ...database,
+    database: database.name ?? 'cnpmcore',
     charset: 'utf8mb4',
     logger: {
       // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror
       // ignore query error
-      logQueryError() {},
+      // logQueryError() {},
+      logQueryError(...args: any[]) {
+        console.log(args);
+      },
     },
   };
 
