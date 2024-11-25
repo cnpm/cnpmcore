@@ -1,0 +1,43 @@
+// Update the VARIANT arg in docker-compose.yml to pick a Node.js version
+{
+	"name": "Node.js && Redis && MySQL",
+	"dockerComposeFile": "../docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+			]
+		}
+	},
+
+	// Forwards ports
+	"forwardPorts": [		
+		8080
+	],
+	"portsAttributes": {
+		"8080": {
+			"label": "Adminer",
+			"onAutoForward": "notify"
+		}
+	},
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": [
+		"bash .devcontainer/scripts/postCreateCommand.sh"		
+	],
+
+	// Container Env
+	"containerEnv": {
+		"MYSQL_HOST": "mysql",
+		"MYSQL_USER": "root",
+		"MYSQL_PASSWORD": "root"
+	},
+
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "node"
+}
