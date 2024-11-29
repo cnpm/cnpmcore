@@ -72,7 +72,7 @@ export abstract class AbstractBinary {
     for (const version of versions) {
       if (!version.modules) continue;
       const modulesVersion = parseInt(version.modules);
-      // node v6.0.0 moduels 48 min
+      // node v6.0.0 modules 48 min
       if (modulesVersion >= 48 && !nodeABIVersions.includes(modulesVersion)) {
         nodeABIVersions.push(modulesVersion);
       }
