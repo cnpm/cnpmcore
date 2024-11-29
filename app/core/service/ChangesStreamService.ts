@@ -104,7 +104,9 @@ export class ChangesStreamService extends AbstractService {
       this.logger.warn('[ChangesStreamService.executeTask:error] %s, exit now', err.message);
       if (err.name === 'HttpClientRequestTimeoutError'
         || err.name === 'ConnectTimeoutError'
-        || err.name === 'BodyTimeoutError') {
+        || err.name === 'BodyTimeoutError'
+        || err.message.includes('timeout')) {
+        // InformationalError: HTTP/2: "stream timeout after 60000"
         this.logger.warn(err);
       } else {
         this.logger.error(err);
