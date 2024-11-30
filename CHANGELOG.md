@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.71.0](https://github.com/cnpm/cnpmcore/compare/v3.70.0...v3.71.0) (2024-11-30)
+
+
+### Features
+
+* sync chrome-for-testing json files ([#737](https://github.com/cnpm/cnpmcore/issues/737)) ([9bb12fd](https://github.com/cnpm/cnpmcore/commit/9bb12fde120f3ea071b38785a600f4c847e09359))
+
 ## [3.70.0](https://github.com/cnpm/cnpmcore/compare/v3.69.0...v3.70.0) (2024-11-30)
 
 
