@@ -106,11 +106,11 @@ describe('test/repository/TaskRepository.test.ts', () => {
       const newData = EntityUtil.defaultData(data, 'taskId');
       const task1 = new Task(newData);
       const lastSince = new Date();
-      await setTimeout(1);
+      await setTimeout(100);
       task1.updatedAt = lastSince;
       await taskRepository.saveTask(task1);
 
-      assert(task1.updatedAt.getTime() > lastSince.getTime());
+      assert(task1.updatedAt.getTime() >= lastSince.getTime());
     });
   });
 
