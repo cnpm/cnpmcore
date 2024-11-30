@@ -10,6 +10,7 @@ import { BadRequestError, ForbiddenError, NotFoundError } from 'egg-errors';
 import { RequireAtLeastOne } from 'type-fest';
 import npa from 'npm-package-arg';
 import semver from 'semver';
+import pMap from 'p-map';
 import {
   calculateIntegrity,
   detectInstallScript,
@@ -23,6 +24,7 @@ import { AbbreviatedPackageJSONType, AbbreviatedPackageManifestType, PackageJSON
 import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
 import { DistRepository } from '../../repository/DistRepository';
+import { isDuplicateKeyError } from '../../repository/util/ErrorUtil';
 import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
 import { PackageVersionBlock } from '../entity/PackageVersionBlock';
@@ -47,7 +49,6 @@ import { BugVersion } from '../entity/BugVersion';
 import { RegistryManagerService } from './RegistryManagerService';
 import { Registry } from '../entity/Registry';
 import { PackageVersionService } from './PackageVersionService';
-import pMap from 'p-map';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
@@ -271,7 +272,7 @@ export class PackageManagerService extends AbstractService {
     try {
       await this.packageRepository.createPackageVersion(pkgVersion);
     } catch (e) {
-      if (e.code === 'ER_DUP_ENTRY') {
+      if (isDuplicateKeyError(e)) {
         throw new ForbiddenError(`Can't modify pre-existing version: ${pkg.fullname}@${cmd.version}`);
       }
       throw e;

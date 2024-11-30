@@ -1,12 +1,13 @@
 import { strict as assert } from 'node:assert';
+import { uniq } from 'lodash';
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
+import { isDuplicateKeyError } from './util/ErrorUtil';
 import type { Task as TaskModel } from './model/Task';
 import type { HistoryTask as HistoryTaskModel } from './model/HistoryTask';
-import { Task as TaskEntity, TaskUpdateCondition } from '../core/entity/Task';
 import { AbstractRepository } from './AbstractRepository';
 import { TaskType, TaskState } from '../../app/common/enum/Task';
-import { uniq } from 'lodash';
+import { Task as TaskEntity, TaskUpdateCondition } from '../core/entity/Task';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -28,7 +29,7 @@ export class TaskRepository extends AbstractRepository {
         await ModelConvertor.convertEntityToModel(task, this.Task);
       } catch (e) {
         e.message = '[TaskRepository] insert Task failed: ' + e.message;
-        if (e.code === 'ER_DUP_ENTRY') {
+        if (isDuplicateKeyError(e)) {
           this.logger.warn(e);
           const taskModel = await this.Task.findOne({ bizId: task.bizId });
           // 覆盖 bizId 相同的 id 和 taskId

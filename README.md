@@ -5,7 +5,7 @@
 [![CodeQL](https://github.com/cnpm/cnpmcore/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/cnpm/cnpmcore/actions/workflows/codeql-analysis.yml)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore?ref=badge_shield)
 
-Reimplementation based on [cnpmjs.org](https://github.com/cnpm/cnpmjs.org) with TypeScript.
+Reimplement based on [cnpmjs.org](https://github.com/cnpm/cnpmjs.org) with TypeScript.
 
 ## Registry HTTP API
 
@@ -23,19 +23,10 @@ See [INTEGRATE.md](INTEGRATE.md)
 
 [MIT](LICENSE)
 
-<!-- GITCONTRIBUTOR_START -->
-
 ## Contributors
 
-|[<img src="https://avatars.githubusercontent.com/u/156269?v=4" width="100px;"/><br/><sub><b>fengmk2</b></sub>](https://github.com/fengmk2)<br/>|[<img src="https://avatars.githubusercontent.com/u/32174276?v=4" width="100px;"/><br/><sub><b>semantic-release-bot</b></sub>](https://github.com/semantic-release-bot)<br/>|[<img src="https://avatars.githubusercontent.com/u/5574625?v=4" width="100px;"/><br/><sub><b>elrrrrrrr</b></sub>](https://github.com/elrrrrrrr)<br/>|[<img src="https://avatars.githubusercontent.com/u/6897780?v=4" width="100px;"/><br/><sub><b>killagu</b></sub>](https://github.com/killagu)<br/>|[<img src="https://avatars.githubusercontent.com/u/35598090?v=4" width="100px;"/><br/><sub><b>hezhengxu2018</b></sub>](https://github.com/hezhengxu2018)<br/>|[<img src="https://avatars.githubusercontent.com/u/13284978?v=4" width="100px;"/><br/><sub><b>Beace</b></sub>](https://github.com/Beace)<br/>|
-| :---: | :---: | :---: | :---: | :---: | :---: |
-|[<img src="https://avatars.githubusercontent.com/u/4635838?v=4" width="100px;"/><br/><sub><b>gemwuu</b></sub>](https://github.com/gemwuu)<br/>|[<img src="https://avatars.githubusercontent.com/u/26033663?v=4" width="100px;"/><br/><sub><b>Zian502</b></sub>](https://github.com/Zian502)<br/>|[<img src="https://avatars.githubusercontent.com/u/17879221?v=4" width="100px;"/><br/><sub><b>laibao101</b></sub>](https://github.com/laibao101)<br/>|[<img src="https://avatars.githubusercontent.com/u/3478550?v=4" width="100px;"/><br/><sub><b>coolyuantao</b></sub>](https://github.com/coolyuantao)<br/>|[<img src="https://avatars.githubusercontent.com/u/10163680?v=4" width="100px;"/><br/><sub><b>Wellaiyo</b></sub>](https://github.com/Wellaiyo)<br/>|[<img src="https://avatars.githubusercontent.com/u/227713?v=4" width="100px;"/><br/><sub><b>atian25</b></sub>](https://github.com/atian25)<br/>|
-|[<img src="https://avatars.githubusercontent.com/u/33210001?v=4" width="100px;"/><br/><sub><b>hljwkwm</b></sub>](https://github.com/hljwkwm)<br/>|[<img src="https://avatars.githubusercontent.com/u/8198408?v=4" width="100px;"/><br/><sub><b>BlackHole1</b></sub>](https://github.com/BlackHole1)<br/>|[<img src="https://avatars.githubusercontent.com/u/1814071?v=4" width="100px;"/><br/><sub><b>xiekw2010</b></sub>](https://github.com/xiekw2010)<br/>|[<img src="https://avatars.githubusercontent.com/u/7054676?v=4" width="100px;"/><br/><sub><b>Zheaoli</b></sub>](https://github.com/Zheaoli)<br/>|[<img src="https://avatars.githubusercontent.com/u/13471233?v=4" width="100px;"/><br/><sub><b>OpportunityLiu</b></sub>](https://github.com/OpportunityLiu)<br/>|[<img src="https://avatars.githubusercontent.com/u/958063?v=4" width="100px;"/><br/><sub><b>thonatos</b></sub>](https://github.com/thonatos)<br/>|
-|[<img src="https://avatars.githubusercontent.com/u/26962197?v=4" width="100px;"/><br/><sub><b>chilingling</b></sub>](https://github.com/chilingling)<br/>|[<img src="https://avatars.githubusercontent.com/u/11039003?v=4" width="100px;"/><br/><sub><b>chenpx976</b></sub>](https://github.com/chenpx976)<br/>|[<img src="https://avatars.githubusercontent.com/u/29791463?v=4" width="100px;"/><br/><sub><b>fossabot</b></sub>](https://github.com/fossabot)<br/>|[<img src="https://avatars.githubusercontent.com/u/1119126?v=4" width="100px;"/><br/><sub><b>looksgood</b></sub>](https://github.com/looksgood)<br/>|[<img src="https://avatars.githubusercontent.com/u/23701019?v=4" width="100px;"/><br/><sub><b>laoboxie</b></sub>](https://github.com/laoboxie)<br/>|[<img src="https://avatars.githubusercontent.com/u/5772358?v=4" width="100px;"/><br/><sub><b>unbyte</b></sub>](https://github.com/unbyte)<br/>|
-[<img src="https://avatars.githubusercontent.com/u/5799374?v=4" width="100px;"/><br/><sub><b>wandergis</b></sub>](https://github.com/wandergis)<br/>|[<img src="https://avatars.githubusercontent.com/u/13448833?v=4" width="100px;"/><br/><sub><b>windhc</b></sub>](https://github.com/windhc)<br/>|[<img src="https://avatars.githubusercontent.com/u/2784308?v=4" width="100px;"/><br/><sub><b>yisibl</b></sub>](https://github.com/yisibl)<br/>|[<img src="https://avatars.githubusercontent.com/u/13127586?v=4" width="100px;"/><br/><sub><b>vimplus</b></sub>](https://github.com/vimplus)<br/>|[<img src="https://avatars.githubusercontent.com/u/5550931?v=4" width="100px;"/><br/><sub><b>feichao93</b></sub>](https://github.com/feichao93)<br/>
+[![Contributors](https://contrib.rocks/image?repo=cnpm/cnpmcore)](https://github.com/cnpm/cnpmcore/graphs/contributors)
 
-This project follows the git-contributor [spec](https://github.com/xudafeng/git-contributor), auto updated at `Fri May 17 2024 22:31:22 GMT+0800`.
-
-<!-- GITCONTRIBUTOR_END -->
+Made with [contributors-img](https://contrib.rocks).
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore?ref=badge_large)

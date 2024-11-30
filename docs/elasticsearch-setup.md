@@ -1,6 +1,7 @@
 # 本地搭建 ES 搜索环境
 
 ## 单机搭建
+
 ### 下载安装 ES
 
 首先我们进入 [ES 下载的官方网站](https://www.elastic.co/cn/downloads/elasticsearch) ，选择合适的操作系统版本并下载。下载完成后再适当位置解压并运行
@@ -49,7 +50,6 @@ path.logs: ./logs
 ```
 
 此时，访问 http://localhost:5601 ，即可看到 Kibana 引导页面。
-
 
 我们仅仅将其作为一个可视化的操作 API 的可视化工具，可以跳过其引导，访问 `/app/dev_tools#/console` 进入 devtool 页面。
 
@@ -247,13 +247,12 @@ ENCRYPTION_KEY=c34d38b3a14956121ff2170e5030b471551370178f43e5626eec58b04a30fae2
 执行如下命令，启动服务
 
 ```bash
-$ docker compose up
+docker compose up
 ```
 
 ### 访问 Elastic
 
 浏览器打开 http://localhost:5601/app/dev_tools#/console，默认账号为 `elastic` 密码为 .env 文件中定义的 `abcdef`
-
 
 ## 创建索引
 
@@ -982,8 +981,9 @@ $ curl -X PUT https://r.cnpmjs.org/-/v1/search/sync/${pkgName}
 ### 删除一条数据
 
 注意需要添加管理员 token，管理员在本地进行登录后，可通过查询 `~/.npmrc` 查看
+
 ```bash
-$ curl -X DELETE -H 'Authorization: Bearer ${token}' http://localhost:7001/-/v1/search/${pkgName}
+curl -X DELETE -H 'Authorization: Bearer ${token}' http://localhost:7001/-/v1/search/${pkgName}
 ```
 
 ### 修改数据
@@ -993,5 +993,5 @@ $ curl -X DELETE -H 'Authorization: Bearer ${token}' http://localhost:7001/-/v1/
 ### 查询
 
 ```bash
-$ npm search colors --registry=http://localhost:7001
+npm search colors --registry=http://localhost:7001
 ```

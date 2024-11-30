@@ -21,6 +21,7 @@ import {
 import { PackageVersionFileRepository } from '../../repository/PackageVersionFileRepository';
 import { PackageVersionRepository } from '../../repository/PackageVersionRepository';
 import { DistRepository } from '../../repository/DistRepository';
+import { isDuplicateKeyError } from '../../repository/util/ErrorUtil';
 import { PackageVersionFile } from '../entity/PackageVersionFile';
 import { PackageVersion } from '../entity/PackageVersion';
 import { Package } from '../entity/Package';
@@ -272,7 +273,9 @@ export class PackageVersionFileService extends AbstractService {
         file.packageVersionFileId, dist.size, file.path);
     } catch (err) {
       // ignore Duplicate entry
-      if (err.code === 'ER_DUP_ENTRY') return file;
+      if (isDuplicateKeyError(err)) {
+        return file;
+      }
       throw err;
     }
     return file;

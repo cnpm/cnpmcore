@@ -5,11 +5,13 @@ import { tmpdir } from 'os';
 import { mkdtempSync } from 'fs';
 import { Readable } from 'stream';
 import mysql from 'mysql2';
+import pg from 'pg';
 import path from 'path';
 import crypto from 'crypto';
 import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil';
 import semver from 'semver';
 import { PackageJSONType } from '../app/repository/PackageRepository';
+import { database, DATABASE_TYPE } from '../config/database';
 
 type PackageOptions = {
   name?: string;
@@ -44,18 +46,12 @@ export class TestUtil {
   private static _app;
   private static ua = 'npm/7.0.0 cnpmcore-unittest/1.0.0';
 
-  static getMySqlConfig() {
+  static getDatabaseConfig() {
     return {
-      host: process.env.MYSQL_HOST || '127.0.0.1',
-      port: process.env.MYSQL_PORT || 3306,
-      user: process.env.MYSQL_USER || 'root',
-      password: process.env.MYSQL_PASSWORD,
+      ...database,
+      database: database.name ?? 'cnpmcore_unittest',
       multipleStatements: true,
     };
-  }
-
-  static getDatabase() {
-    return process.env.MYSQL_DATABASE || 'cnpmcore_unittest';
   }
 
   // 不同的 npm 版本 cli 命令不同
@@ -65,25 +61,16 @@ export class TestUtil {
     return semver.clean(res.stdout);
   }
 
-  // 获取当前所有 sql 脚本内容
-  // 目前统一放置在 ../sql 文件夹中
-  // 默认根据版本号排序，确保向后兼容
-  static async getTableSqls(): Promise<string> {
-    const dirents = await fs.readdir(path.join(__dirname, '../sql'));
-    let versions = dirents.filter(t => path.extname(t) === '.sql').map(t => path.basename(t, '.sql'));
-    versions = semver.sort(versions);
-    const sqls = await Promise.all(versions.map(version => {
-      return fs.readFile(path.join(__dirname, '../sql', `${version}.sql`), 'utf8');
-    }));
-    return sqls.join('\n');
-  }
-
   static async query(sql: string): Promise<any[]> {
     const conn = this.getConnection();
     return new Promise((resolve, reject) => {
-      conn.query(sql, (err: Error, rows: any[]) => {
+      conn.query(sql, (err: Error, rows: any) => {
         if (err) {
           return reject(err);
+        }
+        if (rows.rows) {
+          // pg: { rows }
+          return resolve(rows.rows);
         }
         return resolve(rows);
       });
@@ -92,11 +79,15 @@ export class TestUtil {
 
   static getConnection() {
     if (!this.connection) {
-      const config: any = this.getMySqlConfig();
+      const config = this.getDatabaseConfig();
       if (process.env.CI) {
-        console.log('[TestUtil] connection to mysql: %j', config);
+        console.log('[TestUtil] connection to database: %j', config);
       }
-      this.connection = mysql.createConnection(config);
+      if (config.type === DATABASE_TYPE.MySQL) {
+        this.connection = mysql.createConnection(config as any);
+      } else if (config.type === DATABASE_TYPE.PostgreSQL) {
+        this.connection = new pg.Client(config as any);
+      }
       this.connection.connect();
     }
     return this.connection;
@@ -111,18 +102,26 @@ export class TestUtil {
 
   static async getTableNames() {
     if (!this.tables) {
-      const database = this.getDatabase();
-      const sql = `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${database}';`;
-      const rows = await this.query(sql);
-      this.tables = rows.map(row => row.TABLE_NAME);
+      const config = this.getDatabaseConfig();
+      if (config.type === DATABASE_TYPE.MySQL) {
+        const sql = `
+          SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${config.database}';`;
+        const rows = await this.query(sql);
+        this.tables = rows.map(row => row.TABLE_NAME);
+      } else if (config.type === DATABASE_TYPE.PostgreSQL) {
+        const sql = 'SELECT * FROM pg_catalog.pg_tables where schemaname = \'public\';';
+        const rows = await this.query(sql);
+        this.tables = rows.map(row => row.tablename);
+      }
     }
     return this.tables;
   }
 
   static async truncateDatabase() {
-    const database = this.getDatabase();
     const tables = await this.getTableNames();
-    await Promise.all(tables.map((table: string) => this.query(`TRUNCATE TABLE ${database}.${table};`)));
+    await Promise.all(tables.map(async (table: string) => {
+      await this.query(`TRUNCATE TABLE ${table};`);
+    }));
   }
 
   static get app() {

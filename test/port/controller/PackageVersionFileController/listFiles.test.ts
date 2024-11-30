@@ -4,6 +4,7 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil';
+import { database, DATABASE_TYPE } from '../../../../config/database';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let publisher;
@@ -151,7 +152,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       });
     });
 
-    it('should return the current directory\'s files and directories instead all sub items', async () => {
+    it('should return the current directory files and directories instead all sub items', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const tarball = await TestUtil.readFixturesFile('unpkg.com/openapi-7.3.3.tgz');
       const { integrity } = await calculateIntegrity(tarball);
@@ -184,139 +185,143 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         file.lastModified = '2024-05-18T16:00:18.307Z';
       }
       // console.log(JSON.stringify(res.body, null, 2));
-      assert.deepEqual(res.body, {
-        path: '/',
-        type: 'directory',
-        files: [
-          {
-            path: '/LICENSE',
-            type: 'file',
-            contentType: 'text/plain',
-            integrity: 'sha512-OJCAthMtPqrngGSNaZg5DYzHGQhWG84JV44nxUKqGp8xIuAfZAxbAb7nMATCOqTp8gZv5e4MogcsJCBXiyjXHw==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 11357,
-          },
-          {
-            path: '/index.html',
-            type: 'file',
-            contentType: 'text/html',
-            integrity: 'sha512-L4Vxx8DW1PtZfPut4uwP9DSK9+DbFbKDWWGp4KK5TRKGTHSjYoMExqY50WiTKs/bGu1Ecpneiu3dnYlRZ/sDdw==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 1437,
-          },
-          {
-            path: '/package.json',
-            type: 'file',
-            contentType: 'application/json',
-            integrity: 'sha512-ke5ybpErJgl+Mul1XCSMvly0uYAt8/5mWa5/yYykxfMCE0OBpzgWoFHC+/RM9AQfNgic3bW/ssHXDUUPZiEKkg==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 2852,
-          },
-          {
-            path: '/CHANGES.md',
-            type: 'file',
-            contentType: 'text/markdown',
-            integrity: 'sha512-xxD+0Mdep4Pprq0JsudGLCKtSfHBeIqJVoGqM0qK1b2B/0sXjSQYinxgAwjK8rKSD0jNSo3R5aK8VbgOXLtbjw==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 12346,
-          },
-          {
-            path: '/README.md',
-            type: 'file',
-            contentType: 'text/markdown',
-            integrity: 'sha512-Nnj8b9SsDDobga1LsV7FVE46YrxkdZf5MOMboVHICw56tPHnQ0v1lXvXkWz7k12kTFWbA0z42daaW7WE+AQWfw==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 4409,
-          },
-          {
-            path: '/.npmcheckrc.yaml',
-            type: 'file',
-            contentType: 'text/yaml',
-            integrity: 'sha512-EYTJJ5StGM9DUpAbF8XHV4Z02rlmzN9O6k93fu1YXpf1wDBtmFYG64xaTXk2UfB8x0BCotga+Upm1yOgJVIZTQ==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 105,
-          },
-          {
-            path: '/.redocly.lint-ignore.yaml',
-            type: 'file',
-            contentType: 'text/yaml',
-            integrity: 'sha512-tyPeiIaOGIXb3PNFb2ELAZawxGHSdPZ7IoLdl+tEcDARVFlq6B9yJVAzL5R8L26iCBbvPtlfNGnYkHj4H/5ZMA==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 644,
-          },
-          {
-            path: '/index.yaml',
-            type: 'file',
-            contentType: 'text/yaml',
-            integrity: 'sha512-KW7xaZW5F8NOGt72kc9WvLcvkFDmXbm65JdWPM2pYfy9HMX0/6obJD5jhzQSX5ZU8ww0HMlXGXkRviFnDr88ZA==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 21379,
-          },
-          {
-            path: '/.eslintrc.yml',
-            type: 'file',
-            contentType: 'text/yaml',
-            integrity: 'sha512-3q0aghG4dBd7pgE4UrbtVn52cfg3BqOPkuNcCSwHZKMSFnKZxWr+sH7/OgnBDaifVsXGK7AN8q7sX0Eds6Ditw==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 149,
-          },
-          {
-            path: '/oauth2',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/_util',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/resource',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/parameters',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/id',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/location',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/string',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/money',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/time',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/human',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/health',
-            type: 'directory',
-            files: [],
-          },
-        ],
-      });
+      if (database.type === DATABASE_TYPE.PostgreSQL) {
+        assert.equal(res.body.files.length, 20);
+      } else {
+        assert.deepEqual(res.body, {
+          path: '/',
+          type: 'directory',
+          files: [
+            {
+              path: '/LICENSE',
+              type: 'file',
+              contentType: 'text/plain',
+              integrity: 'sha512-OJCAthMtPqrngGSNaZg5DYzHGQhWG84JV44nxUKqGp8xIuAfZAxbAb7nMATCOqTp8gZv5e4MogcsJCBXiyjXHw==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 11357,
+            },
+            {
+              path: '/index.html',
+              type: 'file',
+              contentType: 'text/html',
+              integrity: 'sha512-L4Vxx8DW1PtZfPut4uwP9DSK9+DbFbKDWWGp4KK5TRKGTHSjYoMExqY50WiTKs/bGu1Ecpneiu3dnYlRZ/sDdw==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 1437,
+            },
+            {
+              path: '/package.json',
+              type: 'file',
+              contentType: 'application/json',
+              integrity: 'sha512-ke5ybpErJgl+Mul1XCSMvly0uYAt8/5mWa5/yYykxfMCE0OBpzgWoFHC+/RM9AQfNgic3bW/ssHXDUUPZiEKkg==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 2852,
+            },
+            {
+              path: '/CHANGES.md',
+              type: 'file',
+              contentType: 'text/markdown',
+              integrity: 'sha512-xxD+0Mdep4Pprq0JsudGLCKtSfHBeIqJVoGqM0qK1b2B/0sXjSQYinxgAwjK8rKSD0jNSo3R5aK8VbgOXLtbjw==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 12346,
+            },
+            {
+              path: '/README.md',
+              type: 'file',
+              contentType: 'text/markdown',
+              integrity: 'sha512-Nnj8b9SsDDobga1LsV7FVE46YrxkdZf5MOMboVHICw56tPHnQ0v1lXvXkWz7k12kTFWbA0z42daaW7WE+AQWfw==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 4409,
+            },
+            {
+              path: '/.npmcheckrc.yaml',
+              type: 'file',
+              contentType: 'text/yaml',
+              integrity: 'sha512-EYTJJ5StGM9DUpAbF8XHV4Z02rlmzN9O6k93fu1YXpf1wDBtmFYG64xaTXk2UfB8x0BCotga+Upm1yOgJVIZTQ==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 105,
+            },
+            {
+              path: '/.redocly.lint-ignore.yaml',
+              type: 'file',
+              contentType: 'text/yaml',
+              integrity: 'sha512-tyPeiIaOGIXb3PNFb2ELAZawxGHSdPZ7IoLdl+tEcDARVFlq6B9yJVAzL5R8L26iCBbvPtlfNGnYkHj4H/5ZMA==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 644,
+            },
+            {
+              path: '/index.yaml',
+              type: 'file',
+              contentType: 'text/yaml',
+              integrity: 'sha512-KW7xaZW5F8NOGt72kc9WvLcvkFDmXbm65JdWPM2pYfy9HMX0/6obJD5jhzQSX5ZU8ww0HMlXGXkRviFnDr88ZA==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 21379,
+            },
+            {
+              path: '/.eslintrc.yml',
+              type: 'file',
+              contentType: 'text/yaml',
+              integrity: 'sha512-3q0aghG4dBd7pgE4UrbtVn52cfg3BqOPkuNcCSwHZKMSFnKZxWr+sH7/OgnBDaifVsXGK7AN8q7sX0Eds6Ditw==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 149,
+            },
+            {
+              path: '/oauth2',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/_util',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/resource',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/parameters',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/id',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/location',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/string',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/money',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/time',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/human',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/health',
+              type: 'directory',
+              files: [],
+            },
+          ],
+        });
+      }
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/id/?meta`);
@@ -326,83 +331,87 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         file.lastModified = '2024-05-18T16:00:18.307Z';
       }
       // console.log(JSON.stringify(res.body, null, 2));
-      assert.deepEqual(res.body, {
-        path: '/id',
-        type: 'directory',
-        files: [
-          {
-            path: '/id/AccountId.d.ts',
-            type: 'file',
-            contentType: 'text/plain',
-            integrity: 'sha512-xj1/RCRAp72pukals97C98DG0b38Gl2xNrUwOi2SRj+EnJKIfQX8WisDpCOSKLFq5j++sGbL0/4wCttrPvi37w==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 787,
-          },
-          {
-            path: '/id/AccountId.js',
-            type: 'file',
-            contentType: 'application/javascript',
-            integrity: 'sha512-kFa+SXSMGbCh2DiuSGmlCS8OCBSE4VRGlq/A2IyY3QxL794soFq4zO3F+UEx4ANUG33urAa4LG4IY2OiUc2Mng==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 1343,
-          },
-          {
-            path: '/id/AccountId.yaml',
-            type: 'file',
-            contentType: 'text/yaml',
-            integrity: 'sha512-R6WB9dXEaNpvqIAH6OdRQ77gSEBlq1GeH2jv2tv1wQEVOmzQtErHlpj+ukvZUwzqf9wTXIPxKjeUhqk6VbfBkA==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 571,
-          },
-          {
-            path: '/id/Mode.js',
-            type: 'file',
-            contentType: 'application/javascript',
-            integrity: 'sha512-jfMuIff4LW/ZQ8el9iCww8c9gw+12UK7eZn+6TMDAlStfLhlu8u7jcCSWSEG1zBTty9DIHn4Nbp+dMDjRUnVWQ==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 3357,
-          },
-          {
-            path: '/id/mode.yaml',
-            type: 'file',
-            contentType: 'text/yaml',
-            integrity: 'sha512-er9S1Da52G8fxwfgxhNbcXPdYz9bzABM7VifDXhgVGX+hwtu8tve9y2aZhPAHcJOy3dClMDQ1eYLAHp7k8TMNQ==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 1222,
-          },
-          {
-            path: '/id/UUID.js',
-            type: 'file',
-            contentType: 'application/javascript',
-            integrity: 'sha512-bo/JyxOZeRRjbN0OR8vNRz3cTY2GcJfRmRnp3QTGXE5iuKYjrpjYzj+vEXopZV1QYPdZaXUK671EoysPE59pQQ==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 992,
-          },
-          {
-            path: '/id/UUID.yaml',
-            type: 'file',
-            contentType: 'text/yaml',
-            integrity: 'sha512-Gjr0LNqWQcO5/oaCyMm9oZWpc/D9K6Qe37sGuYv4kbq0I8teZL92xbR81L+2VShkhLSXdg2Qw5WRjwCkSWyfoA==',
-            lastModified: '2024-05-18T16:00:18.307Z',
-            size: 659,
-          },
-          {
-            path: '/id/legalPerson',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/id/naturalPerson',
-            type: 'directory',
-            files: [],
-          },
-          {
-            path: '/id/sigedis',
-            type: 'directory',
-            files: [],
-          },
-        ],
-      });
+      if (database.type === DATABASE_TYPE.PostgreSQL) {
+        assert.equal(res.body.files.length, 10);
+      } else {
+        assert.deepEqual(res.body, {
+          path: '/id',
+          type: 'directory',
+          files: [
+            {
+              path: '/id/AccountId.d.ts',
+              type: 'file',
+              contentType: 'text/plain',
+              integrity: 'sha512-xj1/RCRAp72pukals97C98DG0b38Gl2xNrUwOi2SRj+EnJKIfQX8WisDpCOSKLFq5j++sGbL0/4wCttrPvi37w==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 787,
+            },
+            {
+              path: '/id/AccountId.js',
+              type: 'file',
+              contentType: 'application/javascript',
+              integrity: 'sha512-kFa+SXSMGbCh2DiuSGmlCS8OCBSE4VRGlq/A2IyY3QxL794soFq4zO3F+UEx4ANUG33urAa4LG4IY2OiUc2Mng==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 1343,
+            },
+            {
+              path: '/id/AccountId.yaml',
+              type: 'file',
+              contentType: 'text/yaml',
+              integrity: 'sha512-R6WB9dXEaNpvqIAH6OdRQ77gSEBlq1GeH2jv2tv1wQEVOmzQtErHlpj+ukvZUwzqf9wTXIPxKjeUhqk6VbfBkA==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 571,
+            },
+            {
+              path: '/id/Mode.js',
+              type: 'file',
+              contentType: 'application/javascript',
+              integrity: 'sha512-jfMuIff4LW/ZQ8el9iCww8c9gw+12UK7eZn+6TMDAlStfLhlu8u7jcCSWSEG1zBTty9DIHn4Nbp+dMDjRUnVWQ==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 3357,
+            },
+            {
+              path: '/id/mode.yaml',
+              type: 'file',
+              contentType: 'text/yaml',
+              integrity: 'sha512-er9S1Da52G8fxwfgxhNbcXPdYz9bzABM7VifDXhgVGX+hwtu8tve9y2aZhPAHcJOy3dClMDQ1eYLAHp7k8TMNQ==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 1222,
+            },
+            {
+              path: '/id/UUID.js',
+              type: 'file',
+              contentType: 'application/javascript',
+              integrity: 'sha512-bo/JyxOZeRRjbN0OR8vNRz3cTY2GcJfRmRnp3QTGXE5iuKYjrpjYzj+vEXopZV1QYPdZaXUK671EoysPE59pQQ==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 992,
+            },
+            {
+              path: '/id/UUID.yaml',
+              type: 'file',
+              contentType: 'text/yaml',
+              integrity: 'sha512-Gjr0LNqWQcO5/oaCyMm9oZWpc/D9K6Qe37sGuYv4kbq0I8teZL92xbR81L+2VShkhLSXdg2Qw5WRjwCkSWyfoA==',
+              lastModified: '2024-05-18T16:00:18.307Z',
+              size: 659,
+            },
+            {
+              path: '/id/legalPerson',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/id/naturalPerson',
+              type: 'directory',
+              files: [],
+            },
+            {
+              path: '/id/sigedis',
+              type: 'directory',
+              files: [],
+            },
+          ],
+        });
+      }
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/id/legalPerson/?meta`);

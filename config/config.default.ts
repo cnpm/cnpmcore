@@ -5,7 +5,8 @@ import { EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
 import { patchAjv } from '../app/port/typebox';
 import { ChangesStreamMode, NOT_IMPLEMENTED_PATH, SyncDeleteMode, SyncMode } from '../app/common/constants';
-import { CnpmcoreConfig } from '../app/port/config';
+import type { CnpmcoreConfig } from '../app/port/config';
+import { database } from './database';
 
 export const cnpmcoreConfig: CnpmcoreConfig = {
   name: 'cnpm',
@@ -60,6 +61,9 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   elasticsearchIndex: 'cnpmcore_packages',
   strictValidateTarballPkg: false,
   strictValidatePackageDeps: false,
+  database: {
+    type: database.type,
+  },
 };
 
 export default (appInfo: EggAppConfig) => {
@@ -70,19 +74,17 @@ export default (appInfo: EggAppConfig) => {
 
   // override config from framework / plugin
   config.dataDir = process.env.CNPMCORE_DATA_DIR || join(appInfo.root, '.cnpmcore');
-
   config.orm = {
-    client: 'mysql2',
-    database: process.env.CNPMCORE_MYSQL_DATABASE || process.env.MYSQL_DATABASE || 'cnpmcore',
-    host: process.env.CNPMCORE_MYSQL_HOST || process.env.MYSQL_HOST || '127.0.0.1',
-    port: process.env.CNPMCORE_MYSQL_PORT || process.env.MYSQL_PORT || 3306,
-    user: process.env.CNPMCORE_MYSQL_USER || process.env.MYSQL_USER || 'root',
-    password: process.env.CNPMCORE_MYSQL_PASSWORD || process.env.MYSQL_PASSWORD,
+    ...database,
+    database: database.name ?? 'cnpmcore',
     charset: 'utf8mb4',
     logger: {
       // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror
       // ignore query error
       logQueryError() {},
+      // logQueryError(...args: any[]) {
+      //   console.log(args);
+      // },
     },
   };
 

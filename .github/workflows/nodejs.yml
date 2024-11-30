@@ -10,6 +10,67 @@ on:
     branches: [ master ]
 
 jobs:
+  test-postgresql-fs-nfs:
+    runs-on: ${{ matrix.os }}
+
+    services:
+      # https://docs.github.com/en/actions/use-cases-and-examples/using-containerized-services/creating-postgresql-service-containers
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+      redis:
+        # https://docs.github.com/en/actions/using-containerized-services/about-service-containers#example-mapping-redis-ports
+        image: redis
+        ports:
+          # Opens tcp port 6379 on the host and service container
+          - 6379:6379
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18.20.0, 18, 20, 22]
+        os: [ubuntu-latest]
+
+    steps:
+    - name: Checkout Git Source
+      uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Dependencies
+      run: npm i -g npminstall && npminstall
+
+    - name: Continuous Integration
+      run: npm run ci:postgresql
+      env:
+        # The hostname used to communicate with the PostgreSQL service container
+        POSTGRES_HOST: localhost
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        # The default PostgreSQL port
+        POSTGRES_PORT: 5432
+
+    - name: Code Coverage
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+
   test-mysql57-fs-nfs:
     runs-on: ${{ matrix.os }}
 
@@ -37,10 +98,10 @@ jobs:
 
     steps:
     - name: Checkout Git Source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
 
@@ -88,10 +149,10 @@ jobs:
 
     steps:
     - name: Checkout Git Source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
 

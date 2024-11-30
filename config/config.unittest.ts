@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { EggAppConfig, PowerPartial } from 'egg';
 import Mock from '@elastic/elasticsearch-mock';
+import { database } from './database';
 
 export const mockES = new Mock();
 
@@ -9,7 +10,7 @@ export default (appInfo: EggAppConfig) => {
   config.dataDir = join(appInfo.root, '.cnpmcore_unittest');
 
   config.orm = {
-    database: process.env.MYSQL_DATABASE || 'cnpmcore_unittest',
+    database: database.name ?? 'cnpmcore_unittest',
   };
 
   config.nfs = {

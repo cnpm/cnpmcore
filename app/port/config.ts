@@ -1,4 +1,5 @@
 import { SyncDeleteMode, SyncMode, ChangesStreamMode } from '../common/constants';
+import { DATABASE_TYPE } from '../../config/database';
 
 export { cnpmcoreConfig } from '../../config/config.default';
 
@@ -94,7 +95,7 @@ export type CnpmcoreConfig = {
   /**
    * white scope list
    */
-  allowScopes: string [],
+  allowScopes: string[],
   /**
    * allow publish non-scope package, disable by default
    */
@@ -175,4 +176,11 @@ export type CnpmcoreConfig = {
    * strictly enforces/validates dependencies version when publish or sync
    */
   strictValidatePackageDeps?: boolean,
+
+  /**
+   * database config
+   */
+  database: {
+    type: DATABASE_TYPE | string,
+  },
 };
