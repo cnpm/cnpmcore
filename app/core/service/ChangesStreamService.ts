@@ -6,20 +6,21 @@ import {
   EggObjectFactory,
   Inject,
 } from '@eggjs/tegg';
-import { TaskState, TaskType } from '../../common/enum/Task';
-import { AbstractService } from '../../common/AbstractService';
-import { TaskRepository } from '../../repository/TaskRepository';
-import { HOST_NAME, ChangesStreamTask, Task } from '../entity/Task';
+import { E500 } from 'egg-errors';
 import { PackageSyncerService, RegistryNotMatchError } from './PackageSyncerService';
 import { TaskService } from './TaskService';
 import { RegistryManagerService } from './RegistryManagerService';
-import { E500 } from 'egg-errors';
+import { ScopeManagerService } from './ScopeManagerService';
+import { PackageRepository } from '../../repository/PackageRepository';
+import { TaskRepository } from '../../repository/TaskRepository';
+import { HOST_NAME, ChangesStreamTask, Task } from '../entity/Task';
 import { Registry } from '../entity/Registry';
 import { AbstractChangeStream } from '../../common/adapter/changesStream/AbstractChangesStream';
 import { getScopeAndName } from '../../common/PackageUtil';
+import { isTimeoutError } from '../../common/ErrorUtil';
 import { GLOBAL_WORKER } from '../../common/constants';
-import { ScopeManagerService } from './ScopeManagerService';
-import { PackageRepository } from '../../repository/PackageRepository';
+import { TaskState, TaskType } from '../../common/enum/Task';
+import { AbstractService } from '../../common/AbstractService';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -102,9 +103,7 @@ export class ChangesStreamService extends AbstractService {
       }
     } catch (err) {
       this.logger.warn('[ChangesStreamService.executeTask:error] %s, exit now', err.message);
-      if (err.name === 'HttpClientRequestTimeoutError'
-        || err.name === 'ConnectTimeoutError'
-        || err.name === 'BodyTimeoutError') {
+      if (isTimeoutError(err)) {
         this.logger.warn(err);
       } else {
         this.logger.error(err);

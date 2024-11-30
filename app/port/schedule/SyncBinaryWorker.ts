@@ -2,6 +2,7 @@ import { EggAppConfig, EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import { BinarySyncerService } from '../../core/service/BinarySyncerService';
+import { isTimeoutError } from '../../common/ErrorUtil';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.ALL,
@@ -35,8 +36,7 @@ export class SyncBinaryWorker {
       const use = Date.now() - startTime;
       this.logger.warn('[SyncBinaryWorker:executeTask:error] taskId: %s, targetName: %s, use %sms, error: %s',
         task.taskId, task.targetName, use, err.message);
-      if (err.name === 'ConnectTimeoutError'
-        || err.name === 'HttpClientRequestTimeoutError') {
+      if (isTimeoutError(err)) {
         this.logger.warn(err);
       } else {
         this.logger.error(err);

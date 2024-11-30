@@ -187,6 +187,7 @@ export default (appInfo: EggAppConfig) => {
 
   config.httpclient = {
     useHttpClientNext: true,
+    allowH2: true,
   };
 
   config.view = {

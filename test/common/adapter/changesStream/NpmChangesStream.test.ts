@@ -59,7 +59,7 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
         };
       });
       const res: ChangesStreamChange[] = [];
-      const stream = await npmChangesStream.fetchChanges(registry, '9517');
+      const stream = npmChangesStream.fetchChanges(registry, '9517');
       for await (const change of stream) {
         res.push(change);
       }
@@ -74,7 +74,7 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
         };
       });
       const res: ChangesStreamChange[] = [];
-      const stream = await npmChangesStream.fetchChanges(registry, '9517');
+      const stream = npmChangesStream.fetchChanges(registry, '9517');
       assert(stream);
       rStream.push('{"seq":2');
       rStream.push(',"id":"bac');
@@ -83,6 +83,20 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
         res.push(change);
       }
       assert(res.length === 1);
+    });
+
+    it.skip('should read changes work', async () => {
+      for (let i = 0; i < 10000; i++) {
+        const stream = npmChangesStream.fetchChanges(registry, '36904024');
+        assert(stream);
+        try {
+          for await (const change of stream) {
+            console.log(change);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
     });
   });
 });
