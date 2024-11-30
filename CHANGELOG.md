@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.70.0](https://github.com/cnpm/cnpmcore/compare/v3.69.0...v3.70.0) (2024-11-30)
+
+
+### Features
+
+* support PostgreSQL ([#733](https://github.com/cnpm/cnpmcore/issues/733)) ([f240799](https://github.com/cnpm/cnpmcore/commit/f240799fa2089174940c1ad42142eaf9a891ad80))
+
 ## [3.69.0](https://github.com/cnpm/cnpmcore/compare/v3.68.0...v3.69.0) (2024-11-30)
 
 
