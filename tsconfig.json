@@ -2,7 +2,7 @@
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
     "strict": true,
-    "target": "ES2021",
+    "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "declaration": false,
