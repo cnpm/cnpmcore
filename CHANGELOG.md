@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.69.0](https://github.com/cnpm/cnpmcore/compare/v3.68.0...v3.69.0) (2024-11-30)
+
+
+### Features
+
+* mirror deno ([#736](https://github.com/cnpm/cnpmcore/issues/736)) ([6de0876](https://github.com/cnpm/cnpmcore/commit/6de0876d35c9ae423b2b4c4a1b4fb9e52af730cd))
+
 ## [3.68.0](https://github.com/cnpm/cnpmcore/compare/v3.67.1...v3.68.0) (2024-11-30)
 
 
