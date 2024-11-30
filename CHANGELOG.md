@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.68.0](https://github.com/cnpm/cnpmcore/compare/v3.67.1...v3.68.0) (2024-11-30)
+
+
+### Features
+
+* enable allowH2 by default and require Node.js >= 18.20.0 ([#734](https://github.com/cnpm/cnpmcore/issues/734)) ([9b01383](https://github.com/cnpm/cnpmcore/commit/9b01383210c07fe943387d2cdccb87ee6f235ece))
+
 ## [3.67.1](https://github.com/cnpm/cnpmcore/compare/v3.67.0...v3.67.1) (2024-11-14)
 
 
