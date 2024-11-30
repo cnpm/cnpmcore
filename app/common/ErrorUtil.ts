@@ -18,7 +18,7 @@ export function isTimeoutError(err: Error) {
       }
     }
   }
-  if (err.cause instanceof Error) {
+  if ('cause' in err && err.cause instanceof Error) {
     if (TimeoutErrorNames.includes(err.cause.name)) {
       return true;
     }
