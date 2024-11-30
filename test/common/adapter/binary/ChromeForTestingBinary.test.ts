@@ -17,6 +17,15 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
         persist: false,
       });
       const result = await binary.fetch('/');
+      assert.equal(result?.items[0].name, 'known-good-versions-with-downloads.json');
+      assert.equal(result?.items[0].date, '2023-09-16T00:21:21.964Z');
+      assert.equal(result?.items[0].isDir, false);
+      assert.equal(result?.items[1].name, 'latest-patch-versions-per-build.json');
+      assert.equal(result?.items[1].date, '2023-09-16T00:21:21.964Z');
+      assert.equal(result?.items[1].isDir, false);
+      assert.equal(result?.items[2].name, 'last-known-good-versions.json');
+      assert.equal(result?.items[2].date, '2023-09-16T00:21:21.964Z');
+      assert.equal(result?.items[2].isDir, false);
       const latestVersion = result!.items![result!.items.length - 1].name;
       assert(latestVersion);
       assert.equal(latestVersion, '119.0.6008.0/');
