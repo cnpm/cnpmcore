@@ -4,6 +4,7 @@ const TimeoutErrorNames = [
   'ConnectionError',
   'ConnectTimeoutError',
   'BodyTimeoutError',
+  'ResponseTimeoutError',
 ];
 
 export function isTimeoutError(err: Error) {

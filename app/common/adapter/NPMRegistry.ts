@@ -12,6 +12,7 @@ import {
   HttpClientResponse,
 } from 'egg';
 import { PackageManifestType } from '../../repository/PackageRepository';
+import { isTimeoutError } from '../ErrorUtil';
 
 type HttpMethod = HttpClientRequestOptions['method'];
 
@@ -52,9 +53,14 @@ export class NPMRegistry {
         // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
         // https://r.cnpmjs.org/intraactive-sdk-ui 44s
         const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
-        return await this.request('GET', url, undefined, { timeout: 120000, headers: { authorization } });
+        return await this.request('GET', url, undefined, {
+          timeout: 120000,
+          headers: { authorization },
+        });
       } catch (err: any) {
-        if (err.name === 'ResponseTimeoutError') throw err;
+        if (isTimeoutError(err)) {
+          throw err;
+        }
         lastError = err;
       }
       retries--;
