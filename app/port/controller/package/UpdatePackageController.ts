@@ -17,6 +17,9 @@ import { AbstractController } from '../AbstractController';
 import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { User as UserEntity } from '../../../core/entity/User';
 import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { SyncMode } from '../../../common/constants';
+import { ProxyCacheRepository } from '../../../repository/ProxyCacheRepository';
+import { isPkgManifest, ProxyCacheService } from '../../../core/service/ProxyCacheService';
 
 const MaintainerDataRule = Type.Object({
   maintainers: Type.Array(Type.Object({
@@ -30,7 +33,10 @@ type Maintainer = Static<typeof MaintainerDataRule>;
 export class UpdatePackageController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
-
+  @Inject()
+  private readonly proxyCacheRepository: ProxyCacheRepository;
+  @Inject()
+  private readonly proxyCacheService: ProxyCacheService;
   // https://github.com/npm/cli/blob/latest/lib/commands/owner.js#L191
   @HTTPMethod({
     // PUT /:fullname/-rev/:rev
@@ -65,6 +71,26 @@ export class UpdatePackageController extends AbstractController {
     }
 
     await this.packageManagerService.replacePackageMaintainersAndDist(pkg, users);
+    // 代理模式下，更新代理缓存
+    if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
+      const refreshList = await this.proxyCacheRepository.findProxyCaches(fullname);
+      if (refreshList.length !== 0) {
+        const taskList = refreshList
+          // 仅manifests需要更新，指定版本的package.json文件发布后不会改变
+          .filter(i => isPkgManifest(i.fileType))
+          .map(async item => {
+            const task = await this.proxyCacheService.createTask(
+              `${item.fullname}/${item.fileType}`,
+              {
+                fullname: item.fullname,
+                fileType: item.fileType,
+              },
+            );
+            return task;
+          });
+        await Promise.all(taskList);
+      }
+    }
     return { ok: true };
   }
 
