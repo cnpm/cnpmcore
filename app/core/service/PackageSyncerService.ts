@@ -262,14 +262,14 @@ export class PackageSyncerService extends AbstractService {
     //   },
     //   "_attachments": {}
     // }
-    let isSecurityHolder = false;
+    let isSecurityHolder = true;
     for (const versionInfo of Object.entries<{ _npmUser?: { name: string } }>(data.versions || {})) {
       const [ v, info ] = versionInfo;
       // >=0.0.1-security <0.0.2-0
       const isSecurityVersion = semver.satisfies(v, '^0.0.1-security');
       const isNpmUser = info?._npmUser?.name === 'npm';
-      if (isSecurityVersion && isNpmUser) {
-        isSecurityHolder = true;
+      if (!isSecurityVersion || !isNpmUser) {
+        isSecurityHolder = false;
         break;
       }
     }
