@@ -228,7 +228,7 @@ export class PackageSyncerService extends AbstractService {
     const { status, data } = remoteFetchResult;
 
     // deleted or blocked
-    if (status === 404 || status === 451) {
+    if (status === 451) {
       return true;
     }
 
@@ -245,14 +245,31 @@ export class PackageSyncerService extends AbstractService {
 
     // security holder
     // test/fixtures/registry.npmjs.org/security-holding-package.json
-    let isSecurityHolder = true;
+    // {
+    //   "_id": "xxx",
+    //   "_rev": "9-a740a77bcd978abeec47d2d027bf688c",
+    //   "name": "xxx",
+    //   "time": {
+    //     "modified": "2017-11-28T00:45:24.162Z",
+    //     "created": "2013-09-20T23:25:18.122Z",
+    //     "0.0.0": "2013-09-20T23:25:20.242Z",
+    //     "1.0.0": "2016-06-22T00:07:41.958Z",
+    //     "0.0.1-security": "2016-12-15T01:03:58.663Z",
+    //     "unpublished": {
+    //       "time": "2017-11-28T00:45:24.163Z",
+    //       "versions": []
+    //     }
+    //   },
+    //   "_attachments": {}
+    // }
+    let isSecurityHolder = false;
     for (const versionInfo of Object.entries<{ _npmUser?: { name: string } }>(data.versions || {})) {
       const [ v, info ] = versionInfo;
       // >=0.0.1-security <0.0.2-0
       const isSecurityVersion = semver.satisfies(v, '^0.0.1-security');
       const isNpmUser = info?._npmUser?.name === 'npm';
-      if (!isSecurityVersion || !isNpmUser) {
-        isSecurityHolder = false;
+      if (isSecurityVersion && isNpmUser) {
+        isSecurityHolder = true;
         break;
       }
     }
@@ -455,6 +472,19 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
+    if (status === 404) {
+      // ignore 404 status
+      // https://github.com/node-modules/detect-port/issues/57
+      task.error = `Package not found, status 404, data: ${JSON.stringify(data)}`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+      this.logger.info('[PackageSyncerService.executeTask:fail-request-error] taskId: %s, targetName: %s, %s',
+        task.taskId, task.targetName, task.error);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      return;
+    }
+
     let readme = data.readme || '';
     if (typeof readme !== 'string') {
       readme = JSON.stringify(readme);
@@ -545,9 +575,9 @@ export class PackageSyncerService extends AbstractService {
       task.error = `invalid maintainers: ${JSON.stringify(maintainers)}`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
-      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       this.logger.info('[PackageSyncerService.executeTask:fail-invalid-maintainers] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
 
@@ -575,9 +605,9 @@ export class PackageSyncerService extends AbstractService {
       task.error = 'There is no available specific versions, stop task.';
       logs.push(`[${isoNow()}]  ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
-      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       this.logger.info('[PackageSyncerService.executeTask:fail-empty-list] taskId: %s, targetName: %s, %s',
         task.taskId, task.targetName, task.error);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
     if (specificVersions) {
@@ -764,9 +794,9 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] ❌ All versions sync fail, package not exists, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
       task.error = lastErrorMessage;
-      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package not exists',
         task.taskId, task.targetName);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
 
@@ -924,8 +954,8 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}] 📝 Log URL: ${logUrl}`);
     logs.push(`[${isoNow()}] 🔗 ${url}`);
     task.error = lastErrorMessage;
-    await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
     this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
       task.taskId, task.targetName);
+    await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
   }
 }
