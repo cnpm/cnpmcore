@@ -318,7 +318,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const stream = await packageSyncerService.findTaskLog(task);
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      console.log(log);
+      // console.log(log);
       assert(log.includes('Package not found, status 404'));
       app.mockAgent().assertNoPendingInterceptors();
     });
