@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.71.1](https://github.com/cnpm/cnpmcore/compare/v3.71.0...v3.71.1) (2024-12-09)
+
+
+### Bug Fixes
+
+* ignore npm registry 404 status response on sync process ([#740](https://github.com/cnpm/cnpmcore/issues/740)) ([57226c5](https://github.com/cnpm/cnpmcore/commit/57226c57a64a978780ae4032235b4a9a216abb7f))
+
 ## [3.71.0](https://github.com/cnpm/cnpmcore/compare/v3.70.0...v3.71.0) (2024-11-30)
 
 
