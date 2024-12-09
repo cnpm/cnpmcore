@@ -37,7 +37,7 @@ export type CnpmcoreConfig = {
   /**
    * sync mode
    * - none: don't sync npm package
-   * - admin: don't sync npm package,only admin can create sync task by sync contorller.
+   * - admin: don't sync npm package,only admin can create sync task by sync controller.
    * - all: sync all npm packages
    * - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
    */
