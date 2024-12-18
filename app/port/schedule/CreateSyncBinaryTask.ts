@@ -3,6 +3,7 @@ import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import { BinarySyncerService } from '../../core/service/BinarySyncerService';
 import binaries, { BinaryName } from '../../../config/binaries';
+import dayjs from 'dayjs';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
@@ -28,7 +29,16 @@ export class CreateSyncBinaryTask {
       // 默认只同步 binaryName 的二进制，即使有不一致的 category，会在同名的 binaryName 任务中同步
       // 例如 canvas 只同步 binaryName 为 canvas 的二进制，不同步 category 为 node-canvas-prebuilt 的二进制
       // node-canvas-prebuilt 的二进制会在 node-canvas-prebuilt 的任务中同步
-      await this.binarySyncerService.createTask(binaryName as BinaryName);
+      await this.binarySyncerService.createTask(binaryName as BinaryName, {
+        fullDiff: isBetween2and205AM() && binary.enableFullDiff,
+      });
     }
   }
+}
+function isBetween2and205AM() {
+  const now = dayjs();
+  const twoAM = now.startOf('day').add(2, 'hour');
+  const twoAMFive = twoAM.add(5, 'minute');
+
+  return now.isAfter(twoAM) && now.isBefore(twoAMFive);
 }
