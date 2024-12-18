@@ -141,6 +141,16 @@ export class PackageSearchService extends AbstractService {
     const { hits, total } = res;
     return {
       objects: hits?.map(item => {
+        // 从 https://github.com/npm/cli/pull/7407 (npm cli v10.6.0) 开始，npm cli 使用 publisher 字段(以前使用 maintainers 字段)
+        // 从现有数据来看，_npmUser 字段和 publisher 字段是等价的
+        // 为了兼容老版本，不删除 _npmUser 字段
+        if (!item._source?.package.publisher && item._source?.package._npmUser) {
+          item._source.package.publisher = {
+            username: item._source.package._npmUser.name,
+            email: item._source.package._npmUser.email,
+          };
+        }
+
         return item._source;
       }),
       total: (total as estypes.SearchTotalHits).value,
