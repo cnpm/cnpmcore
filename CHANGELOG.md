@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.71.2](https://github.com/cnpm/cnpmcore/compare/v3.71.1...v3.71.2) (2024-12-18)
+
+
+### Bug Fixes
+
+* **search:** author is `???` in result ([#741](https://github.com/cnpm/cnpmcore/issues/741)) ([acffb14](https://github.com/cnpm/cnpmcore/commit/acffb14ea096a64755c403f119a119d22543d590)), closes [/github.com/npm/cli/pull/7407/files#diff-4bc15933c685fc9a9ce8be0c13a2f067f5e2b3334bacd6664bdfa7ddc46aedb6L58](https://github.com/cnpm//github.com/npm/cli/pull/7407/files/issues/diff-4bc15933c685fc9a9ce8be0c13a2f067f5e2b3334bacd6664bdfa7ddc46aedb6L58) [/github.com/npm/cli/pull/7407/files#diff-4bc15933c685fc9a9ce8be0c13a2f067f5e2b3334bacd6664bdfa7ddc46aedb6R162](https://github.com/cnpm//github.com/npm/cli/pull/7407/files/issues/diff-4bc15933c685fc9a9ce8be0c13a2f067f5e2b3334bacd6664bdfa7ddc46aedb6R162)
+
 ## [3.71.1](https://github.com/cnpm/cnpmcore/compare/v3.71.0...v3.71.1) (2024-12-09)
 
 
