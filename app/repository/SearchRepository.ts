@@ -17,6 +17,10 @@ export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> & C
     name: string;
     email: string;
   }
+  publisher?: {
+    username: string;
+    email: string;
+  }
 };
 
 
