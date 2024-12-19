@@ -17,6 +17,8 @@ import { calculateIntegrity } from '../../common/PackageUtil';
 import { ABBREVIATED_META_TYPE, PROXY_CACHE_DIR_NAME } from '../../common/constants';
 import { DIST_NAMES } from '../entity/Package';
 import type { AbbreviatedPackageManifestType, AbbreviatedPackageJSONType, PackageManifestType, PackageJSONType } from '../../repository/PackageRepository';
+import { PackageManagerService } from './PackageManagerService';
+import { getScopeAndName } from '../../common/PackageUtil';
 
 function isoNow() {
   return new Date().toISOString();
@@ -50,6 +52,8 @@ export class ProxyCacheService extends AbstractService {
   private readonly cacheService: CacheService;
   @Inject()
   private readonly backgroundTaskHelper:BackgroundTaskHelper;
+  @Inject()
+  private readonly packageManagerService: PackageManagerService;
 
   async getPackageVersionTarResponse(fullname: string, ctx: EggContext): Promise<HttpClientResponse> {
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
@@ -59,12 +63,17 @@ export class ProxyCacheService extends AbstractService {
   }
 
   async getPackageManifest(fullname: string, fileType: DIST_NAMES.FULL_MANIFESTS| DIST_NAMES.ABBREVIATED_MANIFESTS): Promise<AbbreviatedPackageManifestType|PackageManifestType> {
-    const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType))?.filePath;
-    if (cachedStoreKey) {
-      const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
-      const nfsString = Buffer.from(nfsBytes!).toString();
-      const nfsPkgManifgest = JSON.parse(nfsString);
-      return nfsPkgManifgest;
+    try {
+      const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType))?.filePath;
+      if (cachedStoreKey) {
+        const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
+        const nfsString = Buffer.from(nfsBytes!).toString();
+        const nfsPkgManifest = JSON.parse(nfsString);
+        return nfsPkgManifest;
+      }
+    } catch (e) {
+      this.logger.error(e);
+      this.logger.error('[ProxyCacheService.getPackageManifest:error] get cache error, ignore');
     }
 
     const manifest = await this.getRewrittenManifest<typeof fileType>(fullname, fileType);
@@ -152,6 +161,7 @@ export class ProxyCacheService extends AbstractService {
   }
 
   async getRewrittenManifest<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
+    const [ scope, name ] = getScopeAndName(fullname);
     let responseResult;
     switch (fileType) {
       case DIST_NAMES.FULL_MANIFESTS:
@@ -171,9 +181,24 @@ export class ProxyCacheService extends AbstractService {
     }
 
     // replace tarball url
-    const manifest = responseResult.data;
+    const { status, data: manifest } = responseResult;
+    // sourceRegistry not found, check private package
+    if (status === 404) {
+      const { etag, data: manifest, blockReason } = fileType === DIST_NAMES.FULL_MANIFESTS ?
+        await this.packageManagerService.listPackageFullManifests(scope, name, false) :
+        await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, false);
+      // found in private package
+      if (etag && !blockReason) {
+        return manifest as any;
+      }
+    }
     const { sourceRegistry, registry } = this.config.cnpmcore;
     if (isPkgManifest(fileType)) {
+      const { etag, data, blockReason } = fileType === DIST_NAMES.FULL_MANIFESTS ?
+        await this.packageManagerService.listPackageFullManifests(scope, name, false) :
+        await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, false);
+      const hasPrivatePackage = etag && !blockReason;
+
       // pkg manifest
       const versionMap = manifest.versions || {};
       for (const key in versionMap) {
@@ -182,9 +207,26 @@ export class ProxyCacheService extends AbstractService {
           versionItem.dist.tarball = versionItem.dist.tarball.replace(sourceRegistry, registry);
         }
       }
+      // private manifest
+      if (hasPrivatePackage) {
+        const privateVersionMap = data?.versions || {};
+        for (const key in privateVersionMap) {
+          if (!versionMap[key]) {
+            versionMap[key] = privateVersionMap[key];
+          }
+        }
+        if (manifest.time) {
+          const privateTimeMap = data?.time || {};
+          for (const key in privateTimeMap) {
+            if (!manifest.time[key]) {
+              manifest.time[key] = privateTimeMap[key];
+            }
+          }
+        }
+      }
     } else {
       // pkg version manifest
-      const distItem = manifest.dist || {};
+      const distItem = manifest?.dist || {};
       if (distItem.tarball) {
         distItem.tarball = distItem.tarball.replace(sourceRegistry, registry);
       }
