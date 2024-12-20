@@ -1,4 +1,5 @@
 import { SyncDeleteMode, SyncMode, ChangesStreamMode } from '../common/constants';
+import { DATABASE_TYPE } from '../../config/database';
 
 export { cnpmcoreConfig } from '../../config/config.default';
 
@@ -36,7 +37,7 @@ export type CnpmcoreConfig = {
   /**
    * sync mode
    * - none: don't sync npm package
-   * - admin: don't sync npm package,only admin can create sync task by sync contorller.
+   * - admin: don't sync npm package,only admin can create sync task by sync controller.
    * - all: sync all npm packages
    * - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
    */
@@ -94,7 +95,7 @@ export type CnpmcoreConfig = {
   /**
    * white scope list
    */
-  allowScopes: string [],
+  allowScopes: string[],
   /**
    * allow publish non-scope package, disable by default
    */
@@ -175,4 +176,11 @@ export type CnpmcoreConfig = {
    * strictly enforces/validates dependencies version when publish or sync
    */
   strictValidatePackageDeps?: boolean,
+
+  /**
+   * database config
+   */
+  database: {
+    type: DATABASE_TYPE | string,
+  },
 };

@@ -184,7 +184,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
     });
 
-    it('should sync cnpmcore-test-sync-deprecated and mock 404', async () => {
+    it('should sync cnpmcore-test-sync-deprecated and mock 451', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
         persist: false,
@@ -209,9 +209,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(abbreviatedManifests!.data!.versions['0.0.0']!._hasShrinkwrap, false);
       app.mockAgent().assertNoPendingInterceptors();
 
-      // mock 404 and unpublished
+      // mock 451 and unpublished
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
-        status: 404,
+        status: 451,
         data: '{"error":"Not found"}',
         persist: false,
       });
@@ -260,6 +260,50 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
     });
 
+    it('should sync cnpmcore-test-sync-deprecated and ignore 404 in removed', async () => {
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      const name = 'cnpmcore-test-sync-deprecated';
+      await packageSyncerService.createTask(name);
+      let task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const manifests = await packageManagerService.listPackageFullManifests('', name);
+      assert(manifests.data);
+      assert(manifests!.data!.versions['0.0.0']);
+
+      assert.equal(manifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
+      assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert.equal(abbreviatedManifests!.data!.versions['0.0.0']!.deprecated, 'only test for cnpmcore');
+      assert.equal(abbreviatedManifests!.data!.versions['0.0.0']!._hasShrinkwrap, false);
+      app.mockAgent().assertNoPendingInterceptors();
+
+      // mock 404 and no unpublished
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        status: 404,
+        data: '{"error":"Not found"}',
+        persist: false,
+      });
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert(!log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
+      assert(log.includes('Package not found, status 404'));
+      app.mockAgent().assertNoPendingInterceptors();
+    });
+
     it('should sync fail when package not exists', async () => {
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-package-not-exists', 'GET', {
         status: 404,
@@ -275,7 +319,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] ❌ Package not exists, response data: '));
+      assert(log.includes('Package not found, status 404'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 

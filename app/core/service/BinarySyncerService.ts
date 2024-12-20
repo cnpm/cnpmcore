@@ -9,18 +9,19 @@ import {
   EggHttpClient,
 } from 'egg';
 import fs from 'fs/promises';
+import { sortBy } from 'lodash';
 import binaries, { BinaryName, CategoryName } from '../../../config/binaries';
-import { NFSAdapter } from '../../common/adapter/NFSAdapter';
-import { TaskType, TaskState } from '../../common/enum/Task';
-import { downloadToTempfile } from '../../common/FileUtil';
 import { BinaryRepository } from '../../repository/BinaryRepository';
 import { Task } from '../entity/Task';
 import { Binary } from '../entity/Binary';
 import { TaskService } from './TaskService';
+import { NFSAdapter } from '../../common/adapter/NFSAdapter';
+import { downloadToTempfile } from '../../common/FileUtil';
+import { isTimeoutError } from '../../common/ErrorUtil';
 import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
 import { AbstractService } from '../../common/AbstractService';
 import { BinaryType } from '../../common/enum/Binary';
-import { sortBy } from 'lodash';
+import { TaskType, TaskState } from '../../common/enum/Task';
 
 function isoNow() {
   return new Date().toISOString();
@@ -136,12 +137,10 @@ export class BinarySyncerService extends AbstractService {
       this.logger.info('[BinarySyncerService.executeTask:success] taskId: %s, targetName: %s, log: %s, hasDownloadError: %s',
         task.taskId, task.targetName, logUrl, hasDownloadError);
     } catch (err: any) {
-      task.error = err.message;
+      task.error = `${err.name}: ${err.message}`;
       logs.push(`[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ "${binaryName}" ❌❌❌❌❌`);
-      if (err.name === 'HttpClientRequestTimeoutError'
-        || err.name === 'ConnectionError'
-        || err.name === 'ConnectTimeoutError') {
+      if (isTimeoutError(err)) {
         this.logger.warn('[BinarySyncerService.executeTask:fail] taskId: %s, targetName: %s, %s',
           task.taskId, task.targetName, task.error);
         this.logger.warn(err);

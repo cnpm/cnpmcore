@@ -13,11 +13,23 @@ docker build -t cnpmcore .
 ### MySQL
 
 ```bash
-CNPMCORE_MYSQL_DATABASE=cnpmcore
-CNPMCORE_MYSQL_HOST=127.0.0.1
-CNPMCORE_MYSQL_PORT=3306
-CNPMCORE_MYSQL_USER=your-db-user-name
-CNPMCORE_MYSQL_PASSWORD=your-db-user-password
+CNPMCORE_DATABASE_TYPE=MySQL
+CNPMCORE_DATABASE_NAME=cnpmcore
+CNPMCORE_DATABASE_HOST=127.0.0.1
+CNPMCORE_DATABASE_PORT=3306
+CNPMCORE_DATABASE_USER=your-db-user-name
+CNPMCORE_DATABASE_PASSWORD=your-db-user-password
+```
+
+### PostgreSQL
+
+```bash
+CNPMCORE_DATABASE_TYPE=PostgreSQL
+CNPMCORE_DATABASE_NAME=cnpmcore
+CNPMCORE_DATABASE_HOST=127.0.0.1
+CNPMCORE_DATABASE_PORT=5432
+CNPMCORE_DATABASE_USER=your-db-user-name
+CNPMCORE_DATABASE_PASSWORD=your-db-user-password
 ```
 
 ### Redis
@@ -134,14 +146,43 @@ docker run -p 7001:7001 -it --rm \
 
 ## 运行容器
 
+### 基于 MySQL 运行
+
 ```bash
 docker run -p 7001:7001 -it --rm \
   -e CNPMCORE_CONFIG_REGISTRY=https://your-registry.com \
-  -e CNPMCORE_MYSQL_DATABASE=cnpmcore \
-  -e CNPMCORE_MYSQL_HOST=127.0.0.1 \
-  -e CNPMCORE_MYSQL_PORT=3306 \
-  -e CNPMCORE_MYSQL_USER=your-db-user-name \
-  -e CNPMCORE_MYSQL_PASSWORD=your-db-user-password \
+  -e CNPMCORE_DATABASE_TYPE=MySQL \
+  -e CNPMCORE_DATABASE_NAME=cnpmcore \
+  -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
+  -e CNPMCORE_DATABASE_PORT=3306 \
+  -e CNPMCORE_DATABASE_USER=your-db-user-name \
+  -e CNPMCORE_DATABASE_PASSWORD=your-db-user-password \
+  -e CNPMCORE_NFS_TYPE=s3 \
+  -e CNPMCORE_NFS_S3_CLIENT_ENDPOINT=https://your-s3-endpoint \
+  -e CNPMCORE_NFS_S3_CLIENT_BUCKET=your-bucket-name \
+  -e CNPMCORE_NFS_S3_CLIENT_ID=s3-ak \
+  -e CNPMCORE_NFS_S3_CLIENT_SECRET=s3-sk \
+  -e CNPMCORE_NFS_S3_CLIENT_FORCE_PATH_STYLE=true \
+  -e CNPMCORE_NFS_S3_CLIENT_DISABLE_URL=true \
+  -e CNPMCORE_REDIS_HOST=127.0.0.1 \
+  -e CNPMCORE_REDIS_PORT=6379 \
+  -e CNPMCORE_REDIS_PASSWORD=your-redis-password \
+  -e CNPMCORE_REDIS_DB=1 \
+  -e TZ=Asia/Shanghai \
+  --name cnpmcore-prod cnpmcore
+```
+
+### 基于 PostgreSQL 运行
+
+```bash
+docker run -p 7001:7001 -it --rm \
+  -e CNPMCORE_CONFIG_REGISTRY=https://your-registry.com \
+  -e CNPMCORE_DATABASE_TYPE=PostgreSQL \
+  -e CNPMCORE_DATABASE_NAME=cnpmcore \
+  -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
+  -e CNPMCORE_DATABASE_PORT=5432 \
+  -e CNPMCORE_DATABASE_USER=your-db-user-name \
+  -e CNPMCORE_DATABASE_PASSWORD=your-db-user-password \
   -e CNPMCORE_NFS_TYPE=s3 \
   -e CNPMCORE_NFS_S3_CLIENT_ENDPOINT=https://your-s3-endpoint \
   -e CNPMCORE_NFS_S3_CLIENT_BUCKET=your-bucket-name \
@@ -161,7 +202,7 @@ docker run -p 7001:7001 -it --rm \
 
 https://registry-demo.fengmk2.com:9443
 
-管理员账号：cnpmcore_admin/12345678
+管理员账号：`cnpmcore_admin/12345678`
 
 通过 npm login 可以登录
 

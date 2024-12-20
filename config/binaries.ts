@@ -916,6 +916,13 @@ const binaries = {
     repo: 'oven-sh/bun',
     distUrl: 'https://github.com/oven-sh/bun/releases',
   },
+  deno: {
+    category: 'deno',
+    description: 'A modern runtime for JavaScript and TypeScript.',
+    type: BinaryType.GitHub,
+    repo: 'denoland/deno',
+    distUrl: 'https://github.com/denoland/deno/releases',
+  },
   edgedriver: {
     category: 'edgedriver',
     description: 'Microsofts\' EdgeDriver',

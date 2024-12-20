@@ -73,6 +73,45 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       assert(matchFile);
     });
 
+    it('should fetch subdir: /v18.15.0/ work', async () => {
+      app.mockHttpclient('https://nodejs.org/dist/v18.15.0/', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/v18.15.0/index.html'),
+      });
+      const result = await binary.fetch('/v18.15.0/', 'node');
+      assert(result);
+      assert(result.items.length > 0);
+      let matchDir = false;
+      let matchFile = false;
+      for (const item of result.items) {
+        if (item.name === 'docs/') {
+          assert.equal(item.date, '-');
+          assert.equal(item.isDir, true);
+          assert.equal(item.size, '-');
+          matchDir = true;
+        }
+        if (item.name === 'SHASUMS256.txt') {
+          assert.equal(item.date, '04-Nov-2024 17:29');
+          assert.equal(item.isDir, false);
+          assert.equal(item.size, '3.2 KB');
+          assert.equal(item.url, 'https://nodejs.org/dist/v18.15.0/SHASUMS256.txt');
+          matchFile = true;
+        }
+        if (item.name === 'node-v18.15.0-win-x64.zip') {
+          assert.equal(item.date, '30-Oct-2024 18:04');
+          assert.equal(item.isDir, false);
+          assert.equal(item.size, '29 MB');
+          assert.equal(item.url, 'https://nodejs.org/dist/v18.15.0/node-v18.15.0-win-x64.zip');
+          matchFile = true;
+        }
+        if (!item.isDir) {
+          assert(typeof item.size === 'string');
+          assert(item.size.length > 2);
+        }
+      }
+      assert(matchDir);
+      assert(matchFile);
+    });
+
     it('should fetch subdir: /v14.0.0-nightly20200119b318926634/ work', async () => {
       app.mockHttpclient('https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/index.html'),

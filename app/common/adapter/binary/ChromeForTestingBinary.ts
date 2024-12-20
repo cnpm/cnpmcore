@@ -46,6 +46,28 @@ export class ChromeForTestingBinary extends AbstractBinary {
       return;
     }
 
+    this.dirItems['/'].push({
+      name: 'known-good-versions-with-downloads.json',
+      date: data.timestamp,
+      size: '-',
+      isDir: false,
+      url: jsonApiEndpoint,
+    });
+    this.dirItems['/'].push({
+      name: 'latest-patch-versions-per-build.json',
+      date: data.timestamp,
+      size: '-',
+      isDir: false,
+      url: 'https://googlechromelabs.github.io/chrome-for-testing/latest-patch-versions-per-build.json',
+    });
+    this.dirItems['/'].push({
+      name: 'last-known-good-versions.json',
+      date: data.timestamp,
+      size: '-',
+      isDir: false,
+      url: 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json',
+    });
+
     // "timestamp": "2023-09-16T00:21:21.964Z",
     // "versions": [
     //   {

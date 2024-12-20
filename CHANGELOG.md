@@ -1,5 +1,54 @@
 # Changelog
 
+## [3.71.2](https://github.com/cnpm/cnpmcore/compare/v3.71.1...v3.71.2) (2024-12-18)
+
+
+### Bug Fixes
+
+* **search:** author is `???` in result ([#741](https://github.com/cnpm/cnpmcore/issues/741)) ([acffb14](https://github.com/cnpm/cnpmcore/commit/acffb14ea096a64755c403f119a119d22543d590)), closes [/github.com/npm/cli/pull/7407/files#diff-4bc15933c685fc9a9ce8be0c13a2f067f5e2b3334bacd6664bdfa7ddc46aedb6L58](https://github.com/cnpm//github.com/npm/cli/pull/7407/files/issues/diff-4bc15933c685fc9a9ce8be0c13a2f067f5e2b3334bacd6664bdfa7ddc46aedb6L58) [/github.com/npm/cli/pull/7407/files#diff-4bc15933c685fc9a9ce8be0c13a2f067f5e2b3334bacd6664bdfa7ddc46aedb6R162](https://github.com/cnpm//github.com/npm/cli/pull/7407/files/issues/diff-4bc15933c685fc9a9ce8be0c13a2f067f5e2b3334bacd6664bdfa7ddc46aedb6R162)
+
+## [3.71.1](https://github.com/cnpm/cnpmcore/compare/v3.71.0...v3.71.1) (2024-12-09)
+
+
+### Bug Fixes
+
+* ignore npm registry 404 status response on sync process ([#740](https://github.com/cnpm/cnpmcore/issues/740)) ([57226c5](https://github.com/cnpm/cnpmcore/commit/57226c57a64a978780ae4032235b4a9a216abb7f))
+
+## [3.71.0](https://github.com/cnpm/cnpmcore/compare/v3.70.0...v3.71.0) (2024-11-30)
+
+
+### Features
+
+* sync chrome-for-testing json files ([#737](https://github.com/cnpm/cnpmcore/issues/737)) ([9bb12fd](https://github.com/cnpm/cnpmcore/commit/9bb12fde120f3ea071b38785a600f4c847e09359))
+
+## [3.70.0](https://github.com/cnpm/cnpmcore/compare/v3.69.0...v3.70.0) (2024-11-30)
+
+
+### Features
+
+* support PostgreSQL ([#733](https://github.com/cnpm/cnpmcore/issues/733)) ([f240799](https://github.com/cnpm/cnpmcore/commit/f240799fa2089174940c1ad42142eaf9a891ad80))
+
+## [3.69.0](https://github.com/cnpm/cnpmcore/compare/v3.68.0...v3.69.0) (2024-11-30)
+
+
+### Features
+
+* mirror deno ([#736](https://github.com/cnpm/cnpmcore/issues/736)) ([6de0876](https://github.com/cnpm/cnpmcore/commit/6de0876d35c9ae423b2b4c4a1b4fb9e52af730cd))
+
+## [3.68.0](https://github.com/cnpm/cnpmcore/compare/v3.67.1...v3.68.0) (2024-11-30)
+
+
+### Features
+
+* enable allowH2 by default and require Node.js >= 18.20.0 ([#734](https://github.com/cnpm/cnpmcore/issues/734)) ([9b01383](https://github.com/cnpm/cnpmcore/commit/9b01383210c07fe943387d2cdccb87ee6f235ece))
+
+## [3.67.1](https://github.com/cnpm/cnpmcore/compare/v3.67.0...v3.67.1) (2024-11-14)
+
+
+### Bug Fixes
+
+* adapter new html format on nodejs.org/dist ([#728](https://github.com/cnpm/cnpmcore/issues/728)) ([914b59c](https://github.com/cnpm/cnpmcore/commit/914b59c7efde9dac5aca5fc6b8ceef0f25a73040))
+
 ## [3.67.0](https://github.com/cnpm/cnpmcore/compare/v3.66.0...v3.67.0) (2024-11-09)
 
 

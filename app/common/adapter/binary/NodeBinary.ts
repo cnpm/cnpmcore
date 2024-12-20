@@ -1,3 +1,4 @@
+import { basename } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
 import binaries, { BinaryName } from '../../../../config/binaries';
@@ -21,26 +22,39 @@ export class NodeBinary extends AbstractBinary {
     // <a href="index.tab">index.tab</a>                                          17-Dec-2021 23:16              136319
     // <a href="node-0.0.1.tar.gz">node-0.0.1.tar.gz</a>                                  26-Aug-2011 16:22             2846972
     // <a href="node-v14.0.0-nightly20200119b318926634-linux-armv7l.tar.xz">node-v14.0.0-nightly20200119b318926634-linux-ar..&gt;</a> 19-Jan-2020 06:07            18565976
-    const re = /<a href="([^\"]+?)"[^>]*?>[^<]+?<\/a>\s+?([\w\-]+? \w{2}\:\d{2})\s+?(\d+|\-)/ig;
+
+    // new html format
+    //     <a href="docs/">docs/</a>                                                             -                   -
+    // <a href="win-x64/">win-x64/</a>                                                          -                   -
+    // <a href="win-x86/">win-x86/</a>                                                          -                   -
+    // <a href="/dist/v18.15.0/SHASUMS256.txt.asc">SHASUMS256.txt.asc</a>                                 04-Nov-2024 17:29               3.7 KB
+    // <a href="/dist/v18.15.0/SHASUMS256.txt.sig">SHASUMS256.txt.sig</a>                                 04-Nov-2024 17:29                310 B
+    // <a href="/dist/v18.15.0/SHASUMS256.txt">SHASUMS256.txt</a>                                     04-Nov-2024 17:29               3.2 KB
+    const re = /<a href="([^\"]+?)"[^>]*?>[^<]+?<\/a>\s+?((?:[\w\-]+? \w{2}\:\d{2})|\-)\s+?([\d\.\-\s\w]+)/ig;
     const matchs = html.matchAll(re);
     const items: BinaryItem[] = [];
     for (const m of matchs) {
-      const name = m[1];
+      let name = m[1];
       const isDir = name.endsWith('/');
+      if (!isDir) {
+        // /dist/v18.15.0/SHASUMS256.txt => SHASUMS256.txt
+        name = basename(name);
+      }
       const fileUrl = isDir ? '' : `${url}${name}`;
       const date = m[2];
-      const size = m[3];
+      const size = m[3].trim();
       if (size === '0') continue;
       if (binaryConfig.ignoreFiles?.includes(`${dir}${name}`)) continue;
 
-      items.push({
+      const item = {
         name,
         isDir,
         url: fileUrl,
         size,
         date,
         ignoreDownloadStatuses: binaryConfig.options?.ignoreDownloadStatuses,
-      });
+      };
+      items.push(item);
     }
     return { items, nextParams: null };
   }

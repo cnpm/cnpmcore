@@ -30,8 +30,10 @@ describe('test/repository/ChangeRepository.test.ts', () => {
     it('should list from header', async () => {
       const changes = await changeRepository.query(0, 5);
       const ids = changes.map(t => t.id);
+      // pg truncate 后，id 不会重置
+      const firstId = Number(ids[0]) - 1;
       assert.deepStrictEqual(ids, [
-        1, 2, 3, 4, 5,
+        firstId + 1, firstId + 2, firstId + 3, firstId + 4, firstId + 5,
       ]);
     });
   });
