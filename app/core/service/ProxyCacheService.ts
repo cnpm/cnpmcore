@@ -59,12 +59,28 @@ export class ProxyCacheService extends AbstractService {
   }
 
   async getPackageManifest(fullname: string, fileType: DIST_NAMES.FULL_MANIFESTS| DIST_NAMES.ABBREVIATED_MANIFESTS): Promise<AbbreviatedPackageManifestType|PackageManifestType> {
+    const isFullManifests = fileType === DIST_NAMES.FULL_MANIFESTS;
     const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType))?.filePath;
     if (cachedStoreKey) {
-      const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
-      const nfsString = Buffer.from(nfsBytes!).toString();
-      const nfsPkgManifgest = JSON.parse(nfsString);
-      return nfsPkgManifgest;
+      try {
+        const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
+        if (!nfsBytes) throw new Error('not found proxy cache, try again later.');
+
+        const nfsBuffer = Buffer.from(nfsBytes);
+        const { shasum: etag } = await calculateIntegrity(nfsBytes);
+        await this.cacheService.savePackageEtagAndManifests(fullname, isFullManifests, etag, nfsBuffer);
+
+        const nfsString = nfsBuffer.toString();
+        const nfsPkgManifest = JSON.parse(nfsString);
+        return nfsPkgManifest as AbbreviatedPackageManifestType|PackageManifestType;
+      } catch (error) {
+        /* c8 ignore next 6 */
+        if (error.message.includes('not found proxy cache') || error.message.includes('Unexpected token : in JSON at')) {
+          await this.nfsAdapter.remove(cachedStoreKey);
+          await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
+        }
+        throw error;
+      }
     }
 
     const manifest = await this.getRewrittenManifest<typeof fileType>(fullname, fileType);
@@ -88,9 +104,19 @@ export class ProxyCacheService extends AbstractService {
     }
     const cachedStoreKey = (await this.proxyCacheRepository.findProxyCache(fullname, fileType, version))?.filePath;
     if (cachedStoreKey) {
-      const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
-      const nfsString = Buffer.from(nfsBytes!).toString();
-      return JSON.parse(nfsString) as PackageJSONType | AbbreviatedPackageJSONType;
+      try {
+        const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
+        if (!nfsBytes) throw new Error('not found proxy cache, try again later.');
+        const nfsString = Buffer.from(nfsBytes!).toString();
+        return JSON.parse(nfsString) as PackageJSONType | AbbreviatedPackageJSONType;
+      } catch (error) {
+        /* c8 ignore next 6 */
+        if (error.message.includes('not found proxy cache') || error.message.includes('Unexpected token : in JSON at')) {
+          await this.nfsAdapter.remove(cachedStoreKey);
+          await this.proxyCacheRepository.removeProxyCache(fullname, fileType);
+        }
+        throw error;
+      }
     }
     const manifest = await this.getRewrittenManifest(fullname, fileType, versionOrTag);
     this.backgroundTaskHelper.run(async () => {
@@ -107,6 +133,27 @@ export class ProxyCacheService extends AbstractService {
       : `/${PROXY_CACHE_DIR_NAME}/${fullname}/${version}/${fileType}`;
     await this.nfsAdapter.remove(storeKey);
     await this.proxyCacheRepository.removeProxyCache(fullname, fileType, version);
+  }
+
+  replaceTarballUrl<T extends DIST_NAMES>(manifest: GetSourceManifestAndCacheReturnType<T>, fileType: T) {
+    const { sourceRegistry, registry } = this.config.cnpmcore;
+    if (isPkgManifest(fileType)) {
+      // pkg manifest
+      const versionMap = (manifest as AbbreviatedPackageManifestType|PackageManifestType)?.versions;
+      for (const key in versionMap) {
+        const versionItem = versionMap[key];
+        if (versionItem?.dist?.tarball) {
+          versionItem.dist.tarball = versionItem.dist.tarball.replace(sourceRegistry, registry);
+        }
+      }
+    } else {
+      // pkg version manifest
+      const distItem = (manifest as AbbreviatedPackageJSONType | PackageJSONType).dist;
+      if (distItem?.tarball) {
+        distItem.tarball = distItem.tarball.replace(sourceRegistry, registry);
+      }
+    }
+    return manifest;
   }
 
   async createTask(targetName: string, options: UpdateProxyCacheTaskOptions): Promise<CreateUpdateProxyCacheTask> {
@@ -151,44 +198,37 @@ export class ProxyCacheService extends AbstractService {
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
   }
 
-  async getRewrittenManifest<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
+  // only used by schedule task
+  private async getRewrittenManifest<T extends DIST_NAMES>(fullname:string, fileType: T, versionOrTag?:string): Promise<GetSourceManifestAndCacheReturnType<T>> {
     let responseResult;
+    const USER_AGENT = 'npm_service.cnpmjs.org/cnpmcore';
     switch (fileType) {
-      case DIST_NAMES.FULL_MANIFESTS:
-        responseResult = await this.getUpstreamFullManifests(fullname);
+      case DIST_NAMES.FULL_MANIFESTS: {
+        const url = `/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
+        responseResult = await this.getProxyResponse({ url, headers: { accept: 'application/json', 'user-agent': USER_AGENT } }, { dataType: 'json' });
         break;
-      case DIST_NAMES.ABBREVIATED_MANIFESTS:
-        responseResult = await this.getUpstreamAbbreviatedManifests(fullname);
+      }
+      case DIST_NAMES.ABBREVIATED_MANIFESTS: {
+        const url = `/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
+        responseResult = await this.getProxyResponse({ url, headers: { accept: ABBREVIATED_META_TYPE, 'user-agent': USER_AGENT } }, { dataType: 'json' });
         break;
-      case DIST_NAMES.MANIFEST:
-        responseResult = await this.getUpstreamPackageVersionManifest(fullname, versionOrTag!);
+      }
+      case DIST_NAMES.MANIFEST: {
+        const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag!)}`;
+        responseResult = await this.getProxyResponse({ url, headers: { accept: 'application/json', 'user-agent': USER_AGENT } }, { dataType: 'json' });
         break;
-      case DIST_NAMES.ABBREVIATED:
-        responseResult = await this.getUpstreamAbbreviatedPackageVersionManifest(fullname, versionOrTag!);
+      }
+      case DIST_NAMES.ABBREVIATED: {
+        const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag!)}`;
+        responseResult = await this.getProxyResponse({ url, headers: { accept: ABBREVIATED_META_TYPE, 'user-agent': USER_AGENT } }, { dataType: 'json' });
         break;
+      }
       default:
         break;
     }
 
     // replace tarball url
-    const manifest = responseResult.data;
-    const { sourceRegistry, registry } = this.config.cnpmcore;
-    if (isPkgManifest(fileType)) {
-      // pkg manifest
-      const versionMap = manifest.versions || {};
-      for (const key in versionMap) {
-        const versionItem = versionMap[key];
-        if (versionItem?.dist?.tarball) {
-          versionItem.dist.tarball = versionItem.dist.tarball.replace(sourceRegistry, registry);
-        }
-      }
-    } else {
-      // pkg version manifest
-      const distItem = manifest.dist || {};
-      if (distItem.tarball) {
-        distItem.tarball = distItem.tarball.replace(sourceRegistry, registry);
-      }
-    }
+    const manifest = this.replaceTarballUrl(responseResult.data, fileType);
     return manifest;
   }
 
@@ -204,7 +244,7 @@ export class ProxyCacheService extends AbstractService {
     await this.nfsAdapter.uploadBytes(storeKey, nfsBytes);
   }
 
-  private async getProxyResponse(ctx: Partial<EggContext>, options?: HttpClientRequestOptions): Promise<HttpClientResponse> {
+  async getProxyResponse(ctx: Partial<EggContext>, options?: HttpClientRequestOptions): Promise<HttpClientResponse> {
     const registry = this.npmRegistry.registry;
     const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(registry);
     const authorization = this.npmRegistry.genAuthorizationHeader(remoteAuthToken);
@@ -221,8 +261,8 @@ export class ProxyCacheService extends AbstractService {
       compressed: true,
       ...options,
       headers: {
-        accept: ctx.header?.accept,
-        'user-agent': ctx.header?.['user-agent'],
+        accept: ctx.headers?.accept,
+        'user-agent': ctx.headers?.['user-agent'],
         authorization,
         'x-forwarded-for': ctx?.ip,
         via: `1.1, ${this.config.cnpmcore.registry}`,
@@ -231,23 +271,4 @@ export class ProxyCacheService extends AbstractService {
     this.logger.info('[ProxyCacheService:getProxyStreamResponse] %s, status: %s', url, res.status);
     return res;
   }
-
-  private async getUpstreamFullManifests(fullname: string): Promise<HttpClientResponse> {
-    const url = `/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
-    return await this.getProxyResponse({ url }, { dataType: 'json' });
-  }
-
-  private async getUpstreamAbbreviatedManifests(fullname: string): Promise<HttpClientResponse> {
-    const url = `/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
-    return await this.getProxyResponse({ url, headers: { accept: ABBREVIATED_META_TYPE } }, { dataType: 'json' });
-  }
-  private async getUpstreamPackageVersionManifest(fullname: string, versionOrTag: string): Promise<HttpClientResponse> {
-    const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag)}`;
-    return await this.getProxyResponse({ url }, { dataType: 'json' });
-  }
-  private async getUpstreamAbbreviatedPackageVersionManifest(fullname: string, versionOrTag: string): Promise<HttpClientResponse> {
-    const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag)}`;
-    return await this.getProxyResponse({ url, headers: { accept: ABBREVIATED_META_TYPE } }, { dataType: 'json' });
-  }
-
 }

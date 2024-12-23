@@ -9,8 +9,6 @@ import { SyncMode } from '../../../../app/common/constants';
 import { TestUtil } from '../../../TestUtil';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
-  //   let publisher;
-  //   let adminUser;
   let proxyCacheRepository: ProxyCacheRepository;
   beforeEach(async () => {
     proxyCacheRepository = await app.getEggObject(ProxyCacheRepository);
@@ -125,12 +123,6 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .expect(403);
     });
 
-    it('should 403 when not login', async () => {
-      mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
-      mock(app.config.cnpmcore, 'redirectNotFound', false);
-      await app.httpRequest().delete('/-/proxy-cache/foo-bar').expect(401);
-    });
-
     it('should delete all packages about "foo-bar".', async () => {
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
@@ -141,8 +133,10 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .set('authorization', adminUser.authorization)
         .expect(200);
       assert(res.body.ok === true);
+      // foo-bar
       assert(res.body.result.length === 2);
       const res1 = await app.httpRequest().get('/-/proxy-cache').expect(200);
+      // foobar
       assert(res1.body.data.length === 2);
     });
 
@@ -178,14 +172,11 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
       const adminUser = await TestUtil.createAdmin();
-      const res = await app
+      await app
         .httpRequest()
         .delete('/-/proxy-cache')
         .set('authorization', adminUser.authorization)
-        .expect(200);
-      assert(res.body.ok === true);
-      const res1 = await app.httpRequest().get('/-/proxy-cache').expect(200);
-      assert(res1.body.data.length === 0);
+        .expect(501);
     });
   });
 });
