@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.71.3](https://github.com/cnpm/cnpmcore/compare/v3.71.2...v3.71.3) (2024-12-23)
+
+
+### Bug Fixes
+
+* incorrect request headers in proxy mode and deleted unparsable cached data ([#719](https://github.com/cnpm/cnpmcore/issues/719)) ([2780c53](https://github.com/cnpm/cnpmcore/commit/2780c532e113ed801fb5ae6f20bdca0a4bf10130))
+
 ## [3.71.2](https://github.com/cnpm/cnpmcore/compare/v3.71.1...v3.71.2) (2024-12-18)
 
 
