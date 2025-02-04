@@ -43,6 +43,7 @@
     "test:postgresql": "npm run lint:fix && npm run test:local:postgresql",
     "pretest:local:postgresql": "bash prepare-database-postgresql.sh",
     "test:local:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin test",
+    "pretest": "npm run clean",
     "test": "npm run lint:fix && npm run test:local",
     "pretest:local": "bash prepare-database-mysql.sh",
     "test:local": "egg-bin test",
@@ -52,8 +53,9 @@
     "cov": "egg-bin cov",
     "precov:postgresql": "bash prepare-database-postgresql.sh",
     "cov:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin cov",
-    "ci": "npm run lint && npm run cov && npm run tsc:prod",
-    "ci:postgresql": "npm run lint && npm run cov:postgresql && npm run tsc:prod",
+    "preci": "npm run clean",
+    "ci": "npm run lint && npm run cov && npm run tsc:prod && npm run clean",
+    "ci:postgresql": "npm run lint && npm run cov:postgresql && npm run tsc:prod && npm run clean",
     "clean": "tsc -b --clean && rm -rf dist",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "npm run clean && tsc -p ./tsconfig.prod.json",
@@ -145,7 +147,7 @@
     "coffee": "^5.4.0",
     "eslint": "^8.29.0",
     "eslint-config-egg": "^14.0.0",
-    "typescript": "^5.7.3"
+    "typescript": "beta"
   },
   "author": "killagu",
   "license": "MIT",
