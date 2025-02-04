@@ -1,4 +1,4 @@
-import { mock } from 'egg-mock/bootstrap';
+import { mock } from '@eggjs/mock/bootstrap';
 import { TestUtil } from './TestUtil';
 
 beforeEach(async () => {

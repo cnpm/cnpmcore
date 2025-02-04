@@ -59,7 +59,7 @@
     {
       redis: {
         enable: true,
-        package: 'egg-redis',
+        package: '@eggjs/redis',
       },
       teggOrm: {
         enable: true,
@@ -71,7 +71,7 @@
       },
       tracer: {
         enable: true,
-        package: 'egg-tracer',
+        package: '@eggjs/tracer',
       },
       typeboxValidate: {
         enable: true,

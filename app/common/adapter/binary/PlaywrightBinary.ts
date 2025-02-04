@@ -1,7 +1,7 @@
 
 import { AbstractBinary, BinaryAdapter, BinaryItem, FetchResult } from './AbstractBinary';
-import util from 'util';
-import path from 'path';
+import util from 'node:util';
+import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
 

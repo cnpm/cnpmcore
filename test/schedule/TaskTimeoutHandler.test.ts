@@ -1,4 +1,4 @@
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { TaskState } from '../../app/common/enum/Task';
 import { PackageSyncerService } from '../../app/core/service/PackageSyncerService';
 import { HistoryTask } from '../../app/repository/model/HistoryTask';

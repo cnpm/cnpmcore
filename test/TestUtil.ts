@@ -1,13 +1,13 @@
-import fs from 'fs/promises';
+import fs from 'node:fs/promises';
 // 统一通过 coffee 执行 child_process，获取运行时的一些环境信息
 import coffee from 'coffee';
-import { tmpdir } from 'os';
-import { mkdtempSync } from 'fs';
-import { Readable } from 'stream';
+import { tmpdir } from 'node:os';
+import { mkdtempSync } from 'node:fs';
+import { Readable } from 'node:stream';
 import mysql from 'mysql2';
 import pg from 'pg';
-import path from 'path';
-import crypto from 'crypto';
+import path from 'node:path';
+import crypto from 'node:crypto';
 import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil';
 import semver from 'semver';
 import { PackageJSONType } from '../app/repository/PackageRepository';
@@ -127,7 +127,7 @@ export class TestUtil {
   static get app() {
     if (!this._app) {
       /* eslint @typescript-eslint/no-var-requires: "off" */
-      const bootstrap = require('egg-mock/bootstrap');
+      const bootstrap = require('@eggjs/mock/bootstrap');
       this._app = bootstrap.app;
     }
     return this._app;

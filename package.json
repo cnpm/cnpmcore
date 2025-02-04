@@ -5,6 +5,7 @@
   "files": [
     "dist/**/*"
   ],
+  "type": "commonjs",
   "main": "./dist/app.js",
   "typings": "./dist/app",
   "exports": {
@@ -74,6 +75,8 @@
     "registry"
   ],
   "dependencies": {
+    "@eggjs/redis": "^3.0.0",
+    "@eggjs/scripts": "^4.0.0",
     "@eggjs/tegg": "^3.12.0",
     "@eggjs/tegg-aop-plugin": "^3.12.0",
     "@eggjs/tegg-background-task": "^3.29.0",
@@ -83,6 +86,7 @@
     "@eggjs/tegg-orm-plugin": "^3.12.0",
     "@eggjs/tegg-plugin": "^3.12.0",
     "@eggjs/tegg-schedule-plugin": "^3.12.0",
+    "@eggjs/tracer": "^3.0.0",
     "@eggjs/tsconfig": "^1.0.0",
     "@elastic/elasticsearch": "^8.8.1",
     "@fengmk2/tar": "^6.2.0",
@@ -93,13 +97,10 @@
     "base64url": "^3.0.1",
     "bson-objectid": "^2.0.1",
     "dayjs": "^1.10.7",
-    "egg": "^3.29.0",
+    "egg": "^4.0.7",
     "egg-cors": "^3.0.0",
     "egg-errors": "^2.3.0",
-    "egg-redis": "^2.4.0",
-    "egg-scripts": "^3.0.0",
     "egg-status": "^1.0.0",
-    "egg-tracer": "^1.1.0",
     "egg-typebox-validate": "^2.0.0",
     "egg-view-nunjucks": "^2.3.0",
     "eggjs-elasticsearch": "^0.0.6",
@@ -126,6 +127,8 @@
   },
   "devDependencies": {
     "@cnpmjs/npm-cli-login": "^1.1.0",
+    "@eggjs/bin": "^7.1.0",
+    "@eggjs/mock": "^6.0.5",
     "@elastic/elasticsearch-mock": "^2.0.0",
     "@simplewebauthn/typescript-types": "^7.0.0",
     "@types/lodash": "^4.14.196",
@@ -140,11 +143,9 @@
     "@types/ua-parser-js": "^0.7.36",
     "@types/validate-npm-package-name": "^4.0.2",
     "coffee": "^5.4.0",
-    "egg-bin": "^6.0.0",
-    "egg-mock": "^5.10.4",
     "eslint": "^8.29.0",
-    "eslint-config-egg": "^13.0.0",
-    "typescript": "5.2.2"
+    "eslint-config-egg": "^14.0.0",
+    "typescript": "^5.7.3"
   },
   "author": "killagu",
   "license": "MIT",

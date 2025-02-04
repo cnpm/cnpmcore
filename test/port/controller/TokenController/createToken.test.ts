@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import dayjs from 'dayjs';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { Token, TokenType } from '../../../../app/core/entity/Token';
 import { AuthAdapter } from '../../../../app/infra/AuthAdapter';
 import { UserRepository } from '../../../../app/repository/UserRepository';

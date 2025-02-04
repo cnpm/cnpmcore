@@ -10,15 +10,15 @@ export async function ErrorHandler(ctx: EggContext, next: Next) {
     if (err.name === 'PackageNotFoundError') {
       if (err.syncPackage) {
         // create sync task
-        const syncPacakge = err.syncPackage;
+        const syncPackage = err.syncPackage;
         const packageSyncerService = await ctx.getEggObject(PackageSyncerService);
-        const task = await packageSyncerService.createTask(syncPacakge.fullname, {
+        const task = await packageSyncerService.createTask(syncPackage.fullname, {
           authorIp: ctx.ip,
           authorId: ctx.userId,
-          tips: `Sync cause by "${syncPacakge.fullname}" missing, request URL "${ctx.href}"`,
+          tips: `Sync cause by "${syncPackage.fullname}" missing, request URL "${ctx.href}"`,
         });
         ctx.logger.info('[middleware:ErrorHandler][syncPackage] create sync package "%s" task %s',
-          syncPacakge.fullname, task.taskId);
+          syncPackage.fullname, task.taskId);
       }
       if (err.redirectToSourceRegistry) {
         // redirect to sourceRegistry

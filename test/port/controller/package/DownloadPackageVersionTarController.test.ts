@@ -1,6 +1,6 @@
-import { strict as assert } from 'assert';
+import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter';
 import { SyncMode } from '../../../../app/common/constants';

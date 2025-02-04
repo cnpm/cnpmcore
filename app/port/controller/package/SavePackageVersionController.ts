@@ -268,9 +268,9 @@ export class SavePackageVersionController extends AbstractController {
     // forbidden star/unstar request
     // npm@6: referer: 'star [REDACTED]'
     // npm@>=7: 'npm-command': 'star'
-    let command = ctx.get('npm-command');
+    let command = ctx.get<string>('npm-command');
     if (!command) {
-      command = ctx.get('referer').split(' ', 1)[0];
+      command = ctx.get<string>('referer').split(' ', 1)[0];
     }
     if (command === 'star' || command === 'unstar') {
       throw new ForbiddenError(`npm ${command} is not allowed`);

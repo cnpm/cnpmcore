@@ -1,5 +1,5 @@
-import assert from 'assert';
-import { app } from 'egg-mock/bootstrap';
+import assert from 'node:assert';
+import { app } from '@eggjs/mock/bootstrap';
 import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository';
 import { ProxyCache } from '../../app/core/entity/ProxyCache';
 import { DIST_NAMES } from '../../app/core/entity/Package';

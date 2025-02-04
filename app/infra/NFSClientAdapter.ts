@@ -7,7 +7,7 @@ import {
 import { EggAppConfig, EggLogger } from 'egg';
 import FSClient from 'fs-cnpm';
 import { AppendResult, NFSClient, UploadOptions, UploadResult, DownloadOptions } from '../common/typing';
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 
 @SingletonProto({
   name: 'nfsClient',

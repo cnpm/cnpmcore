@@ -105,7 +105,7 @@ export class UserRoleManager {
       };
     }
     this.handleAuthorized = true;
-    const authorization = ctx.get('authorization');
+    const authorization = ctx.get<string>('authorization');
     if (!authorization) return null;
     const authorizedUserAndToken = await this.tokenService.getUserAndToken(authorization);
     if (!authorizedUserAndToken) {
@@ -185,5 +185,11 @@ export class UserRoleManager {
     const { user, token } = authorizedUserAndToken;
     if (token.isReadonly) return false;
     return user.name in this.config.cnpmcore.admins;
+  }
+}
+
+declare module 'egg' {
+  export interface Context {
+    userId?: string;
   }
 }

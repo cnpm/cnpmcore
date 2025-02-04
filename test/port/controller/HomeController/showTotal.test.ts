@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { PackageVersionDownload } from '../../../../app/repository/model/PackageVersionDownload';
 import dayjs from '../../../../app/common/dayjs';

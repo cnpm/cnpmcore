@@ -1,4 +1,4 @@
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { NodeBinary } from '../../app/common/adapter/binary/NodeBinary';
 import { TestUtil } from '../../test/TestUtil';
 

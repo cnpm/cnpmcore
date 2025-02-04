@@ -1,6 +1,6 @@
-import { EggHttpClient, HttpClientRequestOptions, HttpClientResponse } from 'egg';
+import { EggHttpClient, HttpClientRequestOptions, HttpClientResponse, Context } from 'egg';
 import { ForbiddenError } from 'egg-errors';
-import { SingletonProto, AccessLevel, Inject, EggContext } from '@eggjs/tegg';
+import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { valid as semverValid } from 'semver';
 import { AbstractService } from '../../common/AbstractService';
@@ -51,7 +51,7 @@ export class ProxyCacheService extends AbstractService {
   @Inject()
   private readonly backgroundTaskHelper:BackgroundTaskHelper;
 
-  async getPackageVersionTarResponse(fullname: string, ctx: EggContext): Promise<HttpClientResponse> {
+  async getPackageVersionTarResponse(fullname: string, ctx: Context): Promise<HttpClientResponse> {
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
       throw new ForbiddenError(`stop proxy by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`);
     }
@@ -244,7 +244,7 @@ export class ProxyCacheService extends AbstractService {
     await this.nfsAdapter.uploadBytes(storeKey, nfsBytes);
   }
 
-  async getProxyResponse(ctx: Partial<EggContext>, options?: HttpClientRequestOptions): Promise<HttpClientResponse> {
+  async getProxyResponse(ctx: Partial<Context>, options?: HttpClientRequestOptions): Promise<HttpClientResponse> {
     const registry = this.npmRegistry.registry;
     const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(registry);
     const authorization = this.npmRegistry.genAuthorizationHeader(remoteAuthToken);

@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 
 describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => {
   describe('[PUT /-/user/org.couchdb.user::username] loginOrCreateUser()', () => {

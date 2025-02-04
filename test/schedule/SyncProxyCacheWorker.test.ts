@@ -1,4 +1,4 @@
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { SyncMode } from '../../app/common/constants';
 import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository';
 import { ProxyCache } from '../../app/core/entity/ProxyCache';

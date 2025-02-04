@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 import { CypressBinary } from '../../../../app/common/adapter/binary/CypressBinary';
 import { TestUtil } from '../../../../test/TestUtil';
 

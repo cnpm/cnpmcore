@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 import { PackageRepository } from '../../app/repository/PackageRepository';
 import { PackageManagerService } from '../../app/core/service/PackageManagerService';
 import { UserService } from '../../app/core/service/UserService';

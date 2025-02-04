@@ -42,7 +42,7 @@ export class ShowPackageController extends AbstractController {
     try {
       const cacheEtag = await this.cacheService.getPackageEtag(fullname, isFullManifests);
       if (!isSync && cacheEtag) {
-        let requestEtag = ctx.request.get('if-none-match');
+        let requestEtag = ctx.request.get<string>('if-none-match');
         if (requestEtag.startsWith('W/')) {
           requestEtag = requestEtag.substring(2);
         }

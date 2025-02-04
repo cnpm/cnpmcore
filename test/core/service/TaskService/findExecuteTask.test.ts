@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app, mm } from 'egg-mock/bootstrap';
+import { app, mm } from '@eggjs/mock/bootstrap';
 import { TaskService } from '../../../../app/core/service/TaskService';
 import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
 import { TaskState, TaskType } from '../../../../app/common/enum/Task';
