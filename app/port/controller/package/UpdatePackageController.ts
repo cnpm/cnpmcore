@@ -12,7 +12,7 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { Static, Type } from '@sinclair/typebox';
+import { Static, Type } from 'egg-typebox-validate/typebox';
 import { AbstractController } from '../AbstractController';
 import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { User as UserEntity } from '../../../core/entity/User';

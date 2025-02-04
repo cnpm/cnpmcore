@@ -9,7 +9,7 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { Static } from 'egg-typebox-validate/typebox';
+import { Static } from 'egg-typebox-validate-fengmk2/typebox';
 import { E451 } from 'egg-errors';
 
 import { AbstractController } from '../AbstractController';

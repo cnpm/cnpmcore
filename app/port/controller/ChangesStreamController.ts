@@ -7,7 +7,7 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { Type } from '@sinclair/typebox';
+import { Type } from 'egg-typebox-validate/typebox';
 import { AbstractController } from './AbstractController';
 import { ChangeRepository } from '../../repository/ChangeRepository';
 

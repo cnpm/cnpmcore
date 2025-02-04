@@ -11,7 +11,7 @@ import {
 } from '@eggjs/tegg';
 import { E400 } from 'egg-errors';
 import { AbstractController } from './AbstractController';
-import { Static } from 'egg-typebox-validate/typebox';
+import { Static } from 'egg-typebox-validate-fengmk2/typebox';
 import { AdminAccess } from '../middleware/AdminAccess';
 import { ScopeManagerService } from '../../core/service/ScopeManagerService';
 import { RegistryManagerService } from '../../core/service/RegistryManagerService';

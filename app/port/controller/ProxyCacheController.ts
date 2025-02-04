@@ -11,7 +11,7 @@ import {
 import { ForbiddenError, NotFoundError, UnauthorizedError, NotImplementedError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
-import { Static } from 'egg-typebox-validate/typebox';
+import { Static } from 'egg-typebox-validate-fengmk2/typebox';
 import { QueryPageOptions } from '../typebox';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil';
 import {

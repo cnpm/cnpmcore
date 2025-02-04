@@ -12,7 +12,7 @@ import {
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
-import { Static } from 'egg-typebox-validate/typebox';
+import { Static } from 'egg-typebox-validate-fengmk2/typebox';
 import { RegistryManagerService, UpdateRegistryCmd } from '../../core/service/RegistryManagerService';
 import { AdminAccess } from '../middleware/AdminAccess';
 import { ScopeManagerService } from '../../core/service/ScopeManagerService';

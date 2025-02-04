@@ -23,7 +23,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       const name = 'cnpmcore-test-sync-blocklist';
       mock(app.config.cnpmcore, 'syncPackageBlockList', [ name ]);
       try {
-        await proxyCacheService.getPackageVersionTarResponse(name, app.mockContext() as Context);
+        await proxyCacheService.getPackageVersionTarResponse(name, app.mockContext());
       } catch (error) {
         assert(error.options.message.includes('block list'));
       }
