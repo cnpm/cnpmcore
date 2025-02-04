@@ -97,7 +97,7 @@
     "base64url": "^3.0.1",
     "bson-objectid": "^2.0.1",
     "dayjs": "^1.10.7",
-    "egg": "^4.0.7",
+    "egg": "^4.0.8",
     "egg-cors": "^3.0.0",
     "egg-errors": "^2.3.0",
     "egg-status": "^1.0.0",
