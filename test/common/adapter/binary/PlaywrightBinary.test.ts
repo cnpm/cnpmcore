@@ -8,6 +8,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
   beforeEach(async () => {
     binary = await app.getEggObject(PlaywrightBinary);
   });
+
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
@@ -50,8 +51,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         .persist();
       let result = await binary.fetch('/builds/');
       assert(result);
-      // console.log(result.items);
-      assert.equal(result.items.length, 7);
+      assert.equal(result.items.length, 8);
       assert.equal(result.items[0].name, 'chromium/');
       assert.equal(result.items[1].name, 'chromium-tip-of-tree/');
       assert.equal(result.items[2].name, 'firefox/');
@@ -59,11 +59,12 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       assert.equal(result.items[4].name, 'webkit/');
       assert.equal(result.items[5].name, 'ffmpeg/');
       assert.equal(result.items[6].name, 'android/');
+      assert.equal(result.items[7].name, 'chromium-headless-shell/');
       assert.equal(result.items[0].isDir, true);
 
       const names = [
         'chromium', 'chromium-tip-of-tree', 'firefox', 'firefox-beta',
-        'webkit', 'ffmpeg',
+        'webkit', 'ffmpeg', 'chromium-headless-shell',
       ];
       for (const dirname of names) {
         result = await binary.fetch(`/builds/${dirname}/`);

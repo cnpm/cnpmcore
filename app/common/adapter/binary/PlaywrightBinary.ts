@@ -186,6 +186,35 @@ const DOWNLOAD_PATHS = {
     'mac14-arm64': 'builds/android/%s/android.zip',
     'win64': 'builds/android/%s/android.zip',
   },
+  'chromium-headless-shell': {
+    '<unknown>': undefined,
+    'ubuntu18.04-x64': undefined,
+    'ubuntu20.04-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
+    'ubuntu22.04-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
+    'ubuntu24.04-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
+    'ubuntu18.04-arm64': undefined,
+    'ubuntu20.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'ubuntu22.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'ubuntu24.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'debian11-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
+    'debian11-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'debian12-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
+    'debian12-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'mac10.13': undefined,
+    'mac10.14': undefined,
+    'mac10.15': undefined,
+    'mac11': 'builds/chromium/%s/chromium-headless-shell-mac.zip',
+    'mac11-arm64': 'builds/chromium/%s/chromium-headless-shell-mac-arm64.zip',
+    'mac12': 'builds/chromium/%s/chromium-headless-shell-mac.zip',
+    'mac12-arm64': 'builds/chromium/%s/chromium-headless-shell-mac-arm64.zip',
+    'mac13': 'builds/chromium/%s/chromium-headless-shell-mac.zip',
+    'mac13-arm64': 'builds/chromium/%s/chromium-headless-shell-mac-arm64.zip',
+    'mac14': 'builds/chromium/%s/chromium-headless-shell-mac.zip',
+    'mac14-arm64': 'builds/chromium/%s/chromium-headless-shell-mac-arm64.zip',
+    'mac15': 'builds/chromium/%s/chromium-headless-shell-mac.zip',
+    'mac15-arm64': 'builds/chromium/%s/chromium-headless-shell-mac-arm64.zip',
+    'win64': 'builds/chromium/%s/chromium-headless-shell-win64.zip',
+  },
 } as const;
 
 @SingletonProto()
@@ -237,6 +266,22 @@ export class PlaywrightBinary extends AbstractBinary {
             }),
         ),
       );
+      // if chromium-headless-shell not exists on browsers, copy chromium to chromium-headless-shell
+      if (!browsers.find(browser => browser.name === 'chromium-headless-shell')) {
+        const chromium = browsers.find(browser => browser.name === 'chromium');
+        // {
+        //   "name": "chromium",
+        //   "revision": "1155",
+        //   "installByDefault": true,
+        //   "browserVersion": "133.0.6943.16"
+        // }
+        if (chromium) {
+          browsers.push({
+            ...chromium,
+            name: 'chromium-headless-shell',
+          });
+        }
+      }
 
       for (const browser of browsers) {
         const downloadPaths = DOWNLOAD_PATHS[browser.name];
