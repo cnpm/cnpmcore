@@ -229,12 +229,23 @@ export class PlaywrightBinary extends AbstractBinary {
     if (!this.dirItems) {
       const packageData = await this.requestJSON(PACKAGE_URL);
       const nowDateISO = new Date().toISOString();
+      const buildDirs: BinaryItem[] = [];
+      for (const browserName of Object.keys(DOWNLOAD_PATHS)) {
+        if (browserName === 'chromium-headless-shell') {
+          continue;
+        }
+        buildDirs.push({ name: `${browserName}/`, isDir: true, url: '', size: '-', date: nowDateISO });
+      }
       this.dirItems = {
         '/': [{ name: 'builds/', isDir: true, url: '', size: '-', date: nowDateISO }],
-        '/builds/': Object.keys(DOWNLOAD_PATHS).map(
-          dist => ({ name: `${dist}/`, isDir: true, url: '', size: '-', date: nowDateISO })),
-        ...Object.fromEntries(Object.keys(DOWNLOAD_PATHS).map(dist => [ `/builds/${dist}/`, []])),
+        '/builds/': buildDirs,
       };
+      for (const browserName of Object.keys(DOWNLOAD_PATHS)) {
+        if (browserName === 'chromium-headless-shell') {
+          continue;
+        }
+        this.dirItems[`/builds/${browserName}/`] = [];
+      }
 
       // Only download beta and release versions of packages to reduce amount of request
       const packageVersions = Object.keys(packageData.versions)
@@ -286,15 +297,21 @@ export class PlaywrightBinary extends AbstractBinary {
       for (const browser of browsers) {
         const downloadPaths = DOWNLOAD_PATHS[browser.name];
         if (!downloadPaths) continue;
+        let browserDirname = browser.name;
+        if (browser.name === 'chromium-headless-shell') {
+          // chromium-headless-shell should be under chromium
+          // https://playwright.azureedge.net/builds/chromium/1155/chromium-headless-shell-mac-arm64.zip
+          browserDirname = 'chromium';
+        }
         for (const [ platform, remotePath ] of Object.entries(downloadPaths)) {
           if (typeof remotePath !== 'string') continue;
           const revision = browser.revisionOverrides?.[platform] ?? browser.revision;
           const itemDate = browser.browserVersion || revision;
           const url = DOWNLOAD_HOST + util.format(remotePath, revision);
           const name = path.basename(remotePath);
-          const dir = `/builds/${browser.name}/${revision}/`;
+          const dir = `/builds/${browserDirname}/${revision}/`;
           if (!this.dirItems[dir]) {
-            this.dirItems[`/builds/${browser.name}/`].push({
+            this.dirItems[`/builds/${browserDirname}/`].push({
               name: `${revision}/`,
               isDir: true,
               url: '',
