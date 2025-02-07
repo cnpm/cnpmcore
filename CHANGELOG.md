@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.72.1](https://github.com/cnpm/cnpmcore/compare/v3.72.0...v3.72.1) (2025-02-07)
+
+
+### Bug Fixes
+
+* chromium-headless-shell should under the chromium dir ([#749](https://github.com/cnpm/cnpmcore/issues/749)) ([a580b05](https://github.com/cnpm/cnpmcore/commit/a580b05004e28855c2d7c3b7a52e05d46c6349a5))
+
 ## [3.72.0](https://github.com/cnpm/cnpmcore/compare/v3.71.3...v3.72.0) (2025-02-07)
 
 
