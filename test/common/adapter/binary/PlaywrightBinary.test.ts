@@ -51,7 +51,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         .persist();
       let result = await binary.fetch('/builds/');
       assert(result);
-      assert.equal(result.items.length, 8);
+      assert.equal(result.items.length, 7);
       assert.equal(result.items[0].name, 'chromium/');
       assert.equal(result.items[1].name, 'chromium-tip-of-tree/');
       assert.equal(result.items[2].name, 'firefox/');
@@ -59,12 +59,11 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       assert.equal(result.items[4].name, 'webkit/');
       assert.equal(result.items[5].name, 'ffmpeg/');
       assert.equal(result.items[6].name, 'android/');
-      assert.equal(result.items[7].name, 'chromium-headless-shell/');
       assert.equal(result.items[0].isDir, true);
 
       const names = [
         'chromium', 'chromium-tip-of-tree', 'firefox', 'firefox-beta',
-        'webkit', 'ffmpeg', 'chromium-headless-shell',
+        'webkit', 'ffmpeg',
       ];
       for (const dirname of names) {
         result = await binary.fetch(`/builds/${dirname}/`);
@@ -78,6 +77,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         assert(result);
         // console.log(result.items);
         assert(result.items.length > 0);
+        let shouldIncludeChromiumHeadlessShell = false;
         for (const item of result.items) {
           // {
           //   name: 'chromium-linux.zip',
@@ -91,6 +91,17 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
           assert(item.size === '-');
           assert(item.url);
           assert(item.date);
+          if (dirname === 'chromium') {
+            // chromium should include chromium-headless-shell
+            if (item.name.startsWith('chromium-headless-shell')) {
+              assert.match(item.url, /https:\/\/playwright\.azureedge\.net\/builds\/chromium\/\d+\/chromium-headless-shell/);
+              shouldIncludeChromiumHeadlessShell = true;
+            }
+          }
+        }
+        if (dirname === 'chromium') {
+          assert(shouldIncludeChromiumHeadlessShell);
+          // console.log(result);
         }
       }
     });
