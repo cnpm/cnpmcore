@@ -266,6 +266,22 @@ export class PlaywrightBinary extends AbstractBinary {
             }),
         ),
       );
+      // if chromium-headless-shell not exists on browsers, copy chromium to chromium-headless-shell
+      if (!browsers.find(browser => browser.name === 'chromium-headless-shell')) {
+        const chromium = browsers.find(browser => browser.name === 'chromium');
+        // {
+        //   "name": "chromium",
+        //   "revision": "1155",
+        //   "installByDefault": true,
+        //   "browserVersion": "133.0.6943.16"
+        // }
+        if (chromium) {
+          browsers.push({
+            ...chromium,
+            name: 'chromium-headless-shell',
+          });
+        }
+      }
 
       for (const browser of browsers) {
         const downloadPaths = DOWNLOAD_PATHS[browser.name];
