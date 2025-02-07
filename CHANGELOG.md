@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.73.0](https://github.com/cnpm/cnpmcore/compare/v3.72.1...v3.73.0) (2025-02-07)
+
+
+### Features
+
+* update playwright DOWNLOAD_PATHS ([#751](https://github.com/cnpm/cnpmcore/issues/751)) ([1850c8b](https://github.com/cnpm/cnpmcore/commit/1850c8b2d4c442c3526341711dafe9d6c3c0d3c4))
+
 ## [3.72.1](https://github.com/cnpm/cnpmcore/compare/v3.72.0...v3.72.1) (2025-02-07)
 
 
