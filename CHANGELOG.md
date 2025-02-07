@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.72.0](https://github.com/cnpm/cnpmcore/compare/v3.71.3...v3.72.0) (2025-02-07)
+
+
+### Features
+
+* **mirror:** add chromium-headless-shell ([#748](https://github.com/cnpm/cnpmcore/issues/748)) ([3a3aa81](https://github.com/cnpm/cnpmcore/commit/3a3aa818a3d5aed964a06f1624c98e0e3e90410a)), closes [#742](https://github.com/cnpm/cnpmcore/issues/742)
+
 ## [3.71.3](https://github.com/cnpm/cnpmcore/compare/v3.71.2...v3.71.3) (2024-12-23)
 
 
