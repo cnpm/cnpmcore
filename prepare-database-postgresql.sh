@@ -3,7 +3,7 @@
 # set -ex
 
 # read variables from environment
-db_host=${POSTGRES_HOST:-localhost}
+db_host=${POSTGRES_HOST:-127.0.0.1}
 db_port=${POSTGRES_PORT:-5432}
 db_username=${POSTGRES_USER:-postgres}
 db_password=${POSTGRES_PASSWORD:-postgres} # default to empty password
