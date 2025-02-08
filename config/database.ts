@@ -24,10 +24,10 @@ if (dbType === DATABASE_TYPE.MySQL) {
 } else if (dbType === DATABASE_TYPE.PostgreSQL) {
   dbClient = 'pg';
   dialect = 'postgres';
-  dbHost = dbHost || env('CNPMCORE_POSTGRES_HOST', 'string', '') || env('POSTGRES_HOST', 'string', '') || '';
+  dbHost = dbHost || env('CNPMCORE_POSTGRES_HOST', 'string', '') || env('POSTGRES_HOST', 'string', '') || '127.0.0.1';
   dbPort = dbPort || env('CNPMCORE_POSTGRES_PORT', 'number', 0) || env('POSTGRES_PORT', 'number', 0) || 5432;
-  dbUser = dbUser || env('CNPMCORE_POSTGRES_USER', 'string', '') || env('POSTGRES_USER', 'string', '') || '';
-  dbPassword = dbPassword || env('CNPMCORE_POSTGRES_PASSWORD', 'string', '') || env('POSTGRES_PASSWORD', 'string', '');
+  dbUser = dbUser || env('CNPMCORE_POSTGRES_USER', 'string', '') || env('POSTGRES_USER', 'string', '') || 'postgres';
+  dbPassword = dbPassword || env('CNPMCORE_POSTGRES_PASSWORD', 'string', '') || env('POSTGRES_PASSWORD', 'string', '') || 'postgres';
 } else if (dbType === DATABASE_TYPE.SQLite) {
   // TODO: Implement SQLite
   dbClient = 'sqlite';

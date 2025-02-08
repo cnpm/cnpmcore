@@ -1,4 +1,5 @@
-version: '3.6'
+name: cnpmcore_dev_services
+
 services:
   redis:
     image: redis:6-alpine
@@ -30,6 +31,22 @@ services:
     networks:
       - cnpm
 
+  postgres:
+    # env_file:
+    #   - .env
+    image: postgres:16
+    ports:
+      - 5432:5432
+    networks:
+      - cnpm
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: cnpmcore
+      # POSTGRES_HOST: localhost
+    volumes:
+      - cnpm-postgres:/var/lib/postgresql/data
+
   # database explorer
   phpmyadmin:
     image: phpmyadmin
@@ -50,7 +67,7 @@ services:
 volumes:
   cnpm-redis:
   cnpm-mysql:
-
+  cnpm-postgres:
 
 networks:
   cnpm:
