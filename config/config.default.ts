@@ -77,7 +77,7 @@ export default (appInfo: EggAppConfig) => {
   config.dataDir = env('CNPMCORE_DATA_DIR', 'string', join(appInfo.root, '.cnpmcore'));
   config.orm = {
     ...database,
-    database: database.name ?? 'cnpmcore',
+    database: database.name || 'cnpmcore',
     charset: 'utf8mb4',
     logger: {
       // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror
