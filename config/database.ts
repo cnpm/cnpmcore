@@ -1,4 +1,4 @@
-import { env } from "../app/common/EnvUtil";
+import { env } from '../app/common/EnvUtil';
 
 export enum DATABASE_TYPE {
   MySQL = 'MySQL',
