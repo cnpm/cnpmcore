@@ -72,7 +72,7 @@ export class UserRoleManager {
     if (pkg && !scope && !inSelfRegistry) {
       // 3.2 public package can't publish in other registry
       // scope package can be migrated into self registry
-      throw new ForbiddenError(`Can\'t modify npm public package "${fullname}"`);
+      throw new ForbiddenError(`Can't modify npm public package "${fullname}"`);
     }
 
     // 4 check scope is allowed to publish
@@ -185,11 +185,5 @@ export class UserRoleManager {
     const { user, token } = authorizedUserAndToken;
     if (token.isReadonly) return false;
     return user.name in this.config.cnpmcore.admins;
-  }
-}
-
-declare module 'egg' {
-  export interface Context {
-    userId?: string;
   }
 }

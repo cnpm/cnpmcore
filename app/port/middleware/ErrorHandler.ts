@@ -14,7 +14,7 @@ export async function ErrorHandler(ctx: EggContext, next: Next) {
         const packageSyncerService = await ctx.getEggObject(PackageSyncerService);
         const task = await packageSyncerService.createTask(syncPackage.fullname, {
           authorIp: ctx.ip,
-          authorId: ctx.userId,
+          authorId: ctx.userId as string,
           tips: `Sync cause by "${syncPackage.fullname}" missing, request URL "${ctx.href}"`,
         });
         ctx.logger.info('[middleware:ErrorHandler][syncPackage] create sync package "%s" task %s',
