@@ -1,6 +1,5 @@
 import assert from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { Context } from 'egg';
 import { TestUtil } from '../../TestUtil';
 import { ProxyCacheService } from '../../../app/core/service/ProxyCacheService';
 import { ProxyCacheRepository } from '../../../app/repository/ProxyCacheRepository';
@@ -23,8 +22,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       const name = 'cnpmcore-test-sync-blocklist';
       mock(app.config.cnpmcore, 'syncPackageBlockList', [ name ]);
       try {
-        // TODO(fengmk2): extend module, beginModuleScope, getEggObject on tegg
-        await proxyCacheService.getPackageVersionTarResponse(name, app.mockContext() as Context);
+        await proxyCacheService.getPackageVersionTarResponse(name, app.mockContext());
       } catch (error) {
         assert(error.options.message.includes('block list'));
       }
