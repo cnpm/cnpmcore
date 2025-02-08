@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.73.1](https://github.com/cnpm/cnpmcore/compare/v3.73.0...v3.73.1) (2025-02-08)
+
+
+### Bug Fixes
+
+* webauth no need to validate hostname on cli request ([#752](https://github.com/cnpm/cnpmcore/issues/752)) ([f1fc249](https://github.com/cnpm/cnpmcore/commit/f1fc2492b63bc36f69d3fefc9aeee81f9b00cd0f))
+
 ## [3.73.0](https://github.com/cnpm/cnpmcore/compare/v3.72.1...v3.73.0) (2025-02-07)
 
 
