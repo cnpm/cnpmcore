@@ -35,8 +35,8 @@ import { genRSAKeys, decryptRSA } from '../../common/CryptoUtil';
 import { getBrowserTypeForWebauthn } from '../../common/UserUtil';
 
 const LoginRequestRule = Type.Object({
-  // cli 所在机器的 hostname
-  hostname: Type.String({ minLength: 1, maxLength: 100 }),
+  // cli 所在机器的 hostname，最新版本 npm cli 已经不会上报 hostname
+  hostname: Type.Optional(Type.String({ minLength: 1, maxLength: 100 })),
 });
 type LoginRequest = Static<typeof LoginRequestRule>;
 
