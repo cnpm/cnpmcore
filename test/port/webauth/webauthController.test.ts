@@ -26,12 +26,11 @@ describe('test/port/webauth/webauthController.test.ts', () => {
       assert.equal(loginSessionId.length, 36);
     });
 
-    it('should check hostname', async () => {
+    it('should hostname is optional', async () => {
       const res = await app.httpRequest()
         .post('/-/v1/login');
 
-      assert.equal(res.status, 422);
-      assert.equal(res.body.error, "[INVALID_PARAM] must have required property 'hostname'");
+      assert.equal(res.status, 200);
     });
   });
 
