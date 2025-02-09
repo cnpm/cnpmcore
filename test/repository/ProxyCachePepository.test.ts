@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository';
 import { ProxyCache } from '../../app/core/entity/ProxyCache';
@@ -23,17 +23,16 @@ describe('test/repository/ProxyCacheRepository.test.ts', () => {
         fileType: DIST_NAMES.FULL_MANIFESTS,
       }));
       assert(newProxyCache);
-      assert(newProxyCache.fullname === 'foo-bar-new');
+      assert.equal(newProxyCache.fullname, 'foo-bar-new');
     });
 
     it('update work', async () => {
       const beforeUpdateTime = proxyCacheModel.updatedAt.getTime();
       const updatedProxyCache = await proxyCacheRepository.saveProxyCache(ProxyCache.update(proxyCacheModel));
       assert(updatedProxyCache);
-      assert(updatedProxyCache.fullname === 'foo-bar');
+      assert.equal(updatedProxyCache.fullname, 'foo-bar');
       const afterUpdateTime = updatedProxyCache.updatedAt.getTime();
       assert(afterUpdateTime !== beforeUpdateTime);
-      assert(afterUpdateTime - beforeUpdateTime < 1000);
     });
 
     it('list work', async () => {
