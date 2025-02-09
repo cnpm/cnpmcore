@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import { EggAppConfig, PowerPartial, Context } from 'egg';
 import OSSClient from 'oss-cnpm';
+import S3Client from 's3-cnpmcore';
 import { patchAjv } from '../app/port/typebox';
 import { ChangesStreamMode, NOT_IMPLEMENTED_PATH, SyncDeleteMode, SyncMode } from '../app/common/constants';
 import { env } from '../app/common/EnvUtil';
@@ -153,9 +154,6 @@ export default (appInfo: EggAppConfig) => {
     assert(s3Config.credentials.accessKeyId, 'require env CNPMCORE_NFS_S3_CLIENT_ID');
     assert(s3Config.credentials.secretAccessKey, 'require env CNPMCORE_NFS_S3_CLIENT_SECRET');
     assert(s3Config.bucket, 'require env CNPMCORE_NFS_S3_CLIENT_BUCKET');
-    // TODO(@fengmk2): should change to use import to support esm
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const S3Client = require('s3-cnpmcore');
     config.nfs.client = new S3Client(s3Config);
   }
 
