@@ -7,8 +7,6 @@ volumes:
 
 networks:
   cnpm-postgres:
-    name: cnpm-postgres
-    driver: bridge
 
 services:
   redis:
@@ -21,8 +19,6 @@ services:
       - cnpm-redis:/data
     ports:
       - 6379:6379
-    networks:
-      - cnpm-postgres
 
   postgres:
     env_file:
@@ -34,8 +30,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
       - 5432:5432
-    networks:
-      - cnpm-postgres
     volumes:
       - cnpm-postgres:/var/lib/postgresql/data
 
@@ -55,7 +49,5 @@ services:
       - cnpm-pgadmin:/var/lib/pgadmin
     ports:
       - 8888:80
-    networks:
-      - cnpm-postgres
     depends_on:
       - postgres
