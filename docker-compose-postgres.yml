@@ -1,0 +1,61 @@
+name: cnpmcore_dev_services_postgres
+
+services:
+  redis:
+    env_file:
+      - .env
+    image: redis:6-alpine
+    # command: redis-server --appendonly yes --requirepass cnpm
+    restart: always
+    volumes:
+      - cnpm-redis:/data
+    ports:
+      - 6379:6379
+    networks:
+      - cnpm-postgres
+
+  postgres:
+    env_file:
+      - .env
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - 5432:5432
+    networks:
+      - cnpm-postgres
+    volumes:
+      - cnpm-postgres:/var/lib/postgresql/data
+
+  # https://github.com/khezen/compose-postgres/blob/master/docker-compose.yml
+  pgadmin:
+    env_file:
+      - .env
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - cnpm-pgadmin:/var/lib/pgadmin
+    ports:
+      - 8888:80
+    networks:
+      - cnpm-postgres
+    depends_on:
+      - postgres
+
+volumes:
+  cnpm-redis:
+  cnpm-postgres:
+  cnpm-pgadmin:
+
+networks:
+  cnpm-postgres:
+    name: cnpm-postgres
+    driver: bridge

@@ -4,14 +4,32 @@
 
 本项目的外部服务依赖有：MySQL 数据库或 PostgreSQL 数据库、Redis 缓存服务。
 
-可以通过 Docker 来快速启动本地开发环境：
+生成本地开发环境配置文件：
 
 ```bash
-# 启动本地依赖服务
-docker-compose up -d
+cp .env.example .env
+```
+
+可以通过 Docker 来快速启动本地开发环境：
+
+MySQL 开发环境：
+
+```bash
+# 启动本地依赖服务 - MySQL + Redis
+docker-compose -f docker-compose.yml up -d
 
 # 关闭本地依赖服务
-docker-compose down
+docker-compose -f docker-compose.yml down
+```
+
+PostgreSQL 开发环境：
+
+```bash
+# 启动本地依赖服务 - PostgreSQL + Redis
+docker-compose -f docker-compose-postgres.yml up -d
+
+# 关闭本地依赖服务
+docker-compose -f docker-compose-postgres.yml down
 ```
 
 > 手动初始化依赖服务参见[本地开发环境 - MySQL](./docs/setup.md) 或 [本地开发环境 - PostgreSQL](./docs/setup-with-postgresql.md)
@@ -35,6 +53,9 @@ npm run dev
 
 # 访问
 curl -v http://127.0.0.1:7001
+
+# cnpmcore_admin 注册管理员
+npm login --registry=http://127.0.0.1:7001
 ```
 
 ### 开发运行 - PostgreSQL
@@ -48,6 +69,23 @@ npm run dev:postgresql
 
 # 访问
 curl -v http://127.0.0.1:7001
+```
+
+### 登录和测试发包
+
+注册 cnpmcore_admin 管理员
+
+```bash
+npm login --registry=http://127.0.0.1:7001
+
+# 验证登录
+npm whoami --registry=http://127.0.0.1:7001
+```
+
+发包
+
+```bash
+npm publish --registry=http://127.0.0.1:7001
 ```
 
 ### 单元测试
