@@ -1,7 +1,9 @@
-name: cnpmcore_dev_services
+name: cnpmcore_dev_services_mysql
 
 services:
   redis:
+    env_file:
+      - .env
     image: redis:6-alpine
     # command: redis-server --appendonly yes --requirepass cnpm
     restart: always
@@ -10,66 +12,50 @@ services:
     ports:
       - 6379:6379
     networks:
-      - cnpm
+      - cnpm-mysql
 
   mysql:
-    image: mariadb
+    env_file:
+      - .env
+    image: mysql:9
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-}
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-      # MYSQL_DATABASE: 'cnpmcore_unittest'
-      MYSQL_USER: user
-      MYSQL_PASSWORD: pass
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cnpmcore}
     volumes:
       - cnpm-mysql:/var/lib/mysql
-      # - ./conf.d/mysql/:/etc/mysql/conf.d
-      # - ./init.d/mysql/:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
     networks:
-      - cnpm
-
-  postgres:
-    # env_file:
-    #   - .env
-    image: postgres:16
-    ports:
-      - 5432:5432
-    networks:
-      - cnpm
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      # POSTGRES_DB: cnpmcore
-      # POSTGRES_HOST: localhost
-    volumes:
-      - cnpm-postgres:/var/lib/postgresql/data
+      - cnpm-mysql
 
   # database explorer
   phpmyadmin:
+    env_file:
+      - .env
     image: phpmyadmin
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-}
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-      MYSQL_USER: user
-      MYSQL_PASSWORD: pass
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cnpmcore}
+      # MYSQL_USER: ${MYSQL_USER:-user}
+      # MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pass}
       PMA_HOST: 'mysql'
     ports:
       - 8080:80
     networks:
-      - cnpm
+      - cnpm-mysql
     depends_on:
       - mysql
 
 volumes:
   cnpm-redis:
   cnpm-mysql:
-  cnpm-postgres:
 
 networks:
-  cnpm:
-    name: cnpm
+  cnpm-mysql:
+    name: cnpm-mysql
     driver: bridge
