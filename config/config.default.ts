@@ -74,14 +74,8 @@ interface NFSConfig {
   removeBeforeUpload: boolean;
 }
 
-declare module '@eggjs/core' {
-  interface EggAppConfig {
-    nfs: NFSConfig;
-  }
-}
-
 export default (appInfo: EggAppConfig) => {
-  const config = {} as PowerPartial<EggAppConfig>;
+  const config = {} as PowerPartial<EggAppConfig> & { nfs: NFSConfig };
 
   config.keys = env('CNPMCORE_EGG_KEYS', 'string', randomUUID());
   config.cnpmcore = cnpmcoreConfig;
@@ -131,7 +125,7 @@ export default (appInfo: EggAppConfig) => {
     client: null,
     dir: env('CNPMCORE_NFS_DIR', 'string', join(config.dataDir, 'nfs')),
     removeBeforeUpload: env('CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD', 'boolean', false),
-  } as NFSConfig;
+  };
   /* c8 ignore next 17 */
   // enable oss nfs store by env values
   const nfsType = env('CNPMCORE_NFS_TYPE', 'string', '');
