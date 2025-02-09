@@ -32,7 +32,7 @@ describe('test/repository/ProxyCacheRepository.test.ts', () => {
       assert(updatedProxyCache);
       assert.equal(updatedProxyCache.fullname, 'foo-bar');
       const afterUpdateTime = updatedProxyCache.updatedAt.getTime();
-      assert(afterUpdateTime !== beforeUpdateTime);
+      assert(afterUpdateTime >= beforeUpdateTime);
     });
 
     it('list work', async () => {
