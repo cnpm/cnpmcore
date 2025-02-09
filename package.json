@@ -129,7 +129,6 @@
     "s3-cnpmcore": "^1.1.2"
   },
   "devDependencies": {
-    "@cnpmjs/npm-cli-login": "^1.1.0",
     "@eggjs/bin": "^7.1.0",
     "@eggjs/mock": "^6.0.7",
     "@elastic/elasticsearch-mock": "^2.0.0",

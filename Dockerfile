@@ -8,7 +8,8 @@ COPY . .
 
 RUN npm install -g npminstall --registry=https://registry.npmmirror.com \
   && npminstall -c \
-  && npm run tsc
+  && npm run tsc \
+  && npmupdate -c --production # remove devDependencies
 
 ENV NODE_ENV=production \
   EGG_SERVER_ENV=prod
