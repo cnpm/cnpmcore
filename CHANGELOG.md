@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.74.0](https://github.com/cnpm/cnpmcore/compare/v3.73.1...v3.74.0) (2025-02-09)
+
+
+### Features
+
+* allow to set sourceRegistry by CNPMCORE_CONFIG_SOURCE_REGISTRY ([#753](https://github.com/cnpm/cnpmcore/issues/753)) ([9f4f1f1](https://github.com/cnpm/cnpmcore/commit/9f4f1f1e28f001bc575dc85fc56058d2126a14e6))
+
 ## [3.73.1](https://github.com/cnpm/cnpmcore/compare/v3.73.0...v3.73.1) (2025-02-08)
 
 
