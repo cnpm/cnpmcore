@@ -231,5 +231,5 @@ https://hub.docker.com/r/fengmk2/cnpmcore
 
 ```bash
 docker pull fengmk2/cnpmcore:latest
-docker pull fengmk2/cnpmcore:alpine-latest
+docker pull fengmk2/cnpmcore:latest-alpine
 ```
