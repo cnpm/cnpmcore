@@ -7,6 +7,7 @@ import {
   EggContext,
   Inject,
 } from '@eggjs/tegg';
+import { version as EggVersion } from 'egg/package.json';
 import { AbstractController } from './AbstractController';
 import { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService';
 import { HomeService } from '../../core/service/HomeService';
@@ -31,6 +32,7 @@ type SiteEnvInfo = {
   sync_binary: boolean;
   instance_start_time: Date;
   node_version: string;
+  egg_version: string;
   app_version: string;
   engine: string;
   cache_time: string;
@@ -78,6 +80,7 @@ export class HomeController extends AbstractController {
       sync_binary: this.config.cnpmcore.enableSyncBinary,
       instance_start_time: startTime,
       node_version: process.version,
+      egg_version: EggVersion,
       app_version: this.config.pkg.version,
       engine: this.config.orm.client,
       source_registry: this.config.cnpmcore.sourceRegistry,
