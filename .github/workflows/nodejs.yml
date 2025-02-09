@@ -213,9 +213,10 @@ jobs:
       run: npm i
 
     - name: Continuous Integration
-      run: npm run ci "test/port/controller/package/RemovePackageVersionController.test.ts"
+      run: npm run ci "test/cli/npm/install.test.ts"
       env:
         CNPMCORE_NFS_TYPE: s3
+        CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD: true
         CNPMCORE_NFS_S3_CLIENT_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
         CNPMCORE_NFS_S3_CLIENT_ENDPOINT: ${{ secrets.CNPMCORE_NFS_S3_ENDPOINT }}
         CNPMCORE_NFS_S3_CLIENT_ID: ${{ secrets.CNPMCORE_NFS_S3_ID }}

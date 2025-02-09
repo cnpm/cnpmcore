@@ -36,7 +36,7 @@ describe('test/cli/npm/install.test.ts', () => {
     server && server.close();
   });
 
-  beforeEach(async () => {
+  before(async () => {
     await npmLogin(registry, userconfig);
     await coffee
       .spawn('npm', [
@@ -81,7 +81,7 @@ describe('test/cli/npm/install.test.ts', () => {
       assert.equal(res.data.name, '@cnpm/foo');
     });
 
-    it('should work', async () => {
+    it('should install and unpublish work', async () => {
       await coffee
         .spawn('npm', [
           'view',
