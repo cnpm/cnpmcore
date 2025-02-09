@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/cnpm/cnpmcore/compare/v4.0.0...v4.0.1) (2025-02-09)
+
+
+### Bug Fixes
+
+* remove npm-cli-login for ssri security ([#754](https://github.com/cnpm/cnpmcore/issues/754)) ([d18981e](https://github.com/cnpm/cnpmcore/commit/d18981e658902dab54297cc5cc4798a6a9e1c84f))
+
 ## [4.0.0](https://github.com/cnpm/cnpmcore/compare/v3.74.0...v4.0.0) (2025-02-09)
 
 
