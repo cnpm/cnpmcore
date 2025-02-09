@@ -1,5 +1,15 @@
 name: cnpmcore_dev_services_postgres
 
+volumes:
+  cnpm-redis:
+  cnpm-postgres:
+  cnpm-pgadmin:
+
+networks:
+  cnpm-postgres:
+    name: cnpm-postgres
+    driver: bridge
+
 services:
   redis:
     env_file:
@@ -49,13 +59,3 @@ services:
       - cnpm-postgres
     depends_on:
       - postgres
-
-volumes:
-  cnpm-redis:
-  cnpm-postgres:
-  cnpm-pgadmin:
-
-networks:
-  cnpm-postgres:
-    name: cnpm-postgres
-    driver: bridge

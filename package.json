@@ -36,6 +36,7 @@
     }
   },
   "scripts": {
+    "predev": "npm run clean",
     "dev": "egg-bin dev",
     "dev:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin dev",
     "lint": "eslint --cache --ext .ts .",
