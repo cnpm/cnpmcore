@@ -36,7 +36,7 @@ describe('test/cli/npm/install.test.ts', () => {
     server && server.close();
   });
 
-  before(async () => {
+  beforeEach(async () => {
     await npmLogin(registry, userconfig);
     await coffee
       .spawn('npm', [
