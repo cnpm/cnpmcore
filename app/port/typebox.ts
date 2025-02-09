@@ -1,4 +1,5 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Type, Static } from 'egg-typebox-validate-fengmk2/typebox';
+import type { Application } from 'egg';
 import { RegistryType } from '../common/enum/Registry';
 import semver from 'semver';
 import npa from 'npm-package-arg';
@@ -119,7 +120,7 @@ export const CreateHookRequestRule = Type.Object({
 
 // https://github.com/xiekw2010/egg-typebox-validate#%E5%A6%82%E4%BD%95%E5%86%99%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%A1%E9%AA%8C%E8%A7%84%E5%88%99
 // add custom validate to ajv
-export function patchAjv(ajv: any) {
+export function patchAjv(ajv: Application['ajv']) {
   ajv.addFormat('semver-version', {
     type: 'string',
     validate: (version: string) => {
@@ -139,24 +140,24 @@ export function patchAjv(ajv: any) {
         // do not support alias
         // exp: https://unpkg.com/good@npm:cnpmcore@3.17.1/dist/app.js
         return [ 'tag', 'version', 'range' ].includes(npa(spec).type);
-      } catch (e) {
+      } catch {
         return false;
       }
     },
   });
   ajv.addFormat('binary-name', {
     type: 'string',
-    validate: (binaryName: BinaryName) => {
-      return binaryConfig[binaryName];
+    validate: (binaryName: string) => {
+      return !!binaryConfig[binaryName as BinaryName];
     },
   });
   ajv.addFormat('unique-semver-version-array', {
     type: 'string',
     validate: (versionStringList: string) => {
-      let versionList;
+      let versionList: string[];
       try {
         versionList = JSON.parse(versionStringList);
-      } catch (error) {
+      } catch {
         return false;
       }
       if (Array.isArray(versionList)) {

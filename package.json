@@ -5,6 +5,7 @@
   "files": [
     "dist/**/*"
   ],
+  "type": "commonjs",
   "main": "./dist/app.js",
   "typings": "./dist/app",
   "exports": {
@@ -42,6 +43,7 @@
     "test:postgresql": "npm run lint:fix && npm run test:local:postgresql",
     "pretest:local:postgresql": "bash prepare-database-postgresql.sh",
     "test:local:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin test",
+    "pretest": "npm run clean",
     "test": "npm run lint:fix && npm run test:local",
     "pretest:local": "bash prepare-database-mysql.sh",
     "test:local": "egg-bin test",
@@ -51,8 +53,10 @@
     "cov": "egg-bin cov",
     "precov:postgresql": "bash prepare-database-postgresql.sh",
     "cov:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin cov",
-    "ci": "npm run lint && npm run cov && npm run tsc:prod",
-    "ci:postgresql": "npm run lint && npm run cov:postgresql && npm run tsc:prod",
+    "preci": "npm run clean && npm run lint",
+    "ci": "npm run cov ",
+    "postci": "npm run tsc:prod && npm run clean",
+    "ci:postgresql": "npm run lint && npm run cov:postgresql && npm run tsc:prod && npm run clean",
     "clean": "tsc -b --clean && rm -rf dist",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "npm run clean && tsc -p ./tsconfig.prod.json",
@@ -74,6 +78,8 @@
     "registry"
   ],
   "dependencies": {
+    "@eggjs/redis": "^3.0.0",
+    "@eggjs/scripts": "^4.0.0",
     "@eggjs/tegg": "^3.12.0",
     "@eggjs/tegg-aop-plugin": "^3.12.0",
     "@eggjs/tegg-background-task": "^3.29.0",
@@ -83,24 +89,22 @@
     "@eggjs/tegg-orm-plugin": "^3.12.0",
     "@eggjs/tegg-plugin": "^3.12.0",
     "@eggjs/tegg-schedule-plugin": "^3.12.0",
+    "@eggjs/tracer": "^3.0.0",
     "@eggjs/tsconfig": "^1.0.0",
     "@elastic/elasticsearch": "^8.8.1",
     "@fengmk2/tar": "^6.2.0",
     "@node-rs/crc32": "^1.2.2",
     "@simplewebauthn/server": "^7.0.1",
-    "@sinclair/typebox": "^0.23.0",
     "base-x": "^3.0.9",
     "base64url": "^3.0.1",
     "bson-objectid": "^2.0.1",
     "dayjs": "^1.10.7",
-    "egg": "^3.29.0",
+    "egg": "^4.0.8",
     "egg-cors": "^3.0.0",
     "egg-errors": "^2.3.0",
-    "egg-redis": "^2.4.0",
-    "egg-scripts": "^3.0.0",
     "egg-status": "^1.0.0",
-    "egg-tracer": "^1.1.0",
     "egg-typebox-validate": "^2.0.0",
+    "egg-typebox-validate-fengmk2": "beta",
     "egg-view-nunjucks": "^2.3.0",
     "eggjs-elasticsearch": "^0.0.6",
     "fs-cnpm": "^2.4.0",
@@ -126,6 +130,8 @@
   },
   "devDependencies": {
     "@cnpmjs/npm-cli-login": "^1.1.0",
+    "@eggjs/bin": "^7.1.0",
+    "@eggjs/mock": "^6.0.7",
     "@elastic/elasticsearch-mock": "^2.0.0",
     "@simplewebauthn/typescript-types": "^7.0.0",
     "@types/lodash": "^4.14.196",
@@ -140,11 +146,9 @@
     "@types/ua-parser-js": "^0.7.36",
     "@types/validate-npm-package-name": "^4.0.2",
     "coffee": "^5.4.0",
-    "egg-bin": "^6.0.0",
-    "egg-mock": "^5.10.4",
     "eslint": "^8.29.0",
-    "eslint-config-egg": "^13.0.0",
-    "typescript": "5.2.2"
+    "eslint-config-egg": "^14.0.0",
+    "typescript": "beta"
   },
   "author": "killagu",
   "license": "MIT",
@@ -153,6 +157,6 @@
   },
   "homepage": "https://github.com/cnpm/npmcore#readme",
   "engines": {
-    "node": ">= 18.20.0"
+    "node": ">= 20.18.0"
   }
 }

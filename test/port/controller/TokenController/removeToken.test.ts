@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { Token, TokenType } from '../../../../app/core/entity/Token';
 import { UserService } from '../../../../app/core/service/UserService';
 import { AuthAdapter } from '../../../../app/infra/AuthAdapter';

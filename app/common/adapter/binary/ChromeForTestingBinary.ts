@@ -1,4 +1,4 @@
-import { basename } from 'path';
+import { basename } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary';
 import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';

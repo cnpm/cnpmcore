@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 import { BucketBinary } from '../../../../app/common/adapter/binary/BucketBinary';
 import { TestUtil } from '../../../../test/TestUtil';
 

@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 import { NwjsBinary } from '../../../../app/common/adapter/binary/NwjsBinary';
 import { TestUtil } from '../../../../test/TestUtil';
 

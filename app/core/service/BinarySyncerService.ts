@@ -1,4 +1,3 @@
-import { rm } from 'fs/promises';
 import {
   AccessLevel,
   SingletonProto,
@@ -8,7 +7,7 @@ import {
 import {
   EggHttpClient,
 } from 'egg';
-import fs from 'fs/promises';
+import fs from 'node:fs/promises';
 import { sortBy } from 'lodash';
 import binaries, { BinaryName, CategoryName } from '../../../config/binaries';
 import { BinaryRepository } from '../../repository/BinaryRepository';
@@ -223,7 +222,7 @@ export class BinarySyncerService extends AbstractService {
             logs = [];
           } finally {
             if (localFile) {
-              await rm(localFile, { force: true });
+              await fs.rm(localFile, { force: true });
             }
           }
         }

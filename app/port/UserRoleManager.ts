@@ -72,7 +72,7 @@ export class UserRoleManager {
     if (pkg && !scope && !inSelfRegistry) {
       // 3.2 public package can't publish in other registry
       // scope package can be migrated into self registry
-      throw new ForbiddenError(`Can\'t modify npm public package "${fullname}"`);
+      throw new ForbiddenError(`Can't modify npm public package "${fullname}"`);
     }
 
     // 4 check scope is allowed to publish
@@ -105,7 +105,7 @@ export class UserRoleManager {
       };
     }
     this.handleAuthorized = true;
-    const authorization = ctx.get('authorization');
+    const authorization = ctx.get<string>('authorization');
     if (!authorization) return null;
     const authorizedUserAndToken = await this.tokenService.getUserAndToken(authorization);
     if (!authorizedUserAndToken) {

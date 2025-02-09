@@ -8,8 +8,5 @@
     "declaration": false,
     "resolveJsonModule": true,
     "useUnknownInCatchVariables": false,
-  },
-  "exclude": [
-    "node_modules"
-  ],
+  }
 }

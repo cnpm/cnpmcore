@@ -1,4 +1,4 @@
-import { app, assert } from 'egg-mock/bootstrap';
+import { app, assert } from '@eggjs/mock/bootstrap';
 
 describe('test/port/controller/HomeController/misc.test.ts', () => {
   describe('[POST /*] misc()', () => {

@@ -12,7 +12,7 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { Static, Type } from '@sinclair/typebox';
+import { Static, Type } from 'egg-typebox-validate-fengmk2/typebox';
 import { AbstractController } from '../AbstractController';
 import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
 import { User as UserEntity } from '../../../core/entity/User';
@@ -71,9 +71,9 @@ export class UpdatePackageController extends AbstractController {
   private getNpmCommand(ctx: EggContext) {
     // npm@6: referer: 'xxx [REDACTED]'
     // npm@>=7: 'npm-command': 'xxx'
-    let npmCommand = ctx.get('npm-command');
+    let npmCommand = ctx.get<string>('npm-command');
     if (!npmCommand) {
-      npmCommand = ctx.get('referer').split(' ', 1)[0];
+      npmCommand = ctx.get<string>('referer').split(' ', 1)[0];
     }
 
     return npmCommand;

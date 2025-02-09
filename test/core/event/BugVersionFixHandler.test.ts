@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { BUG_VERSIONS } from '../../../app/common/constants';
 import { CacheService } from '../../../app/core/service/CacheService';
 import { BugVersionFixHandler } from '../../../app/core/event/BugVersionFixHandler';

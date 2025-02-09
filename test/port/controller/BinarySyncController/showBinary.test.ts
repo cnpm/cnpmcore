@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService';
 import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary';
 import { SqlcipherBinary } from '../../../../app/common/adapter/binary/SqlcipherBinary';

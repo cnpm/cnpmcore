@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import crypto from 'node:crypto';
 import { basename } from 'node:path';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { AuthAdapter } from '../../../app/infra/AuthAdapter';
 import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter';
 import { UserService } from '../../../app/core/service/UserService';

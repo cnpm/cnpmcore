@@ -10,7 +10,7 @@ import {
   EggContext,
   Inject,
 } from '@eggjs/tegg';
-import { Static, Type } from '@sinclair/typebox';
+import { Static, Type } from 'egg-typebox-validate-fengmk2/typebox';
 import { AbstractController } from './AbstractController';
 import { TokenType, isGranularToken } from '../../core/entity/Token';
 

@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'node:path';
 import { EggAppConfig, PowerPartial } from 'egg';
 import Mock from '@elastic/elasticsearch-mock';
 import { database } from './database';

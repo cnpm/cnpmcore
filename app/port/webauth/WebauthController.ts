@@ -13,9 +13,9 @@ import {
   EggLogger,
   EggAppConfig,
 } from 'egg';
-import { Static, Type } from '@sinclair/typebox';
+import { Static, Type } from 'egg-typebox-validate-fengmk2/typebox';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
-import { createHash } from 'crypto';
+import { createHash } from 'node:crypto';
 import base64url from 'base64url';
 import {
   generateRegistrationOptions,

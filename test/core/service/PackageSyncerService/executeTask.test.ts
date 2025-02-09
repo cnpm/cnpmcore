@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
@@ -1857,6 +1857,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         status: 500,
         persist: false,
         repeats: 3,
+        data: 'server error',
       });
       mock.error(NPMRegistry.prototype, 'downloadTarball');
       mock.data(NPMRegistry.prototype, 'getFullManifests', {
@@ -1898,6 +1899,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         status: 500,
         persist: false,
         repeats: 3,
+        data: 'server error',
       });
       mock.data(NPMRegistry.prototype, 'getFullManifests', {
         data: {

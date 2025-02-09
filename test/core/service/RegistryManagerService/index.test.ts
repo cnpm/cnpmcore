@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
 import { RegistryType } from '../../../../app/common/enum/Registry';
 import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService';

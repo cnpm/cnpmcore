@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { NPMRegistry } from '../../../app/common/adapter/NPMRegistry';
 
 describe('test/common/adapter/CacheAdapter.test.ts', () => {

@@ -38,15 +38,15 @@ const plugin: EggPlugin = {
   },
   tracer: {
     enable: true,
-    package: 'egg-tracer',
+    package: '@eggjs/tracer',
   },
   typeboxValidate: {
     enable: true,
-    package: 'egg-typebox-validate',
+    package: 'egg-typebox-validate-fengmk2',
   },
   redis: {
     enable: true,
-    package: 'egg-redis',
+    package: '@eggjs/redis',
   },
   cors: {
     enable: true,

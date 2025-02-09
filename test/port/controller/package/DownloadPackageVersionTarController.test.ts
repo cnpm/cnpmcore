@@ -1,6 +1,6 @@
-import { strict as assert } from 'assert';
+import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter';
 import { SyncMode } from '../../../../app/common/constants';
@@ -329,12 +329,12 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       });
       let res = await app.httpRequest()
         .get(`/${name}/download/${name}-1.0.0.tgz`);
-      assert(res.status === 302);
-      assert(res.headers.location === `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
+      assert.equal(res.status, 302);
+      assert.equal(res.headers.location, `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
       res = await app.httpRequest()
         .get(`/${scopedName}/download/${scopedName}-1.0.0.tgz`);
-      assert(res.status === 302);
-      assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
+      assert.equal(res.status, 302);
+      assert.equal(res.headers.location, `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
     });
 
     it('should download a version tar with streaming success', async () => {

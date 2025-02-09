@@ -1,6 +1,6 @@
 import { Readable, Duplex } from 'node:stream';
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream';
 import { NpmChangesStream } from '../../../../app/common/adapter/changesStream/NpmChangesStream';
 import { RegistryType } from '../../../../app/common/enum/Registry';

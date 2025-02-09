@@ -7,7 +7,7 @@ import {
   EggContext,
   Inject,
 } from '@eggjs/tegg';
-import path from 'path';
+import path from 'node:path';
 import { NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { BinarySyncerService } from '../../core/service/BinarySyncerService';

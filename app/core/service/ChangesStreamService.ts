@@ -1,5 +1,5 @@
-import os from 'os';
-import { setTimeout } from 'timers/promises';
+import os from 'node:os';
+import { setTimeout } from 'node:timers/promises';
 import {
   AccessLevel,
   SingletonProto,

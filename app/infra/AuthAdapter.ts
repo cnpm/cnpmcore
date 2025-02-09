@@ -5,7 +5,7 @@ import {
   SingletonProto,
 } from '@eggjs/tegg';
 import { Redis } from 'ioredis';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { AuthClient, AuthUrlResult, userResult } from '../common/typing';
 
 const ONE_DAY = 3600 * 24;

@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
+import { version as EggVersion } from 'egg/package.json';
 import { TestUtil } from '../../../../test/TestUtil';
 import { PackageVersionDownload } from '../../../../app/repository/model/PackageVersionDownload';
 import dayjs from '../../../../app/common/dayjs';
@@ -31,6 +32,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       assert(typeof data.download.today === 'number');
       assert(data.engine === app.config.orm.client);
       assert(data.node_version === process.version);
+      assert(data.egg_version === EggVersion);
       assert(data.instance_start_time);
       assert(data.sync_model === 'none');
       assert(data.sync_binary === false);
