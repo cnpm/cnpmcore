@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.0.0](https://github.com/cnpm/cnpmcore/compare/v3.74.0...v4.0.0) (2025-02-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* only support egg >= 4.0.0
+
+the first app on egg v4
+
+https://github.com/eggjs/egg/issues/3644
+
+### Features
+
+* use egg v4 ([#747](https://github.com/cnpm/cnpmcore/issues/747)) ([4427a4f](https://github.com/cnpm/cnpmcore/commit/4427a4fca58e3d1aca4c27f817798f3820db89b9))
+
 ## [3.74.0](https://github.com/cnpm/cnpmcore/compare/v3.73.1...v3.74.0) (2025-02-09)
 
 
