@@ -53,9 +53,6 @@ npm run dev
 
 # 访问
 curl -v http://127.0.0.1:7001
-
-# cnpmcore_admin 注册管理员
-npm login --registry=http://127.0.0.1:7001
 ```
 
 ### 开发运行 - PostgreSQL

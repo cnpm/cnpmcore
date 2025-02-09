@@ -82,6 +82,9 @@ CNPMCORE_LOG_DIR=/var/log/cnpmcore
 
 ```bash
 CNPMCORE_CONFIG_REGISTRY=https://your-registry.com
+# 从中国镜像获取数据
+CNPMCORE_CONFIG_SOURCE_REGISTRY=https://registry.npmmirror.com
+CNPMCORE_CONFIG_SOURCE_REGISTRY_IS_CNPM=true
 ```
 
 ### 时区
@@ -100,6 +103,8 @@ TZ=Asia/Shanghai
 module.exports = {
   cnpmcore: {
     registry: 'https://your-registry.com',
+    sourceRegistry: 'https://registry.npmmirror.com',
+    sourceRegistryIsCNpm: true,
     enableWebAuthn: true,
   },
   orm: {
@@ -151,6 +156,8 @@ docker run -p 7001:7001 -it --rm \
 ```bash
 docker run -p 7001:7001 -it --rm \
   -e CNPMCORE_CONFIG_REGISTRY=https://your-registry.com \
+  -e CNPMCORE_CONFIG_SOURCE_REGISTRY=https://registry.npmmirror.com \
+  -e CNPMCORE_CONFIG_SOURCE_REGISTRY_IS_CNPM=true \
   -e CNPMCORE_DATABASE_TYPE=MySQL \
   -e CNPMCORE_DATABASE_NAME=cnpmcore \
   -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
@@ -177,6 +184,8 @@ docker run -p 7001:7001 -it --rm \
 ```bash
 docker run -p 7001:7001 -it --rm \
   -e CNPMCORE_CONFIG_REGISTRY=https://your-registry.com \
+  -e CNPMCORE_CONFIG_SOURCE_REGISTRY=https://registry.npmmirror.com \
+  -e CNPMCORE_CONFIG_SOURCE_REGISTRY_IS_CNPM=true \
   -e CNPMCORE_DATABASE_TYPE=PostgreSQL \
   -e CNPMCORE_DATABASE_NAME=cnpmcore \
   -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
