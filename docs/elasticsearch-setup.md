@@ -58,8 +58,6 @@ path.logs: ./logs
 新建文件 `docker-compose.yaml`， 复制如下的 `docker-compose.yaml`
 
 ```yaml
-version: "3.8"
-
 volumes:
   certs:
     driver: local
@@ -142,6 +140,7 @@ services:
       - discovery.type=single-node
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - bootstrap.memory_lock=true
+      - bootstrap.system_call_filter=false
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=false
       - xpack.security.http.ssl.key=certs/es01/es01.key
@@ -252,7 +251,7 @@ docker compose up
 
 ### 访问 Elastic
 
-浏览器打开 http://localhost:5601/app/dev_tools#/console，默认账号为 `elastic` 密码为 .env 文件中定义的 `abcdef`
+浏览器打开 http://localhost:5601/app/dev_tools#/console ，默认账号为 `elastic` 密码为 .env 文件中定义的 `abcdef`
 
 ## 创建索引
 
@@ -262,7 +261,7 @@ ES 可以通过 Kibana devtool 进行数据的写入和查询操作。下面创�
 PUT cnpmcore_packages
 {
   "settings": ${settings} // copy 下方 settings
-  "mappings": ${mappings} // copy 下方 settings
+  "mappings": ${mappings} // copy 下方 mappings
 }
 ```
 
@@ -975,7 +974,7 @@ config: {
 ### 同步一条数据
 
 ```bash
-$ curl -X PUT https://r.cnpmjs.org/-/v1/search/sync/${pkgName}
+curl -X PUT http://localhost:7001/-/v1/search/sync/${pkgName}
 ```
 
 ### 删除一条数据
