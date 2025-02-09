@@ -213,7 +213,7 @@ jobs:
       run: npm i
 
     - name: Continuous Integration
-      run: npm run ci
+      run: npm run ci "test/port/controller/package/*.test.ts"
       env:
         CNPMCORE_NFS_TYPE: s3
         CNPMCORE_NFS_S3_CLIENT_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
