@@ -177,7 +177,6 @@ jobs:
     #   contains('
     #     refs/heads/master
     #     refs/heads/dev
-    #     refs/heads/egg-v4
     #   ', github.ref)
 
     services:
@@ -217,10 +216,12 @@ jobs:
       run: npm run ci
       env:
         CNPMCORE_NFS_TYPE: s3
-        CNPMCORE_NFS_S3_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
-        CNPMCORE_NFS_S3_ENDPOINT: ${{ secrets.CNPMCORE_NFS_S3_ENDPOINT }}
-        CNPMCORE_NFS_S3_ID: ${{ secrets.CNPMCORE_NFS_S3_ID }}
-        CNPMCORE_NFS_S3_SECRET: ${{ secrets.CNPMCORE_NFS_S3_SECRET }}
+        CNPMCORE_NFS_S3_CLIENT_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
+        CNPMCORE_NFS_S3_CLIENT_ENDPOINT: ${{ secrets.CNPMCORE_NFS_S3_ENDPOINT }}
+        CNPMCORE_NFS_S3_CLIENT_ID: ${{ secrets.CNPMCORE_NFS_S3_ID }}
+        CNPMCORE_NFS_S3_CLIENT_SECRET: ${{ secrets.CNPMCORE_NFS_S3_SECRET }}
+        CNPMCORE_NFS_S3_CLIENT_FORCE_PATH_STYLE: true
+        # CNPMCORE_NFS_S3_CLIENT_DISABLE_URL: true
 
     - name: Code Coverage
       uses: codecov/codecov-action@v5
