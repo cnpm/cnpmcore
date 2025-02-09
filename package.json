@@ -61,6 +61,9 @@
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "npm run clean && tsc -p ./tsconfig.prod.json",
     "prepublishOnly": "npm run tsc:prod",
+    "images": "npm run images:alpine && npm run images:debian",
+    "images:alpine": "docker build -t cnpmcore:alpine-latest -f .docker/alpine/Dockerfile .",
+    "images:debian": "docker build -t cnpmcore:latest -f .docker/debian/Dockerfile .",
     "start": "eggctl start --daemon && touch egg.status",
     "start:foreground": "eggctl start",
     "stop": "rm -f egg.status && sleep 15 && eggctl stop"

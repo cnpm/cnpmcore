@@ -3,7 +3,7 @@
 ## 构建镜像
 
 ```bash
-docker build -t cnpmcore .
+npm run images
 ```
 
 ## 通过环境变量配置参数
@@ -230,5 +230,6 @@ npm whoami --registry=https://registry-demo.fengmk2.com:9443
 https://hub.docker.com/r/fengmk2/cnpmcore
 
 ```bash
-docker pull fengmk2/cnpmcore
+docker pull fengmk2/cnpmcore:latest
+docker pull fengmk2/cnpmcore:latest-alpine
 ```
