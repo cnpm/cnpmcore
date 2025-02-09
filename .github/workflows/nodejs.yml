@@ -173,12 +173,12 @@ jobs:
   
   test-mysql57-s3-nfs:
     runs-on: ${{ matrix.os }}
-    if: |
-      contains('
-        refs/heads/master
-        refs/heads/dev
-        refs/heads/egg-v4
-      ', github.ref)
+    # if: |
+    #   contains('
+    #     refs/heads/master
+    #     refs/heads/dev
+    #     refs/heads/egg-v4
+    #   ', github.ref)
 
     services:
       mysql:
