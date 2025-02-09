@@ -50,6 +50,4 @@ export class AccessController extends AbstractController {
 
     return res;
   }
-
-
 }
