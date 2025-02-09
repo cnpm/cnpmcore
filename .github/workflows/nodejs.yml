@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, next ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, next ]
 
 jobs:
   test-postgresql-fs-nfs:
@@ -173,11 +173,6 @@ jobs:
   
   test-mysql57-s3-nfs:
     runs-on: ${{ matrix.os }}
-    # if: |
-    #   contains('
-    #     refs/heads/master
-    #     refs/heads/dev
-    #   ', github.ref)
 
     services:
       mysql:
