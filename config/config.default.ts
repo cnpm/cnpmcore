@@ -74,8 +74,10 @@ interface NFSConfig {
   removeBeforeUpload: boolean;
 }
 
-export default (appInfo: EggAppConfig) => {
-  const config = {} as PowerPartial<EggAppConfig> & { nfs: NFSConfig };
+export type Config = PowerPartial<EggAppConfig> & { nfs: NFSConfig };
+
+export default (appInfo: EggAppConfig): Config => {
+  const config = {} as Config;
 
   config.keys = env('CNPMCORE_EGG_KEYS', 'string', randomUUID());
   config.cnpmcore = cnpmcoreConfig;
