@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18.20.0, 18, 20, 22]
+        node-version: [20.18.0, 20, 22]
         os: [ubuntu-latest]
 
     steps:
@@ -67,7 +67,7 @@ jobs:
         POSTGRES_PORT: 5432
 
     - name: Code Coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -93,7 +93,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18.20.0, 18, 20, 22]
+        node-version: [20.18.0, 20, 22]
         os: [ubuntu-latest]
 
     steps:
@@ -112,7 +112,7 @@ jobs:
       run: npm run ci
 
     - name: Code Coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -120,8 +120,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     if: |
       contains('
-        refs/heads/master
-        refs/heads/dev
+        refs/heads/master-skip-oss
+        refs/heads/dev-skip-oss
       ', github.ref)
 
     services:
@@ -135,16 +135,14 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
       redis:
-        # https://docs.github.com/en/actions/using-containerized-services/about-service-containers#example-mapping-redis-ports
         image: redis
         ports:
-          # Opens tcp port 6379 on the host and service container
           - 6379:6379
 
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18.20.0, 18, 20, 22]
+        node-version: [20, 22]
         os: [ubuntu-latest]
 
     steps:
@@ -169,6 +167,62 @@ jobs:
         CNPMCORE_NFS_OSS_SECRET: ${{ secrets.CNPMCORE_NFS_OSS_SECRET }}
 
     - name: Code Coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+  
+  test-mysql57-s3-nfs:
+    runs-on: ${{ matrix.os }}
+    if: |
+      contains('
+        refs/heads/master
+        refs/heads/dev
+        refs/heads/egg-v4
+      ', github.ref)
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_DATABASE: cnpmcore_unittest
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22]
+        os: [ubuntu-latest]
+
+    steps:
+    - name: Checkout Git Source
+      uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Dependencies
+      run: npm i
+
+    - name: Continuous Integration
+      run: npm run ci
+      env:
+        CNPMCORE_NFS_TYPE: s3
+        CNPMCORE_NFS_S3_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
+        CNPMCORE_NFS_S3_ENDPOINT: ${{ secrets.CNPMCORE_NFS_S3_ENDPOINT }}
+        CNPMCORE_NFS_S3_ID: ${{ secrets.CNPMCORE_NFS_S3_ID }}
+        CNPMCORE_NFS_S3_SECRET: ${{ secrets.CNPMCORE_NFS_S3_SECRET }}
+
+    - name: Code Coverage
+      uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}

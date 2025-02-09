@@ -156,6 +156,6 @@
   },
   "homepage": "https://github.com/cnpm/npmcore#readme",
   "engines": {
-    "node": ">= 20.18.2"
+    "node": ">= 20.18.0"
   }
 }
