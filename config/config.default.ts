@@ -4,9 +4,9 @@ import { join } from 'node:path';
 import { EggAppConfig, PowerPartial, Context } from 'egg';
 import OSSClient from 'oss-cnpm';
 import S3Client from 's3-cnpmcore';
+import { env } from 'read-env-value';
 import { patchAjv } from '../app/port/typebox';
 import { ChangesStreamMode, NOT_IMPLEMENTED_PATH, SyncDeleteMode, SyncMode } from '../app/common/constants';
-import { env } from '../app/common/EnvUtil';
 import type { CnpmcoreConfig } from '../app/port/config';
 import { database } from './database';
 
@@ -86,7 +86,7 @@ export default (appInfo: EggAppConfig): Config => {
   config.dataDir = env('CNPMCORE_DATA_DIR', 'string', join(appInfo.root, '.cnpmcore'));
   config.orm = {
     ...database,
-    database: database.name || 'cnpmcore',
+    database: database.name ?? 'cnpmcore',
     charset: 'utf8mb4',
     logger: {
       // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror

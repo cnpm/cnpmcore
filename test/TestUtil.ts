@@ -49,7 +49,7 @@ export class TestUtil {
   static getDatabaseConfig() {
     return {
       ...database,
-      database: database.name || 'cnpmcore_unittest',
+      database: database.name ?? 'cnpmcore_unittest',
       multipleStatements: true,
     };
   }
