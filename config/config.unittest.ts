@@ -10,7 +10,7 @@ export default (appInfo: EggAppConfig) => {
   config.dataDir = join(appInfo.root, '.cnpmcore_unittest');
 
   config.orm = {
-    database: database.name || 'cnpmcore_unittest',
+    database: database.name ?? 'cnpmcore_unittest',
   };
 
   config.nfs = {
