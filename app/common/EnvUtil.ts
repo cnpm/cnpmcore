@@ -4,8 +4,11 @@ export function env(key: string, valueType: ValueType, defaultValue: string): st
 export function env(key: string, valueType: ValueType, defaultValue: boolean): boolean;
 export function env(key: string, valueType: ValueType, defaultValue: number): number;
 export function env(key: string, valueType: ValueType, defaultValue: string | boolean | number): string | boolean | number {
-  const value = process.env[key];
-  if (value === undefined) {
+  let value = process.env[key];
+  if (typeof value === 'string') {
+    value = value.trim();
+  }
+  if (!value) {
     return defaultValue;
   }
 
