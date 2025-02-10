@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.2](https://github.com/cnpm/cnpmcore/compare/v4.0.1...v4.0.2) (2025-02-10)
+
+
+### Bug Fixes
+
+* should return default value when env is empty string ([#759](https://github.com/cnpm/cnpmcore/issues/759)) ([b6c781e](https://github.com/cnpm/cnpmcore/commit/b6c781ec250150a689a9d04080ebca716f0840dd))
+
 ## [4.0.1](https://github.com/cnpm/cnpmcore/compare/v4.0.0...v4.0.1) (2025-02-09)
 
 
