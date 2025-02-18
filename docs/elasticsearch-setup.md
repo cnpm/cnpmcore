@@ -600,6 +600,10 @@ PUT cnpmcore_packages
           "normalizer": "raw",
           "type": "keyword"
         },
+        "version": {
+          "normalizer": "raw",
+          "type": "keyword"
+        },
         "versions": {
           "index": false,
           "type": "text"
