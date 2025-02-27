@@ -92,6 +92,7 @@ export default () => {
     ...cnpmcoreConfig,
     enableChangesStream: false,
     syncMode: SyncMode.all,
+    allowPublicRegistration: true,
   };
   return config;
 }
