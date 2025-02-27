@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.74.2](https://github.com/cnpm/cnpmcore/compare/v3.74.1...v3.74.2) (2025-02-27)
+
+
+### Bug Fixes
+
+* block tgz ([#763](https://github.com/cnpm/cnpmcore/issues/763)) ([3054577](https://github.com/cnpm/cnpmcore/commit/305457777e96b81570b2750cce92a8e36ddbf0b8))
+
 ## [3.74.1](https://github.com/cnpm/cnpmcore/compare/v3.74.0...v3.74.1) (2025-02-10)
 
 
