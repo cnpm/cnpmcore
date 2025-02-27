@@ -5,9 +5,10 @@ import { PackageVersionRepository } from '../../repository/PackageVersionReposit
 import { getScopeAndName } from '../../common/PackageUtil';
 import { SqlRange } from '../entity/SqlRange';
 import { BugVersionService } from './BugVersionService';
-import type { PackageJSONType } from '../../repository/PackageRepository';
+import type { PackageJSONType, PackageRepository } from '../../repository/PackageRepository';
 import { DistRepository } from '../../repository/DistRepository';
 import { BugVersionAdvice } from '../entity/BugVersion';
+import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -15,6 +16,12 @@ import { BugVersionAdvice } from '../entity/BugVersion';
 export class PackageVersionService {
   @Inject()
   private packageVersionRepository: PackageVersionRepository;
+
+  @Inject()
+  private packageRepository: PackageRepository;
+
+  @Inject()
+  private packageVersionBlockRepository: PackageVersionBlockRepository;
 
   @Inject()
   private readonly bugVersionService: BugVersionService;
@@ -114,5 +121,14 @@ export class PackageVersionService {
       }
     }
     return version;
+  }
+
+  async findBlockInfo(fullname: string) {
+    const [ scope, name ] = getScopeAndName(fullname);
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) {
+      return null;
+    }
+    return await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
   }
 }

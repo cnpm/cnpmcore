@@ -4,13 +4,16 @@ import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter';
 import { SyncMode } from '../../../../app/common/constants';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let publisher: any;
   let nfsClientAdapter: NFSClientAdapter;
+  let packageManagerService: PackageManagerService;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
+    packageManagerService = await app.getEggObject(PackageManagerService);
   });
 
   const scope = '@cnpm';
@@ -38,6 +41,8 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     assert(res.status === 201);
     assert(res.body.ok === true);
     assert.match(res.body.rev, /^\d+\-\w{24}$/);
+
+    await packageManagerService.unblockPackageByFullname(scopedName);
   });
 
   describe('[GET /:fullname/-/:name-:version.tgz] download()', () => {
@@ -54,6 +59,14 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         .get(`/${scopedName}/-/testmodule-download-version-tar-1.0.0.tgz`);
       assert(res.status === 302);
       assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
+    });
+
+    it('should block tgz', async () => {
+      await packageManagerService.blockPackageByFullname(scopedName, 'test');
+      const res = await app.httpRequest()
+        .get(`/${scopedName}/-/testmodule-download-version-tar-1.0.0.tgz`)
+        .expect(451);
+      assert.equal(res.body.error, '[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule-download-version-tar@1.0.0 was blocked, reason: test');
     });
 
     it('should support cors OPTIONS Request', async () => {
@@ -337,6 +350,14 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
     });
 
+    it('should block tgz', async () => {
+      await packageManagerService.blockPackageByFullname(scopedName, 'test');
+      const res = await app.httpRequest()
+        .get(`/${scopedName}/download/${scopedName}-1.0.0.tgz`)
+        .expect(451);
+      assert.equal(res.body.error, '[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule-download-version-tar@1.0.0 was blocked, reason: test');
+    });
+
     it('should download a version tar with streaming success', async () => {
       mock(nfsClientAdapter, 'url', 'not-function');
       const res = await app.httpRequest()
@@ -384,6 +405,15 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       assert(res.status === 302);
       assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
     });
+
+    it('should block tgz', async () => {
+      await packageManagerService.blockPackageByFullname(scopedName, 'test');
+      const res = await app.httpRequest()
+        .get(`/${scopedName}/-/${scope}/${name}-1.0.0.tgz`)
+        .expect(451);
+      assert.equal(res.body.error, '[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule-download-version-tar@1.0.0 was blocked, reason: test');
+    });
+
 
     it('should download a version tar with streaming success', async () => {
       mock(nfsClientAdapter, 'url', 'not-function');
