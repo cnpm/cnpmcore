@@ -80,6 +80,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     let pkg;
     let packageVersion;
     try {
+      pkg = await this.getPackageEntityByFullname(fullname, allowSync);
       packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
     } catch (error) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
