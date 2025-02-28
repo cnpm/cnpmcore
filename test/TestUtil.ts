@@ -133,6 +133,10 @@ export class TestUtil {
     return this._app;
   }
 
+  static allowPublicRegistration() {
+    this.app.config.cnpmcore.allowPublicRegistration = true;
+  }
+
   static async rm(filepath: string) {
     try {
       await fs.unlink(filepath);

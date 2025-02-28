@@ -42,7 +42,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
     '@example',
   ],
   allowPublishNonScopePackage: false,
-  allowPublicRegistration: true,
+  allowPublicRegistration: false,
   admins: {
     cnpmcore_admin: 'admin@cnpmjs.org',
   },
@@ -221,4 +221,3 @@ export default (appInfo: EggAppConfig) => {
 
   return config;
 };
-

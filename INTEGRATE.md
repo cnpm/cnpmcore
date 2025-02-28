@@ -92,6 +92,8 @@ export default () => {
     ...cnpmcoreConfig,
     enableChangesStream: false,
     syncMode: SyncMode.all,
+    allowPublicRegistration: true,
+    // 放开注册配置
   };
   return config;
 }

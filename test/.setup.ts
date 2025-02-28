@@ -5,6 +5,7 @@ beforeEach(async () => {
   // dont show console log on unittest by default
   TestUtil.app.loggers.disableConsole();
   await TestUtil.app.redis.flushdb('sync');
+  TestUtil.allowPublicRegistration();
 });
 
 afterEach(async () => {

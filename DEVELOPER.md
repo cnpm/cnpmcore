@@ -73,6 +73,9 @@ curl -v http://127.0.0.1:7001
 
 ### 登录和测试发包
 
+> cnpmcore 默认不开放注册，可以通过 `config.default.ts` 中的 `allowPublicRegistration` 配置开启，否则只有管理员可以登录
+
+
 注册 cnpmcore_admin 管理员
 
 ```bash
