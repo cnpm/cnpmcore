@@ -42,9 +42,9 @@ type UserOptions = {
 };
 
 export class TestUtil {
-  private static connection;
-  private static tables;
-  private static _app;
+  private static connection: any;
+  private static tables: any;
+  private static _app: any;
   private static ua = 'npm/7.0.0 cnpmcore-unittest/1.0.0';
 
   static getDatabaseConfig() {
@@ -316,7 +316,7 @@ export class TestUtil {
         });
   }
 
-  static async readStreamToLog(urlOrStream) {
+  static async readStreamToLog(urlOrStream: any) {
     let stream: Readable;
     if (typeof urlOrStream === 'string') {
       const { res } = await this.app.curl(urlOrStream, { streaming: true });
@@ -331,10 +331,10 @@ export class TestUtil {
     return Buffer.concat(chunks).toString();
   }
 
-  static pickKeys(obj, keys) {
-    const d: Record<string, any> = [];
-    obj.forEach(item => {
-      const newItem = {};
+  static pickKeys(obj: any, keys: any) {
+    const d: Record<string, any>[] = [];
+    obj.forEach((item: any) => {
+      const newItem: Record<string, any> = {};
       for (const key of keys) {
         newItem[key] = item[key];
       }
