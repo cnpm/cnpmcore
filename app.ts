@@ -2,7 +2,7 @@ import path from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { Application, ILifecycleBoot } from 'egg';
 // ReferenceError: Cannot access 'TaskRepository' before initialization
-// import { ChangesStreamService } from './app/core/service/ChangesStreamService.js';
+import { ChangesStreamService } from './app/core/service/ChangesStreamService.js';
 
 declare module 'egg' {
   interface Application {
@@ -43,7 +43,7 @@ export default class CnpmcoreAppHook implements ILifecycleBoot {
   // 应用退出时执行
   // 需要暂停当前执行的 changesStream task
   async beforeClose() {
-    const { ChangesStreamService } = await import('./app/core/service/ChangesStreamService.js');
+    // const { ChangesStreamService } = await import('./app/core/service/ChangesStreamService.js');
     const changesStreamService = await this.app.getEggObject(ChangesStreamService);
     await changesStreamService.suspendSync(true);
   }
