@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import { join, dirname, basename } from 'node:path';
 import { randomUUID } from 'node:crypto';
+// @ts-expect-error type error
 import tar from '@fengmk2/tar';
 import {
   AccessLevel,
@@ -148,7 +149,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
-        onentry: entry => {
+        onentry: (entry: any) => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;
           if (this.#matchReadmeFilename(filename)) {
@@ -204,7 +205,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
-        onentry: entry => {
+        onentry: (entry: any) => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;
           paths.push('/' + filename);

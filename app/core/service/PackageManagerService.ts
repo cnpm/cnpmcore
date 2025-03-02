@@ -712,8 +712,8 @@ export class PackageManagerService extends AbstractService {
       fullManifests,
       abbreviatedManifests,
     ] = await Promise.all([
-      await this._listPackageFullManifests(pkg),
-      await this._listPackageAbbreviatedManifests(pkg),
+      this._listPackageFullManifests(pkg),
+      this._listPackageAbbreviatedManifests(pkg),
     ]);
     await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
   }

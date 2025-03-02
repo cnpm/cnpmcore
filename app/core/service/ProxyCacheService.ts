@@ -233,11 +233,11 @@ export class ProxyCacheService extends AbstractService {
     }
 
     // replace tarball url
-    const manifest = this.replaceTarballUrl(responseResult.data, fileType);
+    const manifest = this.replaceTarballUrl(responseResult!.data, fileType);
     return manifest;
   }
 
-  private async storeRewrittenManifest(manifest, fullname: string, fileType: DIST_NAMES) {
+  private async storeRewrittenManifest(manifest: any, fullname: string, fileType: DIST_NAMES) {
     let storeKey: string;
     if (isPkgManifest(fileType)) {
       storeKey = `/${PROXY_CACHE_DIR_NAME}/${fullname}/${fileType}`;

@@ -57,7 +57,7 @@ export class PackageSearchService extends AbstractService {
       for (let i = 1; i <= 31; i++) {
         const day = String(i).padStart(2, '0');
         const field = `d${day}`;
-        const counter = entity[field];
+        const counter = entity[field as keyof typeof entity] as number;
         if (!counter) continue;
         downloadsAll += counter;
       }
