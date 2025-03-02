@@ -11,14 +11,15 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { AbstractController } from '../AbstractController';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil';
-import { SyncMode } from '../../../common/constants';
-import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
-import { PackageManagerService } from '../../../core/service/PackageManagerService';
-import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
-import { PackageSyncerService } from '../../../core/service/PackageSyncerService';
-import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
+
+import { AbstractController } from '../AbstractController.js';
+import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil.js';
+import { SyncMode } from '../../../common/constants.js';
+import { NFSAdapter } from '../../../common/adapter/NFSAdapter.js';
+import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
+import { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
+import { PackageSyncerService } from '../../../core/service/PackageSyncerService.js';
+import { RegistryManagerService } from '../../../core/service/RegistryManagerService.js';
 
 @HTTPController()
 export class DownloadPackageVersionTarController extends AbstractController {

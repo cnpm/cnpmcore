@@ -1,8 +1,9 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { ModelConvertor } from './util/ModelConvertor';
-import type { Binary as BinaryModel } from './model/Binary';
-import { Binary as BinaryEntity } from '../core/entity/Binary';
-import { AbstractRepository } from './AbstractRepository';
+
+import { ModelConvertor } from './util/ModelConvertor.js';
+import type { Binary as BinaryModel } from './model/Binary.js';
+import { Binary as BinaryEntity } from '../core/entity/Binary.js';
+import { AbstractRepository } from './AbstractRepository.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

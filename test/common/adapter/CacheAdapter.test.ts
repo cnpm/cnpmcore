@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter';
+
+import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter.js';
 
 describe('test/common/adapter/CacheAdapter.test.ts', () => {
   let cache: CacheAdapter;

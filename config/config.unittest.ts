@@ -1,8 +1,10 @@
 import { join } from 'node:path';
 import { EggAppConfig, PowerPartial } from 'egg';
 import Mock from '@elastic/elasticsearch-mock';
-import { database } from './database';
 
+import { database } from './database.js';
+
+// @ts-expect-error has no construct signatures
 export const mockES = new Mock();
 
 export default (appInfo: EggAppConfig) => {

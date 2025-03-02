@@ -1,4 +1,4 @@
-import { HookEventType } from '../../common/enum/Hook';
+import { HookEventType } from '../../common/enum/Hook.js';
 
 export interface PublishChangePayload {
   'dist-tag'?: string;

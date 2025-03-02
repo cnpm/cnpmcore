@@ -1,5 +1,6 @@
 import { EggContext, Next } from '@eggjs/tegg';
-import { PackageSyncerService } from '../../core/service/PackageSyncerService';
+
+import { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
 
 const DEFAULT_SERVER_ERROR_STATUS = 500;
 

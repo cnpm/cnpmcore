@@ -3,27 +3,28 @@ import { ForbiddenError } from 'egg-errors';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { valid as semverValid } from 'semver';
-import { AbstractService } from '../../common/AbstractService';
-import { TaskService } from './TaskService';
-import { CacheService } from './CacheService';
-import { RegistryManagerService } from './RegistryManagerService';
-import { NPMRegistry } from '../../common/adapter/NPMRegistry';
-import { NFSAdapter } from '../../common/adapter/NFSAdapter';
-import { ProxyCache } from '../entity/ProxyCache';
-import { Task, UpdateProxyCacheTaskOptions, CreateUpdateProxyCacheTask } from '../entity/Task';
-import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
-import { TaskType, TaskState } from '../../common/enum/Task';
-import { calculateIntegrity } from '../../common/PackageUtil';
-import { ABBREVIATED_META_TYPE, PROXY_CACHE_DIR_NAME } from '../../common/constants';
-import { DIST_NAMES } from '../entity/Package';
-import type { AbbreviatedPackageManifestType, AbbreviatedPackageJSONType, PackageManifestType, PackageJSONType } from '../../repository/PackageRepository';
+import { AbstractService } from '../../common/AbstractService.js';
+import { TaskService } from './TaskService.js';
+import { CacheService } from './CacheService.js';
+import { RegistryManagerService } from './RegistryManagerService.js';
+import { NPMRegistry } from '../../common/adapter/NPMRegistry.js';
+import { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
+import { ProxyCache } from '../entity/ProxyCache.js';
+import { Task, UpdateProxyCacheTaskOptions, CreateUpdateProxyCacheTask } from '../entity/Task.js';
+import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
+import { TaskType, TaskState } from '../../common/enum/Task.js';
+import { calculateIntegrity } from '../../common/PackageUtil.js';
+import { ABBREVIATED_META_TYPE, PROXY_CACHE_DIR_NAME } from '../../common/constants.js';
+import { DIST_NAMES, isPkgManifest } from '../entity/Package.js';
+import type {
+  AbbreviatedPackageManifestType,
+  AbbreviatedPackageJSONType,
+  PackageManifestType,
+  PackageJSONType,
+} from '../../repository/PackageRepository.js';
 
 function isoNow() {
   return new Date().toISOString();
-}
-
-export function isPkgManifest(fileType: DIST_NAMES) {
-  return fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED_MANIFESTS;
 }
 
 type GetSourceManifestAndCacheReturnType<T> = T extends DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST ? AbbreviatedPackageJSONType | PackageJSONType :
@@ -228,11 +229,11 @@ export class ProxyCacheService extends AbstractService {
     }
 
     // replace tarball url
-    const manifest = this.replaceTarballUrl(responseResult.data, fileType);
+    const manifest = this.replaceTarballUrl(responseResult!.data, fileType);
     return manifest;
   }
 
-  private async storeRewrittenManifest(manifest, fullname: string, fileType: DIST_NAMES) {
+  private async storeRewrittenManifest(manifest: any, fullname: string, fileType: DIST_NAMES) {
     let storeKey: string;
     if (isPkgManifest(fileType)) {
       storeKey = `/${PROXY_CACHE_DIR_NAME}/${fullname}/${fileType}`;

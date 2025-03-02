@@ -1,9 +1,9 @@
 import { EggAppConfig, EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
-import { ProxyCacheService } from '../../core/service/ProxyCacheService';
-import { SyncMode } from '../../common/constants';
 
+import { ProxyCacheService } from '../../core/service/ProxyCacheService.js';
+import { SyncMode } from '../../common/constants.js';
 
 let executingCount = 0;
 

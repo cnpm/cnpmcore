@@ -1,5 +1,6 @@
 import { EggContext, Next } from '@eggjs/tegg';
-import { UserRoleManager } from '../UserRoleManager';
+
+import { UserRoleManager } from '../UserRoleManager.js';
 
 export async function AlwaysAuth(ctx: EggContext, next: Next) {
   if (ctx.app.config.cnpmcore.alwaysAuth) {

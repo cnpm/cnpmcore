@@ -1,9 +1,13 @@
 import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { calculateIntegrity } from '../../../../app/common/PackageUtil';
-import { PackageTagChangedSyncPackageVersionFileEvent, PackageTagAddedSyncPackageVersionFileEvent } from '../../../../app/core/event/SyncPackageVersionFile';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
+import {
+  PackageTagChangedSyncPackageVersionFileEvent,
+  PackageTagAddedSyncPackageVersionFileEvent,
+} from '../../../../app/core/event/SyncPackageVersionFile.js';
 
 describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => {
   let publisher;

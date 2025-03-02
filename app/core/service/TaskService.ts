@@ -3,12 +3,12 @@ import {
   SingletonProto,
   Inject,
 } from '@eggjs/tegg';
-import { NFSAdapter } from '../../common/adapter/NFSAdapter';
-import { TaskState, TaskType } from '../../common/enum/Task';
-import { AbstractService } from '../../common/AbstractService';
-import { TaskRepository } from '../../repository/TaskRepository';
-import { Task, CreateSyncPackageTaskData } from '../entity/Task';
-import { QueueAdapter } from '../../common/typing';
+import { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
+import { TaskState, TaskType } from '../../common/enum/Task.js';
+import { AbstractService } from '../../common/AbstractService.js';
+import { TaskRepository } from '../../repository/TaskRepository.js';
+import { Task, CreateSyncPackageTaskData } from '../entity/Task.js';
+import { QueueAdapter } from '../../common/typing.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

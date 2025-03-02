@@ -1,6 +1,6 @@
-import { Entity, EntityData } from './Entity';
-import { EasyData, EntityUtil } from '../util/EntityUtil';
-import type { RegistryType } from '../../common/enum/Registry';
+import { Entity, EntityData } from './Entity.js';
+import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import type { RegistryType } from '../../common/enum/Registry.js';
 
 interface RegistryData extends EntityData {
   name: string;

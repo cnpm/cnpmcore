@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
-import { EntityUtil } from '../../../app/core/util/EntityUtil';
+
+import { EntityUtil } from '../../../app/core/util/EntityUtil.js';
 
 describe('test/core/util/EntityUtil.test.ts', () => {
   describe('convertPageOptionsToLimitOption', () => {

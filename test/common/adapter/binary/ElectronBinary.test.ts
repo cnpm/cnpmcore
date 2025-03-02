@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { ElectronBinary } from '../../../../app/common/adapter/binary/ElectronBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { ElectronBinary } from '../../../../app/common/adapter/binary/ElectronBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
   let binary: ElectronBinary;

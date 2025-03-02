@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { NodePreGypBinary } from '../../../../app/common/adapter/binary/NodePreGypBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { NodePreGypBinary } from '../../../../app/common/adapter/binary/NodePreGypBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
   let binary: NodePreGypBinary;

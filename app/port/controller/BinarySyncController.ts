@@ -9,11 +9,12 @@ import {
 } from '@eggjs/tegg';
 import path from 'node:path';
 import { NotFoundError } from 'egg-errors';
-import { AbstractController } from './AbstractController';
-import { BinarySyncerService } from '../../core/service/BinarySyncerService';
-import { Binary } from '../../core/entity/Binary';
-import binaries, { BinaryName } from '../../../config/binaries';
-import { BinaryNameRule, BinarySubpathRule } from '../typebox';
+
+import { AbstractController } from './AbstractController.js';
+import { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
+import { Binary } from '../../core/entity/Binary.js';
+import binaries, { BinaryName } from '../../../config/binaries.js';
+import { BinaryNameRule, BinarySubpathRule } from '../typebox.js';
 
 @HTTPController()
 export class BinarySyncController extends AbstractController {

@@ -4,9 +4,9 @@ import {
   SingletonProto,
 } from '@eggjs/tegg';
 import { EggAppConfig } from 'egg';
-
 import { Client as ElasticsearchClient, estypes } from '@elastic/elasticsearch';
-import { SearchAdapter } from '../common/typing';
+
+import { SearchAdapter } from '../common/typing.js';
 
 /**
  * Use elasticsearch to search the huge npm packages.

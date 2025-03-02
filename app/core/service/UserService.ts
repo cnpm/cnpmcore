@@ -5,16 +5,16 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { NotFoundError, ForbiddenError } from 'egg-errors';
-import { UserRepository } from '../../repository/UserRepository';
-import { User as UserEntity } from '../entity/User';
-import { Token as TokenEntity, TokenType } from '../entity/Token';
-import { WebauthnCredential as WebauthnCredentialEntity } from '../entity/WebauthnCredential';
-import { LoginResultCode } from '../../common/enum/User';
-import { integrity, checkIntegrity, randomToken, sha512 } from '../../common/UserUtil';
-import { AbstractService } from '../../common/AbstractService';
-import { RegistryManagerService } from './RegistryManagerService';
-import { getPrefixedName } from '../../common/PackageUtil';
-import { Registry } from '../entity/Registry';
+import { UserRepository } from '../../repository/UserRepository.js';
+import { User as UserEntity } from '../entity/User.js';
+import { Token as TokenEntity, TokenType } from '../entity/Token.js';
+import { WebauthnCredential as WebauthnCredentialEntity } from '../entity/WebauthnCredential.js';
+import { LoginResultCode } from '../../common/enum/User.js';
+import { integrity, checkIntegrity, randomToken, sha512 } from '../../common/UserUtil.js';
+import { AbstractService } from '../../common/AbstractService.js';
+import { RegistryManagerService } from './RegistryManagerService.js';
+import { getPrefixedName } from '../../common/PackageUtil.js';
+import { Registry } from '../entity/Registry.js';
 
 type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
 

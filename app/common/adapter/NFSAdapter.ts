@@ -7,8 +7,8 @@ import {
 } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
 import { EggLogger } from 'egg';
-import { AsyncTimer } from '../aop/AsyncTimer';
-import { NFSClient } from '../typing';
+import { AsyncTimer } from '../aop/AsyncTimer.js';
+import { NFSClient } from '../typing.js';
 
 const INSTANCE_NAME = 'nfsAdapter';
 

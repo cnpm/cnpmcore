@@ -3,10 +3,10 @@ import {
   EggAppConfig, EggLogger,
 } from 'egg';
 import { ForbiddenError } from 'egg-errors';
-import { PACKAGE_VERSION_ADDED, PACKAGE_TAG_ADDED, PACKAGE_TAG_CHANGED } from './index';
-import { getScopeAndName } from '../../common/PackageUtil';
-import { PackageManagerService } from '../service/PackageManagerService';
-import { PackageVersionFileService } from '../service/PackageVersionFileService';
+import { PACKAGE_VERSION_ADDED, PACKAGE_TAG_ADDED, PACKAGE_TAG_CHANGED } from './index.js';
+import { getScopeAndName } from '../../common/PackageUtil.js';
+import { PackageManagerService } from '../service/PackageManagerService.js';
+import { PackageVersionFileService } from '../service/PackageVersionFileService.js';
 
 class SyncPackageVersionFileEvent {
   @Inject()

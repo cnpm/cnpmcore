@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { PlaywrightBinary } from '../../../../app/common/adapter/binary/PlaywrightBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { PlaywrightBinary } from '../../../../app/common/adapter/binary/PlaywrightBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
   let binary: PlaywrightBinary;

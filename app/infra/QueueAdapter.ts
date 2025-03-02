@@ -4,7 +4,8 @@ import {
   SingletonProto,
 } from '@eggjs/tegg';
 import { Redis } from 'ioredis';
-import { QueueAdapter } from '../common/typing';
+
+import { QueueAdapter } from '../common/typing.js';
 
 /**
  * Use sort set to keep queue in order and keep same value only insert once

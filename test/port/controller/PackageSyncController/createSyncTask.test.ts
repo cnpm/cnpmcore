@@ -1,9 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { Task as TaskModel } from '../../../../app/repository/model/Task';
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { Task as TaskModel } from '../../../../app/repository/model/Task.js';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
 
 describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', () => {
   let publisher: any;

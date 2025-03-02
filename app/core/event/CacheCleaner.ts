@@ -11,8 +11,8 @@ import {
   PACKAGE_MAINTAINER_CHANGED,
   PACKAGE_MAINTAINER_REMOVED,
   PACKAGE_META_CHANGED,
-} from './index';
-import { CacheService } from '../../core/service/CacheService';
+} from './index.js';
+import { CacheService } from '../../core/service/CacheService.js';
 
 class CacheCleanerEvent {
   @Inject()

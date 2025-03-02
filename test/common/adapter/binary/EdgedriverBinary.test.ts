@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { EdgedriverBinary } from '../../../../app/common/adapter/binary/EdgedriverBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { EdgedriverBinary } from '../../../../app/common/adapter/binary/EdgedriverBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
   let binary: EdgedriverBinary;

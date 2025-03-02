@@ -2,16 +2,17 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
-import { TestUtil } from '../../../test/TestUtil';
-import { npmLogin } from '../CliUtil';
+
+import { TestUtil } from '../../../test/TestUtil.js';
+import { npmLogin } from '../CliUtil.js';
 
 describe('test/cli/npm/install.test.ts', () => {
-  let server;
-  let registry;
-  let fooPkgDir;
-  let demoDir;
-  let userconfig;
-  let cacheDir;
+  let server: any;
+  let registry: any;
+  let fooPkgDir: any;
+  let demoDir: any;
+  let userconfig: any;
+  let cacheDir: any;
   before(async () => {
     cacheDir = TestUtil.mkdtemp();
     fooPkgDir = TestUtil.getFixtures('@cnpm/foo');

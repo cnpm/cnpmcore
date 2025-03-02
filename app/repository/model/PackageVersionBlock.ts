@@ -1,5 +1,6 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
-import { DataTypes, Bone, LENGTH_VARIANTS } from 'leoric';
+
+import { DataTypes, Bone, LENGTH_VARIANTS } from '../util/leoric.js';
 
 @Model()
 export class PackageVersionBlock extends Bone {

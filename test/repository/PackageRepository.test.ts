@@ -1,9 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { PackageRepository } from '../../app/repository/PackageRepository';
-import { PackageManagerService } from '../../app/core/service/PackageManagerService';
-import { UserService } from '../../app/core/service/UserService';
-import { TestUtil } from '../../test/TestUtil';
+
+import { PackageRepository } from '../../app/repository/PackageRepository.js';
+import { PackageManagerService } from '../../app/core/service/PackageManagerService.js';
+import { UserService } from '../../app/core/service/UserService.js';
+import { TestUtil } from '../../test/TestUtil.js';
 
 describe('test/repository/PackageRepository.test.ts', () => {
   let packageRepository: PackageRepository;

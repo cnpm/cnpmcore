@@ -1,6 +1,7 @@
 import { EggContext, Next } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
-import { UserRoleManager } from '../UserRoleManager';
+
+import { UserRoleManager } from '../UserRoleManager.js';
 
 export async function AdminAccess(ctx: EggContext, next: Next) {
   const userRoleManager = await ctx.getEggObject(UserRoleManager);

@@ -1,11 +1,16 @@
 import { strict as assert } from 'node:assert';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { ChangesStreamService } from '../../app/core/service/ChangesStreamService';
-import { TaskService } from '../../app/core/service/TaskService';
-import { Task } from '../../app/repository/model/Task';
-import { TestUtil } from '../../test/TestUtil';
 
-const ChangesStreamWorkerPath = require.resolve('../../app/port/schedule/ChangesStreamWorker');
+import { ChangesStreamService } from '../../app/core/service/ChangesStreamService.js';
+import { TaskService } from '../../app/core/service/TaskService.js';
+import { Task } from '../../app/repository/model/Task.js';
+import { TestUtil } from '../../test/TestUtil.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ChangesStreamWorkerPath = path.join(__dirname, '../../app/port/schedule/ChangesStreamWorker.ts');
 
 describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   let changesStreamService: ChangesStreamService;

@@ -1,6 +1,7 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
-import { RegistryType } from '../../common/enum/Registry';
-import { DataTypes, Bone } from 'leoric';
+
+import { DataTypes, Bone } from '../util/leoric.js';
+import { RegistryType } from '../../common/enum/Registry.js';
 
 @Model()
 export class Registry extends Bone {

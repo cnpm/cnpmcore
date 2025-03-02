@@ -11,8 +11,8 @@ import {
   HttpClientRequestOptions,
   HttpClientResponse,
 } from 'egg';
-import { PackageManifestType } from '../../repository/PackageRepository';
-import { isTimeoutError } from '../ErrorUtil';
+import { PackageManifestType } from '../../repository/PackageRepository.js';
+import { isTimeoutError } from '../ErrorUtil.js';
 
 type HttpMethod = HttpClientRequestOptions['method'];
 

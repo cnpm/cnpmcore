@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import dayjs from '../../../../app/common/dayjs';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import dayjs from '../../../../app/common/dayjs.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 const SavePackageVersionDownloadCounterPath = require.resolve('../../../../app/port/schedule/SavePackageVersionDownloadCounter');
 

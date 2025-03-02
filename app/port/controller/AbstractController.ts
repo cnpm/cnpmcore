@@ -10,18 +10,19 @@ import {
   EggLogger,
   EggAppConfig,
 } from 'egg';
-import { MiddlewareController } from '../middleware';
-import { UserRoleManager } from '../UserRoleManager';
-import { PackageRepository } from '../../repository/PackageRepository';
-import { UserRepository } from '../../repository/UserRepository';
-import { getFullname, getScopeAndName } from '../../common/PackageUtil';
-import { Package as PackageEntity } from '../../core/entity/Package';
-import { PackageVersion as PackageVersionEntity } from '../../core/entity/PackageVersion';
-import { UserService } from '../../core/service/UserService';
+
+import { MiddlewareController } from '../middleware/index.js';
+import { UserRoleManager } from '../UserRoleManager.js';
+import { PackageRepository } from '../../repository/PackageRepository.js';
+import { UserRepository } from '../../repository/UserRepository.js';
+import { getFullname, getScopeAndName } from '../../common/PackageUtil.js';
+import { Package as PackageEntity } from '../../core/entity/Package.js';
+import { PackageVersion as PackageVersionEntity } from '../../core/entity/PackageVersion.js';
+import { UserService } from '../../core/service/UserService.js';
 import {
   VersionRule,
-} from '../typebox';
-import { SyncMode } from '../../common/constants';
+} from '../typebox.js';
+import { SyncMode } from '../../common/constants.js';
 
 class PackageNotFoundError extends NotFoundError {
   redirectToSourceRegistry?: string;

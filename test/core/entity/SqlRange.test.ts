@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
-import { SqlRange } from '../../../app/core/entity/SqlRange';
+
+import { SqlRange } from '../../../app/core/entity/SqlRange.js';
 
 describe('test/npm/core/entity/SqlRange.test.ts', () => {
   it('should support compose range', () => {

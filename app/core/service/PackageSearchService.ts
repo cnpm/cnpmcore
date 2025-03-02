@@ -1,14 +1,13 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { estypes, errors } from '@elastic/elasticsearch';
 import dayjs from 'dayjs';
-
-import { AbstractService } from '../../common/AbstractService';
-import { formatAuthor, getScopeAndName } from '../../common/PackageUtil';
-import { PackageManagerService } from './PackageManagerService';
-import { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository';
-import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
-import { PackageRepository } from '../../repository/PackageRepository';
-import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
+import { AbstractService } from '../../common/AbstractService.js';
+import { formatAuthor, getScopeAndName } from '../../common/PackageUtil.js';
+import { PackageManagerService } from './PackageManagerService.js';
+import { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository.js';
+import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
+import { PackageRepository } from '../../repository/PackageRepository.js';
+import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
 
 
 @SingletonProto({
@@ -58,7 +57,7 @@ export class PackageSearchService extends AbstractService {
       for (let i = 1; i <= 31; i++) {
         const day = String(i).padStart(2, '0');
         const field = `d${day}`;
-        const counter = entity[field];
+        const counter = entity[field as keyof typeof entity] as number;
         if (!counter) continue;
         downloadsAll += counter;
       }

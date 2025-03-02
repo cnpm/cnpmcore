@@ -1,8 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 import { errors } from '@elastic/elasticsearch';
-import { mockES } from '../../../../config/config.unittest';
-import { TestUtil } from '../../../TestUtil';
+import { mockES } from '../../../../config/config.unittest.js';
+import { TestUtil } from '../../../TestUtil.js';
 
 describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   let publisher;

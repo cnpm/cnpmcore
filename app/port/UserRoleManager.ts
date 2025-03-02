@@ -6,13 +6,14 @@ import {
 } from '@eggjs/tegg';
 import { EggAppConfig, EggLogger } from 'egg';
 import { UnauthorizedError, ForbiddenError } from 'egg-errors';
-import { PackageRepository } from '../repository/PackageRepository';
-import { Package as PackageEntity } from '../core/entity/Package';
-import { User as UserEntity } from '../core/entity/User';
-import { Token as TokenEntity } from '../core/entity/Token';
-import { getScopeAndName } from '../common/PackageUtil';
-import { RegistryManagerService } from '../core/service/RegistryManagerService';
-import { TokenService } from '../core/service/TokenService';
+
+import { PackageRepository } from '../repository/PackageRepository.js';
+import { Package as PackageEntity } from '../core/entity/Package.js';
+import { User as UserEntity } from '../core/entity/User.js';
+import { Token as TokenEntity } from '../core/entity/Token.js';
+import { getScopeAndName } from '../common/PackageUtil.js';
+import { RegistryManagerService } from '../core/service/RegistryManagerService.js';
+import { TokenService } from '../core/service/TokenService.js';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';

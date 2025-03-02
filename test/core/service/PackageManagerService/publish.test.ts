@@ -1,9 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
-import { UserService } from '../../../../app/core/service/UserService';
-import { PackageRepository } from '../../../../app/repository/PackageRepository';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
+import { UserService } from '../../../../app/core/service/UserService.js';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
 
 describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   let packageManagerService: PackageManagerService;

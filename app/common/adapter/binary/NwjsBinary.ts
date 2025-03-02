@@ -1,8 +1,8 @@
 import { SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary';
-import binaries from '../../../../config/binaries';
-import { FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
-import { BucketBinary } from './BucketBinary';
+import binaries from '../../../../config/binaries.js';
+import { BinaryType } from '../../enum/Binary.js';
+import { FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
+import { BucketBinary } from './BucketBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Nwjs)

@@ -6,7 +6,8 @@ import {
 } from '@eggjs/tegg';
 import { Redis } from 'ioredis';
 import { randomUUID } from 'node:crypto';
-import { AuthClient, AuthUrlResult, userResult } from '../common/typing';
+
+import { AuthClient, AuthUrlResult, userResult } from '../common/typing.js';
 
 const ONE_DAY = 3600 * 24;
 

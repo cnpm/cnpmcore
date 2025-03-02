@@ -3,11 +3,11 @@ import {
   SingletonProto,
   Inject,
 } from '@eggjs/tegg';
-import { CacheAdapter } from '../../common/adapter/CacheAdapter';
-import { AbstractService } from '../../common/AbstractService';
-import { ChangesStreamTaskData } from '../entity/Task';
+import { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
+import { AbstractService } from '../../common/AbstractService.js';
+import { ChangesStreamTaskData } from '../entity/Task.js';
 
-type PackageCacheAttribe = 'etag' | 'manifests';
+type PackageCacheAttribute = 'etag' | 'manifests';
 
 export type UpstreamRegistryInfo = {
   registry_name: string;
@@ -95,14 +95,14 @@ export class CacheService extends AbstractService {
 
   public async removeCache(fullname: string) {
     await Promise.all([
-      await this.cacheAdapter.delete(this.cacheKey(fullname, true, 'etag')),
-      await this.cacheAdapter.delete(this.cacheKey(fullname, true, 'manifests')),
-      await this.cacheAdapter.delete(this.cacheKey(fullname, false, 'etag')),
-      await this.cacheAdapter.delete(this.cacheKey(fullname, false, 'manifests')),
+      this.cacheAdapter.delete(this.cacheKey(fullname, true, 'etag')),
+      this.cacheAdapter.delete(this.cacheKey(fullname, true, 'manifests')),
+      this.cacheAdapter.delete(this.cacheKey(fullname, false, 'etag')),
+      this.cacheAdapter.delete(this.cacheKey(fullname, false, 'manifests')),
     ]);
   }
 
-  private cacheKey(fullname: string, isFullManifests: boolean, attribute: PackageCacheAttribe) {
+  private cacheKey(fullname: string, isFullManifests: boolean, attribute: PackageCacheAttribute) {
     return `${fullname}|${isFullManifests ? 'full' : 'abbr'}:${attribute}`;
   }
 }

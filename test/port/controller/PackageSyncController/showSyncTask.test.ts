@@ -1,8 +1,9 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { TaskRepository } from '../../../../app/repository/TaskRepository';
-import { TaskState } from '../../../../app/common/enum/Task';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
+import { TaskState } from '../../../../app/common/enum/Task.js';
 
 const SyncPackageWorkerPath = require.resolve('../../../../app/port/schedule/SyncPackageWorker');
 

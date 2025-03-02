@@ -1,13 +1,13 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import semver, { Range } from 'semver';
 import { Result, AliasResult } from 'npm-package-arg';
-import { PackageVersionRepository } from '../../repository/PackageVersionRepository';
-import { getScopeAndName } from '../../common/PackageUtil';
-import { SqlRange } from '../entity/SqlRange';
-import { BugVersionService } from './BugVersionService';
-import type { PackageJSONType } from '../../repository/PackageRepository';
-import { DistRepository } from '../../repository/DistRepository';
-import { BugVersionAdvice } from '../entity/BugVersion';
+import { PackageVersionRepository } from '../../repository/PackageVersionRepository.js';
+import { getScopeAndName } from '../../common/PackageUtil.js';
+import { SqlRange } from '../entity/SqlRange.js';
+import { BugVersionService } from './BugVersionService.js';
+import type { PackageJSONType } from '../../repository/PackageRepository.js';
+import { DistRepository } from '../../repository/DistRepository.js';
+import { BugVersionAdvice } from '../entity/BugVersion.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

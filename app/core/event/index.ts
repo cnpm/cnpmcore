@@ -1,5 +1,5 @@
 import '@eggjs/tegg';
-import { User } from '../entity/User';
+import { User } from '../entity/User.js';
 
 export const PACKAGE_UNPUBLISHED = 'PACKAGE_UNPUBLISHED';
 export const PACKAGE_BLOCKED = 'PACKAGE_BLOCKED';

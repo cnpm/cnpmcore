@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { BucketBinary } from '../../../../app/common/adapter/binary/BucketBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { BucketBinary } from '../../../../app/common/adapter/binary/BucketBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
   let binary: BucketBinary;

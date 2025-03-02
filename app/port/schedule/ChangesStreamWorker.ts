@@ -1,7 +1,8 @@
 import { EggAppConfig, EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
-import { ChangesStreamService } from '../../core/service/ChangesStreamService';
+
+import { ChangesStreamService } from '../../core/service/ChangesStreamService.js';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,

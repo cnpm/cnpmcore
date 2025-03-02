@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { ChromeForTestingBinary } from '../../../../app/common/adapter/binary/ChromeForTestingBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { ChromeForTestingBinary } from '../../../../app/common/adapter/binary/ChromeForTestingBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
   let binary: ChromeForTestingBinary;

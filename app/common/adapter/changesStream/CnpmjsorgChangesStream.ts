@@ -1,8 +1,8 @@
 import { SingletonProto } from '@eggjs/tegg';
-import { RegistryType } from '../../../common/enum/Registry';
-import { Registry } from '../../../core/entity/Registry';
 import { E500 } from 'egg-errors';
-import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesStream';
+import { RegistryType } from '../../../common/enum/Registry.js';
+import { Registry } from '../../../core/entity/Registry.js';
+import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesStream.js';
 
 const MAX_LIMIT = 10000;
 

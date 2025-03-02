@@ -11,12 +11,13 @@ import {
   Middleware,
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
-import { AbstractController } from './AbstractController';
 import { Static } from 'egg-typebox-validate-fengmk2/typebox';
-import { RegistryManagerService, UpdateRegistryCmd } from '../../core/service/RegistryManagerService';
-import { AdminAccess } from '../middleware/AdminAccess';
-import { ScopeManagerService } from '../../core/service/ScopeManagerService';
-import { RegistryCreateOptions, QueryPageOptions, RegistryCreateSyncOptions, RegistryUpdateOptions } from '../typebox';
+
+import { AbstractController } from './AbstractController.js';
+import { RegistryManagerService, UpdateRegistryCmd } from '../../core/service/RegistryManagerService.js';
+import { AdminAccess } from '../middleware/AdminAccess.js';
+import { ScopeManagerService } from '../../core/service/ScopeManagerService.js';
+import { RegistryCreateOptions, QueryPageOptions, RegistryCreateSyncOptions, RegistryUpdateOptions } from '../typebox.js';
 
 @HTTPController()
 export class RegistryController extends AbstractController {

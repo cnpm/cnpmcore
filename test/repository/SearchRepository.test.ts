@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { SearchManifestType, SearchRepository } from '../../app/repository/SearchRepository';
-import { mockES } from '../../config/config.unittest';
-import { PackageManagerService } from '../../app/core/service/PackageManagerService';
-import { TestUtil } from '../TestUtil';
-import { PackageSearchService } from '../../app/core/service/PackageSearchService';
+
+import { SearchManifestType, SearchRepository } from '../../app/repository/SearchRepository.js';
+import { mockES } from '../../config/config.unittest.js';
+import { PackageManagerService } from '../../app/core/service/PackageManagerService.js';
+import { TestUtil } from '../TestUtil.js';
+import { PackageSearchService } from '../../app/core/service/PackageSearchService.js';
 
 describe('test/repository/SearchRepository.test.ts', () => {
   let searchRepository: SearchRepository;

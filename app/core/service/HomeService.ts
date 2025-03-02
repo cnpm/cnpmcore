@@ -2,9 +2,9 @@ import {
   AccessLevel,
   SingletonProto,
 } from '@eggjs/tegg';
-import { AbstractService } from '../../common/AbstractService';
-import { NOT_IMPLEMENTED_PATH } from '../../common/constants';
 import { NotFoundError, NotImplementedError } from 'egg-errors';
+import { AbstractService } from '../../common/AbstractService.js';
+import { NOT_IMPLEMENTED_PATH } from '../../common/constants.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

@@ -7,11 +7,13 @@ import {
   EggContext,
   Inject,
 } from '@eggjs/tegg';
-import { version as EggVersion } from 'egg/package.json';
-import { AbstractController } from './AbstractController';
-import { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService';
-import { HomeService } from '../../core/service/HomeService';
+import pkg from 'egg/package.json' with { type: 'json' };
 
+import { AbstractController } from './AbstractController.js';
+import { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService.js';
+import { HomeService } from '../../core/service/HomeService.js';
+
+const EggVersion = pkg.version;
 const startTime = new Date();
 
 // registry 站点信息数据 SiteTotalData

@@ -1,12 +1,13 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService';
-import { Task as TaskModel } from '../../../../app/repository/model/Task';
-import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask';
-import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary';
-import { ApiBinary } from '../../../../app/common/adapter/binary/ApiBinary';
-import { BinaryRepository } from '../../../../app/repository/BinaryRepository';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService.js';
+import { Task as TaskModel } from '../../../../app/repository/model/Task.js';
+import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.js';
+import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary.js';
+import { ApiBinary } from '../../../../app/common/adapter/binary/ApiBinary.js';
+import { BinaryRepository } from '../../../../app/repository/BinaryRepository.js';
 
 describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
   let binarySyncerService: BinarySyncerService;

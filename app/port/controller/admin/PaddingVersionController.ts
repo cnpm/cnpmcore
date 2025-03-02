@@ -5,8 +5,9 @@ import {
   Inject,
   HTTPQuery, Context, EggContext,
 } from '@eggjs/tegg';
-import { AbstractController } from '../AbstractController';
-import { FixNoPaddingVersionService } from '../../../core/service/FixNoPaddingVersionService';
+
+import { AbstractController } from '../AbstractController.js';
+import { FixNoPaddingVersionService } from '../../../core/service/FixNoPaddingVersionService.js';
 
 @HTTPController()
 export class PaddingVersionController extends AbstractController {

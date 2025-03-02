@@ -1,5 +1,6 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
-import { DataTypes, Bone } from 'leoric';
+
+import { DataTypes, Bone } from '../util/leoric.js';
 
 @Model()
 export class Change extends Bone {

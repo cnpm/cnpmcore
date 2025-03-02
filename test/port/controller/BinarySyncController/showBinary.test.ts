@@ -1,12 +1,13 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService';
-import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary';
-import { SqlcipherBinary } from '../../../../app/common/adapter/binary/SqlcipherBinary';
-import { BinaryRepository } from '../../../../app/repository/BinaryRepository';
-import { Binary } from '../../../../app/core/entity/Binary';
-import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService.js';
+import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary.js';
+import { SqlcipherBinary } from '../../../../app/common/adapter/binary/SqlcipherBinary.js';
+import { BinaryRepository } from '../../../../app/repository/BinaryRepository.js';
+import { Binary } from '../../../../app/core/entity/Binary.js';
+import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
   let binarySyncerService: BinarySyncerService;
