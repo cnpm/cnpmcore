@@ -1,14 +1,14 @@
 import os from 'node:os';
 import path from 'node:path';
-import { Entity, EntityData } from './Entity';
-import { EasyData, EntityUtil } from '../util/EntityUtil';
-import { TaskType, TaskState } from '../../common/enum/Task';
-import { PROXY_CACHE_DIR_NAME } from '../../common/constants';
-import dayjs from '../../common/dayjs';
-import { HookEvent } from './HookEvent';
-import { DIST_NAMES } from './Package';
-import { isPkgManifest } from '../service/ProxyCacheService';
 import { InternalServerError } from 'egg-errors';
+import { Entity, EntityData } from './Entity.js';
+import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import { TaskType, TaskState } from '../../common/enum/Task.js';
+import { PROXY_CACHE_DIR_NAME } from '../../common/constants.js';
+import dayjs from '../../common/dayjs.js';
+import { HookEvent } from './HookEvent.js';
+import { DIST_NAMES } from './Package.js';
+import { isPkgManifest } from '../service/ProxyCacheService.js';
 
 export const HOST_NAME = os.hostname();
 export const PID = process.pid;

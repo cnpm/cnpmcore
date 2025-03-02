@@ -1,7 +1,7 @@
 import { ImplDecorator, Inject, QualifierImplDecoratorUtil } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary';
 import { EggHttpClient, EggLogger } from 'egg';
-import { BinaryName, BinaryTaskConfig } from '../../../../config/binaries';
+import { BinaryType } from '../../enum/Binary.js';
+import { BinaryName, BinaryTaskConfig } from '../../../../config/binaries.js';
 
 export type BinaryItem = {
   name: string;

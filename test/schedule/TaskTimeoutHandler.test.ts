@@ -1,12 +1,17 @@
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TaskState } from '../../app/common/enum/Task';
-import { PackageSyncerService } from '../../app/core/service/PackageSyncerService';
-import { HistoryTask } from '../../app/repository/model/HistoryTask';
-import { ModelConvertor } from '../../app/repository/util/ModelConvertor';
-import { Task as TaskModel } from '../../app/repository/model/Task';
-import { TaskService } from '../../app/core/service/TaskService';
 
-const TaskTimeoutHandlerPath = require.resolve('../../app/port/schedule/TaskTimeoutHandler');
+import { TaskState } from '../../app/common/enum/Task.js';
+import { PackageSyncerService } from '../../app/core/service/PackageSyncerService.js';
+import { HistoryTask } from '../../app/repository/model/HistoryTask.js';
+import { ModelConvertor } from '../../app/repository/util/ModelConvertor.js';
+import { Task as TaskModel } from '../../app/repository/model/Task.js';
+import { TaskService } from '../../app/core/service/TaskService.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const TaskTimeoutHandlerPath = path.join(__dirname, '../../app/port/schedule/TaskTimeoutHandler.ts');
 
 describe('test/schedule/TaskTimeoutHandler.test.ts', () => {
   it('should work', async () => {

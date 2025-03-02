@@ -1,8 +1,8 @@
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { EggLogger } from 'egg';
 import pMap from 'p-map';
-import { PackageVersionRepository } from '../../repository/PackageVersionRepository';
-import { PaddingSemVer } from '../entity/PaddingSemVer';
+import { PackageVersionRepository } from '../../repository/PackageVersionRepository.js';
+import { PaddingSemVer } from '../entity/PaddingSemVer.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

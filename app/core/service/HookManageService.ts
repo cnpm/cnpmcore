@@ -1,12 +1,12 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { Hook } from '../entity/Hook';
-import { HookType } from '../../common/enum/Hook';
 import {
   ForbiddenError,
   NotFoundError,
 } from 'egg-errors';
-import { HookRepository } from '../../repository/HookRepository';
 import { EggAppConfig } from 'egg';
+import { HookRepository } from '../../repository/HookRepository.js';
+import { Hook } from '../entity/Hook.js';
+import { HookType } from '../../common/enum/Hook.js';
 
 export interface CreateHookCommand {
   type: HookType;

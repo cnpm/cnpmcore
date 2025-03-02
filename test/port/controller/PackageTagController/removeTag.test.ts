@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/PackageTagController/removeTag.test.ts', () => {
   let publisher;

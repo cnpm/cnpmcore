@@ -10,13 +10,13 @@ import {
   PACKAGE_MAINTAINER_CHANGED,
   PACKAGE_MAINTAINER_REMOVED,
   PACKAGE_META_CHANGED, PackageMetaChange,
-} from './index';
-import { ChangeRepository } from '../../repository/ChangeRepository';
-import { Change } from '../entity/Change';
-import { HookEvent } from '../entity/HookEvent';
-import { Task } from '../entity/Task';
-import { User } from '../entity/User';
-import { TaskService } from '../service/TaskService';
+} from './index.js';
+import { ChangeRepository } from '../../repository/ChangeRepository.js';
+import { Change } from '../entity/Change.js';
+import { HookEvent } from '../entity/HookEvent.js';
+import { Task } from '../entity/Task.js';
+import { User } from '../entity/User.js';
+import { TaskService } from '../service/TaskService.js';
 
 class ChangesStreamEvent {
   @Inject()

@@ -9,17 +9,18 @@ import {
   EggContext,
 } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError, UnauthorizedError, NotImplementedError } from 'egg-errors';
-import { AbstractController } from './AbstractController';
-import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository';
+
+import { AbstractController } from './AbstractController.js';
+import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
 import { Static } from 'egg-typebox-validate-fengmk2/typebox';
-import { QueryPageOptions } from '../typebox';
-import { FULLNAME_REG_STRING } from '../../common/PackageUtil';
+import { QueryPageOptions } from '../typebox.js';
+import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
 import {
   ProxyCacheService,
   isPkgManifest,
-} from '../../core/service/ProxyCacheService';
-import { SyncMode } from '../../common/constants';
-import { CacheService } from '../../core/service/CacheService';
+} from '../../core/service/ProxyCacheService.js';
+import { SyncMode } from '../../common/constants.js';
+import { CacheService } from '../../core/service/CacheService.js';
 
 @HTTPController()
 export class ProxyCacheController extends AbstractController {

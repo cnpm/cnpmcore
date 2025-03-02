@@ -2,8 +2,8 @@ import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import {
   AbstractBinary, FetchResult, BinaryItem, BinaryAdapter,
-} from './AbstractBinary';
-import { BinaryType } from '../../enum/Binary';
+} from './AbstractBinary.js';
+import { BinaryType } from '../../enum/Binary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Edgedriver)

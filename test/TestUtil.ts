@@ -8,10 +8,11 @@ import mysql from 'mysql2';
 import pg from 'pg';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil';
 import semver from 'semver';
-import { PackageJSONType } from '../app/repository/PackageRepository';
-import { database, DATABASE_TYPE } from '../config/database';
+
+import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.js';
+import { PackageJSONType } from '../app/repository/PackageRepository.js';
+import { database, DATABASE_TYPE } from '../config/database.js';
 
 type PackageOptions = {
   name?: string;

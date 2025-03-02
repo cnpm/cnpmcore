@@ -1,7 +1,8 @@
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
-import { SearchAdapter } from '../common/typing';
-import { AuthorType, CnpmcorePatchInfo, PackageManifestType } from './PackageRepository';
 import { estypes } from '@elastic/elasticsearch';
+
+import { SearchAdapter } from '../common/typing.js';
+import { AuthorType, CnpmcorePatchInfo, PackageManifestType } from './PackageRepository.js';
 
 export type SearchJSONPickKey = '_rev' | 'name' | 'description' | 'keywords' | 'license' | 'maintainers' | 'dist-tags' | '_source_registry_name';
 

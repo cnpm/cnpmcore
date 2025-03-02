@@ -13,10 +13,11 @@ import {
   EggContext,
 } from '@eggjs/tegg';
 import { Static, Type } from 'egg-typebox-validate-fengmk2/typebox';
-import { AbstractController } from '../AbstractController';
-import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
-import { User as UserEntity } from '../../../core/entity/User';
-import { PackageManagerService } from '../../../core/service/PackageManagerService';
+
+import { AbstractController } from '../AbstractController.js';
+import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';
+import { User as UserEntity } from '../../../core/entity/User.js';
+import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
 
 const MaintainerDataRule = Type.Object({
   maintainers: Type.Array(Type.Object({

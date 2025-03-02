@@ -1,13 +1,14 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { BugVersionService } from '../../../../app/core/service/BugVersionService';
-import { DistRepository } from '../../../../app/repository/DistRepository';
-import { PackageRepository } from '../../../../app/repository/PackageRepository';
-import { BugVersion } from '../../../../app/core/entity/BugVersion';
-import { Package } from '../../../../app/core/entity/Package';
-import { PackageVersion } from '../../../../app/core/entity/PackageVersion';
-import { Dist } from '../../../../app/core/entity/Dist';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { BugVersionService } from '../../../../app/core/service/BugVersionService.js';
+import { DistRepository } from '../../../../app/repository/DistRepository.js';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
+import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
+import { Package } from '../../../../app/core/entity/Package.js';
+import { PackageVersion } from '../../../../app/core/entity/PackageVersion.js';
+import { Dist } from '../../../../app/core/entity/Dist.js';
 
 describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () => {
   let bugVersionService: BugVersionService;

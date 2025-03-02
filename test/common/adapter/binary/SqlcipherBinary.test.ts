@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { SqlcipherBinary } from '../../../../app/common/adapter/binary/SqlcipherBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { SqlcipherBinary } from '../../../../app/common/adapter/binary/SqlcipherBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
   let binary: SqlcipherBinary;

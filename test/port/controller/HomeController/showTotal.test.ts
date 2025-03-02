@@ -1,19 +1,23 @@
 import { strict as assert } from 'node:assert';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { version as EggVersion } from 'egg/package.json';
-import { TestUtil } from '../../../../test/TestUtil';
-import { PackageVersionDownload } from '../../../../app/repository/model/PackageVersionDownload';
-import dayjs from '../../../../app/common/dayjs';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
-import { ChangesStreamService } from '../../../../app/core/service/ChangesStreamService';
-import { TaskRepository } from '../../../../app/repository/TaskRepository';
-import { TaskType } from '../../../../app/common/enum/Task';
-import { ChangesStreamTask } from '../../../../app/core/entity/Task';
-import { RegistryType } from '../../../../app/common/enum/Registry';
-import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService';
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { PackageVersionDownload } from '../../../../app/repository/model/PackageVersionDownload.js';
+import dayjs from '../../../../app/common/dayjs.js';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
+import { ChangesStreamService } from '../../../../app/core/service/ChangesStreamService.js';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
+import { TaskType } from '../../../../app/common/enum/Task.js';
+import { ChangesStreamTask } from '../../../../app/core/entity/Task.js';
+import { RegistryType } from '../../../../app/common/enum/Registry.js';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
 
-const SavePackageVersionDownloadCounterPath = require.resolve('../../../../app/port/schedule/SavePackageVersionDownloadCounter');
-const UpdateTotalDataPath = require.resolve('../../../../app/port/schedule/UpdateTotalData');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const SavePackageVersionDownloadCounterPath = path.join(__dirname, '../../../../app/port/schedule/SavePackageVersionDownloadCounter.ts');
+const UpdateTotalDataPath = path.join(__dirname, '../../../../app/port/schedule/UpdateTotalData.ts');
 
 describe('test/port/controller/HomeController/showTotal.test.ts', () => {
   describe('[GET /] showTotal()', () => {
@@ -32,7 +36,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       assert(typeof data.download.today === 'number');
       assert(data.engine === app.config.orm.client);
       assert(data.node_version === process.version);
-      assert(data.egg_version === EggVersion);
+      assert.match(data.egg_version, /^\d+\.\d+\.\d+/);
       assert(data.instance_start_time);
       assert(data.sync_model === 'none');
       assert(data.sync_binary === false);

@@ -1,9 +1,11 @@
+import { rm, access } from 'node:fs/promises';
+import path from 'node:path';
+
 import { EggAppConfig, EggLogger } from 'egg';
 import { CronParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
-import { rm, access } from 'node:fs/promises';
-import path from 'node:path';
-import dayjs from '../../common/dayjs';
+
+import dayjs from '../../common/dayjs.js';
 
 @Schedule<CronParams>({
   type: ScheduleType.WORKER,

@@ -1,16 +1,17 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { ModelConvertor } from './util/ModelConvertor';
-import type { User as UserModel } from './model/User';
-import type { Package as PackageModel } from './model/Package';
-import type { Token as TokenModel } from './model/Token';
-import type { WebauthnCredential as WebauthnCredentialModel } from './model/WebauthnCredential';
-import { User as UserEntity } from '../core/entity/User';
-import { Token as TokenEntity, isGranularToken } from '../core/entity/Token';
-import { WebauthnCredential as WebauthnCredentialEntity } from '../core/entity/WebauthnCredential';
-import { AbstractRepository } from './AbstractRepository';
-import { TokenPackage as TokenPackageModel } from './model/TokenPackage';
-import { getFullname, getScopeAndName } from '../common/PackageUtil';
-import { PackageRepository } from './PackageRepository';
+
+import { ModelConvertor } from './util/ModelConvertor.js';
+import type { User as UserModel } from './model/User.js';
+import type { Package as PackageModel } from './model/Package.js';
+import type { Token as TokenModel } from './model/Token.js';
+import type { WebauthnCredential as WebauthnCredentialModel } from './model/WebauthnCredential.js';
+import { User as UserEntity } from '../core/entity/User.js';
+import { Token as TokenEntity, isGranularToken } from '../core/entity/Token.js';
+import { WebauthnCredential as WebauthnCredentialEntity } from '../core/entity/WebauthnCredential.js';
+import { AbstractRepository } from './AbstractRepository.js';
+import { TokenPackage as TokenPackageModel } from './model/TokenPackage.js';
+import { getFullname, getScopeAndName } from '../common/PackageUtil.js';
+import { PackageRepository } from './PackageRepository.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

@@ -3,7 +3,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import * as ssri from 'ssri';
 import tar from '@fengmk2/tar';
-import { AuthorType, PackageJSONType } from '../repository/PackageRepository';
+import { AuthorType, PackageJSONType } from '../repository/PackageRepository.js';
 
 
 // /@cnpm%2ffoo

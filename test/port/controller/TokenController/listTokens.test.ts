@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 import dayjs from 'dayjs';
-import { TokenType } from '../../../../app/core/entity/Token';
-import { UserService } from '../../../../app/core/service/UserService';
-import { AuthAdapter } from '../../../../app/infra/AuthAdapter';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { TokenType } from '../../../../app/core/entity/Token.js';
+import { UserService } from '../../../../app/core/service/UserService.js';
+import { AuthAdapter } from '../../../../app/infra/AuthAdapter.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/TokenController/listTokens.test.ts', () => {
   describe('[GET /-/npm/v1/tokens] listTokens()', () => {

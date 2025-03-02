@@ -2,8 +2,9 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
-import { TestUtil } from '../../../test/TestUtil';
-import { npmLogin } from '../CliUtil';
+
+import { TestUtil } from '../../../test/TestUtil.js';
+import { npmLogin } from '../CliUtil.js';
 
 describe('test/cli/npm/install.test.ts', () => {
   let server;

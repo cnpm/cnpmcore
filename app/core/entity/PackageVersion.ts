@@ -1,7 +1,7 @@
-import { Dist } from './Dist';
-import { Entity, EntityData } from './Entity';
-import { EasyData, EntityUtil } from '../util/EntityUtil';
-import { PaddingSemVer } from './PaddingSemVer';
+import { Dist } from './Dist.js';
+import { Entity, EntityData } from './Entity.js';
+import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import { PaddingSemVer } from './PaddingSemVer.js';
 
 interface PackageVersionData extends EntityData {
   packageId: string;

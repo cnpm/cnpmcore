@@ -1,8 +1,9 @@
 import { EggAppConfig } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
-import { BinarySyncerService } from '../../core/service/BinarySyncerService';
-import binaries, { BinaryName } from '../../../config/binaries';
+
+import { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
+import binaries, { BinaryName } from '../../../config/binaries.js';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,

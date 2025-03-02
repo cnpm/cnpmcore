@@ -1,8 +1,9 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { RegistryRepository } from '../../app/repository/RegistryRepository';
-import { Registry } from '../../app/core/entity/Registry';
-import { RegistryType } from '../../app/common/enum/Registry';
+
+import { RegistryRepository } from '../../app/repository/RegistryRepository.js';
+import { Registry } from '../../app/core/entity/Registry.js';
+import { RegistryType } from '../../app/common/enum/Registry.js';
 
 describe('test/repository/RegistryRepository.test.ts', () => {
   let registryRepository: RegistryRepository;

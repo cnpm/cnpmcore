@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { HookManageService } from '../../../../app/core/service/HookManageService';
-import { Hook } from '../../../../app/core/entity/Hook';
-import { UserRepository } from '../../../../app/repository/UserRepository';
-import { HookType } from '../../../../app/common/enum/Hook';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { HookManageService } from '../../../../app/core/service/HookManageService.js';
+import { Hook } from '../../../../app/core/entity/Hook.js';
+import { UserRepository } from '../../../../app/repository/UserRepository.js';
+import { HookType } from '../../../../app/common/enum/Hook.js';
 
 describe('test/port/controller/hook/HookController.test.ts', () => {
   let hookManageService: HookManageService;

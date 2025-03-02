@@ -3,8 +3,8 @@ import {
   Inject,
   QualifierImplDecoratorUtil,
 } from '@eggjs/tegg';
-import { RegistryType } from '../../../common/enum/Registry';
-import { Registry } from '../../../core/entity/Registry';
+import { RegistryType } from '../../../common/enum/Registry.js';
+import { Registry } from '../../../core/entity/Registry.js';
 import {
   EggHttpClient,
   EggLogger,

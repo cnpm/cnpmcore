@@ -10,12 +10,13 @@ import {
   Middleware,
 } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
-import { AbstractController } from './AbstractController';
-import { FULLNAME_REG_STRING } from '../../common/PackageUtil';
-import { PackageManagerService } from '../../core/service/PackageManagerService';
-import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
-import { BlockPackageRule, BlockPackageType } from '../typebox';
-import { AdminAccess } from '../middleware/AdminAccess';
+
+import { AbstractController } from './AbstractController.js';
+import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
+import { PackageManagerService } from '../../core/service/PackageManagerService.js';
+import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
+import { BlockPackageRule, BlockPackageType } from '../typebox.js';
+import { AdminAccess } from '../middleware/AdminAccess.js';
 
 @HTTPController()
 export class PackageBlockController extends AbstractController {

@@ -6,10 +6,11 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { UnprocessableEntityError, NotFoundError } from 'egg-errors';
-import { AbstractController } from './AbstractController';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil';
-import dayjs from '../../common/dayjs';
-import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
+
+import { AbstractController } from './AbstractController.js';
+import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.js';
+import dayjs from '../../common/dayjs.js';
+import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 

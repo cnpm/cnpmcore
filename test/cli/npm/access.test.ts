@@ -2,8 +2,9 @@ import path from 'node:path';
 import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
 import semver from 'semver';
-import { TestUtil } from '../../../test/TestUtil';
-import { npmLogin } from '../CliUtil';
+
+import { TestUtil } from '../../../test/TestUtil.js';
+import { npmLogin } from '../CliUtil.js';
 
 describe('test/cli/npm/access.test.ts', () => {
   let server;

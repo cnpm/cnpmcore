@@ -5,10 +5,11 @@ import { EggAppConfig, PowerPartial, Context } from 'egg';
 import OSSClient from 'oss-cnpm';
 import S3Client from 's3-cnpmcore';
 import { env } from 'read-env-value';
-import { patchAjv } from '../app/port/typebox';
-import { ChangesStreamMode, NOT_IMPLEMENTED_PATH, SyncDeleteMode, SyncMode } from '../app/common/constants';
-import type { CnpmcoreConfig } from '../app/port/config';
-import { database } from './database';
+
+import { patchAjv } from '../app/port/typebox.js';
+import { ChangesStreamMode, NOT_IMPLEMENTED_PATH, SyncDeleteMode, SyncMode } from '../app/common/constants.js';
+import type { CnpmcoreConfig } from '../app/port/config.js';
+import { database } from './database.js';
 
 export const cnpmcoreConfig: CnpmcoreConfig = {
   name: 'cnpm',
@@ -87,6 +88,7 @@ export default (appInfo: EggAppConfig): Config => {
   config.orm = {
     ...database,
     database: database.name ?? 'cnpmcore',
+    // @ts-expect-error has no charset property https://github.com/eggjs/tegg/pull/293
     charset: 'utf8mb4',
     logger: {
       // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror
@@ -163,6 +165,7 @@ export default (appInfo: EggAppConfig): Config => {
     assert(s3Config.credentials.accessKeyId, 'require env CNPMCORE_NFS_S3_CLIENT_ID');
     assert(s3Config.credentials.secretAccessKey, 'require env CNPMCORE_NFS_S3_CLIENT_SECRET');
     assert(s3Config.bucket, 'require env CNPMCORE_NFS_S3_CLIENT_BUCKET');
+    // @ts-expect-error has no construct signatures
     config.nfs.client = new S3Client(s3Config);
   }
 
