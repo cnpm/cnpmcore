@@ -16,7 +16,7 @@ describe('test/core/event/BugVersionFixHandler.test.ts', () => {
     cacheService = await app.getEggObject(CacheService);
     bugVersionService = await app.getEggObject(BugVersionService);
     mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
-    mock(cacheService, 'removeCache', async fullname => {
+    mock(cacheService, 'removeCache', async (fullname: string) => {
       fullnames.push(fullname);
     });
     mock(bugVersionService, 'getBugVersion', async () => {

@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { Application, ILifecycleBoot } from 'egg';
-// ReferenceError: Cannot access 'TaskRepository' before initialization
 import { ChangesStreamService } from './app/core/service/ChangesStreamService.js';
 
 declare module 'egg' {

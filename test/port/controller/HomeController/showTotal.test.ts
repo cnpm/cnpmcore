@@ -16,8 +16,8 @@ import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerSe
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const SavePackageVersionDownloadCounterPath = path.join(__dirname, '../../../../app/port/schedule/SavePackageVersionDownloadCounter.ts');
-const UpdateTotalDataPath = path.join(__dirname, '../../../../app/port/schedule/UpdateTotalData.ts');
+const SavePackageVersionDownloadCounterPath = path.join(__dirname, '../../../../app/port/schedule/SavePackageVersionDownloadCounter.js');
+const UpdateTotalDataPath = path.join(__dirname, '../../../../app/port/schedule/UpdateTotalData.js');
 
 describe('test/port/controller/HomeController/showTotal.test.ts', () => {
   describe('[GET /] showTotal()', () => {
@@ -103,7 +103,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       const lastMonthDate = today.subtract(1, 'month').startOf('month').format('DD');
       const lastYearYearMonthInt = Number(today.subtract(1, 'year').startOf('year').format('YYYYMM'));
       const lastYearDate = today.subtract(1, 'month').startOf('year').format('DD');
-      let row = await PackageVersionDownload.findOne({ packageId: 'total', yearMonth: yesterdayYearMonthInt });
+      let row: any = await PackageVersionDownload.findOne({ packageId: 'total', yearMonth: yesterdayYearMonthInt });
       if (!row) {
         row = await PackageVersionDownload.create({
           packageId: 'total',
@@ -258,12 +258,12 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           .expect('content-type', 'application/json; charset=utf-8');
         const data = res.body;
         assert(data.upstream_registries.length === 2);
-        const [ defaultRegistry ] = data.upstream_registries.filter(item => item.registry_name === 'default');
+        const [ defaultRegistry ] = data.upstream_registries.filter((item: any) => item.registry_name === 'default');
         assert(defaultRegistry.registry_name === 'default');
         assert(defaultRegistry.changes_stream_url === 'https://replicate.npmjs.com/_changes');
         assert(defaultRegistry.source_registry === 'https://registry.npmjs.org');
 
-        const [ customRegistry ] = data.upstream_registries.filter(item => item.registry_name === 'custom');
+        const [ customRegistry ] = data.upstream_registries.filter((item: any) => item.registry_name === 'custom');
         assert(customRegistry.registry_name === 'custom');
         assert(customRegistry.changes_stream_url === 'https://r.cnpmjs.org/_changes');
         assert(customRegistry.source_registry === 'https://cnpmjs.org');

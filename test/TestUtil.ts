@@ -3,16 +3,22 @@ import fs from 'node:fs/promises';
 import coffee from 'coffee';
 import { tmpdir } from 'node:os';
 import { mkdtempSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { Readable } from 'node:stream';
 import mysql from 'mysql2';
 import pg from 'pg';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import semver from 'semver';
+import { app as globalApp } from '@eggjs/mock/bootstrap';
 
 import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.js';
 import { PackageJSONType } from '../app/repository/PackageRepository.js';
 import { database, DATABASE_TYPE } from '../config/database.js';
+import { Package as PackageModel } from '../app/repository/model/Package.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 type PackageOptions = {
   name?: string;
@@ -127,9 +133,7 @@ export class TestUtil {
 
   static get app() {
     if (!this._app) {
-      /* eslint @typescript-eslint/no-var-requires: "off" */
-      const bootstrap = require('@eggjs/mock/bootstrap');
-      this._app = bootstrap.app;
+      this._app = globalApp;
     }
     return this._app;
   }
@@ -228,7 +232,6 @@ export class TestUtil {
 
     if (options?.isPrivate === false) {
       const [ scope, name ] = getScopeAndName(pkg.name);
-      const { Package: PackageModel } = require('../app/repository/model/Package');
       await PackageModel.update({ scope, name }, { isPrivate: false, registryId: options?.registryId });
     }
     return { user, pkg };

@@ -38,7 +38,7 @@ describe('test/core/service/BugVersionService/cleanBugVersionPackageCache.test.t
         },
       },
     });
-    mock(cacheService, 'removeCache', async fullname => {
+    mock(cacheService, 'removeCache', async (fullname: string) => {
       cleanPkgs.push(fullname);
     });
   });

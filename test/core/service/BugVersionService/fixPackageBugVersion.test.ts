@@ -46,7 +46,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () 
         },
       },
     });
-    mock(distRepository, 'findPackageVersionManifest', async (_, version) => {
+    mock(distRepository, 'findPackageVersionManifest', async (_: unknown, version: string) => {
       if (version !== '199.0.0') {
         return {
           name: 'colors',
