@@ -4,9 +4,9 @@ import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { valid as semverValid } from 'semver';
 import { AbstractService } from '../../common/AbstractService.js';
-import type { TaskService } from './TaskService.js';
+import { TaskService } from './TaskService.js';
 import { CacheService } from './CacheService.js';
-import type { RegistryManagerService } from './RegistryManagerService.js';
+import { RegistryManagerService } from './RegistryManagerService.js';
 import { NPMRegistry } from '../../common/adapter/NPMRegistry.js';
 import { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
 import { ProxyCache } from '../entity/ProxyCache.js';
@@ -15,7 +15,7 @@ import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
 import { TaskType, TaskState } from '../../common/enum/Task.js';
 import { calculateIntegrity } from '../../common/PackageUtil.js';
 import { ABBREVIATED_META_TYPE, PROXY_CACHE_DIR_NAME } from '../../common/constants.js';
-import { DIST_NAMES } from '../entity/Package.js';
+import { DIST_NAMES, isPkgManifest } from '../entity/Package.js';
 import type {
   AbbreviatedPackageManifestType,
   AbbreviatedPackageJSONType,
@@ -25,10 +25,6 @@ import type {
 
 function isoNow() {
   return new Date().toISOString();
-}
-
-export function isPkgManifest(fileType: DIST_NAMES) {
-  return fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED_MANIFESTS;
 }
 
 type GetSourceManifestAndCacheReturnType<T> = T extends DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST ? AbbreviatedPackageJSONType | PackageJSONType :

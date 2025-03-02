@@ -7,8 +7,7 @@ import { TaskType, TaskState } from '../../common/enum/Task.js';
 import { PROXY_CACHE_DIR_NAME } from '../../common/constants.js';
 import dayjs from '../../common/dayjs.js';
 import { HookEvent } from './HookEvent.js';
-import { DIST_NAMES } from './Package.js';
-import { isPkgManifest } from '../service/ProxyCacheService.js';
+import { DIST_NAMES, isPkgManifest } from './Package.js';
 
 export const HOST_NAME = os.hostname();
 export const PID = process.pid;

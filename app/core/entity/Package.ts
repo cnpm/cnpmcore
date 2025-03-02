@@ -22,6 +22,10 @@ export enum DIST_NAMES {
   ABBREVIATED_MANIFESTS = 'abbreviated_manifests.json',
 }
 
+export function isPkgManifest(fileType: DIST_NAMES) {
+  return fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED_MANIFESTS;
+}
+
 interface FileInfo {
   size: number;
   shasum: string;

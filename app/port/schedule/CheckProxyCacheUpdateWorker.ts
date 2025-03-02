@@ -4,7 +4,8 @@ import { Inject } from '@eggjs/tegg';
 
 import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
 import { SyncMode } from '../../common/constants.js';
-import { ProxyCacheService, isPkgManifest } from '../../core/service/ProxyCacheService.js';
+import { ProxyCacheService } from '../../core/service/ProxyCacheService.js';
+import { isPkgManifest } from '../../core/entity/Package.js';
 
 @Schedule<CronParams>({
   type: ScheduleType.WORKER,

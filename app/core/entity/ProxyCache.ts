@@ -1,7 +1,6 @@
 import { Entity, EntityData } from './Entity.js';
 import { EasyData } from '../util/EntityUtil.js';
-import { DIST_NAMES } from './Package.js';
-import { isPkgManifest } from '../service/ProxyCacheService.js';
+import { DIST_NAMES, isPkgManifest } from './Package.js';
 import { PROXY_CACHE_DIR_NAME } from '../../common/constants.js';
 interface ProxyCacheData extends EntityData {
   fullname: string;

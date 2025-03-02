@@ -17,10 +17,10 @@ import { QueryPageOptions } from '../typebox.js';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
 import {
   ProxyCacheService,
-  isPkgManifest,
 } from '../../core/service/ProxyCacheService.js';
 import { SyncMode } from '../../common/constants.js';
 import { CacheService } from '../../core/service/CacheService.js';
+import { isPkgManifest } from '../../core/entity/Package.js';
 
 @HTTPController()
 export class ProxyCacheController extends AbstractController {

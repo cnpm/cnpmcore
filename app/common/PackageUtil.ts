@@ -4,7 +4,7 @@ import { pipeline } from 'node:stream/promises';
 import * as ssri from 'ssri';
 // @ts-expect-error type error
 import tar from '@fengmk2/tar';
-import { AuthorType, PackageJSONType } from '../repository/PackageRepository.js';
+import type { AuthorType, PackageJSONType } from '../repository/PackageRepository.js';
 
 
 // /@cnpm%2ffoo
