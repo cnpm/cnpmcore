@@ -49,7 +49,7 @@ export class BinarySyncController extends AbstractController {
   }
 
   @HTTPMethod({
-    path: '/-/binary/:binaryName(@[^/]{1,220}\/[^/]{1,220}|[^@/]{1,220})/:subpath(.*)',
+    path: '/-/binary/:binaryName(@[^/]{1,220}/[^/]{1,220}|[^@/]{1,220})/:subpath(.*)',
     method: HTTPMethodEnum.GET,
   })
   async showBinary(@Context() ctx: EggContext, @HTTPParam() binaryName: BinaryName, @HTTPParam() subpath: string) {
@@ -107,14 +107,14 @@ export class BinarySyncController extends AbstractController {
   }
 
   @HTTPMethod({
-    path: '/-/binary/:binaryName(@[^/]{1,220}\/[^/]{1,220}|[^@/]{1,220})',
+    path: '/-/binary/:binaryName(@[^/]{1,220}/[^/]{1,220}|[^@/]{1,220})',
     method: HTTPMethodEnum.GET,
   })
   async showBinaryIndex(@Context() ctx: EggContext, @HTTPParam() binaryName: BinaryName) {
     // check binaryName valid
     try {
       ctx.tValidate(BinaryNameRule, binaryName);
-    } catch (e) {
+    } catch {
       throw new NotFoundError(`Binary "${binaryName}" not found`);
     }
     return await this.showBinary(ctx, binaryName, '/');

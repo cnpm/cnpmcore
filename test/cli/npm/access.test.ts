@@ -72,7 +72,7 @@ describe('test/cli/npm/access.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /testuser:\sread-write|\"testuser\":\s\"read-write\"/)
+        .expect('stdout', /testuser:\sread-write|"testuser":\s"read-write"/)
         .expect('code', 0)
         .end();
 
@@ -93,7 +93,7 @@ describe('test/cli/npm/access.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /@cnpm\/foo: read-write|\"@cnpm\/foo\":\s\"read-write"/)
+        .expect('stdout', /@cnpm\/foo: read-write|"@cnpm\/foo":\s"read-write"/)
         .expect('code', 0)
         .end();
 

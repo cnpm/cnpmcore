@@ -241,8 +241,9 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         .expect(200);
 
       const task = await taskService.findExecuteTask(TaskType.ChangesStream);
-      assert(task?.targetName === 'CUSTOM3_WORKER');
-      assert((task?.data as ChangesStreamTaskData).since === '9527');
+      assert(task);
+      assert.equal(task.targetName, 'CUSTOM3_WORKER');
+      assert.equal((task.data as ChangesStreamTaskData).since, '9527');
     });
   });
 

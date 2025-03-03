@@ -61,7 +61,7 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
         .get('/-/npm/v1/tokens')
         .set('authorization', authorization)
         .expect(403);
-      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token \"cnpm_\w+\" can\'t setting/);
+      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/);
     });
   });
 

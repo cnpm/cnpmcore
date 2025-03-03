@@ -83,10 +83,10 @@ export class PackageSyncController extends AbstractController {
     const registry = await this.registryManagerService.findByRegistryName(data?.registryName);
 
     if (!registry && data.registryName) {
-      throw new ForbiddenError(`Can\'t find target registry "${data.registryName}"`);
+      throw new ForbiddenError(`Can't find target registry "${data.registryName}"`);
     }
     if (packageEntity?.isPrivate && !registry) {
-      throw new ForbiddenError(`Can\'t sync private package "${params.fullname}"`);
+      throw new ForbiddenError(`Can't sync private package "${params.fullname}"`);
     }
     if (params.syncDownloadData && !this.packageSyncerService.allowSyncDownloadData) {
       throw new ForbiddenError('Not allow to sync package download data');

@@ -62,7 +62,7 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
         .set('authorization', authorization)
         .set('user-agent', ua)
         .expect(403);
-      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token \"cnpm_\w+\" can\'t setting/);
+      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/);
     });
 
     it('should 403 when automation token access', async () => {
@@ -72,7 +72,7 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
         .set('authorization', authorization)
         .set('user-agent', ua)
         .expect(403);
-      assert.match(res.body.error, /\[FORBIDDEN\] Automation Token \"cnpm_\w+\" can\'t setting/);
+      assert.match(res.body.error, /\[FORBIDDEN\] Automation Token "cnpm_\w+" can't setting/);
     });
 
     it('should 404 when token key not exists', async () => {

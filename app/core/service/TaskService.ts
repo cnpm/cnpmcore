@@ -144,6 +144,7 @@ export class TaskService extends AbstractService {
         this.logger.error(
           '[TaskService.retryExecuteTimeoutTasks:error] processing task, taskType: %s, targetName: %s, taskId: %s, attempts %s will retry again',
           task.type, task.targetName, task.taskId, task.attempts);
+        this.logger.error(e);
       }
     }
     // try waiting timeout tasks in 30 mins
@@ -158,6 +159,7 @@ export class TaskService extends AbstractService {
         this.logger.error(
           '[TaskService.retryExecuteTimeoutTasks:error] waiting task, taskType: %s, targetName: %s, taskId: %s, attempts %s will retry again',
           task.type, task.targetName, task.taskId, task.attempts);
+        this.logger.error(e);
       }
     }
     return {

@@ -42,9 +42,9 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
         assert.equal(versions?.length, 3);
         assert(versionRes?.items[0].name);
         assert.equal(versionRes?.items[0].isDir, false);
-        assert.match(versionRes?.items[0].name, /^chrome\-/);
-        assert.match(versionRes?.items[1].name, /^chromedriver\-/);
-        assert.match(versionRes?.items[2].name, /^chrome\-headless\-shell\-/);
+        assert.match(versionRes?.items[0].name, /^chrome-/);
+        assert.match(versionRes?.items[1].name, /^chromedriver-/);
+        assert.match(versionRes?.items[2].name, /^chrome-headless-shell-/);
       }
       await binary.finishFetch(true);
       assert(ChromeForTestingBinary.lastTimestamp);

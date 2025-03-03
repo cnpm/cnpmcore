@@ -73,7 +73,7 @@ export class TokenService extends AbstractService {
 
   async getUserAndToken(authorization: string) {
     if (!authorization) return null;
-    const matchs = /^Bearer ([\w\.]+?)$/.exec(authorization);
+    const matchs = /^Bearer ([\w.]+?)$/.exec(authorization);
     if (!matchs) return null;
     const tokenValue = matchs[1];
     const tokenKey = sha512(tokenValue);

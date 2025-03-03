@@ -1761,7 +1761,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert(log.includes('❌ stop sync by block list: [\"cnpmcore-test-sync-blocklist\",\"foo\"]'));
+      assert(log.includes('❌ stop sync by block list: ["cnpmcore-test-sync-blocklist","foo"]'));
     });
 
     it('should sync upper case "D" success', async () => {
@@ -2604,7 +2604,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
       // already synced pkg
       beforeEach(async () => {
-        app.mockHttpclient(/^https:\/\/registry\.npmjs\.org\/invalid\-deps/, 'GET', {
+        app.mockHttpclient(/^https:\/\/registry\.npmjs\.org\/invalid-deps/, 'GET', {
           data: await TestUtil.readFixturesFile('registry.npmjs.org/invalid-deps.json'),
           persist: false,
         });

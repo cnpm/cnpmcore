@@ -145,7 +145,8 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
         await registryManagerService.createSyncChangesStream({ registryId: registry.registryId, since: '100' });
         const targetName = 'CUSTOM_WORKER';
         const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
-        assert((task?.data as ChangesStreamTaskData).since === '');
+        assert(task);
+        assert.equal((task.data as ChangesStreamTaskData).since, '100');
       });
     });
   });

@@ -95,7 +95,7 @@ describe('test/cli/npm/install.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /\/@cnpm\/foo\/\-\/foo-2.0.0.tgz/)
+        .expect('stdout', /\/@cnpm\/foo\/-\/foo-2.0.0.tgz/)
         .expect('code', 0)
         .end();
 
@@ -145,7 +145,7 @@ describe('test/cli/npm/install.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /\- \@cnpm\/foo/)
+        .expect('stdout', /- @cnpm\/foo/)
         .expect('code', 0)
         .end();
       await coffee
@@ -161,7 +161,7 @@ describe('test/cli/npm/install.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /\- \@cnpm\/foo/)
+        .expect('stdout', /- @cnpm\/foo/)
         .expect('code', 0)
         .end();
       const res = await app.httpclient.request(`${registry}/@cnpm%2ffoo`, { dataType: 'json' });

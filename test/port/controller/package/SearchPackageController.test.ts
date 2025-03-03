@@ -110,7 +110,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .put(`/-/v1/search/sync/${name}`);

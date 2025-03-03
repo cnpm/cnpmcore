@@ -587,7 +587,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers['content-type'], 'application/x-sh');
       assert(!res.headers['content-disposition']);
       assert.equal(res.headers['transfer-encoding'], 'chunked');
-      assert.match(res.text, /#\!\/bin\/bash/);
+      assert.match(res.text, /#!\/bin\/bash/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/docs/manifest.appcache`);

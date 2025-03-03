@@ -91,7 +91,7 @@ export class DownloadController extends AbstractController {
   }
 
   private checkAndGetRange(range: string) {
-    const matchs = /^(\d{4}\-\d{2}\-\d{2}):(\d{4}\-\d{2}\-\d{2})$/.exec(range);
+    const matchs = /^(\d{4}-\d{2}-\d{2}):(\d{4}-\d{2}-\d{2})$/.exec(range);
     if (!matchs) {
       throw new UnprocessableEntityError(`range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`);
     }

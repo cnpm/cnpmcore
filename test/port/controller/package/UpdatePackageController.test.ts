@@ -24,7 +24,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       rev = res.body.rev;
     });
 
@@ -417,7 +417,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           ],
         })
         .expect(403);
-      assert.equal(res.body.error, `[FORBIDDEN] \"${publisher.name}\" not authorized to modify ${scopedName}, please contact maintainers: \"${user.name}, ${user2.name}\"`);
+      assert.equal(res.body.error, `[FORBIDDEN] "${publisher.name}" not authorized to modify ${scopedName}, please contact maintainers: "${user.name}, ${user2.name}"`);
     });
 
     it('should support pnpm and other npm clients', async () => {

@@ -101,7 +101,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         .set('user-agent', ua)
         .send({ password })
         .expect(403);
-      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token \"cnpm_\w+\" can\'t setting/);
+      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/);
     });
   });
 

@@ -36,7 +36,7 @@ export class PackageBlockController extends AbstractController {
     ctx.tValidate(BlockPackageRule, params);
     const packageEntity = await this.getPackageEntityByFullname(params.fullname);
     if (packageEntity.isPrivate) {
-      throw new ForbiddenError(`Can\'t block private package "${params.fullname}"`);
+      throw new ForbiddenError(`Can't block private package "${params.fullname}"`);
     }
 
     const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
@@ -61,7 +61,7 @@ export class PackageBlockController extends AbstractController {
   async unblockPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
     const packageEntity = await this.getPackageEntityByFullname(fullname);
     if (packageEntity.isPrivate) {
-      throw new ForbiddenError(`Can\'t unblock private package "${fullname}"`);
+      throw new ForbiddenError(`Can't unblock private package "${fullname}"`);
     }
 
     await this.packageManagerService.unblockPackage(packageEntity);

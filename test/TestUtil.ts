@@ -141,7 +141,7 @@ export class TestUtil {
   static async rm(filepath: string) {
     try {
       await fs.unlink(filepath);
-    } catch (e) {
+    } catch {
       // ignore
     }
   }

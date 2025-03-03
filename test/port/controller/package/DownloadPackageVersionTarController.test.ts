@@ -28,7 +28,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       .expect(201);
     assert(res.status === 201);
     assert(res.body.ok === true);
-    assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    assert.match(res.body.rev, /^\d+-\w{24}$/);
 
     pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
     res = await app.httpRequest()
@@ -38,7 +38,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       .send(pkg);
     assert(res.status === 201);
     assert(res.body.ok === true);
-    assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    assert.match(res.body.rev, /^\d+-\w{24}$/);
   });
 
   describe('[GET /:fullname/-/:name-:version.tgz] download()', () => {

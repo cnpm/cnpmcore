@@ -32,7 +32,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
       res = await app.httpRequest()
@@ -42,7 +42,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
       res = await app.httpRequest()
@@ -52,7 +52,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       pkg = await TestUtil.getFullPackage({ name: scopedName, version: '2.0.0' });
       res = await app.httpRequest()
@@ -62,7 +62,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
     });
 
     describe('should fallback when cache error', async () => {
@@ -450,7 +450,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -477,7 +477,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -504,7 +504,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -528,7 +528,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       const pkgModel = await packageRepository.findPackage('@cnpm', 'test-module-mock-dist-not-exists');
       await packageRepository.removePackageDist(pkgModel!, false);
@@ -556,7 +556,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       const pkgModel = await packageRepository.findPackage('@cnpm', 'test-module-mock-dist-not-exists-full-manifests');
       await packageRepository.removePackageDist(pkgModel!, true);
@@ -585,7 +585,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       const pkgEntity = await packageRepository.findPackage('@cnpm', name);
       assert(pkgEntity);
@@ -613,7 +613,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       const pkgEntity = await packageRepository.findPackage('@cnpm', name);
       assert(pkgEntity);

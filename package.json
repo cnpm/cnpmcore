@@ -39,6 +39,7 @@
     "predev": "npm run clean",
     "dev": "egg-bin dev",
     "dev:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin dev",
+    "prelint": "oxlint --quiet",
     "lint": "eslint --cache --ext .ts .",
     "lint:fix": "eslint --cache --ext .ts --fix .",
     "test:postgresql": "npm run lint:fix && npm run test:local:postgresql",

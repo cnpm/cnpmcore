@@ -174,7 +174,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -195,7 +195,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg2)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       const pkg3 = await TestUtil.getFullPackage({ name, version: '2.0.0', description: '2.0.0 description' });
       res = await app.httpRequest()
@@ -205,7 +205,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg3)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/2.0.0`)
@@ -291,7 +291,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
     });
 
     it('should publish 102 chars length version', async () => {
@@ -310,7 +310,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -334,7 +334,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -393,7 +393,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -407,7 +407,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg2)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
     });
 
     it('should 422 when dist-tags version not match', async () => {
@@ -611,7 +611,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -628,7 +628,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -645,7 +645,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
         .expect(200);
@@ -670,7 +670,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -689,7 +689,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -706,7 +706,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/99.0.0`)
         .expect(200);
@@ -720,7 +720,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg2)
         .expect(403);
-      assert.equal(res.body.error, `[FORBIDDEN] Can\'t modify pre-existing version: ${pkg2.name}@99.0.0`);
+      assert.equal(res.body.error, `[FORBIDDEN] Can't modify pre-existing version: ${pkg2.name}@99.0.0`);
     });
 
     it('should 422 when version format error', async () => {

@@ -36,7 +36,7 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
         .send(pkg)
         .expect(201);
       assert.equal(createRes.body.ok, true);
-      assert.match(createRes.body.rev, /^\d+\-\w{24}$/);
+      assert.match(createRes.body.rev, /^\d+-\w{24}$/);
       const rev = createRes.body.rev;
 
       // updateMaintainers

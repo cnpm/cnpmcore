@@ -1004,7 +1004,7 @@ export class PackageManagerService extends AbstractService {
         }
         const pkgVersion = await this.packageVersionService.getVersion(npa(`${fullname}@${spec}`));
         assert(pkgVersion);
-      } catch (e) {
+      } catch {
         throw new BadRequestError(`deps ${fullname}@${spec} not found`);
       }
     }, {

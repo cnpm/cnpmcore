@@ -36,8 +36,7 @@ export class CleanTempDir {
       try {
         await access(dir);
         exists = true;
-      } catch (err) {
-        // console.log(err);
+      } catch {
         exists = false;
       }
       this.logger.info('[CleanTempDir.subscribe] dir "%s" exists: %s', dir, exists);
