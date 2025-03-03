@@ -3,10 +3,10 @@ import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { RegistryType } from '../../../../app/common/enum/Registry.js';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
-  let publisher;
+  let publisher: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
   });

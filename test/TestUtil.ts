@@ -47,6 +47,16 @@ type UserOptions = {
   };
 };
 
+export interface TestUser {
+  name: string;
+  displayName: string;
+  password: string;
+  email: string;
+  token: string;
+  authorization: string;
+  ua: string;
+}
+
 export class TestUtil {
   private static connection: any;
   private static tables: any;
@@ -163,7 +173,7 @@ export class TestUtil {
     return JSON.parse(bytes.toString());
   }
 
-  static async getFullPackage(options?: PackageOptions): Promise<PackageJSONType & { versions: PackageJSONType[] }> {
+  static async getFullPackage(options?: PackageOptions): Promise<PackageJSONType & { versions: Record<string, PackageJSONType> }> {
     const fullJSONFile = this.getFixtures('exampleFullPackage.json');
     const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
     if (options) {
@@ -237,7 +247,7 @@ export class TestUtil {
     return { user, pkg };
   }
 
-  static async createUser(user?: UserOptions) {
+  static async createUser(user?: UserOptions): Promise<TestUser> {
     if (!user) {
       user = {};
     }
@@ -255,7 +265,7 @@ export class TestUtil {
         email,
       })
       .expect(201);
-    let token = res.body.token;
+    let token: string = res.body.token;
     if (user.tokenOptions) {
       res = await this.app.httpRequest()
         .post('/-/npm/v1/tokens')
@@ -304,6 +314,7 @@ export class TestUtil {
       name: adminName,
     });
   }
+
   static async createRegistryAndScope() {
     // create success
     const adminUser = await this.createAdmin();

@@ -5,12 +5,13 @@ import { TestUtil } from '../../../../test/TestUtil.js';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
 import { UserService } from '../../../../app/core/service/UserService.js';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
+import { User } from '../../../../app/core/entity/User.js';
 
 describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   let packageManagerService: PackageManagerService;
   let userService: UserService;
   let packageRepository: PackageRepository;
-  let publisher;
+  let publisher: User;
 
   beforeEach(async () => {
     userService = await app.getEggObject(UserService);
@@ -91,7 +92,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
       assert(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.0');
       const pkg = await packageRepository.findPackage('', 'foo');
-      assert(pkg?.description === '~'.repeat(1024 * 10));
+      assert.equal(pkg?.description, '~'.repeat(1024 * 10));
     });
 
     it('should work with dist.localFile', async () => {

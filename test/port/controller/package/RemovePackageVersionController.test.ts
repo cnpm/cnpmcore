@@ -1,12 +1,12 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
 
 describe('test/port/controller/package/RemovePackageVersionController.test.ts', () => {
   let packageRepository: PackageRepository;
-  let publisher;
+  let publisher: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     packageRepository = await app.getEggObject(PackageRepository);

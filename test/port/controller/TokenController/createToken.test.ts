@@ -204,7 +204,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
           .get('/-/npm/v1/tokens/gat')
           .expect(200);
 
-        granularToken = res.body.objects.find(token => token.type === TokenType.granular);
+        granularToken = res.body.objects.find((token: Token) => token.type === TokenType.granular);
         assert(granularToken?.lastUsedAt);
         assert(dayjs(granularToken?.lastUsedAt).isAfter(start));
 

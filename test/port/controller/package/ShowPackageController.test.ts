@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
 import { PackageManifestType, PackageRepository } from '../../../../app/repository/PackageRepository.js';
 import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
@@ -12,7 +12,7 @@ import { SyncMode } from '../../../../app/common/constants.js';
 
 describe('test/port/controller/package/ShowPackageController.test.ts', () => {
   let packageRepository: PackageRepository;
-  let publisher;
+  let publisher: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     packageRepository = await app.getEggObject(PackageRepository);

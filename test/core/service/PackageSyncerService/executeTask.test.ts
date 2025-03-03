@@ -481,9 +481,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const tgzBuffer1_0_0 = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz');
       const tgzBuffer1_1_0 = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz');
 
-      let fullManifestsHeader;
-      let tgzBuffer1_0_0Header;
-      let tgzBuffer1_1_0Header;
+      let fullManifestsHeader: any;
+      let tgzBuffer1_0_0Header: any;
+      let tgzBuffer1_1_0Header: any;
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', (_, opts) => {
         fullManifestsHeader = opts.headers;
         return {

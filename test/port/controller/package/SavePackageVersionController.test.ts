@@ -4,7 +4,7 @@ import { app, mock } from '@eggjs/mock/bootstrap';
 import { ForbiddenError } from 'egg-errors';
 import dayjs from 'dayjs';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
 import { UserRepository } from '../../../../app/repository/UserRepository.js';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
@@ -17,7 +17,7 @@ import { PackageManagerService } from '../../../../app/core/service/PackageManag
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let userRepository: UserRepository;
-  let publisher;
+  let publisher: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     userRepository = await app.getEggObject(UserRepository);
@@ -662,7 +662,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/with-readme-object', version: '0.0.0' });
       assert(pkg.versions);
       const version = Object.keys(pkg.versions)[0];
-      pkg.versions[version].readme = { foo: 'bar' };
+      Reflect.set(pkg.versions[version], 'readme', { foo: 'bar' });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)

@@ -75,7 +75,7 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
       const executeTask = await taskService.findExecuteTask(task1.type);
 
       // 直接返回下一个 task2
-      assert(executeTask?.taskId === task2.taskId);
+      assert.equal(executeTask?.taskId, task2.taskId);
     });
 
     it('should return null when no valid task', async () => {
@@ -86,7 +86,7 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
       const executeTask = await taskService.findExecuteTask(task1.type);
 
       // 直接返回下一个 task2
-      assert(executeTask === null);
+      assert.equal(executeTask, null);
     });
 
     it('should not task which take be other', async () => {
@@ -102,7 +102,7 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
         taskService.findExecuteTask(task1.type),
         taskService.findExecuteTask(task1.type),
       ]);
-      assert(tasks[0]?.taskId !== task1[1]?.taskId);
+      assert(tasks[0]?.taskId !== tasks[1]?.taskId);
     });
   });
 });

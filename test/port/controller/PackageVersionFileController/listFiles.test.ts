@@ -2,14 +2,14 @@ import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
 import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService.js';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
 import { database, DATABASE_TYPE } from '../../../../config/database.js';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
-  let publisher;
-  let adminUser;
+  let publisher: TestUser;
+  let adminUser: TestUser;
   beforeEach(async () => {
     adminUser = await TestUtil.createAdmin();
     publisher = await TestUtil.createUser();

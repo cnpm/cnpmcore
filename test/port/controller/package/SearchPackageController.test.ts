@@ -2,10 +2,10 @@ import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 import { errors } from '@elastic/elasticsearch';
 import { mockES } from '../../../../config/config.unittest.js';
-import { TestUtil } from '../../../TestUtil.js';
+import { TestUser, TestUtil } from '../../../TestUtil.js';
 
 describe('test/port/controller/package/SearchPackageController.test.ts', () => {
-  let publisher;
+  let publisher: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     mock(app.config.cnpmcore, 'enableElasticsearch', true);
@@ -119,7 +119,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   });
 
   describe('[DELETE /-/v1/search/sync/:fullname] delete()', async () => {
-    let admin:Awaited<ReturnType<typeof TestUtil.createAdmin>>;
+    let admin: TestUser;
     beforeEach(async () => {
       admin = await TestUtil.createAdmin();
     });
