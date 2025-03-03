@@ -88,7 +88,6 @@ export default (appInfo: EggAppConfig): Config => {
   config.orm = {
     ...database,
     database: database.name ?? 'cnpmcore',
-    // @ts-expect-error has no charset property https://github.com/eggjs/tegg/pull/293
     charset: 'utf8mb4',
     logger: {
       // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror

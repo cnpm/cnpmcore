@@ -21,9 +21,7 @@ export default class CnpmcoreAppHook implements ILifecycleBoot {
     const app = this.app;
     // https://github.com/eggjs/tegg/blob/master/plugin/orm/app.ts#L37
     // store query sql to log
-    // @ts-expect-error has no logger property https://github.com/eggjs/tegg/pull/293
     app.config.orm.logger = {
-      // @ts-expect-error has no logger property https://github.com/eggjs/tegg/pull/293
       ...app.config.orm.logger,
       logQuery(sql: string, duration: number) {
         app.getLogger('sqlLogger').info('[%s] %s', duration, sql);
