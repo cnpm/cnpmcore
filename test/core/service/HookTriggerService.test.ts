@@ -84,7 +84,7 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
         createHookTriggerService.executeTask(tagTask),
       ]);
 
-      mock(app.httpclient, 'request', async (url, options) => {
+      mock(app.httpclient, 'request', async (url: string, options: HttpClientRequestOptions) => {
         callEndpoint = url;
         callOptions = options;
         return {
