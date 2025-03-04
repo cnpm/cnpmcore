@@ -15,8 +15,6 @@ describe('test/core/event/StoreManifest.test.ts', () => {
   describe('savePackageVersionManifest()', () => {
     it('should not store manifest when enableStoreFullPackageVersionManifestsToDatabase = false', async () => {
       const { pkg } = await TestUtil.createPackage({ version: '1.0.0' });
-      const eventWaiter = await app.getEventWaiter();
-      await eventWaiter.await('PACKAGE_VERSION_ADDED');
       const [ scope, name ] = getScopeAndName(pkg.name);
       const packageId = await packageRepository.findPackageId(scope, name);
       assert(packageId);
