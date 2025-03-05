@@ -1,24 +1,25 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { Orm } from '@eggjs/tegg-orm-plugin/lib/SingletonORM';
+import { Orm } from '@eggjs/tegg-orm-plugin';
 import { EggAppConfig } from 'egg';
-import { Bone } from 'leoric';
-import { Package as PackageModel } from './model/Package';
-import { Package as PackageEntity } from '../core/entity/Package';
-import { ModelConvertor } from './util/ModelConvertor';
-import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVersion';
-import { PackageVersion as PackageVersionModel } from './model/PackageVersion';
-import { PackageVersionManifest as PackageVersionManifestEntity } from '../core/entity/PackageVersionManifest';
-import type { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest';
-import type { Dist as DistModel } from './model/Dist';
-import { Dist as DistEntity } from '../core/entity/Dist';
-import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag';
-import type { PackageTag as PackageTagModel } from './model/PackageTag';
-import type { Maintainer as MaintainerModel } from './model/Maintainer';
-import type { User as UserModel } from './model/User';
-import { User as UserEntity } from '../core/entity/User';
-import { AbstractRepository } from './AbstractRepository';
-import { BugVersionPackages } from '../core/entity/BugVersion';
-import { DATABASE_TYPE } from '../../config/database';
+
+import { Bone } from './util/leoric.js';
+import { Package as PackageModel } from './model/Package.js';
+import { Package as PackageEntity } from '../core/entity/Package.js';
+import { ModelConvertor } from './util/ModelConvertor.js';
+import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVersion.js';
+import { PackageVersion as PackageVersionModel } from './model/PackageVersion.js';
+import { PackageVersionManifest as PackageVersionManifestEntity } from '../core/entity/PackageVersionManifest.js';
+import type { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest.js';
+import type { Dist as DistModel } from './model/Dist.js';
+import { Dist as DistEntity } from '../core/entity/Dist.js';
+import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag.js';
+import type { PackageTag as PackageTagModel } from './model/PackageTag.js';
+import type { Maintainer as MaintainerModel } from './model/Maintainer.js';
+import type { User as UserModel } from './model/User.js';
+import { User as UserEntity } from '../core/entity/User.js';
+import { AbstractRepository } from './AbstractRepository.js';
+import { BugVersionPackages } from '../core/entity/BugVersion.js';
+import { DATABASE_TYPE } from '../../config/database.js';
 
 export type PackageManifestType = Pick<PackageJSONType, PackageJSONPickKey> & {
   _id: string;

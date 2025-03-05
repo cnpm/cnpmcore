@@ -1,7 +1,7 @@
-import { Entity, EntityData } from './Entity';
-import { EasyData, EntityUtil } from '../util/EntityUtil';
-import { Dist } from './Dist';
-import { getFullname } from '../../common/PackageUtil';
+import { Entity, EntityData } from './Entity.js';
+import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import { Dist } from './Dist.js';
+import { getFullname } from '../../common/PackageUtil.js';
 
 interface PackageData extends EntityData {
   scope: string;
@@ -20,6 +20,10 @@ export enum DIST_NAMES {
   README = 'readme.md',
   FULL_MANIFESTS = 'full_manifests.json',
   ABBREVIATED_MANIFESTS = 'abbreviated_manifests.json',
+}
+
+export function isPkgManifest(fileType: DIST_NAMES) {
+  return fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED_MANIFESTS;
 }
 
 interface FileInfo {

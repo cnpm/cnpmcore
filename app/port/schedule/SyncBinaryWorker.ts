@@ -1,8 +1,9 @@
 import { EggAppConfig, EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
-import { BinarySyncerService } from '../../core/service/BinarySyncerService';
-import { isTimeoutError } from '../../common/ErrorUtil';
+
+import { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
+import { isTimeoutError } from '../../common/ErrorUtil.js';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.ALL,

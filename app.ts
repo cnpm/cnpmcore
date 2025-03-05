@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';
-import { Application } from 'egg';
-import { ChangesStreamService } from './app/core/service/ChangesStreamService';
+import { Application, ILifecycleBoot } from 'egg';
+import { ChangesStreamService } from './app/core/service/ChangesStreamService.js';
 
 declare module 'egg' {
   interface Application {
@@ -9,7 +9,7 @@ declare module 'egg' {
   }
 }
 
-export default class CnpmcoreAppHook {
+export default class CnpmcoreAppHook implements ILifecycleBoot {
   private readonly app: Application;
 
   constructor(app: Application) {
@@ -17,7 +17,7 @@ export default class CnpmcoreAppHook {
     this.app.binaryHTML = '';
   }
 
-  async configWillLoad() {
+  configWillLoad() {
     const app = this.app;
     // https://github.com/eggjs/tegg/blob/master/plugin/orm/app.ts#L37
     // store query sql to log

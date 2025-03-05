@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream';
-import { CnpmjsorgChangesStream } from '../../../../app/common/adapter/changesStream/CnpmjsorgChangesStream';
-import { RegistryType } from '../../../../app/common/enum/Registry';
-import { Registry } from '../../../../app/core/entity/Registry';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
+
+import { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';
+import { CnpmjsorgChangesStream } from '../../../../app/common/adapter/changesStream/CnpmjsorgChangesStream.js';
+import { RegistryType } from '../../../../app/common/enum/Registry.js';
+import { Registry } from '../../../../app/core/entity/Registry.js';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
 
 describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () => {
   let cnpmjsorgChangesStream: CnpmjsorgChangesStream;

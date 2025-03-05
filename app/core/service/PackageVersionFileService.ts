@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import { join, dirname, basename } from 'node:path';
 import { randomUUID } from 'node:crypto';
+// @ts-expect-error type error
 import tar from '@fengmk2/tar';
 import {
   AccessLevel,
@@ -9,24 +10,24 @@ import {
 } from '@eggjs/tegg';
 import { ConflictError, ForbiddenError } from 'egg-errors';
 import semver from 'semver';
-import { AbstractService } from '../../common/AbstractService';
+import { AbstractService } from '../../common/AbstractService.js';
 import {
   calculateIntegrity,
   getFullname,
-} from '../../common/PackageUtil';
-import { createTempDir, mimeLookup } from '../../common/FileUtil';
+} from '../../common/PackageUtil.js';
+import { createTempDir, mimeLookup } from '../../common/FileUtil.js';
 import {
   PackageRepository,
-} from '../../repository/PackageRepository';
-import { PackageVersionFileRepository } from '../../repository/PackageVersionFileRepository';
-import { PackageVersionRepository } from '../../repository/PackageVersionRepository';
-import { DistRepository } from '../../repository/DistRepository';
-import { isDuplicateKeyError } from '../../repository/util/ErrorUtil';
-import { PackageVersionFile } from '../entity/PackageVersionFile';
-import { PackageVersion } from '../entity/PackageVersion';
-import { Package } from '../entity/Package';
-import { PackageManagerService } from './PackageManagerService';
-import { CacheAdapter } from '../../common/adapter/CacheAdapter';
+} from '../../repository/PackageRepository.js';
+import { PackageVersionFileRepository } from '../../repository/PackageVersionFileRepository.js';
+import { PackageVersionRepository } from '../../repository/PackageVersionRepository.js';
+import { DistRepository } from '../../repository/DistRepository.js';
+import { isDuplicateKeyError } from '../../repository/util/ErrorUtil.js';
+import { PackageVersionFile } from '../entity/PackageVersionFile.js';
+import { PackageVersion } from '../entity/PackageVersion.js';
+import { Package } from '../entity/Package.js';
+import { PackageManagerService } from './PackageManagerService.js';
+import { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
 
 const unpkgWhiteListUrl = 'https://github.com/cnpm/unpkg-white-list';
 const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60000;
@@ -148,7 +149,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
-        onentry: entry => {
+        onentry: (entry: any) => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;
           if (this.#matchReadmeFilename(filename)) {
@@ -204,7 +205,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
-        onentry: entry => {
+        onentry: (entry: any) => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;
           paths.push('/' + filename);

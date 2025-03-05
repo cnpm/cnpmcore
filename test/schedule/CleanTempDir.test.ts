@@ -1,9 +1,13 @@
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { app } from '@eggjs/mock/bootstrap';
-import dayjs from '../../app/common/dayjs';
 
-const CleanTempDirPath = require.resolve('../../app/port/schedule/CleanTempDir');
+import dayjs from '../../app/common/dayjs.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const CleanTempDirPath = path.join(__dirname, '../../app/port/schedule/CleanTempDir.ts');
 
 describe('test/schedule/CleanTempDir.test.ts', () => {
   it('should clean dir success', async () => {

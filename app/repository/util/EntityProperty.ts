@@ -1,6 +1,7 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert';
 import { EggProtoImplClass } from '@eggjs/tegg';
-import { ModelConvertorUtil } from './ModelConvertorUtil';
+
+import { ModelConvertorUtil } from './ModelConvertorUtil.js';
 
 export function EntityProperty(entityProperty: string) {
   return function(target: any, modelProperty: PropertyKey) {

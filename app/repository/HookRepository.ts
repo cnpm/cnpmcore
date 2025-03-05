@@ -1,8 +1,9 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { Hook } from '../core/entity/Hook';
-import type { Hook as HookModel } from './model/Hook';
-import { ModelConvertor } from './util/ModelConvertor';
-import { HookType } from '../common/enum/Hook';
+
+import { Hook } from '../core/entity/Hook.js';
+import type { Hook as HookModel } from './model/Hook.js';
+import { ModelConvertor } from './util/ModelConvertor.js';
+import { HookType } from '../common/enum/Hook.js';
 
 export interface UpdateHookCommand {
   hookId: string;

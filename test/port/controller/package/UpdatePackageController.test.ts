@@ -1,11 +1,12 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { RegistryType } from '../../../../app/common/enum/Registry';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { RegistryType } from '../../../../app/common/enum/Registry.js';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
-  let publisher;
+  let publisher: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
   });
@@ -23,7 +24,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       rev = res.body.rev;
     });
 
@@ -416,7 +417,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           ],
         })
         .expect(403);
-      assert.equal(res.body.error, `[FORBIDDEN] \"${publisher.name}\" not authorized to modify ${scopedName}, please contact maintainers: \"${user.name}, ${user2.name}\"`);
+      assert.equal(res.body.error, `[FORBIDDEN] "${publisher.name}" not authorized to modify ${scopedName}, please contact maintainers: "${user.name}, ${user2.name}"`);
     });
 
     it('should support pnpm and other npm clients', async () => {

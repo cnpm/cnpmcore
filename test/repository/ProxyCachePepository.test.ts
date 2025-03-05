@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
-import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository';
-import { ProxyCache } from '../../app/core/entity/ProxyCache';
-import { DIST_NAMES } from '../../app/core/entity/Package';
+
+import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository.js';
+import { ProxyCache } from '../../app/core/entity/ProxyCache.js';
+import { DIST_NAMES } from '../../app/core/entity/Package.js';
 
 describe('test/repository/ProxyCacheRepository.test.ts', () => {
   let proxyCacheRepository: ProxyCacheRepository;

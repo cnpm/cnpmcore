@@ -1,7 +1,7 @@
-import { SyncDeleteMode, SyncMode, ChangesStreamMode } from '../common/constants';
-import { DATABASE_TYPE } from '../../config/database';
+import { SyncDeleteMode, SyncMode, ChangesStreamMode } from '../common/constants.js';
+import { DATABASE_TYPE } from '../../config/database.js';
 
-export { cnpmcoreConfig } from '../../config/config.default';
+export { cnpmcoreConfig } from '../../config/config.default.js';
 
 export type CnpmcoreConfig = {
   name: string,

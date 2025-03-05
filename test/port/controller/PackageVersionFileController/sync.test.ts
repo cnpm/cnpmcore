@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/PackageVersionFileController/sync.test.ts', () => {
-  let publisher;
-  let adminUser;
+  let publisher: TestUser;
+  let adminUser: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     adminUser = await TestUtil.createAdmin();

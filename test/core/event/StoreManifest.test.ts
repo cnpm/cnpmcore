@@ -1,8 +1,9 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../test/TestUtil';
-import { getScopeAndName } from '../../../app/common/PackageUtil';
-import { PackageRepository } from '../../../app/repository/PackageRepository';
+
+import { getScopeAndName } from '../../../app/common/PackageUtil.js';
+import { PackageRepository } from '../../../app/repository/PackageRepository.js';
+import { TestUtil } from '../../../test/TestUtil.js';
 
 describe('test/core/event/StoreManifest.test.ts', () => {
   let packageRepository: PackageRepository;
@@ -14,8 +15,6 @@ describe('test/core/event/StoreManifest.test.ts', () => {
   describe('savePackageVersionManifest()', () => {
     it('should not store manifest when enableStoreFullPackageVersionManifestsToDatabase = false', async () => {
       const { pkg } = await TestUtil.createPackage({ version: '1.0.0' });
-      const eventWaiter = await app.getEventWaiter();
-      await eventWaiter.await('PACKAGE_VERSION_ADDED');
       const [ scope, name ] = getScopeAndName(pkg.name);
       const packageId = await packageRepository.findPackageId(scope, name);
       assert(packageId);

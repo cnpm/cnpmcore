@@ -1,11 +1,12 @@
-import { Type, Static } from 'egg-typebox-validate-fengmk2/typebox';
-import type { Application } from 'egg';
-import { RegistryType } from '../common/enum/Registry';
+import { Type, Static } from 'egg-typebox-validate/typebox';
 import semver from 'semver';
 import npa from 'npm-package-arg';
-import { HookType } from '../common/enum/Hook';
-import binaryConfig, { BinaryName } from '../../config/binaries';
-import { uniq } from 'lodash';
+import { uniq } from 'lodash-es';
+import { Ajv } from 'egg-typebox-validate';
+
+import { RegistryType } from '../common/enum/Registry.js';
+import { HookType } from '../common/enum/Hook.js';
+import binaryConfig, { BinaryName } from '../../config/binaries.js';
 
 export const Name = Type.String({
   transform: [ 'trim' ],
@@ -120,7 +121,7 @@ export const CreateHookRequestRule = Type.Object({
 
 // https://github.com/xiekw2010/egg-typebox-validate#%E5%A6%82%E4%BD%95%E5%86%99%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%A1%E9%AA%8C%E8%A7%84%E5%88%99
 // add custom validate to ajv
-export function patchAjv(ajv: Application['ajv']) {
+export function patchAjv(ajv: Ajv) {
   ajv.addFormat('semver-version', {
     type: 'string',
     validate: (version: string) => {

@@ -1,13 +1,17 @@
 import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { calculateIntegrity } from '../../../../app/common/PackageUtil';
-import { PackageTagChangedSyncPackageVersionFileEvent, PackageTagAddedSyncPackageVersionFileEvent } from '../../../../app/core/event/SyncPackageVersionFile';
+
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
+import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
+import {
+  PackageTagChangedSyncPackageVersionFileEvent,
+  PackageTagAddedSyncPackageVersionFileEvent,
+} from '../../../../app/core/event/SyncPackageVersionFile.js';
 
 describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => {
-  let publisher;
-  let adminUser;
+  let publisher: TestUser;
+  let adminUser: TestUser;
   beforeEach(async () => {
     adminUser = await TestUtil.createAdmin();
     publisher = await TestUtil.createUser();
@@ -286,7 +290,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .get(`/${pkg.name}/1.0.0/files/resource/`);
       assert.equal(res.status, 200);
       // console.log(res.body);
-      assert(res.body.files.find(file => file.path === '/resource/ToOneFromχ.js'));
+      assert(res.body.files.find((file: { path: string }) => file.path === '/resource/ToOneFromχ.js'));
       // res = await app.httpRequest()
       // .get(`/${pkg.name}/1.0.0/files/resource/ToOneFromχ.js`);
       res = await app.httpRequest()
@@ -366,8 +370,8 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.status, 200);
       // console.log(res.body);
-      assert.equal(res.body.files.find(file => file.path === '/.'), undefined);
-      assert(res.body.files.find(file => file.path === '/dist'));
+      assert.equal(res.body.files.find((file: { path: string }) => file.path === '/.'), undefined);
+      assert(res.body.files.find((file: { path: string }) => file.path === '/dist'));
       const packageTagAdded = await app.getEggObject(PackageTagAddedSyncPackageVersionFileEvent);
       await packageTagAdded.handle(pkg.name, 'foo');
       await packageTagAdded.handle(pkg.name, 'latest');
@@ -415,8 +419,8 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.status, 200);
       // console.log('%o', res.body);
-      assert(res.body.files.find(file => file.path === '/CONTRIBUTING.md'));
-      let testDir = res.body.files.find(file => file.path === '/tests');
+      assert(res.body.files.find((file: { path: string }) => file.path === '/CONTRIBUTING.md'));
+      let testDir = res.body.files.find((file: { path: string }) => file.path === '/tests');
       assert(testDir);
       assert.equal(testDir.files.length, 0);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
@@ -442,8 +446,8 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .get(`/${pkg.name}/1.0.0/files?meta=true`);
       assert.equal(res.status, 200);
       // console.log('%o', res.body);
-      assert(res.body.files.find(file => file.path === '/CONTRIBUTING.md'));
-      testDir = res.body.files.find(file => file.path === '/tests');
+      assert(res.body.files.find((file: { path: string }) => file.path === '/CONTRIBUTING.md'));
+      testDir = res.body.files.find((file: { path: string }) => file.path === '/tests');
       assert(testDir);
       assert.equal(testDir.files.length, 0);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
@@ -505,7 +509,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.body.path, '/tests');
       // make sure sub dirs exists
-      const integrationDir = res.body.files.find(file => file.path === '/tests/integration');
+      const integrationDir = res.body.files.find((file: { path: string }) => file.path === '/tests/integration');
       assert(integrationDir);
       assert.equal(integrationDir.files.length, 0);
       assert.equal(integrationDir.type, 'directory');
@@ -583,7 +587,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers['content-type'], 'application/x-sh');
       assert(!res.headers['content-disposition']);
       assert.equal(res.headers['transfer-encoding'], 'chunked');
-      assert.match(res.text, /#\!\/bin\/bash/);
+      assert.match(res.text, /#!\/bin\/bash/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/1.0.0/files/docs/manifest.appcache`);

@@ -1,10 +1,11 @@
 import { EggAppConfig, EggHttpClient, EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
-import { PackageSyncerService } from '../../core/service/PackageSyncerService';
-import { PackageRepository } from '../../repository/PackageRepository';
-import { getScopeAndName } from '../../common/PackageUtil';
-import { SyncMode } from '../../common/constants';
+
+import { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
+import { PackageRepository } from '../../repository/PackageRepository.js';
+import { getScopeAndName } from '../../common/PackageUtil.js';
+import { SyncMode } from '../../common/constants.js';
 
 // https://github.com/cnpm/cnpmcore/issues/9
 @Schedule<IntervalParams>({

@@ -1,7 +1,8 @@
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
-import { SearchAdapter } from '../common/typing';
-import { AuthorType, CnpmcorePatchInfo, PackageManifestType } from './PackageRepository';
 import { estypes } from '@elastic/elasticsearch';
+
+import { SearchAdapter } from '../common/typing.js';
+import { AuthorType, CnpmcorePatchInfo, PackageManifestType } from './PackageRepository.js';
 
 export type SearchJSONPickKey = '_rev' | 'name' | 'description' | 'keywords' | 'license' | 'maintainers' | 'dist-tags' | '_source_registry_name';
 
@@ -39,7 +40,7 @@ export class SearchRepository {
   private readonly searchAdapter: SearchAdapter;
 
 
-  async searchPackage(query): Promise<estypes.SearchHitsMetadata<SearchManifestType>> {
+  async searchPackage(query: any): Promise<estypes.SearchHitsMetadata<SearchManifestType>> {
     return await this.searchAdapter.search<SearchManifestType>(query);
   }
 

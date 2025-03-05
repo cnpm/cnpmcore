@@ -1,8 +1,9 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { HookManageService } from '../../../../app/core/service/HookManageService';
-import { HookType } from '../../../../app/common/enum/Hook';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { HookManageService } from '../../../../app/core/service/HookManageService.js';
+import { HookType } from '../../../../app/common/enum/Hook.js';
 
 describe('test/core/service/HookManageService/createHook.test.ts', () => {
   let hookManageService: HookManageService;

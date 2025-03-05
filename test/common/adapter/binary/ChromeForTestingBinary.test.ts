@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { ChromeForTestingBinary } from '../../../../app/common/adapter/binary/ChromeForTestingBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { ChromeForTestingBinary } from '../../../../app/common/adapter/binary/ChromeForTestingBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
   let binary: ChromeForTestingBinary;
@@ -41,9 +42,9 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
         assert.equal(versions?.length, 3);
         assert(versionRes?.items[0].name);
         assert.equal(versionRes?.items[0].isDir, false);
-        assert.match(versionRes?.items[0].name, /^chrome\-/);
-        assert.match(versionRes?.items[1].name, /^chromedriver\-/);
-        assert.match(versionRes?.items[2].name, /^chrome\-headless\-shell\-/);
+        assert.match(versionRes?.items[0].name, /^chrome-/);
+        assert.match(versionRes?.items[1].name, /^chromedriver-/);
+        assert.match(versionRes?.items[2].name, /^chrome-headless-shell-/);
       }
       await binary.finishFetch(true);
       assert(ChromeForTestingBinary.lastTimestamp);

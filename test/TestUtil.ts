@@ -3,15 +3,22 @@ import fs from 'node:fs/promises';
 import coffee from 'coffee';
 import { tmpdir } from 'node:os';
 import { mkdtempSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { Readable } from 'node:stream';
 import mysql from 'mysql2';
 import pg from 'pg';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil';
 import semver from 'semver';
-import { PackageJSONType } from '../app/repository/PackageRepository';
-import { database, DATABASE_TYPE } from '../config/database';
+import { app as globalApp } from '@eggjs/mock/bootstrap';
+
+import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.js';
+import { PackageJSONType } from '../app/repository/PackageRepository.js';
+import { database, DATABASE_TYPE } from '../config/database.js';
+import { Package as PackageModel } from '../app/repository/model/Package.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 type PackageOptions = {
   name?: string;
@@ -40,10 +47,20 @@ type UserOptions = {
   };
 };
 
+export interface TestUser {
+  name: string;
+  displayName: string;
+  password: string;
+  email: string;
+  token: string;
+  authorization: string;
+  ua: string;
+}
+
 export class TestUtil {
-  private static connection;
-  private static tables;
-  private static _app;
+  private static connection: any;
+  private static tables: any;
+  private static _app: any;
   private static ua = 'npm/7.0.0 cnpmcore-unittest/1.0.0';
 
   static getDatabaseConfig() {
@@ -126,9 +143,7 @@ export class TestUtil {
 
   static get app() {
     if (!this._app) {
-      /* eslint @typescript-eslint/no-var-requires: "off" */
-      const bootstrap = require('@eggjs/mock/bootstrap');
-      this._app = bootstrap.app;
+      this._app = globalApp;
     }
     return this._app;
   }
@@ -136,7 +151,7 @@ export class TestUtil {
   static async rm(filepath: string) {
     try {
       await fs.unlink(filepath);
-    } catch (e) {
+    } catch {
       // ignore
     }
   }
@@ -158,7 +173,7 @@ export class TestUtil {
     return JSON.parse(bytes.toString());
   }
 
-  static async getFullPackage(options?: PackageOptions): Promise<PackageJSONType & { versions: PackageJSONType[] }> {
+  static async getFullPackage(options?: PackageOptions): Promise<PackageJSONType & { versions: Record<string, PackageJSONType> }> {
     const fullJSONFile = this.getFixtures('exampleFullPackage.json');
     const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
     if (options) {
@@ -227,13 +242,12 @@ export class TestUtil {
 
     if (options?.isPrivate === false) {
       const [ scope, name ] = getScopeAndName(pkg.name);
-      const { Package: PackageModel } = require('../app/repository/model/Package');
       await PackageModel.update({ scope, name }, { isPrivate: false, registryId: options?.registryId });
     }
     return { user, pkg };
   }
 
-  static async createUser(user?: UserOptions) {
+  static async createUser(user?: UserOptions): Promise<TestUser> {
     if (!user) {
       user = {};
     }
@@ -251,7 +265,7 @@ export class TestUtil {
         email,
       })
       .expect(201);
-    let token = res.body.token;
+    let token: string = res.body.token;
     if (user.tokenOptions) {
       res = await this.app.httpRequest()
         .post('/-/npm/v1/tokens')
@@ -300,6 +314,7 @@ export class TestUtil {
       name: adminName,
     });
   }
+
   static async createRegistryAndScope() {
     // create success
     const adminUser = await this.createAdmin();
@@ -315,7 +330,7 @@ export class TestUtil {
         });
   }
 
-  static async readStreamToLog(urlOrStream) {
+  static async readStreamToLog(urlOrStream: any) {
     let stream: Readable;
     if (typeof urlOrStream === 'string') {
       const { res } = await this.app.curl(urlOrStream, { streaming: true });
@@ -330,10 +345,10 @@ export class TestUtil {
     return Buffer.concat(chunks).toString();
   }
 
-  static pickKeys(obj, keys) {
-    const d: Record<string, any> = [];
-    obj.forEach(item => {
-      const newItem = {};
+  static pickKeys(obj: any, keys: any) {
+    const d: Record<string, any>[] = [];
+    obj.forEach((item: any) => {
+      const newItem: Record<string, any> = {};
       for (const key of keys) {
         newItem[key] = item[key];
       }

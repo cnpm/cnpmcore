@@ -1,6 +1,6 @@
-import { Dist } from './Dist';
-import { Entity, EntityData } from './Entity';
-import { EasyData, EntityUtil } from '../util/EntityUtil';
+import { Dist } from './Dist.js';
+import { Entity, EntityData } from './Entity.js';
+import { EasyData, EntityUtil } from '../util/EntityUtil.js';
 
 interface PackageVersionFileData extends EntityData {
   packageVersionFileId: string;

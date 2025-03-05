@@ -1,19 +1,20 @@
 import { strict as assert } from 'node:assert';
 import { HttpClientRequestOptions } from 'egg';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../test/TestUtil';
-import { HookManageService } from '../../../app/core/service/HookManageService';
-import { HookType } from '../../../app/common/enum/Hook';
-import { UserRepository } from '../../../app/repository/UserRepository';
-import { PACKAGE_TAG_ADDED, PACKAGE_VERSION_ADDED } from '../../../app/core/event';
-import { Change } from '../../../app/core/entity/Change';
-import { ChangeRepository } from '../../../app/repository/ChangeRepository';
-import { Task, TriggerHookTask } from '../../../app/core/entity/Task';
-import { HookEvent } from '../../../app/core/entity/HookEvent';
-import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService';
-import { TaskRepository } from '../../../app/repository/TaskRepository';
-import { Hook } from '../../../app/core/entity/Hook';
-import { HookTriggerService } from '../../../app/core/service/HookTriggerService';
+
+import { TestUtil } from '../../../test/TestUtil.js';
+import { HookManageService } from '../../../app/core/service/HookManageService.js';
+import { HookType } from '../../../app/common/enum/Hook.js';
+import { UserRepository } from '../../../app/repository/UserRepository.js';
+import { PACKAGE_TAG_ADDED, PACKAGE_VERSION_ADDED } from '../../../app/core/event/index.js';
+import { Change } from '../../../app/core/entity/Change.js';
+import { ChangeRepository } from '../../../app/repository/ChangeRepository.js';
+import { Task, TriggerHookTask } from '../../../app/core/entity/Task.js';
+import { HookEvent } from '../../../app/core/entity/HookEvent.js';
+import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService.js';
+import { TaskRepository } from '../../../app/repository/TaskRepository.js';
+import { Hook } from '../../../app/core/entity/Hook.js';
+import { HookTriggerService } from '../../../app/core/service/HookTriggerService.js';
 
 describe('test/core/service/HookTriggerService.test.ts', () => {
   let hookManageService: HookManageService;
@@ -83,7 +84,7 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
         createHookTriggerService.executeTask(tagTask),
       ]);
 
-      mock(app.httpclient, 'request', async (url, options) => {
+      mock(app.httpclient, 'request', async (url: string, options: HttpClientRequestOptions) => {
         callEndpoint = url;
         callOptions = options;
         return {

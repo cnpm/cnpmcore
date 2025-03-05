@@ -1,12 +1,13 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
-import { RegistryType } from '../../../../app/common/enum/Registry';
-import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService';
-import { Registry } from '../../../../app/core/entity/Registry';
-import { TaskRepository } from '../../../../app/repository/TaskRepository';
-import { TaskType } from '../../../../app/common/enum/Task';
-import { ChangesStreamTaskData } from '../../../../app/core/entity/Task';
+
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
+import { RegistryType } from '../../../../app/common/enum/Registry.js';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
+import { Registry } from '../../../../app/core/entity/Registry.js';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
+import { TaskType } from '../../../../app/common/enum/Task.js';
+import { ChangesStreamTaskData } from '../../../../app/core/entity/Task.js';
 
 describe('test/core/service/RegistryManagerService/index.test.ts', () => {
   let registryManagerService: RegistryManagerService;
@@ -47,25 +48,25 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       it('query success', async () => {
         // query success
         const queryRes = await registryManagerService.listRegistries({});
-        assert(queryRes.count === 2);
+        assert.equal(queryRes.count, 2);
         const [ _, registry ] = queryRes.data;
         assert(_);
-        assert(registry.name === 'custom2');
+        assert.equal(registry.name, 'custom2');
       });
 
       it('pageOptions should work', async () => {
         // pageOptions should work
         let queryRes = await registryManagerService.listRegistries({ pageIndex: 0, pageSize: 1 });
-        assert(queryRes.count === 2);
-        assert(queryRes.data.length === 1);
+        assert.equal(queryRes.count, 2);
+        assert.equal(queryRes.data.length, 1);
         const [ firstRegistry ] = queryRes.data;
-        assert(firstRegistry.name === 'custom');
+        assert.equal(firstRegistry.name, 'custom');
 
         queryRes = await registryManagerService.listRegistries({ pageIndex: 1, pageSize: 1 });
-        assert(queryRes.count === 2);
-        assert(queryRes.data.length === 1);
+        assert.equal(queryRes.count, 2);
+        assert.equal(queryRes.data.length, 1);
         const [ secondRegistry ] = queryRes.data;
-        assert(secondRegistry.name === 'custom2');
+        assert.equal(secondRegistry.name, 'custom2');
       });
 
     });
@@ -80,13 +81,12 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       });
 
       queryRes = await registryManagerService.listRegistries({});
-      assert(queryRes.data[0].name === 'custom3');
-
+      assert.equal(queryRes.data[0].name, 'custom3');
     });
 
     it('update should check registry', async () => {
       const queryRes = await registryManagerService.listRegistries({});
-      assert(queryRes.count === 1);
+      assert.equal(queryRes.count, 1);
       const [ registry ] = queryRes.data;
       await assert.rejects(
         registryManagerService.updateRegistry('not_exist', {
@@ -99,10 +99,10 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
 
     it('remove should work', async () => {
       let queryRes = await registryManagerService.listRegistries({});
-      assert(queryRes.count === 1);
+      assert.equal(queryRes.count, 1);
       await registryManagerService.remove({ registryId: queryRes.data[0].registryId });
       queryRes = await registryManagerService.listRegistries({});
-      assert(queryRes.count === 0);
+      assert.equal(queryRes.count, 0);
     });
 
     describe('createSyncChangesStream()', async () => {
@@ -119,11 +119,13 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
         const targetName = 'CUSTOM_WORKER';
         const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
         assert(task);
-        assert((task.data as ChangesStreamTaskData).registryId === registry.registryId);
+        assert.equal((task.data as ChangesStreamTaskData).registryId, registry.registryId);
       });
 
       it('should preCheck registry', async () => {
-        await assert.rejects(registryManagerService.createSyncChangesStream({ registryId: 'mock_invalid_registry_id' }), /not found/);
+        await assert.rejects(registryManagerService.createSyncChangesStream({ registryId: 'mock_invalid_registry_id' }),
+          /not found/,
+        );
       });
 
       it('should preCheck scopes', async () => {
@@ -134,17 +136,21 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
           userPrefix: 'cnpm:',
           type: RegistryType.Cnpmcore,
         });
-        await assert.rejects(registryManagerService.createSyncChangesStream({ registryId: newRegistry.registryId }), /please create scopes first/);
+        await assert.rejects(registryManagerService.createSyncChangesStream({ registryId: newRegistry.registryId }),
+          /please create scopes first/,
+        );
       });
 
       it('should create only once', async () => {
         // create success
         await registryManagerService.createSyncChangesStream({ registryId: registry.registryId });
         await registryManagerService.createSyncChangesStream({ registryId: registry.registryId });
+        // won't create new task
         await registryManagerService.createSyncChangesStream({ registryId: registry.registryId, since: '100' });
         const targetName = 'CUSTOM_WORKER';
         const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
-        assert((task?.data as ChangesStreamTaskData).since === '');
+        assert(task);
+        assert.equal((task.data as ChangesStreamTaskData).since, '');
       });
     });
   });

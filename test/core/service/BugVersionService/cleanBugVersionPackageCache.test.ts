@@ -1,9 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { BugVersionService } from '../../../../app/core/service/BugVersionService';
-import { CacheService } from '../../../../app/core/service/CacheService';
-import { BugVersion } from '../../../../app/core/entity/BugVersion';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { BugVersionService } from '../../../../app/core/service/BugVersionService.js';
+import { CacheService } from '../../../../app/core/service/CacheService.js';
+import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
 
 describe('test/core/service/BugVersionService/cleanBugVersionPackageCache.test.ts', () => {
   let bugVersionService: BugVersionService;
@@ -37,7 +38,7 @@ describe('test/core/service/BugVersionService/cleanBugVersionPackageCache.test.t
         },
       },
     });
-    mock(cacheService, 'removeCache', async fullname => {
+    mock(cacheService, 'removeCache', async (fullname: string) => {
       cleanPkgs.push(fullname);
     });
   });

@@ -1,9 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter';
-import { SyncMode } from '../../../../app/common/constants';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.js';
+import { SyncMode } from '../../../../app/common/constants.js';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let publisher: any;
@@ -27,7 +28,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       .expect(201);
     assert(res.status === 201);
     assert(res.body.ok === true);
-    assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    assert.match(res.body.rev, /^\d+-\w{24}$/);
 
     pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
     res = await app.httpRequest()
@@ -37,7 +38,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       .send(pkg);
     assert(res.status === 201);
     assert(res.body.ok === true);
-    assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    assert.match(res.body.rev, /^\d+-\w{24}$/);
   });
 
   describe('[GET /:fullname/-/:name-:version.tgz] download()', () => {

@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 import {
   AccessLevel,
   LifecycleInit,
@@ -6,8 +7,8 @@ import {
 } from '@eggjs/tegg';
 import { EggAppConfig, EggLogger } from 'egg';
 import FSClient from 'fs-cnpm';
-import { AppendResult, NFSClient, UploadOptions, UploadResult, DownloadOptions } from '../common/typing';
-import { Readable } from 'node:stream';
+
+import { AppendResult, NFSClient, UploadOptions, UploadResult, DownloadOptions } from '../common/typing.js';
 
 @SingletonProto({
   name: 'nfsClient',

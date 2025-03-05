@@ -1,5 +1,4 @@
 import { ForbiddenError, UnauthorizedError } from 'egg-errors';
-import { AuthAdapter } from '../../infra/AuthAdapter';
 import {
   HTTPController,
   HTTPMethod,
@@ -10,9 +9,11 @@ import {
   EggContext,
   Inject,
 } from '@eggjs/tegg';
-import { Static, Type } from 'egg-typebox-validate-fengmk2/typebox';
-import { AbstractController } from './AbstractController';
-import { TokenType, isGranularToken } from '../../core/entity/Token';
+import { Static, Type } from 'egg-typebox-validate/typebox';
+
+import { AuthAdapter } from '../../infra/AuthAdapter.js';
+import { AbstractController } from './AbstractController.js';
+import { TokenType, isGranularToken } from '../../core/entity/Token.js';
 
 // Creating and viewing access tokens
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#viewing-access-tokens

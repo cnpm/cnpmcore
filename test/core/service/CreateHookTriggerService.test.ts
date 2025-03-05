@@ -1,17 +1,18 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../test/TestUtil';
-import { HookManageService } from '../../../app/core/service/HookManageService';
-import { HookType } from '../../../app/common/enum/Hook';
-import { UserRepository } from '../../../app/repository/UserRepository';
-import { PACKAGE_VERSION_ADDED } from '../../../app/core/event';
-import { Change } from '../../../app/core/entity/Change';
-import { ChangeRepository } from '../../../app/repository/ChangeRepository';
-import { Task } from '../../../app/core/entity/Task';
-import { HookEvent } from '../../../app/core/entity/HookEvent';
-import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService';
-import { TaskRepository } from '../../../app/repository/TaskRepository';
-import { Hook } from '../../../app/core/entity/Hook';
+
+import { TestUtil } from '../../../test/TestUtil.js';
+import { HookManageService } from '../../../app/core/service/HookManageService.js';
+import { HookType } from '../../../app/common/enum/Hook.js';
+import { UserRepository } from '../../../app/repository/UserRepository.js';
+import { PACKAGE_VERSION_ADDED } from '../../../app/core/event/index.js';
+import { Change } from '../../../app/core/entity/Change.js';
+import { ChangeRepository } from '../../../app/repository/ChangeRepository.js';
+import { Task } from '../../../app/core/entity/Task.js';
+import { HookEvent } from '../../../app/core/entity/HookEvent.js';
+import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService.js';
+import { TaskRepository } from '../../../app/repository/TaskRepository.js';
+import { Hook } from '../../../app/core/entity/Hook.js';
 
 describe('test/core/service/CreateHookTriggerService.test.ts', () => {
   let hookManageService: HookManageService;

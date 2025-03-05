@@ -1,10 +1,11 @@
 import { EggAppConfig, EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
-import { TaskService } from '../../core/service/TaskService';
-import { TaskType } from '../../common/enum/Task';
-import { CreateHookTask } from '../../core/entity/Task';
-import { CreateHookTriggerService } from '../../core/service/CreateHookTriggerService';
+
+import { TaskService } from '../../core/service/TaskService.js';
+import { TaskType } from '../../common/enum/Task.js';
+import { CreateHookTask } from '../../core/entity/Task.js';
+import { CreateHookTriggerService } from '../../core/service/CreateHookTriggerService.js';
 
 let executingCount = 0;
 

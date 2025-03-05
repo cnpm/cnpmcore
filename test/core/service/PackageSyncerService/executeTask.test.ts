@@ -1,25 +1,26 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
-import { Package as PackageModel } from '../../../../app/repository/model/Package';
-import { Task as TaskModel } from '../../../../app/repository/model/Task';
-import { Task as TaskEntity } from '../../../../app/core/entity/Task';
-import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask';
-import { NPMRegistry } from '../../../../app/common/adapter/NPMRegistry';
-import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter';
-import { getScopeAndName } from '../../../../app/common/PackageUtil';
-import { PackageRepository } from '../../../../app/repository/PackageRepository';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
-import { Registry } from '../../../../app/core/entity/Registry';
-import { RegistryType } from '../../../../app/common/enum/Registry';
-import { TaskService } from '../../../../app/core/service/TaskService';
-import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService';
-import { UserService } from '../../../../app/core/service/UserService';
-import { ChangeRepository } from '../../../../app/repository/ChangeRepository';
-import { PackageVersion } from '../../../../app/repository/model/PackageVersion';
-import { TaskState } from '../../../../app/common/enum/Task';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
+import { Package as PackageModel } from '../../../../app/repository/model/Package.js';
+import { Task as TaskModel } from '../../../../app/repository/model/Task.js';
+import { Task as TaskEntity } from '../../../../app/core/entity/Task.js';
+import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.js';
+import { NPMRegistry } from '../../../../app/common/adapter/NPMRegistry.js';
+import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter.js';
+import { getScopeAndName } from '../../../../app/common/PackageUtil.js';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
+import { Registry } from '../../../../app/core/entity/Registry.js';
+import { RegistryType } from '../../../../app/common/enum/Registry.js';
+import { TaskService } from '../../../../app/core/service/TaskService.js';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
+import { UserService } from '../../../../app/core/service/UserService.js';
+import { ChangeRepository } from '../../../../app/repository/ChangeRepository.js';
+import { PackageVersion } from '../../../../app/repository/model/PackageVersion.js';
+import { TaskState } from '../../../../app/common/enum/Task.js';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let packageSyncerService: PackageSyncerService;
@@ -480,9 +481,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const tgzBuffer1_0_0 = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz');
       const tgzBuffer1_1_0 = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz');
 
-      let fullManifestsHeader;
-      let tgzBuffer1_0_0Header;
-      let tgzBuffer1_1_0Header;
+      let fullManifestsHeader: any;
+      let tgzBuffer1_0_0Header: any;
+      let tgzBuffer1_1_0Header: any;
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', (_, opts) => {
         fullManifestsHeader = opts.headers;
         return {
@@ -1760,7 +1761,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert(log.includes('❌ stop sync by block list: [\"cnpmcore-test-sync-blocklist\",\"foo\"]'));
+      assert(log.includes('❌ stop sync by block list: ["cnpmcore-test-sync-blocklist","foo"]'));
     });
 
     it('should sync upper case "D" success', async () => {
@@ -2603,7 +2604,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
       // already synced pkg
       beforeEach(async () => {
-        app.mockHttpclient(/^https:\/\/registry\.npmjs\.org\/invalid\-deps/, 'GET', {
+        app.mockHttpclient(/^https:\/\/registry\.npmjs\.org\/invalid-deps/, 'GET', {
           data: await TestUtil.readFixturesFile('registry.npmjs.org/invalid-deps.json'),
           persist: false,
         });

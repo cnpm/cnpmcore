@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { GithubBinary } from '../../../../app/common/adapter/binary/GithubBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+
+import { GithubBinary } from '../../../../app/common/adapter/binary/GithubBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
   let binary: GithubBinary;

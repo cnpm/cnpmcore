@@ -13,7 +13,7 @@ import {
   EggLogger,
   EggAppConfig,
 } from 'egg';
-import { Static, Type } from 'egg-typebox-validate-fengmk2/typebox';
+import { Static, Type } from 'egg-typebox-validate/typebox';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 import { createHash } from 'node:crypto';
 import base64url from 'base64url';
@@ -26,13 +26,14 @@ import {
   VerifyAuthenticationResponseOpts,
 } from '@simplewebauthn/server';
 import type { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/typescript-types';
-import { LoginResultCode, WanStatusCode } from '../../common/enum/User';
-import { CacheAdapter } from '../../common/adapter/CacheAdapter';
-import { UserService } from '../../core/service/UserService';
-import { MiddlewareController } from '../middleware';
-import { AuthAdapter } from '../../infra/AuthAdapter';
-import { genRSAKeys, decryptRSA } from '../../common/CryptoUtil';
-import { getBrowserTypeForWebauthn } from '../../common/UserUtil';
+
+import { LoginResultCode, WanStatusCode } from '../../common/enum/User.js';
+import { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
+import { UserService } from '../../core/service/UserService.js';
+import { MiddlewareController } from '../middleware/index.js';
+import { AuthAdapter } from '../../infra/AuthAdapter.js';
+import { genRSAKeys, decryptRSA } from '../../common/CryptoUtil.js';
+import { getBrowserTypeForWebauthn } from '../../common/UserUtil.js';
 
 const LoginRequestRule = Type.Object({
   // cli 所在机器的 hostname，最新版本 npm cli 已经不会上报 hostname
@@ -157,7 +158,9 @@ export class WebauthController extends MiddlewareController {
           expectedOrigin,
           expectedRPID,
           authenticator: {
+            // @ts-expect-error type error
             credentialPublicKey: base64url.toBuffer(credential.publicKey),
+            // @ts-expect-error type error
             credentialID: base64url.toBuffer(credential.credentialId),
             counter: 0,
           },
@@ -236,7 +239,9 @@ export class WebauthController extends MiddlewareController {
         const { verified, registrationInfo } = verification;
         if (verified && registrationInfo) {
           const { credentialPublicKey, credentialID } = registrationInfo;
+          // @ts-expect-error type error
           const base64CredentialPublicKey = base64url.encode(Buffer.from(new Uint8Array(credentialPublicKey)));
+          // @ts-expect-error type error
           const base64CredentialID = base64url.encode(Buffer.from(new Uint8Array(credentialID)));
           this.userService.createWebauthnCredential(user?.userId, {
             credentialId: base64CredentialID,
@@ -278,6 +283,7 @@ export class WebauthController extends MiddlewareController {
         timeout: 60000,
         rpID: expectedRPID,
         allowCredentials: [{
+          // @ts-expect-error type error
           id: base64url.toBuffer(credential.credentialId),
           type: 'public-key',
           transports: [ 'internal' ],
@@ -290,6 +296,7 @@ export class WebauthController extends MiddlewareController {
       result.wanCredentialRegiOption = generateRegistrationOptions({
         rpName: ctx.app.config.name,
         rpID: expectedRPID,
+        // @ts-expect-error type error
         userID: base64url.encode(Buffer.from(regUserIdBuffer)),
         userName: name,
         userDisplayName: name,

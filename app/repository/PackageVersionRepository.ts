@@ -1,11 +1,12 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import { PaddingSemVer } from '../core/entity/PaddingSemVer';
-import type { Package as PackageModel } from './model/Package';
-import { PackageVersion } from '../core/entity/PackageVersion';
-import type { PackageTag } from './model/PackageTag';
-import { ModelConvertor } from './util/ModelConvertor';
-import type { PackageVersion as PackageVersionModel } from './model/PackageVersion';
-import { SqlRange } from '../core/entity/SqlRange';
+
+import { PaddingSemVer } from '../core/entity/PaddingSemVer.js';
+import type { Package as PackageModel } from './model/Package.js';
+import { PackageVersion } from '../core/entity/PackageVersion.js';
+import type { PackageTag } from './model/PackageTag.js';
+import { ModelConvertor } from './util/ModelConvertor.js';
+import type { PackageVersion as PackageVersionModel } from './model/PackageVersion.js';
+import { SqlRange } from '../core/entity/SqlRange.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

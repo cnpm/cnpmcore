@@ -1,12 +1,17 @@
 import { strict as assert } from 'node:assert';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import dayjs from '../../../../app/common/dayjs';
-import { TestUtil } from '../../../../test/TestUtil';
 
-const SavePackageVersionDownloadCounterPath = require.resolve('../../../../app/port/schedule/SavePackageVersionDownloadCounter');
+import dayjs from '../../../../app/common/dayjs.js';
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const SavePackageVersionDownloadCounterPath = path.join(__dirname, '../../../../app/port/schedule/SavePackageVersionDownloadCounter.ts');
 
 describe('test/port/controller/DownloadController/showPackageDownloads.test.ts', () => {
-  let publisher;
+  let publisher: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
   });

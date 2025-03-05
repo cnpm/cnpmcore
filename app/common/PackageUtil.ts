@@ -2,8 +2,9 @@ import { createReadStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import * as ssri from 'ssri';
+// @ts-expect-error type error
 import tar from '@fengmk2/tar';
-import { AuthorType, PackageJSONType } from '../repository/PackageRepository';
+import type { AuthorType, PackageJSONType } from '../repository/PackageRepository.js';
 
 
 // /@cnpm%2ffoo
@@ -12,7 +13,7 @@ import { AuthorType, PackageJSONType } from '../repository/PackageRepository';
 // /foo
 // name max length is 214 chars
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
-export const FULLNAME_REG_STRING = '@[^/]{1,220}\/[^/]{1,220}|@[^%]+\%2[fF][^/]{1,220}|[^@/]{1,220}';
+export const FULLNAME_REG_STRING = '@[^/]{1,220}/[^/]{1,220}|@[^%]+%2[fF][^/]{1,220}|[^@/]{1,220}';
 
 export function getScopeAndName(fullname: string): string[] {
   if (fullname.startsWith('@')) {
@@ -86,7 +87,7 @@ export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Pr
   const parser = tar.t({
     // options.strict 默认为 false，会忽略 Recoverable errors，例如 tar 解析失败
     // 详见 https://github.com/isaacs/node-tar#warnings-and-errors
-    onentry(entry) {
+    onentry(entry: any) {
       if (entry.path === 'package/npm-shrinkwrap.json') {
         hasShrinkWrap = true;
         abortController.abort();
@@ -122,8 +123,8 @@ export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJ
   return new Promise((resolve, reject) => {
     Readable.from(tarballBytes)
       .pipe(tar.t({
-        filter: name => name === 'package/package.json',
-        onentry: async entry => {
+        filter: (name: string) => name === 'package/package.json',
+        onentry: async (entry: any) => {
           const chunks: Buffer[] = [];
           for await (const chunk of entry) {
             chunks.push(chunk);
@@ -131,7 +132,7 @@ export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJ
           try {
             const data = Buffer.concat(chunks);
             return resolve(JSON.parse(data.toString()));
-          } catch (err) {
+          } catch {
             reject(new Error('Error parsing package.json'));
           }
         },
