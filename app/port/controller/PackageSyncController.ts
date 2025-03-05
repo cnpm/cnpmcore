@@ -59,7 +59,6 @@ export class PackageSyncController extends AbstractController {
     if (!this.enableSync) {
       throw new ForbiddenError('Not allow to sync package');
     }
-    // @ts-expect-error should auto import tracer plugin
     const tips = data.tips || `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
     const isAdmin = await this.userRoleManager.isAdmin(ctx);
 
@@ -183,7 +182,6 @@ export class PackageSyncController extends AbstractController {
   async deprecatedCreateSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPQuery() nodeps: string) {
     const options: SyncPackageTaskType = {
       fullname,
-      // @ts-expect-error should auto import tracer plugin
       tips: `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`,
       skipDependencies: nodeps === 'true',
       syncDownloadData: false,

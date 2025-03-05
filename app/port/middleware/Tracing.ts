@@ -11,8 +11,6 @@ export async function Tracing(ctx: EggContext, next: Next) {
   //   host: 'localhost:7001',
   //   connection: 'keep-alive'
   // }
-  // TODO: fix type
-  // @ts-expect-error should auto import tracer plugin
   ctx.set('request-id', ctx.tracer.traceId);
   if (ctx.method !== 'HEAD') {
     ctx.logger.info('[Tracing] auth: %s, npm-command: %s, referer: %s, user-agent: %j',
