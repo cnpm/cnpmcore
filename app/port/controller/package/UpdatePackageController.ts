@@ -12,7 +12,7 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { Static, Type } from 'egg-typebox-validate-fengmk2/typebox';
+import { Static, Type } from 'egg-typebox-validate/typebox';
 
 import { AbstractController } from '../AbstractController.js';
 import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';

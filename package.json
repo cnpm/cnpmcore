@@ -108,7 +108,7 @@
     "egg-cors": "^3.0.0",
     "egg-errors": "^2.3.0",
     "egg-status": "^1.0.0",
-    "egg-typebox-validate-fengmk2": "3.0.0-beta.1",
+    "egg-typebox-validate": "^3.0.0",
     "egg-view-nunjucks": "^2.3.0",
     "eggjs-elasticsearch": "^0.0.6",
     "fs-cnpm": "^2.4.0",

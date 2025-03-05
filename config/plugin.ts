@@ -42,7 +42,7 @@ const plugin: EggPlugin = {
   },
   typeboxValidate: {
     enable: true,
-    package: 'egg-typebox-validate-fengmk2',
+    package: 'egg-typebox-validate',
   },
   redis: {
     enable: true,

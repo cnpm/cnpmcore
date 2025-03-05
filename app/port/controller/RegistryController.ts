@@ -11,7 +11,7 @@ import {
   Middleware,
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
-import { Static } from 'egg-typebox-validate-fengmk2/typebox';
+import { Static } from 'egg-typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.js';
 import { RegistryManagerService, UpdateRegistryCmd } from '../../core/service/RegistryManagerService.js';

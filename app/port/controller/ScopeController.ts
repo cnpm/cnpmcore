@@ -10,7 +10,7 @@ import {
   Middleware,
 } from '@eggjs/tegg';
 import { E400 } from 'egg-errors';
-import { Static } from 'egg-typebox-validate-fengmk2/typebox';
+import { Static } from 'egg-typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.js';
 import { AdminAccess } from '../middleware/AdminAccess.js';

@@ -229,5 +229,4 @@ export default (appInfo: EggAppConfig): Config => {
   }
 
   return config;
-};
-
+}

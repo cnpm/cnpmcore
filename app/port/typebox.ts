@@ -1,8 +1,8 @@
-import { Type, Static } from 'egg-typebox-validate-fengmk2/typebox';
+import { Type, Static } from 'egg-typebox-validate/typebox';
 import semver from 'semver';
 import npa from 'npm-package-arg';
 import { uniq } from 'lodash-es';
-import { Ajv } from 'egg-typebox-validate-fengmk2';
+import { Ajv } from 'egg-typebox-validate';
 
 import { RegistryType } from '../common/enum/Registry.js';
 import { HookType } from '../common/enum/Hook.js';

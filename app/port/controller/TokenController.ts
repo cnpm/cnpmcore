@@ -9,7 +9,7 @@ import {
   EggContext,
   Inject,
 } from '@eggjs/tegg';
-import { Static, Type } from 'egg-typebox-validate-fengmk2/typebox';
+import { Static, Type } from 'egg-typebox-validate/typebox';
 
 import { AuthAdapter } from '../../infra/AuthAdapter.js';
 import { AbstractController } from './AbstractController.js';

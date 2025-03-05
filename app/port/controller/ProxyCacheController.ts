@@ -12,7 +12,7 @@ import { ForbiddenError, NotFoundError, UnauthorizedError, NotImplementedError }
 
 import { AbstractController } from './AbstractController.js';
 import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
-import { Static } from 'egg-typebox-validate-fengmk2/typebox';
+import { Static } from 'egg-typebox-validate/typebox';
 import { QueryPageOptions } from '../typebox.js';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
 import {
