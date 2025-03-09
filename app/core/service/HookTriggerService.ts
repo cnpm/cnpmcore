@@ -1,16 +1,16 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { TriggerHookTask } from '../entity/Task';
-import { HookEvent } from '../entity/HookEvent';
-import { HookRepository } from '../../repository/HookRepository';
-import { PackageRepository } from '../../repository/PackageRepository';
-import { DistRepository } from '../../repository/DistRepository';
-import { UserRepository } from '../../repository/UserRepository';
-import { Hook } from '../entity/Hook';
 import { EggContextHttpClient } from 'egg';
-import { isoNow } from '../../common/LogUtil';
-import { TaskState } from '../../common/enum/Task';
-import { TaskService } from './TaskService';
-import { getScopeAndName } from '../../common/PackageUtil';
+import { TriggerHookTask } from '../entity/Task.js';
+import { HookEvent } from '../entity/HookEvent.js';
+import { HookRepository } from '../../repository/HookRepository.js';
+import { PackageRepository } from '../../repository/PackageRepository.js';
+import { DistRepository } from '../../repository/DistRepository.js';
+import { UserRepository } from '../../repository/UserRepository.js';
+import { Hook } from '../entity/Hook.js';
+import { isoNow } from '../../common/LogUtil.js';
+import { TaskState } from '../../common/enum/Task.js';
+import { TaskService } from './TaskService.js';
+import { getScopeAndName } from '../../common/PackageUtil.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

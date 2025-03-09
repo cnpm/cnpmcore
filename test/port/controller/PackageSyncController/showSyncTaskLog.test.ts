@@ -1,12 +1,13 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { TaskRepository } from '../../../../app/repository/TaskRepository';
-import { TaskState } from '../../../../app/common/enum/Task';
-import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter';
+import { app, mock } from '@eggjs/mock/bootstrap';
+
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
+import { TaskState } from '../../../../app/common/enum/Task.js';
+import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter.js';
 
 describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', () => {
-  let publisher;
+  let publisher: TestUser;
   let taskRepository: TaskRepository;
   let nfsAdapter: NFSAdapter;
   beforeEach(async () => {

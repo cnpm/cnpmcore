@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
-import { BucketBinary } from '../../../../app/common/adapter/binary/BucketBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+import { app } from '@eggjs/mock/bootstrap';
+
+import { BucketBinary } from '../../../../app/common/adapter/binary/BucketBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
   let binary: BucketBinary;
@@ -21,7 +22,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
       let matchFile = false;
       for (const item of result.items) {
         if (item.name === '97.0.4692.71/') {
-          assert(/^\d{4}\-\d{2}\-\d{2}T\d{2}:00:00Z$/.test(item.date));
+          assert(/^\d{4}-\d{2}-\d{2}T\d{2}:00:00Z$/.test(item.date));
           assert(item.isDir === true);
           assert(item.size === '-');
           matchDir = true;

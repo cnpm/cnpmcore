@@ -13,11 +13,12 @@ import {
   UnauthorizedError,
   ForbiddenError,
 } from 'egg-errors';
-import { Static, Type } from '@sinclair/typebox';
-import { AbstractController } from './AbstractController';
-import { LoginResultCode } from '../../common/enum/User';
-import { sha512 } from '../../common/UserUtil';
-import { isGranularToken } from '../../core/entity/Token';
+import { Static, Type } from 'egg-typebox-validate/typebox';
+
+import { AbstractController } from './AbstractController.js';
+import { LoginResultCode } from '../../common/enum/User.js';
+import { sha512 } from '../../common/UserUtil.js';
+import { isGranularToken } from '../../core/entity/Token.js';
 
 // body: {
 //   _id: 'org.couchdb.user:dddd',

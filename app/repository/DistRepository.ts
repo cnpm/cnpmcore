@@ -1,7 +1,8 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { NFSAdapter } from '../common/adapter/NFSAdapter';
-import { PackageJSONType, PackageRepository } from './PackageRepository';
-import { Dist } from '../core/entity/Dist';
+
+import { NFSAdapter } from '../common/adapter/NFSAdapter.js';
+import { PackageJSONType, PackageRepository } from './PackageRepository.js';
+import { Dist } from '../core/entity/Dist.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

@@ -1,4 +1,4 @@
-import { performance } from 'perf_hooks';
+import { performance } from 'node:perf_hooks';
 import {
   HTTPController,
   HTTPMethod,
@@ -7,10 +7,13 @@ import {
   EggContext,
   Inject,
 } from '@eggjs/tegg';
-import { AbstractController } from './AbstractController';
-import { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService';
-import { HomeService } from '../../core/service/HomeService';
+import pkg from 'egg/package.json' with { type: 'json' };
 
+import { AbstractController } from './AbstractController.js';
+import { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService.js';
+import { HomeService } from '../../core/service/HomeService.js';
+
+const EggVersion = pkg.version;
 const startTime = new Date();
 
 // registry 站点信息数据 SiteTotalData
@@ -31,6 +34,7 @@ type SiteEnvInfo = {
   sync_binary: boolean;
   instance_start_time: Date;
   node_version: string;
+  egg_version: string;
   app_version: string;
   engine: string;
   cache_time: string;
@@ -78,6 +82,7 @@ export class HomeController extends AbstractController {
       sync_binary: this.config.cnpmcore.enableSyncBinary,
       instance_start_time: startTime,
       node_version: process.version,
+      egg_version: EggVersion,
       app_version: this.config.pkg.version,
       engine: this.config.orm.client,
       source_registry: this.config.cnpmcore.sourceRegistry,

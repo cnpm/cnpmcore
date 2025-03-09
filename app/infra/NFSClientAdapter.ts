@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 import {
   AccessLevel,
   LifecycleInit,
@@ -6,8 +7,8 @@ import {
 } from '@eggjs/tegg';
 import { EggAppConfig, EggLogger } from 'egg';
 import FSClient from 'fs-cnpm';
-import { AppendResult, NFSClient, UploadOptions, UploadResult, DownloadOptions } from '../common/typing';
-import { Readable } from 'stream';
+
+import { AppendResult, NFSClient, UploadOptions, UploadResult, DownloadOptions } from '../common/typing.js';
 
 @SingletonProto({
   name: 'nfsClient',
@@ -68,10 +69,16 @@ export class NFSClientAdapter implements NFSClient {
   }
 
   async upload(filePath: string, options: UploadOptions): Promise<UploadResult> {
+    if (this.config.nfs.removeBeforeUpload) {
+      await this.remove(options.key);
+    }
     return await this._client.upload(filePath, options);
   }
 
   async uploadBytes(bytes: Uint8Array, options: UploadOptions): Promise<UploadResult> {
+    if (this.config.nfs.removeBeforeUpload) {
+      await this.remove(options.key);
+    }
     if (this._client.uploadBytes) {
       return await this._client.uploadBytes(bytes, options);
     }

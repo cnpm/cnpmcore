@@ -1,5 +1,5 @@
 import { Range, Comparator } from 'semver';
-import { PaddingSemVer } from './PaddingSemVer';
+import { PaddingSemVer } from './PaddingSemVer.js';
 
 const OPERATOR_MAP = {
   '<': '$lt',

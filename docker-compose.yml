@@ -1,5 +1,12 @@
 name: cnpmcore_dev_services_mysql
 
+volumes:
+  cnpm-redis:
+  cnpm-mysql:
+
+networks:
+  cnpm-mysql:
+
 services:
   redis:
     env_file:
@@ -11,8 +18,6 @@ services:
       - cnpm-redis:/data
     ports:
       - 6379:6379
-    networks:
-      - cnpm-mysql
 
   mysql:
     env_file:
@@ -28,8 +33,6 @@ services:
       - cnpm-mysql:/var/lib/mysql
     ports:
       - 3306:3306
-    networks:
-      - cnpm-mysql
 
   # database explorer
   phpmyadmin:
@@ -46,16 +49,5 @@ services:
       PMA_HOST: 'mysql'
     ports:
       - 8080:80
-    networks:
-      - cnpm-mysql
     depends_on:
       - mysql
-
-volumes:
-  cnpm-redis:
-  cnpm-mysql:
-
-networks:
-  cnpm-mysql:
-    name: cnpm-mysql
-    driver: bridge

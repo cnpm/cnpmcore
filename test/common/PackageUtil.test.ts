@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
-import { formatAuthor, formatTarball, hasShrinkWrapInTgz } from '../../app/common/PackageUtil';
-import { TestUtil } from '../TestUtil';
+
+import { formatAuthor, formatTarball, hasShrinkWrapInTgz } from '../../app/common/PackageUtil.js';
+import { TestUtil } from '../TestUtil.js';
 
 describe('test/common/PackageUtil.test.ts', () => {
   describe('formatTarball()', () => {

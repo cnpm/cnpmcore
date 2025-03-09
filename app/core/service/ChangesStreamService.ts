@@ -1,5 +1,5 @@
-import os from 'os';
-import { setTimeout } from 'timers/promises';
+import os from 'node:os';
+import { setTimeout } from 'node:timers/promises';
 import {
   AccessLevel,
   SingletonProto,
@@ -7,20 +7,20 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { E500 } from 'egg-errors';
-import { PackageSyncerService, RegistryNotMatchError } from './PackageSyncerService';
-import { TaskService } from './TaskService';
-import { RegistryManagerService } from './RegistryManagerService';
-import { ScopeManagerService } from './ScopeManagerService';
-import { PackageRepository } from '../../repository/PackageRepository';
-import { TaskRepository } from '../../repository/TaskRepository';
-import { HOST_NAME, ChangesStreamTask, Task } from '../entity/Task';
-import { Registry } from '../entity/Registry';
-import { AbstractChangeStream } from '../../common/adapter/changesStream/AbstractChangesStream';
-import { getScopeAndName } from '../../common/PackageUtil';
-import { isTimeoutError } from '../../common/ErrorUtil';
-import { GLOBAL_WORKER } from '../../common/constants';
-import { TaskState, TaskType } from '../../common/enum/Task';
-import { AbstractService } from '../../common/AbstractService';
+import { PackageSyncerService, RegistryNotMatchError } from './PackageSyncerService.js';
+import { TaskService } from './TaskService.js';
+import { RegistryManagerService } from './RegistryManagerService.js';
+import { ScopeManagerService } from './ScopeManagerService.js';
+import { PackageRepository } from '../../repository/PackageRepository.js';
+import { TaskRepository } from '../../repository/TaskRepository.js';
+import { HOST_NAME, ChangesStreamTask, Task } from '../entity/Task.js';
+import { Registry } from '../entity/Registry.js';
+import { AbstractChangeStream } from '../../common/adapter/changesStream/AbstractChangesStream.js';
+import { getScopeAndName } from '../../common/PackageUtil.js';
+import { isTimeoutError } from '../../common/ErrorUtil.js';
+import { GLOBAL_WORKER } from '../../common/constants.js';
+import { TaskState, TaskType } from '../../common/enum/Task.js';
+import { AbstractService } from '../../common/AbstractService.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

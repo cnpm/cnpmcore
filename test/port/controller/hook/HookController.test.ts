@@ -1,22 +1,23 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { HookManageService } from '../../../../app/core/service/HookManageService';
-import { Hook } from '../../../../app/core/entity/Hook';
-import { UserRepository } from '../../../../app/repository/UserRepository';
-import { HookType } from '../../../../app/common/enum/Hook';
+import { app } from '@eggjs/mock/bootstrap';
+
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
+import { HookManageService } from '../../../../app/core/service/HookManageService.js';
+import { Hook } from '../../../../app/core/entity/Hook.js';
+import { UserRepository } from '../../../../app/repository/UserRepository.js';
+import { HookType } from '../../../../app/common/enum/Hook.js';
 
 describe('test/port/controller/hook/HookController.test.ts', () => {
   let hookManageService: HookManageService;
-  let user;
-  let userId;
+  let user: TestUser;
+  let userId: string;
 
   beforeEach(async () => {
     user = await TestUtil.createUser();
     hookManageService = await app.getEggObject(HookManageService);
     const userRepository = await app.getEggObject(UserRepository);
     const userEntity = await userRepository.findUserByName(user.name);
-    userId = userEntity?.userId;
+    userId = userEntity!.userId;
   });
 
   describe('POST /-/npm/v1/hooks/hook', () => {

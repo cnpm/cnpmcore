@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import base from 'base-x';
 import { crc32 } from '@node-rs/crc32';
 import * as ssri from 'ssri';

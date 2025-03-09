@@ -4,10 +4,11 @@ import {
   HTTPMethodEnum,
   HTTPParam,
 } from '@eggjs/tegg';
-import { AbstractController } from './AbstractController';
-import { FULLNAME_REG_STRING, getFullname, getScopeAndName } from '../../common/PackageUtil';
-import { PackageAccessLevel } from '../../common/constants';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
+
+import { AbstractController } from './AbstractController.js';
+import { FULLNAME_REG_STRING, getFullname, getScopeAndName } from '../../common/PackageUtil.js';
+import { PackageAccessLevel } from '../../common/constants.js';
 
 @HTTPController()
 export class AccessController extends AbstractController {
@@ -50,6 +51,4 @@ export class AccessController extends AbstractController {
 
     return res;
   }
-
-
 }

@@ -1,8 +1,8 @@
 import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary';
-import binaries, { BinaryName } from '../../../../config/binaries';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
+import { BinaryType } from '../../enum/Binary.js';
+import binaries, { BinaryName } from '../../../../config/binaries.js';
+import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Prisma)

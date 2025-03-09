@@ -1,9 +1,14 @@
-import { app, mock } from 'egg-mock/bootstrap';
-import { NodeBinary } from '../../app/common/adapter/binary/NodeBinary';
-import { TestUtil } from '../../test/TestUtil';
+import { app, mock } from '@eggjs/mock/bootstrap';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
-const CreateSyncBinaryTaskPath = require.resolve('../../app/port/schedule/CreateSyncBinaryTask');
-const SyncBinaryWorkerPath = require.resolve('../../app/port/schedule/SyncBinaryWorker');
+import { NodeBinary } from '../../app/common/adapter/binary/NodeBinary.js';
+import { TestUtil } from '../../test/TestUtil.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const CreateSyncBinaryTaskPath = path.join(__dirname, '../../app/port/schedule/CreateSyncBinaryTask.ts');
+const SyncBinaryWorkerPath = path.join(__dirname, '../../app/port/schedule/SyncBinaryWorker.ts');
 
 describe('test/schedule/SyncBinaryWorker.test.ts', () => {
   it('should ignore when enableSyncBinary=false', async () => {

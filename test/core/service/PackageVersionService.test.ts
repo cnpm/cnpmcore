@@ -1,16 +1,16 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import npa from 'npm-package-arg';
 
-import { Package as PackageModel } from '../../../app/repository/model/Package';
-import { PackageVersion as CnpmPackageVersionModel } from '../../../app//repository/model/PackageVersion';
-import { PackageTag as PackageTagModel } from '../../../app/repository/model/PackageTag';
-import { PackageVersionService } from '../../../app/core/service/PackageVersionService';
-import { PaddingSemVer } from '../../../app/core/entity/PaddingSemVer';
-import { BugVersionService } from '../../../app/core/service/BugVersionService';
-import { BugVersion } from '../../../app/core/entity/BugVersion';
-import { PackageVersionRepository } from '../../../app/repository/PackageVersionRepository';
-import { DistRepository } from '../../../app/repository/DistRepository';
+import { Package as PackageModel } from '../../../app/repository/model/Package.js';
+import { PackageVersion as CnpmPackageVersionModel } from '../../../app//repository/model/PackageVersion.js';
+import { PackageTag as PackageTagModel } from '../../../app/repository/model/PackageTag.js';
+import { PackageVersionService } from '../../../app/core/service/PackageVersionService.js';
+import { PaddingSemVer } from '../../../app/core/entity/PaddingSemVer.js';
+import { BugVersionService } from '../../../app/core/service/BugVersionService.js';
+import { BugVersion } from '../../../app/core/entity/BugVersion.js';
+import { PackageVersionRepository } from '../../../app/repository/PackageVersionRepository.js';
+import { DistRepository } from '../../../app/repository/DistRepository.js';
 
 describe('test/core/service/PackageVersionService.test.ts', () => {
 

@@ -7,9 +7,10 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { Type } from '@sinclair/typebox';
-import { AbstractController } from './AbstractController';
-import { ChangeRepository } from '../../repository/ChangeRepository';
+import { Type } from 'egg-typebox-validate/typebox';
+
+import { AbstractController } from './AbstractController.js';
+import { ChangeRepository } from '../../repository/ChangeRepository.js';
 
 const ChangeRule = Type.Object({
   since: Type.Integer({ minimum: 0 }),

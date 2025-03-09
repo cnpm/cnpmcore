@@ -1,4 +1,5 @@
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
+import { IncomingHttpHeaders } from 'node:http';
 import {
   SingletonProto,
   AccessLevel,
@@ -6,9 +7,8 @@ import {
 } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
 import { EggLogger } from 'egg';
-import { AsyncTimer } from '../aop/AsyncTimer';
-import { NFSClient } from '../typing';
-import { IncomingHttpHeaders } from 'http';
+import { AsyncTimer } from '../aop/AsyncTimer.js';
+import { NFSClient } from '../typing.js';
 
 const INSTANCE_NAME = 'nfsAdapter';
 

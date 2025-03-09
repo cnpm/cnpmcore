@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
 import dayjs from 'dayjs';
-import { app, mock } from 'egg-mock/bootstrap';
-import { Token, TokenType } from '../../../../app/core/entity/Token';
-import { AuthAdapter } from '../../../../app/infra/AuthAdapter';
-import { UserRepository } from '../../../../app/repository/UserRepository';
-import { TestUtil } from '../../../../test/TestUtil';
+import { app, mock } from '@eggjs/mock/bootstrap';
+
+import { Token, TokenType } from '../../../../app/core/entity/Token.js';
+import { AuthAdapter } from '../../../../app/infra/AuthAdapter.js';
+import { UserRepository } from '../../../../app/repository/UserRepository.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/TokenController/createToken.test.ts', () => {
   describe('[POST /-/npm/v1/tokens] createToken()', () => {
@@ -100,7 +101,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         .set('user-agent', ua)
         .send({ password })
         .expect(403);
-      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token \"cnpm_\w+\" can\'t setting/);
+      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/);
     });
   });
 
@@ -203,7 +204,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
           .get('/-/npm/v1/tokens/gat')
           .expect(200);
 
-        granularToken = res.body.objects.find(token => token.type === TokenType.granular);
+        granularToken = res.body.objects.find((token: Token) => token.type === TokenType.granular);
         assert(granularToken?.lastUsedAt);
         assert(dayjs(granularToken?.lastUsedAt).isAfter(start));
 

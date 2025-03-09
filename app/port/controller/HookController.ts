@@ -8,13 +8,14 @@ import {
   HTTPParam,
   Inject,
 } from '@eggjs/tegg';
-import { HookManageService } from '../../core/service/HookManageService';
-import { TaskService } from '../../core/service/TaskService';
-import { UserRoleManager } from '../UserRoleManager';
-import { HookType } from '../../common/enum/Hook';
-import { TriggerHookTask } from '../../core/entity/Task';
-import { HookConvertor } from './convertor/HookConvertor';
-import { CreateHookRequestRule, UpdateHookRequestRule } from '../typebox';
+
+import { HookManageService } from '../../core/service/HookManageService.js';
+import { TaskService } from '../../core/service/TaskService.js';
+import { UserRoleManager } from '../UserRoleManager.js';
+import { HookType } from '../../common/enum/Hook.js';
+import { TriggerHookTask } from '../../core/entity/Task.js';
+import { HookConvertor } from './convertor/HookConvertor.js';
+import { CreateHookRequestRule, UpdateHookRequestRule } from '../typebox.js';
 
 export interface CreateHookRequest {
   type: string;

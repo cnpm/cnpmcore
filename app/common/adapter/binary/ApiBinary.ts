@@ -1,7 +1,7 @@
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
 import { Inject, SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary';
 import { EggAppConfig } from 'egg';
+import { BinaryType } from '../../enum/Binary.js';
+import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Api)

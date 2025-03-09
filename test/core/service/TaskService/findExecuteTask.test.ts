@@ -1,9 +1,10 @@
 import { strict as assert } from 'node:assert';
-import { app, mm } from 'egg-mock/bootstrap';
-import { TaskService } from '../../../../app/core/service/TaskService';
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService';
-import { TaskState, TaskType } from '../../../../app/common/enum/Task';
-import { RedisQueueAdapter } from '../../../../app/infra/QueueAdapter';
+import { app, mm } from '@eggjs/mock/bootstrap';
+
+import { TaskService } from '../../../../app/core/service/TaskService.js';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
+import { TaskState, TaskType } from '../../../../app/common/enum/Task.js';
+import { RedisQueueAdapter } from '../../../../app/infra/QueueAdapter.js';
 
 describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
   let taskService: TaskService;
@@ -74,7 +75,7 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
       const executeTask = await taskService.findExecuteTask(task1.type);
 
       // 直接返回下一个 task2
-      assert(executeTask?.taskId === task2.taskId);
+      assert.equal(executeTask?.taskId, task2.taskId);
     });
 
     it('should return null when no valid task', async () => {
@@ -85,7 +86,7 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
       const executeTask = await taskService.findExecuteTask(task1.type);
 
       // 直接返回下一个 task2
-      assert(executeTask === null);
+      assert.equal(executeTask, null);
     });
 
     it('should not task which take be other', async () => {
@@ -101,7 +102,7 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
         taskService.findExecuteTask(task1.type),
         taskService.findExecuteTask(task1.type),
       ]);
-      assert(tasks[0]?.taskId !== task1[1]?.taskId);
+      assert(tasks[0]?.taskId !== tasks[1]?.taskId);
     });
   });
 });

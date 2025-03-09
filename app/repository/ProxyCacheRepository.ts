@@ -1,10 +1,11 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { ModelConvertor } from './util/ModelConvertor';
-import type { ProxyCache as ProxyModeCachedFilesModel } from './model/ProxyCache';
-import { ProxyCache as ProxyCacheEntity } from '../core/entity/ProxyCache';
-import { AbstractRepository } from './AbstractRepository';
-import { DIST_NAMES } from '../core/entity/Package';
-import { EntityUtil, PageOptions, PageResult } from '../core/util/EntityUtil';
+
+import { ModelConvertor } from './util/ModelConvertor.js';
+import type { ProxyCache as ProxyModeCachedFilesModel } from './model/ProxyCache.js';
+import { ProxyCache as ProxyCacheEntity } from '../core/entity/ProxyCache.js';
+import { AbstractRepository } from './AbstractRepository.js';
+import { DIST_NAMES } from '../core/entity/Package.js';
+import { EntityUtil, PageOptions, PageResult } from '../core/util/EntityUtil.js';
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })

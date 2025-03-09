@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
-import { Token, TokenType } from '../../../../app/core/entity/Token';
-import { UserService } from '../../../../app/core/service/UserService';
-import { AuthAdapter } from '../../../../app/infra/AuthAdapter';
-import { TokenPackage } from '../../../../app/repository/model/TokenPackage';
-import { TestUtil } from '../../../../test/TestUtil';
+import { app, mock } from '@eggjs/mock/bootstrap';
+
+import { Token, TokenType } from '../../../../app/core/entity/Token.js';
+import { UserService } from '../../../../app/core/service/UserService.js';
+import { AuthAdapter } from '../../../../app/infra/AuthAdapter.js';
+import { TokenPackage } from '../../../../app/repository/model/TokenPackage.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/TokenController/removeToken.test.ts', () => {
   describe('[DELETE /-/npm/v1/tokens/token/:tokenKey] removeToken()', () => {
@@ -61,7 +62,7 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
         .set('authorization', authorization)
         .set('user-agent', ua)
         .expect(403);
-      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token \"cnpm_\w+\" can\'t setting/);
+      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/);
     });
 
     it('should 403 when automation token access', async () => {
@@ -71,7 +72,7 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
         .set('authorization', authorization)
         .set('user-agent', ua)
         .expect(403);
-      assert.match(res.body.error, /\[FORBIDDEN\] Automation Token \"cnpm_\w+\" can\'t setting/);
+      assert.match(res.body.error, /\[FORBIDDEN\] Automation Token "cnpm_\w+" can't setting/);
     });
 
     it('should 404 when token key not exists', async () => {

@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
+import { app } from '@eggjs/mock/bootstrap';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/UserController/showProfile.test.ts', () => {
   describe('[GET /-/npm/v1/user] showProfile()', () => {

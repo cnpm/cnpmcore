@@ -11,15 +11,16 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { AbstractController } from '../AbstractController';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil';
-import { SyncMode } from '../../../common/constants';
-import { NFSAdapter } from '../../../common/adapter/NFSAdapter';
-import { PackageManagerService } from '../../../core/service/PackageManagerService';
-import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
-import { PackageSyncerService } from '../../../core/service/PackageSyncerService';
-import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
-import { PackageVersionService } from '../../../core/service/PackageVersionService';
+
+import { AbstractController } from '../AbstractController.js';
+import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil.js';
+import { SyncMode } from '../../../common/constants.js';
+import { NFSAdapter } from '../../../common/adapter/NFSAdapter.js';
+import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
+import { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
+import { PackageSyncerService } from '../../../core/service/PackageSyncerService.js';
+import { RegistryManagerService } from '../../../core/service/RegistryManagerService.js';
+import { PackageVersionService } from '../../../core/service/PackageVersionService.js';
 
 @HTTPController()
 export class DownloadPackageVersionTarController extends AbstractController {
@@ -132,7 +133,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
   private async getTgzProxyStream(ctx: EggContext, fullname: string, version: string) {
     const { headers, status, res } = await this.proxyCacheService.getPackageVersionTarResponse(fullname, ctx);
     ctx.status = status;
-    ctx.set(headers as { [key: string]: string | string[] });
+    ctx.set(headers as Record<string, string>);
     ctx.runInBackground(async () => {
       const task = await this.packageSyncerService.createTask(fullname, {
         authorIp: ctx.ip,

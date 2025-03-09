@@ -1,16 +1,17 @@
 import { EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
-import { ChangesStreamTaskData } from '../../core/entity/Task';
-import { RegistryManagerService } from '../../core/service/RegistryManagerService';
-import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
-import { PackageRepository } from '../../repository/PackageRepository';
-import { TaskRepository } from '../../repository/TaskRepository';
-import { ChangeRepository } from '../../repository/ChangeRepository';
-import { CacheService, DownloadInfo, TotalData } from '../../core/service/CacheService';
-import { TaskType } from '../../common/enum/Task';
-import { GLOBAL_WORKER } from '../../common/constants';
-import dayjs from '../../common/dayjs';
+
+import { ChangesStreamTaskData } from '../../core/entity/Task.js';
+import { RegistryManagerService } from '../../core/service/RegistryManagerService.js';
+import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
+import { PackageRepository } from '../../repository/PackageRepository.js';
+import { TaskRepository } from '../../repository/TaskRepository.js';
+import { ChangeRepository } from '../../repository/ChangeRepository.js';
+import { CacheService, DownloadInfo, TotalData } from '../../core/service/CacheService.js';
+import { TaskType } from '../../common/enum/Task.js';
+import { GLOBAL_WORKER } from '../../common/constants.js';
+import dayjs from '../../common/dayjs.js';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,

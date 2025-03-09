@@ -3,7 +3,7 @@
 ## 构建镜像
 
 ```bash
-docker build -t cnpmcore .
+npm run images
 ```
 
 ## 通过环境变量配置参数
@@ -82,6 +82,9 @@ CNPMCORE_LOG_DIR=/var/log/cnpmcore
 
 ```bash
 CNPMCORE_CONFIG_REGISTRY=https://your-registry.com
+# 从中国镜像获取数据
+CNPMCORE_CONFIG_SOURCE_REGISTRY=https://registry.npmmirror.com
+CNPMCORE_CONFIG_SOURCE_REGISTRY_IS_CNPM=true
 ```
 
 ### 时区
@@ -100,6 +103,8 @@ TZ=Asia/Shanghai
 module.exports = {
   cnpmcore: {
     registry: 'https://your-registry.com',
+    sourceRegistry: 'https://registry.npmmirror.com',
+    sourceRegistryIsCNpm: true,
     enableWebAuthn: true,
   },
   orm: {
@@ -151,6 +156,8 @@ docker run -p 7001:7001 -it --rm \
 ```bash
 docker run -p 7001:7001 -it --rm \
   -e CNPMCORE_CONFIG_REGISTRY=https://your-registry.com \
+  -e CNPMCORE_CONFIG_SOURCE_REGISTRY=https://registry.npmmirror.com \
+  -e CNPMCORE_CONFIG_SOURCE_REGISTRY_IS_CNPM=true \
   -e CNPMCORE_DATABASE_TYPE=MySQL \
   -e CNPMCORE_DATABASE_NAME=cnpmcore \
   -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
@@ -177,6 +184,8 @@ docker run -p 7001:7001 -it --rm \
 ```bash
 docker run -p 7001:7001 -it --rm \
   -e CNPMCORE_CONFIG_REGISTRY=https://your-registry.com \
+  -e CNPMCORE_CONFIG_SOURCE_REGISTRY=https://registry.npmmirror.com \
+  -e CNPMCORE_CONFIG_SOURCE_REGISTRY_IS_CNPM=true \
   -e CNPMCORE_DATABASE_TYPE=PostgreSQL \
   -e CNPMCORE_DATABASE_NAME=cnpmcore \
   -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
@@ -200,20 +209,20 @@ docker run -p 7001:7001 -it --rm \
 
 ## 演示地址
 
-https://registry-demo.fengmk2.com:9443
+https://registry.fengmk2.com
 
 管理员账号：`cnpmcore_admin/12345678`
 
 通过 npm login 可以登录
 
 ```bash
-npm login --registry=https://registry-demo.fengmk2.com:9443
+npm login --registry=https://registry.fengmk2.com
 ```
 
 查看当前登录用户
 
 ```bash
-npm whoami --registry=https://registry-demo.fengmk2.com:9443
+npm whoami --registry=https://registry.fengmk2.com
 ```
 
 ## fengmk2/cnpmcore 镜像
@@ -221,5 +230,6 @@ npm whoami --registry=https://registry-demo.fengmk2.com:9443
 https://hub.docker.com/r/fengmk2/cnpmcore
 
 ```bash
-docker pull fengmk2/cnpmcore
+docker pull fengmk2/cnpmcore:latest
+docker pull fengmk2/cnpmcore:latest-alpine
 ```

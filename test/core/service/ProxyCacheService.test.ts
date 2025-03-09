@@ -1,12 +1,13 @@
-import assert from 'assert';
-import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../TestUtil';
-import { ProxyCacheService } from '../../../app/core/service/ProxyCacheService';
-import { ProxyCacheRepository } from '../../../app/repository/ProxyCacheRepository';
-import { DIST_NAMES } from '../../../app/core/entity/Package';
-import { NFSAdapter } from '../../../app/common/adapter/NFSAdapter';
-import { ProxyCache } from '../../../app/core/entity/ProxyCache';
-import { TaskService } from '../../../app/core/service/TaskService';
+import assert from 'node:assert';
+import { app, mock } from '@eggjs/mock/bootstrap';
+
+import { TestUtil } from '../../TestUtil.js';
+import { ProxyCacheService } from '../../../app/core/service/ProxyCacheService.js';
+import { ProxyCacheRepository } from '../../../app/repository/ProxyCacheRepository.js';
+import { DIST_NAMES } from '../../../app/core/entity/Package.js';
+import { NFSAdapter } from '../../../app/common/adapter/NFSAdapter.js';
+import { ProxyCache } from '../../../app/core/entity/ProxyCache.js';
+import { TaskService } from '../../../app/core/service/TaskService.js';
 
 describe('test/core/service/ProxyCacheService/index.test.ts', () => {
   let proxyCacheService: ProxyCacheService;
