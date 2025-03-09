@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master, next ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, next ]
+    branches: [ master ]
 
 jobs:
   test-postgresql-fs-nfs:
