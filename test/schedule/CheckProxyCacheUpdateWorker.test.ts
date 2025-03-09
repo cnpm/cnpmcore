@@ -1,13 +1,18 @@
-import assert from 'assert';
-import { app, mock } from 'egg-mock/bootstrap';
-import { SyncMode } from '../../app/common/constants';
-import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository';
-import { ProxyCache } from '../../app/core/entity/ProxyCache';
-import { DIST_NAMES } from '../../app/core/entity/Package';
-import { TaskService } from '../../app/core/service/TaskService';
-import { TaskType } from '../../app/common/enum/Task';
+import assert from 'node:assert';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import { app, mock } from '@eggjs/mock/bootstrap';
 
-const CheckProxyCacheUpdateWorkerPath = require.resolve('../../app/port/schedule/CheckProxyCacheUpdateWorker');
+import { SyncMode } from '../../app/common/constants.js';
+import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository.js';
+import { ProxyCache } from '../../app/core/entity/ProxyCache.js';
+import { DIST_NAMES } from '../../app/core/entity/Package.js';
+import { TaskService } from '../../app/core/service/TaskService.js';
+import { TaskType } from '../../app/common/enum/Task.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const CheckProxyCacheUpdateWorkerPath = path.join(__dirname, '../../app/port/schedule/CheckProxyCacheUpdateWorker.ts');
 
 describe('test/schedule/CheckProxyCacheUpdateWorker.test.ts', () => {
   it('should create update task by repo', async () => {

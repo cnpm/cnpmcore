@@ -1,7 +1,32 @@
 # Changelog
 
-## [3.75.1](https://github.com/cnpm/cnpmcore/compare/v3.75.0...v3.75.1) (2025-03-09)
+## [4.0.2](https://github.com/cnpm/cnpmcore/compare/v4.0.1...v4.0.2) (2025-02-10)
 
+* should return default value when env is empty string ([#759](https://github.com/cnpm/cnpmcore/issues/759)) ([b6c781e](https://github.com/cnpm/cnpmcore/commit/b6c781ec250150a689a9d04080ebca716f0840dd))
+
+## [4.0.1](https://github.com/cnpm/cnpmcore/compare/v4.0.0...v4.0.1) (2025-02-09)
+
+
+### Bug Fixes
+
+* remove npm-cli-login for ssri security ([#754](https://github.com/cnpm/cnpmcore/issues/754)) ([d18981e](https://github.com/cnpm/cnpmcore/commit/d18981e658902dab54297cc5cc4798a6a9e1c84f))
+
+## [4.0.0](https://github.com/cnpm/cnpmcore/compare/v3.74.0...v4.0.0) (2025-02-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* only support egg >= 4.0.0
+
+the first app on egg v4
+
+https://github.com/eggjs/egg/issues/3644
+
+### Features
+
+* use egg v4 ([#747](https://github.com/cnpm/cnpmcore/issues/747)) ([4427a4f](https://github.com/cnpm/cnpmcore/commit/4427a4fca58e3d1aca4c27f817798f3820db89b9))
+
+## [3.75.1](https://github.com/cnpm/cnpmcore/compare/v3.75.0...v3.75.1) (2025-03-09)
 
 ### Bug Fixes
 

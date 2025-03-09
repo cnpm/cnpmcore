@@ -6,7 +6,7 @@ import url from 'node:url';
 import { randomBytes } from 'node:crypto';
 import { EggContextHttpClient, HttpClientResponse } from 'egg';
 import mime from 'mime-types';
-import dayjs from './dayjs';
+import dayjs from './dayjs.js';
 
 interface DownloadToTempfileOptionalConfig {
   retries?: number,

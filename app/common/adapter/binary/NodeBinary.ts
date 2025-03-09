@@ -1,8 +1,8 @@
 import { basename } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary';
-import binaries, { BinaryName } from '../../../../config/binaries';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
+import { BinaryType } from '../../enum/Binary.js';
+import binaries, { BinaryName } from '../../../../config/binaries.js';
+import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Node)
@@ -30,7 +30,7 @@ export class NodeBinary extends AbstractBinary {
     // <a href="/dist/v18.15.0/SHASUMS256.txt.asc">SHASUMS256.txt.asc</a>                                 04-Nov-2024 17:29               3.7 KB
     // <a href="/dist/v18.15.0/SHASUMS256.txt.sig">SHASUMS256.txt.sig</a>                                 04-Nov-2024 17:29                310 B
     // <a href="/dist/v18.15.0/SHASUMS256.txt">SHASUMS256.txt</a>                                     04-Nov-2024 17:29               3.2 KB
-    const re = /<a href="([^\"]+?)"[^>]*?>[^<]+?<\/a>\s+?((?:[\w\-]+? \w{2}\:\d{2})|\-)\s+?([\d\.\-\s\w]+)/ig;
+    const re = /<a href="([^"]+?)"[^>]*?>[^<]+?<\/a>\s+?((?:[\w-]+? \w{2}:\d{2})|-)\s+?([\d.\-\s\w]+)/ig;
     const matchs = html.matchAll(re);
     const items: BinaryItem[] = [];
     for (const m of matchs) {

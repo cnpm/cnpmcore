@@ -6,10 +6,11 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { UnprocessableEntityError, NotFoundError } from 'egg-errors';
-import { AbstractController } from './AbstractController';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil';
-import dayjs from '../../common/dayjs';
-import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
+
+import { AbstractController } from './AbstractController.js';
+import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.js';
+import dayjs from '../../common/dayjs.js';
+import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -90,7 +91,7 @@ export class DownloadController extends AbstractController {
   }
 
   private checkAndGetRange(range: string) {
-    const matchs = /^(\d{4}\-\d{2}\-\d{2}):(\d{4}\-\d{2}\-\d{2})$/.exec(range);
+    const matchs = /^(\d{4}-\d{2}-\d{2}):(\d{4}-\d{2}-\d{2})$/.exec(range);
     if (!matchs) {
       throw new UnprocessableEntityError(`range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`);
     }

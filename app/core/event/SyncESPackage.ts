@@ -14,9 +14,8 @@ import {
   PACKAGE_META_CHANGED,
   PACKAGE_BLOCKED,
   PACKAGE_UNBLOCKED,
-} from './index';
-
-import { PackageSearchService } from '../service/PackageSearchService';
+} from './index.js';
+import { PackageSearchService } from '../service/PackageSearchService.js';
 
 class SyncESPackage {
   @Inject()

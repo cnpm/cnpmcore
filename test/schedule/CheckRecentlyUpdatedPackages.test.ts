@@ -1,9 +1,14 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
-import { PackageSyncerService } from '../../app/core/service/PackageSyncerService';
-import { TestUtil } from '../../test/TestUtil';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import { app, mock } from '@eggjs/mock/bootstrap';
 
-const CheckRecentlyUpdatedPackagesPath = require.resolve('../../app/port/schedule/CheckRecentlyUpdatedPackages');
+import { PackageSyncerService } from '../../app/core/service/PackageSyncerService.js';
+import { TestUtil } from '../../test/TestUtil.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const CheckRecentlyUpdatedPackagesPath = path.join(__dirname, '../../app/port/schedule/CheckRecentlyUpdatedPackages.ts');
 
 describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
   let packageSyncerService: PackageSyncerService;

@@ -11,14 +11,15 @@ import {
   BackgroundTaskHelper,
 } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
-import { AbstractController } from './AbstractController';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil';
-import { Task } from '../../core/entity/Task';
-import { PackageSyncerService } from '../../core/service/PackageSyncerService';
-import { RegistryManagerService } from '../../core/service/RegistryManagerService';
-import { TaskState } from '../../common/enum/Task';
-import { SyncPackageTaskRule, SyncPackageTaskType } from '../typebox';
-import { SyncMode } from '../../common/constants';
+
+import { AbstractController } from './AbstractController.js';
+import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.js';
+import { Task } from '../../core/entity/Task.js';
+import { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
+import { RegistryManagerService } from '../../core/service/RegistryManagerService.js';
+import { TaskState } from '../../common/enum/Task.js';
+import { SyncPackageTaskRule, SyncPackageTaskType } from '../typebox.js';
+import { SyncMode } from '../../common/constants.js';
 
 @HTTPController()
 export class PackageSyncController extends AbstractController {
@@ -81,10 +82,10 @@ export class PackageSyncController extends AbstractController {
     const registry = await this.registryManagerService.findByRegistryName(data?.registryName);
 
     if (!registry && data.registryName) {
-      throw new ForbiddenError(`Can\'t find target registry "${data.registryName}"`);
+      throw new ForbiddenError(`Can't find target registry "${data.registryName}"`);
     }
     if (packageEntity?.isPrivate && !registry) {
-      throw new ForbiddenError(`Can\'t sync private package "${params.fullname}"`);
+      throw new ForbiddenError(`Can't sync private package "${params.fullname}"`);
     }
     if (params.syncDownloadData && !this.packageSyncerService.allowSyncDownloadData) {
       throw new ForbiddenError('Not allow to sync package download data');

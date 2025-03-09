@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 
 describe('test/port/middleware/Tracing.test.ts', () => {
   it('should set request-id header', async () => {

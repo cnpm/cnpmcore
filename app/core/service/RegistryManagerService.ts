@@ -4,15 +4,15 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { E400, NotFoundError } from 'egg-errors';
-import { RegistryRepository } from '../../repository/RegistryRepository';
-import { AbstractService } from '../../common/AbstractService';
-import { Registry } from '../entity/Registry';
-import { PageOptions, PageResult } from '../util/EntityUtil';
-import { ScopeManagerService } from './ScopeManagerService';
-import { TaskService } from './TaskService';
-import { Task } from '../entity/Task';
-import { ChangesStreamMode, PresetRegistryName } from '../../common/constants';
-import { RegistryType } from '../../common/enum/Registry';
+import { RegistryRepository } from '../../repository/RegistryRepository.js';
+import { AbstractService } from '../../common/AbstractService.js';
+import { Registry } from '../entity/Registry.js';
+import { PageOptions, PageResult } from '../util/EntityUtil.js';
+import { ScopeManagerService } from './ScopeManagerService.js';
+import { TaskService } from './TaskService.js';
+import { Task } from '../entity/Task.js';
+import { ChangesStreamMode, PresetRegistryName } from '../../common/constants.js';
+import { RegistryType } from '../../common/enum/Registry.js';
 
 export interface CreateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'userPrefix' | 'type' | 'name' | 'authToken' > {
   operatorId?: string;

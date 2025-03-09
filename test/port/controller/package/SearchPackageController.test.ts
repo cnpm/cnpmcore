@@ -1,11 +1,11 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { errors } from '@elastic/elasticsearch';
-import { mockES } from '../../../../config/config.unittest';
-import { TestUtil } from '../../../TestUtil';
+import { mockES } from '../../../../config/config.unittest.js';
+import { TestUser, TestUtil } from '../../../TestUtil.js';
 
 describe('test/port/controller/package/SearchPackageController.test.ts', () => {
-  let publisher;
+  let publisher: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     mock(app.config.cnpmcore, 'enableElasticsearch', true);
@@ -110,7 +110,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .put(`/-/v1/search/sync/${name}`);
@@ -119,7 +119,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   });
 
   describe('[DELETE /-/v1/search/sync/:fullname] delete()', async () => {
-    let admin:Awaited<ReturnType<typeof TestUtil.createAdmin>>;
+    let admin: TestUser;
     beforeEach(async () => {
       admin = await TestUtil.createAdmin();
     });

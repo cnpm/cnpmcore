@@ -1,6 +1,6 @@
 import { SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
+import { BinaryType } from '../../enum/Binary.js';
+import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Puppeteer)
@@ -37,7 +37,7 @@ export class PuppeteerBinary extends AbstractBinary {
       // };
       const unpkgURL = 'https://unpkg.com/puppeteer-core@latest/lib/cjs/puppeteer/revisions.js';
       const text = await this.requestXml(unpkgURL);
-      const m = /chromium:\s+\'(\d+)\'\,/.exec(text);
+      const m = /chromium:\s+'(\d+)',/.exec(text);
       if (m && !chromiumRevisions.has(m[1])) {
         chromiumRevisions.set(m[1], new Date().toISOString());
       }

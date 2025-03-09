@@ -1,6 +1,7 @@
 import ObjectID from 'bson-objectid';
 import { E400 } from 'egg-errors';
-import { EntityData } from '../entity/Entity';
+
+import { EntityData } from '../entity/Entity.js';
 
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
@@ -29,6 +30,7 @@ export class EntityUtil {
   }
 
   static createId(): string {
+    // @ts-expect-error ObjectID has no construct signatures
     return new ObjectID().toHexString();
   }
 

@@ -7,15 +7,16 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { AbstractController } from '../AbstractController';
-import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil';
-import { isSyncWorkerRequest } from '../../../common/SyncUtil';
-import { PackageManagerService } from '../../../core/service/PackageManagerService';
-import { CacheService } from '../../../core/service/CacheService';
-import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants';
-import { ProxyCacheService } from '../../../core/service/ProxyCacheService';
-import { calculateIntegrity } from '../../../common/PackageUtil';
-import { DIST_NAMES } from '../../../core/entity/Package';
+
+import { AbstractController } from '../AbstractController.js';
+import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';
+import { isSyncWorkerRequest } from '../../../common/SyncUtil.js';
+import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
+import { CacheService } from '../../../core/service/CacheService.js';
+import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants.js';
+import { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
+import { calculateIntegrity } from '../../../common/PackageUtil.js';
+import { DIST_NAMES } from '../../../core/entity/Package.js';
 
 @HTTPController()
 export class ShowPackageController extends AbstractController {
@@ -42,7 +43,7 @@ export class ShowPackageController extends AbstractController {
     try {
       const cacheEtag = await this.cacheService.getPackageEtag(fullname, isFullManifests);
       if (!isSync && cacheEtag) {
-        let requestEtag = ctx.request.get('if-none-match');
+        let requestEtag = ctx.request.get<string>('if-none-match');
         if (requestEtag.startsWith('W/')) {
           requestEtag = requestEtag.substring(2);
         }

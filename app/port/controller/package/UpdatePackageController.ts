@@ -12,11 +12,12 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { Static, Type } from '@sinclair/typebox';
-import { AbstractController } from '../AbstractController';
-import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
-import { User as UserEntity } from '../../../core/entity/User';
-import { PackageManagerService } from '../../../core/service/PackageManagerService';
+import { Static, Type } from 'egg-typebox-validate/typebox';
+
+import { AbstractController } from '../AbstractController.js';
+import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';
+import { User as UserEntity } from '../../../core/entity/User.js';
+import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
 
 const MaintainerDataRule = Type.Object({
   maintainers: Type.Array(Type.Object({
@@ -71,9 +72,9 @@ export class UpdatePackageController extends AbstractController {
   private getNpmCommand(ctx: EggContext) {
     // npm@6: referer: 'xxx [REDACTED]'
     // npm@>=7: 'npm-command': 'xxx'
-    let npmCommand = ctx.get('npm-command');
+    let npmCommand = ctx.get<string>('npm-command');
     if (!npmCommand) {
-      npmCommand = ctx.get('referer').split(' ', 1)[0];
+      npmCommand = ctx.get<string>('referer').split(' ', 1)[0];
     }
 
     return npmCommand;

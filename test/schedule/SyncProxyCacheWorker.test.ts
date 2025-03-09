@@ -1,11 +1,16 @@
-import { app, mock } from 'egg-mock/bootstrap';
-import { SyncMode } from '../../app/common/constants';
-import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository';
-import { ProxyCache } from '../../app/core/entity/ProxyCache';
-import { DIST_NAMES } from '../../app/core/entity/Package';
-import { ProxyCacheService } from '../../app/core/service/ProxyCacheService';
+import { app, mock } from '@eggjs/mock/bootstrap';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
-const SyncProxyCacheWorkerPath = require.resolve('../../app/port/schedule/SyncProxyCacheWorker');
+import { SyncMode } from '../../app/common/constants.js';
+import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository.js';
+import { ProxyCache } from '../../app/core/entity/ProxyCache.js';
+import { DIST_NAMES } from '../../app/core/entity/Package.js';
+import { ProxyCacheService } from '../../app/core/service/ProxyCacheService.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const SyncProxyCacheWorkerPath = path.join(__dirname, '../../app/port/schedule/SyncProxyCacheWorker.ts');
 
 describe('test/schedule/SyncProxyCacheWorker.test.ts', () => {
 

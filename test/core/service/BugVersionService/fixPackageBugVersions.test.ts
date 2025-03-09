@@ -1,8 +1,9 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { BugVersionService } from '../../../../app/core/service/BugVersionService';
-import { BugVersion } from '../../../../app/core/entity/BugVersion';
+import { app, mock } from '@eggjs/mock/bootstrap';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { BugVersionService } from '../../../../app/core/service/BugVersionService.js';
+import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
 
 describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', () => {
   let bugVersionService: BugVersionService;

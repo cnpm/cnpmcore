@@ -2,8 +2,8 @@ import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import {
   AbstractBinary, FetchResult, BinaryItem, BinaryAdapter,
-} from './AbstractBinary';
-import { BinaryType } from '../../enum/Binary';
+} from './AbstractBinary.js';
+import { BinaryType } from '../../enum/Binary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Edgedriver)
@@ -175,7 +175,7 @@ export class EdgedriverBinary extends AbstractBinary {
   #parseItems(xml: string): BinaryItem[] {
     const items: BinaryItem[] = [];
     // <Blob><Name>124.0.2478.97/edgedriver_arm64.zip</Name><Url>https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/124.0.2478.97/edgedriver_arm64.zip</Url><Properties><Last-Modified>Fri, 10 May 2024 18:35:44 GMT</Last-Modified><Etag>0x8DC712000713C13</Etag><Content-Length>9191362</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-MD5>1tjPTf5JU6KKB06Qf1JOGw==</Content-MD5><Cache-Control /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus></Properties></Blob>
-    const fileRe = /<Blob><Name>([^<]+?)<\/Name><Url>([^<]+?)<\/Url><Properties><Last\-Modified>([^<]+?)<\/Last\-Modified><Etag>(?:[^<]+?)<\/Etag><Content\-Length>(\d+)<\/Content\-Length>/g;
+    const fileRe = /<Blob><Name>([^<]+?)<\/Name><Url>([^<]+?)<\/Url><Properties><Last-Modified>([^<]+?)<\/Last-Modified><Etag>(?:[^<]+?)<\/Etag><Content-Length>(\d+)<\/Content-Length>/g;
     const matchItems = xml.matchAll(fileRe);
     for (const m of matchItems) {
       const fullname = m[1].trim();

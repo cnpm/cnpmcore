@@ -1,7 +1,7 @@
-import { Entity, EntityData } from './Entity';
-import { EasyData, EntityUtil } from '../util/EntityUtil';
-import { HookType } from '../../common/enum/Hook';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
+import { Entity, EntityData } from './Entity.js';
+import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import { HookType } from '../../common/enum/Hook.js';
 
 export type CreateHookData = Omit<EasyData<HookData, 'hookId'>, 'enable' | 'latestTaskId'>;
 

@@ -1,7 +1,8 @@
 import assert from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
-import { CypressBinary } from '../../../../app/common/adapter/binary/CypressBinary';
-import { TestUtil } from '../../../../test/TestUtil';
+import { app } from '@eggjs/mock/bootstrap';
+
+import { CypressBinary } from '../../../../app/common/adapter/binary/CypressBinary.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
   let binary: CypressBinary;

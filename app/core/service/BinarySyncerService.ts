@@ -1,4 +1,3 @@
-import { rm } from 'fs/promises';
 import {
   AccessLevel,
   SingletonProto,
@@ -8,20 +7,20 @@ import {
 import {
   EggHttpClient,
 } from 'egg';
-import fs from 'fs/promises';
-import { sortBy } from 'lodash';
-import binaries, { BinaryName, CategoryName } from '../../../config/binaries';
-import { BinaryRepository } from '../../repository/BinaryRepository';
-import { Task } from '../entity/Task';
-import { Binary } from '../entity/Binary';
-import { TaskService } from './TaskService';
-import { NFSAdapter } from '../../common/adapter/NFSAdapter';
-import { downloadToTempfile } from '../../common/FileUtil';
-import { isTimeoutError } from '../../common/ErrorUtil';
-import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary';
-import { AbstractService } from '../../common/AbstractService';
-import { BinaryType } from '../../common/enum/Binary';
-import { TaskType, TaskState } from '../../common/enum/Task';
+import fs from 'node:fs/promises';
+import { sortBy } from 'lodash-es';
+import binaries, { BinaryName, CategoryName } from '../../../config/binaries.js';
+import { BinaryRepository } from '../../repository/BinaryRepository.js';
+import { Task } from '../entity/Task.js';
+import { Binary } from '../entity/Binary.js';
+import { TaskService } from './TaskService.js';
+import { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
+import { downloadToTempfile } from '../../common/FileUtil.js';
+import { isTimeoutError } from '../../common/ErrorUtil.js';
+import { AbstractBinary, BinaryItem } from '../../common/adapter/binary/AbstractBinary.js';
+import { AbstractService } from '../../common/AbstractService.js';
+import { BinaryType } from '../../common/enum/Binary.js';
+import { TaskType, TaskState } from '../../common/enum/Task.js';
 
 function isoNow() {
   return new Date().toISOString();
@@ -223,7 +222,7 @@ export class BinarySyncerService extends AbstractService {
             logs = [];
           } finally {
             if (localFile) {
-              await rm(localFile, { force: true });
+              await fs.rm(localFile, { force: true });
             }
           }
         }

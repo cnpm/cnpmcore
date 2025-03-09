@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
-import { TaskType } from '../../../../app/common/enum/Task';
-import { Registry } from '../../../../app/core/entity/Registry';
-import { ChangesStreamTaskData } from '../../../../app/core/entity/Task';
-import { TaskService } from '../../../../app/core/service/TaskService';
-import { TestUtil } from '../../../../test/TestUtil';
+import { app } from '@eggjs/mock/bootstrap';
+
+import { TaskType } from '../../../../app/common/enum/Task.js';
+import { Registry } from '../../../../app/core/entity/Registry.js';
+import { ChangesStreamTaskData } from '../../../../app/core/entity/Task.js';
+import { TaskService } from '../../../../app/core/service/TaskService.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/RegistryController/index.test.ts', () => {
   let adminUser: any;
@@ -240,8 +241,9 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         .expect(200);
 
       const task = await taskService.findExecuteTask(TaskType.ChangesStream);
-      assert(task?.targetName === 'CUSTOM3_WORKER');
-      assert((task?.data as ChangesStreamTaskData).since === '9527');
+      assert(task);
+      assert.equal(task.targetName, 'CUSTOM3_WORKER');
+      assert.equal((task.data as ChangesStreamTaskData).since, '9527');
     });
   });
 

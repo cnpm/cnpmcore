@@ -1,8 +1,8 @@
+import { join } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary';
-import binaries, { BinaryName } from '../../../../config/binaries';
-import { join } from 'path';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary';
+import binaries, { BinaryName } from '../../../../config/binaries.js';
+import { BinaryType } from '../../enum/Binary.js';
+import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.NodePreGyp)

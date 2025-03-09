@@ -11,11 +11,12 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import { AbstractController } from '../AbstractController';
-import { FULLNAME_REG_STRING } from '../../../common/PackageUtil';
-import { PackageManagerService } from '../../../core/service/PackageManagerService';
-import { Package } from '../../../core/entity/Package';
-import { PackageVersion } from '../../../core/entity/PackageVersion';
+
+import { AbstractController } from '../AbstractController.js';
+import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';
+import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
+import { Package } from '../../../core/entity/Package.js';
+import { PackageVersion } from '../../../core/entity/PackageVersion.js';
 
 @HTTPController()
 export class RemovePackageVersionController extends AbstractController {

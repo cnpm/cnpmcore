@@ -1,5 +1,5 @@
 import { PackageJson, Simplify } from 'type-fest';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import {
   UnprocessableEntityError,
   ForbiddenError,
@@ -17,20 +17,21 @@ import {
 } from '@eggjs/tegg';
 import * as ssri from 'ssri';
 import validateNpmPackageName from 'validate-npm-package-name';
-import { Static, Type } from '@sinclair/typebox';
-import { AbstractController } from '../AbstractController';
-import { getScopeAndName, FULLNAME_REG_STRING, extractPackageJSON } from '../../../common/PackageUtil';
-import { PackageManagerService } from '../../../core/service/PackageManagerService';
-import { PackageVersion as PackageVersionEntity } from '../../../core/entity/PackageVersion';
+import { Static, Type } from 'egg-typebox-validate/typebox';
+
+import { AbstractController } from '../AbstractController.js';
+import { getScopeAndName, FULLNAME_REG_STRING, extractPackageJSON } from '../../../common/PackageUtil.js';
+import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
+import { PackageVersion as PackageVersionEntity } from '../../../core/entity/PackageVersion.js';
 import {
   VersionRule,
   TagWithVersionRule,
   Name as NameType,
   Description as DescriptionType,
-} from '../../typebox';
-import { RegistryManagerService } from '../../../core/service/RegistryManagerService';
-import { PackageJSONType } from '../../../repository/PackageRepository';
-import { CacheAdapter } from '../../../common/adapter/CacheAdapter';
+} from '../../typebox.js';
+import { RegistryManagerService } from '../../../core/service/RegistryManagerService.js';
+import { PackageJSONType } from '../../../repository/PackageRepository.js';
+import { CacheAdapter } from '../../../common/adapter/CacheAdapter.js';
 
 const STRICT_CHECK_TARBALL_FIELDS: (keyof PackageJson)[] = [ 'name', 'version', 'scripts', 'dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies', 'license', 'licenses', 'bin' ];
 
@@ -268,9 +269,9 @@ export class SavePackageVersionController extends AbstractController {
     // forbidden star/unstar request
     // npm@6: referer: 'star [REDACTED]'
     // npm@>=7: 'npm-command': 'star'
-    let command = ctx.get('npm-command');
+    let command = ctx.get<string>('npm-command');
     if (!command) {
-      command = ctx.get('referer').split(' ', 1)[0];
+      command = ctx.get<string>('referer').split(' ', 1)[0];
     }
     if (command === 'star' || command === 'unstar') {
       throw new ForbiddenError(`npm ${command} is not allowed`);

@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
-import { BugVersion } from '../../../app/core/entity/BugVersion';
+
+import { BugVersion } from '../../../app/core/entity/BugVersion.js';
 
 describe('test/core/entity/BugVersion.test.ts', () => {
   const bugVersion = new BugVersion({

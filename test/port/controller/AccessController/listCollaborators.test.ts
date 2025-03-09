@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
+import { app } from '@eggjs/mock/bootstrap';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/AccessController/listCollaborators.test.ts', () => {
   describe('[GET /-/package/:fullname/collaborators] listCollaborators()', () => {
@@ -35,7 +36,7 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
         .send(pkg)
         .expect(201);
       assert.equal(createRes.body.ok, true);
-      assert.match(createRes.body.rev, /^\d+\-\w{24}$/);
+      assert.match(createRes.body.rev, /^\d+-\w{24}$/);
       const rev = createRes.body.rev;
 
       // updateMaintainers

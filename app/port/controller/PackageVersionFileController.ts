@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import {
   HTTPController,
   HTTPMethod,
@@ -10,16 +11,16 @@ import {
   Middleware,
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
-import { join } from 'node:path';
-import { AbstractController } from './AbstractController';
-import { AdminAccess } from '../middleware/AdminAccess';
-import { getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil';
-import { PackageVersionFileService } from '../../core/service/PackageVersionFileService';
-import { PackageManagerService } from '../../core/service/PackageManagerService';
-import { PackageVersionFile } from '../../core/entity/PackageVersionFile';
-import { PackageVersion } from '../../core/entity/PackageVersion';
-import { DistRepository } from '../../repository/DistRepository';
-import { Spec } from '../typebox';
+
+import { AbstractController } from './AbstractController.js';
+import { AdminAccess } from '../middleware/AdminAccess.js';
+import { getScopeAndName, FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
+import { PackageVersionFileService } from '../../core/service/PackageVersionFileService.js';
+import { PackageManagerService } from '../../core/service/PackageManagerService.js';
+import { PackageVersionFile } from '../../core/entity/PackageVersionFile.js';
+import { PackageVersion } from '../../core/entity/PackageVersion.js';
+import { DistRepository } from '../../repository/DistRepository.js';
+import { Spec } from '../typebox.js';
 
 type FileItem = {
   path: string,

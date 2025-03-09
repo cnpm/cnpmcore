@@ -1,10 +1,11 @@
-import { strict as assert } from 'assert';
+import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
-import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter';
-import { SyncMode } from '../../../../app/common/constants';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
+import { app, mock } from '@eggjs/mock/bootstrap';
+
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.js';
+import { SyncMode } from '../../../../app/common/constants.js';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let publisher: any;
@@ -30,7 +31,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       .expect(201);
     assert(res.status === 201);
     assert(res.body.ok === true);
-    assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    assert.match(res.body.rev, /^\d+-\w{24}$/);
 
     pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
     res = await app.httpRequest()
@@ -40,8 +41,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       .send(pkg);
     assert(res.status === 201);
     assert(res.body.ok === true);
-    assert.match(res.body.rev, /^\d+\-\w{24}$/);
-
+    assert.match(res.body.rev, /^\d+-\w{24}$/);
     await packageManagerService.unblockPackageByFullname(scopedName);
   });
 
@@ -342,12 +342,12 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       });
       let res = await app.httpRequest()
         .get(`/${name}/download/${name}-1.0.0.tgz`);
-      assert(res.status === 302);
-      assert(res.headers.location === `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
+      assert.equal(res.status, 302);
+      assert.equal(res.headers.location, `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
       res = await app.httpRequest()
         .get(`/${scopedName}/download/${scopedName}-1.0.0.tgz`);
-      assert(res.status === 302);
-      assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
+      assert.equal(res.status, 302);
+      assert.equal(res.headers.location, `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
     });
 
     it('should block tgz', async () => {

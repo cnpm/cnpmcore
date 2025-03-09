@@ -1,9 +1,14 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
-import { PackageSyncerService } from '../../app/core/service/PackageSyncerService';
-import { TestUtil } from '../../test/TestUtil';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import { app, mock } from '@eggjs/mock/bootstrap';
 
-const SyncPackageWorkerPath = require.resolve('../../app/port/schedule/SyncPackageWorker');
+import { PackageSyncerService } from '../../app/core/service/PackageSyncerService.js';
+import { TestUtil } from '../../test/TestUtil.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const SyncPackageWorkerPath = path.join(__dirname, '../../app/port/schedule/SyncPackageWorker.ts');
 
 describe('test/schedule/SyncPackageWorker.test.ts', () => {
   beforeEach(async () => {

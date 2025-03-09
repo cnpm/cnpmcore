@@ -1,8 +1,8 @@
-import { CnpmcoreConfig } from '../port/config';
-import { Readable } from 'stream';
-import { IncomingHttpHeaders } from 'http';
+import { Readable } from 'node:stream';
+import { IncomingHttpHeaders } from 'node:http';
 import { EggContext } from '@eggjs/tegg';
 import { estypes } from '@elastic/elasticsearch';
+import { CnpmcoreConfig } from '../port/config.js';
 
 export interface UploadResult {
   key: string;

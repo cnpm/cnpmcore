@@ -1,6 +1,6 @@
-import { Entity, EntityData } from './Entity';
-import { EasyData, EntityUtil } from '../util/EntityUtil';
-import { cleanUserPrefix } from '../../common/PackageUtil';
+import { Entity, EntityData } from './Entity.js';
+import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import { cleanUserPrefix } from '../../common/PackageUtil.js';
 
 interface UserData extends EntityData {
   userId: string;

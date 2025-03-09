@@ -1,22 +1,23 @@
 import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
-import { app, mock } from 'egg-mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import { ForbiddenError } from 'egg-errors';
 import dayjs from 'dayjs';
-import { TestUtil } from '../../../../test/TestUtil';
-import { UserRepository } from '../../../../app/repository/UserRepository';
-import { calculateIntegrity } from '../../../../app/common/PackageUtil';
-import { PackageRepository } from '../../../../app/repository/PackageRepository';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService';
-import { UserService } from '../../../../app/core/service/UserService';
-import { Token, TokenType } from '../../../../app/core/entity/Token';
-import { Token as TokenModel } from '../../../../app/repository/model/Token';
-import { User } from '../../../../app/core/entity/User';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService';
+
+import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
+import { UserRepository } from '../../../../app/repository/UserRepository.js';
+import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
+import { UserService } from '../../../../app/core/service/UserService.js';
+import { Token, TokenType } from '../../../../app/core/entity/Token.js';
+import { Token as TokenModel } from '../../../../app/repository/model/Token.js';
+import { User } from '../../../../app/core/entity/User.js';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let userRepository: UserRepository;
-  let publisher;
+  let publisher: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     userRepository = await app.getEggObject(UserRepository);
@@ -173,7 +174,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -194,7 +195,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg2)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       const pkg3 = await TestUtil.getFullPackage({ name, version: '2.0.0', description: '2.0.0 description' });
       res = await app.httpRequest()
@@ -204,7 +205,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg3)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}/2.0.0`)
@@ -290,7 +291,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
     });
 
     it('should publish 102 chars length version', async () => {
@@ -309,7 +310,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -333,7 +334,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
@@ -392,7 +393,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -406,7 +407,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg2)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
     });
 
     it('should 422 when dist-tags version not match', async () => {
@@ -610,7 +611,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -627,7 +628,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -644,7 +645,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}`)
         .expect(200);
@@ -661,7 +662,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/with-readme-object', version: '0.0.0' });
       assert(pkg.versions);
       const version = Object.keys(pkg.versions)[0];
-      pkg.versions[version].readme = { foo: 'bar' };
+      Reflect.set(pkg.versions[version], 'readme', { foo: 'bar' });
       let res = await app.httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
@@ -669,7 +670,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -688,7 +689,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/0.0.0`)
         .expect(200);
@@ -705,7 +706,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
       assert.equal(res.body.ok, true);
-      assert.match(res.body.rev, /^\d+\-\w{24}$/);
+      assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest()
         .get(`/${pkg.name}/99.0.0`)
         .expect(200);
@@ -719,7 +720,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg2)
         .expect(403);
-      assert.equal(res.body.error, `[FORBIDDEN] Can\'t modify pre-existing version: ${pkg2.name}@99.0.0`);
+      assert.equal(res.body.error, `[FORBIDDEN] Can't modify pre-existing version: ${pkg2.name}@99.0.0`);
     });
 
     it('should 422 when version format error', async () => {

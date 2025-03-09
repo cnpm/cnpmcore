@@ -3,10 +3,10 @@ import {
   SingletonProto,
   Inject,
 } from '@eggjs/tegg';
-import { ScopeRepository } from '../../repository/ScopeRepository';
-import { AbstractService } from '../../common/AbstractService';
-import { Scope } from '../entity/Scope';
-import { PageOptions, PageResult } from '../util/EntityUtil';
+import { ScopeRepository } from '../../repository/ScopeRepository.js';
+import { AbstractService } from '../../common/AbstractService.js';
+import { Scope } from '../entity/Scope.js';
+import { PageOptions, PageResult } from '../util/EntityUtil.js';
 
 export interface CreateScopeCmd extends Pick<Scope, 'name' | 'registryId'> {
   operatorId?: string;

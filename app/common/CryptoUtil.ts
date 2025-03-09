@@ -1,4 +1,4 @@
-import { generateKeyPairSync } from 'crypto';
+import { generateKeyPairSync } from 'node:crypto';
 import NodeRSA from 'node-rsa';
 
 // generate rsa key pair

@@ -10,12 +10,13 @@ import {
   Middleware,
 } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
-import { AbstractController } from './AbstractController';
-import { FULLNAME_REG_STRING } from '../../common/PackageUtil';
-import { PackageManagerService } from '../../core/service/PackageManagerService';
-import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
-import { BlockPackageRule, BlockPackageType } from '../typebox';
-import { AdminAccess } from '../middleware/AdminAccess';
+
+import { AbstractController } from './AbstractController.js';
+import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
+import { PackageManagerService } from '../../core/service/PackageManagerService.js';
+import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
+import { BlockPackageRule, BlockPackageType } from '../typebox.js';
+import { AdminAccess } from '../middleware/AdminAccess.js';
 
 @HTTPController()
 export class PackageBlockController extends AbstractController {
@@ -35,7 +36,7 @@ export class PackageBlockController extends AbstractController {
     ctx.tValidate(BlockPackageRule, params);
     const packageEntity = await this.getPackageEntityByFullname(params.fullname);
     if (packageEntity.isPrivate) {
-      throw new ForbiddenError(`Can\'t block private package "${params.fullname}"`);
+      throw new ForbiddenError(`Can't block private package "${params.fullname}"`);
     }
 
     const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
@@ -60,7 +61,7 @@ export class PackageBlockController extends AbstractController {
   async unblockPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
     const packageEntity = await this.getPackageEntityByFullname(fullname);
     if (packageEntity.isPrivate) {
-      throw new ForbiddenError(`Can\'t unblock private package "${fullname}"`);
+      throw new ForbiddenError(`Can't unblock private package "${fullname}"`);
     }
 
     await this.packageManagerService.unblockPackage(packageEntity);

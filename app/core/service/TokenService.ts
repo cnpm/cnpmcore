@@ -4,17 +4,17 @@ import {
   SingletonProto,
   Inject,
 } from '@eggjs/tegg';
-import { isEmpty } from 'lodash';
-import { AbstractService } from '../../common/AbstractService';
-import { Token, isGranularToken } from '../entity/Token';
-import { TokenPackage as TokenPackageModel } from '../../../app/repository/model/TokenPackage';
-import { Package as PackageModel } from '../../../app/repository/model/Package';
-import { ModelConvertor } from '../../../app/repository/util/ModelConvertor';
-import { Package as PackageEntity } from '../entity/Package';
+import { isEmpty } from 'lodash-es';
 import { ForbiddenError, UnauthorizedError } from 'egg-errors';
-import { getScopeAndName } from '../../../app/common/PackageUtil';
-import { sha512 } from '../../../app/common/UserUtil';
-import { UserRepository } from '../../../app/repository/UserRepository';
+import { AbstractService } from '../../common/AbstractService.js';
+import { Token, isGranularToken } from '../entity/Token.js';
+import { TokenPackage as TokenPackageModel } from '../../../app/repository/model/TokenPackage.js';
+import { Package as PackageModel } from '../../../app/repository/model/Package.js';
+import { ModelConvertor } from '../../../app/repository/util/ModelConvertor.js';
+import { Package as PackageEntity } from '../entity/Package.js';
+import { getScopeAndName } from '../../../app/common/PackageUtil.js';
+import { sha512 } from '../../../app/common/UserUtil.js';
+import { UserRepository } from '../../../app/repository/UserRepository.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -73,7 +73,7 @@ export class TokenService extends AbstractService {
 
   async getUserAndToken(authorization: string) {
     if (!authorization) return null;
-    const matchs = /^Bearer ([\w\.]+?)$/.exec(authorization);
+    const matchs = /^Bearer ([\w.]+?)$/.exec(authorization);
     if (!matchs) return null;
     const tokenValue = matchs[1];
     const tokenKey = sha512(tokenValue);

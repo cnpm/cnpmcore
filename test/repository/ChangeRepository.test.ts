@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
-import { ChangeRepository } from '../../app/repository/ChangeRepository';
-import { Change as ChangeModel } from '../../app/repository/model/Change';
+import { app } from '@eggjs/mock/bootstrap';
+
+import { ChangeRepository } from '../../app/repository/ChangeRepository.js';
+import { Change as ChangeModel } from '../../app/repository/model/Change.js';
 
 describe('test/repository/ChangeRepository.test.ts', () => {
   let changeRepository: ChangeRepository;

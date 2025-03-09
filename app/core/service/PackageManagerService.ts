@@ -18,19 +18,25 @@ import {
   getFullname,
   getScopeAndName,
   hasShrinkWrapInTgz,
-} from '../../common/PackageUtil';
-import { AbstractService } from '../../common/AbstractService';
-import { AbbreviatedPackageJSONType, AbbreviatedPackageManifestType, PackageJSONType, PackageManifestType, PackageRepository } from '../../repository/PackageRepository';
-import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
-import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
-import { DistRepository } from '../../repository/DistRepository';
-import { isDuplicateKeyError } from '../../repository/util/ErrorUtil';
-import { Package } from '../entity/Package';
-import { PackageVersion } from '../entity/PackageVersion';
-import { PackageVersionBlock } from '../entity/PackageVersionBlock';
-import { PackageTag } from '../entity/PackageTag';
-import { User } from '../entity/User';
-import { Dist } from '../entity/Dist';
+} from '../../common/PackageUtil.js';
+import { AbstractService } from '../../common/AbstractService.js';
+import {
+  AbbreviatedPackageJSONType,
+  AbbreviatedPackageManifestType,
+  PackageJSONType,
+  PackageManifestType,
+  PackageRepository,
+} from '../../repository/PackageRepository.js';
+import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
+import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
+import { DistRepository } from '../../repository/DistRepository.js';
+import { isDuplicateKeyError } from '../../repository/util/ErrorUtil.js';
+import { Package } from '../entity/Package.js';
+import { PackageVersion } from '../entity/PackageVersion.js';
+import { PackageVersionBlock } from '../entity/PackageVersionBlock.js';
+import { PackageTag } from '../entity/PackageTag.js';
+import { User } from '../entity/User.js';
+import { Dist } from '../entity/Dist.js';
 import {
   PACKAGE_UNPUBLISHED,
   PACKAGE_BLOCKED,
@@ -43,12 +49,12 @@ import {
   PACKAGE_TAG_CHANGED,
   PACKAGE_TAG_REMOVED,
   PACKAGE_META_CHANGED,
-} from '../event';
-import { BugVersionService } from './BugVersionService';
-import { BugVersion } from '../entity/BugVersion';
-import { RegistryManagerService } from './RegistryManagerService';
-import { Registry } from '../entity/Registry';
-import { PackageVersionService } from './PackageVersionService';
+} from '../event/index.js';
+import { BugVersionService } from './BugVersionService.js';
+import { BugVersion } from '../entity/BugVersion.js';
+import { RegistryManagerService } from './RegistryManagerService.js';
+import { Registry } from '../entity/Registry.js';
+import { PackageVersionService } from './PackageVersionService.js';
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
@@ -706,8 +712,8 @@ export class PackageManagerService extends AbstractService {
       fullManifests,
       abbreviatedManifests,
     ] = await Promise.all([
-      await this._listPackageFullManifests(pkg),
-      await this._listPackageAbbreviatedManifests(pkg),
+      this._listPackageFullManifests(pkg),
+      this._listPackageAbbreviatedManifests(pkg),
     ]);
     await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
   }
@@ -998,7 +1004,7 @@ export class PackageManagerService extends AbstractService {
         }
         const pkgVersion = await this.packageVersionService.getVersion(npa(`${fullname}@${spec}`));
         assert(pkgVersion);
-      } catch (e) {
+      } catch {
         throw new BadRequestError(`deps ${fullname}@${spec} not found`);
       }
     }, {

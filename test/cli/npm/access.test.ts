@@ -1,18 +1,19 @@
 import path from 'node:path';
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
 import semver from 'semver';
-import { TestUtil } from '../../../test/TestUtil';
-import { npmLogin } from '../CliUtil';
+
+import { TestUtil } from '../../../test/TestUtil.js';
+import { npmLogin } from '../CliUtil.js';
 
 describe('test/cli/npm/access.test.ts', () => {
-  let server;
-  let registry;
-  let fooPkgDir;
-  let demoDir;
-  let userconfig;
-  let cacheDir;
-  let useLegacyCommands;
+  let server: any;
+  let registry: any;
+  let fooPkgDir: any;
+  let demoDir: any;
+  let userconfig: any;
+  let cacheDir: any;
+  let useLegacyCommands: any;
   before(async () => {
     cacheDir = TestUtil.mkdtemp();
     fooPkgDir = TestUtil.getFixtures('@cnpm/foo');
@@ -71,7 +72,7 @@ describe('test/cli/npm/access.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /testuser:\sread-write|\"testuser\":\s\"read-write\"/)
+        .expect('stdout', /testuser:\sread-write|"testuser":\s"read-write"/)
         .expect('code', 0)
         .end();
 
@@ -92,7 +93,7 @@ describe('test/cli/npm/access.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /@cnpm\/foo: read-write|\"@cnpm\/foo\":\s\"read-write"/)
+        .expect('stdout', /@cnpm\/foo: read-write|"@cnpm\/foo":\s"read-write"/)
         .expect('code', 0)
         .end();
 

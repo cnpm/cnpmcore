@@ -1,13 +1,18 @@
 import { strict as assert } from 'node:assert';
-import { app, mock } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../../test/TestUtil';
-import { TaskRepository } from '../../../../app/repository/TaskRepository';
-import { TaskState } from '../../../../app/common/enum/Task';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { app, mock } from '@eggjs/mock/bootstrap';
 
-const SyncPackageWorkerPath = require.resolve('../../../../app/port/schedule/SyncPackageWorker');
+import { TestUtil, TestUser } from '../../../../test/TestUtil.js';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
+import { TaskState } from '../../../../app/common/enum/Task.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const SyncPackageWorkerPath = path.join(__dirname, '../../../../app/port/schedule/SyncPackageWorker.ts');
 
 describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () => {
-  let publisher;
+  let publisher: TestUser;
   let taskRepository: TaskRepository;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
