@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.75.1](https://github.com/cnpm/cnpmcore/compare/v3.75.0...v3.75.1) (2025-03-09)
+
+
+### Bug Fixes
+
+* only get packageId from database ([#768](https://github.com/cnpm/cnpmcore/issues/768)) ([bc068d1](https://github.com/cnpm/cnpmcore/commit/bc068d165c029e312d940e0d39216d8789a80015))
+
 ## [3.75.0](https://github.com/cnpm/cnpmcore/compare/v3.74.2...v3.75.0) (2025-03-09)
 
 
