@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.75.0](https://github.com/cnpm/cnpmcore/compare/v3.74.2...v3.75.0) (2025-03-09)
+
+
+### Features
+
+* mirror node-pty-prebuilt-multiarch ([#767](https://github.com/cnpm/cnpmcore/issues/767)) ([cbefb5c](https://github.com/cnpm/cnpmcore/commit/cbefb5c6d07ddb885e81b7854ccc9a6ef9df4327))
+
 ## [3.74.2](https://github.com/cnpm/cnpmcore/compare/v3.74.1...v3.74.2) (2025-02-27)
 
 
