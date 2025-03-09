@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.0](https://github.com/cnpm/cnpmcore/compare/v4.0.3...v4.1.0) (2025-03-09)
+
+
+### Features
+
+* remove codeql-analysis.yml ([3f3751b](https://github.com/cnpm/cnpmcore/commit/3f3751b2d5f124a8d057cbe07fab105c1b856134))
+* use tegg v4 ([#769](https://github.com/cnpm/cnpmcore/issues/769)) ([7938919](https://github.com/cnpm/cnpmcore/commit/7938919d81ab1508c4e2a0c4521bb9e121bfd13d))
+
 ## [4.0.2](https://github.com/cnpm/cnpmcore/compare/v4.0.1...v4.0.2) (2025-02-10)
 
 * should return default value when env is empty string ([#759](https://github.com/cnpm/cnpmcore/issues/759)) ([b6c781e](https://github.com/cnpm/cnpmcore/commit/b6c781ec250150a689a9d04080ebca716f0840dd))
