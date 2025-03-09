@@ -41,7 +41,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       .send(pkg);
     assert(res.status === 201);
     assert(res.body.ok === true);
-    assert.match(res.body.rev, /^\d+\-\w{24}$/);
+    assert.match(res.body.rev, /^\d+-\w{24}$/);
     await packageManagerService.unblockPackageByFullname(scopedName);
   });
 
