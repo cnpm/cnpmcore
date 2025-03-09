@@ -1,7 +1,7 @@
-name: Release
+name: Release 3.x
 on:
   push:
-    branches: [ master ]
+    branches: [ 3.x ]
 
 jobs:
   release:

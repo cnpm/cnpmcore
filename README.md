@@ -1,8 +1,7 @@
 # Private NPM Registry for Enterprise
 
-[![Node.js CI](https://github.com/cnpm/cnpmcore/actions/workflows/nodejs.yml/badge.svg)](https://github.com/cnpm/cnpmcore/actions/workflows/nodejs.yml)
-[![codecov](https://codecov.io/gh/cnpm/cnpmcore/branch/main/graph/badge.svg)](https://codecov.io/gh/cnpm/cnpmcore)
-[![CodeQL](https://github.com/cnpm/cnpmcore/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/cnpm/cnpmcore/actions/workflows/codeql-analysis.yml)
+[![Node.js CI](https://github.com/cnpm/cnpmcore/actions/workflows/nodejs.yml/badge.svg?branch=3.x)](https://github.com/cnpm/cnpmcore/actions/workflows/nodejs.yml)
+[![codecov](https://codecov.io/gh/cnpm/cnpmcore/branch/3.x/graph/badge.svg)](https://app.codecov.io/gh/cnpm/cnpmcore/tree/3.x)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcnpm%2Fcnpmcore?ref=badge_shield)
 
 Reimplement based on [cnpmjs.org](https://github.com/cnpm/cnpmjs.org) with TypeScript.
