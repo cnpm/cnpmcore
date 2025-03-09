@@ -125,10 +125,10 @@ export class PackageVersionService {
 
   async findBlockInfo(fullname: string) {
     const [ scope, name ] = getScopeAndName(fullname);
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) {
+    const packageId = await this.packageRepository.findPackageId(scope, name);
+    if (!packageId) {
       return null;
     }
-    return await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
+    return await this.packageVersionBlockRepository.findPackageBlock(packageId);
   }
 }
