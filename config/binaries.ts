@@ -937,6 +937,13 @@ const binaries = {
     repo: 'messense/homebrew-macos-cross-toolchains',
     distUrl: 'https://github.com/messense/homebrew-macos-cross-toolchains/releases',
   },
+  'node-pty-prebuilt-multiarch': {
+    category: 'node-pty-prebuilt-multiarch',
+    description: 'Prebuilt binaries for node-pty',
+    type: BinaryType.GitHub,
+    repo: 'homebridge/node-pty-prebuilt-multiarch',
+    distUrl: 'https://github.com/homebridge/node-pty-prebuilt-multiarch/releases',
+  },
 } as const;
 
 export type BinaryName = keyof typeof binaries;
