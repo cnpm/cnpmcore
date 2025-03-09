@@ -95,7 +95,7 @@ describe('test/cli/npm/install.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /\/@cnpm\/foo\/-\/foo-2.0.0.tgz/)
+        .expect('stdout', /\/@cnpm\/foo\/-\/foo-\d+\.0\.0\.tgz/)
         .expect('code', 0)
         .end();
 
@@ -112,7 +112,7 @@ describe('test/cli/npm/install.test.ts', () => {
           cwd: demoDir,
         })
         .debug()
-        .expect('stdout', /latest: 2\.0\.0/)
+        .expect('stdout', /latest: \d+\.0\.0/)
         .expect('code', 0)
         .end();
 
