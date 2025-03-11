@@ -20,7 +20,6 @@ import { PackageManagerService } from '../../../core/service/PackageManagerServi
 import { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
 import { PackageSyncerService } from '../../../core/service/PackageSyncerService.js';
 import { RegistryManagerService } from '../../../core/service/RegistryManagerService.js';
-import { PackageVersionService } from '../../../core/service/PackageVersionService.js';
 
 @HTTPController()
 export class DownloadPackageVersionTarController extends AbstractController {
@@ -32,8 +31,6 @@ export class DownloadPackageVersionTarController extends AbstractController {
   private proxyCacheService: ProxyCacheService;
   @Inject()
   private packageSyncerService: PackageSyncerService;
-  @Inject()
-  private packageVersionService: PackageVersionService;
   @Inject()
   private nfsAdapter: NFSAdapter;
 
@@ -59,15 +56,6 @@ export class DownloadPackageVersionTarController extends AbstractController {
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const storeKey = `/packages/${fullname}/${version}/${filenameWithVersion}.tgz`;
     const downloadUrl = await this.nfsAdapter.getDownloadUrl(storeKey);
-
-    // block tgz only all versions have been blocked
-    const blockInfo = await this.packageVersionService.findBlockInfo(fullname);
-    if (blockInfo?.reason) {
-      this.setCDNHeaders(ctx);
-      ctx.logger.info('[PackageController:downloadVersionTar] %s@%s, block for %s',
-        fullname, version, blockInfo.reason);
-      throw this.createPackageBlockError(blockInfo.reason, fullname, version);
-    }
 
     if (this.config.cnpmcore.syncMode === SyncMode.all && downloadUrl) {
       // try nfs url first, avoid db query
