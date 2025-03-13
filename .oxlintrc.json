@@ -4,6 +4,10 @@
     "node": true,
     "mocha": true
   },
+  "categories": {
+    "correctness": "error",
+    "perf": "error"
+  },
   "plugins": [
     "import",
     "typescript",
@@ -21,6 +25,8 @@
     "no-unreachable": "error",
     "no-var": "error",
     "no-eq-null": "error",
+    "no-await-in-loop": "allow",
+    "eqeqeq": ["error", "smart"],
     // import
     "import/no-cycle": "error",
     "import/no-anonymous-default-export": "error",

@@ -912,7 +912,7 @@ export class PackageSyncerService extends AbstractService {
           // https://github.com/cnpm/cnpmcore/issues/689
           'acceptDependencies',
         ];
-        const ignoreInAbbreviated = ['_npmUser'];
+        const ignoreInAbbreviated = new Set(['_npmUser']);
         const diffMeta: Partial<PackageJSONType> = {};
         for (const key of metaDataKeys) {
           let remoteItemValue = item[key];
@@ -925,7 +925,7 @@ export class PackageSyncerService extends AbstractService {
           if (!isEqual(remoteItemValue, existsItem[key])) {
             diffMeta[key] = remoteItemValue;
           } else if (
-            !ignoreInAbbreviated.includes(key) &&
+            !ignoreInAbbreviated.has(key) &&
             existsAbbreviatedItem &&
             !isEqual(
               remoteItemValue,
