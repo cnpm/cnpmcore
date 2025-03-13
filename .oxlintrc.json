@@ -1,11 +1,16 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["import"],
+  "plugins": ["import", "typescript", "unicorn", "jsdoc", "node", "promise"],
   "rules": {
     "import/no-cycle": "error",
     "no-var": "error",
     "no-eq-null": "error",
     "import/no-anonymous-default-export": "error",
     "import/no-namespace": "error",
+    "promise/no-return-wrap": "error",
+    "promise/param-names": "error",
+    "promise/prefer-await-to-callbacks": "error",
+    "promise/prefer-await-to-then": "error",
+    "promise/prefer-catch": "error",
   }
 }

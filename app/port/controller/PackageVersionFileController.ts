@@ -178,7 +178,7 @@ export class PackageVersionFileController extends AbstractController {
    * 2. if given path is directory and has `index.js` file, redirect to it. e.g. using `lib` alias to access `lib/index.js` or `lib/index.json`
    * @param {PackageVersion} packageVersion packageVersion
    * @param {String} path  filepath
-   * @return {Promise<PackageVersionFile | undefined>} return packageVersionFile or null
+   * @returns {Promise<PackageVersionFile | undefined>} return packageVersionFile or null
    */
   async #searchPossibleEntries(packageVersion: PackageVersion, path: string) {
     const possiblePath = [ `${path}.js`, `${path}.json`, `${path}/index.js`, `${path}/index.json` ];

@@ -37,7 +37,7 @@ export class PaddingSemVer {
   static paddingVersion(v: number) {
     const t = String(v);
     if (t.length <= 16) {
-      const padding = new Array(16 - t.length).fill(0)
+      const padding = Array.from({ length: 16 - t.length }).fill(0)
         .join('');
       return padding + t;
     }

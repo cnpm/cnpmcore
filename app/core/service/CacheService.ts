@@ -59,8 +59,8 @@ export class CacheService extends AbstractService {
 
   public async savePackageEtagAndManifests(fullname: string, isFullManifests: boolean, etag: string, manifests: Buffer) {
     await Promise.all([
-      await this.cacheAdapter.set(this.cacheKey(fullname, isFullManifests, 'etag'), etag),
-      await this.cacheAdapter.setBytes(this.cacheKey(fullname, isFullManifests, 'manifests'), manifests),
+      this.cacheAdapter.set(this.cacheKey(fullname, isFullManifests, 'etag'), etag),
+      this.cacheAdapter.setBytes(this.cacheKey(fullname, isFullManifests, 'manifests'), manifests),
     ]);
   }
 

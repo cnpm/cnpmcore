@@ -93,7 +93,7 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
         const limit = (new URL(url)).searchParams.get('limit');
         return {
           data: {
-            results: new Array(Number(limit)).fill(0).map((_, i) => ({
+            results: Array.from({ length: Number(limit) }).map((_, i) => ({
               type: 'PACKAGE_TAG_ADDED',
               id: `abc-cli-${i}`,
               changes: [{ tag: 'latest' }],

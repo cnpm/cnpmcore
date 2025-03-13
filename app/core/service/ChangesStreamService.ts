@@ -129,7 +129,7 @@ export class ChangesStreamService extends AbstractService {
 
     const registry = await this.registryManagerService.ensureDefaultRegistry();
     task.data = {
-      ...(task.data || {}),
+      ...task.data,
       registryId: registry.registryId,
     };
     await this.taskRepository.saveTask(task);

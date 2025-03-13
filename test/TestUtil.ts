@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { mkdtempSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { Readable } from 'node:stream';
-import mysql from 'mysql2';
+import mysql from 'mysql2/promise';
 import pg from 'pg';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -79,33 +79,34 @@ export class TestUtil {
   }
 
   static async query(sql: string): Promise<any[]> {
-    const conn = this.getConnection();
-    return new Promise((resolve, reject) => {
-      conn.query(sql, (err: Error, rows: any) => {
-        if (err) {
-          return reject(err);
-        }
-        if (rows.rows) {
-          // pg: { rows }
-          return resolve(rows.rows);
-        }
-        return resolve(rows);
-      });
-    });
+    const conn = await this.getConnection();
+    try {
+      const result = await conn.query(sql);
+      if (result.rows) {
+        // pg: { rows }
+        return result.rows;
+      } else {
+        // mysql: [ RowDataPacket[], others ]
+        return result[0];
+      }
+    } catch (err) {
+      console.error('[TestUtil] query %o error: %s', sql, err);
+      throw err;
+    }
   }
 
-  static getConnection() {
+  static async getConnection() {
     if (!this.connection) {
       const config = this.getDatabaseConfig();
       if (process.env.CI) {
         console.log('[TestUtil] connection to database: %j', config);
       }
       if (config.type === DATABASE_TYPE.MySQL) {
-        this.connection = mysql.createConnection(config as any);
+        this.connection = await mysql.createConnection(config as any);
       } else if (config.type === DATABASE_TYPE.PostgreSQL) {
         this.connection = new pg.Client(config as any);
       }
-      this.connection.connect();
+      await this.connection.connect();
     }
     return this.connection;
   }
@@ -123,11 +124,24 @@ export class TestUtil {
       if (config.type === DATABASE_TYPE.MySQL) {
         const sql = `
           SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${config.database}';`;
-        const rows = await this.query(sql);
+        // [
+        //     { TABLE_NAME: 'binaries' },
+        //     { TABLE_NAME: 'changes' },
+        //     { TABLE_NAME: 'dists' },
+        //     { TABLE_NAME: 'history_tasks' },
+        //     { TABLE_NAME: 'hooks' },
+        // ...
+        //     { TABLE_NAME: 'token_packages' },
+        //     { TABLE_NAME: 'tokens' },
+        //     { TABLE_NAME: 'total' },
+        //     { TABLE_NAME: 'users' },
+        //     { TABLE_NAME: 'webauthn_credentials' }
+        // ]
+        const rows: { TABLE_NAME: string }[] = await this.query(sql);
         this.tables = rows.map(row => row.TABLE_NAME);
       } else if (config.type === DATABASE_TYPE.PostgreSQL) {
         const sql = 'SELECT * FROM pg_catalog.pg_tables where schemaname = \'public\';';
-        const rows = await this.query(sql);
+        const rows: { tablename: string }[] = await this.query(sql);
         this.tables = rows.map(row => row.tablename);
       }
     }
