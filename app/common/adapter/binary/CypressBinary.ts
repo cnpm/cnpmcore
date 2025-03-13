@@ -1,6 +1,7 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary.js';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
+import type { FetchResult, BinaryItem } from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Cypress)
@@ -53,8 +54,10 @@ export class CypressBinary extends AbstractBinary {
         //   { platform: 'win32', arch: 'x64' },
         // ]
         const platforms = [
-          'darwin-x64', 'darwin-arm64',
-          'linux-x64', 'linux-arm64',
+          'darwin-x64',
+          'darwin-arm64',
+          'linux-x64',
+          'linux-arm64',
           'win32-x64',
         ];
         for (const platform of platforms) {

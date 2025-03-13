@@ -1,19 +1,15 @@
-import {
-  AccessLevel,
-  Inject,
-  EggContext,
-  ContextProto,
-} from '@eggjs/tegg';
-import { EggAppConfig, EggLogger } from 'egg';
+import type { EggContext } from '@eggjs/tegg';
+import { AccessLevel, Inject, ContextProto } from '@eggjs/tegg';
+import type { EggAppConfig, EggLogger } from 'egg';
 import { UnauthorizedError, ForbiddenError } from 'egg-errors';
 
-import { PackageRepository } from '../repository/PackageRepository.js';
-import { Package as PackageEntity } from '../core/entity/Package.js';
-import { User as UserEntity } from '../core/entity/User.js';
-import { Token as TokenEntity } from '../core/entity/Token.js';
+import type { PackageRepository } from '../repository/PackageRepository.js';
+import type { Package as PackageEntity } from '../core/entity/Package.js';
+import type { User as UserEntity } from '../core/entity/User.js';
+import type { Token as TokenEntity } from '../core/entity/Token.js';
 import { getScopeAndName } from '../common/PackageUtil.js';
-import { RegistryManagerService } from '../core/service/RegistryManagerService.js';
-import { TokenService } from '../core/service/TokenService.js';
+import type { RegistryManagerService } from '../core/service/RegistryManagerService.js';
+import type { TokenService } from '../core/service/TokenService.js';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
@@ -44,7 +40,6 @@ export class UserRoleManager {
   // 3. pkg scope is allowed to publish
   // use AbstractController#ensurePublishAccess ensure pkg exists;
   public async checkPublishAccess(ctx: EggContext, fullname: string) {
-
     const user = await this.requiredAuthorizedUser(ctx, 'publish');
 
     // 1. admin has all access
@@ -59,7 +54,7 @@ export class UserRoleManager {
     await this.tokenService.checkGranularTokenAccess(token, fullname);
 
     // 3. has published in current registry
-    const [ scope, name ] = getScopeAndName(fullname);
+    const [scope, name] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
     const selfRegistry = await this.registryManagerService.ensureSelfRegistry();
     const inSelfRegistry = pkg?.registryId === selfRegistry.registryId;
@@ -108,7 +103,8 @@ export class UserRoleManager {
     this.handleAuthorized = true;
     const authorization = ctx.get<string>('authorization');
     if (!authorization) return null;
-    const authorizedUserAndToken = await this.tokenService.getUserAndToken(authorization);
+    const authorizedUserAndToken =
+      await this.tokenService.getUserAndToken(authorization);
     if (!authorizedUserAndToken) {
       return null;
     }
@@ -130,9 +126,14 @@ export class UserRoleManager {
     }
     const { user, token } = authorizedUserAndToken;
     // only enable npm client and version check setting will go into this condition
-    if (this.config.cnpmcore.enableNpmClientAndVersionCheck && role === 'publish') {
+    if (
+      this.config.cnpmcore.enableNpmClientAndVersionCheck &&
+      role === 'publish'
+    ) {
       if (token.isReadonly) {
-        throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't publish`);
+        throw new ForbiddenError(
+          `Read-only Token "${token.tokenMark}" can't publish`
+        );
       }
       // only support npm >= 7.0.0 allow publish action
       // user-agent: "npm/6.14.12 node/v10.24.1 darwin x64"
@@ -147,22 +148,29 @@ export class UserRoleManager {
     }
     if (role === 'setting') {
       if (token.isReadonly) {
-        throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't setting`);
+        throw new ForbiddenError(
+          `Read-only Token "${token.tokenMark}" can't setting`
+        );
       }
       if (token.isAutomation) {
-        throw new ForbiddenError(`Automation Token "${token.tokenMark}" can't setting`);
+        throw new ForbiddenError(
+          `Automation Token "${token.tokenMark}" can't setting`
+        );
       }
     }
     return user;
   }
 
   public async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
-
-    const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
+    const maintainers = await this.packageRepository.listPackageMaintainers(
+      pkg.packageId
+    );
     const maintainer = maintainers.find(m => m.userId === user.userId);
     if (!maintainer) {
       const names = maintainers.map(m => m.name).join(', ');
-      throw new ForbiddenError(`"${user.name}" not authorized to modify ${pkg.fullname}, please contact maintainers: "${names}"`);
+      throw new ForbiddenError(
+        `"${user.name}" not authorized to modify ${pkg.fullname}, please contact maintainers: "${names}"`
+      );
     }
   }
 
@@ -173,10 +181,14 @@ export class UserRoleManager {
     }
     const allowScopes = user.scopes ?? cnpmcoreConfig.allowScopes;
     if (!scope) {
-      throw new ForbiddenError(`Package scope required, legal scopes: "${allowScopes.join(', ')}"`);
+      throw new ForbiddenError(
+        `Package scope required, legal scopes: "${allowScopes.join(', ')}"`
+      );
     }
     if (!allowScopes.includes(scope)) {
-      throw new ForbiddenError(`Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`);
+      throw new ForbiddenError(
+        `Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`
+      );
     }
   }
 

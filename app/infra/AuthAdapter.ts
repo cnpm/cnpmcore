@@ -1,13 +1,13 @@
-import {
-  AccessLevel,
-  EggContext,
-  Inject,
-  SingletonProto,
-} from '@eggjs/tegg';
-import { Redis } from 'ioredis';
+import type { EggContext } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import type { Redis } from 'ioredis';
 import { randomUUID } from 'node:crypto';
 
-import { AuthClient, AuthUrlResult, userResult } from '../common/typing.js';
+import type {
+  AuthClient,
+  AuthUrlResult,
+  userResult,
+} from '../common/typing.js';
 
 const ONE_DAY = 3600 * 24;
 
@@ -50,5 +50,4 @@ export class AuthAdapter implements AuthClient {
     }
     return null;
   }
-
 }

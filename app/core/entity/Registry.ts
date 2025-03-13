@@ -1,5 +1,7 @@
-import { Entity, EntityData } from './Entity.js';
-import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import type { EntityData } from './Entity.js';
+import { Entity } from './Entity.js';
+import type { EasyData } from '../util/EntityUtil.js';
+import { EntityUtil } from '../util/EntityUtil.js';
 import type { RegistryType } from '../../common/enum/Registry.js';
 
 interface RegistryData extends EntityData {
@@ -12,7 +14,10 @@ interface RegistryData extends EntityData {
   authToken?: string;
 }
 
-export type CreateRegistryData = Omit<EasyData<RegistryData, 'registryId'>, 'id'>;
+export type CreateRegistryData = Omit<
+  EasyData<RegistryData, 'registryId'>,
+  'id'
+>;
 
 export class Registry extends Entity {
   name: string;
@@ -35,7 +40,10 @@ export class Registry extends Entity {
   }
 
   public static create(data: CreateRegistryData): Registry {
-    const newData = EntityUtil.defaultData<RegistryData, 'registryId'>(data, 'registryId');
+    const newData = EntityUtil.defaultData<RegistryData, 'registryId'>(
+      data,
+      'registryId'
+    );
     return new Registry(newData);
   }
 }

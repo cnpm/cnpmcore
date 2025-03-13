@@ -1,8 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
-import { PackageManifestType, PackageRepository } from '../../../../app/repository/PackageRepository.js';
+import type { TestUser } from '../../../../test/TestUtil.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
+import type { PackageManifestType } from '../../../../app/repository/PackageRepository.js';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
 import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
 import { CacheService } from '../../../../app/core/service/CacheService.js';
@@ -25,7 +27,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       mock(app.config.cnpmcore, 'registry', 'https://registry.example.com');
       let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -35,7 +38,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -44,8 +48,12 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
-      pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
-      res = await app.httpRequest()
+      pkg = await TestUtil.getFullPackage({
+        name: scopedName,
+        version: '1.0.0',
+      });
+      res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -54,8 +62,12 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
-      pkg = await TestUtil.getFullPackage({ name: scopedName, version: '2.0.0' });
-      res = await app.httpRequest()
+      pkg = await TestUtil.getFullPackage({
+        name: scopedName,
+        version: '2.0.0',
+      });
+      res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -71,9 +83,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         mock(CacheService.prototype, 'getPackageEtag', async () => {
           throw new Error('mock get etag error');
         });
-        await app.httpRequest()
-          .get(`/${name}`)
-          .expect(200);
+        await app.httpRequest().get(`/${name}`).expect(200);
 
         app.expectLog(/ShowPackageController.show:error/);
       });
@@ -86,9 +96,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         mock(CacheService.prototype, 'getPackageManifests', async () => {
           throw new Error('mock get etag error');
         });
-        await app.httpRequest()
-          .get(`/${name}`)
-          .expect(200);
+        await app.httpRequest().get(`/${name}`).expect(200);
 
         app.expectLog(/ShowPackageController.show:error/);
       });
@@ -96,7 +104,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
 
     it('should show one package with full manifests', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${name}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
@@ -112,8 +121,10 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(pkg._id, name);
       assert(pkg._rev);
       assert(versionOne._id);
-      assert.equal(versionOne.dist.tarball,
-        `https://registry.example.com/${name}/-/${name}-1.0.0.tgz`);
+      assert.equal(
+        versionOne.dist.tarball,
+        `https://registry.example.com/${name}/-/${name}-1.0.0.tgz`
+      );
       // should has etag
       assert.match(res.headers.etag, /^W\/"\w{40}"$/);
       // maintainers
@@ -125,28 +136,29 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         },
       ]);
 
-      let res2 = await app.httpRequest()
-        .get(`/${name}`)
-        .expect(200);
+      let res2 = await app.httpRequest().get(`/${name}`).expect(200);
       // etag is same
       assert.equal(res2.headers.etag, res.headers.etag);
 
       // request with etag
       mock(app.config.cnpmcore, 'enableCDN', false);
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}`)
         .set('If-None-Match', res.headers.etag)
         .expect('vary', 'Origin')
         .expect(304);
       // ignore sync request
-      res2 = await app.httpRequest()
+      res2 = await app
+        .httpRequest()
         .get(`/${name}?cache=0`)
         .set('If-None-Match', res.headers.etag)
         .expect('vary', 'Origin')
         .expect(200);
       assert(res2.body.name);
       assert.equal(res2.headers.etag, res.headers.etag);
-      res2 = await app.httpRequest()
+      res2 = await app
+        .httpRequest()
         .get(`/${name}`)
         .set('If-None-Match', res.headers.etag)
         .set('user-agent', 'npm_service.cnpmjs.org/1.0.0')
@@ -156,7 +168,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res2.headers.etag, res.headers.etag);
 
       mock(app.config.cnpmcore, 'enableCDN', true);
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}`)
         .set('If-None-Match', res.headers.etag)
         .expect('vary', 'Origin, Accept, Accept-Encoding')
@@ -164,7 +177,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
 
       // application/vnd.npm.install-v1+json request should not same etag
       mock(app.config.cnpmcore, 'enableCDN', false);
-      res2 = await app.httpRequest()
+      res2 = await app
+        .httpRequest()
         .get(`/${name}`)
         .set('If-None-Match', res.headers.etag)
         .set('Accept', 'application/vnd.npm.install-v1+json');
@@ -173,7 +187,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(res2.headers.vary === 'Origin');
 
       mock(app.config.cnpmcore, 'enableCDN', true);
-      res2 = await app.httpRequest()
+      res2 = await app
+        .httpRequest()
         .get(`/${name}`)
         .set('If-None-Match', res.headers.etag)
         .set('Accept', 'application/vnd.npm.install-v1+json');
@@ -183,7 +198,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
 
       // remove W/ still work
       mock(app.config.cnpmcore, 'enableCDN', false);
-      let resEmpty = await app.httpRequest()
+      let resEmpty = await app
+        .httpRequest()
         .get(`/${name}`)
         .set('if-none-match', res.headers.etag.replace('W/', ''))
         .expect(304);
@@ -191,7 +207,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(resEmpty.headers.vary === 'Origin');
 
       mock(app.config.cnpmcore, 'enableCDN', true);
-      resEmpty = await app.httpRequest()
+      resEmpty = await app
+        .httpRequest()
         .get(`/${name}`)
         .set('if-none-match', res.headers.etag.replace('W/', ''))
         .expect(304);
@@ -199,37 +216,44 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(resEmpty.headers.vary === 'Origin, Accept, Accept-Encoding');
 
       // etag not match
-      const resNew = await app.httpRequest()
+      const resNew = await app
+        .httpRequest()
         .get(`/${name}`)
         .set('if-none-match', res.headers.etag.replace('"', '"change'))
         .expect(200);
       assert(resNew.text);
-      assert(resNew.headers['content-type'] === 'application/json; charset=utf-8');
+      assert(
+        resNew.headers['content-type'] === 'application/json; charset=utf-8'
+      );
       assert(resNew.body.name === name);
 
       // HEAD work
-      const resHead = await app.httpRequest()
-        .head(`/${name}`)
-        .expect(200);
+      const resHead = await app.httpRequest().head(`/${name}`).expect(200);
       assert(!resHead.text);
       assert.match(resHead.headers.etag, /^W\/"\w{40}"$/);
 
       // new version, cache should update
-      const pkgNew = await TestUtil.getFullPackage({ name, version: '101.0.1' });
-      await app.httpRequest()
+      const pkgNew = await TestUtil.getFullPackage({
+        name,
+        version: '101.0.1',
+      });
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkgNew)
         .expect(201);
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}`)
         .set('If-None-Match', res.headers.etag)
         .expect(200);
     });
 
     it('should show one scoped package with full manifests', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${scopedName}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
@@ -246,14 +270,18 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(pkg._id === scopedName);
       assert(pkg._rev);
       assert(versionOne._id);
-      assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-1.0.0.tgz`);
+      assert(
+        versionOne.dist.tarball ===
+          `https://registry.example.com/${scopedName}/-/${name}-1.0.0.tgz`
+      );
       assert(!res.headers['cache-control']);
       assert(res.headers.vary === 'Origin');
     });
 
     it('should show one scoped package with full manifests with CDN enable', async () => {
       mock(app.config.cnpmcore, 'enableCDN', true);
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${scopedName}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
@@ -267,14 +295,18 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(pkg._id, scopedName);
       assert(pkg._rev);
       assert(versionOne._id);
-      assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-1.0.0.tgz`);
+      assert(
+        versionOne.dist.tarball ===
+          `https://registry.example.com/${scopedName}/-/${name}-1.0.0.tgz`
+      );
       assert.equal(res.headers['cache-control'], 'public, max-age=300');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
     });
 
     it('should show one package with abbreviated manifests', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${name}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(200)
@@ -292,18 +324,22 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(!pkg._rev);
       assert(!pkg._id);
       assert(!versionOne._id);
-      assert.equal(versionOne.dist.tarball,
-        `https://registry.example.com/${name}/-/${name}-2.0.0.tgz`);
+      assert.equal(
+        versionOne.dist.tarball,
+        `https://registry.example.com/${name}/-/${name}-2.0.0.tgz`
+      );
 
       // request with etag
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .set('If-None-Match', res.headers.etag)
         .expect(304);
 
       // remove W/ still work
-      const resEmpty = await app.httpRequest()
+      const resEmpty = await app
+        .httpRequest()
         .get(`/${name}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .set('if-none-match', res.headers.etag.replace('W/', ''))
@@ -311,17 +347,21 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(resEmpty.text, '');
 
       // etag not match
-      const resNew = await app.httpRequest()
+      const resNew = await app
+        .httpRequest()
         .get(`/${name}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .set('if-none-match', res.headers.etag.replace('"', '"change'))
         .expect(200);
       assert(resNew.text);
-      assert(resNew.headers['content-type'] === 'application/json; charset=utf-8');
+      assert(
+        resNew.headers['content-type'] === 'application/json; charset=utf-8'
+      );
       assert(resNew.body.name === name);
 
       // HEAD work
-      const resHead = await app.httpRequest()
+      const resHead = await app
+        .httpRequest()
         .head(`/${name}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(200);
@@ -329,8 +369,12 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.match(resHead.headers.etag, /^W\/"\w{40}"$/);
 
       // new version, cache should update
-      const pkgNew = await TestUtil.getFullPackage({ name, version: '101.0.1' });
-      await app.httpRequest()
+      const pkgNew = await TestUtil.getFullPackage({
+        name,
+        version: '101.0.1',
+      });
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -339,7 +383,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
     });
 
     it('should show one scoped package with abbreviated manifests', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${scopedName}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(200)
@@ -356,14 +401,18 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(!pkg._rev);
       assert(!pkg._id);
       assert(!versionOne._id);
-      assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
+      assert(
+        versionOne.dist.tarball ===
+          `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`
+      );
       assert(!res.headers['cache-control']);
       assert(res.headers.vary === 'Origin');
     });
 
     it('should show one scoped package with abbreviated manifests with CDN enable', async () => {
       mock(app.config.cnpmcore, 'enableCDN', true);
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${scopedName}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(200)
@@ -380,13 +429,17 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(!pkg._rev);
       assert(!pkg._id);
       assert(!versionOne._id);
-      assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
+      assert(
+        versionOne.dist.tarball ===
+          `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`
+      );
       assert.equal(res.headers['cache-control'], 'public, max-age=300');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
     });
 
     it('should 404 when package not exists on abbreviated manifest', async () => {
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get(`/${scopedName}-not-exists`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(404)
@@ -394,11 +447,15 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       let data = res.body;
       assert(!res.headers.etag);
       assert(!res.headers['cache-control']);
-      assert(data.error === '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+      assert(
+        data.error ===
+          '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found'
+      );
 
       // should not set cdn cache header
       mock(app.config.cnpmcore, 'enableCDN', true);
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/${scopedName}-not-exists`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(404)
@@ -406,11 +463,15 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       data = res.body;
       assert(!res.headers.etag);
       assert(!res.headers['cache-control']);
-      assert(data.error === '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+      assert(
+        data.error ===
+          '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found'
+      );
     });
 
     it('should 404 when package not exists full manifest', async () => {
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get(`/${scopedName}-not-exists`)
         .set('Accept', 'application/json')
         .expect(404)
@@ -418,11 +479,15 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       let data = res.body;
       assert(!res.headers.etag);
       assert(!res.headers['cache-control']);
-      assert(data.error === '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+      assert(
+        data.error ===
+          '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found'
+      );
 
       // should not set cdn cache header
       mock(app.config.cnpmcore, 'enableCDN', true);
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/${scopedName}-not-exists`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(404)
@@ -430,7 +495,10 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       data = res.body;
       assert(!res.headers.etag);
       assert(!res.headers['cache-control']);
-      assert(data.error === '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found');
+      assert(
+        data.error ===
+          '[NOT_FOUND] @cnpm/testmodule-show-package-not-exists not found'
+      );
     });
 
     it('should abbreviated manifests work with install scripts', async () => {
@@ -443,7 +511,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
           },
         },
       });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -452,7 +521,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/${pkg.name}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(200)
@@ -470,7 +540,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
           },
         },
       });
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -479,7 +550,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/${pkg.name}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(200)
@@ -497,7 +569,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
           },
         },
       });
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -506,7 +579,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/${pkg.name}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(200)
@@ -521,7 +595,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         name: '@cnpm/test-module-mock-dist-not-exists',
         version: '1.0.0',
       });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -530,10 +605,14 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
-      const pkgModel = await packageRepository.findPackage('@cnpm', 'test-module-mock-dist-not-exists');
+      const pkgModel = await packageRepository.findPackage(
+        '@cnpm',
+        'test-module-mock-dist-not-exists'
+      );
       await packageRepository.removePackageDist(pkgModel!, false);
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/${pkg.name}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(200)
@@ -549,7 +628,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         name: '@cnpm/test-module-mock-dist-not-exists-full-manifests',
         version: '1.0.0',
       });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -558,10 +638,14 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
-      const pkgModel = await packageRepository.findPackage('@cnpm', 'test-module-mock-dist-not-exists-full-manifests');
+      const pkgModel = await packageRepository.findPackage(
+        '@cnpm',
+        'test-module-mock-dist-not-exists-full-manifests'
+      );
       await packageRepository.removePackageDist(pkgModel!, true);
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/${pkg.name}`)
         .set('Accept', 'application/json')
         .expect(200)
@@ -578,7 +662,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         name: `@cnpm/${name}`,
         version: '1.0.0',
       });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -592,7 +677,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       await packageRepository.removePackageDist(pkgEntity, true);
       await packageRepository.removePackageVersions(pkgEntity.packageId);
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/${pkg.name}`)
         .set('Accept', 'application/json')
         .expect('content-type', 'application/json; charset=utf-8');
@@ -601,12 +687,14 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
     });
 
     it('should abbreviated manifests work when all versions not exists', async () => {
-      const name = 'test-module-mock-dist-not-exists-abbreviated-manifests-no-verions';
+      const name =
+        'test-module-mock-dist-not-exists-abbreviated-manifests-no-verions';
       const pkg = await TestUtil.getFullPackage({
         name: `@cnpm/${name}`,
         version: '1.0.0',
       });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -620,7 +708,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       await packageRepository.removePackageDist(pkgEntity, false);
       await packageRepository.removePackageVersions(pkgEntity.packageId);
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/${pkg.name}`)
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect('content-type', 'application/json; charset=utf-8');
@@ -630,50 +719,61 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
 
     it('should redirect to source registry if public package not exists when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/123')
         .expect('location', 'https://registry.npmjs.org/123')
         .expect(302);
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/cnpmcore')
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect('location', 'https://registry.npmjs.org/cnpmcore')
         .expect(302);
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/cnpmcore')
         .query({ t: '0123123', foo: 'bar' })
         .set('Accept', 'application/json')
-        .expect('location', 'https://registry.npmjs.org/cnpmcore?t=0123123&foo=bar')
+        .expect(
+          'location',
+          'https://registry.npmjs.org/cnpmcore?t=0123123&foo=bar'
+        )
         .expect(302);
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/@eggjs/cnpmcore')
         .query({ t: '0123123', foo: 'bar' })
         .set('Accept', 'application/json')
-        .expect('location', 'https://registry.npmjs.org/@eggjs/cnpmcore?t=0123123&foo=bar')
+        .expect(
+          'location',
+          'https://registry.npmjs.org/@eggjs/cnpmcore?t=0123123&foo=bar'
+        )
         .expect(302);
     });
 
     it('should not redirect to source registry if public package not exists when syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
-      const res = await app.httpRequest()
-        .get('/123');
+      const res = await app.httpRequest().get('/123');
       assert(res.status === 404);
       assert(res.body.error === '[NOT_FOUND] 123 not found');
     });
 
     it('should not redirect private scope package to source registry if package not exists when syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get('/@cnpm/cnpmcore')
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect('content-type', 'application/json; charset=utf-8');
       assert(res.status === 404);
       assert(res.body.error === '[NOT_FOUND] @cnpm/cnpmcore not found');
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get('/@cnpm/cnpmcore')
         .query({ t: '0123123', foo: 'bar' })
         .set('Accept', 'application/json')
@@ -684,14 +784,16 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
 
     it('should not redirect private scope package to source registry if package not exists when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get('/@cnpm/cnpmcore')
         .set('Accept', 'application/vnd.npm.install-v1+json')
         .expect(404)
         .expect('content-type', 'application/json; charset=utf-8');
       assert(res.body.error === '[NOT_FOUND] @cnpm/cnpmcore not found');
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get('/@cnpm/cnpmcore')
         .query({ t: '0123123', foo: 'bar' })
         .set('Accept', 'application/json')
@@ -702,24 +804,33 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
 
     it('should redirect public scope package to source registry if package not exists when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get('/@eggjs/tegg-metadata')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 302);
-      assert(res.headers.location === 'https://registry.npmjs.org/@eggjs/tegg-metadata');
+      assert(
+        res.headers.location ===
+          'https://registry.npmjs.org/@eggjs/tegg-metadata'
+      );
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get('/@eggjs/tegg-metadata')
         .query({ t: '0123123', foo: 'bar' })
         .set('Accept', 'application/json');
       assert(res.status === 302);
-      assert(res.headers.location === 'https://registry.npmjs.org/@eggjs/tegg-metadata?t=0123123&foo=bar');
+      assert(
+        res.headers.location ===
+          'https://registry.npmjs.org/@eggjs/tegg-metadata?t=0123123&foo=bar'
+      );
     });
 
     it('should not redirect to source registry when redirectNotFound is false and sync mode is none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
       mock(app.config.cnpmcore, 'redirectNotFound', false);
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/@eggjs/tegg-metadata')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 404);
@@ -727,18 +838,23 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
 
     it('should redirect public non-scope package to source registry if package not exists when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get('/egg')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 302);
       assert(res.headers.location === 'https://registry.npmjs.org/egg');
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get('/egg')
         .query({ t: '0123123', foo: 'bar' })
         .set('Accept', 'application/json');
       assert(res.status === 302);
-      assert(res.headers.location === 'https://registry.npmjs.org/egg?t=0123123&foo=bar');
+      assert(
+        res.headers.location ===
+          'https://registry.npmjs.org/egg?t=0123123&foo=bar'
+      );
     });
 
     it('should fix bug version', async () => {
@@ -756,23 +872,34 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       mock(CacheService.prototype, 'getPackageEtag', async () => {
         return null;
       });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get(`/${name}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const shouldFixVersion = res.body.versions['2.0.0'];
-      assert(shouldFixVersion.dist.tarball === 'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz');
-      assert(shouldFixVersion.deprecated === '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
+      assert(
+        shouldFixVersion.dist.tarball ===
+          'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz'
+      );
+      assert(
+        shouldFixVersion.deprecated ===
+          '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason'
+      );
       // don't change version
       assert(shouldFixVersion.version === '2.0.0');
 
       // sync worker request should not effect
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/${name}?cache=0`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const orginalVersion = res.body.versions['2.0.0'];
-      assert(orginalVersion.dist.tarball === 'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz');
+      assert(
+        orginalVersion.dist.tarball ===
+          'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz'
+      );
       assert(!orginalVersion.deprecated);
       assert(orginalVersion.version === '2.0.0');
     });
@@ -781,28 +908,38 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       mock(CacheService.prototype, 'getPackageEtag', async () => {
         return null;
       });
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${name}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
 
       const data = res.body as PackageManifestType;
       assert(data._source_registry_name === 'self');
-      assert(Object.values(data.versions).every(v => v!._source_registry_name === 'self'));
+      assert(
+        Object.values(data.versions).every(
+          v => v!._source_registry_name === 'self'
+        )
+      );
     });
 
     it('should show _source_registry_name for abbreviated', async () => {
       mock(CacheService.prototype, 'getPackageEtag', async () => {
         return null;
       });
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${name}`)
         .set('accept', 'application/vnd.npm.install-v1+json')
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
 
       const data = res.body as PackageManifestType;
-      assert(Object.values(data.versions).every(v => v!._source_registry_name === 'self'));
+      assert(
+        Object.values(data.versions).every(
+          v => v!._source_registry_name === 'self'
+        )
+      );
     });
 
     it('should not throw error if no versions', async () => {
@@ -836,7 +973,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
           },
         };
       });
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
@@ -846,7 +984,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       mock(app.config.cnpmcore, 'syncMode', 'exist');
       mock(app.config.cnpmcore, 'syncNotFound', true);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/lodash')
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
@@ -858,7 +997,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       mock(app.config.cnpmcore, 'syncMode', 'exist');
       mock(app.config.cnpmcore, 'syncNotFound', false);
       mock(app.config.cnpmcore, 'redirectNotFound', true);
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/egg')
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
@@ -869,18 +1009,25 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
     it('should read manifest from source in proxy mode', async () => {
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
-      const data = await TestUtil.readJSONFile(TestUtil.getFixtures('registry.npmjs.org/abbreviated_foobar.json'));
+      const data = await TestUtil.readJSONFile(
+        TestUtil.getFixtures('registry.npmjs.org/abbreviated_foobar.json')
+      );
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
         data,
         persist: false,
       });
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/foobar')
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 200);
       assert(res.body.description === 'cnpmcore mock json');
-      assert(res.body.versions['1.0.0'].dist.tarball.includes(app.config.cnpmcore.registry));
+      assert(
+        res.body.versions['1.0.0'].dist.tarball.includes(
+          app.config.cnpmcore.registry
+        )
+      );
     });
   });
 });

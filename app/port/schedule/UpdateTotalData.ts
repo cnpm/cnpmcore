@@ -1,27 +1,35 @@
-import { EggLogger } from 'egg';
-import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import type { EggLogger } from 'egg';
+import type { IntervalParams } from '@eggjs/tegg/schedule';
+import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
-import { ChangesStreamTaskData } from '../../core/entity/Task.js';
-import { RegistryManagerService } from '../../core/service/RegistryManagerService.js';
-import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
-import { PackageRepository } from '../../repository/PackageRepository.js';
-import { TaskRepository } from '../../repository/TaskRepository.js';
-import { ChangeRepository } from '../../repository/ChangeRepository.js';
-import { CacheService, DownloadInfo, TotalData } from '../../core/service/CacheService.js';
+import type { ChangesStreamTaskData } from '../../core/entity/Task.js';
+import type { RegistryManagerService } from '../../core/service/RegistryManagerService.js';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
+import type { PackageRepository } from '../../repository/PackageRepository.js';
+import type { TaskRepository } from '../../repository/TaskRepository.js';
+import type { ChangeRepository } from '../../repository/ChangeRepository.js';
+import type {
+  CacheService,
+  DownloadInfo,
+  TotalData,
+} from '../../core/service/CacheService.js';
 import { TaskType } from '../../common/enum/Task.js';
 import { GLOBAL_WORKER } from '../../common/constants.js';
 import dayjs from '../../common/dayjs.js';
 
-@Schedule<IntervalParams>({
-  type: ScheduleType.WORKER,
-  scheduleData: {
-    interval: 60000,
+@Schedule<IntervalParams>(
+  {
+    type: ScheduleType.WORKER,
+    scheduleData: {
+      interval: 60000,
+    },
   },
-}, {
-  // immediate = false on unittest env
-  immediate: process.env.NODE_ENV !== 'test',
-})
+  {
+    // immediate = false on unittest env
+    immediate: process.env.NODE_ENV !== 'test',
+  }
+)
 export class UpdateTotalData {
   @Inject()
   private readonly logger: EggLogger;
@@ -59,23 +67,49 @@ export class UpdateTotalData {
     };
     const today = dayjs();
     const lastYearStartDay = today.subtract(1, 'year').startOf('year');
-    const rows = await this.packageVersionDownloadRepository.query('total', lastYearStartDay.toDate(), today.toDate());
+    const rows = await this.packageVersionDownloadRepository.query(
+      'total',
+      lastYearStartDay.toDate(),
+      today.toDate()
+    );
     if (rows.length > 0) {
       const todayInt = Number(today.format('YYYYMMDD'));
       const yesterdayInt = Number(today.subtract(1, 'day').format('YYYYMMDD'));
-      const samedayLastweekInt = Number(today.subtract(1, 'week').startOf('week').format('YYYYMMDD'));
-      const thisWeekStartDayInt = Number(today.startOf('week').format('YYYYMMDD'));
+      const samedayLastweekInt = Number(
+        today.subtract(1, 'week').startOf('week').format('YYYYMMDD')
+      );
+      const thisWeekStartDayInt = Number(
+        today.startOf('week').format('YYYYMMDD')
+      );
       const thisWeekEndDayInt = Number(today.endOf('week').format('YYYYMMDD'));
-      const thisMonthStartDayInt = Number(today.startOf('month').format('YYYYMMDD'));
-      const thisMonthEndDayInt = Number(today.endOf('month').format('YYYYMMDD'));
-      const thisYearStartDayInt = Number(today.startOf('year').format('YYYYMMDD'));
+      const thisMonthStartDayInt = Number(
+        today.startOf('month').format('YYYYMMDD')
+      );
+      const thisMonthEndDayInt = Number(
+        today.endOf('month').format('YYYYMMDD')
+      );
+      const thisYearStartDayInt = Number(
+        today.startOf('year').format('YYYYMMDD')
+      );
       const thisYearEndDayInt = Number(today.endOf('year').format('YYYYMMDD'));
-      const lastWeekStartDayInt = Number(today.subtract(1, 'week').startOf('week').format('YYYYMMDD'));
-      const lastWeekEndDayInt = Number(today.subtract(1, 'week').endOf('week').format('YYYYMMDD'));
-      const lastMonthStartDayInt = Number(today.subtract(1, 'month').startOf('month').format('YYYYMMDD'));
-      const lastMonthEndDayInt = Number(today.subtract(1, 'month').endOf('month').format('YYYYMMDD'));
-      const lastYearStartDayInt = Number(today.subtract(1, 'year').startOf('year').format('YYYYMMDD'));
-      const lastYearEndDayInt = Number(today.subtract(1, 'year').endOf('year').format('YYYYMMDD'));
+      const lastWeekStartDayInt = Number(
+        today.subtract(1, 'week').startOf('week').format('YYYYMMDD')
+      );
+      const lastWeekEndDayInt = Number(
+        today.subtract(1, 'week').endOf('week').format('YYYYMMDD')
+      );
+      const lastMonthStartDayInt = Number(
+        today.subtract(1, 'month').startOf('month').format('YYYYMMDD')
+      );
+      const lastMonthEndDayInt = Number(
+        today.subtract(1, 'month').endOf('month').format('YYYYMMDD')
+      );
+      const lastYearStartDayInt = Number(
+        today.subtract(1, 'year').startOf('year').format('YYYYMMDD')
+      );
+      const lastYearEndDayInt = Number(
+        today.subtract(1, 'year').endOf('year').format('YYYYMMDD')
+      );
 
       for (const row of rows) {
         for (let i = 1; i <= 31; i++) {
@@ -86,13 +120,20 @@ export class UpdateTotalData {
           const dayInt = row.yearMonth * 100 + i;
           if (dayInt === todayInt) download.today += counter;
           if (dayInt === yesterdayInt) download.yesterday += counter;
-          if (dayInt === samedayLastweekInt) download.samedayLastweek += counter;
-          if (dayInt >= thisWeekStartDayInt && dayInt <= thisWeekEndDayInt) download.thisweek += counter;
-          if (dayInt >= thisMonthStartDayInt && dayInt <= thisMonthEndDayInt) download.thismonth += counter;
-          if (dayInt >= thisYearStartDayInt && dayInt <= thisYearEndDayInt) download.thisyear += counter;
-          if (dayInt >= lastWeekStartDayInt && dayInt <= lastWeekEndDayInt) download.lastweek += counter;
-          if (dayInt >= lastMonthStartDayInt && dayInt <= lastMonthEndDayInt) download.lastmonth += counter;
-          if (dayInt >= lastYearStartDayInt && dayInt <= lastYearEndDayInt) download.lastyear += counter;
+          if (dayInt === samedayLastweekInt)
+            download.samedayLastweek += counter;
+          if (dayInt >= thisWeekStartDayInt && dayInt <= thisWeekEndDayInt)
+            download.thisweek += counter;
+          if (dayInt >= thisMonthStartDayInt && dayInt <= thisMonthEndDayInt)
+            download.thismonth += counter;
+          if (dayInt >= thisYearStartDayInt && dayInt <= thisYearEndDayInt)
+            download.thisyear += counter;
+          if (dayInt >= lastWeekStartDayInt && dayInt <= lastWeekEndDayInt)
+            download.lastweek += counter;
+          if (dayInt >= lastMonthStartDayInt && dayInt <= lastMonthEndDayInt)
+            download.lastmonth += counter;
+          if (dayInt >= lastYearStartDayInt && dayInt <= lastYearEndDayInt)
+            download.lastyear += counter;
         }
       }
     }
@@ -107,18 +148,22 @@ export class UpdateTotalData {
     const totalData: TotalData = {
       ...packageTotal,
       download,
-      lastChangeId: lastChange && lastChange.id || 0,
+      lastChangeId: (lastChange && lastChange.id) || 0,
       cacheTime: new Date().toISOString(),
       changesStream: {} as unknown as ChangesStreamTaskData,
       upstreamRegistries: [],
     };
 
-    const tasks = await this.taskRepository.findTasksByCondition({ type: TaskType.ChangesStream });
+    const tasks = await this.taskRepository.findTasksByCondition({
+      type: TaskType.ChangesStream,
+    });
     for (const task of tasks) {
       // 全局 changesStream
       const data = task.data as ChangesStreamTaskData;
       // 补充录入 upstreamRegistries
-      const registry = await this.registryManagerService.findByRegistryId(data.registryId as string);
+      const registry = await this.registryManagerService.findByRegistryId(
+        data.registryId as string
+      );
       if (registry) {
         totalData.upstreamRegistries.push({
           ...data,

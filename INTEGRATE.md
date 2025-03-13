@@ -45,9 +45,7 @@
       "extends": "@eggjs/tsconfig",
       "compilerOptions": {
         "baseUrl": "./",
-        "moduleResolution": "NodeNext",
-        "target": "ES2020",
-        "module": "Node16"
+        "target": "ES2021"
       }
     }
     ```

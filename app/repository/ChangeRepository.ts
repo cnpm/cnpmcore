@@ -2,7 +2,7 @@ import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 
 import { ModelConvertor } from './util/ModelConvertor.js';
 import type { Change as ChangeModel } from './model/Change.js';
-import { Change as ChangeEntity } from '../core/entity/Change.js';
+import type { Change as ChangeEntity } from '../core/entity/Change.js';
 import { AbstractRepository } from './AbstractRepository.js';
 
 @SingletonProto({
@@ -17,7 +17,9 @@ export class ChangeRepository extends AbstractRepository {
   }
 
   async query(since: number, limit: number): Promise<Array<ChangeEntity>> {
-    const models = await this.Change.find({ id: { $gte: since } }).order('id', 'asc').limit(limit);
+    const models = await this.Change.find({ id: { $gte: since } })
+      .order('id', 'asc')
+      .limit(limit);
     return models.toObject() as ChangeEntity[];
   }
 

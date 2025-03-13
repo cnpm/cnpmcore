@@ -1,53 +1,62 @@
 import os from 'node:os';
 import { setTimeout } from 'node:timers/promises';
 import { rm } from 'node:fs/promises';
-import {
-  AccessLevel,
-  SingletonProto,
-  Inject,
-} from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
-import { EggHttpClient } from 'egg';
+import type { EggHttpClient } from 'egg';
 import { isEqual, isEmpty } from 'lodash-es';
 import semver from 'semver';
 import { BadRequestError } from 'egg-errors';
-import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry.js';
-import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil.js';
+import type {
+  NPMRegistry,
+  RegistryResponse,
+} from '../../common/adapter/NPMRegistry.js';
+import {
+  detectInstallScript,
+  getScopeAndName,
+} from '../../common/PackageUtil.js';
 import { downloadToTempfile } from '../../common/FileUtil.js';
 import { TaskState, TaskType } from '../../common/enum/Task.js';
 import { AbstractService } from '../../common/AbstractService.js';
-import { TaskRepository } from '../../repository/TaskRepository.js';
-import { PackageJSONType, PackageManifestType, PackageRepository } from '../../repository/PackageRepository.js';
-import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
-import { UserRepository } from '../../repository/UserRepository.js';
-import { Task, SyncPackageTaskOptions, CreateSyncPackageTask } from '../entity/Task.js';
-import { Package } from '../entity/Package.js';
-import { UserService } from './UserService.js';
-import { TaskService } from './TaskService.js';
-import { PackageManagerService } from './PackageManagerService.js';
-import { CacheService } from './CacheService.js';
-import { User } from '../entity/User.js';
-import { RegistryManagerService } from './RegistryManagerService.js';
-import { Registry } from '../entity/Registry.js';
-import { ScopeManagerService } from './ScopeManagerService.js';
+import type { TaskRepository } from '../../repository/TaskRepository.js';
+import type {
+  PackageJSONType,
+  PackageManifestType,
+  PackageRepository,
+} from '../../repository/PackageRepository.js';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
+import type { UserRepository } from '../../repository/UserRepository.js';
+import type {
+  SyncPackageTaskOptions,
+  CreateSyncPackageTask,
+} from '../entity/Task.js';
+import { Task } from '../entity/Task.js';
+import type { Package } from '../entity/Package.js';
+import type { UserService } from './UserService.js';
+import type { TaskService } from './TaskService.js';
+import type { PackageManagerService } from './PackageManagerService.js';
+import type { CacheService } from './CacheService.js';
+import type { User } from '../entity/User.js';
+import type { RegistryManagerService } from './RegistryManagerService.js';
+import type { Registry } from '../entity/Registry.js';
+import type { ScopeManagerService } from './ScopeManagerService.js';
 import { EventCorkAdvice } from './EventCorkerAdvice.js';
 import { PresetRegistryName, SyncDeleteMode } from '../../common/constants.js';
 
 type syncDeletePkgOptions = {
-  task: Task,
-  pkg: Package | null,
-  logUrl: string,
-  url: string,
-  logs: string[],
-  data: any,
+  task: Task;
+  pkg: Package | null;
+  logUrl: string;
+  url: string;
+  logs: string[];
+  data: any;
 };
 
 function isoNow() {
   return new Date().toISOString();
 }
 
-export class RegistryNotMatchError extends BadRequestError {
-}
+export class RegistryNotMatchError extends BadRequestError {}
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -79,15 +88,20 @@ export class PackageSyncerService extends AbstractService {
   private readonly scopeManagerService: ScopeManagerService;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
-    const [ scope, name ] = getScopeAndName(fullname);
+    const [scope, name] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
     // sync task request registry is not same as package registry
     if (pkg && pkg.registryId && options?.registryId) {
       if (pkg.registryId !== options.registryId) {
-        throw new RegistryNotMatchError(`package ${fullname} is not in registry ${options.registryId}`);
+        throw new RegistryNotMatchError(
+          `package ${fullname} is not in registry ${options.registryId}`
+        );
       }
     }
-    return await this.taskService.createTask(Task.createSyncPackage(fullname, options), true);
+    return await this.taskService.createTask(
+      Task.createSyncPackage(fullname, options),
+      true
+    );
   }
 
   public async findTask(taskId: string) {
@@ -99,12 +113,18 @@ export class PackageSyncerService extends AbstractService {
   }
 
   public async findExecuteTask() {
-    return await this.taskService.findExecuteTask(TaskType.SyncPackage) as CreateSyncPackageTask;
+    return (await this.taskService.findExecuteTask(
+      TaskType.SyncPackage
+    )) as CreateSyncPackageTask;
   }
 
   public get allowSyncDownloadData() {
     const config = this.config.cnpmcore;
-    if (config.enableSyncDownloadData && config.syncDownloadDataSourceRegistry && config.syncDownloadDataMaxDate) {
+    if (
+      config.enableSyncDownloadData &&
+      config.syncDownloadDataSourceRegistry &&
+      config.syncDownloadDataMaxDate
+    ) {
       return true;
     }
     return false;
@@ -119,19 +139,32 @@ export class PackageSyncerService extends AbstractService {
     const start = '2011-01-01';
     const end = this.config.cnpmcore.syncDownloadDataMaxDate;
     const registry = this.config.cnpmcore.syncDownloadDataSourceRegistry;
-    const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(registry);
+    const remoteAuthToken =
+      await this.registryManagerService.getAuthTokenByRegistryHost(registry);
     const logs: string[] = [];
     let downloads: { day: string; downloads: number }[];
 
-    logs.push(`[${isoNow()}][DownloadData] 🚧🚧🚧🚧🚧 Syncing "${fullname}" download data "${start}:${end}" on ${registry} 🚧🚧🚧🚧🚧`);
+    logs.push(
+      `[${isoNow()}][DownloadData] 🚧🚧🚧🚧🚧 Syncing "${fullname}" download data "${start}:${end}" on ${registry} 🚧🚧🚧🚧🚧`
+    );
     const failEnd = '❌❌❌❌❌ 🚮 give up 🚮 ❌❌❌❌❌';
     try {
-      const { data, status, res } = await this.npmRegistry.getDownloadRanges(registry, fullname, start, end, { remoteAuthToken });
+      const { data, status, res } = await this.npmRegistry.getDownloadRanges(
+        registry,
+        fullname,
+        start,
+        end,
+        { remoteAuthToken }
+      );
       downloads = data.downloads || [];
-      logs.push(`[${isoNow()}][DownloadData] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, downloads: ${downloads.length}`);
+      logs.push(
+        `[${isoNow()}][DownloadData] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, downloads: ${downloads.length}`
+      );
     } catch (err: any) {
       const status = err.status || 'unknow';
-      logs.push(`[${isoNow()}][DownloadData] ❌ Get download data error: ${err}, status: ${status}`);
+      logs.push(
+        `[${isoNow()}][DownloadData] ❌ Get download data error: ${err}, status: ${status}`
+      );
       logs.push(`[${isoNow()}][DownloadData] ${failEnd}`);
       await this.taskService.appendTaskLog(task, logs.join('\n'));
       return;
@@ -143,39 +176,57 @@ export class PackageSyncerService extends AbstractService {
       //   "downloads": 45
       // },
       const day = item.day;
-      const [ year, month, date ] = day.split('-');
+      const [year, month, date] = day.split('-');
       const yearMonth = parseInt(`${year}${month}`);
       if (!datas.has(yearMonth)) {
         datas.set(yearMonth, []);
       }
       const counters = datas.get(yearMonth);
-      counters!.push([ date, item.downloads ]);
+      counters!.push([date, item.downloads]);
     }
-    for (const [ yearMonth, counters ] of datas.entries()) {
-      await this.packageVersionDownloadRepository.saveSyncDataByMonth(pkg.packageId, yearMonth, counters);
-      logs.push(`[${isoNow()}][DownloadData] 🟢 ${yearMonth}: ${counters.length} days`);
+    for (const [yearMonth, counters] of datas.entries()) {
+      await this.packageVersionDownloadRepository.saveSyncDataByMonth(
+        pkg.packageId,
+        yearMonth,
+        counters
+      );
+      logs.push(
+        `[${isoNow()}][DownloadData] 🟢 ${yearMonth}: ${counters.length} days`
+      );
     }
-    logs.push(`[${isoNow()}][DownloadData] 🟢🟢🟢🟢🟢 ${registry}/${fullname} 🟢🟢🟢🟢🟢`);
+    logs.push(
+      `[${isoNow()}][DownloadData] 🟢🟢🟢🟢🟢 ${registry}/${fullname} 🟢🟢🟢🟢🟢`
+    );
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
   private async syncUpstream(task: Task) {
     const registry = this.npmRegistry.registry;
     const fullname = task.targetName;
-    const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(registry);
+    const remoteAuthToken =
+      await this.registryManagerService.getAuthTokenByRegistryHost(registry);
     let logs: string[] = [];
     let logId = '';
-    logs.push(`[${isoNow()}][UP] 🚧🚧🚧🚧🚧 Waiting sync "${fullname}" task on ${registry} 🚧🚧🚧🚧🚧`);
+    logs.push(
+      `[${isoNow()}][UP] 🚧🚧🚧🚧🚧 Waiting sync "${fullname}" task on ${registry} 🚧🚧🚧🚧🚧`
+    );
     const failEnd = `❌❌❌❌❌ Sync ${registry}/${fullname} 🚮 give up 🚮 ❌❌❌❌❌`;
     try {
-      const { data, status, res } = await this.npmRegistry.createSyncTask(fullname, { remoteAuthToken });
-      logs.push(`[${isoNow()}][UP] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, data: ${JSON.stringify(data)}`);
+      const { data, status, res } = await this.npmRegistry.createSyncTask(
+        fullname,
+        { remoteAuthToken }
+      );
+      logs.push(
+        `[${isoNow()}][UP] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, data: ${JSON.stringify(data)}`
+      );
       logId = data.logId;
     } catch (err: any) {
       const status = err.status || 'unknow';
       // 可能会抛出 AggregateError 异常
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError
-      logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, create sync task error: ${err}, status: ${status} ${err instanceof AggregateError ? err.errors : ''}`);
+      logs.push(
+        `[${isoNow()}][UP] ❌ Sync ${fullname} fail, create sync task error: ${err}, status: ${status} ${err instanceof AggregateError ? err.errors : ''}`
+      );
       logs.push(`[${isoNow()}][UP] ${failEnd}`);
       await this.taskService.appendTaskLog(task, logs.join('\n'));
       return;
@@ -193,33 +244,47 @@ export class PackageSyncerService extends AbstractService {
     let useTime = Date.now() - startTime;
     while (useTime < maxTimeout) {
       // sleep 1s ~ 6s in random
-      const delay = process.env.NODE_ENV === 'test' ? 100 : 1000 + Math.random() * 5000;
+      const delay =
+        process.env.NODE_ENV === 'test' ? 100 : 1000 + Math.random() * 5000;
       await setTimeout(delay);
       try {
-        const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset, { remoteAuthToken });
+        const { data, status, url } = await this.npmRegistry.getSyncTask(
+          fullname,
+          logId,
+          offset,
+          { remoteAuthToken }
+        );
         useTime = Date.now() - startTime;
         if (!logUrl) {
           logUrl = url;
         }
-        const log = data && data.log || '';
+        const log = (data && data.log) || '';
         offset += log.length;
         if (data && data.syncDone) {
-          logs.push(`[${isoNow()}][UP] 🎉 Sync ${fullname} success [${useTime}ms], log: ${logUrl}, offset: ${offset}`);
+          logs.push(
+            `[${isoNow()}][UP] 🎉 Sync ${fullname} success [${useTime}ms], log: ${logUrl}, offset: ${offset}`
+          );
           logs.push(`[${isoNow()}][UP] 🔗 ${registry}/${fullname}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           return;
         }
-        logs.push(`[${isoNow()}][UP] 🚧 HTTP [${status}] [${useTime}ms], offset: ${offset}`);
+        logs.push(
+          `[${isoNow()}][UP] 🚧 HTTP [${status}] [${useTime}ms], offset: ${offset}`
+        );
         await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
       } catch (err: any) {
         useTime = Date.now() - startTime;
         const status = err.status || 'unknow';
-        logs.push(`[${isoNow()}][UP] 🚧 HTTP [${status}] [${useTime}ms] error: ${err}`);
+        logs.push(
+          `[${isoNow()}][UP] 🚧 HTTP [${status}] [${useTime}ms] error: ${err}`
+        );
       }
     }
     // timeout
-    logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, timeout, log: ${logUrl}, offset: ${offset}`);
+    logs.push(
+      `[${isoNow()}][UP] ❌ Sync ${fullname} fail, timeout, log: ${logUrl}, offset: ${offset}`
+    );
     logs.push(`[${isoNow()}][UP] ${failEnd}`);
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
@@ -263,8 +328,10 @@ export class PackageSyncerService extends AbstractService {
     //   "_attachments": {}
     // }
     let isSecurityHolder = true;
-    for (const versionInfo of Object.entries<{ _npmUser?: { name: string } }>(data.versions || {})) {
-      const [ v, info ] = versionInfo;
+    for (const versionInfo of Object.entries<{ _npmUser?: { name: string } }>(
+      data.versions || {}
+    )) {
+      const [v, info] = versionInfo;
       // >=0.0.1-security <0.0.2-0
       const isSecurityVersion = semver.satisfies(v, '^0.0.1-security');
       const isNpmUser = info?._npmUser?.name === 'npm';
@@ -285,11 +352,20 @@ export class PackageSyncerService extends AbstractService {
   // - ignore: 不做任何处理，直接结束任务
   // - delete: 删除包数据，包括 manifest 存储
   // - block: 软删除 将包标记为 block，用户无法直接使用
-  private async syncDeletePkg({ task, pkg, logUrl, url, logs, data }: syncDeletePkgOptions) {
+  private async syncDeletePkg({
+    task,
+    pkg,
+    logUrl,
+    url,
+    logs,
+    data,
+  }: syncDeletePkgOptions) {
     const fullname = task.targetName;
     const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
     const syncDeleteMode: SyncDeleteMode = this.config.cnpmcore.syncDeleteMode;
-    logs.push(`[${isoNow()}] 🟢 Package "${fullname}" was removed in remote registry, response data: ${JSON.stringify(data)}, config.syncDeleteMode = ${syncDeleteMode}`);
+    logs.push(
+      `[${isoNow()}] 🟢 Package "${fullname}" was removed in remote registry, response data: ${JSON.stringify(data)}, config.syncDeleteMode = ${syncDeleteMode}`
+    );
 
     // pkg not exists in local registry
     if (!pkg) {
@@ -297,31 +373,46 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
-        task.taskId, task.targetName, task.error);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-404] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error
+      );
       return;
     }
 
     if (syncDeleteMode === SyncDeleteMode.ignore) {
       // ignore deleted package
-      logs.push(`[${isoNow()}] 🟢 Skip remove since config.syncDeleteMode = ignore`);
+      logs.push(
+        `[${isoNow()}] 🟢 Skip remove since config.syncDeleteMode = ignore`
+      );
     } else if (syncDeleteMode === SyncDeleteMode.block) {
       // block deleted package
-      await this.packageManagerService.blockPackage(pkg, 'Removed in remote registry');
-      logs.push(`[${isoNow()}] 🟢 Block the package since config.syncDeleteMode = block`);
+      await this.packageManagerService.blockPackage(
+        pkg,
+        'Removed in remote registry'
+      );
+      logs.push(
+        `[${isoNow()}] 🟢 Block the package since config.syncDeleteMode = block`
+      );
     } else if (syncDeleteMode === SyncDeleteMode.delete) {
       // delete package
       await this.packageManagerService.unpublishPackage(pkg);
-      logs.push(`[${isoNow()}] 🟢 Delete the package since config.syncDeleteMode = delete`);
+      logs.push(
+        `[${isoNow()}] 🟢 Delete the package since config.syncDeleteMode = delete`
+      );
     }
 
     // update log
     logs.push(`[${isoNow()}] 📝 Log URL: ${logUrl}`);
     logs.push(`[${isoNow()}] 🔗 ${url}`);
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-    this.logger.info('[PackageSyncerService.executeTask:remove-package] taskId: %s, targetName: %s',
-      task.taskId, task.targetName);
-
+    this.logger.info(
+      '[PackageSyncerService.executeTask:remove-package] taskId: %s, targetName: %s',
+      task.taskId,
+      task.targetName
+    );
   }
 
   // 初始化对应的 Registry
@@ -329,8 +420,13 @@ export class PackageSyncerService extends AbstractService {
   // 1. 其次从 task.data.registryId (创建单包同步任务时传入)
   // 2. 接着根据 scope 进行计算 (作为子包依赖同步时候，无 registryId)
   // 3. 最后返回 default registryId (可能 default registry 也不存在)
-  public async initSpecRegistry(task: Task, pkg: Package | null = null, scope?: string): Promise<Registry> {
-    const registryId = pkg?.registryId || (task.data as SyncPackageTaskOptions).registryId;
+  public async initSpecRegistry(
+    task: Task,
+    pkg: Package | null = null,
+    scope?: string
+  ): Promise<Registry> {
+    const registryId =
+      pkg?.registryId || (task.data as SyncPackageTaskOptions).registryId;
     let targetHost: string = this.config.cnpmcore.sourceRegistry;
     let registry: Registry | null = null;
 
@@ -341,7 +437,9 @@ export class PackageSyncerService extends AbstractService {
     } else if (scope) {
       const scopeModel = await this.scopeManagerService.findByName(scope);
       if (scopeModel?.registryId) {
-        registry = await this.registryManagerService.findByRegistryId(scopeModel?.registryId);
+        registry = await this.registryManagerService.findByRegistryId(
+          scopeModel?.registryId
+        );
       }
     }
 
@@ -367,8 +465,14 @@ export class PackageSyncerService extends AbstractService {
   @Pointcut(EventCorkAdvice)
   public async executeTask(task: Task) {
     const fullname = task.targetName;
-    const [ scope, name ] = getScopeAndName(fullname);
-    const { tips, skipDependencies: originSkipDependencies, syncDownloadData, forceSyncHistory, specificVersions } = task.data as SyncPackageTaskOptions;
+    const [scope, name] = getScopeAndName(fullname);
+    const {
+      tips,
+      skipDependencies: originSkipDependencies,
+      syncDownloadData,
+      forceSyncHistory,
+      specificVersions,
+    } = task.data as SyncPackageTaskOptions;
     let pkg = await this.packageRepository.findPackage(scope, name);
     const registry = await this.initSpecRegistry(task, pkg, scope);
     const registryHost = this.npmRegistry.registry;
@@ -378,34 +482,69 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] 👉👉👉👉👉 Tips: ${tips} 👈👈👈👈👈`);
     }
 
-    const taskQueueLength = await this.taskService.getTaskQueueLength(task.type);
+    const taskQueueLength = await this.taskService.getTaskQueueLength(
+      task.type
+    );
     const taskQueueHighWaterSize = this.config.cnpmcore.taskQueueHighWaterSize;
     const taskQueueInHighWaterState = taskQueueLength >= taskQueueHighWaterSize;
-    const skipDependencies = taskQueueInHighWaterState ? true : !!originSkipDependencies;
-    const syncUpstream = !!(!taskQueueInHighWaterState && this.config.cnpmcore.sourceRegistryIsCNpm && this.config.cnpmcore.syncUpstreamFirst && registry.name === PresetRegistryName.default);
+    const skipDependencies = taskQueueInHighWaterState
+      ? true
+      : !!originSkipDependencies;
+    const syncUpstream = !!(
+      !taskQueueInHighWaterState &&
+      this.config.cnpmcore.sourceRegistryIsCNpm &&
+      this.config.cnpmcore.syncUpstreamFirst &&
+      registry.name === PresetRegistryName.default
+    );
     const logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${task.taskId}/log`;
-    this.logger.info('[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
-      task.taskId, task.targetName, task.attempts, taskQueueLength, taskQueueHighWaterSize, syncUpstream, logUrl);
-    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`);
+    this.logger.info(
+      '[PackageSyncerService.executeTask:start] taskId: %s, targetName: %s, attempts: %s, taskQueue: %s/%s, syncUpstream: %s, log: %s',
+      task.taskId,
+      task.targetName,
+      task.attempts,
+      taskQueueLength,
+      taskQueueHighWaterSize,
+      syncUpstream,
+      logUrl
+    );
+    logs.push(
+      `[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`
+    );
     if (specificVersions) {
-      logs.push(`[${isoNow()}] 👉 syncing specific versions: ${specificVersions.join(' | ')} 👈`);
+      logs.push(
+        `[${isoNow()}] 👉 syncing specific versions: ${specificVersions.join(' | ')} 👈`
+      );
     }
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
     if (registry?.name === PresetRegistryName.self) {
-      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} has been published to the self registry, skip sync ❌❌❌❌❌`);
+      logs.push(
+        `[${isoNow()}] ❌❌❌❌❌ ${fullname} has been published to the self registry, skip sync ❌❌❌❌❌`
+      );
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid registryId',
-        task.taskId, task.targetName);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid registryId',
+        task.taskId,
+        task.targetName
+      );
       return;
     }
 
     if (pkg && pkg?.registryId !== registry?.registryId) {
       if (pkg.registryId) {
-        logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry?.registryId}, skip sync ❌❌❌❌❌`);
-        await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-        this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid registryId',
-          task.taskId, task.targetName);
+        logs.push(
+          `[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry?.registryId}, skip sync ❌❌❌❌❌`
+        );
+        await this.taskService.finishTask(
+          task,
+          TaskState.Fail,
+          logs.join('\n')
+        );
+        this.logger.info(
+          '[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, invalid registryId',
+          task.taskId,
+          task.targetName
+        );
         return;
       }
       // 多同步源之前没有 registryId
@@ -418,10 +557,19 @@ export class PackageSyncerService extends AbstractService {
     if (syncDownloadData && pkg) {
       await this.syncDownloadData(task, pkg);
       logs.push(`[${isoNow()}] 🟢 log: ${logUrl}`);
-      logs.push(`[${isoNow()}] 🟢🟢🟢🟢🟢 Sync "${fullname}" download data success 🟢🟢🟢🟢🟢`);
-      await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
-        task.taskId, task.targetName);
+      logs.push(
+        `[${isoNow()}] 🟢🟢🟢🟢🟢 Sync "${fullname}" download data success 🟢🟢🟢🟢🟢`
+      );
+      await this.taskService.finishTask(
+        task,
+        TaskState.Success,
+        logs.join('\n')
+      );
+      this.logger.info(
+        '[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
+        task.taskId,
+        task.targetName
+      );
       return;
     }
 
@@ -437,21 +585,33 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
-      this.logger.info('[PackageSyncerService.executeTask:fail-block-list] taskId: %s, targetName: %s, %s',
-        task.taskId, task.targetName, task.error);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-block-list] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error
+      );
       return;
     }
 
     let registryFetchResult: RegistryResponse;
     try {
-      registryFetchResult = await this.npmRegistry.getFullManifests(fullname, { remoteAuthToken });
+      registryFetchResult = await this.npmRegistry.getFullManifests(fullname, {
+        remoteAuthToken,
+      });
     } catch (err: any) {
       const status = err.status || 'unknown';
       task.error = `request manifests error: ${err}, status: ${status}`;
-      logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`);
+      logs.push(
+        `[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`
+      );
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
-      this.logger.info('[PackageSyncerService.executeTask:fail-request-error] taskId: %s, targetName: %s, %s',
-        task.taskId, task.targetName, task.error);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-request-error] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error
+      );
       await this.taskService.retryTask(task, logs.join('\n'));
       return;
     }
@@ -463,11 +623,19 @@ export class PackageSyncerService extends AbstractService {
       // registry will response status 522 and data will be null
       // > TypeError: Cannot read properties of null (reading 'readme')
       task.error = `request manifests response error, status: ${status}, data: ${JSON.stringify(data)}`;
-      logs.push(`[${isoNow()}] ❌ response headers: ${JSON.stringify(headers)}`);
-      logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`);
+      logs.push(
+        `[${isoNow()}] ❌ response headers: ${JSON.stringify(headers)}`
+      );
+      logs.push(
+        `[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`
+      );
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
-      this.logger.info('[PackageSyncerService.executeTask:fail-request-error] taskId: %s, targetName: %s, %s',
-        task.taskId, task.targetName, task.error);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-request-error] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error
+      );
       await this.taskService.retryTask(task, logs.join('\n'));
       return;
     }
@@ -477,10 +645,16 @@ export class PackageSyncerService extends AbstractService {
       // https://github.com/node-modules/detect-port/issues/57
       task.error = `Package not found, status 404, data: ${JSON.stringify(data)}`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
-      logs.push(`[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`);
+      logs.push(
+        `[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`
+      );
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
-      this.logger.info('[PackageSyncerService.executeTask:fail-request-error] taskId: %s, targetName: %s, %s',
-        task.taskId, task.targetName, task.error);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-request-error] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error
+      );
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
@@ -496,7 +670,9 @@ export class PackageSyncerService extends AbstractService {
     const timeMap = data.time || {};
     const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
     const contentLength = headers['content-length'] || '-';
-    logs.push(`[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`);
+    logs.push(
+      `[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`
+    );
 
     if (this.isRemovedInRemote(registryFetchResult)) {
       await this.syncDeletePkg({ task, pkg, logs, logUrl, url, data });
@@ -508,7 +684,9 @@ export class PackageSyncerService extends AbstractService {
 
     // show latest information
     if (distTags.latest) {
-      logs.push(`[${isoNow()}] 📖 ${fullname} latest version: ${distTags.latest ?? '-'}, published time: ${JSON.stringify(timeMap[distTags.latest])}`);
+      logs.push(
+        `[${isoNow()}] 📖 ${fullname} latest version: ${distTags.latest ?? '-'}, published time: ${JSON.stringify(timeMap[distTags.latest])}`
+      );
     }
 
     // 1. save maintainers
@@ -517,7 +695,8 @@ export class PackageSyncerService extends AbstractService {
     //   { name: 'jasonlaster11', email: 'jason.laster.11@gmail.com' }
     // ],
     let maintainers = data.maintainers;
-    const maintainersMap: Record<string, PackageManifestType['maintainers']> = {};
+    const maintainersMap: Record<string, PackageManifestType['maintainers']> =
+      {};
     const users: User[] = [];
     let changedUserCount = 0;
     if (!Array.isArray(maintainers) || maintainers.length === 0) {
@@ -526,28 +705,47 @@ export class PackageSyncerService extends AbstractService {
       // security holding package will not contains maintainers, auto set npm and npm@npmjs.com to maintainer
       // "description": "security holding package",
       // "repository": "npm/security-holder"
-      if (data.description === 'security holding package' || data.repository === 'npm/security-holder') {
-        maintainers = data.maintainers = [{ name: 'npm', email: 'npm@npmjs.com' }];
+      if (
+        data.description === 'security holding package' ||
+        data.repository === 'npm/security-holder'
+      ) {
+        maintainers = data.maintainers = [
+          { name: 'npm', email: 'npm@npmjs.com' },
+        ];
       } else {
         // try to use latest tag version's maintainers instead
-        const latestPackageVersion = distTags.latest && versionMap[distTags.latest];
-        if (latestPackageVersion && Array.isArray(latestPackageVersion.maintainers)) {
+        const latestPackageVersion =
+          distTags.latest && versionMap[distTags.latest];
+        if (
+          latestPackageVersion &&
+          Array.isArray(latestPackageVersion.maintainers)
+        ) {
           maintainers = latestPackageVersion.maintainers;
-          logs.push(`[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`);
+          logs.push(
+            `[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`
+          );
         }
       }
     }
 
     if (Array.isArray(maintainers) && maintainers.length > 0) {
-      logs.push(`[${isoNow()}] 🚧 Syncing maintainers: ${JSON.stringify(maintainers)}`);
+      logs.push(
+        `[${isoNow()}] 🚧 Syncing maintainers: ${JSON.stringify(maintainers)}`
+      );
       for (const maintainer of maintainers) {
         if (maintainer.name && maintainer.email) {
           maintainersMap[maintainer.name] = maintainer;
-          const { changed, user } = await this.userService.saveUser(registry?.userPrefix, maintainer.name, maintainer.email);
+          const { changed, user } = await this.userService.saveUser(
+            registry?.userPrefix,
+            maintainer.name,
+            maintainer.email
+          );
           users.push(user);
           if (changed) {
             changedUserCount++;
-            logs.push(`[${isoNow()}] 🟢 [${changedUserCount}] Synced ${maintainer.name} => ${user.name}(${user.userId})`);
+            logs.push(
+              `[${isoNow()}] 🟢 [${changedUserCount}] Synced ${maintainer.name} => ${user.name}(${user.userId})`
+            );
           }
         }
       }
@@ -575,50 +773,80 @@ export class PackageSyncerService extends AbstractService {
       task.error = `invalid maintainers: ${JSON.stringify(maintainers)}`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
-      this.logger.info('[PackageSyncerService.executeTask:fail-invalid-maintainers] taskId: %s, targetName: %s, %s',
-        task.taskId, task.targetName, task.error);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-invalid-maintainers] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error
+      );
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
 
     let lastErrorMessage = '';
     const dependenciesSet = new Set<string>();
-    const { data: existsData } = await this.packageManagerService.listPackageFullManifests(scope, name);
-    const { data: abbreviatedManifests } = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name);
+    const { data: existsData } =
+      await this.packageManagerService.listPackageFullManifests(scope, name);
+    const { data: abbreviatedManifests } =
+      await this.packageManagerService.listPackageAbbreviatedManifests(
+        scope,
+        name
+      );
     const existsVersionMap = existsData?.versions ?? {};
     const existsVersionCount = Object.keys(existsVersionMap).length;
     const abbreviatedVersionMap = abbreviatedManifests?.versions ?? {};
     // 2. save versions
-    if (specificVersions && !this.config.cnpmcore.strictSyncSpecivicVersion && !specificVersions.includes(distTags.latest)) {
-      logs.push(`[${isoNow()}] 📦 Add latest tag version "${fullname}: ${distTags.latest}"`);
+    if (
+      specificVersions &&
+      !this.config.cnpmcore.strictSyncSpecivicVersion &&
+      !specificVersions.includes(distTags.latest)
+    ) {
+      logs.push(
+        `[${isoNow()}] 📦 Add latest tag version "${fullname}: ${distTags.latest}"`
+      );
       specificVersions.push(distTags.latest);
     }
-    const versions = specificVersions ?
-      Object.values<PackageJSONType>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) :
-      Object.values<PackageJSONType>(versionMap);
+    const versions = specificVersions
+      ? Object.values<PackageJSONType>(versionMap).filter(verItem =>
+          specificVersions.includes(verItem.version)
+        )
+      : Object.values<PackageJSONType>(versionMap);
     // 全量同步时跳过排序
-    const sortedAvailableVersions = specificVersions ?
-      versions.map(item => item.version).sort(semver.rcompare) : [];
+    const sortedAvailableVersions = specificVersions
+      ? versions.map(item => item.version).sort(semver.rcompare)
+      : [];
     // 在strictSyncSpecivicVersion模式下（不同步latest）且所有传入的version均不可用
     if (specificVersions && sortedAvailableVersions.length === 0) {
       logs.push(`[${isoNow()}] ❌ `);
       task.error = 'There is no available specific versions, stop task.';
       logs.push(`[${isoNow()}]  ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
-      this.logger.info('[PackageSyncerService.executeTask:fail-empty-list] taskId: %s, targetName: %s, %s',
-        task.taskId, task.targetName, task.error);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-empty-list] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error
+      );
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
     if (specificVersions) {
       // specific versions may not in manifest.
-      const notAvailableVersionList = specificVersions.filter(i => !sortedAvailableVersions.includes(i));
-      logs.push(`[${isoNow()}] 🚧 Syncing specific versions: ${sortedAvailableVersions.join(' | ')}`);
+      const notAvailableVersionList = specificVersions.filter(
+        i => !sortedAvailableVersions.includes(i)
+      );
+      logs.push(
+        `[${isoNow()}] 🚧 Syncing specific versions: ${sortedAvailableVersions.join(' | ')}`
+      );
       if (notAvailableVersionList.length > 0) {
-        logs.push(`🚧 Some specific versions are not available: 👉 ${notAvailableVersionList.join(' | ')} 👈`);
+        logs.push(
+          `🚧 Some specific versions are not available: 👉 ${notAvailableVersionList.join(' | ')} 👈`
+        );
       }
     } else {
-      logs.push(`[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`);
+      logs.push(
+        `[${isoNow()}] 🚧 Syncing versions ${existsVersionCount} => ${versions.length}`
+      );
     }
 
     const updateVersions: string[] = [];
@@ -627,23 +855,37 @@ export class PackageSyncerService extends AbstractService {
     for (const item of versions) {
       const version: string = item.version;
       if (!version) continue;
-      let existsItem: typeof existsVersionMap[string] | undefined = existsVersionMap[version];
-      let existsAbbreviatedItem: typeof abbreviatedVersionMap[string] | undefined = abbreviatedVersionMap[version];
+      let existsItem: (typeof existsVersionMap)[string] | undefined =
+        existsVersionMap[version];
+      let existsAbbreviatedItem:
+        | (typeof abbreviatedVersionMap)[string]
+        | undefined = abbreviatedVersionMap[version];
       const shouldDeleteReadme = !!(existsItem && 'readme' in existsItem);
       if (pkg) {
         if (existsItem) {
           // check item on AbbreviatedManifests
           if (!existsAbbreviatedItem) {
             updateVersions.push(version);
-            logs.push(`[${isoNow()}] 🐛 Remote version ${version} not exists on local abbreviated manifests, need to refresh`);
+            logs.push(
+              `[${isoNow()}] 🐛 Remote version ${version} not exists on local abbreviated manifests, need to refresh`
+            );
           }
         }
 
         if (existsItem && forceSyncHistory === true) {
-          const pkgVer = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+          const pkgVer = await this.packageRepository.findPackageVersion(
+            pkg.packageId,
+            version
+          );
           if (pkgVer) {
-            logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Remove version ${version} for force sync history`);
-            await this.packageManagerService.removePackageVersion(pkg, pkgVer, true);
+            logs.push(
+              `[${isoNow()}] 🚧 [${syncIndex}] Remove version ${version} for force sync history`
+            );
+            await this.packageManagerService.removePackageVersion(
+              pkg,
+              pkgVer,
+              true
+            );
             existsItem = undefined;
             existsAbbreviatedItem = undefined;
             existsVersionMap[version] = undefined;
@@ -658,12 +900,19 @@ export class PackageSyncerService extends AbstractService {
         // need libc field https://github.com/cnpm/cnpmcore/issues/187
         // fix _npmUser field since https://github.com/cnpm/cnpmcore/issues/553
         const metaDataKeys = [
-          'peerDependenciesMeta', 'os', 'cpu', 'libc', 'workspaces', 'hasInstallScript',
-          'deprecated', '_npmUser', 'funding',
+          'peerDependenciesMeta',
+          'os',
+          'cpu',
+          'libc',
+          'workspaces',
+          'hasInstallScript',
+          'deprecated',
+          '_npmUser',
+          'funding',
           // https://github.com/cnpm/cnpmcore/issues/689
           'acceptDependencies',
         ];
-        const ignoreInAbbreviated = [ '_npmUser' ];
+        const ignoreInAbbreviated = new Set(['_npmUser']);
         const diffMeta: Partial<PackageJSONType> = {};
         for (const key of metaDataKeys) {
           let remoteItemValue = item[key];
@@ -675,7 +924,14 @@ export class PackageSyncerService extends AbstractService {
           }
           if (!isEqual(remoteItemValue, existsItem[key])) {
             diffMeta[key] = remoteItemValue;
-          } else if (!ignoreInAbbreviated.includes(key) && existsAbbreviatedItem && !isEqual(remoteItemValue, (existsAbbreviatedItem as Record<string, unknown>)[key])) {
+          } else if (
+            !ignoreInAbbreviated.has(key) &&
+            existsAbbreviatedItem &&
+            !isEqual(
+              remoteItemValue,
+              (existsAbbreviatedItem as Record<string, unknown>)[key]
+            )
+          ) {
             // should diff exists abbreviated item too
             diffMeta[key] = remoteItemValue;
           }
@@ -685,7 +941,7 @@ export class PackageSyncerService extends AbstractService {
           diffMeta.readme = undefined;
         }
         if (!isEmpty(diffMeta)) {
-          differentMetas.push([ existsItem, diffMeta ]);
+          differentMetas.push([existsItem, diffMeta]);
         }
         continue;
       }
@@ -699,29 +955,46 @@ export class PackageSyncerService extends AbstractService {
       const tarball = dist && dist.tarball;
       if (!tarball) {
         lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
-        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
+        logs.push(
+          `[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`
+        );
         await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
       }
       const publishTimeISO = timeMap[version];
-      const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
+      const publishTime = publishTimeISO
+        ? new Date(publishTimeISO)
+        : new Date();
       const delay = Date.now() - publishTime.getTime();
-      logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`);
+      logs.push(
+        `[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`
+      );
       let localFile: string;
       try {
-        const { tmpfile, headers, timing } =
-          await downloadToTempfile(this.httpclient, this.config.dataDir, tarball, { remoteAuthToken });
+        const { tmpfile, headers, timing } = await downloadToTempfile(
+          this.httpclient,
+          this.config.dataDir,
+          tarball,
+          { remoteAuthToken }
+        );
         localFile = tmpfile;
-        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`);
+        logs.push(
+          `[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`
+        );
       } catch (err: any) {
-        if (err.name === 'DownloadNotFoundError' || err.name === 'DownloadStatusInvalidError') {
+        if (
+          err.name === 'DownloadNotFoundError' ||
+          err.name === 'DownloadStatusInvalidError'
+        ) {
           this.logger.warn('Download tarball %s error: %s', tarball, err);
         } else {
           this.logger.error('Download tarball %s error: %s', tarball, err);
         }
         lastErrorMessage = `download tarball error: ${err}`;
-        logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
+        logs.push(
+          `[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`
+        );
         await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
         continue;
@@ -747,25 +1020,40 @@ export class PackageSyncerService extends AbstractService {
       };
       try {
         // 当 version 记录已经存在时，还需要校验一下 pkg.manifests 是否存在
-        const publisher = users.find(user => user.displayName === item._npmUser?.name) || users[0];
-        const pkgVersion = await this.packageManagerService.publish(publishCmd, publisher);
+        const publisher =
+          users.find(user => user.displayName === item._npmUser?.name) ||
+          users[0];
+        const pkgVersion = await this.packageManagerService.publish(
+          publishCmd,
+          publisher
+        );
         updateVersions.push(pkgVersion.version);
-        logs.push(`[${isoNow()}] 🎉 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`);
+        logs.push(
+          `[${isoNow()}] 🎉 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`
+        );
       } catch (err: any) {
         if (err.name === 'ForbiddenError') {
-          logs.push(`[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`);
+          logs.push(
+            `[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`
+          );
           // 如果 pkg.manifests 不存在，需要补充一下
           updateVersions.push(version);
         } else {
           err.taskId = task.taskId;
           this.logger.error(err);
           lastErrorMessage = `publish error: ${err}`;
-          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} error, ${lastErrorMessage}`);
+          logs.push(
+            `[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} error, ${lastErrorMessage}`
+          );
           if (err.name === 'BadRequestError') {
             // 由于当前版本的依赖不满足，尝试重试
             // 默认会在当前队列最后重试
-            this.logger.info('[PackageSyncerService.executeTask:fail-validate-deps] taskId: %s, targetName: %s, %s',
-              task.taskId, task.targetName, task.error);
+            this.logger.info(
+              '[PackageSyncerService.executeTask:fail-validate-deps] taskId: %s, targetName: %s, %s',
+              task.taskId,
+              task.targetName,
+              task.error
+            );
             await this.taskService.retryTask(task, logs.join('\n'));
             return;
           }
@@ -779,7 +1067,8 @@ export class PackageSyncerService extends AbstractService {
         for (const dependencyName in dependencies) {
           dependenciesSet.add(dependencyName);
         }
-        const optionalDependencies: Record<string, string> = item.optionalDependencies || {};
+        const optionalDependencies: Record<string, string> =
+          item.optionalDependencies || {};
         for (const dependencyName in optionalDependencies) {
           dependenciesSet.add(dependencyName);
         }
@@ -791,26 +1080,40 @@ export class PackageSyncerService extends AbstractService {
     }
     if (!pkg || !pkg.id) {
       // sync all versions fail in the first time
-      logs.push(`[${isoNow()}] ❌ All versions sync fail, package not exists, log: ${logUrl}`);
+      logs.push(
+        `[${isoNow()}] ❌ All versions sync fail, package not exists, log: ${logUrl}`
+      );
       logs.push(`[${isoNow()}] ${failEnd}`);
       task.error = lastErrorMessage;
-      this.logger.info('[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package not exists',
-        task.taskId, task.targetName);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package not exists',
+        task.taskId,
+        task.targetName
+      );
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
 
     // 2.1 save differentMetas
-    for (const [ existsItem, diffMeta ] of differentMetas) {
-      const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsItem.version);
+    for (const [existsItem, diffMeta] of differentMetas) {
+      const pkgVersion = await this.packageRepository.findPackageVersion(
+        pkg.packageId,
+        existsItem.version
+      );
       if (pkgVersion) {
-        await this.packageManagerService.savePackageVersionManifest(pkgVersion, diffMeta, diffMeta);
+        await this.packageManagerService.savePackageVersionManifest(
+          pkgVersion,
+          diffMeta,
+          diffMeta
+        );
         updateVersions.push(pkgVersion.version);
         let diffMetaInfo = JSON.stringify(diffMeta);
         if ('readme' in diffMeta) {
           diffMetaInfo += ', delete exists readme';
         }
-        logs.push(`[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${diffMetaInfo}`);
+        logs.push(
+          `[${isoNow()}] 🟢 Synced version ${existsItem.version} success, different meta: ${diffMetaInfo}`
+        );
       }
     }
 
@@ -818,22 +1121,37 @@ export class PackageSyncerService extends AbstractService {
     // 2.3 find out remove versions
     for (const existsVersion in existsVersionMap) {
       if (!(existsVersion in versionMap)) {
-        const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, existsVersion);
+        const pkgVersion = await this.packageRepository.findPackageVersion(
+          pkg.packageId,
+          existsVersion
+        );
         if (pkgVersion) {
-          await this.packageManagerService.removePackageVersion(pkg, pkgVersion, true);
-          logs.push(`[${isoNow()}] 🟢 Removed version ${existsVersion} success`);
+          await this.packageManagerService.removePackageVersion(
+            pkg,
+            pkgVersion,
+            true
+          );
+          logs.push(
+            `[${isoNow()}] 🟢 Removed version ${existsVersion} success`
+          );
         }
         removeVersions.push(existsVersion);
       }
     }
 
-    logs.push(`[${isoNow()}] 🟢 Synced updated ${updateVersions.length} versions, removed ${removeVersions.length} versions`);
+    logs.push(
+      `[${isoNow()}] 🟢 Synced updated ${updateVersions.length} versions, removed ${removeVersions.length} versions`
+    );
     if (updateVersions.length > 0 || removeVersions.length > 0) {
       logs.push(`[${isoNow()}] 🚧 Refreshing manifests to dists ......`);
       const start = Date.now();
       await this.taskService.appendTaskLog(task, logs.join('\n'));
       logs = [];
-      await this.packageManagerService.refreshPackageChangeVersionsToDists(pkg, updateVersions, removeVersions);
+      await this.packageManagerService.refreshPackageChangeVersionsToDists(
+        pkg,
+        updateVersions,
+        removeVersions
+      );
       logs.push(`[${isoNow()}] 🟢 Refresh use ${Date.now() - start}ms`);
     }
 
@@ -841,35 +1159,48 @@ export class PackageSyncerService extends AbstractService {
     // "dist-tags": {
     //   "latest": "0.0.7"
     // },
-    const changedTags: { tag: string, version?: string, action: string }[] = [];
-    const existsDistTags = existsData && existsData['dist-tags'] || {};
+    const changedTags: { tag: string; version?: string; action: string }[] = [];
+    const existsDistTags = (existsData && existsData['dist-tags']) || {};
     let shouldRefreshDistTags = false;
     for (const tag in distTags) {
       const version = distTags[tag];
       const utf8mb3Regex = /[\u0020-\uD7FF\uE000-\uFFFD]/;
       if (!utf8mb3Regex.test(tag)) {
-        logs.push(`[${isoNow()}] 🚧 invalid tag(${tag}: ${version}), tag name is out of utf8mb3, skip`);
+        logs.push(
+          `[${isoNow()}] 🚧 invalid tag(${tag}: ${version}), tag name is out of utf8mb3, skip`
+        );
         continue;
       }
       // 新 tag 指向的版本既不在存量数据里，也不在本次同步版本列表里
       // 例如 latest 对应的 version 写入失败跳过
       if (!existsVersionMap[version] && !updateVersions.includes(version)) {
-        logs.push(`[${isoNow()}] 🚧 invalid tag(${tag}: ${version}), version is not exists, skip`);
+        logs.push(
+          `[${isoNow()}] 🚧 invalid tag(${tag}: ${version}), version is not exists, skip`
+        );
         continue;
       }
-      const changed = await this.packageManagerService.savePackageTag(pkg, tag, version);
+      const changed = await this.packageManagerService.savePackageTag(
+        pkg,
+        tag,
+        version
+      );
       if (changed) {
         changedTags.push({ action: 'change', tag, version });
         shouldRefreshDistTags = false;
       } else if (version !== existsDistTags[tag]) {
         shouldRefreshDistTags = true;
-        logs.push(`[${isoNow()}] 🚧 Remote tag(${tag}: ${version}) not exists in local dist-tags`);
+        logs.push(
+          `[${isoNow()}] 🚧 Remote tag(${tag}: ${version}) not exists in local dist-tags`
+        );
       }
     }
     // 3.1 find out remove tags
     for (const tag in existsDistTags) {
       if (!(tag in distTags)) {
-        const changed = await this.packageManagerService.removePackageTag(pkg, tag);
+        const changed = await this.packageManagerService.removePackageTag(
+          pkg,
+          tag
+        );
         if (changed) {
           changedTags.push({ action: 'remove', tag });
           shouldRefreshDistTags = false;
@@ -880,20 +1211,38 @@ export class PackageSyncerService extends AbstractService {
     // 在同步 sepcific version 时如果没有同步 latestTag 的版本会出现 latestTag 丢失或指向版本不正确的情况
     if (specificVersions && this.config.cnpmcore.strictSyncSpecivicVersion) {
       // 不允许自动同步 latest 版本，从已同步版本中选出 latest
-      let latestStableVersion = semver.maxSatisfying(sortedAvailableVersions, '*');
+      let latestStableVersion = semver.maxSatisfying(
+        sortedAvailableVersions,
+        '*'
+      );
       // 所有版本都不是稳定版本则指向非稳定版本保证 latest 存在
       if (!latestStableVersion) {
         latestStableVersion = sortedAvailableVersions[0];
       }
-      if (!existsDistTags.latest || semver.rcompare(existsDistTags.latest, latestStableVersion) === 1) {
-        logs.push(`[${isoNow()}] 🚧 patch latest tag from specific versions 🚧`);
-        changedTags.push({ action: 'change', tag: 'latest', version: latestStableVersion });
-        await this.packageManagerService.savePackageTag(pkg, 'latest', latestStableVersion);
+      if (
+        !existsDistTags.latest ||
+        semver.rcompare(existsDistTags.latest, latestStableVersion) === 1
+      ) {
+        logs.push(
+          `[${isoNow()}] 🚧 patch latest tag from specific versions 🚧`
+        );
+        changedTags.push({
+          action: 'change',
+          tag: 'latest',
+          version: latestStableVersion,
+        });
+        await this.packageManagerService.savePackageTag(
+          pkg,
+          'latest',
+          latestStableVersion
+        );
       }
     }
 
     if (changedTags.length > 0) {
-      logs.push(`[${isoNow()}] 🟢 Synced ${changedTags.length} tags: ${JSON.stringify(changedTags)}`);
+      logs.push(
+        `[${isoNow()}] 🟢 Synced ${changedTags.length} tags: ${JSON.stringify(changedTags)}`
+      );
     }
     if (shouldRefreshDistTags) {
       await this.packageManagerService.refreshPackageDistTagsToDists(pkg);
@@ -904,11 +1253,13 @@ export class PackageSyncerService extends AbstractService {
     await this.packageManagerService.savePackageMaintainers(pkg, users);
     // 4.1 find out remove maintainers
     const removedMaintainers: unknown[] = [];
-    const existsMaintainers = existsData && existsData.maintainers || [];
+    const existsMaintainers = (existsData && existsData.maintainers) || [];
     for (const maintainer of existsMaintainers) {
       const { name } = maintainer;
       if (!(name in maintainersMap)) {
-        const user = await this.userRepository.findUserByName(`${registry?.userPrefix || 'npm:'}${name}`);
+        const user = await this.userRepository.findUserByName(
+          `${registry?.userPrefix || 'npm:'}${name}`
+        );
         if (user) {
           await this.packageManagerService.removePackageMaintainer(pkg, user);
           removedMaintainers.push(maintainer);
@@ -916,23 +1267,35 @@ export class PackageSyncerService extends AbstractService {
       }
     }
     if (removedMaintainers.length > 0) {
-      logs.push(`[${isoNow()}] 🟢 Removed ${removedMaintainers.length} maintainers: ${JSON.stringify(removedMaintainers)}`);
+      logs.push(
+        `[${isoNow()}] 🟢 Removed ${removedMaintainers.length} maintainers: ${JSON.stringify(removedMaintainers)}`
+      );
     }
 
     // 4.2 update package maintainers in dist
     // The event is initialized in the repository and distributed after uncork.
     // maintainers' information is updated in bulk to ensure consistency.
     if (!isEqual(maintainers, existsMaintainers)) {
-      logs.push(`[${isoNow()}] 🚧 Syncing maintainers to package manifest, from: ${JSON.stringify(maintainers)} to: ${JSON.stringify(existsMaintainers)}`);
+      logs.push(
+        `[${isoNow()}] 🚧 Syncing maintainers to package manifest, from: ${JSON.stringify(maintainers)} to: ${JSON.stringify(existsMaintainers)}`
+      );
       await this.packageManagerService.refreshPackageMaintainersToDists(pkg);
-      logs.push(`[${isoNow()}] 🟢 Syncing maintainers to package manifest done`);
+      logs.push(
+        `[${isoNow()}] 🟢 Syncing maintainers to package manifest done`
+      );
     }
 
     // 5. add deps sync task
     for (const dependencyName of dependenciesSet) {
-      const existsTask = await this.taskRepository.findTaskByTargetName(dependencyName, TaskType.SyncPackage, TaskState.Waiting);
+      const existsTask = await this.taskRepository.findTaskByTargetName(
+        dependencyName,
+        TaskType.SyncPackage,
+        TaskState.Waiting
+      );
       if (existsTask) {
-        logs.push(`[${isoNow()}] 📖 Has dependency "${dependencyName}" sync task: ${existsTask.taskId}, db id: ${existsTask.id}`);
+        logs.push(
+          `[${isoNow()}] 📖 Has dependency "${dependencyName}" sync task: ${existsTask.taskId}, db id: ${existsTask.id}`
+        );
         continue;
       }
       const tips = `Sync cause by "${fullname}" dependencies, parent task: ${task.taskId}`;
@@ -941,7 +1304,9 @@ export class PackageSyncerService extends AbstractService {
         authorIp: task.authorIp,
         tips,
       });
-      logs.push(`[${isoNow()}] 📦 Add dependency "${dependencyName}" sync task: ${dependencyTask.taskId}, db id: ${dependencyTask.id}`);
+      logs.push(
+        `[${isoNow()}] 📦 Add dependency "${dependencyName}" sync task: ${dependencyTask.taskId}, db id: ${dependencyTask.id}`
+      );
     }
 
     if (syncDownloadData) {
@@ -954,8 +1319,11 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}] 📝 Log URL: ${logUrl}`);
     logs.push(`[${isoNow()}] 🔗 ${url}`);
     task.error = lastErrorMessage;
-    this.logger.info('[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
-      task.taskId, task.targetName);
+    this.logger.info(
+      '[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
+      task.taskId,
+      task.targetName
+    );
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
   }
 }

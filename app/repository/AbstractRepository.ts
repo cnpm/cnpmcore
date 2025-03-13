@@ -1,9 +1,5 @@
-import {
-  Inject,
-} from '@eggjs/tegg';
-import {
-  EggLogger,
-} from 'egg';
+import { Inject } from '@eggjs/tegg';
+import type { EggLogger } from 'egg';
 
 export abstract class AbstractRepository {
   @Inject()

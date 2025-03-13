@@ -1,7 +1,8 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
-import { EggAppConfig } from 'egg';
+import type { EggAppConfig } from 'egg';
 import { BinaryType } from '../../enum/Binary.js';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
+import type { FetchResult, BinaryItem } from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Api)
@@ -14,12 +15,20 @@ export class ApiBinary extends AbstractBinary {
     return;
   }
 
-  async fetch(dir: string, binaryName: string): Promise<FetchResult | undefined> {
-    const apiUrl = this.config.cnpmcore.syncBinaryFromAPISource || `${this.config.cnpmcore.sourceRegistry}/-/binary`;
+  async fetch(
+    dir: string,
+    binaryName: string
+  ): Promise<FetchResult | undefined> {
+    const apiUrl =
+      this.config.cnpmcore.syncBinaryFromAPISource ||
+      `${this.config.cnpmcore.sourceRegistry}/-/binary`;
     const url = `${apiUrl}/${binaryName}${dir}`;
     const data = await this.requestJSON(url);
     if (!Array.isArray(data)) {
-      this.logger.warn('[ApiBinary.fetch:response-data-not-array] data: %j', data);
+      this.logger.warn(
+        '[ApiBinary.fetch:response-data-not-array] data: %j',
+        data
+      );
       return;
     }
     const items: BinaryItem[] = [];

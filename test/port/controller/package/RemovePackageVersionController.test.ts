@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
+import type { TestUser } from '../../../../test/TestUtil.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
 
 describe('test/port/controller/package/RemovePackageVersionController.test.ts', () => {
@@ -20,14 +21,14 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         version: '1.0.0',
         isPrivate: false,
       });
-      let res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0`);
+      let res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
       assert(res.status === 200);
 
       const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
       const pkgVersion = res.body;
       const tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .delete(`${tarballUrl}/-rev/${pkgVersion._rev}`)
         .set('authorization', adminUser.authorization)
         .set('npm-command', 'unpublish')
@@ -35,8 +36,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       assert(res.status === 200);
       assert(res.body.ok === true);
 
-      res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0`);
+      res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
       assert(res.status === 404);
     });
 
@@ -47,13 +47,15 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         version: '1.0.0',
         isPrivate: false,
       });
-      let res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0`);
+      let res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
       assert(res.status === 200);
 
       const pkgEntity = await packageRepository.findPackage('', 'foo');
       assert(pkgEntity);
-      const pkgVersionEntity = await packageRepository.findPackageVersion(pkgEntity.packageId, '1.0.0');
+      const pkgVersionEntity = await packageRepository.findPackageVersion(
+        pkgEntity.packageId,
+        '1.0.0'
+      );
       assert(pkgVersionEntity);
       pkgVersionEntity.publishTime = new Date(Date.now() - 72 * 3600000 - 100);
       await packageRepository.savePackageVersion(pkgVersionEntity!);
@@ -61,7 +63,8 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
       const pkgVersion = res.body;
       const tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .delete(`${tarballUrl}/-rev/${pkgVersion._rev}`)
         .set('authorization', adminUser.authorization)
         .set('npm-command', 'unpublish')
@@ -69,8 +72,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       assert(res.status === 200);
       assert(res.body.ok === true);
 
-      res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0`);
+      res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
       assert(res.status === 404);
     });
 
@@ -81,24 +83,25 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         version: '1.0.0',
         isPrivate: false,
       });
-      let res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0`);
+      let res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
       assert(res.status === 200);
 
       const normalUser = await TestUtil.createUser();
       const pkgVersion = res.body;
       const tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .delete(`${tarballUrl}/-rev/${pkgVersion._rev}`)
         .set('authorization', normalUser.authorization)
         .set('npm-command', 'unpublish')
         .set('user-agent', normalUser.ua);
       assert(res.status === 403);
       // console.log(res.body);
-      assert(res.body.error === '[FORBIDDEN] Can\'t modify npm public package "foo"');
+      assert(
+        res.body.error === '[FORBIDDEN] Can\'t modify npm public package "foo"'
+      );
 
-      res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0`);
+      res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
       assert(res.status === 200);
     });
 
@@ -107,7 +110,8 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         name: '@cnpm/foo',
         version: '1.0.0',
       });
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -118,28 +122,25 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         name: '@cnpm/foo',
         version: '2.0.0',
       });
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
 
-      let res = await app.httpRequest()
-        .get(`/${pkg.name}/2.0.0`)
-        .expect(200);
+      let res = await app.httpRequest().get(`/${pkg.name}/2.0.0`).expect(200);
       let pkgVersion = res.body;
       let tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
-      res = await app.httpRequest()
-        .get(`${tarballUrl}`);
+      res = await app.httpRequest().get(`${tarballUrl}`);
       assert(res.status === 200 || res.status === 302);
 
-      res = await app.httpRequest()
-        .get(`/${pkg.name}`)
-        .expect(200);
+      res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
       assert(res.body['dist-tags'].latest === '2.0.0');
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .delete(`${tarballUrl}/-rev/${pkgVersion._rev}`)
         .set('authorization', publisher.authorization)
         .set('npm-command', 'unpublish')
@@ -147,13 +148,10 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .expect(200);
       assert.equal(res.body.ok, true);
 
-      res = await app.httpRequest()
-        .get(`/${pkg.name}`)
-        .expect(200);
+      res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
       assert(res.body['dist-tags'].latest === '1.0.0');
 
-      res = await app.httpRequest()
-        .get(`${tarballUrl}`);
+      res = await app.httpRequest().get(`${tarballUrl}`);
       if (res.status === 404) {
         assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foo@2.0.0 not found');
       } else {
@@ -163,24 +161,23 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         assert.equal(status, 404);
       }
 
-      res = await app.httpRequest()
-        .get(`/${pkg.name}`)
-        .expect(200);
+      res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
       assert(!res.body.versions['2.0.0']);
       assert(res.body.versions['1.0.0']);
       assert.equal(res.body['dist-tags'].latest, '1.0.0');
 
       // remove all versions
-      res = await app.httpRequest()
-        .delete(`${tarballUrl.replace('2.0.0', '1.0.0')}/-rev/${pkgVersion._rev}`)
+      res = await app
+        .httpRequest()
+        .delete(
+          `${tarballUrl.replace('2.0.0', '1.0.0')}/-rev/${pkgVersion._rev}`
+        )
         .set('authorization', publisher.authorization)
         .set('npm-command', 'unpublish')
         .set('user-agent', publisher.ua)
         .expect(200);
       assert.equal(res.body.ok, true);
-      res = await app.httpRequest()
-        .get(`/${pkg.name}`)
-        .expect(200);
+      res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
       assert(!res.body.versions);
       assert.equal(res.body.name, pkg.name);
       assert(res.body.time.unpublished);
@@ -191,25 +188,21 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         name: '@cnpm/foo',
         version: '2.0.0',
       });
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
 
-      res = await app.httpRequest()
-        .get(`/${pkg.name}/2.0.0`)
-        .expect(200);
+      res = await app.httpRequest().get(`/${pkg.name}/2.0.0`).expect(200);
       pkgVersion = res.body;
       tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
-      res = await app.httpRequest()
-        .get(`${tarballUrl}`);
+      res = await app.httpRequest().get(`${tarballUrl}`);
       assert(res.status === 200 || res.status === 302);
 
-      res = await app.httpRequest()
-        .get(`/${pkg.name}`)
-        .expect(200);
+      res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
       assert(res.body['dist-tags'].latest === '2.0.0');
     });
 
@@ -218,19 +211,22 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         name: '@cnpm/foo',
         version: '1.0.0',
       });
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
-      let res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0`)
-        .expect(200);
+      let res = await app.httpRequest().get(`/${pkg.name}/1.0.0`).expect(200);
       const pkgVersion = res.body;
-      const tarballUrl = new URL(pkgVersion.dist.tarball).pathname.replace('1.0.0', '2.0.0');
+      const tarballUrl = new URL(pkgVersion.dist.tarball).pathname.replace(
+        '1.0.0',
+        '2.0.0'
+      );
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .delete(`${tarballUrl}/-rev/${pkg._rev}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -240,7 +236,8 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
     });
 
     it('should 404 when package not exists', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .delete('/@cnpm/foo/-/foo-4.0.0.tgz/-rev/1-61af62d6295fcbd9f8f1c08f')
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -250,12 +247,16 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
     });
 
     it('should 400 when npm-command header invalid', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .delete('/@cnpm/foo/-/foo-4.0.0.tgz/-rev/1-61af62d6295fcbd9f8f1c08f')
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .expect(400);
-      assert.equal(res.body.error, '[BAD_REQUEST] Only allow "unpublish" npm-command');
+      assert.equal(
+        res.body.error,
+        '[BAD_REQUEST] Only allow "unpublish" npm-command'
+      );
     });
 
     it('should 403 when published over 72 hours', async () => {
@@ -263,32 +264,38 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         name: '@cnpm/foo',
         version: '1.0.0',
       });
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
-      let res = await app.httpRequest()
-        .get(`/${pkg.name}/1.0.0`)
-        .expect(200);
+      let res = await app.httpRequest().get(`/${pkg.name}/1.0.0`).expect(200);
       const pkgVersion = res.body;
       const tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
 
       const pkgEntity = await packageRepository.findPackage('@cnpm', 'foo');
       assert(pkgEntity);
-      const pkgVersionEntity = await packageRepository.findPackageVersion(pkgEntity.packageId, '1.0.0');
+      const pkgVersionEntity = await packageRepository.findPackageVersion(
+        pkgEntity.packageId,
+        '1.0.0'
+      );
       assert(pkgVersionEntity);
       pkgVersionEntity.publishTime = new Date(Date.now() - 72 * 3600000 - 100);
       await packageRepository.savePackageVersion(pkgVersionEntity!);
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .delete(`${tarballUrl}/-rev/${pkg._rev}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .set('npm-command', 'unpublish')
         .expect(403);
-      assert.equal(res.body.error, '[FORBIDDEN] @cnpm/foo@1.0.0 unpublish is not allowed after 72 hours of released');
+      assert.equal(
+        res.body.error,
+        '[FORBIDDEN] @cnpm/foo@1.0.0 unpublish is not allowed after 72 hours of released'
+      );
     });
   });
 });

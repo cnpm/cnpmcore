@@ -4,7 +4,7 @@ import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { TestUtil } from '../../../../test/TestUtil.js';
 import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
-import { Task } from '../../../../app/core/entity/Task.js';
+import type { Task } from '../../../../app/core/entity/Task.js';
 import { TaskState } from '../../../../app/common/enum/Task.js';
 import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
 import { TaskService } from '../../../../app/core/service/TaskService.js';
@@ -21,13 +21,16 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
     taskRepository = await app.getEggObject(TaskRepository);
     taskService = await app.getEggObject(TaskService);
 
-    await TestUtil.createPackage({
-      name: pkgName,
-      registryId: 'mock_registry_id',
-      isPrivate: false,
-    }, {
-      name: username,
-    });
+    await TestUtil.createPackage(
+      {
+        name: pkgName,
+        registryId: 'mock_registry_id',
+        isPrivate: false,
+      },
+      {
+        name: username,
+      }
+    );
   });
 
   it('should ignore if registryId not same', async () => {
@@ -40,12 +43,15 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
 
   it('should work when registryId is null', async () => {
     mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
-    await TestUtil.createPackage({
-      name: 'binary-mirror-config',
-      isPrivate: false,
-    }, {
-      name: username,
-    });
+    await TestUtil.createPackage(
+      {
+        name: 'binary-mirror-config',
+        isPrivate: false,
+      },
+      {
+        name: username,
+      }
+    );
 
     const task = await packageSyncerService.createTask('binary-mirror-config', {
       registryId: 'sync_registry_id',
@@ -54,9 +60,12 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
   });
 
   it('should work when pkg not exists', async () => {
-    const task = await packageSyncerService.createTask('binary-mirror-config-not-exists', {
-      registryId: 'sync_registry_id',
-    });
+    const task = await packageSyncerService.createTask(
+      'binary-mirror-config-not-exists',
+      {
+        registryId: 'sync_registry_id',
+      }
+    );
     assert(task);
   });
 
@@ -68,17 +77,24 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
       await taskService.finishTask(task, TaskState.Success);
     });
     const task = await packageSyncerService.createTask(pkgName);
-    const res = await Promise.all([ packageSyncerService.executeTask(task), (async () => {
-      await setTimeout(1);
-      return await packageSyncerService.createTask(pkgName);
-    })() ]);
+    const res = await Promise.all([
+      packageSyncerService.executeTask(task),
+      (async () => {
+        await setTimeout(1);
+        return await packageSyncerService.createTask(pkgName);
+      })(),
+    ]);
     assert(res[1].taskId === task.taskId);
   });
 
   it('should append specific version to waiting task.', async () => {
     const name = '@cnpmcore/test-sync-package-has-two-versions';
-    await packageSyncerService.createTask(name, { specificVersions: [ '1.0.0' ] });
-    await packageSyncerService.createTask(name, { specificVersions: [ '2.0.0' ] });
+    await packageSyncerService.createTask(name, {
+      specificVersions: ['1.0.0'],
+    });
+    await packageSyncerService.createTask(name, {
+      specificVersions: ['2.0.0'],
+    });
     const task = await packageSyncerService.findExecuteTask();
     assert(task);
     assert.equal(task.targetName, name);
@@ -88,7 +104,9 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
 
   it('should remove specific version, switch waiting task to sync all versions.', async () => {
     const name = '@cnpmcore/test-sync-package-has-two-versions';
-    await packageSyncerService.createTask(name, { specificVersions: [ '1.0.0' ] });
+    await packageSyncerService.createTask(name, {
+      specificVersions: ['1.0.0'],
+    });
     await packageSyncerService.createTask(name);
     const task = await packageSyncerService.findExecuteTask();
     assert(task);

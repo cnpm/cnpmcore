@@ -4,7 +4,7 @@ import { app } from '@eggjs/mock/bootstrap';
 import { RegistryType } from '../../../../app/common/enum/Registry.js';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
 import { TestUtil } from '../../../TestUtil.js';
-import { Scope } from '../../../../app/core/entity/Scope.js';
+import type { Scope } from '../../../../app/core/entity/Scope.js';
 
 describe('test/port/controller/ScopeController/index.test.ts', () => {
   let adminUser: any;
@@ -24,33 +24,32 @@ describe('test/port/controller/ScopeController/index.test.ts', () => {
 
   describe('[POST /-/scope] createScope()', () => {
     it('should 200', async () => {
-
       const queryRes = await registryManagerService.listRegistries({});
-      const [ registry ] = queryRes.data;
+      const [registry] = queryRes.data;
 
       // create success
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .post('/-/scope')
         .set('authorization', adminUser.authorization)
-        .send(
-          {
-            name: '@cnpm',
-            registryId: registry.registryId,
-          })
+        .send({
+          name: '@cnpm',
+          registryId: registry.registryId,
+        })
         .expect(200);
 
       assert(res.body.ok);
     });
 
     it('should 400', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .post('/-/scope')
         .set('authorization', adminUser.authorization)
-        .send(
-          {
-            name: '@cnpmbanana',
-            registryId: 'banana',
-          })
+        .send({
+          name: '@cnpmbanana',
+          registryId: 'banana',
+        })
         .expect(400);
 
       assert(res.body.error === '[BAD_REQUEST] registry banana not found');
@@ -58,17 +57,16 @@ describe('test/port/controller/ScopeController/index.test.ts', () => {
 
     it('should 403', async () => {
       // create success
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .post('/-/scope')
-        .send(
-          {
-            name: '@cnpm',
-          })
+        .send({
+          name: '@cnpm',
+        })
         .expect(403);
 
       assert(res.body.error === '[FORBIDDEN] Not allow to access');
     });
-
   });
 
   describe('[DELETE /-/scope/:id] deleteScope()', () => {
@@ -76,21 +74,23 @@ describe('test/port/controller/ScopeController/index.test.ts', () => {
     beforeEach(async () => {
       const queryRes = await registryManagerService.listRegistries({});
       const registry = queryRes.data[0];
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .post('/-/scope')
         .set('authorization', adminUser.authorization)
-        .send(
-          {
-            name: '@cnpmjsa',
-            registryId: registry.registryId,
-          });
-      res = await app.httpRequest()
+        .send({
+          name: '@cnpmjsa',
+          registryId: registry.registryId,
+        });
+      res = await app
+        .httpRequest()
         .get(`/-/registry/${registry.registryId}/scopes`);
 
       scope = res.body.data[0];
     });
     it('should 200', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .delete(`/-/scope/${scope.scopeId}`)
         .set('authorization', adminUser.authorization)
         .expect(200);

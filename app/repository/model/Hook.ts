@@ -1,7 +1,7 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 
 import { DataTypes, Bone } from '../util/leoric.js';
-import { HookType } from '../../common/enum/Hook.js';
+import type { HookType } from '../../common/enum/Hook.js';
 
 @Model()
 export class Hook extends Bone {
@@ -10,7 +10,6 @@ export class Hook extends Bone {
     autoIncrement: true,
   })
   id: bigint;
-
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
   createdAt: Date;

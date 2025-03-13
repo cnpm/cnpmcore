@@ -1,9 +1,10 @@
-import { EggAppConfig, EggHttpClient, EggLogger } from 'egg';
-import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import type { EggAppConfig, EggHttpClient, EggLogger } from 'egg';
+import type { IntervalParams } from '@eggjs/tegg/schedule';
+import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
-import { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
-import { PackageRepository } from '../../repository/PackageRepository.js';
+import type { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
+import type { PackageRepository } from '../../repository/PackageRepository.js';
 import { getScopeAndName } from '../../common/PackageUtil.js';
 import { SyncMode } from '../../common/constants.js';
 
@@ -31,8 +32,16 @@ export class CheckRecentlyUpdatedPackages {
   private readonly httpclient: EggHttpClient;
 
   async subscribe() {
-    const notAllowUpdateModeList = [ SyncMode.none, SyncMode.admin, SyncMode.proxy ];
-    if (notAllowUpdateModeList.includes(this.config.cnpmcore.syncMode) || !this.config.cnpmcore.enableCheckRecentlyUpdated) return;
+    const notAllowUpdateModeList = [
+      SyncMode.none,
+      SyncMode.admin,
+      SyncMode.proxy,
+    ];
+    if (
+      notAllowUpdateModeList.includes(this.config.cnpmcore.syncMode) ||
+      !this.config.cnpmcore.enableCheckRecentlyUpdated
+    )
+      return;
     const pageSize = 36;
     const pageCount = this.config.env === 'unittest' ? 2 : 5;
     for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
@@ -44,14 +53,23 @@ export class CheckRecentlyUpdatedPackages {
           followRedirect: true,
           timeout: 10000,
         });
-        this.logger.info('[CheckRecentlyUpdatedPackages.subscribe][%s] request %s status: %s, data size: %s',
-          pageIndex, pageUrl, status, data.length);
+        this.logger.info(
+          '[CheckRecentlyUpdatedPackages.subscribe][%s] request %s status: %s, data size: %s',
+          pageIndex,
+          pageUrl,
+          status,
+          data.length
+        );
         if (status === 200) {
           html = data.toString();
         }
       } catch (err) {
-        this.logger.info('[CheckRecentlyUpdatedPackages.subscribe:error][%s] request %s error: %s',
-          pageIndex, pageUrl, err);
+        this.logger.info(
+          '[CheckRecentlyUpdatedPackages.subscribe:error][%s] request %s error: %s',
+          pageIndex,
+          pageUrl,
+          err
+        );
         this.logger.error(err);
         continue;
       }
@@ -63,13 +81,20 @@ export class CheckRecentlyUpdatedPackages {
         const data = JSON.parse(matchs[1]);
         const packages = data.context.packages || [];
         if (Array.isArray(packages)) {
-          this.logger.info('[CheckRecentlyUpdatedPackages.subscribe][%s] parse %d packages on %s',
-            pageIndex, packages.length, pageUrl);
+          this.logger.info(
+            '[CheckRecentlyUpdatedPackages.subscribe][%s] parse %d packages on %s',
+            pageIndex,
+            packages.length,
+            pageUrl
+          );
           for (const pkg of packages) {
             // skip update when package does not exist
             if (this.config.cnpmcore.syncMode === 'exist') {
-              const [ scope, name ] = getScopeAndName(pkg.name);
-              const pkgId = await this.packageRepository.findPackageId(scope, name);
+              const [scope, name] = getScopeAndName(pkg.name);
+              const pkgId = await this.packageRepository.findPackageId(
+                scope,
+                name
+              );
               if (!pkgId) {
                 continue;
               }
@@ -77,13 +102,21 @@ export class CheckRecentlyUpdatedPackages {
             const task = await this.packageSyncerService.createTask(pkg.name, {
               tips: `Sync cause by recently updated packages ${pageUrl}`,
             });
-            this.logger.info('[CheckRecentlyUpdatedPackages.subscribe:createTask][%s] taskId: %s, targetName: %s',
-              pageIndex, task.taskId, task.targetName);
+            this.logger.info(
+              '[CheckRecentlyUpdatedPackages.subscribe:createTask][%s] taskId: %s, targetName: %s',
+              pageIndex,
+              task.taskId,
+              task.targetName
+            );
           }
         }
       } catch (err) {
-        this.logger.info('[CheckRecentlyUpdatedPackages.subscribe:error][%s] parse %s context json error: %s',
-          pageIndex, pageUrl, err);
+        this.logger.info(
+          '[CheckRecentlyUpdatedPackages.subscribe:error][%s] parse %s context json error: %s',
+          pageIndex,
+          pageUrl,
+          err
+        );
         this.logger.error(err);
       }
     }

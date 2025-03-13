@@ -5,7 +5,7 @@ import { TestUtil } from '../../../../test/TestUtil.js';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
 import { UserService } from '../../../../app/core/service/UserService.js';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
-import { User } from '../../../../app/core/entity/User.js';
+import type { User } from '../../../../app/core/entity/User.js';
 
 describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   let packageManagerService: PackageManagerService;
@@ -35,37 +35,49 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   describe('publish()', () => {
     it('should work with dist.content', async () => {
       app.mockLog();
-      const { packageId } = await packageManagerService.publish({
-        dist: {
-          content: Buffer.alloc(0),
+      const { packageId } = await packageManagerService.publish(
+        {
+          dist: {
+            content: Buffer.alloc(0),
+          },
+          tags: [''],
+          scope: '',
+          name: 'foo',
+          description: 'foo description',
+          packageJson: await TestUtil.getFullPackage({ name: 'foo' }),
+          readme: '',
+          version: '1.0.0',
+          isPrivate: true,
         },
-        tags: [ '' ],
-        scope: '',
-        name: 'foo',
-        description: 'foo description',
-        packageJson: await TestUtil.getFullPackage({ name: 'foo' }),
-        readme: '',
-        version: '1.0.0',
-        isPrivate: true,
-      }, publisher);
-      let pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
+        publisher
+      );
+      let pkgVersion = await packageRepository.findPackageVersion(
+        packageId,
+        '1.0.0'
+      );
       assert(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.0');
       // another version
-      await packageManagerService.publish({
-        dist: {
-          content: Buffer.alloc(0),
+      await packageManagerService.publish(
+        {
+          dist: {
+            content: Buffer.alloc(0),
+          },
+          tags: [''],
+          scope: '',
+          name: 'foo',
+          description: 'foo description new',
+          packageJson: { name: 'foo', test: 'test', version: '1.0.0' },
+          readme: '',
+          version: '1.0.1',
+          isPrivate: true,
         },
-        tags: [ '' ],
-        scope: '',
-        name: 'foo',
-        description: 'foo description new',
-        packageJson: { name: 'foo', test: 'test', version: '1.0.0' },
-        readme: '',
-        version: '1.0.1',
-        isPrivate: true,
-      }, publisher);
-      pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.1');
+        publisher
+      );
+      pkgVersion = await packageRepository.findPackageVersion(
+        packageId,
+        '1.0.1'
+      );
       assert(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.1');
       // expect aop async timer
@@ -75,20 +87,26 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
 
     it('should work slice long description', async () => {
       app.mockLog();
-      const { packageId } = await packageManagerService.publish({
-        dist: {
-          content: Buffer.alloc(0),
+      const { packageId } = await packageManagerService.publish(
+        {
+          dist: {
+            content: Buffer.alloc(0),
+          },
+          tags: [''],
+          scope: '',
+          name: 'foo',
+          description: '~'.repeat(1100 * 100),
+          packageJson: await TestUtil.getFullPackage({ name: 'foo' }),
+          readme: '',
+          version: '1.0.0',
+          isPrivate: true,
         },
-        tags: [ '' ],
-        scope: '',
-        name: 'foo',
-        description: '~'.repeat(1100 * 100),
-        packageJson: await TestUtil.getFullPackage({ name: 'foo' }),
-        readme: '',
-        version: '1.0.0',
-        isPrivate: true,
-      }, publisher);
-      const pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
+        publisher
+      );
+      const pkgVersion = await packageRepository.findPackageVersion(
+        packageId,
+        '1.0.0'
+      );
       assert(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.0');
       const pkg = await packageRepository.findPackage('', 'foo');
@@ -96,20 +114,28 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
     });
 
     it('should work with dist.localFile', async () => {
-      const { packageId } = await packageManagerService.publish({
-        dist: {
-          localFile: TestUtil.getFixtures('registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'),
+      const { packageId } = await packageManagerService.publish(
+        {
+          dist: {
+            localFile: TestUtil.getFixtures(
+              'registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'
+            ),
+          },
+          tags: [''],
+          scope: '',
+          name: 'pedding',
+          description: 'pedding description',
+          packageJson: { name: 'pedding', test: 'test', version: '1.1.0' },
+          readme: '',
+          version: '1.1.0',
+          isPrivate: false,
         },
-        tags: [ '' ],
-        scope: '',
-        name: 'pedding',
-        description: 'pedding description',
-        packageJson: { name: 'pedding', test: 'test', version: '1.1.0' },
-        readme: '',
-        version: '1.1.0',
-        isPrivate: false,
-      }, publisher);
-      const pkgVersion = await packageRepository.findPackageVersion(packageId, '1.1.0');
+        publisher
+      );
+      const pkgVersion = await packageRepository.findPackageVersion(
+        packageId,
+        '1.1.0'
+      );
       assert(pkgVersion);
       assert.equal(pkgVersion.version, '1.1.0');
       assert.equal(pkgVersion.tarDist.size, 2672);
@@ -121,19 +147,29 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
 
       await assert.rejects(async () => {
         checked = true;
-        await packageManagerService.publish({
-          dist: {
-            localFile: TestUtil.getFixtures('registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'),
+        await packageManagerService.publish(
+          {
+            dist: {
+              localFile: TestUtil.getFixtures(
+                'registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'
+              ),
+            },
+            tags: [''],
+            scope: '',
+            name: 'pedding',
+            description: 'pedding description',
+            packageJson: {
+              name: 'pedding',
+              test: 'test',
+              version: '1.1.0',
+              dependencies: { 'invalid-pkg': 'some-semver-not-exits' },
+            },
+            readme: '',
+            version: '1.1.0',
+            isPrivate: false,
           },
-          tags: [ '' ],
-          scope: '',
-          name: 'pedding',
-          description: 'pedding description',
-          packageJson: { name: 'pedding', test: 'test', version: '1.1.0', dependencies: { 'invalid-pkg': 'some-semver-not-exits' } },
-          readme: '',
-          version: '1.1.0',
-          isPrivate: false,
-        }, publisher);
+          publisher
+        );
       }, /deps invalid-pkg@some-semver-not-exits not found/);
 
       assert(checked);

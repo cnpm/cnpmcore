@@ -1,6 +1,8 @@
-import { Entity, EntityData } from './Entity.js';
-import { EasyData } from '../util/EntityUtil.js';
-import { DIST_NAMES, isPkgManifest } from './Package.js';
+import type { EntityData } from './Entity.js';
+import { Entity } from './Entity.js';
+import type { EasyData } from '../util/EntityUtil.js';
+import type { DIST_NAMES } from './Package.js';
+import { isPkgManifest } from './Package.js';
 import { PROXY_CACHE_DIR_NAME } from '../../common/constants.js';
 interface ProxyCacheData extends EntityData {
   fullname: string;
@@ -8,7 +10,10 @@ interface ProxyCacheData extends EntityData {
   version?: string;
 }
 
-export type CreateProxyCacheData = Omit<EasyData<ProxyCacheData, 'id'>, 'id'| 'filePath'>;
+export type CreateProxyCacheData = Omit<
+  EasyData<ProxyCacheData, 'id'>,
+  'id' | 'filePath'
+>;
 
 export class ProxyCache extends Entity {
   readonly fullname: string;
@@ -37,5 +42,4 @@ export class ProxyCache extends Entity {
     data.updatedAt = new Date();
     return data;
   }
-
 }

@@ -1,12 +1,11 @@
-import {
-  AccessLevel,
-  Inject,
-  SingletonProto,
-} from '@eggjs/tegg';
-import { EggAppConfig } from 'egg';
-import { Client as ElasticsearchClient, estypes } from '@elastic/elasticsearch';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import type { EggAppConfig } from 'egg';
+import type {
+  Client as ElasticsearchClient,
+  estypes,
+} from '@elastic/elasticsearch';
 
-import { SearchAdapter } from '../common/typing.js';
+import type { SearchAdapter } from '../common/typing.js';
 
 /**
  * Use elasticsearch to search the huge npm packages.
@@ -23,7 +22,9 @@ export class ESSearchAdapter implements SearchAdapter {
   private readonly elasticsearch: ElasticsearchClient; // 由 elasticsearch 插件引入
 
   async search<T>(query: any): Promise<estypes.SearchHitsMetadata<T>> {
-    const { cnpmcore: { elasticsearchIndex: index } } = this.config;
+    const {
+      cnpmcore: { elasticsearchIndex: index },
+    } = this.config;
     const result = await this.elasticsearch.search<T>({
       index,
       ...query,
@@ -32,7 +33,9 @@ export class ESSearchAdapter implements SearchAdapter {
   }
 
   async upsert<T>(id: string, document: T): Promise<string> {
-    const { cnpmcore: { elasticsearchIndex: index } } = this.config;
+    const {
+      cnpmcore: { elasticsearchIndex: index },
+    } = this.config;
     const res = await this.elasticsearch.index({
       id,
       index,
@@ -42,7 +45,9 @@ export class ESSearchAdapter implements SearchAdapter {
   }
 
   async delete(id: string): Promise<string> {
-    const { cnpmcore: { elasticsearchIndex: index } } = this.config;
+    const {
+      cnpmcore: { elasticsearchIndex: index },
+    } = this.config;
     const res = await this.elasticsearch.delete({
       index,
       id,

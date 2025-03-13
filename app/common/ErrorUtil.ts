@@ -1,25 +1,25 @@
-const TimeoutErrorNames = [
+const TimeoutErrorNames = new Set([
   'HttpClientRequestTimeoutError',
   'HttpClientConnectTimeoutError',
   'ConnectionError',
   'ConnectTimeoutError',
   'BodyTimeoutError',
   'ResponseTimeoutError',
-];
+]);
 
 export function isTimeoutError(err: Error) {
-  if (TimeoutErrorNames.includes(err.name)) {
+  if (TimeoutErrorNames.has(err.name)) {
     return true;
   }
   if (err instanceof AggregateError && err.errors) {
     for (const subError of err.errors) {
-      if (TimeoutErrorNames.includes(subError.name)) {
+      if (TimeoutErrorNames.has(subError.name)) {
         return true;
       }
     }
   }
   if ('cause' in err && err.cause instanceof Error) {
-    if (TimeoutErrorNames.includes(err.cause.name)) {
+    if (TimeoutErrorNames.has(err.cause.name)) {
       return true;
     }
   }

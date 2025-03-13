@@ -1,9 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
+import type { TestUser } from '../../../../test/TestUtil.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 import { HookManageService } from '../../../../app/core/service/HookManageService.js';
-import { Hook } from '../../../../app/core/entity/Hook.js';
+import type { Hook } from '../../../../app/core/entity/Hook.js';
 import { UserRepository } from '../../../../app/repository/UserRepository.js';
 import { HookType } from '../../../../app/common/enum/Hook.js';
 
@@ -22,7 +23,8 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
 
   describe('POST /-/npm/v1/hooks/hook', () => {
     it('should work', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .post('/-/npm/v1/hooks/hook')
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
@@ -62,7 +64,8 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
     });
 
     it('should work', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .put(`/-/npm/v1/hooks/hook/${hook.hookId}`)
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
@@ -89,7 +92,8 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
     });
 
     it('should work', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .delete(`/-/npm/v1/hooks/hook/${hook.hookId}`)
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
@@ -110,7 +114,8 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
     });
 
     it('should work', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/-/npm/v1/hooks')
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
@@ -132,7 +137,8 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
     });
 
     it('should work', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/-/npm/v1/hooks/hook/${hook.hookId}`)
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)

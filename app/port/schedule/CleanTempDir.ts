@@ -1,8 +1,9 @@
 import { rm, access } from 'node:fs/promises';
 import path from 'node:path';
 
-import { EggAppConfig, EggLogger } from 'egg';
-import { CronParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import type { EggAppConfig, EggLogger } from 'egg';
+import type { CronParams } from '@eggjs/tegg/schedule';
+import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
 import dayjs from '../../common/dayjs.js';
@@ -39,7 +40,11 @@ export class CleanTempDir {
       } catch {
         exists = false;
       }
-      this.logger.info('[CleanTempDir.subscribe] dir "%s" exists: %s', dir, exists);
+      this.logger.info(
+        '[CleanTempDir.subscribe] dir "%s" exists: %s',
+        dir,
+        exists
+      );
       if (exists) {
         await rm(dir, { recursive: true, force: true });
         this.logger.info('[CleanTempDir.subscribe] remove dir "%s"', dir);

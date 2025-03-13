@@ -9,15 +9,21 @@ import { RegistryManagerService } from '../../../../app/core/service/RegistryMan
 import { ChangesStreamService } from '../../../../app/core/service/ChangesStreamService.js';
 import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
 import { TaskType } from '../../../../app/common/enum/Task.js';
-import { ChangesStreamTask } from '../../../../app/core/entity/Task.js';
+import type { ChangesStreamTask } from '../../../../app/core/entity/Task.js';
 import { RegistryType } from '../../../../app/common/enum/Registry.js';
 import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const SavePackageVersionDownloadCounterPath = path.join(__dirname, '../../../../app/port/schedule/SavePackageVersionDownloadCounter.js');
-const UpdateTotalDataPath = path.join(__dirname, '../../../../app/port/schedule/UpdateTotalData.js');
+const SavePackageVersionDownloadCounterPath = path.join(
+  __dirname,
+  '../../../../app/port/schedule/SavePackageVersionDownloadCounter.js'
+);
+const UpdateTotalDataPath = path.join(
+  __dirname,
+  '../../../../app/port/schedule/UpdateTotalData.js'
+);
 
 describe('test/port/controller/HomeController/showTotal.test.ts', () => {
   describe('[GET /] showTotal()', () => {
@@ -26,8 +32,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
     let taskRepository: TaskRepository;
     let scopeManagerService: ScopeManagerService;
     it('should total information', async () => {
-      let res = await app.httpRequest()
-        .get('/');
+      let res = await app.httpRequest().get('/');
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
       let data = res.body;
@@ -44,40 +49,47 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
 
       // downloads count
       const publisher = await TestUtil.createUser();
-      let pkg = await TestUtil.getFullPackage({ name: '@cnpm/home1', version: '1.0.0' });
-      await app.httpRequest()
+      let pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/home1',
+        version: '1.0.0',
+      });
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .expect(201)
         .send(pkg);
-      pkg = await TestUtil.getFullPackage({ name: '@cnpm/home2', version: '2.0.0' });
-      await app.httpRequest()
+      pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/home2',
+        version: '2.0.0',
+      });
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .expect(201)
         .send(pkg);
-      pkg = await TestUtil.getFullPackage({ name: '@cnpm/home1', version: '1.0.1' });
-      await app.httpRequest()
+      pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/home1',
+        version: '1.0.1',
+      });
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .expect(201)
         .send(pkg);
 
-      await app.httpRequest()
-        .get('/@cnpm/home1/-/home1-1.0.0.tgz');
-      await app.httpRequest()
-        .get('/@cnpm/home1/-/home1-1.0.1.tgz');
-      await app.httpRequest()
-        .get('/@cnpm/home2/-/home2-2.0.0.tgz');
+      await app.httpRequest().get('/@cnpm/home1/-/home1-1.0.0.tgz');
+      await app.httpRequest().get('/@cnpm/home1/-/home1-1.0.1.tgz');
+      await app.httpRequest().get('/@cnpm/home2/-/home2-2.0.0.tgz');
       await app.runSchedule(SavePackageVersionDownloadCounterPath);
       await app.runSchedule(UpdateTotalDataPath);
 
-
-      res = await app.httpRequest()
-        .get('/');
+      res = await app.httpRequest().get('/');
       assert(res.status === 200);
       data = res.body;
       assert(data.last_package === '@cnpm/home2');
@@ -95,15 +107,35 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
 
       // mock yesterday lastweek lastmonth
       const today = dayjs();
-      const yesterdayYearMonthInt = Number(today.subtract(1, 'day').format('YYYYMM'));
+      const yesterdayYearMonthInt = Number(
+        today.subtract(1, 'day').format('YYYYMM')
+      );
       const yesterdayDate = today.subtract(1, 'day').format('DD');
-      const lastWeekYearMonthInt = Number(today.subtract(1, 'week').startOf('week').format('YYYYMM'));
-      const lastWeekDate = today.subtract(1, 'week').startOf('week').format('DD');
-      const lastMonthYearMonthInt = Number(today.subtract(1, 'month').startOf('month').format('YYYYMM'));
-      const lastMonthDate = today.subtract(1, 'month').startOf('month').format('DD');
-      const lastYearYearMonthInt = Number(today.subtract(1, 'year').startOf('year').format('YYYYMM'));
-      const lastYearDate = today.subtract(1, 'month').startOf('year').format('DD');
-      let row: any = await PackageVersionDownload.findOne({ packageId: 'total', yearMonth: yesterdayYearMonthInt });
+      const lastWeekYearMonthInt = Number(
+        today.subtract(1, 'week').startOf('week').format('YYYYMM')
+      );
+      const lastWeekDate = today
+        .subtract(1, 'week')
+        .startOf('week')
+        .format('DD');
+      const lastMonthYearMonthInt = Number(
+        today.subtract(1, 'month').startOf('month').format('YYYYMM')
+      );
+      const lastMonthDate = today
+        .subtract(1, 'month')
+        .startOf('month')
+        .format('DD');
+      const lastYearYearMonthInt = Number(
+        today.subtract(1, 'year').startOf('year').format('YYYYMM')
+      );
+      const lastYearDate = today
+        .subtract(1, 'month')
+        .startOf('year')
+        .format('DD');
+      let row: any = await PackageVersionDownload.findOne({
+        packageId: 'total',
+        yearMonth: yesterdayYearMonthInt,
+      });
       if (!row) {
         row = await PackageVersionDownload.create({
           packageId: 'total',
@@ -114,7 +146,10 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       row[`d${yesterdayDate}`] = 1;
       await row.save();
 
-      row = await PackageVersionDownload.findOne({ packageId: 'total', yearMonth: lastWeekYearMonthInt });
+      row = await PackageVersionDownload.findOne({
+        packageId: 'total',
+        yearMonth: lastWeekYearMonthInt,
+      });
       if (!row) {
         row = await PackageVersionDownload.create({
           packageId: 'total',
@@ -125,7 +160,10 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       row[`d${lastWeekDate}`] = 1;
       await row.save();
 
-      row = await PackageVersionDownload.findOne({ packageId: 'total', yearMonth: lastMonthYearMonthInt });
+      row = await PackageVersionDownload.findOne({
+        packageId: 'total',
+        yearMonth: lastMonthYearMonthInt,
+      });
       if (!row) {
         row = await PackageVersionDownload.create({
           packageId: 'total',
@@ -136,7 +174,10 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       row[`d${lastMonthDate}`] = 1;
       await row.save();
 
-      row = await PackageVersionDownload.findOne({ packageId: 'total', yearMonth: lastYearYearMonthInt });
+      row = await PackageVersionDownload.findOne({
+        packageId: 'total',
+        yearMonth: lastYearYearMonthInt,
+      });
       if (!row) {
         row = await PackageVersionDownload.create({
           packageId: 'total',
@@ -148,8 +189,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       await row.save();
 
       await app.runSchedule(UpdateTotalDataPath);
-      res = await app.httpRequest()
-        .get('/');
+      res = await app.httpRequest().get('/');
       assert(res.status === 200);
       data = res.body;
       assert(data.last_package === '@cnpm/home2');
@@ -172,7 +212,8 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
 
     it('should show sync mode = all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/')
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
@@ -182,7 +223,8 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
 
     it('should show sync enableSyncBinary = true', async () => {
       mock(app.config.cnpmcore, 'enableSyncBinary', true);
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/')
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
@@ -199,7 +241,8 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         await app.runSchedule(UpdateTotalDataPath);
       });
       it('should show empty upstream_registries when no changesStreamTasks', async () => {
-        const res = await app.httpRequest()
+        const res = await app
+          .httpRequest()
           .get('/')
           .expect(200)
           .expect('content-type', 'application/json; charset=utf-8');
@@ -210,21 +253,26 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         // create default registry
         await changesStreamService.findExecuteTask();
 
-        const tasks = await taskRepository.findTasksByCondition({ type: TaskType.ChangesStream });
+        const tasks = await taskRepository.findTasksByCondition({
+          type: TaskType.ChangesStream,
+        });
         await changesStreamService.executeTask(tasks[0] as ChangesStreamTask);
         assert(tasks.length === 1);
 
         assert(registryManagerService);
         await app.runSchedule(UpdateTotalDataPath);
-        const res = await app.httpRequest()
+        const res = await app
+          .httpRequest()
           .get('/')
           .expect(200)
           .expect('content-type', 'application/json; charset=utf-8');
         const data = res.body;
         assert(data.upstream_registries.length === 1);
-        const [ upstream ] = data.upstream_registries;
+        const [upstream] = data.upstream_registries;
         assert(upstream.registry_name === 'default');
-        assert(upstream.changes_stream_url === 'https://replicate.npmjs.com/_changes');
+        assert(
+          upstream.changes_stream_url === 'https://replicate.npmjs.com/_changes'
+        );
         assert(upstream.source_registry === 'https://registry.npmjs.org');
       });
 
@@ -240,11 +288,18 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           userPrefix: 'cnpm:',
           type: RegistryType.Cnpmcore,
         });
-        await scopeManagerService.createScope({ name: '@cnpm', registryId: registry.registryId });
-        await registryManagerService.createSyncChangesStream({ registryId: registry.registryId });
+        await scopeManagerService.createScope({
+          name: '@cnpm',
+          registryId: registry.registryId,
+        });
+        await registryManagerService.createSyncChangesStream({
+          registryId: registry.registryId,
+        });
 
         // start sync
-        const tasks = await taskRepository.findTasksByCondition({ type: TaskType.ChangesStream });
+        const tasks = await taskRepository.findTasksByCondition({
+          type: TaskType.ChangesStream,
+        });
         assert(tasks.length === 2);
         for (const task of tasks) {
           await changesStreamService.executeTask(task as ChangesStreamTask);
@@ -252,24 +307,34 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
 
         // refresh total
         await app.runSchedule(UpdateTotalDataPath);
-        const res = await app.httpRequest()
+        const res = await app
+          .httpRequest()
           .get('/')
           .expect(200)
           .expect('content-type', 'application/json; charset=utf-8');
         const data = res.body;
         assert(data.upstream_registries.length === 2);
-        const [ defaultRegistry ] = data.upstream_registries.filter((item: any) => item.registry_name === 'default');
+        const [defaultRegistry] = data.upstream_registries.filter(
+          (item: any) => item.registry_name === 'default'
+        );
         assert(defaultRegistry.registry_name === 'default');
-        assert(defaultRegistry.changes_stream_url === 'https://replicate.npmjs.com/_changes');
-        assert(defaultRegistry.source_registry === 'https://registry.npmjs.org');
+        assert(
+          defaultRegistry.changes_stream_url ===
+            'https://replicate.npmjs.com/_changes'
+        );
+        assert(
+          defaultRegistry.source_registry === 'https://registry.npmjs.org'
+        );
 
-        const [ customRegistry ] = data.upstream_registries.filter((item: any) => item.registry_name === 'custom');
+        const [customRegistry] = data.upstream_registries.filter(
+          (item: any) => item.registry_name === 'custom'
+        );
         assert(customRegistry.registry_name === 'custom');
-        assert(customRegistry.changes_stream_url === 'https://r.cnpmjs.org/_changes');
+        assert(
+          customRegistry.changes_stream_url === 'https://r.cnpmjs.org/_changes'
+        );
         assert(customRegistry.source_registry === 'https://cnpmjs.org');
-
       });
     });
-
   });
 });

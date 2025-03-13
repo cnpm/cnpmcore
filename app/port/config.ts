@@ -1,39 +1,43 @@
-import { SyncDeleteMode, SyncMode, ChangesStreamMode } from '../common/constants.js';
-import { DATABASE_TYPE } from '../../config/database.js';
+import type {
+  SyncDeleteMode,
+  SyncMode,
+  ChangesStreamMode,
+} from '../common/constants.js';
+import type { DATABASE_TYPE } from '../../config/database.js';
 
 export { cnpmcoreConfig } from '../../config/config.default.js';
 
 export type CnpmcoreConfig = {
-  name: string,
+  name: string;
   /**
    * enable hook or not
    */
-  hookEnable: boolean,
+  hookEnable: boolean;
   /**
    * mac custom hooks count
    */
-  hooksLimit: number,
+  hooksLimit: number;
   /**
    * upstream registry url
    */
-  sourceRegistry: string,
+  sourceRegistry: string;
   /**
    * upstream registry is base on `cnpmcore` or not
    * if your upstream is official npm registry, please turn it off
    */
-  sourceRegistryIsCNpm: boolean,
+  sourceRegistryIsCNpm: boolean;
   /**
    * sync upstream first
    */
-  syncUpstreamFirst: boolean,
+  syncUpstreamFirst: boolean;
   /**
    * sync upstream timeout, default is 3mins
    */
-  sourceRegistrySyncTimeout: number,
+  sourceRegistrySyncTimeout: number;
   /**
    * sync task high water size, default is 100
    */
-  taskQueueHighWaterSize: number,
+  taskQueueHighWaterSize: number;
   /**
    * sync mode
    * - none: don't sync npm package
@@ -41,111 +45,111 @@ export type CnpmcoreConfig = {
    * - all: sync all npm packages
    * - exist: only sync exist packages, effected when `enableCheckRecentlyUpdated` or `enableChangesStream` is enabled
    */
-  syncMode: SyncMode,
-  syncDeleteMode: SyncDeleteMode,
-  syncPackageWorkerMaxConcurrentTasks: number,
-  triggerHookWorkerMaxConcurrentTasks: number,
-  createTriggerHookWorkerMaxConcurrentTasks: number,
+  syncMode: SyncMode;
+  syncDeleteMode: SyncDeleteMode;
+  syncPackageWorkerMaxConcurrentTasks: number;
+  triggerHookWorkerMaxConcurrentTasks: number;
+  createTriggerHookWorkerMaxConcurrentTasks: number;
   /**
    * stop syncing these packages in future
    */
-  syncPackageBlockList: string[],
+  syncPackageBlockList: string[];
   /**
    * check recently from https://www.npmjs.com/browse/updated, if use set changesStreamRegistry to cnpmcore,
    * maybe you should disable it
    */
-  enableCheckRecentlyUpdated: boolean,
+  enableCheckRecentlyUpdated: boolean;
   /**
    * mirror binary, default is false
    */
-  enableSyncBinary: boolean,
+  enableSyncBinary: boolean;
   /**
    * sync binary source api, default is `${sourceRegistry}/-/binary`
    */
-  syncBinaryFromAPISource: string,
+  syncBinaryFromAPISource: string;
   /**
    * enable sync downloads data from source registry https://github.com/cnpm/cnpmcore/issues/108
    * all three parameters must be configured at the same time to take effect
    */
-  enableSyncDownloadData: boolean,
-  syncDownloadDataSourceRegistry: string,
+  enableSyncDownloadData: boolean;
+  syncDownloadDataSourceRegistry: string;
   /**
    * should be YYYY-MM-DD format
    */
-  syncDownloadDataMaxDate: string,
+  syncDownloadDataMaxDate: string;
   /**
    * @see https://github.com/npm/registry-follower-tutorial
    */
-  enableChangesStream: boolean,
-  checkChangesStreamInterval: number,
-  changesStreamRegistry: string,
+  enableChangesStream: boolean;
+  checkChangesStreamInterval: number;
+  changesStreamRegistry: string;
   /**
    * handle _changes request mode, default is 'streaming', please set it to 'json' when on cnpmcore registry
    */
-  changesStreamRegistryMode: ChangesStreamMode,
+  changesStreamRegistryMode: ChangesStreamMode;
   /**
    * registry url
    */
-  registry: string,
+  registry: string;
   /**
    * https://docs.npmjs.com/cli/v6/using-npm/config#always-auth npm <= 6
    * if `alwaysAuth=true`, all api request required access token
    */
-  alwaysAuth: boolean,
+  alwaysAuth: boolean;
   /**
    * white scope list
    */
-  allowScopes: string[],
+  allowScopes: string[];
   /**
    * allow publish non-scope package, disable by default
    */
-  allowPublishNonScopePackage: boolean,
+  allowPublishNonScopePackage: boolean;
   /**
    * Public registration is allowed, otherwise only admins can login
    */
-  allowPublicRegistration: boolean,
+  allowPublicRegistration: boolean;
   /**
    * default system admins
    */
-  admins: Record<string, string>,
+  admins: Record<string, string>;
   /**
    * use webauthn for login, https://webauthn.guide/
    * only support platform authenticators, browser support: https://webauthn.me/browser-support
    */
-  enableWebAuthn: boolean,
+  enableWebAuthn: boolean;
   /**
    * http response cache control header
    */
-  enableCDN: boolean,
+  enableCDN: boolean;
   /**
    * if you are using CDN, can override it
    * it meaning cache 300s on CDN server and client side.
    */
-  cdnCacheControlHeader: string,
+  cdnCacheControlHeader: string;
   /**
    * if you are using CDN, can set it to 'Accept, Accept-Encoding'
    */
-  cdnVaryHeader: string,
+  cdnVaryHeader: string;
   /**
    * store full package version manifests data to database table(package_version_manifests), default is false
    */
-  enableStoreFullPackageVersionManifestsToDatabase: boolean,
+  enableStoreFullPackageVersionManifestsToDatabase: boolean;
   /**
    * only support npm as client and npm >= 7.0.0 allow publish action
    */
-  enableNpmClientAndVersionCheck: boolean,
+  enableNpmClientAndVersionCheck: boolean;
   /**
    * sync when package not found, only effect when syncMode = all/exist
    */
-  syncNotFound: boolean,
+  syncNotFound: boolean;
   /**
    * redirect to source registry when package not found
    */
-  redirectNotFound: boolean,
+  redirectNotFound: boolean;
   /**
    * enable unpkg features, https://github.com/cnpm/cnpmcore/issues/452
    */
-  enableUnpkg: boolean,
+  enableUnpkg: boolean;
   /**
    * enable sync unpkg files
    */
@@ -158,29 +162,29 @@ export type CnpmcoreConfig = {
    * enable this would make sync specific version task not append latest version into this task automatically,it would mark the local latest stable version as latest tag.
    * in most cases, you should set to false to keep the same behavior as source registry.
    */
-  strictSyncSpecivicVersion: boolean,
+  strictSyncSpecivicVersion: boolean;
   /**
-  * enable elasticsearch
-  */
-  enableElasticsearch: boolean,
+   * enable elasticsearch
+   */
+  enableElasticsearch: boolean;
   /**
-  * elasticsearch index. if enableElasticsearch is true, you must set a index to write es doc.
-  */
-  elasticsearchIndex: string,
+   * elasticsearch index. if enableElasticsearch is true, you must set a index to write es doc.
+   */
+  elasticsearchIndex: string;
   /**
    * strictly enforces/validates manifest and tgz when publish, https://github.com/cnpm/cnpmcore/issues/542
    */
-  strictValidateTarballPkg?: boolean,
+  strictValidateTarballPkg?: boolean;
 
   /**
    * strictly enforces/validates dependencies version when publish or sync
    */
-  strictValidatePackageDeps?: boolean,
+  strictValidatePackageDeps?: boolean;
 
   /**
    * database config
    */
   database: {
-    type: DATABASE_TYPE | string,
-  },
+    type: DATABASE_TYPE | string;
+  };
 };

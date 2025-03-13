@@ -2,9 +2,10 @@ import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 
 import { ModelConvertor } from './util/ModelConvertor.js';
 import { AbstractRepository } from './AbstractRepository.js';
-import { Scope as ScopeModel } from './model/Scope.js';
+import type { Scope as ScopeModel } from './model/Scope.js';
 import { Scope } from '../core/entity/Scope.js';
-import { EntityUtil, PageOptions, PageResult } from '../core/util/EntityUtil.js';
+import type { PageOptions, PageResult } from '../core/util/EntityUtil.js';
+import { EntityUtil } from '../core/util/EntityUtil.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -23,13 +24,20 @@ export class ScopeRepository extends AbstractRepository {
     }
     return ModelConvertor.convertModelToEntity(model, Scope);
   }
-  async listScopesByRegistryId(registryId: string, page: PageOptions): Promise<PageResult<Scope>> {
+  async listScopesByRegistryId(
+    registryId: string,
+    page: PageOptions
+  ): Promise<PageResult<Scope>> {
     const { offset, limit } = EntityUtil.convertPageOptionsToLimitOption(page);
     const count = await this.Scope.find({ registryId }).count();
-    const models = await this.Scope.find({ registryId }).offset(offset).limit(limit);
+    const models = await this.Scope.find({ registryId })
+      .offset(offset)
+      .limit(limit);
     return {
       count,
-      data: models.map(model => ModelConvertor.convertModelToEntity(model, Scope)),
+      data: models.map(model =>
+        ModelConvertor.convertModelToEntity(model, Scope)
+      ),
     };
   }
 
@@ -39,7 +47,9 @@ export class ScopeRepository extends AbstractRepository {
     const models = await this.Scope.find().offset(offset).limit(limit);
     return {
       count,
-      data: models.map(model => ModelConvertor.convertModelToEntity(model, Scope)),
+      data: models.map(model =>
+        ModelConvertor.convertModelToEntity(model, Scope)
+      ),
     };
   }
 
@@ -51,8 +61,11 @@ export class ScopeRepository extends AbstractRepository {
       return model;
     }
     const model = await ModelConvertor.convertEntityToModel(scope, this.Scope);
-    this.logger.info('[ScopeRepository:saveScope:new] id: %s, scopeId: %s',
-      model.id, model.scopeId);
+    this.logger.info(
+      '[ScopeRepository:saveScope:new] id: %s, scopeId: %s',
+      model.id,
+      model.scopeId
+    );
     await model.save();
     return model;
   }
@@ -64,5 +77,4 @@ export class ScopeRepository extends AbstractRepository {
   async removeScopeByRegistryId(registryId: string): Promise<void> {
     await this.Scope.remove({ registryId });
   }
-
 }

@@ -1,10 +1,5 @@
-import {
-  Inject,
-} from '@eggjs/tegg';
-import {
-  EggAppConfig,
-  EggLogger,
-} from 'egg';
+import { Inject } from '@eggjs/tegg';
+import type { EggAppConfig, EggLogger } from 'egg';
 
 export abstract class AbstractService {
   @Inject()

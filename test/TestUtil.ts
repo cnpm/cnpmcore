@@ -4,8 +4,8 @@ import coffee from 'coffee';
 import { tmpdir } from 'node:os';
 import { mkdtempSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { Readable } from 'node:stream';
-import mysql from 'mysql2';
+import type { Readable } from 'node:stream';
+import mysql from 'mysql2/promise';
 import pg from 'pg';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -13,7 +13,7 @@ import semver from 'semver';
 import { app as globalApp } from '@eggjs/mock/bootstrap';
 
 import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.js';
-import { PackageJSONType } from '../app/repository/PackageRepository.js';
+import type { PackageJSONType } from '../app/repository/PackageRepository.js';
 import { database, DATABASE_TYPE } from '../config/database.js';
 import { Package as PackageModel } from '../app/repository/model/Package.js';
 
@@ -74,38 +74,39 @@ export class TestUtil {
   // 不同的 npm 版本 cli 命令不同
   // 通过 coffee 运行时获取对应版本号
   static async getNpmVersion() {
-    const res = await coffee.spawn('npm', [ '-v' ]).end();
+    const res = await coffee.spawn('npm', ['-v']).end();
     return semver.clean(res.stdout);
   }
 
   static async query(sql: string): Promise<any[]> {
-    const conn = this.getConnection();
-    return new Promise((resolve, reject) => {
-      conn.query(sql, (err: Error, rows: any) => {
-        if (err) {
-          return reject(err);
-        }
-        if (rows.rows) {
-          // pg: { rows }
-          return resolve(rows.rows);
-        }
-        return resolve(rows);
-      });
-    });
+    const conn = await this.getConnection();
+    try {
+      const result = await conn.query(sql);
+      if (result.rows) {
+        // pg: { rows }
+        return result.rows;
+      } else {
+        // mysql: [ RowDataPacket[], others ]
+        return result[0];
+      }
+    } catch (err) {
+      console.error('[TestUtil] query %o error: %s', sql, err);
+      throw err;
+    }
   }
 
-  static getConnection() {
+  static async getConnection() {
     if (!this.connection) {
       const config = this.getDatabaseConfig();
       if (process.env.CI) {
         console.log('[TestUtil] connection to database: %j', config);
       }
       if (config.type === DATABASE_TYPE.MySQL) {
-        this.connection = mysql.createConnection(config as any);
+        this.connection = await mysql.createConnection(config as any);
       } else if (config.type === DATABASE_TYPE.PostgreSQL) {
         this.connection = new pg.Client(config as any);
       }
-      this.connection.connect();
+      await this.connection.connect();
     }
     return this.connection;
   }
@@ -123,11 +124,25 @@ export class TestUtil {
       if (config.type === DATABASE_TYPE.MySQL) {
         const sql = `
           SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${config.database}';`;
-        const rows = await this.query(sql);
+        // [
+        //     { TABLE_NAME: 'binaries' },
+        //     { TABLE_NAME: 'changes' },
+        //     { TABLE_NAME: 'dists' },
+        //     { TABLE_NAME: 'history_tasks' },
+        //     { TABLE_NAME: 'hooks' },
+        // ...
+        //     { TABLE_NAME: 'token_packages' },
+        //     { TABLE_NAME: 'tokens' },
+        //     { TABLE_NAME: 'total' },
+        //     { TABLE_NAME: 'users' },
+        //     { TABLE_NAME: 'webauthn_credentials' }
+        // ]
+        const rows: { TABLE_NAME: string }[] = await this.query(sql);
         this.tables = rows.map(row => row.TABLE_NAME);
       } else if (config.type === DATABASE_TYPE.PostgreSQL) {
-        const sql = 'SELECT * FROM pg_catalog.pg_tables where schemaname = \'public\';';
-        const rows = await this.query(sql);
+        const sql =
+          "SELECT * FROM pg_catalog.pg_tables where schemaname = 'public';";
+        const rows: { tablename: string }[] = await this.query(sql);
         this.tables = rows.map(row => row.tablename);
       }
     }
@@ -136,9 +151,11 @@ export class TestUtil {
 
   static async truncateDatabase() {
     const tables = await this.getTableNames();
-    await Promise.all(tables.map(async (table: string) => {
-      await this.query(`TRUNCATE TABLE ${table};`);
-    }));
+    await Promise.all(
+      tables.map(async (table: string) => {
+        await this.query(`TRUNCATE TABLE ${table};`);
+      })
+    );
   }
 
   static get app() {
@@ -177,7 +194,9 @@ export class TestUtil {
     return JSON.parse(bytes.toString());
   }
 
-  static async getFullPackage(options?: PackageOptions): Promise<PackageJSONType & { versions: Record<string, PackageJSONType> }> {
+  static async getFullPackage(
+    options?: PackageOptions
+  ): Promise<PackageJSONType & { versions: Record<string, PackageJSONType> }> {
     const fullJSONFile = this.getFixtures('exampleFullPackage.json');
     const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
     if (options) {
@@ -234,10 +253,14 @@ export class TestUtil {
     return pkg;
   }
 
-  static async createPackage(options?: PackageOptions, userOptions?: UserOptions) {
+  static async createPackage(
+    options?: PackageOptions,
+    userOptions?: UserOptions
+  ) {
     const pkg = await this.getFullPackage(options);
     const user = await this.createUser(userOptions);
-    await this.app.httpRequest()
+    await this.app
+      .httpRequest()
       .put(`/${pkg.name}`)
       .set('authorization', user.authorization)
       .set('user-agent', user.ua)
@@ -245,8 +268,11 @@ export class TestUtil {
       .expect(201);
 
     if (options?.isPrivate === false) {
-      const [ scope, name ] = getScopeAndName(pkg.name);
-      await PackageModel.update({ scope, name }, { isPrivate: false, registryId: options?.registryId });
+      const [scope, name] = getScopeAndName(pkg.name);
+      await PackageModel.update(
+        { scope, name },
+        { isPrivate: false, registryId: options?.registryId }
+      );
     }
     return { user, pkg };
   }
@@ -260,7 +286,8 @@ export class TestUtil {
     }
     const password = user.password ?? 'password-is-here';
     const email = cleanUserPrefix(user.email ?? `${user.name}@example.com`);
-    let res = await this.app.httpRequest()
+    let res = await this.app
+      .httpRequest()
       .put(`/-/user/org.couchdb.user:${user.name}`)
       .send({
         name: user.name,
@@ -271,7 +298,8 @@ export class TestUtil {
       .expect(201);
     let token: string = res.body.token;
     if (user.tokenOptions) {
-      res = await this.app.httpRequest()
+      res = await this.app
+        .httpRequest()
         .post('/-/npm/v1/tokens')
         .set('authorization', `Bearer ${token}`)
         .send({
@@ -299,7 +327,8 @@ export class TestUtil {
     automation?: true;
     cidr_whitelist?: string[];
   }) {
-    const res = await this.app.httpRequest()
+    const res = await this.app
+      .httpRequest()
       .post('/-/npm/v1/tokens')
       .set('authorization', `Bearer ${user.token}`)
       .set('user-agent', this.ua)
@@ -322,16 +351,16 @@ export class TestUtil {
   static async createRegistryAndScope() {
     // create success
     const adminUser = await this.createAdmin();
-    await this.app.httpRequest()
+    await this.app
+      .httpRequest()
       .post('/-/registry')
       .set('authorization', adminUser.authorization)
-      .send(
-        {
-          name: 'custom6',
-          host: 'https://r.cnpmjs.org/',
-          changeStream: 'https://r.cnpmjs.org/_changes',
-          type: 'cnpmcore',
-        });
+      .send({
+        name: 'custom6',
+        host: 'https://r.cnpmjs.org/',
+        changeStream: 'https://r.cnpmjs.org/_changes',
+        type: 'cnpmcore',
+      });
   }
 
   static async readStreamToLog(urlOrStream: any) {

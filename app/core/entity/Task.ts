@@ -1,13 +1,16 @@
 import os from 'node:os';
 import path from 'node:path';
 import { InternalServerError } from 'egg-errors';
-import { Entity, EntityData } from './Entity.js';
-import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import type { EntityData } from './Entity.js';
+import { Entity } from './Entity.js';
+import type { EasyData } from '../util/EntityUtil.js';
+import { EntityUtil } from '../util/EntityUtil.js';
 import { TaskType, TaskState } from '../../common/enum/Task.js';
 import { PROXY_CACHE_DIR_NAME } from '../../common/constants.js';
 import dayjs from '../../common/dayjs.js';
-import { HookEvent } from './HookEvent.js';
-import { DIST_NAMES, isPkgManifest } from './Package.js';
+import type { HookEvent } from './HookEvent.js';
+import type { DIST_NAMES } from './Package.js';
+import { isPkgManifest } from './Package.js';
 
 export const HOST_NAME = os.hostname();
 export const PID = process.pid;
@@ -44,9 +47,9 @@ export type SyncPackageTaskOptions = {
 };
 
 export type UpdateProxyCacheTaskOptions = {
-  fullname: string,
-  version?: string,
-  fileType: DIST_NAMES,
+  fullname: string;
+  version?: string;
+  fileType: DIST_NAMES;
 };
 
 export interface CreateHookTaskData extends TaskBaseData {
@@ -68,18 +71,18 @@ export interface CreateSyncPackageTaskData extends TaskBaseData {
 }
 
 export interface CreateUpdateProxyCacheTaskData extends TaskBaseData {
-  fullname: string,
-  version?: string,
-  fileType: DIST_NAMES,
-  filePath: string
+  fullname: string;
+  version?: string;
+  fileType: DIST_NAMES;
+  filePath: string;
 }
 
 export interface ChangesStreamTaskData extends TaskBaseData {
   since: string;
-  last_package?: string,
-  last_package_created?: Date,
-  task_count?: number,
-  registryId?: string,
+  last_package?: string;
+  last_package_created?: Date;
+  task_count?: number;
+  registryId?: string;
 }
 
 export interface TaskUpdateCondition {
@@ -133,12 +136,17 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     this.data.taskWorker = `${HOST_NAME}:${PID}`;
   }
 
-  private static create<T extends TaskBaseData>(data: EasyData<TaskData<T>, 'taskId'>): Task<T> {
+  private static create<T extends TaskBaseData>(
+    data: EasyData<TaskData<T>, 'taskId'>
+  ): Task<T> {
     const newData = EntityUtil.defaultData(data, 'taskId');
     return new Task(newData);
   }
 
-  public static createSyncPackage(fullname: string, options?: SyncPackageTaskOptions): CreateSyncPackageTask {
+  public static createSyncPackage(
+    fullname: string,
+    options?: SyncPackageTaskOptions
+  ): CreateSyncPackageTask {
     const data = {
       type: TaskType.SyncPackage,
       state: TaskState.Waiting,
@@ -161,7 +169,11 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static createChangesStream(targetName: string, registryId = '', since = ''): ChangesStreamTask {
+  public static createChangesStream(
+    targetName: string,
+    registryId = '',
+    since = ''
+  ): ChangesStreamTask {
     const data = {
       type: TaskType.ChangesStream,
       state: TaskState.Waiting,
@@ -209,7 +221,10 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static createTriggerHookTask(hookEvent: HookEvent, hookId: string): TriggerHookTask {
+  public static createTriggerHookTask(
+    hookEvent: HookEvent,
+    hookId: string
+  ): TriggerHookTask {
     const data = {
       type: TaskType.TriggerHook,
       state: TaskState.Waiting,
@@ -249,12 +264,17 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
   }
 
   public static needMergeWhenWaiting(type: TaskType) {
-    return [ TaskType.SyncBinary, TaskType.SyncPackage ].includes(type);
+    return [TaskType.SyncBinary, TaskType.SyncPackage].includes(type);
   }
 
-  public static createUpdateProxyCache(targetName: string, options: UpdateProxyCacheTaskOptions):CreateUpdateProxyCacheTask {
+  public static createUpdateProxyCache(
+    targetName: string,
+    options: UpdateProxyCacheTaskOptions
+  ): CreateUpdateProxyCacheTask {
     if (!isPkgManifest(options.fileType)) {
-      throw new InternalServerError('should not update package version manifest.');
+      throw new InternalServerError(
+        'should not update package version manifest.'
+      );
     }
     const filePath = `/${PROXY_CACHE_DIR_NAME}/${options.fullname}/${options.fileType}`;
     const data = {

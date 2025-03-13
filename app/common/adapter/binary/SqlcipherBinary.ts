@@ -1,6 +1,7 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary.js';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
+import type { FetchResult, BinaryItem } from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Sqlcipher)
@@ -16,7 +17,8 @@ export class SqlcipherBinary extends AbstractBinary {
     } = {
       '/': [],
     };
-    const s3Url = 'https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher';
+    const s3Url =
+      'https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher';
     const pkgUrl = 'https://registry.npmjs.com/@journeyapps/sqlcipher';
     const data = await this.requestJSON(pkgUrl);
     // https://github.com/journeyapps/node-sqlcipher/blob/master/.circleci/config.yml#L407
@@ -48,7 +50,8 @@ export class SqlcipherBinary extends AbstractBinary {
       if (major < 5) continue;
       // >= 5.0.0
       const pkgVersion = data.versions[version];
-      const napiVersions = pkgVersion.binary && pkgVersion.binary.napi_versions || [];
+      const napiVersions =
+        (pkgVersion.binary && pkgVersion.binary.napi_versions) || [];
       const date = data.time[version];
       dirItems['/'].push({
         name: `v${version}/`,
@@ -74,7 +77,7 @@ export class SqlcipherBinary extends AbstractBinary {
             size: '-',
             isDir: false,
             url: `${s3Url}/v${version}/${name}`,
-            ignoreDownloadStatuses: [ 404, 403 ],
+            ignoreDownloadStatuses: [404, 403],
           });
         }
       }

@@ -1,3 +1,4 @@
+import type { EggContext } from '@eggjs/tegg';
 import {
   Inject,
   HTTPController,
@@ -6,32 +7,34 @@ import {
   HTTPParam,
   HTTPBody,
   Context,
-  EggContext,
   HTTPQuery,
 } from '@eggjs/tegg';
-import {
-  EggLogger,
-  EggAppConfig,
-} from 'egg';
-import { Static, Type } from 'egg-typebox-validate/typebox';
+import type { EggLogger, EggAppConfig } from 'egg';
+import type { Static } from 'egg-typebox-validate/typebox';
+import { Type } from 'egg-typebox-validate/typebox';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 import { createHash } from 'node:crypto';
 import base64url from 'base64url';
+import type {
+  VerifyRegistrationResponseOpts,
+  VerifyAuthenticationResponseOpts,
+} from '@simplewebauthn/server';
 import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
-  VerifyRegistrationResponseOpts,
-  VerifyAuthenticationResponseOpts,
 } from '@simplewebauthn/server';
-import type { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/typescript-types';
+import type {
+  PublicKeyCredentialCreationOptionsJSON,
+  PublicKeyCredentialRequestOptionsJSON,
+} from '@simplewebauthn/typescript-types';
 
 import { LoginResultCode, WanStatusCode } from '../../common/enum/User.js';
-import { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
-import { UserService } from '../../core/service/UserService.js';
+import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
+import type { UserService } from '../../core/service/UserService.js';
 import { MiddlewareController } from '../middleware/index.js';
-import { AuthAdapter } from '../../infra/AuthAdapter.js';
+import type { AuthAdapter } from '../../infra/AuthAdapter.js';
 import { genRSAKeys, decryptRSA } from '../../common/CryptoUtil.js';
 import { getBrowserTypeForWebauthn } from '../../common/UserUtil.js';
 
@@ -55,7 +58,6 @@ type LoginImplementRequest = {
   wanCredentialRegiData: unknown;
   wanCredentialAuthData: unknown;
   needUnbindWan: boolean;
-
 };
 
 const UserRule = Type.Object({
@@ -86,7 +88,10 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login',
     method: HTTPMethodEnum.POST,
   })
-  async login(@Context() ctx: EggContext, @HTTPBody() loginRequest: LoginRequest) {
+  async login(
+    @Context() ctx: EggContext,
+    @HTTPBody() loginRequest: LoginRequest
+  ) {
     ctx.tValidate(LoginRequestRule, loginRequest);
     return this.authAdapter.getAuthUrl(ctx);
   }
@@ -95,7 +100,10 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login/request/session/:sessionId',
     method: HTTPMethodEnum.GET,
   })
-  async loginRender(@Context() ctx: EggContext, @HTTPParam() sessionId: string) {
+  async loginRender(
+    @Context() ctx: EggContext,
+    @HTTPParam() sessionId: string
+  ) {
     ctx.tValidate(SessionRule, { sessionId });
     ctx.type = 'html';
     const sessionToken = await this.cacheAdapter.get(sessionId);
@@ -116,17 +124,30 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login/request/session/:sessionId',
     method: HTTPMethodEnum.POST,
   })
-  async loginImplement(@Context() ctx: EggContext, @HTTPParam() sessionId: string, @HTTPBody() loginImplementRequest: LoginImplementRequest) {
+  async loginImplement(
+    @Context() ctx: EggContext,
+    @HTTPParam() sessionId: string,
+    @HTTPBody() loginImplementRequest: LoginImplementRequest
+  ) {
     ctx.tValidate(SessionRule, { sessionId });
     const sessionToken = await this.cacheAdapter.get(sessionId);
     if (typeof sessionToken !== 'string') {
-      return { ok: false, message: 'Session not found, please try again on your command line' };
+      return {
+        ok: false,
+        message: 'Session not found, please try again on your command line',
+      };
     }
 
-    const { accData, wanCredentialRegiData, wanCredentialAuthData, needUnbindWan } = loginImplementRequest;
+    const {
+      accData,
+      wanCredentialRegiData,
+      wanCredentialAuthData,
+      needUnbindWan,
+    } = loginImplementRequest;
     const { username, password = '' } = accData;
     const enableWebAuthn = this.config.cnpmcore.enableWebAuthn;
-    const isSupportWebAuthn = ctx.protocol === 'https' || ctx.hostname === 'localhost';
+    const isSupportWebAuthn =
+      ctx.protocol === 'https' || ctx.hostname === 'localhost';
     let token = '';
     let user;
 
@@ -137,23 +158,35 @@ export class WebauthController extends MiddlewareController {
       }
     }
 
-    const browserType = getBrowserTypeForWebauthn(ctx.headers['user-agent']) || undefined;
-    const expectedChallenge = (await this.cacheAdapter.get(`${sessionId}_challenge`)) || '';
+    const browserType =
+      getBrowserTypeForWebauthn(ctx.headers['user-agent']) || undefined;
+    const expectedChallenge =
+      (await this.cacheAdapter.get(`${sessionId}_challenge`)) || '';
     const expectedOrigin = this.config.cnpmcore.registry;
     const expectedRPID = new URL(expectedOrigin).hostname;
     // webauthn authentication
     if (enableWebAuthn && isSupportWebAuthn && wanCredentialAuthData) {
       user = await this.userService.findUserByName(username);
       if (!user) {
-        return { ok: false, message: 'Unauthorized, Please check your login name' };
+        return {
+          ok: false,
+          message: 'Unauthorized, Please check your login name',
+        };
       }
-      const credential = await this.userService.findWebauthnCredential(user.userId, browserType);
+      const credential = await this.userService.findWebauthnCredential(
+        user.userId,
+        browserType
+      );
       if (!credential?.credentialId || !credential?.publicKey) {
-        return { ok: false, message: 'Unauthorized, Please check your login name' };
+        return {
+          ok: false,
+          message: 'Unauthorized, Please check your login name',
+        };
       }
       try {
         const verification = await verifyAuthenticationResponse({
-          response: wanCredentialAuthData as VerifyAuthenticationResponseOpts['response'],
+          response:
+            wanCredentialAuthData as VerifyAuthenticationResponseOpts['response'],
           expectedChallenge,
           expectedOrigin,
           expectedRPID,
@@ -167,11 +200,26 @@ export class WebauthController extends MiddlewareController {
         });
         const { verified } = verification;
         if (!verified) {
-          return { ok: false, message: 'Invalid security arguments, please try again on your browser' };
+          return {
+            ok: false,
+            message:
+              'Invalid security arguments, please try again on your browser',
+          };
         }
       } catch (err) {
-        this.logger.error('[WebauthController.loginImplement:verify-authentication-fail] expectedChallenge: %s, expectedOrigin: %s, expectedRPID: %s, wanCredentialAuthData: %j, error: %j', expectedChallenge, expectedOrigin, expectedRPID, wanCredentialAuthData, err);
-        return { ok: false, message: 'Authentication failed, please continue to sign in with your password' };
+        this.logger.error(
+          '[WebauthController.loginImplement:verify-authentication-fail] expectedChallenge: %s, expectedOrigin: %s, expectedRPID: %s, wanCredentialAuthData: %j, error: %j',
+          expectedChallenge,
+          expectedOrigin,
+          expectedRPID,
+          wanCredentialAuthData,
+          err
+        );
+        return {
+          ok: false,
+          message:
+            'Authentication failed, please continue to sign in with your password',
+        };
       }
       const createToken = await this.userService.createToken(user.userId);
       token = createToken.token!;
@@ -183,7 +231,10 @@ export class WebauthController extends MiddlewareController {
     // check privateKey valid
     const privateKey = await this.cacheAdapter.get(`${sessionId}_privateKey`);
     if (!privateKey) {
-      return { ok: false, message: 'Invalid security arguments, please try again on your browser' };
+      return {
+        ok: false,
+        message: 'Invalid security arguments, please try again on your browser',
+      };
     }
     // check login name and password valid
     const realPassword = decryptRSA(privateKey, password);
@@ -200,7 +251,10 @@ export class WebauthController extends MiddlewareController {
     const result = await this.userService.login(username, realPassword);
     // user exists and password not match
     if (result.code === LoginResultCode.Fail) {
-      return { ok: false, message: 'Please check your login name and password' };
+      return {
+        ok: false,
+        message: 'Please check your login name and password',
+      };
     }
 
     if (result.code === LoginResultCode.Success) {
@@ -209,7 +263,10 @@ export class WebauthController extends MiddlewareController {
       user = result.user;
       // need unbind webauthn credential
       if (needUnbindWan) {
-        await this.userService.removeWebauthnCredential(user?.userId, browserType);
+        await this.userService.removeWebauthnCredential(
+          user?.userId,
+          browserType
+        );
       }
     } else {
       // others: LoginResultCode.UserNotFound
@@ -231,7 +288,8 @@ export class WebauthController extends MiddlewareController {
     if (enableWebAuthn && isSupportWebAuthn && wanCredentialRegiData) {
       try {
         const verification = await verifyRegistrationResponse({
-          response: wanCredentialRegiData as VerifyRegistrationResponseOpts['response'],
+          response:
+            wanCredentialRegiData as VerifyRegistrationResponseOpts['response'],
           expectedChallenge,
           expectedOrigin,
           expectedRPID,
@@ -240,9 +298,13 @@ export class WebauthController extends MiddlewareController {
         if (verified && registrationInfo) {
           const { credentialPublicKey, credentialID } = registrationInfo;
           // @ts-expect-error type error
-          const base64CredentialPublicKey = base64url.encode(Buffer.from(new Uint8Array(credentialPublicKey)));
+          const base64CredentialPublicKey = base64url.encode(
+            Buffer.from(new Uint8Array(credentialPublicKey))
+          );
           // @ts-expect-error type error
-          const base64CredentialID = base64url.encode(Buffer.from(new Uint8Array(credentialID)));
+          const base64CredentialID = base64url.encode(
+            Buffer.from(new Uint8Array(credentialID))
+          );
           this.userService.createWebauthnCredential(user?.userId, {
             credentialId: base64CredentialID,
             publicKey: base64CredentialPublicKey,
@@ -250,7 +312,14 @@ export class WebauthController extends MiddlewareController {
           });
         }
       } catch (err) {
-        this.logger.error('[WebauthController.loginImplement:verify-registration-fail] expectedChallenge: %s, expectedOrigin: %s, expectedRPID: %s, wanCredentialRegiData: %j, error: %j', expectedChallenge, expectedOrigin, expectedRPID, wanCredentialRegiData, err);
+        this.logger.error(
+          '[WebauthController.loginImplement:verify-registration-fail] expectedChallenge: %s, expectedOrigin: %s, expectedRPID: %s, wanCredentialRegiData: %j, error: %j',
+          expectedChallenge,
+          expectedOrigin,
+          expectedRPID,
+          wanCredentialRegiData,
+          err
+        );
       }
     }
 
@@ -261,20 +330,32 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login/request/prepare/:sessionId',
     method: HTTPMethodEnum.GET,
   })
-  async loginPrepare(@Context() ctx: EggContext, @HTTPParam() sessionId: string, @HTTPQuery() name: string) {
+  async loginPrepare(
+    @Context() ctx: EggContext,
+    @HTTPParam() sessionId: string,
+    @HTTPQuery() name: string
+  ) {
     ctx.tValidate(SessionRule, { sessionId });
     const sessionToken = await this.cacheAdapter.get(sessionId);
     if (typeof sessionToken !== 'string') {
-      return { ok: false, message: 'Session not found, please try again on your command line' };
+      return {
+        ok: false,
+        message: 'Session not found, please try again on your command line',
+      };
     }
 
     const browserType = getBrowserTypeForWebauthn(ctx.headers['user-agent']);
     const expectedRPID = new URL(this.config.cnpmcore.registry).hostname;
     const user = await this.userService.findUserByName(name);
-    const result: LoginPrepareResult = { wanStatus: WanStatusCode.UserNotFound };
+    const result: LoginPrepareResult = {
+      wanStatus: WanStatusCode.UserNotFound,
+    };
     let credential;
     if (user) {
-      credential = await this.userService.findWebauthnCredential(user.userId, browserType);
+      credential = await this.userService.findWebauthnCredential(
+        user.userId,
+        browserType
+      );
       result.wanStatus = WanStatusCode.Unbound;
     }
     if (credential?.credentialId && credential?.publicKey) {
@@ -282,17 +363,24 @@ export class WebauthController extends MiddlewareController {
       result.wanCredentialAuthOption = generateAuthenticationOptions({
         timeout: 60000,
         rpID: expectedRPID,
-        allowCredentials: [{
-          // @ts-expect-error type error
-          id: base64url.toBuffer(credential.credentialId),
-          type: 'public-key',
-          transports: [ 'internal' ],
-        }],
+        allowCredentials: [
+          {
+            // @ts-expect-error type error
+            id: base64url.toBuffer(credential.credentialId),
+            type: 'public-key',
+            transports: ['internal'],
+          },
+        ],
       });
-      await this.cacheAdapter.set(`${sessionId}_challenge`, result.wanCredentialAuthOption.challenge);
+      await this.cacheAdapter.set(
+        `${sessionId}_challenge`,
+        result.wanCredentialAuthOption.challenge
+      );
     } else {
       const encoder = new TextEncoder();
-      const regUserIdBuffer = createHash('sha256').update(encoder.encode(name)).digest();
+      const regUserIdBuffer = createHash('sha256')
+        .update(encoder.encode(name))
+        .digest();
       result.wanCredentialRegiOption = generateRegistrationOptions({
         rpName: ctx.app.config.name,
         rpID: expectedRPID,
@@ -306,7 +394,10 @@ export class WebauthController extends MiddlewareController {
           authenticatorAttachment: 'platform',
         },
       });
-      await this.cacheAdapter.set(`${sessionId}_challenge`, result.wanCredentialRegiOption.challenge);
+      await this.cacheAdapter.set(
+        `${sessionId}_challenge`,
+        result.wanCredentialRegiOption.challenge
+      );
     }
     return result;
   }
@@ -328,7 +419,11 @@ export class WebauthController extends MiddlewareController {
       throw new ForbiddenError('invalid user info');
     }
     const { name, email } = userRes;
-    const { token } = await this.userService.ensureTokenByUser({ name, email, ip: ctx.ip });
+    const { token } = await this.userService.ensureTokenByUser({
+      name,
+      email,
+      ip: ctx.ip,
+    });
     await this.cacheAdapter.set(sessionId, token!.token!);
 
     return { success: true };

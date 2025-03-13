@@ -1,3 +1,4 @@
+import type { EggContext } from '@eggjs/tegg';
 import {
   HTTPController,
   HTTPMethod,
@@ -5,16 +6,18 @@ import {
   HTTPParam,
   Inject,
   Context,
-  EggContext,
 } from '@eggjs/tegg';
 
 import { AbstractController } from '../AbstractController.js';
-import { getScopeAndName, FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';
+import {
+  getScopeAndName,
+  FULLNAME_REG_STRING,
+} from '../../../common/PackageUtil.js';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil.js';
-import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
-import { CacheService } from '../../../core/service/CacheService.js';
+import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
+import type { CacheService } from '../../../core/service/CacheService.js';
 import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants.js';
-import { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
+import type { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
 import { calculateIntegrity } from '../../../common/PackageUtil.js';
 import { DIST_NAMES } from '../../../core/entity/Package.js';
 
@@ -34,14 +37,18 @@ export class ShowPackageController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async show(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
-    const [ scope, name ] = getScopeAndName(fullname);
+    const [scope, name] = getScopeAndName(fullname);
     const isSync = isSyncWorkerRequest(ctx);
-    const isFullManifests = ctx.accepts([ 'json', ABBREVIATED_META_TYPE ]) !== ABBREVIATED_META_TYPE;
+    const isFullManifests =
+      ctx.accepts(['json', ABBREVIATED_META_TYPE]) !== ABBREVIATED_META_TYPE;
 
     // handle cache
     // fallback to db when cache error
     try {
-      const cacheEtag = await this.cacheService.getPackageEtag(fullname, isFullManifests);
+      const cacheEtag = await this.cacheService.getPackageEtag(
+        fullname,
+        isFullManifests
+      );
       if (!isSync && cacheEtag) {
         let requestEtag = ctx.request.get<string>('if-none-match');
         if (requestEtag.startsWith('W/')) {
@@ -55,7 +62,10 @@ export class ShowPackageController extends AbstractController {
           return;
         }
         // get cache pkg data
-        const cacheBytes = await this.cacheService.getPackageManifests(fullname, isFullManifests);
+        const cacheBytes = await this.cacheService.getPackageManifests(
+          fullname,
+          isFullManifests
+        );
         if (cacheBytes && cacheBytes.length > 0) {
           ctx.set('etag', `W/${cacheEtag}`);
           ctx.type = 'json';
@@ -65,16 +75,26 @@ export class ShowPackageController extends AbstractController {
       }
     } catch (e) {
       this.logger.error(e);
-      this.logger.error('[ShowPackageController.show:error] get cache error, ignore');
+      this.logger.error(
+        '[ShowPackageController.show:error] get cache error, ignore'
+      );
     }
 
     // handle cache miss
-    let result: { etag: string; data: any, blockReason: string };
+    let result: { etag: string; data: any; blockReason: string };
     if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
       // proxy mode
-      const fileType = isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS;
-      const { data: sourceManifest } = await this.proxyCacheService.getProxyResponse(ctx, { dataType: 'json' });
-      const pkgManifest = this.proxyCacheService.replaceTarballUrl(sourceManifest, fileType);
+      const fileType = isFullManifests
+        ? DIST_NAMES.FULL_MANIFESTS
+        : DIST_NAMES.ABBREVIATED_MANIFESTS;
+      const { data: sourceManifest } =
+        await this.proxyCacheService.getProxyResponse(ctx, {
+          dataType: 'json',
+        });
+      const pkgManifest = this.proxyCacheService.replaceTarballUrl(
+        sourceManifest,
+        fileType
+      );
 
       const nfsBytes = Buffer.from(JSON.stringify(pkgManifest));
       const { shasum: etag } = await calculateIntegrity(nfsBytes);
@@ -82,9 +102,18 @@ export class ShowPackageController extends AbstractController {
     } else {
       // sync mode
       if (isFullManifests) {
-        result = await this.packageManagerService.listPackageFullManifests(scope, name, isSync);
+        result = await this.packageManagerService.listPackageFullManifests(
+          scope,
+          name,
+          isSync
+        );
       } else {
-        result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, isSync);
+        result =
+          await this.packageManagerService.listPackageAbbreviatedManifests(
+            scope,
+            name,
+            isSync
+          );
       }
     }
     const { etag, data, blockReason } = result;
@@ -92,7 +121,11 @@ export class ShowPackageController extends AbstractController {
     if (!etag) {
       const allowSync = this.getAllowSync(ctx);
       // don't set cdn header, no cdn cache for new package to sync as soon as possible
-      throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
+      throw this.createPackageNotFoundErrorWithRedirect(
+        fullname,
+        undefined,
+        allowSync
+      );
     }
     if (blockReason) {
       this.setCDNHeaders(ctx);
@@ -104,7 +137,12 @@ export class ShowPackageController extends AbstractController {
     // sync request response with no bug version fixed
     if (!isSync) {
       ctx.runInBackground(async () => {
-        await this.cacheService.savePackageEtagAndManifests(fullname, isFullManifests, etag, cacheBytes);
+        await this.cacheService.savePackageEtagAndManifests(
+          fullname,
+          isFullManifests,
+          etag,
+          cacheBytes
+        );
       });
     }
 

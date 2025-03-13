@@ -1,23 +1,30 @@
-import {
-  AccessLevel,
-  SingletonProto,
-  Inject,
-} from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { E400, NotFoundError } from 'egg-errors';
-import { RegistryRepository } from '../../repository/RegistryRepository.js';
+import type { RegistryRepository } from '../../repository/RegistryRepository.js';
 import { AbstractService } from '../../common/AbstractService.js';
 import { Registry } from '../entity/Registry.js';
-import { PageOptions, PageResult } from '../util/EntityUtil.js';
-import { ScopeManagerService } from './ScopeManagerService.js';
-import { TaskService } from './TaskService.js';
+import type { PageOptions, PageResult } from '../util/EntityUtil.js';
+import type { ScopeManagerService } from './ScopeManagerService.js';
+import type { TaskService } from './TaskService.js';
 import { Task } from '../entity/Task.js';
-import { ChangesStreamMode, PresetRegistryName } from '../../common/constants.js';
+import {
+  ChangesStreamMode,
+  PresetRegistryName,
+} from '../../common/constants.js';
 import { RegistryType } from '../../common/enum/Registry.js';
 
-export interface CreateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'userPrefix' | 'type' | 'name' | 'authToken' > {
+export interface CreateRegistryCmd
+  extends Pick<
+    Registry,
+    'changeStream' | 'host' | 'userPrefix' | 'type' | 'name' | 'authToken'
+  > {
   operatorId?: string;
 }
-export interface UpdateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'type' | 'name' | 'authToken' > {
+export interface UpdateRegistryCmd
+  extends Pick<
+    Registry,
+    'changeStream' | 'host' | 'type' | 'name' | 'authToken'
+  > {
   operatorId?: string;
 }
 export interface RemoveRegistryCmd extends Pick<Registry, 'registryId'> {
@@ -43,26 +50,50 @@ export class RegistryManagerService extends AbstractService {
 
   async createSyncChangesStream(startSyncCmd: StartSyncCmd): Promise<void> {
     const { registryId, operatorId = '-', since } = startSyncCmd;
-    this.logger.info('[RegistryManagerService.startSyncChangesStream:prepare] operatorId: %s, registryId: %s, since: %s', operatorId, registryId, since);
-    const registry = await this.registryRepository.findRegistryByRegistryId(registryId);
+    this.logger.info(
+      '[RegistryManagerService.startSyncChangesStream:prepare] operatorId: %s, registryId: %s, since: %s',
+      operatorId,
+      registryId,
+      since
+    );
+    const registry =
+      await this.registryRepository.findRegistryByRegistryId(registryId);
     if (!registry) {
       throw new NotFoundError(`registry ${registryId} not found`);
     }
 
     // 防止和 GLOBAL_WORKER 冲突，只能有一个默认的全局 registry
-    const scopesCount = await this.scopeManagerService.countByRegistryId(registryId);
+    const scopesCount =
+      await this.scopeManagerService.countByRegistryId(registryId);
     if (scopesCount === 0) {
-      throw new E400(`registry ${registryId} has no scopes, please create scopes first`);
+      throw new E400(
+        `registry ${registryId} has no scopes, please create scopes first`
+      );
     }
 
     // 启动 changeStream
     const targetName = `${registry.name.toUpperCase()}_WORKER`;
-    await this.taskService.createTask(Task.createChangesStream(targetName, registryId, since), false);
+    await this.taskService.createTask(
+      Task.createChangesStream(targetName, registryId, since),
+      false
+    );
   }
 
   async createRegistry(createCmd: CreateRegistryCmd): Promise<Registry> {
-    const { name, changeStream = '', host, userPrefix = '', type, operatorId = '-', authToken } = createCmd;
-    this.logger.info('[RegistryManagerService.createRegistry:prepare] operatorId: %s, createCmd: %j', operatorId, createCmd);
+    const {
+      name,
+      changeStream = '',
+      host,
+      userPrefix = '',
+      type,
+      operatorId = '-',
+      authToken,
+    } = createCmd;
+    this.logger.info(
+      '[RegistryManagerService.createRegistry:prepare] operatorId: %s, createCmd: %j',
+      operatorId,
+      createCmd
+    );
     const registry = Registry.create({
       name,
       changeStream,
@@ -78,9 +109,21 @@ export class RegistryManagerService extends AbstractService {
   // 更新部分 registry 信息
   // 不允许 userPrefix 字段变更
   async updateRegistry(registryId: string, updateCmd: UpdateRegistryCmd) {
-    const { name, changeStream, host, type, operatorId = '-', authToken } = updateCmd;
-    this.logger.info('[RegistryManagerService.updateRegistry:prepare] operatorId: %s, updateCmd: %j', operatorId, updateCmd);
-    const registry = await this.registryRepository.findRegistryByRegistryId(registryId);
+    const {
+      name,
+      changeStream,
+      host,
+      type,
+      operatorId = '-',
+      authToken,
+    } = updateCmd;
+    this.logger.info(
+      '[RegistryManagerService.updateRegistry:prepare] operatorId: %s, updateCmd: %j',
+      operatorId,
+      updateCmd
+    );
+    const registry =
+      await this.registryRepository.findRegistryByRegistryId(registryId);
     if (!registry) {
       throw new NotFoundError(`registry ${registryId} not found`);
     }
@@ -108,7 +151,9 @@ export class RegistryManagerService extends AbstractService {
   }
 
   async findByRegistryHost(host?: string): Promise<Registry | null> {
-    return host ? await this.registryRepository.findRegistryByRegistryHost(host) : null;
+    return host
+      ? await this.registryRepository.findRegistryByRegistryHost(host)
+      : null;
   }
 
   // 删除 Registry 方法
@@ -116,13 +161,22 @@ export class RegistryManagerService extends AbstractService {
   // 同时删除对应的 scope 数据
   async remove(removeCmd: RemoveRegistryCmd): Promise<void> {
     const { registryId, operatorId = '-' } = removeCmd;
-    this.logger.info('[RegistryManagerService.remove:prepare] operatorId: %s, registryId: %s', operatorId, registryId);
+    this.logger.info(
+      '[RegistryManagerService.remove:prepare] operatorId: %s, registryId: %s',
+      operatorId,
+      registryId
+    );
     await this.registryRepository.removeRegistry(registryId);
-    await this.scopeManagerService.removeByRegistryId({ registryId, operatorId });
+    await this.scopeManagerService.removeByRegistryId({
+      registryId,
+      operatorId,
+    });
   }
 
   async ensureSelfRegistry(): Promise<Registry> {
-    const existRegistry = await this.registryRepository.findRegistry(PresetRegistryName.self);
+    const existRegistry = await this.registryRepository.findRegistry(
+      PresetRegistryName.self
+    );
     if (existRegistry) {
       return existRegistry;
     }
@@ -138,18 +192,26 @@ export class RegistryManagerService extends AbstractService {
     });
 
     return newRegistry;
-
   }
 
   async ensureDefaultRegistry(): Promise<Registry> {
-    const existRegistry = await this.registryRepository.findRegistry(PresetRegistryName.default);
+    const existRegistry = await this.registryRepository.findRegistry(
+      PresetRegistryName.default
+    );
     if (existRegistry) {
       return existRegistry;
     }
 
     // 从配置文件默认生成
-    const { changesStreamRegistryMode, changesStreamRegistry: changesStreamHost, sourceRegistry: host } = this.config.cnpmcore;
-    const type = changesStreamRegistryMode === ChangesStreamMode.json ? RegistryType.Cnpmcore : RegistryType.Npm;
+    const {
+      changesStreamRegistryMode,
+      changesStreamRegistry: changesStreamHost,
+      sourceRegistry: host,
+    } = this.config.cnpmcore;
+    const type =
+      changesStreamRegistryMode === ChangesStreamMode.json
+        ? RegistryType.Cnpmcore
+        : RegistryType.Npm;
     const registry = await this.createRegistry({
       name: PresetRegistryName.default,
       type,
@@ -159,15 +221,13 @@ export class RegistryManagerService extends AbstractService {
     });
 
     return registry;
-
   }
 
-  async getAuthTokenByRegistryHost(host: string): Promise<string|undefined> {
+  async getAuthTokenByRegistryHost(host: string): Promise<string | undefined> {
     const registry = await this.findByRegistryHost(host);
     if (!registry) {
       return undefined;
     }
     return registry.authToken;
   }
-
 }

@@ -3,9 +3,9 @@ import { app } from '@eggjs/mock/bootstrap';
 
 import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import { Registry } from '../../../../app/core/entity/Registry.js';
+import type { Registry } from '../../../../app/core/entity/Registry.js';
 import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import { Task } from '../../../../app/core/entity/Task.js';
+import type { Task } from '../../../../app/core/entity/Task.js';
 
 describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () => {
   let packageSyncerService: PackageSyncerService;
@@ -35,7 +35,11 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
 
   describe('getTaskRegistry()', () => {
     it('should work', async () => {
-      const taskRegistry = await packageSyncerService.initSpecRegistry(task, null, '@cnpm');
+      const taskRegistry = await packageSyncerService.initSpecRegistry(
+        task,
+        null,
+        '@cnpm'
+      );
       assert(taskRegistry);
       assert(taskRegistry.registryId === registry.registryId);
     });
@@ -47,7 +51,11 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
         tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: 1`,
       });
 
-      const taskRegistry = await packageSyncerService.initSpecRegistry(task, null, '@cnpm');
+      const taskRegistry = await packageSyncerService.initSpecRegistry(
+        task,
+        null,
+        '@cnpm'
+      );
       assert(taskRegistry!.name === 'default');
     });
   });

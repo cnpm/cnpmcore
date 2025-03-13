@@ -1,7 +1,8 @@
 import { basename } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary.js';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
+import type { FetchResult, BinaryItem } from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.ChromeForTesting)
@@ -18,7 +19,11 @@ export class ChromeForTestingBinary extends AbstractBinary {
   }
 
   async finishFetch(success: boolean) {
-    if (success && this.#timestamp && ChromeForTestingBinary.lastTimestamp !== this.#timestamp) {
+    if (
+      success &&
+      this.#timestamp &&
+      ChromeForTestingBinary.lastTimestamp !== this.#timestamp
+    ) {
       ChromeForTestingBinary.lastTimestamp = this.#timestamp;
     }
   }
@@ -26,22 +31,35 @@ export class ChromeForTestingBinary extends AbstractBinary {
   async #syncDirItems() {
     this.dirItems = {};
     this.dirItems['/'] = [];
-    const jsonApiEndpoint = 'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json';
-    const { data, status, headers } = await this.httpclient.request(jsonApiEndpoint, {
-      dataType: 'json',
-      timeout: 30000,
-      followRedirect: true,
-      gzip: true,
-    });
+    const jsonApiEndpoint =
+      'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json';
+    const { data, status, headers } = await this.httpclient.request(
+      jsonApiEndpoint,
+      {
+        dataType: 'json',
+        timeout: 30000,
+        followRedirect: true,
+        gzip: true,
+      }
+    );
     if (status !== 200) {
-      this.logger.warn('[ChromeForTestingBinary.request:non-200-status] url: %s, status: %s, headers: %j, data: %j',
-        jsonApiEndpoint, status, headers, data);
+      this.logger.warn(
+        '[ChromeForTestingBinary.request:non-200-status] url: %s, status: %s, headers: %j, data: %j',
+        jsonApiEndpoint,
+        status,
+        headers,
+        data
+      );
       return;
     }
     this.#timestamp = data.timestamp;
     const hasNewData = this.#timestamp !== ChromeForTestingBinary.lastTimestamp;
-    this.logger.info('[ChromeForTestingBinary] remote data timestamp: %j, last timestamp: %j, hasNewData: %s',
-      this.#timestamp, ChromeForTestingBinary.lastTimestamp, hasNewData);
+    this.logger.info(
+      '[ChromeForTestingBinary] remote data timestamp: %j, last timestamp: %j, hasNewData: %s',
+      this.#timestamp,
+      ChromeForTestingBinary.lastTimestamp,
+      hasNewData
+    );
     if (!hasNewData) {
       return;
     }

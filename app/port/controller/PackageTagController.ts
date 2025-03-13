@@ -1,3 +1,4 @@
+import type { EggContext } from '@eggjs/tegg';
 import {
   HTTPController,
   HTTPMethod,
@@ -5,14 +6,13 @@ import {
   HTTPParam,
   HTTPBody,
   Context,
-  EggContext,
   Inject,
 } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
 
 import { AbstractController } from './AbstractController.js';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
-import { PackageManagerService } from '../../core/service/PackageManagerService.js';
+import type { PackageManagerService } from '../../core/service/PackageManagerService.js';
 import { TagRule, TagWithVersionRule } from '../typebox.js';
 
 @HTTPController()
@@ -29,7 +29,9 @@ export class PackageTagController extends AbstractController {
   })
   async showTags(@HTTPParam() fullname: string) {
     const packageEntity = await this.getPackageEntityByFullname(fullname);
-    const tagEntities = await this.packageRepository.listPackageTags(packageEntity.packageId);
+    const tagEntities = await this.packageRepository.listPackageTags(
+      packageEntity.packageId
+    );
     const tags: Record<string, string> = {};
     for (const entity of tagEntities) {
       tags[entity.tag] = entity.version;
@@ -44,13 +46,25 @@ export class PackageTagController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/dist-tags/:tag`,
     method: HTTPMethodEnum.PUT,
   })
-  async saveTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string, @HTTPBody() version: string) {
+  async saveTag(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string,
+    @HTTPParam() tag: string,
+    @HTTPBody() version: string
+  ) {
     const data = { tag, version };
     ctx.tValidate(TagWithVersionRule, data);
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
     const pkg = ensureRes.pkg!;
-    const packageVersion = await this.getPackageVersionEntity(pkg, data.version);
-    await this.packageManagerService.savePackageTag(pkg, data.tag, packageVersion.version);
+    const packageVersion = await this.getPackageVersionEntity(
+      pkg,
+      data.version
+    );
+    await this.packageManagerService.savePackageTag(
+      pkg,
+      data.tag,
+      packageVersion.version
+    );
     return { ok: true };
   }
 
@@ -60,7 +74,11 @@ export class PackageTagController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/dist-tags/:tag`,
     method: HTTPMethodEnum.DELETE,
   })
-  async removeTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string) {
+  async removeTag(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string,
+    @HTTPParam() tag: string
+  ) {
     const data = { tag };
     ctx.tValidate(TagRule, data);
     if (tag === 'latest') {

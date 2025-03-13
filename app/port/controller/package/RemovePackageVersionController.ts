@@ -1,7 +1,5 @@
-import {
-  BadRequestError,
-  ForbiddenError,
-} from 'egg-errors';
+import { BadRequestError, ForbiddenError } from 'egg-errors';
+import type { EggContext } from '@eggjs/tegg';
 import {
   HTTPController,
   HTTPMethod,
@@ -9,14 +7,13 @@ import {
   HTTPParam,
   Inject,
   Context,
-  EggContext,
 } from '@eggjs/tegg';
 
 import { AbstractController } from '../AbstractController.js';
 import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';
-import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
-import { Package } from '../../../core/entity/Package.js';
-import { PackageVersion } from '../../../core/entity/PackageVersion.js';
+import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
+import type { Package } from '../../../core/entity/Package.js';
+import type { PackageVersion } from '../../../core/entity/PackageVersion.js';
 
 @HTTPController()
 export class RemovePackageVersionController extends AbstractController {
@@ -36,14 +33,22 @@ export class RemovePackageVersionController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:filenameWithVersion.tgz/-rev/:rev`,
     method: HTTPMethodEnum.DELETE,
   })
-  async removeByTarballUrl(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+  async removeByTarballUrl(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string,
+    @HTTPParam() filenameWithVersion: string
+  ) {
     const npmCommand = ctx.get('npm-command');
     if (npmCommand !== 'unpublish') {
       throw new BadRequestError('Only allow "unpublish" npm-command');
     }
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
     const pkg = ensureRes.pkg!;
-    const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
+    const version = this.getAndCheckVersionFromFilename(
+      ctx,
+      fullname,
+      filenameWithVersion
+    );
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
     await this.#removePackageVersion(pkg, packageVersion);
     return { ok: true };
@@ -62,7 +67,10 @@ export class RemovePackageVersionController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-rev/:rev`,
     method: HTTPMethodEnum.DELETE,
   })
-  async removeByPkgUri(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
+  async removeByPkgUri(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string
+  ) {
     const npmCommand = ctx.get('npm-command');
     if (npmCommand !== 'unpublish') {
       throw new BadRequestError('Only allow "unpublish" npm-command');
@@ -70,16 +78,25 @@ export class RemovePackageVersionController extends AbstractController {
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
     const pkg = ensureRes.pkg!;
     // try to remove the latest version first
-    const packageTag = await this.packageRepository.findPackageTag(pkg.packageId, 'latest');
+    const packageTag = await this.packageRepository.findPackageTag(
+      pkg.packageId,
+      'latest'
+    );
     let packageVersion: PackageVersion | null = null;
     if (packageTag) {
-      packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, packageTag.version);
+      packageVersion = await this.packageRepository.findPackageVersion(
+        pkg.packageId,
+        packageTag.version
+      );
     }
     if (packageVersion) {
       await this.#removePackageVersion(pkg, packageVersion);
     } else {
-      this.logger.info('[PackageController:unpublishPackage] %s, packageId: %s',
-        pkg.fullname, pkg.packageId);
+      this.logger.info(
+        '[PackageController:unpublishPackage] %s, packageId: %s',
+        pkg.fullname,
+        pkg.packageId
+      );
       await this.packageManagerService.unpublishPackage(pkg);
     }
     return { ok: true };
@@ -88,11 +105,20 @@ export class RemovePackageVersionController extends AbstractController {
   async #removePackageVersion(pkg: Package, packageVersion: PackageVersion) {
     // https://docs.npmjs.com/policies/unpublish
     // can unpublish anytime within the first 72 hours after publishing
-    if (pkg.isPrivate && Date.now() - packageVersion.publishTime.getTime() >= 3600000 * 72) {
-      throw new ForbiddenError(`${pkg.fullname}@${packageVersion.version} unpublish is not allowed after 72 hours of released`);
+    if (
+      pkg.isPrivate &&
+      Date.now() - packageVersion.publishTime.getTime() >= 3600000 * 72
+    ) {
+      throw new ForbiddenError(
+        `${pkg.fullname}@${packageVersion.version} unpublish is not allowed after 72 hours of released`
+      );
     }
-    this.logger.info('[PackageController:removeVersion] %s@%s, packageVersionId: %s',
-      pkg.fullname, packageVersion.version, packageVersion.packageVersionId);
+    this.logger.info(
+      '[PackageController:removeVersion] %s@%s, packageVersionId: %s',
+      pkg.fullname,
+      packageVersion.version,
+      packageVersion.packageVersionId
+    );
     await this.packageManagerService.removePackageVersion(pkg, packageVersion);
   }
 }

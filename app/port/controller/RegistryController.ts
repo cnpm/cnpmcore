@@ -1,6 +1,6 @@
+import type { EggContext } from '@eggjs/tegg';
 import {
   Context,
-  EggContext,
   HTTPBody,
   HTTPController,
   HTTPMethod,
@@ -11,13 +11,21 @@ import {
   Middleware,
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
-import { Static } from 'egg-typebox-validate/typebox';
+import type { Static } from 'egg-typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.js';
-import { RegistryManagerService, UpdateRegistryCmd } from '../../core/service/RegistryManagerService.js';
+import type {
+  RegistryManagerService,
+  UpdateRegistryCmd,
+} from '../../core/service/RegistryManagerService.js';
 import { AdminAccess } from '../middleware/AdminAccess.js';
-import { ScopeManagerService } from '../../core/service/ScopeManagerService.js';
-import { RegistryCreateOptions, QueryPageOptions, RegistryCreateSyncOptions, RegistryUpdateOptions } from '../typebox.js';
+import type { ScopeManagerService } from '../../core/service/ScopeManagerService.js';
+import type { QueryPageOptions } from '../typebox.js';
+import {
+  RegistryCreateOptions,
+  RegistryCreateSyncOptions,
+  RegistryUpdateOptions,
+} from '../typebox.js';
 
 @HTTPController()
 export class RegistryController extends AbstractController {
@@ -30,8 +38,14 @@ export class RegistryController extends AbstractController {
     path: '/-/registry',
     method: HTTPMethodEnum.GET,
   })
-  async listRegistries(@HTTPQuery() pageSize: Static<typeof QueryPageOptions>['pageSize'], @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex']) {
-    const registries = await this.registryManagerService.listRegistries({ pageSize, pageIndex });
+  async listRegistries(
+    @HTTPQuery() pageSize: Static<typeof QueryPageOptions>['pageSize'],
+    @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex']
+  ) {
+    const registries = await this.registryManagerService.listRegistries({
+      pageSize,
+      pageIndex,
+    });
     return registries;
   }
 
@@ -51,12 +65,19 @@ export class RegistryController extends AbstractController {
     path: '/-/registry/:id/scopes',
     method: HTTPMethodEnum.GET,
   })
-  async showRegistryScopes(@HTTPParam() id: string, @HTTPQuery() pageSize: Static<typeof QueryPageOptions>['pageSize'], @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex']) {
+  async showRegistryScopes(
+    @HTTPParam() id: string,
+    @HTTPQuery() pageSize: Static<typeof QueryPageOptions>['pageSize'],
+    @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex']
+  ) {
     const registry = await this.registryManagerService.findByRegistryId(id);
     if (!registry) {
       throw new NotFoundError('registry not found');
     }
-    const scopes = await this.scopeManagerService.listScopesByRegistryId(id, { pageIndex, pageSize });
+    const scopes = await this.scopeManagerService.listScopesByRegistryId(id, {
+      pageIndex,
+      pageSize,
+    });
     return scopes;
   }
 
@@ -65,10 +86,23 @@ export class RegistryController extends AbstractController {
     method: HTTPMethodEnum.POST,
   })
   @Middleware(AdminAccess)
-  async createRegistry(@Context() ctx: EggContext, @HTTPBody() registryOptions: Static<typeof RegistryCreateOptions>) {
+  async createRegistry(
+    @Context() ctx: EggContext,
+    @HTTPBody() registryOptions: Static<typeof RegistryCreateOptions>
+  ) {
     ctx.tValidate(RegistryCreateOptions, registryOptions);
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    const { name, changeStream, host, userPrefix = '', type, authToken } = registryOptions;
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
+      ctx,
+      'setting'
+    );
+    const {
+      name,
+      changeStream,
+      host,
+      userPrefix = '',
+      type,
+      authToken,
+    } = registryOptions;
     await this.registryManagerService.createRegistry({
       name,
       changeStream,
@@ -86,15 +120,26 @@ export class RegistryController extends AbstractController {
     method: HTTPMethodEnum.POST,
   })
   @Middleware(AdminAccess)
-  async createRegistrySyncTask(@Context() ctx: EggContext, @HTTPParam() id: string, @HTTPBody() registryOptions: Static<typeof RegistryCreateSyncOptions>) {
+  async createRegistrySyncTask(
+    @Context() ctx: EggContext,
+    @HTTPParam() id: string,
+    @HTTPBody() registryOptions: Static<typeof RegistryCreateSyncOptions>
+  ) {
     ctx.tValidate(RegistryCreateSyncOptions, registryOptions);
     const { since } = registryOptions;
     const registry = await this.registryManagerService.findByRegistryId(id);
     if (!registry) {
       throw new NotFoundError('registry not found');
     }
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    await this.registryManagerService.createSyncChangesStream({ registryId: registry.registryId, since, operatorId: authorizedUser.userId });
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
+      ctx,
+      'setting'
+    );
+    await this.registryManagerService.createSyncChangesStream({
+      registryId: registry.registryId,
+      since,
+      operatorId: authorizedUser.userId,
+    });
     return { ok: true };
   }
 
@@ -104,8 +149,14 @@ export class RegistryController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async removeRegistry(@Context() ctx: EggContext, @HTTPParam() id: string) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    await this.registryManagerService.remove({ registryId: id, operatorId: authorizedUser.userId });
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
+      ctx,
+      'setting'
+    );
+    await this.registryManagerService.remove({
+      registryId: id,
+      operatorId: authorizedUser.userId,
+    });
     return { ok: true };
   }
 
@@ -114,7 +165,11 @@ export class RegistryController extends AbstractController {
     method: HTTPMethodEnum.PATCH,
   })
   @Middleware(AdminAccess)
-  async updateRegistry(@Context() ctx: EggContext, @HTTPParam() id: string, @HTTPBody() updateRegistryOptions: Partial<UpdateRegistryCmd>) {
+  async updateRegistry(
+    @Context() ctx: EggContext,
+    @HTTPParam() id: string,
+    @HTTPBody() updateRegistryOptions: Partial<UpdateRegistryCmd>
+  ) {
     ctx.tValidate(RegistryUpdateOptions, updateRegistryOptions);
     const registry = await this.registryManagerService.findByRegistryId(id);
     if (!registry) {
@@ -129,7 +184,10 @@ export class RegistryController extends AbstractController {
         authToken,
         ...updateRegistryOptions,
       };
-      await this.registryManagerService.updateRegistry(registry.registryId, _updateRegistryOptions);
+      await this.registryManagerService.updateRegistry(
+        registry.registryId,
+        _updateRegistryOptions
+      );
     }
     return { ok: true };
   }

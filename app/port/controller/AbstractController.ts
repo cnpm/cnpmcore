@@ -1,27 +1,17 @@
-import {
-  NotFoundError,
-  UnavailableForLegalReasonsError,
-} from 'egg-errors';
-import {
-  Inject,
-  EggContext,
-} from '@eggjs/tegg';
-import {
-  EggLogger,
-  EggAppConfig,
-} from 'egg';
+import { NotFoundError, UnavailableForLegalReasonsError } from 'egg-errors';
+import type { EggContext } from '@eggjs/tegg';
+import { Inject } from '@eggjs/tegg';
+import type { EggLogger, EggAppConfig } from 'egg';
 
 import { MiddlewareController } from '../middleware/index.js';
-import { UserRoleManager } from '../UserRoleManager.js';
-import { PackageRepository } from '../../repository/PackageRepository.js';
-import { UserRepository } from '../../repository/UserRepository.js';
+import type { UserRoleManager } from '../UserRoleManager.js';
+import type { PackageRepository } from '../../repository/PackageRepository.js';
+import type { UserRepository } from '../../repository/UserRepository.js';
 import { getFullname, getScopeAndName } from '../../common/PackageUtil.js';
-import { Package as PackageEntity } from '../../core/entity/Package.js';
-import { PackageVersion as PackageVersionEntity } from '../../core/entity/PackageVersion.js';
-import { UserService } from '../../core/service/UserService.js';
-import {
-  VersionRule,
-} from '../typebox.js';
+import type { Package as PackageEntity } from '../../core/entity/Package.js';
+import type { PackageVersion as PackageVersionEntity } from '../../core/entity/PackageVersion.js';
+import type { UserService } from '../../core/service/UserService.js';
+import { VersionRule } from '../typebox.js';
 import { SyncMode } from '../../common/constants.js';
 
 class PackageNotFoundError extends NotFoundError {
@@ -62,11 +52,15 @@ export abstract class AbstractController extends MiddlewareController {
     return scope && this.config.cnpmcore.allowScopes.includes(scope);
   }
 
-  protected async ensurePublishAccess(ctx: EggContext, fullname: string, checkPkgExist = true) {
+  protected async ensurePublishAccess(
+    ctx: EggContext,
+    fullname: string,
+    checkPkgExist = true
+  ) {
     const user = await this.userRoleManager.checkPublishAccess(ctx, fullname);
     let pkg: PackageEntity | null = null;
     if (checkPkgExist) {
-      const [ scope, name ] = getScopeAndName(fullname);
+      const [scope, name] = getScopeAndName(fullname);
       pkg = await this.packageRepository.findPackage(scope, name);
       if (!pkg) {
         throw this.createPackageNotFoundError(fullname, undefined);
@@ -109,19 +103,28 @@ export abstract class AbstractController extends MiddlewareController {
   }
 
   protected createPackageNotFoundError(fullname: string, version?: string) {
-    const message = version ? `${fullname}@${version} not found` : `${fullname} not found`;
+    const message = version
+      ? `${fullname}@${version} not found`
+      : `${fullname} not found`;
     const err = new PackageNotFoundError(message);
     return err;
   }
 
-  protected createPackageNotFoundErrorWithRedirect(fullname: string, version?: string, allowSync = false) {
+  protected createPackageNotFoundErrorWithRedirect(
+    fullname: string,
+    version?: string,
+    allowSync = false
+  ) {
     // const err = new PackageNotFoundError(message);
     const err = this.createPackageNotFoundError(fullname, version);
-    const [ scope ] = getScopeAndName(fullname);
+    const [scope] = getScopeAndName(fullname);
     // dont sync private scope
     if (!this.isPrivateScope(scope)) {
       // syncMode = none/admin, redirect public package to source registry
-      if (!this.enableSync && this.config.cnpmcore.syncMode !== SyncMode.admin) {
+      if (
+        !this.enableSync &&
+        this.config.cnpmcore.syncMode !== SyncMode.admin
+      ) {
         if (this.redirectNotFound) {
           err.redirectToSourceRegistry = this.sourceRegistry;
         }
@@ -142,35 +145,67 @@ export abstract class AbstractController extends MiddlewareController {
     return err;
   }
 
-  protected createPackageBlockError(reason: string, fullname: string, version?: string) {
-    const message = version ? `${fullname}@${version} was blocked` : `${fullname} was blocked`;
+  protected createPackageBlockError(
+    reason: string,
+    fullname: string,
+    version?: string
+  ) {
+    const message = version
+      ? `${fullname}@${version} was blocked`
+      : `${fullname} was blocked`;
     return new UnavailableForLegalReasonsError(`${message}, reason: ${reason}`);
   }
 
-  protected async getPackageEntityByFullname(fullname: string, allowSync?: boolean): Promise<PackageEntity> {
-    const [ scope, name ] = getScopeAndName(fullname);
+  protected async getPackageEntityByFullname(
+    fullname: string,
+    allowSync?: boolean
+  ): Promise<PackageEntity> {
+    const [scope, name] = getScopeAndName(fullname);
     return await this.getPackageEntity(scope, name, allowSync);
   }
 
   // try to get package entity, throw NotFoundError when package not exists
-  protected async getPackageEntity(scope: string, name: string, allowSync?:boolean): Promise<PackageEntity> {
+  protected async getPackageEntity(
+    scope: string,
+    name: string,
+    allowSync?: boolean
+  ): Promise<PackageEntity> {
     const packageEntity = await this.packageRepository.findPackage(scope, name);
     if (!packageEntity) {
       const fullname = getFullname(scope, name);
-      throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
+      throw this.createPackageNotFoundErrorWithRedirect(
+        fullname,
+        undefined,
+        allowSync
+      );
     }
     return packageEntity;
   }
 
-  protected async getPackageVersionEntity(pkg: PackageEntity, version: string, allowSync?: boolean): Promise<PackageVersionEntity> {
-    const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+  protected async getPackageVersionEntity(
+    pkg: PackageEntity,
+    version: string,
+    allowSync?: boolean
+  ): Promise<PackageVersionEntity> {
+    const packageVersion = await this.packageRepository.findPackageVersion(
+      pkg.packageId,
+      version
+    );
     if (!packageVersion) {
-      throw this.createPackageNotFoundErrorWithRedirect(pkg.fullname, version, allowSync);
+      throw this.createPackageNotFoundErrorWithRedirect(
+        pkg.fullname,
+        version,
+        allowSync
+      );
     }
     return packageVersion;
   }
 
-  protected getAndCheckVersionFromFilename(ctx: EggContext, fullname: string, filenameWithVersion: string) {
+  protected getAndCheckVersionFromFilename(
+    ctx: EggContext,
+    fullname: string,
+    filenameWithVersion: string
+  ) {
     const scopeAndName = getScopeAndName(fullname);
     const name = scopeAndName[1];
     // @foo/bar/-/bar-1.0.0 == filename: bar ==> 1.0.0

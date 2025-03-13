@@ -1,7 +1,7 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 
 import { DataTypes, Bone, LENGTH_VARIANTS } from '../util/leoric.js';
-import { TaskState, TaskType } from '../../common/enum/Task.js';
+import type { TaskState, TaskType } from '../../common/enum/Task.js';
 
 @Model()
 export class HistoryTask extends Bone {

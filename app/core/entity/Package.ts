@@ -1,5 +1,7 @@
-import { Entity, EntityData } from './Entity.js';
-import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import type { EntityData } from './Entity.js';
+import { Entity } from './Entity.js';
+import type { EasyData } from '../util/EntityUtil.js';
+import { EntityUtil } from '../util/EntityUtil.js';
 import { Dist } from './Dist.js';
 import { getFullname } from '../../common/PackageUtil.js';
 
@@ -23,7 +25,10 @@ export enum DIST_NAMES {
 }
 
 export function isPkgManifest(fileType: DIST_NAMES) {
-  return fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED_MANIFESTS;
+  return (
+    fileType === DIST_NAMES.FULL_MANIFESTS ||
+    fileType === DIST_NAMES.ABBREVIATED_MANIFESTS
+  );
 }
 
 interface FileInfo {

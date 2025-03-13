@@ -1,11 +1,14 @@
 import { createReadStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
-import * as ssri from 'ssri';
+import type { HashLike } from 'ssri';
+import { fromData, fromStream } from 'ssri';
 // @ts-expect-error type error
 import tar from '@fengmk2/tar';
-import type { AuthorType, PackageJSONType } from '../repository/PackageRepository.js';
-
+import type {
+  AuthorType,
+  PackageJSONType,
+} from '../repository/PackageRepository.js';
 
 // /@cnpm%2ffoo
 // /@cnpm%2Ffoo
@@ -13,13 +16,14 @@ import type { AuthorType, PackageJSONType } from '../repository/PackageRepositor
 // /foo
 // name max length is 214 chars
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
-export const FULLNAME_REG_STRING = '@[^/]{1,220}/[^/]{1,220}|@[^%]+%2[fF][^/]{1,220}|[^@/]{1,220}';
+export const FULLNAME_REG_STRING =
+  '@[^/]{1,220}/[^/]{1,220}|@[^%]+%2[fF][^/]{1,220}|[^@/]{1,220}';
 
 export function getScopeAndName(fullname: string): string[] {
   if (fullname.startsWith('@')) {
     return fullname.split('/', 2);
   }
-  return [ '', fullname ];
+  return ['', fullname];
 }
 
 export function getFullname(scope: string, name: string): string {
@@ -35,14 +39,14 @@ export function getPrefixedName(prefix: string, username: string): string {
 }
 
 export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
-  let integrityObj;
+  let integrityObj: HashLike;
   if (typeof contentOrFile === 'string') {
-    integrityObj = await ssri.fromStream(createReadStream(contentOrFile), {
-      algorithms: [ 'sha512', 'sha1' ],
+    integrityObj = await fromStream(createReadStream(contentOrFile), {
+      algorithms: ['sha512', 'sha1'],
     });
   } else {
-    integrityObj = ssri.fromData(contentOrFile, {
-      algorithms: [ 'sha512', 'sha1' ],
+    integrityObj = fromData(contentOrFile, {
+      algorithms: ['sha512', 'sha1'],
     });
   }
   const integrity = integrityObj.sha512[0].toString() as string;
@@ -50,7 +54,12 @@ export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
   return { integrity, shasum };
 }
 
-export function formatTarball(registry: string, scope: string, name: string, version: string) {
+export function formatTarball(
+  registry: string,
+  scope: string,
+  name: string,
+  version: string
+) {
   const fullname = getFullname(scope, name);
   return `${registry}/${fullname}/-/${name}-${version}.tgz`;
 }
@@ -69,7 +78,9 @@ export function detectInstallScript(manifest: any) {
 }
 
 /** 判断一个版本压缩包中是否包含 npm-shrinkwrap.json */
-export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Promise<boolean> {
+export async function hasShrinkWrapInTgz(
+  contentOrFile: Uint8Array | string
+): Promise<boolean> {
   let readable: Readable;
   if (typeof contentOrFile === 'string') {
     readable = createReadStream(contentOrFile);
@@ -102,12 +113,17 @@ export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Pr
     if (e.code === 'ABORT_ERR') {
       return hasShrinkWrap;
     }
-    throw Object.assign(new Error('[hasShrinkWrapInTgz] Fail to parse input file'), { cause: e });
+    throw Object.assign(
+      new Error('[hasShrinkWrapInTgz] Fail to parse input file'),
+      { cause: e }
+    );
   }
 }
 
 /** 写入 ES 时，格式化 author */
-export function formatAuthor(author: string | AuthorType | undefined): AuthorType | undefined {
+export function formatAuthor(
+  author: string | AuthorType | undefined
+): AuthorType | undefined {
   if (author === undefined) {
     return author;
   }
@@ -119,10 +135,12 @@ export function formatAuthor(author: string | AuthorType | undefined): AuthorTyp
   return author;
 }
 
-export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJSONType> {
+export async function extractPackageJSON(
+  tarballBytes: Buffer
+): Promise<PackageJSONType> {
   return new Promise((resolve, reject) => {
-    Readable.from(tarballBytes)
-      .pipe(tar.t({
+    Readable.from(tarballBytes).pipe(
+      tar.t({
         filter: (name: string) => name === 'package/package.json',
         onentry: async (entry: any) => {
           const chunks: Buffer[] = [];
@@ -136,6 +154,7 @@ export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJ
             reject(new Error('Error parsing package.json'));
           }
         },
-      }));
+      })
+    );
   });
 }

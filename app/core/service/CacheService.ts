@@ -1,11 +1,7 @@
-import {
-  AccessLevel,
-  SingletonProto,
-  Inject,
-} from '@eggjs/tegg';
-import { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
 import { AbstractService } from '../../common/AbstractService.js';
-import { ChangesStreamTaskData } from '../entity/Task.js';
+import type { ChangesStreamTaskData } from '../entity/Task.js';
 
 type PackageCacheAttribute = 'etag' | 'manifests';
 
@@ -57,40 +53,56 @@ export class CacheService extends AbstractService {
     return await this.cacheAdapter.getBytes(key);
   }
 
-  public async savePackageEtagAndManifests(fullname: string, isFullManifests: boolean, etag: string, manifests: Buffer) {
+  public async savePackageEtagAndManifests(
+    fullname: string,
+    isFullManifests: boolean,
+    etag: string,
+    manifests: Buffer
+  ) {
     await Promise.all([
-      await this.cacheAdapter.set(this.cacheKey(fullname, isFullManifests, 'etag'), etag),
-      await this.cacheAdapter.setBytes(this.cacheKey(fullname, isFullManifests, 'manifests'), manifests),
+      this.cacheAdapter.set(
+        this.cacheKey(fullname, isFullManifests, 'etag'),
+        etag
+      ),
+      this.cacheAdapter.setBytes(
+        this.cacheKey(fullname, isFullManifests, 'manifests'),
+        manifests
+      ),
     ]);
   }
 
   public async getTotalData() {
     const value = await this.cacheAdapter.get(TOTAL_DATA_KEY);
-    const totalData: TotalData = value ? JSON.parse(value) : {
-      packageCount: 0,
-      packageVersionCount: 0,
-      lastPackage: '',
-      lastPackageVersion: '',
-      download: {
-        today: 0,
-        thisweek: 0,
-        thismonth: 0,
-        thisyear: 0,
-        lastday: 0,
-        lastweek: 0,
-        lastmonth: 0,
-        lastyear: 0,
-      },
-      changesStream: {},
-      upstreamRegistries: [],
-      lastChangeId: 0,
-      cacheTime: '',
-    };
+    const totalData: TotalData = value
+      ? JSON.parse(value)
+      : {
+          packageCount: 0,
+          packageVersionCount: 0,
+          lastPackage: '',
+          lastPackageVersion: '',
+          download: {
+            today: 0,
+            thisweek: 0,
+            thismonth: 0,
+            thisyear: 0,
+            lastday: 0,
+            lastweek: 0,
+            lastmonth: 0,
+            lastyear: 0,
+          },
+          changesStream: {},
+          upstreamRegistries: [],
+          lastChangeId: 0,
+          cacheTime: '',
+        };
     return totalData;
   }
 
   public async saveTotalData(totalData: TotalData) {
-    return await this.cacheAdapter.set(TOTAL_DATA_KEY, JSON.stringify(totalData));
+    return await this.cacheAdapter.set(
+      TOTAL_DATA_KEY,
+      JSON.stringify(totalData)
+    );
   }
 
   public async removeCache(fullname: string) {
@@ -102,7 +114,11 @@ export class CacheService extends AbstractService {
     ]);
   }
 
-  private cacheKey(fullname: string, isFullManifests: boolean, attribute: PackageCacheAttribute) {
+  private cacheKey(
+    fullname: string,
+    isFullManifests: boolean,
+    attribute: PackageCacheAttribute
+  ) {
     return `${fullname}|${isFullManifests ? 'full' : 'abbr'}:${attribute}`;
   }
 }

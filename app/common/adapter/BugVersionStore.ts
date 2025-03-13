@@ -1,5 +1,5 @@
 import { AccessLevel, SingletonProto } from '@eggjs/tegg';
-import { BugVersion } from '../../core/entity/BugVersion.js';
+import type { BugVersion } from '../../core/entity/BugVersion.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

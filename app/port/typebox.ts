@@ -1,31 +1,33 @@
-import { Type, Static } from 'egg-typebox-validate/typebox';
+import type { Static } from 'egg-typebox-validate/typebox';
+import { Type } from 'egg-typebox-validate/typebox';
 import semver from 'semver';
 import npa from 'npm-package-arg';
 import { uniq } from 'lodash-es';
-import { Ajv } from 'egg-typebox-validate';
+import type { Ajv } from 'egg-typebox-validate';
 
 import { RegistryType } from '../common/enum/Registry.js';
 import { HookType } from '../common/enum/Hook.js';
-import binaryConfig, { BinaryName } from '../../config/binaries.js';
+import type { BinaryName } from '../../config/binaries.js';
+import binaryConfig from '../../config/binaries.js';
 
 export const Name = Type.String({
-  transform: [ 'trim' ],
+  transform: ['trim'],
 });
 
 export const Url = Type.String({
-  transform: [ 'trim' ],
+  transform: ['trim'],
   minLength: 1,
   maxLength: 2048,
 });
 
 export const Secret = Type.String({
-  transform: [ 'trim' ],
+  transform: ['trim'],
   minLength: 1,
   maxLength: 200,
 });
 
 export const HookName = Type.String({
-  transform: [ 'trim' ],
+  transform: ['trim'],
   minLength: 1,
   maxLength: 428,
 });
@@ -34,7 +36,7 @@ export const HookTypeType = Type.Enum(HookType);
 
 export const BinaryNameRule = Type.String({
   format: 'binary-name',
-  transform: [ 'trim' ],
+  transform: ['trim'],
   minLength: 1,
   maxLength: 220,
 });
@@ -45,21 +47,21 @@ export const BinarySubpathRule = Type.RegEx(/^[ -~]{1,1024}$/);
 
 export const Tag = Type.String({
   format: 'semver-tag',
-  transform: [ 'trim' ],
+  transform: ['trim'],
   minLength: 1,
   maxLength: 214,
 });
 // min: 0.0.0
 export const Version = Type.String({
   format: 'semver-version',
-  transform: [ 'trim' ],
+  transform: ['trim'],
   minLength: 5,
   maxLength: 256,
 });
 
 export const VersionStringArray = Type.String({
   format: 'unique-semver-version-array',
-  transform: [ 'trim' ],
+  transform: ['trim'],
 });
 
 export const Spec = Type.String({
@@ -67,7 +69,10 @@ export const Spec = Type.String({
   minLength: 1,
 });
 
-export const Description = Type.String({ maxLength: 10240, transform: [ 'trim' ] });
+export const Description = Type.String({
+  maxLength: 10240,
+  transform: ['trim'],
+});
 
 export const TagRule = Type.Object({
   tag: Tag,
@@ -83,7 +88,7 @@ export const TagWithVersionRule = Type.Object({
 export const SyncPackageTaskRule = Type.Object({
   fullname: Name,
   tips: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     maxLength: 1024,
   }),
   skipDependencies: Type.Boolean(),
@@ -101,7 +106,7 @@ export type SyncPackageTaskType = Static<typeof SyncPackageTaskRule>;
 export const BlockPackageRule = Type.Object({
   fullname: Name,
   reason: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     maxLength: 10240,
   }),
 });
@@ -140,7 +145,7 @@ export function patchAjv(ajv: Ajv) {
       try {
         // do not support alias
         // exp: https://unpkg.com/good@npm:cnpmcore@3.17.1/dist/app.js
-        return [ 'tag', 'version', 'range' ].includes(npa(spec).type);
+        return ['tag', 'version', 'range'].includes(npa(spec).type);
       } catch {
         return false;
       }
@@ -172,15 +177,19 @@ export function patchAjv(ajv: Ajv) {
 }
 
 export const QueryPageOptions = Type.Object({
-  pageSize: Type.Optional(Type.Number({
-    transform: [ 'trim' ],
-    minimum: 1,
-    maximum: 100,
-  })),
-  pageIndex: Type.Optional(Type.Number({
-    transform: [ 'trim' ],
-    minimum: 0,
-  })),
+  pageSize: Type.Optional(
+    Type.Number({
+      transform: ['trim'],
+      minimum: 1,
+      maximum: 100,
+    })
+  ),
+  pageIndex: Type.Optional(
+    Type.Number({
+      transform: ['trim'],
+      minimum: 0,
+    })
+  ),
 });
 
 export const RegistryCreateSyncOptions = Type.Object({
@@ -189,74 +198,76 @@ export const RegistryCreateSyncOptions = Type.Object({
 
 export const RegistryCreateOptions = Type.Object({
   name: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minLength: 1,
     maxLength: 256,
   }),
   host: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minLength: 1,
     maxLength: 4096,
   }),
   changeStream: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minLength: 1,
     maxLength: 4096,
   }),
-  userPrefix: Type.Optional(Type.String({
-    transform: [ 'trim' ],
-    minLength: 1,
-    maxLength: 256,
-  })),
+  userPrefix: Type.Optional(
+    Type.String({
+      transform: ['trim'],
+      minLength: 1,
+      maxLength: 256,
+    })
+  ),
   type: Type.Enum(RegistryType),
   authToken: Type.Optional(
     Type.String({
-      transform: [ 'trim' ],
+      transform: ['trim'],
       maxLength: 256,
-    }),
+    })
   ),
 });
 
 export const RegistryUpdateOptions = Type.Object({
   name: Type.Optional(
     Type.String({
-      transform: [ 'trim' ],
+      transform: ['trim'],
       minLength: 1,
       maxLength: 256,
-    }),
+    })
   ),
   host: Type.Optional(
     Type.String({
-      transform: [ 'trim' ],
+      transform: ['trim'],
       minLength: 1,
       maxLength: 4096,
-    }),
+    })
   ),
   changeStream: Type.Optional(
     Type.String({
-      transform: [ 'trim' ],
+      transform: ['trim'],
       minLength: 1,
       maxLength: 4096,
-    }),
+    })
   ),
   type: Type.Optional(Type.Enum(RegistryType)),
   authToken: Type.Optional(
     Type.String({
-      transform: [ 'trim' ],
+      transform: ['trim'],
       minLength: 1,
       maxLength: 256,
-    }),
+    })
   ),
 });
 
 export const ScopeCreateOptions = Type.Object({
   name: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minLength: 1,
     maxLength: 256,
   }),
   registryId: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minLength: 1,
     maxLength: 256,
   }),
@@ -264,17 +275,17 @@ export const ScopeCreateOptions = Type.Object({
 
 export const ScopeUpdateOptions = Type.Object({
   name: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minLength: 1,
     maxLength: 256,
   }),
   registryId: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minLength: 1,
     maxLength: 256,
   }),
   scopeId: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minLength: 1,
     maxLength: 256,
   }),
@@ -282,17 +293,17 @@ export const ScopeUpdateOptions = Type.Object({
 
 export const SearchQueryOptions = Type.Object({
   from: Type.Number({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minimum: 0,
     default: 0,
   }),
   size: Type.Number({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minimum: 1,
     default: 20,
   }),
   text: Type.String({
-    transform: [ 'trim' ],
+    transform: ['trim'],
     minLength: 1,
     maxLength: 256,
   }),

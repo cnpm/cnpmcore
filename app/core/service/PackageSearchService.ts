@@ -1,14 +1,18 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import { estypes, errors } from '@elastic/elasticsearch';
+import type { estypes } from '@elastic/elasticsearch';
+import { errors } from '@elastic/elasticsearch';
 import dayjs from 'dayjs';
 import { AbstractService } from '../../common/AbstractService.js';
 import { formatAuthor, getScopeAndName } from '../../common/PackageUtil.js';
-import { PackageManagerService } from './PackageManagerService.js';
-import { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository.js';
-import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
-import { PackageRepository } from '../../repository/PackageRepository.js';
-import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
-
+import type { PackageManagerService } from './PackageManagerService.js';
+import type {
+  SearchManifestType,
+  SearchMappingType,
+  SearchRepository,
+} from '../../repository/SearchRepository.js';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
+import type { PackageRepository } from '../../repository/PackageRepository.js';
+import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -26,23 +30,39 @@ export class PackageSearchService extends AbstractService {
   protected packageVersionBlockRepository: PackageVersionBlockRepository;
 
   async syncPackage(fullname: string, isSync = true) {
-    const [ scope, name ] = getScopeAndName(fullname);
-    const fullManifests = await this.packageManagerService.listPackageFullManifests(scope, name, isSync);
+    const [scope, name] = getScopeAndName(fullname);
+    const fullManifests =
+      await this.packageManagerService.listPackageFullManifests(
+        scope,
+        name,
+        isSync
+      );
 
     if (!fullManifests.data) {
-      this.logger.warn('[PackageSearchService.syncPackage] save package:%s not found', fullname);
+      this.logger.warn(
+        '[PackageSearchService.syncPackage] save package:%s not found',
+        fullname
+      );
       return;
     }
 
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) {
-      this.logger.warn('[PackageSearchService.syncPackage] findPackage:%s not found', fullname);
+      this.logger.warn(
+        '[PackageSearchService.syncPackage] findPackage:%s not found',
+        fullname
+      );
       return;
     }
 
-    const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
+    const block = await this.packageVersionBlockRepository.findPackageBlock(
+      pkg.packageId
+    );
     if (block) {
-      this.logger.warn('[PackageSearchService.syncPackage] package:%s is blocked, try to remove es', fullname);
+      this.logger.warn(
+        '[PackageSearchService.syncPackage] package:%s is blocked, try to remove es',
+        fullname
+      );
       await this.removePackage(fullname);
       return;
     }
@@ -51,7 +71,11 @@ export class PackageSearchService extends AbstractService {
     const startDate = dayjs().subtract(1, 'year');
     const endDate = dayjs();
 
-    const entities = await this.packageVersionDownloadRepository.query(pkg.packageId, startDate.toDate(), endDate.toDate());
+    const entities = await this.packageVersionDownloadRepository.query(
+      pkg.packageId,
+      startDate.toDate(),
+      endDate.toDate()
+    );
     let downloadsAll = 0;
     for (const entity of entities) {
       for (let i = 1; i <= 31; i++) {
@@ -76,7 +100,10 @@ export class PackageSearchService extends AbstractService {
       keywords: manifest.keywords || [],
       versions: Object.keys(manifest.versions),
       description: manifest.description,
-      license: typeof manifest.license === 'object' ? manifest.license?.type : manifest.license,
+      license:
+        typeof manifest.license === 'object'
+          ? manifest.license?.type
+          : manifest.license,
       maintainers: manifest.maintainers,
       author: formatAuthor(manifest.author),
       'dist-tags': manifest['dist-tags'],
@@ -112,7 +139,11 @@ export class PackageSearchService extends AbstractService {
     return await this.searchRepository.upsertPackage(document);
   }
 
-  async searchPackage(text: string, from: number, size: number): Promise<{ objects: (SearchManifestType | undefined)[], total: number }> {
+  async searchPackage(
+    text: string,
+    from: number,
+    size: number
+  ): Promise<{ objects: (SearchManifestType | undefined)[]; total: number }> {
     const matchQueries = this._buildMatchQueries(text);
     const scriptScore = this._buildScriptScore({
       text,
@@ -143,7 +174,10 @@ export class PackageSearchService extends AbstractService {
         // 从 https://github.com/npm/cli/pull/7407 (npm cli v10.6.0) 开始，npm cli 使用 publisher 字段(以前使用 maintainers 字段)
         // 从现有数据来看，_npmUser 字段和 publisher 字段是等价的
         // 为了兼容老版本，不删除 _npmUser 字段
-        if (!item._source?.package.publisher && item._source?.package._npmUser) {
+        if (
+          !item._source?.package.publisher &&
+          item._source?.package._npmUser
+        ) {
           item._source.package.publisher = {
             username: item._source.package._npmUser.name,
             email: item._source.package._npmUser.email,
@@ -162,7 +196,10 @@ export class PackageSearchService extends AbstractService {
     } catch (error) {
       // if the package does not exist, returns success
       if (error instanceof errors.ResponseError && error?.statusCode === 404) {
-        this.logger.warn('[PackageSearchService.removePackage] remove package:%s not found', fullname);
+        this.logger.warn(
+          '[PackageSearchService.removePackage] remove package:%s not found',
+          fullname
+        );
         return fullname;
       }
       throw error;
@@ -241,7 +278,10 @@ export class PackageSearchService extends AbstractService {
     ];
   }
 
-  private _buildScriptScore(params: { text: string | undefined, scoreEffect: number }) {
+  private _buildScriptScore(params: {
+    text: string | undefined;
+    scoreEffect: number;
+  }) {
     // keep search simple, only download(popularity)
     const downloads = 'doc["downloads.all"].value';
     const source = `doc["package.name.raw"].value.equals(params.text) ? 100000 + ${downloads} : _score * Math.pow(${downloads}, params.scoreEffect)`;

@@ -12,7 +12,7 @@ import { Task } from '../../../app/core/entity/Task.js';
 import { HookEvent } from '../../../app/core/entity/HookEvent.js';
 import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService.js';
 import { TaskRepository } from '../../../app/repository/TaskRepository.js';
-import { Hook } from '../../../app/core/entity/Hook.js';
+import type { Hook } from '../../../app/core/entity/Hook.js';
 
 describe('test/core/service/CreateHookTriggerService.test.ts', () => {
   let hookManageService: HookManageService;
@@ -29,11 +29,14 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
     createHookTriggerService = await app.getEggObject(CreateHookTriggerService);
     taskRepository = await app.getEggObject(TaskRepository);
     const userRepository = await app.getEggObject(UserRepository);
-    await TestUtil.createPackage({
-      name: pkgName,
-    }, {
-      name: username,
-    });
+    await TestUtil.createPackage(
+      {
+        name: pkgName,
+      },
+      {
+        name: username,
+      }
+    );
     const user = await userRepository.findUserByName(username);
     userId = user!.userId;
   });
@@ -64,9 +67,13 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
       });
 
       it('should create package hook trigger', async () => {
-        const task = Task.createCreateHookTask(HookEvent.createUnpublishEvent(pkgName, change.changeId));
+        const task = Task.createCreateHookTask(
+          HookEvent.createUnpublishEvent(pkgName, change.changeId)
+        );
         await createHookTriggerService.executeTask(task);
-        const pushTask = await taskRepository.findTaskByBizId(`TriggerHook:${change.changeId}:${hook.hookId}`);
+        const pushTask = await taskRepository.findTaskByBizId(
+          `TriggerHook:${change.changeId}:${hook.hookId}`
+        );
         assert(pushTask);
       });
     });
@@ -84,9 +91,13 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
       });
 
       it('should create scope hook trigger', async () => {
-        const task = Task.createCreateHookTask(HookEvent.createUnpublishEvent(pkgName, change.changeId));
+        const task = Task.createCreateHookTask(
+          HookEvent.createUnpublishEvent(pkgName, change.changeId)
+        );
         await createHookTriggerService.executeTask(task);
-        const pushTask = await taskRepository.findTaskByBizId(`TriggerHook:${change.changeId}:${hook.hookId}`);
+        const pushTask = await taskRepository.findTaskByBizId(
+          `TriggerHook:${change.changeId}:${hook.hookId}`
+        );
         assert(pushTask);
       });
     });
@@ -104,9 +115,13 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
       });
 
       it('should create scope hook trigger', async () => {
-        const task = Task.createCreateHookTask(HookEvent.createUnpublishEvent(pkgName, change.changeId));
+        const task = Task.createCreateHookTask(
+          HookEvent.createUnpublishEvent(pkgName, change.changeId)
+        );
         await createHookTriggerService.executeTask(task);
-        const pushTask = await taskRepository.findTaskByBizId(`TriggerHook:${change.changeId}:${hook.hookId}`);
+        const pushTask = await taskRepository.findTaskByBizId(
+          `TriggerHook:${change.changeId}:${hook.hookId}`
+        );
         assert(pushTask);
       });
     });

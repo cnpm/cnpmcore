@@ -1,19 +1,23 @@
 import { strict as assert } from 'node:assert';
-import { HttpClientRequestOptions } from 'egg';
+import type { HttpClientRequestOptions } from 'egg';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { TestUtil } from '../../../test/TestUtil.js';
 import { HookManageService } from '../../../app/core/service/HookManageService.js';
 import { HookType } from '../../../app/common/enum/Hook.js';
 import { UserRepository } from '../../../app/repository/UserRepository.js';
-import { PACKAGE_TAG_ADDED, PACKAGE_VERSION_ADDED } from '../../../app/core/event/index.js';
+import {
+  PACKAGE_TAG_ADDED,
+  PACKAGE_VERSION_ADDED,
+} from '../../../app/core/event/index.js';
 import { Change } from '../../../app/core/entity/Change.js';
 import { ChangeRepository } from '../../../app/repository/ChangeRepository.js';
-import { Task, TriggerHookTask } from '../../../app/core/entity/Task.js';
+import type { TriggerHookTask } from '../../../app/core/entity/Task.js';
+import { Task } from '../../../app/core/entity/Task.js';
 import { HookEvent } from '../../../app/core/entity/HookEvent.js';
 import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService.js';
 import { TaskRepository } from '../../../app/repository/TaskRepository.js';
-import { Hook } from '../../../app/core/entity/Hook.js';
+import type { Hook } from '../../../app/core/entity/Hook.js';
 import { HookTriggerService } from '../../../app/core/service/HookTriggerService.js';
 
 describe('test/core/service/HookTriggerService.test.ts', () => {
@@ -33,11 +37,14 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
     taskRepository = await app.getEggObject(TaskRepository);
     const userRepository = await app.getEggObject(UserRepository);
     hookTriggerService = await app.getEggObject(HookTriggerService);
-    await TestUtil.createPackage({
-      name: pkgName,
-    }, {
-      name: username,
-    });
+    await TestUtil.createPackage(
+      {
+        name: pkgName,
+      },
+      {
+        name: username,
+      }
+    );
     const user = await userRepository.findUserByName(username);
     userId = user!.userId;
   });
@@ -76,25 +83,45 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
         endpoint: 'http://foo.com',
         secret: 'mock_secret',
       });
-      const versionTask = Task.createCreateHookTask(HookEvent.createPublishEvent(pkgName, versionChange.changeId, '1.0.0', 'latest'));
-      const tagTask = Task.createCreateHookTask(HookEvent.createPublishEvent(pkgName, tagChange.changeId, '1.0.0', 'latest'));
+      const versionTask = Task.createCreateHookTask(
+        HookEvent.createPublishEvent(
+          pkgName,
+          versionChange.changeId,
+          '1.0.0',
+          'latest'
+        )
+      );
+      const tagTask = Task.createCreateHookTask(
+        HookEvent.createPublishEvent(
+          pkgName,
+          tagChange.changeId,
+          '1.0.0',
+          'latest'
+        )
+      );
 
       await Promise.all([
         createHookTriggerService.executeTask(versionTask),
         createHookTriggerService.executeTask(tagTask),
       ]);
 
-      mock(app.httpclient, 'request', async (url: string, options: HttpClientRequestOptions) => {
-        callEndpoint = url;
-        callOptions = options;
-        return {
-          status: 200,
-        };
-      });
+      mock(
+        app.httpclient,
+        'request',
+        async (url: string, options: HttpClientRequestOptions) => {
+          callEndpoint = url;
+          callOptions = options;
+          return {
+            status: 200,
+          };
+        }
+      );
     });
 
     it('should execute trigger', async () => {
-      const pushTask = await taskRepository.findTaskByBizId(`TriggerHook:${versionChange.changeId}:${hook.hookId}`) as TriggerHookTask;
+      const pushTask = (await taskRepository.findTaskByBizId(
+        `TriggerHook:${versionChange.changeId}:${hook.hookId}`
+      )) as TriggerHookTask;
       await hookTriggerService.executeTask(pushTask);
       assert(callEndpoint === hook.endpoint);
       assert(callOptions);
@@ -117,7 +144,14 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
     });
 
     it('should create each event', async () => {
-      const tasks = await Promise.all([ taskRepository.findTaskByBizId(`TriggerHook:${versionChange.changeId}:${hook.hookId}`), taskRepository.findTaskByBizId(`TriggerHook:${tagChange.changeId}:${hook.hookId}`) ]);
+      const tasks = await Promise.all([
+        taskRepository.findTaskByBizId(
+          `TriggerHook:${versionChange.changeId}:${hook.hookId}`
+        ),
+        taskRepository.findTaskByBizId(
+          `TriggerHook:${tagChange.changeId}:${hook.hookId}`
+        ),
+      ]);
       assert.equal(tasks.filter(Boolean).length, 2);
     });
   });

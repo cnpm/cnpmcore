@@ -3,7 +3,7 @@ import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { TestUtil } from '../../../../test/TestUtil.js';
 import { HookManageService } from '../../../../app/core/service/HookManageService.js';
-import { Hook } from '../../../../app/core/entity/Hook.js';
+import type { Hook } from '../../../../app/core/entity/Hook.js';
 import { HookType } from '../../../../app/common/enum/Hook.js';
 
 describe('test/core/service/HookManageService/updateHook.test.ts', () => {
@@ -41,14 +41,17 @@ describe('test/core/service/HookManageService/updateHook.test.ts', () => {
 
   describe('hook not belong to operator', () => {
     it('should throw error', async () => {
-      await assert.rejects(async () => {
-        await hookManageService.updateHook({
-          hookId: hook.hookId,
-          operatorId: 'not_exits_owner_id',
-          endpoint: 'http://foo.com',
-          secret: 'mock_secret',
-        });
-      }, new RegExp(`hook ${hook.hookId} not belong to not_exits_owner_id`));
+      await assert.rejects(
+        async () => {
+          await hookManageService.updateHook({
+            hookId: hook.hookId,
+            operatorId: 'not_exits_owner_id',
+            endpoint: 'http://foo.com',
+            secret: 'mock_secret',
+          });
+        },
+        new RegExp(`hook ${hook.hookId} not belong to not_exits_owner_id`)
+      );
     });
   });
 

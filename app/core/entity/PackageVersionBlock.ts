@@ -1,5 +1,7 @@
-import { Entity, EntityData } from './Entity.js';
-import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import type { EntityData } from './Entity.js';
+import { Entity } from './Entity.js';
+import type { EasyData } from '../util/EntityUtil.js';
+import { EntityUtil } from '../util/EntityUtil.js';
 
 interface PackageVersionBlockData extends EntityData {
   packageVersionBlockId: string;
@@ -22,7 +24,9 @@ export class PackageVersionBlock extends Entity {
     this.reason = data.reason;
   }
 
-  static create(data: EasyData<PackageVersionBlockData, 'packageVersionBlockId'>): PackageVersionBlock {
+  static create(
+    data: EasyData<PackageVersionBlockData, 'packageVersionBlockId'>
+  ): PackageVersionBlock {
     const newData = EntityUtil.defaultData(data, 'packageVersionBlockId');
     return new PackageVersionBlock(newData);
   }

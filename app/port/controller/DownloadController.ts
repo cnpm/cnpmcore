@@ -8,9 +8,12 @@ import {
 import { UnprocessableEntityError, NotFoundError } from 'egg-errors';
 
 import { AbstractController } from './AbstractController.js';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.js';
+import {
+  FULLNAME_REG_STRING,
+  getScopeAndName,
+} from '../../common/PackageUtil.js';
 import dayjs from '../../common/dayjs.js';
-import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -23,17 +26,25 @@ export class DownloadController extends AbstractController {
     path: `/downloads/range/:range/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.GET,
   })
-  async showPackageDownloads(@HTTPParam() fullname: string, @HTTPParam() range: string) {
-    const [ startDate, endDate ] = this.checkAndGetRange(range);
-    const [ scope, name ] = getScopeAndName(fullname);
+  async showPackageDownloads(
+    @HTTPParam() fullname: string,
+    @HTTPParam() range: string
+  ) {
+    const [startDate, endDate] = this.checkAndGetRange(range);
+    const [scope, name] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) throw new NotFoundError(`${fullname} not found`);
-    const entities = await this.packageVersionDownloadRepository.query(pkg.packageId, startDate.toDate(), endDate.toDate());
+    const entities = await this.packageVersionDownloadRepository.query(
+      pkg.packageId,
+      startDate.toDate(),
+      endDate.toDate()
+    );
     const days: Record<string, number> = {};
-    const versions: Record<string, { day: string, downloads: number }[]> = {};
+    const versions: Record<string, { day: string; downloads: number }[]> = {};
     for (const entity of entities) {
       const yearMonth = String(entity.yearMonth);
-      const prefix = yearMonth.substring(0, 4) + '-' + yearMonth.substring(4, 6);
+      const prefix =
+        yearMonth.substring(0, 4) + '-' + yearMonth.substring(4, 6);
       for (let i = 1; i <= 31; i++) {
         const day = String(i).padStart(2, '0');
         const field = `d${day}` as keyof typeof entity;
@@ -64,13 +75,21 @@ export class DownloadController extends AbstractController {
     path: '/downloads/:scope/:range',
     method: HTTPMethodEnum.GET,
   })
-  async showTotalDownloads(@HTTPParam() scope: string, @HTTPParam() range: string) {
-    const [ startDate, endDate ] = this.checkAndGetRange(range);
-    const entities = await this.packageVersionDownloadRepository.query(scope, startDate.toDate(), endDate.toDate());
+  async showTotalDownloads(
+    @HTTPParam() scope: string,
+    @HTTPParam() range: string
+  ) {
+    const [startDate, endDate] = this.checkAndGetRange(range);
+    const entities = await this.packageVersionDownloadRepository.query(
+      scope,
+      startDate.toDate(),
+      endDate.toDate()
+    );
     const days: Record<string, number> = {};
     for (const entity of entities) {
       const yearMonth = String(entity.yearMonth);
-      const prefix = yearMonth.substring(0, 4) + '-' + yearMonth.substring(4, 6);
+      const prefix =
+        yearMonth.substring(0, 4) + '-' + yearMonth.substring(4, 6);
       for (let i = 1; i <= 31; i++) {
         const day = String(i).padStart(2, '0');
         const field = `d${day}` as keyof typeof entity;
@@ -93,14 +112,18 @@ export class DownloadController extends AbstractController {
   private checkAndGetRange(range: string) {
     const matchs = /^(\d{4}-\d{2}-\d{2}):(\d{4}-\d{2}-\d{2})$/.exec(range);
     if (!matchs) {
-      throw new UnprocessableEntityError(`range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`);
+      throw new UnprocessableEntityError(
+        `range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`
+      );
     }
     const start = matchs[1];
     const end = matchs[2];
     let startDate = dayjs(start, DATE_FORMAT, true);
     let endDate = dayjs(end, DATE_FORMAT, true);
     if (!startDate.isValid() || !endDate.isValid()) {
-      throw new UnprocessableEntityError(`range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`);
+      throw new UnprocessableEntityError(
+        `range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`
+      );
     }
     if (endDate.isBefore(startDate)) {
       const tmp = startDate;
@@ -111,8 +134,9 @@ export class DownloadController extends AbstractController {
     const maxDate = startDate.add(1, 'year');
     if (endDate.isAfter(maxDate)) {
       throw new UnprocessableEntityError(
-        `range(${range}) beyond the processable range, max up to "${maxDate.format(DATE_FORMAT)}"`);
+        `range(${range}) beyond the processable range, max up to "${maxDate.format(DATE_FORMAT)}"`
+      );
     }
-    return [ startDate, endDate ];
+    return [startDate, endDate];
   }
 }

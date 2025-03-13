@@ -2,10 +2,10 @@ import { Readable, Duplex } from 'node:stream';
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';
+import type { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';
 import { NpmChangesStream } from '../../../../app/common/adapter/changesStream/NpmChangesStream.js';
 import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import { Registry } from '../../../../app/core/entity/Registry.js';
+import type { Registry } from '../../../../app/core/entity/Registry.js';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
 
 describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
@@ -40,12 +40,20 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
       app.mockHttpclient(/https:\/\/replicate\.npmjs\.com/, () => {
         throw new Error('mock request replicate _changes error');
       });
-      await assert.rejects(npmChangesStream.getInitialSince(registry), /mock request/);
+      await assert.rejects(
+        npmChangesStream.getInitialSince(registry),
+        /mock request/
+      );
     });
 
     it('should throw error invalid seq', async () => {
-      app.mockHttpclient(/https:\/\/replicate\.npmjs\.com/, { data: { update_seqs: 'invalid' } });
-      await assert.rejects(npmChangesStream.getInitialSince(registry), /get getInitialSince failed/);
+      app.mockHttpclient(/https:\/\/replicate\.npmjs\.com/, {
+        data: { update_seqs: 'invalid' },
+      });
+      await assert.rejects(
+        npmChangesStream.getInitialSince(registry),
+        /get getInitialSince failed/
+      );
     });
   });
 
@@ -79,7 +87,9 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
       assert(stream);
       rStream.push('{"seq":2');
       rStream.push(',"id":"bac');
-      rStream.push('kbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true}');
+      rStream.push(
+        'kbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true}'
+      );
       for await (const change of stream) {
         res.push(change);
       }

@@ -1,8 +1,10 @@
 import { basename } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary.js';
-import binaries, { BinaryName } from '../../../../config/binaries.js';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
+import type { BinaryName } from '../../../../config/binaries.js';
+import binaries from '../../../../config/binaries.js';
+import type { FetchResult, BinaryItem } from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Node)
@@ -12,7 +14,10 @@ export class NodeBinary extends AbstractBinary {
     return;
   }
 
-  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
+  async fetch(
+    dir: string,
+    binaryName: BinaryName
+  ): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const url = `${binaryConfig.distUrl}${dir}`;
     const html = await this.requestXml(url);
@@ -30,7 +35,8 @@ export class NodeBinary extends AbstractBinary {
     // <a href="/dist/v18.15.0/SHASUMS256.txt.asc">SHASUMS256.txt.asc</a>                                 04-Nov-2024 17:29               3.7 KB
     // <a href="/dist/v18.15.0/SHASUMS256.txt.sig">SHASUMS256.txt.sig</a>                                 04-Nov-2024 17:29                310 B
     // <a href="/dist/v18.15.0/SHASUMS256.txt">SHASUMS256.txt</a>                                     04-Nov-2024 17:29               3.2 KB
-    const re = /<a href="([^"]+?)"[^>]*?>[^<]+?<\/a>\s+?((?:[\w-]+? \w{2}:\d{2})|-)\s+?([\d.\-\s\w]+)/ig;
+    const re =
+      /<a href="([^"]+?)"[^>]*?>[^<]+?<\/a>\s+?((?:[\w-]+? \w{2}:\d{2})|-)\s+?([\d.\-\s\w]+)/gi;
     const matchs = html.matchAll(re);
     const items: BinaryItem[] = [];
     for (const m of matchs) {

@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import base from 'base-x';
 import { crc32 } from '@node-rs/crc32';
-import * as ssri from 'ssri';
+import { checkData, create } from 'ssri';
 import UAParser from 'ua-parser-js';
 
 const base62 = base('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
@@ -29,12 +29,12 @@ export function checkToken(token: string, prefix: string): boolean {
 }
 
 export function integrity(plain: string): string {
-  return ssri.create().update(plain).digest()
+  return create().update(plain).digest()
     .toString();
 }
 
 export function checkIntegrity(plain: string, expectedIntegrity: string): boolean {
-  return !!ssri.checkData(plain, expectedIntegrity);
+  return !!checkData(plain, expectedIntegrity);
 }
 
 export function sha512(plain: string): string {

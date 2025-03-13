@@ -1,14 +1,10 @@
-import { Readable } from 'node:stream';
-import { IncomingHttpHeaders } from 'node:http';
-import {
-  SingletonProto,
-  AccessLevel,
-  Inject,
-} from '@eggjs/tegg';
+import type { Readable } from 'node:stream';
+import type { IncomingHttpHeaders } from 'node:http';
+import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
-import { EggLogger } from 'egg';
+import type { EggLogger } from 'egg';
 import { AsyncTimer } from '../aop/AsyncTimer.js';
-import { NFSClient } from '../typing.js';
+import type { NFSClient } from '../typing.js';
 
 const INSTANCE_NAME = 'nfsAdapter';
 
@@ -25,13 +21,23 @@ export class NFSAdapter {
 
   @Pointcut(AsyncTimer)
   async uploadBytes(storeKey: string, bytes: Uint8Array) {
-    this.logger.info('[%s:uploadBytes] key: %s, bytes: %d', INSTANCE_NAME, storeKey, bytes.length);
+    this.logger.info(
+      '[%s:uploadBytes] key: %s, bytes: %d',
+      INSTANCE_NAME,
+      storeKey,
+      bytes.length
+    );
     await this.nfsClient.uploadBytes(bytes, { key: storeKey });
   }
 
   // will return next store position
   @Pointcut(AsyncTimer)
-  async appendBytes(storeKey: string, bytes: Uint8Array, position?: string, headers?: IncomingHttpHeaders) {
+  async appendBytes(
+    storeKey: string,
+    bytes: Uint8Array,
+    position?: string,
+    headers?: IncomingHttpHeaders
+  ) {
     // make sure position is undefined by the first time
     if (!position) position = undefined;
     const options = {
@@ -45,14 +51,24 @@ export class NFSAdapter {
 
   @Pointcut(AsyncTimer)
   async uploadFile(storeKey: string, file: string) {
-    this.logger.info('[%s:uploadFile] key: %s, file: %s', INSTANCE_NAME, storeKey, file);
+    this.logger.info(
+      '[%s:uploadFile] key: %s, file: %s',
+      INSTANCE_NAME,
+      storeKey,
+      file
+    );
     await this.nfsClient.upload(file, { key: storeKey });
   }
 
   @Pointcut(AsyncTimer)
   async downloadFile(storeKey: string, file: string, timeout: number) {
-    this.logger.info('[%s:downloadFile] key: %s, file: %s, timeout: %s',
-      INSTANCE_NAME, storeKey, file, timeout);
+    this.logger.info(
+      '[%s:downloadFile] key: %s, file: %s, timeout: %s',
+      INSTANCE_NAME,
+      storeKey,
+      file,
+      timeout
+    );
     await this.nfsClient.download(storeKey, file, { timeout });
   }
 
@@ -79,7 +95,9 @@ export class NFSAdapter {
     }
   }
 
-  async getDownloadUrlOrStream(storeKey: string): Promise<string | Readable | undefined> {
+  async getDownloadUrlOrStream(
+    storeKey: string
+  ): Promise<string | Readable | undefined> {
     const downloadUrl = await this.getDownloadUrl(storeKey);
     if (downloadUrl) {
       return downloadUrl;
