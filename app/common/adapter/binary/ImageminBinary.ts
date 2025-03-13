@@ -1,7 +1,9 @@
 import { SingletonProto } from '@eggjs/tegg';
-import binaries, { BinaryName } from '../../../../config/binaries.js';
+import type { BinaryName } from '../../../../config/binaries.js';
+import binaries from '../../../../config/binaries.js';
 import { BinaryType } from '../../enum/Binary.js';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
+import type { FetchResult, BinaryItem } from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Imagemin)
@@ -11,7 +13,10 @@ export class ImageminBinary extends AbstractBinary {
     return;
   }
 
-  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
+  async fetch(
+    dir: string,
+    binaryName: BinaryName
+  ): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const dirItems: {
       [key: string]: BinaryItem[];
@@ -66,7 +71,7 @@ export class ImageminBinary extends AbstractBinary {
               size: '-',
               isDir: false,
               url: `${binaryConfig.distUrl}/${binaryConfig.repo}${platformDir}${name}`,
-              ignoreDownloadStatuses: [ 404 ],
+              ignoreDownloadStatuses: [404],
             });
           }
         } else {
@@ -88,7 +93,7 @@ export class ImageminBinary extends AbstractBinary {
                 size: '-',
                 isDir: false,
                 url: `${binaryConfig.distUrl}/${binaryConfig.repo}${platformArchDir}${name}`,
-                ignoreDownloadStatuses: [ 404 ],
+                ignoreDownloadStatuses: [404],
               });
             }
           }

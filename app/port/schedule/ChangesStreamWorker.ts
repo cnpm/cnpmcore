@@ -1,8 +1,9 @@
-import { EggAppConfig, EggLogger } from 'egg';
-import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import type { EggAppConfig, EggLogger } from 'egg';
+import type { IntervalParams } from '@eggjs/tegg/schedule';
+import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
-import { ChangesStreamService } from '../../core/service/ChangesStreamService.js';
+import type { ChangesStreamService } from '../../core/service/ChangesStreamService.js';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
@@ -21,7 +22,11 @@ export class ChangesStreamWorker {
   private readonly logger: EggLogger;
 
   async subscribe() {
-    if (this.config.cnpmcore.syncMode === 'none' || !this.config.cnpmcore.enableChangesStream) return;
+    if (
+      this.config.cnpmcore.syncMode === 'none' ||
+      !this.config.cnpmcore.enableChangesStream
+    )
+      return;
     const task = await this.changesStreamService.findExecuteTask();
     if (!task) return;
     this.logger.info('[ChangesStreamWorker:start] taskId: %s', task.taskId);

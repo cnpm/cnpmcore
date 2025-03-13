@@ -1,4 +1,4 @@
-import { EggContext, Next } from '@eggjs/tegg';
+import type { EggContext, Next } from '@eggjs/tegg';
 
 import { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
 
@@ -12,14 +12,21 @@ export async function ErrorHandler(ctx: EggContext, next: Next) {
       if (err.syncPackage) {
         // create sync task
         const syncPackage = err.syncPackage;
-        const packageSyncerService = await ctx.getEggObject(PackageSyncerService);
-        const task = await packageSyncerService.createTask(syncPackage.fullname, {
-          authorIp: ctx.ip,
-          authorId: ctx.userId as string,
-          tips: `Sync cause by "${syncPackage.fullname}" missing, request URL "${ctx.href}"`,
-        });
-        ctx.logger.info('[middleware:ErrorHandler][syncPackage] create sync package "%s" task %s',
-          syncPackage.fullname, task.taskId);
+        const packageSyncerService =
+          await ctx.getEggObject(PackageSyncerService);
+        const task = await packageSyncerService.createTask(
+          syncPackage.fullname,
+          {
+            authorIp: ctx.ip,
+            authorId: ctx.userId as string,
+            tips: `Sync cause by "${syncPackage.fullname}" missing, request URL "${ctx.href}"`,
+          }
+        );
+        ctx.logger.info(
+          '[middleware:ErrorHandler][syncPackage] create sync package "%s" task %s',
+          syncPackage.fullname,
+          task.taskId
+        );
       }
       if (err.redirectToSourceRegistry) {
         // redirect to sourceRegistry
@@ -32,14 +39,24 @@ export async function ErrorHandler(ctx: EggContext, next: Next) {
     }
 
     // http status, default is DEFAULT_SERVER_ERROR_STATUS
-    ctx.status = (typeof err.status === 'number' && err.status >= 200) ? err.status : DEFAULT_SERVER_ERROR_STATUS;
+    ctx.status =
+      typeof err.status === 'number' && err.status >= 200
+        ? err.status
+        : DEFAULT_SERVER_ERROR_STATUS;
     // don't log NotImplementedError
-    if (ctx.status >= DEFAULT_SERVER_ERROR_STATUS && err.name !== 'NotImplementedError') {
+    if (
+      ctx.status >= DEFAULT_SERVER_ERROR_STATUS &&
+      err.name !== 'NotImplementedError'
+    ) {
       ctx.logger.error(err);
     }
     let message = err.message;
     // convert ctx.tValidate error
-    if (err.name === 'UnprocessableEntityError' && err.currentSchema && err.errors[0]?.message) {
+    if (
+      err.name === 'UnprocessableEntityError' &&
+      err.currentSchema &&
+      err.errors[0]?.message
+    ) {
       // {
       //   instancePath: '/password',
       //   schemaPath: '#/properties/password/minLength',
@@ -55,7 +72,9 @@ export async function ErrorHandler(ctx: EggContext, next: Next) {
     }
     // error body format https://github.com/npm/npm-registry-fetch/blob/main/errors.js#L45
     ctx.body = {
-      error: err.code ? `[${String(err.code).toUpperCase()}] ${message}` : message,
+      error: err.code
+        ? `[${String(err.code).toUpperCase()}] ${message}`
+        : message,
     };
   }
 }

@@ -1,3 +1,4 @@
+import type { EggContext, BackgroundTaskHelper } from '@eggjs/tegg';
 import {
   HTTPController,
   HTTPMethod,
@@ -5,20 +6,22 @@ import {
   HTTPParam,
   HTTPBody,
   Context,
-  EggContext,
   Inject,
   HTTPQuery,
-  BackgroundTaskHelper,
 } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 
 import { AbstractController } from './AbstractController.js';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.js';
-import { Task } from '../../core/entity/Task.js';
-import { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
-import { RegistryManagerService } from '../../core/service/RegistryManagerService.js';
+import {
+  FULLNAME_REG_STRING,
+  getScopeAndName,
+} from '../../common/PackageUtil.js';
+import type { Task } from '../../core/entity/Task.js';
+import type { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
+import type { RegistryManagerService } from '../../core/service/RegistryManagerService.js';
 import { TaskState } from '../../common/enum/Task.js';
-import { SyncPackageTaskRule, SyncPackageTaskType } from '../typebox.js';
+import type { SyncPackageTaskType } from '../typebox.js';
+import { SyncPackageTaskRule } from '../typebox.js';
 import { SyncMode } from '../../common/constants.js';
 
 @HTTPController()
@@ -34,9 +37,15 @@ export class PackageSyncController extends AbstractController {
 
   private async _executeTaskAsync(task: Task) {
     const startTime = Date.now();
-    this.logger.info('[PackageSyncController:executeTask:start] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms',
-      task.taskId, task.targetName, task.attempts, task.data, task.updatedAt,
-      startTime - task.updatedAt.getTime());
+    this.logger.info(
+      '[PackageSyncController:executeTask:start] taskId: %s, targetName: %s, attempts: %s, params: %j, updatedAt: %s, delay %sms',
+      task.taskId,
+      task.targetName,
+      task.attempts,
+      task.data,
+      task.updatedAt,
+      startTime - task.updatedAt.getTime()
+    );
     let result = 'success';
     try {
       await this.packageSyncerService.executeTask(task);
@@ -45,8 +54,13 @@ export class PackageSyncController extends AbstractController {
       this.logger.error(err);
     } finally {
       const use = Date.now() - startTime;
-      this.logger.info('[PackageSyncController:executeTask:%s] taskId: %s, targetName: %s, use %sms',
-        result, task.taskId, task.targetName, use);
+      this.logger.info(
+        '[PackageSyncController:executeTask:%s] taskId: %s, targetName: %s, use %sms',
+        result,
+        task.taskId,
+        task.targetName,
+        use
+      );
     }
   }
 
@@ -55,11 +69,17 @@ export class PackageSyncController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/syncs`,
     method: HTTPMethodEnum.PUT,
   })
-  async createSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: SyncPackageTaskType) {
+  async createSyncTask(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string,
+    @HTTPBody() data: SyncPackageTaskType
+  ) {
     if (!this.enableSync) {
       throw new ForbiddenError('Not allow to sync package');
     }
-    const tips = data.tips || `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
+    const tips =
+      data.tips ||
+      `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`;
     const isAdmin = await this.userRoleManager.isAdmin(ctx);
 
     if (this.config.cnpmcore.syncMode === SyncMode.admin && !isAdmin) {
@@ -77,23 +97,39 @@ export class PackageSyncController extends AbstractController {
       specificVersions: data.specificVersions,
     };
     ctx.tValidate(SyncPackageTaskRule, params);
-    const [ scope, name ] = getScopeAndName(params.fullname);
+    const [scope, name] = getScopeAndName(params.fullname);
     const packageEntity = await this.packageRepository.findPackage(scope, name);
-    const registry = await this.registryManagerService.findByRegistryName(data?.registryName);
+    const registry = await this.registryManagerService.findByRegistryName(
+      data?.registryName
+    );
 
     if (!registry && data.registryName) {
-      throw new ForbiddenError(`Can't find target registry "${data.registryName}"`);
+      throw new ForbiddenError(
+        `Can't find target registry "${data.registryName}"`
+      );
     }
     if (packageEntity?.isPrivate && !registry) {
-      throw new ForbiddenError(`Can't sync private package "${params.fullname}"`);
+      throw new ForbiddenError(
+        `Can't sync private package "${params.fullname}"`
+      );
     }
-    if (params.syncDownloadData && !this.packageSyncerService.allowSyncDownloadData) {
+    if (
+      params.syncDownloadData &&
+      !this.packageSyncerService.allowSyncDownloadData
+    ) {
       throw new ForbiddenError('Not allow to sync package download data');
     }
-    if (registry && packageEntity?.registryId && packageEntity.registryId !== registry.registryId) {
-      throw new ForbiddenError(`The package is synced from ${packageEntity.registryId}`);
+    if (
+      registry &&
+      packageEntity?.registryId &&
+      packageEntity.registryId !== registry.registryId
+    ) {
+      throw new ForbiddenError(
+        `The package is synced from ${packageEntity.registryId}`
+      );
     }
-    const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    const authorized =
+      await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     const task = await this.packageSyncerService.createTask(params.fullname, {
       authorIp: ctx.ip,
       authorId: authorized?.user.userId,
@@ -102,17 +138,23 @@ export class PackageSyncController extends AbstractController {
       syncDownloadData: params.syncDownloadData,
       forceSyncHistory: params.forceSyncHistory,
       registryId: registry?.registryId,
-      specificVersions: params.specificVersions && JSON.parse(params.specificVersions),
+      specificVersions:
+        params.specificVersions && JSON.parse(params.specificVersions),
     });
-    ctx.logger.info('[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
-      task.taskId, fullname);
+    ctx.logger.info(
+      '[PackageSyncController.createSyncTask:success] taskId: %s, fullname: %s',
+      task.taskId,
+      fullname
+    );
     if (data.force) {
       if (isAdmin) {
         // set background task timeout to 5min
         this.backgroundTaskHelper.timeout = 1000 * 60 * 5;
         this.backgroundTaskHelper.run(async () => {
-          ctx.logger.info('[PackageSyncController.createSyncTask:execute-immediately] taskId: %s',
-            task.taskId);
+          ctx.logger.info(
+            '[PackageSyncController.createSyncTask:execute-immediately] taskId: %s',
+            task.taskId
+          );
           // execute task in background
           await this._executeTaskAsync(task);
         });
@@ -133,9 +175,15 @@ export class PackageSyncController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/syncs/:taskId`,
     method: HTTPMethodEnum.GET,
   })
-  async showSyncTask(@HTTPParam() fullname: string, @HTTPParam() taskId: string) {
+  async showSyncTask(
+    @HTTPParam() fullname: string,
+    @HTTPParam() taskId: string
+  ) {
     const task = await this.packageSyncerService.findTask(taskId);
-    if (!task) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" not found`);
+    if (!task)
+      throw new NotFoundError(
+        `Package "${fullname}" sync task "${taskId}" not found`
+      );
     let logUrl: string | undefined;
     if (task.state !== TaskState.Waiting) {
       logUrl = `${this.config.cnpmcore.registry}/-/package/${fullname}/syncs/${taskId}/log`;
@@ -157,13 +205,26 @@ export class PackageSyncController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/syncs/:taskId/log`,
     method: HTTPMethodEnum.GET,
   })
-  async showSyncTaskLog(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() taskId: string) {
+  async showSyncTaskLog(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string,
+    @HTTPParam() taskId: string
+  ) {
     const task = await this.packageSyncerService.findTask(taskId);
-    if (!task) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" not found`);
-    if (task.state === TaskState.Waiting) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" log not found`);
+    if (!task)
+      throw new NotFoundError(
+        `Package "${fullname}" sync task "${taskId}" not found`
+      );
+    if (task.state === TaskState.Waiting)
+      throw new NotFoundError(
+        `Package "${fullname}" sync task "${taskId}" log not found`
+      );
 
     const logUrlOrStream = await this.packageSyncerService.findTaskLog(task);
-    if (!logUrlOrStream) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" log not found`);
+    if (!logUrlOrStream)
+      throw new NotFoundError(
+        `Package "${fullname}" sync task "${taskId}" log not found`
+      );
     if (typeof logUrlOrStream === 'string') {
       ctx.redirect(logUrlOrStream);
       return;
@@ -179,7 +240,11 @@ export class PackageSyncController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/sync`,
     method: HTTPMethodEnum.PUT,
   })
-  async deprecatedCreateSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPQuery() nodeps: string) {
+  async deprecatedCreateSyncTask(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string,
+    @HTTPQuery() nodeps: string
+  ) {
     const options: SyncPackageTaskType = {
       fullname,
       tips: `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`,
@@ -201,9 +266,13 @@ export class PackageSyncController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/sync/log/:taskId`,
     method: HTTPMethodEnum.GET,
   })
-  async deprecatedShowSyncTask(@HTTPParam() fullname: string, @HTTPParam() taskId: string) {
+  async deprecatedShowSyncTask(
+    @HTTPParam() fullname: string,
+    @HTTPParam() taskId: string
+  ) {
     const task = await this.showSyncTask(fullname, taskId);
-    const syncDone = task.state !== TaskState.Waiting && task.state !== TaskState.Processing;
+    const syncDone =
+      task.state !== TaskState.Waiting && task.state !== TaskState.Processing;
     const stateMessage = syncDone ? '[done]' : '[processing]';
     // https://github.com/cnpm/cnpm/blob/cadd3cd54c22b1a157810a43ab10febdb2410ca6/bin/cnpm-sync#L82
     const log = `[${new Date().toISOString()}] ${stateMessage} Sync ${fullname} data: ${JSON.stringify(task)}`;

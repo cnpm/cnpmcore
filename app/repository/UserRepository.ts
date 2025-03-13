@@ -9,9 +9,9 @@ import { User as UserEntity } from '../core/entity/User.js';
 import { Token as TokenEntity, isGranularToken } from '../core/entity/Token.js';
 import { WebauthnCredential as WebauthnCredentialEntity } from '../core/entity/WebauthnCredential.js';
 import { AbstractRepository } from './AbstractRepository.js';
-import { TokenPackage as TokenPackageModel } from './model/TokenPackage.js';
+import type { TokenPackage as TokenPackageModel } from './model/TokenPackage.js';
 import { getFullname, getScopeAndName } from '../common/PackageUtil.js';
-import { PackageRepository } from './PackageRepository.js';
+import type { PackageRepository } from './PackageRepository.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -42,7 +42,11 @@ export class UserRepository extends AbstractRepository {
       await ModelConvertor.saveEntityToModel(user, model);
     } else {
       const model = await ModelConvertor.convertEntityToModel(user, this.User);
-      this.logger.info('[UserRepository:saveUser:new] id: %s, userId: %s', model.id, model.userId);
+      this.logger.info(
+        '[UserRepository:saveUser:new] id: %s, userId: %s',
+        model.id,
+        model.userId
+      );
     }
   }
 
@@ -81,7 +85,9 @@ export class UserRepository extends AbstractRepository {
   private async _injectTokenPackages(token: TokenEntity) {
     if (isGranularToken(token)) {
       const models = await this.TokenPackage.find({ tokenId: token.tokenId });
-      const packages = await this.Package.find({ packageId: models.map(m => m.packageId) });
+      const packages = await this.Package.find({
+        packageId: models.map(m => m.packageId),
+      });
       if (Array.isArray(packages)) {
         token.allowedPackages = packages.map(p => getFullname(p.scope, p.name));
       }
@@ -100,13 +106,23 @@ export class UserRepository extends AbstractRepository {
     } else {
       if (isGranularToken(token)) {
         await this.TokenPackage.transaction(async transaction => {
-          model = await ModelConvertor.convertEntityToModel(token, this.Token, transaction);
+          model = await ModelConvertor.convertEntityToModel(
+            token,
+            this.Token,
+            transaction
+          );
           if (Array.isArray(token.allowedPackages)) {
             for (const packageName of token.allowedPackages) {
-              const [ scope, name ] = getScopeAndName(packageName);
-              const packageId = await this.packageRepository.findPackageId(scope, name);
+              const [scope, name] = getScopeAndName(packageName);
+              const packageId = await this.packageRepository.findPackageId(
+                scope,
+                name
+              );
               if (packageId) {
-                await this.TokenPackage.create({ packageId, tokenId: token.tokenId }, transaction);
+                await this.TokenPackage.create(
+                  { packageId, tokenId: token.tokenId },
+                  transaction
+                );
               }
             }
           }
@@ -114,22 +130,35 @@ export class UserRepository extends AbstractRepository {
       } else {
         model = await ModelConvertor.convertEntityToModel(token, this.Token);
       }
-      this.logger.info('[UserRepository:saveToken:new] id: %s, tokenId: %s', model!.id, model!.tokenId);
+      this.logger.info(
+        '[UserRepository:saveToken:new] id: %s, tokenId: %s',
+        model!.id,
+        model!.tokenId
+      );
     }
   }
 
   async removeToken(tokenId: string) {
     await this.Token.transaction(async transaction => {
-      const removeCount = await this.Token.remove({ tokenId }, true, transaction);
+      const removeCount = await this.Token.remove(
+        { tokenId },
+        true,
+        transaction
+      );
       await this.TokenPackage.remove({ tokenId }, true, transaction);
-      this.logger.info('[UserRepository:removeToken:remove] %d rows, tokenId: %s',
-        removeCount, tokenId);
+      this.logger.info(
+        '[UserRepository:removeToken:remove] %d rows, tokenId: %s',
+        removeCount,
+        tokenId
+      );
     });
   }
 
   async listTokens(userId: string): Promise<TokenEntity[]> {
     const models = await this.Token.find({ userId });
-    const tokens = models.map(model => ModelConvertor.convertModelToEntity(model, TokenEntity));
+    const tokens = models.map(model =>
+      ModelConvertor.convertModelToEntity(model, TokenEntity)
+    );
     for (const token of tokens) {
       await this._injectTokenPackages(token);
     }
@@ -138,16 +167,28 @@ export class UserRepository extends AbstractRepository {
 
   async saveCredential(credential: WebauthnCredentialEntity): Promise<void> {
     if (credential.id) {
-      const model = await this.WebauthnCredential.findOne({ id: credential.id });
+      const model = await this.WebauthnCredential.findOne({
+        id: credential.id,
+      });
       if (!model) return;
       await ModelConvertor.saveEntityToModel(credential, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(credential, this.WebauthnCredential);
-      this.logger.info('[UserRepository:saveCredential:new] id: %s, wancId: %s', model.id, model.wancId);
+      const model = await ModelConvertor.convertEntityToModel(
+        credential,
+        this.WebauthnCredential
+      );
+      this.logger.info(
+        '[UserRepository:saveCredential:new] id: %s, wancId: %s',
+        model.id,
+        model.wancId
+      );
     }
   }
 
-  async findCredentialByUserIdAndBrowserType(userId: string | undefined, browserType: string | null) {
+  async findCredentialByUserIdAndBrowserType(
+    userId: string | undefined,
+    browserType: string | null
+  ) {
     const model = await this.WebauthnCredential.findOne({
       userId,
       browserType,
@@ -158,6 +199,10 @@ export class UserRepository extends AbstractRepository {
 
   async removeCredential(wancId: string) {
     const removeCount = await this.WebauthnCredential.remove({ wancId });
-    this.logger.info('[UserRepository:removeCredential:remove] %d rows, wancId: %s', removeCount, wancId);
+    this.logger.info(
+      '[UserRepository:removeCredential:remove] %d rows, wancId: %s',
+      removeCount,
+      wancId
+    );
   }
 }

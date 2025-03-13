@@ -2,7 +2,8 @@ import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 import { errors } from '@elastic/elasticsearch';
 import { mockES } from '../../../../config/config.unittest.js';
-import { TestUser, TestUtil } from '../../../TestUtil.js';
+import type { TestUser } from '../../../TestUtil.js';
+import { TestUtil } from '../../../TestUtil.js';
 
 describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   let publisher: TestUser;
@@ -20,63 +21,74 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   describe('[GET /-/v1/search] search()', async () => {
     it('should throw 451 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/-/v1/search?text=example&from=0&size=1')
         .expect(451);
     });
 
     it('should get example package', async () => {
-      mockES.add({
-        method: 'POST',
-        path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
-      }, () => {
-        return {
-          hits: {
-            total: { value: 1, relation: 'eq' },
-            hits: [{
-              _source: {
-                downloads: {
-                  all: 0,
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        () => {
+          return {
+            hits: {
+              total: { value: 1, relation: 'eq' },
+              hits: [
+                {
+                  _source: {
+                    downloads: {
+                      all: 0,
+                    },
+                    package: {
+                      name: 'example',
+                      description: 'example package',
+                    },
+                  },
                 },
-                package: {
-                  name: 'example',
-                  description: 'example package',
-                },
-              },
-            }],
-          },
-        };
-      });
-      const res = await app.httpRequest()
+              ],
+            },
+          };
+        }
+      );
+      const res = await app
+        .httpRequest()
         .get('/-/v1/search?text=example&from=0&size=1');
       assert.equal(res.body.objects[0].package.name, 'example');
       assert.equal(res.body.total, 1);
     });
 
     it('should get example package when search text is empty', async () => {
-      mockES.add({
-        method: 'POST',
-        path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
-      }, () => {
-        return {
-          hits: {
-            total: { value: 1, relation: 'eq' },
-            hits: [{
-              _source: {
-                downloads: {
-                  all: 0,
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        () => {
+          return {
+            hits: {
+              total: { value: 1, relation: 'eq' },
+              hits: [
+                {
+                  _source: {
+                    downloads: {
+                      all: 0,
+                    },
+                    package: {
+                      name: 'example',
+                      description: 'example package',
+                    },
+                  },
                 },
-                package: {
-                  name: 'example',
-                  description: 'example package',
-                },
-              },
-            }],
-          },
-        };
-      });
-      const res = await app.httpRequest()
-        .get('/-/v1/search?from=0&size=1');
+              ],
+            },
+          };
+        }
+      );
+      const res = await app.httpRequest().get('/-/v1/search?from=0&size=1');
       assert.equal(res.body.objects[0].package.name, 'example');
       assert.equal(res.body.total, 1);
     });
@@ -85,25 +97,27 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   describe('[PUT /-/v1/search/sync/:fullname] sync()', async () => {
     it('should throw 451 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
-      await app.httpRequest()
-        .put('/-/v1/search/sync/example')
-        .expect(451);
+      await app.httpRequest().put('/-/v1/search/sync/example').expect(451);
     });
 
     it('should upsert a example package', async () => {
       const name = 'testmodule-search-package';
-      mockES.add({
-        method: 'PUT',
-        path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
-      }, () => {
-        return {
-          _id: name,
-        };
-      });
+      mockES.add(
+        {
+          method: 'PUT',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
+        },
+        () => {
+          return {
+            _id: name,
+          };
+        }
+      );
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       mock(app.config.cnpmcore, 'registry', 'https://registry.example.com');
       const pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -112,8 +126,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
-      res = await app.httpRequest()
-        .put(`/-/v1/search/sync/${name}`);
+      res = await app.httpRequest().put(`/-/v1/search/sync/${name}`);
       assert.equal(res.body.package, name);
     });
   });
@@ -125,7 +138,8 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
     });
     it('should throw 451 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .delete('/-/v1/search/sync/example')
         .set('authorization', admin.authorization)
         .expect(451);
@@ -133,19 +147,23 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
 
     it('should delete a example package', async () => {
       const name = 'testmodule-search-package';
-      mockES.add({
-        method: 'DELETE',
-        path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
-      }, () => {
-        return {
-          _id: name,
-        };
-      });
+      mockES.add(
+        {
+          method: 'DELETE',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
+        },
+        () => {
+          return {
+            _id: name,
+          };
+        }
+      );
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       mock(app.config.cnpmcore, 'enableElasticsearch', true);
       mock(app.config.cnpmcore, 'registry', 'https://registry.example.com');
 
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .delete(`/-/v1/search/sync/${name}`)
         .set('authorization', admin.authorization);
       assert.equal(res.body.package, name);
@@ -153,36 +171,40 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
 
     it('should delete a non existent package', async () => {
       const name = 'non-existent-search-package';
-      mockES.add({
-        method: 'DELETE',
-        path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
-      }, () => {
-        return new errors.ResponseError({
-          body: { errors: {}, status: 404 },
-          statusCode: 404,
-          warnings: null,
-          meta: {
-            name: '',
-            context: '',
-            request: {
-              params: {
-                method: 'delete',
-                path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
+      mockES.add(
+        {
+          method: 'DELETE',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
+        },
+        () => {
+          return new errors.ResponseError({
+            body: { errors: {}, status: 404 },
+            statusCode: 404,
+            warnings: null,
+            meta: {
+              name: '',
+              context: '',
+              request: {
+                params: {
+                  method: 'delete',
+                  path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
+                },
+                options: {},
+                id: '',
               },
-              options: {},
-              id: '',
+              connection: null,
+              attempts: 1,
+              aborted: true,
             },
-            connection: null,
-            attempts: 1,
-            aborted: true,
-          },
-        });
-      });
+          });
+        }
+      );
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       mock(app.config.cnpmcore, 'enableElasticsearch', true);
       mock(app.config.cnpmcore, 'registry', 'https://registry.example.com');
 
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .delete(`/-/v1/search/sync/${name}`)
         .set('authorization', admin.authorization);
       assert.equal(res.body.package, name);

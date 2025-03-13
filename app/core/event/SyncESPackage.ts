@@ -1,6 +1,6 @@
 // TODO sync event
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { EggAppConfig } from 'egg';
+import type { EggAppConfig } from 'egg';
 import { Event, Inject } from '@eggjs/tegg';
 import {
   PACKAGE_UNPUBLISHED,
@@ -15,7 +15,7 @@ import {
   PACKAGE_BLOCKED,
   PACKAGE_UNBLOCKED,
 } from './index.js';
-import { PackageSearchService } from '../service/PackageSearchService.js';
+import type { PackageSearchService } from '../service/PackageSearchService.js';
 
 class SyncESPackage {
   @Inject()

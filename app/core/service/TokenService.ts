@@ -1,20 +1,17 @@
 import dayjs from 'dayjs';
-import {
-  AccessLevel,
-  SingletonProto,
-  Inject,
-} from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { isEmpty } from 'lodash-es';
 import { ForbiddenError, UnauthorizedError } from 'egg-errors';
 import { AbstractService } from '../../common/AbstractService.js';
-import { Token, isGranularToken } from '../entity/Token.js';
-import { TokenPackage as TokenPackageModel } from '../../../app/repository/model/TokenPackage.js';
-import { Package as PackageModel } from '../../../app/repository/model/Package.js';
+import type { Token } from '../entity/Token.js';
+import { isGranularToken } from '../entity/Token.js';
+import type { TokenPackage as TokenPackageModel } from '../../../app/repository/model/TokenPackage.js';
+import type { Package as PackageModel } from '../../../app/repository/model/Package.js';
 import { ModelConvertor } from '../../../app/repository/util/ModelConvertor.js';
 import { Package as PackageEntity } from '../entity/Package.js';
 import { getScopeAndName } from '../../../app/common/PackageUtil.js';
 import { sha512 } from '../../../app/common/UserUtil.js';
-import { UserRepository } from '../../../app/repository/UserRepository.js';
+import type { UserRepository } from '../../../app/repository/UserRepository.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -30,8 +27,12 @@ export class TokenService extends AbstractService {
   public async listTokenPackages(token: Token) {
     if (isGranularToken(token)) {
       const models = await this.TokenPackage.find({ tokenId: token.tokenId });
-      const packages = await this.Package.find({ packageId: models.map(m => m.packageId) });
-      return packages.map(pkg => ModelConvertor.convertModelToEntity(pkg, PackageEntity));
+      const packages = await this.Package.find({
+        packageId: models.map(m => m.packageId),
+      });
+      return packages.map(pkg =>
+        ModelConvertor.convertModelToEntity(pkg, PackageEntity)
+      );
     }
     return null;
   }
@@ -48,7 +49,7 @@ export class TokenService extends AbstractService {
 
   public async checkGranularTokenAccess(token: Token, fullname: string) {
     // check for scope whitelist
-    const [ scope, name ] = getScopeAndName(fullname);
+    const [scope, name] = getScopeAndName(fullname);
     // check for packages whitelist
     const allowedPackages = await this.listTokenPackages(token);
 
@@ -57,7 +58,9 @@ export class TokenService extends AbstractService {
       return true;
     }
 
-    const existPkgConfig = allowedPackages?.find(pkg => pkg.scope === scope && pkg.name === name);
+    const existPkgConfig = allowedPackages?.find(
+      pkg => pkg.scope === scope && pkg.name === name
+    );
     if (existPkgConfig) {
       return true;
     }
@@ -68,7 +71,6 @@ export class TokenService extends AbstractService {
     }
 
     throw new ForbiddenError(`can't access package "${fullname}"`);
-
   }
 
   async getUserAndToken(authorization: string) {
@@ -77,8 +79,8 @@ export class TokenService extends AbstractService {
     if (!matchs) return null;
     const tokenValue = matchs[1];
     const tokenKey = sha512(tokenValue);
-    const authorizedUserAndToken = await this.userRepository.findUserAndTokenByTokenKey(tokenKey);
+    const authorizedUserAndToken =
+      await this.userRepository.findUserAndTokenByTokenKey(tokenKey);
     return authorizedUserAndToken;
   }
-
 }

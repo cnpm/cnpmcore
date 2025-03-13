@@ -1,13 +1,18 @@
 import { SingletonProto } from '@eggjs/tegg';
-import binaries, { BinaryName } from '../../../../config/binaries.js';
+import type { BinaryName } from '../../../../config/binaries.js';
+import binaries from '../../../../config/binaries.js';
 import { BinaryType } from '../../enum/Binary.js';
-import { BinaryAdapter, BinaryItem, FetchResult } from './AbstractBinary.js';
+import type { BinaryItem, FetchResult } from './AbstractBinary.js';
+import { BinaryAdapter } from './AbstractBinary.js';
 import { GithubBinary } from './GithubBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Electron)
 export class ElectronBinary extends GithubBinary {
-  async fetch(dir: string, binaryName: BinaryName = 'electron'): Promise<FetchResult | undefined> {
+  async fetch(
+    dir: string,
+    binaryName: BinaryName = 'electron'
+  ): Promise<FetchResult | undefined> {
     const releases = await this.initReleases(binaryName, binaries.electron);
     if (!releases) return;
 
@@ -34,7 +39,10 @@ export class ElectronBinary extends GithubBinary {
       }
     } else {
       for (const item of releases) {
-        if (dir === `/${item.tag_name}/` || dir === `/${item.tag_name.substring(1)}/`) {
+        if (
+          dir === `/${item.tag_name}/` ||
+          dir === `/${item.tag_name.substring(1)}/`
+        ) {
           items = this.formatItems(item, binaries.electron);
           break;
         }

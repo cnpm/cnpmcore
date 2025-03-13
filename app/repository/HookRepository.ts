@@ -3,7 +3,7 @@ import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { Hook } from '../core/entity/Hook.js';
 import type { Hook as HookModel } from './model/Hook.js';
 import { ModelConvertor } from './util/ModelConvertor.js';
-import { HookType } from '../common/enum/Hook.js';
+import type { HookType } from '../common/enum/Hook.js';
 
 export interface UpdateHookCommand {
   hookId: string;
@@ -42,12 +42,15 @@ export class HookRepository {
    * only endpoint and secret can be updated
    */
   async updateHook(cmd: UpdateHookCommand) {
-    this.Hook.update({
-      hookId: cmd.hookId,
-    }, {
-      endpoint: cmd.endpoint,
-      secret: cmd.secret,
-    });
+    this.Hook.update(
+      {
+        hookId: cmd.hookId,
+      },
+      {
+        endpoint: cmd.endpoint,
+        secret: cmd.secret,
+      }
+    );
   }
 
   async listHooksByOwnerId(ownerId: string) {
@@ -55,10 +58,16 @@ export class HookRepository {
     return hookRows.map(row => ModelConvertor.convertModelToEntity(row, Hook));
   }
 
-  async listHooksByTypeAndName(type: HookType, name: string, since?: bigint): Promise<Array<Hook>> {
+  async listHooksByTypeAndName(
+    type: HookType,
+    name: string,
+    since?: bigint
+  ): Promise<Array<Hook>> {
     let hookRows: Array<HookModel>;
     if (typeof since !== 'undefined') {
-      hookRows = await this.Hook.find({ type, name, id: { $gt: since } }).limit(100);
+      hookRows = await this.Hook.find({ type, name, id: { $gt: since } }).limit(
+        100
+      );
     } else {
       hookRows = await this.Hook.find({ type, name }).limit(100);
     }

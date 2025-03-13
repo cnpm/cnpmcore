@@ -1,8 +1,8 @@
 import { Event, Inject } from '@eggjs/tegg';
-import { EggLogger } from 'egg';
+import type { EggLogger } from 'egg';
 import { PACKAGE_VERSION_ADDED } from './index.js';
 import { BUG_VERSIONS } from '../../common/constants.js';
-import { BugVersionService } from '../service/BugVersionService.js';
+import type { BugVersionService } from '../service/BugVersionService.js';
 
 @Event(PACKAGE_VERSION_ADDED)
 export class BugVersionFixHandler {

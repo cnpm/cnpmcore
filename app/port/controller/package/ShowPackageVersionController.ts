@@ -1,3 +1,4 @@
+import type { EggContext } from '@eggjs/tegg';
 import {
   HTTPController,
   HTTPMethod,
@@ -5,7 +6,6 @@ import {
   HTTPParam,
   Inject,
   Context,
-  EggContext,
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
 
@@ -15,8 +15,8 @@ import {
   FULLNAME_REG_STRING,
 } from '../../../common/PackageUtil.js';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil.js';
-import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
-import { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
+import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
+import type { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
 import { Spec } from '../../../port/typebox.js';
 import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants.js';
 import { DIST_NAMES } from '../../../core/entity/Package.js';
@@ -36,14 +36,14 @@ export class ShowPackageVersionController extends AbstractController {
   async show(
     @Context() ctx: EggContext,
     @HTTPParam() fullname: string,
-    @HTTPParam() versionSpec: string,
+    @HTTPParam() versionSpec: string
   ) {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
-    const [ scope, name ] = getScopeAndName(fullname);
+    const [scope, name] = getScopeAndName(fullname);
     const isSync = isSyncWorkerRequest(ctx);
     const isFullManifests =
-      ctx.accepts([ 'json', ABBREVIATED_META_TYPE ]) !== ABBREVIATED_META_TYPE;
+      ctx.accepts(['json', ABBREVIATED_META_TYPE]) !== ABBREVIATED_META_TYPE;
 
     const { blockReason, manifest, pkg } =
       await this.packageManagerService.showPackageVersionManifest(
@@ -51,7 +51,7 @@ export class ShowPackageVersionController extends AbstractController {
         name,
         versionSpec,
         isSync,
-        isFullManifests,
+        isFullManifests
       );
     const allowSync = this.getAllowSync(ctx);
 
@@ -68,12 +68,16 @@ export class ShowPackageVersionController extends AbstractController {
         return await this.proxyCacheService.getPackageVersionManifest(
           fullname,
           fileType,
-          versionSpec,
+          versionSpec
         );
       }
 
       if (!pkg) {
-        throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
+        throw this.createPackageNotFoundErrorWithRedirect(
+          fullname,
+          undefined,
+          allowSync
+        );
       }
       if (!manifest) {
         throw new NotFoundError(`${fullname}@${versionSpec} not found`);

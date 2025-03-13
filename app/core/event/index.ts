@@ -1,5 +1,5 @@
 import '@eggjs/tegg';
-import { User } from '../entity/User.js';
+import type { User } from '../entity/User.js';
 
 export const PACKAGE_UNPUBLISHED = 'PACKAGE_UNPUBLISHED';
 export const PACKAGE_BLOCKED = 'PACKAGE_BLOCKED';
@@ -22,19 +22,35 @@ export interface PackageMetaChange {
   deprecateds?: Array<PackageDeprecated>;
 }
 
-
 declare module '@eggjs/tegg' {
   interface Events {
     [PACKAGE_UNPUBLISHED]: (fullname: string) => Promise<void>;
     [PACKAGE_BLOCKED]: (fullname: string) => Promise<void>;
     [PACKAGE_UNBLOCKED]: (fullname: string) => Promise<void>;
-    [PACKAGE_VERSION_ADDED]: (fullname: string, version: string, tag?: string) => Promise<void>;
-    [PACKAGE_VERSION_REMOVED]: (fullname: string, version: string, tag?: string) => Promise<void>;
+    [PACKAGE_VERSION_ADDED]: (
+      fullname: string,
+      version: string,
+      tag?: string
+    ) => Promise<void>;
+    [PACKAGE_VERSION_REMOVED]: (
+      fullname: string,
+      version: string,
+      tag?: string
+    ) => Promise<void>;
     [PACKAGE_TAG_ADDED]: (fullname: string, tag: string) => Promise<void>;
     [PACKAGE_TAG_CHANGED]: (fullname: string, tag: string) => Promise<void>;
     [PACKAGE_TAG_REMOVED]: (fullname: string, tag: string) => Promise<void>;
-    [PACKAGE_MAINTAINER_CHANGED]: (fullname: string, maintainers: User[]) => Promise<void>;
-    [PACKAGE_MAINTAINER_REMOVED]: (fullname: string, maintainer: string) => Promise<void>;
-    [PACKAGE_META_CHANGED]: (fullname: string, meta: PackageMetaChange) => Promise<void>;
+    [PACKAGE_MAINTAINER_CHANGED]: (
+      fullname: string,
+      maintainers: User[]
+    ) => Promise<void>;
+    [PACKAGE_MAINTAINER_REMOVED]: (
+      fullname: string,
+      maintainer: string
+    ) => Promise<void>;
+    [PACKAGE_META_CHANGED]: (
+      fullname: string,
+      meta: PackageMetaChange
+    ) => Promise<void>;
   }
 }

@@ -1,7 +1,6 @@
 import { PassThrough } from 'node:stream';
-import {
-  NotFoundError,
-} from 'egg-errors';
+import { NotFoundError } from 'egg-errors';
+import type { EggContext } from '@eggjs/tegg';
 import {
   HTTPController,
   HTTPMethod,
@@ -9,17 +8,19 @@ import {
   HTTPParam,
   Inject,
   Context,
-  EggContext,
 } from '@eggjs/tegg';
 
 import { AbstractController } from '../AbstractController.js';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../../common/PackageUtil.js';
+import {
+  FULLNAME_REG_STRING,
+  getScopeAndName,
+} from '../../../common/PackageUtil.js';
 import { SyncMode } from '../../../common/constants.js';
-import { NFSAdapter } from '../../../common/adapter/NFSAdapter.js';
-import { PackageManagerService } from '../../../core/service/PackageManagerService.js';
-import { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
-import { PackageSyncerService } from '../../../core/service/PackageSyncerService.js';
-import { RegistryManagerService } from '../../../core/service/RegistryManagerService.js';
+import type { NFSAdapter } from '../../../common/adapter/NFSAdapter.js';
+import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
+import type { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
+import type { PackageSyncerService } from '../../../core/service/PackageSyncerService.js';
+import type { RegistryManagerService } from '../../../core/service/RegistryManagerService.js';
 
 @HTTPController()
 export class DownloadPackageVersionTarController extends AbstractController {
@@ -51,9 +52,17 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:filenameWithVersion.tgz`,
     method: HTTPMethodEnum.GET,
   })
-  async download(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+  async download(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string,
+    @HTTPParam() filenameWithVersion: string
+  ) {
     // tgz file storeKey: `/packages/${this.fullname}/${version}/${filename}`
-    const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
+    const version = this.getAndCheckVersionFromFilename(
+      ctx,
+      fullname,
+      filenameWithVersion
+    );
     const storeKey = `/packages/${fullname}/${version}/${filenameWithVersion}.tgz`;
     const downloadUrl = await this.nfsAdapter.getDownloadUrl(storeKey);
 
@@ -70,7 +79,11 @@ export class DownloadPackageVersionTarController extends AbstractController {
     let packageVersion;
     try {
       pkg = await this.getPackageEntityByFullname(fullname, allowSync);
-      packageVersion = await this.getPackageVersionEntity(pkg, version, allowSync);
+      packageVersion = await this.getPackageVersionEntity(
+        pkg,
+        version,
+        allowSync
+      );
     } catch (error) {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
         // proxy mode package version not found.
@@ -91,9 +104,16 @@ export class DownloadPackageVersionTarController extends AbstractController {
       return;
     }
     // read from database
-    ctx.logger.info('[PackageController:downloadVersionTar] %s@%s, packageVersionId: %s',
-      pkg.fullname, version, packageVersion.packageVersionId);
-    const urlOrStream = await this.packageManagerService.downloadPackageVersionTar(packageVersion);
+    ctx.logger.info(
+      '[PackageController:downloadVersionTar] %s@%s, packageVersionId: %s',
+      pkg.fullname,
+      version,
+      packageVersion.packageVersionId
+    );
+    const urlOrStream =
+      await this.packageManagerService.downloadPackageVersionTar(
+        packageVersion
+      );
     if (!urlOrStream) {
       throw new NotFoundError(`"${filenameWithVersion}.tgz" not found`);
     }
@@ -111,15 +131,24 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/download/:fullnameWithVersion+.tgz`,
     method: HTTPMethodEnum.GET,
   })
-  async deprecatedDownload(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() fullnameWithVersion: string) {
+  async deprecatedDownload(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string,
+    @HTTPParam() fullnameWithVersion: string
+  ) {
     // /@emotion/utils/download/@emotion/utils-0.11.3.tgz
     // => /@emotion/utils/-/utils-0.11.3.tgz
     const filenameWithVersion = getScopeAndName(fullnameWithVersion)[1];
     return await this.download(ctx, fullname, filenameWithVersion);
   }
 
-  private async getTgzProxyStream(ctx: EggContext, fullname: string, version: string) {
-    const { headers, status, res } = await this.proxyCacheService.getPackageVersionTarResponse(fullname, ctx);
+  private async getTgzProxyStream(
+    ctx: EggContext,
+    fullname: string,
+    version: string
+  ) {
+    const { headers, status, res } =
+      await this.proxyCacheService.getPackageVersionTarResponse(fullname, ctx);
     ctx.status = status;
     ctx.set(headers as Record<string, string>);
     ctx.runInBackground(async () => {
@@ -128,10 +157,13 @@ export class DownloadPackageVersionTarController extends AbstractController {
         authorId: `pid_${process.pid}`,
         tips: `Sync specific version in proxy mode cause by "${ctx.href}"`,
         skipDependencies: true,
-        specificVersions: [ version ],
+        specificVersions: [version],
       });
-      ctx.logger.info('[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
-        task.taskId, fullname);
+      ctx.logger.info(
+        '[DownloadPackageVersionTarController.createSyncTask:success] taskId: %s, fullname: %s',
+        task.taskId,
+        fullname
+      );
     });
     return res;
   }
@@ -152,7 +184,11 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:scope/:filenameWithVersion.tgz`,
     method: HTTPMethodEnum.GET,
   })
-  async downloadVerdaccioPathStyle(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+  async downloadVerdaccioPathStyle(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string,
+    @HTTPParam() filenameWithVersion: string
+  ) {
     return this.download(ctx, fullname, filenameWithVersion);
   }
 }

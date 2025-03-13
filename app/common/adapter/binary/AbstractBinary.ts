@@ -1,7 +1,11 @@
-import { ImplDecorator, Inject, QualifierImplDecoratorUtil } from '@eggjs/tegg';
-import { EggHttpClient, EggLogger } from 'egg';
-import { BinaryType } from '../../enum/Binary.js';
-import { BinaryName, BinaryTaskConfig } from '../../../../config/binaries.js';
+import type { ImplDecorator } from '@eggjs/tegg';
+import { Inject, QualifierImplDecoratorUtil } from '@eggjs/tegg';
+import type { EggHttpClient, EggLogger } from 'egg';
+import type { BinaryType } from '../../enum/Binary.js';
+import type {
+  BinaryName,
+  BinaryTaskConfig,
+} from '../../../../config/binaries.js';
 
 export type BinaryItem = {
   name: string;
@@ -17,7 +21,7 @@ export type FetchResult = {
   nextParams?: any;
 };
 
-const platforms = [ 'darwin', 'linux', 'win32' ] as const;
+const platforms = ['darwin', 'linux', 'win32'] as const;
 
 export const BINARY_ADAPTER_ATTRIBUTE = Symbol('BINARY_ADAPTER_ATTRIBUTE');
 
@@ -29,7 +33,10 @@ export abstract class AbstractBinary {
   protected httpclient: EggHttpClient;
 
   abstract initFetch(binaryName: BinaryName): Promise<void>;
-  abstract fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined>;
+  abstract fetch(
+    dir: string,
+    binaryName: BinaryName
+  ): Promise<FetchResult | undefined>;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async finishFetch(_success: boolean, _binaryName: BinaryName): Promise<void> {
@@ -44,13 +51,22 @@ export abstract class AbstractBinary {
     });
     const xml = data.toString() as string;
     if (status !== 200) {
-      this.logger.warn('[AbstractBinary.requestXml:non-200-status] url: %s, status: %s, headers: %j, xml: %j', url, status, headers, xml);
+      this.logger.warn(
+        '[AbstractBinary.requestXml:non-200-status] url: %s, status: %s, headers: %j, xml: %j',
+        url,
+        status,
+        headers,
+        xml
+      );
       return '';
     }
     return xml;
   }
 
-  protected async requestJSON(url: string, requestHeaders?: Record<string, string>) {
+  protected async requestJSON(
+    url: string,
+    requestHeaders?: Record<string, string>
+  ) {
     const { status, data, headers } = await this.httpclient.request(url, {
       timeout: 30000,
       dataType: 'json',
@@ -59,7 +75,12 @@ export abstract class AbstractBinary {
       headers: requestHeaders,
     });
     if (status !== 200) {
-      this.logger.warn('[AbstractBinary.requestJSON:non-200-status] url: %s, status: %s, headers: %j', url, status, headers);
+      this.logger.warn(
+        '[AbstractBinary.requestJSON:non-200-status] url: %s, status: %s, headers: %j',
+        url,
+        status,
+        headers
+      );
       return data;
     }
     return data;
@@ -68,7 +89,9 @@ export abstract class AbstractBinary {
   // https://nodejs.org/api/n-api.html#n_api_node_api_version_matrix
   protected async listNodeABIVersions() {
     const nodeABIVersions: number[] = [];
-    const versions = await this.requestJSON('https://nodejs.org/dist/index.json');
+    const versions = await this.requestJSON(
+      'https://nodejs.org/dist/index.json'
+    );
     for (const version of versions) {
       if (!version.modules) continue;
       const modulesVersion = parseInt(version.modules);
@@ -89,21 +112,24 @@ export abstract class AbstractBinary {
     if (binaryConfig?.options?.nodeArchs) return binaryConfig.options.nodeArchs;
     // https://nodejs.org/api/os.html#osarch
     return {
-      linux: [ 'arm', 'arm64', 's390x', 'ia32', 'x64' ],
-      darwin: [ 'arm64', 'ia32', 'x64' ],
-      win32: [ 'ia32', 'x64' ],
+      linux: ['arm', 'arm64', 's390x', 'ia32', 'x64'],
+      darwin: ['arm64', 'ia32', 'x64'],
+      win32: ['ia32', 'x64'],
     };
   }
 
-  protected listNodeLibcs(): Record<typeof platforms[number], string[]> {
+  protected listNodeLibcs(): Record<(typeof platforms)[number], string[]> {
     // https://github.com/lovell/detect-libc/blob/master/lib/detect-libc.js#L42
     return {
-      darwin: [ 'unknown' ],
-      linux: [ 'glibc', 'musl' ],
-      win32: [ 'unknown' ],
+      darwin: ['unknown'],
+      linux: ['glibc', 'musl'],
+      win32: ['unknown'],
     };
   }
 }
 
 export const BinaryAdapter: ImplDecorator<AbstractBinary, typeof BinaryType> =
-  QualifierImplDecoratorUtil.generatorDecorator(AbstractBinary, BINARY_ADAPTER_ATTRIBUTE);
+  QualifierImplDecoratorUtil.generatorDecorator(
+    AbstractBinary,
+    BINARY_ADAPTER_ATTRIBUTE
+  );

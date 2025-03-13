@@ -1,3 +1,4 @@
+import type { EggContext } from '@eggjs/tegg';
 import {
   HTTPController,
   HTTPMethod,
@@ -5,7 +6,6 @@ import {
   HTTPParam,
   HTTPBody,
   Context,
-  EggContext,
 } from '@eggjs/tegg';
 import {
   UnprocessableEntityError,
@@ -13,7 +13,8 @@ import {
   UnauthorizedError,
   ForbiddenError,
 } from 'egg-errors';
-import { Static, Type } from 'egg-typebox-validate/typebox';
+import type { Static } from 'egg-typebox-validate/typebox';
+import { Type } from 'egg-typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.js';
 import { LoginResultCode } from '../../common/enum/User.js';
@@ -57,7 +58,11 @@ export class UserController extends AbstractController {
     path: '/-/user/org.couchdb.user::username',
     method: HTTPMethodEnum.PUT,
   })
-  async loginOrCreateUser(@Context() ctx: EggContext, @HTTPParam() username: string, @HTTPBody() user: User) {
+  async loginOrCreateUser(
+    @Context() ctx: EggContext,
+    @HTTPParam() username: string,
+    @HTTPBody() user: User
+  ) {
     // headers: {
     //   'user-agent': 'npm/8.1.2 node/v16.13.1 darwin arm64 workspaces/false',
     //   'npm-command': 'adduser',
@@ -71,7 +76,9 @@ export class UserController extends AbstractController {
     // console.log(username, user, ctx.headers, ctx.href);
     ctx.tValidate(UserRule, user);
     if (username !== user.name) {
-      throw new UnprocessableEntityError(`username(${username}) not match user.name(${user.name})`);
+      throw new UnprocessableEntityError(
+        `username(${username}) not match user.name(${user.name})`
+      );
     }
     if (this.config.cnpmcore.allowPublicRegistration === false) {
       if (!this.config.cnpmcore.admins[user.name]) {
@@ -126,12 +133,16 @@ export class UserController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   async logout(@Context() ctx: EggContext, @HTTPParam() token: string) {
-    const authorizedUserAndToken = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    const authorizedUserAndToken =
+      await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) return { ok: false };
     if (authorizedUserAndToken.token.tokenKey !== sha512(token)) {
       throw new UnprocessableEntityError('invalid token');
     }
-    await this.userService.removeToken(authorizedUserAndToken.user.userId, token);
+    await this.userService.removeToken(
+      authorizedUserAndToken.user.userId,
+      token
+    );
     return { ok: true };
   }
 
@@ -145,7 +156,8 @@ export class UserController extends AbstractController {
     if (!user) {
       throw new NotFoundError(`User "${username}" not found`);
     }
-    const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    const authorized =
+      await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     return {
       _id: `org.couchdb.user:${user.displayName}`,
       name: user.displayName,
@@ -160,11 +172,20 @@ export class UserController extends AbstractController {
   })
   async whoami(@Context() ctx: EggContext) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
-    const authorizedRes = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    const authorizedRes =
+      await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     const { token, user } = authorizedRes!;
 
     if (isGranularToken(token)) {
-      const { name, description, expiredAt, allowedPackages, allowedScopes, lastUsedAt, type } = token;
+      const {
+        name,
+        description,
+        expiredAt,
+        allowedPackages,
+        allowedScopes,
+        lastUsedAt,
+        type,
+      } = token;
       return {
         username: user.displayName,
         name,
@@ -186,7 +207,6 @@ export class UserController extends AbstractController {
     return {
       username: user.displayName,
     };
-
   }
 
   // https://github.com/cnpm/cnpmcore/issues/64
@@ -204,7 +224,10 @@ export class UserController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showProfile(@Context() ctx: EggContext) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
+      ctx,
+      'read'
+    );
     return {
       // "tfa": {
       //   "pending": false,

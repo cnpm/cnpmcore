@@ -1,8 +1,8 @@
-import { Readable } from 'node:stream';
-import { IncomingHttpHeaders } from 'node:http';
-import { EggContext } from '@eggjs/tegg';
-import { estypes } from '@elastic/elasticsearch';
-import { CnpmcoreConfig } from '../port/config.js';
+import type { Readable } from 'node:stream';
+import type { IncomingHttpHeaders } from 'node:http';
+import type { EggContext } from '@eggjs/tegg';
+import type { estypes } from '@elastic/elasticsearch';
+import type { CnpmcoreConfig } from '../port/config.js';
 
 export interface UploadResult {
   key: string;
@@ -19,8 +19,8 @@ export interface UploadOptions {
 
 export interface AppendOptions {
   key: string;
-  position?: string,
-  headers?: IncomingHttpHeaders,
+  position?: string;
+  headers?: IncomingHttpHeaders;
 }
 
 export interface DownloadOptions {
@@ -40,7 +40,11 @@ export interface NFSClient {
 
   createDownloadStream(key: string): Promise<Readable | undefined>;
 
-  download(key: string, filepath: string, options: DownloadOptions): Promise<void>;
+  download(
+    key: string,
+    filepath: string,
+    options: DownloadOptions
+  ): Promise<void>;
 
   url?(key: string): string;
 }

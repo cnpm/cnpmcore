@@ -1,4 +1,4 @@
-import { EggContext, Next } from '@eggjs/tegg';
+import type { EggContext, Next } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
 
 import { UserRoleManager } from '../UserRoleManager.js';

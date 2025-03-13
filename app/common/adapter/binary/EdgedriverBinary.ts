@@ -1,8 +1,7 @@
 import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
-import {
-  AbstractBinary, FetchResult, BinaryItem, BinaryAdapter,
-} from './AbstractBinary.js';
+import type { FetchResult, BinaryItem } from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
 import { BinaryType } from '../../enum/Binary.js';
 
 @SingletonProto()
@@ -20,15 +19,23 @@ export class EdgedriverBinary extends AbstractBinary {
     this.dirItems = {};
     this.dirItems['/'] = [];
     const jsonApiEndpoint = 'https://edgeupdates.microsoft.com/api/products';
-    const { data, status, headers } = await this.httpclient.request(jsonApiEndpoint, {
-      dataType: 'json',
-      timeout: 30000,
-      followRedirect: true,
-      gzip: true,
-    });
+    const { data, status, headers } = await this.httpclient.request(
+      jsonApiEndpoint,
+      {
+        dataType: 'json',
+        timeout: 30000,
+        followRedirect: true,
+        gzip: true,
+      }
+    );
     if (status !== 200) {
-      this.logger.warn('[EdgedriverBinary.request:non-200-status] url: %s, status: %s, headers: %j, data: %j',
-        jsonApiEndpoint, status, headers, data);
+      this.logger.warn(
+        '[EdgedriverBinary.request:non-200-status] url: %s, status: %s, headers: %j, data: %j',
+        jsonApiEndpoint,
+        status,
+        headers,
+        data
+      );
       return;
     }
     this.logger.info('[EdgedriverBinary] remote data length: %s', data.length);
@@ -175,7 +182,8 @@ export class EdgedriverBinary extends AbstractBinary {
   #parseItems(xml: string): BinaryItem[] {
     const items: BinaryItem[] = [];
     // <Blob><Name>124.0.2478.97/edgedriver_arm64.zip</Name><Url>https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/124.0.2478.97/edgedriver_arm64.zip</Url><Properties><Last-Modified>Fri, 10 May 2024 18:35:44 GMT</Last-Modified><Etag>0x8DC712000713C13</Etag><Content-Length>9191362</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-MD5>1tjPTf5JU6KKB06Qf1JOGw==</Content-MD5><Cache-Control /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus></Properties></Blob>
-    const fileRe = /<Blob><Name>([^<]+?)<\/Name><Url>([^<]+?)<\/Url><Properties><Last-Modified>([^<]+?)<\/Last-Modified><Etag>(?:[^<]+?)<\/Etag><Content-Length>(\d+)<\/Content-Length>/g;
+    const fileRe =
+      /<Blob><Name>([^<]+?)<\/Name><Url>([^<]+?)<\/Url><Properties><Last-Modified>([^<]+?)<\/Last-Modified><Etag>(?:[^<]+?)<\/Etag><Content-Length>(\d+)<\/Content-Length>/g;
     const matchItems = xml.matchAll(fileRe);
     for (const m of matchItems) {
       const fullname = m[1].trim();

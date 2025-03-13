@@ -1,15 +1,17 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { E500 } from 'egg-errors';
 import { RegistryType } from '../../../common/enum/Registry.js';
-import { Registry } from '../../../core/entity/Registry.js';
-import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesStream.js';
+import type { Registry } from '../../../core/entity/Registry.js';
+import {
+  AbstractChangeStream,
+  RegistryChangesStream,
+} from './AbstractChangesStream.js';
 
 @SingletonProto()
 @RegistryChangesStream(RegistryType.Cnpmcore)
 export class CnpmcoreChangesStream extends AbstractChangeStream {
-
   async getInitialSince(registry: Registry): Promise<string> {
-    const db = (new URL(registry.changeStream)).origin;
+    const db = new URL(registry.changeStream).origin;
     const { status, data } = await this.httpclient.request(db, {
       followRedirect: true,
       timeout: 10000,
@@ -19,12 +21,17 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
       throw new E500(`get getInitialSince failed: ${data.update_seq}`);
     }
     const since = String(data.update_seq - 10);
-    this.logger.warn('[NpmChangesStream.getInitialSince:firstSeq] GET %s status: %s, data: %j, since: %s',
-      registry.name, status, data, since);
+    this.logger.warn(
+      '[NpmChangesStream.getInitialSince:firstSeq] GET %s status: %s, data: %j, since: %s',
+      registry.name,
+      status,
+      data,
+      since
+    );
     return since;
   }
 
-  async* fetchChanges(registry: Registry, since: string) {
+  async *fetchChanges(registry: Registry, since: string) {
     const db = this.getChangesStreamUrl(registry, since);
     // json mode
     const { data } = await this.httpclient.request(db, {

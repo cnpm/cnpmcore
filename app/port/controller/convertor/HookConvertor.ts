@@ -1,7 +1,7 @@
-import { Hook } from '../../../core/entity/Hook.js';
-import { TriggerHookTask } from '../../../core/entity/Task.js';
-import { User } from '../../../core/entity/User.js';
-import { HookType } from '../../../common/enum/Hook.js';
+import type { Hook } from '../../../core/entity/Hook.js';
+import type { TriggerHookTask } from '../../../core/entity/Task.js';
+import type { User } from '../../../core/entity/User.js';
+import type { HookType } from '../../../common/enum/Hook.js';
 
 export interface HookVo {
   id: string;
@@ -12,10 +12,10 @@ export interface HookVo {
   type: HookType;
   created: Date;
   updated: Date;
-  delivered: boolean,
-  last_delivery: Date | null,
-  response_code: number,
-  status: 'active',
+  delivered: boolean;
+  last_delivery: Date | null;
+  response_code: number;
+  status: 'active';
 }
 
 export interface DeleteHookVo {
@@ -27,15 +27,19 @@ export interface DeleteHookVo {
   type: HookType;
   created: Date;
   updated: Date;
-  delivered: boolean,
-  last_delivery: Date | null,
-  response_code: number,
-  status: 'active',
-  deleted: boolean,
+  delivered: boolean;
+  last_delivery: Date | null;
+  response_code: number;
+  status: 'active';
+  deleted: boolean;
 }
 
 export class HookConvertor {
-  static convertToHookVo(hook: Hook, user: User, task?: TriggerHookTask | null | undefined): HookVo {
+  static convertToHookVo(
+    hook: Hook,
+    user: User,
+    task?: TriggerHookTask | null | undefined
+  ): HookVo {
     return {
       id: hook.hookId,
       username: user.name,
@@ -52,7 +56,11 @@ export class HookConvertor {
     };
   }
 
-  static convertToDeleteHookVo(hook: Hook, user: User, task?: TriggerHookTask | null): DeleteHookVo {
+  static convertToDeleteHookVo(
+    hook: Hook,
+    user: User,
+    task?: TriggerHookTask | null
+  ): DeleteHookVo {
     const vo = HookConvertor.convertToHookVo(hook, user, task);
     return Object.assign(vo, {
       deleted: true,

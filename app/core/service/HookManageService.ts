@@ -1,12 +1,9 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import {
-  ForbiddenError,
-  NotFoundError,
-} from 'egg-errors';
-import { EggAppConfig } from 'egg';
-import { HookRepository } from '../../repository/HookRepository.js';
+import { ForbiddenError, NotFoundError } from 'egg-errors';
+import type { EggAppConfig } from 'egg';
+import type { HookRepository } from '../../repository/HookRepository.js';
 import { Hook } from '../entity/Hook.js';
-import { HookType } from '../../common/enum/Hook.js';
+import type { HookType } from '../../common/enum/Hook.js';
 
 export interface CreateHookCommand {
   type: HookType;
@@ -59,7 +56,9 @@ export class HookManageService {
       throw new NotFoundError(`hook ${cmd.hookId} not found`);
     }
     if (hook.ownerId !== cmd.operatorId) {
-      throw new ForbiddenError(`hook ${cmd.hookId} not belong to ${cmd.operatorId}`);
+      throw new ForbiddenError(
+        `hook ${cmd.hookId} not belong to ${cmd.operatorId}`
+      );
     }
     hook.endpoint = cmd.endpoint;
     hook.secret = cmd.secret;
@@ -73,7 +72,9 @@ export class HookManageService {
       throw new NotFoundError(`hook ${cmd.hookId} not found`);
     }
     if (hook.ownerId !== cmd.operatorId) {
-      throw new ForbiddenError(`hook ${cmd.hookId} not belong to ${cmd.operatorId}`);
+      throw new ForbiddenError(
+        `hook ${cmd.hookId} not belong to ${cmd.operatorId}`
+      );
     }
     await this.hookRepository.removeHook(cmd.hookId);
     return hook;

@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { SearchManifestType, SearchRepository } from '../../app/repository/SearchRepository.js';
+import type { SearchManifestType } from '../../app/repository/SearchRepository.js';
+import { SearchRepository } from '../../app/repository/SearchRepository.js';
 import { mockES } from '../../config/config.unittest.js';
 import { PackageManagerService } from '../../app/core/service/PackageManagerService.js';
 import { TestUtil } from '../TestUtil.js';
@@ -34,19 +35,24 @@ describe('test/repository/SearchRepository.test.ts', () => {
           description: 'example package',
         },
       };
-      mockES.add({
-        method: 'POST',
-        path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
-      }, () => {
-        return {
-          hits: {
-            total: { value: 1, relation: 'eq' },
-            hits: [{
-              _source,
-            }],
-          },
-        };
-      });
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        () => {
+          return {
+            hits: {
+              total: { value: 1, relation: 'eq' },
+              hits: [
+                {
+                  _source,
+                },
+              ],
+            },
+          };
+        }
+      );
       const res = await searchRepository.searchPackage({
         body: {
           query: {
@@ -69,7 +75,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
           scope: 'unscoped',
           version: '1.0.0',
           _rev: '243-61f144324ce7cf8f58255946"',
-          versions: [ '1.0.1' ],
+          versions: ['1.0.1'],
           maintainers: [
             {
               name: 'cnpmcore',
@@ -88,34 +94,39 @@ describe('test/repository/SearchRepository.test.ts', () => {
           all: 0,
         },
       };
-      mockES.add({
-        method: 'PUT',
-        path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
-      }, () => {
-        return {
-          _id: manifest.package.name,
-        };
-      });
+      mockES.add(
+        {
+          method: 'PUT',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
+        },
+        () => {
+          return {
+            _id: manifest.package.name,
+          };
+        }
+      );
       const id = await searchRepository.upsertPackage(manifest);
       assert.equal(id, manifest.package.name);
     });
 
     it('delete work', async () => {
       const mockedPackageName = 'example';
-      mockES.add({
-        method: 'DELETE',
-        path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
-      }, () => {
-        return {
-          _id: 'example',
-        };
-      });
+      mockES.add(
+        {
+          method: 'DELETE',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_doc/:id`,
+        },
+        () => {
+          return {
+            _id: 'example',
+          };
+        }
+      );
       const id = await searchRepository.removePackage(mockedPackageName);
       assert.equal(id, mockedPackageName);
     });
 
     it('should clear blocked pkg', async () => {
-
       await TestUtil.createPackage({
         name: '@cnpm/example',
       });
@@ -130,20 +141,24 @@ describe('test/repository/SearchRepository.test.ts', () => {
         },
       };
 
-      mockES.add({
-        method: 'POST',
-        path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
-      }, () => {
-        return {
-          hits: {
-            total: { value: 1, relation: 'eq' },
-            hits: [{
-              _source,
-            }],
-          },
-        };
-      });
-
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        () => {
+          return {
+            hits: {
+              total: { value: 1, relation: 'eq' },
+              hits: [
+                {
+                  _source,
+                },
+              ],
+            },
+          };
+        }
+      );
 
       let res = await searchRepository.searchPackage({
         body: {
@@ -169,15 +184,21 @@ describe('test/repository/SearchRepository.test.ts', () => {
 
       let called = false;
 
-      mock(PackageSearchService.prototype, 'removePackage', async (fullname: string) => {
-        if (fullname === '@cnpm/example') {
-          called = true;
+      mock(
+        PackageSearchService.prototype,
+        'removePackage',
+        async (fullname: string) => {
+          if (fullname === '@cnpm/example') {
+            called = true;
+          }
         }
-      });
+      );
 
-      await packageManagerService.blockPackageByFullname('@cnpm/example', 'test');
+      await packageManagerService.blockPackageByFullname(
+        '@cnpm/example',
+        'test'
+      );
       assert(called);
-
     });
   });
 });

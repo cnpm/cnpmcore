@@ -1,3 +1,4 @@
+import type { EggContext } from '@eggjs/tegg';
 import {
   HTTPController,
   HTTPMethod,
@@ -5,12 +6,11 @@ import {
   HTTPQuery,
   Inject,
   Context,
-  EggContext,
 } from '@eggjs/tegg';
 import { Type } from 'egg-typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.js';
-import { ChangeRepository } from '../../repository/ChangeRepository.js';
+import type { ChangeRepository } from '../../repository/ChangeRepository.js';
 
 const ChangeRule = Type.Object({
   since: Type.Integer({ minimum: 0 }),
@@ -37,10 +37,9 @@ export class ChangesStreamController extends AbstractController {
         seq: change.id,
         type: change.type,
         id: change.targetName,
-        changes: [ change.data ],
+        changes: [change.data],
       };
     });
     return { results };
   }
 }
-

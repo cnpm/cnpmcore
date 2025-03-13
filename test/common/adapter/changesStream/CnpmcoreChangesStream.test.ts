@@ -1,10 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';
+import type { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';
 import { CnpmcoreChangesStream } from '../../../../app/common/adapter/changesStream/CnpmcoreChangesStream.js';
 import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import { Registry } from '../../../../app/core/entity/Registry.js';
+import type { Registry } from '../../../../app/core/entity/Registry.js';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
 
 describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () => {
@@ -39,12 +39,20 @@ describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () =
       app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, () => {
         throw new Error('mock request replicate _changes error');
       });
-      await assert.rejects(cnpmcoreChangesStream.getInitialSince(registry), /mock request/);
+      await assert.rejects(
+        cnpmcoreChangesStream.getInitialSince(registry),
+        /mock request/
+      );
     });
 
     it('should throw error invalid seq', async () => {
-      app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, { data: { update_seqs: 'invalid' } });
-      await assert.rejects(cnpmcoreChangesStream.getInitialSince(registry), /get getInitialSince failed/);
+      app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, {
+        data: { update_seqs: 'invalid' },
+      });
+      await assert.rejects(
+        cnpmcoreChangesStream.getInitialSince(registry),
+        /get getInitialSince failed/
+      );
     });
   });
 

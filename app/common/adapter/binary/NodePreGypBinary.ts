@@ -1,8 +1,10 @@
 import { join } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
-import binaries, { BinaryName } from '../../../../config/binaries.js';
+import type { BinaryName } from '../../../../config/binaries.js';
+import binaries from '../../../../config/binaries.js';
 import { BinaryType } from '../../enum/Binary.js';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
+import type { FetchResult, BinaryItem } from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.NodePreGyp)
@@ -13,7 +15,10 @@ export class NodePreGypBinary extends AbstractBinary {
   }
 
   // https://github.com/mapbox/node-pre-gyp
-  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
+  async fetch(
+    dir: string,
+    binaryName: BinaryName
+  ): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const npmPackageName = binaryConfig.options?.npmPackageName ?? binaryName;
     const pkgUrl = `https://registry.npmjs.com/${npmPackageName}`;
@@ -33,20 +38,28 @@ export class NodePreGypBinary extends AbstractBinary {
       if (!pkgVersion.binary) continue;
       // https://github.com/mapbox/node-pre-gyp#package_name
       // defaults to {module_name}-v{version}-{node_abi}-{platform}-{arch}.tar.gz
-      let binaryFile = pkgVersion.binary.package_name
-        || '{module_name}-v{version}-{node_abi}-{platform}-{arch}.tar.gz';
+      let binaryFile =
+        pkgVersion.binary.package_name ||
+        '{module_name}-v{version}-{node_abi}-{platform}-{arch}.tar.gz';
       if (!binaryFile) continue;
       const moduleName = pkgVersion.binary.module_name || pkgVersion.name;
-      binaryFile = binaryFile.replace('{version}', version)
+      binaryFile = binaryFile
+        .replace('{version}', version)
         .replace('{module_name}', moduleName);
 
       let currentDir = dirItems['/'];
       let versionPrefix = '';
       let remotePath = pkgVersion.binary.remote_path;
       const napiVersions = pkgVersion.binary.napi_versions ?? [];
-      if (binaryConfig.options?.requiredNapiVersions && napiVersions.length === 0) continue;
+      if (
+        binaryConfig.options?.requiredNapiVersions &&
+        napiVersions.length === 0
+      )
+        continue;
       if (remotePath?.includes('{version}')) {
-        const dirName = remotePath.includes('v{version}') ? `v${version}` : version;
+        const dirName = remotePath.includes('v{version}')
+          ? `v${version}`
+          : version;
         versionPrefix = `/${dirName}`;
         dirItems['/'].push({
           name: `${dirName}/`,
@@ -67,17 +80,20 @@ export class NodePreGypBinary extends AbstractBinary {
       //   "remote_path": "{name}/v{version}",
       //   "package_name": "{node_abi}-{platform}-{arch}-{libc}.tar.gz"
       // },
-      if (binaryFile.includes('{node_abi}')
-        && binaryFile.includes('{platform}')
-        && binaryFile.includes('{arch}')
-        && binaryFile.includes('{libc}')) {
+      if (
+        binaryFile.includes('{node_abi}') &&
+        binaryFile.includes('{platform}') &&
+        binaryFile.includes('{arch}') &&
+        binaryFile.includes('{libc}')
+      ) {
         for (const nodeAbi of nodeABIVersions) {
           for (const platform of nodePlatforms) {
             const archs = nodeArchs[platform];
             const libcs = nodeLibcs[platform];
             for (const arch of archs) {
               for (const libc of libcs) {
-                const name = binaryFile.replace('{node_abi}', `node-v${nodeAbi}`)
+                const name = binaryFile
+                  .replace('{node_abi}', `node-v${nodeAbi}`)
                   .replace('{platform}', platform)
                   .replace('{arch}', arch)
                   .replace('{libc}', libc);
@@ -87,20 +103,23 @@ export class NodePreGypBinary extends AbstractBinary {
                   size: '-',
                   isDir: false,
                   url: `${binaryConfig.distUrl}/${binaryName}${versionPrefix}/${name}`,
-                  ignoreDownloadStatuses: [ 404 ],
+                  ignoreDownloadStatuses: [404],
                 });
               }
             }
           }
         }
-      } else if (binaryFile.includes('{node_abi}')
-        && binaryFile.includes('{platform}')
-        && binaryFile.includes('{arch}')) {
+      } else if (
+        binaryFile.includes('{node_abi}') &&
+        binaryFile.includes('{platform}') &&
+        binaryFile.includes('{arch}')
+      ) {
         for (const nodeAbi of nodeABIVersions) {
           for (const platform of nodePlatforms) {
             const archs = nodeArchs[platform];
             for (const arch of archs) {
-              const name = binaryFile.replace('{node_abi}', `node-v${nodeAbi}`)
+              const name = binaryFile
+                .replace('{node_abi}', `node-v${nodeAbi}`)
                 .replace('{platform}', platform)
                 .replace('{arch}', arch);
               currentDir.push({
@@ -109,12 +128,15 @@ export class NodePreGypBinary extends AbstractBinary {
                 size: '-',
                 isDir: false,
                 url: `${binaryConfig.distUrl}/${binaryName}${versionPrefix}/${name}`,
-                ignoreDownloadStatuses: [ 404 ],
+                ignoreDownloadStatuses: [404],
               });
             }
           }
         }
-      } else if (binaryFile.includes('{platform}-{arch}-{node_napi_label}-{libc}') && napiVersions.length > 0) {
+      } else if (
+        binaryFile.includes('{platform}-{arch}-{node_napi_label}-{libc}') &&
+        napiVersions.length > 0
+      ) {
         // https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/darwin-arm64-napi-v6-unknown.tar.gz
         // https://github.com/samizdatco/skia-canvas/blob/2a75801d7cce3b4e4e6ad015a173daefaa8465e6/package.json#L48
         // "binary": {
@@ -133,7 +155,8 @@ export class NodePreGypBinary extends AbstractBinary {
           for (const arch of archs) {
             for (const libc of libcs) {
               for (const napiVersion of napiVersions) {
-                const name = binaryFile.replace('{platform}', platform)
+                const name = binaryFile
+                  .replace('{platform}', platform)
                   .replace('{arch}', arch)
                   .replace('{node_napi_label}', `napi-v${napiVersion}`)
                   .replace('{libc}', libc);
@@ -143,7 +166,7 @@ export class NodePreGypBinary extends AbstractBinary {
                   size: '-',
                   isDir: false,
                   url: `${binaryConfig.distUrl}${versionPrefix}/${name}`,
-                  ignoreDownloadStatuses: [ 404, 403 ],
+                  ignoreDownloadStatuses: [404, 403],
                 });
               }
             }
@@ -165,10 +188,12 @@ export class NodePreGypBinary extends AbstractBinary {
           const archs = nodeArchs[platform];
           for (const arch of archs) {
             for (const napiVersion of napiVersions) {
-              const binaryFileName = binaryFile.replace('{platform}', platform)
+              const binaryFileName = binaryFile
+                .replace('{platform}', platform)
                 .replace('{arch}', arch)
                 .replace('{node_napi_label}', napiVersion);
-              remotePath = remotePath.replace('{module_name}', moduleName)
+              remotePath = remotePath
+                .replace('{module_name}', moduleName)
                 .replace('{name}', binaryName)
                 .replace('{version}', version)
                 .replace('{configuration}', 'Release');
@@ -180,12 +205,15 @@ export class NodePreGypBinary extends AbstractBinary {
                 size: '-',
                 isDir: false,
                 url: remoteUrl,
-                ignoreDownloadStatuses: [ 404 ],
+                ignoreDownloadStatuses: [404],
               });
             }
           }
         }
-      } else if (binaryFile.includes('{platform}') && binaryFile.includes('{arch}')) {
+      } else if (
+        binaryFile.includes('{platform}') &&
+        binaryFile.includes('{arch}')
+      ) {
         // https://github.com/grpc/grpc-node/blob/master/packages/grpc-tools/package.json#L29
         // "binary": {
         //   "module_name": "grpc_tools",
@@ -205,9 +233,11 @@ export class NodePreGypBinary extends AbstractBinary {
         for (const platform of nodePlatforms) {
           const archs = nodeArchs[platform];
           for (const arch of archs) {
-            const binaryFileName = binaryFile.replace('{platform}', platform)
+            const binaryFileName = binaryFile
+              .replace('{platform}', platform)
               .replace('{arch}', arch);
-            remotePath = remotePath.replace('{module_name}', moduleName)
+            remotePath = remotePath
+              .replace('{module_name}', moduleName)
               .replace('{name}', binaryName)
               .replace('{version}', version)
               .replace('{configuration}', 'Release');
@@ -219,7 +249,7 @@ export class NodePreGypBinary extends AbstractBinary {
               size: '-',
               isDir: false,
               url: remoteUrl,
-              ignoreDownloadStatuses: [ 404 ],
+              ignoreDownloadStatuses: [404],
             });
           }
         }

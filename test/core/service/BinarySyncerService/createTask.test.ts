@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService.js';
-import { BinaryName } from '../../../../config/binaries.js';
+import type { BinaryName } from '../../../../config/binaries.js';
 
 describe('test/core/service/BinarySyncerService/createTask.test.ts', () => {
   let binarySyncerService: BinarySyncerService;
@@ -13,8 +13,14 @@ describe('test/core/service/BinarySyncerService/createTask.test.ts', () => {
 
   describe('createTask()', () => {
     it('should ignore duplicate binary task', async () => {
-      const task = await binarySyncerService.createTask('banana' as BinaryName, {});
-      const newTask = await binarySyncerService.createTask('banana' as BinaryName, {});
+      const task = await binarySyncerService.createTask(
+        'banana' as BinaryName,
+        {}
+      );
+      const newTask = await binarySyncerService.createTask(
+        'banana' as BinaryName,
+        {}
+      );
       assert(task?.taskId === newTask?.taskId);
       assert(task?.bizId === 'SyncBinary:banana');
     });

@@ -4,10 +4,10 @@ import { app } from '@eggjs/mock/bootstrap';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
 import { RegistryType } from '../../../../app/common/enum/Registry.js';
 import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
-import { Registry } from '../../../../app/core/entity/Registry.js';
+import type { Registry } from '../../../../app/core/entity/Registry.js';
 import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
 import { TaskType } from '../../../../app/common/enum/Task.js';
-import { ChangesStreamTaskData } from '../../../../app/core/entity/Task.js';
+import type { ChangesStreamTaskData } from '../../../../app/core/entity/Task.js';
 
 describe('test/core/service/RegistryManagerService/index.test.ts', () => {
   let registryManagerService: RegistryManagerService;
@@ -32,7 +32,6 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
   });
 
   describe('RegistryManagerService', () => {
-
     describe('query should work', async () => {
       beforeEach(async () => {
         // create another
@@ -49,31 +48,36 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
         // query success
         const queryRes = await registryManagerService.listRegistries({});
         assert.equal(queryRes.count, 2);
-        const [ _, registry ] = queryRes.data;
+        const [_, registry] = queryRes.data;
         assert(_);
         assert.equal(registry.name, 'custom2');
       });
 
       it('pageOptions should work', async () => {
         // pageOptions should work
-        let queryRes = await registryManagerService.listRegistries({ pageIndex: 0, pageSize: 1 });
+        let queryRes = await registryManagerService.listRegistries({
+          pageIndex: 0,
+          pageSize: 1,
+        });
         assert.equal(queryRes.count, 2);
         assert.equal(queryRes.data.length, 1);
-        const [ firstRegistry ] = queryRes.data;
+        const [firstRegistry] = queryRes.data;
         assert.equal(firstRegistry.name, 'custom');
 
-        queryRes = await registryManagerService.listRegistries({ pageIndex: 1, pageSize: 1 });
+        queryRes = await registryManagerService.listRegistries({
+          pageIndex: 1,
+          pageSize: 1,
+        });
         assert.equal(queryRes.count, 2);
         assert.equal(queryRes.data.length, 1);
-        const [ secondRegistry ] = queryRes.data;
+        const [secondRegistry] = queryRes.data;
         assert.equal(secondRegistry.name, 'custom2');
       });
-
     });
 
     it('update work', async () => {
       let queryRes = await registryManagerService.listRegistries({});
-      const [ registry ] = queryRes.data;
+      const [registry] = queryRes.data;
 
       await registryManagerService.updateRegistry(registry.registryId, {
         ...registry,
@@ -87,20 +91,22 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
     it('update should check registry', async () => {
       const queryRes = await registryManagerService.listRegistries({});
       assert.equal(queryRes.count, 1);
-      const [ registry ] = queryRes.data;
+      const [registry] = queryRes.data;
       await assert.rejects(
         registryManagerService.updateRegistry('not_exist', {
           ...registry,
           name: 'boo',
         }),
-        /not found/,
+        /not found/
       );
     });
 
     it('remove should work', async () => {
       let queryRes = await registryManagerService.listRegistries({});
       assert.equal(queryRes.count, 1);
-      await registryManagerService.remove({ registryId: queryRes.data[0].registryId });
+      await registryManagerService.remove({
+        registryId: queryRes.data[0].registryId,
+      });
       queryRes = await registryManagerService.listRegistries({});
       assert.equal(queryRes.count, 0);
     });
@@ -109,22 +115,36 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       let registry: Registry;
       beforeEach(async () => {
         // create scope
-        [ registry ] = (await registryManagerService.listRegistries({})).data;
-        await scopeManagerService.createScope({ name: '@cnpm', registryId: registry.registryId });
+        [registry] = (await registryManagerService.listRegistries({})).data;
+        await scopeManagerService.createScope({
+          name: '@cnpm',
+          registryId: registry.registryId,
+        });
       });
 
       it('should work', async () => {
         // create success
-        await registryManagerService.createSyncChangesStream({ registryId: registry.registryId });
+        await registryManagerService.createSyncChangesStream({
+          registryId: registry.registryId,
+        });
         const targetName = 'CUSTOM_WORKER';
-        const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
+        const task = await taskRepository.findTaskByTargetName(
+          targetName,
+          TaskType.ChangesStream
+        );
         assert(task);
-        assert.equal((task.data as ChangesStreamTaskData).registryId, registry.registryId);
+        assert.equal(
+          (task.data as ChangesStreamTaskData).registryId,
+          registry.registryId
+        );
       });
 
       it('should preCheck registry', async () => {
-        await assert.rejects(registryManagerService.createSyncChangesStream({ registryId: 'mock_invalid_registry_id' }),
-          /not found/,
+        await assert.rejects(
+          registryManagerService.createSyncChangesStream({
+            registryId: 'mock_invalid_registry_id',
+          }),
+          /not found/
         );
       });
 
@@ -136,19 +156,32 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
           userPrefix: 'cnpm:',
           type: RegistryType.Cnpmcore,
         });
-        await assert.rejects(registryManagerService.createSyncChangesStream({ registryId: newRegistry.registryId }),
-          /please create scopes first/,
+        await assert.rejects(
+          registryManagerService.createSyncChangesStream({
+            registryId: newRegistry.registryId,
+          }),
+          /please create scopes first/
         );
       });
 
       it('should create only once', async () => {
         // create success
-        await registryManagerService.createSyncChangesStream({ registryId: registry.registryId });
-        await registryManagerService.createSyncChangesStream({ registryId: registry.registryId });
+        await registryManagerService.createSyncChangesStream({
+          registryId: registry.registryId,
+        });
+        await registryManagerService.createSyncChangesStream({
+          registryId: registry.registryId,
+        });
         // won't create new task
-        await registryManagerService.createSyncChangesStream({ registryId: registry.registryId, since: '100' });
+        await registryManagerService.createSyncChangesStream({
+          registryId: registry.registryId,
+          since: '100',
+        });
         const targetName = 'CUSTOM_WORKER';
-        const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
+        const task = await taskRepository.findTaskByTargetName(
+          targetName,
+          TaskType.ChangesStream
+        );
         assert(task);
         assert.equal((task.data as ChangesStreamTaskData).since, '');
       });

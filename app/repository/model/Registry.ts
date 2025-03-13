@@ -1,7 +1,7 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 
 import { DataTypes, Bone } from '../util/leoric.js';
-import { RegistryType } from '../../common/enum/Registry.js';
+import type { RegistryType } from '../../common/enum/Registry.js';
 
 @Model()
 export class Registry extends Bone {
@@ -39,5 +39,4 @@ export class Registry extends Bone {
 
   @Attribute(DataTypes.STRING(256), { name: 'auth_token' })
   authToken?: string;
-
 }

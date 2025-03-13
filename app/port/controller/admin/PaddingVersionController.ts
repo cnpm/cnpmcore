@@ -1,13 +1,15 @@
+import type { EggContext } from '@eggjs/tegg';
 import {
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   Inject,
-  HTTPQuery, Context, EggContext,
+  HTTPQuery,
+  Context,
 } from '@eggjs/tegg';
 
 import { AbstractController } from '../AbstractController.js';
-import { FixNoPaddingVersionService } from '../../../core/service/FixNoPaddingVersionService.js';
+import type { FixNoPaddingVersionService } from '../../../core/service/FixNoPaddingVersionService.js';
 
 @HTTPController()
 export class PaddingVersionController extends AbstractController {
@@ -18,7 +20,10 @@ export class PaddingVersionController extends AbstractController {
     method: HTTPMethodEnum.PUT,
     path: '/-/admin/npm/fixPaddingVersion',
   })
-  async fixNoPaddingVersion(@Context() ctx: EggContext, @HTTPQuery() id: string) {
+  async fixNoPaddingVersion(
+    @Context() ctx: EggContext,
+    @HTTPQuery() id: string
+  ) {
     const isAdmin = await this.userRoleManager.isAdmin(ctx);
     if (!isAdmin) {
       return {

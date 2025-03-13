@@ -1,7 +1,7 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 
 import { DataTypes, Bone } from '../util/leoric.js';
-import { DIST_NAMES } from '../../core/entity/Package.js';
+import type { DIST_NAMES } from '../../core/entity/Package.js';
 
 @Model()
 export class ProxyCache extends Bone {
@@ -30,5 +30,4 @@ export class ProxyCache extends Bone {
 
   @Attribute(DataTypes.STRING(214))
   version?: string;
-
 }

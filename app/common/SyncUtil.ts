@@ -1,4 +1,4 @@
-import { EggContext } from '@eggjs/tegg';
+import type { EggContext } from '@eggjs/tegg';
 
 export function isSyncWorkerRequest(ctx: EggContext) {
   // sync request will contain this query params

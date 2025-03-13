@@ -5,9 +5,14 @@ import { app } from '@eggjs/mock/bootstrap';
 
 import { TaskRepository } from '../../app/repository/TaskRepository.js';
 import { Task as TaskModel } from '../../app/repository/model/Task.js';
-import { ChangesStreamTaskData, Task, TaskData } from '../../app/core/entity/Task.js';
+import type {
+  ChangesStreamTaskData,
+  TaskData,
+} from '../../app/core/entity/Task.js';
+import { Task } from '../../app/core/entity/Task.js';
 import { TaskState, TaskType } from '../../app/common/enum/Task.js';
-import { EasyData, EntityUtil } from '../../app/core/util/EntityUtil.js';
+import type { EasyData } from '../../app/core/util/EntityUtil.js';
+import { EntityUtil } from '../../app/core/util/EntityUtil.js';
 
 describe('test/repository/TaskRepository.test.ts', () => {
   let taskRepository: TaskRepository;
@@ -22,7 +27,6 @@ describe('test/repository/TaskRepository.test.ts', () => {
   });
 
   describe('unique biz id', () => {
-
     it('should save succeed if biz id is equal', async () => {
       const bizId = 'mock_dup_biz_id';
       const data: EasyData<TaskData<ChangesStreamTaskData>, 'taskId'> = {
@@ -72,7 +76,7 @@ describe('test/repository/TaskRepository.test.ts', () => {
       // 持久化保存 task1
       await taskRepository.saveTask(task1);
       // 再取一个 asyncTask ，两者指向相同的数据行
-      const asyncTask = await taskRepository.findTask(task1.taskId) as Task;
+      const asyncTask = (await taskRepository.findTask(task1.taskId)) as Task;
 
       // task1 对应的数据被更新了
       await setTimeout(1);
@@ -140,7 +144,7 @@ describe('test/repository/TaskRepository.test.ts', () => {
 
     it('should only save one', async () => {
       const condition = task.start();
-      const [ firstSave, secondSave ] = await Promise.all([
+      const [firstSave, secondSave] = await Promise.all([
         taskRepository.idempotentSaveTask(task, condition),
         taskRepository.idempotentSaveTask(task, condition),
       ]);

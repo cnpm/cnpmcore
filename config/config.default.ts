@@ -1,13 +1,18 @@
 import { strict as assert } from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
-import { EggAppConfig, PowerPartial, Context } from 'egg';
+import type { EggAppConfig, PowerPartial, Context } from 'egg';
 import OSSClient from 'oss-cnpm';
 import S3Client from 's3-cnpmcore';
 import { env } from 'read-env-value';
 
 import { patchAjv } from '../app/port/typebox.js';
-import { ChangesStreamMode, NOT_IMPLEMENTED_PATH, SyncDeleteMode, SyncMode } from '../app/common/constants.js';
+import {
+  ChangesStreamMode,
+  NOT_IMPLEMENTED_PATH,
+  SyncDeleteMode,
+  SyncMode,
+} from '../app/common/constants.js';
 import type { CnpmcoreConfig } from '../app/port/config.js';
 import { database } from './database.js';
 
@@ -15,8 +20,16 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   name: 'cnpm',
   hookEnable: false,
   hooksLimit: 20,
-  sourceRegistry: env('CNPMCORE_CONFIG_SOURCE_REGISTRY', 'string', 'https://registry.npmjs.org'),
-  sourceRegistryIsCNpm: env('CNPMCORE_CONFIG_SOURCE_REGISTRY_IS_CNPM', 'boolean', false),
+  sourceRegistry: env(
+    'CNPMCORE_CONFIG_SOURCE_REGISTRY',
+    'string',
+    'https://registry.npmjs.org'
+  ),
+  sourceRegistryIsCNpm: env(
+    'CNPMCORE_CONFIG_SOURCE_REGISTRY_IS_CNPM',
+    'boolean',
+    false
+  ),
   syncUpstreamFirst: false,
   sourceRegistrySyncTimeout: 180000,
   taskQueueHighWaterSize: 100,
@@ -38,11 +51,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   changesStreamRegistryMode: ChangesStreamMode.streaming,
   registry: env('CNPMCORE_CONFIG_REGISTRY', 'string', 'http://localhost:7001'),
   alwaysAuth: false,
-  allowScopes: [
-    '@cnpm',
-    '@cnpmcore',
-    '@example',
-  ],
+  allowScopes: ['@cnpm', '@cnpmcore', '@example'],
   allowPublishNonScopePackage: false,
   allowPublicRegistration: false,
   admins: {
@@ -84,7 +93,11 @@ export default function startConfig(appInfo: EggAppConfig) {
   config.cnpmcore = cnpmcoreConfig;
 
   // override config from framework / plugin
-  config.dataDir = env('CNPMCORE_DATA_DIR', 'string', join(appInfo.root, '.cnpmcore'));
+  config.dataDir = env(
+    'CNPMCORE_DATA_DIR',
+    'string',
+    join(appInfo.root, '.cnpmcore')
+  );
   config.orm = {
     ...database,
     database: database.name ?? 'cnpmcore',
@@ -127,7 +140,11 @@ export default function startConfig(appInfo: EggAppConfig) {
   config.nfs = {
     client: null,
     dir: env('CNPMCORE_NFS_DIR', 'string', join(config.dataDir, 'nfs')),
-    removeBeforeUpload: env('CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD', 'boolean', false),
+    removeBeforeUpload: env(
+      'CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD',
+      'boolean',
+      false
+    ),
   };
   /* c8 ignore next 17 */
   // enable oss nfs store by env values
@@ -157,12 +174,22 @@ export default function startConfig(appInfo: EggAppConfig) {
         secretAccessKey: env('CNPMCORE_NFS_S3_CLIENT_SECRET', 'string', ''),
       },
       bucket: env('CNPMCORE_NFS_S3_CLIENT_BUCKET', 'string', ''),
-      forcePathStyle: env('CNPMCORE_NFS_S3_CLIENT_FORCE_PATH_STYLE', 'boolean', false),
+      forcePathStyle: env(
+        'CNPMCORE_NFS_S3_CLIENT_FORCE_PATH_STYLE',
+        'boolean',
+        false
+      ),
       disableURL: env('CNPMCORE_NFS_S3_CLIENT_DISABLE_URL', 'boolean', false),
     };
     assert(s3Config.endpoint, 'require env CNPMCORE_NFS_S3_CLIENT_ENDPOINT');
-    assert(s3Config.credentials.accessKeyId, 'require env CNPMCORE_NFS_S3_CLIENT_ID');
-    assert(s3Config.credentials.secretAccessKey, 'require env CNPMCORE_NFS_S3_CLIENT_SECRET');
+    assert(
+      s3Config.credentials.accessKeyId,
+      'require env CNPMCORE_NFS_S3_CLIENT_ID'
+    );
+    assert(
+      s3Config.credentials.secretAccessKey,
+      'require env CNPMCORE_NFS_S3_CLIENT_SECRET'
+    );
     assert(s3Config.bucket, 'require env CNPMCORE_NFS_S3_CLIENT_BUCKET');
     // @ts-expect-error has no construct signatures
     config.nfs.client = new S3Client(s3Config);
@@ -171,7 +198,11 @@ export default function startConfig(appInfo: EggAppConfig) {
   config.logger = {
     enablePerformanceTimer: true,
     enableFastContextLogger: true,
-    appLogName: env('CNPMCORE_APP_LOG_NAME', 'string', `${appInfo.name}-web.log`),
+    appLogName: env(
+      'CNPMCORE_APP_LOG_NAME',
+      'string',
+      `${appInfo.name}-web.log`
+    ),
     coreLogName: env('CNPMCORE_CORE_LOG_NAME', 'string', 'egg-web.log'),
     agentLogName: env('CNPMCORE_AGENT_LOG_NAME', 'string', 'egg-agent.log'),
     errorLogName: env('CNPMCORE_ERROR_LOG_NAME', 'string', 'common-error.log'),
@@ -221,12 +252,20 @@ export default function startConfig(appInfo: EggAppConfig) {
       client: {
         node: env('CNPMCORE_CONFIG_ES_CLIENT_NODE', 'string', ''),
         auth: {
-          username: env('CNPMCORE_CONFIG_ES_CLIENT_AUTH_USERNAME', 'string', ''),
-          password: env('CNPMCORE_CONFIG_ES_CLIENT_AUTH_PASSWORD', 'string', ''),
+          username: env(
+            'CNPMCORE_CONFIG_ES_CLIENT_AUTH_USERNAME',
+            'string',
+            ''
+          ),
+          password: env(
+            'CNPMCORE_CONFIG_ES_CLIENT_AUTH_PASSWORD',
+            'string',
+            ''
+          ),
         },
       },
     };
   }
 
   return config;
-};
+}

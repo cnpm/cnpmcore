@@ -1,17 +1,21 @@
 import { performance } from 'node:perf_hooks';
+import type { EggContext } from '@eggjs/tegg';
 import {
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   Context,
-  EggContext,
   Inject,
 } from '@eggjs/tegg';
 import pkg from 'egg/package.json' with { type: 'json' };
 
 import { AbstractController } from './AbstractController.js';
-import { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService.js';
-import { HomeService } from '../../core/service/HomeService.js';
+import type {
+  CacheService,
+  DownloadInfo,
+  UpstreamRegistryInfo,
+} from '../../core/service/CacheService.js';
+import type { HomeService } from '../../core/service/HomeService.js';
 
 const EggVersion = pkg.version;
 const startTime = new Date();
@@ -24,9 +28,9 @@ const startTime = new Date();
 type SiteTotalData = LegacyInfo & SiteEnvInfo & TotalInfo;
 
 type LegacyInfo = {
-  source_registry: string,
-  changes_stream_registry: string,
-  sync_changes_steam: any,
+  source_registry: string;
+  changes_stream_registry: string;
+  sync_changes_steam: any;
 };
 
 type SiteEnvInfo = {
@@ -49,7 +53,6 @@ type TotalInfo = {
   download: DownloadInfo;
   upstream_registries?: UpstreamRegistryInfo[];
 };
-
 
 @HTTPController()
 export class HomeController extends AbstractController {
@@ -124,5 +127,4 @@ export class HomeController extends AbstractController {
   async miscGet(@Context() ctx: EggContext) {
     await this.homeService.misc(ctx.path);
   }
-
 }

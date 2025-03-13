@@ -3,31 +3,22 @@ import { join, dirname, basename } from 'node:path';
 import { randomUUID } from 'node:crypto';
 // @ts-expect-error type error
 import tar from '@fengmk2/tar';
-import {
-  AccessLevel,
-  SingletonProto,
-  Inject,
-} from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ConflictError, ForbiddenError } from 'egg-errors';
 import semver from 'semver';
 import { AbstractService } from '../../common/AbstractService.js';
-import {
-  calculateIntegrity,
-  getFullname,
-} from '../../common/PackageUtil.js';
+import { calculateIntegrity, getFullname } from '../../common/PackageUtil.js';
 import { createTempDir, mimeLookup } from '../../common/FileUtil.js';
-import {
-  PackageRepository,
-} from '../../repository/PackageRepository.js';
-import { PackageVersionFileRepository } from '../../repository/PackageVersionFileRepository.js';
-import { PackageVersionRepository } from '../../repository/PackageVersionRepository.js';
-import { DistRepository } from '../../repository/DistRepository.js';
+import type { PackageRepository } from '../../repository/PackageRepository.js';
+import type { PackageVersionFileRepository } from '../../repository/PackageVersionFileRepository.js';
+import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.js';
+import type { DistRepository } from '../../repository/DistRepository.js';
 import { isDuplicateKeyError } from '../../repository/util/ErrorUtil.js';
 import { PackageVersionFile } from '../entity/PackageVersionFile.js';
-import { PackageVersion } from '../entity/PackageVersion.js';
-import { Package } from '../entity/Package.js';
-import { PackageManagerService } from './PackageManagerService.js';
-import { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
+import type { PackageVersion } from '../entity/PackageVersion.js';
+import type { Package } from '../entity/Package.js';
+import type { PackageManagerService } from './PackageManagerService.js';
+import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
 
 const unpkgWhiteListUrl = 'https://github.com/cnpm/unpkg-white-list';
 const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60000;
@@ -51,34 +42,55 @@ export class PackageVersionFileService extends AbstractService {
 
   #unpkgWhiteListCheckTime: number = 0;
   #unpkgWhiteListCurrentVersion: string = '';
-  #unpkgWhiteListAllowPackages: Record<string, {
-    version: string;
-  }> = {};
+  #unpkgWhiteListAllowPackages: Record<
+    string,
+    {
+      version: string;
+    }
+  > = {};
   #unpkgWhiteListAllowScopes: string[] = [];
 
   async listPackageVersionFiles(pkgVersion: PackageVersion, directory: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
-    return await this.packageVersionFileRepository.listPackageVersionFiles(pkgVersion.packageVersionId, directory);
+    return await this.packageVersionFileRepository.listPackageVersionFiles(
+      pkgVersion.packageVersionId,
+      directory
+    );
   }
 
   async showPackageVersionFile(pkgVersion: PackageVersion, path: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
     const { directory, name } = this.#getDirectoryAndName(path);
     return await this.packageVersionFileRepository.findPackageVersionFile(
-      pkgVersion.packageVersionId, directory, name);
+      pkgVersion.packageVersionId,
+      directory,
+      name
+    );
   }
 
   async #ensurePackageVersionFilesSync(pkgVersion: PackageVersion) {
-    const hasFiles = await this.packageVersionFileRepository.hasPackageVersionFiles(pkgVersion.packageVersionId);
+    const hasFiles =
+      await this.packageVersionFileRepository.hasPackageVersionFiles(
+        pkgVersion.packageVersionId
+      );
     if (!hasFiles) {
       const lockName = `${pkgVersion.packageVersionId}:syncFiles`;
-      const lockRes = await this.cacheAdapter.usingLock(lockName, 60, async () => {
-        await this.syncPackageVersionFiles(pkgVersion);
-      });
+      const lockRes = await this.cacheAdapter.usingLock(
+        lockName,
+        60,
+        async () => {
+          await this.syncPackageVersionFiles(pkgVersion);
+        }
+      );
       // lock fail
       if (!lockRes) {
-        this.logger.warn('[package:version:syncPackageVersionFiles] check lock:%s fail', lockName);
-        throw new ConflictError('Package version file sync is currently in progress. Please try again later.');
+        this.logger.warn(
+          '[package:version:syncPackageVersionFiles] check lock:%s fail',
+          lockName
+        );
+        throw new ConflictError(
+          'Package version file sync is currently in progress. Please try again later.'
+        );
       }
     }
   }
@@ -92,27 +104,42 @@ export class PackageVersionFileService extends AbstractService {
     this.#unpkgWhiteListCheckTime = Date.now();
     const whiteListScope = '';
     const whiteListPackageName = 'unpkg-white-list';
-    const whiteListPackageVersion = await this.packageVersionRepository.findVersionByTag(
-      whiteListScope, whiteListPackageName, 'latest');
+    const whiteListPackageVersion =
+      await this.packageVersionRepository.findVersionByTag(
+        whiteListScope,
+        whiteListPackageName,
+        'latest'
+      );
     if (!whiteListPackageVersion) return;
     // same version, skip update for performance
     if (this.#unpkgWhiteListCurrentVersion === whiteListPackageVersion) return;
 
     // update the new version white list
-    const { manifest } = await this.packageManagerService.showPackageVersionManifest(
-      whiteListScope, whiteListPackageName, whiteListPackageVersion, false, true);
+    const { manifest } =
+      await this.packageManagerService.showPackageVersionManifest(
+        whiteListScope,
+        whiteListPackageName,
+        whiteListPackageVersion,
+        false,
+        true
+      );
     if (!manifest) return;
     this.#unpkgWhiteListCurrentVersion = manifest.version;
-    this.#unpkgWhiteListAllowPackages = manifest.allowPackages ?? {} as any;
-    this.#unpkgWhiteListAllowScopes = manifest.allowScopes ?? [] as any;
-    this.logger.info('[PackageVersionFileService.updateUnpkgWhiteList] version:%s, total %s packages, %s scopes',
+    this.#unpkgWhiteListAllowPackages = manifest.allowPackages ?? ({} as any);
+    this.#unpkgWhiteListAllowScopes = manifest.allowScopes ?? ([] as any);
+    this.logger.info(
+      '[PackageVersionFileService.updateUnpkgWhiteList] version:%s, total %s packages, %s scopes',
       whiteListPackageVersion,
       Object.keys(this.#unpkgWhiteListAllowPackages).length,
-      this.#unpkgWhiteListAllowScopes.length,
+      this.#unpkgWhiteListAllowScopes.length
     );
   }
 
-  async checkPackageVersionInUnpkgWhiteList(pkgScope: string, pkgName: string, pkgVersion: string) {
+  async checkPackageVersionInUnpkgWhiteList(
+    pkgScope: string,
+    pkgName: string,
+    pkgVersion: string
+  ) {
     if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return;
     await this.#updateUnpkgWhiteList();
 
@@ -123,14 +150,22 @@ export class PackageVersionFileService extends AbstractService {
     const fullname = getFullname(pkgScope, pkgName);
     const pkgConfig = this.#unpkgWhiteListAllowPackages[fullname];
     if (!pkgConfig?.version) {
-      throw new ForbiddenError(`"${fullname}" is not allow to unpkg files, see ${unpkgWhiteListUrl}`);
+      throw new ForbiddenError(
+        `"${fullname}" is not allow to unpkg files, see ${unpkgWhiteListUrl}`
+      );
     }
 
     // satisfies 默认不会包含 prerelease 版本
     // https://docs.npmjs.com/about-semantic-versioning#using-semantic-versioning-to-specify-update-types-your-package-can-accept
     // [x, *] 代表任意版本，这里统一通过 semver 来判断
-    if (!semver.satisfies(pkgVersion, pkgConfig.version, { includePrerelease: true })) {
-      throw new ForbiddenError(`"${fullname}@${pkgVersion}" not satisfies "${pkgConfig.version}" to unpkg files, see ${unpkgWhiteListUrl}`);
+    if (
+      !semver.satisfies(pkgVersion, pkgConfig.version, {
+        includePrerelease: true,
+      })
+    ) {
+      throw new ForbiddenError(
+        `"${fullname}@${pkgVersion}" not satisfies "${pkgConfig.version}" to unpkg files, see ${unpkgWhiteListUrl}`
+      );
     }
   }
 
@@ -141,10 +176,21 @@ export class PackageVersionFileService extends AbstractService {
     const tarFile = `${tmpdir}.tgz`;
     const readmeFilenames: string[] = [];
     try {
-      this.logger.info('[PackageVersionFileService.syncPackageReadme:download-start] dist:%s(path:%s, size:%s) => tarFile:%s',
-        latestPkgVersion.tarDist.distId, latestPkgVersion.tarDist.path, latestPkgVersion.tarDist.size, tarFile);
-      await this.distRepository.downloadDistToFile(latestPkgVersion.tarDist, tarFile);
-      this.logger.info('[PackageVersionFileService.syncPackageReadme:extract-start] tmpdir:%s', tmpdir);
+      this.logger.info(
+        '[PackageVersionFileService.syncPackageReadme:download-start] dist:%s(path:%s, size:%s) => tarFile:%s',
+        latestPkgVersion.tarDist.distId,
+        latestPkgVersion.tarDist.path,
+        latestPkgVersion.tarDist.size,
+        tarFile
+      );
+      await this.distRepository.downloadDistToFile(
+        latestPkgVersion.tarDist,
+        tarFile
+      );
+      this.logger.info(
+        '[PackageVersionFileService.syncPackageReadme:extract-start] tmpdir:%s',
+        tmpdir
+      );
       await tar.extract({
         file: tarFile,
         cwd: tmpdir,
@@ -163,8 +209,13 @@ export class PackageVersionFileService extends AbstractService {
         await this.packageManagerService.savePackageReadme(pkg, readmeFile);
       }
     } catch (err) {
-      this.logger.warn('[PackageVersionFileService.syncPackageReadme:error] packageVersionId: %s, readmeFilenames: %j, tmpdir: %s, error: %s',
-        latestPkgVersion.packageVersionId, readmeFilenames, tmpdir, err);
+      this.logger.warn(
+        '[PackageVersionFileService.syncPackageReadme:error] packageVersionId: %s, readmeFilenames: %j, tmpdir: %s, error: %s',
+        latestPkgVersion.packageVersionId,
+        readmeFilenames,
+        tmpdir,
+        err
+      );
       // ignore TAR_BAD_ARCHIVE error
       if (err.code === 'TAR_BAD_ARCHIVE') return;
       throw err;
@@ -173,8 +224,11 @@ export class PackageVersionFileService extends AbstractService {
         await fs.rm(tarFile, { force: true });
         await fs.rm(tmpdir, { recursive: true, force: true });
       } catch (err) {
-        this.logger.warn('[PackageVersionFileService.syncPackageReadme:warn] remove tmpdir: %s, error: %s',
-          tmpdir, err);
+        this.logger.warn(
+          '[PackageVersionFileService.syncPackageReadme:warn] remove tmpdir: %s, error: %s',
+          tmpdir,
+          err
+        );
       }
     }
   }
@@ -185,11 +239,17 @@ export class PackageVersionFileService extends AbstractService {
     if (!this.config.cnpmcore.enableUnpkg) return files;
     if (!this.config.cnpmcore.enableSyncUnpkgFiles) return files;
 
-    const pkg = await this.packageRepository.findPackageByPackageId(pkgVersion.packageId);
+    const pkg = await this.packageRepository.findPackageByPackageId(
+      pkgVersion.packageId
+    );
     if (!pkg) return files;
 
     // check unpkg white list
-    await this.checkPackageVersionInUnpkgWhiteList(pkg.scope, pkg.name, pkgVersion.version);
+    await this.checkPackageVersionInUnpkgWhiteList(
+      pkg.scope,
+      pkg.name,
+      pkgVersion.version
+    );
 
     const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${pkgVersion.version}_${randomUUID()}`;
     const tmpdir = await createTempDir(this.config.dataDir, dirname);
@@ -197,10 +257,18 @@ export class PackageVersionFileService extends AbstractService {
     const paths: string[] = [];
     const readmeFilenames: string[] = [];
     try {
-      this.logger.info('[PackageVersionFileService.syncPackageVersionFiles:download-start] dist:%s(path:%s, size:%s) => tarFile:%s',
-        pkgVersion.tarDist.distId, pkgVersion.tarDist.path, pkgVersion.tarDist.size, tarFile);
+      this.logger.info(
+        '[PackageVersionFileService.syncPackageVersionFiles:download-start] dist:%s(path:%s, size:%s) => tarFile:%s',
+        pkgVersion.tarDist.distId,
+        pkgVersion.tarDist.path,
+        pkgVersion.tarDist.size,
+        tarFile
+      );
       await this.distRepository.downloadDistToFile(pkgVersion.tarDist, tarFile);
-      this.logger.info('[PackageVersionFileService.syncPackageVersionFiles:extract-start] tmpdir:%s', tmpdir);
+      this.logger.info(
+        '[PackageVersionFileService.syncPackageVersionFiles:extract-start] tmpdir:%s',
+        tmpdir
+      );
       await tar.extract({
         file: tarFile,
         cwd: tmpdir,
@@ -216,20 +284,38 @@ export class PackageVersionFileService extends AbstractService {
       });
       for (const path of paths) {
         const localFile = join(tmpdir, path);
-        const file = await this.#savePackageVersionFile(pkg, pkgVersion, path, localFile);
+        const file = await this.#savePackageVersionFile(
+          pkg,
+          pkgVersion,
+          path,
+          localFile
+        );
         files.push(file);
       }
-      this.logger.info('[PackageVersionFileService.syncPackageVersionFiles:success] packageVersionId: %s, %d paths, %d files, tmpdir: %s',
-        pkgVersion.packageVersionId, paths.length, files.length, tmpdir);
+      this.logger.info(
+        '[PackageVersionFileService.syncPackageVersionFiles:success] packageVersionId: %s, %d paths, %d files, tmpdir: %s',
+        pkgVersion.packageVersionId,
+        paths.length,
+        files.length,
+        tmpdir
+      );
       if (readmeFilenames.length > 0) {
         const readmeFilename = this.#preferMarkdownReadme(readmeFilenames);
         const readmeFile = join(tmpdir, readmeFilename);
-        await this.packageManagerService.savePackageVersionReadme(pkgVersion, readmeFile);
+        await this.packageManagerService.savePackageVersionReadme(
+          pkgVersion,
+          readmeFile
+        );
       }
       return files;
     } catch (err) {
-      this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:error] packageVersionId: %s, %d paths, tmpdir: %s, error: %s',
-        pkgVersion.packageVersionId, paths.length, tmpdir, err);
+      this.logger.warn(
+        '[PackageVersionFileService.syncPackageVersionFiles:error] packageVersionId: %s, %d paths, tmpdir: %s, error: %s',
+        pkgVersion.packageVersionId,
+        paths.length,
+        tmpdir,
+        err
+      );
       // ignore TAR_BAD_ARCHIVE error
       if (err.code === 'TAR_BAD_ARCHIVE') return files;
       throw err;
@@ -238,16 +324,27 @@ export class PackageVersionFileService extends AbstractService {
         await fs.rm(tarFile, { force: true });
         await fs.rm(tmpdir, { recursive: true, force: true });
       } catch (err) {
-        this.logger.warn('[PackageVersionFileService.syncPackageVersionFiles:warn] remove tmpdir: %s, error: %s',
-          tmpdir, err);
+        this.logger.warn(
+          '[PackageVersionFileService.syncPackageVersionFiles:warn] remove tmpdir: %s, error: %s',
+          tmpdir,
+          err
+        );
       }
     }
   }
 
-  async #savePackageVersionFile(pkg: Package, pkgVersion: PackageVersion, path: string, localFile: string) {
+  async #savePackageVersionFile(
+    pkg: Package,
+    pkgVersion: PackageVersion,
+    path: string,
+    localFile: string
+  ) {
     const { directory, name } = this.#getDirectoryAndName(path);
     let file = await this.packageVersionFileRepository.findPackageVersionFile(
-      pkgVersion.packageVersionId, directory, name);
+      pkgVersion.packageVersionId,
+      directory,
+      name
+    );
     if (file) return file;
     const stat = await fs.stat(localFile);
     const distIntegrity = await calculateIntegrity(localFile);
@@ -270,8 +367,12 @@ export class PackageVersionFileService extends AbstractService {
     });
     try {
       await this.packageVersionFileRepository.createPackageVersionFile(file);
-      this.logger.info('[PackageVersionFileService.#savePackageVersionFile:success] fileId: %s, size: %s, path: %s',
-        file.packageVersionFileId, dist.size, file.path);
+      this.logger.info(
+        '[PackageVersionFileService.#savePackageVersionFile:success] fileId: %s, size: %s, path: %s',
+        file.packageVersionFileId,
+        dist.size,
+        file.path
+      );
     } catch (err) {
       // ignore Duplicate entry
       if (isDuplicateKeyError(err)) {
@@ -302,7 +403,7 @@ export class PackageVersionFileService extends AbstractService {
   #matchReadmeFilename(filename: string) {
     // support README,README.*
     // https://github.com/npm/read-package-json/blob/main/lib/read-json.js#L280
-    return (/^README(\.\w{1,20}|$)/i.test(filename));
+    return /^README(\.\w{1,20}|$)/i.test(filename);
   }
 
   // https://github.com/npm/read-package-json/blob/main/lib/read-json.js#L280

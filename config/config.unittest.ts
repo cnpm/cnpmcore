@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { EggAppConfig, PowerPartial } from 'egg';
+import type { EggAppConfig, PowerPartial } from 'egg';
 import Mock from '@elastic/elasticsearch-mock';
 
 import { database } from './database.js';
@@ -31,4 +31,4 @@ export default function startConfig(appInfo: EggAppConfig) {
   };
 
   return config;
-};
+}

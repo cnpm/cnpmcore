@@ -1,11 +1,14 @@
 import ObjectID from 'bson-objectid';
 import { E400 } from 'egg-errors';
 
-import { EntityData } from '../entity/Entity.js';
+import type { EntityData } from '../entity/Entity.js';
 
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-export type EasyData<T extends EntityData, Id extends keyof T> = PartialBy<T, 'createdAt' | 'updatedAt' | Id>;
+export type EasyData<T extends EntityData, Id extends keyof T> = PartialBy<
+  T,
+  'createdAt' | 'updatedAt' | Id
+>;
 
 const MAX_PAGE_SIZE = 100 as const;
 export interface PageOptions {
@@ -14,7 +17,7 @@ export interface PageOptions {
 }
 export interface PageResult<T> {
   count: number;
-  data: Array<T>
+  data: Array<T>;
 }
 export interface PageLimitOptions {
   offset: number;
@@ -22,7 +25,10 @@ export interface PageLimitOptions {
 }
 
 export class EntityUtil {
-  static defaultData<T extends EntityData, Id extends keyof T>(data: EasyData<T, Id>, id: Id): T {
+  static defaultData<T extends EntityData, Id extends keyof T>(
+    data: EasyData<T, Id>,
+    id: Id
+  ): T {
     Reflect.set(data, id, EntityUtil.createId());
     data.createdAt = data.createdAt || new Date();
     data.updatedAt = data.updatedAt || new Date();

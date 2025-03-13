@@ -1,8 +1,13 @@
 import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary.js';
-import binaries, { BinaryName, BinaryTaskConfig } from '../../../../config/binaries.js';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
+import type {
+  BinaryName,
+  BinaryTaskConfig,
+} from '../../../../config/binaries.js';
+import binaries from '../../../../config/binaries.js';
+import type { FetchResult, BinaryItem } from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Bucket)
@@ -12,7 +17,10 @@ export class BucketBinary extends AbstractBinary {
     return;
   }
 
-  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
+  async fetch(
+    dir: string,
+    binaryName: BinaryName
+  ): Promise<FetchResult | undefined> {
     // /foo/ => foo/
     const binaryConfig = binaries[binaryName];
     const subDir = dir.substring(1);
@@ -21,13 +29,18 @@ export class BucketBinary extends AbstractBinary {
     return { items: this.parseItems(xml, dir, binaryConfig), nextParams: null };
   }
 
-  protected parseItems(xml: string, dir: string, binaryConfig: BinaryTaskConfig): BinaryItem[] {
+  protected parseItems(
+    xml: string,
+    dir: string,
+    binaryConfig: BinaryTaskConfig
+  ): BinaryItem[] {
     const items: BinaryItem[] = [];
     // https://nwjs2.s3.amazonaws.com/?prefix=v0.59.0%2Fx64%2F
     // https://chromedriver.storage.googleapis.com/?delimiter=/&prefix=
     // <Contents><Key>2.0/chromedriver_linux32.zip</Key><Generation>1380149859530000</Generation><MetaGeneration>2</MetaGeneration><LastModified>2013-09-25T22:57:39.349Z</LastModified><ETag>"c0d96102715c4916b872f91f5bf9b12c"</ETag><Size>7262134</Size><Owner/></Contents><Contents>
     // <Contents><Key>v0.59.0/nwjs-v0.59.0-linux-ia32.tar.gz</Key><LastModified>2015-11-02T02:34:18.000Z</LastModified><ETag>&quot;b1b7a52928e9f874bad0cabf7f74ba8e&quot;</ETag><Size>22842</Size><StorageClass>STANDARD</StorageClass></Contents>
-    const fileRe = /<Contents><Key>([^<]+?)<\/Key>(?:<Generation>\d+?<\/Generation>)?(?:<MetaGeneration>\d+?<\/MetaGeneration>)?<LastModified>([^<]+?)<\/LastModified><ETag>[^<]+?<\/ETag><Size>(\d+?)<\/Size>/g;
+    const fileRe =
+      /<Contents><Key>([^<]+?)<\/Key>(?:<Generation>\d+?<\/Generation>)?(?:<MetaGeneration>\d+?<\/MetaGeneration>)?<LastModified>([^<]+?)<\/LastModified><ETag>[^<]+?<\/ETag><Size>(\d+?)<\/Size>/g;
     let matchs = xml.matchAll(fileRe);
     for (const m of matchs) {
       const fullname = m[1].trim();
@@ -52,7 +65,8 @@ export class BucketBinary extends AbstractBinary {
       });
     }
     // <CommonPrefixes><Prefix>v0.59.0/x64/</Prefix></CommonPrefixes>
-    const dirRe = /<CommonPrefixes><Prefix>([^<]+?)<\/Prefix><\/CommonPrefixes>/g;
+    const dirRe =
+      /<CommonPrefixes><Prefix>([^<]+?)<\/Prefix><\/CommonPrefixes>/g;
     matchs = xml.matchAll(dirRe);
     for (const m of matchs) {
       // <Prefix>AWSLogs/</Prefix>

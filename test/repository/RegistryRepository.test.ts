@@ -3,7 +3,7 @@ import { app } from '@eggjs/mock/bootstrap';
 
 import { RegistryRepository } from '../../app/repository/RegistryRepository.js';
 import { Registry } from '../../app/core/entity/Registry.js';
-import { RegistryType } from '../../app/common/enum/Registry.js';
+import type { RegistryType } from '../../app/common/enum/Registry.js';
 
 describe('test/repository/RegistryRepository.test.ts', () => {
   let registryRepository: RegistryRepository;
@@ -11,26 +11,30 @@ describe('test/repository/RegistryRepository.test.ts', () => {
 
   beforeEach(async () => {
     registryRepository = await app.getEggObject(RegistryRepository);
-    registryModel = await registryRepository.saveRegistry(Registry.create({
-      name: 'cnpmcore',
-      userPrefix: 'cnpm:',
-      changeStream: 'https://r.npmjs.com/_changes',
-      host: 'https://registry.npmjs.org',
-      type: 'cnpmcore' as RegistryType,
-      authToken: '',
-    })) as Registry;
+    registryModel = (await registryRepository.saveRegistry(
+      Registry.create({
+        name: 'cnpmcore',
+        userPrefix: 'cnpm:',
+        changeStream: 'https://r.npmjs.com/_changes',
+        host: 'https://registry.npmjs.org',
+        type: 'cnpmcore' as RegistryType,
+        authToken: '',
+      })
+    )) as Registry;
   });
 
   describe('RegistryRepository', () => {
     it('create work', async () => {
-      const newRegistry = await registryRepository.saveRegistry(Registry.create({
-        name: 'npm',
-        userPrefix: 'npm:',
-        changeStream: 'https://ra.npmjs.com/_changes',
-        host: 'https://registry.npmjs.org',
-        type: 'cnpmcore' as RegistryType,
-        authToken: '',
-      })) as Registry;
+      const newRegistry = (await registryRepository.saveRegistry(
+        Registry.create({
+          name: 'npm',
+          userPrefix: 'npm:',
+          changeStream: 'https://ra.npmjs.com/_changes',
+          host: 'https://registry.npmjs.org',
+          type: 'cnpmcore' as RegistryType,
+          authToken: '',
+        })
+      )) as Registry;
       assert(newRegistry);
       assert(newRegistry.type === 'cnpmcore');
     });

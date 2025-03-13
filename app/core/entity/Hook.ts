@@ -1,9 +1,14 @@
 import crypto from 'node:crypto';
-import { Entity, EntityData } from './Entity.js';
-import { EasyData, EntityUtil } from '../util/EntityUtil.js';
-import { HookType } from '../../common/enum/Hook.js';
+import type { EntityData } from './Entity.js';
+import { Entity } from './Entity.js';
+import type { EasyData } from '../util/EntityUtil.js';
+import { EntityUtil } from '../util/EntityUtil.js';
+import type { HookType } from '../../common/enum/Hook.js';
 
-export type CreateHookData = Omit<EasyData<HookData, 'hookId'>, 'enable' | 'latestTaskId'>;
+export type CreateHookData = Omit<
+  EasyData<HookData, 'hookId'>,
+  'enable' | 'latestTaskId'
+>;
 
 export interface HookData extends EntityData {
   hookId: string;
@@ -50,7 +55,8 @@ export class Hook extends Entity {
   // payload 可能会特别大，如果做多次 stringify 浪费太多 cpu
   signPayload(payload: object) {
     const payloadStr = JSON.stringify(payload);
-    const digest = crypto.createHmac('sha256', this.secret)
+    const digest = crypto
+      .createHmac('sha256', this.secret)
       .update(JSON.stringify(payload))
       .digest('hex');
     return {

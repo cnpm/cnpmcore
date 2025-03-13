@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUser, TestUtil } from '../../../../test/TestUtil.js';
+import type { TestUser } from '../../../../test/TestUtil.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
 import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
 import { TaskState } from '../../../../app/common/enum/Task.js';
 import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter.js';
@@ -20,7 +21,8 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
   describe('[GET /-/package/:fullname/syncs/:taskId/log] showSyncTaskLog()', () => {
     it('should 401 if user not login when alwaysAuth = true', async () => {
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa' });
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -28,30 +30,37 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
         .expect(201);
 
       mock(app.config.cnpmcore, 'alwaysAuth', true);
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/-/package/${pkg.name}/syncs/mock-task-id/log`)
         .expect(401);
       assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
     });
 
     it('should 404 when task not exists', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/-/package/koa/syncs/mock-task-id/log')
         .expect(404);
-      assert.equal(res.body.error, '[NOT_FOUND] Package "koa" sync task "mock-task-id" not found');
+      assert.equal(
+        res.body.error,
+        '[NOT_FOUND] Package "koa" sync task "mock-task-id" not found'
+      );
     });
 
     it('should 200 and 302', async () => {
-      let res = await app.httpRequest()
-        .put('/-/package/koa/syncs')
-        .expect(201);
+      let res = await app.httpRequest().put('/-/package/koa/syncs').expect(201);
       assert(res.body.id);
       const task = await taskRepository.findTask(res.body.id);
       // waiting state logUrl is not exists
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/-/package/koa/syncs/${task!.taskId}/log`);
       if (res.status === 404) {
-        assert.equal(res.body.error, `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`);
+        assert.equal(
+          res.body.error,
+          `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`
+        );
       } else {
         assert.equal(res.status, 302);
         const { status } = await app.curl(res.headers.location);
@@ -62,10 +71,14 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
       await taskRepository.saveTask(task!);
 
       // log file not exists
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get(`/-/package/koa/syncs/${task!.taskId}/log`);
       if (res.status === 404) {
-        assert.equal(res.body.error, `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`);
+        assert.equal(
+          res.body.error,
+          `[NOT_FOUND] Package "koa" sync task "${task!.taskId}" log not found`
+        );
       } else {
         assert.equal(res.status, 302);
         const { status } = await app.curl(res.headers.location);
@@ -73,8 +86,12 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
       }
 
       // save log file
-      await nfsAdapter.uploadBytes(task!.logPath, Buffer.from('hello log file 😄\nsencod line here'));
-      res = await app.httpRequest()
+      await nfsAdapter.uploadBytes(
+        task!.logPath,
+        Buffer.from('hello log file 😄\nsencod line here')
+      );
+      res = await app
+        .httpRequest()
         .get(`/-/package/koa/syncs/${task!.taskId}/log`);
       if (res.status === 200) {
         assert.equal(res.text, 'hello log file 😄\nsencod line here');
@@ -87,8 +104,13 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
       }
 
       // mock redirect
-      mock.data(nfsAdapter.constructor.prototype, 'getDownloadUrlOrStream', 'http://mock.com/some.log');
-      res = await app.httpRequest()
+      mock.data(
+        nfsAdapter.constructor.prototype,
+        'getDownloadUrlOrStream',
+        'http://mock.com/some.log'
+      );
+      res = await app
+        .httpRequest()
         .get(`/-/package/koa/syncs/${task!.taskId}/log`)
         .expect('location', 'http://mock.com/some.log')
         .expect(302);

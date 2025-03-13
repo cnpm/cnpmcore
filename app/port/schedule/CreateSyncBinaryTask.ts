@@ -1,9 +1,11 @@
-import { EggAppConfig } from 'egg';
-import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import type { EggAppConfig } from 'egg';
+import type { IntervalParams } from '@eggjs/tegg/schedule';
+import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
-import { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
-import binaries, { BinaryName } from '../../../config/binaries.js';
+import type { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
+import type { BinaryName } from '../../../config/binaries.js';
+import binaries from '../../../config/binaries.js';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
@@ -22,7 +24,7 @@ export class CreateSyncBinaryTask {
   async subscribe() {
     if (!this.config.cnpmcore.enableSyncBinary) return;
 
-    for (const [ binaryName, binary ] of Object.entries(binaries)) {
+    for (const [binaryName, binary] of Object.entries(binaries)) {
       if (this.config.env === 'unittest' && binaryName !== 'node') continue;
       if (binary.disable) continue;
 

@@ -1,12 +1,14 @@
 import { Event, Inject } from '@eggjs/tegg';
-import {
-  EggAppConfig, EggLogger,
-} from 'egg';
+import type { EggAppConfig, EggLogger } from 'egg';
 import { ForbiddenError } from 'egg-errors';
-import { PACKAGE_VERSION_ADDED, PACKAGE_TAG_ADDED, PACKAGE_TAG_CHANGED } from './index.js';
+import {
+  PACKAGE_VERSION_ADDED,
+  PACKAGE_TAG_ADDED,
+  PACKAGE_TAG_CHANGED,
+} from './index.js';
 import { getScopeAndName } from '../../common/PackageUtil.js';
-import { PackageManagerService } from '../service/PackageManagerService.js';
-import { PackageVersionFileService } from '../service/PackageVersionFileService.js';
+import type { PackageManagerService } from '../service/PackageManagerService.js';
+import type { PackageVersionFileService } from '../service/PackageVersionFileService.js';
 
 class SyncPackageVersionFileEvent {
   @Inject()
@@ -23,17 +25,28 @@ class SyncPackageVersionFileEvent {
     if (!this.config.cnpmcore.enableUnpkg) return;
     if (!this.config.cnpmcore.enableSyncUnpkgFiles) return;
     // ignore sync on unittest
-    if (this.config.env === 'unittest' && fullname !== '@cnpm/unittest-unpkg-demo') return;
-    const [ scope, name ] = getScopeAndName(fullname);
-    const { packageVersion } = await this.packageManagerService.showPackageVersionByVersionOrTag(
-      scope, name, version);
+    if (
+      this.config.env === 'unittest' &&
+      fullname !== '@cnpm/unittest-unpkg-demo'
+    )
+      return;
+    const [scope, name] = getScopeAndName(fullname);
+    const { packageVersion } =
+      await this.packageManagerService.showPackageVersionByVersionOrTag(
+        scope,
+        name,
+        version
+      );
     if (!packageVersion) return;
     try {
-      await this.packageVersionFileService.syncPackageVersionFiles(packageVersion);
+      await this.packageVersionFileService.syncPackageVersionFiles(
+        packageVersion
+      );
     } catch (err) {
       if (err instanceof ForbiddenError) {
-        this.logger.info('[SyncPackageVersionFileEvent.syncPackageVersionFile] ignore sync files, cause: %s',
-          err.message,
+        this.logger.info(
+          '[SyncPackageVersionFileEvent.syncPackageVersionFile] ignore sync files, cause: %s',
+          err.message
         );
         return;
       }
@@ -42,9 +55,13 @@ class SyncPackageVersionFileEvent {
   }
 
   protected async syncPackageReadmeToLatestVersion(fullname: string) {
-    const [ scope, name ] = getScopeAndName(fullname);
-    const { pkg, packageVersion } = await this.packageManagerService.showPackageVersionByVersionOrTag(
-      scope, name, 'latest');
+    const [scope, name] = getScopeAndName(fullname);
+    const { pkg, packageVersion } =
+      await this.packageManagerService.showPackageVersionByVersionOrTag(
+        scope,
+        name,
+        'latest'
+      );
     if (!pkg || !packageVersion) return;
     await this.packageVersionFileService.syncPackageReadme(pkg, packageVersion);
   }

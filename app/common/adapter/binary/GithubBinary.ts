@@ -1,7 +1,12 @@
 import { SingletonProto } from '@eggjs/tegg';
-import binaries, { BinaryName, BinaryTaskConfig } from '../../../../config/binaries.js';
+import type {
+  BinaryName,
+  BinaryTaskConfig,
+} from '../../../../config/binaries.js';
+import binaries from '../../../../config/binaries.js';
 import { BinaryType } from '../../enum/Binary.js';
-import { AbstractBinary, FetchResult, BinaryItem, BinaryAdapter } from './AbstractBinary.js';
+import type { FetchResult, BinaryItem } from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.GitHub)
@@ -12,7 +17,10 @@ export class GithubBinary extends AbstractBinary {
     delete this.releases[binaryName];
   }
 
-  protected async initReleases(binaryName: BinaryName, binaryConfig: BinaryTaskConfig) {
+  protected async initReleases(
+    binaryName: BinaryName,
+    binaryConfig: BinaryTaskConfig
+  ) {
     if (!this.releases[binaryName]) {
       // https://docs.github.com/en/rest/reference/releases get three pages
       // https://api.github.com/repos/electron/electron/releases
@@ -28,11 +36,22 @@ export class GithubBinary extends AbstractBinary {
         const data = await this.requestJSON(url, requestHeaders);
         if (!Array.isArray(data)) {
           // {"message":"API rate limit exceeded for 47.57.239.54. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
-          if (typeof data?.message === 'string' && data.message.includes('rate limit')) {
-            this.logger.info('[GithubBinary.fetch:hit-rate-limit] skip sync this time, data: %j, url: %s', data, url);
+          if (
+            typeof data?.message === 'string' &&
+            data.message.includes('rate limit')
+          ) {
+            this.logger.info(
+              '[GithubBinary.fetch:hit-rate-limit] skip sync this time, data: %j, url: %s',
+              data,
+              url
+            );
             return;
           }
-          this.logger.warn('[GithubBinary.fetch:response-data-not-array] data: %j, url: %s', data, url);
+          this.logger.warn(
+            '[GithubBinary.fetch:response-data-not-array] data: %j, url: %s',
+            data,
+            url
+          );
           return;
         }
         releases = releases.concat(data);
@@ -48,7 +67,10 @@ export class GithubBinary extends AbstractBinary {
     const maxFileSize = 1024 * 1024 * 250;
     for (const asset of releaseItem.assets) {
       if (asset.size > maxFileSize) {
-        this.logger.info('[GithubBinary.formatItems] asset reach max file size(> 250MB), ignore download it, asset: %j', asset);
+        this.logger.info(
+          '[GithubBinary.formatItems] asset reach max file size(> 250MB), ignore download it, asset: %j',
+          asset
+        );
         continue;
       }
       items.push({
@@ -83,7 +105,10 @@ export class GithubBinary extends AbstractBinary {
     return items;
   }
 
-  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
+  async fetch(
+    dir: string,
+    binaryName: BinaryName
+  ): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const releases = await this.initReleases(binaryName, binaryConfig);
     if (!releases) return;

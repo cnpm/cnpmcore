@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
-import { Entity, EntityData } from './Entity.js';
-import { EasyData, EntityUtil } from '../util/EntityUtil.js';
+import type { EntityData } from './Entity.js';
+import { Entity } from './Entity.js';
+import type { EasyData } from '../util/EntityUtil.js';
+import { EntityUtil } from '../util/EntityUtil.js';
 
 export enum TokenType {
   granular = 'granular',
@@ -17,7 +19,7 @@ interface BaseTokenData extends EntityData {
   lastUsedAt?: Date;
 }
 
-interface ClassicTokenData extends BaseTokenData{
+interface ClassicTokenData extends BaseTokenData {
   isAutomation?: boolean;
 }
 interface GranularTokenData extends BaseTokenData {
@@ -31,7 +33,9 @@ interface GranularTokenData extends BaseTokenData {
 
 type TokenData = ClassicTokenData | GranularTokenData;
 
-export function isGranularToken(data: TokenData | Token): data is GranularTokenData {
+export function isGranularToken(
+  data: TokenData | Token
+): data is GranularTokenData {
   return data.type === TokenType.granular;
 }
 
@@ -79,9 +83,10 @@ export class Token extends Entity {
   static create(data: EasyData<TokenData, 'tokenId'>): Token {
     const newData = EntityUtil.defaultData(data, 'tokenId');
     if (isGranularToken(newData) && !newData.expiredAt) {
-      newData.expiredAt = dayjs(newData.createdAt).add(newData.expires, 'days').toDate();
+      newData.expiredAt = dayjs(newData.createdAt)
+        .add(newData.expires, 'days')
+        .toDate();
     }
     return new Token(newData);
   }
-
 }

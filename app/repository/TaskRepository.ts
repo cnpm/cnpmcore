@@ -7,8 +7,9 @@ import { isDuplicateKeyError } from './util/ErrorUtil.js';
 import type { Task as TaskModel } from './model/Task.js';
 import type { HistoryTask as HistoryTaskModel } from './model/HistoryTask.js';
 import { AbstractRepository } from './AbstractRepository.js';
-import { TaskType, TaskState } from '../../app/common/enum/Task.js';
-import { Task as TaskEntity, TaskUpdateCondition } from '../core/entity/Task.js';
+import type { TaskType, TaskState } from '../../app/common/enum/Task.js';
+import type { TaskUpdateCondition } from '../core/entity/Task.js';
+import { Task as TaskEntity } from '../core/entity/Task.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -48,13 +49,19 @@ export class TaskRepository extends AbstractRepository {
     }
   }
 
-  async idempotentSaveTask(task: TaskEntity, condition: TaskUpdateCondition): Promise<boolean> {
+  async idempotentSaveTask(
+    task: TaskEntity,
+    condition: TaskUpdateCondition
+  ): Promise<boolean> {
     assert(task.id, 'task have no save');
     const changes = ModelConvertor.convertEntityToChanges(task, this.Task);
-    const updateRows = await this.Task.update({
-      taskId: condition.taskId,
-      attempts: condition.attempts,
-    }, changes);
+    const updateRows = await this.Task.update(
+      {
+        taskId: condition.taskId,
+        attempts: condition.attempts,
+      },
+      changes
+    );
     return updateRows === 1;
   }
 
@@ -70,12 +77,17 @@ export class TaskRepository extends AbstractRepository {
     await model.remove();
   }
 
-  async updateSpecificVersionsOfWaitingTask(task: TaskEntity, specificVersions?: Array<string>): Promise<void> {
+  async updateSpecificVersionsOfWaitingTask(
+    task: TaskEntity,
+    specificVersions?: Array<string>
+  ): Promise<void> {
     const model = await this.Task.findOne({ id: task.id });
     if (!model || !model.data.specificVersions) return;
     if (specificVersions) {
       const data = model.data;
-      const combinedVersions = uniq<string>(data.specificVersions.concat(specificVersions));
+      const combinedVersions = uniq<string>(
+        data.specificVersions.concat(specificVersions)
+      );
       data.specificVersions = combinedVersions;
       await model.update({ data });
     } else {
@@ -108,15 +120,27 @@ export class TaskRepository extends AbstractRepository {
 
   async findTasks(taskIds: Array<string>): Promise<Array<TaskEntity>> {
     const tasks = await this.HistoryTask.find({ taskId: { $in: taskIds } });
-    return tasks.map(task => ModelConvertor.convertModelToEntity(task, TaskEntity));
+    return tasks.map(task =>
+      ModelConvertor.convertModelToEntity(task, TaskEntity)
+    );
   }
 
-  async findTasksByCondition(where: { targetName?: string; state?: TaskState; type: TaskType }): Promise<Array<TaskEntity>> {
+  async findTasksByCondition(where: {
+    targetName?: string;
+    state?: TaskState;
+    type: TaskType;
+  }): Promise<Array<TaskEntity>> {
     const tasks = await this.Task.find(where);
-    return tasks.map(task => ModelConvertor.convertModelToEntity(task, TaskEntity));
+    return tasks.map(task =>
+      ModelConvertor.convertModelToEntity(task, TaskEntity)
+    );
   }
 
-  async findTaskByTargetName(targetName: string, type: TaskType, state?: TaskState) {
+  async findTaskByTargetName(
+    targetName: string,
+    type: TaskType,
+    state?: TaskState
+  ) {
     const where: any = { targetName, type };
     if (state) {
       where.state = state;
@@ -137,7 +161,9 @@ export class TaskRepository extends AbstractRepository {
         $lt: timeoutDate,
       },
     }).limit(1000);
-    return models.map(model => ModelConvertor.convertModelToEntity(model, TaskEntity));
+    return models.map(model =>
+      ModelConvertor.convertModelToEntity(model, TaskEntity)
+    );
   }
 
   async findTaskByAuthorIpAndType(authorIp: string, type: TaskType) {
@@ -145,6 +171,8 @@ export class TaskRepository extends AbstractRepository {
       type,
       authorIp,
     }).limit(1000);
-    return models.map(model => ModelConvertor.convertModelToEntity(model, TaskEntity));
+    return models.map(model =>
+      ModelConvertor.convertModelToEntity(model, TaskEntity)
+    );
   }
 }

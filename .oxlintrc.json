@@ -1,16 +1,46 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["import", "typescript", "unicorn", "jsdoc", "node", "promise"],
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "plugins": [
+    "import",
+    "typescript",
+    "unicorn",
+    "jsdoc",
+    "node",
+    "promise",
+    "oxc"
+  ],
   "rules": {
-    "import/no-cycle": "error",
+    // eslint
+    "constructor-super": "error",
+    "getter-return": "error",
+    "no-undef": "error",
+    "no-unreachable": "error",
     "no-var": "error",
     "no-eq-null": "error",
+    // import
+    "import/no-cycle": "error",
     "import/no-anonymous-default-export": "error",
     "import/no-namespace": "error",
+    "import/named": "error",
+    "import/export": "error",
+    // promise
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
     "promise/prefer-await-to-callbacks": "error",
     "promise/prefer-await-to-then": "error",
     "promise/prefer-catch": "error",
+    "promise/no-return-in-finally": "error",
+    // unicorn
+    "unicorn/error-message": "error",
+    // "unicorn/no-null": "error",
+    "unicorn/throw-new-error": "error",
+    // oxc
+    "oxc/no-map-spread": "error",
+    // typescript
+    "typescript/consistent-type-imports": "error"
   }
 }
