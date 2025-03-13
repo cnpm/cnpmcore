@@ -15,7 +15,7 @@ import {
   Context,
   EggContext,
 } from '@eggjs/tegg';
-import * as ssri from 'ssri';
+import { checkData, fromData } from 'ssri';
 import validateNpmPackageName from 'validate-npm-package-name';
 import { Static, Type } from 'egg-typebox-validate/typebox';
 
@@ -180,12 +180,12 @@ export class SavePackageVersionController extends AbstractController {
     // for content security reason
     // check integrity
     if (integrity) {
-      const algorithm = ssri.checkData(tarballBytes, integrity);
+      const algorithm = checkData(tarballBytes, integrity);
       if (!algorithm) {
         throw new UnprocessableEntityError('dist.integrity invalid');
       }
     } else {
-      const integrityObj = ssri.fromData(tarballBytes, {
+      const integrityObj = fromData(tarballBytes, {
         algorithms: [ 'sha1' ],
       });
       const shasum = integrityObj.sha1[0].hexDigest();

@@ -1,7 +1,7 @@
 import { createReadStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
-import * as ssri from 'ssri';
+import { fromData, fromStream, HashLike } from 'ssri';
 // @ts-expect-error type error
 import tar from '@fengmk2/tar';
 import type { AuthorType, PackageJSONType } from '../repository/PackageRepository.js';
@@ -35,13 +35,13 @@ export function getPrefixedName(prefix: string, username: string): string {
 }
 
 export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
-  let integrityObj;
+  let integrityObj: HashLike;
   if (typeof contentOrFile === 'string') {
-    integrityObj = await ssri.fromStream(createReadStream(contentOrFile), {
+    integrityObj = await fromStream(createReadStream(contentOrFile), {
       algorithms: [ 'sha512', 'sha1' ],
     });
   } else {
-    integrityObj = ssri.fromData(contentOrFile, {
+    integrityObj = fromData(contentOrFile, {
       algorithms: [ 'sha512', 'sha1' ],
     });
   }

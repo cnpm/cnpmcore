@@ -1,6 +1,11 @@
 {
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["import"],
   "rules": {
-    "import/no-cycle": "error"
+    "import/no-cycle": "error",
+    "no-var": "error",
+    "no-eq-null": "error",
+    "import/no-anonymous-default-export": "error",
+    "import/no-namespace": "error",
   }
 }

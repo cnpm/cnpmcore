@@ -77,7 +77,7 @@ interface NFSConfig {
 
 export type Config = PowerPartial<EggAppConfig> & { nfs: NFSConfig };
 
-export default (appInfo: EggAppConfig): Config => {
+export default function startConfig(appInfo: EggAppConfig) {
   const config = {} as Config;
 
   config.keys = env('CNPMCORE_EGG_KEYS', 'string', randomUUID());
