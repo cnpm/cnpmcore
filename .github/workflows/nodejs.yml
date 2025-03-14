@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   test-postgresql-fs-nfs:
@@ -45,31 +45,31 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-    - name: Checkout Git Source
-      uses: actions/checkout@v4
+      - name: Checkout Git Source
+        uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Dependencies
-      run: npm i -g npminstall && npminstall
+      - name: Install Dependencies
+        run: npm i -g npminstall && npminstall
 
-    - name: Continuous Integration
-      run: npm run ci:postgresql
-      env:
-        # The hostname used to communicate with the PostgreSQL service container
-        POSTGRES_HOST: localhost
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        # The default PostgreSQL port
-        POSTGRES_PORT: 5432
+      - name: Continuous Integration
+        run: npm run ci:postgresql
+        env:
+          # The hostname used to communicate with the PostgreSQL service container
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          # The default PostgreSQL port
+          POSTGRES_PORT: 5432
 
-    - name: Code Coverage
-      uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Code Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   test-mysql57-fs-nfs:
     runs-on: ${{ matrix.os }}
@@ -97,80 +97,80 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-    - name: Checkout Git Source
-      uses: actions/checkout@v4
+      - name: Checkout Git Source
+        uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Dependencies
-      run: npm i -g npminstall && npminstall
+      - name: Install Dependencies
+        run: npm i -g npminstall && npminstall
 
-    - name: Continuous Integration
-      run: npm run ci
+      - name: Continuous Integration
+        run: npm run ci
 
-    - name: Code Coverage
-      uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Code Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
-  test-mysql57-oss-nfs:
-    runs-on: ${{ matrix.os }}
-    if: |
-      contains('
-        refs/heads/master-skip-oss
-        refs/heads/dev-skip-oss
-      ', github.ref)
+  # test-mysql57-oss-nfs:
+  #   runs-on: ${{ matrix.os }}
+  #   if: |
+  #     contains('
+  #       refs/heads/master-skip-oss
+  #       refs/heads/dev-skip-oss
+  #     ', github.ref)
 
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_DATABASE: cnpmcore_unittest
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+  #   services:
+  #     mysql:
+  #       image: mysql:5.7
+  #       env:
+  #         MYSQL_ALLOW_EMPTY_PASSWORD: true
+  #         MYSQL_DATABASE: cnpmcore_unittest
+  #       ports:
+  #         - 3306:3306
+  #       options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
+  #     redis:
+  #       image: redis
+  #       ports:
+  #         - 6379:6379
 
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [20, 22]
-        os: [ubuntu-latest]
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       node-version: [20, 22]
+  #       os: [ubuntu-latest]
 
-    steps:
-    - name: Checkout Git Source
-      uses: actions/checkout@v4
+  #   steps:
+  #   - name: Checkout Git Source
+  #     uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+  #   - name: Use Node.js ${{ matrix.node-version }}
+  #     uses: actions/setup-node@v4
+  #     with:
+  #       node-version: ${{ matrix.node-version }}
 
-    - name: Install Dependencies
-      run: npm i
+  #   - name: Install Dependencies
+  #     run: npm i
 
-    - name: Continuous Integration
-      run: npm run ci
-      env:
-        CNPMCORE_NFS_TYPE: oss
-        CNPMCORE_NFS_OSS_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
-        CNPMCORE_NFS_OSS_ENDPOINT: https://oss-us-west-1.aliyuncs.com
-        CNPMCORE_NFS_OSS_ID: ${{ secrets.CNPMCORE_NFS_OSS_ID }}
-        CNPMCORE_NFS_OSS_SECRET: ${{ secrets.CNPMCORE_NFS_OSS_SECRET }}
+  #   - name: Continuous Integration
+  #     run: npm run ci
+  #     env:
+  #       CNPMCORE_NFS_TYPE: oss
+  #       CNPMCORE_NFS_OSS_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
+  #       CNPMCORE_NFS_OSS_ENDPOINT: https://oss-us-west-1.aliyuncs.com
+  #       CNPMCORE_NFS_OSS_ID: ${{ secrets.CNPMCORE_NFS_OSS_ID }}
+  #       CNPMCORE_NFS_OSS_SECRET: ${{ secrets.CNPMCORE_NFS_OSS_SECRET }}
 
-    - name: Code Coverage
-      uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-  
+  #   - name: Code Coverage
+  #     uses: codecov/codecov-action@v5
+  #     with:
+  #       token: ${{ secrets.CODECOV_TOKEN }}
+
   test-mysql57-s3-nfs:
     runs-on: ${{ matrix.os }}
 
@@ -196,30 +196,30 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-    - name: Checkout Git Source
-      uses: actions/checkout@v4
+      - name: Checkout Git Source
+        uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Dependencies
-      run: npm i
+      - name: Install Dependencies
+        run: npm i
 
-    - name: Continuous Integration
-      run: npm run ci "test/cli/npm/install.test.ts"
-      env:
-        CNPMCORE_NFS_TYPE: s3
-        CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD: true
-        CNPMCORE_NFS_S3_CLIENT_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
-        CNPMCORE_NFS_S3_CLIENT_ENDPOINT: ${{ secrets.CNPMCORE_NFS_S3_ENDPOINT }}
-        CNPMCORE_NFS_S3_CLIENT_ID: ${{ secrets.CNPMCORE_NFS_S3_ID }}
-        CNPMCORE_NFS_S3_CLIENT_SECRET: ${{ secrets.CNPMCORE_NFS_S3_SECRET }}
-        CNPMCORE_NFS_S3_CLIENT_FORCE_PATH_STYLE: true
-        # CNPMCORE_NFS_S3_CLIENT_DISABLE_URL: true
+      - name: Continuous Integration
+        run: npm run ci "test/cli/npm/install.test.ts"
+        env:
+          CNPMCORE_NFS_TYPE: s3
+          CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD: true
+          CNPMCORE_NFS_S3_CLIENT_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
+          CNPMCORE_NFS_S3_CLIENT_ENDPOINT: ${{ secrets.CNPMCORE_NFS_S3_ENDPOINT }}
+          CNPMCORE_NFS_S3_CLIENT_ID: ${{ secrets.CNPMCORE_NFS_S3_ID }}
+          CNPMCORE_NFS_S3_CLIENT_SECRET: ${{ secrets.CNPMCORE_NFS_S3_SECRET }}
+          CNPMCORE_NFS_S3_CLIENT_FORCE_PATH_STYLE: true
+          # CNPMCORE_NFS_S3_CLIENT_DISABLE_URL: true
 
-    - name: Code Coverage
-      uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Code Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
