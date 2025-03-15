@@ -128,12 +128,12 @@ type PackageJSONPickKey =
   | 'versions'
   | 'contributors';
 
-export type CnpmcorePatchInfo = {
+export interface CnpmcorePatchInfo {
   _cnpmcore_publish_time?: Date;
   publish_time?: number;
   _source_registry_name?: string;
   block?: string;
-};
+}
 
 type AbbreviatedKey =
   | 'name'
@@ -160,46 +160,46 @@ type AbbreviatedKey =
   | 'acceptDependencies'
   | 'funding';
 
-type DistType = {
+interface DistType {
   tarball: string;
   size: number;
   shasum: string;
   integrity: string;
   [key: string]: unknown;
-};
+}
 
-export type AuthorType = {
+export interface AuthorType {
   name: string;
   username?: string;
   email?: string;
   url?: string;
-};
+}
 
-type LicenseType = {
+interface LicenseType {
   type: string;
   url: string;
-};
+}
 
-type ContributorType = {
+interface ContributorType {
   name?: string;
   email?: string;
   url?: string;
   [key: string]: unknown;
-};
+}
 
-type DirectoriesType = {
+interface DirectoriesType {
   lib?: string;
   bin?: string;
   man?: string;
   test?: string;
   [key: string]: string | undefined;
-};
+}
 
-type RepositoryType = {
+interface RepositoryType {
   type: string;
   url: string;
   [key: string]: unknown;
-};
+}
 
 type DepInfo = Record<string, string>;
 

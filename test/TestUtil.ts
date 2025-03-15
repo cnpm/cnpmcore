@@ -20,7 +20,7 @@ import { Package as PackageModel } from '../app/repository/model/Package.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-type PackageOptions = {
+interface PackageOptions {
   name?: string;
   version?: string;
   versionObject?: object;
@@ -34,9 +34,9 @@ type PackageOptions = {
   description?: string;
   registryId?: string;
   main?: string;
-};
+}
 
-type UserOptions = {
+interface UserOptions {
   name?: string;
   password?: string;
   email?: string;
@@ -45,7 +45,7 @@ type UserOptions = {
     readonly?: boolean;
     cidr_whitelist?: string[];
   };
-};
+}
 
 export interface TestUser {
   name: string;

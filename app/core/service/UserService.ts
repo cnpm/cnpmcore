@@ -21,22 +21,22 @@ import type { Registry } from '../entity/Registry.js';
 
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 
-type CreateUser = {
+interface CreateUser {
   name: string;
   email: string;
   password: string;
   ip: string;
-};
+}
 
-type LoginResult = {
+interface LoginResult {
   code: LoginResultCode;
   user?: UserEntity;
   token?: TokenEntity;
-};
+}
 
 type CreateTokenOption = CreateClassicTokenOptions | CreateGranularTokenOptions;
 
-type CreateGranularTokenOptions = {
+interface CreateGranularTokenOptions {
   type: TokenType.granular;
   name: string;
   description?: string;
@@ -45,19 +45,19 @@ type CreateGranularTokenOptions = {
   isReadonly?: boolean;
   cidrWhitelist?: string[];
   expires: number;
-};
+}
 
-type CreateClassicTokenOptions = {
+interface CreateClassicTokenOptions {
   isReadonly?: boolean;
   isAutomation?: boolean;
   cidrWhitelist?: string[];
-};
+}
 
-type CreateWebauthnCredentialOptions = {
+interface CreateWebauthnCredentialOptions {
   credentialId: string;
   publicKey: string;
   browserType?: string;
-};
+}
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

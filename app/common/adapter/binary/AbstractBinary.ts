@@ -10,19 +10,19 @@ import type {
   BinaryTaskConfig,
 } from '../../../../config/binaries.js';
 
-export type BinaryItem = {
+export interface BinaryItem {
   name: string;
   isDir: boolean;
   url: string;
   size: string | number;
   date: string;
   ignoreDownloadStatuses?: number[];
-};
+}
 
-export type FetchResult = {
+export interface FetchResult {
   items: BinaryItem[];
   nextParams?: any;
-};
+}
 
 const platforms = ['darwin', 'linux', 'win32'] as const;
 

@@ -11,7 +11,7 @@ export type UpstreamRegistryInfo = {
   changes_stream_url: string;
 } & ChangesStreamTaskData;
 
-export type DownloadInfo = {
+export interface DownloadInfo {
   today: number;
   yesterday: number;
   samedayLastweek: number;
@@ -21,9 +21,9 @@ export type DownloadInfo = {
   lastweek: number;
   lastmonth: number;
   lastyear: number;
-};
+}
 
-export type TotalData = {
+export interface TotalData {
   packageCount: number;
   packageVersionCount: number;
   lastPackage: string;
@@ -33,7 +33,7 @@ export type TotalData = {
   lastChangeId: number | bigint;
   cacheTime: string;
   upstreamRegistries: UpstreamRegistryInfo[];
-};
+}
 const TOTAL_DATA_KEY = '__TOTAL_DATA__';
 
 @SingletonProto({

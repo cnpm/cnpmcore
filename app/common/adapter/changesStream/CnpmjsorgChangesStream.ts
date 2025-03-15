@@ -9,7 +9,7 @@ import {
 
 const MAX_LIMIT = 10000;
 
-type FetchResults = {
+interface FetchResults {
   results: {
     seq: number;
     type: string;
@@ -17,7 +17,7 @@ type FetchResults = {
     changes: Record<string, string>[];
     gmt_modified: Date;
   }[];
-};
+}
 
 @SingletonProto()
 @RegistryChangesStream(RegistryType.Cnpmjsorg)

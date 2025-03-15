@@ -9,7 +9,11 @@ const CREATED_AT = 'createdAt';
 const UPDATED_AT = 'updatedAt';
 const ID = 'id';
 
-type BonePatchInfo = { id?: bigint; updatedAt?: Date; createdAt?: Date };
+interface BonePatchInfo {
+  id?: bigint;
+  updatedAt?: Date;
+  createdAt?: Date;
+}
 type PatchedBone = LeoricBone & BonePatchInfo;
 
 export class ModelConvertor {

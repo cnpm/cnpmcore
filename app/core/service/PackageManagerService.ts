@@ -1034,8 +1034,7 @@ export class PackageManagerService extends AbstractService {
     // the latest version metas
     for (const field of fieldsFromLatestManifest) {
       if (latestManifest[field]) {
-        (fullManifests as Record<string, unknown>)[field] =
-          latestManifest[field];
+        Reflect.set(fullManifests, field, latestManifest[field]);
       }
     }
   }

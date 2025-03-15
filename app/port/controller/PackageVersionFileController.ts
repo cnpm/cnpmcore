@@ -25,20 +25,20 @@ import type { PackageVersion } from '../../core/entity/PackageVersion.js';
 import type { DistRepository } from '../../repository/DistRepository.js';
 import { Spec } from '../typebox.js';
 
-type FileItem = {
+interface FileItem {
   path: string;
   type: 'file';
   contentType: string;
   integrity: string;
   lastModified: Date;
   size: number;
-};
+}
 
-type DirectoryItem = {
+interface DirectoryItem {
   path: string;
   type: 'directory';
   files: (DirectoryItem | FileItem)[];
-};
+}
 
 function formatFileItem(file: PackageVersionFile): FileItem {
   return {
