@@ -84,11 +84,8 @@ describe('test/core/event/StoreManifest.test.ts', () => {
       // console.log(packageVersionManifest2.manifest);
 
       // should work same version
-      (await app.getEventbus()).emit(
-        'PACKAGE_VERSION_ADDED',
-        pkg.name,
-        '2.0.0'
-      );
+      const eventbus = await app.getEventbus();
+      eventbus.emit('PACKAGE_VERSION_ADDED', pkg.name, '2.0.0');
       eventWaiter = await app.getEventWaiter();
       await eventWaiter.await('PACKAGE_VERSION_ADDED');
       app.notExpectLog(

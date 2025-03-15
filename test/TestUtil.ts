@@ -189,6 +189,10 @@ export class TestUtil {
     return await fs.readFile(this.getFixtures(name));
   }
 
+  static async readFixturesJSONFile(name?: string) {
+    return TestUtil.readJSONFile(this.getFixtures(name));
+  }
+
   static async readJSONFile(filepath: string) {
     const bytes = await fs.readFile(filepath);
     return JSON.parse(bytes.toString());
@@ -197,8 +201,7 @@ export class TestUtil {
   static async getFullPackage(
     options?: PackageOptions
   ): Promise<PackageJSONType & { versions: Record<string, PackageJSONType> }> {
-    const fullJSONFile = this.getFixtures('exampleFullPackage.json');
-    const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
+    const pkg = await this.readFixturesJSONFile('exampleFullPackage.json');
     if (options) {
       const attachs = pkg._attachments || {};
       const firstFilename = Object.keys(attachs)[0];
