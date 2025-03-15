@@ -27,13 +27,13 @@ const startTime = new Date();
 // LegacyInfo: 旧版兼容信息
 type SiteTotalData = LegacyInfo & SiteEnvInfo & TotalInfo;
 
-type LegacyInfo = {
+interface LegacyInfo {
   source_registry: string;
   changes_stream_registry: string;
   sync_changes_steam: any;
-};
+}
 
-type SiteEnvInfo = {
+interface SiteEnvInfo {
   sync_model: string;
   sync_binary: boolean;
   instance_start_time: Date;
@@ -42,9 +42,9 @@ type SiteEnvInfo = {
   app_version: string;
   engine: string;
   cache_time: string;
-};
+}
 
-type TotalInfo = {
+interface TotalInfo {
   last_package: string;
   last_package_version: string;
   doc_count: number | bigint;
@@ -52,7 +52,7 @@ type TotalInfo = {
   update_seq: number | bigint;
   download: DownloadInfo;
   upstream_registries?: UpstreamRegistryInfo[];
-};
+}
 
 @HTTPController()
 export class HomeController extends AbstractController {

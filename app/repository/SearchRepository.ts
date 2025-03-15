@@ -37,12 +37,12 @@ export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> &
     };
   };
 
-export type SearchManifestType = {
+export interface SearchManifestType {
   package: SearchMappingType;
   downloads: {
     all: number;
   };
-};
+}
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

@@ -45,14 +45,14 @@ import type { ScopeManagerService } from './ScopeManagerService.js';
 import { EventCorkAdvice } from './EventCorkerAdvice.js';
 import { PresetRegistryName, SyncDeleteMode } from '../../common/constants.js';
 
-type syncDeletePkgOptions = {
+interface syncDeletePkgOptions {
   task: Task;
   pkg: Package | null;
   logUrl: string;
   url: string;
   logs: string[];
   data: any;
-};
+}
 
 function isoNow() {
   return new Date().toISOString();

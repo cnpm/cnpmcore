@@ -41,13 +41,13 @@ const LoginRequestRule = Type.Object({
 });
 type LoginRequest = Static<typeof LoginRequestRule>;
 
-type LoginPrepareResult = {
+interface LoginPrepareResult {
   wanStatus: number;
   wanCredentialRegiOption?: PublicKeyCredentialCreationOptionsJSON;
   wanCredentialAuthOption?: PublicKeyCredentialRequestOptionsJSON;
-};
+}
 
-type LoginImplementRequest = {
+interface LoginImplementRequest {
   accData: {
     username: string;
     password: string;
@@ -55,7 +55,7 @@ type LoginImplementRequest = {
   wanCredentialRegiData: unknown;
   wanCredentialAuthData: unknown;
   needUnbindWan: boolean;
-};
+}
 
 const UserRule = Type.Object({
   name: Type.String({ minLength: 1, maxLength: 100 }),

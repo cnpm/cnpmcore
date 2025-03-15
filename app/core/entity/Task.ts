@@ -33,7 +33,7 @@ export interface TaskData<T = TaskBaseData> extends EntityData {
   bizId?: string;
 }
 
-export type SyncPackageTaskOptions = {
+export interface SyncPackageTaskOptions {
   authorId?: string;
   authorIp?: string;
   tips?: string;
@@ -43,13 +43,13 @@ export type SyncPackageTaskOptions = {
   forceSyncHistory?: boolean;
   registryId?: string;
   specificVersions?: Array<string>;
-};
+}
 
-export type UpdateProxyCacheTaskOptions = {
+export interface UpdateProxyCacheTaskOptions {
   fullname: string;
   version?: string;
   fileType: DIST_NAMES;
-};
+}
 
 export interface CreateHookTaskData extends TaskBaseData {
   hookEvent: HookEvent;
@@ -307,8 +307,8 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
   }
 }
 
-export type SyncInfo = {
+export interface SyncInfo {
   lastSince: string;
   taskCount: number;
   lastPackage?: string;
-};
+}

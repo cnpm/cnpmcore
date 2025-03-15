@@ -15,10 +15,10 @@ import type {
 
 const ONE_DAY = 3600 * 24;
 
-type SSO_USER = {
+interface SSO_USER {
   name: string;
   email: string;
-};
+}
 
 /**
  * Use sort set to keep queue in order and keep same value only insert once
