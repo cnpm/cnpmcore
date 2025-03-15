@@ -40,8 +40,8 @@ export class PackageVersionFileService extends AbstractService {
   @Inject()
   private readonly cacheAdapter: CacheAdapter;
 
-  #unpkgWhiteListCheckTime: number = 0;
-  #unpkgWhiteListCurrentVersion: string = '';
+  #unpkgWhiteListCheckTime = 0;
+  #unpkgWhiteListCurrentVersion = '';
   #unpkgWhiteListAllowPackages: Record<
     string,
     {
