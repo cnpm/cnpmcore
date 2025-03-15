@@ -38,6 +38,8 @@
     "max-params": ["error", 5],
     "no-await-expression-member": "error",
     "no-continue": "allow",
+    "guard-for-in": "allow",
+    "func-style": "allow",
     // import
     "import/no-cycle": "error",
     "import/no-anonymous-default-export": "error",
@@ -60,6 +62,7 @@
     "unicorn/catch-error-name": "allow",
     "unicorn/prefer-spread": "allow",
     "unicorn/numeric-separators-style": "error",
+    "unicorn/prefer-string-raw": "error",
     // oxc
     "oxc/no-map-spread": "error",
     // typescript

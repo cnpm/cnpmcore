@@ -22,7 +22,7 @@ describe('test/common/UserUtil.test.ts', () => {
       assert(!checkToken('cnpm__', 'cnpm'));
       assert(!checkToken('cnpm_1_2', 'npm'));
       assert(!checkToken('cnpm_1_2', 'cnpm'));
-      assert(!checkToken('cnpm_1?!@#_2\\dd', 'cnpm'));
+      assert(!checkToken(String.raw`cnpm_1?!@#_2\dd`, 'cnpm'));
     });
   });
 });
