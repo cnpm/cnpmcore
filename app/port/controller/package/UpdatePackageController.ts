@@ -57,7 +57,7 @@ export class UpdatePackageController extends AbstractController {
     }
     ctx.tValidate(MaintainerDataRule, data);
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
-    const pkg = ensureRes.pkg!;
+    const pkg = ensureRes.pkg;
     const registry = await this.packageManagerService.getSourceRegistry(pkg);
     // make sure all maintainers exists
     const users: UserEntity[] = [];
