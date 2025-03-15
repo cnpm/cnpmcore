@@ -43,7 +43,7 @@ export class RemovePackageVersionController extends AbstractController {
       throw new BadRequestError('Only allow "unpublish" npm-command');
     }
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
-    const pkg = ensureRes.pkg!;
+    const pkg = ensureRes.pkg;
     const version = this.getAndCheckVersionFromFilename(
       ctx,
       fullname,
@@ -76,7 +76,7 @@ export class RemovePackageVersionController extends AbstractController {
       throw new BadRequestError('Only allow "unpublish" npm-command');
     }
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
-    const pkg = ensureRes.pkg!;
+    const pkg = ensureRes.pkg;
     // try to remove the latest version first
     const packageTag = await this.packageRepository.findPackageTag(
       pkg.packageId,
