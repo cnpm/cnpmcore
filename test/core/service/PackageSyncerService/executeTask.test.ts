@@ -3678,10 +3678,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       });
 
       it('should resync history version if forceSyncHistory is true', async () => {
-        const manifest = JSON.parse(
-          (
-            await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json')
-          ).toString()
+        const manifest = await TestUtil.readFixturesJSONFile(
+          'registry.npmjs.org/foobar.json'
         );
         manifest.versions['1.0.0']._npmUser = {
           name: 'apple',

@@ -115,7 +115,8 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       let registry: Registry;
       beforeEach(async () => {
         // create scope
-        [registry] = (await registryManagerService.listRegistries({})).data;
+        const queryRes = await registryManagerService.listRegistries({});
+        registry = queryRes.data[0];
         await scopeManagerService.createScope({
           name: '@cnpm',
           registryId: registry.registryId,

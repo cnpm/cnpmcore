@@ -86,9 +86,11 @@ export class ProxyCacheService extends AbstractService {
     fileType: DIST_NAMES.FULL_MANIFESTS | DIST_NAMES.ABBREVIATED_MANIFESTS
   ): Promise<AbbreviatedPackageManifestType | PackageManifestType> {
     const isFullManifests = fileType === DIST_NAMES.FULL_MANIFESTS;
-    const cachedStoreKey = (
-      await this.proxyCacheRepository.findProxyCache(fullname, fileType)
-    )?.filePath;
+    const proxyCache = await this.proxyCacheRepository.findProxyCache(
+      fullname,
+      fileType
+    );
+    const cachedStoreKey = proxyCache?.filePath;
     if (cachedStoreKey) {
       try {
         const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
@@ -151,13 +153,12 @@ export class ProxyCacheService extends AbstractService {
       const distTags = pkgManifest['dist-tags'] || {};
       version = distTags[versionOrTag] ? distTags[versionOrTag] : versionOrTag;
     }
-    const cachedStoreKey = (
-      await this.proxyCacheRepository.findProxyCache(
-        fullname,
-        fileType,
-        version
-      )
-    )?.filePath;
+    const proxyCache = await this.proxyCacheRepository.findProxyCache(
+      fullname,
+      fileType,
+      version
+    );
+    const cachedStoreKey = proxyCache?.filePath;
     if (cachedStoreKey) {
       try {
         const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);

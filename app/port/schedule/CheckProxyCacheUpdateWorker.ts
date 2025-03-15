@@ -57,12 +57,11 @@ export class CheckProxyCacheUpdateWorker {
         }
       }
       pageIndex++;
-      list = (
-        await this.proxyCacheRepository.listCachedFiles({
-          pageSize: 5,
-          pageIndex,
-        })
-      ).data;
+      const result = await this.proxyCacheRepository.listCachedFiles({
+        pageSize: 5,
+        pageIndex,
+      });
+      list = result.data;
     }
   }
 }

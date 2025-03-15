@@ -7,9 +7,11 @@
   "categories": {
     "correctness": "error",
     "perf": "error",
-    "nursery": "error"
+    "nursery": "error",
     // "restriction": "error",
     // "style": "error",
+    // "pedantic": "error",
+    "suspicious": "error"
   },
   "plugins": [
     "import",
@@ -30,6 +32,7 @@
     "no-eq-null": "error",
     "no-await-in-loop": "allow",
     "eqeqeq": ["error", "smart"],
+    "init-declarations": "allow",
     // import
     "import/no-cycle": "error",
     "import/no-anonymous-default-export": "error",
@@ -49,11 +52,13 @@
     "unicorn/filename-case": "allow",
     // "unicorn/no-null": "error",
     "unicorn/throw-new-error": "error",
+    "no-await-expression-member": "error",
     // oxc
     "oxc/no-map-spread": "error",
     // typescript
     "typescript/consistent-type-imports": "error",
     // "typescript/no-non-null-assertion": "error",
+    "no-extraneous-class": "allow",
     // style
     "sort-imports": "allow",
     "yoda": "allow",

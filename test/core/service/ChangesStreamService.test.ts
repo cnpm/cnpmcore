@@ -50,9 +50,9 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       type: RegistryType.Cnpmcore,
     });
 
-    const data = (await registryManagerService.listRegistries({})).data;
-    npmRegistry = data[0];
-    cnpmRegistry = data[1];
+    const queryRes = await registryManagerService.listRegistries({});
+    npmRegistry = queryRes.data[0];
+    cnpmRegistry = queryRes.data[1];
 
     // create custom scope
     await scopeManagerService.createScope({
