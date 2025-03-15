@@ -63,6 +63,7 @@
     "unicorn/prefer-spread": "allow",
     "unicorn/numeric-separators-style": "error",
     "unicorn/prefer-string-raw": "error",
+    "unicorn/text-encoding-identifier-case": "error",
     // oxc
     "oxc/no-map-spread": "error",
     // typescript

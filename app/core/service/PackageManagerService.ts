@@ -697,7 +697,7 @@ export class PackageManagerService extends AbstractService {
         pkg.manifestsDist
       );
     if (!fullManifests) return;
-    fullManifests.readme = await readFile(readmeFile, 'utf-8');
+    fullManifests.readme = await readFile(readmeFile, 'utf8');
     await this._updatePackageManifestsToDists(pkg, fullManifests, null);
     this.logger.info(
       '[PackageManagerService.savePackageReadme] save packageId:%s readme, size: %s',
