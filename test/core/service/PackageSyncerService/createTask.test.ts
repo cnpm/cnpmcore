@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
 

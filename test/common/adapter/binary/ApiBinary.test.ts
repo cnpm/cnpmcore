@@ -1,4 +1,5 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { ApiBinary } from '../../../../app/common/adapter/binary/ApiBinary.js';
@@ -11,9 +12,15 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
   });
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      mock(app.config.cnpmcore, 'syncBinaryFromAPISource', 'https://cnpmjs.org/mirrors/apis');
+      mock(
+        app.config.cnpmcore,
+        'syncBinaryFromAPISource',
+        'https://cnpmjs.org/mirrors/apis'
+      );
       app.mockHttpclient('https://cnpmjs.org/mirrors/apis/node/', 'GET', {
-        data: await TestUtil.readFixturesFile('cnpmjs.org/mirrors/apis/node.json'),
+        data: await TestUtil.readFixturesFile(
+          'cnpmjs.org/mirrors/apis/node.json'
+        ),
         persist: false,
       });
       const result = await binary.fetch('/', 'node');
@@ -31,8 +38,11 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
         if (item.name === 'node-v0.1.100.tar.gz') {
           assert(item.date === '26-Aug-2011 16:21');
           assert(item.isDir === false);
-          assert(item.size === 3813493);
-          assert(item.url === 'https://r.cnpmjs.org/-/binary/node/node-v0.1.100.tar.gz');
+          assert(item.size === 3_813_493);
+          assert(
+            item.url ===
+              'https://r.cnpmjs.org/-/binary/node/node-v0.1.100.tar.gz'
+          );
           matchFile = true;
         }
         if (!item.isDir) {
@@ -47,10 +57,16 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
     it('should fetch subdir: /v16.13.1/ work', async () => {
       mock(app.config.cnpmcore, 'syncBinaryFromAPISource', null);
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
-      app.mockHttpclient('https://r.cnpmjs.org/-/binary/node/v16.13.1/', 'GET', {
-        data: await TestUtil.readFixturesFile('r.cnpmjs.org/-/binary/node/v16.13.1.json'),
-        persist: false,
-      });
+      app.mockHttpclient(
+        'https://r.cnpmjs.org/-/binary/node/v16.13.1/',
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile(
+            'r.cnpmjs.org/-/binary/node/v16.13.1.json'
+          ),
+          persist: false,
+        }
+      );
       const result = await binary.fetch('/v16.13.1/', 'node');
       assert(result);
       assert(result.items.length > 0);
@@ -67,7 +83,10 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
           assert(item.date === '01-Dec-2021 16:13');
           assert(item.isDir === false);
           assert(item.size === 3153);
-          assert(item.url === 'https://r.cnpmjs.org/-/binary/node/v16.13.1/SHASUMS256.txt');
+          assert(
+            item.url ===
+              'https://r.cnpmjs.org/-/binary/node/v16.13.1/SHASUMS256.txt'
+          );
           matchFile = true;
         }
         if (!item.isDir) {

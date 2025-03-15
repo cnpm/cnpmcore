@@ -1,8 +1,7 @@
 import dayjs from 'dayjs';
-import type { EntityData } from './Entity.js';
-import { Entity } from './Entity.js';
-import type { EasyData } from '../util/EntityUtil.js';
-import { EntityUtil } from '../util/EntityUtil.js';
+
+import { Entity, type EntityData } from './Entity.js';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
 
 export enum TokenType {
   granular = 'granular',

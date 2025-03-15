@@ -1,6 +1,6 @@
 import { performance } from 'node:perf_hooks';
-import type { AdviceContext, IAdvice } from '@eggjs/tegg/aop';
-import { Advice } from '@eggjs/tegg/aop';
+
+import { Advice, type AdviceContext, type IAdvice } from '@eggjs/tegg/aop';
 import { Inject } from '@eggjs/tegg';
 import type { EggLogger } from 'egg';
 

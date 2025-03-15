@@ -1,10 +1,12 @@
 import { SingletonProto } from '@eggjs/tegg';
-import type { BinaryName } from '../../../../config/binaries.js';
-import binaries from '../../../../config/binaries.js';
+import binaries, { type BinaryName } from '../../../../config/binaries.js';
 import { BinaryType } from '../../enum/Binary.js';
-import type { BinaryItem, FetchResult } from './AbstractBinary.js';
-import { BinaryAdapter } from './AbstractBinary.js';
 import { GithubBinary } from './GithubBinary.js';
+import {
+  BinaryAdapter,
+  type BinaryItem,
+  type FetchResult,
+} from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Electron)

@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
@@ -40,26 +40,34 @@ describe('test/cli/npm/install.test.ts', () => {
   beforeEach(async () => {
     await npmLogin(registry, userconfig);
     await coffee
-      .spawn('npm', [
-        'publish',
-        `--registry=${registry}`,
-        `--userconfig=${userconfig}`,
-        `--cache=${cacheDir}`,
-      ], {
-        cwd: fooPkgDir,
-      })
+      .spawn(
+        'npm',
+        [
+          'publish',
+          `--registry=${registry}`,
+          `--userconfig=${userconfig}`,
+          `--cache=${cacheDir}`,
+        ],
+        {
+          cwd: fooPkgDir,
+        }
+      )
       .debug()
       // .expect('code', 0)
       .end();
     await coffee
-      .spawn('npm', [
-        'publish',
-        `--registry=${registry}`,
-        `--userconfig=${userconfig}`,
-        `--cache=${cacheDir}`,
-      ], {
-        cwd: TestUtil.getFixtures('@cnpm/foo-2.0.0'),
-      })
+      .spawn(
+        'npm',
+        [
+          'publish',
+          `--registry=${registry}`,
+          `--userconfig=${userconfig}`,
+          `--cache=${cacheDir}`,
+        ],
+        {
+          cwd: TestUtil.getFixtures('@cnpm/foo-2.0.0'),
+        }
+      )
       .debug()
       // .expect('code', 0)
       .end();
@@ -67,104 +75,134 @@ describe('test/cli/npm/install.test.ts', () => {
 
   describe('npm install', () => {
     it('should support /@cnpm%2Ffoo1 router path', async () => {
-      let res = await app.httpclient.request(`${registry}/@cnpm%2Ffoo1`, { dataType: 'json' });
+      let res = await app.httpclient.request(`${registry}/@cnpm%2Ffoo1`, {
+        dataType: 'json',
+      });
       assert.equal(res.status, 404);
       assert.equal(res.data.error, '[NOT_FOUND] @cnpm/foo1 not found');
-      res = await app.httpclient.request(`${registry}/@cnpm%2fbar`, { dataType: 'json' });
+      res = await app.httpclient.request(`${registry}/@cnpm%2fbar`, {
+        dataType: 'json',
+      });
       assert.equal(res.status, 404);
       assert.equal(res.data.error, '[NOT_FOUND] @cnpm/bar not found');
 
-      res = await app.httpclient.request(`${registry}/@cnpm%2ffoo`, { dataType: 'json' });
+      res = await app.httpclient.request(`${registry}/@cnpm%2ffoo`, {
+        dataType: 'json',
+      });
       assert.equal(res.status, 200);
       assert.equal(res.data.name, '@cnpm/foo');
-      res = await app.httpclient.request(`${registry}/@cnpm%2Ffoo`, { dataType: 'json' });
+      res = await app.httpclient.request(`${registry}/@cnpm%2Ffoo`, {
+        dataType: 'json',
+      });
       assert.equal(res.status, 200);
       assert.equal(res.data.name, '@cnpm/foo');
     });
 
     it('should install and unpublish work', async () => {
       await coffee
-        .spawn('npm', [
-          'view',
-          '@cnpm/foo',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-          // '--json',
-        ], {
-          cwd: demoDir,
-        })
+        .spawn(
+          'npm',
+          [
+            'view',
+            '@cnpm/foo',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+            // '--json',
+          ],
+          {
+            cwd: demoDir,
+          }
+        )
         .debug()
         .expect('stdout', /\/@cnpm\/foo\/-\/foo-\d+\.0\.0\.tgz/)
         .expect('code', 0)
         .end();
 
       await coffee
-        .spawn('npm', [
-          'dist-tag',
-          'ls',
-          '@cnpm/foo',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-          // '--json',
-        ], {
-          cwd: demoDir,
-        })
+        .spawn(
+          'npm',
+          [
+            'dist-tag',
+            'ls',
+            '@cnpm/foo',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+            // '--json',
+          ],
+          {
+            cwd: demoDir,
+          }
+        )
         .debug()
         .expect('stdout', /latest: \d+\.0\.0/)
         .expect('code', 0)
         .end();
 
       await coffee
-        .spawn('npm', [
-          'install',
-          '--package-lock=false',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-          '--no-audit',
-          // '--verbose',
-        ], {
-          cwd: demoDir,
-        })
+        .spawn(
+          'npm',
+          [
+            'install',
+            '--package-lock=false',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+            '--no-audit',
+            // '--verbose',
+          ],
+          {
+            cwd: demoDir,
+          }
+        )
         .debug()
         .expect('code', 0)
         .end();
 
       await coffee
-        .spawn('npm', [
-          'unpublish',
-          '-f',
-          '@cnpm/foo@1.0.0',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-          '--verbose',
-        ], {
-          cwd: demoDir,
-        })
+        .spawn(
+          'npm',
+          [
+            'unpublish',
+            '-f',
+            '@cnpm/foo@1.0.0',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+            '--verbose',
+          ],
+          {
+            cwd: demoDir,
+          }
+        )
         .debug()
         .expect('stdout', /- @cnpm\/foo/)
         .expect('code', 0)
         .end();
       await coffee
-        .spawn('npm', [
-          'unpublish',
-          '-f',
-          '@cnpm/foo@2.0.0',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-          '--verbose',
-        ], {
-          cwd: demoDir,
-        })
+        .spawn(
+          'npm',
+          [
+            'unpublish',
+            '-f',
+            '@cnpm/foo@2.0.0',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+            '--verbose',
+          ],
+          {
+            cwd: demoDir,
+          }
+        )
         .debug()
         .expect('stdout', /- @cnpm\/foo/)
         .expect('code', 0)
         .end();
-      const res = await app.httpclient.request(`${registry}/@cnpm%2ffoo`, { dataType: 'json' });
+      const res = await app.httpclient.request(`${registry}/@cnpm%2ffoo`, {
+        dataType: 'json',
+      });
       assert.equal(res.status, 200);
       assert(res.data.time.unpublished);
       assert.equal(res.data.versions, undefined);

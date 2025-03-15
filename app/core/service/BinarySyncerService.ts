@@ -1,10 +1,18 @@
-import type { EggObjectFactory } from '@eggjs/tegg';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import type { EggHttpClient } from 'egg';
 import fs from 'node:fs/promises';
+
+import {
+  AccessLevel,
+  Inject,
+  SingletonProto,
+  type EggObjectFactory,
+} from '@eggjs/tegg';
+import type { EggHttpClient } from 'egg';
 import { sortBy } from 'lodash-es';
-import type { BinaryName, CategoryName } from '../../../config/binaries.js';
-import binaries from '../../../config/binaries.js';
+
+import binaries, {
+  type BinaryName,
+  type CategoryName,
+} from '../../../config/binaries.js';
 import type { BinaryRepository } from '../../repository/BinaryRepository.js';
 import { Task } from '../entity/Task.js';
 import { Binary } from '../entity/Binary.js';
@@ -12,11 +20,13 @@ import type { TaskService } from './TaskService.js';
 import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
 import { downloadToTempfile } from '../../common/FileUtil.js';
 import { isTimeoutError } from '../../common/ErrorUtil.js';
-import type { BinaryItem } from '../../common/adapter/binary/AbstractBinary.js';
-import { AbstractBinary } from '../../common/adapter/binary/AbstractBinary.js';
+import {
+  AbstractBinary,
+  type BinaryItem,
+} from '../../common/adapter/binary/AbstractBinary.js';
 import { AbstractService } from '../../common/AbstractService.js';
 import { BinaryType } from '../../common/enum/Binary.js';
-import { TaskType, TaskState } from '../../common/enum/Task.js';
+import { TaskState, TaskType } from '../../common/enum/Task.js';
 
 function isoNow() {
   return new Date().toISOString();

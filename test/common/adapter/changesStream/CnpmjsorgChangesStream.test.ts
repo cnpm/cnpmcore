@@ -1,4 +1,5 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import type { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';
@@ -27,7 +28,7 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
     it('should work', async () => {
       const since = await cnpmjsorgChangesStream.getInitialSince(registry);
       const now = new Date().getTime();
-      assert(now - Number(since) < 10000);
+      assert(now - Number(since) < 10_000);
     });
   });
 

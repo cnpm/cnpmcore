@@ -1,7 +1,11 @@
-import type { EggContext } from '@eggjs/tegg';
-import { AccessLevel, Inject, ContextProto } from '@eggjs/tegg';
+import {
+  type EggContext,
+  AccessLevel,
+  ContextProto,
+  Inject,
+} from '@eggjs/tegg';
 import type { EggAppConfig, EggLogger } from 'egg';
-import { UnauthorizedError, ForbiddenError } from 'egg-errors';
+import { ForbiddenError, UnauthorizedError } from 'egg-errors';
 
 import type { PackageRepository } from '../repository/PackageRepository.js';
 import type { Package as PackageEntity } from '../core/entity/Package.js';

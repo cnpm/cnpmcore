@@ -1,11 +1,12 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { E500 } from 'egg-errors';
+
 import { RegistryType } from '../../../common/enum/Registry.js';
 import type { Registry } from '../../../core/entity/Registry.js';
-import type { ChangesStreamChange } from './AbstractChangesStream.js';
 import {
   AbstractChangeStream,
   RegistryChangesStream,
+  type ChangesStreamChange,
 } from './AbstractChangesStream.js';
 
 @SingletonProto()
@@ -15,7 +16,7 @@ export class NpmChangesStream extends AbstractChangeStream {
     const db = new URL(registry.changeStream).origin;
     const { status, data } = await this.httpclient.request(db, {
       followRedirect: true,
-      timeout: 10000,
+      timeout: 10_000,
       dataType: 'json',
     });
     const since = String(data.update_seq - 10);
@@ -37,7 +38,7 @@ export class NpmChangesStream extends AbstractChangeStream {
     const db = this.getChangesStreamUrl(registry, since);
     const { res } = await this.httpclient.request(db, {
       streaming: true,
-      timeout: 60000,
+      timeout: 60_000,
     });
 
     let buf = '';

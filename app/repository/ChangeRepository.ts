@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
 import { ModelConvertor } from './util/ModelConvertor.js';
 import type { Change as ChangeModel } from './model/Change.js';

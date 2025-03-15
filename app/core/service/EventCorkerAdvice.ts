@@ -1,7 +1,5 @@
-import type { ContextEventBus } from '@eggjs/tegg';
-import { Inject } from '@eggjs/tegg';
-import type { IAdvice } from '@eggjs/tegg/aop';
-import { Advice } from '@eggjs/tegg/aop';
+import { Inject, type ContextEventBus } from '@eggjs/tegg';
+import { Advice, type IAdvice } from '@eggjs/tegg/aop';
 
 @Advice()
 export class EventCorkAdvice implements IAdvice {

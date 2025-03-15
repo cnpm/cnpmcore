@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { TestUtil } from '../../../../test/TestUtil.js';
@@ -20,7 +20,8 @@ describe('test/core/service/BugVersionService/cleanBugVersionPackageCache.test.t
       faker: {
         '6.6.6': {
           version: '5.5.3',
-          reason: 'Please use https://github.com/MilosPaunovic/community-faker instead',
+          reason:
+            'Please use https://github.com/MilosPaunovic/community-faker instead',
         },
       },
       colors: {
@@ -50,6 +51,6 @@ describe('test/core/service/BugVersionService/cleanBugVersionPackageCache.test.t
 
   it('should clean all packages has bug version', async () => {
     await bugVersionService.cleanBugVersionPackageCaches(bugVersion);
-    assert.deepStrictEqual(cleanPkgs, [ 'faker', 'colors' ]);
+    assert.deepStrictEqual(cleanPkgs, ['faker', 'colors']);
   });
 });

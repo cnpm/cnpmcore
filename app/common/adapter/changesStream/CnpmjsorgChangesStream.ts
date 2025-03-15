@@ -7,9 +7,9 @@ import {
   RegistryChangesStream,
 } from './AbstractChangesStream.js';
 
-const MAX_LIMIT = 10000;
+const MAX_LIMIT = 10_000;
 
-type FetchResults = {
+interface FetchResults {
   results: {
     seq: number;
     type: string;
@@ -17,7 +17,7 @@ type FetchResults = {
     changes: Record<string, string>[];
     gmt_modified: Date;
   }[];
-};
+}
 
 @SingletonProto()
 @RegistryChangesStream(RegistryType.Cnpmjsorg)
@@ -46,7 +46,7 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
     // json mode
     const res = await this.httpclient.request<FetchResults>(db, {
       followRedirect: true,
-      timeout: 30000,
+      timeout: 30_000,
       dataType: 'json',
       gzip: true,
     });

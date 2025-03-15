@@ -1,12 +1,15 @@
 import { SingletonProto } from '@eggjs/tegg';
-import type {
-  BinaryName,
-  BinaryTaskConfig,
+import binaries, {
+  type BinaryName,
+  type BinaryTaskConfig,
 } from '../../../../config/binaries.js';
-import binaries from '../../../../config/binaries.js';
 import { BinaryType } from '../../enum/Binary.js';
-import type { FetchResult, BinaryItem } from './AbstractBinary.js';
-import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
+import {
+  AbstractBinary,
+  BinaryAdapter,
+  type BinaryItem,
+  type FetchResult,
+} from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.GitHub)

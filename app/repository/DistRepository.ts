@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
 import type { NFSAdapter } from '../common/adapter/NFSAdapter.js';
 import type {
@@ -88,6 +88,6 @@ export class DistRepository {
 
   async downloadDistToFile(dist: Dist, file: string) {
     // max up to 5mins
-    return await this.nfsAdapter.downloadFile(dist.path, file, 60000 * 5);
+    return await this.nfsAdapter.downloadFile(dist.path, file, 60_000 * 5);
   }
 }

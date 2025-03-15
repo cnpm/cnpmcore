@@ -1,5 +1,5 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
   Context,
   HTTPBody,
   HTTPController,

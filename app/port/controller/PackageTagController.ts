@@ -1,11 +1,11 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
+  HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  HTTPBody,
-  Context,
   Inject,
 } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
@@ -55,7 +55,7 @@ export class PackageTagController extends AbstractController {
     const data = { tag, version };
     ctx.tValidate(TagWithVersionRule, data);
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
-    const pkg = ensureRes.pkg!;
+    const pkg = ensureRes.pkg;
     const packageVersion = await this.getPackageVersionEntity(
       pkg,
       data.version
@@ -85,7 +85,7 @@ export class PackageTagController extends AbstractController {
       throw new ForbiddenError('Can\'t remove the "latest" tag');
     }
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
-    const pkg = ensureRes.pkg!;
+    const pkg = ensureRes.pkg;
     await this.packageManagerService.removePackageTag(pkg, data.tag);
     return { ok: true };
   }

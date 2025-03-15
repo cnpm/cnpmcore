@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises';
-import { join, dirname, basename } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 // @ts-expect-error type error
 import tar from '@fengmk2/tar';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { ConflictError, ForbiddenError } from 'egg-errors';
 import semver from 'semver';
 import { AbstractService } from '../../common/AbstractService.js';
@@ -21,7 +21,7 @@ import type { PackageManagerService } from './PackageManagerService.js';
 import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
 
 const unpkgWhiteListUrl = 'https://github.com/cnpm/unpkg-white-list';
-const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60000;
+const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60_000;
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -40,8 +40,8 @@ export class PackageVersionFileService extends AbstractService {
   @Inject()
   private readonly cacheAdapter: CacheAdapter;
 
-  #unpkgWhiteListCheckTime: number = 0;
-  #unpkgWhiteListCurrentVersion: string = '';
+  #unpkgWhiteListCheckTime = 0;
+  #unpkgWhiteListCurrentVersion = '';
   #unpkgWhiteListAllowPackages: Record<
     string,
     {

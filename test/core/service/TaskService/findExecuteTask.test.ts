@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app, mm } from '@eggjs/mock/bootstrap';
 
 import { TaskService } from '../../../../app/core/service/TaskService.js';
@@ -93,7 +93,7 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
       const task1 = await packageSyncerService.createTask('foo-1');
       const task2 = await packageSyncerService.createTask('foo-2');
       // mock pop get duplicate taskId
-      const popResult = [ task1.taskId, task1.taskId, task2.taskId ];
+      const popResult = [task1.taskId, task1.taskId, task2.taskId];
       let times = 0;
       mm(queueAdapter, 'pop', async () => {
         return popResult[times++];

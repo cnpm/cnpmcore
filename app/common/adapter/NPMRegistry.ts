@@ -1,9 +1,9 @@
 import { setTimeout } from 'node:timers/promises';
-import { ContextProto, AccessLevel, Inject } from '@eggjs/tegg';
+import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
 import type {
-  EggLogger,
-  EggContextHttpClient,
   EggAppConfig,
+  EggContextHttpClient,
+  EggLogger,
   HttpClientRequestOptions,
   HttpClientResponse,
 } from 'egg';
@@ -27,7 +27,7 @@ export class NPMRegistry {
   private readonly httpclient: EggContextHttpClient;
   @Inject()
   private config: EggAppConfig;
-  private timeout = 10000;
+  private timeout = 10_000;
   public registryHost: string;
 
   get registry(): string {
@@ -55,7 +55,7 @@ export class NPMRegistry {
           optionalConfig?.remoteAuthToken
         );
         return await this.request('GET', url, undefined, {
-          timeout: 120000,
+          timeout: 120_000,
           headers: { authorization },
         });
       } catch (err: any) {

@@ -1,11 +1,11 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import pMap from 'p-map';
+
 import { AbstractService } from '../../common/AbstractService.js';
 import { HookType } from '../../common/enum/Hook.js';
 import { TaskState } from '../../common/enum/Task.js';
+import { Task, type CreateHookTask } from '../entity/Task.js';
 import type { HookEvent } from '../entity/HookEvent.js';
-import type { CreateHookTask } from '../entity/Task.js';
-import { Task } from '../entity/Task.js';
 import type { HookRepository } from '../../repository/HookRepository.js';
 import type { PackageRepository } from '../../repository/PackageRepository.js';
 import type { Hook } from '../entity/Hook.js';

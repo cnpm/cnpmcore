@@ -1,18 +1,18 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
-  Inject,
-  HTTPQuery,
   HTTPParam,
-  Context,
+  HTTPQuery,
+  Inject,
 } from '@eggjs/tegg';
 import {
   ForbiddenError,
   NotFoundError,
-  UnauthorizedError,
   NotImplementedError,
+  UnauthorizedError,
 } from 'egg-errors';
 
 import { AbstractController } from './AbstractController.js';

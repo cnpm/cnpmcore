@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
 import { ModelConvertor } from './util/ModelConvertor.js';
 import type { Binary as BinaryModel } from './model/Binary.js';
@@ -16,10 +16,20 @@ export class BinaryRepository extends AbstractRepository {
     if (binary.id) {
       const model = await this.Binary.findOne({ id: binary.id });
       if (!model) return;
-      await ModelConvertor.saveEntityToModel<BinaryModel>(binary as unknown as Record<string, unknown>, model);
+      await ModelConvertor.saveEntityToModel<BinaryModel>(
+        binary as unknown as Record<string, unknown>,
+        model
+      );
     } else {
-      const model = await ModelConvertor.convertEntityToModel(binary as unknown as Record<string, unknown>, this.Binary);
-      this.logger.info('[BinaryRepository:saveBinary:new] id: %s, binaryId: %s', model.id, model.binaryId);
+      const model = await ModelConvertor.convertEntityToModel(
+        binary as unknown as Record<string, unknown>,
+        this.Binary
+      );
+      this.logger.info(
+        '[BinaryRepository:saveBinary:new] id: %s, binaryId: %s',
+        model.id,
+        model.binaryId
+      );
     }
   }
 
@@ -29,8 +39,13 @@ export class BinaryRepository extends AbstractRepository {
     return null;
   }
 
-  async listBinaries(category: string, parent: string): Promise<BinaryEntity[]> {
+  async listBinaries(
+    category: string,
+    parent: string
+  ): Promise<BinaryEntity[]> {
     const models = await this.Binary.find({ category, parent });
-    return models.map(model => ModelConvertor.convertModelToEntity(model, BinaryEntity));
+    return models.map(model =>
+      ModelConvertor.convertModelToEntity(model, BinaryEntity)
+    );
   }
 }

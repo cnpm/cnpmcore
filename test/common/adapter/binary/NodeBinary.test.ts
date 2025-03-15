@@ -1,4 +1,5 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary.js';
@@ -44,7 +45,9 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
 
     it('should fetch subdir: /v16.13.1/ work', async () => {
       app.mockHttpclient('https://nodejs.org/dist/v16.13.1/', 'GET', {
-        data: await TestUtil.readFixturesFile('nodejs.org/site/v16.13.1/index.html'),
+        data: await TestUtil.readFixturesFile(
+          'nodejs.org/site/v16.13.1/index.html'
+        ),
       });
       const result = await binary.fetch('/v16.13.1/', 'node');
       assert(result);
@@ -62,7 +65,9 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           assert(item.date === '01-Dec-2021 16:13');
           assert(item.isDir === false);
           assert(item.size === '3153');
-          assert(item.url === 'https://nodejs.org/dist/v16.13.1/SHASUMS256.txt');
+          assert(
+            item.url === 'https://nodejs.org/dist/v16.13.1/SHASUMS256.txt'
+          );
           matchFile = true;
         }
         if (!item.isDir) {
@@ -76,7 +81,9 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
 
     it('should fetch subdir: /v18.15.0/ work', async () => {
       app.mockHttpclient('https://nodejs.org/dist/v18.15.0/', 'GET', {
-        data: await TestUtil.readFixturesFile('nodejs.org/site/v18.15.0/index.html'),
+        data: await TestUtil.readFixturesFile(
+          'nodejs.org/site/v18.15.0/index.html'
+        ),
       });
       const result = await binary.fetch('/v18.15.0/', 'node');
       assert(result);
@@ -94,14 +101,20 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           assert.equal(item.date, '04-Nov-2024 17:29');
           assert.equal(item.isDir, false);
           assert.equal(item.size, '3.2 KB');
-          assert.equal(item.url, 'https://nodejs.org/dist/v18.15.0/SHASUMS256.txt');
+          assert.equal(
+            item.url,
+            'https://nodejs.org/dist/v18.15.0/SHASUMS256.txt'
+          );
           matchFile = true;
         }
         if (item.name === 'node-v18.15.0-win-x64.zip') {
           assert.equal(item.date, '30-Oct-2024 18:04');
           assert.equal(item.isDir, false);
           assert.equal(item.size, '29 MB');
-          assert.equal(item.url, 'https://nodejs.org/dist/v18.15.0/node-v18.15.0-win-x64.zip');
+          assert.equal(
+            item.url,
+            'https://nodejs.org/dist/v18.15.0/node-v18.15.0-win-x64.zip'
+          );
           matchFile = true;
         }
         if (!item.isDir) {
@@ -114,10 +127,19 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v14.0.0-nightly20200119b318926634/ work', async () => {
-      app.mockHttpclient('https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/', 'GET', {
-        data: await TestUtil.readFixturesFile('nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/index.html'),
-      });
-      const result = await binary.fetch('/v14.0.0-nightly20200119b318926634/', 'node-nightly');
+      app.mockHttpclient(
+        'https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/',
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile(
+            'nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/index.html'
+          ),
+        }
+      );
+      const result = await binary.fetch(
+        '/v14.0.0-nightly20200119b318926634/',
+        'node-nightly'
+      );
       assert(result);
       assert(result.items.length > 0);
       let matchDir = false;
@@ -134,14 +156,23 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           assert(item.date === '19-Jan-2020 07:35');
           assert(item.isDir === false);
           assert(item.size === '3797');
-          assert(item.url === 'https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/SHASUMS256.txt');
+          assert(
+            item.url ===
+              'https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/SHASUMS256.txt'
+          );
           matchFile1 = true;
         }
-        if (item.name === 'node-v14.0.0-nightly20200119b318926634-linux-s390x.tar.xz') {
+        if (
+          item.name ===
+          'node-v14.0.0-nightly20200119b318926634-linux-s390x.tar.xz'
+        ) {
           assert(item.date === '19-Jan-2020 06:03');
           assert(item.isDir === false);
           assert(item.size === '20416228');
-          assert(item.url === 'https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/node-v14.0.0-nightly20200119b318926634-linux-s390x.tar.xz');
+          assert(
+            item.url ===
+              'https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/node-v14.0.0-nightly20200119b318926634-linux-s390x.tar.xz'
+          );
           matchFile2 = true;
         }
         if (!item.isDir) {
@@ -155,10 +186,19 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
     });
 
     it('should skip zero size file', async () => {
-      app.mockHttpclient('https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/', 'GET', {
-        data: await TestUtil.readFixturesFile('nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/index.html'),
-      });
-      const result = await binary.fetch('/v14.0.0-nightly20200204ee9e689df2/', 'node-nightly');
+      app.mockHttpclient(
+        'https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/',
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile(
+            'nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/index.html'
+          ),
+        }
+      );
+      const result = await binary.fetch(
+        '/v14.0.0-nightly20200204ee9e689df2/',
+        'node-nightly'
+      );
       assert(result);
       assert(result.items.length > 0);
       let matchDir = false;
@@ -173,14 +213,23 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           assert(item.date === '04-Feb-2020 06:15');
           assert(item.isDir === false);
           assert(item.size === '1364');
-          assert(item.url === 'https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/SHASUMS256.txt');
+          assert(
+            item.url ===
+              'https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/SHASUMS256.txt'
+          );
           matchFile1 = true;
         }
-        if (item.name === 'node-v14.0.0-nightly20200204ee9e689df2-linux-arm64.tar.gz') {
+        if (
+          item.name ===
+          'node-v14.0.0-nightly20200204ee9e689df2-linux-arm64.tar.gz'
+        ) {
           assert(item.date === '04-Feb-2020 06:02');
           assert(item.isDir === false);
           assert(item.size === '33496011');
-          assert(item.url === 'https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/node-v14.0.0-nightly20200204ee9e689df2-linux-arm64.tar.gz');
+          assert(
+            item.url ===
+              'https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/node-v14.0.0-nightly20200204ee9e689df2-linux-arm64.tar.gz'
+          );
           matchFile2 = true;
         }
         // skip 0 size file: https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/node-v14.0.0-nightly20200204ee9e689df2-win-x86.7z
@@ -200,15 +249,21 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
 
     it('should on python', async () => {
       app.mockHttpclient('https://www.python.org/ftp/python/', 'GET', {
-        data: await TestUtil.readFixturesFile('www.python.org/ftp/python/index.html'),
+        data: await TestUtil.readFixturesFile(
+          'www.python.org/ftp/python/index.html'
+        ),
         persist: false,
       });
       app.mockHttpclient('https://www.python.org/ftp/python/3.7.3/', 'GET', {
-        data: await TestUtil.readFixturesFile('www.python.org/ftp/python/3.7.3.html'),
+        data: await TestUtil.readFixturesFile(
+          'www.python.org/ftp/python/3.7.3.html'
+        ),
         persist: false,
       });
       app.mockHttpclient('https://www.python.org/ftp/python/src/', 'GET', {
-        data: await TestUtil.readFixturesFile('www.python.org/ftp/python/src.html'),
+        data: await TestUtil.readFixturesFile(
+          'www.python.org/ftp/python/src.html'
+        ),
         persist: false,
       });
 
@@ -271,7 +326,10 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           assert(item.date === '25-Mar-2019 23:04');
           assert(item.isDir === false);
           assert(item.size === '25424128');
-          assert(item.url === 'https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe');
+          assert(
+            item.url ===
+              'https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe'
+          );
           matchFile = true;
         }
         if (!item.isDir) {

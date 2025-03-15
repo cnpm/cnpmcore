@@ -1,14 +1,17 @@
-import type { ImplDecorator } from '@eggjs/tegg';
-import { Inject, QualifierImplDecoratorUtil } from '@eggjs/tegg';
+import {
+  Inject,
+  QualifierImplDecoratorUtil,
+  type ImplDecorator,
+} from '@eggjs/tegg';
 import type { RegistryType } from '../../../common/enum/Registry.js';
 import type { Registry } from '../../../core/entity/Registry.js';
 import type { EggHttpClient, EggLogger } from 'egg';
 
 export const CHANGE_STREAM_ATTRIBUTE = 'CHANGE_STREAM_ATTRIBUTE';
-export type ChangesStreamChange = {
+export interface ChangesStreamChange {
   seq: string;
   fullname: string;
-};
+}
 
 export abstract class AbstractChangeStream {
   @Inject()

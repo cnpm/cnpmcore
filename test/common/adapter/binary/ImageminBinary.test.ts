@@ -1,4 +1,5 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import { ImageminBinary } from '../../../../app/common/adapter/binary/ImageminBinary.js';
@@ -11,7 +12,9 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
   });
   it('should fetch jpegtran-bin', async () => {
     app.mockHttpclient('https://registry.npmjs.com/jpegtran-bin', 'GET', {
-      data: await TestUtil.readFixturesFile('registry.npmjs.com/jpegtran-bin.json'),
+      data: await TestUtil.readFixturesFile(
+        'registry.npmjs.com/jpegtran-bin.json'
+      ),
     });
     let result = await binary.fetch('/', 'jpegtran-bin');
     assert(result);
@@ -69,16 +72,24 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     // console.log(result.items);
     assert(result.items.length === 2);
     assert(result.items[0].name === 'jpegtran.exe');
-    assert(result.items[0].url === 'https://raw.githubusercontent.com/imagemin/jpegtran-bin/v4.0.0/vendor/win/x86/jpegtran.exe');
+    assert(
+      result.items[0].url ===
+        'https://raw.githubusercontent.com/imagemin/jpegtran-bin/v4.0.0/vendor/win/x86/jpegtran.exe'
+    );
     assert(result.items[0].isDir === false);
     assert(result.items[1].name === 'libjpeg-62.dll');
     assert(result.items[1].isDir === false);
-    assert(result.items[1].url === 'https://raw.githubusercontent.com/imagemin/jpegtran-bin/v4.0.0/vendor/win/x86/libjpeg-62.dll');
+    assert(
+      result.items[1].url ===
+        'https://raw.githubusercontent.com/imagemin/jpegtran-bin/v4.0.0/vendor/win/x86/libjpeg-62.dll'
+    );
   });
 
   it('should fetch advpng-bin', async () => {
     app.mockHttpclient('https://registry.npmjs.com/advpng-bin', 'GET', {
-      data: await TestUtil.readFixturesFile('registry.npmjs.com/advpng-bin.json'),
+      data: await TestUtil.readFixturesFile(
+        'registry.npmjs.com/advpng-bin.json'
+      ),
     });
     let result = await binary.fetch('/', 'advpng-bin');
     // console.log(result?.items.map(_ => _.name));
@@ -125,7 +136,10 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     // console.log(result.items);
     assert(result.items.length === 1);
     assert(result.items[0].name === 'advpng');
-    assert(result.items[0].url === 'https://raw.githubusercontent.com/imagemin/advpng-bin/v4.0.0/vendor/osx/advpng');
+    assert(
+      result.items[0].url ===
+        'https://raw.githubusercontent.com/imagemin/advpng-bin/v4.0.0/vendor/osx/advpng'
+    );
     assert(result.items[0].isDir === false);
   });
 
@@ -180,7 +194,10 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     // console.log(result.items);
     assert(result.items.length === 1);
     assert(result.items[0].name === 'cjpeg');
-    assert(result.items[0].url === 'https://raw.githubusercontent.com/imagemin/mozjpeg-bin/v4.0.0/vendor/osx/cjpeg');
+    assert(
+      result.items[0].url ===
+        'https://raw.githubusercontent.com/imagemin/mozjpeg-bin/v4.0.0/vendor/osx/cjpeg'
+    );
     assert(result.items[0].isDir === false);
 
     result = await binary.fetch('/v8.0.0/vendor/macos/', 'mozjpeg-bin');
@@ -188,7 +205,10 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
     // console.log(result.items);
     assert(result.items.length === 1);
     assert(result.items[0].name === 'cjpeg');
-    assert(result.items[0].url === 'https://raw.githubusercontent.com/imagemin/mozjpeg-bin/v8.0.0/vendor/macos/cjpeg');
+    assert(
+      result.items[0].url ===
+        'https://raw.githubusercontent.com/imagemin/mozjpeg-bin/v8.0.0/vendor/macos/cjpeg'
+    );
     assert(result.items[0].isDir === false);
   });
 
@@ -222,7 +242,9 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
 
   it('should fetch optipng-bin', async () => {
     app.mockHttpclient('https://registry.npmjs.com/optipng-bin', 'GET', {
-      data: await TestUtil.readFixturesFile('registry.npmjs.com/optipng-bin.json'),
+      data: await TestUtil.readFixturesFile(
+        'registry.npmjs.com/optipng-bin.json'
+      ),
     });
     const result = await binary.fetch('/', 'optipng-bin');
     assert(result);
@@ -250,7 +272,9 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
 
   it('should fetch zopflipng-bin', async () => {
     app.mockHttpclient('https://registry.npmjs.com/zopflipng-bin', 'GET', {
-      data: await TestUtil.readFixturesFile('registry.npmjs.com/zopflipng-bin.json'),
+      data: await TestUtil.readFixturesFile(
+        'registry.npmjs.com/zopflipng-bin.json'
+      ),
     });
     const result = await binary.fetch('/', 'zopflipng-bin');
     assert(result);
@@ -278,7 +302,9 @@ describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
 
   it('should fetch jpegoptim-bin', async () => {
     app.mockHttpclient('https://registry.npmjs.com/jpegoptim-bin', 'GET', {
-      data: await TestUtil.readFixturesFile('registry.npmjs.com/jpegoptim-bin.json'),
+      data: await TestUtil.readFixturesFile(
+        'registry.npmjs.com/jpegoptim-bin.json'
+      ),
     });
     const result = await binary.fetch('/', 'jpegoptim-bin');
     assert(result);

@@ -1,6 +1,6 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 
-import { DataTypes, Bone } from '../util/leoric.js';
+import { Bone, DataTypes } from '../util/leoric.js';
 import { EntityProperty } from '../util/EntityProperty.js';
 
 @Model()
@@ -38,7 +38,7 @@ export class Package extends Bone {
   @Attribute(DataTypes.BOOLEAN)
   isPrivate: boolean;
 
-  @Attribute(DataTypes.STRING(10240))
+  @Attribute(DataTypes.STRING(10_240))
   description: string;
 
   // store all abbreviated manifests into Dist store

@@ -1,13 +1,13 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
 import {
-  PackageTagChangedSyncPackageVersionFileEvent,
   PackageTagAddedSyncPackageVersionFileEvent,
+  PackageTagChangedSyncPackageVersionFileEvent,
 } from '../../../../app/core/event/SyncPackageVersionFile.js';
 
 describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => {
@@ -605,7 +605,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         integrity:
           'sha512-o/nCeU2MBJpIWhA8gIbf6YW49Ss3Spga5M70LJjjyRMlALQDmeh8IVMXagAe79l1Yznci/otKtNjWhVMOM38hg==',
         lastModified: publishTime,
-        size: 26716,
+        size: 26_716,
       });
 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/tests`);
