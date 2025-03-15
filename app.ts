@@ -33,7 +33,7 @@ export default class CnpmcoreAppHook implements ILifecycleBoot {
   async didReady() {
     // ready binary.html and replace registry
     const filepath = path.join(this.app.baseDir, 'app/port/binary.html');
-    const text = await readFile(filepath, 'utf-8');
+    const text = await readFile(filepath, 'utf8');
     this.app.binaryHTML = text.replace(
       '{{registry}}',
       this.app.config.cnpmcore.registry
