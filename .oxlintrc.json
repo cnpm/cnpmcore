@@ -6,7 +6,10 @@
   },
   "categories": {
     "correctness": "error",
-    "perf": "error"
+    "perf": "error",
+    "nursery": "error",
+    // "restriction": "error",
+    "style": "error",
   },
   "plugins": [
     "import",
@@ -42,11 +45,20 @@
     "promise/no-return-in-finally": "error",
     // unicorn
     "unicorn/error-message": "error",
+    "unicorn/no-null": "allow",
+    "unicorn/filename-case": "allow",
     // "unicorn/no-null": "error",
     "unicorn/throw-new-error": "error",
     // oxc
     "oxc/no-map-spread": "error",
     // typescript
-    "typescript/consistent-type-imports": "error"
+    "typescript/consistent-type-imports": "error",
+    // "typescript/no-non-null-assertion": "error",
+    // style
+    "sort-imports": "error",
+    "yoda": "allow",
+    "sort-keys": "allow",
+    "no-magic-numbers": "allow",
+    "no-duplicate-imports": "error",
   }
 }

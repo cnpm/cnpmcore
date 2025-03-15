@@ -1,7 +1,7 @@
 import { NotFoundError, UnavailableForLegalReasonsError } from 'egg-errors';
 import type { EggContext } from '@eggjs/tegg';
 import { Inject } from '@eggjs/tegg';
-import type { EggLogger, EggAppConfig } from 'egg';
+import type { EggAppConfig, EggLogger } from 'egg';
 
 import { MiddlewareController } from '../middleware/index.js';
 import type { UserRoleManager } from '../UserRoleManager.js';
@@ -11,6 +11,7 @@ import { getFullname, getScopeAndName } from '../../common/PackageUtil.js';
 import type { Package as PackageEntity } from '../../core/entity/Package.js';
 import type { PackageVersion as PackageVersionEntity } from '../../core/entity/PackageVersion.js';
 import type { UserService } from '../../core/service/UserService.js';
+import type { User as UserEntity } from '../../core/entity/User.js';
 import { VersionRule } from '../typebox.js';
 import { SyncMode } from '../../common/constants.js';
 
@@ -52,21 +53,25 @@ export abstract class AbstractController extends MiddlewareController {
     return scope && this.config.cnpmcore.allowScopes.includes(scope);
   }
 
-  protected async ensurePublishAccess(
+  protected async ensurePublishAccess<C extends boolean>(
     ctx: EggContext,
     fullname: string,
-    checkPkgExist = true
-  ) {
+    checkPkgExist: C = true as C
+  ): Promise<{ pkg: C extends true ? PackageEntity : undefined; user: UserEntity }> {
     const user = await this.userRoleManager.checkPublishAccess(ctx, fullname);
-    let pkg: PackageEntity | null = null;
-    if (checkPkgExist) {
-      const [scope, name] = getScopeAndName(fullname);
-      pkg = await this.packageRepository.findPackage(scope, name);
-      if (!pkg) {
-        throw this.createPackageNotFoundError(fullname, undefined);
-      }
+    if (!checkPkgExist) {
+      // @ts-expect-error checkPkgExist is false, pkg is undefined
+      return {
+        user,
+      };
+    }
+    const [scope, name] = getScopeAndName(fullname);
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) {
+      throw this.createPackageNotFoundError(fullname);
     }
     return {
+      // @ts-expect-error pkg exists
       pkg,
       user,
     };
@@ -106,8 +111,7 @@ export abstract class AbstractController extends MiddlewareController {
     const message = version
       ? `${fullname}@${version} not found`
       : `${fullname} not found`;
-    const err = new PackageNotFoundError(message);
-    return err;
+    return new PackageNotFoundError(message);
   }
 
   protected createPackageNotFoundErrorWithRedirect(
@@ -118,7 +122,7 @@ export abstract class AbstractController extends MiddlewareController {
     // const err = new PackageNotFoundError(message);
     const err = this.createPackageNotFoundError(fullname, version);
     const [scope] = getScopeAndName(fullname);
-    // dont sync private scope
+    // don't sync private scope
     if (!this.isPrivateScope(scope)) {
       // syncMode = none/admin, redirect public package to source registry
       if (
