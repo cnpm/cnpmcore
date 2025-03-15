@@ -1,10 +1,11 @@
 import { createReadStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
-import type { HashLike } from 'ssri';
-import { fromData, fromStream } from 'ssri';
+
+import { fromData, fromStream, type HashLike } from 'ssri';
 // @ts-expect-error type error
 import tar from '@fengmk2/tar';
+
 import type {
   AuthorType,
   PackageJSONType,

@@ -1,5 +1,5 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
   Context,
   HTTPBody,
   HTTPController,
@@ -20,11 +20,11 @@ import type {
 } from '../../core/service/RegistryManagerService.js';
 import { AdminAccess } from '../middleware/AdminAccess.js';
 import type { ScopeManagerService } from '../../core/service/ScopeManagerService.js';
-import type { QueryPageOptions } from '../typebox.js';
 import {
   RegistryCreateOptions,
   RegistryCreateSyncOptions,
   RegistryUpdateOptions,
+  type QueryPageOptions,
 } from '../typebox.js';
 
 @HTTPController()

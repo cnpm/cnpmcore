@@ -1,12 +1,10 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 describe('test/port/controller/HomeController/ping.test.ts', () => {
   describe('[GET /-/ping] ping()', () => {
     it('should 200', async () => {
-      const res = await app.httpRequest()
-        .get('/-/ping')
-        .expect(200);
+      const res = await app.httpRequest().get('/-/ping').expect(200);
       assert(res.body.pong === true);
       // console.log(res.body, res.headers['x-readtime']);
       assert(res.headers['x-frame-options'] === 'SAMEORIGIN');

@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';

@@ -1,12 +1,14 @@
 import os from 'node:os';
 import { setTimeout } from 'node:timers/promises';
 import { rm } from 'node:fs/promises';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
 import type { EggHttpClient } from 'egg';
-import { isEqual, isEmpty } from 'lodash-es';
+import { isEmpty, isEqual } from 'lodash-es';
 import semver from 'semver';
 import { BadRequestError } from 'egg-errors';
+
 import type {
   NPMRegistry,
   RegistryResponse,
@@ -26,11 +28,11 @@ import type {
 } from '../../repository/PackageRepository.js';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
 import type { UserRepository } from '../../repository/UserRepository.js';
-import type {
-  SyncPackageTaskOptions,
-  CreateSyncPackageTask,
+import {
+  type CreateSyncPackageTask,
+  type SyncPackageTaskOptions,
+  Task,
 } from '../entity/Task.js';
-import { Task } from '../entity/Task.js';
 import type { Package } from '../entity/Package.js';
 import type { UserService } from './UserService.js';
 import type { TaskService } from './TaskService.js';

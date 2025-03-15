@@ -1,8 +1,7 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/PackageTagController/saveTag.test.ts', () => {
   let publisher: TestUser;

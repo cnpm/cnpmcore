@@ -1,8 +1,8 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
 import { TaskState } from '../../../../app/common/enum/Task.js';
 import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter.js';

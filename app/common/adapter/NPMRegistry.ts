@@ -1,9 +1,9 @@
 import { setTimeout } from 'node:timers/promises';
-import { ContextProto, AccessLevel, Inject } from '@eggjs/tegg';
+import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
 import type {
-  EggLogger,
-  EggContextHttpClient,
   EggAppConfig,
+  EggContextHttpClient,
+  EggLogger,
   HttpClientRequestOptions,
   HttpClientResponse,
 } from 'egg';

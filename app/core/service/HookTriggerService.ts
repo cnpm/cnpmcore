@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { EggContextHttpClient } from 'egg';
 import type { TriggerHookTask } from '../entity/Task.js';
 import type { HookEvent } from '../entity/HookEvent.js';

@@ -1,5 +1,6 @@
-import { Readable, Duplex } from 'node:stream';
-import { strict as assert } from 'node:assert';
+import { Duplex, Readable } from 'node:stream';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import type { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';

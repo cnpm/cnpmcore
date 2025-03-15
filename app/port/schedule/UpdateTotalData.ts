@@ -1,7 +1,10 @@
-import type { EggLogger } from 'egg';
-import type { IntervalParams } from '@eggjs/tegg/schedule';
-import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import {
+  Schedule,
+  ScheduleType,
+  type IntervalParams,
+} from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
+import type { EggLogger } from 'egg';
 
 import type { ChangesStreamTaskData } from '../../core/entity/Task.js';
 import type { RegistryManagerService } from '../../core/service/RegistryManagerService.js';

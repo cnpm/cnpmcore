@@ -1,9 +1,8 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
-import type { PackageManifestType } from '../../../../app/repository/PackageRepository.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
 import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';

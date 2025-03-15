@@ -1,12 +1,18 @@
-import { stat, readFile } from 'node:fs/promises';
-import { strict as assert } from 'node:assert';
-import type { EventBus } from '@eggjs/tegg';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { readFile, stat } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+
+import {
+  AccessLevel,
+  Inject,
+  SingletonProto,
+  type EventBus,
+} from '@eggjs/tegg';
 import { BadRequestError, ForbiddenError, NotFoundError } from 'egg-errors';
 import type { RequireAtLeastOne } from 'type-fest';
 import npa from 'npm-package-arg';
 import semver from 'semver';
 import pMap from 'p-map';
+
 import {
   calculateIntegrity,
   detectInstallScript,
@@ -34,17 +40,17 @@ import { PackageTag } from '../entity/PackageTag.js';
 import type { User } from '../entity/User.js';
 import type { Dist } from '../entity/Dist.js';
 import {
-  PACKAGE_UNPUBLISHED,
   PACKAGE_BLOCKED,
-  PACKAGE_UNBLOCKED,
   PACKAGE_MAINTAINER_CHANGED,
   PACKAGE_MAINTAINER_REMOVED,
-  PACKAGE_VERSION_ADDED,
-  PACKAGE_VERSION_REMOVED,
+  PACKAGE_META_CHANGED,
   PACKAGE_TAG_ADDED,
   PACKAGE_TAG_CHANGED,
   PACKAGE_TAG_REMOVED,
-  PACKAGE_META_CHANGED,
+  PACKAGE_UNBLOCKED,
+  PACKAGE_UNPUBLISHED,
+  PACKAGE_VERSION_ADDED,
+  PACKAGE_VERSION_REMOVED,
 } from '../event/index.js';
 import type { BugVersionService } from './BugVersionService.js';
 import type { BugVersion } from '../entity/BugVersion.js';

@@ -1,5 +1,4 @@
-import type { Static } from 'egg-typebox-validate/typebox';
-import { Type } from 'egg-typebox-validate/typebox';
+import { Type, type Static } from 'egg-typebox-validate/typebox';
 import semver from 'semver';
 import npa from 'npm-package-arg';
 import { uniq } from 'lodash-es';
@@ -7,8 +6,7 @@ import type { Ajv } from 'egg-typebox-validate';
 
 import { RegistryType } from '../common/enum/Registry.js';
 import { HookType } from '../common/enum/Hook.js';
-import type { BinaryName } from '../../config/binaries.js';
-import binaryConfig from '../../config/binaries.js';
+import binaryConfig, { type BinaryName } from '../../config/binaries.js';
 
 export const Name = Type.String({
   transform: ['trim'],

@@ -1,14 +1,17 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/AccessController/listCollaborators.test.ts', () => {
   describe('[GET /-/package/:fullname/collaborators] listCollaborators()', () => {
-
     it('should work', async () => {
-      const { pkg } = await TestUtil.createPackage({ version: '1.0.0' }, { name: 'banana-owner' });
-      const res = await app.httpRequest()
+      const { pkg } = await TestUtil.createPackage(
+        { version: '1.0.0' },
+        { name: 'banana-owner' }
+      );
+      const res = await app
+        .httpRequest()
         .get(`/-/package/${pkg.name}/collaborators`)
         .expect(200);
 
@@ -16,7 +19,8 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
     });
 
     it('should 403 when pkg not exists', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/-/package/banana/collaborators')
         .expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] Forbidden');
@@ -24,12 +28,14 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
 
     it('should refresh when maintainer updated', async () => {
       const owner = await TestUtil.createUser({ name: 'banana-owner' });
-      const maintainer = await TestUtil.createUser({ name: 'banana-maintainer' });
-
+      const maintainer = await TestUtil.createUser({
+        name: 'banana-maintainer',
+      });
 
       // create pkg
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/banana' });
-      const createRes = await app.httpRequest()
+      const createRes = await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', owner.authorization)
         .set('user-agent', owner.ua)
@@ -40,24 +46,28 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
       const rev = createRes.body.rev;
 
       // updateMaintainers
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .put(`/${pkg.name}/-rev/${rev}`)
         .set('authorization', owner.authorization)
         .set('user-agent', owner.ua)
         .set('npm-command', 'owner')
         .send({
           ...pkg,
-          maintainers: [{ name: maintainer.name, email: maintainer.email }, { name: owner.name, email: owner.email }],
+          maintainers: [
+            { name: maintainer.name, email: maintainer.email },
+            { name: owner.name, email: owner.email },
+          ],
         })
         .expect(200);
 
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/-/package/${pkg.name}/collaborators`)
         .expect(200);
 
       assert(res.body['banana-owner'] === 'write');
       assert(res.body['banana-maintainer'] === 'write');
     });
-
   });
 });

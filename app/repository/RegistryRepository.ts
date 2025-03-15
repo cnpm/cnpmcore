@@ -1,12 +1,14 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
 import { ModelConvertor } from './util/ModelConvertor.js';
-import type { Registry } from '../core/entity/Registry.js';
 import { Registry as RegistryEntity } from '../core/entity/Registry.js';
 import { AbstractRepository } from './AbstractRepository.js';
 import type { Registry as RegistryModel } from './model/Registry.js';
-import type { PageOptions, PageResult } from '../core/util/EntityUtil.js';
-import { EntityUtil } from '../core/util/EntityUtil.js';
+import {
+  EntityUtil,
+  type PageOptions,
+  type PageResult,
+} from '../core/util/EntityUtil.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -15,7 +17,7 @@ export class RegistryRepository extends AbstractRepository {
   @Inject()
   private readonly Registry: typeof RegistryModel;
 
-  async listRegistries(page: PageOptions): Promise<PageResult<Registry>> {
+  async listRegistries(page: PageOptions): Promise<PageResult<RegistryEntity>> {
     const { offset, limit } = EntityUtil.convertPageOptionsToLimitOption(page);
     const count = await this.Registry.find().count();
     const models = await this.Registry.find().offset(offset).limit(limit);
@@ -55,7 +57,7 @@ export class RegistryRepository extends AbstractRepository {
     return null;
   }
 
-  async saveRegistry(registry: Registry) {
+  async saveRegistry(registry: RegistryEntity) {
     if (registry.id) {
       const model = await this.Registry.findOne({ id: registry.id });
       if (!model) return;

@@ -7,9 +7,9 @@
   "categories": {
     "correctness": "error",
     "perf": "error",
-    "nursery": "error",
+    "nursery": "error"
     // "restriction": "error",
-    "style": "error",
+    // "style": "error",
   },
   "plugins": [
     "import",
@@ -55,10 +55,10 @@
     "typescript/consistent-type-imports": "error",
     // "typescript/no-non-null-assertion": "error",
     // style
-    "sort-imports": "error",
+    "sort-imports": "allow",
     "yoda": "allow",
     "sort-keys": "allow",
     "no-magic-numbers": "allow",
-    "no-duplicate-imports": "error",
+    "no-duplicate-imports": "error"
   }
 }

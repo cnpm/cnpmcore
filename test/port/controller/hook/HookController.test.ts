@@ -1,8 +1,8 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { HookManageService } from '../../../../app/core/service/HookManageService.js';
 import type { Hook } from '../../../../app/core/entity/Hook.js';
 import { UserRepository } from '../../../../app/repository/UserRepository.js';

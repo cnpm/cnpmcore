@@ -1,16 +1,15 @@
-import { UnprocessableEntityError, BadRequestError } from 'egg-errors';
-import type { EggContext } from '@eggjs/tegg';
+import { BadRequestError, UnprocessableEntityError } from 'egg-errors';
 import {
+  type EggContext,
+  Context,
+  HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  HTTPBody,
   Inject,
-  Context,
 } from '@eggjs/tegg';
-import type { Static } from 'egg-typebox-validate/typebox';
-import { Type } from 'egg-typebox-validate/typebox';
+import { Type, type Static } from 'egg-typebox-validate/typebox';
 
 import { AbstractController } from '../AbstractController.js';
 import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';

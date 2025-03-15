@@ -1,5 +1,8 @@
-import type { ImplDecorator } from '@eggjs/tegg';
-import { Inject, QualifierImplDecoratorUtil } from '@eggjs/tegg';
+import {
+  Inject,
+  QualifierImplDecoratorUtil,
+  type ImplDecorator,
+} from '@eggjs/tegg';
 import type { EggHttpClient, EggLogger } from 'egg';
 import type { BinaryType } from '../../enum/Binary.js';
 import type {

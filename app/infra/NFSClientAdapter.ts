@@ -1,8 +1,8 @@
 import type { Readable } from 'node:stream';
 import {
   AccessLevel,
-  LifecycleInit,
   Inject,
+  LifecycleInit,
   SingletonProto,
 } from '@eggjs/tegg';
 import type { EggAppConfig, EggLogger } from 'egg';
@@ -10,10 +10,10 @@ import FSClient from 'fs-cnpm';
 
 import type {
   AppendResult,
+  DownloadOptions,
   NFSClient,
   UploadOptions,
   UploadResult,
-  DownloadOptions,
 } from '../common/typing.js';
 
 @SingletonProto({

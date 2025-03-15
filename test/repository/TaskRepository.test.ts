@@ -1,18 +1,17 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
 import os from 'node:os';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { TaskRepository } from '../../app/repository/TaskRepository.js';
 import { Task as TaskModel } from '../../app/repository/model/Task.js';
-import type {
-  ChangesStreamTaskData,
-  TaskData,
+import {
+  Task,
+  type TaskData,
+  type ChangesStreamTaskData,
 } from '../../app/core/entity/Task.js';
-import { Task } from '../../app/core/entity/Task.js';
+import { EntityUtil, type EasyData } from '../../app/core/util/EntityUtil.js';
 import { TaskState, TaskType } from '../../app/common/enum/Task.js';
-import type { EasyData } from '../../app/core/util/EntityUtil.js';
-import { EntityUtil } from '../../app/core/util/EntityUtil.js';
 
 describe('test/repository/TaskRepository.test.ts', () => {
   let taskRepository: TaskRepository;

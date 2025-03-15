@@ -1,7 +1,7 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
-import type { EggAppConfig, PowerPartial, Context } from 'egg';
+import type { Context, EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
 import S3Client from 's3-cnpmcore';
 import { env } from 'read-env-value';

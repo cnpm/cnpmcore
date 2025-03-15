@@ -1,6 +1,6 @@
 import type { Readable } from 'node:stream';
 import type { IncomingHttpHeaders } from 'node:http';
-import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
 import type { EggLogger } from 'egg';
 import { AsyncTimer } from '../aop/AsyncTimer.js';

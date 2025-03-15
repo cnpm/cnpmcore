@@ -1,14 +1,17 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/AccessController/listPackagesByUser.test.ts', () => {
   describe('[GET /-/org/:username/package] listPackagesByUser()', () => {
-
     it('should work', async () => {
-      const { pkg } = await TestUtil.createPackage({ version: '1.0.0' }, { name: 'banana' });
-      const res = await app.httpRequest()
+      const { pkg } = await TestUtil.createPackage(
+        { version: '1.0.0' },
+        { name: 'banana' }
+      );
+      const res = await app
+        .httpRequest()
         .get('/-/org/banana/package')
         .expect(200);
 
@@ -16,11 +19,14 @@ describe('test/port/controller/AccessController/listPackagesByUser.test.ts', () 
     });
 
     it('should 404 when user not exists', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/-/org/banana-disappear/package')
         .expect(404);
-      assert.equal(res.body.error, '[NOT_FOUND] User "banana-disappear" not found');
+      assert.equal(
+        res.body.error,
+        '[NOT_FOUND] User "banana-disappear" not found'
+      );
     });
-
   });
 });

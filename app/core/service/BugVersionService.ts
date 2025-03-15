@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { EggLogger } from 'egg';
 import pMap from 'p-map';
 import { BugVersion } from '../entity/BugVersion.js';

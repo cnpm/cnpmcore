@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import dayjs from 'dayjs';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
@@ -9,7 +9,8 @@ describe('test/port/controller/UserController/whoami.test.ts', () => {
   describe('[GET /-/whoami] whoami()', () => {
     it('should 200', async () => {
       const { authorization, name } = await TestUtil.createUser();
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/-/whoami')
         .set('authorization', authorization)
         .expect(200);
@@ -17,12 +18,11 @@ describe('test/port/controller/UserController/whoami.test.ts', () => {
     });
 
     it('should unauthorized', async () => {
-      let res = await app.httpRequest()
-        .get('/-/whoami')
-        .expect(401);
+      let res = await app.httpRequest().get('/-/whoami').expect(401);
       assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get('/-/whoami')
         .set('authorization', 'Bearer foo-token')
         .expect(401);
@@ -38,18 +38,20 @@ describe('test/port/controller/UserController/whoami.test.ts', () => {
           email,
         };
       });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .post('/-/npm/v1/tokens/gat')
         .send({
           name: 'apple',
           description: 'lets play',
-          allowedPackages: [ '@cnpm/banana' ],
-          allowedScopes: [ '@banana' ],
+          allowedPackages: ['@cnpm/banana'],
+          allowedScopes: ['@banana'],
           expires: 30,
         })
         .expect(200);
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get('/-/whoami')
         .set('authorization', `Bearer ${res.body.token}`)
         .expect(200);
@@ -57,8 +59,8 @@ describe('test/port/controller/UserController/whoami.test.ts', () => {
       assert.equal(res.body.username, name);
       assert.equal(res.body.name, 'apple');
       assert.equal(res.body.description, 'lets play');
-      assert.deepEqual(res.body.allowedPackages, [ '@cnpm/banana' ]);
-      assert.deepEqual(res.body.allowedScopes, [ '@banana' ]);
+      assert.deepEqual(res.body.allowedPackages, ['@cnpm/banana']);
+      assert.deepEqual(res.body.allowedScopes, ['@banana']);
       assert(dayjs(res.body.expires).isBefore(dayjs().add(30, 'days')));
     });
   });

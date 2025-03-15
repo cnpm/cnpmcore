@@ -1,26 +1,26 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
-import { Package as PackageModel } from '../../../../app/repository/model/Package.js';
-import { Task as TaskModel } from '../../../../app/repository/model/Task.js';
-import { Task as TaskEntity } from '../../../../app/core/entity/Task.js';
-import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.js';
-import { NPMRegistry } from '../../../../app/common/adapter/NPMRegistry.js';
-import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter.js';
-import { getScopeAndName } from '../../../../app/common/PackageUtil.js';
-import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import type { Registry } from '../../../../app/core/entity/Registry.js';
-import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import { TaskService } from '../../../../app/core/service/TaskService.js';
-import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
-import { UserService } from '../../../../app/core/service/UserService.js';
 import { ChangeRepository } from '../../../../app/repository/ChangeRepository.js';
+import { getScopeAndName } from '../../../../app/common/PackageUtil.js';
+import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.js';
+import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter.js';
+import { NPMRegistry } from '../../../../app/common/adapter/NPMRegistry.js';
+import { Package as PackageModel } from '../../../../app/repository/model/Package.js';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
 import { PackageVersion } from '../../../../app/repository/model/PackageVersion.js';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
+import { RegistryType } from '../../../../app/common/enum/Registry.js';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
+import { Task as TaskEntity } from '../../../../app/core/entity/Task.js';
+import { Task as TaskModel } from '../../../../app/repository/model/Task.js';
+import { TaskService } from '../../../../app/core/service/TaskService.js';
 import { TaskState } from '../../../../app/common/enum/Task.js';
+import { TestUtil } from '../../../../test/TestUtil.js';
+import { UserService } from '../../../../app/core/service/UserService.js';
+import type { Registry } from '../../../../app/core/entity/Registry.js';
 
 describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   let packageSyncerService: PackageSyncerService;

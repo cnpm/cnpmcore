@@ -1,12 +1,12 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService.js';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
-import { database, DATABASE_TYPE } from '../../../../config/database.js';
+import { DATABASE_TYPE, database } from '../../../../config/database.js';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let publisher: TestUser;

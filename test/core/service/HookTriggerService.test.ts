@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import type { HttpClientRequestOptions } from 'egg';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
@@ -12,8 +12,7 @@ import {
 } from '../../../app/core/event/index.js';
 import { Change } from '../../../app/core/entity/Change.js';
 import { ChangeRepository } from '../../../app/repository/ChangeRepository.js';
-import type { TriggerHookTask } from '../../../app/core/entity/Task.js';
-import { Task } from '../../../app/core/entity/Task.js';
+import { Task, type TriggerHookTask } from '../../../app/core/entity/Task.js';
 import { HookEvent } from '../../../app/core/entity/HookEvent.js';
 import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService.js';
 import { TaskRepository } from '../../../app/repository/TaskRepository.js';

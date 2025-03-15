@@ -1,29 +1,26 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
-  Inject,
+  type EggContext,
+  Context,
+  HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  HTTPBody,
-  Context,
   HTTPQuery,
+  Inject,
 } from '@eggjs/tegg';
-import type { EggLogger, EggAppConfig } from 'egg';
-import type { Static } from 'egg-typebox-validate/typebox';
-import { Type } from 'egg-typebox-validate/typebox';
+import type { EggAppConfig, EggLogger } from 'egg';
+import { Type, type Static } from 'egg-typebox-validate/typebox';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 import { createHash } from 'node:crypto';
 import base64url from 'base64url';
-import type {
-  VerifyRegistrationResponseOpts,
-  VerifyAuthenticationResponseOpts,
-} from '@simplewebauthn/server';
 import {
-  generateRegistrationOptions,
-  verifyRegistrationResponse,
+  type VerifyAuthenticationResponseOpts,
+  type VerifyRegistrationResponseOpts,
   generateAuthenticationOptions,
+  generateRegistrationOptions,
   verifyAuthenticationResponse,
+  verifyRegistrationResponse,
 } from '@simplewebauthn/server';
 import type {
   PublicKeyCredentialCreationOptionsJSON,
@@ -35,7 +32,7 @@ import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
 import type { UserService } from '../../core/service/UserService.js';
 import { MiddlewareController } from '../middleware/index.js';
 import type { AuthAdapter } from '../../infra/AuthAdapter.js';
-import { genRSAKeys, decryptRSA } from '../../common/CryptoUtil.js';
+import { decryptRSA, genRSAKeys } from '../../common/CryptoUtil.js';
 import { getBrowserTypeForWebauthn } from '../../common/UserUtil.js';
 
 const LoginRequestRule = Type.Object({

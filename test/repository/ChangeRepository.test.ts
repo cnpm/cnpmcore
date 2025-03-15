@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { ChangeRepository } from '../../app/repository/ChangeRepository.js';
@@ -34,7 +34,11 @@ describe('test/repository/ChangeRepository.test.ts', () => {
       // pg truncate 后，id 不会重置
       const firstId = Number(ids[0]) - 1;
       assert.deepStrictEqual(ids, [
-        firstId + 1, firstId + 2, firstId + 3, firstId + 4, firstId + 5,
+        firstId + 1,
+        firstId + 2,
+        firstId + 3,
+        firstId + 4,
+        firstId + 5,
       ]);
     });
   });

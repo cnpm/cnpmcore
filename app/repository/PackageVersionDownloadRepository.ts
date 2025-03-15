@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
 import { AbstractRepository } from './AbstractRepository.js';
 import type { PackageVersionDownload as PackageVersionDownloadModel } from './model/PackageVersionDownload.js';
@@ -10,7 +10,11 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
   @Inject()
   private readonly PackageVersionDownload: typeof PackageVersionDownloadModel;
 
-  async plus(packageId: string, version: string, counter: number): Promise<void> {
+  async plus(
+    packageId: string,
+    version: string,
+    counter: number
+  ): Promise<void> {
     const now = new Date();
     const yearMonth = now.getFullYear() * 100 + now.getMonth() + 1;
     const date = new Date().getDate();
@@ -28,14 +32,27 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
         yearMonth,
       };
       model = await this.PackageVersionDownload.create(attributes);
-      this.logger.info('[PackageVersionDownloadRepository:plus:new] id: %s, packageId: %s, version: %s, yearMonth: %s',
-        model.id, model.packageId, model.version, model.yearMonth);
+      this.logger.info(
+        '[PackageVersionDownloadRepository:plus:new] id: %s, packageId: %s, version: %s, yearMonth: %s',
+        model.id,
+        model.packageId,
+        model.version,
+        model.yearMonth
+      );
     }
-    await this.PackageVersionDownload
-      .where({ id: model.id })
-      .increment(field, counter);
-    this.logger.info('[PackageVersionDownloadRepository:plus:increment] id: %s, packageId: %s, version: %s, field: %s%s, plus: %d',
-      model.id, model.packageId, model.version, model.yearMonth, field, counter);
+    await this.PackageVersionDownload.where({ id: model.id }).increment(
+      field,
+      counter
+    );
+    this.logger.info(
+      '[PackageVersionDownloadRepository:plus:increment] id: %s, packageId: %s, version: %s, field: %s%s, plus: %d',
+      model.id,
+      model.packageId,
+      model.version,
+      model.yearMonth,
+      field,
+      counter
+    );
   }
 
   async query(packageId: string, start: Date, end: Date) {
@@ -48,7 +65,11 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
     return models;
   }
 
-  async saveSyncDataByMonth(packageId: string, yearMonth: number, counters: [string, number][]): Promise<void> {
+  async saveSyncDataByMonth(
+    packageId: string,
+    yearMonth: number,
+    counters: [string, number][]
+  ): Promise<void> {
     const version = '*';
     let model = await this.PackageVersionDownload.findOne({
       packageId,
@@ -64,7 +85,7 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
       };
       model = await this.PackageVersionDownload.create(attributes);
     }
-    for (const [ date, counter ] of counters) {
+    for (const [date, counter] of counters) {
       const field = `d${date}`;
       (model as unknown as Record<string, number>)[field] = counter;
     }
