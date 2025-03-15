@@ -55,7 +55,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
         if (item.name === 'nwjs-v0.59.0-win-x64.zip') {
           assert(item.date === '2021-12-02T23:35:59.000Z');
           assert(item.isDir === false);
-          assert(item.size === 110828221);
+          assert(item.size === 110_828_221);
           assert(
             item.url === 'https://dl.nwjs.io/v0.59.0/nwjs-v0.59.0-win-x64.zip'
           );
@@ -86,14 +86,14 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
         if (item.name === 'node.lib') {
           assert(item.date === '2021-12-21T22:41:19.000Z');
           assert(item.isDir === false);
-          assert(item.size === 871984);
+          assert(item.size === 871_984);
           assert(item.url === 'https://dl.nwjs.io/v0.59.1/x64/node.lib');
           matchFile1 = true;
         }
         if (item.name === 'nw.lib') {
           assert(item.date === '2021-12-21T22:41:19.000Z');
           assert(item.isDir === false);
-          assert(item.size === 6213840);
+          assert(item.size === 6_213_840);
           assert(item.url === 'https://dl.nwjs.io/v0.59.1/x64/nw.lib');
           matchFile2 = true;
         }

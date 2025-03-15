@@ -413,7 +413,7 @@ export class ProxyCacheService extends AbstractService {
       // once redirection is also count as a retry
       retry: 7,
       dataType: 'stream',
-      timeout: 10000,
+      timeout: 10_000,
       compressed: true,
       ...options,
       headers: {

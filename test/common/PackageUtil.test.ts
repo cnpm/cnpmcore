@@ -44,7 +44,7 @@ describe('test/common/PackageUtil.test.ts', () => {
         bigTarballUrl,
         { dataType: 'buffer' }
       );
-      assert.equal(bigBufferResult.data.length, /* ~16MB */ 16035586);
+      assert.equal(bigBufferResult.data.length, /* ~16MB */ 16_035_586);
       assert.equal(await hasShrinkWrapInTgz(bigBufferResult.data), false);
     });
   });

@@ -41,7 +41,7 @@ export class ChromeForTestingBinary extends AbstractBinary {
       jsonApiEndpoint,
       {
         dataType: 'json',
-        timeout: 30000,
+        timeout: 30_000,
         followRedirect: true,
         gzip: true,
       }

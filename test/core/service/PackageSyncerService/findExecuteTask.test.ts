@@ -55,7 +55,7 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       await TaskModel.update(
         { id: task3.id },
         {
-          updatedAt: new Date(task3.updatedAt.getTime() - 60000 * 10 - 1),
+          updatedAt: new Date(task3.updatedAt.getTime() - 60_000 * 10 - 1),
           logStorePosition: '123',
         }
       );
@@ -78,7 +78,7 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       // attempts > 3 will be set to timeout task and save to history
       await TaskModel.update(
         { id: task3.id },
-        { updatedAt: new Date(task3.updatedAt.getTime() - 60000 * 10 - 1) }
+        { updatedAt: new Date(task3.updatedAt.getTime() - 60_000 * 10 - 1) }
       );
       app.mockLog();
       await taskService.retryExecuteTimeoutTasks();
@@ -91,7 +91,7 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
 
       await TaskModel.update(
         { id: task3.id },
-        { updatedAt: new Date(task3.updatedAt.getTime() - 60000 * 10 - 1) }
+        { updatedAt: new Date(task3.updatedAt.getTime() - 60_000 * 10 - 1) }
       );
       app.mockLog();
       let result = await taskService.retryExecuteTimeoutTasks();
@@ -123,7 +123,7 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       await TaskModel.update(
         { id: task.id },
         {
-          updatedAt: new Date(task.updatedAt.getTime() - 60000 * 10 - 1),
+          updatedAt: new Date(task.updatedAt.getTime() - 60_000 * 10 - 1),
         }
       );
       let result = await taskService.retryExecuteTimeoutTasks();
@@ -134,7 +134,7 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       await TaskModel.update(
         { id: task.id },
         {
-          updatedAt: new Date(task.updatedAt.getTime() - 60000 * 30 - 1),
+          updatedAt: new Date(task.updatedAt.getTime() - 60_000 * 30 - 1),
         }
       );
       app.mockLog();

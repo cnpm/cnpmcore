@@ -605,7 +605,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         integrity:
           'sha512-o/nCeU2MBJpIWhA8gIbf6YW49Ss3Spga5M70LJjjyRMlALQDmeh8IVMXagAe79l1Yznci/otKtNjWhVMOM38hg==',
         lastModified: publishTime,
-        size: 26716,
+        size: 26_716,
       });
 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/tests`);

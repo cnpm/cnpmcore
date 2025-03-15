@@ -28,7 +28,7 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
     it('should work', async () => {
       const since = await cnpmjsorgChangesStream.getInitialSince(registry);
       const now = new Date().getTime();
-      assert(now - Number(since) < 10000);
+      assert(now - Number(since) < 10_000);
     });
   });
 

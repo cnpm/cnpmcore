@@ -48,7 +48,7 @@ export abstract class AbstractBinary {
 
   protected async requestXml(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {
-      timeout: 30000,
+      timeout: 30_000,
       followRedirect: true,
       gzip: true,
     });
@@ -71,7 +71,7 @@ export abstract class AbstractBinary {
     requestHeaders?: Record<string, string>
   ) {
     const { status, data, headers } = await this.httpclient.request(url, {
-      timeout: 30000,
+      timeout: 30_000,
       dataType: 'json',
       followRedirect: true,
       gzip: true,

@@ -54,7 +54,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     const existsTask = await Task.findOne({ type: 'changes_stream' });
     assert(existsTask);
     existsTask.updatedAt = new Date(
-      existsTask.updatedAt.getTime() - 60000 * 10 - 1
+      existsTask.updatedAt.getTime() - 60_000 * 10 - 1
     );
     await existsTask.save();
     const result = await taskService.retryExecuteTimeoutTasks();
@@ -99,7 +99,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     const existsTask = await Task.findOne({ type: 'changes_stream' });
     assert(existsTask);
     existsTask.updatedAt = new Date(
-      existsTask.updatedAt.getTime() - 60000 * 10 - 1
+      existsTask.updatedAt.getTime() - 60_000 * 10 - 1
     );
     await existsTask.save();
     const result = await taskService.retryExecuteTimeoutTasks();

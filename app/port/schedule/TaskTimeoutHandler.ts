@@ -13,7 +13,7 @@ import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
   {
     type: ScheduleType.WORKER,
     scheduleData: {
-      interval: 60000,
+      interval: 60_000,
     },
   },
   {

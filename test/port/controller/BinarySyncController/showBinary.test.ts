@@ -446,7 +446,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       assert(items[0].type === 'file');
       // assert(items[0].size === 1856939);
       // mock size
-      assert(items[0].size === 10240);
+      assert(items[0].size === 10_240);
       assert(items[0].date === '2021-12-14T13:12:31.587Z');
       assert(items[0].id);
       assert(items[0].modified);

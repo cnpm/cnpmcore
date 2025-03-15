@@ -12,7 +12,7 @@ import { isTimeoutError } from '../../common/ErrorUtil.js';
 @Schedule<IntervalParams>({
   type: ScheduleType.ALL,
   scheduleData: {
-    interval: 10000,
+    interval: 10_000,
   },
 })
 export class SyncBinaryWorker {

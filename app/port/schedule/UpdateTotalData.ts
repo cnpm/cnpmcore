@@ -25,7 +25,7 @@ import dayjs from '../../common/dayjs.js';
   {
     type: ScheduleType.WORKER,
     scheduleData: {
-      interval: 60000,
+      interval: 60_000,
     },
   },
   {

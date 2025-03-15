@@ -86,7 +86,7 @@ async function _downloadToTempfile(
       requestHeaders.authorization = `Bearer ${optionalConfig.remoteAuthToken}`;
     }
     const { status, headers, res } = (await httpclient.request(url, {
-      timeout: 60000 * 10,
+      timeout: 60_000 * 10,
       headers: requestHeaders,
       writeStream,
       timing: true,
