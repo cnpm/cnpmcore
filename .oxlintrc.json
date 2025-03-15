@@ -59,6 +59,7 @@
     "typescript/consistent-type-imports": "error",
     // "typescript/no-non-null-assertion": "error",
     "no-extraneous-class": "allow",
+    "typescript/consistent-type-definitions": "allow",
     // style
     "sort-imports": "allow",
     "yoda": "allow",
