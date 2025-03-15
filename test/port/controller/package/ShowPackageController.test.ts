@@ -3,7 +3,10 @@ import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
-import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
+import {
+  PackageRepository,
+  type PackageManifestType,
+} from '../../../../app/repository/PackageRepository.js';
 import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
 import { CacheService } from '../../../../app/core/service/CacheService.js';
