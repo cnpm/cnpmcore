@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 import npa from 'npm-package-arg';
 
@@ -13,7 +13,6 @@ import { PackageVersionRepository } from '../../../app/repository/PackageVersion
 import { DistRepository } from '../../../app/repository/DistRepository.js';
 
 describe('test/core/service/PackageVersionService.test.ts', () => {
-
   let distRepository: DistRepository;
   let packageVersionService: PackageVersionService;
   let bugVersionService: BugVersionService;
@@ -21,7 +20,6 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
 
   beforeEach(async () => {
     await app.ready();
-
 
     await PackageModel.create({
       createdAt: new Date(),
@@ -58,20 +56,24 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
     bugVersionService = await app.getEggObject(BugVersionService);
     packageVersionRepository = await app.getEggObject(PackageVersionRepository);
 
-    mock(distRepository, 'findPackageVersionManifest', async (_: string, version: string) => {
-      if (version === '1.0.0') {
-        return {
-          name: 'mock_package',
-          version: '1.0.0',
-        };
+    mock(
+      distRepository,
+      'findPackageVersionManifest',
+      async (_: string, version: string) => {
+        if (version === '1.0.0') {
+          return {
+            name: 'mock_package',
+            version: '1.0.0',
+          };
+        }
+        if (version === '1.1.3') {
+          return {
+            name: 'mock_package',
+            version: '1.1.3',
+          };
+        }
       }
-      if (version === '1.1.3') {
-        return {
-          name: 'mock_package',
-          version: '1.1.3',
-        };
-      }
-    });
+    );
   });
 
   afterEach(async () => {
@@ -84,9 +86,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
   describe('getPackageManifest', () => {
     describe('version middlewares', () => {
       describe('hit wildcard', () => {
-
         beforeEach(async () => {
-
           // 1.1.0
           await CnpmPackageVersionModel.create({
             packageId: 'mock_package_id',
@@ -99,39 +99,58 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
             publishTime: new Date(),
           });
 
-          mock(distRepository, 'findPackageVersionManifest', async (_: string, version: string) => {
-            assert.equal(version, '1.1.0');
-            return {
-              name: 'mock_package',
-              version: '1.1.0',
-            };
-          });
-
+          mock(
+            distRepository,
+            'findPackageVersionManifest',
+            async (_: string, version: string) => {
+              assert.equal(version, '1.1.0');
+              return {
+                name: 'mock_package',
+                version: '1.1.0',
+              };
+            }
+          );
         });
 
         it('should return latest for *', async () => {
-          const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@*'), true);
+          const manifest = await packageVersionService.readManifest(
+            'mock_package_id',
+            npa('mock_package@*'),
+            true
+          );
           assert(manifest);
           assert.equal(manifest.version, '1.1.0');
         });
 
         describe('getVersion should work', () => {
           it('should work without options', async () => {
-            const wildVersion = await packageVersionService.getVersion(npa('mock_package@*'));
-            const tagVersion = await packageVersionService.getVersion(npa('mock_package@latest'));
+            const wildVersion = await packageVersionService.getVersion(
+              npa('mock_package@*')
+            );
+            const tagVersion = await packageVersionService.getVersion(
+              npa('mock_package@latest')
+            );
             assert.equal(wildVersion, '1.1.0');
             assert.equal(tagVersion, '1.0.0');
           });
         });
 
         it('should return latest for x', async () => {
-          const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@*'), true);
+          const manifest = await packageVersionService.readManifest(
+            'mock_package_id',
+            npa('mock_package@*'),
+            true
+          );
           assert(manifest);
           assert.equal(manifest.version, '1.1.0');
         });
 
         it('should return latest for compose', async () => {
-          const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@^*||~x'), true);
+          const manifest = await packageVersionService.readManifest(
+            'mock_package_id',
+            npa('mock_package@^*||~x'),
+            true
+          );
           assert(manifest);
           assert.equal(manifest.version, '1.1.0');
         });
@@ -151,13 +170,17 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           publishTime: new Date(),
         });
 
-        mock(distRepository, 'findPackageVersionManifest', async (_: string, version: string) => {
-          assert(version === '0.0.9');
-          return {
-            name: 'mock_package',
-            version: '0.0.9',
-          };
-        });
+        mock(
+          distRepository,
+          'findPackageVersionManifest',
+          async (_: string, version: string) => {
+            assert(version === '0.0.9');
+            return {
+              name: 'mock_package',
+              version: '0.0.9',
+            };
+          }
+        );
         mock(bugVersionService, 'getBugVersion', async () => {
           return new BugVersion({
             mock_package: {
@@ -171,12 +194,17 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
       });
 
       it('should work', async () => {
-        const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@latest'), true);
+        const manifest = await packageVersionService.readManifest(
+          'mock_package_id',
+          npa('mock_package@latest'),
+          true
+        );
         assert(manifest);
-        assert.equal(manifest.deprecated, '[WARNING] Use 0.0.9 instead of 1.0.0, reason: mock bug version');
+        assert.equal(
+          manifest.deprecated,
+          '[WARNING] Use 0.0.9 instead of 1.0.0, reason: mock bug version'
+        );
       });
-
-
     });
 
     describe('hit range resolution', () => {
@@ -203,19 +231,23 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           publishTime: new Date(),
         });
 
-        mock(distRepository, 'findPackageVersionManifest', async (_: string, version: string) => {
-          if (version === '0.0.9') {
-            return {
-              name: 'mock_package',
-              version: '0.0.9',
-            };
-          } else if (version === '0.0.10') {
-            return {
-              name: 'mock_package',
-              version: '0.0.10',
-            };
+        mock(
+          distRepository,
+          'findPackageVersionManifest',
+          async (_: string, version: string) => {
+            if (version === '0.0.9') {
+              return {
+                name: 'mock_package',
+                version: '0.0.9',
+              };
+            } else if (version === '0.0.10') {
+              return {
+                name: 'mock_package',
+                version: '0.0.10',
+              };
+            }
           }
-        });
+        );
         mock(bugVersionService, 'getBugVersion', () => {
           return new BugVersion({});
         });
@@ -225,7 +257,6 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
         await CnpmPackageVersionModel.truncate();
         await CnpmPackageVersionModel.truncate();
       });
-
     });
 
     describe('hit tag resolution', () => {
@@ -247,13 +278,17 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           version: '0.0.9',
         });
 
-        mock(distRepository, 'findPackageVersionManifest', async (_: string, version: string) => {
-          assert(version === '0.0.9');
-          return {
-            name: 'mock_package',
-            version: '0.0.9',
-          };
-        });
+        mock(
+          distRepository,
+          'findPackageVersionManifest',
+          async (_: string, version: string) => {
+            assert(version === '0.0.9');
+            return {
+              name: 'mock_package',
+              version: '0.0.9',
+            };
+          }
+        );
         mock(bugVersionService, 'getBugVersion', () => {
           return new BugVersion({});
         });
@@ -262,12 +297,10 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
       afterEach(async () => {
         await CnpmPackageVersionModel.truncate();
       });
-
     });
 
     describe('semver', () => {
       beforeEach(async () => {
-
         await CnpmPackageVersionModel.create({
           packageId: 'mock_package_id',
           packageVersionId: 'mock_2',
@@ -290,27 +323,33 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           publishTime: new Date(),
         });
 
-        mock(distRepository, 'findPackageVersionManifest', async (_: string, version: string) => {
-          if (version === '2.2.0') {
-            return {
-              name: 'mock_package',
-              version: '2.2.0',
-            };
+        mock(
+          distRepository,
+          'findPackageVersionManifest',
+          async (_: string, version: string) => {
+            if (version === '2.2.0') {
+              return {
+                name: 'mock_package',
+                version: '2.2.0',
+              };
+            }
+            if (version === '1.0.0') {
+              return {
+                name: 'mock_package',
+                version: '1.0.0',
+              };
+            }
           }
-          if (version === '1.0.0') {
-            return {
-              name: 'mock_package',
-              version: '1.0.0',
-            };
-          }
-        });
-
-
+        );
       });
 
       describe('should return latest tag', () => {
         it('should work', async () => {
-          const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@^1.0.0'), true);
+          const manifest = await packageVersionService.readManifest(
+            'mock_package_id',
+            npa('mock_package@^1.0.0'),
+            true
+          );
           assert(manifest);
           assert(manifest.version === '1.0.0');
         });
@@ -318,18 +357,25 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
 
       describe('2.x', () => {
         it('should return major latest tag', async () => {
-          const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@^2.0.0'), true);
+          const manifest = await packageVersionService.readManifest(
+            'mock_package_id',
+            npa('mock_package@^2.0.0'),
+            true
+          );
           assert(manifest);
           assert(manifest.version === '2.2.0');
         });
       });
-
     });
   });
 
   describe('get alias', () => {
     it('should work', async () => {
-      const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package_alias@npm:mock_package@^1.0.0'), true);
+      const manifest = await packageVersionService.readManifest(
+        'mock_package_id',
+        npa('mock_package_alias@npm:mock_package@^1.0.0'),
+        true
+      );
       assert.deepStrictEqual(manifest, {
         name: 'mock_package',
         version: '1.0.0',
@@ -339,7 +385,11 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
 
   describe('get tag', () => {
     it('should work', async () => {
-      const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@latest'), true);
+      const manifest = await packageVersionService.readManifest(
+        'mock_package_id',
+        npa('mock_package@latest'),
+        true
+      );
       assert.deepStrictEqual(manifest, {
         name: 'mock_package',
         version: '1.0.0',
@@ -347,7 +397,6 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
     });
 
     it('should work for range tag', async () => {
-
       await CnpmPackageVersionModel.create({
         packageId: 'mock_package_id',
         packageVersionId: 'mock_package_1.1.3',
@@ -377,7 +426,11 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
         version: '1.1.3',
       });
 
-      const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@1.1'), true);
+      const manifest = await packageVersionService.readManifest(
+        'mock_package_id',
+        npa('mock_package@1.1'),
+        true
+      );
       assert.deepStrictEqual(manifest, {
         name: 'mock_package',
         version: '1.1.3',
@@ -387,7 +440,11 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
 
   describe('get version', () => {
     it('should work', async () => {
-      const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@1.0.0'), true);
+      const manifest = await packageVersionService.readManifest(
+        'mock_package_id',
+        npa('mock_package@1.0.0'),
+        true
+      );
       assert.deepStrictEqual(manifest, {
         name: 'mock_package',
         version: '1.0.0',
@@ -397,7 +454,11 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
 
   describe('get range', () => {
     it('should work', async () => {
-      const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@^1.0.0'), true);
+      const manifest = await packageVersionService.readManifest(
+        'mock_package_id',
+        npa('mock_package@^1.0.0'),
+        true
+      );
       assert.deepStrictEqual(manifest, {
         name: 'mock_package',
         version: '1.0.0',
@@ -405,7 +466,11 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
     });
 
     it('should work for equal range', async () => {
-      const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@=1.0.0'), true);
+      const manifest = await packageVersionService.readManifest(
+        'mock_package_id',
+        npa('mock_package@=1.0.0'),
+        true
+      );
       assert.deepStrictEqual(manifest, {
         name: 'mock_package',
         version: '1.0.0',
@@ -413,7 +478,6 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
     });
 
     it('should support maxSatisfying', async () => {
-
       // 17.0.18
       await CnpmPackageVersionModel.create({
         packageId: 'mock_package_id',
@@ -425,7 +489,10 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
         readmeDistId: 'mock_readme_dist_id',
         publishTime: new Date(),
       });
-      await packageVersionRepository.fixPaddingVersion('mock_package_17.0.18', new PaddingSemVer('17.0.18'));
+      await packageVersionRepository.fixPaddingVersion(
+        'mock_package_17.0.18',
+        new PaddingSemVer('17.0.18')
+      );
 
       // 17.0.9
       await CnpmPackageVersionModel.create({
@@ -438,8 +505,13 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
         readmeDistId: 'mock_readme_dist_id',
         publishTime: new Date(),
       });
-      await packageVersionRepository.fixPaddingVersion('mock_package_17.0.9', new PaddingSemVer('17.0.9'));
-      const version = await packageVersionService.getVersion(npa('mock_package@<18.0.0'));
+      await packageVersionRepository.fixPaddingVersion(
+        'mock_package_17.0.9',
+        new PaddingSemVer('17.0.9')
+      );
+      const version = await packageVersionService.getVersion(
+        npa('mock_package@<18.0.0')
+      );
       assert(version, '17.0.18');
     });
   });

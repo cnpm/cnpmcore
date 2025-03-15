@@ -14,7 +14,7 @@ import { app as globalApp } from '@eggjs/mock/bootstrap';
 
 import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.js';
 import type { PackageJSONType } from '../app/repository/PackageRepository.js';
-import { database, DATABASE_TYPE } from '../config/database.js';
+import { DATABASE_TYPE, database } from '../config/database.js';
 import { Package as PackageModel } from '../app/repository/model/Package.js';
 
 const __filename = fileURLToPath(import.meta.url);

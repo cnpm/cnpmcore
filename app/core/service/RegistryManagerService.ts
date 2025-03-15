@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { E400, NotFoundError } from 'egg-errors';
 import type { RegistryRepository } from '../../repository/RegistryRepository.js';
 import { AbstractService } from '../../common/AbstractService.js';

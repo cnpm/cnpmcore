@@ -1,7 +1,7 @@
 import type {
+  ChangesStreamMode,
   SyncDeleteMode,
   SyncMode,
-  ChangesStreamMode,
 } from '../common/constants.js';
 import type { DATABASE_TYPE } from '../../config/database.js';
 

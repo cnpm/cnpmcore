@@ -1,10 +1,10 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  Context,
   Inject,
 } from '@eggjs/tegg';
 import path from 'node:path';
@@ -13,8 +13,7 @@ import { NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController.js';
 import type { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
 import type { Binary } from '../../core/entity/Binary.js';
-import type { BinaryName } from '../../../config/binaries.js';
-import binaries from '../../../config/binaries.js';
+import binaries, { type BinaryName } from '../../../config/binaries.js';
 import { BinaryNameRule, BinarySubpathRule } from '../typebox.js';
 
 @HTTPController()

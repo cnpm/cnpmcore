@@ -1,13 +1,14 @@
 import type {
+  Context,
   EggHttpClient,
   HttpClientRequestOptions,
   HttpClientResponse,
-  Context,
 } from 'egg';
 import { ForbiddenError } from 'egg-errors';
-import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { valid as semverValid } from 'semver';
+
 import { AbstractService } from '../../common/AbstractService.js';
 import type { TaskService } from './TaskService.js';
 import type { CacheService } from './CacheService.js';
@@ -15,13 +16,13 @@ import type { RegistryManagerService } from './RegistryManagerService.js';
 import type { NPMRegistry } from '../../common/adapter/NPMRegistry.js';
 import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
 import { ProxyCache } from '../entity/ProxyCache.js';
-import type {
-  UpdateProxyCacheTaskOptions,
-  CreateUpdateProxyCacheTask,
+import {
+  type CreateUpdateProxyCacheTask,
+  type UpdateProxyCacheTaskOptions,
+  Task,
 } from '../entity/Task.js';
-import { Task } from '../entity/Task.js';
 import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
-import { TaskType, TaskState } from '../../common/enum/Task.js';
+import { TaskState, TaskType } from '../../common/enum/Task.js';
 import { calculateIntegrity } from '../../common/PackageUtil.js';
 import {
   ABBREVIATED_META_TYPE,
@@ -29,10 +30,10 @@ import {
 } from '../../common/constants.js';
 import { DIST_NAMES, isPkgManifest } from '../entity/Package.js';
 import type {
-  AbbreviatedPackageManifestType,
   AbbreviatedPackageJSONType,
-  PackageManifestType,
+  AbbreviatedPackageManifestType,
   PackageJSONType,
+  PackageManifestType,
 } from '../../repository/PackageRepository.js';
 
 function isoNow() {

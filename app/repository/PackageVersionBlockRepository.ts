@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
 import { ModelConvertor } from './util/ModelConvertor.js';
 import type { PackageVersionBlock as PackageVersionBlockModel } from './model/PackageVersionBlock.js';
@@ -18,9 +18,15 @@ export class PackageVersionBlockRepository extends AbstractRepository {
       if (!model) return;
       await ModelConvertor.saveEntityToModel(block, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(block, this.PackageVersionBlock);
-      this.logger.info('[PackageVersionBlockRepository:savePackageVersionBlock:new] id: %s, packageVersionBlockId: %s',
-        model.id, model.packageVersionBlockId);
+      const model = await ModelConvertor.convertEntityToModel(
+        block,
+        this.PackageVersionBlock
+      );
+      this.logger.info(
+        '[PackageVersionBlockRepository:savePackageVersionBlock:new] id: %s, packageVersionBlockId: %s',
+        model.id,
+        model.packageVersionBlockId
+      );
     }
   }
 
@@ -29,8 +35,15 @@ export class PackageVersionBlockRepository extends AbstractRepository {
   }
 
   async findPackageVersionBlock(packageId: string, version: string) {
-    const model = await this.PackageVersionBlock.findOne({ packageId, version });
-    if (model) return ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity);
+    const model = await this.PackageVersionBlock.findOne({
+      packageId,
+      version,
+    });
+    if (model)
+      return ModelConvertor.convertModelToEntity(
+        model,
+        PackageVersionBlockEntity
+      );
     return null;
   }
 
@@ -39,8 +52,13 @@ export class PackageVersionBlockRepository extends AbstractRepository {
   }
 
   async removePackageVersionBlock(packageVersionBlockId: string) {
-    const removeCount = await this.PackageVersionBlock.remove({ packageVersionBlockId });
-    this.logger.info('[PackageVersionBlockRepository:removePackageVersionBlock:remove] %d rows, packageVersionBlockId: %s',
-      removeCount, packageVersionBlockId);
+    const removeCount = await this.PackageVersionBlock.remove({
+      packageVersionBlockId,
+    });
+    this.logger.info(
+      '[PackageVersionBlockRepository:removePackageVersionBlock:remove] %d rows, packageVersionBlockId: %s',
+      removeCount,
+      packageVersionBlockId
+    );
   }
 }

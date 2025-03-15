@@ -1,4 +1,5 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import { PuppeteerBinary } from '../../../../app/common/adapter/binary/PuppeteerBinary.js';
@@ -12,17 +13,29 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
   describe('fetch()', () => {
     it('should fetch work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/puppeteer', 'GET', {
-        data: await TestUtil.readFixturesFile('registry.npmjs.com/puppeteer.json'),
+        data: await TestUtil.readFixturesFile(
+          'registry.npmjs.com/puppeteer.json'
+        ),
         persist: false,
       });
-      app.mockHttpclient('https://unpkg.com/puppeteer-core@latest/lib/cjs/puppeteer/revisions.js', 'GET', {
-        data: await TestUtil.readFixturesFile('unpkg.com/puppeteer-core@latest/lib/cjs/puppeteer/revisions.js.txt'),
-        persist: false,
-      });
-      app.mockHttpclient('https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2FLAST_CHANGE', 'GET', {
-        data: '1055816',
-        persist: false,
-      });
+      app.mockHttpclient(
+        'https://unpkg.com/puppeteer-core@latest/lib/cjs/puppeteer/revisions.js',
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile(
+            'unpkg.com/puppeteer-core@latest/lib/cjs/puppeteer/revisions.js.txt'
+          ),
+          persist: false,
+        }
+      );
+      app.mockHttpclient(
+        'https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2FLAST_CHANGE',
+        'GET',
+        {
+          data: '1055816',
+          persist: false,
+        }
+      );
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length === 5);

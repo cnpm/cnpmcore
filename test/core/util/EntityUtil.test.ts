@@ -1,11 +1,14 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 
 import { EntityUtil } from '../../../app/core/util/EntityUtil.js';
 
 describe('test/core/util/EntityUtil.test.ts', () => {
   describe('convertPageOptionsToLimitOption', () => {
     it('should work', async () => {
-      const res = EntityUtil.convertPageOptionsToLimitOption({ pageIndex: 1, pageSize: 10 });
+      const res = EntityUtil.convertPageOptionsToLimitOption({
+        pageIndex: 1,
+        pageSize: 10,
+      });
       assert(res.limit === 10);
       assert(res.offset === 10);
     });
@@ -18,9 +21,11 @@ describe('test/core/util/EntityUtil.test.ts', () => {
 
     it('should validate params', async () => {
       assert.throws(() => {
-        EntityUtil.convertPageOptionsToLimitOption({ pageIndex: 1, pageSize: 101 });
+        EntityUtil.convertPageOptionsToLimitOption({
+          pageIndex: 1,
+          pageSize: 101,
+        });
       }, /max page size is 100, current request is 101/);
-
     });
   });
 });

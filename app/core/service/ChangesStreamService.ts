@@ -1,17 +1,24 @@
 import os from 'node:os';
 import { setTimeout } from 'node:timers/promises';
-import type { EggObjectFactory } from '@eggjs/tegg';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+
+import {
+  AccessLevel,
+  Inject,
+  SingletonProto,
+  type EggObjectFactory,
+} from '@eggjs/tegg';
 import { E500 } from 'egg-errors';
-import type { PackageSyncerService } from './PackageSyncerService.js';
-import { RegistryNotMatchError } from './PackageSyncerService.js';
+
+import {
+  RegistryNotMatchError,
+  type PackageSyncerService,
+} from './PackageSyncerService.js';
 import type { TaskService } from './TaskService.js';
 import type { RegistryManagerService } from './RegistryManagerService.js';
 import type { ScopeManagerService } from './ScopeManagerService.js';
 import type { PackageRepository } from '../../repository/PackageRepository.js';
 import type { TaskRepository } from '../../repository/TaskRepository.js';
-import type { ChangesStreamTask } from '../entity/Task.js';
-import { HOST_NAME, Task } from '../entity/Task.js';
+import { HOST_NAME, Task, type ChangesStreamTask } from '../entity/Task.js';
 import type { Registry } from '../entity/Registry.js';
 import { AbstractChangeStream } from '../../common/adapter/changesStream/AbstractChangesStream.js';
 import { getScopeAndName } from '../../common/PackageUtil.js';

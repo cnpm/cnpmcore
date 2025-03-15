@@ -1,7 +1,6 @@
-import type { EggAppConfig, EggLogger } from 'egg';
-import type { CronParams } from '@eggjs/tegg/schedule';
-import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import { Schedule, ScheduleType, type CronParams } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
+import type { EggAppConfig, EggLogger } from 'egg';
 
 import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
 import { SyncMode } from '../../common/constants.js';

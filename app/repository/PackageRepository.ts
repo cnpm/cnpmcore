@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { Orm } from '@eggjs/tegg-orm-plugin';
 import type { EggAppConfig } from 'egg';
 

@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { app, mock } from '@eggjs/mock/bootstrap';
@@ -8,7 +8,10 @@ import { TestUtil } from '../../test/TestUtil.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CheckRecentlyUpdatedPackagesPath = path.join(__dirname, '../../app/port/schedule/CheckRecentlyUpdatedPackages.ts');
+const CheckRecentlyUpdatedPackagesPath = path.join(
+  __dirname,
+  '../../app/port/schedule/CheckRecentlyUpdatedPackages.ts'
+);
 
 describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
   let packageSyncerService: PackageSyncerService;
@@ -19,7 +22,8 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
   it('should work', async () => {
     app.mockLog();
 
-    app.mockAgent()
+    app
+      .mockAgent()
       .get('https://www.npmjs.com')
       .intercept({
         method: 'GET',
@@ -28,9 +32,15 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
           offset: '0',
         },
       })
-      .reply(200, await TestUtil.readFixturesFile('www.npmjs.com/browse/updated/offset-0.html'))
+      .reply(
+        200,
+        await TestUtil.readFixturesFile(
+          'www.npmjs.com/browse/updated/offset-0.html'
+        )
+      )
       .times(2);
-    app.mockAgent()
+    app
+      .mockAgent()
       .get('https://www.npmjs.com')
       .intercept({
         method: 'GET',
@@ -39,7 +49,12 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
           offset: '36',
         },
       })
-      .reply(200, await TestUtil.readFixturesFile('www.npmjs.com/browse/updated/offset-36.html'))
+      .reply(
+        200,
+        await TestUtil.readFixturesFile(
+          'www.npmjs.com/browse/updated/offset-36.html'
+        )
+      )
       .times(2);
     // syncMode=none
     mock(app.config.cnpmcore, 'syncMode', 'none');
@@ -111,7 +126,8 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
   });
 
   it('should handle PackageSyncerService.createTask error', async () => {
-    app.mockAgent()
+    app
+      .mockAgent()
       .get('https://www.npmjs.com')
       .intercept({
         method: 'GET',
@@ -120,8 +136,14 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
           offset: '0',
         },
       })
-      .reply(200, await TestUtil.readFixturesFile('www.npmjs.com/browse/updated/offset-0.html'));
-    app.mockAgent()
+      .reply(
+        200,
+        await TestUtil.readFixturesFile(
+          'www.npmjs.com/browse/updated/offset-0.html'
+        )
+      );
+    app
+      .mockAgent()
       .get('https://www.npmjs.com')
       .intercept({
         method: 'GET',
@@ -130,7 +152,12 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
           offset: '36',
         },
       })
-      .reply(200, await TestUtil.readFixturesFile('www.npmjs.com/browse/updated/offset-36.html'));
+      .reply(
+        200,
+        await TestUtil.readFixturesFile(
+          'www.npmjs.com/browse/updated/offset-36.html'
+        )
+      );
     mock(app.config.cnpmcore, 'syncMode', 'all');
     app.mockLog();
     mock.error(PackageSyncerService.prototype, 'createTask');

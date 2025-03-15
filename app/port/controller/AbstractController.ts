@@ -1,6 +1,5 @@
 import { NotFoundError, UnavailableForLegalReasonsError } from 'egg-errors';
-import type { EggContext } from '@eggjs/tegg';
-import { Inject } from '@eggjs/tegg';
+import { type EggContext, Inject } from '@eggjs/tegg';
 import type { EggAppConfig, EggLogger } from 'egg';
 
 import { MiddlewareController } from '../middleware/index.js';
@@ -57,7 +56,10 @@ export abstract class AbstractController extends MiddlewareController {
     ctx: EggContext,
     fullname: string,
     checkPkgExist: C = true as C
-  ): Promise<{ pkg: C extends true ? PackageEntity : undefined; user: UserEntity }> {
+  ): Promise<{
+    pkg: C extends true ? PackageEntity : undefined;
+    user: UserEntity;
+  }> {
     const user = await this.userRoleManager.checkPublishAccess(ctx, fullname);
     if (!checkPkgExist) {
       // @ts-expect-error checkPkgExist is false, pkg is undefined

@@ -1,7 +1,11 @@
 import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
-import type { FetchResult, BinaryItem } from './AbstractBinary.js';
-import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
+import {
+  AbstractBinary,
+  BinaryAdapter,
+  type BinaryItem,
+  type FetchResult,
+} from './AbstractBinary.js';
 import { BinaryType } from '../../enum/Binary.js';
 
 @SingletonProto()

@@ -1,15 +1,16 @@
 import crypto from 'node:crypto';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { NotFoundError, ForbiddenError } from 'egg-errors';
+
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { ForbiddenError, NotFoundError } from 'egg-errors';
+
 import type { UserRepository } from '../../repository/UserRepository.js';
 import { User as UserEntity } from '../entity/User.js';
-import type { TokenType } from '../entity/Token.js';
-import { Token as TokenEntity } from '../entity/Token.js';
+import { Token as TokenEntity, type TokenType } from '../entity/Token.js';
 import { WebauthnCredential as WebauthnCredentialEntity } from '../entity/WebauthnCredential.js';
 import { LoginResultCode } from '../../common/enum/User.js';
 import {
-  integrity,
   checkIntegrity,
+  integrity,
   randomToken,
   sha512,
 } from '../../common/UserUtil.js';

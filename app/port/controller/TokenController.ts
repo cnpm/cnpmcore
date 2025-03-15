@@ -1,16 +1,15 @@
 import { ForbiddenError, UnauthorizedError } from 'egg-errors';
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
+  HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
-  HTTPBody,
   HTTPParam,
-  Context,
   Inject,
 } from '@eggjs/tegg';
-import type { Static } from 'egg-typebox-validate/typebox';
-import { Type } from 'egg-typebox-validate/typebox';
+import { Type, type Static } from 'egg-typebox-validate/typebox';
 
 import type { AuthAdapter } from '../../infra/AuthAdapter.js';
 import { AbstractController } from './AbstractController.js';

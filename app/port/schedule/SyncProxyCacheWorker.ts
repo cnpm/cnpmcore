@@ -1,6 +1,9 @@
 import type { EggAppConfig, EggLogger } from 'egg';
-import type { IntervalParams } from '@eggjs/tegg/schedule';
-import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import {
+  Schedule,
+  ScheduleType,
+  type IntervalParams,
+} from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
 import type { ProxyCacheService } from '../../core/service/ProxyCacheService.js';

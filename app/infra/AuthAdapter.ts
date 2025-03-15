@@ -1,5 +1,9 @@
-import type { EggContext } from '@eggjs/tegg';
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import {
+  type EggContext,
+  AccessLevel,
+  Inject,
+  SingletonProto,
+} from '@eggjs/tegg';
 import type { Redis } from 'ioredis';
 import { randomUUID } from 'node:crypto';
 

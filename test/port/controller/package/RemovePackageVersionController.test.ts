@@ -1,8 +1,8 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
 
 describe('test/port/controller/package/RemovePackageVersionController.test.ts', () => {

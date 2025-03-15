@@ -1,13 +1,13 @@
 import { PassThrough } from 'node:stream';
 import { NotFoundError } from 'egg-errors';
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-  Context,
 } from '@eggjs/tegg';
 
 import { AbstractController } from '../AbstractController.js';

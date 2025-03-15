@@ -1,13 +1,13 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
 import {
-  PackageTagChangedSyncPackageVersionFileEvent,
   PackageTagAddedSyncPackageVersionFileEvent,
+  PackageTagChangedSyncPackageVersionFileEvent,
 } from '../../../../app/core/event/SyncPackageVersionFile.js';
 
 describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => {

@@ -1,12 +1,12 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { Readable } from 'node:stream';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { TestUtil } from '../../../test/TestUtil.js';
 import { ChangesStreamService } from '../../../app/core/service/ChangesStreamService.js';
 import { TaskService } from '../../../app/core/service/TaskService.js';
-import type { ChangesStreamTask } from '../../../app/core/entity/Task.js';
-import { Task } from '../../../app/core/entity/Task.js';
+import { Task, type ChangesStreamTask } from '../../../app/core/entity/Task.js';
 import { RegistryManagerService } from '../../../app/core/service/RegistryManagerService.js';
 import { RegistryType } from '../../../app/common/enum/Registry.js';
 import { ScopeManagerService } from '../../../app/core/service/ScopeManagerService.js';

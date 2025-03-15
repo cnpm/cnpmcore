@@ -1,11 +1,12 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { E500 } from 'egg-errors';
+
 import { RegistryType } from '../../../common/enum/Registry.js';
 import type { Registry } from '../../../core/entity/Registry.js';
-import type { ChangesStreamChange } from './AbstractChangesStream.js';
 import {
   AbstractChangeStream,
   RegistryChangesStream,
+  type ChangesStreamChange,
 } from './AbstractChangesStream.js';
 
 @SingletonProto()

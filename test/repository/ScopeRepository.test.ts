@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { ScopeRepository } from '../../app/repository/ScopeRepository.js';
@@ -10,31 +10,39 @@ describe('test/repository/ScopeRepository.test.ts', () => {
 
   beforeEach(async () => {
     scopeRepository = await app.getEggObject(ScopeRepository);
-    cnpmjsScope = await scopeRepository.saveScope(Scope.create({
-      name: '@cnpmjs',
-      registryId: '1',
-    })) as Scope;
+    cnpmjsScope = (await scopeRepository.saveScope(
+      Scope.create({
+        name: '@cnpmjs',
+        registryId: '1',
+      })
+    )) as Scope;
   });
 
   describe('RegistryRepository', () => {
     it('create work', async () => {
-      const cnpmScope = await scopeRepository.saveScope(Scope.create({
-        name: '@cnpm',
-        registryId: '1',
-      }));
+      const cnpmScope = await scopeRepository.saveScope(
+        Scope.create({
+          name: '@cnpm',
+          registryId: '1',
+        })
+      );
       assert(cnpmScope);
       assert(cnpmjsScope);
     });
 
     it('list work', async () => {
       // list
-      const cnpmScope = await scopeRepository.saveScope(Scope.create({
-        name: '@cnpm',
-        registryId: '1',
-      })) as Scope;
+      const cnpmScope = (await scopeRepository.saveScope(
+        Scope.create({
+          name: '@cnpm',
+          registryId: '1',
+        })
+      )) as Scope;
       const scopeRes = await scopeRepository.listScopes({});
-      assert.deepEqual([ cnpmjsScope.name, cnpmScope.name ],
-        Array.from(scopeRes.data.map(scope => scope.name)));
+      assert.deepEqual(
+        [cnpmjsScope.name, cnpmScope.name],
+        Array.from(scopeRes.data.map(scope => scope.name))
+      );
     });
 
     it('update work', async () => {
@@ -52,14 +60,18 @@ describe('test/repository/ScopeRepository.test.ts', () => {
 
     it('remove work', async () => {
       // remove
-      const cnpmScope = await scopeRepository.saveScope(Scope.create({
-        name: '@cnpm',
-        registryId: '1',
-      })) as Scope;
+      const cnpmScope = (await scopeRepository.saveScope(
+        Scope.create({
+          name: '@cnpm',
+          registryId: '1',
+        })
+      )) as Scope;
       await scopeRepository.removeScope(cnpmjsScope.scopeId);
       const scopesAfterRemove = await scopeRepository.listScopes({});
-      assert.deepEqual(Array.from(scopesAfterRemove.data.map(scope => scope.name)),
-        [ cnpmScope.name ]);
+      assert.deepEqual(
+        Array.from(scopesAfterRemove.data.map(scope => scope.name)),
+        [cnpmScope.name]
+      );
       await scopeRepository.removeScopeByRegistryId(cnpmjsScope.registryId);
       const emptyRes = await scopeRepository.listScopes({});
       assert.deepEqual(Array.from(emptyRes.data), []);

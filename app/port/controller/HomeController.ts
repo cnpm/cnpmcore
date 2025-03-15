@@ -1,10 +1,10 @@
 import { performance } from 'node:perf_hooks';
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
-  Context,
   Inject,
 } from '@eggjs/tegg';
 import pkg from 'egg/package.json' with { type: 'json' };

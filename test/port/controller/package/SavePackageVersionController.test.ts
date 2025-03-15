@@ -1,20 +1,18 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 import { ForbiddenError } from 'egg-errors';
 import dayjs from 'dayjs';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { UserRepository } from '../../../../app/repository/UserRepository.js';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
 import { UserService } from '../../../../app/core/service/UserService.js';
-import type { Token } from '../../../../app/core/entity/Token.js';
 import { TokenType } from '../../../../app/core/entity/Token.js';
 import { Token as TokenModel } from '../../../../app/repository/model/Token.js';
-import type { User } from '../../../../app/core/entity/User.js';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {

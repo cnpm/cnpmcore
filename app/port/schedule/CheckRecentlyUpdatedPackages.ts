@@ -1,7 +1,10 @@
-import type { EggAppConfig, EggHttpClient, EggLogger } from 'egg';
-import type { IntervalParams } from '@eggjs/tegg/schedule';
-import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import {
+  Schedule,
+  ScheduleType,
+  type IntervalParams,
+} from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
+import type { EggAppConfig, EggHttpClient, EggLogger } from 'egg';
 
 import type { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
 import type { PackageRepository } from '../../repository/PackageRepository.js';

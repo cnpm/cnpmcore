@@ -1,11 +1,11 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
+  HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  HTTPBody,
-  Context,
   Inject,
 } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';

@@ -1,11 +1,11 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
+  HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  HTTPBody,
-  Context,
   Inject,
   Middleware,
 } from '@eggjs/tegg';
@@ -15,8 +15,7 @@ import { AbstractController } from './AbstractController.js';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
 import type { PackageManagerService } from '../../core/service/PackageManagerService.js';
 import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
-import type { BlockPackageType } from '../typebox.js';
-import { BlockPackageRule } from '../typebox.js';
+import { BlockPackageRule, type BlockPackageType } from '../typebox.js';
 import { AdminAccess } from '../middleware/AdminAccess.js';
 
 @HTTPController()

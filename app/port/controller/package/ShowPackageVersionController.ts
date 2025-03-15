@@ -1,18 +1,18 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-  Context,
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
 
 import { AbstractController } from '../AbstractController.js';
 import {
-  getScopeAndName,
   FULLNAME_REG_STRING,
+  getScopeAndName,
 } from '../../../common/PackageUtil.js';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil.js';
 import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';

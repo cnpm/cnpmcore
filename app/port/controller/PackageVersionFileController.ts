@@ -1,13 +1,13 @@
 import { join } from 'node:path';
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   HTTPQuery,
   Inject,
-  Context,
   Middleware,
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
@@ -15,8 +15,8 @@ import { NotFoundError } from 'egg-errors';
 import { AbstractController } from './AbstractController.js';
 import { AdminAccess } from '../middleware/AdminAccess.js';
 import {
-  getScopeAndName,
   FULLNAME_REG_STRING,
+  getScopeAndName,
 } from '../../common/PackageUtil.js';
 import type { PackageVersionFileService } from '../../core/service/PackageVersionFileService.js';
 import type { PackageManagerService } from '../../core/service/PackageManagerService.js';

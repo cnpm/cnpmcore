@@ -1,20 +1,19 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
+  HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  HTTPBody,
-  Context,
 } from '@eggjs/tegg';
 import {
-  UnprocessableEntityError,
+  ForbiddenError,
   NotFoundError,
   UnauthorizedError,
-  ForbiddenError,
+  UnprocessableEntityError,
 } from 'egg-errors';
-import type { Static } from 'egg-typebox-validate/typebox';
-import { Type } from 'egg-typebox-validate/typebox';
+import { Type, type Static } from 'egg-typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.js';
 import { LoginResultCode } from '../../common/enum/User.js';

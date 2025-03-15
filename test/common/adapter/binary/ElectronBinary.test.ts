@@ -1,4 +1,5 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import { ElectronBinary } from '../../../../app/common/adapter/binary/ElectronBinary.js';
@@ -11,11 +12,17 @@ describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
   });
   describe('fetch()', () => {
     it('should fetch root and subdir work', async () => {
-      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('electron-releases.json'));
-      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/, 'GET', {
-        data: response,
-        status: 200,
-      });
+      const response = await TestUtil.readJSONFile(
+        TestUtil.getFixtures('electron-releases.json')
+      );
+      app.mockHttpclient(
+        /https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/,
+        'GET',
+        {
+          data: response,
+          status: 200,
+        }
+      );
       let result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);

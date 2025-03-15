@@ -1,12 +1,15 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import semver, { Range } from 'semver';
-import type { Result, AliasResult } from 'npm-package-arg';
+import type { AliasResult, Result } from 'npm-package-arg';
+
 import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.js';
 import { getScopeAndName } from '../../common/PackageUtil.js';
 import { SqlRange } from '../entity/SqlRange.js';
 import type { BugVersionService } from './BugVersionService.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import { type PackageJSONType } from '../../repository/PackageRepository.js';
+import {
+  type PackageJSONType,
+  type PackageRepository,
+} from '../../repository/PackageRepository.js';
 import type { DistRepository } from '../../repository/DistRepository.js';
 import type { BugVersionAdvice } from '../entity/BugVersion.js';
 import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
