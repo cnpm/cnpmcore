@@ -38,7 +38,7 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
         if (item.name === 'node-v0.1.100.tar.gz') {
           assert(item.date === '26-Aug-2011 16:21');
           assert(item.isDir === false);
-          assert(item.size === 3813493);
+          assert(item.size === 3_813_493);
           assert(
             item.url ===
               'https://r.cnpmjs.org/-/binary/node/node-v0.1.100.tar.gz'

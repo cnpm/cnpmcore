@@ -16,7 +16,7 @@ export class NpmChangesStream extends AbstractChangeStream {
     const db = new URL(registry.changeStream).origin;
     const { status, data } = await this.httpclient.request(db, {
       followRedirect: true,
-      timeout: 10000,
+      timeout: 10_000,
       dataType: 'json',
     });
     const since = String(data.update_seq - 10);
@@ -38,7 +38,7 @@ export class NpmChangesStream extends AbstractChangeStream {
     const db = this.getChangesStreamUrl(registry, since);
     const { res } = await this.httpclient.request(db, {
       streaming: true,
-      timeout: 60000,
+      timeout: 60_000,
     });
 
     let buf = '';

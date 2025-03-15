@@ -149,7 +149,7 @@ export class TaskService extends AbstractService {
     // try processing timeout tasks in 10 mins
     const tasks = await this.taskRepository.findTimeoutTasks(
       TaskState.Processing,
-      60000 * 10
+      60_000 * 10
     );
     for (const task of tasks) {
       try {
@@ -191,7 +191,7 @@ export class TaskService extends AbstractService {
     // try waiting timeout tasks in 30 mins
     const waitingTasks = await this.taskRepository.findTimeoutTasks(
       TaskState.Waiting,
-      60000 * 30
+      60_000 * 30
     );
     for (const task of waitingTasks) {
       try {

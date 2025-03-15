@@ -358,7 +358,7 @@ export class WebauthController extends MiddlewareController {
     if (credential?.credentialId && credential?.publicKey) {
       result.wanStatus = WanStatusCode.Bound;
       result.wanCredentialAuthOption = generateAuthenticationOptions({
-        timeout: 60000,
+        timeout: 60_000,
         rpID: expectedRPID,
         allowCredentials: [
           {
@@ -385,7 +385,7 @@ export class WebauthController extends MiddlewareController {
         userID: base64url.encode(Buffer.from(regUserIdBuffer)),
         userName: name,
         userDisplayName: name,
-        timeout: 60000,
+        timeout: 60_000,
         attestationType: 'direct',
         authenticatorSelection: {
           authenticatorAttachment: 'platform',

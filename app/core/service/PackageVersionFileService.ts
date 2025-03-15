@@ -21,7 +21,7 @@ import type { PackageManagerService } from './PackageManagerService.js';
 import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
 
 const unpkgWhiteListUrl = 'https://github.com/cnpm/unpkg-white-list';
-const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60000;
+const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60_000;
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

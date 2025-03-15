@@ -16,7 +16,7 @@ import { SyncMode } from '../../common/constants.js';
   type: ScheduleType.WORKER,
   scheduleData: {
     // every 5 mins
-    interval: 60000 * 5,
+    interval: 60_000 * 5,
   },
 })
 export class CheckRecentlyUpdatedPackages {
@@ -54,7 +54,7 @@ export class CheckRecentlyUpdatedPackages {
       try {
         const { status, data } = await this.httpclient.request(pageUrl, {
           followRedirect: true,
-          timeout: 10000,
+          timeout: 10_000,
         });
         this.logger.info(
           '[CheckRecentlyUpdatedPackages.subscribe][%s] request %s status: %s, data size: %s',

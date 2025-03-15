@@ -98,7 +98,7 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
     });
 
     it.skip('should read changes work', async () => {
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 10_000; i++) {
         const stream = npmChangesStream.fetchChanges(registry, '36904024');
         assert(stream);
         try {

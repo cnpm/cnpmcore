@@ -13,7 +13,7 @@ import binaries, { type BinaryName } from '../../../config/binaries.js';
   type: ScheduleType.WORKER,
   scheduleData: {
     // every 5 mins
-    interval: 60000 * 5,
+    interval: 60_000 * 5,
   },
 })
 export class CreateSyncBinaryTask {

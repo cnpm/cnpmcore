@@ -14,7 +14,7 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
     const db = new URL(registry.changeStream).origin;
     const { status, data } = await this.httpclient.request(db, {
       followRedirect: true,
-      timeout: 10000,
+      timeout: 10_000,
       dataType: 'json',
     });
     if (!data.update_seq) {
@@ -36,7 +36,7 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
     // json mode
     const { data } = await this.httpclient.request(db, {
       followRedirect: true,
-      timeout: 30000,
+      timeout: 30_000,
       dataType: 'json',
       gzip: true,
     });

@@ -117,7 +117,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(Object.keys(pkg.versions).length === 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['1.0.0'];
-      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert.equal(versionOne.dist.unpackedSize, 6_497_043);
       assert(versionOne._cnpmcore_publish_time);
       assert(versionOne.publish_time);
       assert.equal(pkg._id, name);
@@ -264,7 +264,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(Object.keys(pkg.versions).length === 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['1.0.0'];
-      assert(versionOne.dist.unpackedSize === 6497043);
+      assert(versionOne.dist.unpackedSize === 6_497_043);
       assert(versionOne._cnpmcore_publish_time);
       assert.equal(typeof versionOne._cnpmcore_publish_time, 'string');
       assert(versionOne.publish_time);
@@ -292,7 +292,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(Object.keys(pkg.versions).length, 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['1.0.0'];
-      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert.equal(versionOne.dist.unpackedSize, 6_497_043);
       assert(versionOne._cnpmcore_publish_time);
       assert.equal(pkg._id, scopedName);
       assert(pkg._rev);
@@ -319,7 +319,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.match(pkg.modified, /^202\d/);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['2.0.0'];
-      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert.equal(versionOne.dist.unpackedSize, 6_497_043);
       assert(!versionOne._cnpmcore_publish_time);
       assert(versionOne.publish_time);
       assert.equal(typeof versionOne.publish_time, 'number');
@@ -396,7 +396,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(Object.keys(pkg.versions).length, 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['2.0.0'];
-      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert.equal(versionOne.dist.unpackedSize, 6_497_043);
       assert(!versionOne._cnpmcore_publish_time);
       assert(versionOne.publish_time);
       assert.equal(typeof versionOne.publish_time, 'number');
@@ -424,7 +424,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(Object.keys(pkg.versions).length === 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['2.0.0'];
-      assert(versionOne.dist.unpackedSize === 6497043);
+      assert(versionOne.dist.unpackedSize === 6_497_043);
       assert(!versionOne._cnpmcore_publish_time);
       assert(versionOne.publish_time);
       assert.equal(typeof versionOne.publish_time, 'number');

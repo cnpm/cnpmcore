@@ -11,7 +11,7 @@ import type { ChangesStreamService } from '../../core/service/ChangesStreamServi
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
   scheduleData: {
-    interval: 60000,
+    interval: 60_000,
   },
 })
 export class ChangesStreamWorker {

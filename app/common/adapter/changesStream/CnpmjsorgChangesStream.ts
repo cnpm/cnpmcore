@@ -7,7 +7,7 @@ import {
   RegistryChangesStream,
 } from './AbstractChangesStream.js';
 
-const MAX_LIMIT = 10000;
+const MAX_LIMIT = 10_000;
 
 interface FetchResults {
   results: {
@@ -46,7 +46,7 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
     // json mode
     const res = await this.httpclient.request<FetchResults>(db, {
       followRedirect: true,
-      timeout: 30000,
+      timeout: 30_000,
       dataType: 'json',
       gzip: true,
     });

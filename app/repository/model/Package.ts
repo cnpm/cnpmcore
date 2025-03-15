@@ -38,7 +38,7 @@ export class Package extends Bone {
   @Attribute(DataTypes.BOOLEAN)
   isPrivate: boolean;
 
-  @Attribute(DataTypes.STRING(10240))
+  @Attribute(DataTypes.STRING(10_240))
   description: string;
 
   // store all abbreviated manifests into Dist store

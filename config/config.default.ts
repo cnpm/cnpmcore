@@ -31,7 +31,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
     false
   ),
   syncUpstreamFirst: false,
-  sourceRegistrySyncTimeout: 180000,
+  sourceRegistrySyncTimeout: 180_000,
   taskQueueHighWaterSize: 100,
   syncMode: SyncMode.none,
   syncDeleteMode: SyncDeleteMode.delete,

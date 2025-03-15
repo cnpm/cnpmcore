@@ -107,7 +107,7 @@ export class RemovePackageVersionController extends AbstractController {
     // can unpublish anytime within the first 72 hours after publishing
     if (
       pkg.isPrivate &&
-      Date.now() - packageVersion.publishTime.getTime() >= 3600000 * 72
+      Date.now() - packageVersion.publishTime.getTime() >= 3_600_000 * 72
     ) {
       throw new ForbiddenError(
         `${pkg.fullname}@${packageVersion.version} unpublish is not allowed after 72 hours of released`

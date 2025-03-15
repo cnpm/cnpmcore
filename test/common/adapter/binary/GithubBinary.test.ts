@@ -83,7 +83,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         assert(item.isDir === false);
         if (item.name === 'skia-canvas-v0.9.30-darwin-arm64.tar.gz') {
           assert(item.date === '2024-08-26T18:04:13Z');
-          assert(item.size === 7547563);
+          assert(item.size === 7_547_563);
           assert.equal(
             item.url,
             'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-darwin-arm64.tar.gz'
@@ -92,7 +92,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         }
         if (item.name === 'skia-canvas-v0.9.30-linux-arm-glibc.tar.gz') {
           assert(item.date === '2024-08-26T18:04:17Z');
-          assert(item.size === 8836353);
+          assert(item.size === 8_836_353);
           assert.equal(
             item.url,
             'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-linux-arm-glibc.tar.gz'
@@ -101,7 +101,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         }
         if (item.name === 'skia-canvas-v0.9.30-win32-x64.tar.gz') {
           assert(item.date === '2024-08-26T18:04:29Z');
-          assert(item.size === 7497076);
+          assert(item.size === 7_497_076);
           assert.equal(
             item.url,
             'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-win32-x64.tar.gz'
@@ -150,7 +150,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         assert(item.isDir === false);
         if (item.name === 'protoc-28.2-linux-aarch_64.zip') {
           assert(item.date === '2024-09-18T21:02:40Z');
-          assert(item.size === 3218760);
+          assert(item.size === 3_218_760);
           assert.equal(
             item.url,
             'https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-aarch_64.zip'

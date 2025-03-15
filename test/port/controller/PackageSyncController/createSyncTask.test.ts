@@ -366,7 +366,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       // update bigger than 1 min, same task return
       await TaskModel.update(
         { taskId: firstTaskId },
-        { updatedAt: new Date(Date.now() - 60001) }
+        { updatedAt: new Date(Date.now() - 60_001) }
       );
       res = await app.httpRequest().put('/-/package/koa/syncs').expect(201);
       assert(res.body.ok === true);

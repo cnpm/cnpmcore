@@ -68,7 +68,7 @@ export const Spec = Type.String({
 });
 
 export const Description = Type.String({
-  maxLength: 10240,
+  maxLength: 10_240,
   transform: ['trim'],
 });
 
@@ -105,7 +105,7 @@ export const BlockPackageRule = Type.Object({
   fullname: Name,
   reason: Type.String({
     transform: ['trim'],
-    maxLength: 10240,
+    maxLength: 10_240,
   }),
 });
 export type BlockPackageType = Static<typeof BlockPackageRule>;

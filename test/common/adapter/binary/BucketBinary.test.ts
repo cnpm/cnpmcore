@@ -70,7 +70,7 @@ describe('test/common/adapter/binary/BucketBinary.test.ts', () => {
         // console.log(item);
         if (item.name === 'chromedriver_mac64_m1.zip') {
           assert(item.date === '2022-01-05T05:45:15.397Z');
-          assert(item.size === 7846919);
+          assert(item.size === 7_846_919);
           assert(
             item.url ===
               'https://chromedriver.storage.googleapis.com/97.0.4692.71/chromedriver_mac64_m1.zip'

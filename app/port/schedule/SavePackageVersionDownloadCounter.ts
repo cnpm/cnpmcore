@@ -10,7 +10,7 @@ import type { PackageManagerService } from '../../core/service/PackageManagerSer
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
   scheduleData: {
-    interval: 60000,
+    interval: 60_000,
   },
 })
 export class SavePackageVersionDownloadCounter {
