@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.1.4](https://github.com/cnpm/cnpmcore/compare/v4.1.3...v4.1.4) (2025-03-16)
+
+### Bug Fixes
+
+- use tegg beta ([#776](https://github.com/cnpm/cnpmcore/issues/776)) ([dd5ee4f](https://github.com/cnpm/cnpmcore/commit/dd5ee4ff3022f08e35aad224bc3ed547bddd17b3))
+
 ## [4.1.3](https://github.com/cnpm/cnpmcore/compare/v4.1.2...v4.1.3) (2025-03-16)
 
 ### Performance Improvements
