@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.1.3](https://github.com/cnpm/cnpmcore/compare/v4.1.2...v4.1.3) (2025-03-16)
+
+### Performance Improvements
+
+- refactor AsyncTimer advice to Singleton ([#775](https://github.com/cnpm/cnpmcore/issues/775)) ([884ff50](https://github.com/cnpm/cnpmcore/commit/884ff50a2f4c85de8de26789b00351936b296dcb))
+
 ## [4.1.2](https://github.com/cnpm/cnpmcore/compare/v4.1.1...v4.1.2) (2025-03-14)
 
 ### Bug Fixes
