@@ -42,7 +42,7 @@ export interface SyncPackageTaskOptions {
   // force sync history version
   forceSyncHistory?: boolean;
   registryId?: string;
-  specificVersions?: Array<string>;
+  specificVersions?: string[];
 }
 
 export interface UpdateProxyCacheTaskOptions {
@@ -66,7 +66,7 @@ export interface CreateSyncPackageTaskData extends TaskBaseData {
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
   forceSyncHistory?: boolean;
-  specificVersions?: Array<string>;
+  specificVersions?: string[];
 }
 
 export interface CreateUpdateProxyCacheTaskData extends TaskBaseData {

@@ -12,11 +12,11 @@ export class BugVersion {
     this.data = data;
   }
 
-  listAllPackagesHasBugs(): Array<string> {
+  listAllPackagesHasBugs(): string[] {
     return Object.keys(this.data);
   }
 
-  listBugVersions(pkgName: string): Array<string> {
+  listBugVersions(pkgName: string): string[] {
     const bugVersionPackage = this.data[pkgName];
     if (!bugVersionPackage) {
       return [];
@@ -36,13 +36,18 @@ export class BugVersion {
     if (bugVersionManifest.dist.tarball === fixVersionManifest.dist.tarball) {
       return;
     }
-    const advice = this.fixVersion(bugVersionManifest.name, bugVersionManifest.version);
+    const advice = this.fixVersion(
+      bugVersionManifest.name,
+      bugVersionManifest.version
+    );
     if (!advice) {
       return;
     }
     const newManifest = JSON.parse(JSON.stringify(fixVersionManifest));
     const hotfixDeprecated = `[WARNING] Use ${advice.version} instead of ${bugVersionManifest.version}, reason: ${advice.reason}`;
-    newManifest.deprecated = bugVersionManifest.deprecated ? `${bugVersionManifest.deprecated} (${hotfixDeprecated})` : hotfixDeprecated;
+    newManifest.deprecated = bugVersionManifest.deprecated
+      ? `${bugVersionManifest.deprecated} (${hotfixDeprecated})`
+      : hotfixDeprecated;
     // don't change version
     newManifest.version = bugVersionManifest.version;
     return newManifest;

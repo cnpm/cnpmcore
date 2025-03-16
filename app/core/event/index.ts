@@ -19,7 +19,7 @@ export interface PackageDeprecated {
 }
 
 export interface PackageMetaChange {
-  deprecateds?: Array<PackageDeprecated>;
+  deprecateds?: PackageDeprecated[];
 }
 
 declare module '@eggjs/tegg' {

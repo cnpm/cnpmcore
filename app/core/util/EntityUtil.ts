@@ -17,7 +17,7 @@ export interface PageOptions {
 }
 export interface PageResult<T> {
   count: number;
-  data: Array<T>;
+  data: T[];
 }
 export interface PageLimitOptions {
   offset: number;

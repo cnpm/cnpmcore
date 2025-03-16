@@ -73,6 +73,7 @@
     "typescript/consistent-type-definitions": "error",
     "typescript/consistent-indexed-object-style": "allow",
     "typescript/no-inferrable-types": "error",
+    "typescript/array-type": "error",
     // style
     "sort-imports": "allow",
     "yoda": "allow",

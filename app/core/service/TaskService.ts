@@ -108,7 +108,7 @@ export class TaskService extends AbstractService {
     return await this.taskRepository.findTask(taskId);
   }
 
-  public async findTasks(taskIdList: Array<string>) {
+  public async findTasks(taskIdList: string[]) {
     return await this.taskRepository.findTasks(taskIdList);
   }
 

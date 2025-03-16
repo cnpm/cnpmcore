@@ -96,7 +96,7 @@ export class PackageVersionRepository {
     scope: string,
     name: string,
     sqlRange: SqlRange
-  ): Promise<Array<string>> {
+  ): Promise<string[]> {
     const versions = await this.PackageVersion.select('version')
       .join(
         this.Package as any,

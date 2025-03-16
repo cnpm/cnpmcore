@@ -61,8 +61,8 @@ export class SqlRange {
     };
   }
 
-  private comparatorSetToSql(comparatorSet: Array<Comparator>) {
-    const condition: Array<object> = [];
+  private comparatorSetToSql(comparatorSet: Comparator[]) {
+    const condition: object[] = [];
     for (const comparator of comparatorSet) {
       condition.push(this.comparatorToSql(comparator));
     }
@@ -70,7 +70,7 @@ export class SqlRange {
   }
 
   private generateWhere() {
-    const conditions: Array<object> = [];
+    const conditions: object[] = [];
     for (const rangeSet of this.range.set) {
       conditions.push(this.comparatorSetToSql(rangeSet as Comparator[]));
     }

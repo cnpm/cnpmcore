@@ -82,7 +82,7 @@ export class TaskRepository extends AbstractRepository {
 
   async updateSpecificVersionsOfWaitingTask(
     task: TaskEntity,
-    specificVersions?: Array<string>
+    specificVersions?: string[]
   ): Promise<void> {
     const model = await this.Task.findOne({ id: task.id });
     if (!model || !model.data.specificVersions) return;
@@ -121,7 +121,7 @@ export class TaskRepository extends AbstractRepository {
     return null;
   }
 
-  async findTasks(taskIds: Array<string>): Promise<Array<TaskEntity>> {
+  async findTasks(taskIds: string[]): Promise<TaskEntity[]> {
     const tasks = await this.HistoryTask.find({ taskId: { $in: taskIds } });
     return tasks.map(task =>
       ModelConvertor.convertModelToEntity(task, TaskEntity)
@@ -132,7 +132,7 @@ export class TaskRepository extends AbstractRepository {
     targetName?: string;
     state?: TaskState;
     type: TaskType;
-  }): Promise<Array<TaskEntity>> {
+  }): Promise<TaskEntity[]> {
     const tasks = await this.Task.find(where);
     return tasks.map(task =>
       ModelConvertor.convertModelToEntity(task, TaskEntity)

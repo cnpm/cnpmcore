@@ -123,7 +123,7 @@ export class CreateHookTriggerService extends AbstractService {
     }
   }
 
-  private async createTriggerTasks(hooks: Array<Hook>, hookEvent: HookEvent) {
+  private async createTriggerTasks(hooks: Hook[], hookEvent: HookEvent) {
     await pMap(
       hooks,
       async hook => {
