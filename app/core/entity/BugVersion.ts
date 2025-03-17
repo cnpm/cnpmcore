@@ -43,7 +43,7 @@ export class BugVersion {
     if (!advice) {
       return;
     }
-    const newManifest = JSON.parse(JSON.stringify(fixVersionManifest));
+    const newManifest = structuredClone(fixVersionManifest);
     const hotfixDeprecated = `[WARNING] Use ${advice.version} instead of ${bugVersionManifest.version}, reason: ${advice.reason}`;
     newManifest.deprecated = bugVersionManifest.deprecated
       ? `${bugVersionManifest.deprecated} (${hotfixDeprecated})`
