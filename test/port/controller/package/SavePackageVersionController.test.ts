@@ -773,12 +773,13 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     });
 
     it('should add new version without description(object type) success', async () => {
-      const pkg = (await TestUtil.getFullPackage({
+      const pkg = await TestUtil.getFullPackage({
         name: '@cnpm/with-description-object',
         version: '0.0.0',
-      })) as any;
+      });
       const version = Object.keys(pkg.versions)[0];
-      (pkg.versions[version] as any).description = { foo: 'bar' };
+      // @ts-expect-error type definition is not correct
+      pkg.versions[version].description = { foo: 'bar' };
       let res = await app
         .httpRequest()
         .put(`/${pkg.name}`)

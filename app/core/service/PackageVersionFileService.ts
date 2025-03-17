@@ -125,7 +125,9 @@ export class PackageVersionFileService extends AbstractService {
       );
     if (!manifest) return;
     this.#unpkgWhiteListCurrentVersion = manifest.version;
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     this.#unpkgWhiteListAllowPackages = manifest.allowPackages ?? ({} as any);
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     this.#unpkgWhiteListAllowScopes = manifest.allowScopes ?? ([] as any);
     this.logger.info(
       '[PackageVersionFileService.updateUnpkgWhiteList] version:%s, total %s packages, %s scopes',
@@ -195,7 +197,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
-        onentry: (entry: any) => {
+        onentry: (entry: unknown) => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;
           if (this.#matchReadmeFilename(filename)) {
@@ -273,7 +275,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
-        onentry: (entry: any) => {
+        onentry: (entry: unknown) => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;
           paths.push('/' + filename);

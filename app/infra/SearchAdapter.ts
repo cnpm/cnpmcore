@@ -21,6 +21,7 @@ export class ESSearchAdapter implements SearchAdapter {
   @Inject()
   private readonly elasticsearch: ElasticsearchClient; // 由 elasticsearch 插件引入
 
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   async search<T>(query: any): Promise<estypes.SearchHitsMetadata<T>> {
     const {
       cnpmcore: { elasticsearchIndex: index },

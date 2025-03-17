@@ -79,7 +79,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
 };
 
 export interface NFSConfig {
-  client: any;
+  client: unknown;
   dir: string;
   removeBeforeUpload: boolean;
 }

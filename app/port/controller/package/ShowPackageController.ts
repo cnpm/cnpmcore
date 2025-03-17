@@ -81,7 +81,7 @@ export class ShowPackageController extends AbstractController {
     }
 
     // handle cache miss
-    let result: { etag: string; data: any; blockReason: string };
+    let result: { etag: string; data: unknown; blockReason: string };
     if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
       // proxy mode
       const fileType = isFullManifests

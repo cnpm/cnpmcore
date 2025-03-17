@@ -31,6 +31,7 @@ export class BugVersion {
   }
 
   // TODO manifest typing
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   fixManifest(bugVersionManifest: any, fixVersionManifest: any): any {
     // If the tarball is same, manifest has fixed.
     if (bugVersionManifest.dist.tarball === fixVersionManifest.dist.tarball) {

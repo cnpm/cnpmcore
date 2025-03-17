@@ -71,7 +71,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         assert(item.description);
       }
 
-      const item = items.filter((item: any) => item.name === 'nwjs/');
+      const item = items.filter((item: Binary) => item.name === 'nwjs/');
       assert.deepStrictEqual(item, [
         {
           name: 'nwjs/',

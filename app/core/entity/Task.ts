@@ -243,7 +243,10 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static createSyncBinary(targetName: string, lastData: any): Task {
+  public static createSyncBinary(
+    targetName: string,
+    lastData?: Record<string, unknown>
+  ): Task {
     const data = {
       type: TaskType.SyncBinary,
       state: TaskState.Waiting,

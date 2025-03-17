@@ -4,6 +4,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg';
 import { ModelConvertorUtil } from './ModelConvertorUtil.js';
 
 export function EntityProperty(entityProperty: string) {
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   return (target: any, modelProperty: PropertyKey) => {
     const clazz = target.constructor as EggProtoImplClass;
     assert(

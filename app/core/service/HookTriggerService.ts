@@ -89,10 +89,10 @@ export class HookTriggerService {
       },
       // webhook 场景下，由于 endpoint 都不同
       // 因此几乎不存在连接复用的情况，因此这里不使用 keepAlive
-      agent: false,
-      httpsAgent: false,
+      // agent: false,
+      // httpsAgent: false,
       data: payloadStr,
-    } as any);
+    });
     if (res.status >= 200 && res.status < 300) {
       return res.status;
     }

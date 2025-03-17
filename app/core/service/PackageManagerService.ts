@@ -15,6 +15,7 @@ import pMap from 'p-map';
 
 import {
   calculateIntegrity,
+  type Integrity,
   detectInstallScript,
   formatTarball,
   getFullname,
@@ -201,14 +202,15 @@ export class PackageManagerService extends AbstractService {
     const hasInstallScript = detectInstallScript(cmd.packageJson)
       ? true
       : undefined;
-    let tarDistIntegrity: any;
+    let tarDistIntegrity: Integrity;
     let tarDistSize = 0;
     if (cmd.dist.content) {
       const tarDistBytes = cmd.dist.content;
       tarDistIntegrity = await calculateIntegrity(tarDistBytes);
       tarDistSize = tarDistBytes.length;
-    } else if (cmd.dist.localFile) {
-      const localFile = cmd.dist.localFile;
+    } else {
+      // should has localFile
+      const localFile = cmd.dist.localFile as string;
       const fileStat = await stat(localFile);
       tarDistIntegrity = await calculateIntegrity(localFile);
       tarDistSize = fileStat.size;
@@ -1074,8 +1076,8 @@ export class PackageManagerService extends AbstractService {
 
   private async _mergeManifestDist(
     manifestDist: Dist,
-    mergeData?: any,
-    replaceData?: any
+    mergeData?: unknown,
+    replaceData?: unknown
   ) {
     let manifest =
       await this.distRepository.readDistBytesToJSON<PackageManifestType>(
@@ -1085,7 +1087,7 @@ export class PackageManagerService extends AbstractService {
       Object.assign(manifest, mergeData);
     }
     if (replaceData) {
-      manifest = replaceData;
+      manifest = replaceData as PackageManifestType;
     }
     const manifestBytes = Buffer.from(JSON.stringify(manifest));
     const manifestIntegrity = await calculateIntegrity(manifestBytes);
@@ -1221,7 +1223,7 @@ export class PackageManagerService extends AbstractService {
       await this.bugVersionService.fixPackageBugVersions(
         bugVersion,
         fullname,
-        (manifests as any).versions
+        manifests.versions
       );
       const distBytes = Buffer.from(JSON.stringify(manifests));
       const distIntegrity = await calculateIntegrity(distBytes);
@@ -1298,7 +1300,7 @@ export class PackageManagerService extends AbstractService {
       latestTagVersion = distTags.latest;
     }
 
-    let latestManifest: any;
+    let latestManifest: PackageJSONType | undefined;
     let latestPackageVersion = packageVersions[0];
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
@@ -1325,14 +1327,14 @@ export class PackageManagerService extends AbstractService {
     if (!latestManifest) {
       latestManifest = data.versions[latestPackageVersion.version];
     }
-    this._mergeLatestManifestFields(data, latestManifest);
+    this._mergeLatestManifestFields(data, latestManifest as PackageJSONType);
     return data;
   }
 
   private async _listPackageAbbreviatedManifests(
     pkg: Package
   ): Promise<AbbreviatedPackageManifestType | null> {
-    // read all verions from db
+    // read all versions from db
     const packageVersions = await this.packageRepository.listPackageVersions(
       pkg.packageId
     );

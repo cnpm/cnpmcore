@@ -1,3 +1,4 @@
+// oxlint-disable typescript-eslint/no-explicit-any
 import fs from 'node:fs/promises';
 // 统一通过 coffee 执行 child_process，获取运行时的一些环境信息
 import coffee from 'coffee';

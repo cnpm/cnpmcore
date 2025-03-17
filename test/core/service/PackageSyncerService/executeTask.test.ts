@@ -758,14 +758,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         'registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'
       );
 
-      let fullManifestsHeader: any;
-      let tgzBuffer1_0_0Header: any;
-      let tgzBuffer1_1_0Header: any;
+      let fullManifestsHeader: Record<string, string> = {};
+      let tgzBuffer1_0_0Header: Record<string, string> = {};
+      let tgzBuffer1_1_0Header: Record<string, string> = {};
       app.mockHttpclient(
         'https://registry.npmjs.org/foobar',
         'GET',
         (_, opts) => {
-          fullManifestsHeader = opts.headers;
+          fullManifestsHeader = opts.headers as Record<string, string>;
           return {
             data: fullManifests,
             persist: false,
@@ -777,7 +777,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         'https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz',
         'GET',
         (_, opts) => {
-          tgzBuffer1_0_0Header = opts.headers;
+          tgzBuffer1_0_0Header = opts.headers as Record<string, string>;
           return {
             data: tgzBuffer1_0_0,
             persist: false,
@@ -788,7 +788,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         'https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz',
         'GET',
         (_, opts) => {
-          tgzBuffer1_1_0Header = opts.headers;
+          tgzBuffer1_1_0Header = opts.headers as Record<string, string>;
           return {
             data: tgzBuffer1_1_0,
             persist: false,
@@ -1683,9 +1683,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       let res = await packageManagerService.listPackageFullManifests('', name);
       assert(res.data);
       assert(res.data.versions);
-      assert(
-        (res.data as any).versions[res.data['dist-tags'].latest]
-          .hasInstallScript === undefined
+      assert.equal(
+        res.data.versions[res.data['dist-tags'].latest]?.hasInstallScript,
+        undefined
       );
       app.mockAgent().assertNoPendingInterceptors();
 

@@ -38,6 +38,7 @@ export class Task extends Bone {
   authorIp: string;
 
   @Attribute(DataTypes.JSONB)
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   data: any;
 
   @Attribute(DataTypes.STRING(512))

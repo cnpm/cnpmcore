@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { type TestUser, TestUtil } from '../../../../test/TestUtil.js';
 import { Task as TaskModel } from '../../../../app/repository/model/Task.js';
 import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
 
 describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', () => {
-  let publisher: any;
+  let publisher: TestUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
     mock(app.config.cnpmcore, 'syncMode', 'all');

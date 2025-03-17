@@ -14,6 +14,7 @@ import {
 @SingletonProto()
 @BinaryAdapter(BinaryType.GitHub)
 export class GithubBinary extends AbstractBinary {
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   private releases: Record<string, any[]> = {};
 
   async initFetch(binaryName: BinaryName) {
@@ -28,6 +29,7 @@ export class GithubBinary extends AbstractBinary {
       // https://docs.github.com/en/rest/reference/releases get three pages
       // https://api.github.com/repos/electron/electron/releases
       // https://api.github.com/repos/electron/electron/releases?per_page=100&page=3
+      // oxlint-disable-next-line typescript-eslint/no-explicit-any
       let releases: any[] = [];
       const maxPage = binaryConfig.options?.maxPage || 1;
       for (let i = 0; i < maxPage; i++) {
@@ -64,6 +66,7 @@ export class GithubBinary extends AbstractBinary {
     return this.releases[binaryName];
   }
 
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   protected formatItems(releaseItem: any, binaryConfig: BinaryTaskConfig) {
     const items: BinaryItem[] = [];
     // 250MB

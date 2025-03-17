@@ -51,7 +51,7 @@ interface syncDeletePkgOptions {
   logUrl: string;
   url: string;
   logs: string[];
-  data: any;
+  data: unknown;
 }
 
 function isoNow() {
@@ -162,7 +162,7 @@ export class PackageSyncerService extends AbstractService {
       logs.push(
         `[${isoNow()}][DownloadData] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, downloads: ${downloads.length}`
       );
-    } catch (err: any) {
+    } catch (err) {
       const status = err.status || 'unknow';
       logs.push(
         `[${isoNow()}][DownloadData] ❌ Get download data error: ${err}, status: ${status}`
@@ -223,7 +223,7 @@ export class PackageSyncerService extends AbstractService {
         `[${isoNow()}][UP] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, data: ${JSON.stringify(data)}`
       );
       logId = data.logId;
-    } catch (err: any) {
+    } catch (err) {
       const status = err.status || 'unknow';
       // 可能会抛出 AggregateError 异常
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError
@@ -276,7 +276,7 @@ export class PackageSyncerService extends AbstractService {
         );
         await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
-      } catch (err: any) {
+      } catch (err) {
         useTime = Date.now() - startTime;
         const status = err.status || 'unknow';
         logs.push(
@@ -602,7 +602,7 @@ export class PackageSyncerService extends AbstractService {
       registryFetchResult = await this.npmRegistry.getFullManifests(fullname, {
         remoteAuthToken,
       });
-    } catch (err: any) {
+    } catch (err) {
       const status = err.status || 'unknown';
       task.error = `request manifests error: ${err}, status: ${status}`;
       logs.push(
@@ -984,7 +984,7 @@ export class PackageSyncerService extends AbstractService {
         logs.push(
           `[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`
         );
-      } catch (err: any) {
+      } catch (err) {
         if (
           err.name === 'DownloadNotFoundError' ||
           err.name === 'DownloadStatusInvalidError'
@@ -1033,7 +1033,7 @@ export class PackageSyncerService extends AbstractService {
         logs.push(
           `[${isoNow()}] 🎉 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`
         );
-      } catch (err: any) {
+      } catch (err) {
         if (err.name === 'ForbiddenError') {
           logs.push(
             `[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`

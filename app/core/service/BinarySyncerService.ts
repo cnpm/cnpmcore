@@ -92,7 +92,10 @@ export class BinarySyncerService extends AbstractService {
     return await this.nfsAdapter.getDownloadUrlOrStream(binary.storePath);
   }
 
-  public async createTask(binaryName: BinaryName, lastData?: any) {
+  public async createTask(
+    binaryName: BinaryName,
+    lastData?: Record<string, unknown>
+  ) {
     try {
       return await this.taskService.createTask(
         Task.createSyncBinary(binaryName, lastData),
@@ -169,7 +172,7 @@ export class BinarySyncerService extends AbstractService {
         logUrl,
         hasDownloadError
       );
-    } catch (err: any) {
+    } catch (err) {
       task.error = `${err.name}: ${err.message}`;
       logs.push(
         `[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`
@@ -289,7 +292,7 @@ export class BinarySyncerService extends AbstractService {
             );
             await this.taskService.appendTaskLog(task, logs.join('\n'));
             logs = [];
-          } catch (err: any) {
+          } catch (err) {
             if (err.name === 'DownloadNotFoundError') {
               this.logger.info('Not found %s, skip it', item.sourceUrl);
               logs.push(

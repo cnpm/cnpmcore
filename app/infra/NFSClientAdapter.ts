@@ -27,6 +27,7 @@ export class NFSClientAdapter implements NFSClient {
   @Inject()
   private config: EggAppConfig;
 
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   private _client: any;
 
   get client() {

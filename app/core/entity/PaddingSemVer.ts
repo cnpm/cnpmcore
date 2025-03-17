@@ -14,7 +14,8 @@ export class PaddingSemVer {
       return;
     }
     this.semver = new SemVer(semver);
-    if ((this.semver as any).includePrerelease) {
+    // @ts-expect-error type definition is not correct
+    if (this.semver.includePrerelease) {
       this.isPreRelease = true;
     } else if (this.semver.prerelease && this.semver.prerelease.length) {
       this.isPreRelease = true;
@@ -25,9 +26,10 @@ export class PaddingSemVer {
 
   get paddingVersion(): string {
     if (!this._paddingVersion) {
-      this._paddingVersion = PaddingSemVer.paddingVersion(this.semver.major)
-        + PaddingSemVer.paddingVersion(this.semver.minor)
-        + PaddingSemVer.paddingVersion(this.semver.patch);
+      this._paddingVersion =
+        PaddingSemVer.paddingVersion(this.semver.major) +
+        PaddingSemVer.paddingVersion(this.semver.minor) +
+        PaddingSemVer.paddingVersion(this.semver.patch);
     }
     return this._paddingVersion;
   }
@@ -37,7 +39,8 @@ export class PaddingSemVer {
   static paddingVersion(v: number) {
     const t = String(v);
     if (t.length <= 16) {
-      const padding = Array.from({ length: 16 - t.length }).fill(0)
+      const padding = Array.from({ length: 16 - t.length })
+        .fill(0)
         .join('');
       return padding + t;
     }

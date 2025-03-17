@@ -79,6 +79,7 @@ export class PrismaBinary extends AbstractBinary {
     return { items: this.#parseItems(result), nextParams: null };
   }
 
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   #parseItems(result: any): BinaryItem[] {
     const items: BinaryItem[] = [];
     // objects": [

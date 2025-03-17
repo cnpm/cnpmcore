@@ -52,6 +52,7 @@ export class SearchRepository {
   private readonly searchAdapter: SearchAdapter;
 
   async searchPackage(
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     query: any
   ): Promise<estypes.SearchHitsMetadata<SearchManifestType>> {
     return await this.searchAdapter.search<SearchManifestType>(query);

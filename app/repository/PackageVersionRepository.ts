@@ -34,6 +34,7 @@ export class PackageVersionRepository {
     const versionModels = versions.map(t =>
       ModelConvertor.convertModelToEntity(t, PackageVersion)
     );
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     return (versionModels as any).toObject();
   }
 
@@ -56,7 +57,7 @@ export class PackageVersionRepository {
     tag: string
   ): Promise<string | undefined> {
     const tags = (await this.PackageTag.select('version')
-      .join(this.Package as any, 'packageTags.packageId = packages.packageId')
+      .join(this.Package, 'packageTags.packageId = packages.packageId')
       .where({
         scope,
         name,
@@ -77,10 +78,7 @@ export class PackageVersionRepository {
     const versions = (await this.PackageVersion.select(
       'packageVersions.version'
     )
-      .join(
-        this.Package as any,
-        'packageVersions.packageId = packages.packageId'
-      )
+      .join(this.Package, 'packageVersions.packageId = packages.packageId')
       .where({
         'packages.scope': scope,
         'packages.name': name,
@@ -98,15 +96,13 @@ export class PackageVersionRepository {
     sqlRange: SqlRange
   ): Promise<string[]> {
     const versions = await this.PackageVersion.select('version')
-      .join(
-        this.Package as any,
-        'packageVersions.packageId = packages.packageId'
-      )
+      .join(this.Package, 'packageVersions.packageId = packages.packageId')
       .where({
         scope,
         name,
         ...sqlRange.condition,
       } as object);
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     return (versions as any)
       .toObject()
       .map((t: { version: string }) => t.version);

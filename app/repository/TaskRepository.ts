@@ -144,7 +144,10 @@ export class TaskRepository extends AbstractRepository {
     type: TaskType,
     state?: TaskState
   ) {
-    const where: any = { targetName, type };
+    const where: { targetName: string; type: TaskType; state?: TaskState } = {
+      targetName,
+      type,
+    };
     if (state) {
       where.state = state;
     }

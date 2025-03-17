@@ -22,6 +22,7 @@ export interface BinaryItem {
 
 export interface FetchResult {
   items: BinaryItem[];
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   nextParams?: any;
 }
 

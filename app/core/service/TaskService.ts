@@ -249,7 +249,7 @@ export class TaskService extends AbstractService {
       if (nextPosition) {
         task.logStorePosition = nextPosition;
       }
-    } catch (err: any) {
+    } catch (err) {
       // [PositionNotEqualToLengthError]: Position is not equal to file length, status: 409
       // [ObjectNotAppendableError]: The object is not appendable
       if (

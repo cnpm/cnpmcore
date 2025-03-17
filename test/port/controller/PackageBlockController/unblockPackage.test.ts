@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { type TestUser, TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/PackageBlockController/unblockPackage.test.ts', () => {
-  let adminUser: any;
+  let adminUser: TestUser;
   beforeEach(async () => {
     adminUser = await TestUtil.createAdmin();
   });

@@ -30,7 +30,7 @@ type SiteTotalData = LegacyInfo & SiteEnvInfo & TotalInfo;
 interface LegacyInfo {
   source_registry: string;
   changes_stream_registry: string;
-  sync_changes_steam: any;
+  sync_changes_steam: unknown;
 }
 
 interface SiteEnvInfo {

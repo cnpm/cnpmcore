@@ -73,6 +73,7 @@ export class BugVersionService {
   async fixPackageBugVersions(
     bugVersion: BugVersion,
     fullname: string,
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifests: Record<string, any>
   ) {
     // If package all version unpublished(like pinyin-tool), versions is undefined
@@ -90,6 +91,7 @@ export class BugVersionService {
   async fixPackageBugVersion(
     bugVersion: BugVersion,
     fullname: string,
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifest: any
   ) {
     const advice = bugVersion.fixVersion(fullname, manifest.version);
@@ -121,7 +123,9 @@ export class BugVersionService {
   private fixPackageBugVersionWithAllVersions(
     fullname: string,
     bugVersion: BugVersion,
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifest: any,
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifests: Record<string, any>
   ) {
     const advice = bugVersion.fixVersion(fullname, manifest.version);

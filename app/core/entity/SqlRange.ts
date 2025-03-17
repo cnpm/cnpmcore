@@ -21,7 +21,8 @@ export class SqlRange {
   }
 
   private comparatorToSql(comparator: Comparator) {
-    if (comparator.semver === (Comparator as any).ANY) {
+    // @ts-expect-error type definition is not correct
+    if (comparator.semver === Comparator.ANY) {
       return {
         $and: [
           {

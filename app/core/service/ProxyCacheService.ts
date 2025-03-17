@@ -380,6 +380,7 @@ export class ProxyCacheService extends AbstractService {
   }
 
   private async storeRewrittenManifest(
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifest: any,
     fullname: string,
     fileType: DIST_NAMES

@@ -92,6 +92,7 @@
     "typescript/consistent-indexed-object-style": "allow",
     "typescript/no-inferrable-types": "error",
     "typescript/array-type": "error",
-    "typescript/no-non-null-assertion": "error"
+    "typescript/no-non-null-assertion": "error",
+    "typescript/no-explicit-any": "error"
   }
 }

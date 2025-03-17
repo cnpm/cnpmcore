@@ -30,5 +30,6 @@ export class PackageVersionManifest extends Bone {
   packageVersionManifestId: string;
 
   @Attribute(DataTypes.JSONB)
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   manifest: any;
 }

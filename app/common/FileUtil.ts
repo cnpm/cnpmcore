@@ -91,7 +91,7 @@ export async function downloadToTempfile(
   optionalConfig?: DownloadToTempfileOptionalConfig
 ) {
   let retries = optionalConfig?.retries || 3;
-  let lastError: any;
+  let lastError: Error | undefined;
   while (retries > 0) {
     try {
       return await _downloadToTempfile(
@@ -100,7 +100,7 @@ export async function downloadToTempfile(
         url,
         optionalConfig
       );
-    } catch (err: any) {
+    } catch (err) {
       if (err.name === 'DownloadNotFoundError') throw err;
       lastError = err;
     }
