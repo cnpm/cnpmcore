@@ -47,6 +47,8 @@
     "no-duplicate-imports": "error",
     "no-multi-assign": "error",
     "func-names": "error",
+    "default-param-last": "error",
+    "prefer-object-spread": "error",
 
     // import
     "import/no-cycle": "error",

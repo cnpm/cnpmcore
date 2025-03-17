@@ -43,10 +43,11 @@ export class Hook extends Entity {
   }
 
   static create(data: CreateHookData): Hook {
-    const hookData: EasyData<HookData, 'hookId'> = Object.assign({}, data, {
+    const hookData: EasyData<HookData, 'hookId'> = {
+      ...data,
       enable: true,
       latestTaskId: undefined,
-    });
+    };
     const newData = EntityUtil.defaultData(hookData, 'hookId');
     return new Hook(newData);
   }
