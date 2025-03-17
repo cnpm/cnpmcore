@@ -142,7 +142,7 @@ export class ProxyCacheService extends AbstractService {
     fileType: DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST,
     versionOrTag: string
   ): Promise<AbbreviatedPackageJSONType | PackageJSONType> {
-    let version;
+    let version: string;
     if (semverValid(versionOrTag)) {
       version = versionOrTag;
     } else {
@@ -151,7 +151,7 @@ export class ProxyCacheService extends AbstractService {
         DIST_NAMES.ABBREVIATED_MANIFESTS
       );
       const distTags = pkgManifest['dist-tags'] || {};
-      version = distTags[versionOrTag] ? distTags[versionOrTag] : versionOrTag;
+      version = distTags[versionOrTag] ?? versionOrTag;
     }
     const proxyCache = await this.proxyCacheRepository.findProxyCache(
       fullname,

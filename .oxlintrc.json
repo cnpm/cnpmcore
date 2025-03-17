@@ -72,6 +72,7 @@
     "unicorn/no-null": "allow",
     "unicorn/filename-case": "allow",
     "unicorn/prefer-structured-clone": "error",
+    "unicorn/prefer-logical-operator-over-ternary": "error",
 
     // "unicorn/no-null": "error",
     "unicorn/throw-new-error": "error",
