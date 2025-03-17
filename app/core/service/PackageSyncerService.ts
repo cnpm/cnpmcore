@@ -711,9 +711,8 @@ export class PackageSyncerService extends AbstractService {
         data.description === 'security holding package' ||
         data.repository === 'npm/security-holder'
       ) {
-        maintainers = data.maintainers = [
-          { name: 'npm', email: 'npm@npmjs.com' },
-        ];
+        data.maintainers = [{ name: 'npm', email: 'npm@npmjs.com' }];
+        maintainers = data.maintainers;
       } else {
         // try to use latest tag version's maintainers instead
         const latestPackageVersion =

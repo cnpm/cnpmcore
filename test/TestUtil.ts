@@ -239,7 +239,8 @@ export class TestUtil {
         delete pkg.readme;
         delete version.readme;
       } else if (options.readme) {
-        version.readme = pkg.readme = options.readme;
+        pkg.readme = options.readme;
+        version.readme = options.readme;
       }
       if (options.description) {
         version.description = options.description;

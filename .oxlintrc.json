@@ -40,12 +40,20 @@
     "no-continue": "allow",
     "guard-for-in": "allow",
     "func-style": "allow",
+    "sort-imports": "allow",
+    "yoda": "allow",
+    "sort-keys": "allow",
+    "no-magic-numbers": "allow",
+    "no-duplicate-imports": "error",
+    "no-multi-assign": "error",
+
     // import
     "import/no-cycle": "error",
     "import/no-anonymous-default-export": "error",
     "import/no-namespace": "error",
     "import/named": "error",
     "import/export": "error",
+
     // promise
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
@@ -54,10 +62,12 @@
     "promise/prefer-catch": "error",
     "promise/no-return-in-finally": "error",
     "promise/avoid-new": "error",
+
     // unicorn
     "unicorn/error-message": "error",
     "unicorn/no-null": "allow",
     "unicorn/filename-case": "allow",
+
     // "unicorn/no-null": "error",
     "unicorn/throw-new-error": "error",
     "unicorn/catch-error-name": "allow",
@@ -65,8 +75,10 @@
     "unicorn/numeric-separators-style": "error",
     "unicorn/prefer-string-raw": "error",
     "unicorn/text-encoding-identifier-case": "error",
+
     // oxc
     "oxc/no-map-spread": "error",
+
     // typescript
     "typescript/consistent-type-imports": "error",
     // "typescript/no-non-null-assertion": "error",
@@ -74,12 +86,6 @@
     "typescript/consistent-type-definitions": "error",
     "typescript/consistent-indexed-object-style": "allow",
     "typescript/no-inferrable-types": "error",
-    "typescript/array-type": "error",
-    // style
-    "sort-imports": "allow",
-    "yoda": "allow",
-    "sort-keys": "allow",
-    "no-magic-numbers": "allow",
-    "no-duplicate-imports": "error"
+    "typescript/array-type": "error"
   }
 }

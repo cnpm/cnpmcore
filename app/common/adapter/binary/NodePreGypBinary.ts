@@ -71,7 +71,8 @@ export class NodePreGypBinary extends AbstractBinary {
           isDir: true,
           url: '',
         });
-        currentDir = dirItems[`/${dirName}/`] = [];
+        currentDir = [];
+        dirItems[`/${dirName}/`] = currentDir;
       }
 
       // https://node-precompiled-binaries.grpc.io/?delimiter=/&prefix=grpc/v1.24.11/
