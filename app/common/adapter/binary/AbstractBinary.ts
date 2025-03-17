@@ -10,6 +10,7 @@ import type {
   BinaryTaskConfig,
 } from '../../../../config/binaries.js';
 
+const platforms = ['darwin', 'linux', 'win32'] as const;
 export interface BinaryItem {
   name: string;
   isDir: boolean;
@@ -23,8 +24,6 @@ export interface FetchResult {
   items: BinaryItem[];
   nextParams?: any;
 }
-
-const platforms = ['darwin', 'linux', 'win32'] as const;
 
 export const BINARY_ADAPTER_ATTRIBUTE = Symbol('BINARY_ADAPTER_ATTRIBUTE');
 

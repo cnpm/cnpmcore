@@ -58,6 +58,10 @@ import type { RegistryManagerService } from './RegistryManagerService.js';
 import type { Registry } from '../entity/Registry.js';
 import type { PackageVersionService } from './PackageVersionService.js';
 
+const TOTAL = '@@TOTAL@@';
+const SCOPE_TOTAL_PREFIX = '@@SCOPE@@:';
+const DESCRIPTION_LIMIT = 1024 * 10;
+
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
   scope: string;
@@ -85,10 +89,6 @@ export interface PublishPackageCmd {
   // only use on sync package for speed up https://github.com/cnpm/cnpmcore/issues/28
   skipRefreshPackageManifests?: boolean;
 }
-
-const TOTAL = '@@TOTAL@@';
-const SCOPE_TOTAL_PREFIX = '@@SCOPE@@:';
-const DESCRIPTION_LIMIT = 1024 * 10;
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

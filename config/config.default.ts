@@ -78,7 +78,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   },
 };
 
-interface NFSConfig {
+export interface NFSConfig {
   client: any;
   dir: string;
   removeBeforeUpload: boolean;

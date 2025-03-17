@@ -1,3 +1,4 @@
+// oxlint-disable import/exports-last
 import { mkdir, rm } from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
 import { setTimeout } from 'node:timers/promises';
@@ -8,7 +9,54 @@ import type { EggContextHttpClient, HttpClientResponse } from 'egg';
 import mime from 'mime-types';
 import dayjs from './dayjs.js';
 
-interface DownloadToTempfileOptionalConfig {
+async function _downloadToTempfile(
+  httpclient: EggContextHttpClient,
+  dataDir: string,
+  url: string,
+  optionalConfig?: DownloadToTempfileOptionalConfig
+): Promise<Tempfile> {
+  const tmpfile = await createTempfile(dataDir, url);
+  const writeStream = createWriteStream(tmpfile);
+  try {
+    // max 10 mins to download
+    // FIXME: should show download progress
+    const requestHeaders: Record<string, string> = {};
+    if (optionalConfig?.remoteAuthToken) {
+      requestHeaders.authorization = `Bearer ${optionalConfig.remoteAuthToken}`;
+    }
+    const { status, headers, res } = (await httpclient.request(url, {
+      timeout: 60_000 * 10,
+      headers: requestHeaders,
+      writeStream,
+      timing: true,
+      followRedirect: true,
+    })) as HttpClientResponse;
+    if (
+      status === 404 ||
+      (optionalConfig?.ignoreDownloadStatuses &&
+        optionalConfig.ignoreDownloadStatuses.includes(status))
+    ) {
+      const err = new Error(`Not found, status(${status})`);
+      err.name = 'DownloadNotFoundError';
+      throw err;
+    }
+    if (status !== 200) {
+      const err = new Error(`Download ${url} status(${status}) invalid`);
+      err.name = 'DownloadStatusInvalidError';
+      throw err;
+    }
+    return {
+      tmpfile,
+      headers,
+      timing: res.timing,
+    };
+  } catch (err) {
+    await rm(tmpfile, { force: true });
+    throw err;
+  }
+}
+
+export interface DownloadToTempfileOptionalConfig {
   retries?: number;
   ignoreDownloadStatuses?: number[];
   remoteAuthToken?: string;
@@ -69,52 +117,6 @@ export interface Tempfile {
   tmpfile: string;
   headers: HttpClientResponse['res']['headers'];
   timing: HttpClientResponse['res']['timing'];
-}
-async function _downloadToTempfile(
-  httpclient: EggContextHttpClient,
-  dataDir: string,
-  url: string,
-  optionalConfig?: DownloadToTempfileOptionalConfig
-): Promise<Tempfile> {
-  const tmpfile = await createTempfile(dataDir, url);
-  const writeStream = createWriteStream(tmpfile);
-  try {
-    // max 10 mins to download
-    // FIXME: should show download progress
-    const requestHeaders: Record<string, string> = {};
-    if (optionalConfig?.remoteAuthToken) {
-      requestHeaders.authorization = `Bearer ${optionalConfig.remoteAuthToken}`;
-    }
-    const { status, headers, res } = (await httpclient.request(url, {
-      timeout: 60_000 * 10,
-      headers: requestHeaders,
-      writeStream,
-      timing: true,
-      followRedirect: true,
-    })) as HttpClientResponse;
-    if (
-      status === 404 ||
-      (optionalConfig?.ignoreDownloadStatuses &&
-        optionalConfig.ignoreDownloadStatuses.includes(status))
-    ) {
-      const err = new Error(`Not found, status(${status})`);
-      err.name = 'DownloadNotFoundError';
-      throw err;
-    }
-    if (status !== 200) {
-      const err = new Error(`Download ${url} status(${status}) invalid`);
-      err.name = 'DownloadStatusInvalidError';
-      throw err;
-    }
-    return {
-      tmpfile,
-      headers,
-      timing: res.timing,
-    };
-  } catch (err) {
-    await rm(tmpfile, { force: true });
-    throw err;
-  }
 }
 
 const DEFAULT_CONTENT_TYPE = 'application/octet-stream';

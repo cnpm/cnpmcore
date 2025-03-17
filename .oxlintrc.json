@@ -53,6 +53,7 @@
     "import/no-namespace": "error",
     "import/named": "error",
     "import/export": "error",
+    "import/exports-last": "allow",
 
     // promise
     "promise/no-return-wrap": "error",

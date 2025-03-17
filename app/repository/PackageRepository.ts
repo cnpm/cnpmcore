@@ -114,7 +114,7 @@ export type PackageJSONType = CnpmcorePatchInfo & {
   [key: string]: unknown;
 };
 
-type PackageJSONPickKey =
+export type PackageJSONPickKey =
   | 'name'
   | 'author'
   | 'bugs'
@@ -135,7 +135,7 @@ export interface CnpmcorePatchInfo {
   block?: string;
 }
 
-type AbbreviatedKey =
+export type AbbreviatedKey =
   | 'name'
   | 'version'
   | 'deprecated'
@@ -160,7 +160,7 @@ type AbbreviatedKey =
   | 'acceptDependencies'
   | 'funding';
 
-interface DistType {
+export interface DistType {
   tarball: string;
   size: number;
   shasum: string;
@@ -175,19 +175,19 @@ export interface AuthorType {
   url?: string;
 }
 
-interface LicenseType {
+export interface LicenseType {
   type: string;
   url: string;
 }
 
-interface ContributorType {
+export interface ContributorType {
   name?: string;
   email?: string;
   url?: string;
   [key: string]: unknown;
 }
 
-interface DirectoriesType {
+export interface DirectoriesType {
   lib?: string;
   bin?: string;
   man?: string;
@@ -195,13 +195,13 @@ interface DirectoriesType {
   [key: string]: string | undefined;
 }
 
-interface RepositoryType {
+export interface RepositoryType {
   type: string;
   url: string;
   [key: string]: unknown;
 }
 
-type DepInfo = Record<string, string>;
+export type DepInfo = Record<string, string>;
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

@@ -1,30 +1,5 @@
 import { BinaryType } from '../app/common/enum/Binary.js';
 
-export interface BinaryTaskConfig {
-  category: CategoryName; // 默认 category 为 binaryName，但是有些 binary 会有不同的 category，比如 canvas，包含 canvas 和 node-canvas-prebuilt 两个
-  description: string;
-  type: BinaryType;
-  repo: string;
-  distUrl: string;
-  ignoreDirs?: readonly string[];
-  ignoreFiles?: readonly string[];
-  options?: {
-    nodePlatforms?: readonly string[];
-    nodeArchs?: Record<string, readonly string[]>;
-    // Imagemin binFiles
-    binFiles?: Record<string, readonly string[]>;
-    // default is 1
-    maxPage?: number;
-    // custom npm package name, for ImageminBinary
-    npmPackageName?: string;
-    // custom for NodePreGypBinary
-    requiredNapiVersions?: boolean;
-    // ignore download fail response status
-    ignoreDownloadStatuses?: number[];
-  };
-  disable?: boolean;
-}
-
 const binaries = {
   // NwjsBinary
   nwjs: {
@@ -989,10 +964,35 @@ const binaries = {
   },
 } as const;
 
+export interface BinaryTaskConfig {
+  category: CategoryName; // 默认 category 为 binaryName，但是有些 binary 会有不同的 category，比如 canvas，包含 canvas 和 node-canvas-prebuilt 两个
+  description: string;
+  type: BinaryType;
+  repo: string;
+  distUrl: string;
+  ignoreDirs?: readonly string[];
+  ignoreFiles?: readonly string[];
+  options?: {
+    nodePlatforms?: readonly string[];
+    nodeArchs?: Record<string, readonly string[]>;
+    // Imagemin binFiles
+    binFiles?: Record<string, readonly string[]>;
+    // default is 1
+    maxPage?: number;
+    // custom npm package name, for ImageminBinary
+    npmPackageName?: string;
+    // custom for NodePreGypBinary
+    requiredNapiVersions?: boolean;
+    // ignore download fail response status
+    ignoreDownloadStatuses?: number[];
+  };
+  disable?: boolean;
+}
+
 export type BinaryName = keyof typeof binaries;
 export type CategoryName = (typeof binaries)[BinaryName]['category'];
 
-const BinaryConfigMap: Record<BinaryName, BinaryTaskConfig> = {
+export const BinaryConfigMap: Record<BinaryName, BinaryTaskConfig> = {
   ...binaries,
 };
 
