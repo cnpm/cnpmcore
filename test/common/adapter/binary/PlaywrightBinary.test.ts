@@ -1,4 +1,5 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import { PlaywrightBinary } from '../../../../app/common/adapter/binary/PlaywrightBinary.js';
@@ -13,15 +14,24 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
-        data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
+        data: await TestUtil.readFixturesFile(
+          'registry.npmjs.com/playwright-core.json'
+        ),
         persist: false,
       });
-      app.mockAgent().get('https://unpkg.com')
+      app
+        .mockAgent()
+        .get('https://unpkg.com')
         .intercept({
           method: 'GET',
           path: /browsers\.json/,
         })
-        .reply(200, await TestUtil.readFixturesFile('unpkg.com/playwright-core-browsers.json'))
+        .reply(
+          200,
+          await TestUtil.readFixturesFile(
+            'unpkg.com/playwright-core-browsers.json'
+          )
+        )
         .persist();
       const result = await binary.fetch('/');
       assert(result);
@@ -40,15 +50,24 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
 
     it('should fetch subdir: /builds/, /builds/chromium/ work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
-        data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
+        data: await TestUtil.readFixturesFile(
+          'registry.npmjs.com/playwright-core.json'
+        ),
         persist: false,
       });
-      app.mockAgent().get('https://unpkg.com')
+      app
+        .mockAgent()
+        .get('https://unpkg.com')
         .intercept({
           method: 'GET',
           path: /browsers\.json/,
         })
-        .reply(200, await TestUtil.readFixturesFile('unpkg.com/playwright-core-browsers.json'))
+        .reply(
+          200,
+          await TestUtil.readFixturesFile(
+            'unpkg.com/playwright-core-browsers.json'
+          )
+        )
         .persist();
       let result = await binary.fetch('/builds/');
       assert(result);
@@ -64,8 +83,14 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       assert.equal(result.items[0].isDir, true);
 
       const names = [
-        'chromium', 'chromium-tip-of-tree', 'firefox', 'firefox-beta',
-        'webkit', 'ffmpeg', 'winldd', 'android',
+        'chromium',
+        'chromium-tip-of-tree',
+        'firefox',
+        'firefox-beta',
+        'webkit',
+        'ffmpeg',
+        'winldd',
+        'android',
       ];
       for (const dirname of names) {
         result = await binary.fetch(`/builds/${dirname}/`);
@@ -75,7 +100,9 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         for (const item of result.items) {
           assert(item.isDir);
         }
-        result = await binary.fetch(`/builds/${dirname}/${result.items[0].name}`);
+        result = await binary.fetch(
+          `/builds/${dirname}/${result.items[0].name}`
+        );
         assert(result);
         // console.log(result.items);
         assert(result.items.length > 0);
@@ -98,13 +125,19 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
           if (dirname === 'chromium') {
             // chromium should include chromium-headless-shell
             if (item.name.startsWith('chromium-headless-shell')) {
-              assert.match(item.url, /https:\/\/playwright\.azureedge\.net\/builds\/chromium\/\d+\/chromium-headless-shell/);
+              assert.match(
+                item.url,
+                /https:\/\/playwright\.azureedge\.net\/builds\/chromium\/\d+\/chromium-headless-shell/
+              );
               shouldIncludeChromiumHeadlessShell = true;
             }
           }
           if (dirname === 'chromium-tip-of-tree') {
             if (item.name.startsWith('chromium-tip-of-tree-headless-shell')) {
-              assert.match(item.url, /https:\/\/playwright\.azureedge\.net\/builds\/chromium-tip-of-tree\/\d+\/chromium-tip-of-tree-headless-shell/);
+              assert.match(
+                item.url,
+                /https:\/\/playwright\.azureedge\.net\/builds\/chromium-tip-of-tree\/\d+\/chromium-tip-of-tree-headless-shell/
+              );
               shouldIncludeChromiumTipOfTreeHeadlessShell = true;
             }
           }

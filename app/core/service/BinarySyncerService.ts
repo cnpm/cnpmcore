@@ -1,10 +1,18 @@
-import type { EggObjectFactory } from '@eggjs/tegg';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import type { EggHttpClient } from 'egg';
 import fs from 'node:fs/promises';
+
+import {
+  AccessLevel,
+  Inject,
+  SingletonProto,
+  type EggObjectFactory,
+} from '@eggjs/tegg';
+import type { EggHttpClient } from 'egg';
 import { sortBy } from 'lodash-es';
-import type { BinaryName, CategoryName } from '../../../config/binaries.js';
-import binaries from '../../../config/binaries.js';
+
+import binaries, {
+  type BinaryName,
+  type CategoryName,
+} from '../../../config/binaries.js';
 import type { BinaryRepository } from '../../repository/BinaryRepository.js';
 import { Task } from '../entity/Task.js';
 import { Binary } from '../entity/Binary.js';
@@ -12,11 +20,13 @@ import type { TaskService } from './TaskService.js';
 import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
 import { downloadToTempfile } from '../../common/FileUtil.js';
 import { isTimeoutError } from '../../common/ErrorUtil.js';
-import type { BinaryItem } from '../../common/adapter/binary/AbstractBinary.js';
-import { AbstractBinary } from '../../common/adapter/binary/AbstractBinary.js';
+import {
+  AbstractBinary,
+  type BinaryItem,
+} from '../../common/adapter/binary/AbstractBinary.js';
 import { AbstractService } from '../../common/AbstractService.js';
 import { BinaryType } from '../../common/enum/Binary.js';
-import { TaskType, TaskState } from '../../common/enum/Task.js';
+import { TaskState, TaskType } from '../../common/enum/Task.js';
 
 function isoNow() {
   return new Date().toISOString();
@@ -82,7 +92,10 @@ export class BinarySyncerService extends AbstractService {
     return await this.nfsAdapter.getDownloadUrlOrStream(binary.storePath);
   }
 
-  public async createTask(binaryName: BinaryName, lastData?: any) {
+  public async createTask(
+    binaryName: BinaryName,
+    lastData?: Record<string, unknown>
+  ) {
     try {
       return await this.taskService.createTask(
         Task.createSyncBinary(binaryName, lastData),
@@ -159,7 +172,7 @@ export class BinarySyncerService extends AbstractService {
         logUrl,
         hasDownloadError
       );
-    } catch (err: any) {
+    } catch (err) {
       task.error = `${err.name}: ${err.message}`;
       logs.push(
         `[${isoNow()}] ❌ Synced "${binaryName}" fail, ${task.error}, log: ${logUrl}`
@@ -263,7 +276,7 @@ export class BinarySyncerService extends AbstractService {
             const { tmpfile, headers, timing } = await downloadToTempfile(
               this.httpclient,
               this.config.dataDir,
-              item.sourceUrl!,
+              item.sourceUrl,
               { ignoreDownloadStatuses: item.ignoreDownloadStatuses }
             );
             const log = `[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)}, ${item.sourceUrl} => ${tmpfile}`;
@@ -279,7 +292,7 @@ export class BinarySyncerService extends AbstractService {
             );
             await this.taskService.appendTaskLog(task, logs.join('\n'));
             logs = [];
-          } catch (err: any) {
+          } catch (err) {
             if (err.name === 'DownloadNotFoundError') {
               this.logger.info('Not found %s, skip it', item.sourceUrl);
               logs.push(

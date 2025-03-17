@@ -1,16 +1,15 @@
 import os from 'node:os';
 import path from 'node:path';
+
 import { InternalServerError } from 'egg-errors';
-import type { EntityData } from './Entity.js';
-import { Entity } from './Entity.js';
-import type { EasyData } from '../util/EntityUtil.js';
-import { EntityUtil } from '../util/EntityUtil.js';
-import { TaskType, TaskState } from '../../common/enum/Task.js';
+
+import { Entity, type EntityData } from './Entity.js';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
+import { TaskState, TaskType } from '../../common/enum/Task.js';
 import { PROXY_CACHE_DIR_NAME } from '../../common/constants.js';
 import dayjs from '../../common/dayjs.js';
 import type { HookEvent } from './HookEvent.js';
-import type { DIST_NAMES } from './Package.js';
-import { isPkgManifest } from './Package.js';
+import { isPkgManifest, type DIST_NAMES } from './Package.js';
 
 export const HOST_NAME = os.hostname();
 export const PID = process.pid;
@@ -34,7 +33,7 @@ export interface TaskData<T = TaskBaseData> extends EntityData {
   bizId?: string;
 }
 
-export type SyncPackageTaskOptions = {
+export interface SyncPackageTaskOptions {
   authorId?: string;
   authorIp?: string;
   tips?: string;
@@ -43,14 +42,14 @@ export type SyncPackageTaskOptions = {
   // force sync history version
   forceSyncHistory?: boolean;
   registryId?: string;
-  specificVersions?: Array<string>;
-};
+  specificVersions?: string[];
+}
 
-export type UpdateProxyCacheTaskOptions = {
+export interface UpdateProxyCacheTaskOptions {
   fullname: string;
   version?: string;
   fileType: DIST_NAMES;
-};
+}
 
 export interface CreateHookTaskData extends TaskBaseData {
   hookEvent: HookEvent;
@@ -67,7 +66,7 @@ export interface CreateSyncPackageTaskData extends TaskBaseData {
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
   forceSyncHistory?: boolean;
-  specificVersions?: Array<string>;
+  specificVersions?: string[];
 }
 
 export interface CreateUpdateProxyCacheTaskData extends TaskBaseData {
@@ -244,7 +243,10 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static createSyncBinary(targetName: string, lastData: any): Task {
+  public static createSyncBinary(
+    targetName: string,
+    lastData?: Record<string, unknown>
+  ): Task {
     const data = {
       type: TaskType.SyncBinary,
       state: TaskState.Waiting,
@@ -308,8 +310,8 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
   }
 }
 
-export type SyncInfo = {
+export interface SyncInfo {
   lastSince: string;
   taskCount: number;
   lastPackage?: string;
-};
+}

@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { TestUtil } from '../../../test/TestUtil.js';
@@ -38,7 +38,8 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
       }
     );
     const user = await userRepository.findUserByName(username);
-    userId = user!.userId;
+    assert(user);
+    userId = user.userId;
   });
 
   describe('executeTask', () => {

@@ -2,9 +2,9 @@ import { Event, Inject } from '@eggjs/tegg';
 import type { EggAppConfig, EggLogger } from 'egg';
 import { ForbiddenError } from 'egg-errors';
 import {
-  PACKAGE_VERSION_ADDED,
   PACKAGE_TAG_ADDED,
   PACKAGE_TAG_CHANGED,
+  PACKAGE_VERSION_ADDED,
 } from './index.js';
 import { getScopeAndName } from '../../common/PackageUtil.js';
 import type { PackageManagerService } from '../service/PackageManagerService.js';

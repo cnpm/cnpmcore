@@ -1,4 +1,4 @@
-import { Range, Comparator } from 'semver';
+import { Comparator, Range } from 'semver';
 import { PaddingSemVer } from './PaddingSemVer.js';
 
 const OPERATOR_MAP = {
@@ -21,7 +21,8 @@ export class SqlRange {
   }
 
   private comparatorToSql(comparator: Comparator) {
-    if (comparator.semver === (Comparator as any).ANY) {
+    // @ts-expect-error type definition is not correct
+    if (comparator.semver === Comparator.ANY) {
       return {
         $and: [
           {
@@ -38,11 +39,13 @@ export class SqlRange {
       };
     }
     const paddingSemver = new PaddingSemVer(comparator.semver);
-    const operator = OPERATOR_MAP[comparator.operator as keyof typeof OPERATOR_MAP];
+    const operator =
+      OPERATOR_MAP[comparator.operator as keyof typeof OPERATOR_MAP];
     if (!operator) {
       throw new Error(`unknown operator ${comparator.operator}`);
     }
-    this._containPreRelease = this._containPreRelease || paddingSemver.isPreRelease;
+    this._containPreRelease =
+      this._containPreRelease || paddingSemver.isPreRelease;
     return {
       $and: [
         {
@@ -59,8 +62,8 @@ export class SqlRange {
     };
   }
 
-  private comparatorSetToSql(comparatorSet: Array<Comparator>) {
-    const condition: Array<object> = [];
+  private comparatorSetToSql(comparatorSet: Comparator[]) {
+    const condition: object[] = [];
     for (const comparator of comparatorSet) {
       condition.push(this.comparatorToSql(comparator));
     }
@@ -68,7 +71,7 @@ export class SqlRange {
   }
 
   private generateWhere() {
-    const conditions: Array<object> = [];
+    const conditions: object[] = [];
     for (const rangeSet of this.range.set) {
       conditions.push(this.comparatorSetToSql(rangeSet as Comparator[]));
     }

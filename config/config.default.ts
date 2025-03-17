@@ -1,7 +1,7 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
-import type { EggAppConfig, PowerPartial, Context } from 'egg';
+import type { Context, EggAppConfig, PowerPartial } from 'egg';
 import OSSClient from 'oss-cnpm';
 import S3Client from 's3-cnpmcore';
 import { env } from 'read-env-value';
@@ -31,7 +31,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
     false
   ),
   syncUpstreamFirst: false,
-  sourceRegistrySyncTimeout: 180000,
+  sourceRegistrySyncTimeout: 180_000,
   taskQueueHighWaterSize: 100,
   syncMode: SyncMode.none,
   syncDeleteMode: SyncDeleteMode.delete,
@@ -78,8 +78,8 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   },
 };
 
-interface NFSConfig {
-  client: any;
+export interface NFSConfig {
+  client: unknown;
   dir: string;
   removeBeforeUpload: boolean;
 }

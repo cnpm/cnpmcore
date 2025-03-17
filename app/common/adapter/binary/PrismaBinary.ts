@@ -1,10 +1,13 @@
 import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
+import binaries, { type BinaryName } from '../../../../config/binaries.js';
 import { BinaryType } from '../../enum/Binary.js';
-import type { BinaryName } from '../../../../config/binaries.js';
-import binaries from '../../../../config/binaries.js';
-import type { FetchResult, BinaryItem } from './AbstractBinary.js';
-import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
+import {
+  AbstractBinary,
+  BinaryAdapter,
+  type BinaryItem,
+  type FetchResult,
+} from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Prisma)
@@ -76,6 +79,7 @@ export class PrismaBinary extends AbstractBinary {
     return { items: this.#parseItems(result), nextParams: null };
   }
 
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   #parseItems(result: any): BinaryItem[] {
     const items: BinaryItem[] = [];
     // objects": [

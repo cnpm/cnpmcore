@@ -1,12 +1,14 @@
 import os from 'node:os';
 import { setTimeout } from 'node:timers/promises';
 import { rm } from 'node:fs/promises';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
 import type { EggHttpClient } from 'egg';
-import { isEqual, isEmpty } from 'lodash-es';
+import { isEmpty, isEqual } from 'lodash-es';
 import semver from 'semver';
 import { BadRequestError } from 'egg-errors';
+
 import type {
   NPMRegistry,
   RegistryResponse,
@@ -26,11 +28,11 @@ import type {
 } from '../../repository/PackageRepository.js';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
 import type { UserRepository } from '../../repository/UserRepository.js';
-import type {
-  SyncPackageTaskOptions,
-  CreateSyncPackageTask,
+import {
+  type CreateSyncPackageTask,
+  type SyncPackageTaskOptions,
+  Task,
 } from '../entity/Task.js';
-import { Task } from '../entity/Task.js';
 import type { Package } from '../entity/Package.js';
 import type { UserService } from './UserService.js';
 import type { TaskService } from './TaskService.js';
@@ -43,14 +45,14 @@ import type { ScopeManagerService } from './ScopeManagerService.js';
 import { EventCorkAdvice } from './EventCorkerAdvice.js';
 import { PresetRegistryName, SyncDeleteMode } from '../../common/constants.js';
 
-type syncDeletePkgOptions = {
+interface syncDeletePkgOptions {
   task: Task;
   pkg: Package | null;
   logUrl: string;
   url: string;
   logs: string[];
-  data: any;
-};
+  data: unknown;
+}
 
 function isoNow() {
   return new Date().toISOString();
@@ -160,7 +162,7 @@ export class PackageSyncerService extends AbstractService {
       logs.push(
         `[${isoNow()}][DownloadData] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, downloads: ${downloads.length}`
       );
-    } catch (err: any) {
+    } catch (err) {
       const status = err.status || 'unknow';
       logs.push(
         `[${isoNow()}][DownloadData] ❌ Get download data error: ${err}, status: ${status}`
@@ -182,6 +184,7 @@ export class PackageSyncerService extends AbstractService {
         datas.set(yearMonth, []);
       }
       const counters = datas.get(yearMonth);
+      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       counters!.push([date, item.downloads]);
     }
     for (const [yearMonth, counters] of datas.entries()) {
@@ -220,7 +223,7 @@ export class PackageSyncerService extends AbstractService {
         `[${isoNow()}][UP] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, data: ${JSON.stringify(data)}`
       );
       logId = data.logId;
-    } catch (err: any) {
+    } catch (err) {
       const status = err.status || 'unknow';
       // 可能会抛出 AggregateError 异常
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError
@@ -273,7 +276,7 @@ export class PackageSyncerService extends AbstractService {
         );
         await this.taskService.appendTaskLog(task, logs.join('\n'));
         logs = [];
-      } catch (err: any) {
+      } catch (err) {
         useTime = Date.now() - startTime;
         const status = err.status || 'unknow';
         logs.push(
@@ -450,7 +453,7 @@ export class PackageSyncerService extends AbstractService {
 
     // 更新 targetHost 地址
     // defaultRegistry 可能还未创建
-    if (registry?.host) {
+    if (registry.host) {
       targetHost = registry.host;
     }
     this.npmRegistry.setRegistryHost(targetHost);
@@ -517,7 +520,7 @@ export class PackageSyncerService extends AbstractService {
     }
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
-    if (registry?.name === PresetRegistryName.self) {
+    if (registry.name === PresetRegistryName.self) {
       logs.push(
         `[${isoNow()}] ❌❌❌❌❌ ${fullname} has been published to the self registry, skip sync ❌❌❌❌❌`
       );
@@ -530,10 +533,10 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    if (pkg && pkg?.registryId !== registry?.registryId) {
+    if (pkg && pkg?.registryId !== registry.registryId) {
       if (pkg.registryId) {
         logs.push(
-          `[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry?.registryId}, skip sync ❌❌❌❌❌`
+          `[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry.registryId}, skip sync ❌❌❌❌❌`
         );
         await this.taskService.finishTask(
           task,
@@ -550,7 +553,7 @@ export class PackageSyncerService extends AbstractService {
       // 多同步源之前没有 registryId
       // publish() 版本不变时，不会更新 registryId
       // 在同步前，进行更新操作
-      pkg.registryId = registry?.registryId;
+      pkg.registryId = registry.registryId;
       await this.packageRepository.savePackage(pkg);
     }
 
@@ -599,7 +602,7 @@ export class PackageSyncerService extends AbstractService {
       registryFetchResult = await this.npmRegistry.getFullManifests(fullname, {
         remoteAuthToken,
       });
-    } catch (err: any) {
+    } catch (err) {
       const status = err.status || 'unknown';
       task.error = `request manifests error: ${err}, status: ${status}`;
       logs.push(
@@ -709,9 +712,8 @@ export class PackageSyncerService extends AbstractService {
         data.description === 'security holding package' ||
         data.repository === 'npm/security-holder'
       ) {
-        maintainers = data.maintainers = [
-          { name: 'npm', email: 'npm@npmjs.com' },
-        ];
+        data.maintainers = [{ name: 'npm', email: 'npm@npmjs.com' }];
+        maintainers = data.maintainers;
       } else {
         // try to use latest tag version's maintainers instead
         const latestPackageVersion =
@@ -736,9 +738,9 @@ export class PackageSyncerService extends AbstractService {
         if (maintainer.name && maintainer.email) {
           maintainersMap[maintainer.name] = maintainer;
           const { changed, user } = await this.userService.saveUser(
-            registry?.userPrefix,
             maintainer.name,
-            maintainer.email
+            maintainer.email,
+            registry.userPrefix
           );
           users.push(user);
           if (changed) {
@@ -982,7 +984,7 @@ export class PackageSyncerService extends AbstractService {
         logs.push(
           `[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`
         );
-      } catch (err: any) {
+      } catch (err) {
         if (
           err.name === 'DownloadNotFoundError' ||
           err.name === 'DownloadStatusInvalidError'
@@ -1010,7 +1012,7 @@ export class PackageSyncerService extends AbstractService {
         description,
         packageJson: item,
         readme,
-        registryId: registry?.registryId,
+        registryId: registry.registryId,
         dist: {
           localFile,
         },
@@ -1031,7 +1033,7 @@ export class PackageSyncerService extends AbstractService {
         logs.push(
           `[${isoNow()}] 🎉 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`
         );
-      } catch (err: any) {
+      } catch (err) {
         if (err.name === 'ForbiddenError') {
           logs.push(
             `[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`
@@ -1207,7 +1209,7 @@ export class PackageSyncerService extends AbstractService {
         }
       }
     }
-    // 3.2 shoud add latest tag
+    // 3.2 should add latest tag
     // 在同步 sepcific version 时如果没有同步 latestTag 的版本会出现 latestTag 丢失或指向版本不正确的情况
     if (specificVersions && this.config.cnpmcore.strictSyncSpecivicVersion) {
       // 不允许自动同步 latest 版本，从已同步版本中选出 latest
@@ -1258,7 +1260,7 @@ export class PackageSyncerService extends AbstractService {
       const { name } = maintainer;
       if (!(name in maintainersMap)) {
         const user = await this.userRepository.findUserByName(
-          `${registry?.userPrefix || 'npm:'}${name}`
+          `${registry.userPrefix || 'npm:'}${name}`
         );
         if (user) {
           await this.packageManagerService.removePackageMaintainer(pkg, user);

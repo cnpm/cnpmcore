@@ -1,8 +1,8 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { Token } from '../../../../app/core/entity/Token.js';
-import { TokenType } from '../../../../app/core/entity/Token.js';
+import { TokenType, type Token } from '../../../../app/core/entity/Token.js';
 import { UserService } from '../../../../app/core/service/UserService.js';
 import { AuthAdapter } from '../../../../app/infra/AuthAdapter.js';
 import { TokenPackage } from '../../../../app/repository/model/TokenPackage.js';

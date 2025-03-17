@@ -1,6 +1,6 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 
-import { randomToken, checkToken } from '../../app/common/UserUtil.js';
+import { checkToken, randomToken } from '../../app/common/UserUtil.js';
 
 describe('test/common/UserUtil.test.ts', () => {
   describe('randomToken()', () => {
@@ -22,7 +22,7 @@ describe('test/common/UserUtil.test.ts', () => {
       assert(!checkToken('cnpm__', 'cnpm'));
       assert(!checkToken('cnpm_1_2', 'npm'));
       assert(!checkToken('cnpm_1_2', 'cnpm'));
-      assert(!checkToken('cnpm_1?!@#_2\\dd', 'cnpm'));
+      assert(!checkToken(String.raw`cnpm_1?!@#_2\dd`, 'cnpm'));
     });
   });
 });

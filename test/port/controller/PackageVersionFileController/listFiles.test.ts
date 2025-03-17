@@ -1,12 +1,12 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService.js';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
-import { database, DATABASE_TYPE } from '../../../../config/database.js';
+import { DATABASE_TYPE, database } from '../../../../config/database.js';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let publisher: TestUser;
@@ -223,7 +223,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
               integrity:
                 'sha512-OJCAthMtPqrngGSNaZg5DYzHGQhWG84JV44nxUKqGp8xIuAfZAxbAb7nMATCOqTp8gZv5e4MogcsJCBXiyjXHw==',
               lastModified: '2024-05-18T16:00:18.307Z',
-              size: 11357,
+              size: 11_357,
             },
             {
               path: '/index.html',
@@ -250,7 +250,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
               integrity:
                 'sha512-xxD+0Mdep4Pprq0JsudGLCKtSfHBeIqJVoGqM0qK1b2B/0sXjSQYinxgAwjK8rKSD0jNSo3R5aK8VbgOXLtbjw==',
               lastModified: '2024-05-18T16:00:18.307Z',
-              size: 12346,
+              size: 12_346,
             },
             {
               path: '/README.md',
@@ -286,7 +286,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
               integrity:
                 'sha512-KW7xaZW5F8NOGt72kc9WvLcvkFDmXbm65JdWPM2pYfy9HMX0/6obJD5jhzQSX5ZU8ww0HMlXGXkRviFnDr88ZA==',
               lastModified: '2024-05-18T16:00:18.307Z',
-              size: 21379,
+              size: 21_379,
             },
             {
               path: '/.eslintrc.yml',

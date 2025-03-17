@@ -1,8 +1,8 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
 
 describe('test/port/controller/package/RemovePackageVersionController.test.ts', () => {
@@ -57,8 +57,10 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         '1.0.0'
       );
       assert(pkgVersionEntity);
-      pkgVersionEntity.publishTime = new Date(Date.now() - 72 * 3600000 - 100);
-      await packageRepository.savePackageVersion(pkgVersionEntity!);
+      pkgVersionEntity.publishTime = new Date(
+        Date.now() - 72 * 3_600_000 - 100
+      );
+      await packageRepository.savePackageVersion(pkgVersionEntity);
 
       const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
       const pkgVersion = res.body;
@@ -282,8 +284,10 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         '1.0.0'
       );
       assert(pkgVersionEntity);
-      pkgVersionEntity.publishTime = new Date(Date.now() - 72 * 3600000 - 100);
-      await packageRepository.savePackageVersion(pkgVersionEntity!);
+      pkgVersionEntity.publishTime = new Date(
+        Date.now() - 72 * 3_600_000 - 100
+      );
+      await packageRepository.savePackageVersion(pkgVersionEntity);
 
       res = await app
         .httpRequest()

@@ -1,5 +1,6 @@
-import { Readable, Duplex } from 'node:stream';
-import { strict as assert } from 'node:assert';
+import { Duplex, Readable } from 'node:stream';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import type { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';
@@ -97,7 +98,7 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
     });
 
     it.skip('should read changes work', async () => {
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 10_000; i++) {
         const stream = npmChangesStream.fetchChanges(registry, '36904024');
         assert(stream);
         try {

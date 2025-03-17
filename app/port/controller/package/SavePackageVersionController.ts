@@ -1,38 +1,37 @@
 import type { PackageJson, Simplify } from 'type-fest';
 import { isEqual } from 'lodash-es';
 import {
-  UnprocessableEntityError,
-  ForbiddenError,
   ConflictError,
+  ForbiddenError,
+  UnprocessableEntityError,
 } from 'egg-errors';
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
+  HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  HTTPBody,
   Inject,
-  Context,
 } from '@eggjs/tegg';
 import { checkData, fromData } from 'ssri';
 import validateNpmPackageName from 'validate-npm-package-name';
-import type { Static } from 'egg-typebox-validate/typebox';
-import { Type } from 'egg-typebox-validate/typebox';
+import { Type, type Static } from 'egg-typebox-validate/typebox';
 
 import { AbstractController } from '../AbstractController.js';
 import {
-  getScopeAndName,
   FULLNAME_REG_STRING,
   extractPackageJSON,
+  getScopeAndName,
 } from '../../../common/PackageUtil.js';
 import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
 import type { PackageVersion as PackageVersionEntity } from '../../../core/entity/PackageVersion.js';
 import {
-  VersionRule,
-  TagWithVersionRule,
-  Name as NameType,
   Description as DescriptionType,
+  Name as NameType,
+  TagWithVersionRule,
+  VersionRule,
 } from '../../typebox.js';
 import type { RegistryManagerService } from '../../../core/service/RegistryManagerService.js';
 import type { PackageJSONType } from '../../../repository/PackageRepository.js';
@@ -182,7 +181,7 @@ export class SavePackageVersionController extends AbstractController {
     const [scope, name] = getScopeAndName(fullname);
     // see @https://github.com/cnpm/cnpmcore/issues/574
     // add default latest tag
-    if (!pkg['dist-tags']!.latest) {
+    if (!distTags.latest) {
       const existsPkg = await this.packageRepository.findPackage(scope, name);
       const existsLatestTag =
         existsPkg &&
@@ -192,7 +191,7 @@ export class SavePackageVersionController extends AbstractController {
         ));
       if (!existsPkg || !existsLatestTag) {
         this.logger.warn('[package:version:add] add default latest tag');
-        pkg['dist-tags']!.latest = pkg['dist-tags']![tagNames[0]];
+        distTags.latest = distTags[tagNames[0]];
         tagNames = [...tagNames, 'latest'];
       }
     }
@@ -330,7 +329,7 @@ export class SavePackageVersionController extends AbstractController {
     await this.packageManagerService.saveDeprecatedVersions(
       pkg,
       versions.map(v => {
-        return { version: v.version, deprecated: v.deprecated! };
+        return { version: v.version, deprecated: v.deprecated };
       })
     );
     return { ok: true };

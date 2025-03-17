@@ -1,10 +1,12 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
-import type { PackageManifestType } from '../../../../app/repository/PackageRepository.js';
-import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
+import {
+  PackageRepository,
+  type PackageManifestType,
+} from '../../../../app/repository/PackageRepository.js';
 import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
 import { CacheService } from '../../../../app/core/service/CacheService.js';
@@ -115,7 +117,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(Object.keys(pkg.versions).length === 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['1.0.0'];
-      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert.equal(versionOne.dist.unpackedSize, 6_497_043);
       assert(versionOne._cnpmcore_publish_time);
       assert(versionOne.publish_time);
       assert.equal(pkg._id, name);
@@ -262,7 +264,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(Object.keys(pkg.versions).length === 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['1.0.0'];
-      assert(versionOne.dist.unpackedSize === 6497043);
+      assert(versionOne.dist.unpackedSize === 6_497_043);
       assert(versionOne._cnpmcore_publish_time);
       assert.equal(typeof versionOne._cnpmcore_publish_time, 'string');
       assert(versionOne.publish_time);
@@ -290,7 +292,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(Object.keys(pkg.versions).length, 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['1.0.0'];
-      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert.equal(versionOne.dist.unpackedSize, 6_497_043);
       assert(versionOne._cnpmcore_publish_time);
       assert.equal(pkg._id, scopedName);
       assert(pkg._rev);
@@ -317,7 +319,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.match(pkg.modified, /^202\d/);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['2.0.0'];
-      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert.equal(versionOne.dist.unpackedSize, 6_497_043);
       assert(!versionOne._cnpmcore_publish_time);
       assert(versionOne.publish_time);
       assert.equal(typeof versionOne.publish_time, 'number');
@@ -394,7 +396,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.equal(Object.keys(pkg.versions).length, 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['2.0.0'];
-      assert.equal(versionOne.dist.unpackedSize, 6497043);
+      assert.equal(versionOne.dist.unpackedSize, 6_497_043);
       assert(!versionOne._cnpmcore_publish_time);
       assert(versionOne.publish_time);
       assert.equal(typeof versionOne.publish_time, 'number');
@@ -422,7 +424,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(Object.keys(pkg.versions).length === 2);
       // console.log(JSON.stringify(pkg, null, 2));
       const versionOne = pkg.versions['2.0.0'];
-      assert(versionOne.dist.unpackedSize === 6497043);
+      assert(versionOne.dist.unpackedSize === 6_497_043);
       assert(!versionOne._cnpmcore_publish_time);
       assert(versionOne.publish_time);
       assert.equal(typeof versionOne.publish_time, 'number');
@@ -609,7 +611,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         '@cnpm',
         'test-module-mock-dist-not-exists'
       );
-      await packageRepository.removePackageDist(pkgModel!, false);
+      assert(pkgModel);
+      await packageRepository.removePackageDist(pkgModel, false);
 
       res = await app
         .httpRequest()
@@ -642,7 +645,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         '@cnpm',
         'test-module-mock-dist-not-exists-full-manifests'
       );
-      await packageRepository.removePackageDist(pkgModel!, true);
+      assert(pkgModel);
+      await packageRepository.removePackageDist(pkgModel, true);
 
       res = await app
         .httpRequest()
@@ -918,7 +922,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(data._source_registry_name === 'self');
       assert(
         Object.values(data.versions).every(
-          v => v!._source_registry_name === 'self'
+          v => v && v._source_registry_name === 'self'
         )
       );
     });
@@ -937,7 +941,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const data = res.body as PackageManifestType;
       assert(
         Object.values(data.versions).every(
-          v => v!._source_registry_name === 'self'
+          v => v && v._source_registry_name === 'self'
         )
       );
     });

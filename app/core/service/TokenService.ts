@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { isEmpty } from 'lodash-es';
 import { ForbiddenError, UnauthorizedError } from 'egg-errors';
+
 import { AbstractService } from '../../common/AbstractService.js';
-import type { Token } from '../entity/Token.js';
-import { isGranularToken } from '../entity/Token.js';
+import { isGranularToken, type Token } from '../entity/Token.js';
 import type { TokenPackage as TokenPackageModel } from '../../../app/repository/model/TokenPackage.js';
 import type { Package as PackageModel } from '../../../app/repository/model/Package.js';
 import { ModelConvertor } from '../../../app/repository/util/ModelConvertor.js';

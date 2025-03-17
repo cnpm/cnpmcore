@@ -1,8 +1,11 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { SearchManifestType } from '../../app/repository/SearchRepository.js';
-import { SearchRepository } from '../../app/repository/SearchRepository.js';
+import {
+  SearchRepository,
+  type SearchManifestType,
+} from '../../app/repository/SearchRepository.js';
 import { mockES } from '../../config/config.unittest.js';
 import { PackageManagerService } from '../../app/core/service/PackageManagerService.js';
 import { TestUtil } from '../TestUtil.js';

@@ -1,10 +1,10 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+
 import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
 import { TaskState, TaskType } from '../../common/enum/Task.js';
 import { AbstractService } from '../../common/AbstractService.js';
 import type { TaskRepository } from '../../repository/TaskRepository.js';
-import type { CreateSyncPackageTaskData } from '../entity/Task.js';
-import { Task } from '../entity/Task.js';
+import { Task, type CreateSyncPackageTaskData } from '../entity/Task.js';
 import type { QueueAdapter } from '../../common/typing.js';
 
 @SingletonProto({
@@ -108,7 +108,7 @@ export class TaskService extends AbstractService {
     return await this.taskRepository.findTask(taskId);
   }
 
-  public async findTasks(taskIdList: Array<string>) {
+  public async findTasks(taskIdList: string[]) {
     return await this.taskRepository.findTasks(taskIdList);
   }
 
@@ -149,7 +149,7 @@ export class TaskService extends AbstractService {
     // try processing timeout tasks in 10 mins
     const tasks = await this.taskRepository.findTimeoutTasks(
       TaskState.Processing,
-      60000 * 10
+      60_000 * 10
     );
     for (const task of tasks) {
       try {
@@ -191,7 +191,7 @@ export class TaskService extends AbstractService {
     // try waiting timeout tasks in 30 mins
     const waitingTasks = await this.taskRepository.findTimeoutTasks(
       TaskState.Waiting,
-      60000 * 30
+      60_000 * 30
     );
     for (const task of waitingTasks) {
       try {
@@ -249,7 +249,7 @@ export class TaskService extends AbstractService {
       if (nextPosition) {
         task.logStorePosition = nextPosition;
       }
-    } catch (err: any) {
+    } catch (err) {
       // [PositionNotEqualToLengthError]: Position is not equal to file length, status: 409
       // [ObjectNotAppendableError]: The object is not appendable
       if (

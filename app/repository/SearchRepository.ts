@@ -1,4 +1,4 @@
-import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { estypes } from '@elastic/elasticsearch';
 
 import type { SearchAdapter } from '../common/typing.js';
@@ -37,12 +37,12 @@ export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> &
     };
   };
 
-export type SearchManifestType = {
+export interface SearchManifestType {
   package: SearchMappingType;
   downloads: {
     all: number;
   };
-};
+}
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -52,6 +52,7 @@ export class SearchRepository {
   private readonly searchAdapter: SearchAdapter;
 
   async searchPackage(
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     query: any
   ): Promise<estypes.SearchHitsMetadata<SearchManifestType>> {
     return await this.searchAdapter.search<SearchManifestType>(query);

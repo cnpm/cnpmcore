@@ -1,10 +1,13 @@
 import { join } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
-import type { BinaryName } from '../../../../config/binaries.js';
-import binaries from '../../../../config/binaries.js';
+import binaries, { type BinaryName } from '../../../../config/binaries.js';
 import { BinaryType } from '../../enum/Binary.js';
-import type { FetchResult, BinaryItem } from './AbstractBinary.js';
-import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
+import {
+  AbstractBinary,
+  BinaryAdapter,
+  type BinaryItem,
+  type FetchResult,
+} from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.NodePreGyp)
@@ -68,7 +71,8 @@ export class NodePreGypBinary extends AbstractBinary {
           isDir: true,
           url: '',
         });
-        currentDir = dirItems[`/${dirName}/`] = [];
+        currentDir = [];
+        dirItems[`/${dirName}/`] = currentDir;
       }
 
       // https://node-precompiled-binaries.grpc.io/?delimiter=/&prefix=grpc/v1.24.11/

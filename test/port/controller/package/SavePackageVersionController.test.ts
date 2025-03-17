@@ -1,18 +1,17 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 import { ForbiddenError } from 'egg-errors';
 import dayjs from 'dayjs';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { UserRepository } from '../../../../app/repository/UserRepository.js';
 import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
 import { UserService } from '../../../../app/core/service/UserService.js';
-import type { Token } from '../../../../app/core/entity/Token.js';
-import { TokenType } from '../../../../app/core/entity/Token.js';
+import { TokenType, type Token } from '../../../../app/core/entity/Token.js';
 import { Token as TokenModel } from '../../../../app/repository/model/Token.js';
 import type { User } from '../../../../app/core/entity/User.js';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
@@ -315,7 +314,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       );
       assert(pkgEntity);
       pkgEntity.registryId = '';
-      await packageRepository.savePackage(pkgEntity!);
+      await packageRepository.savePackage(pkgEntity);
 
       res = await app.httpRequest().get(`/${pkg.name}`);
       assert.equal(res.body._source_registry_name, 'default');
@@ -774,12 +773,13 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     });
 
     it('should add new version without description(object type) success', async () => {
-      const pkg = (await TestUtil.getFullPackage({
+      const pkg = await TestUtil.getFullPackage({
         name: '@cnpm/with-description-object',
         version: '0.0.0',
-      })) as any;
+      });
       const version = Object.keys(pkg.versions)[0];
-      (pkg.versions[version] as any).description = { foo: 'bar' };
+      // @ts-expect-error type definition is not correct
+      pkg.versions[version].description = { foo: 'bar' };
       let res = await app
         .httpRequest()
         .put(`/${pkg.name}`)
@@ -927,6 +927,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         name: '@cnpm/LegacyName',
       });
       const user = await userRepository.findUserByName(publisher.name);
+      assert(user);
       await packageManagerService.publish(
         {
           scope: '@cnpm',
@@ -941,7 +942,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           tags: ['latest'],
           isPrivate: true,
         },
-        user!
+        user
       );
 
       const res = await app
@@ -1334,7 +1335,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       });
 
       it('should 200 when token has no limit', async () => {
-        token = await userService.createToken(user!.userId, {
+        assert(user);
+        token = await userService.createToken(user.userId, {
           name: 'new-token',
           type: TokenType.granular,
           expires: 1,
@@ -1353,7 +1355,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       });
 
       it('should 200 when allowedScopes', async () => {
-        token = await userService.createToken(user!.userId, {
+        assert(user);
+        token = await userService.createToken(user.userId, {
           name: 'new-token',
           type: TokenType.granular,
           allowedScopes: ['@cnpm'],
@@ -1373,11 +1376,12 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       });
 
       it('should 200 when allowedPackages', async () => {
+        assert(user);
         await TestUtil.createPackage(
           { name: '@cnpm/other_new_pkg' },
-          { name: user!.name }
+          { name: user.name }
         );
-        token = await userService.createToken(user!.userId, {
+        token = await userService.createToken(user.userId, {
           name: 'new-token',
           type: TokenType.granular,
           allowedPackages: ['@cnpm/other_new_pkg'],
@@ -1398,7 +1402,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
       it('should 200 add default latest tag', async () => {
         const name = '@cnpm/default_latest_tag';
-        token = await userService.createToken(user!.userId, {
+        assert(user);
+        token = await userService.createToken(user.userId, {
           name: 'new-token',
           type: TokenType.granular,
           allowedPackages: [name],

@@ -1,11 +1,11 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import dayjs from '../../../../app/common/dayjs.js';
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

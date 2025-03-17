@@ -1,14 +1,21 @@
-import { stat, readFile } from 'node:fs/promises';
-import { strict as assert } from 'node:assert';
-import type { EventBus } from '@eggjs/tegg';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { readFile, stat } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+
+import {
+  AccessLevel,
+  Inject,
+  SingletonProto,
+  type EventBus,
+} from '@eggjs/tegg';
 import { BadRequestError, ForbiddenError, NotFoundError } from 'egg-errors';
 import type { RequireAtLeastOne } from 'type-fest';
 import npa from 'npm-package-arg';
 import semver from 'semver';
 import pMap from 'p-map';
+
 import {
   calculateIntegrity,
+  type Integrity,
   detectInstallScript,
   formatTarball,
   getFullname,
@@ -34,23 +41,27 @@ import { PackageTag } from '../entity/PackageTag.js';
 import type { User } from '../entity/User.js';
 import type { Dist } from '../entity/Dist.js';
 import {
-  PACKAGE_UNPUBLISHED,
   PACKAGE_BLOCKED,
-  PACKAGE_UNBLOCKED,
   PACKAGE_MAINTAINER_CHANGED,
   PACKAGE_MAINTAINER_REMOVED,
-  PACKAGE_VERSION_ADDED,
-  PACKAGE_VERSION_REMOVED,
+  PACKAGE_META_CHANGED,
   PACKAGE_TAG_ADDED,
   PACKAGE_TAG_CHANGED,
   PACKAGE_TAG_REMOVED,
-  PACKAGE_META_CHANGED,
+  PACKAGE_UNBLOCKED,
+  PACKAGE_UNPUBLISHED,
+  PACKAGE_VERSION_ADDED,
+  PACKAGE_VERSION_REMOVED,
 } from '../event/index.js';
 import type { BugVersionService } from './BugVersionService.js';
 import type { BugVersion } from '../entity/BugVersion.js';
 import type { RegistryManagerService } from './RegistryManagerService.js';
 import type { Registry } from '../entity/Registry.js';
 import type { PackageVersionService } from './PackageVersionService.js';
+
+const TOTAL = '@@TOTAL@@';
+const SCOPE_TOTAL_PREFIX = '@@SCOPE@@:';
+const DESCRIPTION_LIMIT = 1024 * 10;
 
 export interface PublishPackageCmd {
   // maintainer: Maintainer;
@@ -79,10 +90,6 @@ export interface PublishPackageCmd {
   // only use on sync package for speed up https://github.com/cnpm/cnpmcore/issues/28
   skipRefreshPackageManifests?: boolean;
 }
-
-const TOTAL = '@@TOTAL@@';
-const SCOPE_TOTAL_PREFIX = '@@SCOPE@@:';
-const DESCRIPTION_LIMIT = 1024 * 10;
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -171,9 +178,11 @@ export class PackageManagerService extends AbstractService {
       cmd.packageJson.publish_time = publishTime.getTime();
     }
     if (cmd.packageJson._hasShrinkwrap === undefined) {
-      cmd.packageJson._hasShrinkwrap = await hasShrinkWrapInTgz(
-        cmd.dist.content || cmd.dist.localFile!
-      );
+      const contentOrFile = cmd.dist.content || cmd.dist.localFile;
+      if (contentOrFile) {
+        cmd.packageJson._hasShrinkwrap =
+          await hasShrinkWrapInTgz(contentOrFile);
+      }
     }
 
     // set _npmUser field to cmd.packageJson
@@ -193,14 +202,15 @@ export class PackageManagerService extends AbstractService {
     const hasInstallScript = detectInstallScript(cmd.packageJson)
       ? true
       : undefined;
-    let tarDistIntegrity: any;
+    let tarDistIntegrity: Integrity;
     let tarDistSize = 0;
     if (cmd.dist.content) {
       const tarDistBytes = cmd.dist.content;
       tarDistIntegrity = await calculateIntegrity(tarDistBytes);
       tarDistSize = tarDistBytes.length;
-    } else if (cmd.dist.localFile) {
-      const localFile = cmd.dist.localFile;
+    } else {
+      // should has localFile
+      const localFile = cmd.dist.localFile as string;
       const fileStat = await stat(localFile);
       tarDistIntegrity = await calculateIntegrity(localFile);
       tarDistSize = fileStat.size;
@@ -634,7 +644,7 @@ export class PackageManagerService extends AbstractService {
 
   public async saveDeprecatedVersions(
     pkg: Package,
-    deprecatedList: { version: string; deprecated: string }[]
+    deprecatedList: { version: string; deprecated?: string }[]
   ) {
     const updateVersions: string[] = [];
     for (const { version, deprecated } of deprecatedList) {
@@ -691,7 +701,7 @@ export class PackageManagerService extends AbstractService {
         pkg.manifestsDist
       );
     if (!fullManifests) return;
-    fullManifests.readme = await readFile(readmeFile, 'utf-8');
+    fullManifests.readme = await readFile(readmeFile, 'utf8');
     await this._updatePackageManifestsToDists(pkg, fullManifests, null);
     this.logger.info(
       '[PackageManagerService.savePackageReadme] save packageId:%s readme, size: %s',
@@ -740,11 +750,13 @@ export class PackageManagerService extends AbstractService {
       'dist-tags': {},
     };
     await this._mergeManifestDist(
+      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       pkg.manifestsDist!,
       undefined,
       unpublishedInfo
     );
     await this._mergeManifestDist(
+      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       pkg.abbreviatedsDist!,
       undefined,
       unpublishedInfo
@@ -975,6 +987,7 @@ export class PackageManagerService extends AbstractService {
     if (refreshAttr === 'maintainers') {
       const fullManifests =
         await this.distRepository.readDistBytesToJSON<PackageManifestType>(
+          // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
           pkg.manifestsDist!
         );
       const maintainers = await this._listPackageMaintainers(pkg);
@@ -985,11 +998,13 @@ export class PackageManagerService extends AbstractService {
     } else if (refreshAttr === 'dist-tags') {
       const fullManifests =
         await this.distRepository.readDistBytesToJSON<PackageManifestType>(
+          // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
           pkg.manifestsDist!
         );
       if (fullManifests) {
         const abbreviatedManifests =
           await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(
+            // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
             pkg.abbreviatedsDist!
           );
         if (abbreviatedManifests) {
@@ -1028,8 +1043,7 @@ export class PackageManagerService extends AbstractService {
     // the latest version metas
     for (const field of fieldsFromLatestManifest) {
       if (latestManifest[field]) {
-        (fullManifests as Record<string, unknown>)[field] =
-          latestManifest[field];
+        Reflect.set(fullManifests, field, latestManifest[field]);
       }
     }
   }
@@ -1062,8 +1076,8 @@ export class PackageManagerService extends AbstractService {
 
   private async _mergeManifestDist(
     manifestDist: Dist,
-    mergeData?: any,
-    replaceData?: any
+    mergeData?: unknown,
+    replaceData?: unknown
   ) {
     let manifest =
       await this.distRepository.readDistBytesToJSON<PackageManifestType>(
@@ -1073,7 +1087,7 @@ export class PackageManagerService extends AbstractService {
       Object.assign(manifest, mergeData);
     }
     if (replaceData) {
-      manifest = replaceData;
+      manifest = replaceData as PackageManifestType;
     }
     const manifestBytes = Buffer.from(JSON.stringify(manifest));
     const manifestIntegrity = await calculateIntegrity(manifestBytes);
@@ -1203,19 +1217,20 @@ export class PackageManagerService extends AbstractService {
       fullManifests,
       abbreviatedManifests
     );
-    const manifests = (fullManifests || abbreviatedManifests)! as T;
+    const manifests = (fullManifests || abbreviatedManifests) as T;
     /* c8 ignore next 5 */
     if (bugVersion) {
       await this.bugVersionService.fixPackageBugVersions(
         bugVersion,
         fullname,
-        (manifests as any).versions
+        manifests.versions
       );
       const distBytes = Buffer.from(JSON.stringify(manifests));
       const distIntegrity = await calculateIntegrity(distBytes);
       etag = `"${distIntegrity.shasum}"`;
     } else {
       dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
+      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       etag = `"${dist!.shasum}"`;
     }
     return { etag, data: manifests, blockReason };
@@ -1285,7 +1300,7 @@ export class PackageManagerService extends AbstractService {
       latestTagVersion = distTags.latest;
     }
 
-    let latestManifest: any;
+    let latestManifest: PackageJSONType | undefined;
     let latestPackageVersion = packageVersions[0];
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
@@ -1312,14 +1327,14 @@ export class PackageManagerService extends AbstractService {
     if (!latestManifest) {
       latestManifest = data.versions[latestPackageVersion.version];
     }
-    this._mergeLatestManifestFields(data, latestManifest);
+    this._mergeLatestManifestFields(data, latestManifest as PackageJSONType);
     return data;
   }
 
   private async _listPackageAbbreviatedManifests(
     pkg: Package
   ): Promise<AbbreviatedPackageManifestType | null> {
-    // read all verions from db
+    // read all versions from db
     const packageVersions = await this.packageRepository.listPackageVersions(
       pkg.packageId
     );

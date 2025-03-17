@@ -1,6 +1,6 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 
-import { DataTypes, Bone } from '../util/leoric.js';
+import { Bone, DataTypes } from '../util/leoric.js';
 import { EntityProperty } from '../util/EntityProperty.js';
 import { PaddingSemVer } from '../../core/entity/PaddingSemVer.js';
 
@@ -56,7 +56,11 @@ export class PackageVersion extends Bone {
   @Attribute(DataTypes.BOOLEAN)
   isPreRelease: boolean;
 
-  static beforeCreate(instance: { version: string; paddingVersion: string; isPreRelease: boolean }) {
+  static beforeCreate(instance: {
+    version: string;
+    paddingVersion: string;
+    isPreRelease: boolean;
+  }) {
     if (!instance.paddingVersion) {
       const paddingSemVer = new PaddingSemVer(instance.version);
       instance.paddingVersion = paddingSemVer.paddingVersion;

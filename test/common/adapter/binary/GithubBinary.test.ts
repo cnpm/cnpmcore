@@ -1,4 +1,5 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import { GithubBinary } from '../../../../app/common/adapter/binary/GithubBinary.js';
@@ -12,11 +13,17 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root and subdir work', async () => {
-      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('electron-releases.json'));
-      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/, 'GET', {
-        data: response,
-        status: 200,
-      });
+      const response = await TestUtil.readJSONFile(
+        TestUtil.getFixtures('electron-releases.json')
+      );
+      app.mockHttpclient(
+        /https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/,
+        'GET',
+        {
+          data: response,
+          status: 200,
+        }
+      );
       let result = await binary.fetch('/', 'electron');
       assert(result);
       assert(result.items.length > 0);
@@ -38,11 +45,17 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
     });
 
     it('should fetch skia-canvas', async () => {
-      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('skia-canvas-releases.json'));
-      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/samizdatco\/skia-canvas\/releases/, 'GET', {
-        data: response,
-        status: 200,
-      });
+      const response = await TestUtil.readJSONFile(
+        TestUtil.getFixtures('skia-canvas-releases.json')
+      );
+      app.mockHttpclient(
+        /https:\/\/api\.github\.com\/repos\/samizdatco\/skia-canvas\/releases/,
+        'GET',
+        {
+          data: response,
+          status: 200,
+        }
+      );
       let result = await binary.fetch('/', 'skia-canvas');
       assert(result);
       assert(result.items.length > 0);
@@ -70,20 +83,29 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         assert(item.isDir === false);
         if (item.name === 'skia-canvas-v0.9.30-darwin-arm64.tar.gz') {
           assert(item.date === '2024-08-26T18:04:13Z');
-          assert(item.size === 7547563);
-          assert.equal(item.url, 'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-darwin-arm64.tar.gz');
+          assert(item.size === 7_547_563);
+          assert.equal(
+            item.url,
+            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-darwin-arm64.tar.gz'
+          );
           matchFile1 = true;
         }
         if (item.name === 'skia-canvas-v0.9.30-linux-arm-glibc.tar.gz') {
           assert(item.date === '2024-08-26T18:04:17Z');
-          assert(item.size === 8836353);
-          assert.equal(item.url, 'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-linux-arm-glibc.tar.gz');
+          assert(item.size === 8_836_353);
+          assert.equal(
+            item.url,
+            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-linux-arm-glibc.tar.gz'
+          );
           matchFile2 = true;
         }
         if (item.name === 'skia-canvas-v0.9.30-win32-x64.tar.gz') {
           assert(item.date === '2024-08-26T18:04:29Z');
-          assert(item.size === 7497076);
-          assert.equal(item.url, 'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-win32-x64.tar.gz');
+          assert(item.size === 7_497_076);
+          assert.equal(
+            item.url,
+            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-win32-x64.tar.gz'
+          );
           matchFile3 = true;
         }
       }
@@ -93,11 +115,17 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
     });
 
     it('should fetch protobuf', async () => {
-      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('protobuf-releases.json'));
-      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/protocolbuffers\/protobuf\/releases/, 'GET', {
-        data: response,
-        status: 200,
-      });
+      const response = await TestUtil.readJSONFile(
+        TestUtil.getFixtures('protobuf-releases.json')
+      );
+      app.mockHttpclient(
+        /https:\/\/api\.github\.com\/repos\/protocolbuffers\/protobuf\/releases/,
+        'GET',
+        {
+          data: response,
+          status: 200,
+        }
+      );
       let result = await binary.fetch('/', 'protobuf');
       assert(result);
       assert(result.items.length > 0);
@@ -122,8 +150,11 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         assert(item.isDir === false);
         if (item.name === 'protoc-28.2-linux-aarch_64.zip') {
           assert(item.date === '2024-09-18T21:02:40Z');
-          assert(item.size === 3218760);
-          assert.equal(item.url, 'https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-aarch_64.zip');
+          assert(item.size === 3_218_760);
+          assert.equal(
+            item.url,
+            'https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-aarch_64.zip'
+          );
           matchFile1 = true;
         }
       }

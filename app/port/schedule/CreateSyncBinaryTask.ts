@@ -1,17 +1,19 @@
 import type { EggAppConfig } from 'egg';
-import type { IntervalParams } from '@eggjs/tegg/schedule';
-import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import {
+  Schedule,
+  ScheduleType,
+  type IntervalParams,
+} from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
 import type { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
-import type { BinaryName } from '../../../config/binaries.js';
-import binaries from '../../../config/binaries.js';
+import binaries, { type BinaryName } from '../../../config/binaries.js';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
   scheduleData: {
     // every 5 mins
-    interval: 60000 * 5,
+    interval: 60_000 * 5,
   },
 })
 export class CreateSyncBinaryTask {

@@ -1,13 +1,14 @@
-import type { EggContext, BackgroundTaskHelper } from '@eggjs/tegg';
 import {
+  type EggContext,
+  type BackgroundTaskHelper,
+  Context,
+  HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  HTTPBody,
-  Context,
-  Inject,
   HTTPQuery,
+  Inject,
 } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 
@@ -20,8 +21,7 @@ import type { Task } from '../../core/entity/Task.js';
 import type { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
 import type { RegistryManagerService } from '../../core/service/RegistryManagerService.js';
 import { TaskState } from '../../common/enum/Task.js';
-import type { SyncPackageTaskType } from '../typebox.js';
-import { SyncPackageTaskRule } from '../typebox.js';
+import { SyncPackageTaskRule, type SyncPackageTaskType } from '../typebox.js';
 import { SyncMode } from '../../common/constants.js';
 
 @HTTPController()

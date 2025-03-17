@@ -1,7 +1,10 @@
-import type { EggLogger } from 'egg';
-import type { IntervalParams } from '@eggjs/tegg/schedule';
-import { Schedule, ScheduleType } from '@eggjs/tegg/schedule';
+import {
+  Schedule,
+  ScheduleType,
+  type IntervalParams,
+} from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
+import type { EggLogger } from 'egg';
 
 import type { TaskService } from '../../core/service/TaskService.js';
 import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
@@ -10,7 +13,7 @@ import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
   {
     type: ScheduleType.WORKER,
     scheduleData: {
-      interval: 60000,
+      interval: 60_000,
     },
   },
   {

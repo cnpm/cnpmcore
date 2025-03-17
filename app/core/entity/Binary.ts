@@ -1,7 +1,5 @@
-import type { EntityData } from './Entity.js';
-import { Entity } from './Entity.js';
-import type { EasyData } from '../util/EntityUtil.js';
-import { EntityUtil } from '../util/EntityUtil.js';
+import { Entity, type EntityData } from './Entity.js';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
 
 interface BinaryData extends EntityData {
   binaryId: string;
@@ -23,7 +21,7 @@ export class Binary extends Entity {
   isDir: boolean;
   size: number;
   date: string;
-  sourceUrl?: string;
+  sourceUrl: string;
   ignoreDownloadStatuses?: number[];
 
   constructor(data: BinaryData) {

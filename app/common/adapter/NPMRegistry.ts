@@ -1,9 +1,9 @@
 import { setTimeout } from 'node:timers/promises';
-import { ContextProto, AccessLevel, Inject } from '@eggjs/tegg';
+import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
 import type {
-  EggLogger,
-  EggContextHttpClient,
   EggAppConfig,
+  EggContextHttpClient,
+  EggLogger,
   HttpClientRequestOptions,
   HttpClientResponse,
 } from 'egg';
@@ -27,7 +27,7 @@ export class NPMRegistry {
   private readonly httpclient: EggContextHttpClient;
   @Inject()
   private config: EggAppConfig;
-  private timeout = 10000;
+  private timeout = 10_000;
   public registryHost: string;
 
   get registry(): string {
@@ -46,7 +46,7 @@ export class NPMRegistry {
     // set query t=timestamp, make sure CDN cache disable
     // cache=0 is sync worker request flag
     const url = `${this.registry}/${encodeURIComponent(fullname)}?t=${Date.now()}&cache=0`;
-    let lastError: any;
+    let lastError: Error | undefined;
     while (retries > 0) {
       try {
         // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
@@ -55,10 +55,10 @@ export class NPMRegistry {
           optionalConfig?.remoteAuthToken
         );
         return await this.request('GET', url, undefined, {
-          timeout: 120000,
+          timeout: 120_000,
           headers: { authorization },
         });
-      } catch (err: any) {
+      } catch (err) {
         if (isTimeoutError(err)) {
           throw err;
         }

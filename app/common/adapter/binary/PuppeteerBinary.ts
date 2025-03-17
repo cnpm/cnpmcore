@@ -1,7 +1,11 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary.js';
-import type { FetchResult, BinaryItem } from './AbstractBinary.js';
-import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
+import {
+  AbstractBinary,
+  BinaryAdapter,
+  type BinaryItem,
+  type FetchResult,
+} from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Puppeteer)
@@ -134,7 +138,7 @@ export class PuppeteerBinary extends AbstractBinary {
     if (platform === 'Mac' || platform === 'Mac_Arm') return 'chrome-mac';
     if (platform === 'Win' || platform === 'Win_x64') {
       // Windows archive name changed at r591479.
-      return parseInt(revision, 10) > 591479 ? 'chrome-win' : 'chrome-win32';
+      return parseInt(revision, 10) > 591_479 ? 'chrome-win' : 'chrome-win32';
     }
     return '';
   }

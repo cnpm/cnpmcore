@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
@@ -40,8 +40,7 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
         null,
         '@cnpm'
       );
-      assert(taskRegistry);
-      assert(taskRegistry.registryId === registry.registryId);
+      assert.equal(taskRegistry.registryId, registry.registryId);
     });
     it('should support legacy task', async () => {
       const task = await packageSyncerService.createTask('@cnpm/bananas', {
@@ -56,7 +55,7 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
         null,
         '@cnpm'
       );
-      assert(taskRegistry!.name === 'default');
+      assert.equal(taskRegistry.name, 'default');
     });
   });
 });

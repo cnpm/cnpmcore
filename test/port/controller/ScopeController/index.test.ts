@@ -1,13 +1,13 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { RegistryType } from '../../../../app/common/enum/Registry.js';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import { TestUtil } from '../../../TestUtil.js';
+import { type TestUser, TestUtil } from '../../../TestUtil.js';
 import type { Scope } from '../../../../app/core/entity/Scope.js';
 
 describe('test/port/controller/ScopeController/index.test.ts', () => {
-  let adminUser: any;
+  let adminUser: TestUser;
   let registryManagerService: RegistryManagerService;
   beforeEach(async () => {
     adminUser = await TestUtil.createAdmin();

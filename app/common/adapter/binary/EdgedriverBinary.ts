@@ -1,7 +1,11 @@
 import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
-import type { FetchResult, BinaryItem } from './AbstractBinary.js';
-import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
+import {
+  AbstractBinary,
+  BinaryAdapter,
+  type BinaryItem,
+  type FetchResult,
+} from './AbstractBinary.js';
 import { BinaryType } from '../../enum/Binary.js';
 
 @SingletonProto()
@@ -23,7 +27,7 @@ export class EdgedriverBinary extends AbstractBinary {
       jsonApiEndpoint,
       {
         dataType: 'json',
-        timeout: 30000,
+        timeout: 30_000,
         followRedirect: true,
         gzip: true,
       }
@@ -167,7 +171,7 @@ export class EdgedriverBinary extends AbstractBinary {
     }
     // fetch root dir
     if (dir === '/') {
-      return { items: this.dirItems![dir], nextParams: null };
+      return { items: this.dirItems?.[dir] ?? [], nextParams: null };
     }
 
     // fetch sub dir

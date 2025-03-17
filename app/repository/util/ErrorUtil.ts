@@ -1,4 +1,5 @@
-export function isDuplicateKeyError(err: any) {
+export function isDuplicateKeyError(err: Error) {
+  // @ts-expect-error error code is not defined
   if (err.code === 'ER_DUP_ENTRY') {
     return true;
   }

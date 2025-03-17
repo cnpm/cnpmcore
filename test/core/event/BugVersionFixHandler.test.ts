@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { BUG_VERSIONS } from '../../../app/common/constants.js';
@@ -24,7 +24,8 @@ describe('test/core/event/BugVersionFixHandler.test.ts', () => {
         faker: {
           '6.6.6': {
             version: '5.5.3',
-            reason: 'Please use https://github.com/MilosPaunovic/community-faker instead',
+            reason:
+              'Please use https://github.com/MilosPaunovic/community-faker instead',
           },
         },
       });
@@ -34,8 +35,6 @@ describe('test/core/event/BugVersionFixHandler.test.ts', () => {
   it('should clean packages cache', async () => {
     const bugVersionFixHandler = await app.getEggObject(BugVersionFixHandler);
     await bugVersionFixHandler.handle(BUG_VERSIONS);
-    assert.deepStrictEqual(fullnames, [
-      'faker',
-    ]);
+    assert.deepStrictEqual(fullnames, ['faker']);
   });
 });

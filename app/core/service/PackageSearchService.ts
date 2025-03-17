@@ -1,7 +1,7 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { estypes } from '@elastic/elasticsearch';
-import { errors } from '@elastic/elasticsearch';
+import { errors, type estypes } from '@elastic/elasticsearch';
 import dayjs from 'dayjs';
+
 import { AbstractService } from '../../common/AbstractService.js';
 import { formatAuthor, getScopeAndName } from '../../common/PackageUtil.js';
 import type { PackageManagerService } from './PackageManagerService.js';

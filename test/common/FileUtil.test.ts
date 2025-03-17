@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 
 import { mimeLookup } from '../../app/common/FileUtil.js';
 
@@ -15,9 +15,18 @@ describe('test/common/FileUtil.test.ts', () => {
       assert.equal(mimeLookup('/.jshintignore'), 'text/plain');
       assert.equal(mimeLookup('/.eslintignore'), 'text/plain');
       assert.equal(mimeLookup('/.eslintrc'), 'application/json');
-      assert.equal(mimeLookup('/docs/_plugins/markdown.rb'), 'application/octet-stream');
-      assert.equal(mimeLookup('/docs/static/less/pouchdb/anchors.less'), 'text/less');
-      assert.equal(mimeLookup('/docs/static/less/pouchdb/anchors.css'), 'text/css');
+      assert.equal(
+        mimeLookup('/docs/_plugins/markdown.rb'),
+        'application/octet-stream'
+      );
+      assert.equal(
+        mimeLookup('/docs/static/less/pouchdb/anchors.less'),
+        'text/less'
+      );
+      assert.equal(
+        mimeLookup('/docs/static/less/pouchdb/anchors.css'),
+        'text/css'
+      );
       assert.equal(mimeLookup('/foo/bar.xml'), 'application/xml');
       assert.equal(mimeLookup('/favicon.ico'), 'image/vnd.microsoft.icon');
       assert.equal(mimeLookup('/index.ts'), 'text/plain');

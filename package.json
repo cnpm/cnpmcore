@@ -40,7 +40,7 @@
     "dev": "egg-bin dev",
     "dev:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin dev",
     "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
+    "lint:fix": "npm run lint -- --fix",
     "test:postgresql": "npm run lint:fix && npm run test:local:postgresql",
     "pretest:local:postgresql": "bash prepare-database-postgresql.sh",
     "test:local:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin test",
@@ -167,7 +167,7 @@
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown --cache",
-    "*.{ts}": [
+    "*.{ts,js}": [
       "prettier --ignore-unknown --write",
       "oxlint --fix"
     ]

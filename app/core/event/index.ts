@@ -15,11 +15,11 @@ export const PACKAGE_META_CHANGED = 'PACKAGE_META_CHANGED';
 
 export interface PackageDeprecated {
   version: string;
-  deprecated: string;
+  deprecated?: string;
 }
 
 export interface PackageMetaChange {
-  deprecateds?: Array<PackageDeprecated>;
+  deprecateds?: PackageDeprecated[];
 }
 
 declare module '@eggjs/tegg' {

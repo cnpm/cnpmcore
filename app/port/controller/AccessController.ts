@@ -7,7 +7,11 @@ import {
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 
 import { AbstractController } from './AbstractController.js';
-import { FULLNAME_REG_STRING, getFullname, getScopeAndName } from '../../common/PackageUtil.js';
+import {
+  FULLNAME_REG_STRING,
+  getFullname,
+  getScopeAndName,
+} from '../../common/PackageUtil.js';
 import { PackageAccessLevel } from '../../common/constants.js';
 
 @HTTPController()
@@ -17,14 +21,16 @@ export class AccessController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async listCollaborators(@HTTPParam() fullname: string) {
-    const [ scope, name ] = getScopeAndName(fullname);
+    const [scope, name] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
     // return 403 if pkg not exists
     if (!pkg) {
       throw new ForbiddenError('Forbidden');
     }
 
-    const maintainers = await this.packageRepository.listPackageMaintainers(pkg!.packageId);
+    const maintainers = await this.packageRepository.listPackageMaintainers(
+      pkg.packageId
+    );
     const res: Record<string, string> = {};
     maintainers.forEach(maintainer => {
       res[maintainer.displayName] = PackageAccessLevel.write;

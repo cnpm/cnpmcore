@@ -1,5 +1,6 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
@@ -7,7 +8,6 @@ import {
   HTTPQuery,
   Inject,
   Middleware,
-  Context,
 } from '@eggjs/tegg';
 import type { Static } from 'egg-typebox-validate/typebox';
 import { E451 } from 'egg-errors';

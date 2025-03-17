@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { TestUtil } from '../../../../test/TestUtil.js';
@@ -20,10 +20,15 @@ describe('test/core/service/PackageManagerService/block.test.ts', () => {
     it('should work with name', async () => {
       app.mockLog();
       const { pkg } = await TestUtil.createPackage({ isPrivate: false });
-      const blockRes = await packageManagerService.blockPackageByFullname(pkg.name, 'xxx');
+      const blockRes = await packageManagerService.blockPackageByFullname(
+        pkg.name,
+        'xxx'
+      );
       assert(blockRes.packageVersionBlockId);
 
-      assert.doesNotReject(packageManagerService.unblockPackageByFullname(pkg.name || ''));
+      assert.doesNotReject(
+        packageManagerService.unblockPackageByFullname(pkg.name || '')
+      );
     });
   });
 });

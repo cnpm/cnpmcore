@@ -1,13 +1,14 @@
 import type {
+  Context,
   EggHttpClient,
   HttpClientRequestOptions,
   HttpClientResponse,
-  Context,
 } from 'egg';
 import { ForbiddenError } from 'egg-errors';
-import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { valid as semverValid } from 'semver';
+
 import { AbstractService } from '../../common/AbstractService.js';
 import type { TaskService } from './TaskService.js';
 import type { CacheService } from './CacheService.js';
@@ -15,13 +16,13 @@ import type { RegistryManagerService } from './RegistryManagerService.js';
 import type { NPMRegistry } from '../../common/adapter/NPMRegistry.js';
 import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
 import { ProxyCache } from '../entity/ProxyCache.js';
-import type {
-  UpdateProxyCacheTaskOptions,
-  CreateUpdateProxyCacheTask,
+import {
+  type CreateUpdateProxyCacheTask,
+  type UpdateProxyCacheTaskOptions,
+  Task,
 } from '../entity/Task.js';
-import { Task } from '../entity/Task.js';
 import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
-import { TaskType, TaskState } from '../../common/enum/Task.js';
+import { TaskState, TaskType } from '../../common/enum/Task.js';
 import { calculateIntegrity } from '../../common/PackageUtil.js';
 import {
   ABBREVIATED_META_TYPE,
@@ -29,10 +30,10 @@ import {
 } from '../../common/constants.js';
 import { DIST_NAMES, isPkgManifest } from '../entity/Package.js';
 import type {
-  AbbreviatedPackageManifestType,
   AbbreviatedPackageJSONType,
-  PackageManifestType,
+  AbbreviatedPackageManifestType,
   PackageJSONType,
+  PackageManifestType,
 } from '../../repository/PackageRepository.js';
 
 function isoNow() {
@@ -85,9 +86,11 @@ export class ProxyCacheService extends AbstractService {
     fileType: DIST_NAMES.FULL_MANIFESTS | DIST_NAMES.ABBREVIATED_MANIFESTS
   ): Promise<AbbreviatedPackageManifestType | PackageManifestType> {
     const isFullManifests = fileType === DIST_NAMES.FULL_MANIFESTS;
-    const cachedStoreKey = (
-      await this.proxyCacheRepository.findProxyCache(fullname, fileType)
-    )?.filePath;
+    const proxyCache = await this.proxyCacheRepository.findProxyCache(
+      fullname,
+      fileType
+    );
+    const cachedStoreKey = proxyCache?.filePath;
     if (cachedStoreKey) {
       try {
         const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
@@ -139,7 +142,7 @@ export class ProxyCacheService extends AbstractService {
     fileType: DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST,
     versionOrTag: string
   ): Promise<AbbreviatedPackageJSONType | PackageJSONType> {
-    let version;
+    let version: string;
     if (semverValid(versionOrTag)) {
       version = versionOrTag;
     } else {
@@ -148,21 +151,20 @@ export class ProxyCacheService extends AbstractService {
         DIST_NAMES.ABBREVIATED_MANIFESTS
       );
       const distTags = pkgManifest['dist-tags'] || {};
-      version = distTags[versionOrTag] ? distTags[versionOrTag] : versionOrTag;
+      version = distTags[versionOrTag] ?? versionOrTag;
     }
-    const cachedStoreKey = (
-      await this.proxyCacheRepository.findProxyCache(
-        fullname,
-        fileType,
-        version
-      )
-    )?.filePath;
+    const proxyCache = await this.proxyCacheRepository.findProxyCache(
+      fullname,
+      fileType,
+      version
+    );
+    const cachedStoreKey = proxyCache?.filePath;
     if (cachedStoreKey) {
       try {
         const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
         if (!nfsBytes)
           throw new Error('not found proxy cache, try again later.');
-        const nfsString = Buffer.from(nfsBytes!).toString();
+        const nfsString = Buffer.from(nfsBytes).toString();
         return JSON.parse(nfsString) as
           | PackageJSONType
           | AbbreviatedPackageJSONType;
@@ -344,7 +346,7 @@ export class ProxyCacheService extends AbstractService {
         break;
       }
       case DIST_NAMES.MANIFEST: {
-        const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag!)}`;
+        const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag ?? '')}`;
         responseResult = await this.getProxyResponse(
           {
             url,
@@ -355,7 +357,7 @@ export class ProxyCacheService extends AbstractService {
         break;
       }
       case DIST_NAMES.ABBREVIATED: {
-        const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag!)}`;
+        const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag ?? '')}`;
         responseResult = await this.getProxyResponse(
           {
             url,
@@ -373,11 +375,12 @@ export class ProxyCacheService extends AbstractService {
     }
 
     // replace tarball url
-    const manifest = this.replaceTarballUrl(responseResult!.data, fileType);
+    const manifest = this.replaceTarballUrl(responseResult?.data, fileType);
     return manifest;
   }
 
   private async storeRewrittenManifest(
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifest: any,
     fullname: string,
     fileType: DIST_NAMES
@@ -411,7 +414,7 @@ export class ProxyCacheService extends AbstractService {
       // once redirection is also count as a retry
       retry: 7,
       dataType: 'stream',
-      timeout: 10000,
+      timeout: 10_000,
       compressed: true,
       ...options,
       headers: {

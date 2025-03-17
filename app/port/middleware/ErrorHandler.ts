@@ -7,7 +7,7 @@ const DEFAULT_SERVER_ERROR_STATUS = 500;
 export async function ErrorHandler(ctx: EggContext, next: Next) {
   try {
     await next();
-  } catch (err: any) {
+  } catch (err) {
     if (err.name === 'PackageNotFoundError') {
       if (err.syncPackage) {
         // create sync task

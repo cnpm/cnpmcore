@@ -1,12 +1,15 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import semver, { Range } from 'semver';
-import type { Result, AliasResult } from 'npm-package-arg';
+import type { AliasResult, Result } from 'npm-package-arg';
+
 import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.js';
 import { getScopeAndName } from '../../common/PackageUtil.js';
 import { SqlRange } from '../entity/SqlRange.js';
 import type { BugVersionService } from './BugVersionService.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import { type PackageJSONType } from '../../repository/PackageRepository.js';
+import {
+  type PackageJSONType,
+  type PackageRepository,
+} from '../../repository/PackageRepository.js';
 import type { DistRepository } from '../../repository/DistRepository.js';
 import type { BugVersionAdvice } from '../entity/BugVersion.js';
 import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
@@ -50,7 +53,7 @@ export class PackageVersionService {
     if (withBugVersion) {
       const bugVersion = await this.bugVersionService.getBugVersion();
       if (bugVersion) {
-        const advice = bugVersion.fixVersion(spec.name!, version);
+        const advice = bugVersion.fixVersion(spec.name as string, version);
         if (advice) {
           bugVersionAdvice = {
             advice,
@@ -91,7 +94,7 @@ export class PackageVersionService {
         realSpec = spec;
         break;
       default:
-        throw new Error(`npmcore not support spec: ${spec.raw}`);
+        throw new Error(`cnpmcore not support spec: ${spec.raw}`);
     }
     return realSpec;
   }
@@ -101,19 +104,20 @@ export class PackageVersionService {
     withBugVersion = true
   ): Promise<string | undefined | null> {
     let version: string | undefined | null;
-    const [scope, name] = getScopeAndName(spec.name!);
+    const [scope, name] = getScopeAndName(spec.name as string);
+    const fetchSpec = spec.fetchSpec as string;
     // 优先通过 tag 来进行判断
     if (spec.type === 'tag') {
       version = await this.packageVersionRepository.findVersionByTag(
         scope,
         name,
-        spec.fetchSpec!
+        fetchSpec
       );
     } else if (spec.type === 'version') {
       // 1.0.0
       // '=1.0.0' => '1.0.0'
       // https://github.com/npm/npm-package-arg/blob/main/lib/npa.js#L392
-      version = semver.valid(spec.fetchSpec!, true);
+      version = semver.valid(fetchSpec, true);
     } else if (spec.type === 'range') {
       // a@1.1 情况下，1.1 会解析为 range，如果有对应的 distTag 时会失效
       // 这里需要进行兼容
@@ -122,12 +126,12 @@ export class PackageVersionService {
         await this.packageVersionRepository.findVersionByTag(
           scope,
           name,
-          spec.fetchSpec!
+          fetchSpec
         );
       if (versionMatchTag) {
         version = versionMatchTag;
       } else {
-        const range = new Range(spec.fetchSpec!);
+        const range = new Range(fetchSpec);
         const paddingSemVer = new SqlRange(range);
         if (paddingSemVer.containPreRelease) {
           const versions =
@@ -149,7 +153,7 @@ export class PackageVersionService {
     if (version && withBugVersion) {
       const bugVersion = await this.bugVersionService.getBugVersion();
       if (bugVersion) {
-        const advice = bugVersion.fixVersion(spec.name!, version);
+        const advice = bugVersion.fixVersion(spec.name as string, version);
         if (advice) {
           version = advice.version;
         }

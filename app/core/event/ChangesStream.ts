@@ -1,16 +1,17 @@
 import type { EggAppConfig } from 'egg';
 import { Event, Inject } from '@eggjs/tegg';
-import type { PackageMetaChange } from './index.js';
+
 import {
-  PACKAGE_UNPUBLISHED,
-  PACKAGE_VERSION_ADDED,
-  PACKAGE_VERSION_REMOVED,
-  PACKAGE_TAG_ADDED,
-  PACKAGE_TAG_CHANGED,
-  PACKAGE_TAG_REMOVED,
+  type PackageMetaChange,
   PACKAGE_MAINTAINER_CHANGED,
   PACKAGE_MAINTAINER_REMOVED,
   PACKAGE_META_CHANGED,
+  PACKAGE_TAG_ADDED,
+  PACKAGE_TAG_CHANGED,
+  PACKAGE_TAG_REMOVED,
+  PACKAGE_UNPUBLISHED,
+  PACKAGE_VERSION_ADDED,
+  PACKAGE_VERSION_REMOVED,
 } from './index.js';
 import type { ChangeRepository } from '../../repository/ChangeRepository.js';
 import { Change } from '../entity/Change.js';

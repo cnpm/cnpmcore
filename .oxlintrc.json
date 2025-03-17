@@ -6,7 +6,12 @@
   },
   "categories": {
     "correctness": "error",
-    "perf": "error"
+    "perf": "error",
+    "nursery": "error",
+    // "restriction": "error",
+    "style": "error",
+    // "pedantic": "error",
+    "suspicious": "error"
   },
   "plugins": [
     "import",
@@ -27,12 +32,32 @@
     "no-eq-null": "error",
     "no-await-in-loop": "allow",
     "eqeqeq": ["error", "smart"],
+    "init-declarations": "allow",
+    "curly": "allow",
+    "no-ternary": "allow",
+    "max-params": ["error", 5],
+    "no-await-expression-member": "error",
+    "no-continue": "allow",
+    "guard-for-in": "allow",
+    "func-style": "allow",
+    "sort-imports": "allow",
+    "yoda": "allow",
+    "sort-keys": "allow",
+    "no-magic-numbers": "allow",
+    "no-duplicate-imports": "error",
+    "no-multi-assign": "error",
+    "func-names": "error",
+    "default-param-last": "error",
+    "prefer-object-spread": "error",
+
     // import
     "import/no-cycle": "error",
     "import/no-anonymous-default-export": "error",
     "import/no-namespace": "error",
     "import/named": "error",
     "import/export": "error",
+    "import/exports-last": "allow",
+
     // promise
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
@@ -40,13 +65,34 @@
     "promise/prefer-await-to-then": "error",
     "promise/prefer-catch": "error",
     "promise/no-return-in-finally": "error",
+    "promise/avoid-new": "error",
+
     // unicorn
     "unicorn/error-message": "error",
+    "unicorn/no-null": "allow",
+    "unicorn/filename-case": "allow",
+    "unicorn/prefer-structured-clone": "error",
+    "unicorn/prefer-logical-operator-over-ternary": "error",
+
     // "unicorn/no-null": "error",
     "unicorn/throw-new-error": "error",
+    "unicorn/catch-error-name": "allow",
+    "unicorn/prefer-spread": "allow",
+    "unicorn/numeric-separators-style": "error",
+    "unicorn/prefer-string-raw": "error",
+    "unicorn/text-encoding-identifier-case": "error",
+
     // oxc
     "oxc/no-map-spread": "error",
+
     // typescript
-    "typescript/consistent-type-imports": "error"
+    "typescript/consistent-type-imports": "error",
+    "no-extraneous-class": "allow",
+    "typescript/consistent-type-definitions": "error",
+    "typescript/consistent-indexed-object-style": "allow",
+    "typescript/no-inferrable-types": "error",
+    "typescript/array-type": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/no-explicit-any": "error"
   }
 }

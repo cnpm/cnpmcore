@@ -1,7 +1,11 @@
-import type { EggContext } from '@eggjs/tegg';
-import { AccessLevel, Inject, ContextProto } from '@eggjs/tegg';
+import {
+  type EggContext,
+  AccessLevel,
+  ContextProto,
+  Inject,
+} from '@eggjs/tegg';
 import type { EggAppConfig, EggLogger } from 'egg';
-import { UnauthorizedError, ForbiddenError } from 'egg-errors';
+import { ForbiddenError, UnauthorizedError } from 'egg-errors';
 
 import type { PackageRepository } from '../repository/PackageRepository.js';
 import type { Package as PackageEntity } from '../core/entity/Package.js';
@@ -50,6 +54,7 @@ export class UserRoleManager {
 
     // 2. check for checkGranularTokenAccess
     const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
+    // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
     const { token } = authorizedUserAndToken!;
     await this.tokenService.checkGranularTokenAccess(token, fullname);
 
@@ -75,7 +80,7 @@ export class UserRoleManager {
     await this.requiredPackageScope(scope, user);
     if (pkg) {
       // published scoped package
-      await this.requiredPackageMaintainer(pkg!, user);
+      await this.requiredPackageMaintainer(pkg, user);
     }
 
     return user;

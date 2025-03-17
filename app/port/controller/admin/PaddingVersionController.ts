@@ -1,11 +1,11 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
-  Inject,
   HTTPQuery,
-  Context,
+  Inject,
 } from '@eggjs/tegg';
 
 import { AbstractController } from '../AbstractController.js';

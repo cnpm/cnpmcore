@@ -1,12 +1,12 @@
 import { BadRequestError, ForbiddenError } from 'egg-errors';
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-  Context,
 } from '@eggjs/tegg';
 
 import { AbstractController } from '../AbstractController.js';
@@ -43,7 +43,7 @@ export class RemovePackageVersionController extends AbstractController {
       throw new BadRequestError('Only allow "unpublish" npm-command');
     }
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
-    const pkg = ensureRes.pkg!;
+    const pkg = ensureRes.pkg;
     const version = this.getAndCheckVersionFromFilename(
       ctx,
       fullname,
@@ -76,7 +76,7 @@ export class RemovePackageVersionController extends AbstractController {
       throw new BadRequestError('Only allow "unpublish" npm-command');
     }
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
-    const pkg = ensureRes.pkg!;
+    const pkg = ensureRes.pkg;
     // try to remove the latest version first
     const packageTag = await this.packageRepository.findPackageTag(
       pkg.packageId,
@@ -107,7 +107,7 @@ export class RemovePackageVersionController extends AbstractController {
     // can unpublish anytime within the first 72 hours after publishing
     if (
       pkg.isPrivate &&
-      Date.now() - packageVersion.publishTime.getTime() >= 3600000 * 72
+      Date.now() - packageVersion.publishTime.getTime() >= 3_600_000 * 72
     ) {
       throw new ForbiddenError(
         `${pkg.fullname}@${packageVersion.version} unpublish is not allowed after 72 hours of released`

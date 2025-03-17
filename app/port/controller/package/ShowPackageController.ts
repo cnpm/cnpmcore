@@ -1,24 +1,24 @@
-import type { EggContext } from '@eggjs/tegg';
 import {
+  type EggContext,
+  Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-  Context,
 } from '@eggjs/tegg';
 
 import { AbstractController } from '../AbstractController.js';
 import {
-  getScopeAndName,
   FULLNAME_REG_STRING,
+  getScopeAndName,
+  calculateIntegrity,
 } from '../../../common/PackageUtil.js';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil.js';
 import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
 import type { CacheService } from '../../../core/service/CacheService.js';
 import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants.js';
 import type { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
-import { calculateIntegrity } from '../../../common/PackageUtil.js';
 import { DIST_NAMES } from '../../../core/entity/Package.js';
 
 @HTTPController()
@@ -81,7 +81,7 @@ export class ShowPackageController extends AbstractController {
     }
 
     // handle cache miss
-    let result: { etag: string; data: any; blockReason: string };
+    let result: { etag: string; data: unknown; blockReason: string };
     if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
       // proxy mode
       const fileType = isFullManifests

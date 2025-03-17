@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { EggContextHttpClient } from 'egg';
 import type { TriggerHookTask } from '../entity/Task.js';
 import type { HookEvent } from '../entity/HookEvent.js';
@@ -11,6 +11,7 @@ import { isoNow } from '../../common/LogUtil.js';
 import { TaskState } from '../../common/enum/Task.js';
 import type { TaskService } from './TaskService.js';
 import { getScopeAndName } from '../../common/PackageUtil.js';
+import type { Dist } from '../entity/Dist.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -88,10 +89,10 @@ export class HookTriggerService {
       },
       // webhook 场景下，由于 endpoint 都不同
       // 因此几乎不存在连接复用的情况，因此这里不使用 keepAlive
-      agent: false,
-      httpsAgent: false,
+      // agent: false,
+      // httpsAgent: false,
       data: payloadStr,
-    } as any);
+    });
     if (res.status >= 200 && res.status < 300) {
       return res.status;
     }
@@ -123,7 +124,7 @@ export class HookTriggerService {
       return;
     }
     const manifest = await this.distRepository.readDistBytesToJSON(
-      pkg!.manifestsDist!
+      pkg.manifestsDist as Dist
     );
     return {
       event: hookEvent.event,

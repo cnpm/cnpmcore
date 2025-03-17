@@ -1,9 +1,12 @@
 import { SingletonProto } from '@eggjs/tegg';
-import type { BinaryName } from '../../../../config/binaries.js';
-import binaries from '../../../../config/binaries.js';
+import binaries, { type BinaryName } from '../../../../config/binaries.js';
 import { BinaryType } from '../../enum/Binary.js';
-import type { FetchResult, BinaryItem } from './AbstractBinary.js';
-import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
+import {
+  AbstractBinary,
+  BinaryAdapter,
+  type BinaryItem,
+  type FetchResult,
+} from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Imagemin)
@@ -52,7 +55,7 @@ export class ImageminBinary extends AbstractBinary {
       });
       const versionVendorDir = `/v${version}/vendor/`;
       dirItems[versionVendorDir] = [];
-      for (const platform of binaryConfig.options!.nodePlatforms!) {
+      for (const platform of binaryConfig.options?.nodePlatforms ?? []) {
         dirItems[versionVendorDir].push({
           name: `${platform}/`,
           date,
@@ -62,9 +65,9 @@ export class ImageminBinary extends AbstractBinary {
         });
         const platformDir = `/v${version}/vendor/${platform}/`;
         dirItems[platformDir] = [];
-        const archs = binaryConfig.options!.nodeArchs![platform];
+        const archs = binaryConfig.options?.nodeArchs?.[platform] ?? [];
         if (archs.length === 0) {
-          for (const name of binaryConfig.options!.binFiles![platform]) {
+          for (const name of binaryConfig.options?.binFiles?.[platform] ?? []) {
             dirItems[platformDir].push({
               name,
               date,
@@ -86,7 +89,8 @@ export class ImageminBinary extends AbstractBinary {
             const platformArchDir = `/v${version}/vendor/${platform}/${arch}/`;
             dirItems[platformArchDir] = [];
 
-            for (const name of binaryConfig.options!.binFiles![platform]) {
+            for (const name of binaryConfig.options?.binFiles?.[platform] ??
+              []) {
               dirItems[platformArchDir].push({
                 name,
                 date,

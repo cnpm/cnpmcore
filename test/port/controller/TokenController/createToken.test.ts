@@ -1,9 +1,9 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import dayjs from 'dayjs';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { Token } from '../../../../app/core/entity/Token.js';
-import { TokenType } from '../../../../app/core/entity/Token.js';
+import { TokenType, type Token } from '../../../../app/core/entity/Token.js';
 import { AuthAdapter } from '../../../../app/infra/AuthAdapter.js';
 import { UserRepository } from '../../../../app/repository/UserRepository.js';
 import { TestUtil } from '../../../../test/TestUtil.js';
@@ -202,7 +202,8 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
 
         const userRepository = await app.getEggObject(UserRepository);
         const user = await userRepository.findUserByName('banana');
-        const tokens = await userRepository.listTokens(user!.userId);
+        assert(user);
+        const tokens = await userRepository.listTokens(user.userId);
 
         let granularToken = tokens.find(
           token => token.type === TokenType.granular

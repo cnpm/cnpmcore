@@ -1,8 +1,8 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import type { TestUser } from '../../../../test/TestUtil.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
 import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
 import { BugVersionService } from '../../../../app/core/service/BugVersionService.js';
 import { SyncMode } from '../../../../app/common/constants.js';

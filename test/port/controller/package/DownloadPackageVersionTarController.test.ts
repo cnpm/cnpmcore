@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { type TestUser, TestUtil } from '../../../../test/TestUtil.js';
 import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.js';
 import { SyncMode } from '../../../../app/common/constants.js';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
-  let publisher: any;
+  let publisher: TestUser;
   let nfsClientAdapter: NFSClientAdapter;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
@@ -20,7 +20,8 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
   beforeEach(async () => {
     mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
     let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
-    let res = await app.httpRequest()
+    let res = await app
+      .httpRequest()
       .put(`/${pkg.name}`)
       .set('authorization', publisher.authorization)
       .set('user-agent', publisher.ua)
@@ -31,7 +32,8 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     assert.match(res.body.rev, /^\d+-\w{24}$/);
 
     pkg = await TestUtil.getFullPackage({ name: scopedName, version: '1.0.0' });
-    res = await app.httpRequest()
+    res = await app
+      .httpRequest()
       .put(`/${pkg.name}`)
       .set('authorization', publisher.authorization)
       .set('user-agent', publisher.ua)
@@ -47,14 +49,22 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         return `https://cdn.mock.com${storeKey}`;
       });
 
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`);
       assert(res.status === 302);
-      assert(res.headers.location === `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
-      res = await app.httpRequest()
+      assert(
+        res.headers.location ===
+          `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`
+      );
+      res = await app
+        .httpRequest()
         .get(`/${scopedName}/-/testmodule-download-version-tar-1.0.0.tgz`);
       assert(res.status === 302);
-      assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
+      assert(
+        res.headers.location ===
+          `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`
+      );
     });
 
     it('should support cors OPTIONS Request', async () => {
@@ -62,12 +72,14 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         return `https://cdn.mock.com${storeKey}`;
       });
 
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .options(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`);
       assert.equal(res.status, 204);
       assert.equal(res.headers['access-control-allow-origin'], '*');
       assert.equal(res.headers['access-control-allow-methods'], 'GET,HEAD');
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .options(`/${scopedName}/-/testmodule-download-version-tar-1.0.0.tgz`);
       assert.equal(res.status, 204);
       assert.equal(res.headers['access-control-allow-origin'], '*');
@@ -80,52 +92,80 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
           return `https://cdn.mock.com${storeKey}`;
         });
 
-        let res = await app.httpRequest()
+        let res = await app
+          .httpRequest()
           .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`);
         assert(res.status === 302);
-        assert(res.headers.location === `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
-        res = await app.httpRequest()
+        assert(
+          res.headers.location ===
+            `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`
+        );
+        res = await app
+          .httpRequest()
           .get(`/${scopedName}/-/testmodule-download-version-tar-1.0.0.tgz`);
         assert(res.status === 302);
-        assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
+        assert(
+          res.headers.location ===
+            `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`
+        );
       });
     }
 
     it('should download a version tar with streaming success', async () => {
       mock(nfsClientAdapter, 'url', 'not-function');
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}/-/testmodule-download-version-tar-1.0.0.tgz`)
         .expect('content-type', 'application/octet-stream')
-        .expect('content-disposition', 'attachment; filename="testmodule-download-version-tar-1.0.0.tgz"')
+        .expect(
+          'content-disposition',
+          'attachment; filename="testmodule-download-version-tar-1.0.0.tgz"'
+        )
         .expect(200);
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${scopedName}/-/testmodule-download-version-tar-1.0.0.tgz`)
         .expect('content-type', 'application/octet-stream')
-        .expect('content-disposition', 'attachment; filename="testmodule-download-version-tar-1.0.0.tgz"')
+        .expect(
+          'content-disposition',
+          'attachment; filename="testmodule-download-version-tar-1.0.0.tgz"'
+        )
         .expect(200);
     });
 
     it('should download non-scope package tar success', async () => {
       mock(nfsClientAdapter, 'url', 'not-function');
-      const pkg = await TestUtil.getFullPackage({ name: 'testmodule-download-version-tar222', version: '1.0.0' });
-      await app.httpRequest()
+      const pkg = await TestUtil.getFullPackage({
+        name: 'testmodule-download-version-tar222',
+        version: '1.0.0',
+      });
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${pkg.name}/-/${pkg.name}-1.0.0.tgz`)
         .expect('content-type', 'application/octet-stream')
-        .expect('content-disposition', 'attachment; filename="testmodule-download-version-tar222-1.0.0.tgz"')
+        .expect(
+          'content-disposition',
+          'attachment; filename="testmodule-download-version-tar222-1.0.0.tgz"'
+        )
         .expect(200);
     });
 
     it('should mock getDownloadUrlOrStream return undefined', async () => {
-      const pkg = await TestUtil.getFullPackage({ name: 'testmodule-download-version-tar222', version: '1.0.0' });
-      await app.httpRequest()
+      const pkg = await TestUtil.getFullPackage({
+        name: 'testmodule-download-version-tar222',
+        version: '1.0.0',
+      });
+      await app
+        .httpRequest()
         .put(`/${pkg.name}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
@@ -140,19 +180,25 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
           return undefined;
         });
       }
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${pkg.name}/-/${pkg.name}-1.0.0.tgz`);
       assert(res.status === 404);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
-      assert(res.body.error === '[NOT_FOUND] "testmodule-download-version-tar222-1.0.0.tgz" not found');
+      assert(
+        res.body.error ===
+          '[NOT_FOUND] "testmodule-download-version-tar222-1.0.0.tgz" not found'
+      );
     });
 
     it('should 422 when version is empty string', async () => {
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}/-/testmodule-download-version-tar-.tgz`)
         .expect(422)
         .expect({
-          error: '[INVALID_PARAM] version: must NOT have fewer than 5 characters',
+          error:
+            '[INVALID_PARAM] version: must NOT have fewer than 5 characters',
         });
     });
 
@@ -162,17 +208,27 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
           return undefined;
         });
       }
-      await app.httpRequest()
-        .get('/@cnpm/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz')
+      await app
+        .httpRequest()
+        .get(
+          '/@cnpm/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz'
+        )
         .expect(404)
         .expect({
-          error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar-not-exists not found',
+          error:
+            '[NOT_FOUND] @cnpm/testmodule-download-version-tar-not-exists not found',
         });
 
-      const res = await app.httpRequest()
-        .get('/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz');
+      const res = await app
+        .httpRequest()
+        .get(
+          '/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz'
+        );
       assert(res.status === 302);
-      assert(res.headers.location === 'https://registry.npmjs.org/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz');
+      assert(
+        res.headers.location ===
+          'https://registry.npmjs.org/testmodule-download-version-tar-not-exists/-/testmodule-download-version-tar-not-exists-1.0.0.tgz'
+      );
     });
 
     it('should 404 when package version not exists', async () => {
@@ -183,18 +239,22 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         });
       }
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}/-/${name}-1.0.404404.tgz`)
         .expect(404)
         .expect({
-          error: '[NOT_FOUND] testmodule-download-version-tar@1.0.404404 not found',
+          error:
+            '[NOT_FOUND] testmodule-download-version-tar@1.0.404404 not found',
         });
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${scopedName}/-/${name}-1.0.404404.tgz`)
         .expect(404)
         .expect({
-          error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
+          error:
+            '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
         });
     });
 
@@ -203,13 +263,18 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         return 'http://foo.com/foo.tgz';
       });
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}/-/${name}-1.0.404404.tgz`)
         .expect(302)
-        .expect('location', `https://registry.npmjs.org/${name}/-/${name}-1.0.404404.tgz`);
+        .expect(
+          'location',
+          `https://registry.npmjs.org/${name}/-/${name}-1.0.404404.tgz`
+        );
 
       // not redirect the private package
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${scopedName}/-/${name}-1.0.404404.tgz`)
         .expect(404)
         .expect({
@@ -225,23 +290,26 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       }
 
       mock(app.config.cnpmcore, 'syncMode', 'all');
-      const res = await app.httpRequest()
-        .get('/foo/-/foo-1.0.404404.tgz');
+      const res = await app.httpRequest().get('/foo/-/foo-1.0.404404.tgz');
       assert(res.status === 404);
       assert(res.body.error === '[NOT_FOUND] foo not found');
 
       // not redirect when package exists
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}/-/${name}-1.0.404404.tgz`)
         .expect(404)
         .expect({
-          error: '[NOT_FOUND] testmodule-download-version-tar@1.0.404404 not found',
+          error:
+            '[NOT_FOUND] testmodule-download-version-tar@1.0.404404 not found',
         });
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${scopedName}/-/${name}-1.0.404404.tgz`)
         .expect(404)
         .expect({
-          error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
+          error:
+            '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
         });
     });
 
@@ -253,29 +321,41 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       }
 
       mock(app.config.cnpmcore, 'syncMode', 'none');
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/foo/-/foo-1.0.404404.tgz')
         .expect(302)
-        .expect('location', 'https://registry.npmjs.org/foo/-/foo-1.0.404404.tgz');
+        .expect(
+          'location',
+          'https://registry.npmjs.org/foo/-/foo-1.0.404404.tgz'
+        );
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/foo/-/foo-1.0.404404.tgz?t=123')
         .expect(302)
-        .expect('location', 'https://registry.npmjs.org/foo/-/foo-1.0.404404.tgz?t=123');
+        .expect(
+          'location',
+          'https://registry.npmjs.org/foo/-/foo-1.0.404404.tgz?t=123'
+        );
 
       mock(app.config.cnpmcore, 'redirectNotFound', false);
       // not redirect when package exists
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${name}/-/${name}-1.0.404404.tgz`)
         .expect(404)
         .expect({
-          error: '[NOT_FOUND] testmodule-download-version-tar@1.0.404404 not found',
+          error:
+            '[NOT_FOUND] testmodule-download-version-tar@1.0.404404 not found',
         });
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${scopedName}/-/${name}-1.0.404404.tgz`)
         .expect(404)
         .expect({
-          error: '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
+          error:
+            '[NOT_FOUND] @cnpm/testmodule-download-version-tar@1.0.404404 not found',
         });
     });
 
@@ -283,43 +363,57 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       mock(app.config.cnpmcore, 'syncMode', 'exist');
       mock(app.config.cnpmcore, 'syncNotFound', false);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/lodash/-/lodash-1.404.404.tgz')
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 404);
-      app.notExpectLog('[middleware:ErrorHandler][syncPackage] create sync package');
+      app.notExpectLog(
+        '[middleware:ErrorHandler][syncPackage] create sync package'
+      );
     });
 
     it('should create sync task when package version tgz not exists and syncNotFound=true', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'exist');
       mock(app.config.cnpmcore, 'syncNotFound', true);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/lodash/-/lodash-1.404.404.tgz')
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 404);
-      app.expectLog('[middleware:ErrorHandler][syncPackage] create sync package');
+      app.expectLog(
+        '[middleware:ErrorHandler][syncPackage] create sync package'
+      );
     });
 
     it('should create sync specific version task when package version tgz not found in proxy mode ', async () => {
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
-      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
-        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
-        persist: false,
-      });
-      const res = await app.httpRequest()
+      app.mockHttpclient(
+        'https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz',
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile(
+            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
+          ),
+          persist: false,
+        }
+      );
+      const res = await app
+        .httpRequest()
         .get('/foobar/-/foobar-1.0.0.tgz')
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 200);
       // run in background
       await setTimeout(500);
-      app.expectLog('[DownloadPackageVersionTarController.createSyncTask:success]');
+      app.expectLog(
+        '[DownloadPackageVersionTarController.createSyncTask:success]'
+      );
     });
-
   });
 
   describe('[GET /:fullname/download/:fullname-:version.tgz] deprecatedDownload()', () => {
@@ -328,29 +422,45 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         // console.log('call url: ', storeKey);
         return `https://cdn.mock.com${storeKey}`;
       });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get(`/${name}/download/${name}-1.0.0.tgz`);
       assert.equal(res.status, 302);
-      assert.equal(res.headers.location, `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
-      res = await app.httpRequest()
+      assert.equal(
+        res.headers.location,
+        `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`
+      );
+      res = await app
+        .httpRequest()
         .get(`/${scopedName}/download/${scopedName}-1.0.0.tgz`);
       assert.equal(res.status, 302);
-      assert.equal(res.headers.location, `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
+      assert.equal(
+        res.headers.location,
+        `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`
+      );
     });
 
     it('should download a version tar with streaming success', async () => {
       mock(nfsClientAdapter, 'url', 'not-function');
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${name}/download/${name}-1.0.0.tgz`);
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/octet-stream');
-      assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
+      assert(
+        res.headers['content-disposition'] ===
+          `attachment; filename="${name}-1.0.0.tgz"`
+      );
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${scopedName}/download/${scopedName}-1.0.0.tgz`);
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/octet-stream');
-      assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
+      assert(
+        res.headers['content-disposition'] ===
+          `attachment; filename="${name}-1.0.0.tgz"`
+      );
     });
 
     it('should mock getDownloadUrlOrStream return undefined', async () => {
@@ -362,7 +472,8 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
           return undefined;
         });
       }
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${name}/download/${name}-1.0.0.tgz`);
       assert(res.status === 404);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
@@ -376,29 +487,45 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
         // console.log('call url: ', storeKey);
         return `https://cdn.mock.com${storeKey}`;
       });
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get(`/${name}/-/${scope}/${name}-1.0.0.tgz`);
       assert(res.status === 302);
-      assert(res.headers.location === `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`);
-      res = await app.httpRequest()
+      assert(
+        res.headers.location ===
+          `https://cdn.mock.com/packages/${name}/1.0.0/${name}-1.0.0.tgz`
+      );
+      res = await app
+        .httpRequest()
         .get(`/${scopedName}/-/${scope}/${name}-1.0.0.tgz`);
       assert(res.status === 302);
-      assert(res.headers.location === `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`);
+      assert(
+        res.headers.location ===
+          `https://cdn.mock.com/packages/${scopedName}/1.0.0/${name}-1.0.0.tgz`
+      );
     });
 
     it('should download a version tar with streaming success', async () => {
       mock(nfsClientAdapter, 'url', 'not-function');
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${name}/-/${scope}/${name}-1.0.0.tgz`);
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/octet-stream');
-      assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
+      assert(
+        res.headers['content-disposition'] ===
+          `attachment; filename="${name}-1.0.0.tgz"`
+      );
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get(`/${scopedName}/-/${scope}/${name}-1.0.0.tgz`);
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/octet-stream');
-      assert(res.headers['content-disposition'] === `attachment; filename="${name}-1.0.0.tgz"`);
+      assert(
+        res.headers['content-disposition'] ===
+          `attachment; filename="${name}-1.0.0.tgz"`
+      );
     });
 
     it('should mock getDownloadUrlOrStream return undefined', async () => {
@@ -410,7 +537,8 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
           return undefined;
         });
       }
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get(`/${name}/-/${scope}/${name}-1.0.0.tgz`);
       assert(res.status === 404);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');

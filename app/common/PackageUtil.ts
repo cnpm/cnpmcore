@@ -1,10 +1,11 @@
 import { createReadStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
-import type { HashLike } from 'ssri';
-import { fromData, fromStream } from 'ssri';
+
+import { fromData, fromStream, type HashLike } from 'ssri';
 // @ts-expect-error type error
 import tar from '@fengmk2/tar';
+
 import type {
   AuthorType,
   PackageJSONType,
@@ -38,7 +39,14 @@ export function getPrefixedName(prefix: string, username: string): string {
   return prefix ? `${prefix}${username}` : username;
 }
 
-export async function calculateIntegrity(contentOrFile: Uint8Array | string) {
+export interface Integrity {
+  integrity: string;
+  shasum: string;
+}
+
+export async function calculateIntegrity(
+  contentOrFile: Uint8Array | string
+): Promise<Integrity> {
   let integrityObj: HashLike;
   if (typeof contentOrFile === 'string') {
     integrityObj = await fromStream(createReadStream(contentOrFile), {
@@ -64,7 +72,9 @@ export function formatTarball(
   return `${registry}/${fullname}/-/${name}-${version}.tgz`;
 }
 
-export function detectInstallScript(manifest: any) {
+export function detectInstallScript(manifest: {
+  scripts?: Record<string, string>;
+}) {
   // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
   let hasInstallScript = false;
   const scripts = manifest.scripts;
@@ -98,6 +108,7 @@ export async function hasShrinkWrapInTgz(
   const parser = tar.t({
     // options.strict 默认为 false，会忽略 Recoverable errors，例如 tar 解析失败
     // 详见 https://github.com/isaacs/node-tar#warnings-and-errors
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     onentry(entry: any) {
       if (entry.path === 'package/npm-shrinkwrap.json') {
         hasShrinkWrap = true;
@@ -138,11 +149,12 @@ export function formatAuthor(
 export async function extractPackageJSON(
   tarballBytes: Buffer
 ): Promise<PackageJSONType> {
+  // oxlint-disable-next-line promise/avoid-new
   return new Promise((resolve, reject) => {
     Readable.from(tarballBytes).pipe(
       tar.t({
         filter: (name: string) => name === 'package/package.json',
-        onentry: async (entry: any) => {
+        onentry: async (entry: Readable) => {
           const chunks: Buffer[] = [];
           for await (const chunk of entry) {
             chunks.push(chunk);

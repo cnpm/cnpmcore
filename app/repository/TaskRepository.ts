@@ -1,15 +1,18 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { uniq } from 'lodash-es';
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
 import { ModelConvertor } from './util/ModelConvertor.js';
 import { isDuplicateKeyError } from './util/ErrorUtil.js';
 import type { Task as TaskModel } from './model/Task.js';
 import type { HistoryTask as HistoryTaskModel } from './model/HistoryTask.js';
 import { AbstractRepository } from './AbstractRepository.js';
-import type { TaskType, TaskState } from '../../app/common/enum/Task.js';
-import type { TaskUpdateCondition } from '../core/entity/Task.js';
-import { Task as TaskEntity } from '../core/entity/Task.js';
+import type { TaskState, TaskType } from '../../app/common/enum/Task.js';
+import {
+  Task as TaskEntity,
+  type TaskUpdateCondition,
+} from '../core/entity/Task.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -79,7 +82,7 @@ export class TaskRepository extends AbstractRepository {
 
   async updateSpecificVersionsOfWaitingTask(
     task: TaskEntity,
-    specificVersions?: Array<string>
+    specificVersions?: string[]
   ): Promise<void> {
     const model = await this.Task.findOne({ id: task.id });
     if (!model || !model.data.specificVersions) return;
@@ -118,7 +121,7 @@ export class TaskRepository extends AbstractRepository {
     return null;
   }
 
-  async findTasks(taskIds: Array<string>): Promise<Array<TaskEntity>> {
+  async findTasks(taskIds: string[]): Promise<TaskEntity[]> {
     const tasks = await this.HistoryTask.find({ taskId: { $in: taskIds } });
     return tasks.map(task =>
       ModelConvertor.convertModelToEntity(task, TaskEntity)
@@ -129,7 +132,7 @@ export class TaskRepository extends AbstractRepository {
     targetName?: string;
     state?: TaskState;
     type: TaskType;
-  }): Promise<Array<TaskEntity>> {
+  }): Promise<TaskEntity[]> {
     const tasks = await this.Task.find(where);
     return tasks.map(task =>
       ModelConvertor.convertModelToEntity(task, TaskEntity)
@@ -141,7 +144,10 @@ export class TaskRepository extends AbstractRepository {
     type: TaskType,
     state?: TaskState
   ) {
-    const where: any = { targetName, type };
+    const where: { targetName: string; type: TaskType; state?: TaskState } = {
+      targetName,
+      type,
+    };
     if (state) {
       where.state = state;
     }

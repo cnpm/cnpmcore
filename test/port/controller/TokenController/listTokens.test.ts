@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 import dayjs from 'dayjs';
 
@@ -10,11 +10,10 @@ import { TestUtil } from '../../../../test/TestUtil.js';
 describe('test/port/controller/TokenController/listTokens.test.ts', () => {
   describe('[GET /-/npm/v1/tokens] listTokens()', () => {
     it('should 401', async () => {
-      let res = await app.httpRequest()
-        .get('/-/npm/v1/tokens')
-        .expect(401);
+      let res = await app.httpRequest().get('/-/npm/v1/tokens').expect(401);
       assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get('/-/npm/v1/tokens')
         .set('authorization', 'Bearer foo-token')
         .expect(401);
@@ -23,7 +22,8 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
 
     it('should 200', async () => {
       const { authorization } = await TestUtil.createUser();
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/-/npm/v1/tokens')
         .set('authorization', authorization)
         .expect(200);
@@ -41,12 +41,14 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
       const { authorization } = await TestUtil.createUser();
       const now = Date.now();
 
-      let res = await app.httpRequest()
+      let res = await app
+        .httpRequest()
         .get('/-/whoami')
         .set('authorization', authorization)
         .expect(200);
 
-      res = await app.httpRequest()
+      res = await app
+        .httpRequest()
         .get('/-/npm/v1/tokens')
         .set('authorization', authorization)
         .expect(200);
@@ -56,12 +58,18 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
     });
 
     it('should 401 when readonly token access', async () => {
-      const { authorization } = await TestUtil.createUser({ tokenOptions: { readonly: true } });
-      const res = await app.httpRequest()
+      const { authorization } = await TestUtil.createUser({
+        tokenOptions: { readonly: true },
+      });
+      const res = await app
+        .httpRequest()
         .get('/-/npm/v1/tokens')
         .set('authorization', authorization)
         .expect(403);
-      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/);
+      assert.match(
+        res.body.error,
+        /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/
+      );
     });
   });
 
@@ -75,8 +83,8 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
       await userService.createToken(user.userId, {
         name: 'good',
         type: TokenType.granular,
-        allowedPackages: [ '@cnpm/a' ],
-        allowedScopes: [ '@cnpmjs' ],
+        allowedPackages: ['@cnpm/a'],
+        allowedScopes: ['@cnpmjs'],
         expires: 1,
       });
 
@@ -89,14 +97,15 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
     });
 
     it('should 200', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .get('/-/npm/v1/tokens/gat')
         .expect(200);
 
       assert.equal(res.body.objects.length, 1);
       assert.equal(res.body.objects[0].name, 'good');
-      assert.deepEqual(res.body.objects[0].allowedScopes, [ '@cnpmjs' ]);
-      assert.deepEqual(res.body.objects[0].allowedPackages, [ '@cnpm/a' ]);
+      assert.deepEqual(res.body.objects[0].allowedScopes, ['@cnpmjs']);
+      assert.deepEqual(res.body.objects[0].allowedPackages, ['@cnpm/a']);
     });
   });
 });

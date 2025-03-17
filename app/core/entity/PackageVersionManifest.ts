@@ -1,12 +1,11 @@
-import type { EntityData } from './Entity.js';
-import { Entity } from './Entity.js';
-import type { EasyData } from '../util/EntityUtil.js';
-import { EntityUtil } from '../util/EntityUtil.js';
+import { Entity, type EntityData } from './Entity.js';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
 
 interface PackageVersionManifestData extends EntityData {
   packageId: string;
   packageVersionId: string;
   packageVersionManifestId: string;
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   manifest: any;
 }
 
@@ -14,6 +13,7 @@ export class PackageVersionManifest extends Entity {
   packageId: string;
   packageVersionId: string;
   packageVersionManifestId: string;
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   manifest: any;
 
   constructor(data: PackageVersionManifestData) {

@@ -1,6 +1,6 @@
 import { performance } from 'node:perf_hooks';
-import type { AdviceContext, IAdvice } from '@eggjs/tegg/aop';
-import { Advice } from '@eggjs/tegg/aop';
+
+import { Advice, type AdviceContext, type IAdvice } from '@eggjs/tegg/aop';
 import { Inject } from '@eggjs/tegg';
 import type { EggLogger } from 'egg';
 
@@ -23,13 +23,13 @@ export class AsyncTimer implements IAdvice {
   }
 
   async afterFinally(ctx: AdviceContext) {
-    const ms = Math.floor((performance.now() - ctx.get(START)!) * 1000) / 1000;
+    const ms = Math.floor((performance.now() - ctx.get(START)) * 1000) / 1000;
     this.logger.info(
       '[%s] [%s:%s|%s]',
       ms,
       ctx.that.constructor.name,
       ctx.method,
-      ctx.get(SUCCEED)! ? 'T' : 'F'
+      ctx.get(SUCCEED) ? 'T' : 'F'
     );
   }
 }

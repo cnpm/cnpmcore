@@ -1,13 +1,13 @@
 import type {
+  ChangesStreamMode,
   SyncDeleteMode,
   SyncMode,
-  ChangesStreamMode,
 } from '../common/constants.js';
 import type { DATABASE_TYPE } from '../../config/database.js';
 
 export { cnpmcoreConfig } from '../../config/config.default.js';
 
-export type CnpmcoreConfig = {
+export interface CnpmcoreConfig {
   name: string;
   /**
    * enable hook or not
@@ -187,4 +187,4 @@ export type CnpmcoreConfig = {
   database: {
     type: DATABASE_TYPE | string;
   };
-};
+}

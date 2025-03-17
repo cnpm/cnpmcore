@@ -1,6 +1,6 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 
-import { DataTypes, Bone } from '../util/leoric.js';
+import { Bone, DataTypes } from '../util/leoric.js';
 
 @Model()
 export class Change extends Bone {
@@ -28,5 +28,6 @@ export class Change extends Bone {
   targetName: string;
 
   @Attribute(DataTypes.JSONB)
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   data: any;
 }

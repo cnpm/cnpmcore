@@ -1,7 +1,9 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
+
 import { TestUtil } from '../../../../test/TestUtil.js';
 import { PackageVersionDownload } from '../../../../app/repository/model/PackageVersionDownload.js';
 import dayjs from '../../../../app/common/dayjs.js';
@@ -12,6 +14,7 @@ import { TaskType } from '../../../../app/common/enum/Task.js';
 import type { ChangesStreamTask } from '../../../../app/core/entity/Task.js';
 import { RegistryType } from '../../../../app/common/enum/Registry.js';
 import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
+import type { UpstreamRegistryInfo } from '../../../../app/core/service/CacheService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -132,7 +135,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         .subtract(1, 'month')
         .startOf('year')
         .format('DD');
-      let row: any = await PackageVersionDownload.findOne({
+      let row = await PackageVersionDownload.findOne({
         packageId: 'total',
         yearMonth: yesterdayYearMonthInt,
       });
@@ -143,6 +146,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           yearMonth: yesterdayYearMonthInt,
         });
       }
+      // @ts-expect-error
       row[`d${yesterdayDate}`] = 1;
       await row.save();
 
@@ -157,6 +161,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           yearMonth: lastWeekYearMonthInt,
         });
       }
+      // @ts-expect-error
       row[`d${lastWeekDate}`] = 1;
       await row.save();
 
@@ -171,6 +176,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           yearMonth: lastMonthYearMonthInt,
         });
       }
+      // @ts-expect-error
       row[`d${lastMonthDate}`] = 1;
       await row.save();
 
@@ -185,6 +191,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           yearMonth: lastYearYearMonthInt,
         });
       }
+      // @ts-expect-error
       row[`d${lastYearDate}`] = 1;
       await row.save();
 
@@ -315,7 +322,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         const data = res.body;
         assert(data.upstream_registries.length === 2);
         const [defaultRegistry] = data.upstream_registries.filter(
-          (item: any) => item.registry_name === 'default'
+          (item: UpstreamRegistryInfo) => item.registry_name === 'default'
         );
         assert(defaultRegistry.registry_name === 'default');
         assert(
@@ -327,7 +334,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         );
 
         const [customRegistry] = data.upstream_registries.filter(
-          (item: any) => item.registry_name === 'custom'
+          (item: UpstreamRegistryInfo) => item.registry_name === 'custom'
         );
         assert(customRegistry.registry_name === 'custom');
         assert(

@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
@@ -32,10 +32,9 @@ describe('test/core/service/ScopeManagerService/index.test.ts', () => {
       });
 
       const queryRes = await scopeManagerService.listScopes({});
-      const [ _, otherScope ] = queryRes.data;
+      const [_, otherScope] = queryRes.data;
       assert(_);
       assert(otherScope.name === 'custom2');
-
     });
   });
 });

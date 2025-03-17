@@ -1,4 +1,5 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import { SqlcipherBinary } from '../../../../app/common/adapter/binary/SqlcipherBinary.js';
@@ -11,10 +12,16 @@ describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
   });
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
-      app.mockHttpclient('https://registry.npmjs.com/@journeyapps/sqlcipher', 'GET', {
-        data: await TestUtil.readFixturesFile('registry.npmjs.com/@journeyapps/sqlcipher.json'),
-        persist: false,
-      });
+      app.mockHttpclient(
+        'https://registry.npmjs.com/@journeyapps/sqlcipher',
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile(
+            'registry.npmjs.com/@journeyapps/sqlcipher.json'
+          ),
+          persist: false,
+        }
+      );
       const result = await binary.fetch('/');
       assert(result);
       assert(result.items.length > 0);
@@ -40,17 +47,23 @@ describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /v5.3.1/ work', async () => {
-      app.mockHttpclient('https://registry.npmjs.com/@journeyapps/sqlcipher', 'GET', {
-        data: await TestUtil.readFixturesFile('registry.npmjs.com/@journeyapps/sqlcipher.json'),
-        persist: false,
-      });
+      app.mockHttpclient(
+        'https://registry.npmjs.com/@journeyapps/sqlcipher',
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile(
+            'registry.npmjs.com/@journeyapps/sqlcipher.json'
+          ),
+          persist: false,
+        }
+      );
       const result = await binary.fetch('/v5.3.1/');
       assert(result);
       assert(result.items.length > 0);
       for (const item of result.items) {
         assert(item.isDir === false);
         assert(item.name.endsWith('.tar.gz'));
-        assert.deepEqual(item.ignoreDownloadStatuses, [ 404, 403 ]);
+        assert.deepEqual(item.ignoreDownloadStatuses, [404, 403]);
       }
       app.mockAgent().assertNoPendingInterceptors();
     });

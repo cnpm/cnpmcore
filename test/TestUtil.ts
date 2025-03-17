@@ -1,3 +1,4 @@
+// oxlint-disable typescript-eslint/no-explicit-any
 import fs from 'node:fs/promises';
 // 统一通过 coffee 执行 child_process，获取运行时的一些环境信息
 import coffee from 'coffee';
@@ -14,13 +15,13 @@ import { app as globalApp } from '@eggjs/mock/bootstrap';
 
 import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.js';
 import type { PackageJSONType } from '../app/repository/PackageRepository.js';
-import { database, DATABASE_TYPE } from '../config/database.js';
+import { DATABASE_TYPE, database } from '../config/database.js';
 import { Package as PackageModel } from '../app/repository/model/Package.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-type PackageOptions = {
+interface PackageOptions {
   name?: string;
   version?: string;
   versionObject?: object;
@@ -34,9 +35,9 @@ type PackageOptions = {
   description?: string;
   registryId?: string;
   main?: string;
-};
+}
 
-type UserOptions = {
+interface UserOptions {
   name?: string;
   password?: string;
   email?: string;
@@ -45,7 +46,7 @@ type UserOptions = {
     readonly?: boolean;
     cidr_whitelist?: string[];
   };
-};
+}
 
 export interface TestUser {
   name: string;
@@ -189,6 +190,10 @@ export class TestUtil {
     return await fs.readFile(this.getFixtures(name));
   }
 
+  static async readFixturesJSONFile(name?: string) {
+    return TestUtil.readJSONFile(this.getFixtures(name));
+  }
+
   static async readJSONFile(filepath: string) {
     const bytes = await fs.readFile(filepath);
     return JSON.parse(bytes.toString());
@@ -197,8 +202,7 @@ export class TestUtil {
   static async getFullPackage(
     options?: PackageOptions
   ): Promise<PackageJSONType & { versions: Record<string, PackageJSONType> }> {
-    const fullJSONFile = this.getFixtures('exampleFullPackage.json');
-    const pkg = JSON.parse((await fs.readFile(fullJSONFile)).toString());
+    const pkg = await this.readFixturesJSONFile('exampleFullPackage.json');
     if (options) {
       const attachs = pkg._attachments || {};
       const firstFilename = Object.keys(attachs)[0];
@@ -236,7 +240,8 @@ export class TestUtil {
         delete pkg.readme;
         delete version.readme;
       } else if (options.readme) {
-        version.readme = pkg.readme = options.readme;
+        pkg.readme = options.readme;
+        version.readme = options.readme;
       }
       if (options.description) {
         version.description = options.description;

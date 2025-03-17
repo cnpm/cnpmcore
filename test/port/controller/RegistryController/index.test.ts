@@ -1,14 +1,14 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
 import { TaskType } from '../../../../app/common/enum/Task.js';
 import type { Registry } from '../../../../app/core/entity/Registry.js';
 import type { ChangesStreamTaskData } from '../../../../app/core/entity/Task.js';
 import { TaskService } from '../../../../app/core/service/TaskService.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { type TestUser, TestUtil } from '../../../../test/TestUtil.js';
 
 describe('test/port/controller/RegistryController/index.test.ts', () => {
-  let adminUser: any;
+  let adminUser: TestUser;
   let registry: Registry;
   let taskService: TaskService;
   before(async () => {

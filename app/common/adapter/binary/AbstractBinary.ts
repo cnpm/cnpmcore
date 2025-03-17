@@ -1,5 +1,8 @@
-import type { ImplDecorator } from '@eggjs/tegg';
-import { Inject, QualifierImplDecoratorUtil } from '@eggjs/tegg';
+import {
+  Inject,
+  QualifierImplDecoratorUtil,
+  type ImplDecorator,
+} from '@eggjs/tegg';
 import type { EggHttpClient, EggLogger } from 'egg';
 import type { BinaryType } from '../../enum/Binary.js';
 import type {
@@ -7,21 +10,21 @@ import type {
   BinaryTaskConfig,
 } from '../../../../config/binaries.js';
 
-export type BinaryItem = {
+const platforms = ['darwin', 'linux', 'win32'] as const;
+export interface BinaryItem {
   name: string;
   isDir: boolean;
   url: string;
   size: string | number;
   date: string;
   ignoreDownloadStatuses?: number[];
-};
+}
 
-export type FetchResult = {
+export interface FetchResult {
   items: BinaryItem[];
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
   nextParams?: any;
-};
-
-const platforms = ['darwin', 'linux', 'win32'] as const;
+}
 
 export const BINARY_ADAPTER_ATTRIBUTE = Symbol('BINARY_ADAPTER_ATTRIBUTE');
 
@@ -45,7 +48,7 @@ export abstract class AbstractBinary {
 
   protected async requestXml(url: string) {
     const { status, data, headers } = await this.httpclient.request(url, {
-      timeout: 30000,
+      timeout: 30_000,
       followRedirect: true,
       gzip: true,
     });
@@ -68,7 +71,7 @@ export abstract class AbstractBinary {
     requestHeaders?: Record<string, string>
   ) {
     const { status, data, headers } = await this.httpclient.request(url, {
-      timeout: 30000,
+      timeout: 30_000,
       dataType: 'json',
       followRedirect: true,
       gzip: true,

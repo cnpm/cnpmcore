@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { EggLogger } from 'egg';
 import pMap from 'p-map';
 import { BugVersion } from '../entity/BugVersion.js';
@@ -37,21 +37,21 @@ export class BugVersionService {
     if (!pkg) return;
     /* c8 ignore next 10 */
     const tag = await this.packageRepository.findPackageTag(
-      pkg!.packageId,
+      pkg.packageId,
       LATEST_TAG
     );
     if (!tag) return;
-    let bugVersion = this.bugVersionStore.getBugVersion(tag!.version);
+    let bugVersion = this.bugVersionStore.getBugVersion(tag.version);
     if (!bugVersion) {
       const packageVersionJson =
         (await this.distRepository.findPackageVersionManifest(
-          pkg!.packageId,
-          tag!.version
+          pkg.packageId,
+          tag.version
         )) as PackageJSONType;
       if (!packageVersionJson) return;
       const data = packageVersionJson.config?.['bug-versions'];
       bugVersion = new BugVersion(data || {});
-      this.bugVersionStore.setBugVersion(bugVersion, tag!.version);
+      this.bugVersionStore.setBugVersion(bugVersion, tag.version);
     }
     return bugVersion;
   }
@@ -73,6 +73,7 @@ export class BugVersionService {
   async fixPackageBugVersions(
     bugVersion: BugVersion,
     fullname: string,
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifests: Record<string, any>
   ) {
     // If package all version unpublished(like pinyin-tool), versions is undefined
@@ -90,6 +91,7 @@ export class BugVersionService {
   async fixPackageBugVersion(
     bugVersion: BugVersion,
     fullname: string,
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifest: any
   ) {
     const advice = bugVersion.fixVersion(fullname, manifest.version);
@@ -121,7 +123,9 @@ export class BugVersionService {
   private fixPackageBugVersionWithAllVersions(
     fullname: string,
     bugVersion: BugVersion,
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifest: any,
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifests: Record<string, any>
   ) {
     const advice = bugVersion.fixVersion(fullname, manifest.version);

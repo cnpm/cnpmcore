@@ -1,8 +1,7 @@
 import crypto from 'node:crypto';
-import type { EntityData } from './Entity.js';
-import { Entity } from './Entity.js';
-import type { EasyData } from '../util/EntityUtil.js';
-import { EntityUtil } from '../util/EntityUtil.js';
+
+import { Entity, type EntityData } from './Entity.js';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
 import type { HookType } from '../../common/enum/Hook.js';
 
 export type CreateHookData = Omit<
@@ -44,10 +43,11 @@ export class Hook extends Entity {
   }
 
   static create(data: CreateHookData): Hook {
-    const hookData: EasyData<HookData, 'hookId'> = Object.assign({}, data, {
+    const hookData: EasyData<HookData, 'hookId'> = {
+      ...data,
       enable: true,
       latestTaskId: undefined,
-    });
+    };
     const newData = EntityUtil.defaultData(hookData, 'hookId');
     return new Hook(newData);
   }

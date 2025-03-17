@@ -1,8 +1,12 @@
 import { basename } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import { BinaryType } from '../../enum/Binary.js';
-import type { FetchResult, BinaryItem } from './AbstractBinary.js';
-import { AbstractBinary, BinaryAdapter } from './AbstractBinary.js';
+import {
+  AbstractBinary,
+  BinaryAdapter,
+  type BinaryItem,
+  type FetchResult,
+} from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.ChromeForTesting)
@@ -37,7 +41,7 @@ export class ChromeForTestingBinary extends AbstractBinary {
       jsonApiEndpoint,
       {
         dataType: 'json',
-        timeout: 30000,
+        timeout: 30_000,
         followRedirect: true,
         gzip: true,
       }
@@ -169,6 +173,6 @@ export class ChromeForTestingBinary extends AbstractBinary {
     if (!this.dirItems) {
       await this.#syncDirItems();
     }
-    return { items: this.dirItems![dir], nextParams: null };
+    return { items: this.dirItems?.[dir] ?? [], nextParams: null };
   }
 }
