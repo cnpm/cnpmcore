@@ -139,6 +139,7 @@ export function formatAuthor(
 export async function extractPackageJSON(
   tarballBytes: Buffer
 ): Promise<PackageJSONType> {
+  // oxlint-disable-next-line promise/avoid-new
   return new Promise((resolve, reject) => {
     Readable.from(tarballBytes).pipe(
       tar.t({

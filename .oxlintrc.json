@@ -53,6 +53,7 @@
     "promise/prefer-await-to-then": "error",
     "promise/prefer-catch": "error",
     "promise/no-return-in-finally": "error",
+    "promise/avoid-new": "error",
     // unicorn
     "unicorn/error-message": "error",
     "unicorn/no-null": "allow",
