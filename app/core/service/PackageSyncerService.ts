@@ -184,6 +184,7 @@ export class PackageSyncerService extends AbstractService {
         datas.set(yearMonth, []);
       }
       const counters = datas.get(yearMonth);
+      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       counters!.push([date, item.downloads]);
     }
     for (const [yearMonth, counters] of datas.entries()) {

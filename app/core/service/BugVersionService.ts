@@ -37,21 +37,21 @@ export class BugVersionService {
     if (!pkg) return;
     /* c8 ignore next 10 */
     const tag = await this.packageRepository.findPackageTag(
-      pkg!.packageId,
+      pkg.packageId,
       LATEST_TAG
     );
     if (!tag) return;
-    let bugVersion = this.bugVersionStore.getBugVersion(tag!.version);
+    let bugVersion = this.bugVersionStore.getBugVersion(tag.version);
     if (!bugVersion) {
       const packageVersionJson =
         (await this.distRepository.findPackageVersionManifest(
-          pkg!.packageId,
-          tag!.version
+          pkg.packageId,
+          tag.version
         )) as PackageJSONType;
       if (!packageVersionJson) return;
       const data = packageVersionJson.config?.['bug-versions'];
       bugVersion = new BugVersion(data || {});
-      this.bugVersionStore.setBugVersion(bugVersion, tag!.version);
+      this.bugVersionStore.setBugVersion(bugVersion, tag.version);
     }
     return bugVersion;
   }

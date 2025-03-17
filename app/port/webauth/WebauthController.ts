@@ -219,7 +219,7 @@ export class WebauthController extends MiddlewareController {
         };
       }
       const createToken = await this.userService.createToken(user.userId);
-      token = createToken.token!;
+      token = createToken.token;
 
       await this.cacheAdapter.set(sessionId, token);
       return { ok: true };
@@ -256,7 +256,8 @@ export class WebauthController extends MiddlewareController {
 
     if (result.code === LoginResultCode.Success) {
       // login success
-      token = result.token!.token!;
+      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
+      token = result.token!.token;
       user = result.user;
       // need unbind webauthn credential
       if (needUnbindWan) {
@@ -275,7 +276,7 @@ export class WebauthController extends MiddlewareController {
         email: `${username}@webauth.cnpmjs.org`,
         ip: ctx.ip,
       });
-      token = createRes.token!.token!;
+      token = createRes.token.token;
       user = createRes.user;
     }
 
@@ -421,7 +422,7 @@ export class WebauthController extends MiddlewareController {
       email,
       ip: ctx.ip,
     });
-    await this.cacheAdapter.set(sessionId, token!.token!);
+    await this.cacheAdapter.set(sessionId, token.token);
 
     return { success: true };
   }

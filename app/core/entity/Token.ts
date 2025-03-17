@@ -54,7 +54,7 @@ export class Token extends Entity {
   readonly expires?: number;
   lastUsedAt: Date | null;
   allowedPackages?: string[];
-  token?: string;
+  token: string;
 
   constructor(data: TokenData) {
     super(data);

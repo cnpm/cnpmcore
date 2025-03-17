@@ -40,8 +40,7 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
         null,
         '@cnpm'
       );
-      assert(taskRegistry);
-      assert(taskRegistry.registryId === registry.registryId);
+      assert.equal(taskRegistry.registryId, registry.registryId);
     });
     it('should support legacy task', async () => {
       const task = await packageSyncerService.createTask('@cnpm/bananas', {
@@ -56,7 +55,7 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
         null,
         '@cnpm'
       );
-      assert(taskRegistry!.name === 'default');
+      assert.equal(taskRegistry.name, 'default');
     });
   });
 });

@@ -202,7 +202,8 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
 
         const userRepository = await app.getEggObject(UserRepository);
         const user = await userRepository.findUserByName('banana');
-        const tokens = await userRepository.listTokens(user!.userId);
+        assert(user);
+        const tokens = await userRepository.listTokens(user.userId);
 
         let granularToken = tokens.find(
           token => token.type === TokenType.granular

@@ -177,9 +177,11 @@ export class PackageManagerService extends AbstractService {
       cmd.packageJson.publish_time = publishTime.getTime();
     }
     if (cmd.packageJson._hasShrinkwrap === undefined) {
-      cmd.packageJson._hasShrinkwrap = await hasShrinkWrapInTgz(
-        cmd.dist.content || cmd.dist.localFile!
-      );
+      const contentOrFile = cmd.dist.content || cmd.dist.localFile;
+      if (contentOrFile) {
+        cmd.packageJson._hasShrinkwrap =
+          await hasShrinkWrapInTgz(contentOrFile);
+      }
     }
 
     // set _npmUser field to cmd.packageJson
@@ -640,7 +642,7 @@ export class PackageManagerService extends AbstractService {
 
   public async saveDeprecatedVersions(
     pkg: Package,
-    deprecatedList: { version: string; deprecated: string }[]
+    deprecatedList: { version: string; deprecated?: string }[]
   ) {
     const updateVersions: string[] = [];
     for (const { version, deprecated } of deprecatedList) {
@@ -746,11 +748,13 @@ export class PackageManagerService extends AbstractService {
       'dist-tags': {},
     };
     await this._mergeManifestDist(
+      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       pkg.manifestsDist!,
       undefined,
       unpublishedInfo
     );
     await this._mergeManifestDist(
+      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       pkg.abbreviatedsDist!,
       undefined,
       unpublishedInfo
@@ -981,6 +985,7 @@ export class PackageManagerService extends AbstractService {
     if (refreshAttr === 'maintainers') {
       const fullManifests =
         await this.distRepository.readDistBytesToJSON<PackageManifestType>(
+          // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
           pkg.manifestsDist!
         );
       const maintainers = await this._listPackageMaintainers(pkg);
@@ -991,11 +996,13 @@ export class PackageManagerService extends AbstractService {
     } else if (refreshAttr === 'dist-tags') {
       const fullManifests =
         await this.distRepository.readDistBytesToJSON<PackageManifestType>(
+          // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
           pkg.manifestsDist!
         );
       if (fullManifests) {
         const abbreviatedManifests =
           await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(
+            // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
             pkg.abbreviatedsDist!
           );
         if (abbreviatedManifests) {
@@ -1208,7 +1215,7 @@ export class PackageManagerService extends AbstractService {
       fullManifests,
       abbreviatedManifests
     );
-    const manifests = (fullManifests || abbreviatedManifests)! as T;
+    const manifests = (fullManifests || abbreviatedManifests) as T;
     /* c8 ignore next 5 */
     if (bugVersion) {
       await this.bugVersionService.fixPackageBugVersions(
@@ -1221,6 +1228,7 @@ export class PackageManagerService extends AbstractService {
       etag = `"${distIntegrity.shasum}"`;
     } else {
       dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
+      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       etag = `"${dist!.shasum}"`;
     }
     return { etag, data: manifests, blockReason };

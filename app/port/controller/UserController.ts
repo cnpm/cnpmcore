@@ -173,6 +173,7 @@ export class UserController extends AbstractController {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const authorizedRes =
       await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    // oxlint-disable-next-line typescript/no-non-null-assertion
     const { token, user } = authorizedRes!;
 
     if (isGranularToken(token)) {

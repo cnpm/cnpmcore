@@ -78,6 +78,7 @@ export async function createTempfile(dataDir: string, filename: string) {
   // https://github.com/cnpm/cnpmjs.org/pull/1345
   const tmpfile = path.join(
     tmpdir,
+    // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
     `${randomBytes(10).toString('hex')}-${path.basename(url.parse(filename).pathname!)}`
   );
   return tmpfile;

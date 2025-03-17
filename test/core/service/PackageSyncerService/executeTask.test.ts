@@ -85,7 +85,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
-      assert.equal(model!.isPrivate, false);
+      assert(model);
+      assert.equal(model.isPrivate, false);
       assert(log.includes(', skipDependencies: true'));
 
       // sync again
@@ -99,14 +100,16 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       // console.log(JSON.stringify(manifests, null, 2));
       // should have 2 maintainers
-      assert(manifests.data!.maintainers.length >= 1);
+      assert(manifests.data?.maintainers);
+      assert(manifests.data.maintainers.length >= 1);
       const abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests(
           '',
           'foobar'
         );
       // console.log(JSON.stringify(abbreviatedManifests, null, 2));
-      assert.equal(abbreviatedManifests.data!.name, manifests.data!.name);
+      assert(abbreviatedManifests.data);
+      assert.equal(abbreviatedManifests.data.name, manifests.data.name);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -206,7 +209,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
-      assert.equal(model!.isPrivate, false);
+      assert(model);
+      assert.equal(model.isPrivate, false);
       assert(log.includes(', taskQueue: 3/2'));
       assert(log.includes(', skipDependencies: true'));
       app.mockAgent().assertNoPendingInterceptors();
@@ -250,9 +254,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           'xxhash'
         );
       // console.log(JSON.stringify(abbreviatedManifests, null, 2));
-      assert.equal(abbreviatedManifests.data!.name, manifests.data!.name);
-      assert(abbreviatedManifests.data!.versions['1.0.0']);
-      assert(abbreviatedManifests.data!.versions['1.0.0'].optionalDependencies);
+      assert(abbreviatedManifests.data);
+      assert(manifests.data);
+      assert.equal(abbreviatedManifests.data.name, manifests.data.name);
+      assert(abbreviatedManifests.data.versions['1.0.0']);
+      assert(abbreviatedManifests.data.versions['1.0.0'].optionalDependencies);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -287,7 +293,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         name
       );
       assert(manifests.data);
-      assert(manifests!.data!.versions['0.0.0']);
+      assert(manifests.data.versions['0.0.0']);
 
       assert.equal(
         manifests.data.versions['0.0.0'].deprecated,
@@ -296,12 +302,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
       let abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert(abbreviatedManifests.data);
+      assert(abbreviatedManifests.data.versions['0.0.0']);
       assert.equal(
-        abbreviatedManifests!.data!.versions['0.0.0']!.deprecated,
+        abbreviatedManifests.data.versions['0.0.0'].deprecated,
         'only test for cnpmcore'
       );
       assert.equal(
-        abbreviatedManifests!.data!.versions['0.0.0']!._hasShrinkwrap,
+        abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap,
         false
       );
       app.mockAgent().assertNoPendingInterceptors();
@@ -336,7 +344,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(manifests.data.time.unpublished);
       abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(abbreviatedManifests.data!.time!.unpublished);
+      assert(abbreviatedManifests.data);
+      assert(abbreviatedManifests.data.time?.unpublished);
       app.mockAgent().assertNoPendingInterceptors();
 
       // sync again
@@ -372,21 +381,25 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         '',
         name
       );
-      assert(!manifests.data!.time.unpublished);
+      assert(manifests.data);
+      assert(!manifests.data.time.unpublished);
+      assert(manifests.data.versions['0.0.0']);
       assert.equal(
-        manifests.data!.versions['0.0.0']!.deprecated,
+        manifests.data.versions['0.0.0'].deprecated,
         'only test for cnpmcore'
       );
-      assert.equal(manifests.data!.versions['0.0.0']!._hasShrinkwrap, false);
+      assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
       abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(!abbreviatedManifests.data!.time?.unpublished);
+      assert(abbreviatedManifests.data);
+      assert(!abbreviatedManifests.data.time?.unpublished);
+      assert(abbreviatedManifests.data.versions['0.0.0']);
       assert.equal(
-        abbreviatedManifests.data!.versions['0.0.0']!.deprecated,
+        abbreviatedManifests.data.versions['0.0.0'].deprecated,
         'only test for cnpmcore'
       );
       assert.equal(
-        abbreviatedManifests.data!.versions['0.0.0']!._hasShrinkwrap,
+        abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap,
         false
       );
       app.mockAgent().assertNoPendingInterceptors();
@@ -423,7 +436,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         name
       );
       assert(manifests.data);
-      assert(manifests!.data!.versions['0.0.0']);
+      assert(manifests.data.versions['0.0.0']);
 
       assert.equal(
         manifests.data.versions['0.0.0'].deprecated,
@@ -432,12 +445,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
       const abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert(abbreviatedManifests.data?.versions['0.0.0']);
       assert.equal(
-        abbreviatedManifests!.data!.versions['0.0.0']!.deprecated,
+        abbreviatedManifests.data.versions['0.0.0'].deprecated,
         'only test for cnpmcore'
       );
       assert.equal(
-        abbreviatedManifests!.data!.versions['0.0.0']!._hasShrinkwrap,
+        abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap,
         false
       );
       app.mockAgent().assertNoPendingInterceptors();
@@ -1353,7 +1367,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const changes = await changeRepository.query(0, 100);
         const [firstChange] = changes;
         const firstChangeDate = new Date(firstChange.createdAt);
-        const taskFinishedDate = new Date(finishedTask!.updatedAt);
+        const taskFinishedDate = new Date(finishedTask.updatedAt);
 
         // 任务结束后一起触发
         assert(firstChangeDate.getTime() - taskFinishedDate.getTime() > 0);
@@ -1495,8 +1509,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         '@cnpmcore',
         'test-sync-package-has-two-versions'
       );
-      assert(Object.keys(r.data!.versions).length === 1);
-      assert(!r.data!.versions['1.0.0'], '1.0.0 should not exists');
+      assert(r.data);
+      assert.equal(Object.keys(r.data.versions).length, 1);
+      assert(!r.data.versions['1.0.0'], '1.0.0 should not exists');
     });
 
     it('should work on unpublished package', async () => {
@@ -1557,8 +1572,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('] 🟢 Synced '));
       data = await packageManagerService.listPackageFullManifests('', name);
       // console.log(data.data);
-      assert(!data.data!.time.unpublished);
-      assert(data.data!.maintainers);
+      assert(data.data);
+      assert(!data.data.time.unpublished);
+      assert(data.data.maintainers);
       app.mockAgent().assertNoPendingInterceptors();
 
       app.mockHttpclient(
@@ -1582,8 +1598,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       data = await packageManagerService.listPackageFullManifests('', name);
       // console.log(data.data);
-      assert(data.data!.time.unpublished);
-      assert(!data.data!.maintainers);
+      assert(data.data?.time.unpublished);
+      assert(!data.data?.maintainers);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -1630,7 +1646,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         '',
         name
       );
-      assert.equal(data!.readme, '');
+      assert(data);
+      assert.equal(data.readme, '');
     });
 
     it('should auto sync missing hasInstallScript property', async () => {
@@ -1691,14 +1708,16 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(log.includes('🚧 Syncing versions 1 => 1'));
       assert(res.data);
       res = await packageManagerService.listPackageFullManifests('', name);
+      assert(res.data?.versions);
       assert(
-        res.data!.versions?.[res.data!['dist-tags'].latest]
-          ?.hasInstallScript === true
+        res.data.versions[res.data['dist-tags'].latest]?.hasInstallScript ===
+          true
       );
       const abbrRes =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert(abbrRes.data);
       assert(
-        abbrRes.data!.versions[abbrRes.data!['dist-tags'].latest]
+        abbrRes.data.versions[abbrRes.data['dist-tags'].latest]
           ?.hasInstallScript === true
       );
       app.mockAgent().assertNoPendingInterceptors();
@@ -1741,8 +1760,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         '',
         name
       );
-      assert(data!.readme === 'mock readme content');
-      assert(data!.versions['0.0.0']!.readme === undefined);
+      assert(data);
+      assert.equal(data.readme, 'mock readme content');
+      assert.equal(data.versions['0.0.0']?.readme, undefined);
     });
 
     it('should work on mock package.readme is object', async () => {
@@ -1775,7 +1795,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         '',
         name
       );
-      assert.equal(data!.data!.readme, '{"foo":"mock readme is object"}');
+      assert.equal(data.data?.readme, '{"foo":"mock readme is object"}');
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -1814,7 +1834,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         )
       );
       let data = await packageManagerService.listPackageFullManifests('', name);
-      assert.deepEqual(data!.data!['dist-tags'], { latest: '0.0.0' });
+      assert.deepEqual(data.data?.['dist-tags'], { latest: '0.0.0' });
 
       // update tags, add beta tag
       app.mockHttpclient(
@@ -1867,7 +1887,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert(!log.includes('[1] Synced version 0.0.0 success'));
       assert(!log.includes('🟢 Synced 1 tags: '));
       data = await packageManagerService.listPackageFullManifests('', name);
-      assert.deepEqual(data!.data!['dist-tags'], {
+      assert(data.data);
+      assert.deepEqual(data.data['dist-tags'], {
         latest: '0.0.0',
         beta: '0.0.0',
       });
@@ -2508,11 +2529,12 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
 
       const pkg = await packageRepository.findPackage('', name);
+      assert(pkg);
       const pkgVersion = await packageRepository.findPackageVersion(
-        pkg!.packageId,
+        pkg.packageId,
         '0.0.0'
       );
-      assert(pkg?.name === name);
+      assert.equal(pkg.name, name);
       assert(pkgVersion);
 
       // mock unpublish
@@ -2844,18 +2866,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(JSON.stringify(abbreviatedManifests.data, null, 2));
       assert(abbreviatedManifests.data?.versions['2.0.0']);
       assert.equal(
-        abbreviatedManifests.data!.versions['2.0.0'].peerDependenciesMeta
+        abbreviatedManifests.data.versions['2.0.0'].peerDependenciesMeta
           ?.bufferutil.optional,
         true
       );
       assert.equal(
-        abbreviatedManifests.data!.versions['2.0.0'].os?.[0],
+        abbreviatedManifests.data.versions['2.0.0'].os?.[0],
         'linux'
       );
-      assert.equal(
-        abbreviatedManifests.data!.versions['2.0.0'].cpu?.[0],
-        'x64'
-      );
+      assert.equal(abbreviatedManifests.data.versions['2.0.0'].cpu?.[0], 'x64');
       app.mockAgent().assertNoPendingInterceptors();
 
       // again should skip sync different metas
@@ -2917,12 +2936,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         name
       );
       assert(manifests.data?.versions['2.0.0']);
-      assert(manifests.data.versions['2.0.0'].readme === undefined);
+      assert.equal(manifests.data.versions['2.0.0'].readme, undefined);
 
       // should sync missing cpu on abbreviated manifests
       const pkg = await packageRepository.findPackage('', name);
+      assert(pkg);
       const pkgVersion = await packageRepository.findPackageVersion(
-        pkg!.packageId,
+        pkg.packageId,
         '2.0.0'
       );
       assert(pkgVersion);
@@ -2931,14 +2951,16 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         {},
         { cpu: undefined, libc: ['glibc'] }
       );
-      await packageManagerService.refreshPackageChangeVersionsToDists(pkg!, [
+      assert(pkg);
+      await packageManagerService.refreshPackageChangeVersionsToDists(pkg, [
         '2.0.0',
       ]);
       abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(!abbreviatedManifests.data!.versions['2.0.0'].cpu);
+      assert(abbreviatedManifests.data?.versions);
+      assert(!abbreviatedManifests.data.versions['2.0.0']?.cpu);
       assert.deepStrictEqual(
-        abbreviatedManifests.data!.versions['2.0.0'].libc,
+        abbreviatedManifests.data.versions['2.0.0']?.libc,
         ['glibc']
       );
 
@@ -2969,9 +2991,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await mock.restore();
       abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(abbreviatedManifests.data?.versions['2.0.0']);
+      assert(abbreviatedManifests.data);
+      assert(abbreviatedManifests.data.versions['2.0.0']);
       assert.equal(abbreviatedManifests.data.versions['2.0.0'].cpu?.[0], 'x64');
-      assert(!abbreviatedManifests.data!.versions['2.0.0'].libc);
+      assert(!abbreviatedManifests.data.versions['2.0.0'].libc);
     });
 
     it('should sync missing acceptDependencies with different metas', async () => {
@@ -3036,7 +3059,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         '',
         name
       );
-      assert(manifests.data?.versions['2.0.0']);
+      assert(manifests.data);
+      assert(manifests.data.versions['2.0.0']);
       assert.equal(
         manifests.data.versions['2.0.0'].peerDependenciesMeta?.bufferutil
           .optional,
@@ -3049,23 +3073,20 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
       // console.log(JSON.stringify(abbreviatedManifests.data, null, 2));
-      assert(abbreviatedManifests.data?.versions['2.0.0']);
+      assert(abbreviatedManifests.data);
+      assert(abbreviatedManifests.data.versions['2.0.0']);
       assert.equal(
-        abbreviatedManifests.data!.versions['2.0.0'].peerDependenciesMeta
+        abbreviatedManifests.data.versions['2.0.0'].peerDependenciesMeta
           ?.bufferutil.optional,
         true
       );
       assert.equal(
-        abbreviatedManifests.data!.versions['2.0.0'].os?.[0],
+        abbreviatedManifests.data.versions['2.0.0'].os?.[0],
         'linux'
       );
+      assert.equal(abbreviatedManifests.data.versions['2.0.0'].cpu?.[0], 'x64');
       assert.equal(
-        abbreviatedManifests.data!.versions['2.0.0'].cpu?.[0],
-        'x64'
-      );
-      assert.equal(
-        abbreviatedManifests.data!.versions['2.0.0'].acceptDependencies
-          ?.webpack,
+        abbreviatedManifests.data.versions['2.0.0'].acceptDependencies?.webpack,
         '^4.46.x'
       );
       app.mockAgent().assertNoPendingInterceptors();
@@ -3464,7 +3485,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         );
 
         const pkg = await packageRepository.findPackage('@cnpm', 'banana');
-        assert(pkg!.registryId === registry.registryId);
+        assert.equal(pkg?.registryId, registry.registryId);
       });
 
       it('should sync from target registry when pkg not exists', async () => {
@@ -3586,7 +3607,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const versions = await PackageVersion.find({
           packageId: model.packageId,
         });
-        assert.equal(model!.isPrivate, false);
+        assert.equal(model.isPrivate, false);
         assert(versions.length === 2);
       });
 
@@ -3616,7 +3637,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const versions = await PackageVersion.find({
           packageId: model.packageId,
         });
-        assert.equal(model!.isPrivate, false);
+        assert.equal(model.isPrivate, false);
         assert(versions.length === 2);
 
         const manifests = await packageManagerService.listPackageFullManifests(
@@ -3631,7 +3652,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
         await app.httpRequest().get(`/${pkg.name}`).expect(451);
 
-        // could resotre
+        // could restore
         await packageManagerService.unblockPackage(pkg);
 
         await app.httpRequest().get(`/${pkg.name}`).expect(200);

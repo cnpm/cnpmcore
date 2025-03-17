@@ -11,6 +11,7 @@ import { isoNow } from '../../common/LogUtil.js';
 import { TaskState } from '../../common/enum/Task.js';
 import type { TaskService } from './TaskService.js';
 import { getScopeAndName } from '../../common/PackageUtil.js';
+import type { Dist } from '../entity/Dist.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -123,7 +124,7 @@ export class HookTriggerService {
       return;
     }
     const manifest = await this.distRepository.readDistBytesToJSON(
-      pkg!.manifestsDist!
+      pkg.manifestsDist as Dist
     );
     return {
       event: hookEvent.event,

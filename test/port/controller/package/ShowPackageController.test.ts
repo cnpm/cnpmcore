@@ -611,7 +611,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         '@cnpm',
         'test-module-mock-dist-not-exists'
       );
-      await packageRepository.removePackageDist(pkgModel!, false);
+      assert(pkgModel);
+      await packageRepository.removePackageDist(pkgModel, false);
 
       res = await app
         .httpRequest()
@@ -644,7 +645,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         '@cnpm',
         'test-module-mock-dist-not-exists-full-manifests'
       );
-      await packageRepository.removePackageDist(pkgModel!, true);
+      assert(pkgModel);
+      await packageRepository.removePackageDist(pkgModel, true);
 
       res = await app
         .httpRequest()
@@ -920,7 +922,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(data._source_registry_name === 'self');
       assert(
         Object.values(data.versions).every(
-          v => v!._source_registry_name === 'self'
+          v => v && v._source_registry_name === 'self'
         )
       );
     });
@@ -939,7 +941,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const data = res.body as PackageManifestType;
       assert(
         Object.values(data.versions).every(
-          v => v!._source_registry_name === 'self'
+          v => v && v._source_registry_name === 'self'
         )
       );
     });

@@ -23,13 +23,13 @@ export class AsyncTimer implements IAdvice {
   }
 
   async afterFinally(ctx: AdviceContext) {
-    const ms = Math.floor((performance.now() - ctx.get(START)!) * 1000) / 1000;
+    const ms = Math.floor((performance.now() - ctx.get(START)) * 1000) / 1000;
     this.logger.info(
       '[%s] [%s:%s|%s]',
       ms,
       ctx.that.constructor.name,
       ctx.method,
-      ctx.get(SUCCEED)! ? 'T' : 'F'
+      ctx.get(SUCCEED) ? 'T' : 'F'
     );
   }
 }

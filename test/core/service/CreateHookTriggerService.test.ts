@@ -38,7 +38,8 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
       }
     );
     const user = await userRepository.findUserByName(username);
-    userId = user!.userId;
+    assert(user);
+    userId = user.userId;
   });
 
   describe('executeTask', () => {

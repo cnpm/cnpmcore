@@ -273,7 +273,7 @@ export class BinarySyncerService extends AbstractService {
             const { tmpfile, headers, timing } = await downloadToTempfile(
               this.httpclient,
               this.config.dataDir,
-              item.sourceUrl!,
+              item.sourceUrl,
               { ignoreDownloadStatuses: item.ignoreDownloadStatuses }
             );
             const log = `[${isoNow()}][${dir}] 🟢 [${parentIndex}${index}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)}, ${item.sourceUrl} => ${tmpfile}`;

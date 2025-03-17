@@ -18,7 +18,8 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
     hookManageService = await app.getEggObject(HookManageService);
     const userRepository = await app.getEggObject(UserRepository);
     const userEntity = await userRepository.findUserByName(user.name);
-    userId = userEntity!.userId;
+    assert(userEntity);
+    userId = userEntity.userId;
   });
 
   describe('POST /-/npm/v1/hooks/hook', () => {

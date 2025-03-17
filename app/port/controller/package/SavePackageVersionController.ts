@@ -181,7 +181,7 @@ export class SavePackageVersionController extends AbstractController {
     const [scope, name] = getScopeAndName(fullname);
     // see @https://github.com/cnpm/cnpmcore/issues/574
     // add default latest tag
-    if (!pkg['dist-tags']!.latest) {
+    if (!distTags.latest) {
       const existsPkg = await this.packageRepository.findPackage(scope, name);
       const existsLatestTag =
         existsPkg &&
@@ -191,7 +191,7 @@ export class SavePackageVersionController extends AbstractController {
         ));
       if (!existsPkg || !existsLatestTag) {
         this.logger.warn('[package:version:add] add default latest tag');
-        pkg['dist-tags']!.latest = pkg['dist-tags']![tagNames[0]];
+        distTags.latest = distTags[tagNames[0]];
         tagNames = [...tagNames, 'latest'];
       }
     }
@@ -329,7 +329,7 @@ export class SavePackageVersionController extends AbstractController {
     await this.packageManagerService.saveDeprecatedVersions(
       pkg,
       versions.map(v => {
-        return { version: v.version, deprecated: v.deprecated! };
+        return { version: v.version, deprecated: v.deprecated };
       })
     );
     return { ok: true };

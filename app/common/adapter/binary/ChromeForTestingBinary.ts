@@ -173,6 +173,6 @@ export class ChromeForTestingBinary extends AbstractBinary {
     if (!this.dirItems) {
       await this.#syncDirItems();
     }
-    return { items: this.dirItems![dir], nextParams: null };
+    return { items: this.dirItems?.[dir] ?? [], nextParams: null };
   }
 }

@@ -106,7 +106,7 @@ export class HomeController extends AbstractController {
   async ping(@Context() ctx: EggContext) {
     return {
       pong: true,
-      use: performance.now() - ctx.performanceStarttime!,
+      use: performance.now() - ctx.performanceStarttime,
     };
   }
 

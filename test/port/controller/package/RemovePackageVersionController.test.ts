@@ -60,7 +60,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       pkgVersionEntity.publishTime = new Date(
         Date.now() - 72 * 3_600_000 - 100
       );
-      await packageRepository.savePackageVersion(pkgVersionEntity!);
+      await packageRepository.savePackageVersion(pkgVersionEntity);
 
       const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
       const pkgVersion = res.body;
@@ -287,7 +287,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       pkgVersionEntity.publishTime = new Date(
         Date.now() - 72 * 3_600_000 - 100
       );
-      await packageRepository.savePackageVersion(pkgVersionEntity!);
+      await packageRepository.savePackageVersion(pkgVersionEntity);
 
       res = await app
         .httpRequest()

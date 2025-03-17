@@ -164,7 +164,7 @@ export class ProxyCacheService extends AbstractService {
         const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
         if (!nfsBytes)
           throw new Error('not found proxy cache, try again later.');
-        const nfsString = Buffer.from(nfsBytes!).toString();
+        const nfsString = Buffer.from(nfsBytes).toString();
         return JSON.parse(nfsString) as
           | PackageJSONType
           | AbbreviatedPackageJSONType;
@@ -346,7 +346,7 @@ export class ProxyCacheService extends AbstractService {
         break;
       }
       case DIST_NAMES.MANIFEST: {
-        const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag!)}`;
+        const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag ?? '')}`;
         responseResult = await this.getProxyResponse(
           {
             url,
@@ -357,7 +357,7 @@ export class ProxyCacheService extends AbstractService {
         break;
       }
       case DIST_NAMES.ABBREVIATED: {
-        const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag!)}`;
+        const url = `/${encodeURIComponent(fullname)}/${encodeURIComponent(versionOrTag ?? '')}`;
         responseResult = await this.getProxyResponse(
           {
             url,
@@ -375,7 +375,7 @@ export class ProxyCacheService extends AbstractService {
     }
 
     // replace tarball url
-    const manifest = this.replaceTarballUrl(responseResult!.data, fileType);
+    const manifest = this.replaceTarballUrl(responseResult?.data, fileType);
     return manifest;
   }
 

@@ -587,8 +587,9 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
 
       await binarySyncerService.createTask('node', {});
       task = await binarySyncerService.findExecuteTask();
-      await binarySyncerService.executeTask(task!);
-      stream = await binarySyncerService.findTaskLog(task!);
+      assert(task);
+      await binarySyncerService.executeTask(task);
+      stream = await binarySyncerService.findTaskLog(task);
       assert(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);

@@ -70,7 +70,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       assert(!res.body.logUrl);
 
       task.state = TaskState.Processing;
-      await taskRepository.saveTask(task!);
+      await taskRepository.saveTask(task);
       res = await app.httpRequest().get(`/-/package/koa/syncs/${task.taskId}`);
       assert(res.status === 200);
       assert(res.body.id);
@@ -180,8 +180,8 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       assert.equal(res.body.syncDone, false);
       assert(res.body.log);
 
-      task!.state = TaskState.Processing;
-      await taskRepository.saveTask(task!);
+      task.state = TaskState.Processing;
+      await taskRepository.saveTask(task);
 
       res = await app
         .httpRequest()
@@ -195,7 +195,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
 
       // finish
       task.state = TaskState.Success;
-      await taskRepository.saveTask(task!);
+      await taskRepository.saveTask(task);
 
       res = await app
         .httpRequest()

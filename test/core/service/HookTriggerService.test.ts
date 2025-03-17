@@ -45,7 +45,8 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
       }
     );
     const user = await userRepository.findUserByName(username);
-    userId = user!.userId;
+    assert(user);
+    userId = user.userId;
   });
 
   describe('executeTask', () => {
@@ -125,7 +126,8 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
       assert(callEndpoint === hook.endpoint);
       assert(callOptions);
       assert(callOptions.method === 'POST');
-      assert(callOptions.headers!['x-npm-signature']);
+      assert(callOptions.headers);
+      assert(callOptions.headers['x-npm-signature']);
       const data = JSON.parse(callOptions.data);
       assert(data.event === 'package:publish');
       assert(data.name === pkgName);

@@ -171,7 +171,7 @@ export class EdgedriverBinary extends AbstractBinary {
     }
     // fetch root dir
     if (dir === '/') {
-      return { items: this.dirItems![dir], nextParams: null };
+      return { items: this.dirItems?.[dir] ?? [], nextParams: null };
     }
 
     // fetch sub dir

@@ -56,11 +56,12 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
         nextParams: null,
       });
 
-      const latestVersion = result!.items![result!.items.length - 1].name;
+      const latestVersion = result.items[result.items.length - 1].name;
       assert(latestVersion);
       assert.equal(latestVersion, '126.0.2578.0/');
       result = await binary.fetch(`/${latestVersion}`);
-      const items = result!.items;
+      assert(result);
+      const items = result.items;
       assert(items.length >= 3);
       for (const item of items) {
         // {

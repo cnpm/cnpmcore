@@ -21,7 +21,7 @@ export class Binary extends Entity {
   isDir: boolean;
   size: number;
   date: string;
-  sourceUrl?: string;
+  sourceUrl: string;
   ignoreDownloadStatuses?: number[];
 
   constructor(data: BinaryData) {

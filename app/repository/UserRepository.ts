@@ -96,7 +96,7 @@ export class UserRepository extends AbstractRepository {
 
   async saveToken(token: TokenEntity): Promise<void> {
     // create
-    let model: TokenModel;
+    let model: TokenModel | null = null;
     // update
     if (token.id) {
       const res = await this.Token.findOne({ id: token.id });
@@ -132,8 +132,8 @@ export class UserRepository extends AbstractRepository {
       }
       this.logger.info(
         '[UserRepository:saveToken:new] id: %s, tokenId: %s',
-        model!.id,
-        model!.tokenId
+        model?.id,
+        model?.tokenId
       );
     }
   }
