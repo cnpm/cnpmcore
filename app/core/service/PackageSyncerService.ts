@@ -452,7 +452,7 @@ export class PackageSyncerService extends AbstractService {
 
     // 更新 targetHost 地址
     // defaultRegistry 可能还未创建
-    if (registry?.host) {
+    if (registry.host) {
       targetHost = registry.host;
     }
     this.npmRegistry.setRegistryHost(targetHost);
@@ -519,7 +519,7 @@ export class PackageSyncerService extends AbstractService {
     }
     logs.push(`[${isoNow()}] 🚧 log: ${logUrl}`);
 
-    if (registry?.name === PresetRegistryName.self) {
+    if (registry.name === PresetRegistryName.self) {
       logs.push(
         `[${isoNow()}] ❌❌❌❌❌ ${fullname} has been published to the self registry, skip sync ❌❌❌❌❌`
       );
@@ -532,10 +532,10 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    if (pkg && pkg?.registryId !== registry?.registryId) {
+    if (pkg && pkg?.registryId !== registry.registryId) {
       if (pkg.registryId) {
         logs.push(
-          `[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry?.registryId}, skip sync ❌❌❌❌❌`
+          `[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry.registryId}, skip sync ❌❌❌❌❌`
         );
         await this.taskService.finishTask(
           task,
@@ -552,7 +552,7 @@ export class PackageSyncerService extends AbstractService {
       // 多同步源之前没有 registryId
       // publish() 版本不变时，不会更新 registryId
       // 在同步前，进行更新操作
-      pkg.registryId = registry?.registryId;
+      pkg.registryId = registry.registryId;
       await this.packageRepository.savePackage(pkg);
     }
 
@@ -737,9 +737,9 @@ export class PackageSyncerService extends AbstractService {
         if (maintainer.name && maintainer.email) {
           maintainersMap[maintainer.name] = maintainer;
           const { changed, user } = await this.userService.saveUser(
-            registry?.userPrefix,
             maintainer.name,
-            maintainer.email
+            maintainer.email,
+            registry.userPrefix
           );
           users.push(user);
           if (changed) {
@@ -1011,7 +1011,7 @@ export class PackageSyncerService extends AbstractService {
         description,
         packageJson: item,
         readme,
-        registryId: registry?.registryId,
+        registryId: registry.registryId,
         dist: {
           localFile,
         },
@@ -1208,7 +1208,7 @@ export class PackageSyncerService extends AbstractService {
         }
       }
     }
-    // 3.2 shoud add latest tag
+    // 3.2 should add latest tag
     // 在同步 sepcific version 时如果没有同步 latestTag 的版本会出现 latestTag 丢失或指向版本不正确的情况
     if (specificVersions && this.config.cnpmcore.strictSyncSpecivicVersion) {
       // 不允许自动同步 latest 版本，从已同步版本中选出 latest
@@ -1259,7 +1259,7 @@ export class PackageSyncerService extends AbstractService {
       const { name } = maintainer;
       if (!(name in maintainersMap)) {
         const user = await this.userRepository.findUserByName(
-          `${registry?.userPrefix || 'npm:'}${name}`
+          `${registry.userPrefix || 'npm:'}${name}`
         );
         if (user) {
           await this.packageManagerService.removePackageMaintainer(pkg, user);

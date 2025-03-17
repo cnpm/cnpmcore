@@ -4,7 +4,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg';
 import { ModelConvertorUtil } from './ModelConvertorUtil.js';
 
 export function EntityProperty(entityProperty: string) {
-  return function (target: any, modelProperty: PropertyKey) {
+  return (target: any, modelProperty: PropertyKey) => {
     const clazz = target.constructor as EggProtoImplClass;
     assert(
       typeof modelProperty === 'string',

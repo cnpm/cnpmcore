@@ -9,7 +9,7 @@
     "perf": "error",
     "nursery": "error",
     // "restriction": "error",
-    // "style": "error",
+    "style": "error",
     // "pedantic": "error",
     "suspicious": "error"
   },
@@ -46,6 +46,7 @@
     "no-magic-numbers": "allow",
     "no-duplicate-imports": "error",
     "no-multi-assign": "error",
+    "func-names": "error",
 
     // import
     "import/no-cycle": "error",

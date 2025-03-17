@@ -163,9 +163,9 @@ export class UserService extends AbstractService {
   }
 
   async saveUser(
-    userPrefix = 'npm:',
     name: string,
-    email: string
+    email: string,
+    userPrefix = 'npm:'
   ): Promise<{ changed: boolean; user: UserEntity }> {
     const storeName = name.startsWith('name:') ? name : `${userPrefix}${name}`;
     let user = await this.userRepository.findUserByName(storeName);
