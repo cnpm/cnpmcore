@@ -101,6 +101,7 @@ export class ShowPackageController extends AbstractController {
       result = { data: pkgManifest, etag, blockReason: '' };
     } else {
       // sync mode
+      // oxlint-disable-next-line no-lonely-if
       if (isFullManifests) {
         result = await this.packageManagerService.listPackageFullManifests(
           scope,

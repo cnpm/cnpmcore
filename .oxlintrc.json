@@ -57,6 +57,7 @@
     "no-empty-function": "error",
     "max-depth": ["error", 6],
     "max-lines-per-function": "allow",
+    "no-lonely-if": "error",
 
     // import
     "import/exports-last": "allow",

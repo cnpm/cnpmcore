@@ -242,12 +242,10 @@ export class BinarySyncerService extends AbstractService {
           );
           if (hasError) {
             hasDownloadError = true;
-          } else {
+          } else if (hasSubItems) {
             // if any file download error, let dir sync again next time
             // if empty dir, don't save it
-            if (hasSubItems) {
-              await this.saveBinaryItem(item);
-            }
+            await this.saveBinaryItem(item);
           }
         } else {
           // download to nfs
