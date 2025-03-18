@@ -64,6 +64,7 @@
     "max-classes-per-file": "allow",
     "radix": "allow",
     "no-negated-condition": "error",
+    "no-else-return": "error",
 
     // import
     "import/exports-last": "allow",

@@ -86,10 +86,9 @@ export class TestUtil {
       if (result.rows) {
         // pg: { rows }
         return result.rows;
-      } else {
-        // mysql: [ RowDataPacket[], others ]
-        return result[0];
       }
+      // mysql: [ RowDataPacket[], others ]
+      return result[0];
     } catch (err) {
       console.error('[TestUtil] query %o error: %s', sql, err);
       throw err;
