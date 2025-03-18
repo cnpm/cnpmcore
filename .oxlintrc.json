@@ -110,6 +110,7 @@
     "unicorn/prefer-date-now": "error",
     "unicorn/no-static-only-class": "allow",
     "unicorn/no-typeof-undefined": "error",
+    "unicorn/prefer-negative-index": "error",
 
     // oxc
     "oxc/no-map-spread": "error",
