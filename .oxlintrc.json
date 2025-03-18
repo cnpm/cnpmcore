@@ -65,6 +65,7 @@
     "radix": "allow",
     "no-negated-condition": "error",
     "no-else-return": "error",
+    "no-throw-literal": "error",
 
     // import
     "import/exports-last": "allow",
@@ -107,6 +108,7 @@
     "unicorn/no-lonely-if": "error",
     "unicorn/no-useless-undefined": "allow",
     "unicorn/prefer-date-now": "error",
+    "unicorn/no-static-only-class": "allow",
 
     // oxc
     "oxc/no-map-spread": "error",
@@ -126,7 +128,11 @@
     "typescript/no-import-type-side-effects": "error",
     "typescript/no-dynamic-delete": "error",
     "typescript/prefer-ts-expect-error": "error",
-    "typescript/ban-ts-comment": "error"
+    "typescript/ban-ts-comment": "error",
+
+    // jsdoc
+    "jsdoc/require-returns": "allow",
+    "jsdoc/require-param": "allow"
   },
   "ignorePatterns": ["index.d.ts"]
 }
