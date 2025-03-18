@@ -27,7 +27,7 @@ describe('test/cli/npm/install.test.ts', () => {
     server = app.listen(0);
     await once(server, 'listening');
     registry = `http://localhost:${(server.address() as AddressInfo).port}`;
-    console.log(`registry ${registry} ready`);
+    // console.log(`registry ${registry} ready`);
   });
 
   after(async () => {

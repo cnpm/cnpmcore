@@ -103,9 +103,11 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
         assert(stream);
         try {
           for await (const change of stream) {
+            // oxlint-disable-next-line no-console
             console.log(change);
           }
         } catch (err) {
+          // oxlint-disable-next-line no-console
           console.error(err);
         }
       }

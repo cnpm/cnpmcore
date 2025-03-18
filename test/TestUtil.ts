@@ -90,6 +90,7 @@ export class TestUtil {
       // mysql: [ RowDataPacket[], others ]
       return result[0];
     } catch (err) {
+      // oxlint-disable-next-line no-console
       console.error('[TestUtil] query %o error: %s', sql, err);
       throw err;
     }
@@ -99,6 +100,7 @@ export class TestUtil {
     if (!this.connection) {
       const config = this.getDatabaseConfig();
       if (process.env.CI) {
+        // oxlint-disable-next-line no-console
         console.log('[TestUtil] connection to database: %j', config);
       }
       if (config.type === DATABASE_TYPE.MySQL) {

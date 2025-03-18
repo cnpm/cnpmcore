@@ -447,6 +447,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(413);
+      // oxlint-disable-next-line no-console
       console.log(res.body, res.text, res.headers);
     });
 

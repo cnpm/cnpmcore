@@ -52,7 +52,7 @@
     "no-undefined": "allow",
     "no-plusplus": "allow",
     // maybe warn
-    "no-console": "allow",
+    "no-console": "warn",
     "no-extraneous-class": "allow",
     "no-empty-function": "error",
     "max-depth": ["error", 6],
