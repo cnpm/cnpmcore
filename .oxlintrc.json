@@ -10,7 +10,7 @@
     "nursery": "error",
     "restriction": "error",
     "style": "error",
-    // "pedantic": "error",
+    "pedantic": "error",
     "suspicious": "error"
   },
   "plugins": [
@@ -109,6 +109,7 @@
     "unicorn/no-useless-undefined": "allow",
     "unicorn/prefer-date-now": "error",
     "unicorn/no-static-only-class": "allow",
+    "unicorn/no-typeof-undefined": "error",
 
     // oxc
     "oxc/no-map-spread": "error",

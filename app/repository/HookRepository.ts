@@ -64,7 +64,7 @@ export class HookRepository {
     since?: bigint
   ): Promise<Hook[]> {
     let hookRows: HookModel[];
-    if (typeof since === 'undefined') {
+    if (since === undefined) {
       hookRows = await this.Hook.find({ type, name }).limit(100);
     } else {
       hookRows = await this.Hook.find({ type, name, id: { $gt: since } }).limit(
