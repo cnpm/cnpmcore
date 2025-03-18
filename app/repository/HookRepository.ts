@@ -64,12 +64,12 @@ export class HookRepository {
     since?: bigint
   ): Promise<Hook[]> {
     let hookRows: HookModel[];
-    if (typeof since !== 'undefined') {
+    if (typeof since === 'undefined') {
+      hookRows = await this.Hook.find({ type, name }).limit(100);
+    } else {
       hookRows = await this.Hook.find({ type, name, id: { $gt: since } }).limit(
         100
       );
-    } else {
-      hookRows = await this.Hook.find({ type, name }).limit(100);
     }
     return hookRows.map(row => ModelConvertor.convertModelToEntity(row, Hook));
   }

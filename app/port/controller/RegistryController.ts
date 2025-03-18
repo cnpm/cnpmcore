@@ -174,21 +174,21 @@ export class RegistryController extends AbstractController {
     const registry = await this.registryManagerService.findByRegistryId(id);
     if (!registry) {
       throw new NotFoundError('registry not found');
-    } else {
-      const { name, changeStream, host, type, authToken } = registry;
-      const _updateRegistryOptions = {
-        name,
-        changeStream,
-        host,
-        type,
-        authToken,
-        ...updateRegistryOptions,
-      };
-      await this.registryManagerService.updateRegistry(
-        registry.registryId,
-        _updateRegistryOptions
-      );
     }
+
+    const { name, changeStream, host, type, authToken } = registry;
+    const _updateRegistryOptions = {
+      name,
+      changeStream,
+      host,
+      type,
+      authToken,
+      ...updateRegistryOptions,
+    };
+    await this.registryManagerService.updateRegistry(
+      registry.registryId,
+      _updateRegistryOptions
+    );
     return { ok: true };
   }
 }

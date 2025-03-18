@@ -61,6 +61,9 @@
     "max-lines": "allow",
     "require-await": "allow",
     "max-nested-callbacks": ["error", 5],
+    "max-classes-per-file": "allow",
+    "radix": "allow",
+    "no-negated-condition": "error",
 
     // import
     "import/exports-last": "allow",
@@ -101,6 +104,7 @@
     "unicorn/no-array-for-each": "error",
     "unicorn/explicit-length-check": "error",
     "unicorn/no-lonely-if": "error",
+    "unicorn/no-useless-undefined": "allow",
 
     // oxc
     "oxc/no-map-spread": "error",
