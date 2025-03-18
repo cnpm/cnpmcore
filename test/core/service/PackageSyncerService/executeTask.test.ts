@@ -101,7 +101,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(JSON.stringify(manifests, null, 2));
       // should have 2 maintainers
       assert(manifests.data?.maintainers);
-      assert(manifests.data.maintainers.length >= 1);
+      assert(manifests.data.maintainers.length > 0);
       const abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests(
           '',

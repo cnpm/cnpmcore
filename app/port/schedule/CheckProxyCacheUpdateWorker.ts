@@ -33,7 +33,7 @@ export class CheckProxyCacheUpdateWorker {
       pageSize: 5,
       pageIndex,
     });
-    while (list.length !== 0) {
+    while (list.length > 0) {
       for (const item of list) {
         try {
           if (isPkgManifest(item.fileType)) {

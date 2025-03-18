@@ -91,7 +91,6 @@
     "unicorn/prefer-number-properties": "error",
     "unicorn/prefer-array-some": "error",
     "unicorn/prefer-string-slice": "error",
-
     // "unicorn/no-null": "error",
     "unicorn/throw-new-error": "error",
     "unicorn/catch-error-name": "allow",
@@ -100,6 +99,7 @@
     "unicorn/prefer-string-raw": "error",
     "unicorn/text-encoding-identifier-case": "error",
     "unicorn/no-array-for-each": "error",
+    "unicorn/explicit-length-check": "error",
 
     // oxc
     "oxc/no-map-spread": "error",

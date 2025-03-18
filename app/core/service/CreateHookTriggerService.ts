@@ -109,7 +109,7 @@ export class CreateHookTriggerService extends AbstractService {
     hookEvent: HookEvent
   ) {
     let hooks = await this.hookRepository.listHooksByTypeAndName(type, name);
-    while (hooks.length) {
+    while (hooks.length > 0) {
       await this.createTriggerTasks(hooks, hookEvent);
       hooks = await this.hookRepository.listHooksByTypeAndName(
         type,
