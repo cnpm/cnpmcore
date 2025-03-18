@@ -176,7 +176,7 @@ export class EdgedriverBinary extends AbstractBinary {
 
     // fetch sub dir
     // /foo/ => foo/
-    const subDir = dir.substring(1);
+    const subDir = dir.slice(1);
     // https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver?prefix=124.0.2478.97/&delimiter=/&maxresults=100&restype=container&comp=list
     const url = `https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver?prefix=${encodeURIComponent(subDir)}&delimiter=/&maxresults=100&restype=container&comp=list`;
     const xml = await this.requestXml(url);

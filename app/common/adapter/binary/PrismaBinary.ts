@@ -73,7 +73,7 @@ export class PrismaBinary extends AbstractBinary {
     }
     // /foo/ => foo/
     const binaryConfig = binaries[binaryName];
-    const subDir = dir.substring(1);
+    const subDir = dir.slice(1);
     const url = `${binaryConfig.distUrl}?delimiter=/&prefix=${encodeURIComponent(subDir)}`;
     const result = await this.requestJSON(url);
     return { items: this.#parseItems(result), nextParams: null };

@@ -216,7 +216,7 @@ export abstract class AbstractController extends MiddlewareController {
     const name = scopeAndName[1];
     // @foo/bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
     // bar/-/bar-1.0.0 == filename: bar ==> 1.0.0
-    const version = filenameWithVersion.substring(name.length + 1);
+    const version = filenameWithVersion.slice(name.length + 1);
     // check version format
     const data = { version };
     ctx.tValidate(VersionRule, data);

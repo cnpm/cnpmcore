@@ -52,7 +52,7 @@ export class ShowPackageController extends AbstractController {
       if (!isSync && cacheEtag) {
         let requestEtag = ctx.request.get<string>('if-none-match');
         if (requestEtag.startsWith('W/')) {
-          requestEtag = requestEtag.substring(2);
+          requestEtag = requestEtag.slice(2);
         }
         if (requestEtag === cacheEtag) {
           // make sure CDN cache header set here

@@ -17,7 +17,7 @@ export class NwjsBinary extends BucketBinary {
     const binaryConfig = binaries.nwjs;
     const isRootDir = dir === '/';
     // /foo/ => foo/
-    const subDir = dir.substring(1);
+    const subDir = dir.slice(1);
     const url = isRootDir
       ? binaryConfig.distUrl
       : `${this.s3Url}${encodeURIComponent(subDir)}`;

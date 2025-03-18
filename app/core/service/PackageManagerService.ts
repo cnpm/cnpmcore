@@ -144,7 +144,7 @@ export class PackageManagerService extends AbstractService {
 
     // 防止 description 长度超过 db 限制
     if (pkg.description?.length > DESCRIPTION_LIMIT) {
-      pkg.description = pkg.description.substring(0, DESCRIPTION_LIMIT);
+      pkg.description = pkg.description.slice(0, DESCRIPTION_LIMIT);
     }
     await this.packageRepository.savePackage(pkg);
     // create maintainer
