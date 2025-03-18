@@ -106,6 +106,7 @@
     "unicorn/explicit-length-check": "error",
     "unicorn/no-lonely-if": "error",
     "unicorn/no-useless-undefined": "allow",
+    "unicorn/prefer-date-now": "error",
 
     // oxc
     "oxc/no-map-spread": "error",
