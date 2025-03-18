@@ -125,7 +125,8 @@
     "typescript/no-explicit-any": "error",
     "typescript/no-import-type-side-effects": "error",
     "typescript/no-dynamic-delete": "error",
-    "typescript/prefer-ts-expect-error": "error"
+    "typescript/prefer-ts-expect-error": "error",
+    "typescript/ban-ts-comment": "error"
   },
   "ignorePatterns": ["index.d.ts"]
 }

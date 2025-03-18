@@ -77,8 +77,7 @@ export interface AuthClient {
 }
 
 declare module 'egg' {
-  // @ts-expect-error
-  // avoid TS2310 Type 'EggAppConfig' recursively references itself as a base type.
+  // @ts-expect-error avoid TS2310 Type 'EggAppConfig' recursively references itself as a base type.
   interface EggAppConfig {
     cnpmcore: CnpmcoreConfig;
   }
