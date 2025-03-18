@@ -146,19 +146,17 @@ export class PackageSyncController extends AbstractController {
       task.taskId,
       fullname
     );
-    if (data.force) {
-      if (isAdmin) {
-        // set background task timeout to 5min
-        this.backgroundTaskHelper.timeout = 1000 * 60 * 5;
-        this.backgroundTaskHelper.run(async () => {
-          ctx.logger.info(
-            '[PackageSyncController.createSyncTask:execute-immediately] taskId: %s',
-            task.taskId
-          );
-          // execute task in background
-          await this._executeTaskAsync(task);
-        });
-      }
+    if (data.force && isAdmin) {
+      // set background task timeout to 5min
+      this.backgroundTaskHelper.timeout = 1000 * 60 * 5;
+      this.backgroundTaskHelper.run(async () => {
+        ctx.logger.info(
+          '[PackageSyncController.createSyncTask:execute-immediately] taskId: %s',
+          task.taskId
+        );
+        // execute task in background
+        await this._executeTaskAsync(task);
+      });
     }
     ctx.status = 201;
     return {

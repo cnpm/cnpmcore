@@ -79,10 +79,11 @@ export class UserController extends AbstractController {
         `username(${username}) not match user.name(${user.name})`
       );
     }
-    if (this.config.cnpmcore.allowPublicRegistration === false) {
-      if (!this.config.cnpmcore.admins[user.name]) {
-        throw new ForbiddenError('Public registration is not allowed');
-      }
+    if (
+      this.config.cnpmcore.allowPublicRegistration === false &&
+      !this.config.cnpmcore.admins[user.name]
+    ) {
+      throw new ForbiddenError('Public registration is not allowed');
     }
 
     const result = await this.userService.login(user.name, user.password);

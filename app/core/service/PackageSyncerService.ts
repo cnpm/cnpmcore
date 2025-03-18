@@ -93,12 +93,15 @@ export class PackageSyncerService extends AbstractService {
     const [scope, name] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
     // sync task request registry is not same as package registry
-    if (pkg && pkg.registryId && options?.registryId) {
-      if (pkg.registryId !== options.registryId) {
-        throw new RegistryNotMatchError(
-          `package ${fullname} is not in registry ${options.registryId}`
-        );
-      }
+    if (
+      pkg &&
+      pkg.registryId &&
+      options?.registryId &&
+      pkg.registryId !== options.registryId
+    ) {
+      throw new RegistryNotMatchError(
+        `package ${fullname} is not in registry ${options.registryId}`
+      );
     }
     return await this.taskService.createTask(
       Task.createSyncPackage(fullname, options),
@@ -864,14 +867,12 @@ export class PackageSyncerService extends AbstractService {
         | undefined = abbreviatedVersionMap[version];
       const shouldDeleteReadme = !!(existsItem && 'readme' in existsItem);
       if (pkg) {
-        if (existsItem) {
+        if (existsItem && !existsAbbreviatedItem) {
           // check item on AbbreviatedManifests
-          if (!existsAbbreviatedItem) {
-            updateVersions.push(version);
-            logs.push(
-              `[${isoNow()}] 🐛 Remote version ${version} not exists on local abbreviated manifests, need to refresh`
-            );
-          }
+          updateVersions.push(version);
+          logs.push(
+            `[${isoNow()}] 🐛 Remote version ${version} not exists on local abbreviated manifests, need to refresh`
+          );
         }
 
         if (existsItem && forceSyncHistory === true) {
@@ -919,10 +920,12 @@ export class PackageSyncerService extends AbstractService {
         for (const key of metaDataKeys) {
           let remoteItemValue = item[key];
           // make sure hasInstallScript exists
-          if (key === 'hasInstallScript' && remoteItemValue === undefined) {
-            if (detectInstallScript(item)) {
-              remoteItemValue = true;
-            }
+          if (
+            key === 'hasInstallScript' &&
+            remoteItemValue === undefined &&
+            detectInstallScript(item)
+          ) {
+            remoteItemValue = true;
           }
           if (!isEqual(remoteItemValue, existsItem[key])) {
             diffMeta[key] = remoteItemValue;

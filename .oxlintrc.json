@@ -100,6 +100,7 @@
     "unicorn/text-encoding-identifier-case": "error",
     "unicorn/no-array-for-each": "error",
     "unicorn/explicit-length-check": "error",
+    "unicorn/no-lonely-if": "error",
 
     // oxc
     "oxc/no-map-spread": "error",

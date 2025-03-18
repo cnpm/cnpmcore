@@ -149,10 +149,11 @@ export class WebauthController extends MiddlewareController {
     let user;
 
     // public registration
-    if (this.config.cnpmcore.allowPublicRegistration === false) {
-      if (!this.config.cnpmcore.admins[username]) {
-        return { ok: false, message: 'Public registration is not allowed' };
-      }
+    if (
+      this.config.cnpmcore.allowPublicRegistration === false &&
+      !this.config.cnpmcore.admins[username]
+    ) {
+      return { ok: false, message: 'Public registration is not allowed' };
     }
 
     const browserType =
