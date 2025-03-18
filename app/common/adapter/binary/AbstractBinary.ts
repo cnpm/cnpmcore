@@ -66,10 +66,11 @@ export abstract class AbstractBinary {
     return xml;
   }
 
-  protected async requestJSON(
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
+  protected async requestJSON<T = any>(
     url: string,
     requestHeaders?: Record<string, string>
-  ) {
+  ): Promise<T> {
     const { status, data, headers } = await this.httpclient.request(url, {
       timeout: 30_000,
       dataType: 'json',
@@ -84,9 +85,9 @@ export abstract class AbstractBinary {
         status,
         headers
       );
-      return data;
+      return data as T;
     }
-    return data;
+    return data as T;
   }
 
   // https://nodejs.org/api/n-api.html#n_api_node_api_version_matrix
@@ -97,7 +98,7 @@ export abstract class AbstractBinary {
     );
     for (const version of versions) {
       if (!version.modules) continue;
-      const modulesVersion = parseInt(version.modules);
+      const modulesVersion = Number.parseInt(version.modules);
       // node v6.0.0 modules 48 min
       if (modulesVersion >= 48 && !nodeABIVersions.includes(modulesVersion)) {
         nodeABIVersions.push(modulesVersion);

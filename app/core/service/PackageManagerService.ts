@@ -925,8 +925,11 @@ export class PackageManagerService extends AbstractService {
     }
     if (removeVersions) {
       for (const version of removeVersions) {
+        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete fullManifests.versions[version];
+        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete fullManifests.time[version];
+        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete abbreviatedManifests.versions[version];
       }
     }

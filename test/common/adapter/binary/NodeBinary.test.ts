@@ -344,7 +344,7 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       result = await binary.fetch('/src/', 'python');
       assert(result);
       assert(result.items.length > 0);
-      assert(!result.items.find(item => item.name === 'Python-1.6.tar.gz'));
+      assert(!result.items.some(item => item.name === 'Python-1.6.tar.gz'));
     });
   });
 });

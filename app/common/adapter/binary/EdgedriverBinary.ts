@@ -211,7 +211,7 @@ export class EdgedriverBinary extends AbstractBinary {
       const name = path.basename(fullname);
       const url = m[2].trim();
       const date = m[3].trim();
-      const size = parseInt(m[4].trim());
+      const size = Number.parseInt(m[4].trim());
       items.push({
         name,
         isDir: false,

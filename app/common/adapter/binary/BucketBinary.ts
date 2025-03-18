@@ -58,7 +58,7 @@ export class BucketBinary extends AbstractBinary {
 
       const name = path.basename(fullname);
       const date = m[2].trim();
-      const size = parseInt(m[3].trim());
+      const size = Number.parseInt(m[3].trim());
       items.push({
         name,
         isDir: false,

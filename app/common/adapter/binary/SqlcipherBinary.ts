@@ -50,7 +50,7 @@ export class SqlcipherBinary extends AbstractBinary {
       'win32-ia32',
     ];
     for (const version in data.versions) {
-      const major = parseInt(version.split('.', 1)[0]);
+      const major = Number.parseInt(version.split('.', 1)[0]);
       if (major < 5) continue;
       // >= 5.0.0
       const pkgVersion = data.versions[version];

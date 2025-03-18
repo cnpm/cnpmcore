@@ -32,7 +32,7 @@ export class ImageminBinary extends AbstractBinary {
     // https://github.com/imagemin/jpegtran-bin/blob/v4.0.0/lib/index.js
     // https://github.com/imagemin/pngquant-bin/blob/v4.0.0/lib/index.js
     for (const version in data.versions) {
-      const major = parseInt(version.split('.', 1)[0]);
+      const major = Number.parseInt(version.split('.', 1)[0]);
       if (major < 4) continue;
       // >= 4.0.0
       const date = data.time[version];

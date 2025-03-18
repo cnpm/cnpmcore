@@ -3,7 +3,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg';
 import { get as lodashGet, set as lodashSet } from 'lodash-es';
 
 import { ModelConvertorUtil } from './ModelConvertorUtil.js';
-import { type LeoricBone, type Bone } from './leoric.js';
+import type { LeoricBone, Bone } from './leoric.js';
 
 const CREATED_AT = 'createdAt';
 const UPDATED_AT = 'updatedAt';

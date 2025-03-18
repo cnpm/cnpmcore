@@ -56,16 +56,16 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
       const abbreviatedManifest = res.body;
 
-      [fullManifest, abbreviatedManifest].forEach(manifest => {
-        Object.keys(manifest.versions).forEach(v => {
+      for (const manifest of [fullManifest, abbreviatedManifest]) {
+        for (const v of Object.keys(manifest.versions)) {
           const version = manifest.versions[v];
           assert(version);
           assert.equal(version._source_registry_name, 'self');
           assert(version.publish_time);
-        });
-      });
+        }
+      }
 
-      Object.keys(fullManifest.versions).forEach(v => {
+      for (const v of Object.keys(fullManifest.versions)) {
         const version = fullManifest.versions[v];
         assert(version);
         assert(version._cnpmcore_publish_time);
@@ -73,8 +73,9 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           name: user.name,
           email: user.email,
         });
-      });
+      }
     });
+
     it('should 200 when package in current registry', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const { pkg, user } = await TestUtil.createPackage({

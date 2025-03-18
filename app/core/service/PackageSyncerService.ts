@@ -179,7 +179,7 @@ export class PackageSyncerService extends AbstractService {
       // },
       const day = item.day;
       const [year, month, date] = day.split('-');
-      const yearMonth = parseInt(`${year}${month}`);
+      const yearMonth = Number.parseInt(`${year}${month}`);
       if (!datas.has(yearMonth)) {
         datas.set(yearMonth, []);
       }

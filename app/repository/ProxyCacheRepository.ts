@@ -88,9 +88,11 @@ export class ProxyCacheRepository extends AbstractRepository {
   }
 
   async removeProxyCache(fullname: string, fileType: string, version?: string) {
-    version
-      ? await this.ProxyCache.remove({ fullname, version, fileType })
-      : await this.ProxyCache.remove({ fullname, fileType });
+    if (version) {
+      await this.ProxyCache.remove({ fullname, version, fileType });
+    } else {
+      await this.ProxyCache.remove({ fullname, fileType });
+    }
   }
 
   async truncateProxyCache() {

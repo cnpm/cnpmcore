@@ -32,9 +32,9 @@ export class AccessController extends AbstractController {
       pkg.packageId
     );
     const res: Record<string, string> = {};
-    maintainers.forEach(maintainer => {
+    for (const maintainer of maintainers) {
       res[maintainer.displayName] = PackageAccessLevel.write;
-    });
+    }
 
     return res;
   }
@@ -51,9 +51,9 @@ export class AccessController extends AbstractController {
 
     const pkgs = await this.packageRepository.listPackagesByUserId(user.userId);
     const res: Record<string, string> = {};
-    pkgs.forEach(pkg => {
+    for (const pkg of pkgs) {
       res[getFullname(pkg.scope, pkg.name)] = PackageAccessLevel.write;
-    });
+    }
 
     return res;
   }

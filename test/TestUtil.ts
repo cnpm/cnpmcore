@@ -234,6 +234,7 @@ export class TestUtil {
       }
       if (updateAttach) {
         attachs[`${version.name}-${version.version}.tgz`] = attach;
+        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete attachs[firstFilename];
       }
       if (options.readme === null) {
@@ -383,16 +384,16 @@ export class TestUtil {
     return Buffer.concat(chunks).toString();
   }
 
-  static pickKeys(obj: any, keys: any) {
+  static pickKeys(obj: any[], keys: any) {
     const d: Record<string, any>[] = [];
-    obj.forEach((item: any) => {
+    for (const item of obj) {
       const newItem: Record<string, any> = {};
       for (const key of keys) {
         newItem[key] = item[key];
       }
 
       d.push(newItem);
-    });
+    }
     return d;
   }
 }

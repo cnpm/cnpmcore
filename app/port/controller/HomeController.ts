@@ -113,7 +113,7 @@ export class HomeController extends AbstractController {
   @HTTPMethod({
     path: '/*',
     method: HTTPMethodEnum.POST,
-    priority: -Infinity,
+    priority: Number.NEGATIVE_INFINITY,
   })
   async miscPost(@Context() ctx: EggContext) {
     await this.homeService.misc(ctx.path);
@@ -122,7 +122,7 @@ export class HomeController extends AbstractController {
   @HTTPMethod({
     path: '/*',
     method: HTTPMethodEnum.GET,
-    priority: -Infinity,
+    priority: Number.NEGATIVE_INFINITY,
   })
   async miscGet(@Context() ctx: EggContext) {
     await this.homeService.misc(ctx.path);

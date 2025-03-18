@@ -6,9 +6,9 @@ import type { PackageVersionRepository } from '../../repository/PackageVersionRe
 import { getScopeAndName } from '../../common/PackageUtil.js';
 import { SqlRange } from '../entity/SqlRange.js';
 import type { BugVersionService } from './BugVersionService.js';
-import {
-  type PackageJSONType,
-  type PackageRepository,
+import type {
+  PackageJSONType,
+  PackageRepository,
 } from '../../repository/PackageRepository.js';
 import type { DistRepository } from '../../repository/DistRepository.js';
 import type { BugVersionAdvice } from '../entity/BugVersion.js';

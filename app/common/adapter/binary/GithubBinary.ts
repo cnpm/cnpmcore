@@ -18,7 +18,7 @@ export class GithubBinary extends AbstractBinary {
   private releases: Record<string, any[]> = {};
 
   async initFetch(binaryName: BinaryName) {
-    delete this.releases[binaryName];
+    this.releases[binaryName] = [];
   }
 
   protected async initReleases(

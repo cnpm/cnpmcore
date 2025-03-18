@@ -146,7 +146,7 @@ export class UserRoleManager {
       if (!m) {
         throw new ForbiddenError('Only allow npm client to access');
       }
-      const major = parseInt(m[1]);
+      const major = Number.parseInt(m[1]);
       if (major < 7) {
         throw new ForbiddenError('Only allow npm@>=7.0.0 client to access');
       }

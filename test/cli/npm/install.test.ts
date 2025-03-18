@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { once } from 'node:events';
-import { type Server, type AddressInfo } from 'node:net';
+import type { Server, AddressInfo } from 'node:net';
 
 import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
