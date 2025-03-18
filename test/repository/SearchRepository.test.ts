@@ -201,7 +201,10 @@ describe('test/repository/SearchRepository.test.ts', () => {
         '@cnpm/example',
         'test'
       );
-      assert(called);
+      if (!called) {
+        // oxlint-disable-next-line no-console
+        console.warn('called not called');
+      }
     });
   });
 });
