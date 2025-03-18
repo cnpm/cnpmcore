@@ -120,15 +120,7 @@ export class PackageManagerService extends AbstractService {
       await this._checkPackageDepsVersion(cmd.packageJson);
     }
     let pkg = await this.packageRepository.findPackage(cmd.scope, cmd.name);
-    if (!pkg) {
-      pkg = Package.create({
-        scope: cmd.scope,
-        name: cmd.name,
-        isPrivate: cmd.isPrivate,
-        description: cmd.description || '',
-        registryId: cmd.registryId,
-      });
-    } else {
+    if (pkg) {
       // update description
       // will read database twice to update description by model to entity and entity to model
       if (pkg.description !== cmd.description) {
@@ -140,11 +132,19 @@ export class PackageManagerService extends AbstractService {
       if (cmd.registryId) {
         pkg.registryId = cmd.registryId;
       }
+    } else {
+      pkg = Package.create({
+        scope: cmd.scope,
+        name: cmd.name,
+        isPrivate: cmd.isPrivate,
+        description: cmd.description || '',
+        registryId: cmd.registryId,
+      });
     }
 
     // 防止 description 长度超过 db 限制
     if (pkg.description?.length > DESCRIPTION_LIMIT) {
-      pkg.description = pkg.description.substring(0, DESCRIPTION_LIMIT);
+      pkg.description = pkg.description.slice(0, DESCRIPTION_LIMIT);
     }
     await this.packageRepository.savePackage(pkg);
     // create maintainer
@@ -925,8 +925,11 @@ export class PackageManagerService extends AbstractService {
     }
     if (removeVersions) {
       for (const version of removeVersions) {
+        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete fullManifests.versions[version];
+        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete fullManifests.time[version];
+        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete abbreviatedManifests.versions[version];
       }
     }

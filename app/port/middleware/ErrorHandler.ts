@@ -65,7 +65,7 @@ export async function ErrorHandler(ctx: EggContext, next: Next) {
       // }
       const item = err.errors[0];
       if (item.instancePath) {
-        message = `${item.instancePath.substring(1)}: ${item.message}`;
+        message = `${item.instancePath.slice(1)}: ${item.message}`;
       } else {
         message = item.message;
       }

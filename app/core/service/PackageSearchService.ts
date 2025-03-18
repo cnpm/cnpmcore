@@ -160,7 +160,7 @@ export class PackageSearchService extends AbstractService {
             query: {
               bool: {
                 should: matchQueries,
-                minimum_should_match: matchQueries.length ? 1 : 0,
+                minimum_should_match: matchQueries.length > 0 ? 1 : 0,
               },
             },
             script_score: scriptScore,

@@ -41,6 +41,7 @@ export class ApiBinary extends AbstractBinary {
         name: item.name,
         isDir: item.type === 'dir',
         url: item.url,
+        // oxlint-disable-next-line unicorn/explicit-length-check
         size: item.size || '-',
         date: item.date,
       });

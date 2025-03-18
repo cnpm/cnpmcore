@@ -78,11 +78,9 @@ export function detectInstallScript(manifest: {
   // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
   let hasInstallScript = false;
   const scripts = manifest.scripts;
-  if (scripts) {
-    // https://www.npmjs.com/package/fix-has-install-script
-    if (scripts.install || scripts.preinstall || scripts.postinstall) {
-      hasInstallScript = true;
-    }
+  // https://www.npmjs.com/package/fix-has-install-script
+  if (scripts?.install || scripts?.preinstall || scripts?.postinstall) {
+    hasInstallScript = true;
   }
   return hasInstallScript;
 }

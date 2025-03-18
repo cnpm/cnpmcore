@@ -43,8 +43,7 @@ export class DownloadController extends AbstractController {
     const versions: Record<string, { day: string; downloads: number }[]> = {};
     for (const entity of entities) {
       const yearMonth = String(entity.yearMonth);
-      const prefix =
-        yearMonth.substring(0, 4) + '-' + yearMonth.substring(4, 6);
+      const prefix = yearMonth.slice(0, 4) + '-' + yearMonth.slice(4, 6);
       for (let i = 1; i <= 31; i++) {
         const day = String(i).padStart(2, '0');
         const field = `d${day}` as keyof typeof entity;
@@ -88,8 +87,7 @@ export class DownloadController extends AbstractController {
     const days: Record<string, number> = {};
     for (const entity of entities) {
       const yearMonth = String(entity.yearMonth);
-      const prefix =
-        yearMonth.substring(0, 4) + '-' + yearMonth.substring(4, 6);
+      const prefix = yearMonth.slice(0, 4) + '-' + yearMonth.slice(4, 6);
       for (let i = 1; i <= 31; i++) {
         const day = String(i).padStart(2, '0');
         const field = `d${day}` as keyof typeof entity;

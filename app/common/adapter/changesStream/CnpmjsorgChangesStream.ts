@@ -25,7 +25,7 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
   // cnpmjsorg 未实现 update_seq 字段
   // 默认返回当前时间戳字符串
   async getInitialSince(registry: Registry): Promise<string> {
-    const since = String(new Date().getTime());
+    const since = String(Date.now());
     this.logger.warn(
       `[CnpmjsorgChangesStream.getInitialSince] since: ${since}, skip query ${registry.changeStream}`
     );

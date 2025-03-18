@@ -112,6 +112,7 @@ export async function downloadToTempfile(
       await setTimeout(delay);
     }
   }
+  // oxlint-disable-next-line no-throw-literal
   throw lastError;
 }
 export interface Tempfile {

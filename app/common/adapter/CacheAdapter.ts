@@ -36,7 +36,7 @@ export class CacheAdapter {
     const lockName = this.getLockName(key);
     const existsTimestamp = await this.redis.get(lockName);
     if (existsTimestamp) {
-      if (Date.now() - parseInt(existsTimestamp) < seconds * 1000) {
+      if (Date.now() - Number.parseInt(existsTimestamp) < seconds * 1000) {
         return null;
       }
       // lock timeout, delete it

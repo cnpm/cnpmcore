@@ -35,7 +35,7 @@ export class PrismaBinary extends AbstractBinary {
     const commitIdMap: Record<string, boolean> = {};
     // https://list-binaries.prisma-orm.workers.dev/?delimiter=/&prefix=all_commits/61023c35d2c8762f66f09bc4183d2f630b541d08/
     for (const version in data.versions) {
-      const major = parseInt(version.split('.', 1)[0]);
+      const major = Number.parseInt(version.split('.', 1)[0]);
       // need >= 3.0.0
       if (major < 3) continue;
       const date = data.time[version];
@@ -73,7 +73,7 @@ export class PrismaBinary extends AbstractBinary {
     }
     // /foo/ => foo/
     const binaryConfig = binaries[binaryName];
-    const subDir = dir.substring(1);
+    const subDir = dir.slice(1);
     const url = `${binaryConfig.distUrl}?delimiter=/&prefix=${encodeURIComponent(subDir)}`;
     const result = await this.requestJSON(url);
     return { items: this.#parseItems(result), nextParams: null };

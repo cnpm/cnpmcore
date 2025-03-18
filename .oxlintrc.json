@@ -8,9 +8,9 @@
     "correctness": "error",
     "perf": "error",
     "nursery": "error",
-    // "restriction": "error",
+    "restriction": "error",
     "style": "error",
-    // "pedantic": "error",
+    "pedantic": "error",
     "suspicious": "error"
   },
   "plugins": [
@@ -49,14 +49,34 @@
     "func-names": "error",
     "default-param-last": "error",
     "prefer-object-spread": "error",
+    "no-undefined": "allow",
+    "no-plusplus": "allow",
+    // maybe warn
+    "no-console": "warn",
+    "no-extraneous-class": "allow",
+    "no-empty-function": "error",
+    "max-depth": ["error", 6],
+    "max-lines-per-function": "allow",
+    "no-lonely-if": "error",
+    "max-lines": "allow",
+    "require-await": "allow",
+    "max-nested-callbacks": ["error", 5],
+    "max-classes-per-file": "allow",
+    "radix": "allow",
+    "no-negated-condition": "error",
+    "no-else-return": "error",
+    "no-throw-literal": "error",
 
     // import
+    "import/exports-last": "allow",
+    "import/max-dependencies": "allow",
     "import/no-cycle": "error",
     "import/no-anonymous-default-export": "error",
     "import/no-namespace": "error",
     "import/named": "error",
     "import/export": "error",
-    "import/exports-last": "allow",
+    "import/no-default-export": "allow",
+    "import/unambiguous": "error",
 
     // promise
     "promise/no-return-wrap": "error",
@@ -73,7 +93,9 @@
     "unicorn/filename-case": "allow",
     "unicorn/prefer-structured-clone": "error",
     "unicorn/prefer-logical-operator-over-ternary": "error",
-
+    "unicorn/prefer-number-properties": "error",
+    "unicorn/prefer-array-some": "error",
+    "unicorn/prefer-string-slice": "error",
     // "unicorn/no-null": "error",
     "unicorn/throw-new-error": "error",
     "unicorn/catch-error-name": "allow",
@@ -81,18 +103,39 @@
     "unicorn/numeric-separators-style": "error",
     "unicorn/prefer-string-raw": "error",
     "unicorn/text-encoding-identifier-case": "error",
+    "unicorn/no-array-for-each": "error",
+    "unicorn/explicit-length-check": "error",
+    "unicorn/no-lonely-if": "error",
+    "unicorn/no-useless-undefined": "allow",
+    "unicorn/prefer-date-now": "error",
+    "unicorn/no-static-only-class": "allow",
+    "unicorn/no-typeof-undefined": "error",
+    "unicorn/prefer-negative-index": "error",
 
     // oxc
     "oxc/no-map-spread": "error",
+    "oxc/no-rest-spread-properties": "allow",
+    "oxc/no-optional-chaining": "allow",
+    "oxc/no-async-await": "allow",
 
     // typescript
+    "typescript/explicit-function-return-type": "allow",
     "typescript/consistent-type-imports": "error",
-    "no-extraneous-class": "allow",
     "typescript/consistent-type-definitions": "error",
     "typescript/consistent-indexed-object-style": "allow",
     "typescript/no-inferrable-types": "error",
     "typescript/array-type": "error",
     "typescript/no-non-null-assertion": "error",
-    "typescript/no-explicit-any": "error"
-  }
+    "typescript/no-explicit-any": "error",
+    "typescript/no-import-type-side-effects": "error",
+    "typescript/no-dynamic-delete": "error",
+    "typescript/prefer-ts-expect-error": "error",
+    "typescript/ban-ts-comment": "error",
+    "typescript/prefer-enum-initializers": "error",
+
+    // jsdoc
+    "jsdoc/require-returns": "allow",
+    "jsdoc/require-param": "allow"
+  },
+  "ignorePatterns": ["index.d.ts"]
 }

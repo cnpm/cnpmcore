@@ -74,7 +74,7 @@ export class PackageVersionFileRepository extends AbstractRepository {
         // only keep directory = '/' or sub directory like `/dist` but not `/dist/foo`
         // sub directory
         const subDirectoryName = item.directory
-          .substring(prefix.length)
+          .slice(prefix.length)
           .split('/')[0];
         subDirectories.add(`${prefix}${subDirectoryName}`);
       }

@@ -25,7 +25,7 @@ export class CypressBinary extends AbstractBinary {
       this.dirItems = {};
       this.dirItems['/'] = [];
       for (const version in data.versions) {
-        const major = parseInt(version.split('.', 1)[0]);
+        const major = Number.parseInt(version.split('.', 1)[0]);
         // need >= 4.0.0
         // https://npmmirror.com/mirrors/cypress/4.0.0/
         if (major < 4) continue;

@@ -86,11 +86,11 @@ export class TestUtil {
       if (result.rows) {
         // pg: { rows }
         return result.rows;
-      } else {
-        // mysql: [ RowDataPacket[], others ]
-        return result[0];
       }
+      // mysql: [ RowDataPacket[], others ]
+      return result[0];
     } catch (err) {
+      // oxlint-disable-next-line no-console
       console.error('[TestUtil] query %o error: %s', sql, err);
       throw err;
     }
@@ -100,6 +100,7 @@ export class TestUtil {
     if (!this.connection) {
       const config = this.getDatabaseConfig();
       if (process.env.CI) {
+        // oxlint-disable-next-line no-console
         console.log('[TestUtil] connection to database: %j', config);
       }
       if (config.type === DATABASE_TYPE.MySQL) {
@@ -234,6 +235,7 @@ export class TestUtil {
       }
       if (updateAttach) {
         attachs[`${version.name}-${version.version}.tgz`] = attach;
+        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete attachs[firstFilename];
       }
       if (options.readme === null) {
@@ -383,16 +385,16 @@ export class TestUtil {
     return Buffer.concat(chunks).toString();
   }
 
-  static pickKeys(obj: any, keys: any) {
+  static pickKeys(obj: any[], keys: any) {
     const d: Record<string, any>[] = [];
-    obj.forEach((item: any) => {
+    for (const item of obj) {
       const newItem: Record<string, any> = {};
       for (const key of keys) {
         newItem[key] = item[key];
       }
 
       d.push(newItem);
-    });
+    }
     return d;
   }
 }

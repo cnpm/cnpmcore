@@ -442,7 +442,7 @@ export class PlaywrightBinary extends AbstractBinary {
       );
       // if chromium-headless-shell not exists on browsers, copy chromium to chromium-headless-shell
       if (
-        !browsers.find(browser => browser.name === 'chromium-headless-shell')
+        !browsers.some(browser => browser.name === 'chromium-headless-shell')
       ) {
         const chromium = browsers.find(browser => browser.name === 'chromium');
         // {
@@ -460,7 +460,7 @@ export class PlaywrightBinary extends AbstractBinary {
       }
       // if chromium-tip-of-tree-headless-shell not exists on browsers, copy chromium-tip-of-tree to chromium-tip-of-tree-headless-shell
       if (
-        !browsers.find(
+        !browsers.some(
           browser => browser.name === 'chromium-tip-of-tree-headless-shell'
         )
       ) {
@@ -506,7 +506,7 @@ export class PlaywrightBinary extends AbstractBinary {
             });
             this.dirItems[dir] = [];
           }
-          if (!this.dirItems[dir].find(item => item.name === name)) {
+          if (!this.dirItems[dir].some(item => item.name === name)) {
             this.dirItems[dir].push({
               name,
               isDir: false,

@@ -198,7 +198,7 @@ export class UserService extends AbstractService {
     // https://github.blog/changelog/2022-12-06-limit-scope-of-npm-tokens-with-the-new-granular-access-tokens/
     const token = randomToken(this.config.cnpmcore.name);
     const tokenKey = sha512(token);
-    const tokenMark = token.substring(0, token.indexOf('_') + 4);
+    const tokenMark = token.slice(0, token.indexOf('_') + 4);
     const tokenEntity = TokenEntity.create({
       tokenKey,
       tokenMark,

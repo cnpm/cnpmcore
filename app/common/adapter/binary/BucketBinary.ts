@@ -26,7 +26,7 @@ export class BucketBinary extends AbstractBinary {
   ): Promise<FetchResult | undefined> {
     // /foo/ => foo/
     const binaryConfig = binaries[binaryName];
-    const subDir = dir.substring(1);
+    const subDir = dir.slice(1);
     const url = `${binaryConfig.distUrl}?delimiter=/&prefix=${encodeURIComponent(subDir)}`;
     const xml = await this.requestXml(url);
     return { items: this.parseItems(xml, dir, binaryConfig), nextParams: null };
@@ -58,7 +58,7 @@ export class BucketBinary extends AbstractBinary {
 
       const name = path.basename(fullname);
       const date = m[2].trim();
-      const size = parseInt(m[3].trim());
+      const size = Number.parseInt(m[3].trim());
       items.push({
         name,
         isDir: false,

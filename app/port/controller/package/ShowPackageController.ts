@@ -52,7 +52,7 @@ export class ShowPackageController extends AbstractController {
       if (!isSync && cacheEtag) {
         let requestEtag = ctx.request.get<string>('if-none-match');
         if (requestEtag.startsWith('W/')) {
-          requestEtag = requestEtag.substring(2);
+          requestEtag = requestEtag.slice(2);
         }
         if (requestEtag === cacheEtag) {
           // make sure CDN cache header set here
@@ -101,6 +101,7 @@ export class ShowPackageController extends AbstractController {
       result = { data: pkgManifest, etag, blockReason: '' };
     } else {
       // sync mode
+      // oxlint-disable-next-line no-lonely-if
       if (isFullManifests) {
         result = await this.packageManagerService.listPackageFullManifests(
           scope,

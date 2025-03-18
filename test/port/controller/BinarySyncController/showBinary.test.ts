@@ -419,14 +419,20 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       let res = await app
         .httpRequest()
         .get('/-/binary/@journeyapps/sqlcipher/');
-      assert(res.status === 200);
-      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      assert.equal(res.status, 200);
+      assert.equal(
+        res.headers['content-type'],
+        'application/json; charset=utf-8'
+      );
       let items = res.body;
       assert(items.length === 1);
 
       res = await app.httpRequest().get('/-/binary/@journeyapps/sqlcipher');
-      assert(res.status === 200);
-      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      assert.equal(res.status, 200);
+      assert.equal(
+        res.headers['content-type'],
+        'application/json; charset=utf-8'
+      );
       items = res.body;
       assert(items.length === 1);
       assert(items[0].name === 'v5.3.1/');
@@ -437,8 +443,11 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       res = await app
         .httpRequest()
         .get('/-/binary/@journeyapps/sqlcipher/v5.3.1/');
-      assert(res.status === 200);
-      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      assert.equal(res.status, 200);
+      assert.equal(
+        res.headers['content-type'],
+        'application/json; charset=utf-8'
+      );
       items = res.body;
       assert(items.length === 1);
       assert(items[0].name === 'napi-v6-win32-ia32.tar.gz');
@@ -458,13 +467,13 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           '/-/binary/@journeyapps/sqlcipher/v5.3.1/napi-v6-win32-ia32.tar.gz'
         );
       if (res.status === 200) {
-        assert(res.headers['content-type'] === 'application/gzip');
-        assert(
-          res.headers['content-disposition'] ===
-            'attachment; filename="napi-v6-win32-ia32.tar.gz"'
+        assert.equal(res.headers['content-type'], 'application/gzip');
+        assert.equal(
+          res.headers['content-disposition'],
+          'attachment; filename="napi-v6-win32-ia32.tar.gz"'
         );
       } else {
-        assert(res.status === 302);
+        assert.equal(res.status, 302);
       }
       app.mockAgent().assertNoPendingInterceptors();
     });

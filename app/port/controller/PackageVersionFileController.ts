@@ -173,7 +173,7 @@ export class PackageVersionFileController extends AbstractController {
       versionSpec
     );
     if (path.endsWith('/')) {
-      const directory = path.substring(0, path.length - 1);
+      const directory = path.slice(0, -1);
       const files = await this.#listFilesByDirectory(packageVersion, directory);
       if (!files) {
         throw new NotFoundError(

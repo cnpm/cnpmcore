@@ -122,24 +122,26 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
           assert(item.size === '-');
           assert(item.url);
           assert(item.date);
-          if (dirname === 'chromium') {
+          if (
+            dirname === 'chromium' &&
+            item.name.startsWith('chromium-headless-shell')
+          ) {
             // chromium should include chromium-headless-shell
-            if (item.name.startsWith('chromium-headless-shell')) {
-              assert.match(
-                item.url,
-                /https:\/\/playwright\.azureedge\.net\/builds\/chromium\/\d+\/chromium-headless-shell/
-              );
-              shouldIncludeChromiumHeadlessShell = true;
-            }
+            assert.match(
+              item.url,
+              /https:\/\/playwright\.azureedge\.net\/builds\/chromium\/\d+\/chromium-headless-shell/
+            );
+            shouldIncludeChromiumHeadlessShell = true;
           }
-          if (dirname === 'chromium-tip-of-tree') {
-            if (item.name.startsWith('chromium-tip-of-tree-headless-shell')) {
-              assert.match(
-                item.url,
-                /https:\/\/playwright\.azureedge\.net\/builds\/chromium-tip-of-tree\/\d+\/chromium-tip-of-tree-headless-shell/
-              );
-              shouldIncludeChromiumTipOfTreeHeadlessShell = true;
-            }
+          if (
+            dirname === 'chromium-tip-of-tree' &&
+            item.name.startsWith('chromium-tip-of-tree-headless-shell')
+          ) {
+            assert.match(
+              item.url,
+              /https:\/\/playwright\.azureedge\.net\/builds\/chromium-tip-of-tree\/\d+\/chromium-tip-of-tree-headless-shell/
+            );
+            shouldIncludeChromiumTipOfTreeHeadlessShell = true;
           }
         }
         if (dirname === 'chromium') {

@@ -1,11 +1,11 @@
 export enum LoginResultCode {
-  UserNotFound,
-  Success,
-  Fail,
+  UserNotFound = 0,
+  Success = 1,
+  Fail = 2,
 }
 
 export enum WanStatusCode {
-  UserNotFound,
-  Unbound,
-  Bound,
+  UserNotFound = 0,
+  Unbound = 1,
+  Bound = 2,
 }

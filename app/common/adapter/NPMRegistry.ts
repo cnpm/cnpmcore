@@ -72,6 +72,7 @@ export class NPMRegistry {
         await setTimeout(delay);
       }
     }
+    // oxlint-disable-next-line no-throw-literal
     throw lastError;
   }
 

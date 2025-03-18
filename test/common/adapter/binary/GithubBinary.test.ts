@@ -75,7 +75,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
       result = await binary.fetch('/v0.9.30/', 'skia-canvas');
       assert(result);
       assert(result.items.length > 0);
-      console.log(JSON.stringify(result.items, null, 2));
+      // console.log(JSON.stringify(result.items, null, 2));
       let matchFile1 = false;
       let matchFile2 = false;
       let matchFile3 = false;
@@ -144,7 +144,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
       result = await binary.fetch('/v28.2/', 'protobuf');
       assert(result);
       assert(result.items.length > 0);
-      console.log(JSON.stringify(result.items, null, 2));
+      // console.log(JSON.stringify(result.items, null, 2));
       let matchFile1 = false;
       for (const item of result.items) {
         assert(item.isDir === false);

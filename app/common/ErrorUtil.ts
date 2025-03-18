@@ -18,10 +18,12 @@ export function isTimeoutError(err: Error) {
       }
     }
   }
-  if ('cause' in err && err.cause instanceof Error) {
-    if (TimeoutErrorNames.has(err.cause.name)) {
-      return true;
-    }
+  if (
+    'cause' in err &&
+    err.cause instanceof Error &&
+    TimeoutErrorNames.has(err.cause.name)
+  ) {
+    return true;
   }
   return false;
 }

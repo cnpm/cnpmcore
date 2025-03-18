@@ -33,7 +33,7 @@ export class PaddingVersionController extends AbstractController {
     }
     let idNum: number | undefined;
     if (id) {
-      idNum = parseInt(id);
+      idNum = Number.parseInt(id);
       if (Number.isNaN(idNum)) {
         return {
           ok: false,

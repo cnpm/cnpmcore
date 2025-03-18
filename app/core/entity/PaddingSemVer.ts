@@ -17,7 +17,7 @@ export class PaddingSemVer {
     // @ts-expect-error type definition is not correct
     if (this.semver.includePrerelease) {
       this.isPreRelease = true;
-    } else if (this.semver.prerelease && this.semver.prerelease.length) {
+    } else if (this.semver.prerelease && this.semver.prerelease.length > 0) {
       this.isPreRelease = true;
     } else {
       this.isPreRelease = false;

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { once } from 'node:events';
-import { type Server, type AddressInfo } from 'node:net';
+import type { Server, AddressInfo } from 'node:net';
 
 import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
@@ -27,7 +27,7 @@ describe('test/cli/npm/install.test.ts', () => {
     server = app.listen(0);
     await once(server, 'listening');
     registry = `http://localhost:${(server.address() as AddressInfo).port}`;
-    console.log(`registry ${registry} ready`);
+    // console.log(`registry ${registry} ready`);
   });
 
   after(async () => {
