@@ -58,6 +58,9 @@
     "max-depth": ["error", 6],
     "max-lines-per-function": "allow",
     "no-lonely-if": "error",
+    "max-lines": "allow",
+    "require-await": "allow",
+    "max-nested-callbacks": ["error", 5],
 
     // import
     "import/exports-last": "allow",

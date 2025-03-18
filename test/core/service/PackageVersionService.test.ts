@@ -102,6 +102,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           mock(
             distRepository,
             'findPackageVersionManifest',
+            // oxlint-disable-next-line max-nested-callbacks
             async (_: string, version: string) => {
               assert.equal(version, '1.1.0');
               return {
@@ -122,17 +123,15 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           assert.equal(manifest.version, '1.1.0');
         });
 
-        describe('getVersion should work', () => {
-          it('should work without options', async () => {
-            const wildVersion = await packageVersionService.getVersion(
-              npa('mock_package@*')
-            );
-            const tagVersion = await packageVersionService.getVersion(
-              npa('mock_package@latest')
-            );
-            assert.equal(wildVersion, '1.1.0');
-            assert.equal(tagVersion, '1.0.0');
-          });
+        it('should getVersion work without options', async () => {
+          const wildVersion = await packageVersionService.getVersion(
+            npa('mock_package@*')
+          );
+          const tagVersion = await packageVersionService.getVersion(
+            npa('mock_package@latest')
+          );
+          assert.equal(wildVersion, '1.1.0');
+          assert.equal(tagVersion, '1.0.0');
         });
 
         it('should return latest for x', async () => {
