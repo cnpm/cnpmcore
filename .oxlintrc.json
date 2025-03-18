@@ -129,6 +129,7 @@
     "typescript/no-dynamic-delete": "error",
     "typescript/prefer-ts-expect-error": "error",
     "typescript/ban-ts-comment": "error",
+    "typescript/prefer-enum-initializers": "error",
 
     // jsdoc
     "jsdoc/require-returns": "allow",
