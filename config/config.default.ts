@@ -162,7 +162,7 @@ export default function startConfig(appInfo: EggAppConfig) {
         'Cache-Control': 'max-age=0, s-maxage=60',
       },
     };
-    assert(ossConfig.cdnBaseUrl, 'require env CNPMCORE_NFS_OSS_BUCKET');
+    assert(ossConfig.bucket, 'require env CNPMCORE_NFS_OSS_BUCKET');
     assert(ossConfig.endpoint, 'require env CNPMCORE_NFS_OSS_ENDPOINT');
     assert(ossConfig.accessKeyId, 'require env CNPMCORE_NFS_OSS_ID');
     assert(ossConfig.accessKeySecret, 'require env CNPMCORE_NFS_OSS_SECRET');
