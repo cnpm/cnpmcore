@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.1.5](https://github.com/cnpm/cnpmcore/compare/v4.1.4...v4.1.5) (2025-03-27)
+
+### Bug Fixes
+
+- 🐛 oss config assert ([#780](https://github.com/cnpm/cnpmcore/issues/780)) ([5c132b8](https://github.com/cnpm/cnpmcore/commit/5c132b882b209e57b5a7f919997e84bb1593d8dd)), closes [#779](https://github.com/cnpm/cnpmcore/issues/779)
+
 ## [4.1.4](https://github.com/cnpm/cnpmcore/compare/v4.1.3...v4.1.4) (2025-03-16)
 
 ### Bug Fixes
