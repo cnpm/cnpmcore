@@ -9,12 +9,7 @@
       "request": "launch",
       "name": "Egg Debug",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev",
-        "--",
-        "--inspect-brk"
-      ],
+      "runtimeArgs": ["run", "dev", "--", "--inspect-brk"],
       "console": "integratedTerminal",
       "restart": true,
       "autoAttachChildProcesses": true
@@ -24,12 +19,7 @@
       "request": "launch",
       "name": "Egg Test",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "test-local",
-        "--",
-        "--inspect-brk"
-      ],
+      "runtimeArgs": ["run", "test:local", "--", "--inspect-brk"],
       "autoAttachChildProcesses": true
     }
   ]
