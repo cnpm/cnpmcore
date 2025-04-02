@@ -11,6 +11,8 @@ import {
 
 export const platforms = ['Linux_x64', 'Mac', 'Mac_Arm', 'Win', 'Win_x64'];
 
+const MAX_DEPTH = 100;
+
 @SingletonProto()
 @BinaryAdapter(BinaryType.Puppeteer)
 export class PuppeteerBinary extends AbstractBinary {
@@ -52,6 +54,7 @@ export class PuppeteerBinary extends AbstractBinary {
           url: '',
         });
         this.dirItems[`/${platform}/`] = [];
+        let i = 0;
         do {
           let requestUrl = s3Url + '?prefix=' + platform;
           if (marker) {
@@ -75,7 +78,8 @@ export class PuppeteerBinary extends AbstractBinary {
               chromiumRevisions.set(revision, content.LastModified);
             }
           }
-        } while (marker !== undefined);
+          // 最多遍历 100 次防止内存爆炸，下次同步任务会继续
+        } while (i++ < MAX_DEPTH || marker !== undefined);
       }
 
       for (const [revision, date] of chromiumRevisions.entries()) {
