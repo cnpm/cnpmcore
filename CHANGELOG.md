@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.1.6](https://github.com/cnpm/cnpmcore/compare/v4.1.5...v4.1.6) (2025-04-02)
+
+### Bug Fixes
+
+- iterator chromium bucket to get all versions ([#785](https://github.com/cnpm/cnpmcore/issues/785)) ([facb26d](https://github.com/cnpm/cnpmcore/commit/facb26d192f73a8f92632e999a3c62b1b9204e50))
+
 ## [4.1.5](https://github.com/cnpm/cnpmcore/compare/v4.1.4...v4.1.5) (2025-03-27)
 
 ### Bug Fixes
