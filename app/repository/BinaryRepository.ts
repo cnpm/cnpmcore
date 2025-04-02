@@ -48,4 +48,18 @@ export class BinaryRepository extends AbstractRepository {
       ModelConvertor.convertModelToEntity(model, BinaryEntity)
     );
   }
+
+  async findLatestBinaryDir(
+    category: string,
+    parent: string
+  ): Promise<BinaryEntity | null> {
+    const model = await this.Binary.findOne({ category, parent }).order(
+      'gmt_create',
+      'desc'
+    );
+    if (model) {
+      return ModelConvertor.convertModelToEntity(model, BinaryEntity);
+    }
+    return null;
+  }
 }

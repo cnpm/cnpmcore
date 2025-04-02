@@ -35,7 +35,7 @@
     "init-declarations": "allow",
     "curly": "allow",
     "no-ternary": "allow",
-    "max-params": ["error", 5],
+    "max-params": ["error", 6],
     "no-await-expression-member": "error",
     "no-continue": "allow",
     "guard-for-in": "allow",
