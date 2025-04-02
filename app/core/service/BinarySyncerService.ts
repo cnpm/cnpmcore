@@ -27,6 +27,7 @@ import {
 import { AbstractService } from '../../common/AbstractService.js';
 import { BinaryType } from '../../common/enum/Binary.js';
 import { TaskState, TaskType } from '../../common/enum/Task.js';
+import { platforms } from '../../common/adapter/binary/PuppeteerBinary.js';
 
 function isoNow() {
   return new Date().toISOString();
@@ -98,6 +99,25 @@ export class BinarySyncerService extends AbstractService {
     binaryName: BinaryName,
     lastData?: Record<string, unknown>
   ) {
+    // chromium-browser-snapshots 产物极大，完整遍历 s3 bucket 耗时会太长
+    // 必须从上次同步的 revision 之后开始遍历
+    // 如果需要补偿数据，可以
+    if (binaryName === 'chromium-browser-snapshots') {
+      lastData = lastData || {};
+      for (const platform of platforms) {
+        if (lastData[platform]) continue;
+        const binaryDir = await this.binaryRepository.findLatestBinaryDir(
+          'chromium-browser-snapshots',
+          `/${platform}/`
+        );
+        if (binaryDir) {
+          lastData[platform] = binaryDir.name.slice(
+            0,
+            - 1
+          );
+        }
+      }
+    }
     try {
       return await this.taskService.createTask(
         Task.createSyncBinary(binaryName, lastData),
@@ -207,10 +227,11 @@ export class BinarySyncerService extends AbstractService {
     task: Task,
     dir: string,
     parentIndex = '',
-    latestVersionParent = '/'
+    latestVersionParent = '/',
+    lastData?: Record<string, unknown>
   ) {
     const binaryName = task.targetName as BinaryName;
-    const result = await binaryAdapter.fetch(dir, binaryName);
+    const result = await binaryAdapter.fetch(dir, binaryName, lastData);
     let hasDownloadError = false;
     let hasItems = false;
     if (result && result.items.length > 0) {

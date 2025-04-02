@@ -38,7 +38,8 @@ export abstract class AbstractBinary {
   abstract initFetch(binaryName: BinaryName): Promise<void>;
   abstract fetch(
     dir: string,
-    binaryName: BinaryName
+    binaryName: BinaryName,
+    lastData?: Record<string, unknown>
   ): Promise<FetchResult | undefined>;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

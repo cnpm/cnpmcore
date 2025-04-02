@@ -6,6 +6,8 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   Inject,
+  Middleware,
+  HTTPBody,
 } from '@eggjs/tegg';
 import path from 'node:path';
 import { NotFoundError } from 'egg-errors';
@@ -15,6 +17,7 @@ import type { BinarySyncerService } from '../../core/service/BinarySyncerService
 import type { Binary } from '../../core/entity/Binary.js';
 import binaries, { type BinaryName } from '../../../config/binaries.js';
 import { BinaryNameRule, BinarySubpathRule } from '../typebox.js';
+import { AdminAccess } from '../middleware/AdminAccess.js';
 
 @HTTPController()
 export class BinarySyncController extends AbstractController {
@@ -118,6 +121,34 @@ export class BinarySyncController extends AbstractController {
     }
     ctx.attachment(name);
     return urlOrStream;
+  }
+
+  @HTTPMethod({
+    path: '/-/binary/:binaryName/sync',
+    method: HTTPMethodEnum.POST,
+  })
+  @Middleware(AdminAccess)
+  async syncBinary(
+    @Context() ctx: EggContext,
+    @HTTPParam() binaryName: BinaryName,
+    @HTTPBody() lastData?: Record<string, string>
+  ) {
+    // check binaryName valid
+    try {
+      ctx.tValidate(BinaryNameRule, binaryName);
+    } catch {
+      throw new NotFoundError(`Binary "${binaryName}" not found`);
+    }
+    this.logger.info('SyncBinary: %s, lastData: %j', binaryName, lastData);
+    const task = await this.binarySyncerService.createTask(
+      binaryName,
+      lastData
+    );
+    return {
+      ok: true,
+      taskId: task?.taskId,
+      logPath: task?.logPath,
+    };
   }
 
   @HTTPMethod({
