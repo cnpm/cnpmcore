@@ -79,7 +79,7 @@ export class PuppeteerBinary extends AbstractBinary {
             }
           }
           // 最多遍历 100 次防止内存爆炸，下次同步任务会继续
-        } while (i++ < MAX_DEPTH || marker !== undefined);
+        } while (i++ < MAX_DEPTH && marker !== undefined);
       }
 
       for (const [revision, date] of chromiumRevisions.entries()) {
