@@ -12,7 +12,7 @@ CREATE TABLE `binaries` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_binary_id` (`binary_id`),
   UNIQUE KEY `uk_category_parent_name` (`category`,`parent`,`name`),
-  KEY `idx_category_parent` (`category`,`parent`)
+  KEY `idx_category_parent_gmt_create` (`category`, `parent`, `gmt_create`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci COMMENT='binary info'
 ;
 

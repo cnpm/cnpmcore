@@ -36,7 +36,7 @@ export class PuppeteerBinary extends AbstractBinary {
       this.dirItems['/'] = [];
       for (const platform of platforms) {
         const revision = lastData?.[platform] as string;
-        if (revision) {
+        if (!revision) {
           // 丢弃库中历史不带 lastData 的任务，防止遍历任务过多
           this.logger.info(
             'drop puppeteer task if has no last data for platform %s, lastPlatform',
