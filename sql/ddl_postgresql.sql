@@ -13,7 +13,7 @@ CREATE TABLE binaries (
 
 CREATE UNIQUE INDEX binaries_uk_binary_id ON binaries (binary_id);
 CREATE UNIQUE INDEX binaries_uk_category_parent_name ON binaries (category, parent, name);
-CREATE INDEX binaries_idx_category_parent ON binaries (category, parent);
+CREATE INDEX binaries_idx_category_parent_gmt_create ON binaries (category, parent, gmt_create);
 
 COMMENT ON TABLE binaries IS 'binary info';
 COMMENT ON COLUMN binaries.id IS 'primary key';
