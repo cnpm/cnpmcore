@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.2.0](https://github.com/cnpm/cnpmcore/compare/v4.1.6...v4.2.0) (2025-04-03)
+
+### Features
+
+- **sql:** add gmt_create for binaries index idx_category_parent_gmt_create ([#786](https://github.com/cnpm/cnpmcore/issues/786)) ([080035f](https://github.com/cnpm/cnpmcore/commit/080035f7bce47ddf894870dee3db0a9060ec2ebc))
+
 ## [4.1.6](https://github.com/cnpm/cnpmcore/compare/v4.1.5...v4.1.6) (2025-04-02)
 
 ### Bug Fixes
