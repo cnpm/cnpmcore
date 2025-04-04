@@ -30,6 +30,7 @@ import type {
   PackageManifestType,
   PackageRepository,
 } from '../../repository/PackageRepository.js';
+import type { PackageVersionFileRepository } from '../../repository/PackageVersionFileRepository.js';
 import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
 import type { DistRepository } from '../../repository/DistRepository.js';
@@ -99,6 +100,8 @@ export class PackageManagerService extends AbstractService {
   private readonly eventBus: EventBus;
   @Inject()
   private readonly packageRepository: PackageRepository;
+  @Inject()
+  private readonly packageVersionFileRepository: PackageVersionFileRepository;
   @Inject()
   private readonly packageVersionBlockRepository: PackageVersionBlockRepository;
   @Inject()
@@ -720,6 +723,40 @@ export class PackageManagerService extends AbstractService {
     ]);
     // remove from repository
     await this.packageRepository.removePackageVersion(pkgVersion);
+
+    // remove package version files
+    await this.removePackageVersionFileAndDist(pkgVersion);
+  }
+
+  public async removePackageVersionFileAndDist(pkgVersion: PackageVersion) {
+    let fileDists: Dist[] = [];
+    if (!this.config.cnpmcore.enableUnpkg) return fileDists;
+    if (!this.config.cnpmcore.enableSyncUnpkgFiles) return fileDists;
+
+    fileDists =
+      await this.packageVersionFileRepository.findPackageVersionFileDists(
+        pkgVersion.packageVersionId
+      );
+
+    // remove nfs dists
+    await pMap(
+      fileDists,
+      async dist => {
+        await this.distRepository.destroyDist(dist);
+      },
+      {
+        concurrency: 50,
+        stopOnError: false,
+      }
+    );
+
+    // remove package version files from repository
+    await this.packageVersionFileRepository.removePackageVersionFiles(
+      pkgVersion.packageVersionId,
+      fileDists.map(dists => dists.distId)
+    );
+
+    return fileDists;
   }
 
   public async unpublishPackage(pkg: Package) {
