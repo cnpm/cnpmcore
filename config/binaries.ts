@@ -62,6 +62,13 @@ const binaries = {
       ignoreDownloadStatuses: [403] satisfies number[],
     },
   },
+  'python-build-standalone': {
+    category: 'python-build-standalone',
+    description: 'Produce redistributable builds of Python',
+    type: BinaryType.GitHub,
+    repo: 'astral-sh/python-build-standalone',
+    distUrl: 'https://github.com/astral-sh/python-build-standalone/releases',
+  },
   // CypressBinary
   cypress: {
     category: 'cypress',
