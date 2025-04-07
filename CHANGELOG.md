@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.3.0](https://github.com/cnpm/cnpmcore/compare/v4.2.0...v4.3.0) (2025-04-07)
+
+### Features
+
+- mirror astral-sh/python-build-standalone ([#787](https://github.com/cnpm/cnpmcore/issues/787)) ([58a1a9c](https://github.com/cnpm/cnpmcore/commit/58a1a9c2af49d7be15f4cb8c54ad65bb68b8de09))
+
 ## [4.2.0](https://github.com/cnpm/cnpmcore/compare/v4.1.6...v4.2.0) (2025-04-03)
 
 ### Features
