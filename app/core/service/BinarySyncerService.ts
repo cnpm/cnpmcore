@@ -14,8 +14,7 @@ import binaries, {
   type CategoryName,
 } from '../../../config/binaries.js';
 import type { BinaryRepository } from '../../repository/BinaryRepository.js';
-import type { SyncBinaryTask} from '../entity/Task.js';
-import { Task } from '../entity/Task.js';
+import { Task, type SyncBinaryTask } from '../entity/Task.js';
 import { Binary } from '../entity/Binary.js';
 import type { TaskService } from './TaskService.js';
 import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
