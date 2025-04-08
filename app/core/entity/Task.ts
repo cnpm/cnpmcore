@@ -76,6 +76,8 @@ export interface CreateUpdateProxyCacheTaskData extends TaskBaseData {
   filePath: string;
 }
 
+export type SyncBinaryTaskData = Record<string, unknown> & TaskBaseData;
+
 export interface ChangesStreamTaskData extends TaskBaseData {
   since: string;
   last_package?: string;
@@ -94,6 +96,7 @@ export type TriggerHookTask = Task<TriggerHookTaskData>;
 export type CreateSyncPackageTask = Task<CreateSyncPackageTaskData>;
 export type ChangesStreamTask = Task<ChangesStreamTaskData>;
 export type CreateUpdateProxyCacheTask = Task<CreateUpdateProxyCacheTaskData>;
+export type SyncBinaryTask = Task<SyncBinaryTaskData>;
 
 export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
   taskId: string;

@@ -8,6 +8,7 @@ import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/mode
 import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary.js';
 import { ApiBinary } from '../../../../app/common/adapter/binary/ApiBinary.js';
 import { BinaryRepository } from '../../../../app/repository/BinaryRepository.js';
+import type { SyncBinaryTaskData } from '../../../../app/core/entity/Task.js';
 
 describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
   let binarySyncerService: BinarySyncerService;
@@ -603,6 +604,46 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         '/latest/docs/'
       );
       assert(BinaryItems.length === 2);
+    });
+
+    it('should fetch with task data', async () => {
+      app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
+        persist: false,
+      });
+      app.mockHttpclient(
+        'https://nodejs.org/dist/latest/docs/apilinks.json',
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile(
+            'nodejs.org/site/latest/docs/apilinks.json'
+          ),
+          persist: false,
+        }
+      );
+      await binarySyncerService.createTask('node', {
+        'mock-data': '2333',
+      });
+      let task = await binarySyncerService.findExecuteTask();
+      assert(task);
+      let binaryName: string | undefined;
+      let lastData: SyncBinaryTaskData | undefined;
+      mock(
+        NodeBinary.prototype,
+        'fetch',
+        async (
+          _dir: string,
+          aBinaryName: string,
+          aLastData?: SyncBinaryTaskData
+        ) => {
+          binaryName = aBinaryName;
+          lastData = aLastData;
+          return { items: [] };
+        }
+      );
+      await binarySyncerService.executeTask(task);
+      assert.equal(binaryName, 'node');
+      assert.equal(lastData?.['mock-data'], '2333');
     });
   });
 });
