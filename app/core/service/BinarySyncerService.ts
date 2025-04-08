@@ -14,6 +14,7 @@ import binaries, {
   type CategoryName,
 } from '../../../config/binaries.js';
 import type { BinaryRepository } from '../../repository/BinaryRepository.js';
+import type { SyncBinaryTask} from '../entity/Task.js';
 import { Task } from '../entity/Task.js';
 import { Binary } from '../entity/Binary.js';
 import type { TaskService } from './TaskService.js';
@@ -111,10 +112,7 @@ export class BinarySyncerService extends AbstractService {
           `/${platform}/`
         );
         if (binaryDir) {
-          lastData[platform] = binaryDir.name.slice(
-            0,
-            - 1
-          );
+          lastData[platform] = binaryDir.name.slice(0, -1);
         }
       }
     }
@@ -132,19 +130,19 @@ export class BinarySyncerService extends AbstractService {
     }
   }
 
-  public async findTask(taskId: string) {
+  public async findTask(taskId: string): Promise<SyncBinaryTask | null> {
     return await this.taskService.findTask(taskId);
   }
 
-  public async findTaskLog(task: Task) {
+  public async findTaskLog(task: SyncBinaryTask) {
     return await this.taskService.findTaskLog(task);
   }
 
-  public async findExecuteTask() {
+  public async findExecuteTask(): Promise<SyncBinaryTask | null> {
     return await this.taskService.findExecuteTask(TaskType.SyncBinary);
   }
 
-  public async executeTask(task: Task) {
+  public async executeTask(task: SyncBinaryTask) {
     const binaryName = task.targetName as BinaryName;
     const binaryAdapter = await this.getBinaryAdapter(binaryName);
     const logUrl = `${this.config.cnpmcore.registry}/-/binary/${binaryName}/syncs/${task.taskId}/log`;
@@ -224,14 +222,13 @@ export class BinarySyncerService extends AbstractService {
 
   private async syncDir(
     binaryAdapter: AbstractBinary,
-    task: Task,
+    task: SyncBinaryTask,
     dir: string,
     parentIndex = '',
-    latestVersionParent = '/',
-    lastData?: Record<string, unknown>
+    latestVersionParent = '/'
   ) {
     const binaryName = task.targetName as BinaryName;
-    const result = await binaryAdapter.fetch(dir, binaryName, lastData);
+    const result = await binaryAdapter.fetch(dir, binaryName, task.data);
     let hasDownloadError = false;
     let hasItems = false;
     if (result && result.items.length > 0) {
