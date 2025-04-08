@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.3.1](https://github.com/cnpm/cnpmcore/compare/v4.3.0...v4.3.1) (2025-04-08)
+
+### Bug Fixes
+
+- execute SyncBinaryTask should with data ([#788](https://github.com/cnpm/cnpmcore/issues/788)) ([af3672e](https://github.com/cnpm/cnpmcore/commit/af3672ebdba51f55c3fc1a8b1fa7f4be232b8b04))
+
 ## [4.3.0](https://github.com/cnpm/cnpmcore/compare/v4.2.0...v4.3.0) (2025-04-07)
 
 ### Features
