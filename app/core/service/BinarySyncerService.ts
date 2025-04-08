@@ -130,7 +130,7 @@ export class BinarySyncerService extends AbstractService {
   }
 
   public async findTask(taskId: string): Promise<SyncBinaryTask | null> {
-    return await this.taskService.findTask(taskId);
+    return (await this.taskService.findTask(taskId)) as SyncBinaryTask;
   }
 
   public async findTaskLog(task: SyncBinaryTask) {
@@ -138,7 +138,9 @@ export class BinarySyncerService extends AbstractService {
   }
 
   public async findExecuteTask(): Promise<SyncBinaryTask | null> {
-    return await this.taskService.findExecuteTask(TaskType.SyncBinary);
+    return (await this.taskService.findExecuteTask(
+      TaskType.SyncBinary
+    )) as SyncBinaryTask;
   }
 
   public async executeTask(task: SyncBinaryTask) {
