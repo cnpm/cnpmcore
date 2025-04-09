@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.4.0](https://github.com/cnpm/cnpmcore/compare/v4.3.1...v4.4.0) (2025-04-09)
+
+### Features
+
+- add onnxruntime binary mirror ([#790](https://github.com/cnpm/cnpmcore/issues/790)) ([f4f09c2](https://github.com/cnpm/cnpmcore/commit/f4f09c2d6611781e5ddb396e9cda3e916549a741))
+
 ## [4.3.1](https://github.com/cnpm/cnpmcore/compare/v4.3.0...v4.3.1) (2025-04-08)
 
 ### Bug Fixes
