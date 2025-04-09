@@ -969,6 +969,13 @@ const binaries = {
     distUrl:
       'https://github.com/homebridge/node-pty-prebuilt-multiarch/releases',
   },
+  'onnxruntime-node': {
+    category: 'onnxruntime-node',
+    description: 'ONNX Runtime Node.js binding enables Node.js applications to run ONNX model inference.',
+    type: BinaryType.GitHub,
+    repo: 'microsoft/onnxruntime',
+    distUrl: 'https://github.com/microsoft/onnxruntime/releases/',
+  },
 } as const;
 
 export interface BinaryTaskConfig {
