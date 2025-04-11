@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.5.0](https://github.com/cnpm/cnpmcore/compare/v4.4.0...v4.5.0) (2025-04-11)
+
+### Features
+
+- use npm new replication api ([#792](https://github.com/cnpm/cnpmcore/issues/792)) ([de97428](https://github.com/cnpm/cnpmcore/commit/de97428ffdb914626ddacec31c3dadf523c3f551))
+
 ## [4.4.0](https://github.com/cnpm/cnpmcore/compare/v4.3.1...v4.4.0) (2025-04-09)
 
 ### Features
