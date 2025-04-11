@@ -18,6 +18,9 @@ export class NpmChangesStream extends AbstractChangeStream {
       followRedirect: true,
       timeout: 10_000,
       dataType: 'json',
+      headers: {
+        'npm-replication-opt-in': 'true',
+      },
     });
     const since = String(data.update_seq - 10);
     if (!data.update_seq) {
@@ -34,29 +37,46 @@ export class NpmChangesStream extends AbstractChangeStream {
     return since;
   }
 
-  async *fetchChanges(registry: Registry, since: string) {
+  async *fetchChanges(
+    registry: Registry,
+    since: string
+  ): AsyncGenerator<ChangesStreamChange> {
     const db = this.getChangesStreamUrl(registry, since);
-    const { res } = await this.httpclient.request(db, {
-      streaming: true,
+    const { data, headers } = await this.httpclient.request(db, {
       timeout: 60_000,
+      headers: {
+        // https://github.com/orgs/community/discussions/152515
+        'npm-replication-opt-in': 'true',
+      },
+      dataType: 'json',
+      gzip: true,
     });
+    const count = data.results?.length;
+    const last_seq = data.last_seq;
+    this.logger.info(
+      '[NpmChangesStream.fetchChanges] %s, count: %s, last_seq: %s, headers: %j',
+      db,
+      count,
+      last_seq,
+      headers
+    );
 
-    let buf = '';
-    for await (const chunk of res) {
-      const text = chunk.toString();
-      const lines = text.split('\n');
-
-      for (const line of lines) {
-        const content = buf + line;
-        const match = /"seq":(\d+),"id":"([^"]+)"/g.exec(content);
-        const seq = match?.[1];
-        const fullname = match?.[2];
-        if (seq && fullname) {
-          buf = '';
-          const change: ChangesStreamChange = { fullname, seq };
+    if (data.results?.length > 0) {
+      for (const change of data.results) {
+        // {
+        //   seq: 2495018,
+        //   id: 'ng-create-all-project',
+        //   changes: [ { rev: '3-be3a014aab8e379ba28a28adb8e10142' }, [length]: 1 ],
+        //   deleted: true
+        // },
+        const seq = String(change.seq);
+        const fullname = change.id;
+        if (seq && fullname && seq !== since) {
+          const change = {
+            fullname,
+            seq,
+          };
           yield change;
-        } else {
-          buf += line;
         }
       }
     }

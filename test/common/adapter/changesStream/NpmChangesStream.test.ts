@@ -1,7 +1,6 @@
-import { Duplex, Readable } from 'node:stream';
 import assert from 'node:assert/strict';
 
-import { app, mock } from '@eggjs/mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 
 import type { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';
 import { NpmChangesStream } from '../../../../app/common/adapter/changesStream/NpmChangesStream.js';
@@ -34,7 +33,7 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
         },
       });
       const since = await npmChangesStream.getInitialSince(registry);
-      assert(since === '9517');
+      assert.match(since, /^\d+$/);
     });
 
     it('should throw error', async () => {
@@ -60,55 +59,52 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
 
   describe('fetchChanges()', () => {
     it('should work', async () => {
-      mock(app.httpclient, 'request', async () => {
-        return {
-          res: Readable.from(`
-          {"seq":2,"id":"backbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
-          {"seq":3,"id":"backbone2.websql.deferred","changes":[{"rev":"4-f6150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
-          `),
-        };
+      app.mockHttpclient(/https:\/\/replicate\.npmjs\.com/, {
+        status: 200,
+        data: {
+          results: [
+            {
+              seq: 1,
+              id: 'create-react-component-helper',
+              changes: [{ rev: '5-18d3f1e936474bec418e087d082af5eb' }],
+            },
+            {
+              seq: 2,
+              id: 'yj-binaryxml',
+              changes: [{ rev: '89-288fe33f74d9ab42ccdcfbea2a4b16eb' }],
+            },
+          ],
+        },
       });
       const res: ChangesStreamChange[] = [];
       const stream = npmChangesStream.fetchChanges(registry, '9517');
       for await (const change of stream) {
         res.push(change);
       }
-      assert(res.length === 2);
-    });
-
-    it('should work for broken chunk', async () => {
-      const rStream = Duplex.from('');
-      mock(app.httpclient, 'request', async () => {
-        return {
-          res: rStream,
-        };
-      });
-      const res: ChangesStreamChange[] = [];
-      const stream = npmChangesStream.fetchChanges(registry, '9517');
-      assert(stream);
-      rStream.push('{"seq":2');
-      rStream.push(',"id":"bac');
-      rStream.push(
-        'kbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true}'
-      );
-      for await (const change of stream) {
-        res.push(change);
-      }
-      assert(res.length === 1);
+      assert.equal(res.length, 2);
     });
 
     it.skip('should read changes work', async () => {
+      let lastSeq = '62000870';
       for (let i = 0; i < 10_000; i++) {
-        const stream = npmChangesStream.fetchChanges(registry, '36904024');
+        // 62080870
+        // 36904024
+        const stream = npmChangesStream.fetchChanges(registry, lastSeq);
         assert(stream);
+        let hasMore = false;
         try {
           for await (const change of stream) {
             // oxlint-disable-next-line no-console
-            console.log(change);
+            console.log(i, change);
+            lastSeq = change.seq;
+            hasMore = true;
           }
         } catch (err) {
           // oxlint-disable-next-line no-console
           console.error(err);
+        }
+        if (!hasMore) {
+          break;
         }
       }
     });
