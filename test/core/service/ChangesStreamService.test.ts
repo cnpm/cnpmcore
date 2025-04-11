@@ -177,35 +177,53 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
 
   describe('fetchChanges()', () => {
     it('should work', async () => {
-      mock(app.httpclient, 'request', async () => {
-        return {
-          res: Readable.from(`
-            {"seq":2,"id":"backbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
-            {"seq":3,"id":"backbone2.websql.deferred","changes":[{"rev":"4-f6150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
-            `),
-        };
+      app.mockHttpclient(/https:\/\/replicate\.npmjs\.com/, {
+        status: 200,
+        data: {
+          results: [
+            {
+              seq: 2,
+              id: 'create-react-component-helper',
+              changes: [{ rev: '5-18d3f1e936474bec418e087d082af5eb' }],
+            },
+            {
+              seq: 3,
+              id: 'yj-binaryxml',
+              changes: [{ rev: '89-288fe33f74d9ab42ccdcfbea2a4b16eb' }],
+            },
+          ],
+        },
       });
       const changes = await changesStreamService.executeSync('1', task);
-      assert(changes.taskCount === 2);
-      assert(changes.lastSince === '3');
+      assert.equal(changes.taskCount, 2, JSON.stringify(changes));
+      assert.equal(changes.lastSince, '3');
     });
 
     it('should update since even not taskCount', async () => {
       mock(ChangesStreamService.prototype, 'needSync', async () => {
         return false;
       });
-      mock(app.httpclient, 'request', async () => {
-        return {
-          res: Readable.from(`
-            {"seq":2,"id":"backbone.websql.deferred","changes":[{"rev":"4-f5150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
-            {"seq":3,"id":"backbone2.websql.deferred","changes":[{"rev":"4-f6150b238ab62cd890211fb57fc9eca5"}],"deleted":true},
-            `),
-        };
+      app.mockHttpclient(/https:\/\/replicate\.npmjs\.com/, {
+        status: 200,
+        data: {
+          results: [
+            {
+              seq: 2,
+              id: 'create-react-component-helper',
+              changes: [{ rev: '5-18d3f1e936474bec418e087d082af5eb' }],
+            },
+            {
+              seq: 3,
+              id: 'yj-binaryxml',
+              changes: [{ rev: '89-288fe33f74d9ab42ccdcfbea2a4b16eb' }],
+            },
+          ],
+        },
       });
       const changes = await changesStreamService.executeSync('1', task);
-      assert(changes.taskCount === 0);
-      assert(changes.lastSince === '3');
-      assert(task.data.since === '3');
+      assert.equal(changes.taskCount, 0);
+      assert.equal(changes.lastSince, '3');
+      assert.equal(task.data.since, '3');
     });
   });
 
