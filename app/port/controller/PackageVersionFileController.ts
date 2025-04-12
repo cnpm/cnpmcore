@@ -100,6 +100,36 @@ export class PackageVersionFileController extends AbstractController {
   }
 
   @HTTPMethod({
+    // DELETE /:fullname/:versionSpec/files
+    path: `/:fullname(${FULLNAME_REG_STRING})/:versionSpec/files`,
+    method: HTTPMethodEnum.DELETE,
+  })
+  @Middleware(AdminAccess)
+  async removeFiles(
+    @Context() ctx: EggContext,
+    @HTTPParam() fullname: string,
+    @HTTPParam() versionSpec: string
+  ) {
+    ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
+    this.#requireUnpkgEnable();
+    const [scope, name] = getScopeAndName(fullname);
+    const { packageVersion } =
+      await this.packageManagerService.showPackageVersionByVersionOrTag(
+        scope,
+        name,
+        versionSpec
+      );
+    if (!packageVersion) {
+      throw new NotFoundError(`${fullname}@${versionSpec} not found`);
+    }
+    const files =
+      await this.packageVersionFileService.removePackageVersionFiles(
+        packageVersion
+      );
+    return files.map(file => formatFileItem(file));
+  }
+
+  @HTTPMethod({
     // GET /:fullname/:versionSpec/files => /:fullname/:versionSpec/files/${pkg.main}
     // GET /:fullname/:versionSpec/files?meta
     // GET /:fullname/:versionSpec/files/
