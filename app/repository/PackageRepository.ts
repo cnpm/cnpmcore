@@ -1,6 +1,5 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { Orm } from '@eggjs/tegg-orm-plugin';
-import type { EggAppConfig } from 'egg';
 
 import type { Bone } from './util/leoric.js';
 import { Package as PackageModel } from './model/Package.js';
@@ -226,9 +225,6 @@ export class PackageRepository extends AbstractRepository {
 
   @Inject()
   private readonly User: typeof UserModel;
-
-  @Inject()
-  private readonly config: EggAppConfig;
 
   @Inject()
   private readonly orm: Orm;
