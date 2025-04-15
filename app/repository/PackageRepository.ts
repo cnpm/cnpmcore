@@ -1,6 +1,5 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { Orm } from '@eggjs/tegg-orm-plugin';
-import type { EggAppConfig } from 'egg';
 
 import type { Bone } from './util/leoric.js';
 import { Package as PackageModel } from './model/Package.js';
@@ -19,7 +18,6 @@ import type { User as UserModel } from './model/User.js';
 import { User as UserEntity } from '../core/entity/User.js';
 import { AbstractRepository } from './AbstractRepository.js';
 import type { BugVersionPackages } from '../core/entity/BugVersion.js';
-import { DATABASE_TYPE } from '../../config/database.js';
 
 export type PackageManifestType = Pick<PackageJSONType, PackageJSONPickKey> & {
   _id: string;
@@ -227,9 +225,6 @@ export class PackageRepository extends AbstractRepository {
 
   @Inject()
   private readonly User: typeof UserModel;
-
-  @Inject()
-  private readonly config: EggAppConfig;
 
   @Inject()
   private readonly orm: Orm;
@@ -592,20 +587,6 @@ export class PackageRepository extends AbstractRepository {
   }
 
   private async getTotalCountByModel(model: typeof Bone): Promise<number> {
-    if (this.config.cnpmcore.database.type === DATABASE_TYPE.MySQL) {
-      const { database } = this.config.orm as { database: string };
-      const sql = `
-        SELECT
-            TABLE_ROWS as table_rows
-          FROM
-            information_schema.tables
-          WHERE
-            table_schema = '${database}'
-            AND table_name = '${model.table}';
-      `;
-      const result = await this.orm.client.query(sql);
-      return result.rows?.[0].table_rows as number;
-    }
     const sql = `SELECT count(id) as total FROM ${model.table};`;
     const result = await this.orm.client.query(sql);
     const total = Number(result.rows?.[0].total);

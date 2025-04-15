@@ -25,6 +25,7 @@
   "rules": {
     // eslint
     "constructor-super": "error",
+    "group-exports": "allow",
     "getter-return": "error",
     "no-undef": "error",
     "no-unreachable": "error",
