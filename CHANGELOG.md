@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.5.1](https://github.com/cnpm/cnpmcore/compare/v4.5.0...v4.5.1) (2025-04-15)
+
+### Bug Fixes
+
+- disable information_schema.tables count ([#794](https://github.com/cnpm/cnpmcore/issues/794)) ([0a6eab3](https://github.com/cnpm/cnpmcore/commit/0a6eab325e3b3a29e0ad54c7d8b51cdff1206e33))
+
 ## [4.5.0](https://github.com/cnpm/cnpmcore/compare/v4.4.0...v4.5.0) (2025-04-11)
 
 ### Features
