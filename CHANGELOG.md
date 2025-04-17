@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.5.2](https://github.com/cnpm/cnpmcore/compare/v4.5.1...v4.5.2) (2025-04-17)
+
+### Bug Fixes
+
+- init release ([#795](https://github.com/cnpm/cnpmcore/issues/795)) ([3203c64](https://github.com/cnpm/cnpmcore/commit/3203c64c48ae217731b6409a240a04f01ee57b27)), closes [/github.com/cnpm/cnpm/issues/459#issue-2998106947](https://github.com/cnpm//github.com/cnpm/cnpm/issues/459/issues/issue-2998106947)
+
 ## [4.5.1](https://github.com/cnpm/cnpmcore/compare/v4.5.0...v4.5.1) (2025-04-15)
 
 ### Bug Fixes
