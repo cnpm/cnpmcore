@@ -15,10 +15,10 @@ import {
 @BinaryAdapter(BinaryType.GitHub)
 export class GithubBinary extends AbstractBinary {
   // oxlint-disable-next-line typescript-eslint/no-explicit-any
-  private releases: Record<string, any[]> = {};
+  private releases: Record<string, any[] | undefined> = {};
 
   async initFetch(binaryName: BinaryName) {
-    this.releases[binaryName] = [];
+    this.releases[binaryName] = undefined;
   }
 
   protected async initReleases(
