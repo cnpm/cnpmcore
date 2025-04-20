@@ -56,6 +56,26 @@ jobs:
       - name: Install Dependencies
         run: npm i -g npminstall && npminstall
 
+      # https://github.com/elastic/elastic-github-actions/blob/master/elasticsearch/README.md
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 8.18.0
+
+      - name: Wait for Elasticsearch to be ready
+        run: |
+          while ! curl -s http://localhost:9200 -u elastic:changeme | grep -q "elasticsearch"; do
+            echo "Waiting for Elasticsearch to be ready..."
+            sleep 1
+          done
+
       - name: Continuous Integration
         run: npm run ci:postgresql
         env:
