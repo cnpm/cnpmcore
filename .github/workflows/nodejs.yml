@@ -71,8 +71,8 @@ jobs:
 
       - name: Wait for Elasticsearch to be ready
         run: |
-          curl -v http://localhost:9200 -k -u elastic:changeme
-          while ! curl -s http://localhost:9200 -k -u elastic:changeme | grep -q "elasticsearch"; do
+          curl -v http://127.0.0.1:9200 -k -u elastic:changeme || echo "Elasticsearch is not ready"
+          while ! curl -v http://127.0.0.1:9200 -k -u elastic:changeme | grep -q "elasticsearch"; do
             echo "Waiting for Elasticsearch to be ready..."
             sleep 1
           done
