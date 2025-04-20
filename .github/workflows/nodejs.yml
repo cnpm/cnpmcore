@@ -72,8 +72,7 @@ jobs:
 
       - name: Wait for Elasticsearch to be ready
         run: |
-          curl -v https://localhost:9200 -k -u elastic:cnpmcore || echo "Elasticsearch is not ready"
-          while ! curl -v https://localhost:9200 -k -u elastic:cnpmcore | grep -q "elasticsearch"; do
+          while ! curl -s https://localhost:9200 -k -u elastic:cnpmcore | grep -q "elasticsearch"; do
             echo "Waiting for Elasticsearch to be ready..."
             sleep 1
           done
