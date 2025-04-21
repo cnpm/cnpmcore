@@ -68,12 +68,12 @@ jobs:
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
           stack-version: 8.18.0
-          elasticsearch_password: cnpmcore
+          security-enabled: false
 
       - name: Wait for Elasticsearch to be ready
         run: |
-          curl -v https://localhost:9200 -u elastic:cnpmcore
-          while ! curl -s https://localhost:9200 -k -u elastic:cnpmcore | grep -q "elasticsearch"; do
+          curl -v http://localhost:9200
+          while ! curl -s http://localhost:9200 | grep -q "elasticsearch"; do
             echo "Waiting for Elasticsearch to be ready..."
             sleep 1
           done
