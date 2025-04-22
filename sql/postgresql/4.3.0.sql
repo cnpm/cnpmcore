@@ -7,7 +7,13 @@ CREATE TABLE IF NOT EXISTS totals (
   CONSTRAINT uk_type UNIQUE (type)
 );
 
--- init data
+COMMENT ON TABLE totals IS 'total table';
+COMMENT ON COLUMN totals.id IS 'primary key';
+COMMENT ON COLUMN totals.type IS 'total type';
+COMMENT ON COLUMN totals.count IS 'total count';
+COMMENT ON COLUMN totals.gmt_create IS 'create time';
+COMMENT ON COLUMN totals.gmt_modified IS 'modified time';
+
 INSERT INTO totals (type, count, gmt_create, gmt_modified)
 SELECT 'packageCount', COUNT(*), NOW(), NOW() FROM packages
 UNION ALL
