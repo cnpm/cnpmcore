@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS totals (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
+  gmt_create timestamp(3) NOT NULL,
+  gmt_modified timestamp(3) NOT NULL,
   type varchar(24) NOT NULL,
   count bigint NOT NULL,
-  gmt_create timestamp NOT NULL,
-  gmt_modified timestamp NOT NULL,
   CONSTRAINT uk_type UNIQUE (type)
 );
 
