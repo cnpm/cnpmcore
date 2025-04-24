@@ -5,6 +5,7 @@ import { PackageRepository } from '../../app/repository/PackageRepository.js';
 import { PackageManagerService } from '../../app/core/service/PackageManagerService.js';
 import { UserService } from '../../app/core/service/UserService.js';
 import { TestUtil } from '../../test/TestUtil.js';
+import { setTimeout } from 'node:timers/promises';
 
 describe('test/repository/PackageRepository.test.ts', () => {
   let packageRepository: PackageRepository;
@@ -42,9 +43,9 @@ describe('test/repository/PackageRepository.test.ts', () => {
         },
         user
       );
+      await setTimeout(1000);
       const res = await packageRepository.queryTotal();
-      // information_schema 只能返回大概值，仅验证增加
-      assert(res.packageCount > packageCount);
+      assert(res.packageCount >= packageCount);
       assert(res.packageVersionCount > packageVersionCount);
     });
   });

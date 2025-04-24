@@ -1,12 +1,9 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { Orm } from '@eggjs/tegg-orm-plugin';
-
-import type { Bone } from './util/leoric.js';
-import { Package as PackageModel } from './model/Package.js';
+import type { Package as PackageModel } from './model/Package.js';
 import { Package as PackageEntity } from '../core/entity/Package.js';
 import { ModelConvertor } from './util/ModelConvertor.js';
 import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVersion.js';
-import { PackageVersion as PackageVersionModel } from './model/PackageVersion.js';
+import type { PackageVersion as PackageVersionModel } from './model/PackageVersion.js';
 import type { PackageVersionManifest as PackageVersionManifestEntity } from '../core/entity/PackageVersionManifest.js';
 import type { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest.js';
 import type { Dist as DistModel } from './model/Dist.js';
@@ -18,6 +15,7 @@ import type { User as UserModel } from './model/User.js';
 import { User as UserEntity } from '../core/entity/User.js';
 import { AbstractRepository } from './AbstractRepository.js';
 import type { BugVersionPackages } from '../core/entity/BugVersion.js';
+import type { TotalRepository } from './TotalRepository.js';
 
 export type PackageManifestType = Pick<PackageJSONType, PackageJSONPickKey> & {
   _id: string;
@@ -227,7 +225,7 @@ export class PackageRepository extends AbstractRepository {
   private readonly User: typeof UserModel;
 
   @Inject()
-  private readonly orm: Orm;
+  private readonly totalRepository: TotalRepository;
 
   async #convertPackageModelToEntity(model: PackageModel) {
     const manifestsDistModel = model.manifestsDistId
@@ -586,18 +584,12 @@ export class PackageRepository extends AbstractRepository {
     );
   }
 
-  private async getTotalCountByModel(model: typeof Bone): Promise<number> {
-    const sql = `SELECT count(id) as total FROM ${model.table};`;
-    const result = await this.orm.client.query(sql);
-    const total = Number(result.rows?.[0].total);
-    return total;
-  }
-
   public async queryTotal() {
+    const { packageCount, packageVersionCount } =
+      await this.totalRepository.getAll();
+
     const lastPkg = await this.Package.findOne().order('id', 'desc');
     const lastVersion = await this.PackageVersion.findOne().order('id', 'desc');
-    let packageCount = 0;
-    let packageVersionCount = 0;
     let lastPackage = '';
     let lastPackageVersion = '';
 
@@ -605,9 +597,6 @@ export class PackageRepository extends AbstractRepository {
       lastPackage = lastPkg.scope
         ? `${lastPkg.scope}/${lastPkg.name}`
         : lastPkg.name;
-      // FIXME: id will be out of range number
-      // 可能存在 id 增长不连续的情况，通过 count 查询
-      packageCount = await this.getTotalCountByModel(PackageModel);
     }
 
     if (lastVersion) {
@@ -618,12 +607,11 @@ export class PackageRepository extends AbstractRepository {
         const fullname = pkg.scope ? `${pkg.scope}/${pkg.name}` : pkg.name;
         lastPackageVersion = `${fullname}@${lastVersion.version}`;
       }
-      packageVersionCount =
-        await this.getTotalCountByModel(PackageVersionModel);
     }
+
     return {
-      packageCount,
-      packageVersionCount,
+      packageCount: Number(packageCount),
+      packageVersionCount: Number(packageVersionCount),
       lastPackage,
       lastPackageVersion,
     };

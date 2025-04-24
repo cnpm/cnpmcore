@@ -150,6 +150,8 @@ export class UpdateTotalData {
     const lastChange = await this.changeRepository.getLastChange();
     const totalData: TotalData = {
       ...packageTotal,
+      packageCount: Number(packageTotal.packageCount),
+      packageVersionCount: Number(packageTotal.packageVersionCount),
       download,
       lastChangeId: (lastChange && lastChange.id) || 0,
       cacheTime: new Date().toISOString(),

@@ -15,6 +15,7 @@ import type { ChangesStreamTask } from '../../../../app/core/entity/Task.js';
 import { RegistryType } from '../../../../app/common/enum/Registry.js';
 import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
 import type { UpstreamRegistryInfo } from '../../../../app/core/service/CacheService.js';
+import { TotalRepository } from '../../../../app/repository/TotalRepository.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,8 +34,11 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
     let registryManagerService: RegistryManagerService;
     let changesStreamService: ChangesStreamService;
     let taskRepository: TaskRepository;
+    let totalRepository: TotalRepository;
     let scopeManagerService: ScopeManagerService;
     it('should total information', async () => {
+      totalRepository = await app.getEggObject(TotalRepository);
+      await totalRepository.reset();
       let res = await app.httpRequest().get('/');
       assert(res.status === 200);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
@@ -63,10 +67,12 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         .set('user-agent', publisher.ua)
         .expect(201)
         .send(pkg);
+
       pkg = await TestUtil.getFullPackage({
         name: '@cnpm/home2',
         version: '2.0.0',
       });
+
       await app
         .httpRequest()
         .put(`/${pkg.name}`)
@@ -74,6 +80,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         .set('user-agent', publisher.ua)
         .expect(201)
         .send(pkg);
+
       pkg = await TestUtil.getFullPackage({
         name: '@cnpm/home1',
         version: '1.0.1',
