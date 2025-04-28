@@ -50,6 +50,24 @@ export class PackageVersionFileRepository extends AbstractRepository {
     );
   }
 
+  async findPackageVersionFileDists(packageVersionId: string) {
+    const fileDists: DistEntity[] = [];
+    const queue = ['/'];
+    while (queue.length > 0) {
+      const directory = queue.shift();
+      if (!directory) {
+        continue;
+      }
+      const { files, directories } = await this.listPackageVersionFiles(
+        packageVersionId,
+        directory
+      );
+      fileDists.push(...files.map(file => file.dist));
+      queue.push(...directories);
+    }
+    return fileDists;
+  }
+
   async listPackageVersionFiles(packageVersionId: string, directory: string) {
     const isRoot = directory === '/';
     const where = isRoot
@@ -94,6 +112,47 @@ export class PackageVersionFileRepository extends AbstractRepository {
       );
     });
     return { files, directories: Array.from(subDirectories) };
+  }
+
+  async removePackageVersionFiles(
+    packageVersionId: string,
+    distIds?: string[]
+  ) {
+    if (!distIds) {
+      const fileDists =
+        await this.findPackageVersionFileDists(packageVersionId);
+      distIds = fileDists.map(dist => dist.distId);
+    }
+
+    await this.PackageVersionFile.transaction(async transaction => {
+      const removeCount = await this.PackageVersionFile.remove(
+        { packageVersionId },
+        true,
+        transaction
+      );
+      this.logger.info(
+        '[PackageVersionFileRepository:removePackageVersionFiles:remove] %d rows in PackageVersionFile, packageVersionId: %s',
+        removeCount,
+        packageVersionId
+      );
+
+      if (distIds.length > 0) {
+        const distCount = await this.Dist.remove(
+          {
+            distId: distIds,
+          },
+          true,
+          transaction
+        );
+        this.logger.info(
+          '[PackageVersionFileRepository:removePackageVersionFiles:remove] %d rows in Dist, packageVersionId: %s',
+          distCount,
+          packageVersionId
+        );
+      }
+    });
+
+    return distIds;
   }
 
   async hasPackageVersionFiles(packageVersionId: string) {
