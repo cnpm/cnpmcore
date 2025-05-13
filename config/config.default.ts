@@ -47,7 +47,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   syncDownloadDataMaxDate: '',
   enableChangesStream: false,
   checkChangesStreamInterval: 500,
-  changesStreamRegistry: 'https://replicate.npmjs.com',
+  changesStreamRegistry: 'https://replicate.npmjs.com/registry',
   changesStreamRegistryMode: ChangesStreamMode.streaming,
   registry: env('CNPMCORE_CONFIG_REGISTRY', 'string', 'http://localhost:7001'),
   alwaysAuth: false,
