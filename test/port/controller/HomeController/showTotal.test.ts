@@ -287,7 +287,8 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         const [upstream] = data.upstream_registries;
         assert.ok(upstream.registry_name === 'default');
         assert.ok(
-          upstream.changes_stream_url === 'https://replicate.npmjs.com/_changes'
+          upstream.changes_stream_url ===
+            'https://replicate.npmjs.com/registry/_changes'
         );
         assert.ok(upstream.source_registry === 'https://registry.npmjs.org');
       });
@@ -336,7 +337,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         assert.ok(defaultRegistry.registry_name === 'default');
         assert.ok(
           defaultRegistry.changes_stream_url ===
-            'https://replicate.npmjs.com/_changes'
+            'https://replicate.npmjs.com/registry/_changes'
         );
         assert.ok(
           defaultRegistry.source_registry === 'https://registry.npmjs.org'
