@@ -17,8 +17,8 @@ describe('test/port/webauth/webauthController.test.ts', () => {
       });
 
       assert.equal(res.status, 200);
-      assert(res.body.loginUrl);
-      assert(res.body.doneUrl);
+      assert.ok(res.body.loginUrl);
+      assert.ok(res.body.doneUrl);
       const loginSessionId = basename(res.body.loginUrl);
       const doneSessionId = basename(res.body.doneUrl);
       assert.equal(loginSessionId, doneSessionId);
@@ -60,7 +60,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
         .get(`/-/v1/login/request/session/${crypto.randomUUID()}`);
 
       assert.equal(res.status, 404);
-      assert(/Session not found/.test(res.text));
+      assert.ok(/Session not found/.test(res.text));
       assert.equal(res.headers['content-type'], 'text/html; charset=utf-8');
     });
 
@@ -70,7 +70,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
         .get(`/-/v1/login/request/session/${sessionId}`);
 
       assert.equal(res.status, 200);
-      assert(/<title>Sign in to CNPM<\/title>/.test(res.text));
+      assert.ok(/<title>Sign in to CNPM<\/title>/.test(res.text));
     });
   });
 
@@ -102,7 +102,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
         .post(`/-/v1/login/request/session/${crypto.randomUUID()}`);
 
       assert.equal(res.status, 200);
-      assert(/Session not found/.test(res.text));
+      assert.ok(/Session not found/.test(res.text));
       assert.equal(
         res.headers['content-type'],
         'application/json; charset=utf-8'
@@ -149,7 +149,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
           });
 
         assert.equal(res.status, 200);
-        assert(
+        assert.ok(
           /Please check your login name and password/.test(res.body.message)
         );
       });
@@ -167,7 +167,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
           });
 
         assert.equal(res.status, 200);
-        assert(/Unauthorized, Validation Failed/.test(res.body.message));
+        assert.ok(/Unauthorized, Validation Failed/.test(res.body.message));
       });
 
       it('should check authentication user (unbound webauthn) when enableWebauthn', async () => {
@@ -186,7 +186,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
           });
 
         assert.equal(res.status, 200);
-        assert(
+        assert.ok(
           /Unauthorized, Please check your login name/.test(res.body.message)
         );
       });
@@ -208,7 +208,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
         assert.equal(res.body.ok, true);
 
         const user = await userRepository.findUserByName('orange');
-        assert(user);
+        assert.ok(user);
       });
 
       it('only support admin when not allowPublicRegistration', async () => {
@@ -225,7 +225,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
           });
 
         assert.equal(res.status, 200);
-        assert(/Public registration is not allowed/.test(res.body.message));
+        assert.ok(/Public registration is not allowed/.test(res.body.message));
       });
     });
   });
@@ -269,7 +269,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
         .get(`/-/v1/login/request/prepare/${crypto.randomUUID()}?name=banana`);
 
       assert.equal(res.status, 200);
-      assert(/Session not found/.test(res.text));
+      assert.ok(/Session not found/.test(res.text));
       assert.equal(
         res.headers['content-type'],
         'application/json; charset=utf-8'
@@ -282,7 +282,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
         .get(`/-/v1/login/request/prepare/${sessionId}?name=banana`);
 
       assert.equal(res.status, 200);
-      assert(typeof res.body.wanCredentialAuthOption === 'object');
+      assert.ok(typeof res.body.wanCredentialAuthOption === 'object');
     });
 
     it('should get prepare with registration options', async () => {
@@ -291,7 +291,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
         .get(`/-/v1/login/request/prepare/${sessionId}?name=apple`);
 
       assert.equal(res.status, 200);
-      assert(typeof res.body.wanCredentialRegiOption === 'object');
+      assert.ok(typeof res.body.wanCredentialRegiOption === 'object');
     });
   });
 
@@ -351,7 +351,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
 
       assert.equal(res.status, 200);
       assert.equal(res.headers['content-type'], 'text/html; charset=utf-8');
-      assert(/Authorization Successful/.test(res.text));
+      assert.ok(/Authorization Successful/.test(res.text));
     });
   });
 

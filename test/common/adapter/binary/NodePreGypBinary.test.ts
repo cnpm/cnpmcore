@@ -19,36 +19,36 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
       let result = await binary.fetch('/', 'grpc');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir1 = false;
       let matchDir2 = false;
       for (const item of result.items) {
         if (item.name === 'v1.24.11/') {
-          assert(item.date === '2021-07-23T18:07:10.297Z');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '2021-07-23T18:07:10.297Z');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir1 = true;
         }
         if (item.name === 'v1.14.0/') {
-          assert(item.date === '2018-08-10T16:59:52.551Z');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '2018-08-10T16:59:52.551Z');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir2 = true;
         }
       }
-      assert(matchDir1);
-      assert(matchDir2);
+      assert.ok(matchDir1);
+      assert.ok(matchDir2);
 
       result = await binary.fetch('/v1.24.11/', 'grpc');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
       for (const item of result.items) {
-        assert(item.isDir === false);
-        assert(item.name);
-        assert(item.date);
-        assert(item.url.includes('/v1.24.11/'));
+        assert.ok(item.isDir === false);
+        assert.ok(item.name);
+        assert.ok(item.date);
+        assert.ok(item.url.includes('/v1.24.11/'));
         assert.deepEqual(item.ignoreDownloadStatuses, [404]);
       }
     });
@@ -63,37 +63,37 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
       let result = await binary.fetch('/', 'grpc-tools');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
       let matchDir1 = false;
       let matchDir2 = false;
       for (const item of result.items) {
         if (item.name === 'v1.11.2/') {
-          assert(item.date === '2021-06-18T17:01:49.917Z');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '2021-06-18T17:01:49.917Z');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir1 = true;
         }
         if (item.name === 'v0.14.1/') {
-          assert(item.date === '2016-05-11T22:54:25.492Z');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '2016-05-11T22:54:25.492Z');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir2 = true;
         }
       }
-      assert(matchDir1);
-      assert(matchDir2);
+      assert.ok(matchDir1);
+      assert.ok(matchDir2);
 
       result = await binary.fetch('/v1.11.2/', 'grpc-tools');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
       for (const item of result.items) {
-        assert(item.isDir === false);
-        assert(item.name);
-        assert(item.date);
-        assert(item.url.includes('/v1.11.2/'));
+        assert.ok(item.isDir === false);
+        assert.ok(item.name);
+        assert.ok(item.date);
+        assert.ok(item.url.includes('/v1.11.2/'));
         assert.deepEqual(item.ignoreDownloadStatuses, [404]);
       }
     });
@@ -108,36 +108,36 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
       const result = await binary.fetch('/', 'nodegit');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
       let matchFile1 = false;
       let matchFile2 = false;
       let matchFile3 = false;
       for (const item of result.items) {
-        assert(item.isDir === false);
+        assert.ok(item.isDir === false);
         if (item.name === 'nodegit-v0.27.0-node-v64-linux-x64.tar.gz') {
-          assert(item.date === '2020-07-28T19:27:28.363Z');
-          assert(item.size === '-');
-          assert(
+          assert.ok(item.date === '2020-07-28T19:27:28.363Z');
+          assert.ok(item.size === '-');
+          assert.ok(
             item.url ===
               'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.27.0-node-v64-linux-x64.tar.gz'
           );
           matchFile1 = true;
         }
         if (item.name === 'nodegit-v0.25.0-node-v64-darwin-x64.tar.gz') {
-          assert(item.date === '2019-08-09T16:46:10.709Z');
-          assert(item.size === '-');
-          assert(
+          assert.ok(item.date === '2019-08-09T16:46:10.709Z');
+          assert.ok(item.size === '-');
+          assert.ok(
             item.url ===
               'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.25.0-node-v64-darwin-x64.tar.gz'
           );
           matchFile2 = true;
         }
         if (item.name === 'nodegit-v0.26.0-node-v57-win32-x64.tar.gz') {
-          assert(item.date === '2019-09-11T15:47:20.192Z');
-          assert(item.size === '-');
-          assert(
+          assert.ok(item.date === '2019-09-11T15:47:20.192Z');
+          assert.ok(item.size === '-');
+          assert.ok(
             item.url ===
               'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.26.0-node-v57-win32-x64.tar.gz'
           );
@@ -147,9 +147,9 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           throw new Error('should not run this');
         }
       }
-      assert(matchFile1);
-      assert(matchFile2);
-      assert(matchFile3);
+      assert.ok(matchFile1);
+      assert.ok(matchFile2);
+      assert.ok(matchFile3);
     });
 
     it('should fetch wrtc', async () => {
@@ -160,59 +160,59 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
       let result = await binary.fetch('/', 'wrtc');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
       let matchDir = false;
       for (const item of result.items) {
-        assert(item.isDir === true);
+        assert.ok(item.isDir === true);
         if (item.name === 'v0.4.7/') {
           matchDir = true;
         }
       }
-      assert(matchDir);
+      assert.ok(matchDir);
 
       result = await binary.fetch('/v0.4.7/', 'wrtc');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
       let matchFile1 = false;
       let matchFile2 = false;
       let matchFile3 = false;
       for (const item of result.items) {
-        assert(item.isDir === false);
+        assert.ok(item.isDir === false);
         assert.deepEqual(item.ignoreDownloadStatuses, [404]);
         if (item.name === 'linux-arm64.tar.gz') {
-          assert(item.date === '2021-01-10T15:43:35.384Z');
-          assert(item.size === '-');
-          assert(
+          assert.ok(item.date === '2021-01-10T15:43:35.384Z');
+          assert.ok(item.size === '-');
+          assert.ok(
             item.url ===
               'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/linux-arm64.tar.gz'
           );
           matchFile1 = true;
         }
         if (item.name === 'linux-x64.tar.gz') {
-          assert(item.date === '2021-01-10T15:43:35.384Z');
-          assert(item.size === '-');
-          assert(
+          assert.ok(item.date === '2021-01-10T15:43:35.384Z');
+          assert.ok(item.size === '-');
+          assert.ok(
             item.url ===
               'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/linux-x64.tar.gz'
           );
           matchFile2 = true;
         }
         if (item.name === 'darwin-x64.tar.gz') {
-          assert(item.date === '2021-01-10T15:43:35.384Z');
-          assert(item.size === '-');
-          assert(
+          assert.ok(item.date === '2021-01-10T15:43:35.384Z');
+          assert.ok(item.size === '-');
+          assert.ok(
             item.url ===
               'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/darwin-x64.tar.gz'
           );
           matchFile3 = true;
         }
       }
-      assert(matchFile1);
-      assert(matchFile2);
-      assert(matchFile3);
+      assert.ok(matchFile1);
+      assert.ok(matchFile2);
+      assert.ok(matchFile3);
     });
 
     it('should fetch libpg-query', async () => {
@@ -225,19 +225,19 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
       });
       const result = await binary.fetch('/', 'libpg-query-node');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchFile1 = false;
       let matchFile2 = false;
       let matchFile3 = false;
       let matchFile4 = false;
       let matchFile5 = false;
       for (const item of result.items) {
-        assert(item.isDir === false);
+        assert.ok(item.isDir === false);
         assert.deepEqual(item.ignoreDownloadStatuses, [404]);
         if (item.name === 'queryparser-v13.2.1-node-v108-darwin-arm64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
-          assert(item.size === '-');
+          assert.ok(item.date === '2022-03-11T00:49:54.060Z');
+          assert.ok(item.size === '-');
           assert.equal(
             item.url,
             'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-darwin-arm64.tar.gz'
@@ -245,8 +245,8 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           matchFile1 = true;
         }
         if (item.name === 'queryparser-v13.2.1-node-v108-darwin-x64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
-          assert(item.size === '-');
+          assert.ok(item.date === '2022-03-11T00:49:54.060Z');
+          assert.ok(item.size === '-');
           assert.equal(
             item.url,
             'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-darwin-x64.tar.gz'
@@ -254,8 +254,8 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           matchFile2 = true;
         }
         if (item.name === 'queryparser-v13.2.1-node-v108-linux-arm.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
-          assert(item.size === '-');
+          assert.ok(item.date === '2022-03-11T00:49:54.060Z');
+          assert.ok(item.size === '-');
           assert.equal(
             item.url,
             'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-linux-arm.tar.gz'
@@ -263,8 +263,8 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           matchFile3 = true;
         }
         if (item.name === 'queryparser-v13.2.1-node-v108-linux-x64.tar.gz') {
-          assert(item.date === '2022-03-11T00:49:54.060Z');
-          assert(item.size === '-');
+          assert.ok(item.date === '2022-03-11T00:49:54.060Z');
+          assert.ok(item.size === '-');
           assert.equal(
             item.url,
             'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-linux-x64.tar.gz'
@@ -281,11 +281,11 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           matchFile5 = true;
         }
       }
-      assert(matchFile1);
-      assert(matchFile2);
-      assert(matchFile3);
-      assert(matchFile4);
-      assert(matchFile5);
+      assert.ok(matchFile1);
+      assert.ok(matchFile2);
+      assert.ok(matchFile3);
+      assert.ok(matchFile4);
+      assert.ok(matchFile5);
     });
   });
 });

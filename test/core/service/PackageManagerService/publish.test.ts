@@ -55,7 +55,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
         packageId,
         '1.0.0'
       );
-      assert(pkgVersion);
+      assert.ok(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.0');
       // another version
       await packageManagerService.publish(
@@ -78,7 +78,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
         packageId,
         '1.0.1'
       );
-      assert(pkgVersion);
+      assert.ok(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.1');
       // expect aop async timer
       // 2022-06-03 13:55:39,152 INFO 79813 [-/127.0.0.1/cb81b2f0-e301-11ec-94f3-bf6547f48233/112.523ms GET /] [0.311] [NFSAdapter:uploadBytes|T]
@@ -107,7 +107,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
         packageId,
         '1.0.0'
       );
-      assert(pkgVersion);
+      assert.ok(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.0');
       const pkg = await packageRepository.findPackage('', 'foo');
       assert.equal(pkg?.description, '~'.repeat(1024 * 10));
@@ -136,7 +136,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
         packageId,
         '1.1.0'
       );
-      assert(pkgVersion);
+      assert.ok(pkgVersion);
       assert.equal(pkgVersion.version, '1.1.0');
       assert.equal(pkgVersion.tarDist.size, 2672);
     });
@@ -172,7 +172,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
         );
       }, /deps invalid-pkg@some-semver-not-exits not found/);
 
-      assert(checked);
+      assert.ok(checked);
     });
   });
 });

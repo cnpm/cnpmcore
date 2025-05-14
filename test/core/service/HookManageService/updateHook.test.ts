@@ -62,8 +62,8 @@ describe('test/core/service/HookManageService/updateHook.test.ts', () => {
       endpoint: 'http://new.com',
       secret: 'new_mock_secret',
     });
-    assert(updatedHook);
-    assert(updatedHook.endpoint === 'http://new.com');
-    assert(updatedHook.secret === 'new_mock_secret');
+    assert.ok(updatedHook);
+    assert.ok(updatedHook.endpoint === 'http://new.com');
+    assert.ok(updatedHook.secret === 'new_mock_secret');
   });
 });

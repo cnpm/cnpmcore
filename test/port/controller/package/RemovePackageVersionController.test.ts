@@ -22,7 +22,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         isPrivate: false,
       });
       let res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
-      assert(res.status === 200);
+      assert.ok(res.status === 200);
 
       const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
       const pkgVersion = res.body;
@@ -33,11 +33,11 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .set('authorization', adminUser.authorization)
         .set('npm-command', 'unpublish')
         .set('user-agent', adminUser.ua);
-      assert(res.status === 200);
-      assert(res.body.ok === true);
+      assert.ok(res.status === 200);
+      assert.ok(res.body.ok === true);
 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
-      assert(res.status === 404);
+      assert.ok(res.status === 404);
     });
 
     it('should remove public package version over 72 hours success on admin action', async () => {
@@ -48,15 +48,15 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         isPrivate: false,
       });
       let res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
-      assert(res.status === 200);
+      assert.ok(res.status === 200);
 
       const pkgEntity = await packageRepository.findPackage('', 'foo');
-      assert(pkgEntity);
+      assert.ok(pkgEntity);
       const pkgVersionEntity = await packageRepository.findPackageVersion(
         pkgEntity.packageId,
         '1.0.0'
       );
-      assert(pkgVersionEntity);
+      assert.ok(pkgVersionEntity);
       pkgVersionEntity.publishTime = new Date(
         Date.now() - 72 * 3_600_000 - 100
       );
@@ -71,11 +71,11 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .set('authorization', adminUser.authorization)
         .set('npm-command', 'unpublish')
         .set('user-agent', adminUser.ua);
-      assert(res.status === 200);
-      assert(res.body.ok === true);
+      assert.ok(res.status === 200);
+      assert.ok(res.body.ok === true);
 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
-      assert(res.status === 404);
+      assert.ok(res.status === 404);
     });
 
     it('should remove public package version fobidden on non-admin action', async () => {
@@ -86,7 +86,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         isPrivate: false,
       });
       let res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
-      assert(res.status === 200);
+      assert.ok(res.status === 200);
 
       const normalUser = await TestUtil.createUser();
       const pkgVersion = res.body;
@@ -97,14 +97,14 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .set('authorization', normalUser.authorization)
         .set('npm-command', 'unpublish')
         .set('user-agent', normalUser.ua);
-      assert(res.status === 403);
+      assert.ok(res.status === 403);
       // console.log(res.body);
-      assert(
+      assert.ok(
         res.body.error === '[FORBIDDEN] Can\'t modify npm public package "foo"'
       );
 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
-      assert(res.status === 200);
+      assert.ok(res.status === 200);
     });
 
     it('should remove the latest version', async () => {
@@ -136,10 +136,10 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       let pkgVersion = res.body;
       let tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
       res = await app.httpRequest().get(`${tarballUrl}`);
-      assert(res.status === 200 || res.status === 302);
+      assert.ok(res.status === 200 || res.status === 302);
 
       res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
-      assert(res.body['dist-tags'].latest === '2.0.0');
+      assert.ok(res.body['dist-tags'].latest === '2.0.0');
 
       res = await app
         .httpRequest()
@@ -151,7 +151,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       assert.equal(res.body.ok, true);
 
       res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
-      assert(res.body['dist-tags'].latest === '1.0.0');
+      assert.ok(res.body['dist-tags'].latest === '1.0.0');
 
       res = await app.httpRequest().get(`${tarballUrl}`);
       if (res.status === 404) {
@@ -164,8 +164,8 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       }
 
       res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
-      assert(!res.body.versions['2.0.0']);
-      assert(res.body.versions['1.0.0']);
+      assert.ok(!res.body.versions['2.0.0']);
+      assert.ok(res.body.versions['1.0.0']);
       assert.equal(res.body['dist-tags'].latest, '1.0.0');
 
       // remove all versions
@@ -180,9 +180,9 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .expect(200);
       assert.equal(res.body.ok, true);
       res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
-      assert(!res.body.versions);
+      assert.ok(!res.body.versions);
       assert.equal(res.body.name, pkg.name);
-      assert(res.body.time.unpublished);
+      assert.ok(res.body.time.unpublished);
       assert.deepEqual(res.body['dist-tags'], {});
 
       // publish again work
@@ -202,10 +202,10 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       pkgVersion = res.body;
       tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
       res = await app.httpRequest().get(`${tarballUrl}`);
-      assert(res.status === 200 || res.status === 302);
+      assert.ok(res.status === 200 || res.status === 302);
 
       res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
-      assert(res.body['dist-tags'].latest === '2.0.0');
+      assert.ok(res.body['dist-tags'].latest === '2.0.0');
     });
 
     it('should 404 when version not exists', async () => {
@@ -278,12 +278,12 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       const tarballUrl = new URL(pkgVersion.dist.tarball).pathname;
 
       const pkgEntity = await packageRepository.findPackage('@cnpm', 'foo');
-      assert(pkgEntity);
+      assert.ok(pkgEntity);
       const pkgVersionEntity = await packageRepository.findPackageVersion(
         pkgEntity.packageId,
         '1.0.0'
       );
-      assert(pkgVersionEntity);
+      assert.ok(pkgVersionEntity);
       pkgVersionEntity.publishTime = new Date(
         Date.now() - 72 * 3_600_000 - 100
       );

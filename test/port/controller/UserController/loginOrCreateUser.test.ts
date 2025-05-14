@@ -76,7 +76,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
         .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.id, 'org.couchdb.user:cnpmcore_admin');
-      assert(res.body.rev);
+      assert.ok(res.body.rev);
       assert.match(res.body.token, /^cnpm_\w+/);
     });
 
@@ -93,7 +93,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
         .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.id, 'org.couchdb.user:leo');
-      assert(res.body.rev);
+      assert.ok(res.body.rev);
       assert.match(res.body.token, /^cnpm_\w+/);
       const lastToken = res.body.token;
 
@@ -109,7 +109,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
         .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.id, 'org.couchdb.user:leo');
-      assert(res.body.rev);
+      assert.ok(res.body.rev);
       assert.match(res.body.token, /^cnpm_\w+/);
       assert.notEqual(res.body.token, lastToken);
 
@@ -143,7 +143,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
         .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.id, 'org.couchdb.user:leo');
-      assert(res.body.rev);
+      assert.ok(res.body.rev);
       assert.match(res.body.token, /^cnpm_\w+/);
       const lastToken = res.body.token;
 
@@ -159,7 +159,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
         .expect(201);
       assert.equal(res.body.ok, true);
       assert.equal(res.body.id, 'org.couchdb.user:leo');
-      assert(res.body.rev);
+      assert.ok(res.body.rev);
       assert.match(res.body.token, /^cnpm_\w+/);
       assert.notEqual(res.body.token, lastToken);
 

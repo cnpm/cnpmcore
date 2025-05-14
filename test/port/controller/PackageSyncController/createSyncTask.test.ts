@@ -20,7 +20,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .httpRequest()
         .put('/-/package/koa/syncs')
         .expect(403);
-      assert(res.body.error === '[FORBIDDEN] Not allow to sync package');
+      assert.ok(res.body.error === '[FORBIDDEN] Not allow to sync package');
     });
 
     it('should 403 when syncMode = admin', async () => {
@@ -29,7 +29,9 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .httpRequest()
         .put('/-/package/koa/syncs')
         .expect(403);
-      assert(res.body.error === '[FORBIDDEN] Only admin allow to sync package');
+      assert.ok(
+        res.body.error === '[FORBIDDEN] Only admin allow to sync package'
+      );
     });
 
     it('should 201 when syncMode = admin & login as admin', async () => {
@@ -48,7 +50,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .httpRequest()
         .put('/-/package/koa/syncs')
         .expect(401);
-      assert(res.body.error === '[UNAUTHORIZED] Login first');
+      assert.ok(res.body.error === '[UNAUTHORIZED] Login first');
     });
 
     it('should 403 if when sync private package', async () => {
@@ -67,7 +69,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .httpRequest()
         .put(`/-/package/${pkg.name}/syncs`)
         .expect(403);
-      assert(
+      assert.ok(
         res.body.error === '[FORBIDDEN] Can\'t sync private package "@cnpm/koa"'
       );
     });
@@ -93,10 +95,10 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .put('/-/package/koa/syncs')
         .set('authorization', publisher.authorization)
         .expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.type === 'sync_package');
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.type === 'sync_package');
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
     });
 
     it('should 201 if user login when alwaysAuth = false', async () => {
@@ -106,9 +108,9 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .put('/-/package/koa/syncs')
         .set('authorization', publisher.authorization)
         .expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
       app.notExpectLog(
         '[PackageSyncController.createSyncTask:execute-immediately]'
       );
@@ -122,9 +124,9 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .set('authorization', publisher.authorization)
         .send({ force: true })
         .expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
       app.notExpectLog(
         '[PackageSyncController.createSyncTask:execute-immediately]'
       );
@@ -144,9 +146,9 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .set('authorization', admin.authorization)
         .send({ force: true })
         .expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
       await setTimeout(100); // await for sync task started
       app.expectLog(
         '[PackageSyncController.createSyncTask:execute-immediately]'
@@ -166,7 +168,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .send({ registryName: 'invalid' })
         .expect(403);
 
-      assert(res.body.error.includes("Can't find target registry"));
+      assert.ok(res.body.error.includes("Can't find target registry"));
     });
 
     it('should check the packageEntity registryId', async () => {
@@ -196,7 +198,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .send({ registryName: 'cnpm' })
         .expect(403);
 
-      assert(res.body.error.includes('The package is synced from'));
+      assert.ok(res.body.error.includes('The package is synced from'));
     });
 
     it('should ignore the packageEntity registryId when registry not exists', async () => {
@@ -225,9 +227,9 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .set('authorization', admin.authorization)
         .send()
         .expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
     });
 
     it('should sync immediately and mock executeTask error when admin user request', async () => {
@@ -240,9 +242,9 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .set('authorization', admin.authorization)
         .send({ force: true })
         .expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
       app.expectLog(
         '[PackageSyncController.createSyncTask:execute-immediately]'
       );
@@ -254,27 +256,27 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
 
     it('should 201 if user not login when alwaysAuth = false', async () => {
       let res = await app.httpRequest().put('/-/package/koa/syncs').expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
       let task = await TaskModel.findOne({ taskId: res.body.id });
-      assert(task);
-      assert(task.data.skipDependencies === false);
-      assert(task.data.syncDownloadData === false);
+      assert.ok(task);
+      assert.ok(task.data.skipDependencies === false);
+      assert.ok(task.data.syncDownloadData === false);
 
       res = await app
         .httpRequest()
         .put('/-/package/ob/syncs')
         .send({ skipDependencies: true, tips: 'foo bar' })
         .expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
       task = await TaskModel.findOne({ taskId: res.body.id });
-      assert(task);
-      assert(task.data.skipDependencies === true);
-      assert(task.data.syncDownloadData === false);
-      assert(task.data.tips === 'foo bar');
+      assert.ok(task);
+      assert.ok(task.data.skipDependencies === true);
+      assert.ok(task.data.syncDownloadData === false);
+      assert.ok(task.data.tips === 'foo bar');
     });
 
     it('should 422 when enableSyncDownloadData = false', async () => {
@@ -282,8 +284,8 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .httpRequest()
         .put('/-/package/ob/syncs')
         .send({ syncDownloadData: true });
-      assert(res.status === 403);
-      assert(
+      assert.ok(res.status === 403);
+      assert.ok(
         res.body.error === '[FORBIDDEN] Not allow to sync package download data'
       );
 
@@ -298,8 +300,8 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .httpRequest()
         .put('/-/package/ob/syncs')
         .send({ syncDownloadData: true });
-      assert(res.status === 403);
-      assert(
+      assert.ok(res.status === 403);
+      assert.ok(
         res.body.error === '[FORBIDDEN] Not allow to sync package download data'
       );
 
@@ -310,8 +312,8 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .httpRequest()
         .put('/-/package/ob/syncs')
         .send({ syncDownloadData: true });
-      assert(res.status === 403);
-      assert(
+      assert.ok(res.status === 403);
+      assert.ok(
         res.body.error === '[FORBIDDEN] Not allow to sync package download data'
       );
     });
@@ -328,40 +330,40 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .httpRequest()
         .put('/-/package/ob/syncs')
         .send({ syncDownloadData: true });
-      assert(res.status === 201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.status === 201);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
       const task = await TaskModel.findOne({ taskId: res.body.id });
-      assert(task);
-      assert(task.data.syncDownloadData === true);
+      assert.ok(task);
+      assert.ok(task.data.syncDownloadData === true);
     });
 
     it('should dont create exists waiting task', async () => {
       let res = await app.httpRequest().put('/-/package/koa/syncs').expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
       const firstTaskId = res.body.id;
       // again dont create
       res = await app.httpRequest().put('/-/package/koa/syncs').expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id === firstTaskId);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id === firstTaskId);
     });
 
     it('should dont create exists waiting task', async () => {
       let res = await app.httpRequest().put('/-/package/koa/syncs').expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id);
       const firstTaskId = res.body.id;
 
       // again dont create
       res = await app.httpRequest().put('/-/package/koa/syncs').expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id === firstTaskId);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id === firstTaskId);
 
       // update bigger than 1 min, same task return
       await TaskModel.update(
@@ -369,9 +371,9 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         { updatedAt: new Date(Date.now() - 60_001) }
       );
       res = await app.httpRequest().put('/-/package/koa/syncs').expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.state === 'waiting');
-      assert(res.body.id === firstTaskId);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.state === 'waiting');
+      assert.ok(res.body.id === firstTaskId);
     });
   });
 
@@ -379,13 +381,15 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
     it('should 403 when syncMode = none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
       const res = await app.httpRequest().put('/koa/sync').expect(403);
-      assert(res.body.error === '[FORBIDDEN] Not allow to sync package');
+      assert.ok(res.body.error === '[FORBIDDEN] Not allow to sync package');
     });
 
     it('should 403 when syncMode = admin', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'admin');
       const res = await app.httpRequest().put('/koa/sync').expect(403);
-      assert(res.body.error === '[FORBIDDEN] Only admin allow to sync package');
+      assert.ok(
+        res.body.error === '[FORBIDDEN] Only admin allow to sync package'
+      );
     });
 
     it('should 201 when syncMode = admin & login as admin', async () => {
@@ -400,23 +404,23 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
 
     it('should 201', async () => {
       let res = await app.httpRequest().put('/koa/sync').expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.logId);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.logId);
       let task = await TaskModel.findOne({ taskId: res.body.logId });
-      assert(task);
-      assert(task.data.skipDependencies === false);
+      assert.ok(task);
+      assert.ok(task.data.skipDependencies === false);
 
       res = await app.httpRequest().put('/koa/sync?nodeps=true').expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.logId);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.logId);
 
       res = await app.httpRequest().put('/ob/sync?nodeps=true').expect(201);
-      assert(res.body.ok === true);
-      assert(res.body.logId);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.logId);
       // skipDependencies should be true
       task = await TaskModel.findOne({ taskId: res.body.logId });
-      assert(task);
-      assert(task.data.skipDependencies === true);
+      assert.ok(task);
+      assert.ok(task.data.skipDependencies === true);
     });
   });
 });

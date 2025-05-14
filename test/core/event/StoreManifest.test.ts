@@ -17,17 +17,17 @@ describe('test/core/event/StoreManifest.test.ts', () => {
       const { pkg } = await TestUtil.createPackage({ version: '1.0.0' });
       const [scope, name] = getScopeAndName(pkg.name);
       const packageId = await packageRepository.findPackageId(scope, name);
-      assert(packageId);
+      assert.ok(packageId);
       const packageVersion = await packageRepository.findPackageVersion(
         packageId,
         '1.0.0'
       );
-      assert(packageVersion);
+      assert.ok(packageVersion);
       const packageVersionManifest =
         await packageRepository.findPackageVersionManifest(
           packageVersion.packageVersionId
         );
-      assert(!packageVersionManifest);
+      assert.ok(!packageVersionManifest);
       app.notExpectLog(
         '[PackageRepository:savePackageVersionManifest:new] id: '
       );
@@ -47,21 +47,23 @@ describe('test/core/event/StoreManifest.test.ts', () => {
       await eventWaiter.await('PACKAGE_VERSION_ADDED');
       const [scope, name] = getScopeAndName(pkg.name);
       const packageId = await packageRepository.findPackageId(scope, name);
-      assert(packageId);
+      assert.ok(packageId);
       const packageVersion = await packageRepository.findPackageVersion(
         packageId,
         '1.0.0'
       );
-      assert(packageVersion);
+      assert.ok(packageVersion);
       const packageVersionManifest =
         await packageRepository.findPackageVersionManifest(
           packageVersion.packageVersionId
         );
-      assert(packageVersionManifest);
+      assert.ok(packageVersionManifest);
       app.expectLog('[PackageRepository:savePackageVersionManifest:new] id: ');
-      assert(packageVersionManifest.manifest.readme === 'test store manifest');
-      assert(packageVersionManifest.manifest.description);
-      assert(packageVersionManifest.manifest.version === '1.0.0');
+      assert.ok(
+        packageVersionManifest.manifest.readme === 'test store manifest'
+      );
+      assert.ok(packageVersionManifest.manifest.description);
+      assert.ok(packageVersionManifest.manifest.version === '1.0.0');
       // console.log(packageVersionManifest.manifest);
 
       await TestUtil.createPackage(
@@ -74,13 +76,13 @@ describe('test/core/event/StoreManifest.test.ts', () => {
         packageId,
         '2.0.0'
       );
-      assert(packageVersion2);
+      assert.ok(packageVersion2);
       const packageVersionManifest2 =
         await packageRepository.findPackageVersionManifest(
           packageVersion2.packageVersionId
         );
-      assert(packageVersionManifest2);
-      assert(packageVersionManifest2.manifest.version === '2.0.0');
+      assert.ok(packageVersionManifest2);
+      assert.ok(packageVersionManifest2.manifest.version === '2.0.0');
       // console.log(packageVersionManifest2.manifest);
 
       // should work same version

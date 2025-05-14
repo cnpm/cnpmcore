@@ -56,7 +56,7 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
     const task = await packageSyncerService.createTask('binary-mirror-config', {
       registryId: 'sync_registry_id',
     });
-    assert(task);
+    assert.ok(task);
   });
 
   it('should work when pkg not exists', async () => {
@@ -66,7 +66,7 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
         registryId: 'sync_registry_id',
       }
     );
-    assert(task);
+    assert.ok(task);
   });
 
   it('should merge task when processing', async () => {
@@ -84,7 +84,7 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
         return await packageSyncerService.createTask(pkgName);
       })(),
     ]);
-    assert(res[1].taskId === task.taskId);
+    assert.ok(res[1].taskId === task.taskId);
   });
 
   it('should append specific version to waiting task.', async () => {
@@ -96,10 +96,10 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
       specificVersions: ['2.0.0'],
     });
     const task = await packageSyncerService.findExecuteTask();
-    assert(task);
+    assert.ok(task);
     assert.equal(task.targetName, name);
-    assert(task.data.specificVersions);
-    assert(task.data.specificVersions.length === 2);
+    assert.ok(task.data.specificVersions);
+    assert.ok(task.data.specificVersions.length === 2);
   });
 
   it('should remove specific version, switch waiting task to sync all versions.', async () => {
@@ -109,14 +109,14 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
     });
     await packageSyncerService.createTask(name);
     const task = await packageSyncerService.findExecuteTask();
-    assert(task);
+    assert.ok(task);
     assert.equal(task.targetName, name);
-    assert(task.data.specificVersions === undefined);
+    assert.ok(task.data.specificVersions === undefined);
   });
 
   it('should not duplicate task when waiting', async () => {
     const task = await packageSyncerService.createTask(pkgName);
     const newTask = await packageSyncerService.createTask(pkgName);
-    assert(newTask.taskId === task.taskId);
+    assert.ok(newTask.taskId === task.taskId);
   });
 });

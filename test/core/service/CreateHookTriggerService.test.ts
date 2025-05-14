@@ -38,7 +38,7 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
       }
     );
     const user = await userRepository.findUserByName(username);
-    assert(user);
+    assert.ok(user);
     userId = user.userId;
   });
 
@@ -75,7 +75,7 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
         const pushTask = await taskRepository.findTaskByBizId(
           `TriggerHook:${change.changeId}:${hook.hookId}`
         );
-        assert(pushTask);
+        assert.ok(pushTask);
       });
     });
 
@@ -99,7 +99,7 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
         const pushTask = await taskRepository.findTaskByBizId(
           `TriggerHook:${change.changeId}:${hook.hookId}`
         );
-        assert(pushTask);
+        assert.ok(pushTask);
       });
     });
 
@@ -123,7 +123,7 @@ describe('test/core/service/CreateHookTriggerService.test.ts', () => {
         const pushTask = await taskRepository.findTaskByBizId(
           `TriggerHook:${change.changeId}:${hook.hookId}`
         );
-        assert(pushTask);
+        assert.ok(pushTask);
       });
     });
   });

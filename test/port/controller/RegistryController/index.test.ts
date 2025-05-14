@@ -60,7 +60,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
           type: 'cnpmcore',
         });
 
-      assert(res.body.ok);
+      assert.ok(res.body.ok);
     });
 
     it('should verify params', async () => {
@@ -75,7 +75,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         })
         .expect(422);
 
-      assert(
+      assert.ok(
         res.body.error === "[INVALID_PARAM] must have required property 'host'"
       );
     });
@@ -93,7 +93,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         })
         .expect(403);
 
-      assert(res.body.error === '[FORBIDDEN] Not allow to access');
+      assert.ok(res.body.error === '[FORBIDDEN] Not allow to access');
     });
   });
 
@@ -115,8 +115,8 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
       // query success
       const res = await app.httpRequest().get('/-/registry').expect(200);
 
-      assert(res.body.count === 2);
-      assert(res.body.data[1].name === 'custom5');
+      assert.ok(res.body.count === 2);
+      assert.ok(res.body.data[1].name === 'custom5');
     });
   });
 
@@ -154,22 +154,22 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         .httpRequest()
         .get(`/-/registry/${registry.registryId}/scopes`)
         .expect(200);
-      assert(scopRes.body.count === 4);
-      assert(scopRes.body.data.length === 4);
+      assert.ok(scopRes.body.count === 4);
+      assert.ok(scopRes.body.data.length === 4);
 
       scopRes = await app
         .httpRequest()
         .get(`/-/registry/${registry.registryId}/scopes?pageSize=1`)
         .expect(200);
-      assert(scopRes.body.count === 4);
-      assert(scopRes.body.data.length === 1);
+      assert.ok(scopRes.body.count === 4);
+      assert.ok(scopRes.body.data.length === 1);
 
       scopRes = await app
         .httpRequest()
         .get(`/-/registry/${registry.registryId}/scopes?pageSize=2&pageIndex=1`)
         .expect(200);
-      assert(scopRes.body.count === 4);
-      assert(scopRes.body.data.length === 2);
+      assert.ok(scopRes.body.count === 4);
+      assert.ok(scopRes.body.data.length === 2);
     });
     it('should error', async () => {
       await app
@@ -207,7 +207,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         .set('authorization', adminUser.authorization)
         .expect(200);
 
-      assert(queryRes.body.count === 0);
+      assert.ok(queryRes.body.count === 0);
     });
   });
 
@@ -225,7 +225,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         .post('/-/registry/in_valid/sync')
         .set('authorization', adminUser.authorization)
         .expect(404);
-      assert(res.body.error.includes('registry not found'));
+      assert.ok(res.body.error.includes('registry not found'));
     });
 
     it('should 200', async () => {
@@ -236,7 +236,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         .expect(200);
 
       const task = await taskService.findExecuteTask(TaskType.ChangesStream);
-      assert(task?.targetName === 'CUSTOM3_WORKER');
+      assert.ok(task?.targetName === 'CUSTOM3_WORKER');
     });
 
     it('since params', async () => {
@@ -250,7 +250,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         .expect(200);
 
       const task = await taskService.findExecuteTask(TaskType.ChangesStream);
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, 'CUSTOM3_WORKER');
       assert.equal((task.data as ChangesStreamTaskData).since, '9527');
     });

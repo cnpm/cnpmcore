@@ -11,12 +11,12 @@ describe('test/port/controller/UserController/showProfile.test.ts', () => {
         .httpRequest()
         .get('/-/npm/v1/user')
         .set('authorization', authorization + 'wrong');
-      assert(res.status === 401);
-      assert(res.body.error === '[UNAUTHORIZED] Invalid token');
+      assert.ok(res.status === 401);
+      assert.ok(res.body.error === '[UNAUTHORIZED] Invalid token');
 
       res = await app.httpRequest().get('/-/npm/v1/user');
-      assert(res.status === 401);
-      assert(res.body.error === '[UNAUTHORIZED] Login first');
+      assert.ok(res.status === 401);
+      assert.ok(res.body.error === '[UNAUTHORIZED] Login first');
     });
 
     it('should 200', async () => {
@@ -25,8 +25,8 @@ describe('test/port/controller/UserController/showProfile.test.ts', () => {
         .httpRequest()
         .get('/-/npm/v1/user')
         .set('authorization', authorization);
-      assert(res.status === 200);
-      assert(res.body.name === name);
+      assert.ok(res.status === 200);
+      assert.ok(res.body.name === name);
     });
   });
 });

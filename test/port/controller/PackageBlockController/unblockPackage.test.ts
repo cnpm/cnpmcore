@@ -16,8 +16,8 @@ describe('test/port/controller/PackageBlockController/unblockPackage.test.ts', (
         .httpRequest()
         .delete(`/-/package/${pkg.name}/blocks`)
         .set('authorization', adminUser.authorization);
-      assert(res.status === 200);
-      assert(res.body.ok === true);
+      assert.ok(res.status === 200);
+      assert.ok(res.body.ok === true);
 
       res = await app
         .httpRequest()
@@ -26,21 +26,21 @@ describe('test/port/controller/PackageBlockController/unblockPackage.test.ts', (
         .send({
           reason: 'only for tests',
         });
-      assert(res.status === 201);
-      assert(res.body.ok === true);
-      assert(res.body.id);
+      assert.ok(res.status === 201);
+      assert.ok(res.body.ok === true);
+      assert.ok(res.body.id);
 
       res = await app
         .httpRequest()
         .delete(`/-/package/${pkg.name}/blocks`)
         .set('authorization', adminUser.authorization);
-      assert(res.status === 200);
-      assert(res.body.ok === true);
+      assert.ok(res.status === 200);
+      assert.ok(res.body.ok === true);
 
       // get blocks
       res = await app.httpRequest().get(`/-/package/${pkg.name}/blocks`);
-      assert(res.status === 200);
-      assert(res.body.data.length === 0);
+      assert.ok(res.status === 200);
+      assert.ok(res.body.data.length === 0);
 
       // block again
       res = await app
@@ -50,22 +50,22 @@ describe('test/port/controller/PackageBlockController/unblockPackage.test.ts', (
         .send({
           reason: 'only for tests',
         });
-      assert(res.status === 201);
-      assert(res.body.ok === true);
+      assert.ok(res.status === 201);
+      assert.ok(res.body.ok === true);
       res = await app.httpRequest().get(`/-/package/${pkg.name}/blocks`);
-      assert(res.status === 200);
-      assert(res.body.data.length === 1);
+      assert.ok(res.status === 200);
+      assert.ok(res.body.data.length === 1);
 
       // unblock gain
       res = await app
         .httpRequest()
         .delete(`/-/package/${pkg.name}/blocks`)
         .set('authorization', adminUser.authorization);
-      assert(res.status === 200);
-      assert(res.body.ok === true);
+      assert.ok(res.status === 200);
+      assert.ok(res.body.ok === true);
       res = await app.httpRequest().get(`/-/package/${pkg.name}/blocks`);
-      assert(res.status === 200);
-      assert(res.body.data.length === 0);
+      assert.ok(res.status === 200);
+      assert.ok(res.body.data.length === 0);
     });
 
     it('should 403 block private package', async () => {
@@ -74,8 +74,8 @@ describe('test/port/controller/PackageBlockController/unblockPackage.test.ts', (
         .httpRequest()
         .delete(`/-/package/${pkg.name}/blocks`)
         .set('authorization', adminUser.authorization);
-      assert(res.status === 403);
-      assert(
+      assert.ok(res.status === 403);
+      assert.ok(
         res.body.error ===
           '[FORBIDDEN] Can\'t unblock private package "@cnpm/testmodule"'
       );
@@ -88,12 +88,12 @@ describe('test/port/controller/PackageBlockController/unblockPackage.test.ts', (
         .httpRequest()
         .delete(`/-/package/${pkg.name}/blocks`)
         .set('authorization', user.authorization);
-      assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] Not allow to access');
+      assert.ok(res.status === 403);
+      assert.ok(res.body.error === '[FORBIDDEN] Not allow to access');
 
       res = await app.httpRequest().delete(`/-/package/${pkg.name}/blocks`);
-      assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] Not allow to access');
+      assert.ok(res.status === 403);
+      assert.ok(res.body.error === '[FORBIDDEN] Not allow to access');
     });
   });
 });

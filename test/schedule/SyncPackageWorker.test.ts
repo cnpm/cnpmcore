@@ -55,7 +55,7 @@ describe('test/schedule/SyncPackageWorker.test.ts', () => {
       .set('Accept', 'application/json')
       .expect(200);
     // make sure npm user name not contain 'npm:'
-    assert(res.body.maintainers[0].name === 'fengmk2');
+    assert.ok(res.body.maintainers[0].name === 'fengmk2');
     app.mockAgent().assertNoPendingInterceptors();
   });
 
@@ -95,8 +95,8 @@ describe('test/schedule/SyncPackageWorker.test.ts', () => {
       .httpRequest()
       .get(`/${name}`)
       .set('Accept', 'application/json');
-    assert(res.status === 200);
-    assert(res.body.name === name);
+    assert.ok(res.status === 200);
+    assert.ok(res.body.name === name);
     app.mockAgent().assertNoPendingInterceptors();
   });
 

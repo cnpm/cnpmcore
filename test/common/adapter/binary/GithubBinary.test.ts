@@ -25,21 +25,21 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         }
       );
       let result = await binary.fetch('/', 'electron');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       for (const item of result.items) {
-        assert(item.name.endsWith('/'));
-        assert(item.isDir);
-        assert(item.size === '-');
+        assert.ok(item.name.endsWith('/'));
+        assert.ok(item.isDir);
+        assert.ok(item.size === '-');
       }
 
       const firstDir = `/${result.items[0].name}`;
       result = await binary.fetch(firstDir, 'electron');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       for (const item of result.items) {
-        assert(!item.name.endsWith('/'));
-        assert(!item.isDir);
+        assert.ok(!item.name.endsWith('/'));
+        assert.ok(!item.isDir);
       }
       // console.log(result.items);
     });
@@ -57,33 +57,33 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         }
       );
       let result = await binary.fetch('/', 'skia-canvas');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
       let matchDir = false;
       for (const item of result.items) {
-        assert(item.isDir === true);
+        assert.ok(item.isDir === true);
         if (item.name === 'v0.9.30/') {
           matchDir = true;
         }
       }
-      assert(matchDir);
+      assert.ok(matchDir);
 
       result = await binary.fetch('/v0.9.24/', 'skia-canvas');
-      assert(result?.items.every(item => !/{.*}/.test(item.url)));
+      assert.ok(result?.items.every(item => !/{.*}/.test(item.url)));
 
       result = await binary.fetch('/v0.9.30/', 'skia-canvas');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
       let matchFile1 = false;
       let matchFile2 = false;
       let matchFile3 = false;
       for (const item of result.items) {
-        assert(item.isDir === false);
+        assert.ok(item.isDir === false);
         if (item.name === 'skia-canvas-v0.9.30-darwin-arm64.tar.gz') {
-          assert(item.date === '2024-08-26T18:04:13Z');
-          assert(item.size === 7_547_563);
+          assert.ok(item.date === '2024-08-26T18:04:13Z');
+          assert.ok(item.size === 7_547_563);
           assert.equal(
             item.url,
             'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-darwin-arm64.tar.gz'
@@ -91,8 +91,8 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           matchFile1 = true;
         }
         if (item.name === 'skia-canvas-v0.9.30-linux-arm-glibc.tar.gz') {
-          assert(item.date === '2024-08-26T18:04:17Z');
-          assert(item.size === 8_836_353);
+          assert.ok(item.date === '2024-08-26T18:04:17Z');
+          assert.ok(item.size === 8_836_353);
           assert.equal(
             item.url,
             'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-linux-arm-glibc.tar.gz'
@@ -100,8 +100,8 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           matchFile2 = true;
         }
         if (item.name === 'skia-canvas-v0.9.30-win32-x64.tar.gz') {
-          assert(item.date === '2024-08-26T18:04:29Z');
-          assert(item.size === 7_497_076);
+          assert.ok(item.date === '2024-08-26T18:04:29Z');
+          assert.ok(item.size === 7_497_076);
           assert.equal(
             item.url,
             'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-win32-x64.tar.gz'
@@ -109,9 +109,9 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           matchFile3 = true;
         }
       }
-      assert(matchFile1);
-      assert(matchFile2);
-      assert(matchFile3);
+      assert.ok(matchFile1);
+      assert.ok(matchFile2);
+      assert.ok(matchFile3);
     });
 
     it('should fetch protobuf', async () => {
@@ -127,30 +127,30 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         }
       );
       let result = await binary.fetch('/', 'protobuf');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir = false;
       for (const item of result.items) {
-        assert(item.isDir === true);
+        assert.ok(item.isDir === true);
         if (item.name === 'v28.2/') {
           matchDir = true;
         }
       }
-      assert(matchDir);
+      assert.ok(matchDir);
 
       result = await binary.fetch('/v28.2/', 'protobuf');
-      assert(result?.items.every(item => !/{.*}/.test(item.url)));
+      assert.ok(result?.items.every(item => !/{.*}/.test(item.url)));
 
       result = await binary.fetch('/v28.2/', 'protobuf');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       // console.log(JSON.stringify(result.items, null, 2));
       let matchFile1 = false;
       for (const item of result.items) {
-        assert(item.isDir === false);
+        assert.ok(item.isDir === false);
         if (item.name === 'protoc-28.2-linux-aarch_64.zip') {
-          assert(item.date === '2024-09-18T21:02:40Z');
-          assert(item.size === 3_218_760);
+          assert.ok(item.date === '2024-09-18T21:02:40Z');
+          assert.ok(item.size === 3_218_760);
           assert.equal(
             item.url,
             'https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-aarch_64.zip'
@@ -158,7 +158,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           matchFile1 = true;
         }
       }
-      assert(matchFile1);
+      assert.ok(matchFile1);
     });
   });
 });

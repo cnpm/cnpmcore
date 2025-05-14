@@ -18,7 +18,7 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
     hookManageService = await app.getEggObject(HookManageService);
     const userRepository = await app.getEggObject(UserRepository);
     const userEntity = await userRepository.findUserByName(user.name);
-    assert(userEntity);
+    assert.ok(userEntity);
     userId = userEntity.userId;
   });
 
@@ -36,19 +36,19 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
           secret: 'this is certainly very secret',
         })
         .expect(200);
-      assert(res.body);
-      assert(res.body.id);
-      assert(res.body.username === user.name);
-      assert(res.body.name === '@cnpmcore');
-      assert(res.body.endpoint === 'https://example.com/webhook');
-      assert(res.body.secret === 'this is certainly very secret');
-      assert(res.body.type === HookType.Scope);
-      assert(res.body.created);
-      assert(res.body.updated);
-      assert(res.body.delivered === false);
-      assert(res.body.last_delivery === null);
-      assert(res.body.response_code === 0);
-      assert(res.body.status === 'active');
+      assert.ok(res.body);
+      assert.ok(res.body.id);
+      assert.ok(res.body.username === user.name);
+      assert.ok(res.body.name === '@cnpmcore');
+      assert.ok(res.body.endpoint === 'https://example.com/webhook');
+      assert.ok(res.body.secret === 'this is certainly very secret');
+      assert.ok(res.body.type === HookType.Scope);
+      assert.ok(res.body.created);
+      assert.ok(res.body.updated);
+      assert.ok(res.body.delivered === false);
+      assert.ok(res.body.last_delivery === null);
+      assert.ok(res.body.response_code === 0);
+      assert.ok(res.body.status === 'active');
     });
   });
 
@@ -75,8 +75,8 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
           secret: 'new secret',
         })
         .expect(200);
-      assert(res.body.endpoint === 'https://new.com/webhook');
-      assert(res.body.secret === 'new secret');
+      assert.ok(res.body.endpoint === 'https://new.com/webhook');
+      assert.ok(res.body.secret === 'new secret');
     });
   });
 
@@ -99,7 +99,7 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
         .expect(200);
-      assert(res.body.deleted === true);
+      assert.ok(res.body.deleted === true);
     });
   });
 
@@ -121,7 +121,7 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
         .expect(200);
-      assert(res.body.objects.length === 1);
+      assert.ok(res.body.objects.length === 1);
     });
   });
 
@@ -144,19 +144,19 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
         .expect(200);
-      assert(res.body);
-      assert(res.body.id === hook.hookId);
-      assert(res.body.username === user.name);
-      assert(res.body.name === 'foo_package');
-      assert(res.body.endpoint === 'http://foo.com');
-      assert(res.body.secret === 'mock_secret');
-      assert(res.body.type === HookType.Package);
-      assert(res.body.created);
-      assert(res.body.updated);
-      assert(res.body.delivered === false);
-      assert(res.body.last_delivery === null);
-      assert(res.body.response_code === 0);
-      assert(res.body.status === 'active');
+      assert.ok(res.body);
+      assert.ok(res.body.id === hook.hookId);
+      assert.ok(res.body.username === user.name);
+      assert.ok(res.body.name === 'foo_package');
+      assert.ok(res.body.endpoint === 'http://foo.com');
+      assert.ok(res.body.secret === 'mock_secret');
+      assert.ok(res.body.type === HookType.Package);
+      assert.ok(res.body.created);
+      assert.ok(res.body.updated);
+      assert.ok(res.body.delivered === false);
+      assert.ok(res.body.last_delivery === null);
+      assert.ok(res.body.response_code === 0);
+      assert.ok(res.body.status === 'active');
     });
   });
 });

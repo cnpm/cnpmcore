@@ -38,7 +38,7 @@ describe('test/port/controller/ScopeController/index.test.ts', () => {
         })
         .expect(200);
 
-      assert(res.body.ok);
+      assert.ok(res.body.ok);
     });
 
     it('should 400', async () => {
@@ -52,7 +52,7 @@ describe('test/port/controller/ScopeController/index.test.ts', () => {
         })
         .expect(400);
 
-      assert(res.body.error === '[BAD_REQUEST] registry banana not found');
+      assert.ok(res.body.error === '[BAD_REQUEST] registry banana not found');
     });
 
     it('should 403', async () => {
@@ -65,7 +65,7 @@ describe('test/port/controller/ScopeController/index.test.ts', () => {
         })
         .expect(403);
 
-      assert(res.body.error === '[FORBIDDEN] Not allow to access');
+      assert.ok(res.body.error === '[FORBIDDEN] Not allow to access');
     });
   });
 
@@ -94,7 +94,7 @@ describe('test/port/controller/ScopeController/index.test.ts', () => {
         .delete(`/-/scope/${scope.scopeId}`)
         .set('authorization', adminUser.authorization)
         .expect(200);
-      assert(res.body.ok);
+      assert.ok(res.body.ok);
     });
   });
 });

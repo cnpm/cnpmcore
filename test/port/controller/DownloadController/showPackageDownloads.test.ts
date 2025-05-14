@@ -125,7 +125,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         .expect('content-type', 'application/json; charset=utf-8');
       let data = res.body;
       // console.log(data);
-      assert(data.downloads.length > 0);
+      assert.ok(data.downloads.length > 0);
       assert.equal(data.downloads[0].downloads, 4);
       assert.equal(data.versions['1.0.0'][0].downloads, 3);
 
@@ -136,9 +136,9 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         .expect('content-type', 'application/json; charset=utf-8');
       data = res.body;
       // console.log(data);
-      assert(data.downloads.length > 0);
-      assert(data.downloads[0].downloads === 1);
-      assert(data.versions['1.0.0'][0].downloads === 1);
+      assert.ok(data.downloads.length > 0);
+      assert.ok(data.downloads[0].downloads === 1);
+      assert.ok(data.versions['1.0.0'][0].downloads === 1);
 
       // __total__
       res = await app
@@ -148,9 +148,9 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         .expect('content-type', 'application/json; charset=utf-8');
       data = res.body;
       // console.log(data);
-      assert(data.downloads.length > 0);
+      assert.ok(data.downloads.length > 0);
       assert.equal(data.downloads[0].downloads, 6);
-      assert(!data.versions);
+      assert.ok(!data.versions);
 
       // scope
       res = await app
@@ -160,9 +160,9 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         .expect('content-type', 'application/json; charset=utf-8');
       data = res.body;
       // console.log(data);
-      assert(data.downloads.length > 0);
+      assert.ok(data.downloads.length > 0);
       assert.equal(data.downloads[0].downloads, 4);
-      assert(!data.versions);
+      assert.ok(!data.versions);
 
       res = await app
         .httpRequest()
@@ -171,9 +171,9 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         .expect('content-type', 'application/json; charset=utf-8');
       data = res.body;
       // console.log(data);
-      assert(data.downloads.length > 0);
+      assert.ok(data.downloads.length > 0);
       assert.equal(data.downloads[0].downloads, 1);
-      assert(!data.versions);
+      assert.ok(!data.versions);
     });
 
     it('should get package download infos auto handle start and end position', async () => {
@@ -209,8 +209,8 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
       // console.log(data);
-      assert(data.downloads.length > 0);
-      assert(data.versions);
+      assert.ok(data.downloads.length > 0);
+      assert.ok(data.versions);
     });
 
     it('should get package download infos with empty data', async () => {

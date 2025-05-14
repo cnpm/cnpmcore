@@ -23,26 +23,26 @@ describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
         }
       );
       const result = await binary.fetch('/');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir1 = false;
       let matchDir2 = false;
       for (const item of result.items) {
         if (item.name === 'v5.3.1/') {
-          assert(item.date === '2021-12-14T13:12:31.587Z');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '2021-12-14T13:12:31.587Z');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir1 = true;
         }
         if (item.name === 'v5.0.0/') {
-          assert(item.date === '2020-09-25T13:05:17.722Z');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '2020-09-25T13:05:17.722Z');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir2 = true;
         }
       }
-      assert(matchDir1);
-      assert(matchDir2);
+      assert.ok(matchDir1);
+      assert.ok(matchDir2);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -58,11 +58,11 @@ describe('test/common/adapter/binary/SqlcipherBinary.test.ts', () => {
         }
       );
       const result = await binary.fetch('/v5.3.1/');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       for (const item of result.items) {
-        assert(item.isDir === false);
-        assert(item.name.endsWith('.tar.gz'));
+        assert.ok(item.isDir === false);
+        assert.ok(item.name.endsWith('.tar.gz'));
         assert.deepEqual(item.ignoreDownloadStatuses, [404, 403]);
       }
       app.mockAgent().assertNoPendingInterceptors();

@@ -33,7 +33,7 @@ describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () =
         },
       });
       const since = await cnpmcoreChangesStream.getInitialSince(registry);
-      assert(since === '9517');
+      assert.ok(since === '9517');
     });
 
     it('should throw error', async () => {
@@ -85,7 +85,7 @@ describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () =
         res.push(change as ChangesStreamChange);
       }
 
-      assert(res.length === 1);
+      assert.ok(res.length === 1);
     });
   });
 });

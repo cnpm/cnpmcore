@@ -9,14 +9,14 @@ describe('test/core/util/EntityUtil.test.ts', () => {
         pageIndex: 1,
         pageSize: 10,
       });
-      assert(res.limit === 10);
-      assert(res.offset === 10);
+      assert.ok(res.limit === 10);
+      assert.ok(res.offset === 10);
     });
 
     it('should work for default value', async () => {
       const res = EntityUtil.convertPageOptionsToLimitOption({});
-      assert(res.limit === 20);
-      assert(res.offset === 0);
+      assert.ok(res.limit === 20);
+      assert.ok(res.offset === 0);
     });
 
     it('should validate params', async () => {

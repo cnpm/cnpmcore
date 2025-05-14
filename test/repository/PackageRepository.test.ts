@@ -45,8 +45,8 @@ describe('test/repository/PackageRepository.test.ts', () => {
       );
       await setTimeout(1000);
       const res = await packageRepository.queryTotal();
-      assert(res.packageCount >= packageCount);
-      assert(res.packageVersionCount > packageVersionCount);
+      assert.ok(res.packageCount >= packageCount);
+      assert.ok(res.packageVersionCount > packageVersionCount);
     });
   });
 });

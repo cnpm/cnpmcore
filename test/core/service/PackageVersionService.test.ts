@@ -119,7 +119,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
             npa('mock_package@*'),
             true
           );
-          assert(manifest);
+          assert.ok(manifest);
           assert.equal(manifest.version, '1.1.0');
         });
 
@@ -140,7 +140,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
             npa('mock_package@*'),
             true
           );
-          assert(manifest);
+          assert.ok(manifest);
           assert.equal(manifest.version, '1.1.0');
         });
 
@@ -150,7 +150,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
             npa('mock_package@^*||~x'),
             true
           );
-          assert(manifest);
+          assert.ok(manifest);
           assert.equal(manifest.version, '1.1.0');
         });
       });
@@ -173,7 +173,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           distRepository,
           'findPackageVersionManifest',
           async (_: string, version: string) => {
-            assert(version === '0.0.9');
+            assert.ok(version === '0.0.9');
             return {
               name: 'mock_package',
               version: '0.0.9',
@@ -198,7 +198,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           npa('mock_package@latest'),
           true
         );
-        assert(manifest);
+        assert.ok(manifest);
         assert.equal(
           manifest.deprecated,
           '[WARNING] Use 0.0.9 instead of 1.0.0, reason: mock bug version'
@@ -281,7 +281,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           distRepository,
           'findPackageVersionManifest',
           async (_: string, version: string) => {
-            assert(version === '0.0.9');
+            assert.ok(version === '0.0.9');
             return {
               name: 'mock_package',
               version: '0.0.9',
@@ -349,8 +349,8 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
             npa('mock_package@^1.0.0'),
             true
           );
-          assert(manifest);
-          assert(manifest.version === '1.0.0');
+          assert.ok(manifest);
+          assert.ok(manifest.version === '1.0.0');
         });
       });
 
@@ -361,8 +361,8 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
             npa('mock_package@^2.0.0'),
             true
           );
-          assert(manifest);
-          assert(manifest.version === '2.2.0');
+          assert.ok(manifest);
+          assert.ok(manifest.version === '2.2.0');
         });
       });
     });
@@ -511,7 +511,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
       const version = await packageVersionService.getVersion(
         npa('mock_package@<18.0.0')
       );
-      assert(version, '17.0.18');
+      assert.ok(version, '17.0.18');
     });
   });
 });

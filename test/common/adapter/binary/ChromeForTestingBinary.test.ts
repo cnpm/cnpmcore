@@ -41,12 +41,12 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
       assert.equal(result?.items[2].date, '2023-09-16T00:21:21.964Z');
       assert.equal(result?.items[2].isDir, false);
       const latestVersion = result.items[result.items.length - 1].name;
-      assert(latestVersion);
+      assert.ok(latestVersion);
       assert.equal(latestVersion, '119.0.6008.0/');
 
       const platformRes = await binary.fetch(`/${latestVersion}`);
       const platforms = platformRes?.items.map(item => item.name);
-      assert(platforms);
+      assert.ok(platforms);
       assert.deepEqual(platforms, [
         'linux64/',
         'mac-arm64/',
@@ -59,18 +59,18 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
         const versionRes = await binary.fetch(`/${latestVersion}${platform}`);
         const versions = versionRes?.items.map(item => item.name);
         assert.equal(versions?.length, 3);
-        assert(versionRes?.items[0].name);
+        assert.ok(versionRes?.items[0].name);
         assert.equal(versionRes?.items[0].isDir, false);
         assert.match(versionRes?.items[0].name, /^chrome-/);
         assert.match(versionRes?.items[1].name, /^chromedriver-/);
         assert.match(versionRes?.items[2].name, /^chrome-headless-shell-/);
       }
       await binary.finishFetch(true);
-      assert(ChromeForTestingBinary.lastTimestamp);
+      assert.ok(ChromeForTestingBinary.lastTimestamp);
     });
 
     it('should return empty when timestamp is not changed', async () => {
-      assert(ChromeForTestingBinary.lastTimestamp);
+      assert.ok(ChromeForTestingBinary.lastTimestamp);
       await binary.initFetch();
       app.mockHttpclient(
         'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json',

@@ -15,7 +15,7 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
         .get(`/-/package/${pkg.name}/collaborators`)
         .expect(200);
 
-      assert(res.body['banana-owner'] === 'write');
+      assert.ok(res.body['banana-owner'] === 'write');
     });
 
     it('should 403 when pkg not exists', async () => {
@@ -66,8 +66,8 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
         .get(`/-/package/${pkg.name}/collaborators`)
         .expect(200);
 
-      assert(res.body['banana-owner'] === 'write');
-      assert(res.body['banana-maintainer'] === 'write');
+      assert.ok(res.body['banana-owner'] === 'write');
+      assert.ok(res.body['banana-maintainer'] === 'write');
     });
   });
 });

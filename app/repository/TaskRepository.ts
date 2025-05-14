@@ -56,7 +56,7 @@ export class TaskRepository extends AbstractRepository {
     task: TaskEntity,
     condition: TaskUpdateCondition
   ): Promise<boolean> {
-    assert(task.id, 'task have no save');
+    assert.ok(task.id, 'task have no save');
     const changes = ModelConvertor.convertEntityToChanges(task, this.Task);
     const updateRows = await this.Task.update(
       {
