@@ -232,7 +232,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       app.mockLog();
       mock(app.config.cnpmcore, 'enableChangesStream', true);
       app.mockHttpclient(
-        'https://replicate.npmjs.com/_changes?since=9527',
+        'https://replicate.npmjs.com/registry/_changes?since=9527',
         'GET',
         () => {
           return {
