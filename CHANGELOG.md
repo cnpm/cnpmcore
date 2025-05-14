@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.5.3](https://github.com/cnpm/cnpmcore/compare/v4.5.2...v4.5.3) (2025-05-14)
+
+### Bug Fixes
+
+- use new changestream endpoint ([#800](https://github.com/cnpm/cnpmcore/issues/800)) ([2d8bad3](https://github.com/cnpm/cnpmcore/commit/2d8bad3ca23df603e55f2e2b9f7802e0f653fbe0))
+
 ## [4.5.2](https://github.com/cnpm/cnpmcore/compare/v4.5.1...v4.5.2) (2025-04-17)
 
 ### Bug Fixes
