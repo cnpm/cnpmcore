@@ -5,9 +5,9 @@ describe('test/port/controller/HomeController/ping.test.ts', () => {
   describe('[GET /-/ping] ping()', () => {
     it('should 200', async () => {
       const res = await app.httpRequest().get('/-/ping').expect(200);
-      assert(res.body.pong === true);
+      assert.ok(res.body.pong === true);
       // console.log(res.body, res.headers['x-readtime']);
-      assert(res.headers['x-frame-options'] === 'SAMEORIGIN');
+      assert.ok(res.headers['x-frame-options'] === 'SAMEORIGIN');
     });
   });
 });

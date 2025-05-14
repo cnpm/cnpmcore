@@ -12,7 +12,10 @@ import { TaskType } from '../../app/common/enum/Task.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CheckProxyCacheUpdateWorkerPath = path.join(__dirname, '../../app/port/schedule/CheckProxyCacheUpdateWorker.ts');
+const CheckProxyCacheUpdateWorkerPath = path.join(
+  __dirname,
+  '../../app/port/schedule/CheckProxyCacheUpdateWorker.ts'
+);
 
 describe('test/schedule/CheckProxyCacheUpdateWorker.test.ts', () => {
   it('should create update task by repo', async () => {
@@ -20,14 +23,15 @@ describe('test/schedule/CheckProxyCacheUpdateWorker.test.ts', () => {
     mock(app.config.cnpmcore, 'redirectNotFound', false);
     const proxyCacheRepository = await app.getEggObject(ProxyCacheRepository);
     const taskService = await app.getEggObject(TaskService);
-    await proxyCacheRepository.saveProxyCache(ProxyCache.create({
-      fullname: 'foo-bar',
-      fileType: DIST_NAMES.FULL_MANIFESTS,
-    }));
+    await proxyCacheRepository.saveProxyCache(
+      ProxyCache.create({
+        fullname: 'foo-bar',
+        fileType: DIST_NAMES.FULL_MANIFESTS,
+      })
+    );
     await app.runSchedule(CheckProxyCacheUpdateWorkerPath);
     const task = await taskService.findExecuteTask(TaskType.UpdateProxyCache);
-    assert(task);
+    assert.ok(task);
     assert.equal(task.targetName, `foo-bar/${DIST_NAMES.FULL_MANIFESTS}`);
   });
-
 });

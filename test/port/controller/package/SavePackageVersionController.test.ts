@@ -59,16 +59,16 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       for (const manifest of [fullManifest, abbreviatedManifest]) {
         for (const v of Object.keys(manifest.versions)) {
           const version = manifest.versions[v];
-          assert(version);
+          assert.ok(version);
           assert.equal(version._source_registry_name, 'self');
-          assert(version.publish_time);
+          assert.ok(version.publish_time);
         }
       }
 
       for (const v of Object.keys(fullManifest.versions)) {
         const version = fullManifest.versions[v];
-        assert(version);
-        assert(version._cnpmcore_publish_time);
+        assert.ok(version);
+        assert.ok(version._cnpmcore_publish_time);
         assert.deepEqual(version._npmUser, {
           name: user.name,
           email: user.email,
@@ -102,7 +102,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       );
       const selfRegistry = await registryManagerService.ensureSelfRegistry();
 
-      assert(pkgEntity);
+      assert.ok(pkgEntity);
       assert.equal(pkgEntity.registryId, selfRegistry.registryId);
     });
 
@@ -138,9 +138,9 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
             .send(pkg);
         })(),
       ]);
-      assert(errorRes.error, '[FORBIDDEN] mock error');
+      assert.ok(errorRes.error, '[FORBIDDEN] mock error');
       assert.equal(conflictRes.status, 409);
-      assert(
+      assert.ok(
         conflictRes.error,
         '[CONFLICT] Unable to create the publication lock, please try again later.'
       );
@@ -153,7 +153,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('authorization', user.authorization)
         .set('user-agent', user.ua)
         .send(pkg);
-      assert(nextErrorRes.error, '[FORBIDDEN] mock error');
+      assert.ok(nextErrorRes.error, '[FORBIDDEN] mock error');
     });
 
     it('should verify tgz and manifest', async () => {
@@ -228,10 +228,10 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.match(res.body.rev, /^\d+-\w{24}$/);
       res = await app.httpRequest().get(`/${pkg.name}/0.0.0`).expect(200);
       assert.equal(res.body.version, '0.0.0');
-      assert(res.body.description === 'init description');
+      assert.ok(res.body.description === 'init description');
       res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
-      assert(res.body['dist-tags'].latest === '0.0.0');
-      assert(res.body.description === 'init description');
+      assert.ok(res.body['dist-tags'].latest === '0.0.0');
+      assert.ok(res.body.description === 'init description');
 
       // add other version
       const pkg2 = await TestUtil.getFullPackage({ name, version: '1.0.0' });
@@ -261,11 +261,11 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
       res = await app.httpRequest().get(`/${pkg.name}/2.0.0`).expect(200);
-      assert(res.body.version === '2.0.0');
-      assert(res.body.description === '2.0.0 description');
+      assert.ok(res.body.version === '2.0.0');
+      assert.ok(res.body.description === '2.0.0 description');
       res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
-      assert(res.body['dist-tags'].latest === '2.0.0');
-      assert(res.body.description === '2.0.0 description');
+      assert.ok(res.body['dist-tags'].latest === '2.0.0');
+      assert.ok(res.body.description === '2.0.0 description');
     });
 
     it('should 403 on not allow scoped package', async () => {
@@ -307,13 +307,13 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
 
-      assert(res);
+      assert.ok(res);
       const packageRepository = await app.getEggObject(PackageRepository);
       let pkgEntity = await packageRepository.findPackage(
         '@cnpm',
         'publish-package-test'
       );
-      assert(pkgEntity);
+      assert.ok(pkgEntity);
       pkgEntity.registryId = '';
       await packageRepository.savePackage(pkgEntity);
 
@@ -333,7 +333,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         '@cnpm',
         'publish-package-test'
       );
-      assert(pkgEntity?.registryId);
+      assert.ok(pkgEntity?.registryId);
 
       res = await app.httpRequest().get(`/${pkg.name}`);
       assert.equal(res.body._source_registry_name, 'self');
@@ -342,7 +342,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     it('should publish on user custom scopes', async () => {
       // add user.scopes
       const user = await userRepository.findUserByName(publisher.name);
-      assert(user);
+      assert.ok(user);
       user.scopes = ['@somescope'];
       await userRepository.saveUser(user);
       const name = '@somescope/publish-package-test';
@@ -361,7 +361,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     it('should publish 102 chars length version', async () => {
       // https://github.com/cnpm/cnpmcore/issues/36
       const user = await userRepository.findUserByName(publisher.name);
-      assert(user);
+      assert.ok(user);
       user.scopes = ['@inrupt'];
       await userRepository.saveUser(user);
       const name = '@inrupt/solid-client';
@@ -385,7 +385,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
     it('should publish 100+ chars length name', async () => {
       // https://github.com/cnpm/cnpmcore/issues/36
       const user = await userRepository.findUserByName(publisher.name);
-      assert(user);
+      assert.ok(user);
       user.scopes = ['@inrupt'];
       await userRepository.saveUser(user);
       const name =
@@ -652,7 +652,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.equal(res.body.deprecated, deprecated);
       res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
       assert.equal(res.body.versions['0.0.0'].deprecated, deprecated);
-      assert(!res.body.versions['1.0.0']);
+      assert.ok(!res.body.versions['1.0.0']);
 
       // remove deprecated message
       res = await app
@@ -681,7 +681,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.equal(res.body.deprecated, undefined);
       res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
       assert.equal(res.body.versions['0.0.0'].deprecated, undefined);
-      assert(!res.body.versions['1.0.0']);
+      assert.ok(!res.body.versions['1.0.0']);
     });
 
     it('should add new version without dist success', async () => {
@@ -689,7 +689,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         name: '@cnpm/without-dist',
         version: '0.0.0',
       });
-      assert(pkg.versions);
+      assert.ok(pkg.versions);
       const version = Object.keys(pkg.versions)[0];
       pkg.versions[version].dist = undefined;
       let res = await app
@@ -757,7 +757,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         name: '@cnpm/with-readme-object',
         version: '0.0.0',
       });
-      assert(pkg.versions);
+      assert.ok(pkg.versions);
       const version = Object.keys(pkg.versions)[0];
       Reflect.set(pkg.versions[version], 'readme', { foo: 'bar' });
       let res = await app
@@ -883,8 +883,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkg);
-      assert(res.status === 422);
-      assert(
+      assert.ok(res.status === 422);
+      assert.ok(
         res.body.error ===
           '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain special characters ("~\'!()*")'
       );
@@ -898,8 +898,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkg);
-      assert(res.status === 422);
-      assert(
+      assert.ok(res.status === 422);
+      assert.ok(
         res.body.error ===
           '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can only contain URL-friendly characters'
       );
@@ -913,8 +913,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkg);
-      assert(res.status === 422);
-      assert(
+      assert.ok(res.status === 422);
+      assert.ok(
         res.body.error ===
           '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters, name can no longer contain capital letters'
       );
@@ -929,7 +929,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         name: '@cnpm/LegacyName',
       });
       const user = await userRepository.findUserByName(publisher.name);
-      assert(user);
+      assert.ok(user);
       await packageManagerService.publish(
         {
           scope: '@cnpm',
@@ -953,7 +953,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkg);
-      assert(res.status === 201);
+      assert.ok(res.status === 201);
     });
 
     it('should 422 when attachment data format invalid', async () => {
@@ -1120,7 +1120,9 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           _attachments: {},
         })
         .expect(422);
-      assert(res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty');
+      assert.ok(
+        res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty'
+      );
 
       res = await app
         .httpRequest()
@@ -1137,7 +1139,9 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           },
         })
         .expect(422);
-      assert(res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty');
+      assert.ok(
+        res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty'
+      );
 
       res = await app
         .httpRequest()
@@ -1155,7 +1159,9 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           _attachments: null,
         })
         .expect(422);
-      assert(res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty');
+      assert.ok(
+        res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty'
+      );
     });
 
     it('should 422 versions is empty', async () => {
@@ -1232,7 +1238,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           },
         })
         .expect(422);
-      assert(res.body.error === '[UNPROCESSABLE_ENTITY] dist-tags is empty');
+      assert.ok(res.body.error === '[UNPROCESSABLE_ENTITY] dist-tags is empty');
     });
 
     it('should 402 when star / unstar request', async () => {
@@ -1243,8 +1249,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .set('npm-command', 'star')
         .send({});
-      assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] npm star is not allowed');
+      assert.ok(res.status === 403);
+      assert.ok(res.body.error === '[FORBIDDEN] npm star is not allowed');
 
       res = await app
         .httpRequest()
@@ -1253,8 +1259,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .set('npm-command', 'unstar')
         .send({});
-      assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] npm unstar is not allowed');
+      assert.ok(res.status === 403);
+      assert.ok(res.body.error === '[FORBIDDEN] npm unstar is not allowed');
 
       res = await app
         .httpRequest()
@@ -1263,8 +1269,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .set('referer', 'star [REDACTED]')
         .send({});
-      assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] npm star is not allowed');
+      assert.ok(res.status === 403);
+      assert.ok(res.body.error === '[FORBIDDEN] npm star is not allowed');
 
       res = await app
         .httpRequest()
@@ -1273,8 +1279,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .set('referer', 'unstar [REDACTED]')
         .send({});
-      assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] npm unstar is not allowed');
+      assert.ok(res.status === 403);
+      assert.ok(res.body.error === '[FORBIDDEN] npm unstar is not allowed');
     });
 
     describe('granular token', async () => {
@@ -1286,7 +1292,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         userService = await app.getEggObject(UserService);
 
         user = await userService.findUserByName(publisher.name);
-        assert(user);
+        assert.ok(user);
         token = await userService.createToken(user.userId, {
           name: publisher.name,
           type: TokenType.granular,
@@ -1315,7 +1321,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           .set('user-agent', publisher.ua)
           .send(pkg);
 
-        assert(res.body.error, 'Token expired');
+        assert.ok(res.body.error, 'Token expired');
         assert.equal(res.status, 401);
       });
 
@@ -1337,7 +1343,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       });
 
       it('should 200 when token has no limit', async () => {
-        assert(user);
+        assert.ok(user);
         token = await userService.createToken(user.userId, {
           name: 'new-token',
           type: TokenType.granular,
@@ -1357,7 +1363,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       });
 
       it('should 200 when allowedScopes', async () => {
-        assert(user);
+        assert.ok(user);
         token = await userService.createToken(user.userId, {
           name: 'new-token',
           type: TokenType.granular,
@@ -1378,7 +1384,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       });
 
       it('should 200 when allowedPackages', async () => {
-        assert(user);
+        assert.ok(user);
         await TestUtil.createPackage(
           { name: '@cnpm/other_new_pkg' },
           { name: user.name }
@@ -1404,7 +1410,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
       it('should 200 add default latest tag', async () => {
         const name = '@cnpm/default_latest_tag';
-        assert(user);
+        assert.ok(user);
         token = await userService.createToken(user.userId, {
           name: 'new-token',
           type: TokenType.granular,

@@ -202,20 +202,20 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
 
         const userRepository = await app.getEggObject(UserRepository);
         const user = await userRepository.findUserByName('banana');
-        assert(user);
+        assert.ok(user);
         const tokens = await userRepository.listTokens(user.userId);
 
         let granularToken = tokens.find(
           token => token.type === TokenType.granular
         );
 
-        assert(granularToken);
-        assert(granularToken.lastUsedAt === null);
+        assert.ok(granularToken);
+        assert.ok(granularToken.lastUsedAt === null);
         assert.equal(granularToken.name, 'apple');
         assert.deepEqual(granularToken.allowedScopes, ['@banana']);
         const expiredDate = dayjs(granularToken.expiredAt);
-        assert(expiredDate.isAfter(dayjs().add(29, 'days')));
-        assert(expiredDate.isBefore(dayjs().add(30, 'days')));
+        assert.ok(expiredDate.isAfter(dayjs().add(29, 'days')));
+        assert.ok(expiredDate.isBefore(dayjs().add(30, 'days')));
 
         // should ignore granularToken when use v1 query
         res = await app
@@ -223,8 +223,8 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
           .get('/-/npm/v1/tokens')
           .set('authorization', 'Bearer ' + res.body.token);
 
-        assert(res.body.objects.length > 0);
-        assert(
+        assert.ok(res.body.objects.length > 0);
+        assert.ok(
           res.body.objects.every(
             (token: Token) => token.type !== TokenType.granular
           )
@@ -236,8 +236,8 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         granularToken = res.body.objects.find(
           (token: Token) => token.type === TokenType.granular
         );
-        assert(granularToken?.lastUsedAt);
-        assert(dayjs(granularToken?.lastUsedAt).isAfter(start));
+        assert.ok(granularToken?.lastUsedAt);
+        assert.ok(dayjs(granularToken?.lastUsedAt).isAfter(start));
       });
 
       it('should check for uniq name', async () => {

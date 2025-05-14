@@ -37,7 +37,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .expect('content-type', 'application/json; charset=utf-8');
       assert.equal(res.body.name, 'foo');
       assert.match(res.body.dist.tarball, /^http:\/\//);
-      assert(res.body.dist.tarball.endsWith('/foo/-/foo-1.0.0.tgz'));
+      assert.ok(res.body.dist.tarball.endsWith('/foo/-/foo-1.0.0.tgz'));
       assert.equal(
         res.body.dist.shasum,
         'fa475605f88bab9b1127833633ca3ae0a477224c'
@@ -131,15 +131,15 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
 
-      assert(
+      assert.ok(
         new URL(res.body.dist.tarball).pathname === '/foo/-/foo-1.0.0.tgz'
       );
-      assert(
+      assert.ok(
         res.body.deprecated ===
           '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason'
       );
       // don't change version
-      assert(res.body.version === '2.0.0');
+      assert.ok(res.body.version === '2.0.0');
 
       // same version not fix bug version
       res = await app
@@ -148,11 +148,11 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
 
-      assert(
+      assert.ok(
         new URL(res.body.dist.tarball).pathname === '/foo/-/foo-3.0.0.tgz'
       );
-      assert(!res.body.deprecated);
-      assert(res.body.version === '3.0.0');
+      assert.ok(!res.body.deprecated);
+      assert.ok(res.body.version === '3.0.0');
 
       // sync worker request should not effect
       res = await app
@@ -160,11 +160,11 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .get(`/${pkgV1.name}/2.0.0?cache=0`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
-      assert(
+      assert.ok(
         new URL(res.body.dist.tarball).pathname === '/foo/-/foo-2.0.0.tgz'
       );
-      assert(!res.body.deprecated);
-      assert(res.body.version === '2.0.0');
+      assert.ok(!res.body.deprecated);
+      assert.ok(res.body.version === '2.0.0');
     });
 
     it('should 422 with invalid spec', async () => {
@@ -173,7 +173,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .get('/foo/@invalid-spec')
         .expect(422)
         .expect('content-type', 'application/json; charset=utf-8');
-      assert(res.error, '[INVALID_PARAM] must match format "semver-spec"');
+      assert.ok(res.error, '[INVALID_PARAM] must match format "semver-spec"');
     });
 
     it('should work with scoped package', async () => {
@@ -197,7 +197,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .get('/@cnpm/foo/1.0.0')
         .expect(200)
         .expect(res => {
-          assert(res.body);
+          assert.ok(res.body);
         });
     });
 
@@ -215,17 +215,17 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .send(pkg);
-      assert(res.status === 201);
+      assert.ok(res.status === 201);
       res = await app.httpRequest().get(`/${pkg.name}/latest`);
-      assert(res.status === 200);
-      assert(res.body.version === '1.0.0');
-      assert(!res.headers['cache-control']);
-      assert(res.headers.vary === 'Origin');
+      assert.ok(res.status === 200);
+      assert.ok(res.body.version === '1.0.0');
+      assert.ok(!res.headers['cache-control']);
+      assert.ok(res.headers.vary === 'Origin');
 
       mock(app.config.cnpmcore, 'enableCDN', true);
       res = await app.httpRequest().get(`/${pkg.name}/latest`);
-      assert(res.status === 200);
-      assert(res.body.version === '1.0.0');
+      assert.ok(res.status === 200);
+      assert.ok(res.body.version === '1.0.0');
       assert.equal(res.headers['cache-control'], 'public, max-age=300');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
     });
@@ -270,7 +270,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       // 404 when tag not exists
       res = await app.httpRequest().get(`/${pkg.name}/beta-not-exists`);
       assert.equal(res.status, 404);
-      assert(!res.headers.etag);
+      assert.ok(!res.headers.etag);
       assert.equal(
         res.body.error,
         `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`
@@ -297,7 +297,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .httpRequest()
         .get(`/${pkg.name}/1.0.40000404`)
         .expect(404);
-      assert(!res.headers.etag);
+      assert.ok(!res.headers.etag);
       assert.equal(
         res.body.error,
         `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`
@@ -309,8 +309,8 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .httpRequest()
         .get(`/${pkg.name}/1.0.40000404`)
         .expect(404);
-      assert(!res.headers.etag);
-      assert(
+      assert.ok(!res.headers.etag);
+      assert.ok(
         res.body.error === `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`
       );
     });
@@ -320,7 +320,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .httpRequest()
         .get('/@cnpm/foonot-exists/1.0.40000404')
         .expect(404);
-      assert(!res.headers.etag);
+      assert.ok(!res.headers.etag);
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
 
@@ -330,7 +330,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .httpRequest()
         .get('/foonot-not-exists/1.0.40000404')
         .expect(404);
-      assert(res.body.error === '[NOT_FOUND] foonot-not-exists not found');
+      assert.ok(res.body.error === '[NOT_FOUND] foonot-not-exists not found');
 
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       await TestUtil.createPackage({ name: 'foo-exists', isPrivate: false });
@@ -365,9 +365,9 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
     it('should redirect public scope package to source registry when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
       let res = await app.httpRequest().get('/@egg/foonot-exists/1.0.40000404');
-      assert(res.status === 302);
-      assert(!res.headers.etag);
-      assert(
+      assert.ok(res.status === 302);
+      assert.ok(!res.headers.etag);
+      assert.ok(
         res.headers.location ===
           'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404'
       );
@@ -375,9 +375,9 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       res = await app
         .httpRequest()
         .get('/@egg/foonot-exists/1.0.40000404?t=123');
-      assert(res.status === 302);
-      assert(!res.headers.etag);
-      assert(
+      assert.ok(res.status === 302);
+      assert.ok(!res.headers.etag);
+      assert.ok(
         res.headers.location ===
           'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404?t=123'
       );
@@ -407,7 +407,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
     it('should show _source_registry_name in version manifest', async () => {
       await TestUtil.createPackage({ name: '@cnpm/foo', version: '1.0.0' });
       const res = await app.httpRequest().get('/@cnpm/foo/1.0.0').expect(200);
-      assert(res.body._source_registry_name === 'self');
+      assert.ok(res.body._source_registry_name === 'self');
     });
 
     it('should show _source_registry_name in version manifest for abbreviated', async () => {
@@ -417,7 +417,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .get('/@cnpm/foo/1.0.0')
         .set('accept', 'application/vnd.npm.install-v1+json')
         .expect(200);
-      assert(res.body._source_registry_name === 'self');
+      assert.ok(res.body._source_registry_name === 'self');
     });
 
     it('should read package version manifest from source in proxy mode', async () => {
@@ -435,8 +435,8 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .get('/foobar/1.0.0')
         .set('user-agent', publisher.ua + ' node/16.0.0')
         .set('Accept', 'application/vnd.npm.install-v1+json');
-      assert(res.status === 200);
-      assert(res.body.dist.tarball.includes(app.config.cnpmcore.registry));
+      assert.ok(res.status === 200);
+      assert.ok(res.body.dist.tarball.includes(app.config.cnpmcore.registry));
     });
   });
 });

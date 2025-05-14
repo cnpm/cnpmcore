@@ -90,7 +90,7 @@ describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
         // 62080870
         // 36904024
         const stream = npmChangesStream.fetchChanges(registry, lastSeq);
-        assert(stream);
+        assert.ok(stream);
         let hasMore = false;
         try {
           for await (const change of stream) {

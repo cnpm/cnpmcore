@@ -56,6 +56,6 @@ describe('test/core/service/HookManageService/getHookByOwnerId.test.ts', () => {
       hook.hookId,
       'mock_owner_id'
     );
-    assert(getHook);
+    assert.ok(getHook);
   });
 });

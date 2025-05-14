@@ -21,7 +21,7 @@ describe('test/core/service/ScopeManagerService/index.test.ts', () => {
   describe('ScopeManagerService', () => {
     it('query should work', async () => {
       const queryRes = await scopeManagerService.listScopes({});
-      assert(queryRes.data[0].name === 'custom');
+      assert.ok(queryRes.data[0].name === 'custom');
     });
 
     it('query after create work', async () => {
@@ -33,8 +33,8 @@ describe('test/core/service/ScopeManagerService/index.test.ts', () => {
 
       const queryRes = await scopeManagerService.listScopes({});
       const [_, otherScope] = queryRes.data;
-      assert(_);
-      assert(otherScope.name === 'custom2');
+      assert.ok(_);
+      assert.ok(otherScope.name === 'custom2');
     });
   });
 });

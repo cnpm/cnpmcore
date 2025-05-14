@@ -18,38 +18,38 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
   describe('findExecuteTask()', () => {
     it('should get a task to execute', async () => {
       let task = await packageSyncerService.findExecuteTask();
-      assert(!task);
+      assert.ok(!task);
 
       await packageSyncerService.createTask('foo');
       await packageSyncerService.createTask('bar');
       await packageSyncerService.createTask('ok');
       const task1 = await packageSyncerService.findExecuteTask();
-      assert(task1);
-      assert(task1.state === 'processing');
-      assert(task1.updatedAt > task1.createdAt);
-      assert(task1.attempts === 1);
+      assert.ok(task1);
+      assert.ok(task1.state === 'processing');
+      assert.ok(task1.updatedAt > task1.createdAt);
+      assert.ok(task1.attempts === 1);
       // console.log(task1, task1.updatedAt.getTime() - task1.createdAt.getTime());
       const task2 = await packageSyncerService.findExecuteTask();
-      assert(task2);
-      assert(task2.state === 'processing');
-      assert(task2.updatedAt > task2.createdAt);
-      assert(task1.attempts === 1);
+      assert.ok(task2);
+      assert.ok(task2.state === 'processing');
+      assert.ok(task2.updatedAt > task2.createdAt);
+      assert.ok(task1.attempts === 1);
       // console.log(task2, task2.updatedAt.getTime() - task2.createdAt.getTime());
       const task3 = await packageSyncerService.findExecuteTask();
-      assert(task3);
-      assert(task3.state === 'processing');
-      assert(task3.updatedAt > task3.createdAt);
-      assert(task1.attempts === 1);
+      assert.ok(task3);
+      assert.ok(task3.state === 'processing');
+      assert.ok(task3.updatedAt > task3.createdAt);
+      assert.ok(task1.attempts === 1);
       // console.log(task3, task3.updatedAt.getTime() - task3.createdAt.getTime());
-      assert(task3.id);
-      assert(task2.id);
-      assert(task1.id);
-      assert(task3.id > task2.id);
-      assert(task2.id > task1.id);
+      assert.ok(task3.id);
+      assert.ok(task2.id);
+      assert.ok(task1.id);
+      assert.ok(task3.id > task2.id);
+      assert.ok(task2.id > task1.id);
 
       // again will empty
       task = await packageSyncerService.findExecuteTask();
-      assert(!task);
+      assert.ok(!task);
 
       // mock timeout
       await TaskModel.update(
@@ -64,16 +64,16 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       app.expectLog('[TaskService.retryExecuteTimeoutTasks:retry]');
 
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
-      assert(task.id === task3.id);
-      assert(task.updatedAt > task3.updatedAt);
-      assert(task.attempts === 2);
-      assert(task.logPath.endsWith('-1.log'));
-      assert(task.logStorePosition === '');
+      assert.ok(task);
+      assert.ok(task.id === task3.id);
+      assert.ok(task.updatedAt > task3.updatedAt);
+      assert.ok(task.attempts === 2);
+      assert.ok(task.logPath.endsWith('-1.log'));
+      assert.ok(task.logStorePosition === '');
 
       // again will empty
       task = await packageSyncerService.findExecuteTask();
-      assert(!task);
+      assert.ok(!task);
 
       // attempts > 3 will be set to timeout task and save to history
       await TaskModel.update(
@@ -85,9 +85,9 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       app.expectLog('[TaskService.retryExecuteTimeoutTasks:retry]');
 
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
-      assert(task.attempts === 3);
-      assert(task.logPath.endsWith('-2.log'));
+      assert.ok(task);
+      assert.ok(task.attempts === 3);
+      assert.ok(task.logPath.endsWith('-2.log'));
 
       await TaskModel.update(
         { id: task3.id },
@@ -95,27 +95,27 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       );
       app.mockLog();
       let result = await taskService.retryExecuteTimeoutTasks();
-      assert(result.processing === 1);
-      assert(result.waiting === 0);
+      assert.ok(result.processing === 1);
+      assert.ok(result.waiting === 0);
       app.expectLog('[TaskService.retryExecuteTimeoutTasks:timeout]');
 
       // again should not effect
       result = await taskService.retryExecuteTimeoutTasks();
-      assert(result.processing === 0);
-      assert(result.waiting === 0);
+      assert.ok(result.processing === 0);
+      assert.ok(result.waiting === 0);
 
       task = await packageSyncerService.findExecuteTask();
-      assert(!task);
+      assert.ok(!task);
       const history = await HistoryTaskModel.findOne({ taskId: task3.taskId });
-      assert(history);
-      assert(history.state === 'timeout');
-      assert(history.attempts === 3);
-      assert(!(await TaskModel.findOne({ id: task3.id })));
+      assert.ok(history);
+      assert.ok(history.state === 'timeout');
+      assert.ok(history.attempts === 3);
+      assert.ok(!(await TaskModel.findOne({ id: task3.id })));
     });
 
     it('should mock waiting timeout task', async () => {
       let task = await packageSyncerService.findExecuteTask();
-      assert(!task);
+      assert.ok(!task);
 
       task = await packageSyncerService.createTask('foo');
 
@@ -127,8 +127,8 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
         }
       );
       let result = await taskService.retryExecuteTimeoutTasks();
-      assert(result.processing === 0);
-      assert(result.waiting === 0);
+      assert.ok(result.processing === 0);
+      assert.ok(result.waiting === 0);
 
       // mock timeout 30mins
       await TaskModel.update(
@@ -140,18 +140,18 @@ describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () =>
       app.mockLog();
       result = await taskService.retryExecuteTimeoutTasks();
       app.expectLog('[TaskService.retryExecuteTimeoutTasks:retryWaiting]');
-      assert(result.processing === 0);
-      assert(result.waiting === 1);
+      assert.ok(result.processing === 0);
+      assert.ok(result.waiting === 1);
 
       result = await taskService.retryExecuteTimeoutTasks();
-      assert(result.processing === 0);
-      assert(result.waiting === 0);
+      assert.ok(result.processing === 0);
+      assert.ok(result.waiting === 0);
 
       // has one tasks in queue
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       task = await packageSyncerService.findExecuteTask();
-      assert(!task);
+      assert.ok(!task);
     });
   });
 });

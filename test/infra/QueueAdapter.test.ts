@@ -14,12 +14,12 @@ describe('test/infra/QueueAdapter.test.ts', () => {
     const queueName = 'duplicate_test';
     const taskId = 'task_id_1';
     let res = await queueAdapter.push(queueName, taskId);
-    assert(res === true);
+    assert.ok(res === true);
     res = await queueAdapter.push(queueName, taskId);
-    assert(res === false);
+    assert.ok(res === false);
     const length = await queueAdapter.length(queueName);
-    assert(length === 1);
+    assert.ok(length === 1);
     const queueTaskId = await queueAdapter.pop(queueName);
-    assert(queueTaskId === taskId);
+    assert.ok(queueTaskId === taskId);
   });
 });

@@ -199,7 +199,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () 
       'colors',
       manifest
     );
-    assert(newManifest === manifest);
+    assert.ok(newManifest === manifest);
   });
 
   it('should should not fix if fixed version not exits', async () => {
@@ -229,6 +229,6 @@ describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () 
       'colors',
       manifest
     );
-    assert(newManifest === manifest);
+    assert.ok(newManifest === manifest);
   });
 });

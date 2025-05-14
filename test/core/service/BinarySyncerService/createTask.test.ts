@@ -21,8 +21,8 @@ describe('test/core/service/BinarySyncerService/createTask.test.ts', () => {
         'banana' as BinaryName,
         {}
       );
-      assert(task?.taskId === newTask?.taskId);
-      assert(task?.bizId === 'SyncBinary:banana');
+      assert.ok(task?.taskId === newTask?.taskId);
+      assert.ok(task?.bizId === 'SyncBinary:banana');
     });
   });
 });

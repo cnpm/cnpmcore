@@ -28,7 +28,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     registryManagerService = await app.getEggObject(RegistryManagerService);
     scopeManagerService = await app.getEggObject(ScopeManagerService);
     queueAdapter = await app.getEggObject(RedisQueueAdapter);
-    assert(changesStreamService);
+    assert.ok(changesStreamService);
     task = Task.createChangesStream('GLOBAL_WORKER', '', '9527');
     taskService.createTask(task, false);
 
@@ -63,27 +63,27 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
 
   describe('prepareRegistry()', () => {
     it('should init since', async () => {
-      assert(task.data.since === '9527');
+      assert.ok(task.data.since === '9527');
     });
     it('should create default registry by config', async () => {
       await changesStreamService.prepareRegistry(task);
       let registries = await registryManagerService.listRegistries({});
-      assert(registries.count === 3);
+      assert.ok(registries.count === 3);
 
       // only create once
       await changesStreamService.prepareRegistry(task);
       registries = await registryManagerService.listRegistries({});
-      assert(registries.count === 3);
+      assert.ok(registries.count === 3);
     });
 
     it('should throw error when invalid registryId', async () => {
       await changesStreamService.prepareRegistry(task);
       const registries = await registryManagerService.listRegistries({});
-      assert(registries.count === 3);
+      assert.ok(registries.count === 3);
 
       // remove the registry
       const registryId = task.data.registryId;
-      assert(registryId);
+      assert.ok(registryId);
       await registryManagerService.remove({ registryId });
 
       await assert.rejects(
@@ -104,12 +104,12 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
         npmRegistry,
         '@cnpm/test'
       );
-      assert(res);
+      assert.ok(res);
     });
 
     it('unscoped package should sync default registry', async () => {
       const res = await changesStreamService.needSync(npmRegistry, 'banana');
-      assert(res);
+      assert.ok(res);
     });
 
     it('scoped package should sync default registry', async () => {
@@ -117,7 +117,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
         npmRegistry,
         '@gogogo/banana'
       );
-      assert(res);
+      assert.ok(res);
     });
 
     it('scoped package should sync custom registry', async () => {
@@ -125,14 +125,14 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
         cnpmRegistry,
         '@cnpm/banana'
       );
-      assert(res);
+      assert.ok(res);
       res = await changesStreamService.needSync(cnpmRegistry, '@dnpmjs/banana');
-      assert(!res);
+      assert.ok(!res);
     });
 
     it('unscoped package should not sync custom registry', async () => {
       const res = await changesStreamService.needSync(cnpmRegistry, 'banana');
-      assert(!res);
+      assert.ok(!res);
     });
 
     it('the package does not exist should not sync with any registry', async () => {
@@ -143,9 +143,9 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
         registryId: npmRegistry.registryId,
       });
       let res = await changesStreamService.needSync(npmRegistry, 'banana');
-      assert(!res);
+      assert.ok(!res);
       res = await changesStreamService.needSync(npmRegistry, '@cnpm/test');
-      assert(res);
+      assert.ok(res);
     });
   });
 
@@ -158,7 +158,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
         },
       });
       const since = await changesStreamService.getInitialSince(task);
-      assert(since === '9517');
+      assert.ok(since === '9517');
     });
   });
 
@@ -171,7 +171,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
         },
       });
       const since = await changesStreamService.getInitialSince(task);
-      assert(since === '9517');
+      assert.ok(since === '9517');
     });
   });
 
@@ -245,19 +245,19 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     });
     it('should work', async () => {
       const task = await changesStreamService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await changesStreamService.executeTask(task);
-      assert(task.state === 'processing');
+      assert.ok(task.state === 'processing');
 
       let len = await queueAdapter.length('changes_stream');
-      assert(len === 0);
+      assert.ok(len === 0);
       await changesStreamService.suspendSync(true);
       const newTask = await taskService.findTask(task.taskId);
-      assert(newTask);
-      assert(newTask.taskId === task.taskId);
-      assert(newTask.state === 'waiting');
+      assert.ok(newTask);
+      assert.ok(newTask.taskId === task.taskId);
+      assert.ok(newTask.state === 'waiting');
       len = await queueAdapter.length('changes_stream');
-      assert(len === 1);
+      assert.ok(len === 1);
 
       app.expectLog('[ChangesStreamService.suspendSync:suspend] taskId');
     });
@@ -266,19 +266,19 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       mock(app.config.cnpmcore, 'enableChangesStream', true);
 
       const task = await changesStreamService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       mock(changesStreamService, 'executeSync', async () => {
         throw new Error('mock error');
       });
       await changesStreamService.executeTask(task);
 
       const newTask = await taskService.findTask(task.taskId);
-      assert(newTask);
-      assert(newTask.state === 'waiting');
+      assert.ok(newTask);
+      assert.ok(newTask.state === 'waiting');
       // still sync nexttick;
-      assert(app.config.cnpmcore.enableChangesStream === true);
+      assert.ok(app.config.cnpmcore.enableChangesStream === true);
       const len = await queueAdapter.length('changes_stream');
-      assert(len === 1);
+      assert.ok(len === 1);
       app.expectLog('[ChangesStreamService.suspendSync:start]');
       app.expectLog('[ChangesStreamService.suspendSync:suspend] taskId');
     });

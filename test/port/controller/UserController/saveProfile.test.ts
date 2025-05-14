@@ -11,12 +11,16 @@ describe('test/port/controller/UserController/saveProfile.test.ts', () => {
         .httpRequest()
         .post('/-/npm/v1/user')
         .set('authorization', authorization);
-      assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] npm profile set is not allowed');
+      assert.ok(res.status === 403);
+      assert.ok(
+        res.body.error === '[FORBIDDEN] npm profile set is not allowed'
+      );
 
       res = await app.httpRequest().post('/-/npm/v1/user');
-      assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] npm profile set is not allowed');
+      assert.ok(res.status === 403);
+      assert.ok(
+        res.body.error === '[FORBIDDEN] npm profile set is not allowed'
+      );
     });
   });
 });

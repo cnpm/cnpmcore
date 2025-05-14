@@ -49,7 +49,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
         const queryRes = await registryManagerService.listRegistries({});
         assert.equal(queryRes.count, 2);
         const [_, registry] = queryRes.data;
-        assert(_);
+        assert.ok(_);
         assert.equal(registry.name, 'custom2');
       });
 
@@ -133,7 +133,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
           targetName,
           TaskType.ChangesStream
         );
-        assert(task);
+        assert.ok(task);
         assert.equal(
           (task.data as ChangesStreamTaskData).registryId,
           registry.registryId
@@ -183,7 +183,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
           targetName,
           TaskType.ChangesStream
         );
-        assert(task);
+        assert.ok(task);
         assert.equal((task.data as ChangesStreamTaskData).since, '');
       });
     });

@@ -49,7 +49,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
       const res = await app.httpRequest().get('/-/proxy-cache').expect(200);
-      assert(res.body.data.length === 4);
+      assert.ok(res.body.data.length === 4);
     });
 
     it('should pageSize work', async () => {
@@ -59,18 +59,18 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .httpRequest()
         .get('/-/proxy-cache?pageSize=2&pageIndex=0')
         .expect(200);
-      assert(res0.body.data.length === 2);
+      assert.ok(res0.body.data.length === 2);
       const res1 = await app
         .httpRequest()
         .get('/-/proxy-cache?pageSize=2&pageIndex=1')
         .expect(200);
-      assert(res1.body.data.length === 2);
+      assert.ok(res1.body.data.length === 2);
       const res2 = await app
         .httpRequest()
         .get('/-/proxy-cache?pageSize=2&pageIndex=2')
         .expect(200);
-      assert(res2.body.data.length === 0);
-      assert(res2.body.count === 4);
+      assert.ok(res2.body.data.length === 0);
+      assert.ok(res2.body.count === 4);
     });
   });
 
@@ -86,7 +86,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .httpRequest()
         .get('/-/proxy-cache/foo-bar')
         .expect(200);
-      assert(res.body.count === 2);
+      assert.ok(res.body.count === 2);
     });
 
     it('should 404 when not found', async () => {
@@ -96,7 +96,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .httpRequest()
         .get('/-/proxy-cache/foo-bar-xxx')
         .expect(200);
-      assert(res.body.count === 0);
+      assert.ok(res.body.count === 0);
     });
   });
 
@@ -113,12 +113,12 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .patch('/-/proxy-cache/foo-bar')
         .expect(200);
       // 仅需创建ABBREVIATED_MANIFESTS的更新任务
-      assert(res.body.tasks.length === 1);
+      assert.ok(res.body.tasks.length === 1);
       const taskRepository = await app.getEggObject(TaskRepository);
       const waitingTask = await taskRepository.findTask(
         res.body.tasks[0].taskId
       );
-      assert(waitingTask);
+      assert.ok(waitingTask);
     });
 
     it('should 404 when not found', async () => {
@@ -147,12 +147,12 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .delete('/-/proxy-cache/foo-bar')
         .set('authorization', adminUser.authorization)
         .expect(200);
-      assert(res.body.ok === true);
+      assert.ok(res.body.ok === true);
       // foo-bar
-      assert(res.body.result.length === 2);
+      assert.ok(res.body.result.length === 2);
       const res1 = await app.httpRequest().get('/-/proxy-cache').expect(200);
       // foobar
-      assert(res1.body.data.length === 2);
+      assert.ok(res1.body.data.length === 2);
     });
 
     it('should 404 when not found', async () => {

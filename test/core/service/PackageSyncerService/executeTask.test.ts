@@ -76,23 +76,23 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         skipDependencies: true,
       });
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
-      assert(!(await TaskModel.findOne({ taskId: task.taskId })));
-      assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+      assert.ok(!(await TaskModel.findOne({ taskId: task.taskId })));
+      assert.ok(await HistoryTaskModel.findOne({ taskId: task.taskId }));
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
-      assert(model);
+      assert.ok(model);
       assert.equal(model.isPrivate, false);
-      assert(log.includes(', skipDependencies: true'));
+      assert.ok(log.includes(', skipDependencies: true'));
 
       // sync again
       await packageSyncerService.createTask('foobar');
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       const manifests = await packageManagerService.listPackageFullManifests(
         '',
@@ -100,15 +100,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       // console.log(JSON.stringify(manifests, null, 2));
       // should have 2 maintainers
-      assert(manifests.data?.maintainers);
-      assert(manifests.data.maintainers.length > 0);
+      assert.ok(manifests.data?.maintainers);
+      assert.ok(manifests.data.maintainers.length > 0);
       const abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests(
           '',
           'foobar'
         );
       // console.log(JSON.stringify(abbreviatedManifests, null, 2));
-      assert(abbreviatedManifests.data);
+      assert.ok(abbreviatedManifests.data);
       assert.equal(abbreviatedManifests.data.name, manifests.data.name);
       app.mockAgent().assertNoPendingInterceptors();
     });
@@ -145,7 +145,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         skipDependencies: true,
       });
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
 
       await packageSyncerService.createTask('foobar', {
@@ -153,14 +153,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         skipDependencies: true,
       });
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       const stream2 = await packageSyncerService.findTaskLog(task);
-      assert(stream2);
+      assert.ok(stream2);
       const log2 = await TestUtil.readStreamToLog(stream2);
       // console.log(log2);
-      assert(/Remove version 1\.0\.0 for force sync history/.test(log2));
-      assert(/Syncing version 1\.0\.0/.test(log2));
+      assert.ok(/Remove version 1\.0\.0 for force sync history/.test(log2));
+      assert.ok(/Syncing version 1\.0\.0/.test(log2));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -199,20 +199,20 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         skipDependencies: false,
       });
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, 'foobar');
       await packageSyncerService.executeTask(task);
-      assert(!(await TaskModel.findOne({ taskId: task.taskId })));
-      assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+      assert.ok(!(await TaskModel.findOne({ taskId: task.taskId })));
+      assert.ok(await HistoryTaskModel.findOne({ taskId: task.taskId }));
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
-      assert(model);
+      assert.ok(model);
       assert.equal(model.isPrivate, false);
-      assert(log.includes(', taskQueue: 3/2'));
-      assert(log.includes(', skipDependencies: true'));
+      assert.ok(log.includes(', taskQueue: 3/2'));
+      assert.ok(log.includes(', skipDependencies: true'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -237,10 +237,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask('@node-rs/xxhash');
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
-      assert(!(await TaskModel.findOne({ taskId: task.taskId })));
-      assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+      assert.ok(!(await TaskModel.findOne({ taskId: task.taskId })));
+      assert.ok(await HistoryTaskModel.findOne({ taskId: task.taskId }));
 
       const manifests = await packageManagerService.listPackageFullManifests(
         '@node-rs',
@@ -254,11 +254,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           'xxhash'
         );
       // console.log(JSON.stringify(abbreviatedManifests, null, 2));
-      assert(abbreviatedManifests.data);
-      assert(manifests.data);
+      assert.ok(abbreviatedManifests.data);
+      assert.ok(manifests.data);
       assert.equal(abbreviatedManifests.data.name, manifests.data.name);
-      assert(abbreviatedManifests.data.versions['1.0.0']);
-      assert(abbreviatedManifests.data.versions['1.0.0'].optionalDependencies);
+      assert.ok(abbreviatedManifests.data.versions['1.0.0']);
+      assert.ok(
+        abbreviatedManifests.data.versions['1.0.0'].optionalDependencies
+      );
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -286,14 +288,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       let manifests = await packageManagerService.listPackageFullManifests(
         '',
         name
       );
-      assert(manifests.data);
-      assert(manifests.data.versions['0.0.0']);
+      assert.ok(manifests.data);
+      assert.ok(manifests.data.versions['0.0.0']);
 
       assert.equal(
         manifests.data.versions['0.0.0'].deprecated,
@@ -302,8 +304,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
       let abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(abbreviatedManifests.data);
-      assert(abbreviatedManifests.data.versions['0.0.0']);
+      assert.ok(abbreviatedManifests.data);
+      assert.ok(abbreviatedManifests.data.versions['0.0.0']);
       assert.equal(
         abbreviatedManifests.data.versions['0.0.0'].deprecated,
         'only test for cnpmcore'
@@ -326,13 +328,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
       );
 
@@ -340,12 +342,12 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         '',
         name
       );
-      assert(manifests.data);
-      assert(manifests.data.time.unpublished);
+      assert.ok(manifests.data);
+      assert.ok(manifests.data.time.unpublished);
       abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(abbreviatedManifests.data);
-      assert(abbreviatedManifests.data.time?.unpublished);
+      assert.ok(abbreviatedManifests.data);
+      assert.ok(abbreviatedManifests.data.time?.unpublished);
       app.mockAgent().assertNoPendingInterceptors();
 
       // sync again
@@ -371,19 +373,19 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       manifests = await packageManagerService.listPackageFullManifests(
         '',
         name
       );
-      assert(manifests.data);
-      assert(!manifests.data.time.unpublished);
-      assert(manifests.data.versions['0.0.0']);
+      assert.ok(manifests.data);
+      assert.ok(!manifests.data.time.unpublished);
+      assert.ok(manifests.data.versions['0.0.0']);
       assert.equal(
         manifests.data.versions['0.0.0'].deprecated,
         'only test for cnpmcore'
@@ -391,9 +393,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
       abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(abbreviatedManifests.data);
-      assert(!abbreviatedManifests.data.time?.unpublished);
-      assert(abbreviatedManifests.data.versions['0.0.0']);
+      assert.ok(abbreviatedManifests.data);
+      assert.ok(!abbreviatedManifests.data.time?.unpublished);
+      assert.ok(abbreviatedManifests.data.versions['0.0.0']);
       assert.equal(
         abbreviatedManifests.data.versions['0.0.0'].deprecated,
         'only test for cnpmcore'
@@ -429,14 +431,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       const manifests = await packageManagerService.listPackageFullManifests(
         '',
         name
       );
-      assert(manifests.data);
-      assert(manifests.data.versions['0.0.0']);
+      assert.ok(manifests.data);
+      assert.ok(manifests.data.versions['0.0.0']);
 
       assert.equal(
         manifests.data.versions['0.0.0'].deprecated,
@@ -445,7 +447,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
       const abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(abbreviatedManifests.data?.versions['0.0.0']);
+      assert.ok(abbreviatedManifests.data?.versions['0.0.0']);
       assert.equal(
         abbreviatedManifests.data.versions['0.0.0'].deprecated,
         'only test for cnpmcore'
@@ -468,16 +470,16 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         !log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
       );
-      assert(log.includes('Package not found, status 404'));
+      assert.ok(log.includes('Package not found, status 404'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -494,13 +496,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-package-not-exists';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('Package not found, status 404'));
+      assert.ok(log.includes('Package not found, status 404'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -535,13 +537,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🔗'));
+      assert.ok(log.includes('] 🔗'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -576,13 +578,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🔗'));
+      assert.ok(log.includes('] 🔗'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -610,14 +612,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       let name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           '] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '
         )
@@ -647,14 +649,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           'Sync cause by "cnpmcore-test-sync-dependencies" dependencies, parent task: '
         )
@@ -688,19 +690,19 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       name = 'cnpmcore-test-sync-dependencies';
       const task = await packageSyncerService.createTask(name);
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         !log.includes(
           '] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '
         )
       );
-      assert(
+      assert.ok(
         log.includes(
           '] 📖 Has dependency "cnpmcore-test-sync-deprecated" sync task: '
         )
@@ -731,10 +733,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
       app.mockAgent().assertNoPendingInterceptors();
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           '] 📦 Add dependency "@resvg/resvg-js-win32-x64-msvc" sync task: '
         )
@@ -799,7 +801,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         skipDependencies: true,
       });
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       assert.equal(fullManifestsHeader?.authorization, `Bearer ${testToken}`);
       assert.equal(tgzBuffer1_0_0Header?.authorization, `Bearer ${testToken}`);
@@ -830,19 +832,19 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       mock.error(packageManagerService.constructor.prototype, 'publish');
       const task = await packageSyncerService.createTask(name);
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           '❌ [1] Synced version 0.0.0 error, publish error: MockError: mm mock error'
         )
       );
-      assert(log.includes('❌ All versions sync fail, package not exists'));
+      assert.ok(log.includes('❌ All versions sync fail, package not exists'));
 
       const res = await app
         .httpRequest()
@@ -879,13 +881,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       err.name = 'ForbiddenError';
       mock.error(packageManagerService.constructor.prototype, 'publish', err);
       const task = await packageSyncerService.createTask(name);
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      assert(
+      assert.ok(
         log.includes(
           '🐛 [1] Synced version 0.0.0 already exists, skip publish, try to set in local manifest'
         )
@@ -916,20 +918,20 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       const name = 'cnpmcore-test-sync-deprecated';
       const task = await packageSyncerService.createTask(name);
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       app.mockAgent().assertNoPendingInterceptors();
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           '❌ [1] Synced version 0.0.0 fail, download tarball error: DownloadStatusInvalidError: Download https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz status(500) invalid'
         )
       );
-      assert(log.includes('❌ All versions sync fail, package not exists'));
+      assert.ok(log.includes('❌ All versions sync fail, package not exists'));
     });
 
     describe('sync version idempotence', async () => {
@@ -970,17 +972,17 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const name = '@cnpmcore/test-sync-package-has-two-versions';
         await packageSyncerService.createTask(name);
         let task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         assert.equal(task.targetName, name);
         await packageSyncerService.executeTask(task);
         let stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         let log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
-        assert(
+        assert.ok(
           log.includes('] 🟢 Synced updated 2 versions, removed 0 versions')
         );
-        assert(log.includes('] 🚧 Syncing versions 0 => 2'));
+        assert.ok(log.includes('] 🚧 Syncing versions 0 => 2'));
 
         // mock listPackageFullManifests return only one version
         // 如果 version publish 同步中断了，没有刷新 manifests，会导致下一次同步重新 version publish，然后报错
@@ -990,7 +992,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           scopedAndName[0],
           scopedAndName[1]
         );
-        assert(manifests.data);
+        assert.ok(manifests.data);
         delete manifests.data.versions['1.0.0'];
         mock.data(
           PackageManagerService.prototype,
@@ -1000,20 +1002,20 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
         await packageSyncerService.createTask(name);
         task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         assert.equal(task.targetName, name);
         await packageSyncerService.executeTask(task);
         stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
-        assert(
+        assert.ok(
           log.includes(
             'Synced version 1.0.0 already exists, skip publish, try to set in local manifest'
           )
         );
-        assert(log.includes('] 🟢 Synced updated'));
-        assert(log.includes('] 🚧 Syncing versions 1 => 2'));
+        assert.ok(log.includes('] 🟢 Synced updated'));
+        assert.ok(log.includes('] 🚧 Syncing versions 1 => 2'));
         app.mockAgent().assertNoPendingInterceptors();
         await mock.restore();
 
@@ -1030,7 +1032,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
             scopedAndName[0],
             scopedAndName[1]
           );
-        assert(abbrs.data);
+        assert.ok(abbrs.data);
         delete abbrs.data.versions['1.0.0'];
         mock.data(
           PackageManagerService.prototype,
@@ -1040,20 +1042,20 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
         await packageSyncerService.createTask(name);
         task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         assert.equal(task.targetName, name);
         await packageSyncerService.executeTask(task);
         stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
-        assert(
+        assert.ok(
           log.includes(
             '] 🐛 Remote version 1.0.0 not exists on local abbreviated manifests, need to refresh'
           )
         );
-        assert(log.includes('] 🟢 Synced updated'));
-        assert(log.includes('] 🚧 Syncing versions 2 => 2'));
+        assert.ok(log.includes('] 🟢 Synced updated'));
+        assert.ok(log.includes('] 🚧 Syncing versions 2 => 2'));
         app.mockAgent().assertNoPendingInterceptors();
         await mock.restore();
 
@@ -1074,20 +1076,20 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         mock.data(PackageManagerService.prototype, 'savePackageTag', null);
         await packageSyncerService.createTask(name);
         task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         await packageSyncerService.executeTask(task);
         stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
-        assert(
+        assert.ok(
           log.includes(
             '] 🚧 Remote tag(foo: 2.0.0) not exists in local dist-tags'
           )
         );
-        assert(!log.includes('] 🚧 Refreshing manifests to dists ......'));
-        assert(log.includes('] 🚧 Syncing versions 2 => 2'));
-        assert(
+        assert.ok(!log.includes('] 🚧 Refreshing manifests to dists ......'));
+        assert.ok(log.includes('] 🚧 Syncing versions 2 => 2'));
+        assert.ok(
           log.includes(
             `] 📖 @cnpmcore/test-sync-package-has-two-versions latest version: ${latestVersion}, published time: ${JSON.stringify(result.data.time[latestVersion])}`
           )
@@ -1100,7 +1102,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const name = '@cnpmcore/test-sync-package-has-two-versions';
         await packageSyncerService.createTask(name);
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         assert.equal(task.targetName, name);
 
         const { user } = await userService.create({
@@ -1129,7 +1131,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           publishCmd,
           user
         );
-        assert(pkgVersion.version === '1.0.0');
+        assert.ok(pkgVersion.version === '1.0.0');
 
         const publishCmd2 = {
           scope: '@cnpmcore',
@@ -1150,28 +1152,28 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           publishCmd2,
           user
         );
-        assert(pkgVersion2.version === '2.0.0');
+        assert.ok(pkgVersion2.version === '2.0.0');
 
         await packageSyncerService.executeTask(task);
 
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
-        assert(
+        assert.ok(
           log.includes(
             'Synced version 2.0.0 already exists, skip publish, try to set in local manifest'
           )
         );
-        assert(log.includes('] 🚧 Syncing versions 1 => 2'));
+        assert.ok(log.includes('] 🚧 Syncing versions 1 => 2'));
 
         const fullManifests =
           await packageManagerService.listPackageFullManifests(
             '@cnpmcore',
             'test-sync-package-has-two-versions'
           );
-        assert(fullManifests.data);
-        assert(fullManifests.data.versions['2.0.0']);
+        assert.ok(fullManifests.data);
+        assert.ok(fullManifests.data.versions['2.0.0']);
       });
 
       it('should skip self registry', async () => {
@@ -1204,18 +1206,18 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           publishCmd,
           user
         );
-        assert(pkgVersion.version === '1.0.0');
+        assert.ok(pkgVersion.version === '1.0.0');
 
         await packageSyncerService.createTask(name);
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         await packageSyncerService.executeTask(task);
 
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
-        assert(
+        assert.ok(
           log.includes(
             `${name} has been published to the self registry, skip sync ❌❌❌❌❌`
           )
@@ -1227,7 +1229,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const name = '@cnpmcore/test-sync-package-has-two-versions';
         await packageSyncerService.createTask(name);
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         assert.equal(task.targetName, name);
 
         const { user } = await userService.create({
@@ -1256,7 +1258,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           publishCmd,
           user
         );
-        assert(pkgVersion.version === '1.0.0');
+        assert.ok(pkgVersion.version === '1.0.0');
 
         const publishCmd2 = {
           scope: '@cnpmcore',
@@ -1277,7 +1279,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           publishCmd2,
           user
         );
-        assert(pkgVersion2.version === '2.0.0');
+        assert.ok(pkgVersion2.version === '2.0.0');
 
         // 模拟查询未发现版本重复，写入时异常
         mock(packageRepository, 'findPackageVersion', async () => {
@@ -1286,15 +1288,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         await packageSyncerService.executeTask(task);
 
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
-        assert(
+        assert.ok(
           log.includes(
             'Synced version 2.0.0 already exists, skip publish, try to set in local manifest'
           )
         );
-        assert(log.includes('] 🚧 Syncing versions 1 => 2'));
+        assert.ok(log.includes('] 🚧 Syncing versions 1 => 2'));
       });
 
       it('should skip version when insert error', async () => {
@@ -1302,7 +1304,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const name = '@cnpmcore/test-sync-package-has-two-versions';
         await packageSyncerService.createTask(name);
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         assert.equal(task.targetName, name);
         const { user } = await userService.create({
           name: 'test-user',
@@ -1330,7 +1332,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           publishCmd,
           user
         );
-        assert(pkgVersion.version === '1.0.0');
+        assert.ok(pkgVersion.version === '1.0.0');
 
         // 模拟查询未发现版本重复，写入时异常
         mock(packageRepository, 'findPackageVersion', async () => {
@@ -1343,9 +1345,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         await packageSyncerService.executeTask(task);
 
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert(log.includes(' Synced updated 0 versions, removed 0 versions'));
+        assert.ok(
+          log.includes(' Synced updated 0 versions, removed 0 versions')
+        );
       });
 
       it('event cork should work', async () => {
@@ -1353,12 +1357,12 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const name = '@cnpmcore/test-sync-package-has-two-versions';
         await packageSyncerService.createTask(name);
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         assert.equal(task.targetName, name);
 
         await packageSyncerService.executeTask(task);
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
 
         const finishedTask = (await taskService.findTask(
           task.taskId
@@ -1370,7 +1374,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const taskFinishedDate = new Date(finishedTask.updatedAt);
 
         // 任务结束后一起触发
-        assert(firstChangeDate.getTime() - taskFinishedDate.getTime() > 0);
+        assert.ok(firstChangeDate.getTime() - taskFinishedDate.getTime() > 0);
       });
 
       it('should bulk update maintainer dist', async () => {
@@ -1378,7 +1382,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const name = '@cnpmcore/test-sync-package-has-two-versions';
         await packageSyncerService.createTask(name);
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         assert.equal(task.targetName, name);
         let called = 0;
 
@@ -1391,7 +1395,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         );
         await packageSyncerService.executeTask(task);
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
 
         const finishedTask = (await taskService.findTask(
           task.taskId
@@ -1407,40 +1411,44 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = '@cnpmcore/test-sync-package-has-two-versions';
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes('] 🟢 Synced updated 2 versions, removed 0 versions')
       );
-      assert(log.includes('] 🚧 Syncing versions 0 => 2'));
+      assert.ok(log.includes('] 🚧 Syncing versions 0 => 2'));
 
       const pkg = await packageRepository.findPackage(
         '@cnpmcore',
         'test-sync-package-has-two-versions'
       );
-      assert(pkg);
+      assert.ok(pkg);
       await packageRepository.removePackageVersions(pkg.packageId);
 
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         !log.includes('] 🟢 Synced updated 0 versions, removed 0 versions')
       );
-      assert(log.includes('] 🐛 Remote version 1.0.0 not exists on database'));
-      assert(log.includes('] 🐛 Remote version 2.0.0 not exists on database'));
-      assert(log.includes('] 🚧 Syncing versions 2 => 2'));
+      assert.ok(
+        log.includes('] 🐛 Remote version 1.0.0 not exists on database')
+      );
+      assert.ok(
+        log.includes('] 🐛 Remote version 2.0.0 not exists on database')
+      );
+      assert.ok(log.includes('] 🚧 Syncing versions 2 => 2'));
     });
 
     it('should sync removed versions', async () => {
@@ -1475,14 +1483,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = '@cnpmcore/test-sync-package-has-two-versions';
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢 Synced updated 2 versions'));
+      assert.ok(log.includes('] 🟢 Synced updated 2 versions'));
       app.mockAgent().assertNoPendingInterceptors();
 
       app.mockHttpclient(
@@ -1496,22 +1504,22 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('removed 1 versions'));
-      assert(log.includes('] 🟢 Removed version 1.0.0 success'));
+      assert.ok(log.includes('removed 1 versions'));
+      assert.ok(log.includes('] 🟢 Removed version 1.0.0 success'));
       const r = await packageManagerService.listPackageFullManifests(
         '@cnpmcore',
         'test-sync-package-has-two-versions'
       );
-      assert(r.data);
+      assert.ok(r.data);
       assert.equal(Object.keys(r.data.versions).length, 1);
-      assert(!r.data.versions['1.0.0'], '1.0.0 should not exists');
+      assert.ok(!r.data.versions['1.0.0'], '1.0.0 should not exists');
     });
 
     it('should work on unpublished package', async () => {
@@ -1527,17 +1535,17 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // ignore unpublished when local package not exists
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
       );
       let data = await packageManagerService.listPackageFullManifests('', name);
-      assert(data.data === null);
+      assert.ok(data.data === null);
 
       // sync unpublished
       app.mockHttpclient(
@@ -1563,18 +1571,18 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('] 🟢 Synced '));
+      assert.ok(log.includes('] 🟢 Synced '));
       data = await packageManagerService.listPackageFullManifests('', name);
       // console.log(data.data);
-      assert(data.data);
-      assert(!data.data.time.unpublished);
-      assert(data.data.maintainers);
+      assert.ok(data.data);
+      assert.ok(!data.data.time.unpublished);
+      assert.ok(data.data.maintainers);
       app.mockAgent().assertNoPendingInterceptors();
 
       app.mockHttpclient(
@@ -1587,19 +1595,19 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
       );
       data = await packageManagerService.listPackageFullManifests('', name);
       // console.log(data.data);
-      assert(data.data?.time.unpublished);
-      assert(!data.data?.maintainers);
+      assert.ok(data.data?.time.unpublished);
+      assert.ok(!data.data?.maintainers);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -1631,13 +1639,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           '] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '
         )
@@ -1646,7 +1654,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         '',
         name
       );
-      assert(data);
+      assert.ok(data);
       assert.equal(data.readme, '');
     });
 
@@ -1673,16 +1681,16 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🚧 Syncing versions 0 => 1'));
+      assert.ok(log.includes('🚧 Syncing versions 0 => 1'));
       let res = await packageManagerService.listPackageFullManifests('', name);
-      assert(res.data);
-      assert(res.data.versions);
+      assert.ok(res.data);
+      assert.ok(res.data.versions);
       assert.equal(
         res.data.versions[res.data['dist-tags'].latest]?.hasInstallScript,
         undefined
@@ -1699,24 +1707,24 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🚧 Syncing versions 1 => 1'));
-      assert(res.data);
+      assert.ok(log.includes('🚧 Syncing versions 1 => 1'));
+      assert.ok(res.data);
       res = await packageManagerService.listPackageFullManifests('', name);
-      assert(res.data?.versions);
-      assert(
+      assert.ok(res.data?.versions);
+      assert.ok(
         res.data.versions[res.data['dist-tags'].latest]?.hasInstallScript ===
           true
       );
       const abbrRes =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(abbrRes.data);
-      assert(
+      assert.ok(abbrRes.data);
+      assert.ok(
         abbrRes.data.versions[abbrRes.data['dist-tags'].latest]
           ?.hasInstallScript === true
       );
@@ -1745,13 +1753,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           '] 🔗 https://registry.npmjs.org/cnpmcore-test-sync-deprecated'
         )
@@ -1760,7 +1768,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         '',
         name
       );
-      assert(data);
+      assert.ok(data);
       assert.equal(data.readme, 'mock readme content');
       assert.equal(data.versions['0.0.0']?.readme, undefined);
     });
@@ -1787,10 +1795,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const data = await packageManagerService.listPackageFullManifests(
         '',
         name
@@ -1821,14 +1829,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('[1] Synced version 0.0.0 success'));
-      assert(
+      assert.ok(log.includes('[1] Synced version 0.0.0 success'));
+      assert.ok(
         log.includes(
           '🟢 Synced 1 tags: [{"action":"change","tag":"latest","version":"0.0.0"}]'
         )
@@ -1848,20 +1856,20 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
 
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(!log.includes('[1] Synced version 0.0.0 success'));
-      assert(
+      assert.ok(!log.includes('[1] Synced version 0.0.0 success'));
+      assert.ok(
         log.includes(
           '🟢 Synced 1 tags: [{"action":"change","tag":"beta","version":"0.0.0"}]'
         )
       );
       data = await packageManagerService.listPackageFullManifests('', name);
-      assert(data.data);
+      assert.ok(data.data);
       assert.deepEqual(data.data['dist-tags'], {
         latest: '0.0.0',
         beta: '0.0.0',
@@ -1878,16 +1886,16 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(!log.includes('[1] Synced version 0.0.0 success'));
-      assert(!log.includes('🟢 Synced 1 tags: '));
+      assert.ok(!log.includes('[1] Synced version 0.0.0 success'));
+      assert.ok(!log.includes('🟢 Synced 1 tags: '));
       data = await packageManagerService.listPackageFullManifests('', name);
-      assert(data.data);
+      assert.ok(data.data);
       assert.deepEqual(data.data['dist-tags'], {
         latest: '0.0.0',
         beta: '0.0.0',
@@ -1904,16 +1912,18 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(!log.includes('[1] Synced version 0.0.0 success'));
-      assert(log.includes('Synced 1 tags: [{"action":"remove","tag":"beta"}]'));
+      assert.ok(!log.includes('[1] Synced version 0.0.0 success'));
+      assert.ok(
+        log.includes('Synced 1 tags: [{"action":"remove","tag":"beta"}]')
+      );
       data = await packageManagerService.listPackageFullManifests('', name);
-      assert(data.data);
+      assert.ok(data.data);
       assert.deepEqual(data.data['dist-tags'], { latest: '0.0.0' });
       app.mockAgent().assertNoPendingInterceptors();
     });
@@ -1953,14 +1963,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         specificVersions: ['1.0.0'],
       });
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      assert(log.includes('] 🟢 Synced updated 1 versions'));
-      assert(app.mockAgent().pendingInterceptors().length === 1);
+      assert.ok(log.includes('] 🟢 Synced updated 1 versions'));
+      assert.ok(app.mockAgent().pendingInterceptors().length === 1);
     });
 
     it('should sync specific versions and latest version.', async () => {
@@ -1997,14 +2007,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         specificVersions: ['1.0.0'],
       });
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      assert(log.includes('] 🟢 Synced updated 2 versions'));
-      assert(app.mockAgent().pendingInterceptors().length === 0);
+      assert.ok(log.includes('] 🟢 Synced updated 2 versions'));
+      assert.ok(app.mockAgent().pendingInterceptors().length === 0);
     });
 
     it('should sync specific versions and latest version.', async () => {
@@ -2031,13 +2041,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         specificVersions: ['1.0.0', '9.99.9'],
       });
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      assert(
+      assert.ok(
         log.includes('🚧 Some specific versions are not available: 👉 9.99.9')
       );
     });
@@ -2067,13 +2077,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         specificVersions: ['1.0.0', '9.99.9'],
       });
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      assert(
+      assert.ok(
         log.includes('🚧 Some specific versions are not available: 👉 9.99.9')
       );
       const manifest =
@@ -2081,7 +2091,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           '@cnpmcore',
           'test-sync-package-has-two-versions'
         );
-      assert(manifest.data?.['dist-tags']);
+      assert.ok(manifest.data?.['dist-tags']);
       assert.equal(manifest.data?.['dist-tags'].latest, '1.0.0');
     });
 
@@ -2113,20 +2123,20 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes(', syncUpstream: true'));
-      assert(
+      assert.ok(log.includes(', syncUpstream: true'));
+      assert.ok(
         log.includes(
           '][UP] 🚧🚧🚧🚧🚧 Waiting sync "cnpmcore-test-sync-deprecated" task on https://r.cnpmjs.org 🚧'
         )
       );
-      assert(
+      assert.ok(
         log.includes(
           '][UP] 🟢🟢🟢🟢🟢 https://r.cnpmjs.org/cnpmcore-test-sync-deprecated 🟢'
         )
@@ -2162,16 +2172,16 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.createTask(name);
       await packageSyncerService.createTask(name + '-foo');
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes(', syncUpstream: false'));
-      assert(log.includes(', taskQueue: 1/1'));
-      assert(
+      assert.ok(log.includes(', syncUpstream: false'));
+      assert.ok(log.includes(', taskQueue: 1/1'));
+      assert.ok(
         !log.includes(
           '][UP] 🚧🚧🚧🚧🚧 Waiting sync "cnpmcore-test-sync-deprecated" task on https://r.cnpmjs.org 🚧'
         )
@@ -2205,14 +2215,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         !log.includes(
           '][UP] 🟢🟢🟢🟢🟢 https://r.cnpmjs.org/cnpmcore-test-sync-deprecated 🟢'
         )
@@ -2248,15 +2258,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
-      assert(
+      assert.ok(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
+      assert.ok(
         log.includes(`][UP] ❌ Sync ${name} fail, create sync task error:`)
       );
       app.mockAgent().assertNoPendingInterceptors();
@@ -2293,15 +2303,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
-      assert(log.includes(`][UP] ❌ Sync ${name} fail, missing logId`));
+      assert.ok(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
+      assert.ok(log.includes(`][UP] ❌ Sync ${name} fail, missing logId`));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -2352,15 +2362,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
-      assert(log.includes('][UP] 🚧 HTTP [200]'));
+      assert.ok(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
+      assert.ok(log.includes('][UP] 🚧 HTTP [200]'));
       assert.match(log, /\]\[UP\] 🚧 HTTP \[unknow\] \[\d+ms\] error: /);
       app.mockAgent().assertNoPendingInterceptors();
     });
@@ -2416,15 +2426,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
-      assert(log.includes(`][UP] ❌ Sync ${name} fail, timeout`));
+      assert.ok(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
+      assert.ok(log.includes(`][UP] ❌ Sync ${name} fail, timeout`));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -2433,19 +2443,21 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert(log.includes(`❌ Synced ${name} fail, request manifests error`));
+      assert.ok(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
+      assert.ok(
+        log.includes(`❌ Synced ${name} fail, request manifests error`)
+      );
       // retry task
       const task2 = await packageSyncerService.findExecuteTask();
-      assert(task2);
-      assert(task2.id === task.id);
+      assert.ok(task2);
+      assert.ok(task2.id === task.id);
     });
 
     it('should mock getFullManifests invalid maintainers error', async () => {
@@ -2459,15 +2471,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert(log.includes('❌ invalid maintainers: '));
+      assert.ok(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
+      assert.ok(log.includes('❌ invalid maintainers: '));
     });
 
     it('should try to use latest tag version maintainers instead', async () => {
@@ -2493,17 +2505,17 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes('📖 Use the latest version(0.0.0) maintainers instead')
       );
-      assert(log.includes('] 🔗'));
+      assert.ok(log.includes('] 🔗'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -2529,13 +2541,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
 
       const pkg = await packageRepository.findPackage('', name);
-      assert(pkg);
+      assert.ok(pkg);
       const pkgVersion = await packageRepository.findPackageVersion(
         pkg.packageId,
         '0.0.0'
       );
       assert.equal(pkg.name, name);
-      assert(pkgVersion);
+      assert.ok(pkgVersion);
 
       // mock unpublish
       app.mockHttpclient(`https://registry.npmjs.org/${name}`, 'GET', {
@@ -2549,11 +2561,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await packageSyncerService.executeTask(task);
 
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
 
-      assert(
+      assert.ok(
         log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
       );
     });
@@ -2563,15 +2575,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       mock(app.config.cnpmcore, 'syncPackageBlockList', [name, 'foo']);
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert(
+      assert.ok(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
+      assert.ok(
         log.includes(
           '❌ stop sync by block list: ["cnpmcore-test-sync-blocklist","foo"]'
         )
@@ -2598,26 +2610,26 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'D';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes('🚧🚧🚧🚧🚧 Syncing from https://registry.npmjs.org/D, ')
       );
-      assert(log.includes('🔗'));
+      assert.ok(log.includes('🔗'));
       const res = await app
         .httpRequest()
         .get(`/${name}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
-      assert(data.name === name);
+      assert.ok(data.name === name);
       // assert(data.dist === name);
-      assert(
+      assert.ok(
         data.versions[data['dist-tags'].latest].dist.tarball.includes('/D/-/D-')
       );
       app.mockAgent().assertNoPendingInterceptors();
@@ -2641,27 +2653,27 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'Buffer';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           '🚧🚧🚧🚧🚧 Syncing from https://registry.npmjs.org/Buffer, '
         )
       );
-      assert(log.includes('🔗'));
+      assert.ok(log.includes('🔗'));
       const res = await app
         .httpRequest()
         .get(`/${name}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
-      assert(data.name === name);
-      assert(
+      assert.ok(data.name === name);
+      assert.ok(
         data.versions[data['dist-tags'].latest].dist.tarball.includes(
           '/Buffer/-/Buffer-'
         )
@@ -2693,14 +2705,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-security-holding-package';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
       );
     });
@@ -2733,19 +2745,21 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert(
+      assert.ok(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
+      assert.ok(
         log.includes('Synced version 1.0.0 fail, missing tarball, dist: ')
       );
-      assert(log.includes('❌ All versions sync fail, package not exists'));
-      assert(log.includes('Synced version 2.0.0 fail, download tarball error'));
+      assert.ok(log.includes('❌ All versions sync fail, package not exists'));
+      assert.ok(
+        log.includes('Synced version 2.0.0 fail, download tarball error')
+      );
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -2772,16 +2786,16 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert(log.includes('❌ All versions sync fail, package not exists'));
-      assert(
+      assert.ok(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
+      assert.ok(log.includes('❌ All versions sync fail, package not exists'));
+      assert.ok(
         log.includes(
           'Synced version 2.0.0 fail, download tarball error: DownloadStatusInvalidError: Download http://foo.com/a.tgz status(500) invalid'
         )
@@ -2832,26 +2846,26 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         tips: 'sync test tips here',
       });
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           'Synced version 2.0.0 success, different meta: {"peerDependenciesMeta":{"bufferutil":{"optional":true},"utf-8-validate":{"optional":true}},"os":["linux"],"cpu":["x64"],"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"}}'
         )
       );
-      assert(
+      assert.ok(
         log.includes('Z] 👉👉👉👉👉 Tips: sync test tips here 👈👈👈👈👈')
       );
-      assert(log.includes(', skipDependencies: false'));
+      assert.ok(log.includes(', skipDependencies: false'));
       let manifests = await packageManagerService.listPackageFullManifests(
         '',
         name
       );
-      assert(manifests.data?.versions['2.0.0']);
+      assert.ok(manifests.data?.versions['2.0.0']);
       assert.equal(
         manifests.data.versions['2.0.0'].peerDependenciesMeta?.bufferutil
           .optional,
@@ -2864,7 +2878,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       let abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
       // console.log(JSON.stringify(abbreviatedManifests.data, null, 2));
-      assert(abbreviatedManifests.data?.versions['2.0.0']);
+      assert.ok(abbreviatedManifests.data?.versions['2.0.0']);
       assert.equal(
         abbreviatedManifests.data.versions['2.0.0'].peerDependenciesMeta
           ?.bufferutil.optional,
@@ -2890,13 +2904,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(!log.includes('🟢 Synced version 2.0.0 success, different meta:'));
+      assert.ok(
+        !log.includes('🟢 Synced version 2.0.0 success, different meta:')
+      );
       app.mockAgent().assertNoPendingInterceptors();
 
       // should delete readme
@@ -2918,13 +2934,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           '🟢 Synced version 2.0.0 success, different meta: {}, delete exists readme'
         )
@@ -2935,30 +2951,30 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         '',
         name
       );
-      assert(manifests.data?.versions['2.0.0']);
+      assert.ok(manifests.data?.versions['2.0.0']);
       assert.equal(manifests.data.versions['2.0.0'].readme, undefined);
 
       // should sync missing cpu on abbreviated manifests
       const pkg = await packageRepository.findPackage('', name);
-      assert(pkg);
+      assert.ok(pkg);
       const pkgVersion = await packageRepository.findPackageVersion(
         pkg.packageId,
         '2.0.0'
       );
-      assert(pkgVersion);
+      assert.ok(pkgVersion);
       await packageManagerService.savePackageVersionManifest(
         pkgVersion,
         {},
         { cpu: undefined, libc: ['glibc'] }
       );
-      assert(pkg);
+      assert.ok(pkg);
       await packageManagerService.refreshPackageChangeVersionsToDists(pkg, [
         '2.0.0',
       ]);
       abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(abbreviatedManifests.data?.versions);
-      assert(!abbreviatedManifests.data.versions['2.0.0']?.cpu);
+      assert.ok(abbreviatedManifests.data?.versions);
+      assert.ok(!abbreviatedManifests.data.versions['2.0.0']?.cpu);
       assert.deepStrictEqual(
         abbreviatedManifests.data.versions['2.0.0']?.libc,
         ['glibc']
@@ -2976,13 +2992,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           '🟢 Synced version 2.0.0 success, different meta: {"cpu":["x64"]}'
         )
@@ -2991,10 +3007,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       await mock.restore();
       abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
-      assert(abbreviatedManifests.data);
-      assert(abbreviatedManifests.data.versions['2.0.0']);
+      assert.ok(abbreviatedManifests.data);
+      assert.ok(abbreviatedManifests.data.versions['2.0.0']);
       assert.equal(abbreviatedManifests.data.versions['2.0.0'].cpu?.[0], 'x64');
-      assert(!abbreviatedManifests.data.versions['2.0.0'].libc);
+      assert.ok(!abbreviatedManifests.data.versions['2.0.0'].libc);
     });
 
     it('should sync missing acceptDependencies with different metas', async () => {
@@ -3040,27 +3056,27 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         tips: 'sync test tips here',
       });
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(
+      assert.ok(
         log.includes(
           'Synced version 2.0.0 success, different meta: {"peerDependenciesMeta":{"bufferutil":{"optional":true},"utf-8-validate":{"optional":true}},"os":["linux"],"cpu":["x64"],"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"acceptDependencies":{"webpack":"^4.46.x"}}'
         )
       );
-      assert(
+      assert.ok(
         log.includes('Z] 👉👉👉👉👉 Tips: sync test tips here 👈👈👈👈👈')
       );
-      assert(log.includes(', skipDependencies: false'));
+      assert.ok(log.includes(', skipDependencies: false'));
       const manifests = await packageManagerService.listPackageFullManifests(
         '',
         name
       );
-      assert(manifests.data);
-      assert(manifests.data.versions['2.0.0']);
+      assert.ok(manifests.data);
+      assert.ok(manifests.data.versions['2.0.0']);
       assert.equal(
         manifests.data.versions['2.0.0'].peerDependenciesMeta?.bufferutil
           .optional,
@@ -3073,8 +3089,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const abbreviatedManifests =
         await packageManagerService.listPackageAbbreviatedManifests('', name);
       // console.log(JSON.stringify(abbreviatedManifests.data, null, 2));
-      assert(abbreviatedManifests.data);
-      assert(abbreviatedManifests.data.versions['2.0.0']);
+      assert.ok(abbreviatedManifests.data);
+      assert.ok(abbreviatedManifests.data.versions['2.0.0']);
       assert.equal(
         abbreviatedManifests.data.versions['2.0.0'].peerDependenciesMeta
           ?.bufferutil.optional,
@@ -3104,13 +3120,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(!log.includes('🟢 Synced version 2.0.0 success, different meta:'));
+      assert.ok(
+        !log.includes('🟢 Synced version 2.0.0 success, different meta:')
+      );
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -3163,16 +3181,16 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'pedding';
       await packageSyncerService.createTask(name, { syncDownloadData: true });
       let task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       let stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('][DownloadData] 🟢 202101: 31 days'));
-      assert(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
-      assert(log.includes('] 🟢🟢🟢🟢🟢'));
+      assert.ok(log.includes('][DownloadData] 🟢 202101: 31 days'));
+      assert.ok(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
+      assert.ok(log.includes('] 🟢🟢🟢🟢🟢'));
 
       let res = await app
         .httpRequest()
@@ -3180,23 +3198,23 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       let data = res.body;
-      assert(data.downloads.length > 0);
-      assert(Object.keys(data.versions).length === 0);
+      assert.ok(data.downloads.length > 0);
+      assert.ok(Object.keys(data.versions).length === 0);
       // console.log('%j', data);
 
       // again should sync download data only
       await packageSyncerService.createTask(name, { syncDownloadData: true });
       task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('][DownloadData] 🟢 202110: 31 days'));
-      assert(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
-      assert(
+      assert.ok(log.includes('][DownloadData] 🟢 202110: 31 days'));
+      assert.ok(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
+      assert.ok(
         log.includes(
           `] 🟢🟢🟢🟢🟢 Sync "${name}" download data success 🟢🟢🟢🟢🟢`
         )
@@ -3208,8 +3226,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       data = res.body;
-      assert(data.downloads.length > 0);
-      assert(Object.keys(data.versions).length === 0);
+      assert.ok(data.downloads.length > 0);
+      assert.ok(Object.keys(data.versions).length === 0);
       // console.log('%j', data);
       app.mockAgent().assertNoPendingInterceptors();
     });
@@ -3245,15 +3263,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'pedding';
       await packageSyncerService.createTask(name, { syncDownloadData: true });
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(!log.includes('][DownloadData] 🟢 202111: 10 days'));
-      assert(!log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
+      assert.ok(!log.includes('][DownloadData] 🟢 202111: 10 days'));
+      assert.ok(!log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
 
       const res = await app
         .httpRequest()
@@ -3261,7 +3279,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
-      assert(data.downloads.length === 0);
+      assert.ok(data.downloads.length === 0);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -3304,15 +3322,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const name = 'pedding';
       await packageSyncerService.createTask(name, { syncDownloadData: true });
       const task = await packageSyncerService.findExecuteTask();
-      assert(task);
+      assert.ok(task);
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
-      assert(stream);
+      assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert(log.includes('][DownloadData] ❌ Get download data error: '));
-      assert(
+      assert.ok(log.includes('][DownloadData] ❌ Get download data error: '));
+      assert.ok(
         log.includes('][DownloadData] ❌❌❌❌❌ 🚮 give up 🚮 ❌❌❌❌❌')
       );
       app.mockAgent().assertNoPendingInterceptors();
@@ -3358,14 +3376,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const name = '@dnpm/banana';
         await packageSyncerService.createTask(name);
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         assert.equal(task.targetName, name);
         await packageSyncerService.executeTask(task);
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
-        assert(log.includes('syncUpstream: false'));
+        assert.ok(log.includes('syncUpstream: false'));
       });
 
       it('should sync from target registry & default registry', async () => {
@@ -3384,9 +3402,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         let task = await packageSyncerService.findExecuteTask();
         await packageSyncerService.executeTask(task);
         let stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         let log = await TestUtil.readStreamToLog(stream);
-        assert(log.includes('Syncing from https://custom.npmjs.com/cnpm-pkg'));
+        assert.ok(
+          log.includes('Syncing from https://custom.npmjs.com/cnpm-pkg')
+        );
 
         // default registry
         app.mockHttpclient('https://default.npmjs.org/npm-pkg', 'GET', {
@@ -3403,9 +3423,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         );
         await packageSyncerService.executeTask(task);
         stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         log = await TestUtil.readStreamToLog(stream);
-        assert(log.includes('Syncing from https://default.npmjs.org/npm-pkg'));
+        assert.ok(
+          log.includes('Syncing from https://default.npmjs.org/npm-pkg')
+        );
         app.mockAgent().assertNoPendingInterceptors();
       });
 
@@ -3441,9 +3463,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const task = await packageSyncerService.findExecuteTask();
         await packageSyncerService.executeTask(task);
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert(
+        assert.ok(
           log.includes(
             'Syncing from https://registry.npmjs.org/@cnpmcore/sync_not_match_registry_name'
           )
@@ -3478,9 +3500,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         });
         await packageSyncerService.executeTask(task);
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert(
+        assert.ok(
           log.includes('Syncing from https://custom.npmjs.com/@cnpm/banana')
         );
 
@@ -3507,9 +3529,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         });
         await packageSyncerService.executeTask(task);
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert(
+        assert.ok(
           log.includes('Syncing from https://custom.npmjs.com/@cnpm/banana')
         );
       });
@@ -3535,9 +3557,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         const task = await packageSyncerService.findExecuteTask();
         await packageSyncerService.executeTask(task);
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert(log.includes('skip sync'));
+        assert.ok(log.includes('skip sync'));
       });
     });
 
@@ -3575,10 +3597,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           skipDependencies: true,
         });
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         await packageSyncerService.executeTask(task);
-        assert(!(await TaskModel.findOne({ taskId: task.taskId })));
-        assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+        assert.ok(!(await TaskModel.findOne({ taskId: task.taskId })));
+        assert.ok(await HistoryTaskModel.findOne({ taskId: task.taskId }));
       });
 
       it('should ignore when upstream is removed', async () => {
@@ -3593,22 +3615,22 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           skipDependencies: true,
         });
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         await packageSyncerService.executeTask(task);
-        assert(!(await TaskModel.findOne({ taskId: task.taskId })));
-        assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+        assert.ok(!(await TaskModel.findOne({ taskId: task.taskId })));
+        assert.ok(await HistoryTaskModel.findOne({ taskId: task.taskId }));
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert(log);
+        assert.ok(log);
         // console.log(log);
         const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
-        assert(model);
+        assert.ok(model);
         const versions = await PackageVersion.find({
           packageId: model.packageId,
         });
         assert.equal(model.isPrivate, false);
-        assert(versions.length === 2);
+        assert.ok(versions.length === 2);
       });
 
       it('should block when upstream is removed', async () => {
@@ -3623,32 +3645,32 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           skipDependencies: true,
         });
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         await packageSyncerService.executeTask(task);
-        assert(!(await TaskModel.findOne({ taskId: task.taskId })));
-        assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+        assert.ok(!(await TaskModel.findOne({ taskId: task.taskId })));
+        assert.ok(await HistoryTaskModel.findOne({ taskId: task.taskId }));
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert(log);
+        assert.ok(log);
         // console.log(log);
         const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
-        assert(model);
+        assert.ok(model);
         const versions = await PackageVersion.find({
           packageId: model.packageId,
         });
         assert.equal(model.isPrivate, false);
-        assert(versions.length === 2);
+        assert.ok(versions.length === 2);
 
         const manifests = await packageManagerService.listPackageFullManifests(
           '',
           'foobar'
         );
-        assert(manifests.blockReason === 'Removed in remote registry');
-        assert(manifests.data);
-        assert(manifests.data.block === 'Removed in remote registry');
+        assert.ok(manifests.blockReason === 'Removed in remote registry');
+        assert.ok(manifests.data);
+        assert.ok(manifests.data.block === 'Removed in remote registry');
         const pkg = await packageRepository.findPackage('', 'foobar');
-        assert(pkg);
+        assert.ok(pkg);
 
         await app.httpRequest().get(`/${pkg.name}`).expect(451);
 
@@ -3668,21 +3690,21 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           skipDependencies: true,
         });
         let task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         await packageSyncerService.executeTask(task);
-        assert(!(await TaskModel.findOne({ taskId: task.taskId })));
-        assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
+        assert.ok(!(await TaskModel.findOne({ taskId: task.taskId })));
+        assert.ok(await HistoryTaskModel.findOne({ taskId: task.taskId }));
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert(log);
+        assert.ok(log);
         // console.log(log);
         const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
-        assert(model);
+        assert.ok(model);
         const versions = await PackageVersion.find({
           packageId: model.packageId,
         });
-        assert(versions.length === 0);
+        assert.ok(versions.length === 0);
 
         // resync
         app.mockLog();
@@ -3691,7 +3713,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         });
         task = await packageSyncerService.findExecuteTask();
         await packageSyncerService.executeTask(task);
-        assert(task);
+        assert.ok(task);
         const pkg = await packageRepository.findPackage('', 'foobar');
         app.expectLog(
           `[packageManagerService.unpublishPackage:skip] ${pkg?.packageId} already unpublished`
@@ -3741,7 +3763,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           skipDependencies: true,
         });
         let task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         await packageSyncerService.executeTask(task);
 
         // should sync publisher
@@ -3765,13 +3787,13 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           skipDependencies: true,
         });
         task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         await packageSyncerService.executeTask(task);
         const stream2 = await packageSyncerService.findTaskLog(task);
-        assert(stream2);
+        assert.ok(stream2);
         const log2 = await TestUtil.readStreamToLog(stream2);
         // console.log(log2);
-        assert(
+        assert.ok(
           /different meta: {"_npmUser":{"name":"banana","email":"banana@cnpmjs.org"}}/.test(
             log2
           )
@@ -3812,24 +3834,24 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
           skipDependencies: true,
         });
         const task = await packageSyncerService.findExecuteTask();
-        assert(task);
+        assert.ok(task);
         await packageSyncerService.executeTask(task);
         // assert(!await TaskModel.findOne({ taskId: task.taskId }));
         // assert(await HistoryTaskModel.findOne({ taskId: task.taskId }));
         const stream = await packageSyncerService.findTaskLog(task);
-        assert(stream);
+        assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert(log);
+        assert.ok(log);
         // console.log(log);
         const model = await PackageModel.findOne({
           scope: '',
           name: 'invalid-deps',
         });
-        assert(!model);
+        assert.ok(!model);
 
         // shoud requeue
         const reTask = await packageSyncerService.findExecuteTask();
-        assert(reTask.attempts === 2);
+        assert.ok(reTask.attempts === 2);
       });
     });
   });

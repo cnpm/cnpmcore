@@ -61,7 +61,7 @@ describe('test/core/entity/BugVersion.test.ts', () => {
 
     it('should return undefined if not a bug version', () => {
       const advice = bugVersion.fixVersion('colors', '1.4.3');
-      assert(!advice);
+      assert.ok(!advice);
     });
   });
 
@@ -179,7 +179,7 @@ describe('test/core/entity/BugVersion.test.ts', () => {
           node: '>=0.1.90',
         },
       });
-      assert(!fixedManifest);
+      assert.ok(!fixedManifest);
     });
 
     it('should not mofidy manifest if not a bug version', () => {
@@ -225,7 +225,7 @@ describe('test/core/entity/BugVersion.test.ts', () => {
           node: '>=0.1.90',
         },
       });
-      assert(!fixedManifest);
+      assert.ok(!fixedManifest);
     });
   });
 });

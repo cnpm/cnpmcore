@@ -59,24 +59,24 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
 
     it('should 200', async () => {
       let res = await app.httpRequest().put('/-/package/koa/syncs');
-      assert(res.status === 201);
-      assert(res.body.id);
+      assert.ok(res.status === 201);
+      assert.ok(res.body.id);
       const task = await taskRepository.findTask(res.body.id);
-      assert(task);
+      assert.ok(task);
       res = await app.httpRequest().get(`/-/package/koa/syncs/${task.taskId}`);
-      assert(res.status === 200);
-      assert(res.body.id);
+      assert.ok(res.status === 200);
+      assert.ok(res.body.id);
       // waiting state logUrl is not exists
-      assert(!res.body.logUrl);
+      assert.ok(!res.body.logUrl);
 
       task.state = TaskState.Processing;
       await taskRepository.saveTask(task);
       res = await app.httpRequest().get(`/-/package/koa/syncs/${task.taskId}`);
-      assert(res.status === 200);
-      assert(res.body.id);
-      assert(res.body.logUrl);
-      assert(res.body.logUrl.startsWith('http://localhost:7001/-/package/'));
-      assert(res.body.logUrl.endsWith('/log'));
+      assert.ok(res.status === 200);
+      assert.ok(res.body.id);
+      assert.ok(res.body.logUrl);
+      assert.ok(res.body.logUrl.startsWith('http://localhost:7001/-/package/'));
+      assert.ok(res.body.logUrl.endsWith('/log'));
     });
 
     it('should get sucess task after schedule run', async () => {
@@ -106,13 +106,13 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
         .put(`/-/package/${name}/syncs`)
         .expect(201);
       const taskId = res.body.id;
-      assert(taskId);
+      assert.ok(taskId);
       res = await app
         .httpRequest()
         .get(`/-/package/${name}/syncs/${taskId}`)
         .expect(200);
       // waiting state logUrl is not exists
-      assert(!res.body.logUrl);
+      assert.ok(!res.body.logUrl);
       await app.runSchedule(SyncPackageWorkerPath);
       // again should work
       await app.runSchedule(SyncPackageWorkerPath);
@@ -122,7 +122,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
         .get(`/-/package/${name}/syncs/${taskId}`)
         .expect(200);
       assert.equal(res.body.state, TaskState.Success);
-      assert(res.body.logUrl);
+      assert.ok(res.body.logUrl);
 
       res = await app
         .httpRequest()
@@ -139,16 +139,16 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
       // check hasInstallScript
       res = await app.httpRequest().get(`/${name}`).expect(200);
       let pkg = res.body.versions['3.0.0'];
-      assert(!('hasInstallScript' in pkg));
-      assert(pkg.scripts);
+      assert.ok(!('hasInstallScript' in pkg));
+      assert.ok(pkg.scripts);
       res = await app
         .httpRequest()
         .get(`/${name}`)
         .set('accept', 'application/vnd.npm.install-v1+json')
         .expect(200);
       pkg = res.body.versions['3.0.0'];
-      assert(pkg.hasInstallScript === true);
-      assert(!pkg.scripts);
+      assert.ok(pkg.hasInstallScript === true);
+      assert.ok(!pkg.scripts);
     });
   });
 
@@ -166,19 +166,19 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
 
     it('should 200', async () => {
       let res = await app.httpRequest().put('/koa/sync').expect(201);
-      assert(res.body.logId);
+      assert.ok(res.body.logId);
       const task = await taskRepository.findTask(res.body.logId);
-      assert(task);
+      assert.ok(task);
 
       res = await app
         .httpRequest()
         .get(`/koa/sync/log/${task.taskId}`)
         .expect(200);
-      assert(res.body.ok);
+      assert.ok(res.body.ok);
       // waiting state logUrl is not exists
-      assert(!res.body.logUrl);
+      assert.ok(!res.body.logUrl);
       assert.equal(res.body.syncDone, false);
-      assert(res.body.log);
+      assert.ok(res.body.log);
 
       task.state = TaskState.Processing;
       await taskRepository.saveTask(task);
@@ -187,11 +187,11 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
         .httpRequest()
         .get(`/koa/sync/log/${task.taskId}?t=123`)
         .expect(200);
-      assert(res.body.logUrl);
+      assert.ok(res.body.logUrl);
       assert.match(res.body.logUrl, /^http:\/\/localhost:7001\/-\/package\//);
       assert.match(res.body.logUrl, /\/log$/);
       assert.equal(res.body.syncDone, false);
-      assert(res.body.log);
+      assert.ok(res.body.log);
 
       // finish
       task.state = TaskState.Success;
@@ -201,7 +201,7 @@ describe('test/port/controller/PackageSyncController/showSyncTask.test.ts', () =
         .httpRequest()
         .get(`/koa/sync/log/${task.taskId}`)
         .expect(200);
-      assert(res.body.logUrl);
+      assert.ok(res.body.logUrl);
       assert.match(res.body.logUrl, /^http:\/\//);
       assert.match(res.body.logUrl, /\/log$/);
       assert.equal(res.body.syncDone, true);

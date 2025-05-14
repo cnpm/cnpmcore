@@ -57,12 +57,12 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
       });
 
       const latestVersion = result.items[result.items.length - 1].name;
-      assert(latestVersion);
+      assert.ok(latestVersion);
       assert.equal(latestVersion, '126.0.2578.0/');
       result = await binary.fetch(`/${latestVersion}`);
-      assert(result);
+      assert.ok(result);
       const items = result.items;
-      assert(items.length >= 3);
+      assert.ok(items.length >= 3);
       for (const item of items) {
         // {
         //   name: 'edgedriver_win64.zip',
@@ -74,9 +74,9 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
         assert.equal(item.isDir, false);
         assert.match(item.name, /^edgedriver_\w+.zip$/);
         assert.match(item.url, /^https:\/\//);
-        assert(typeof item.size === 'number');
-        assert(item.size > 0);
-        assert(item.date);
+        assert.ok(typeof item.size === 'number');
+        assert.ok(item.size > 0);
+        assert.ok(item.date);
       }
     });
   });

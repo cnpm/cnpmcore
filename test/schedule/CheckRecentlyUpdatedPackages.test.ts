@@ -67,7 +67,7 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe][0] request');
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe][0] parse');
     const executeTask = await packageSyncerService.findExecuteTask();
-    assert(!executeTask);
+    assert.ok(!executeTask);
 
     // syncMode=all
     mock(app.config.cnpmcore, 'syncMode', 'all');
@@ -76,7 +76,7 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe][0] parse');
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe:createTask]');
     const task = await packageSyncerService.findExecuteTask();
-    assert(task);
+    assert.ok(task);
     app.mockAgent().assertNoPendingInterceptors();
   });
 
@@ -107,10 +107,10 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
     mock(app.config.cnpmcore, 'syncMode', 'exist');
     await app.runSchedule(CheckRecentlyUpdatedPackagesPath);
     let task = await packageSyncerService.findExecuteTask();
-    assert(task);
-    assert(task.targetName === '@cnpm/foo');
+    assert.ok(task);
+    assert.ok(task.targetName === '@cnpm/foo');
     task = await packageSyncerService.findExecuteTask();
-    assert(!task);
+    assert.ok(!task);
   });
 
   it('should handle pageUrl request error', async () => {
@@ -122,7 +122,7 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
     await app.runSchedule(CheckRecentlyUpdatedPackagesPath);
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe:error][0] request');
     const task = await packageSyncerService.findExecuteTask();
-    assert(!task);
+    assert.ok(!task);
   });
 
   it('should handle PackageSyncerService.createTask error', async () => {
@@ -164,7 +164,7 @@ describe('test/schedule/CheckRecentlyUpdatedPackages.test.ts', () => {
     await app.runSchedule(CheckRecentlyUpdatedPackagesPath);
     app.expectLog('[CheckRecentlyUpdatedPackages.subscribe:error][0] parse');
     const task = await packageSyncerService.findExecuteTask();
-    assert(!task);
+    assert.ok(!task);
     app.mockAgent().assertNoPendingInterceptors();
   });
 });

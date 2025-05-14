@@ -26,8 +26,8 @@ describe('test/repository/ScopeRepository.test.ts', () => {
           registryId: '1',
         })
       );
-      assert(cnpmScope);
-      assert(cnpmjsScope);
+      assert.ok(cnpmScope);
+      assert.ok(cnpmjsScope);
     });
 
     it('list work', async () => {
@@ -54,8 +54,8 @@ describe('test/repository/ScopeRepository.test.ts', () => {
         registryId: '1',
       });
       const scopeRes = await scopeRepository.listScopes({});
-      assert(scopeRes.count === 1);
-      assert(scopeRes.data[0].name === '@anpm');
+      assert.ok(scopeRes.count === 1);
+      assert.ok(scopeRes.data[0].name === '@anpm');
     });
 
     it('remove work', async () => {

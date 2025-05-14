@@ -8,21 +8,21 @@ describe('test/common/UserUtil.test.ts', () => {
       for (let i = 0; i < 2000; i++) {
         const token = randomToken('cnpm');
         assert.match(token, /cnpm_\w{31,33}_\w{4,6}/);
-        assert(checkToken(token, 'cnpm'));
-        assert(!checkToken(token, 'npm'));
-        assert(!checkToken(token + 'a', 'cnpm'));
+        assert.ok(checkToken(token, 'cnpm'));
+        assert.ok(!checkToken(token, 'npm'));
+        assert.ok(!checkToken(token + 'a', 'cnpm'));
       }
     });
   });
 
   describe('checkToken()', () => {
     it('should work', () => {
-      assert(checkToken(randomToken('cnpm'), 'cnpm'));
-      assert(!checkToken('', 'cnpm'));
-      assert(!checkToken('cnpm__', 'cnpm'));
-      assert(!checkToken('cnpm_1_2', 'npm'));
-      assert(!checkToken('cnpm_1_2', 'cnpm'));
-      assert(!checkToken(String.raw`cnpm_1?!@#_2\dd`, 'cnpm'));
+      assert.ok(checkToken(randomToken('cnpm'), 'cnpm'));
+      assert.ok(!checkToken('', 'cnpm'));
+      assert.ok(!checkToken('cnpm__', 'cnpm'));
+      assert.ok(!checkToken('cnpm_1_2', 'npm'));
+      assert.ok(!checkToken('cnpm_1_2', 'cnpm'));
+      assert.ok(!checkToken(String.raw`cnpm_1?!@#_2\dd`, 'cnpm'));
     });
   });
 });

@@ -19,14 +19,14 @@ describe('test/common/adapter/BugVersionStore.test.ts', () => {
     describe('version hit', () => {
       it('should return bug version', () => {
         const cache = bugVersionStore.getBugVersion(version);
-        assert(cache === bugVersion);
+        assert.ok(cache === bugVersion);
       });
     });
 
     describe('version miss', () => {
       it('should return undefined', () => {
         const cache = bugVersionStore.getBugVersion('1.0.1');
-        assert(!cache);
+        assert.ok(!cache);
       });
     });
   });

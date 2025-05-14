@@ -24,34 +24,34 @@ describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
         }
       );
       let result = await binary.fetch('/');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       // console.log(result.items);
       for (const item of result.items) {
-        assert(item.name.endsWith('/'));
-        assert(item.isDir);
-        assert(item.size === '-');
+        assert.ok(item.name.endsWith('/'));
+        assert.ok(item.isDir);
+        assert.ok(item.size === '-');
       }
 
       const firstDir = result.items[0].name;
       const secondDir = result.items[1].name;
-      assert(firstDir === `v${secondDir}`);
+      assert.ok(firstDir === `v${secondDir}`);
       result = await binary.fetch(`/${firstDir}`);
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       for (const item of result.items) {
-        assert(!item.name.endsWith('/'));
-        assert(!item.isDir);
+        assert.ok(!item.name.endsWith('/'));
+        assert.ok(!item.isDir);
       }
       const firstItemsLength = result.items.length;
       // console.log(result.items);
 
       result = await binary.fetch(`/${secondDir}`);
-      assert(result);
-      assert(result.items.length === firstItemsLength);
+      assert.ok(result);
+      assert.ok(result.items.length === firstItemsLength);
       for (const item of result.items) {
-        assert(!item.name.endsWith('/'));
-        assert(!item.isDir);
+        assert.ok(!item.name.endsWith('/'));
+        assert.ok(!item.isDir);
       }
       // console.log(result.items);
     });

@@ -45,7 +45,7 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
       }
     );
     const user = await userRepository.findUserByName(username);
-    assert(user);
+    assert.ok(user);
     userId = user.userId;
   });
 
@@ -123,25 +123,25 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
         `TriggerHook:${versionChange.changeId}:${hook.hookId}`
       )) as TriggerHookTask;
       await hookTriggerService.executeTask(pushTask);
-      assert(callEndpoint === hook.endpoint);
-      assert(callOptions);
-      assert(callOptions.method === 'POST');
-      assert(callOptions.headers);
-      assert(callOptions.headers['x-npm-signature']);
+      assert.ok(callEndpoint === hook.endpoint);
+      assert.ok(callOptions);
+      assert.ok(callOptions.method === 'POST');
+      assert.ok(callOptions.headers);
+      assert.ok(callOptions.headers['x-npm-signature']);
       const data = JSON.parse(callOptions.data);
-      assert(data.event === 'package:publish');
-      assert(data.name === pkgName);
-      assert(data.type === 'package');
-      assert(data.version === '1.0.0');
+      assert.ok(data.event === 'package:publish');
+      assert.ok(data.name === pkgName);
+      assert.ok(data.type === 'package');
+      assert.ok(data.version === '1.0.0');
       assert.deepStrictEqual(data.hookOwner, {
         username,
       });
-      assert(data.payload);
+      assert.ok(data.payload);
       assert.deepStrictEqual(data.change, {
         version: '1.0.0',
         'dist-tag': 'latest',
       });
-      assert(data.time === pushTask.data.hookEvent.time);
+      assert.ok(data.time === pushTask.data.hookEvent.time);
     });
 
     it('should create each event', async () => {
