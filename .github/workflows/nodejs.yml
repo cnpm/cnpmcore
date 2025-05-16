@@ -87,6 +87,8 @@ jobs:
           POSTGRES_PASSWORD: postgres
           # The default PostgreSQL port
           POSTGRES_PORT: 5432
+          CNPMCORE_CONFIG_ENABLE_ES: true
+          CNPMCORE_CONFIG_ES_CLIENT_NODES: http://localhost:9200
 
       - name: Code Coverage
         uses: codecov/codecov-action@v5
