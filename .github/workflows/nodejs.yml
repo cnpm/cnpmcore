@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20.18.0, 20, 22]
+        node-version: [20, 22, 24]
         os: [ubuntu-latest]
 
     steps:
@@ -56,6 +56,28 @@ jobs:
       - name: Install Dependencies
         run: npm i -g npminstall && npminstall
 
+      # https://github.com/elastic/elastic-github-actions/blob/master/elasticsearch/README.md
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 8.18.0
+          security-enabled: false
+
+      - name: Wait for Elasticsearch to be ready
+        run: |
+          curl -v http://localhost:9200
+          while ! curl -s http://localhost:9200 | grep -q "elasticsearch"; do
+            echo "Waiting for Elasticsearch to be ready..."
+            sleep 1
+          done
+
       - name: Continuous Integration
         run: npm run ci:postgresql
         env:
@@ -65,6 +87,8 @@ jobs:
           POSTGRES_PASSWORD: postgres
           # The default PostgreSQL port
           POSTGRES_PORT: 5432
+          CNPMCORE_CONFIG_ENABLE_ES: true
+          CNPMCORE_CONFIG_ES_CLIENT_NODES: http://localhost:9200
 
       - name: Code Coverage
         uses: codecov/codecov-action@v5
@@ -93,7 +117,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20.18.0, 20, 22]
+        node-version: [20, 22, 24]
         os: [ubuntu-latest]
 
     steps:
@@ -115,61 +139,6 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-
-  # test-mysql57-oss-nfs:
-  #   runs-on: ${{ matrix.os }}
-  #   if: |
-  #     contains('
-  #       refs/heads/master-skip-oss
-  #       refs/heads/dev-skip-oss
-  #     ', github.ref)
-
-  #   services:
-  #     mysql:
-  #       image: mysql:5.7
-  #       env:
-  #         MYSQL_ALLOW_EMPTY_PASSWORD: true
-  #         MYSQL_DATABASE: cnpmcore_unittest
-  #       ports:
-  #         - 3306:3306
-  #       options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
-
-  #     redis:
-  #       image: redis
-  #       ports:
-  #         - 6379:6379
-
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       node-version: [20, 22]
-  #       os: [ubuntu-latest]
-
-  #   steps:
-  #   - name: Checkout Git Source
-  #     uses: actions/checkout@v4
-
-  #   - name: Use Node.js ${{ matrix.node-version }}
-  #     uses: actions/setup-node@v4
-  #     with:
-  #       node-version: ${{ matrix.node-version }}
-
-  #   - name: Install Dependencies
-  #     run: npm i
-
-  #   - name: Continuous Integration
-  #     run: npm run ci
-  #     env:
-  #       CNPMCORE_NFS_TYPE: oss
-  #       CNPMCORE_NFS_OSS_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
-  #       CNPMCORE_NFS_OSS_ENDPOINT: https://oss-us-west-1.aliyuncs.com
-  #       CNPMCORE_NFS_OSS_ID: ${{ secrets.CNPMCORE_NFS_OSS_ID }}
-  #       CNPMCORE_NFS_OSS_SECRET: ${{ secrets.CNPMCORE_NFS_OSS_SECRET }}
-
-  #   - name: Code Coverage
-  #     uses: codecov/codecov-action@v5
-  #     with:
-  #       token: ${{ secrets.CODECOV_TOKEN }}
 
   test-mysql57-s3-nfs:
     runs-on: ${{ matrix.os }}
