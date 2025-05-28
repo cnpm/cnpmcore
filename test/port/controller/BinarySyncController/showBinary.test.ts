@@ -8,7 +8,6 @@ import { BinaryRepository } from '../../../../app/repository/BinaryRepository.js
 import { Binary } from '../../../../app/core/entity/Binary.js';
 import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.js';
 import { TestUtil } from '../../../../test/TestUtil.js';
-import { setTimeout } from 'node:timers/promises';
 
 describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
   let binarySyncerService: BinarySyncerService;
@@ -760,7 +759,6 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
     });
 
     it('since and limit should show valid files', async () => {
-      const now = new Date();
       await binaryRepository.saveBinary(
         Binary.create({
           category: 'node-canvas-prebuilt',
@@ -781,7 +779,6 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           date: '2021-12-15T13:12:31.587Z',
         })
       );
-      await setTimeout(100);
       await binaryRepository.saveBinary(
         Binary.create({
           category: 'node-canvas-prebuilt',
@@ -792,7 +789,6 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           date: '2021-12-16T13:12:31.587Z',
         })
       );
-      await setTimeout(100);
       await binaryRepository.saveBinary(
         Binary.create({
           category: 'node-canvas-prebuilt',
@@ -806,7 +802,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       const res = await app
         .httpRequest()
         .get(
-          `/-/binary/node-canvas-prebuilt/v2.6.1/?since=${now.toISOString()}&limit=1`
+          `/-/binary/node-canvas-prebuilt/v2.6.1/?since=2021-12-15T13:12:31.587Z&limit=1`
         );
       assert.ok(res.status === 200);
       assert.ok(
@@ -834,7 +830,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       const res2 = await app
         .httpRequest()
         .get(
-          `/-/binary/node-canvas-prebuilt/v2.6.1/?since=${new Date(now.getTime() + 50).toISOString()}&limit=1`
+          `/-/binary/node-canvas-prebuilt/v2.6.1/?since=2021-12-16T13:12:31.587Z&limit=1`
         );
       assert.ok(res2.status === 200);
       assert.ok(

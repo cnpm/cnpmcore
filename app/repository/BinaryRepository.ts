@@ -44,7 +44,7 @@ export class BinaryRepository extends AbstractRepository {
     parent: string,
     options?: {
       limit: number;
-      since: Date;
+      since: string;
     }
   ): Promise<BinaryEntity[]> {
     let models;
@@ -52,9 +52,9 @@ export class BinaryRepository extends AbstractRepository {
       models = await this.Binary.find({
         category,
         parent,
-        createdAt: { $gte: options.since },
+        date: { $gte: options.since },
       })
-        .order('gmt_create', 'asc')
+        .order('date', 'asc')
         .limit(options.limit);
     } else {
       models = await this.Binary.find({ category, parent });

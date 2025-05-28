@@ -83,15 +83,6 @@ export class BinarySyncController extends AbstractController {
         );
       }
     }
-    let sinceTime: Date | undefined;
-    if (since) {
-      sinceTime = new Date(since);
-      try {
-        sinceTime.toISOString();
-      } catch {
-        throw new NotFoundError(`invalidate since "${limit}"`);
-      }
-    }
     subpath = subpath || '/';
     if (subpath === '/') {
       const items = await this.binarySyncerService.listRootBinaries(binaryName);
@@ -131,10 +122,10 @@ export class BinarySyncController extends AbstractController {
     }
     if (binary.isDir) {
       let options;
-      if (limitCount && sinceTime) {
+      if (limitCount && since) {
         options = {
           limit: limitCount,
-          since: sinceTime,
+          since,
         };
       }
       const items = await this.binarySyncerService.listDirBinaries(

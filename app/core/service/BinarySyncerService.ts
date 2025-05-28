@@ -63,7 +63,7 @@ export class BinarySyncerService extends AbstractService {
     binary: Binary,
     options?: {
       limit: number;
-      since: Date;
+      since: string;
     }
   ) {
     return await this.binaryRepository.listBinaries(
@@ -125,7 +125,7 @@ export class BinarySyncerService extends AbstractService {
         'chromium-browser-snapshots'
       );
       if (latestBinary) {
-        lastData.lastSyncTime = latestBinary.createdAt;
+        lastData.lastSyncTime = latestBinary.date;
       }
     }
     try {
