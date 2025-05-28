@@ -8,6 +8,7 @@ import { BinaryRepository } from '../../../../app/repository/BinaryRepository.js
 import { Binary } from '../../../../app/core/entity/Binary.js';
 import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.js';
 import { TestUtil } from '../../../../test/TestUtil.js';
+import { setTimeout } from 'node:timers/promises';
 
 describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
   let binarySyncerService: BinarySyncerService;
@@ -756,6 +757,105 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         res.headers.location,
         'https://cdn.mock.com/binaries/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz'
       );
+    });
+
+    it('since and limit should show valid files', async () => {
+      const now = new Date();
+      await binaryRepository.saveBinary(
+        Binary.create({
+          category: 'node-canvas-prebuilt',
+          parent: '/',
+          name: 'v2.6.1/',
+          isDir: true,
+          size: 0,
+          date: '2021-12-14T13:12:31.587Z',
+        })
+      );
+      await binaryRepository.saveBinary(
+        Binary.create({
+          category: 'node-canvas-prebuilt',
+          parent: '/v2.6.1/',
+          name: 'node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+          isDir: false,
+          size: 10,
+          date: '2021-12-15T13:12:31.587Z',
+        })
+      );
+      await setTimeout(100);
+      await binaryRepository.saveBinary(
+        Binary.create({
+          category: 'node-canvas-prebuilt',
+          parent: '/v2.6.1/',
+          name: 'node-canvas-prebuilt-v2.6.1-node-v58-linux-glibc-x64.tar.gz',
+          isDir: false,
+          size: 10,
+          date: '2021-12-16T13:12:31.587Z',
+        })
+      );
+      await setTimeout(100);
+      await binaryRepository.saveBinary(
+        Binary.create({
+          category: 'node-canvas-prebuilt',
+          parent: '/v2.6.1/',
+          name: 'node-canvas-prebuilt-v2.6.1-node-v59-linux-glibc-x64.tar.gz',
+          isDir: false,
+          size: 10,
+          date: '2021-12-17T13:12:31.587Z',
+        })
+      );
+      const res = await app
+        .httpRequest()
+        .get(
+          `/-/binary/node-canvas-prebuilt/v2.6.1/?since=${now.toISOString()}&limit=1`
+        );
+      assert(res.status === 200);
+      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      const items = TestUtil.pickKeys(res.body, [
+        'category',
+        'name',
+        'date',
+        'type',
+        'url',
+      ]);
+      assert.equal(items.length, 1);
+
+      assert.deepStrictEqual(items, [
+        {
+          category: 'node-canvas-prebuilt',
+          name: 'node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+          date: '2021-12-15T13:12:31.587Z',
+          type: 'file',
+          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
+        },
+      ]);
+
+      const res2 = await app
+        .httpRequest()
+        .get(
+          `/-/binary/node-canvas-prebuilt/v2.6.1/?since=${new Date(now.getTime() + 50).toISOString()}&limit=1`
+        );
+      assert(res2.status === 200);
+      assert(
+        res2.headers['content-type'] === 'application/json; charset=utf-8'
+      );
+      const items2 = TestUtil.pickKeys(res2.body, [
+        'category',
+        'name',
+        'date',
+        'type',
+        'url',
+      ]);
+      assert.equal(items2.length, 1);
+
+      assert.deepStrictEqual(items2, [
+        {
+          category: 'node-canvas-prebuilt',
+          name: 'node-canvas-prebuilt-v2.6.1-node-v58-linux-glibc-x64.tar.gz',
+          date: '2021-12-16T13:12:31.587Z',
+          type: 'file',
+          url: 'http://localhost:7001/-/binary/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v58-linux-glibc-x64.tar.gz',
+        },
+      ]);
     });
   });
 });

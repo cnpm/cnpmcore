@@ -5,6 +5,7 @@ import {
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
+  HTTPQuery,
   Inject,
   Middleware,
   HTTPBody,
@@ -60,13 +61,36 @@ export class BinarySyncController extends AbstractController {
   async showBinary(
     @Context() ctx: EggContext,
     @HTTPParam() binaryName: BinaryName,
-    @HTTPParam() subpath: string
+    @HTTPParam() subpath: string,
+    @HTTPQuery() since: string,
+    @HTTPQuery() limit: string
   ) {
     // check binaryName valid
     try {
       ctx.tValidate(BinaryNameRule, binaryName);
     } catch {
       throw new NotFoundError(`Binary "${binaryName}" not found`);
+    }
+    let limitCount: number | undefined;
+    if (limit) {
+      limitCount = Number(limit);
+      if (Number.isNaN(limitCount)) {
+        throw new NotFoundError(`invalidate limit "${limit}"`);
+      }
+      if (limitCount > 1000) {
+        throw new NotFoundError(
+          `limit should less than 1000, query is "${limit}"`
+        );
+      }
+    }
+    let sinceTime: Date | undefined;
+    if (since) {
+      sinceTime = new Date(since);
+      try {
+        sinceTime.toISOString();
+      } catch {
+        throw new NotFoundError(`invalidate since "${limit}"`);
+      }
     }
     subpath = subpath || '/';
     if (subpath === '/') {
@@ -106,7 +130,17 @@ export class BinarySyncController extends AbstractController {
       throw new NotFoundError(`Binary "${binaryName}${subpath}" not found`);
     }
     if (binary.isDir) {
-      const items = await this.binarySyncerService.listDirBinaries(binary);
+      let options;
+      if (limitCount && sinceTime) {
+        options = {
+          limit: limitCount,
+          since: sinceTime,
+        };
+      }
+      const items = await this.binarySyncerService.listDirBinaries(
+        binary,
+        options
+      );
       return this.formatItems(items);
     }
 
@@ -157,7 +191,9 @@ export class BinarySyncController extends AbstractController {
   })
   async showBinaryIndex(
     @Context() ctx: EggContext,
-    @HTTPParam() binaryName: BinaryName
+    @HTTPParam() binaryName: BinaryName,
+    @HTTPQuery() since: string,
+    @HTTPQuery() limit: string
   ) {
     // check binaryName valid
     try {
@@ -165,7 +201,7 @@ export class BinarySyncController extends AbstractController {
     } catch {
       throw new NotFoundError(`Binary "${binaryName}" not found`);
     }
-    return await this.showBinary(ctx, binaryName, '/');
+    return await this.showBinary(ctx, binaryName, '/', since, limit);
   }
 
   private formatItems(items: Binary[]) {

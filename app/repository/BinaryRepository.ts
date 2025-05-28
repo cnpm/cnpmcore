@@ -41,9 +41,24 @@ export class BinaryRepository extends AbstractRepository {
 
   async listBinaries(
     category: string,
-    parent: string
+    parent: string,
+    options?: {
+      limit: number;
+      since: Date;
+    }
   ): Promise<BinaryEntity[]> {
-    const models = await this.Binary.find({ category, parent });
+    let models;
+    if (options) {
+      models = await this.Binary.find({
+        category,
+        parent,
+        createdAt: { $gte: options.since },
+      })
+        .order('gmt_create', 'asc')
+        .limit(options.limit);
+    } else {
+      models = await this.Binary.find({ category, parent });
+    }
     return models.map(model =>
       ModelConvertor.convertModelToEntity(model, BinaryEntity)
     );
@@ -57,6 +72,14 @@ export class BinaryRepository extends AbstractRepository {
       'gmt_create',
       'desc'
     );
+    if (model) {
+      return ModelConvertor.convertModelToEntity(model, BinaryEntity);
+    }
+    return null;
+  }
+
+  async findLatestBinary(category: string): Promise<BinaryEntity | null> {
+    const model = await this.Binary.findOne({ category }).order('id', 'desc');
     if (model) {
       return ModelConvertor.convertModelToEntity(model, BinaryEntity);
     }
