@@ -136,7 +136,14 @@
 
     // jsdoc
     "jsdoc/require-returns": "allow",
-    "jsdoc/require-param": "allow"
+    "jsdoc/require-param": "allow",
+
+    // import
+    "consistent-type-specifier-style": "allow",
+    "no-unassigned-import": "allow",
+
+    // for-loop
+    "no-for-loop": "allow"
   },
   "ignorePatterns": ["index.d.ts"]
 }

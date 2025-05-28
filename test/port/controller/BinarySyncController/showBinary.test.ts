@@ -808,8 +808,10 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         .get(
           `/-/binary/node-canvas-prebuilt/v2.6.1/?since=${now.toISOString()}&limit=1`
         );
-      assert(res.status === 200);
-      assert(res.headers['content-type'] === 'application/json; charset=utf-8');
+      assert.ok(res.status === 200);
+      assert.ok(
+        res.headers['content-type'] === 'application/json; charset=utf-8'
+      );
       const items = TestUtil.pickKeys(res.body, [
         'category',
         'name',
@@ -834,8 +836,8 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         .get(
           `/-/binary/node-canvas-prebuilt/v2.6.1/?since=${new Date(now.getTime() + 50).toISOString()}&limit=1`
         );
-      assert(res2.status === 200);
-      assert(
+      assert.ok(res2.status === 200);
+      assert.ok(
         res2.headers['content-type'] === 'application/json; charset=utf-8'
       );
       const items2 = TestUtil.pickKeys(res2.body, [
