@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.6.2](https://github.com/cnpm/cnpmcore/compare/v4.6.1...v4.6.2) (2025-05-29)
+
+### Bug Fixes
+
+- only set lastSyncTime if lastData.lastSyncTime is undefined ([#804](https://github.com/cnpm/cnpmcore/issues/804)) ([1239dc9](https://github.com/cnpm/cnpmcore/commit/1239dc9f49ff1ae0c584abf6c5f79b35573866ae))
+
 ## [4.6.1](https://github.com/cnpm/cnpmcore/compare/v4.6.0...v4.6.1) (2025-05-29)
 
 ### Bug Fixes
