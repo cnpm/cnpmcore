@@ -29,7 +29,7 @@ export class ApiBinary extends AbstractBinary {
       `${this.config.cnpmcore.sourceRegistry}/-/binary`;
     let url = `${apiUrl}/${binaryName}${dir}`;
     if (lastData && lastData.lastSyncTime) {
-      url += `?since=${(lastData.lastSyncTime as Date).toISOString()}&limit=100`;
+      url += `?since=${lastData.lastSyncTime}&limit=100`;
     }
 
     const data = await this.requestJSON(url);

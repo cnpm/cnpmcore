@@ -97,5 +97,24 @@ describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
       assert.ok(matchDir);
       assert.ok(matchFile);
     });
+
+    it('should fetch with lastData', async () => {
+      mock(
+        app.config.cnpmcore,
+        'syncBinaryFromAPISource',
+        'https://cnpmjs.org/mirrors/apis'
+      );
+      app.mockHttpclient('https://cnpmjs.org/mirrors/apis/node/', 'GET', {
+        data: await TestUtil.readFixturesFile(
+          'cnpmjs.org/mirrors/apis/node.json'
+        ),
+        persist: false,
+      });
+      const result = await binary.fetch('/', 'node', {
+        lastSyncTime: '2025-03-11T15:43:56.748Z',
+      });
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
+    });
   });
 });
