@@ -124,7 +124,7 @@ export class BinarySyncerService extends AbstractService {
       const latestBinary = await this.binaryRepository.findLatestBinary(
         'chromium-browser-snapshots'
       );
-      if (latestBinary) {
+      if (latestBinary && !lastData.lastSyncTime) {
         lastData.lastSyncTime = latestBinary.date;
       }
     }
