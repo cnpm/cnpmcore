@@ -331,7 +331,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           .expect('content-type', 'application/json; charset=utf-8');
         const data = res.body;
         assert.ok(data.upstream_registries.length === 2);
-        const [defaultRegistry] = data.upstream_registries.filter(
+        const defaultRegistry = data.upstream_registries.find(
           (item: UpstreamRegistryInfo) => item.registry_name === 'default'
         );
         assert.ok(defaultRegistry.registry_name === 'default');
@@ -343,7 +343,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           defaultRegistry.source_registry === 'https://registry.npmjs.org'
         );
 
-        const [customRegistry] = data.upstream_registries.filter(
+        const customRegistry = data.upstream_registries.find(
           (item: UpstreamRegistryInfo) => item.registry_name === 'custom'
         );
         assert.ok(customRegistry.registry_name === 'custom');

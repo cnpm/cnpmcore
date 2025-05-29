@@ -59,10 +59,17 @@ export class BinarySyncerService extends AbstractService {
     return await this.binaryRepository.findBinary(targetName, parent, name);
   }
 
-  public async listDirBinaries(binary: Binary) {
+  public async listDirBinaries(
+    binary: Binary,
+    options?: {
+      limit: number;
+      since: string;
+    }
+  ) {
     return await this.binaryRepository.listBinaries(
       binary.category,
-      `${binary.parent}${binary.name}`
+      `${binary.parent}${binary.name}`,
+      options
     );
   }
 
@@ -113,6 +120,12 @@ export class BinarySyncerService extends AbstractService {
         if (binaryDir) {
           lastData[platform] = binaryDir.name.slice(0, -1);
         }
+      }
+      const latestBinary = await this.binaryRepository.findLatestBinary(
+        'chromium-browser-snapshots'
+      );
+      if (latestBinary) {
+        lastData.lastSyncTime = latestBinary.date;
       }
     }
     try {
