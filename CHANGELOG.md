@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.6.3](https://github.com/cnpm/cnpmcore/compare/v4.6.2...v4.6.3) (2025-05-29)
+
+### Bug Fixes
+
+- set puppeteer loop only once ([#805](https://github.com/cnpm/cnpmcore/issues/805)) ([54e3335](https://github.com/cnpm/cnpmcore/commit/54e3335abde7f4b021f0d315613f861b2a7b09ce))
+
 ## [4.6.2](https://github.com/cnpm/cnpmcore/compare/v4.6.1...v4.6.2) (2025-05-29)
 
 ### Bug Fixes
