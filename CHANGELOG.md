@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.6.0](https://github.com/cnpm/cnpmcore/compare/v4.5.3...v4.6.0) (2025-05-29)
+
+### Features
+
+- add since for api sync binary ([#802](https://github.com/cnpm/cnpmcore/issues/802)) ([297bd7a](https://github.com/cnpm/cnpmcore/commit/297bd7a745ad03cd541927e7fb7c772dd775046f))
+
 ## [4.5.3](https://github.com/cnpm/cnpmcore/compare/v4.5.2...v4.5.3) (2025-05-14)
 
 ### Bug Fixes
