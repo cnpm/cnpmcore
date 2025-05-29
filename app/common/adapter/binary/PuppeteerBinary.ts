@@ -11,7 +11,7 @@ import {
 
 export const platforms = ['Linux_x64', 'Mac', 'Mac_Arm', 'Win', 'Win_x64'];
 
-const MAX_DEPTH = 100;
+const MAX_DEPTH = 1;
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Puppeteer)
