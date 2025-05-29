@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.6.1](https://github.com/cnpm/cnpmcore/compare/v4.6.0...v4.6.1) (2025-05-29)
+
+### Bug Fixes
+
+- lastSyncTime is string should not stringify again ([#803](https://github.com/cnpm/cnpmcore/issues/803)) ([f6f5314](https://github.com/cnpm/cnpmcore/commit/f6f53149a1568d8f8eff02ec8586f6bc30b9951d))
+
 ## [4.6.0](https://github.com/cnpm/cnpmcore/compare/v4.5.3...v4.6.0) (2025-05-29)
 
 ### Features
