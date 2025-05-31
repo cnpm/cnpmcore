@@ -4,8 +4,7 @@ import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
 import { TaskState, TaskType } from '../../common/enum/Task.js';
 import { AbstractService } from '../../common/AbstractService.js';
 import type { TaskRepository } from '../../repository/TaskRepository.js';
-import type { Task} from '../entity/Task.js';
-import { type CreateSyncPackageTaskData } from '../entity/Task.js';
+import type { Task, CreateSyncPackageTaskData } from '../entity/Task.js';
 import type { QueueAdapter } from '../../common/typing.js';
 
 @SingletonProto({
