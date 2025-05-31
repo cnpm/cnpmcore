@@ -16,6 +16,7 @@ export const PID = process.pid;
 
 export interface TaskBaseData {
   taskWorker: string;
+  shouldNotMerge?: boolean;
 }
 
 export interface TaskData<T = TaskBaseData> extends EntityData {
@@ -268,8 +269,14 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static needMergeWhenWaiting(type: TaskType) {
-    return [TaskType.SyncBinary, TaskType.SyncPackage].includes(type);
+  needMergeWhenWaiting(): boolean {
+    // 历史任务补偿时，将 shouldNotMerge 设置为 true，避免合并
+    // 补偿任务单独执行
+    if (this.data.shouldNotMerge === true) {
+      return false;
+    }
+    // 仅合并二进制镜像与 npm 包
+    return [TaskType.SyncBinary, TaskType.SyncPackage].includes(this.type);
   }
 
   public static createUpdateProxyCache(
