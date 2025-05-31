@@ -4,7 +4,8 @@ import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
 import { TaskState, TaskType } from '../../common/enum/Task.js';
 import { AbstractService } from '../../common/AbstractService.js';
 import type { TaskRepository } from '../../repository/TaskRepository.js';
-import { Task, type CreateSyncPackageTaskData } from '../entity/Task.js';
+import type { Task} from '../entity/Task.js';
+import { type CreateSyncPackageTaskData } from '../entity/Task.js';
 import type { QueueAdapter } from '../../common/typing.js';
 
 @SingletonProto({
@@ -29,7 +30,7 @@ export class TaskService extends AbstractService {
     );
 
     // 只在包同步场景下做任务合并，其余场景通过 bizId 来进行任务幂等
-    if (existsTask && Task.needMergeWhenWaiting(task.type)) {
+    if (existsTask && task.needMergeWhenWaiting()) {
       // 在包同步场景，如果任务还未被触发，就不继续重复创建
       // 如果任务正在执行，可能任务状态已更新，这种情况需要继续创建
       if (existsTask.state === TaskState.Waiting) {
