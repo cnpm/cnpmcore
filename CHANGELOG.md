@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.7.0](https://github.com/cnpm/cnpmcore/compare/v4.6.3...v4.7.0) (2025-05-31)
+
+### Features
+
+- add shouldNotMerge for task data for skip task merge ([#807](https://github.com/cnpm/cnpmcore/issues/807)) ([490dce3](https://github.com/cnpm/cnpmcore/commit/490dce3ad203975fabab7ff11041f988f4a5c5d8))
+
 ## [4.6.3](https://github.com/cnpm/cnpmcore/compare/v4.6.2...v4.6.3) (2025-05-29)
 
 ### Bug Fixes
