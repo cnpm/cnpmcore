@@ -6,6 +6,16 @@
 
 - add shouldNotMerge for task data for skip task merge ([#807](https://github.com/cnpm/cnpmcore/issues/807)) ([490dce3](https://github.com/cnpm/cnpmcore/commit/490dce3ad203975fabab7ff11041f988f4a5c5d8))
 
+### Bug Fixes
+
+- order binary by date ([#808](https://github.com/cnpm/cnpmcore/issues/808)) ([12aa425](https://github.com/cnpm/cnpmcore/commit/12aa425c2627c3145bf4f6952f7ac5412d578d5f))
+
+## [4.7.0](https://github.com/cnpm/cnpmcore/compare/v4.6.3...v4.7.0) (2025-05-31)
+
+### Features
+
+- add shouldNotMerge for task data for skip task merge ([#807](https://github.com/cnpm/cnpmcore/issues/807)) ([490dce3](https://github.com/cnpm/cnpmcore/commit/490dce3ad203975fabab7ff11041f988f4a5c5d8))
+
 ## [4.6.3](https://github.com/cnpm/cnpmcore/compare/v4.6.2...v4.6.3) (2025-05-29)
 
 ### Bug Fixes
