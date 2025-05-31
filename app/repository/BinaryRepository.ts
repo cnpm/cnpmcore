@@ -69,7 +69,7 @@ export class BinaryRepository extends AbstractRepository {
     parent: string
   ): Promise<BinaryEntity | null> {
     const model = await this.Binary.findOne({ category, parent }).order(
-      'gmt_create',
+      'date',
       'desc'
     );
     if (model) {
