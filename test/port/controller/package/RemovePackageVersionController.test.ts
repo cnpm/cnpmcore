@@ -208,6 +208,69 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       assert.ok(res.body['dist-tags'].latest === '2.0.0');
     });
 
+    it('should remove package version files', async () => {
+      app.mockLog();
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      mock(app.config.cnpmcore, 'enableUnpkg', true);
+      mock(app.config.cnpmcore, 'enableSyncUnpkgFiles', true);
+      const { pkg } = await TestUtil.createPackage({
+        name: 'foo',
+        version: '1.0.0',
+        isPrivate: false,
+      });
+      let res = await app.httpRequest().get(`/${pkg.name}`).expect(200);
+      const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
+      const pkgVersion = res.body;
+
+      await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json`)
+        .expect(200);
+
+      res = await app
+        .httpRequest()
+        .delete(`/${pkg.name}/-rev/${pkgVersion._rev}`)
+        .set('authorization', adminUser.authorization)
+        .set('npm-command', 'unpublish')
+        .set('user-agent', adminUser.ua)
+        .expect(200);
+      assert.equal(res.body.ok, true);
+
+      app.expectLog(
+        `DELETE /${pkg.name}/-rev/${pkgVersion._rev}] [PackageController:removeVersion] ${pkg.name}@1.0.0`
+      );
+      app.expectLog(
+        `DELETE /${pkg.name}/-rev/${pkgVersion._rev}] [nfsAdapter:remove] key: /packages/${pkg.name}/1.0.0/abbreviated.json`
+      );
+      app.expectLog(
+        `DELETE /${pkg.name}/-rev/${pkgVersion._rev}] [nfsAdapter:remove] key: /packages/${pkg.name}/1.0.0/package.json`
+      );
+      app.expectLog(
+        `DELETE /${pkg.name}/-rev/${pkgVersion._rev}] [nfsAdapter:remove] key: /packages/${pkg.name}/1.0.0/readme.md`
+      );
+      app.expectLog(
+        `DELETE /${pkg.name}/-rev/${pkgVersion._rev}] [nfsAdapter:remove] key: /packages/${pkg.name}/1.0.0/${pkg.name}-1.0.0.tgz`
+      );
+      app.expectLog(
+        `DELETE /${pkg.name}/-rev/${pkgVersion._rev}] [PackageRepository:removePackageVersion:remove] 4 dist rows, 1 rows`
+      );
+
+      app.expectLog(
+        `DELETE /${pkg.name}/-rev/${pkgVersion._rev}] [nfsAdapter:remove] key: /packages/${pkg.name}/1.0.0/files/package.json`
+      );
+      app.expectLog(
+        `DELETE /${pkg.name}/-rev/${pkgVersion._rev}] [PackageVersionFileRepository:removePackageVersionFiles:remove] 1 rows in PackageVersionFile`
+      );
+      app.expectLog(
+        `DELETE /${pkg.name}/-rev/${pkgVersion._rev}] [PackageVersionFileRepository:removePackageVersionFiles:remove] 1 rows in Dist`
+      );
+
+      await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json`)
+        .expect(404);
+    });
+
     it('should 404 when version not exists', async () => {
       const pkg = await TestUtil.getFullPackage({
         name: '@cnpm/foo',
