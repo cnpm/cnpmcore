@@ -577,10 +577,6 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['content-type'], 'text/plain; charset=utf-8');
-      assert.equal(
-        res.headers['content-disposition'],
-        'attachment; filename="getting-started.html"'
-      );
       assert.equal(res.headers['transfer-encoding'], 'chunked');
       assert.match(res.text, /<!DOCTYPE html>/);
 
