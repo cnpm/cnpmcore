@@ -228,7 +228,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             {
               path: '/index.html',
               type: 'file',
-              contentType: 'text/html',
+              contentType: 'text/plain',
               integrity:
                 'sha512-L4Vxx8DW1PtZfPut4uwP9DSK9+DbFbKDWWGp4KK5TRKGTHSjYoMExqY50WiTKs/bGu1Ecpneiu3dnYlRZ/sDdw==',
               lastModified: '2024-05-18T16:00:18.307Z',
