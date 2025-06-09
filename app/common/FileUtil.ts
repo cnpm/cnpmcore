@@ -135,15 +135,27 @@ const WHITE_FILENAME_CONTENT_TYPES = {
   '.eslintrc': 'application/json',
 } as const;
 
+const CONTENT_TYPE_BLACKLIST = new Set(['application/xml', 'text/html']);
+
+export function ensureContentType(contentType: string) {
+  if (CONTENT_TYPE_BLACKLIST.has(contentType)) {
+    return 'text/plain';
+  }
+  return contentType;
+}
+
 export function mimeLookup(filepath: string) {
   const filename = path.basename(filepath).toLowerCase();
   if (filename.endsWith('.ts')) return PLAIN_TEXT;
   if (filename.endsWith('.lock')) return PLAIN_TEXT;
-  return (
-    mime.lookup(filename) ||
+  const defaultContentType = mime.lookup(filename);
+  // https://github.com/cnpm/cnpmcore/issues/693#issuecomment-2955268229
+  const contentType =
+    defaultContentType ||
     WHITE_FILENAME_CONTENT_TYPES[
       filename as keyof typeof WHITE_FILENAME_CONTENT_TYPES
     ] ||
-    DEFAULT_CONTENT_TYPE
-  );
+    DEFAULT_CONTENT_TYPE;
+
+  return ensureContentType(contentType);
 }

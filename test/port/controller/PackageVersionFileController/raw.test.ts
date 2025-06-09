@@ -576,11 +576,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.status, 200);
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
-      assert.equal(res.headers['content-type'], 'text/html; charset=utf-8');
-      assert.equal(
-        res.headers['content-disposition'],
-        'attachment; filename="getting-started.html"'
-      );
+      assert.equal(res.headers['content-type'], 'text/plain; charset=utf-8');
       assert.equal(res.headers['transfer-encoding'], 'chunked');
       assert.match(res.text, /<!DOCTYPE html>/);
 
@@ -601,7 +597,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.deepEqual(res.body, {
         path: '/docs/_site/getting-started.html',
         type: 'file',
-        contentType: 'text/html',
+        contentType: 'text/plain',
         integrity:
           'sha512-o/nCeU2MBJpIWhA8gIbf6YW49Ss3Spga5M70LJjjyRMlALQDmeh8IVMXagAe79l1Yznci/otKtNjWhVMOM38hg==',
         lastModified: publishTime,

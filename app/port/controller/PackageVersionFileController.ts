@@ -24,6 +24,7 @@ import type { PackageVersionFile } from '../../core/entity/PackageVersionFile.js
 import type { PackageVersion } from '../../core/entity/PackageVersion.js';
 import type { DistRepository } from '../../repository/DistRepository.js';
 import { Spec } from '../typebox.js';
+import { ensureContentType } from '../../common/FileUtil.js';
 
 interface FileItem {
   path: string;
@@ -216,10 +217,8 @@ export class PackageVersionFileController extends AbstractController {
       return formatFileItem(file);
     }
     ctx.set('cache-control', FILE_CACHE_CONTROL);
-    ctx.type = file.contentType;
-    if (file.contentType === 'text/html' || file.contentType === 'text/xml') {
-      ctx.attachment(file.path);
-    }
+    // https://github.com/cnpm/cnpmcore/issues/693#issuecomment-2955268229
+    ctx.type = ensureContentType(file.contentType);
     return await this.distRepository.getDistStream(file.dist);
   }
 

@@ -27,7 +27,8 @@ describe('test/common/FileUtil.test.ts', () => {
         mimeLookup('/docs/static/less/pouchdb/anchors.css'),
         'text/css'
       );
-      assert.equal(mimeLookup('/foo/bar.xml'), 'application/xml');
+      assert.equal(mimeLookup('/foo/bar.xml'), 'text/plain');
+      assert.equal(mimeLookup('/foo/bar.html'), 'text/plain');
       assert.equal(mimeLookup('/favicon.ico'), 'image/vnd.microsoft.icon');
       assert.equal(mimeLookup('/index.ts'), 'text/plain');
       assert.equal(mimeLookup('/index.d.ts'), 'text/plain');
