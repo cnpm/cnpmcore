@@ -62,6 +62,13 @@ const binaries = {
       ignoreDownloadStatuses: [403] satisfies number[],
     },
   },
+  'python-build-standalone': {
+    category: 'python-build-standalone',
+    description: 'Produce redistributable builds of Python',
+    type: BinaryType.GitHub,
+    repo: 'astral-sh/python-build-standalone',
+    distUrl: 'https://github.com/astral-sh/python-build-standalone/releases',
+  },
   // CypressBinary
   cypress: {
     category: 'cypress',
@@ -961,6 +968,13 @@ const binaries = {
     repo: 'homebridge/node-pty-prebuilt-multiarch',
     distUrl:
       'https://github.com/homebridge/node-pty-prebuilt-multiarch/releases',
+  },
+  'onnxruntime': {
+    category: 'onnxruntime',
+    description: 'ONNX Runtime Node.js binding enables Node.js applications to run ONNX model inference.',
+    type: BinaryType.GitHub,
+    repo: 'microsoft/onnxruntime',
+    distUrl: 'https://github.com/microsoft/onnxruntime/releases/',
   },
 } as const;
 

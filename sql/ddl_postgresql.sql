@@ -13,7 +13,8 @@ CREATE TABLE binaries (
 
 CREATE UNIQUE INDEX binaries_uk_binary_id ON binaries (binary_id);
 CREATE UNIQUE INDEX binaries_uk_category_parent_name ON binaries (category, parent, name);
-CREATE INDEX binaries_idx_category_parent ON binaries (category, parent);
+CREATE INDEX binaries_idx_category_parent_gmt_create ON binaries (category, parent, gmt_create);
+CREATE INDEX binaries_idx_category_parent_date ON binaries (category, parent, date);
 
 COMMENT ON TABLE binaries IS 'binary info';
 COMMENT ON COLUMN binaries.id IS 'primary key';
@@ -702,3 +703,19 @@ COMMENT ON COLUMN webauthn_credentials.user_id IS 'user id';
 COMMENT ON COLUMN webauthn_credentials.credential_id IS 'webauthn credential id';
 COMMENT ON COLUMN webauthn_credentials.public_key IS 'webauthn credential publick key';
 COMMENT ON COLUMN webauthn_credentials.browser_type IS 'user browser name';
+
+CREATE TABLE IF NOT EXISTS totals (
+  id BIGSERIAL PRIMARY KEY,
+  gmt_create timestamp(3) NOT NULL,
+  gmt_modified timestamp(3) NOT NULL,
+  type varchar(24) NOT NULL,
+  count bigint NOT NULL,
+  CONSTRAINT uk_type UNIQUE (type)
+);
+
+COMMENT ON TABLE totals IS 'total table';
+COMMENT ON COLUMN totals.id IS 'primary key';
+COMMENT ON COLUMN totals.type IS 'total type';
+COMMENT ON COLUMN totals.count IS 'total count';
+COMMENT ON COLUMN totals.gmt_create IS 'create time';
+COMMENT ON COLUMN totals.gmt_modified IS 'modified time';

@@ -56,6 +56,6 @@ describe('test/core/service/HookManageService/deleteHook.test.ts', () => {
       hookId: hook.hookId,
       operatorId: 'mock_owner_id',
     });
-    assert(deleteHook);
+    assert.ok(deleteHook);
   });
 });

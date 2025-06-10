@@ -14,13 +14,13 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
 
   describe('setRegistryHost()', () => {
     it('default registry', async () => {
-      assert(npmRegistry.registry === 'https://registry.npmjs.org');
+      assert.ok(npmRegistry.registry === 'https://registry.npmjs.org');
     });
     it('should work', async () => {
-      assert(npmRegistry.registry);
+      assert.ok(npmRegistry.registry);
       const host = 'https://registry.npmmirror.com';
       npmRegistry.setRegistryHost(host);
-      assert(npmRegistry.registry === 'https://registry.npmmirror.com');
+      assert.ok(npmRegistry.registry === 'https://registry.npmmirror.com');
     });
   });
 });

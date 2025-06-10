@@ -14,7 +14,7 @@ import binaries, {
   type CategoryName,
 } from '../../../config/binaries.js';
 import type { BinaryRepository } from '../../repository/BinaryRepository.js';
-import { Task } from '../entity/Task.js';
+import { Task, type SyncBinaryTask } from '../entity/Task.js';
 import { Binary } from '../entity/Binary.js';
 import type { TaskService } from './TaskService.js';
 import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
@@ -27,6 +27,7 @@ import {
 import { AbstractService } from '../../common/AbstractService.js';
 import { BinaryType } from '../../common/enum/Binary.js';
 import { TaskState, TaskType } from '../../common/enum/Task.js';
+import { platforms } from '../../common/adapter/binary/PuppeteerBinary.js';
 
 function isoNow() {
   return new Date().toISOString();
@@ -58,10 +59,17 @@ export class BinarySyncerService extends AbstractService {
     return await this.binaryRepository.findBinary(targetName, parent, name);
   }
 
-  public async listDirBinaries(binary: Binary) {
+  public async listDirBinaries(
+    binary: Binary,
+    options?: {
+      limit: number;
+      since: string;
+    }
+  ) {
     return await this.binaryRepository.listBinaries(
       binary.category,
-      `${binary.parent}${binary.name}`
+      `${binary.parent}${binary.name}`,
+      options
     );
   }
 
@@ -98,6 +106,28 @@ export class BinarySyncerService extends AbstractService {
     binaryName: BinaryName,
     lastData?: Record<string, unknown>
   ) {
+    // chromium-browser-snapshots 产物极大，完整遍历 s3 bucket 耗时会太长
+    // 必须从上次同步的 revision 之后开始遍历
+    // 如果需要补偿数据，可以
+    if (binaryName === 'chromium-browser-snapshots') {
+      lastData = lastData || {};
+      for (const platform of platforms) {
+        if (lastData[platform]) continue;
+        const binaryDir = await this.binaryRepository.findLatestBinaryDir(
+          'chromium-browser-snapshots',
+          `/${platform}/`
+        );
+        if (binaryDir) {
+          lastData[platform] = binaryDir.name.slice(0, -1);
+        }
+      }
+      const latestBinary = await this.binaryRepository.findLatestBinary(
+        'chromium-browser-snapshots'
+      );
+      if (latestBinary && !lastData.lastSyncTime) {
+        lastData.lastSyncTime = latestBinary.date;
+      }
+    }
     try {
       return await this.taskService.createTask(
         Task.createSyncBinary(binaryName, lastData),
@@ -112,19 +142,21 @@ export class BinarySyncerService extends AbstractService {
     }
   }
 
-  public async findTask(taskId: string) {
-    return await this.taskService.findTask(taskId);
+  public async findTask(taskId: string): Promise<SyncBinaryTask | null> {
+    return (await this.taskService.findTask(taskId)) as SyncBinaryTask;
   }
 
-  public async findTaskLog(task: Task) {
+  public async findTaskLog(task: SyncBinaryTask) {
     return await this.taskService.findTaskLog(task);
   }
 
-  public async findExecuteTask() {
-    return await this.taskService.findExecuteTask(TaskType.SyncBinary);
+  public async findExecuteTask(): Promise<SyncBinaryTask | null> {
+    return (await this.taskService.findExecuteTask(
+      TaskType.SyncBinary
+    )) as SyncBinaryTask;
   }
 
-  public async executeTask(task: Task) {
+  public async executeTask(task: SyncBinaryTask) {
     const binaryName = task.targetName as BinaryName;
     const binaryAdapter = await this.getBinaryAdapter(binaryName);
     const logUrl = `${this.config.cnpmcore.registry}/-/binary/${binaryName}/syncs/${task.taskId}/log`;
@@ -204,13 +236,13 @@ export class BinarySyncerService extends AbstractService {
 
   private async syncDir(
     binaryAdapter: AbstractBinary,
-    task: Task,
+    task: SyncBinaryTask,
     dir: string,
     parentIndex = '',
     latestVersionParent = '/'
   ) {
     const binaryName = task.targetName as BinaryName;
-    const result = await binaryAdapter.fetch(dir, binaryName);
+    const result = await binaryAdapter.fetch(dir, binaryName, task.data);
     let hasDownloadError = false;
     let hasItems = false;
     if (result && result.items.length > 0) {

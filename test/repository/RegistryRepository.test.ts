@@ -35,8 +35,8 @@ describe('test/repository/RegistryRepository.test.ts', () => {
           authToken: '',
         })
       )) as Registry;
-      assert(newRegistry);
-      assert(newRegistry.type === 'cnpmcore');
+      assert.ok(newRegistry);
+      assert.ok(newRegistry.type === 'cnpmcore');
     });
     it('update work', async () => {
       const updatedRegistry = await registryRepository.saveRegistry({
@@ -49,22 +49,22 @@ describe('test/repository/RegistryRepository.test.ts', () => {
         type: 'cnpmcore' as RegistryType,
         changeStream: 'https://replicate.npmjs.com/_changes',
       });
-      assert(updatedRegistry);
-      assert(updatedRegistry.name === 'banana');
+      assert.ok(updatedRegistry);
+      assert.ok(updatedRegistry.name === 'banana');
     });
     it('list work', async () => {
       const registries = await registryRepository.listRegistries({});
-      assert(registries.count === 1);
+      assert.ok(registries.count === 1);
     });
 
     it('query null', async () => {
       const queryRes = await registryRepository.findRegistry('orange');
-      assert(queryRes === null);
+      assert.ok(queryRes === null);
     });
 
     it('query work', async () => {
       const queryRes = await registryRepository.findRegistry('cnpmcore');
-      assert(queryRes?.name === 'cnpmcore');
+      assert.ok(queryRes?.name === 'cnpmcore');
     });
     it('remove work', async () => {
       await registryRepository.removeRegistry(registryModel.registryId);

@@ -34,18 +34,18 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         )
         .persist();
       const result = await binary.fetch('/');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir1 = false;
       for (const item of result.items) {
         if (item.name === 'builds/') {
-          assert(item.date);
+          assert.ok(item.date);
           assert.equal(item.isDir, true);
-          assert(item.size === '-');
+          assert.ok(item.size === '-');
           matchDir1 = true;
         }
       }
-      assert(matchDir1);
+      assert.ok(matchDir1);
     });
 
     it('should fetch subdir: /builds/, /builds/chromium/ work', async () => {
@@ -70,7 +70,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         )
         .persist();
       let result = await binary.fetch('/builds/');
-      assert(result);
+      assert.ok(result);
       assert.equal(result.items.length, 8, JSON.stringify(result, null, 2));
       assert.equal(result.items[0].name, 'chromium/');
       assert.equal(result.items[1].name, 'chromium-tip-of-tree/');
@@ -94,18 +94,18 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       ];
       for (const dirname of names) {
         result = await binary.fetch(`/builds/${dirname}/`);
-        assert(result);
+        assert.ok(result);
         // console.log(dirname, result.items);
-        assert(result.items.length > 0, JSON.stringify(result, null, 2));
+        assert.ok(result.items.length > 0, JSON.stringify(result, null, 2));
         for (const item of result.items) {
-          assert(item.isDir);
+          assert.ok(item.isDir);
         }
         result = await binary.fetch(
           `/builds/${dirname}/${result.items[0].name}`
         );
-        assert(result);
+        assert.ok(result);
         // console.log(result.items);
-        assert(result.items.length > 0);
+        assert.ok(result.items.length > 0);
         let shouldIncludeChromiumHeadlessShell = false;
         // chromium-tip-of-tree-headless-shell
         let shouldIncludeChromiumTipOfTreeHeadlessShell = false;
@@ -117,11 +117,11 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
           //   size: '-',
           //   date: '2022-04-18T20:51:53.788Z'
           // },
-          assert(item.isDir === false);
-          assert(item.name);
-          assert(item.size === '-');
-          assert(item.url);
-          assert(item.date);
+          assert.ok(item.isDir === false);
+          assert.ok(item.name);
+          assert.ok(item.size === '-');
+          assert.ok(item.url);
+          assert.ok(item.date);
           if (
             dirname === 'chromium' &&
             item.name.startsWith('chromium-headless-shell')
@@ -145,11 +145,11 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
           }
         }
         if (dirname === 'chromium') {
-          assert(shouldIncludeChromiumHeadlessShell);
+          assert.ok(shouldIncludeChromiumHeadlessShell);
           // console.log(result);
         }
         if (dirname === 'chromium-tip-of-tree') {
-          assert(shouldIncludeChromiumTipOfTreeHeadlessShell);
+          assert.ok(shouldIncludeChromiumTipOfTreeHeadlessShell);
         }
         // if (dirname === 'winldd') {
         //   console.log(result);

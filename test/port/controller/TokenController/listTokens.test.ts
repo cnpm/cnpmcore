@@ -33,8 +33,8 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
       assert.deepEqual(tokens[0].cidr_whitelist, []);
       assert.equal(tokens[0].readonly, false);
       assert.equal(tokens[0].automation, false);
-      assert(tokens[0].created);
-      assert(tokens[0].updated);
+      assert.ok(tokens[0].created);
+      assert.ok(tokens[0].updated);
     });
 
     it('should update lastUsedAt', async () => {
@@ -54,7 +54,7 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
         .expect(200);
 
       const lastUsedAt = res.body.objects[0].lastUsedAt;
-      assert(dayjs(lastUsedAt).isAfter(now));
+      assert.ok(dayjs(lastUsedAt).isAfter(now));
     });
 
     it('should 401 when readonly token access', async () => {
@@ -79,7 +79,7 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
       const { name, email } = await TestUtil.createUser();
       const userService = await app.getEggObject(UserService);
       const user = await userService.findUserByName(name);
-      assert(user);
+      assert.ok(user);
       await userService.createToken(user.userId, {
         name: 'good',
         type: TokenType.granular,

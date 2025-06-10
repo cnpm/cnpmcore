@@ -48,18 +48,18 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     app.expectLog('[ChangesStreamWorker:start]');
     app.expectLog('[ChangesStreamService.executeTask:changes] since: ');
     const task = await changesStreamService.findExecuteTask();
-    assert(!task, 'task should not exists');
+    assert.ok(!task, 'task should not exists');
 
     // mock no changed after 10 mins
     const existsTask = await Task.findOne({ type: 'changes_stream' });
-    assert(existsTask);
+    assert.ok(existsTask);
     existsTask.updatedAt = new Date(
       existsTask.updatedAt.getTime() - 60_000 * 10 - 1
     );
     await existsTask.save();
     const result = await taskService.retryExecuteTimeoutTasks();
-    assert(result.processing === 1);
-    assert(result.waiting === 0);
+    assert.ok(result.processing === 1);
+    assert.ok(result.waiting === 0);
   });
 
   it('should work on replicate: r.cnpmjs.org', async () => {
@@ -93,18 +93,18 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     app.expectLog('[ChangesStreamService.executeTask:changes] since:');
     app.expectLog(/, \d+ new tasks,/);
     const task = await changesStreamService.findExecuteTask();
-    assert(!task);
+    assert.ok(!task);
 
     // mock no changed after 10 mins
     const existsTask = await Task.findOne({ type: 'changes_stream' });
-    assert(existsTask);
+    assert.ok(existsTask);
     existsTask.updatedAt = new Date(
       existsTask.updatedAt.getTime() - 60_000 * 10 - 1
     );
     await existsTask.save();
     const result = await taskService.retryExecuteTimeoutTasks();
-    assert(result.processing === 1);
-    assert(result.waiting === 0);
+    assert.ok(result.processing === 1);
+    assert.ok(result.waiting === 0);
     // mock request https://r.cnpmjs.org/_changes error
     app.mockHttpclient('https://r.cnpmjs.org/_changes', 'GET', {
       status: 500,

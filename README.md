@@ -6,6 +6,9 @@
 [![Node.js Version](https://img.shields.io/node/v/cnpmcore.svg?style=flat)](https://nodejs.org/en/download/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/cnpm/cnpmcore)
+[![NPM Version](https://img.shields.io/npm/v/cnpmcore)](https://www.npmjs.com/package/cnpmcore)
+[![NPM Downloads](https://img.shields.io/npm/dm/cnpmcore)](https://www.npmjs.com/package/cnpmcore)
+[![NPM License](https://img.shields.io/npm/l/cnpmcore)](https://github.com/cnpm/cnpmcore/blob/master/LICENSE)
 
 Reimplement based on [cnpmjs.org](https://github.com/cnpm/cnpmjs.org) with TypeScript.
 

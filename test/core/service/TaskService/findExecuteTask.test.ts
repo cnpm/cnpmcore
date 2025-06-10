@@ -20,33 +20,33 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
   describe('findExecuteTask()', () => {
     it('should get a task to execute', async () => {
       let task = await taskService.findExecuteTask(TaskType.SyncPackage);
-      assert(!task);
+      assert.ok(!task);
 
       const newTask = await packageSyncerService.createTask('foo');
-      assert(newTask);
+      assert.ok(newTask);
       app.expectLog(/queue size: 1/);
-      assert(!newTask.data.taskWorker);
+      assert.ok(!newTask.data.taskWorker);
       // same task not create again
       const newTask2 = await packageSyncerService.createTask('foo');
-      assert(newTask2);
-      assert(newTask2.taskId === newTask.taskId);
-      assert(!newTask2.data.taskWorker);
+      assert.ok(newTask2);
+      assert.ok(newTask2.taskId === newTask.taskId);
+      assert.ok(!newTask2.data.taskWorker);
       app.expectLog(/queue size: 1/);
 
       // find other task type
       task = await taskService.findExecuteTask(TaskType.SyncBinary);
-      assert(!task);
+      assert.ok(!task);
 
       task = await taskService.findExecuteTask(TaskType.SyncPackage);
-      assert(task);
-      assert(task.targetName === 'foo');
-      assert(task.taskId === newTask.taskId);
-      assert(task.data.taskWorker);
-      assert(task.state === TaskState.Processing);
+      assert.ok(task);
+      assert.ok(task.targetName === 'foo');
+      assert.ok(task.taskId === newTask.taskId);
+      assert.ok(task.data.taskWorker);
+      assert.ok(task.state === TaskState.Processing);
 
       // find again will null
       task = await taskService.findExecuteTask(TaskType.SyncPackage);
-      assert(!task);
+      assert.ok(!task);
     });
 
     it('should get multi tasks to execute', async () => {
@@ -55,15 +55,15 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
       }
       for (let i = 0; i < 10; i++) {
         const task = await taskService.findExecuteTask(TaskType.SyncPackage);
-        assert(task);
+        assert.ok(task);
       }
       let task = await taskService.findExecuteTask(TaskType.SyncPackage);
-      assert(!task);
+      assert.ok(!task);
       await packageSyncerService.createTask('foo');
       task = await taskService.findExecuteTask(TaskType.SyncPackage);
-      assert(task);
+      assert.ok(task);
       task = await taskService.findExecuteTask(TaskType.SyncPackage);
-      assert(!task);
+      assert.ok(!task);
     });
 
     it('should check task state before execute', async () => {
@@ -102,7 +102,7 @@ describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
         taskService.findExecuteTask(task1.type),
         taskService.findExecuteTask(task1.type),
       ]);
-      assert(tasks[0]?.taskId !== tasks[1]?.taskId);
+      assert.ok(tasks[0]?.taskId !== tasks[1]?.taskId);
     });
   });
 });

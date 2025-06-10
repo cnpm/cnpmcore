@@ -28,7 +28,7 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
     it('should work', async () => {
       const since = await cnpmjsorgChangesStream.getInitialSince(registry);
       const now = Date.now();
-      assert(now - Number(since) < 10_000);
+      assert.ok(now - Number(since) < 10_000);
     });
   });
 
@@ -58,7 +58,7 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
       for await (const change of stream) {
         res.push(change as ChangesStreamChange);
       }
-      assert(res.length === 2);
+      assert.ok(res.length === 2);
     });
 
     it('should work when fetch latest changes', async () => {
@@ -86,7 +86,7 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
       for await (const change of stream) {
         changes.push(change);
       }
-      assert(changes.length === 2);
+      assert.ok(changes.length === 2);
     });
 
     it('should reject max limit', async () => {

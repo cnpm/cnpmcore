@@ -10,8 +10,8 @@ describe('test/common/CryptoUtil.test.ts', () => {
   describe('genRSAKeys()', () => {
     it('should work', () => {
       const keys = genRSAKeys();
-      assert(keys.publicKey);
-      assert(keys.privateKey);
+      assert.ok(keys.publicKey);
+      assert.ok(keys.privateKey);
     });
   });
 

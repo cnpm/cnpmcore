@@ -21,12 +21,17 @@ export class ApiBinary extends AbstractBinary {
 
   async fetch(
     dir: string,
-    binaryName: string
+    binaryName: string,
+    lastData?: Record<string, unknown>
   ): Promise<FetchResult | undefined> {
     const apiUrl =
       this.config.cnpmcore.syncBinaryFromAPISource ||
       `${this.config.cnpmcore.sourceRegistry}/-/binary`;
-    const url = `${apiUrl}/${binaryName}${dir}`;
+    let url = `${apiUrl}/${binaryName}${dir}`;
+    if (lastData && lastData.lastSyncTime) {
+      url += `?since=${lastData.lastSyncTime}&limit=100`;
+    }
+
     const data = await this.requestJSON(url);
     if (!Array.isArray(data)) {
       this.logger.warn(

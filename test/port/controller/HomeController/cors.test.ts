@@ -16,7 +16,7 @@ describe('test/port/controller/HomeController/cors.test.ts', () => {
         'https://www.test-cors.org'
       );
       assert.equal(res.headers['access-control-allow-credentials'], 'true');
-      assert(!res.headers['access-control-allow-methods']);
+      assert.ok(!res.headers['access-control-allow-methods']);
     });
 
     it('should OPTIONS work', async () => {

@@ -11,14 +11,14 @@ describe('test/port/controller/UserController/starredByUser.test.ts', () => {
         .httpRequest()
         .get('/-/_view/starredByUser?key=%22cnpmcore_admin%22')
         .set('authorization', authorization);
-      assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] npm stars is not allowed');
+      assert.ok(res.status === 403);
+      assert.ok(res.body.error === '[FORBIDDEN] npm stars is not allowed');
 
       res = await app
         .httpRequest()
         .get('/-/_view/starredByUser?key=%22cnpmcore_admin%22');
-      assert(res.status === 403);
-      assert(res.body.error === '[FORBIDDEN] npm stars is not allowed');
+      assert.ok(res.status === 403);
+      assert.ok(res.body.error === '[FORBIDDEN] npm stars is not allowed');
     });
   });
 });

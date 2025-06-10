@@ -43,7 +43,7 @@ describe('test/core/service/HookManageService/createHook.test.ts', () => {
       endpoint: 'http://foo.com',
       secret: 'mock_secret',
     });
-    assert(hook);
-    assert(hook.enable === true);
+    assert.ok(hook);
+    assert.ok(hook.enable === true);
   });
 });

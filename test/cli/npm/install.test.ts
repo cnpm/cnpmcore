@@ -204,8 +204,8 @@ describe('test/cli/npm/install.test.ts', () => {
         dataType: 'json',
       });
       assert.equal(res.status, 200);
-      assert(res.data.time.unpublished);
-      assert.equal(res.data.versions, undefined);
+      assert.ok(res.data.time.unpublished, JSON.stringify(res.data));
+      assert.equal(res.data.versions, undefined, JSON.stringify(res.data));
     });
   });
 });

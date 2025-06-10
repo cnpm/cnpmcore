@@ -1,5 +1,127 @@
 # Changelog
 
+## [4.7.1](https://github.com/cnpm/cnpmcore/compare/v4.7.0...v4.7.1) (2025-06-10)
+
+### Bug Fixes
+
+- should change npm package version ([eaed6fe](https://github.com/cnpm/cnpmcore/commit/eaed6fe478e5e3d88c637b3ce5284a125bb8ad8f))
+
+## [4.7.0](https://github.com/cnpm/cnpmcore/compare/v4.6.3...v4.7.0) (2025-06-10)
+
+### Features
+
+- add shouldNotMerge for task data for skip task merge ([#807](https://github.com/cnpm/cnpmcore/issues/807)) ([490dce3](https://github.com/cnpm/cnpmcore/commit/490dce3ad203975fabab7ff11041f988f4a5c5d8))
+
+### Bug Fixes
+
+- content type check ([#809](https://github.com/cnpm/cnpmcore/issues/809)) ([b8c7c06](https://github.com/cnpm/cnpmcore/commit/b8c7c065364cdad2600189b5e202b66c19ee3f16)), closes [#693](https://github.com/cnpm/cnpmcore/issues/693)
+- order binary by date ([#808](https://github.com/cnpm/cnpmcore/issues/808)) ([12aa425](https://github.com/cnpm/cnpmcore/commit/12aa425c2627c3145bf4f6952f7ac5412d578d5f))
+
+## [4.7.0](https://github.com/cnpm/cnpmcore/compare/v4.6.3...v4.7.0) (2025-06-09)
+
+### Features
+
+- add shouldNotMerge for task data for skip task merge ([#807](https://github.com/cnpm/cnpmcore/issues/807)) ([490dce3](https://github.com/cnpm/cnpmcore/commit/490dce3ad203975fabab7ff11041f988f4a5c5d8))
+
+### Bug Fixes
+
+- content type check ([#809](https://github.com/cnpm/cnpmcore/issues/809)) ([b8c7c06](https://github.com/cnpm/cnpmcore/commit/b8c7c065364cdad2600189b5e202b66c19ee3f16)), closes [#693](https://github.com/cnpm/cnpmcore/issues/693)
+- order binary by date ([#808](https://github.com/cnpm/cnpmcore/issues/808)) ([12aa425](https://github.com/cnpm/cnpmcore/commit/12aa425c2627c3145bf4f6952f7ac5412d578d5f))
+
+## [4.7.0](https://github.com/cnpm/cnpmcore/compare/v4.6.3...v4.7.0) (2025-05-31)
+
+### Features
+
+- add shouldNotMerge for task data for skip task merge ([#807](https://github.com/cnpm/cnpmcore/issues/807)) ([490dce3](https://github.com/cnpm/cnpmcore/commit/490dce3ad203975fabab7ff11041f988f4a5c5d8))
+
+### Bug Fixes
+
+- order binary by date ([#808](https://github.com/cnpm/cnpmcore/issues/808)) ([12aa425](https://github.com/cnpm/cnpmcore/commit/12aa425c2627c3145bf4f6952f7ac5412d578d5f))
+
+## [4.7.0](https://github.com/cnpm/cnpmcore/compare/v4.6.3...v4.7.0) (2025-05-31)
+
+### Features
+
+- add shouldNotMerge for task data for skip task merge ([#807](https://github.com/cnpm/cnpmcore/issues/807)) ([490dce3](https://github.com/cnpm/cnpmcore/commit/490dce3ad203975fabab7ff11041f988f4a5c5d8))
+
+## [4.6.3](https://github.com/cnpm/cnpmcore/compare/v4.6.2...v4.6.3) (2025-05-29)
+
+### Bug Fixes
+
+- set puppeteer loop only once ([#805](https://github.com/cnpm/cnpmcore/issues/805)) ([54e3335](https://github.com/cnpm/cnpmcore/commit/54e3335abde7f4b021f0d315613f861b2a7b09ce))
+
+## [4.6.2](https://github.com/cnpm/cnpmcore/compare/v4.6.1...v4.6.2) (2025-05-29)
+
+### Bug Fixes
+
+- only set lastSyncTime if lastData.lastSyncTime is undefined ([#804](https://github.com/cnpm/cnpmcore/issues/804)) ([1239dc9](https://github.com/cnpm/cnpmcore/commit/1239dc9f49ff1ae0c584abf6c5f79b35573866ae))
+
+## [4.6.1](https://github.com/cnpm/cnpmcore/compare/v4.6.0...v4.6.1) (2025-05-29)
+
+### Bug Fixes
+
+- lastSyncTime is string should not stringify again ([#803](https://github.com/cnpm/cnpmcore/issues/803)) ([f6f5314](https://github.com/cnpm/cnpmcore/commit/f6f53149a1568d8f8eff02ec8586f6bc30b9951d))
+
+## [4.6.0](https://github.com/cnpm/cnpmcore/compare/v4.5.3...v4.6.0) (2025-05-29)
+
+### Features
+
+- add since for api sync binary ([#802](https://github.com/cnpm/cnpmcore/issues/802)) ([297bd7a](https://github.com/cnpm/cnpmcore/commit/297bd7a745ad03cd541927e7fb7c772dd775046f))
+
+## [4.5.3](https://github.com/cnpm/cnpmcore/compare/v4.5.2...v4.5.3) (2025-05-14)
+
+### Bug Fixes
+
+- use new changestream endpoint ([#800](https://github.com/cnpm/cnpmcore/issues/800)) ([2d8bad3](https://github.com/cnpm/cnpmcore/commit/2d8bad3ca23df603e55f2e2b9f7802e0f653fbe0))
+
+## [4.5.2](https://github.com/cnpm/cnpmcore/compare/v4.5.1...v4.5.2) (2025-04-17)
+
+### Bug Fixes
+
+- init release ([#795](https://github.com/cnpm/cnpmcore/issues/795)) ([3203c64](https://github.com/cnpm/cnpmcore/commit/3203c64c48ae217731b6409a240a04f01ee57b27)), closes [/github.com/cnpm/cnpm/issues/459#issue-2998106947](https://github.com/cnpm//github.com/cnpm/cnpm/issues/459/issues/issue-2998106947)
+
+## [4.5.1](https://github.com/cnpm/cnpmcore/compare/v4.5.0...v4.5.1) (2025-04-15)
+
+### Bug Fixes
+
+- disable information_schema.tables count ([#794](https://github.com/cnpm/cnpmcore/issues/794)) ([0a6eab3](https://github.com/cnpm/cnpmcore/commit/0a6eab325e3b3a29e0ad54c7d8b51cdff1206e33))
+
+## [4.5.0](https://github.com/cnpm/cnpmcore/compare/v4.4.0...v4.5.0) (2025-04-11)
+
+### Features
+
+- use npm new replication api ([#792](https://github.com/cnpm/cnpmcore/issues/792)) ([de97428](https://github.com/cnpm/cnpmcore/commit/de97428ffdb914626ddacec31c3dadf523c3f551))
+
+## [4.4.0](https://github.com/cnpm/cnpmcore/compare/v4.3.1...v4.4.0) (2025-04-09)
+
+### Features
+
+- add onnxruntime binary mirror ([#790](https://github.com/cnpm/cnpmcore/issues/790)) ([f4f09c2](https://github.com/cnpm/cnpmcore/commit/f4f09c2d6611781e5ddb396e9cda3e916549a741))
+
+## [4.3.1](https://github.com/cnpm/cnpmcore/compare/v4.3.0...v4.3.1) (2025-04-08)
+
+### Bug Fixes
+
+- execute SyncBinaryTask should with data ([#788](https://github.com/cnpm/cnpmcore/issues/788)) ([af3672e](https://github.com/cnpm/cnpmcore/commit/af3672ebdba51f55c3fc1a8b1fa7f4be232b8b04))
+
+## [4.3.0](https://github.com/cnpm/cnpmcore/compare/v4.2.0...v4.3.0) (2025-04-07)
+
+### Features
+
+- mirror astral-sh/python-build-standalone ([#787](https://github.com/cnpm/cnpmcore/issues/787)) ([58a1a9c](https://github.com/cnpm/cnpmcore/commit/58a1a9c2af49d7be15f4cb8c54ad65bb68b8de09))
+
+## [4.2.0](https://github.com/cnpm/cnpmcore/compare/v4.1.6...v4.2.0) (2025-04-03)
+
+### Features
+
+- **sql:** add gmt_create for binaries index idx_category_parent_gmt_create ([#786](https://github.com/cnpm/cnpmcore/issues/786)) ([080035f](https://github.com/cnpm/cnpmcore/commit/080035f7bce47ddf894870dee3db0a9060ec2ebc))
+
+## [4.1.6](https://github.com/cnpm/cnpmcore/compare/v4.1.5...v4.1.6) (2025-04-02)
+
+### Bug Fixes
+
+- iterator chromium bucket to get all versions ([#785](https://github.com/cnpm/cnpmcore/issues/785)) ([facb26d](https://github.com/cnpm/cnpmcore/commit/facb26d192f73a8f92632e999a3c62b1b9204e50))
+
 ## [4.1.5](https://github.com/cnpm/cnpmcore/compare/v4.1.4...v4.1.5) (2025-03-27)
 
 ### Bug Fixes

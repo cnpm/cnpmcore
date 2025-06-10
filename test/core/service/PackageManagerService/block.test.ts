@@ -24,7 +24,7 @@ describe('test/core/service/PackageManagerService/block.test.ts', () => {
         pkg.name,
         'xxx'
       );
-      assert(blockRes.packageVersionBlockId);
+      assert.ok(blockRes.packageVersionBlockId);
 
       assert.doesNotReject(
         packageManagerService.unblockPackageByFullname(pkg.name || '')

@@ -12,7 +12,8 @@ CREATE TABLE `binaries` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_binary_id` (`binary_id`),
   UNIQUE KEY `uk_category_parent_name` (`category`,`parent`,`name`),
-  KEY `idx_category_parent` (`category`,`parent`)
+  KEY `idx_category_parent_gmt_create` (`category`, `parent`, `gmt_create`),
+  KEY `idx_category_parent_date` (`category`, `parent`, `date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci COMMENT='binary info'
 ;
 
@@ -432,3 +433,13 @@ CREATE TABLE `webauthn_credentials` (
   KEY `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci COMMENT='webauthn credential info'
 ;
+
+CREATE TABLE IF NOT EXISTS `totals` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `type` varchar(24) NOT NULL COMMENT 'total type',
+  `count` bigint(20) NOT NULL COMMENT 'total count',
+  `gmt_create` datetime NOT NULL COMMENT 'create time',
+  `gmt_modified` datetime NOT NULL COMMENT 'modified time',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_type` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='total table';

@@ -1,6 +1,7 @@
 import '@eggjs/tegg';
 import type { User } from '../entity/User.js';
 
+export const PACKAGE_ADDED = 'PACKAGE_ADDED';
 export const PACKAGE_UNPUBLISHED = 'PACKAGE_UNPUBLISHED';
 export const PACKAGE_BLOCKED = 'PACKAGE_BLOCKED';
 export const PACKAGE_UNBLOCKED = 'PACKAGE_UNBLOCKED';
@@ -24,6 +25,7 @@ export interface PackageMetaChange {
 
 declare module '@eggjs/tegg' {
   interface Events {
+    [PACKAGE_ADDED]: (fullname: string) => Promise<void>;
     [PACKAGE_UNPUBLISHED]: (fullname: string) => Promise<void>;
     [PACKAGE_BLOCKED]: (fullname: string) => Promise<void>;
     [PACKAGE_UNBLOCKED]: (fullname: string) => Promise<void>;

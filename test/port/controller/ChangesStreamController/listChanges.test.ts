@@ -32,7 +32,7 @@ describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () 
       );
       assert.equal(res.body.results[0].type, 'PACKAGE_VERSION_ADDED');
       assert.equal(res.body.results[0].id, pkg.name);
-      assert(res.body.results[0].seq);
+      assert.ok(res.body.results[0].seq);
       assert.equal(
         res.body.results[0].changes.length,
         1,

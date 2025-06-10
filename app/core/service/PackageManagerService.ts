@@ -42,6 +42,7 @@ import { PackageTag } from '../entity/PackageTag.js';
 import type { User } from '../entity/User.js';
 import type { Dist } from '../entity/Dist.js';
 import {
+  PACKAGE_ADDED,
   PACKAGE_BLOCKED,
   PACKAGE_MAINTAINER_CHANGED,
   PACKAGE_MAINTAINER_REMOVED,
@@ -123,6 +124,7 @@ export class PackageManagerService extends AbstractService {
       await this._checkPackageDepsVersion(cmd.packageJson);
     }
     let pkg = await this.packageRepository.findPackage(cmd.scope, cmd.name);
+    let isNewPackage = !pkg;
     if (pkg) {
       // update description
       // will read database twice to update description by model to entity and entity to model
@@ -338,6 +340,10 @@ export class PackageManagerService extends AbstractService {
         pkgVersion.version,
         undefined
       );
+    }
+
+    if (isNewPackage) {
+      this.eventBus.emit(PACKAGE_ADDED, pkg.fullname);
     }
 
     return pkgVersion;
@@ -1418,7 +1424,7 @@ export class PackageManagerService extends AbstractService {
           const pkgVersion = await this.packageVersionService.getVersion(
             npa(`${fullname}@${spec}`)
           );
-          assert(pkgVersion);
+          assert.ok(pkgVersion);
         } catch {
           throw new BadRequestError(`deps ${fullname}@${spec} not found`);
         }

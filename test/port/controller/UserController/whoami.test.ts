@@ -61,7 +61,7 @@ describe('test/port/controller/UserController/whoami.test.ts', () => {
       assert.equal(res.body.description, 'lets play');
       assert.deepEqual(res.body.allowedPackages, ['@cnpm/banana']);
       assert.deepEqual(res.body.allowedScopes, ['@banana']);
-      assert(dayjs(res.body.expires).isBefore(dayjs().add(30, 'days')));
+      assert.ok(dayjs(res.body.expires).isBefore(dayjs().add(30, 'days')));
     });
   });
 });

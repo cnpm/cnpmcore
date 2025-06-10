@@ -21,8 +21,8 @@ describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
       await binary.initFetch();
       const result = await binary.fetch('/all_commits/', 'prisma');
       // console.log(result);
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir1 = false;
       let matchDir2 = false;
       let matchDir3 = false;
@@ -46,9 +46,9 @@ describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
           matchDir3 = true;
         }
       }
-      assert(matchDir1);
-      assert(matchDir2);
-      assert(matchDir3);
+      assert.ok(matchDir1);
+      assert.ok(matchDir2);
+      assert.ok(matchDir3);
     });
 
     it('should fetch subdir: /61023c35d2c8762f66f09bc4183d2f630b541d08/ work', async () => {
@@ -66,7 +66,7 @@ describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
         '/61023c35d2c8762f66f09bc4183d2f630b541d08/',
         'prisma'
       );
-      assert(result);
+      assert.ok(result);
       assert.equal(result.items.length, 16);
       assert.equal(result.items[0].name, 'darwin-arm64/');
       assert.equal(result.items[1].name, 'darwin/');
@@ -88,7 +88,7 @@ describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
         '/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/',
         'prisma'
       );
-      assert(result);
+      assert.ok(result);
       assert.equal(result.items.length, 20);
       assert.equal(
         result.items[0].name,

@@ -16,31 +16,33 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.html'),
       });
       const result = await binary.fetch('/', 'node');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir = false;
       let matchFile = false;
       for (const item of result.items) {
         if (item.name === 'v0.10.40/') {
-          assert(item.date === '09-Jul-2015 21:57');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '09-Jul-2015 21:57');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir = true;
         }
         if (item.name === 'node-v0.1.100.tar.gz') {
-          assert(item.date === '26-Aug-2011 16:21');
-          assert(item.isDir === false);
-          assert(item.size === '3813493');
-          assert(item.url === 'https://nodejs.org/dist/node-v0.1.100.tar.gz');
+          assert.ok(item.date === '26-Aug-2011 16:21');
+          assert.ok(item.isDir === false);
+          assert.ok(item.size === '3813493');
+          assert.ok(
+            item.url === 'https://nodejs.org/dist/node-v0.1.100.tar.gz'
+          );
           matchFile = true;
         }
         if (!item.isDir) {
-          assert(typeof item.size === 'string');
-          assert(item.size.length > 2);
+          assert.ok(typeof item.size === 'string');
+          assert.ok(item.size.length > 2);
         }
       }
-      assert(matchDir);
-      assert(matchFile);
+      assert.ok(matchDir);
+      assert.ok(matchFile);
     });
 
     it('should fetch subdir: /v16.13.1/ work', async () => {
@@ -50,33 +52,33 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
         ),
       });
       const result = await binary.fetch('/v16.13.1/', 'node');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir = false;
       let matchFile = false;
       for (const item of result.items) {
         if (item.name === 'docs/') {
-          assert(item.date === '30-Nov-2021 19:33');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '30-Nov-2021 19:33');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir = true;
         }
         if (item.name === 'SHASUMS256.txt') {
-          assert(item.date === '01-Dec-2021 16:13');
-          assert(item.isDir === false);
-          assert(item.size === '3153');
-          assert(
+          assert.ok(item.date === '01-Dec-2021 16:13');
+          assert.ok(item.isDir === false);
+          assert.ok(item.size === '3153');
+          assert.ok(
             item.url === 'https://nodejs.org/dist/v16.13.1/SHASUMS256.txt'
           );
           matchFile = true;
         }
         if (!item.isDir) {
-          assert(typeof item.size === 'string');
-          assert(item.size.length > 2);
+          assert.ok(typeof item.size === 'string');
+          assert.ok(item.size.length > 2);
         }
       }
-      assert(matchDir);
-      assert(matchFile);
+      assert.ok(matchDir);
+      assert.ok(matchFile);
     });
 
     it('should fetch subdir: /v18.15.0/ work', async () => {
@@ -86,8 +88,8 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
         ),
       });
       const result = await binary.fetch('/v18.15.0/', 'node');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir = false;
       let matchFile = false;
       for (const item of result.items) {
@@ -118,12 +120,12 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           matchFile = true;
         }
         if (!item.isDir) {
-          assert(typeof item.size === 'string');
-          assert(item.size.length > 2);
+          assert.ok(typeof item.size === 'string');
+          assert.ok(item.size.length > 2);
         }
       }
-      assert(matchDir);
-      assert(matchFile);
+      assert.ok(matchDir);
+      assert.ok(matchFile);
     });
 
     it('should fetch subdir: /v14.0.0-nightly20200119b318926634/ work', async () => {
@@ -140,23 +142,23 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
         '/v14.0.0-nightly20200119b318926634/',
         'node-nightly'
       );
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir = false;
       let matchFile1 = false;
       let matchFile2 = false;
       for (const item of result.items) {
         if (item.name === 'docs/') {
-          assert(item.date === '19-Jan-2020 06:34');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '19-Jan-2020 06:34');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir = true;
         }
         if (item.name === 'SHASUMS256.txt') {
-          assert(item.date === '19-Jan-2020 07:35');
-          assert(item.isDir === false);
-          assert(item.size === '3797');
-          assert(
+          assert.ok(item.date === '19-Jan-2020 07:35');
+          assert.ok(item.isDir === false);
+          assert.ok(item.size === '3797');
+          assert.ok(
             item.url ===
               'https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/SHASUMS256.txt'
           );
@@ -166,23 +168,23 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           item.name ===
           'node-v14.0.0-nightly20200119b318926634-linux-s390x.tar.xz'
         ) {
-          assert(item.date === '19-Jan-2020 06:03');
-          assert(item.isDir === false);
-          assert(item.size === '20416228');
-          assert(
+          assert.ok(item.date === '19-Jan-2020 06:03');
+          assert.ok(item.isDir === false);
+          assert.ok(item.size === '20416228');
+          assert.ok(
             item.url ===
               'https://nodejs.org/download/nightly/v14.0.0-nightly20200119b318926634/node-v14.0.0-nightly20200119b318926634-linux-s390x.tar.xz'
           );
           matchFile2 = true;
         }
         if (!item.isDir) {
-          assert(typeof item.size === 'string');
-          assert(item.size.length > 2);
+          assert.ok(typeof item.size === 'string');
+          assert.ok(item.size.length > 2);
         }
       }
-      assert(matchDir);
-      assert(matchFile1);
-      assert(matchFile2);
+      assert.ok(matchDir);
+      assert.ok(matchFile1);
+      assert.ok(matchFile2);
     });
 
     it('should skip zero size file', async () => {
@@ -199,8 +201,8 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
         '/v14.0.0-nightly20200204ee9e689df2/',
         'node-nightly'
       );
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir = false;
       let matchFile1 = false;
       let matchFile2 = false;
@@ -210,10 +212,10 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           matchDir = true;
         }
         if (item.name === 'SHASUMS256.txt') {
-          assert(item.date === '04-Feb-2020 06:15');
-          assert(item.isDir === false);
-          assert(item.size === '1364');
-          assert(
+          assert.ok(item.date === '04-Feb-2020 06:15');
+          assert.ok(item.isDir === false);
+          assert.ok(item.size === '1364');
+          assert.ok(
             item.url ===
               'https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/SHASUMS256.txt'
           );
@@ -223,10 +225,10 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           item.name ===
           'node-v14.0.0-nightly20200204ee9e689df2-linux-arm64.tar.gz'
         ) {
-          assert(item.date === '04-Feb-2020 06:02');
-          assert(item.isDir === false);
-          assert(item.size === '33496011');
-          assert(
+          assert.ok(item.date === '04-Feb-2020 06:02');
+          assert.ok(item.isDir === false);
+          assert.ok(item.size === '33496011');
+          assert.ok(
             item.url ===
               'https://nodejs.org/download/nightly/v14.0.0-nightly20200204ee9e689df2/node-v14.0.0-nightly20200204ee9e689df2-linux-arm64.tar.gz'
           );
@@ -237,14 +239,14 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
           matchFile3 = true;
         }
         if (!item.isDir) {
-          assert(typeof item.size === 'string');
-          assert(item.size.length > 2);
+          assert.ok(typeof item.size === 'string');
+          assert.ok(item.size.length > 2);
         }
       }
-      assert(!matchDir);
-      assert(matchFile1);
-      assert(matchFile2);
-      assert(!matchFile3);
+      assert.ok(!matchDir);
+      assert.ok(matchFile1);
+      assert.ok(matchFile2);
+      assert.ok(!matchFile3);
     });
 
     it('should on python', async () => {
@@ -268,83 +270,85 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       });
 
       let result = await binary.fetch('/', 'python');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
       let matchDir1 = false;
       let matchDir2 = false;
       let matchFile = false;
       for (const item of result.items) {
         if (item.name === '2.7.18/') {
-          assert(item.date === '20-Apr-2020 13:48');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '20-Apr-2020 13:48');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir1 = true;
         }
         if (item.name === '3.7.3/') {
-          assert(item.date === '25-Mar-2019 23:04');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '25-Mar-2019 23:04');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir2 = true;
         }
         if (item.name === 'README.html') {
-          assert(item.date);
-          assert(item.isDir === false);
-          assert(item.size);
-          assert(item.url === 'https://www.python.org/ftp/python/README.html');
+          assert.ok(item.date);
+          assert.ok(item.isDir === false);
+          assert.ok(item.size);
+          assert.ok(
+            item.url === 'https://www.python.org/ftp/python/README.html'
+          );
           matchFile = true;
         }
         if (!item.isDir) {
-          assert(typeof item.size === 'string');
-          assert(item.size.length > 2);
+          assert.ok(typeof item.size === 'string');
+          assert.ok(item.size.length > 2);
         }
       }
-      assert(matchDir1);
-      assert(matchDir2);
-      assert(matchFile);
+      assert.ok(matchDir1);
+      assert.ok(matchDir2);
+      assert.ok(matchFile);
 
       result = await binary.fetch('/3.7.3/', 'python');
-      assert(result);
-      assert(result.items.length > 0);
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
 
       matchDir1 = false;
       matchDir2 = false;
       matchFile = false;
       for (const item of result.items) {
         if (item.name === 'win32/') {
-          assert(item.date === '25-Mar-2019 23:04');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '25-Mar-2019 23:04');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir1 = true;
         }
         if (item.name === 'amd64/') {
-          assert(item.date === '25-Mar-2019 23:03');
-          assert(item.isDir === true);
-          assert(item.size === '-');
+          assert.ok(item.date === '25-Mar-2019 23:03');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
           matchDir2 = true;
         }
         if (item.name === 'python-3.7.3.exe') {
-          assert(item.date === '25-Mar-2019 23:04');
-          assert(item.isDir === false);
-          assert(item.size === '25424128');
-          assert(
+          assert.ok(item.date === '25-Mar-2019 23:04');
+          assert.ok(item.isDir === false);
+          assert.ok(item.size === '25424128');
+          assert.ok(
             item.url ===
               'https://www.python.org/ftp/python/3.7.3/python-3.7.3.exe'
           );
           matchFile = true;
         }
         if (!item.isDir) {
-          assert(typeof item.size === 'string');
-          assert(item.size.length > 2);
+          assert.ok(typeof item.size === 'string');
+          assert.ok(item.size.length > 2);
         }
       }
-      assert(matchDir1);
-      assert(matchDir2);
-      assert(matchFile);
+      assert.ok(matchDir1);
+      assert.ok(matchDir2);
+      assert.ok(matchFile);
 
       result = await binary.fetch('/src/', 'python');
-      assert(result);
-      assert(result.items.length > 0);
-      assert(!result.items.some(item => item.name === 'Python-1.6.tar.gz'));
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
+      assert.ok(!result.items.some(item => item.name === 'Python-1.6.tar.gz'));
     });
   });
 });

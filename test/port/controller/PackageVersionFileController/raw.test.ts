@@ -62,7 +62,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       // console.log(res.body);
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
-      assert(!res.headers['content-disposition']);
+      assert.ok(!res.headers['content-disposition']);
       assert.deepEqual(res.body, {
         name: 'mk2testmodule',
         version: '0.0.1',
@@ -262,8 +262,8 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .httpRequest()
         .get('/foo/1.0.0/files/package2.json?meta')
         .expect(404);
-      assert(!res.headers.etag);
-      assert(!res.headers['cache-control']);
+      assert.ok(!res.headers.etag);
+      assert.ok(!res.headers['cache-control']);
       assert.equal(
         res.body.error,
         `[NOT_FOUND] File ${pkg.name}@1.0.0/package2.json not found`
@@ -345,7 +345,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/resource/`);
       assert.equal(res.status, 200);
       // console.log(res.body);
-      assert(
+      assert.ok(
         res.body.files.find(
           (file: { path: string }) => file.path === '/resource/ToOneFromχ.js'
         )
@@ -394,7 +394,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.status, 201);
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.status, 200);
-      assert(
+      assert.ok(
         res.body.files.find(
           (file: { path: string }) => file.path === '/package.json'
         )
@@ -445,7 +445,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         res.body.files.find((file: { path: string }) => file.path === '/.'),
         undefined
       );
-      assert(
+      assert.ok(
         res.body.files.find((file: { path: string }) => file.path === '/dist')
       );
       const packageTagAdded = await app.getEggObject(
@@ -495,7 +495,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.status, 200);
       // console.log('%o', res.body);
-      assert(
+      assert.ok(
         res.body.files.find(
           (file: { path: string }) => file.path === '/CONTRIBUTING.md'
         )
@@ -503,7 +503,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       let testDir = res.body.files.find(
         (file: { path: string }) => file.path === '/tests'
       );
-      assert(testDir);
+      assert.ok(testDir);
       assert.equal(testDir.files.length, 0);
       assert.equal(
         res.headers['cache-control'],
@@ -528,7 +528,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files?meta=true`);
       assert.equal(res.status, 200);
       // console.log('%o', res.body);
-      assert(
+      assert.ok(
         res.body.files.find(
           (file: { path: string }) => file.path === '/CONTRIBUTING.md'
         )
@@ -536,7 +536,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       testDir = res.body.files.find(
         (file: { path: string }) => file.path === '/tests'
       );
-      assert(testDir);
+      assert.ok(testDir);
       assert.equal(testDir.files.length, 0);
       assert.equal(
         res.headers['cache-control'],
@@ -576,11 +576,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.status, 200);
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
-      assert.equal(res.headers['content-type'], 'text/html; charset=utf-8');
-      assert.equal(
-        res.headers['content-disposition'],
-        'attachment; filename="getting-started.html"'
-      );
+      assert.equal(res.headers['content-type'], 'text/plain; charset=utf-8');
       assert.equal(res.headers['transfer-encoding'], 'chunked');
       assert.match(res.text, /<!DOCTYPE html>/);
 
@@ -597,11 +593,11 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         res.headers['content-type'],
         'application/json; charset=utf-8'
       );
-      assert(!res.headers['content-disposition']);
+      assert.ok(!res.headers['content-disposition']);
       assert.deepEqual(res.body, {
         path: '/docs/_site/getting-started.html',
         type: 'file',
-        contentType: 'text/html',
+        contentType: 'text/plain',
         integrity:
           'sha512-o/nCeU2MBJpIWhA8gIbf6YW49Ss3Spga5M70LJjjyRMlALQDmeh8IVMXagAe79l1Yznci/otKtNjWhVMOM38hg==',
         lastModified: publishTime,
@@ -628,7 +624,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       const integrationDir = res.body.files.find(
         (file: { path: string }) => file.path === '/tests/integration'
       );
-      assert(integrationDir);
+      assert.ok(integrationDir);
       assert.equal(integrationDir.files.length, 0);
       assert.equal(integrationDir.type, 'directory');
 
@@ -641,7 +637,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         res.headers['content-type'],
         'application/javascript; charset=utf-8'
       );
-      assert(!res.headers['content-disposition']);
+      assert.ok(!res.headers['content-disposition']);
       assert.equal(res.headers['transfer-encoding'], 'chunked');
       assert.match(res.text, /describe\(/);
 
@@ -657,7 +653,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         res.headers['content-type'],
         'application/json; charset=utf-8'
       );
-      assert(!res.headers['content-disposition']);
+      assert.ok(!res.headers['content-disposition']);
       assert.deepEqual(res.body, {
         path: '/tests/integration/test.http.js',
         type: 'file',
@@ -673,7 +669,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['content-type'], 'text/markdown; charset=utf-8');
-      assert(!res.headers['content-disposition']);
+      assert.ok(!res.headers['content-disposition']);
       assert.equal(res.headers['transfer-encoding'], 'chunked');
       assert.match(res.text, /The Javascript Database that Syncs/);
 
@@ -682,7 +678,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['content-type'], 'text/yaml; charset=utf-8');
-      assert(!res.headers['content-disposition']);
+      assert.ok(!res.headers['content-disposition']);
       assert.equal(res.headers['transfer-encoding'], 'chunked');
       assert.match(res.text, /language: node_js/);
 
@@ -692,7 +688,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       // FIXME: should be text/plain
       assert.equal(res.headers['content-type'], 'text/plain; charset=utf-8');
-      assert(!res.headers['content-disposition']);
+      assert.ok(!res.headers['content-disposition']);
       assert.equal(res.headers['transfer-encoding'], 'chunked');
       assert.match(res.text, /Apache License/);
 
@@ -702,7 +698,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       // FIXME: should be text/plain
       assert.equal(res.headers['content-type'], 'text/plain; charset=utf-8');
-      assert(!res.headers['content-disposition']);
+      assert.ok(!res.headers['content-disposition']);
       assert.equal(res.headers['transfer-encoding'], 'chunked');
 
       res = await app
@@ -712,7 +708,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['content-type'], 'application/x-sh');
-      assert(!res.headers['content-disposition']);
+      assert.ok(!res.headers['content-disposition']);
       assert.equal(res.headers['transfer-encoding'], 'chunked');
       assert.match(res.text, /#!\/bin\/bash/);
 
@@ -726,7 +722,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         res.headers['content-type'],
         'text/cache-manifest; charset=utf-8'
       );
-      assert(!res.headers['content-disposition']);
+      assert.ok(!res.headers['content-disposition']);
       assert.equal(res.headers['transfer-encoding'], 'chunked');
       assert.match(res.text, /CACHE MANIFEST/);
     });
@@ -772,8 +768,8 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .httpRequest()
         .get(`/${pkg.name}/1.0.40000404/files/foo.json`)
         .expect(404);
-      assert(!res.headers.etag);
-      assert(!res.headers['cache-control']);
+      assert.ok(!res.headers.etag);
+      assert.ok(!res.headers['cache-control']);
       assert.equal(
         res.body.error,
         `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`
@@ -783,8 +779,8 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .httpRequest()
         .get(`/${pkg.name}/1.0.40000404/files/bin/foo/bar.js`)
         .expect(404);
-      assert(!res.headers.etag);
-      assert(!res.headers['cache-control']);
+      assert.ok(!res.headers.etag);
+      assert.ok(!res.headers['cache-control']);
       assert.equal(
         res.body.error,
         `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`

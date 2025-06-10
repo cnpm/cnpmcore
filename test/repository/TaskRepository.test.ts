@@ -47,12 +47,12 @@ describe('test/repository/TaskRepository.test.ts', () => {
         taskRepository.saveTask(task1),
         taskRepository.saveTask(task2),
       ]);
-      assert(task1.id);
-      assert(task2.id);
-      assert(task1.id === task2.id);
-      assert(task1.taskId);
-      assert(task2.taskId);
-      assert(task1.taskId === task2.taskId);
+      assert.ok(task1.id);
+      assert.ok(task2.id);
+      assert.ok(task1.id === task2.id);
+      assert.ok(task1.taskId);
+      assert.ok(task2.taskId);
+      assert.ok(task1.taskId === task2.taskId);
     });
 
     it('should update updatedAt', async () => {
@@ -88,7 +88,9 @@ describe('test/repository/TaskRepository.test.ts', () => {
       // 由于已经被 task1 更新，所以会导致 asyncTask.updatedAd 会覆盖 model
       await taskRepository.saveTask(asyncTask);
 
-      assert(asyncTask.updatedAt.getTime() !== asyncTask.createdAt.getTime());
+      assert.ok(
+        asyncTask.updatedAt.getTime() !== asyncTask.createdAt.getTime()
+      );
     });
 
     it('cant modify updatedAt', async () => {
@@ -114,7 +116,7 @@ describe('test/repository/TaskRepository.test.ts', () => {
       task1.updatedAt = lastSince;
       await taskRepository.saveTask(task1);
 
-      assert(task1.updatedAt.getTime() >= lastSince.getTime());
+      assert.ok(task1.updatedAt.getTime() >= lastSince.getTime());
     });
   });
 
@@ -147,7 +149,7 @@ describe('test/repository/TaskRepository.test.ts', () => {
         taskRepository.idempotentSaveTask(task, condition),
         taskRepository.idempotentSaveTask(task, condition),
       ]);
-      assert(firstSave !== secondSave);
+      assert.ok(firstSave !== secondSave);
     });
   });
 });

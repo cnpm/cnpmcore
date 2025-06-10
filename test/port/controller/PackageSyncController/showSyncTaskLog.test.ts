@@ -50,9 +50,9 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
 
     it('should 200 and 302', async () => {
       let res = await app.httpRequest().put('/-/package/koa/syncs').expect(201);
-      assert(res.body.id);
+      assert.ok(res.body.id);
       const task = await taskRepository.findTask(res.body.id);
-      assert(task);
+      assert.ok(task);
       // waiting state logUrl is not exists
       res = await app
         .httpRequest()
@@ -99,7 +99,7 @@ describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', (
         assert.equal(res.headers['content-type'], 'text/plain; charset=utf-8');
       } else {
         assert.equal(res.status, 302);
-        assert(res.headers.location);
+        assert.ok(res.headers.location);
         const log = await TestUtil.readStreamToLog(res.headers.location);
         assert.equal(log, 'hello log file 😄\nsencod line here');
       }

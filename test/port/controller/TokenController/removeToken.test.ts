@@ -168,7 +168,7 @@ describe('test/port/controller/TokenController/removeToken.test.ts', () => {
       const { name, email } = await TestUtil.createUser();
       const userService = await app.getEggObject(UserService);
       const user = await userService.findUserByName(name);
-      assert(user);
+      assert.ok(user);
       await TestUtil.createPackage({ name: '@cnpm/foo' }, { name: user.name });
       token = await userService.createToken(user.userId, {
         name: 'good',

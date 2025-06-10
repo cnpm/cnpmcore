@@ -47,7 +47,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   syncDownloadDataMaxDate: '',
   enableChangesStream: false,
   checkChangesStreamInterval: 500,
-  changesStreamRegistry: 'https://replicate.npmjs.com',
+  changesStreamRegistry: 'https://replicate.npmjs.com/registry',
   changesStreamRegistryMode: ChangesStreamMode.streaming,
   registry: env('CNPMCORE_CONFIG_REGISTRY', 'string', 'http://localhost:7001'),
   alwaysAuth: false,
@@ -162,10 +162,10 @@ export default function startConfig(appInfo: EggAppConfig) {
         'Cache-Control': 'max-age=0, s-maxage=60',
       },
     };
-    assert(ossConfig.bucket, 'require env CNPMCORE_NFS_OSS_BUCKET');
-    assert(ossConfig.endpoint, 'require env CNPMCORE_NFS_OSS_ENDPOINT');
-    assert(ossConfig.accessKeyId, 'require env CNPMCORE_NFS_OSS_ID');
-    assert(ossConfig.accessKeySecret, 'require env CNPMCORE_NFS_OSS_SECRET');
+    assert.ok(ossConfig.bucket, 'require env CNPMCORE_NFS_OSS_BUCKET');
+    assert.ok(ossConfig.endpoint, 'require env CNPMCORE_NFS_OSS_ENDPOINT');
+    assert.ok(ossConfig.accessKeyId, 'require env CNPMCORE_NFS_OSS_ID');
+    assert.ok(ossConfig.accessKeySecret, 'require env CNPMCORE_NFS_OSS_SECRET');
     config.nfs.client = new OSSClient(ossConfig);
   } else if (nfsType === 's3') {
     const s3Config = {
@@ -183,16 +183,16 @@ export default function startConfig(appInfo: EggAppConfig) {
       ),
       disableURL: env('CNPMCORE_NFS_S3_CLIENT_DISABLE_URL', 'boolean', false),
     };
-    assert(s3Config.endpoint, 'require env CNPMCORE_NFS_S3_CLIENT_ENDPOINT');
-    assert(
+    assert.ok(s3Config.endpoint, 'require env CNPMCORE_NFS_S3_CLIENT_ENDPOINT');
+    assert.ok(
       s3Config.credentials.accessKeyId,
       'require env CNPMCORE_NFS_S3_CLIENT_ID'
     );
-    assert(
+    assert.ok(
       s3Config.credentials.secretAccessKey,
       'require env CNPMCORE_NFS_S3_CLIENT_SECRET'
     );
-    assert(s3Config.bucket, 'require env CNPMCORE_NFS_S3_CLIENT_BUCKET');
+    assert.ok(s3Config.bucket, 'require env CNPMCORE_NFS_S3_CLIENT_BUCKET');
     // @ts-expect-error has no construct signatures
     config.nfs.client = new S3Client(s3Config);
   }

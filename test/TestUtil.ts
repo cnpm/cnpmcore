@@ -3,11 +3,11 @@ import fs from 'node:fs/promises';
 // 统一通过 coffee 执行 child_process，获取运行时的一些环境信息
 import coffee from 'coffee';
 import { tmpdir } from 'node:os';
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import type { Readable } from 'node:stream';
 import mysql from 'mysql2/promise';
-import pg from 'pg';
+import { Client } from 'pg';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import semver from 'semver';
@@ -106,7 +106,7 @@ export class TestUtil {
       if (config.type === DATABASE_TYPE.MySQL) {
         this.connection = await mysql.createConnection(config as any);
       } else if (config.type === DATABASE_TYPE.PostgreSQL) {
-        this.connection = new pg.Client(config as any);
+        this.connection = new Client(config as any);
       }
       await this.connection.connect();
     }
@@ -189,6 +189,10 @@ export class TestUtil {
 
   static async readFixturesFile(name?: string): Promise<Buffer> {
     return await fs.readFile(this.getFixtures(name));
+  }
+
+  static readFixturesFileSync(name?: string): Buffer {
+    return readFileSync(this.getFixtures(name));
   }
 
   static async readFixturesJSONFile(name?: string) {

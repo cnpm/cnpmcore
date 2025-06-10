@@ -63,7 +63,7 @@ describe('test/npm/core/entity/SqlRange.test.ts', () => {
   });
   it('should support =', () => {
     const res = new SqlRange('1.0.0 || 2.0.0');
-    assert(res.containPreRelease === false);
+    assert.ok(res.containPreRelease === false);
     assert.deepEqual(res.condition, {
       $or: [
         {

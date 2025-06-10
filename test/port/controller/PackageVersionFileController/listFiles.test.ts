@@ -228,7 +228,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             {
               path: '/index.html',
               type: 'file',
-              contentType: 'text/html',
+              contentType: 'text/plain',
               integrity:
                 'sha512-L4Vxx8DW1PtZfPut4uwP9DSK9+DbFbKDWWGp4KK5TRKGTHSjYoMExqY50WiTKs/bGu1Ecpneiu3dnYlRZ/sDdw==',
               lastModified: '2024-05-18T16:00:18.307Z',
@@ -718,8 +718,8 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .httpRequest()
         .get(`/${pkg.name}/1.0.40000404/files`)
         .expect(404);
-      assert(!res.headers.etag);
-      assert(!res.headers['cache-control']);
+      assert.ok(!res.headers.etag);
+      assert.ok(!res.headers['cache-control']);
       assert.equal(
         res.body.error,
         `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`
@@ -731,8 +731,8 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .httpRequest()
         .get('/@cnpm/foonot-exists/1.0.40000404/files')
         .expect(404);
-      assert(!res.headers.etag);
-      assert(!res.headers['cache-control']);
+      assert.ok(!res.headers.etag);
+      assert.ok(!res.headers['cache-control']);
       assert.equal(
         res.body.error,
         '[NOT_FOUND] @cnpm/foonot-exists@1.0.40000404 not found'
@@ -949,7 +949,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/@cnpm/foo/1.0.0/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 200);
-        assert(res.body.name);
+        assert.ok(res.body.name);
       });
 
       it('should 200 when package version in white list', async () => {
@@ -999,7 +999,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/foo/1.0.0/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 200);
-        assert(res.body.name);
+        assert.ok(res.body.name);
 
         pkg = await TestUtil.getFullPackage({
           name: 'foo',
@@ -1021,7 +1021,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/foo/1.0.1/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 200);
-        assert(res.body.name);
+        assert.ok(res.body.name);
 
         // unpkg-white-list change
         pkg = await TestUtil.getFullPackage({
@@ -1126,7 +1126,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/foo/0.0.0/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 200);
-        assert(res.body.name);
+        assert.ok(res.body.name);
 
         pkg = await TestUtil.getFullPackage({
           name: 'foo',
@@ -1148,7 +1148,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/foo/0.3.0-rc15/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 200);
-        assert(res.body.name);
+        assert.ok(res.body.name);
 
         pkg = await TestUtil.getFullPackage({
           name: 'baz',
@@ -1170,7 +1170,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/baz/0.3.0-rc15/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 200);
-        assert(res.body.name);
+        assert.ok(res.body.name);
 
         pkg = await TestUtil.getFullPackage({
           name: 'bar',

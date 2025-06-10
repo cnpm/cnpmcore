@@ -5,7 +5,10 @@ import {
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
+  HTTPQuery,
   Inject,
+  Middleware,
+  HTTPBody,
 } from '@eggjs/tegg';
 import path from 'node:path';
 import { NotFoundError } from 'egg-errors';
@@ -15,6 +18,7 @@ import type { BinarySyncerService } from '../../core/service/BinarySyncerService
 import type { Binary } from '../../core/entity/Binary.js';
 import binaries, { type BinaryName } from '../../../config/binaries.js';
 import { BinaryNameRule, BinarySubpathRule } from '../typebox.js';
+import { AdminAccess } from '../middleware/AdminAccess.js';
 
 @HTTPController()
 export class BinarySyncController extends AbstractController {
@@ -57,13 +61,27 @@ export class BinarySyncController extends AbstractController {
   async showBinary(
     @Context() ctx: EggContext,
     @HTTPParam() binaryName: BinaryName,
-    @HTTPParam() subpath: string
+    @HTTPParam() subpath: string,
+    @HTTPQuery() since: string,
+    @HTTPQuery() limit: string
   ) {
     // check binaryName valid
     try {
       ctx.tValidate(BinaryNameRule, binaryName);
     } catch {
       throw new NotFoundError(`Binary "${binaryName}" not found`);
+    }
+    let limitCount: number | undefined;
+    if (limit) {
+      limitCount = Number(limit);
+      if (Number.isNaN(limitCount)) {
+        throw new NotFoundError(`invalidate limit "${limit}"`);
+      }
+      if (limitCount > 1000) {
+        throw new NotFoundError(
+          `limit should less than 1000, query is "${limit}"`
+        );
+      }
     }
     subpath = subpath || '/';
     if (subpath === '/') {
@@ -103,7 +121,17 @@ export class BinarySyncController extends AbstractController {
       throw new NotFoundError(`Binary "${binaryName}${subpath}" not found`);
     }
     if (binary.isDir) {
-      const items = await this.binarySyncerService.listDirBinaries(binary);
+      let options;
+      if (limitCount && since) {
+        options = {
+          limit: limitCount,
+          since,
+        };
+      }
+      const items = await this.binarySyncerService.listDirBinaries(
+        binary,
+        options
+      );
       return this.formatItems(items);
     }
 
@@ -121,12 +149,14 @@ export class BinarySyncController extends AbstractController {
   }
 
   @HTTPMethod({
-    path: '/-/binary/:binaryName(@[^/]{1,220}/[^/]{1,220}|[^@/]{1,220})',
-    method: HTTPMethodEnum.GET,
+    path: '/-/binary/:binaryName/sync',
+    method: HTTPMethodEnum.POST,
   })
-  async showBinaryIndex(
+  @Middleware(AdminAccess)
+  async syncBinary(
     @Context() ctx: EggContext,
-    @HTTPParam() binaryName: BinaryName
+    @HTTPParam() binaryName: BinaryName,
+    @HTTPBody() lastData?: Record<string, string>
   ) {
     // check binaryName valid
     try {
@@ -134,7 +164,35 @@ export class BinarySyncController extends AbstractController {
     } catch {
       throw new NotFoundError(`Binary "${binaryName}" not found`);
     }
-    return await this.showBinary(ctx, binaryName, '/');
+    this.logger.info('SyncBinary: %s, lastData: %j', binaryName, lastData);
+    const task = await this.binarySyncerService.createTask(
+      binaryName,
+      lastData
+    );
+    return {
+      ok: true,
+      taskId: task?.taskId,
+      logPath: task?.logPath,
+    };
+  }
+
+  @HTTPMethod({
+    path: '/-/binary/:binaryName(@[^/]{1,220}/[^/]{1,220}|[^@/]{1,220})',
+    method: HTTPMethodEnum.GET,
+  })
+  async showBinaryIndex(
+    @Context() ctx: EggContext,
+    @HTTPParam() binaryName: BinaryName,
+    @HTTPQuery() since: string,
+    @HTTPQuery() limit: string
+  ) {
+    // check binaryName valid
+    try {
+      ctx.tValidate(BinaryNameRule, binaryName);
+    } catch {
+      throw new NotFoundError(`Binary "${binaryName}" not found`);
+    }
+    return await this.showBinary(ctx, binaryName, '/', since, limit);
   }
 
   private formatItems(items: Binary[]) {
