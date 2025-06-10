@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.7.1](https://github.com/cnpm/cnpmcore/compare/v4.7.0...v4.7.1) (2025-06-10)
+
+### Bug Fixes
+
+- should change npm package version ([eaed6fe](https://github.com/cnpm/cnpmcore/commit/eaed6fe478e5e3d88c637b3ce5284a125bb8ad8f))
+
 ## [4.7.0](https://github.com/cnpm/cnpmcore/compare/v4.6.3...v4.7.0) (2025-06-10)
 
 ### Features
