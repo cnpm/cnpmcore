@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.7.2](https://github.com/cnpm/cnpmcore/compare/v4.7.1...v4.7.2) (2025-06-18)
+
+### Bug Fixes
+
+- npm stream descending ([#812](https://github.com/cnpm/cnpmcore/issues/812)) ([e932624](https://github.com/cnpm/cnpmcore/commit/e932624c6fbd8cb7aa075fa9656931f1b05d1492))
+
 ## [4.7.1](https://github.com/cnpm/cnpmcore/compare/v4.7.0...v4.7.1) (2025-06-10)
 
 ### Bug Fixes
