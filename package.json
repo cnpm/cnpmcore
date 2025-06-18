@@ -51,9 +51,9 @@
     "pret": "bash prepare-database-mysql.sh",
     "t": "npm run lint:fix && egg-bin test --changed",
     "precov": "bash prepare-database-mysql.sh",
-    "cov": "egg-bin cov --tscompiler ts-node/esm",
+    "cov": "egg-bin cov",
     "precov:postgresql": "bash prepare-database-postgresql.sh",
-    "cov:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin cov --tscompiler ts-node/esm",
+    "cov:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin cov",
     "preci": "npm run clean && npm run lint",
     "ci": "npm run cov ",
     "postci": "npm run tsc:prod && npm run clean",
@@ -82,6 +82,12 @@
     "npm registry",
     "registry"
   ],
+  "overrides": {
+    "mocha": "11.6.0"
+  },
+  "resolutions": {
+    "mocha": "11.6.0"
+  },
   "dependencies": {
     "@eggjs/redis": "^3.0.0",
     "@eggjs/scripts": "^4.0.0",
