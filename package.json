@@ -82,6 +82,12 @@
     "npm registry",
     "registry"
   ],
+  "overrides": {
+    "mocha": "11.6.0"
+  },
+  "resolutions": {
+    "mocha": "11.6.0"
+  },
   "dependencies": {
     "@eggjs/redis": "^3.0.0",
     "@eggjs/scripts": "^4.0.0",
