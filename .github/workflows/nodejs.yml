@@ -54,7 +54,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install Dependencies
-        run: npm i -g npminstall && npminstall
+        run: npm i -g utoo && utoo
 
       # https://github.com/elastic/elastic-github-actions/blob/master/elasticsearch/README.md
       - name: Configure sysctl limits
