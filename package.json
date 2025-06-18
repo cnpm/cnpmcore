@@ -132,6 +132,12 @@
   "optionalDependencies": {
     "s3-cnpmcore": "^1.1.2"
   },
+  "resolutions": {
+    "mocha": "11.6.0"
+  },
+  "overrides": {
+    "mocha": "11.6.0"
+  },
   "devDependencies": {
     "@eggjs/bin": "^7.1.0",
     "@eggjs/mock": "^6.0.7",
