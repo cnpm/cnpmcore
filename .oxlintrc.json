@@ -78,6 +78,7 @@
     "import/export": "error",
     "import/no-default-export": "allow",
     "import/unambiguous": "error",
+    "import/extensions": "allow",
 
     // promise
     "promise/no-return-wrap": "error",
