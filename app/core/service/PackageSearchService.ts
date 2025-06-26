@@ -90,7 +90,15 @@ export class PackageSearchService extends AbstractService {
     const { data: manifest } = fullManifests;
 
     const latestVersion = manifest['dist-tags'].latest;
-    const latestManifest = manifest.versions[latestVersion];
+    if (!latestVersion) {
+      this.logger.warn(
+        '[PackageSearchService.syncPackage] package:%s latestVersion not found, dist-tags: %j, skip sync',
+        fullname,
+        manifest['dist-tags']
+      );
+      return;
+    }
+    const latestManifest = manifest.versions?.[latestVersion];
 
     const packageDoc: SearchMappingType = {
       name: manifest.name,
