@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.7.3](https://github.com/cnpm/cnpmcore/compare/v4.7.2...v4.7.3) (2025-06-26)
+
+### Bug Fixes
+
+- latest version maybe not exists ([#814](https://github.com/cnpm/cnpmcore/issues/814)) ([bed4778](https://github.com/cnpm/cnpmcore/commit/bed4778cbca3797407be1af1cbd28d6e559ed09f))
+
 ## [4.7.2](https://github.com/cnpm/cnpmcore/compare/v4.7.1...v4.7.2) (2025-06-18)
 
 ### Bug Fixes
