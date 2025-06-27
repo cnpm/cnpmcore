@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.7.4](https://github.com/cnpm/cnpmcore/compare/v4.7.3...v4.7.4) (2025-06-27)
+
+### Bug Fixes
+
+- remove descending ([#815](https://github.com/cnpm/cnpmcore/issues/815)) ([1001e1f](https://github.com/cnpm/cnpmcore/commit/1001e1ffa2013e36ac197a318ef7711ffda1128a))
+
 ## [4.7.3](https://github.com/cnpm/cnpmcore/compare/v4.7.2...v4.7.3) (2025-06-26)
 
 ### Bug Fixes
