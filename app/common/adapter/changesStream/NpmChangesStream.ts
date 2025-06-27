@@ -43,9 +43,7 @@ export class NpmChangesStream extends AbstractChangeStream {
   ): AsyncGenerator<ChangesStreamChange> {
     // https://github.com/orgs/community/discussions/152515
     const db = this.getChangesStreamUrl(registry, since);
-    const url = new URL(db);
-    url.searchParams.set('descending', 'true');
-    const { data, headers } = await this.httpclient.request(url, {
+    const { data, headers } = await this.httpclient.request(db, {
       timeout: 60_000,
       headers: {
         'npm-replication-opt-in': 'true',
