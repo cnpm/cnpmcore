@@ -85,16 +85,19 @@ export class PackageVersionService {
   private findRealSpec(spec: Result) {
     let realSpec: Result;
     switch (spec.type) {
-      case 'alias':
+      case 'alias': {
         realSpec = (spec as AliasResult).subSpec;
         break;
+      }
       case 'version':
       case 'tag':
-      case 'range':
+      case 'range': {
         realSpec = spec;
         break;
-      default:
+      }
+      default: {
         throw new Error(`cnpmcore not support spec: ${spec.raw}`);
+      }
     }
     return realSpec;
   }

@@ -67,6 +67,8 @@
     "no-negated-condition": "error",
     "no-else-return": "error",
     "no-throw-literal": "error",
+    "id-length": "allow",
+    "arrow-body-style": "allow",
 
     // import
     "import/exports-last": "allow",
@@ -79,6 +81,7 @@
     "import/no-default-export": "allow",
     "import/unambiguous": "error",
     "import/extensions": "allow",
+    "import/prefer-default-export": "allow",
 
     // promise
     "promise/no-return-wrap": "error",
@@ -134,6 +137,7 @@
     "typescript/prefer-ts-expect-error": "error",
     "typescript/ban-ts-comment": "error",
     "typescript/prefer-enum-initializers": "error",
+    "typescript/explicit-module-boundary-types": "allow",
 
     // jsdoc
     "jsdoc/require-returns": "allow",
