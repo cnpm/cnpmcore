@@ -48,6 +48,8 @@ jobs:
         with:
           context: .
           file: .docker/debian/Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
