@@ -3,6 +3,8 @@
   "compilerOptions": {
     "target": "ES2021",
     "resolveJsonModule": true,
-    "useUnknownInCatchVariables": false
-  }
+    "useUnknownInCatchVariables": false,
+    "declaration": false
+  },
+  "exclude": ["test"]
 }

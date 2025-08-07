@@ -69,6 +69,8 @@
     "no-throw-literal": "error",
     "id-length": "allow",
     "arrow-body-style": "allow",
+    "prefer-destructuring": "allow",
+    "new-cap": "allow",
 
     // import
     "import/exports-last": "allow",

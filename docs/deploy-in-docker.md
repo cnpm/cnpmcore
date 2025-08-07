@@ -225,11 +225,10 @@ npm login --registry=https://registry.fengmk2.com
 npm whoami --registry=https://registry.fengmk2.com
 ```
 
-## fengmk2/cnpmcore 镜像
+## cnpm/cnpmcore 镜像
 
-https://hub.docker.com/r/fengmk2/cnpmcore
+https://github.com/cnpm/cnpmcore/pkgs/container/cnpmcore
 
 ```bash
-docker pull fengmk2/cnpmcore:latest
-docker pull fengmk2/cnpmcore:latest-alpine
+docker pull ghcr.io/cnpm/cnpmcore:latest
 ```

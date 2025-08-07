@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY . .
 
-RUN chmod +x .docker/build.sh && .docker/build.sh
+RUN .docker/build.sh
 
 ENV NODE_ENV=production \
   EGG_SERVER_ENV=prod \
