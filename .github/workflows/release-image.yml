@@ -4,6 +4,7 @@ name: Create and publish a Docker image
 # Configures this workflow to run manually
 on:
   workflow_dispatch:
+
   pull_request:
     branches: [master]
 
