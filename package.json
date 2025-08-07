@@ -67,8 +67,7 @@
     "images:debian": "docker build -t cnpmcore:latest -f .docker/debian/Dockerfile .",
     "start": "eggctl start --daemon && touch egg.status",
     "start:foreground": "eggctl start",
-    "stop": "rm -f egg.status && sleep 15 && eggctl stop",
-    "prepare": "husky"
+    "stop": "rm -f egg.status && sleep 15 && eggctl stop"
   },
   "repository": {
     "type": "git",
