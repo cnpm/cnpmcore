@@ -158,16 +158,16 @@
     "coffee": "^5.4.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.0",
-    "oxlint": "^1.0.0",
+    "oxlint": "^1.9.0",
     "prettier": "^3.5.3",
     "typescript": "5"
   },
   "author": "killagu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cnpm/npmcore/issues"
+    "url": "https://github.com/cnpm/cnpmcore/issues"
   },
-  "homepage": "https://github.com/cnpm/npmcore#readme",
+  "homepage": "https://github.com/cnpm/cnpmcore#readme",
   "engines": {
     "node": ">= 20.18.0"
   },

@@ -370,8 +370,9 @@ export class ProxyCacheService extends AbstractService {
         );
         break;
       }
-      default:
+      default: {
         break;
+      }
     }
 
     // replace tarball url

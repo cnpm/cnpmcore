@@ -139,18 +139,16 @@ export class TokenController extends AbstractController {
     // }
     const objects = tokens
       .filter(token => !isGranularToken(token))
-      .map(token => {
-        return {
-          token: token.tokenMark,
-          key: token.tokenKey,
-          cidr_whitelist: token.cidrWhitelist,
-          readonly: token.isReadonly,
-          automation: token.isAutomation,
-          created: token.createdAt,
-          lastUsedAt: token.lastUsedAt,
-          updated: token.updatedAt,
-        };
-      });
+      .map(token => ({
+        token: token.tokenMark,
+        key: token.tokenKey,
+        cidr_whitelist: token.cidrWhitelist,
+        readonly: token.isReadonly,
+        automation: token.isAutomation,
+        created: token.createdAt,
+        lastUsedAt: token.lastUsedAt,
+        updated: token.updatedAt,
+      }));
     // TODO: paging, urls: { next: string }
     return { objects, total: objects.length, urls: {} };
   }

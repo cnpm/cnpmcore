@@ -218,14 +218,12 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           fileType: DIST_NAMES.FULL_MANIFESTS,
         }
       );
-      mock(proxyCacheService, 'getPackageVersionManifest', async () => {
-        return {
-          status: 200,
-          data: await TestUtil.readJSONFile(
-            TestUtil.getFixtures('registry.npmjs.org/foobar.json')
-          ),
-        };
-      });
+      mock(proxyCacheService, 'getPackageVersionManifest', async () => ({
+        status: 200,
+        data: await TestUtil.readJSONFile(
+          TestUtil.getFixtures('registry.npmjs.org/foobar.json')
+        ),
+      }));
       await proxyCacheService.executeTask(task);
       const stream = await taskService.findTaskLog(task);
       assert.ok(stream);

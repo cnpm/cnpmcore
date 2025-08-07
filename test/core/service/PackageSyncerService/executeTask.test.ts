@@ -1282,9 +1282,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         assert.ok(pkgVersion2.version === '2.0.0');
 
         // 模拟查询未发现版本重复，写入时异常
-        mock(packageRepository, 'findPackageVersion', async () => {
-          return null;
-        });
+        mock(packageRepository, 'findPackageVersion', async () => null);
         await packageSyncerService.executeTask(task);
 
         const stream = await packageSyncerService.findTaskLog(task);
@@ -1335,9 +1333,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         assert.ok(pkgVersion.version === '1.0.0');
 
         // 模拟查询未发现版本重复，写入时异常
-        mock(packageRepository, 'findPackageVersion', async () => {
-          return null;
-        });
+        mock(packageRepository, 'findPackageVersion', async () => null);
 
         mock(packageRepository, 'createPackageVersion', async () => {
           throw new Error('mock error');

@@ -328,9 +328,7 @@ export class SavePackageVersionController extends AbstractController {
     const pkg = await this.getPackageEntityByFullname(fullname);
     await this.packageManagerService.saveDeprecatedVersions(
       pkg,
-      versions.map(v => {
-        return { version: v.version, deprecated: v.deprecated };
-      })
+      versions.map(v => ({ version: v.version, deprecated: v.deprecated }))
     );
     return { ok: true };
   }

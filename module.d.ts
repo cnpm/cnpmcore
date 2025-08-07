@@ -1,6 +1,6 @@
-import { ContextCnpmcore } from "./app/core/typing";
+import type { ContextCnpmcore } from './app/core/typing';
 
-declare module "egg" {
+declare module 'egg' {
   export interface EggContextModule {
     cnpmcoreCore: ContextCnpmcore;
   }

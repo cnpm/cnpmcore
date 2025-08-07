@@ -122,13 +122,13 @@ export class ProxyCacheController extends AbstractController {
       throw new NotFoundError();
     }
     await this.cacheService.removeCache(fullname);
-    const removingList = proxyCachesList.map(item => {
-      return this.proxyCacheService.removeProxyCache(
+    const removingList = proxyCachesList.map(item =>
+      this.proxyCacheService.removeProxyCache(
         item.fullname,
         item.fileType,
         item.version
-      );
-    });
+      )
+    );
     await Promise.all(removingList);
     return {
       ok: true,
