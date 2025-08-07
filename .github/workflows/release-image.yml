@@ -64,6 +64,7 @@ jobs:
 
       # This step generates an artifact attestation for the image, which is a tamper-proof statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see [Using artifact attestations to establish provenance for builds](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds).
       - name: Generate artifact attestation
+        if: github.event_name != 'pull_request'
         uses: actions/attest-build-provenance@v2
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
