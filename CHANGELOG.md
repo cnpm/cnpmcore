@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.5](https://github.com/cnpm/cnpmcore/compare/v4.7.4...v4.7.5) (2025-08-07)
+
+
+### Bug Fixes
+
+* use NPM description ([b23f3fe](https://github.com/cnpm/cnpmcore/commit/b23f3fe22e71df9a6347bc2b1338aab0a6160ed3))
+
 ## [4.7.4](https://github.com/cnpm/cnpmcore/compare/v4.7.3...v4.7.4) (2025-06-27)
 
 ### Bug Fixes
