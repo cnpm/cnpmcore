@@ -12,7 +12,6 @@
     "max-params": ["error", 6],
     "no-console": "warn",
     "import/no-anonymous-default-export": "error",
-    "import/unambiguous": "allow",
     "no-unassigned-import": "allow",
     "new-cap": "allow"
   },
