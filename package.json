@@ -140,6 +140,7 @@
   "devDependencies": {
     "@eggjs/bin": "^7.1.0",
     "@eggjs/mock": "^6.0.7",
+    "@eggjs/oxlint-config": "^1.0.0",
     "@eggjs/tsconfig": "^2.0.0",
     "@elastic/elasticsearch-mock": "^2.0.0",
     "@simplewebauthn/typescript-types": "^7.0.0",
