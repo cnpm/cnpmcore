@@ -6,7 +6,6 @@ on:
 jobs:
   release:
     name: NPM
-    uses: cnpm/github-actions/.github/workflows/node-release.yml@master
+    uses: cnpm/github-actions/.github/workflows/npm-release.yml@master
     secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
