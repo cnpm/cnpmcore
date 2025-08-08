@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>4.7.6 (2025-08-08)</small>
+
+* fix: use npm truster publisher (#825) ([0a5500b](https://github.com/cnpm/cnpmcore/commit/0a5500b)), closes [#825](https://github.com/cnpm/cnpmcore/issues/825)
+* chore: update oxlint config to use @eggjs/oxlint-config (#824) ([f94531c](https://github.com/cnpm/cnpmcore/commit/f94531c)), closes [#824](https://github.com/cnpm/cnpmcore/issues/824)
+
 ## [4.7.5](https://github.com/cnpm/cnpmcore/compare/v4.7.4...v4.7.5) (2025-08-07)
 
 
