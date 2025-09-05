@@ -81,6 +81,42 @@ describe('test/common/adapter/binary/NodeBinary.test.ts', () => {
       assert.ok(matchFile);
     });
 
+    it('should fetch subdir: /v20.19.5/ work', async () => {
+      app.mockHttpclient('https://nodejs.org/dist/v20.19.5/', 'GET', {
+        data: await TestUtil.readFixturesFile(
+          'nodejs.org/site/v20.19.5/index.html'
+        ),
+      });
+      const result = await binary.fetch('/v20.19.5/', 'node');
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
+      let matchDir = false;
+      let matchFile = false;
+      for (const item of result.items) {
+        if (item.name === 'docs/') {
+          assert.ok(item.date === '-');
+          assert.ok(item.isDir === true);
+          assert.ok(item.size === '-');
+          matchDir = true;
+        }
+        if (item.name === 'SHASUMS256.txt') {
+          assert.ok(item.date === '03-Sep-2025 18:19');
+          assert.ok(item.isDir === false);
+          assert.ok(item.size === '3.8 KB');
+          assert.ok(
+            item.url === 'https://nodejs.org/dist/v20.19.5/SHASUMS256.txt'
+          );
+          matchFile = true;
+        }
+        if (!item.isDir) {
+          assert.ok(typeof item.size === 'string');
+          assert.ok(item.size.length > 2);
+        }
+      }
+      assert.ok(matchDir);
+      assert.ok(matchFile);
+    });
+
     it('should fetch subdir: /v18.15.0/ work', async () => {
       app.mockHttpclient('https://nodejs.org/dist/v18.15.0/', 'GET', {
         data: await TestUtil.readFixturesFile(
