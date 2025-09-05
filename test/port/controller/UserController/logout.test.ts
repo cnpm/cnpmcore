@@ -35,7 +35,7 @@ describe('test/port/controller/UserController/logout.test.ts', () => {
       let res = await app
         .httpRequest()
         .delete('/-/user/token/invalid-token-value')
-        .set('authorization', user.authorization + 'foo')
+        .set('authorization', `${user.authorization}foo`)
         .expect(200);
       assert.equal(res.body.ok, false);
       res = await app

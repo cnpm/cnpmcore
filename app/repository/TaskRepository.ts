@@ -33,7 +33,7 @@ export class TaskRepository extends AbstractRepository {
       try {
         await ModelConvertor.convertEntityToModel(task, this.Task);
       } catch (e) {
-        e.message = '[TaskRepository] insert Task failed: ' + e.message;
+        e.message = `[TaskRepository] insert Task failed: ${e.message}`;
         if (isDuplicateKeyError(e)) {
           this.logger.warn(e);
           const taskModel = await this.Task.findOne({ bizId: task.bizId });

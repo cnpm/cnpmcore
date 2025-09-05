@@ -368,7 +368,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       const res = await app
         .httpRequest()
         .get('/lodash/-/lodash-1.404.404.tgz')
-        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('user-agent', `${publisher.ua} node/16.0.0`)
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert.ok(res.status === 404);
       app.notExpectLog(
@@ -383,7 +383,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       const res = await app
         .httpRequest()
         .get('/lodash/-/lodash-1.404.404.tgz')
-        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('user-agent', `${publisher.ua} node/16.0.0`)
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert.ok(res.status === 404);
       app.expectLog(
@@ -407,7 +407,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       const res = await app
         .httpRequest()
         .get('/foobar/-/foobar-1.0.0.tgz')
-        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('user-agent', `${publisher.ua} node/16.0.0`)
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert.ok(res.status === 200);
       // run in background

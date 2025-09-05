@@ -278,7 +278,7 @@ export class PackageVersionFileService extends AbstractService {
         onentry: (entry: unknown) => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;
-          paths.push('/' + filename);
+          paths.push(`/${filename}`);
           if (this.#matchReadmeFilename(filename)) {
             readmeFilenames.push(filename);
           }

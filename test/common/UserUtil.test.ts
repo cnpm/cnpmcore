@@ -10,7 +10,7 @@ describe('test/common/UserUtil.test.ts', () => {
         assert.match(token, /cnpm_\w{31,33}_\w{4,6}/);
         assert.ok(checkToken(token, 'cnpm'));
         assert.ok(!checkToken(token, 'npm'));
-        assert.ok(!checkToken(token + 'a', 'cnpm'));
+        assert.ok(!checkToken(`${token}a`, 'cnpm'));
       }
     });
   });

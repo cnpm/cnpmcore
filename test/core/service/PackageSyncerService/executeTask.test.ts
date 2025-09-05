@@ -2166,7 +2166,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       mock(app.config.cnpmcore, 'taskQueueHighWaterSize', 1);
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
-      await packageSyncerService.createTask(name + '-foo');
+      await packageSyncerService.createTask(`${name}-foo`);
       const task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
       assert.equal(task.targetName, name);

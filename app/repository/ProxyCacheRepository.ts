@@ -39,8 +39,7 @@ export class ProxyCacheRepository extends AbstractRepository {
           this.ProxyCache
         );
       } catch (e) {
-        e.message =
-          '[ProxyCacheRepository] insert ProxyCache failed: ' + e.message;
+        e.message = `[ProxyCacheRepository] insert ProxyCache failed: ${e.message}`;
         throw e;
       }
     }
