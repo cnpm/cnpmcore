@@ -10,7 +10,7 @@ describe('test/port/controller/UserController/showProfile.test.ts', () => {
       let res = await app
         .httpRequest()
         .get('/-/npm/v1/user')
-        .set('authorization', authorization + 'wrong');
+        .set('authorization', `${authorization}wrong`);
       assert.ok(res.status === 401);
       assert.ok(res.body.error === '[UNAUTHORIZED] Invalid token');
 

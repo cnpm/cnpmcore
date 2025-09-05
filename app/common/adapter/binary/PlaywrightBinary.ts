@@ -429,6 +429,7 @@ export class PlaywrightBinary extends AbstractBinary {
               //   },
               // ]
               browsers.push(...data.browsers);
+              return data;
             })
             .catch(err => {
               /* c8 ignore next 2 */

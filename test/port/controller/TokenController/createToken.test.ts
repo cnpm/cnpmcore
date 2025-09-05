@@ -221,7 +221,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         res = await app
           .httpRequest()
           .get('/-/npm/v1/tokens')
-          .set('authorization', 'Bearer ' + res.body.token);
+          .set('authorization', `Bearer ${res.body.token}`);
 
         assert.ok(res.body.objects.length > 0);
         assert.ok(

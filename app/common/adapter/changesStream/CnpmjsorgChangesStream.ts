@@ -70,7 +70,7 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
 
     if (data.results?.length > 0) {
       for (const change of data.results) {
-        const seq = new Date(change.gmt_modified).getTime() + '';
+        const seq = `${new Date(change.gmt_modified).getTime()}`;
         const fullname = change.id;
         if (seq && fullname && seq !== since) {
           const change = {

@@ -23,7 +23,7 @@ describe('test/repository/ChangeRepository.test.ts', () => {
         change.type = 'add';
         change.targetName = 'test';
         change.data = {};
-        change.changeId = 'change_id_' + i;
+        change.changeId = `change_id_${i}`;
         await change.save();
       }
     });

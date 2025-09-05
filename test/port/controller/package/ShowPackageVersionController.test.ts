@@ -433,7 +433,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       const res = await app
         .httpRequest()
         .get('/foobar/1.0.0')
-        .set('user-agent', publisher.ua + ' node/16.0.0')
+        .set('user-agent', `${publisher.ua} node/16.0.0`)
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert.ok(res.status === 200);
       assert.ok(res.body.dist.tarball.includes(app.config.cnpmcore.registry));

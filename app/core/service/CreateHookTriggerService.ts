@@ -92,7 +92,7 @@ export class CreateHookTriggerService extends AbstractService {
         `[${isoNow()}][Hooks] create trigger succeed \n`
       );
     } catch (e) {
-      e.message = 'create trigger failed: ' + e.message;
+      e.message = `create trigger failed: ${e.message}`;
       await this.taskService.finishTask(
         task,
         TaskState.Fail,

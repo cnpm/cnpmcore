@@ -240,7 +240,7 @@ export class TaskService extends AbstractService {
     try {
       const nextPosition = await this.nfsAdapter.appendBytes(
         task.logPath,
-        Buffer.from(appendLog + '\n'),
+        Buffer.from(`${appendLog}\n`),
         task.logStorePosition,
         {
           'Content-Type': 'text/plain; charset=utf-8',
@@ -259,7 +259,7 @@ export class TaskService extends AbstractService {
         // override exists log file
         await this.nfsAdapter.uploadBytes(
           task.logPath,
-          Buffer.from(appendLog + '\n')
+          Buffer.from(`${appendLog}\n`)
         );
         return;
       }

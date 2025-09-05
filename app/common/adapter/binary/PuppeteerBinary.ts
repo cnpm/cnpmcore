@@ -56,9 +56,9 @@ export class PuppeteerBinary extends AbstractBinary {
         this.dirItems[`/${platform}/`] = [];
         let i = 0;
         do {
-          let requestUrl = s3Url + '?prefix=' + platform + '&max-keys=100';
+          let requestUrl = `${s3Url}?prefix=${platform}&max-keys=100`;
           if (marker) {
-            requestUrl += '&marker=' + marker;
+            requestUrl += `&marker=${marker}`;
           }
           const xml = await this.requestXml(requestUrl);
           const parser = new XMLParser();
