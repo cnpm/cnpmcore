@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.8.0 (2025-09-08)
+
+* chore: add permissions to release workflow ([8587d27](https://github.com/cnpm/cnpmcore/commit/8587d27))
+* feat: new node binary date format (#827) ([13b2da0](https://github.com/cnpm/cnpmcore/commit/13b2da0)), closes [#827](https://github.com/cnpm/cnpmcore/issues/827)
+
 ## <small>4.7.6 (2025-08-08)</small>
 
 * fix: use npm truster publisher (#825) ([0a5500b](https://github.com/cnpm/cnpmcore/commit/0a5500b)), closes [#825](https://github.com/cnpm/cnpmcore/issues/825)
