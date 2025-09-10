@@ -2,6 +2,7 @@ import { basename } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
 import binaries, { type BinaryName } from '../../../../config/binaries.js';
 import dayjs from 'dayjs';
+import { gte } from 'semver';
 import { BinaryType } from '../../enum/Binary.js';
 import {
   AbstractBinary,
@@ -18,6 +19,7 @@ export class FirefoxBinary extends AbstractBinary {
     return;
   }
 
+  // Only fetch Firefox versions >= 100.0.0 to avoid too old versions
   async fetch(
     dir: string,
     binaryName: BinaryName
@@ -43,6 +45,27 @@ export class FirefoxBinary extends AbstractBinary {
         // Keep the full name for files
         name = basename(name);
       }
+      
+      // Filter out old Firefox versions (< 100.0.0) for directories
+      if (isDir && name !== '../') {
+        const versionName = name.slice(0, -1); // Remove trailing '/'
+        // Skip non-version directories and beta/rc versions
+        if (/^\d+\.\d+/.test(versionName)) {
+          try {
+            // For versions like "131.0b3", extract just the version part "131.0"
+            const cleanVersion = versionName.replace(/[a-zA-Z].*$/, '');
+            // Pad to semver format if needed (e.g., "131.0" -> "131.0.0")
+            const semverVersion = cleanVersion.split('.').length === 2 ? `${cleanVersion}.0` : cleanVersion;
+            if (!gte(semverVersion, '100.0.0')) {
+              continue; // Skip versions < 100.0.0
+            }
+          } catch {
+            // If version parsing fails, skip this directory
+            continue;
+          }
+        }
+      }
+      
       const fileUrl = isDir ? '' : `${url}${name}`;
       const dateStr = m[2];
       const date = dateStr === '-' ? '-' : dayjs(dateStr).format('DD-MMM-YYYY HH:mm');

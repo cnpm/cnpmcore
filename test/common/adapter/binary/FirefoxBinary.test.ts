@@ -36,6 +36,48 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
       assert.ok(result.items[4].date === '28-Oct-2024 20:13');
     });
 
+    it('should filter out old Firefox versions < 100.0.0', async () => {
+      app.mockHttpclient(
+        'https://archive.mozilla.org/pub/firefox/releases/',
+        'GET',
+        {
+          data: TestUtil.readFixturesFileSync(
+            'archive.mozilla.org/pub/firefox/releases/index-with-old-versions.html'
+          ),
+        }
+      );
+
+      const result = await binary.fetch('/', 'firefox');
+      assert.ok(result);
+      
+      // Should only include versions >= 100.0.0
+      const versionDirs = result.items.filter(item => item.isDir);
+      const versionNames = new Set(versionDirs.map(item => item.name));
+      
+      // Should include versions >= 100.0.0
+      assert.ok(versionNames.has('100.0/'));
+      assert.ok(versionNames.has('130.0/'));
+      assert.ok(versionNames.has('131.0/'));
+      assert.ok(versionNames.has('131.0b3/')); // Beta versions should be included if >= 100.0.0
+      
+      // Should exclude versions < 100.0.0
+      assert.ok(!versionNames.has('3.6/'));
+      assert.ok(!versionNames.has('52.0/'));
+      assert.ok(!versionNames.has('78.0/'));
+      assert.ok(!versionNames.has('99.0/'));
+      
+      // All version directories should be >= 100.0.0
+      const validVersions = versionDirs.filter(item => {
+        const versionName = item.name.slice(0, -1); // Remove trailing '/'
+        if (/^\d+\.\d+/.test(versionName)) {
+          const cleanVersion = versionName.replace(/[a-zA-Z].*$/, '');
+          return cleanVersion >= '100.0';
+        }
+        return true;
+      });
+      assert.ok(validVersions.length === versionDirs.length);
+    });
+
     it('should fetch version directory with files', async () => {
       app.mockHttpclient(
         'https://archive.mozilla.org/pub/firefox/releases/131.0.3/',
