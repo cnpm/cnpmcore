@@ -612,6 +612,8 @@ curl -X POST \
 
 Manage webhooks that trigger on package events (publish, install, etc.).
 
+**Base Path**: All hook endpoints use the base path `/-/npm`
+
 ### Create Hook
 
 Create a new webhook.
