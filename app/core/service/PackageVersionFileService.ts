@@ -356,7 +356,8 @@ export class PackageVersionFileService extends AbstractService {
     const dist = pkg.createPackageVersionFile(distPath, pkgVersion.version, {
       size: stat.size,
       shasum: distIntegrity.shasum,
-      integrity: distIntegrity.integrity,
+      // Store the combined SRI string for enhanced SRI support while maintaining backwards compatibility
+      integrity: distIntegrity.sri.combined,
     });
     await this.distRepository.saveDist(dist, localFile);
     file = PackageVersionFile.create({
