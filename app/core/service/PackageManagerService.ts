@@ -1371,7 +1371,9 @@ export class PackageManagerService extends AbstractService {
       if (manifest) {
         data.versions[packageVersion.version] = manifest;
         // data.time is guaranteed to exist since we initialize it above
-        data.time![packageVersion.version] = packageVersion.publishTime;
+        if (data.time) {
+          data.time[packageVersion.version] = packageVersion.publishTime;
+        }
       }
     }
     return data;
