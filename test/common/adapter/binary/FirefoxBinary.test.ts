@@ -10,17 +10,20 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
   beforeEach(async () => {
     binary = await app.getEggObject(FirefoxBinary);
   });
+  
+  it('should create binary instance', () => {
+    assert.ok(binary);
+    assert.ok(typeof binary.fetch === 'function');
+  });
+  
   describe('fetch()', () => {
     it('should fetch root directory', async () => {
-      app.mockHttpclient(
-        'https://archive.mozilla.org/pub/firefox/releases/',
-        'GET',
-        {
-          data: TestUtil.readFixturesFileSync(
-            'archive.mozilla.org/pub/firefox/releases/index.html'
-          ),
-        }
-      );
+      app.mockHttpclient('https://archive.mozilla.org/pub/firefox/releases/', 'GET', {
+        data: await TestUtil.readFixturesFile(
+          'archive.mozilla.org/pub/firefox/releases/index.html'
+        ),
+        persist: false,
+      });
 
       const result = await binary.fetch('/', 'firefox');
       assert.ok(result);
@@ -37,15 +40,12 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
     });
 
     it('should filter out old Firefox versions < 100.0.0', async () => {
-      app.mockHttpclient(
-        'https://archive.mozilla.org/pub/firefox/releases/',
-        'GET',
-        {
-          data: TestUtil.readFixturesFileSync(
-            'archive.mozilla.org/pub/firefox/releases/index-with-old-versions.html'
-          ),
-        }
-      );
+      app.mockHttpclient('https://archive.mozilla.org/pub/firefox/releases/', 'GET', {
+        data: await TestUtil.readFixturesFile(
+          'archive.mozilla.org/pub/firefox/releases/index-with-old-versions.html'
+        ),
+        persist: false,
+      });
 
       const result = await binary.fetch('/', 'firefox');
       assert.ok(result);
@@ -79,15 +79,12 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
     });
 
     it('should fetch version directory with files', async () => {
-      app.mockHttpclient(
-        'https://archive.mozilla.org/pub/firefox/releases/131.0.3/',
-        'GET',
-        {
-          data: TestUtil.readFixturesFileSync(
-            'archive.mozilla.org/pub/firefox/releases/131.0.3.html'
-          ),
-        }
-      );
+      app.mockHttpclient('https://archive.mozilla.org/pub/firefox/releases/131.0.3/', 'GET', {
+        data: await TestUtil.readFixturesFile(
+          'archive.mozilla.org/pub/firefox/releases/131.0.3.html'
+        ),
+        persist: false,
+      });
 
       const result = await binary.fetch('/131.0.3/', 'firefox');
       assert.ok(result);
