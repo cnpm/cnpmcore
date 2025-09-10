@@ -59,8 +59,13 @@ export class FirefoxBinary extends AbstractBinary {
             if (!gte(semverVersion, '100.0.0')) {
               continue; // Skip versions < 100.0.0
             }
-          } catch {
-            // If version parsing fails, skip this directory
+          } catch (error) {
+            // If version parsing fails, log the error and skip this directory
+            this.logger.warn(
+              '[FirefoxBinary.fetch:version-parsing-failed] Failed to parse version for directory: %s, error: %s',
+              versionName,
+              error?.message || error
+            );
             continue;
           }
         }
