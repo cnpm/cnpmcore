@@ -42,10 +42,10 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
       assert.ok(results.length >= 6);
       
       // Check for specific expected entries
-      const dirNames = results.map(r => r.href);
-      assert.ok(dirNames.includes('130.0/'));
-      assert.ok(dirNames.includes('131.0.3/'));
-      assert.ok(dirNames.includes('131.0b3/'));
+      const dirNameSet = new Set(results.map(r => r.href));
+      assert.ok(dirNameSet.has('130.0/'));
+      assert.ok(dirNameSet.has('131.0.3/'));
+      assert.ok(dirNameSet.has('131.0b3/'));
     });
 
     it('should filter out old Firefox versions < 100.0.0', async () => {
@@ -72,7 +72,7 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
               if (gte(semverVersion, '100.0.0')) {
                 filteredResults.push(name);
               }
-            } catch (error) {
+            } catch {
               // Skip on error
             }
           }
