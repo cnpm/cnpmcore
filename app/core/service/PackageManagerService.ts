@@ -1357,6 +1357,10 @@ export class PackageManagerService extends AbstractService {
       modified: pkg.updatedAt,
       name: pkg.fullname,
       versions: {},
+      time: {
+        created: pkg.createdAt,
+        modified: pkg.updatedAt,
+      },
     };
 
     for (const packageVersion of packageVersions) {
@@ -1366,6 +1370,8 @@ export class PackageManagerService extends AbstractService {
         );
       if (manifest) {
         data.versions[packageVersion.version] = manifest;
+        // data.time is guaranteed to exist since we initialize it above
+        data.time![packageVersion.version] = packageVersion.publishTime;
       }
     }
     return data;
