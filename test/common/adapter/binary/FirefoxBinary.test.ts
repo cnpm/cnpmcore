@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import { gte } from 'semver';
 
 import { app } from '@eggjs/mock/bootstrap';
 
