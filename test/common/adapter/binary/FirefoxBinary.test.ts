@@ -104,7 +104,18 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
       const result = await binary.fetch('/', 'firefox');
       assert.ok(result);
       assert.ok(result.items.length === 6);
-      // Check if version directories are parsed correctly
+      
+      // Create a list of names for easier debugging and validation
+      const itemNames = result.items.map(item => item.name);
+      const filteredResults = itemNames.filter(name => name.endsWith('/'));
+      
+      // Check if all expected version directories are present
+      assert.ok(filteredResults.includes('130.0/'), `Missing 130.0/ in: [${filteredResults.join(', ')}]`);
+      assert.ok(filteredResults.includes('130.0.1/'), `Missing 130.0.1/ in: [${filteredResults.join(', ')}]`);
+      assert.ok(filteredResults.includes('131.0/'), `Missing 131.0/ in: [${filteredResults.join(', ')}]`);
+      assert.ok(filteredResults.includes('131.0.3/'), `Missing 131.0.3/ in: [${filteredResults.join(', ')}]`);
+      
+      // Check specific item properties
       assert.ok(result.items[0].name === '130.0/');
       assert.ok(result.items[0].isDir === true);
       assert.ok(result.items[0].date === '01-Oct-2024 19:13');
