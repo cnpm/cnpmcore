@@ -101,7 +101,7 @@ const binaries = {
     description: 'Firefox releases for puppeteer',
     type: BinaryType.Firefox,
     repo: 'mozilla/firefox',
-    distUrl: 'https://archive.mozilla.org/pub/firefox/releases/',
+    distUrl: 'https://archive.mozilla.org/pub/firefox/releases',
   },
   // ChromeBinary
   'chrome-for-testing': {
