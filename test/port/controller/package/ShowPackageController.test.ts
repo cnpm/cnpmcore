@@ -384,6 +384,34 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect(201);
     });
 
+    it('should include time field in abbreviated manifests for pnpm time-based resolution', async () => {
+      mock(app.config.cnpmcore, 'syncMode', 'all');
+      const res = await app
+        .httpRequest()
+        .get(`/${name}`)
+        .set('Accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const pkg = res.body;
+      
+      // Verify time field structure exists
+      assert.ok(pkg.time, 'time field should be present in abbreviated manifests');
+      assert.ok(pkg.time.created, 'time.created should be present');
+      assert.ok(pkg.time.modified, 'time.modified should be present');
+      
+      // Verify each version has a publish time
+      const versions = Object.keys(pkg.versions);
+      for (const version of versions) {
+        assert.ok(pkg.time[version], `time.${version} should be present for version ${version}`);
+        assert.ok(pkg.time[version] instanceof Date || typeof pkg.time[version] === 'string', 
+          `time.${version} should be a Date or string`);
+      }
+      
+      // Verify at least the expected versions have time entries
+      assert.ok(pkg.time['1.0.0'], 'time.1.0.0 should be present');
+      assert.ok(pkg.time['2.0.0'], 'time.2.0.0 should be present');
+    });
+
     it('should show one scoped package with abbreviated manifests', async () => {
       const res = await app
         .httpRequest()
