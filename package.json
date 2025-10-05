@@ -89,7 +89,7 @@
     "mocha": "11.6.0"
   },
   "dependencies": {
-    "@eggjs/redis": "^3.0.0",
+    "@eggjs/redis": "beta",
     "@eggjs/scripts": "^4.0.0",
     "@eggjs/tegg": "beta",
     "@eggjs/tegg-aop-plugin": "beta",
