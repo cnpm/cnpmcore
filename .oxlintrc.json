@@ -13,7 +13,10 @@
     "no-console": "warn",
     "import/no-anonymous-default-export": "error",
     "no-unassigned-import": "allow",
-    "new-cap": "allow"
+    "new-cap": "allow",
+    "class-methods-use-this": "allow",
+    "import/no-named-export": "allow",
+    "unicorn/no-array-sort": "allow"
   },
   "ignorePatterns": ["index.d.ts"]
 }

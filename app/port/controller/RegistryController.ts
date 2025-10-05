@@ -11,7 +11,7 @@ import {
   Middleware,
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
-import type { Static } from 'egg-typebox-validate/typebox';
+import type { Static } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.js';
 import type {

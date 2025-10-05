@@ -73,7 +73,7 @@
       },
       typeboxValidate: {
         enable: true,
-        package: 'egg-typebox-validate',
+        package: '@eggjs/typebox-validate',
       },
     }
     ```

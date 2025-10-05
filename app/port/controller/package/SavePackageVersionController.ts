@@ -17,7 +17,7 @@ import {
 } from '@eggjs/tegg';
 import { checkData, fromData } from 'ssri';
 import validateNpmPackageName from 'validate-npm-package-name';
-import { Type, type Static } from 'egg-typebox-validate/typebox';
+import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from '../AbstractController.js';
 import {

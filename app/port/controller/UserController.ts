@@ -13,7 +13,7 @@ import {
   UnauthorizedError,
   UnprocessableEntityError,
 } from 'egg-errors';
-import { Type, type Static } from 'egg-typebox-validate/typebox';
+import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.js';
 import { LoginResultCode } from '../../common/enum/User.js';
