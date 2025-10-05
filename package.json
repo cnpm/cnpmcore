@@ -59,7 +59,7 @@
     "ci": "npm run cov ",
     "postci": "npm run tsc:prod && npm run clean",
     "ci:postgresql": "npm run lint && npm run cov:postgresql && npm run tsc:prod && npm run clean",
-    "clean": "tsc -b --clean && rm -rf dist",
+    "clean": "tsc -b --clean && rm -rf dist *.tsbuildinfo",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "npm run clean && tsc -p ./tsconfig.prod.json",
     "prepublishOnly": "npm run tsc:prod",

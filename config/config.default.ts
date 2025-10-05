@@ -87,8 +87,8 @@ export interface NFSConfig {
 
 export type Config = PartialEggConfig & { nfs: NFSConfig };
 
-export default function startConfig(appInfo: EggAppConfig) {
-  const config = {} as PartialEggConfig;
+export default function startConfig(appInfo: EggAppConfig): Config {
+  const config = {} as Config;
 
   config.keys = env('CNPMCORE_EGG_KEYS', 'string', randomUUID());
   config.cnpmcore = cnpmcoreConfig;
