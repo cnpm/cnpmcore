@@ -88,11 +88,7 @@ GET /package/1.0.0/files/dist/bundle.js
 
 ## Configuration
 
-SRI functionality is automatically enabled when:
-- `enableUnpkg` is true
-- `enableSyncUnpkgFiles` is true
-
-No additional configuration required.
+No additional configuration required. SRI functionality is automatically enabled for all unpkg file responses.
 
 ## Security Benefits
 
