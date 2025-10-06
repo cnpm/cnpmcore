@@ -9,7 +9,7 @@ import {
   Inject,
   Middleware,
 } from '@eggjs/tegg';
-import type { Static } from 'egg-typebox-validate/typebox';
+import type { Static } from '@eggjs/typebox-validate/typebox';
 import { E451 } from 'egg-errors';
 
 import { AbstractController } from '../AbstractController.js';

@@ -10,7 +10,8 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import type { EggAppConfig, EggLogger } from 'egg';
-import { Type, type Static } from 'egg-typebox-validate/typebox';
+import '@eggjs/typebox-validate';
+import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 import { createHash } from 'node:crypto';
 import base64url from 'base64url';

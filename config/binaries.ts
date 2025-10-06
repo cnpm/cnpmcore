@@ -95,6 +95,14 @@ const binaries = {
     distUrl:
       'https://chromium-browser-snapshots.storage.googleapis.com/?delimiter=/&prefix=',
   },
+  // Firefox binary for puppeteer
+  firefox: {
+    category: 'firefox',
+    description: 'Firefox releases for puppeteer',
+    type: BinaryType.Firefox,
+    repo: 'mozilla/firefox',
+    distUrl: 'https://archive.mozilla.org/pub/firefox/releases',
+  },
   // ChromeBinary
   'chrome-for-testing': {
     category: 'chrome-for-testing',

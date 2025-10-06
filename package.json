@@ -1,6 +1,6 @@
 {
   "name": "cnpmcore",
-  "version": "4.8.0",
+  "version": "4.9.0",
   "description": "Private NPM Registry for Enterprise",
   "files": [
     "dist/**/*"
@@ -41,24 +41,25 @@
     "dev:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin dev",
     "lint": "oxlint",
     "lint:fix": "npm run lint -- --fix",
-    "test:postgresql": "npm run lint:fix && npm run test:local:postgresql",
+    "typecheck": "tsc --noEmit",
+    "test:postgresql": "npm run lint && npm run test:local:postgresql",
     "pretest:local:postgresql": "bash prepare-database-postgresql.sh",
     "test:local:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin test",
     "pretest": "npm run clean",
-    "test": "npm run lint:fix && npm run test:local",
+    "test": "npm run lint && npm run typecheck && npm run test:local",
     "pretest:local": "bash prepare-database-mysql.sh",
     "test:local": "egg-bin test",
     "pret": "bash prepare-database-mysql.sh",
-    "t": "npm run lint:fix && egg-bin test --changed",
+    "t": "npm run lint && egg-bin test --changed",
     "precov": "bash prepare-database-mysql.sh",
     "cov": "egg-bin cov",
     "precov:postgresql": "bash prepare-database-postgresql.sh",
     "cov:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin cov",
-    "preci": "npm run clean && npm run lint",
+    "preci": "npm run clean && npm run lint && npm run typecheck",
     "ci": "npm run cov ",
     "postci": "npm run tsc:prod && npm run clean",
     "ci:postgresql": "npm run lint && npm run cov:postgresql && npm run tsc:prod && npm run clean",
-    "clean": "tsc -b --clean && rm -rf dist",
+    "clean": "tsc -b --clean && rm -rf dist *.tsbuildinfo",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "npm run clean && tsc -p ./tsconfig.prod.json",
     "prepublishOnly": "npm run tsc:prod",
@@ -88,7 +89,7 @@
     "mocha": "11.6.0"
   },
   "dependencies": {
-    "@eggjs/redis": "^3.0.0",
+    "@eggjs/redis": "beta",
     "@eggjs/scripts": "^4.0.0",
     "@eggjs/tegg": "beta",
     "@eggjs/tegg-aop-plugin": "beta",
@@ -99,7 +100,8 @@
     "@eggjs/tegg-orm-plugin": "beta",
     "@eggjs/tegg-plugin": "beta",
     "@eggjs/tegg-schedule-plugin": "beta",
-    "@eggjs/tracer": "^3.0.0",
+    "@eggjs/tracer": "beta",
+    "@eggjs/typebox-validate": "beta",
     "@elastic/elasticsearch": "^8.8.1",
     "@fengmk2/tar": "^6.2.0",
     "@node-rs/crc32": "^1.2.2",
@@ -108,11 +110,10 @@
     "base64url": "^3.0.1",
     "bson-objectid": "^2.0.4",
     "dayjs": "^1.10.7",
-    "egg": "^4.0.8",
+    "egg": "beta",
     "egg-cors": "^3.0.0",
     "egg-errors": "^2.3.0",
     "egg-status": "^1.0.0",
-    "egg-typebox-validate": "^3.0.0",
     "egg-view-nunjucks": "^2.3.0",
     "eggjs-elasticsearch": "^0.0.6",
     "fast-xml-parser": "^5.0.9",
@@ -138,10 +139,10 @@
     "s3-cnpmcore": "^1.1.2"
   },
   "devDependencies": {
-    "@eggjs/bin": "^7.1.0",
-    "@eggjs/mock": "^6.0.7",
+    "@eggjs/bin": "beta",
+    "@eggjs/mock": "beta",
     "@eggjs/oxlint-config": "^1.0.0",
-    "@eggjs/tsconfig": "^2.0.0",
+    "@eggjs/tsconfig": "beta",
     "@elastic/elasticsearch-mock": "^2.0.0",
     "@simplewebauthn/typescript-types": "^7.0.0",
     "@types/lodash-es": "^4.17.12",
@@ -159,6 +160,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.5.0",
     "oxlint": "^1.11.0",
+    "oxlint-tsgolint": "^0.2.0",
     "prettier": "^3.5.3",
     "typescript": "5"
   },
@@ -169,7 +171,7 @@
   },
   "homepage": "https://github.com/cnpm/cnpmcore#readme",
   "engines": {
-    "node": ">= 20.18.0"
+    "node": "^20.18.0 || >=22.18.0"
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown --cache",

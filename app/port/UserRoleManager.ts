@@ -140,15 +140,19 @@ export class UserRoleManager {
           `Read-only Token "${token.tokenMark}" can't publish`
         );
       }
+      const userAgent: string = ctx.get('user-agent');
       // only support npm >= 7.0.0 allow publish action
       // user-agent: "npm/6.14.12 node/v10.24.1 darwin x64"
-      const m = /\bnpm\/(\d{1,5})\./.exec(ctx.get('user-agent'));
-      if (!m) {
+      // pnpm: "pnpm/10.17.0 npm/? node/v20.19.5 darwin arm64"
+      const isPnpm = userAgent.startsWith('pnpm/');
+      const m = /\bnpm\/(\d{1,5})\./.exec(userAgent);
+      if (m) {
+        const major = Number.parseInt(m[1]);
+        if (major < 7) {
+          throw new ForbiddenError('Only allow npm@>=7.0.0 client to access');
+        }
+      } else if (!isPnpm) {
         throw new ForbiddenError('Only allow npm client to access');
-      }
-      const major = Number.parseInt(m[1]);
-      if (major < 7) {
-        throw new ForbiddenError('Only allow npm@>=7.0.0 client to access');
       }
     }
     if (role === 'setting') {
