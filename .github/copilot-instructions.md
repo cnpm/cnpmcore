@@ -4,6 +4,157 @@ cnpmcore is a TypeScript-based private NPM registry implementation built with Eg
 
 **ALWAYS reference these instructions first** and fallback to search or bash commands only when you encounter unexpected information that does not match the information here.
 
+## Code Style and Conventions
+
+### Linting and Formatting
+- **Linter**: Oxlint (fast Rust-based linter)
+- **Formatter**: Prettier with specific configuration
+- **Pre-commit hooks**: Husky + lint-staged automatically format and lint on commit
+
+**Code Style Rules:**
+```javascript
+// From .prettierrc
+{
+  "singleQuote": true,        // Use single quotes
+  "trailingComma": "es5",     // ES5 trailing commas
+  "tabWidth": 2,              // 2-space indentation
+  "printWidth": 120,          // 120 character line width
+  "arrowParens": "avoid"      // Avoid parens when possible
+}
+
+// From .oxlintrc.json
+{
+  "max-params": 6,            // Maximum 6 function parameters
+  "no-console": "warn",       // Warn on console usage
+  "import/no-anonymous-default-export": "error"
+}
+```
+
+**Linting Commands:**
+```bash
+npm run lint         # Check for linting errors
+npm run lint:fix     # Auto-fix linting issues
+npm run typecheck    # TypeScript type checking without build
+```
+
+### TypeScript Conventions
+- Use strict TypeScript with comprehensive type definitions
+- Avoid `any` types - use proper typing or `unknown`
+- Export types and interfaces for reusability
+- Use ES modules (`import/export`) syntax throughout
+
+### Testing Conventions
+- Test files use `.test.ts` suffix
+- Use `@eggjs/mock` for mocking and testing
+- Tests organized to mirror source structure in `test/` directory
+- Use `assert` from `node:assert/strict` for assertions
+- Mock external dependencies using `mock()` from `@eggjs/mock`
+
+**Test Naming Pattern:**
+```typescript
+describe('test/path/to/SourceFile.test.ts', () => {
+  describe('[HTTP_METHOD /api/path] functionName()', () => {
+    it('should handle expected behavior', async () => {
+      // Test implementation
+    });
+  });
+});
+```
+
+## Domain-Driven Design (DDD) Architecture
+
+cnpmcore follows **Domain-Driven Design** principles with clear separation of concerns:
+
+### Layer Architecture (Dependency Flow)
+
+```
+Controller (HTTP Interface Layer)
+    ↓ depends on
+Service (Business Logic Layer)
+    ↓ depends on
+Repository (Data Access Layer)
+    ↓ depends on
+Model (ORM/Database Layer)
+
+Entity (Domain Models - no dependencies, pure business logic)
+Common (Utilities and Adapters - available to all layers)
+```
+
+### Layer Responsibilities
+
+**Controller Layer** (`app/port/controller/`):
+- HTTP request/response handling
+- Request validation using `@eggjs/typebox-validate`
+- User authentication and authorization
+- **NO business logic** - delegate to Services
+- Inheritance: `YourController extends AbstractController extends MiddlewareController`
+
+**Service Layer** (`app/core/service/`):
+- Core business logic implementation
+- Orchestration of multiple repositories and entities
+- Transaction management
+- Event publishing
+- NO HTTP concerns, NO direct database access
+
+**Repository Layer** (`app/repository/`):
+- Data access and persistence
+- CRUD operations on Models
+- Query building and optimization
+- NO business logic
+
+**Entity Layer** (`app/core/entity/`):
+- Domain models with business behavior
+- Pure business logic (no infrastructure dependencies)
+- Immutable data structures where possible
+- Rich domain objects (not anemic models)
+
+**Model Layer** (`app/repository/model/`):
+- ORM definitions using Leoric
+- Database schema mapping
+- Table and column definitions
+- NO business logic
+
+### Repository Method Naming Convention
+
+**ALWAYS follow these naming patterns:**
+- `findSomething` - Query a single model/entity
+- `saveSomething` - Save (create or update) a model
+- `removeSomething` - Delete a model
+- `listSomethings` - Query multiple models (use plural)
+
+### Request Validation Trilogy
+
+**ALWAYS validate requests in this exact order:**
+
+1. **Request Parameter Validation** - First line of defense
+   ```typescript
+   // Use @eggjs/typebox-validate for type-safe validation
+   // See app/port/typebox.ts for examples
+   ```
+
+2. **User Authentication & Token Permissions**
+   ```typescript
+   // Token roles: 'read' | 'publish' | 'setting'
+   const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
+   ```
+
+3. **Resource Authorization** - Prevent horizontal privilege escalation
+   ```typescript
+   // Example: Ensure user is package maintainer
+   await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+   // Or use convenience method
+   const { pkg } = await this.ensurePublishAccess(ctx, fullname);
+   ```
+
+### Modifying Database Models
+
+When changing a Model, update **all 3 locations**:
+1. SQL migration files: `sql/mysql/*.sql` AND `sql/postgresql/*.sql`
+2. ORM Model: `app/repository/model/*.ts`
+3. Domain Entity: `app/core/entity/*.ts`
+
+**NEVER auto-generate SQL migrations** - manual review is required for safety.
+
 ## Prerequisites and Environment Setup
 
 - **Node.js**: Version 20.18.0 or higher (required by engines field in package.json)
@@ -93,6 +244,48 @@ npm run cov:postgresql
 - Full test suite processes 100+ test files and requires database initialization
 - Test failures may occur in CI environment; use individual test files for validation
 
+**Testing Philosophy:**
+- **Write tests for all new features** - No feature is complete without tests
+- **Test at the right layer** - Controller tests for HTTP, Service tests for business logic
+- **Mock external dependencies** - Use `mock()` from `@eggjs/mock`
+- **Use realistic test data** - Create through `TestUtil` helper methods
+- **Clean up after tests** - Database is reset between test files
+- **Test both success and failure cases** - Error paths are equally important
+
+**Common Test Patterns:**
+```typescript
+import { app, mock } from '@eggjs/mock/bootstrap';
+import { TestUtil } from '../../../test/TestUtil';
+
+describe('test/path/to/YourController.test.ts', () => {
+  describe('[GET /api/endpoint] methodName()', () => {
+    it('should return expected result', async () => {
+      // Setup
+      const { authorization } = await TestUtil.createUser();
+      
+      // Execute
+      const res = await app
+        .httpRequest()
+        .get('/api/endpoint')
+        .set('authorization', authorization)
+        .expect(200);
+      
+      // Assert
+      assert.equal(res.body.someField, expectedValue);
+    });
+    
+    it('should handle unauthorized access', async () => {
+      const res = await app
+        .httpRequest()
+        .get('/api/endpoint')
+        .expect(401);
+      
+      assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
+    });
+  });
+});
+```
+
 ### Production Commands
 ```bash
 # CI pipeline commands - NEVER CANCEL: Takes 5+ minutes. Set timeout to 15+ minutes.
@@ -169,21 +362,87 @@ app/
 - **ChangesStreamService**: NPM registry change stream processing
 - **UserController**: User authentication and profile management
 
+### Infrastructure Adapters (`app/infra/`)
+Enterprise customization layer for PaaS integration. cnpmcore provides default implementations, but enterprises should implement their own based on their infrastructure:
+
+- **NFSClientAdapter**: File storage abstraction (local/S3/OSS)
+- **QueueAdapter**: Message queue integration
+- **AuthAdapter**: Authentication system integration
+- **BinaryAdapter**: Binary package storage adapter
+
+These adapters allow cnpmcore to integrate with different cloud providers and enterprise systems without modifying core business logic.
+
 ### Configuration Files
 - `config/config.default.ts`: Main application configuration
 - `config/database.ts`: Database connection settings
+- `config/binaries.ts`: Binary package mirror configurations
 - `.env`: Environment-specific variables
 - `tsconfig.json`: TypeScript compilation settings
+- `tsconfig.prod.json`: Production build settings
 
 ## Common Development Tasks
 
 ### Adding New Features
-1. **ALWAYS run** `npm run lint:fix` before making changes
-2. Add entity classes in `app/core/entity/` for new domain models
-3. Add services in `app/core/service/` for business logic
-4. Add controllers in `app/port/controller/` for HTTP endpoints
-5. Add repositories in `app/repository/` for data access
-6. **ALWAYS run** tests and linting before committing
+
+**ALWAYS follow this workflow:**
+
+1. **Plan the change** - Identify which layers need modification
+2. **Run linter** - `npm run lint:fix` to establish clean baseline
+3. **Bottom-up implementation** - Build from data layer up to controller:
+
+   a. **Model Layer** (if new data structure needed):
+      - Add SQL migrations: `sql/mysql/*.sql` AND `sql/postgresql/*.sql`
+      - Create Model: `app/repository/model/YourModel.ts`
+      - Run database migration scripts
+
+   b. **Entity Layer** (domain models):
+      - Create Entity: `app/core/entity/YourEntity.ts`
+      - Implement business logic and behavior
+      - Keep entities pure (no infrastructure dependencies)
+
+   c. **Repository Layer** (data access):
+      - Create Repository: `app/repository/YourRepository.ts`
+      - Follow naming: `findX`, `saveX`, `removeX`, `listXs`
+      - Inject dependencies using `@Inject()`
+
+   d. **Service Layer** (business logic):
+      - Create Service: `app/core/service/YourService.ts`
+      - Orchestrate repositories and entities
+      - Use `@SingletonProto()` for service lifecycle
+
+   e. **Controller Layer** (HTTP endpoints):
+      - Create Controller: `app/port/controller/YourController.ts`
+      - Extend `AbstractController`
+      - Add HTTP method decorators: `@HTTPMethod()`, `@HTTPBody()`, etc.
+      - Implement 3-step validation (params → auth → authorization)
+
+4. **Add tests** - Create test file: `test/path/matching/source/YourFile.test.ts`
+5. **Lint and test** - `npm run lint:fix && npm run test:local test/your/test.test.ts`
+6. **Type check** - `npm run typecheck`
+7. **Commit** - Use semantic commit messages (feat/fix/chore/docs/test)
+
+**Example Controller Implementation:**
+```typescript
+import { AbstractController } from './AbstractController';
+import { Inject } from '@eggjs/tegg';
+import { HTTPController, HTTPMethod, HTTPQuery } from '@eggjs/tegg-controller-plugin';
+
+@HTTPController()
+export class YourController extends AbstractController {
+  @Inject()
+  private readonly yourService: YourService;
+
+  @HTTPMethod({ path: '/api/path', method: 'GET' })
+  async yourMethod(@HTTPQuery() params: YourQueryType) {
+    // 1. Validate params (done by @HTTPQuery with typebox)
+    // 2. Authenticate user
+    const user = await this.userRoleManager.requiredAuthorizedUser(this.ctx, 'read');
+    // 3. Authorize resource access (if needed)
+    // 4. Delegate to service
+    return await this.yourService.doSomething(params);
+  }
+}
+```
 
 ### Database Migrations
 - SQL files are in `sql/mysql/` and `sql/postgresql/`
@@ -273,10 +532,34 @@ npm run images:debian
 
 ## Performance Notes
 
+Command execution times (for timeout planning):
+
 - **Startup Time**: ~20 seconds for development server
 - **Build Time**: ~6 seconds for TypeScript compilation  
 - **Test Time**: 4-15 minutes for full suite (database dependent)
+- **Individual Test**: ~12 seconds for single test file
 - **Package Installation**: ~2 minutes for npm install
 - **Database Init**: <2 seconds for either MySQL or PostgreSQL
+- **Linting**: <1 second (oxlint is very fast)
 
 Always account for these timings when setting timeouts for automated processes.
+
+## Semantic Commit Messages
+
+Use conventional commit format for all commits:
+
+- `feat:` - New features
+- `fix:` - Bug fixes  
+- `docs:` - Documentation changes
+- `chore:` - Maintenance tasks
+- `test:` - Test additions or modifications
+- `refactor:` - Code refactoring
+- `perf:` - Performance improvements
+
+Examples:
+```bash
+feat: add support for GitHub binary mirroring
+fix: resolve authentication token expiration issue  
+docs: update API documentation for sync endpoints
+test: add tests for package publication workflow
+```
