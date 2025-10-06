@@ -786,5 +786,198 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`
       );
     });
+
+    it('should include SRI headers when serving raw files', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const pkg = await TestUtil.getFullPackage({
+        name: 'sri-test-package',
+        version: '1.0.0',
+      });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      // Test raw file access includes SRI headers
+      const res = await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json`)
+        .expect(200);
+
+      // Should include all SRI headers
+      assert.ok(res.headers['x-sri-sha256'], 'Missing X-SRI-SHA256 header');
+      assert.ok(res.headers['x-sri-sha384'], 'Missing X-SRI-SHA384 header');
+      assert.ok(res.headers['x-sri-sha512'], 'Missing X-SRI-SHA512 header');
+      assert.ok(res.headers['x-sri-integrity'], 'Missing X-SRI-Integrity header');
+
+      // Verify header format
+      assert(res.headers['x-sri-sha256'].startsWith('sha256-'));
+      assert(res.headers['x-sri-sha384'].startsWith('sha384-'));
+      assert(res.headers['x-sri-sha512'].startsWith('sha512-'));
+
+      // Combined header should contain all three algorithms
+      const combinedHeader = res.headers['x-sri-integrity'];
+      assert(combinedHeader.includes('sha256-'));
+      assert(combinedHeader.includes('sha384-'));
+      assert(combinedHeader.includes('sha512-'));
+      
+      // Should be space-separated
+      const parts = combinedHeader.split(' ');
+      assert.equal(parts.length, 3, 'Combined header should have 3 algorithms');
+    });
+
+    it('should include SRI data in file metadata response', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const pkg = await TestUtil.getFullPackage({
+        name: 'sri-meta-test',
+        version: '1.0.0',
+      });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      // Test metadata includes SRI object
+      const res = await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json?meta`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+
+      assert.ok(res.body.sri, 'Response should include sri object');
+      assert.ok(res.body.sri.sha256, 'Missing sri.sha256');
+      assert.ok(res.body.sri.sha384, 'Missing sri.sha384');
+      assert.ok(res.body.sri.sha512, 'Missing sri.sha512');
+      assert.ok(res.body.sri.combined, 'Missing sri.combined');
+
+      // Verify format
+      assert(res.body.sri.sha256.startsWith('sha256-'));
+      assert(res.body.sri.sha384.startsWith('sha384-'));
+      assert(res.body.sri.sha512.startsWith('sha512-'));
+
+      // Combined should match the pattern
+      assert.equal(
+        res.body.sri.combined,
+        `${res.body.sri.sha256} ${res.body.sri.sha384} ${res.body.sri.sha512}`
+      );
+
+      // Backwards compatibility: integrity field should still be SHA-512
+      assert.equal(res.body.integrity, res.body.sri.sha512);
+    });
+
+    it('should handle legacy packages with SHA-512 only integrity', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const pkg = await TestUtil.getFullPackage({
+        name: 'legacy-package',
+        version: '1.0.0',
+      });
+      
+      // Modify the package to simulate legacy format (SHA-512 only)
+      // This would happen for packages published before the SRI enhancement
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      // Even with new SRI support, should work correctly
+      const res = await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json`)
+        .expect(200);
+
+      // Should still have SRI headers (generated from the file)
+      assert.ok(res.headers['x-sri-sha256']);
+      assert.ok(res.headers['x-sri-sha384']);
+      assert.ok(res.headers['x-sri-sha512']);
+      assert.ok(res.headers['x-sri-integrity']);
+    });
+
+    it('should maintain backwards compatibility in metadata responses', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const pkg = await TestUtil.getFullPackage({
+        name: 'compat-test',
+        version: '1.0.0',
+      });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      const res = await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json?meta`)
+        .expect(200);
+
+      // All original fields should still be present
+      assert.ok(res.body.path);
+      assert.ok(res.body.type);
+      assert.ok(res.body.contentType);
+      assert.ok(res.body.integrity);
+      assert.ok(res.body.lastModified);
+      assert.ok(res.body.size);
+
+      // New SRI field should be additional, not replacing
+      assert.ok(res.body.sri);
+      
+      // Primary integrity field should match sri.sha512 for backwards compatibility
+      assert.equal(res.body.integrity, res.body.sri.sha512);
+    });
+
+    it('should generate consistent SRI values for the same file', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const pkg = await TestUtil.getFullPackage({
+        name: 'consistency-test',
+        version: '1.0.0',
+      });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      // Get the file multiple times
+      const res1 = await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json`)
+        .expect(200);
+
+      const res2 = await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json`)
+        .expect(200);
+
+      // SRI headers should be identical
+      assert.equal(res1.headers['x-sri-sha256'], res2.headers['x-sri-sha256']);
+      assert.equal(res1.headers['x-sri-sha384'], res2.headers['x-sri-sha384']);
+      assert.equal(res1.headers['x-sri-sha512'], res2.headers['x-sri-sha512']);
+      assert.equal(res1.headers['x-sri-integrity'], res2.headers['x-sri-integrity']);
+
+      // Metadata should also be consistent
+      const meta1 = await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json?meta`)
+        .expect(200);
+
+      const meta2 = await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json?meta`)
+        .expect(200);
+
+      assert.deepEqual(meta1.body.sri, meta2.body.sri);
+    });
   });
 });
