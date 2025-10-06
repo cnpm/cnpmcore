@@ -263,6 +263,24 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
       assert.deepEqual(res.body, { ok: true });
     });
 
+    it('should support pnpm client', async () => {
+      const user = await TestUtil.createUser();
+      mock(app.config.cnpmcore, 'admins', { [user.name]: user.email });
+      const res = await app
+        .httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', 'pnpm/7.3.1 npm/?')
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [{ name: user.name, email: user.email }],
+        });
+      assert.deepEqual(res.body, { ok: true });
+      assert.equal(res.statusCode, 200);
+    });
+
     it('should 403 when npm client invalid', async () => {
       const user = await TestUtil.createUser();
       let res = await app
@@ -463,6 +481,24 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         .put(`/${scopedName}/-rev/${rev}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', 'pnpm/6.0.0 npm/17.1.0')
+        .set('npm-command', 'owner')
+        .send({
+          _id: rev,
+          _rev: rev,
+          maintainers: [
+            { name: user.name, email: user.email },
+            { name: publisher.name, email: publisher.email },
+          ],
+        })
+        .expect(200);
+      assert.equal(res.body.ok, true);
+
+      // should valid with pnpm10 and npm=?
+      res = await app
+        .httpRequest()
+        .put(`/${scopedName}/-rev/${rev}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', 'pnpm/10.0.0 npm/?')
         .set('npm-command', 'owner')
         .send({
           _id: rev,

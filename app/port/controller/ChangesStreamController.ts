@@ -7,7 +7,7 @@ import {
   HTTPQuery,
   Inject,
 } from '@eggjs/tegg';
-import { Type } from 'egg-typebox-validate/typebox';
+import { Type } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.js';
 import type { ChangeRepository } from '../../repository/ChangeRepository.js';
