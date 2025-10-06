@@ -140,14 +140,17 @@ export class UserRoleManager {
           `Read-only Token "${token.tokenMark}" can't publish`
         );
       }
+      const userAgent: string = ctx.get('user-agent');
       // only support npm >= 7.0.0 allow publish action
       // user-agent: "npm/6.14.12 node/v10.24.1 darwin x64"
-      const m = /\bnpm\/(\d{1,5})\./.exec(ctx.get('user-agent'));
+      // pnpm: "pnpm/10.17.0 npm/? node/v20.19.5 darwin arm64"
+      const m = /\b(npm|pnpm)\/(\d{1,5})\./.exec(userAgent);
       if (!m) {
         throw new ForbiddenError('Only allow npm client to access');
       }
-      const major = Number.parseInt(m[1]);
-      if (major < 7) {
+      const client = m[1];
+      const major = Number.parseInt(m[2]);
+      if (client === 'npm' && major < 7) {
         throw new ForbiddenError('Only allow npm@>=7.0.0 client to access');
       }
     }

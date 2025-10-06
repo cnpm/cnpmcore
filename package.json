@@ -171,7 +171,7 @@
   },
   "homepage": "https://github.com/cnpm/cnpmcore#readme",
   "engines": {
-    "node": ">= 22.18.0"
+    "node": "^20.18.0 || >=22.18.0"
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown --cache",
