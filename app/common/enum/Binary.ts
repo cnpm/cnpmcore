@@ -3,6 +3,7 @@ export enum BinaryType {
   Bucket = 'bucket',
   Cypress = 'cypress',
   Electron = 'electron',
+  Firefox = 'firefox',
   GitHub = 'github',
   Imagemin = 'imagemin',
   Node = 'node',

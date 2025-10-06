@@ -17,7 +17,7 @@ import {
 
 import { AbstractController } from './AbstractController.js';
 import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
-import type { Static } from 'egg-typebox-validate/typebox';
+import type { Static } from '@eggjs/typebox-validate/typebox';
 import type { QueryPageOptions } from '../typebox.js';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
 import type { ProxyCacheService } from '../../core/service/ProxyCacheService.js';

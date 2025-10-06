@@ -77,8 +77,6 @@ export interface AuthClient {
 }
 
 declare module 'egg' {
-  // oxlint-disable-next-line prefer-ts-expect-error ban-ts-comment
-  // @ts-ignore
   interface EggAppConfig {
     cnpmcore: CnpmcoreConfig;
   }
