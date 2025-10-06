@@ -1,5 +1,4 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { Readable } from 'node:stream';
 
 import type { NFSAdapter } from '../common/adapter/NFSAdapter.js';
 import type {
@@ -59,28 +58,9 @@ export class DistRepository {
   }
 
   async readDistBytesToString(dist: Dist): Promise<string> {
-    // Use stream-based approach to reduce memory usage
-    const stream = await this.nfsAdapter.getStream(dist.path);
-    if (!stream) return '';
-    
-    return this.streamToString(stream);
-  }
-
-  /**
-   * Private utility to convert a readable stream to string efficiently
-   * This reduces memory usage compared to loading entire file as bytes first
-   */
-  private async streamToString(stream: Readable): Promise<string> {
-    const chunks: Buffer[] = [];
-    
-    // Use async iterator to avoid explicit Promise constructor
-    for await (const chunk of stream) {
-      chunks.push(chunk);
-    }
-    
-    // Concatenate all chunks efficiently
-    const result = Buffer.concat(chunks);
-    return result.toString('utf8');
+    const bytes = await this.readDistBytes(dist);
+    if (!bytes) return '';
+    return Buffer.from(bytes).toString('utf8');
   }
 
   async readDistBytes(dist: Dist): Promise<Uint8Array | undefined> {
