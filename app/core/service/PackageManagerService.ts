@@ -925,6 +925,11 @@ export class PackageManagerService extends AbstractService {
           if (abbreviatedManifest) {
             abbreviatedManifests.versions[packageVersion.version] =
               abbreviatedManifest;
+            // abbreviatedManifests.time is guaranteed to exist since it's initialized in _listPackageAbbreviatedManifests
+            if (abbreviatedManifests.time) {
+              abbreviatedManifests.time[packageVersion.version] =
+                packageVersion.publishTime;
+            }
           }
         }
       }
@@ -937,6 +942,8 @@ export class PackageManagerService extends AbstractService {
         delete fullManifests.time[version];
         // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete abbreviatedManifests.versions[version];
+        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
+        delete abbreviatedManifests.time?.[version];
       }
     }
 
@@ -1357,6 +1364,10 @@ export class PackageManagerService extends AbstractService {
       modified: pkg.updatedAt,
       name: pkg.fullname,
       versions: {},
+      time: {
+        created: pkg.createdAt,
+        modified: pkg.updatedAt,
+      },
     };
 
     for (const packageVersion of packageVersions) {
@@ -1366,6 +1377,10 @@ export class PackageManagerService extends AbstractService {
         );
       if (manifest) {
         data.versions[packageVersion.version] = manifest;
+        // data.time is guaranteed to exist since we initialize it above
+        if (data.time) {
+          data.time[packageVersion.version] = packageVersion.publishTime;
+        }
       }
     }
     return data;
