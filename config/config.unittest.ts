@@ -7,7 +7,7 @@ import { database } from './database.js';
 // @ts-expect-error has no construct signatures
 export const mockES = new Mock();
 
-export default function startConfig(appInfo: EggAppConfig) {
+export default function startConfig(appInfo: EggAppConfig): PowerPartial<EggAppConfig> {
   const config = {} as PowerPartial<EggAppConfig>;
   config.dataDir = join(appInfo.root, '.cnpmcore_unittest');
 
