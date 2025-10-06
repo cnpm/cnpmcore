@@ -12,26 +12,26 @@ describe('test/common/PackageUtil/calculateIntegrity.test.ts', () => {
       const result = await calculateIntegrity(testData);
       
       // Should maintain backwards compatibility
-      assert(typeof result.integrity === 'string');
-      assert(typeof result.shasum === 'string');
-      assert(result.integrity.startsWith('sha512-'));
+      assert.ok(typeof result.integrity === 'string');
+      assert.ok(typeof result.shasum === 'string');
+      assert.ok(result.integrity.startsWith('sha512-'));
       
       // Should include enhanced SRI data
-      assert(typeof result.sri === 'object');
-      assert(typeof result.sri.sha256 === 'string');
-      assert(typeof result.sri.sha384 === 'string');
-      assert(typeof result.sri.sha512 === 'string');
-      assert(typeof result.sri.combined === 'string');
+      assert.ok(typeof result.sri === 'object');
+      assert.ok(typeof result.sri.sha256 === 'string');
+      assert.ok(typeof result.sri.sha384 === 'string');
+      assert.ok(typeof result.sri.sha512 === 'string');
+      assert.ok(typeof result.sri.combined === 'string');
       
       // Verify individual algorithms
-      assert(result.sri.sha256.startsWith('sha256-'));
-      assert(result.sri.sha384.startsWith('sha384-'));
-      assert(result.sri.sha512.startsWith('sha512-'));
+      assert.ok(result.sri.sha256.startsWith('sha256-'));
+      assert.ok(result.sri.sha384.startsWith('sha384-'));
+      assert.ok(result.sri.sha512.startsWith('sha512-'));
       
       // Combined should contain all three algorithms
-      assert(result.sri.combined.includes('sha256-'));
-      assert(result.sri.combined.includes('sha384-'));
-      assert(result.sri.combined.includes('sha512-'));
+      assert.ok(result.sri.combined.includes('sha256-'));
+      assert.ok(result.sri.combined.includes('sha384-'));
+      assert.ok(result.sri.combined.includes('sha512-'));
       
       // Combined should be space-separated
       const parts = result.sri.combined.split(' ');
@@ -50,9 +50,9 @@ describe('test/common/PackageUtil/calculateIntegrity.test.ts', () => {
         const result = await calculateIntegrity(testFile);
         
         // Should have all required fields
-        assert(typeof result.integrity === 'string');
-        assert(typeof result.shasum === 'string');
-        assert(typeof result.sri === 'object');
+        assert.ok(typeof result.integrity === 'string');
+        assert.ok(typeof result.shasum === 'string');
+        assert.ok(typeof result.sri === 'object');
         
         // Should be deterministic
         const result2 = await calculateIntegrity(testFile);
@@ -63,7 +63,7 @@ describe('test/common/PackageUtil/calculateIntegrity.test.ts', () => {
         assert.equal(result.sri.sha512, result2.sri.sha512);
         assert.equal(result.sri.combined, result2.sri.combined);
       } finally {
-        await unlink(testFile).catch(() => {});
+        await unlink(testFile).catch(() => { /* ignore errors */ });
       }
     });
 
@@ -86,7 +86,7 @@ describe('test/common/PackageUtil/calculateIntegrity.test.ts', () => {
         assert.equal(binaryResult.sri.sha512, fileResult.sri.sha512);
         assert.equal(binaryResult.sri.combined, fileResult.sri.combined);
       } finally {
-        await unlink(testFile).catch(() => {});
+        await unlink(testFile).catch(() => { /* ignore errors */ });
       }
     });
 
@@ -94,12 +94,12 @@ describe('test/common/PackageUtil/calculateIntegrity.test.ts', () => {
       const emptyData = new Uint8Array(0);
       const result = await calculateIntegrity(emptyData);
       
-      assert(typeof result.integrity === 'string');
-      assert(typeof result.shasum === 'string');
-      assert(typeof result.sri === 'object');
-      assert(result.sri.sha256.startsWith('sha256-'));
-      assert(result.sri.sha384.startsWith('sha384-'));
-      assert(result.sri.sha512.startsWith('sha512-'));
+      assert.ok(typeof result.integrity === 'string');
+      assert.ok(typeof result.shasum === 'string');
+      assert.ok(typeof result.sri === 'object');
+      assert.ok(result.sri.sha256.startsWith('sha256-'));
+      assert.ok(result.sri.sha384.startsWith('sha384-'));
+      assert.ok(result.sri.sha512.startsWith('sha512-'));
     });
   });
 });

@@ -1,43 +1,68 @@
 import assert from 'node:assert/strict';
 
+// Simulate the parseSRIFromIntegrity function from the controller
+function parseSRIFromIntegrity(integrity) {
+  const parts = integrity.trim().split(/\s+/);
+  const sri = {};
+  
+  for (const part of parts) {
+    if (part.startsWith('sha256-')) {
+      sri.sha256 = part;
+    } else if (part.startsWith('sha384-')) {
+      sri.sha384 = part;
+    } else if (part.startsWith('sha512-')) {
+      sri.sha512 = part;
+    }
+  }
+  
+  if (Object.keys(sri).length > 0) {
+    return {
+      sha256: sri.sha256 || '',
+      sha384: sri.sha384 || '',
+      sha512: sri.sha512 || '',
+      combined: Object.values(sri).filter(Boolean).join(' '),
+    };
+  }
+  
+  return null;
+}
+
+// Simulate the formatFileItem function behavior
+function formatFileItem(file) {
+  const baseItem = {
+    path: file.path,
+    type: 'file',
+    contentType: file.contentType,
+    integrity: file.dist.integrity,
+    lastModified: file.mtime,
+    size: file.dist.size,
+  };
+
+  const integrityStr = file.dist.integrity;
+  const sriData = parseSRIFromIntegrity(integrityStr);
+  
+  if (sriData) {
+    return {
+      ...baseItem,
+      sri: sriData,
+    };
+  }
+  
+  return baseItem;
+}
+
 // Test the controller functions in isolation
 function runSRITests() {
-  console.log('\nSRI Integration Test:');
+  // SRI Integration Test
 
   // Test 1: Parse SRI from combined integrity string
   function testParseSRI() {
-    // Simulate the parseSRIFromIntegrity function from the controller
-    function parseSRIFromIntegrity(integrity) {
-      const parts = integrity.trim().split(/\s+/);
-      const sri = {};
-      
-      for (const part of parts) {
-        if (part.startsWith('sha256-')) {
-          sri.sha256 = part;
-        } else if (part.startsWith('sha384-')) {
-          sri.sha384 = part;
-        } else if (part.startsWith('sha512-')) {
-          sri.sha512 = part;
-        }
-      }
-      
-      if (Object.keys(sri).length > 0) {
-        return {
-          sha256: sri.sha256 || '',
-          sha384: sri.sha384 || '',
-          sha512: sri.sha512 || '',
-          combined: Object.values(sri).filter(Boolean).join(' '),
-        };
-      }
-      
-      return null;
-    }
 
     // Test with combined SRI (new files)
     const combinedSRI = 'sha256-ABC sha384-DEF sha512-GHI';
     const parsed = parseSRIFromIntegrity(combinedSRI);
     
-    assert(parsed !== null);
+    assert.ok(parsed !== null);
     assert.equal(parsed.sha256, 'sha256-ABC');
     assert.equal(parsed.sha384, 'sha384-DEF');
     assert.equal(parsed.sha512, 'sha512-GHI');
@@ -47,7 +72,7 @@ function runSRITests() {
     const legacySRI = 'sha512-GHI';
     const parsedLegacy = parseSRIFromIntegrity(legacySRI);
     
-    assert(parsedLegacy !== null);
+    assert.ok(parsedLegacy !== null);
     assert.equal(parsedLegacy.sha256, '');
     assert.equal(parsedLegacy.sha384, '');
     assert.equal(parsedLegacy.sha512, 'sha512-GHI');
@@ -59,56 +84,10 @@ function runSRITests() {
     
     const empty = parseSRIFromIntegrity('');
     assert.equal(empty, null);
-    
-    console.log('  ✓ should parse SRI from combined integrity string');
   }
 
   // Test 2: Format file item with SRI data
   function testFormatFileItem() {
-    // Simulate the formatFileItem function behavior
-    function formatFileItem(file) {
-      const baseItem = {
-        path: file.path,
-        type: 'file',
-        contentType: file.contentType,
-        integrity: file.dist.integrity,
-        lastModified: file.mtime,
-        size: file.dist.size,
-      };
-
-      // Parse SRI data
-      function parseSRIFromIntegrity(integrity) {
-        const parts = integrity.trim().split(/\s+/);
-        const sri = {};
-        
-        for (const part of parts) {
-          if (part.startsWith('sha256-')) sri.sha256 = part;
-          else if (part.startsWith('sha384-')) sri.sha384 = part;
-          else if (part.startsWith('sha512-')) sri.sha512 = part;
-        }
-        
-        if (Object.keys(sri).length > 0) {
-          return {
-            sha256: sri.sha256 || '',
-            sha384: sri.sha384 || '',
-            sha512: sri.sha512 || '',
-            combined: Object.values(sri).filter(Boolean).join(' '),
-          };
-        }
-        return null;
-      }
-
-      const sriData = parseSRIFromIntegrity(file.dist.integrity);
-      
-      if (sriData) {
-        return {
-          ...baseItem,
-          sri: sriData,
-        };
-      }
-      
-      return baseItem;
-    }
 
     // Test with new file format (combined SRI)
     const newFile = {
@@ -122,7 +101,7 @@ function runSRITests() {
     };
 
     const newFormatted = formatFileItem(newFile);
-    assert(newFormatted.sri);
+    assert.ok(newFormatted.sri);
     assert.equal(newFormatted.sri.sha256, 'sha256-ABC');
     assert.equal(newFormatted.sri.sha384, 'sha384-DEF');
     assert.equal(newFormatted.sri.sha512, 'sha512-GHI');
@@ -140,7 +119,7 @@ function runSRITests() {
     };
 
     const legacyFormatted = formatFileItem(legacyFile);
-    assert(legacyFormatted.sri);
+    assert.ok(legacyFormatted.sri);
     assert.equal(legacyFormatted.sri.sha256, '');
     assert.equal(legacyFormatted.sri.sha384, '');
     assert.equal(legacyFormatted.sri.sha512, 'sha512-GHI');
@@ -158,9 +137,7 @@ function runSRITests() {
     };
 
     const invalidFormatted = formatFileItem(invalidFile);
-    assert(!invalidFormatted.sri); // Should not have SRI data for invalid integrity
-    
-    console.log('  ✓ should format file item with SRI data');
+    assert.ok(!invalidFormatted.sri); // Should not have SRI data for invalid integrity
   }
 
   // Test 3: Verify SRI header format
@@ -174,9 +151,9 @@ function runSRITests() {
     };
 
     // Verify header values are valid SRI format
-    assert(sriData.sha256.startsWith('sha256-'));
-    assert(sriData.sha384.startsWith('sha384-'));
-    assert(sriData.sha512.startsWith('sha512-'));
+    assert.ok(sriData.sha256.startsWith('sha256-'));
+    assert.ok(sriData.sha384.startsWith('sha384-'));
+    assert.ok(sriData.sha512.startsWith('sha512-'));
     
     // Verify combined format is space-separated
     const parts = sriData.combined.split(' ');
@@ -184,8 +161,6 @@ function runSRITests() {
     assert.equal(parts[0], sriData.sha256);
     assert.equal(parts[1], sriData.sha384);
     assert.equal(parts[2], sriData.sha512);
-    
-    console.log('  ✓ should verify SRI header format');
   }
 
   // Run all tests
@@ -193,10 +168,11 @@ function runSRITests() {
     testParseSRI();
     testFormatFileItem();
     testSRIHeaders();
-    console.log('\n✅ All SRI integration tests passed!');
+    // All SRI integration tests passed!
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`\n❌ Test failed: ${error.message}`);
-    process.exit(1);
+    throw error;
   }
 }
 

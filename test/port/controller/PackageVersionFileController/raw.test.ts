@@ -814,15 +814,15 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.ok(res.headers['x-sri-integrity'], 'Missing X-SRI-Integrity header');
 
       // Verify header format
-      assert(res.headers['x-sri-sha256'].startsWith('sha256-'));
-      assert(res.headers['x-sri-sha384'].startsWith('sha384-'));
-      assert(res.headers['x-sri-sha512'].startsWith('sha512-'));
+      assert.ok(res.headers['x-sri-sha256'].startsWith('sha256-'));
+      assert.ok(res.headers['x-sri-sha384'].startsWith('sha384-'));
+      assert.ok(res.headers['x-sri-sha512'].startsWith('sha512-'));
 
       // Combined header should contain all three algorithms
       const combinedHeader = res.headers['x-sri-integrity'];
-      assert(combinedHeader.includes('sha256-'));
-      assert(combinedHeader.includes('sha384-'));
-      assert(combinedHeader.includes('sha512-'));
+      assert.ok(combinedHeader.includes('sha256-'));
+      assert.ok(combinedHeader.includes('sha384-'));
+      assert.ok(combinedHeader.includes('sha512-'));
       
       // Should be space-separated
       const parts = combinedHeader.split(' ');
@@ -857,9 +857,9 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.ok(res.body.sri.combined, 'Missing sri.combined');
 
       // Verify format
-      assert(res.body.sri.sha256.startsWith('sha256-'));
-      assert(res.body.sri.sha384.startsWith('sha384-'));
-      assert(res.body.sri.sha512.startsWith('sha512-'));
+      assert.ok(res.body.sri.sha256.startsWith('sha256-'));
+      assert.ok(res.body.sri.sha384.startsWith('sha384-'));
+      assert.ok(res.body.sri.sha512.startsWith('sha512-'));
 
       // Combined should match the pattern
       assert.equal(
