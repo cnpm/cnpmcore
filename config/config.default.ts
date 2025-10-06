@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
-import type { Context, EggAppConfig, PowerPartial } from 'egg';
+
+import type { Context, EggAppConfig, PartialEggConfig } from 'egg';
 import OSSClient from 'oss-cnpm';
 import S3Client from 's3-cnpmcore';
 import { env } from 'read-env-value';
@@ -84,9 +85,9 @@ export interface NFSConfig {
   removeBeforeUpload: boolean;
 }
 
-export type Config = PowerPartial<EggAppConfig> & { nfs: NFSConfig };
+export type Config = PartialEggConfig & { nfs: NFSConfig };
 
-export default function startConfig(appInfo: EggAppConfig) {
+export default function startConfig(appInfo: EggAppConfig): Config {
   const config = {} as Config;
 
   config.keys = env('CNPMCORE_EGG_KEYS', 'string', randomUUID());

@@ -236,7 +236,7 @@ private async getPackageEntity(scope: string, name: string) {
 
 #### 1、请求参数校验
 
-使用 [egg-typebox-validate](https://github.com/xiekw2010/egg-typebox-validate) 来做请求参数校验，只需要定义一次参数类型和规则，就能同时拥有参数校验和类型定义。
+使用 [@eggjs/typebox-validate](https://github.com/eggjs/egg/tree/next/plugins/typebox-validate) 来做请求参数校验，只需要定义一次参数类型和规则，就能同时拥有参数校验和类型定义。
 详细使用方式可以参考 [PR#12](https://github.com/cnpm/cnpmcore/pull/12)。
 
 使用方式请直接参考 `app/port/typebox.ts` 代码。

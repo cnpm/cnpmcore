@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.9.0 (2025-09-12)
+
+* feat: add Firefox binary mirroring support for Puppeteer with version filtering and comprehensive te ([17b1b81](https://github.com/cnpm/cnpmcore/commit/17b1b81)), closes [#828](https://github.com/cnpm/cnpmcore/issues/828) [#826](https://github.com/cnpm/cnpmcore/issues/826)
+* chore: Add comprehensive GitHub Copilot instructions with validated commands and timing expectations ([bb0bdef](https://github.com/cnpm/cnpmcore/commit/bb0bdef)), closes [#830](https://github.com/cnpm/cnpmcore/issues/830) [#829](https://github.com/cnpm/cnpmcore/issues/829)
+
 ## 4.8.0 (2025-09-08)
 
 * chore: add permissions to release workflow ([8587d27](https://github.com/cnpm/cnpmcore/commit/8587d27))
