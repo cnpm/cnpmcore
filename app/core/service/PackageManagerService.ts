@@ -925,6 +925,11 @@ export class PackageManagerService extends AbstractService {
           if (abbreviatedManifest) {
             abbreviatedManifests.versions[packageVersion.version] =
               abbreviatedManifest;
+            // abbreviatedManifests.time is guaranteed to exist since it's initialized in _listPackageAbbreviatedManifests
+            if (abbreviatedManifests.time) {
+              abbreviatedManifests.time[packageVersion.version] =
+                packageVersion.publishTime;
+            }
           }
         }
       }
@@ -937,6 +942,8 @@ export class PackageManagerService extends AbstractService {
         delete fullManifests.time[version];
         // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete abbreviatedManifests.versions[version];
+        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
+        delete abbreviatedManifests.time?.[version];
       }
     }
 
