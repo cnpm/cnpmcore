@@ -92,7 +92,7 @@ export class FirefoxBinary extends AbstractBinary {
       if (href.startsWith('/')) {
         // Extract the last part of the path
         const parts = href.split('/').filter(Boolean);
-        name = parts[parts.length - 1];
+        name = parts.at(-1);
         if (href.endsWith('/')) {
           name += '/';
         }

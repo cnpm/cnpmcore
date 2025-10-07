@@ -23,7 +23,7 @@ export class FixNoPaddingVersionService {
         break;
       }
       id =
-        (packageVersions[packageVersions.length - 1].id as unknown as number) +
+        (packageVersions.at(-1).id as unknown as number) +
         1;
       this.logger.info(
         '[FixNoPaddingVersionService] fix padding version ids %j',

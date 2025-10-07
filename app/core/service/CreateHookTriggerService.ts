@@ -114,7 +114,7 @@ export class CreateHookTriggerService extends AbstractService {
       hooks = await this.hookRepository.listHooksByTypeAndName(
         type,
         name,
-        hooks[hooks.length - 1].id
+        hooks.at(-1).id
       );
       await this.taskService.appendTaskLog(
         task,

@@ -11,6 +11,30 @@ on:
   merge_group:
 
 jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Git Source
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm i -g npminstall && npminstall
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run tsc && npm run tsc:prod
+  
   test-postgresql-fs-nfs:
     strategy:
       fail-fast: false
@@ -18,8 +42,8 @@ jobs:
         node-version: [20, 22, 24]
         os: [ubuntu-latest]
         # 0-based index
-        shardIndex: [0, 1, 2, 3, 4]
-        shardTotal: [5]
+        shardIndex: [0, 1, 2]
+        shardTotal: [3]
 
     name: test on postgresql (node@${{ matrix.node-version }}, shard@${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
 
@@ -111,8 +135,8 @@ jobs:
         node-version: [20, 22, 24]
         os: [ubuntu-latest]
         # 0-based index
-        shardIndex: [0, 1, 2, 3, 4]
-        shardTotal: [5]
+        shardIndex: [0, 1, 2]
+        shardTotal: [3]
 
     name: test on mysql (node@${{ matrix.node-version }}, shard@${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
 
