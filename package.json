@@ -90,7 +90,7 @@
   },
   "dependencies": {
     "@eggjs/redis": "beta",
-    "@eggjs/scripts": "^4.0.0",
+    "@eggjs/scripts": "beta",
     "@eggjs/tegg": "beta",
     "@eggjs/tegg-aop-plugin": "beta",
     "@eggjs/tegg-background-task": "beta",
