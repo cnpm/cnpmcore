@@ -53,7 +53,7 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
     const { results = [] } = res.data;
     if (results?.length >= limit) {
       const [first] = results;
-      const last = results.at(-1);
+      const last = results[results.length - 1];
       if (first.gmt_modified === last?.gmt_modified) {
         return await this.tryFetch(registry, since, limit + 1000);
       }
