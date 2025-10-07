@@ -31,12 +31,6 @@ interface FileItem {
   type: 'file';
   contentType: string;
   integrity: string;
-  sri?: {
-    sha256: string;
-    sha384: string;
-    sha512: string;
-    combined: string;
-  };
   lastModified: Date;
   size: number;
 }
@@ -48,56 +42,14 @@ interface DirectoryItem {
 }
 
 function formatFileItem(file: PackageVersionFile): FileItem {
-  const baseItem = {
+  return {
     path: file.path,
-    type: 'file' as const,
+    type: 'file',
     contentType: file.contentType,
     integrity: file.dist.integrity,
     lastModified: file.mtime,
     size: file.dist.size,
   };
-
-  // For backwards compatibility, try to parse SRI data from combined integrity
-  // or generate individual algorithms if available
-  const integrityStr = file.dist.integrity;
-  const sriData = parseSRIFromIntegrity(integrityStr);
-  
-  if (sriData) {
-    return {
-      ...baseItem,
-      sri: sriData,
-    };
-  }
-  
-  return baseItem;
-}
-
-function parseSRIFromIntegrity(integrity: string) {
-  // If the integrity contains multiple algorithms (space-separated), parse them
-  const parts = integrity.trim().split(/\s+/);
-  const sri: Record<string, string> = {};
-  
-  for (const part of parts) {
-    if (part.startsWith('sha256-')) {
-      sri.sha256 = part;
-    } else if (part.startsWith('sha384-')) {
-      sri.sha384 = part;
-    } else if (part.startsWith('sha512-')) {
-      sri.sha512 = part;
-    }
-  }
-  
-  // Only return SRI data if we have at least one algorithm
-  if (Object.keys(sri).length > 0) {
-    return {
-      sha256: sri.sha256 || '',
-      sha384: sri.sha384 || '',
-      sha512: sri.sha512 || '',
-      combined: Object.values(sri).filter(Boolean).join(' '),
-    };
-  }
-  
-  return null;
 }
 
 const META_CACHE_CONTROL = 'public, s-maxage=600, max-age=60';
@@ -267,15 +219,9 @@ export class PackageVersionFileController extends AbstractController {
     }
     ctx.set('cache-control', FILE_CACHE_CONTROL);
     
-    // Add SRI-related headers for better integration with browsers and tools
-    const sriData = parseSRIFromIntegrity(file.dist.integrity);
-    if (sriData) {
-      // Set individual SRI headers for different use cases
-      if (sriData.sha256) ctx.set('X-SRI-SHA256', sriData.sha256);
-      if (sriData.sha384) ctx.set('X-SRI-SHA384', sriData.sha384);  
-      if (sriData.sha512) ctx.set('X-SRI-SHA512', sriData.sha512);
-      // Combined header for easy HTML integration
-      ctx.set('X-SRI-Integrity', sriData.combined);
+    // Add SRI header for subresource integrity verification
+    if (file.dist.integrity) {
+      ctx.set('X-Integrity', file.dist.integrity);
     }
     
     // https://github.com/cnpm/cnpmcore/issues/693#issuecomment-2955268229

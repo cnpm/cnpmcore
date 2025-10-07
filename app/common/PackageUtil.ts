@@ -42,12 +42,6 @@ export function getPrefixedName(prefix: string, username: string): string {
 export interface Integrity {
   integrity: string;
   shasum: string;
-  sri: {
-    sha256: string;
-    sha384: string;
-    sha512: string;
-    combined: string; // All algorithms combined for HTML integrity attribute
-  };
 }
 
 export async function calculateIntegrity(
@@ -56,49 +50,16 @@ export async function calculateIntegrity(
   let integrityObj: HashLike;
   if (typeof contentOrFile === 'string') {
     integrityObj = await fromStream(createReadStream(contentOrFile), {
-      algorithms: ['sha256', 'sha384', 'sha512', 'sha1'],
+      algorithms: ['sha512', 'sha1'],
     });
   } else {
     integrityObj = fromData(contentOrFile, {
-      algorithms: ['sha256', 'sha384', 'sha512', 'sha1'],
+      algorithms: ['sha512', 'sha1'],
     });
   }
-  
-  // Maintain backwards compatibility with existing SHA-512 primary integrity
   const integrity = integrityObj.sha512[0].toString() as string;
   const shasum = integrityObj.sha1[0].hexDigest() as string;
-  
-  // Generate individual SRI hashes using a safer approach for TypeScript
-  const fullIntegrityString = integrityObj.toString();
-  const algorithms = fullIntegrityString.split(/\s+/);
-  
-  let sha256 = '';
-  let sha384 = '';
-  let sha512 = '';
-  
-  for (const algo of algorithms) {
-    if (algo.startsWith('sha256-')) {
-      sha256 = algo;
-    } else if (algo.startsWith('sha384-')) {
-      sha384 = algo;
-    } else if (algo.startsWith('sha512-')) {
-      sha512 = algo;
-    }
-  }
-  
-  // Combined SRI string for HTML integrity attribute (space-separated)
-  const combined = [sha256, sha384, sha512].filter(Boolean).join(' ');
-  
-  return { 
-    integrity, 
-    shasum,
-    sri: {
-      sha256,
-      sha384,
-      sha512,
-      combined
-    }
-  };
+  return { integrity, shasum };
 }
 
 export function formatTarball(
