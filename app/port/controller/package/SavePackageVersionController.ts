@@ -117,6 +117,7 @@ export class SavePackageVersionController extends AbstractController {
     this.validateNpmCommand(ctx);
     ctx.tValidate(FullPackageRule, pkg);
     const { user } = await this.ensurePublishAccess(ctx, fullname, false);
+    // oxlint-disable-next-line no-param-reassign
     fullname = fullname.trim();
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(

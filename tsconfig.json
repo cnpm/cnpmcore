@@ -1,7 +1,7 @@
 {
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ES2022",
     "resolveJsonModule": true,
     "useUnknownInCatchVariables": false,
     "declaration": false,

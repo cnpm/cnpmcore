@@ -40,7 +40,7 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
       assert.equal(result?.items[2].name, 'last-known-good-versions.json');
       assert.equal(result?.items[2].date, '2023-09-16T00:21:21.964Z');
       assert.equal(result?.items[2].isDir, false);
-      const latestVersion = result.items.at(-1).name;
+      const latestVersion = result.items.at(-1)?.name;
       assert.ok(latestVersion);
       assert.equal(latestVersion, '119.0.6008.0/');
 

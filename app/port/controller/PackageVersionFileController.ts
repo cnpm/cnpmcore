@@ -165,6 +165,7 @@ export class PackageVersionFileController extends AbstractController {
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     ctx.vary(this.config.cnpmcore.cdnVaryHeader);
     const [scope, name] = getScopeAndName(fullname);
+    // oxlint-disable-next-line no-param-reassign
     path = `/${path}`;
     const packageVersion = await this.#getPackageVersion(
       ctx,
