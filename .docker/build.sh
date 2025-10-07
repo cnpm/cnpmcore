@@ -2,6 +2,6 @@
 
 node -v && npm -v \
   && npm install -g npminstall --registry=https://registry.npmmirror.com \
-  && npminstall -c \
+  && (npminstall -c || true) \
   && npm run tsc \
   && npmupdate -c --production
