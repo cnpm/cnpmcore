@@ -16,7 +16,9 @@
     "new-cap": "allow",
     "class-methods-use-this": "allow",
     "import/no-named-export": "allow",
-    "unicorn/no-array-sort": "allow"
+    "unicorn/no-array-sort": "allow",
+    "no-param-reassign": "allow",
+    "unicorn/prefer-at": "allow"
   },
   "ignorePatterns": ["index.d.ts"]
 }

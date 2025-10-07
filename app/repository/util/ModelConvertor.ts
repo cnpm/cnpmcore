@@ -117,7 +117,7 @@ export class ModelConvertor {
     entityClazz: EggProtoImplClass<T>,
     data?: object
   ): T {
-    data = data || {};
+    const entityData = data ?? {};
     const ModelClazz = bone.constructor as EggProtoImplClass;
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
@@ -131,9 +131,9 @@ export class ModelConvertor {
       );
       const attributeValue =
         bone[attributeMeta.propertyName as keyof LeoricBone];
-      lodashSet(data, entityPropertyName, attributeValue);
+      lodashSet(entityData, entityPropertyName, attributeValue);
     }
-    const model = Reflect.construct(entityClazz, [data]);
+    const model = Reflect.construct(entityClazz, [entityData]);
     return model;
   }
 }

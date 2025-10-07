@@ -11,7 +11,42 @@ on:
   merge_group:
 
 jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Git Source
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm i -g npminstall && npminstall
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run tsc && npm run tsc:prod
+  
   test-postgresql-fs-nfs:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22, 24]
+        os: [ubuntu-latest]
+        # 0-based index
+        shardIndex: [0, 1, 2]
+        shardTotal: [3]
+
+    name: test on postgresql (node@${{ matrix.node-version }}, shard@${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+
     runs-on: ${{ matrix.os }}
 
     services:
@@ -38,12 +73,6 @@ jobs:
         ports:
           # Opens tcp port 6379 on the host and service container
           - 6379:6379
-
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [20, 22, 24]
-        os: [ubuntu-latest]
 
     steps:
       - name: Checkout Git Source
@@ -90,6 +119,9 @@ jobs:
           POSTGRES_PORT: 5432
           CNPMCORE_CONFIG_ENABLE_ES: true
           CNPMCORE_CONFIG_ES_CLIENT_NODES: http://localhost:9200
+          # https://github.com/jamiebuilds/ci-parallel-vars
+          CI_NODE_INDEX: ${{ matrix.shardIndex }}
+          CI_NODE_TOTAL: ${{ matrix.shardTotal }}
 
       - name: Code Coverage
         uses: codecov/codecov-action@v5
@@ -97,6 +129,17 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   test-mysql57-fs-nfs:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22, 24]
+        os: [ubuntu-latest]
+        # 0-based index
+        shardIndex: [0, 1, 2]
+        shardTotal: [3]
+
+    name: test on mysql (node@${{ matrix.node-version }}, shard@${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+
     runs-on: ${{ matrix.os }}
 
     services:
@@ -115,12 +158,6 @@ jobs:
           # Opens tcp port 6379 on the host and service container
           - 6379:6379
 
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [20, 22, 24]
-        os: [ubuntu-latest]
-
     steps:
       - name: Checkout Git Source
         uses: actions/checkout@v4
@@ -135,6 +172,10 @@ jobs:
 
       - name: Continuous Integration
         run: npm run ci
+        env:
+          # https://github.com/jamiebuilds/ci-parallel-vars
+          CI_NODE_INDEX: ${{ matrix.shardIndex }}
+          CI_NODE_TOTAL: ${{ matrix.shardTotal }}
 
       - name: Code Coverage
         uses: codecov/codecov-action@v5
@@ -142,6 +183,13 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   test-mysql57-s3-nfs:
+    if: ${{ github.ref_name == 'master' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22]
+        os: [ubuntu-latest]
+
     runs-on: ${{ matrix.os }}
 
     services:
@@ -158,12 +206,6 @@ jobs:
         image: redis
         ports:
           - 6379:6379
-
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [20, 22]
-        os: [ubuntu-latest]
 
     steps:
       - name: Checkout Git Source
