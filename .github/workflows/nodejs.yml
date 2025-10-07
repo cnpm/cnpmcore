@@ -183,6 +183,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   test-mysql57-s3-nfs:
+    if: ${{ github.ref_name == 'master' }}
     strategy:
       fail-fast: false
       matrix:
