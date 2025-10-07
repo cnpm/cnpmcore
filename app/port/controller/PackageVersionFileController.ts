@@ -218,6 +218,12 @@ export class PackageVersionFileController extends AbstractController {
       return formatFileItem(file);
     }
     ctx.set('cache-control', FILE_CACHE_CONTROL);
+    
+    // Add SRI header for subresource integrity verification
+    if (file.dist.integrity) {
+      ctx.set('X-Integrity', file.dist.integrity);
+    }
+    
     // https://github.com/cnpm/cnpmcore/issues/693#issuecomment-2955268229
     ctx.type = ensureContentType(file.contentType);
     return await this.distRepository.getDistStream(file.dist);
