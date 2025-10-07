@@ -1,6 +1,7 @@
 {
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
+    // leoric only supports ES2021
     "target": "ES2021",
     "resolveJsonModule": true,
     "useUnknownInCatchVariables": false,
