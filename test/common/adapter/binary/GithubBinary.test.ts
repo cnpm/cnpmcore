@@ -195,7 +195,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         assert.ok(item.isDir === false);
         if (item.name === 'ripgrep-v14.1.1-1-x86_64-pc-windows-msvc.zip') {
           assert.equal(item.date, '2024-10-01T11:30:01Z');
-          assert.equal(item.size, 1234567);
+          assert.equal(item.size, 1_234_567);
           assert.equal(
             item.url,
             'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-pc-windows-msvc.zip'
@@ -204,7 +204,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         }
         if (item.name === 'ripgrep-v14.1.1-1-x86_64-apple-darwin.tar.gz') {
           assert.equal(item.date, '2024-10-01T11:30:06Z');
-          assert.equal(item.size, 2345678);
+          assert.equal(item.size, 2_345_678);
           assert.equal(
             item.url,
             'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-apple-darwin.tar.gz'
@@ -213,7 +213,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
         }
         if (item.name === 'ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar.gz') {
           assert.equal(item.date, '2024-10-01T11:30:11Z');
-          assert.equal(item.size, 3456789);
+          assert.equal(item.size, 3_456_789);
           assert.equal(
             item.url,
             'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar.gz'
