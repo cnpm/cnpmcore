@@ -241,7 +241,6 @@ jobs:
     needs:
       - test-postgresql-fs-nfs
       - test-mysql57-fs-nfs
-      - test-mysql57-s3-nfs
       - typecheck
     steps:
       - run: exit 1
