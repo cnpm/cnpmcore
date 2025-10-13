@@ -160,5 +160,70 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
       }
       assert.ok(matchFile1);
     });
+
+    it('should fetch ripgrep-prebuilt', async () => {
+      const response = await TestUtil.readJSONFile(
+        TestUtil.getFixtures('ripgrep-prebuilt-releases.json')
+      );
+      app.mockHttpclient(
+        /https:\/\/api\.github\.com\/repos\/microsoft\/ripgrep-prebuilt\/releases/,
+        'GET',
+        {
+          data: response,
+          status: 200,
+        }
+      );
+      let result = await binary.fetch('/', 'ripgrep-prebuilt');
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
+      let matchDir = false;
+      for (const item of result.items) {
+        assert.ok(item.isDir === true);
+        if (item.name === 'v14.1.1-1/') {
+          matchDir = true;
+        }
+      }
+      assert.ok(matchDir);
+
+      result = await binary.fetch('/v14.1.1-1/', 'ripgrep-prebuilt');
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
+      let matchFile1 = false;
+      let matchFile2 = false;
+      let matchFile3 = false;
+      for (const item of result.items) {
+        assert.ok(item.isDir === false);
+        if (item.name === 'ripgrep-v14.1.1-1-x86_64-pc-windows-msvc.zip') {
+          assert.ok(item.date === '2024-10-01T11:30:01Z');
+          assert.ok(item.size === 1234567);
+          assert.equal(
+            item.url,
+            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-pc-windows-msvc.zip'
+          );
+          matchFile1 = true;
+        }
+        if (item.name === 'ripgrep-v14.1.1-1-x86_64-apple-darwin.tar.gz') {
+          assert.ok(item.date === '2024-10-01T11:30:06Z');
+          assert.ok(item.size === 2345678);
+          assert.equal(
+            item.url,
+            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-apple-darwin.tar.gz'
+          );
+          matchFile2 = true;
+        }
+        if (item.name === 'ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar.gz') {
+          assert.ok(item.date === '2024-10-01T11:30:11Z');
+          assert.ok(item.size === 3456789);
+          assert.equal(
+            item.url,
+            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar.gz'
+          );
+          matchFile3 = true;
+        }
+      }
+      assert.ok(matchFile1);
+      assert.ok(matchFile2);
+      assert.ok(matchFile3);
+    });
   });
 });

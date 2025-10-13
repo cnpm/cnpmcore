@@ -984,6 +984,13 @@ const binaries = {
     repo: 'microsoft/onnxruntime',
     distUrl: 'https://github.com/microsoft/onnxruntime/releases/',
   },
+  'ripgrep-prebuilt': {
+    category: 'ripgrep-prebuilt',
+    description: 'Prebuilt ripgrep binaries for Node.js projects',
+    type: BinaryType.GitHub,
+    repo: 'microsoft/ripgrep-prebuilt',
+    distUrl: 'https://github.com/microsoft/ripgrep-prebuilt/releases',
+  },
 } as const;
 
 export interface BinaryTaskConfig {
