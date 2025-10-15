@@ -13,17 +13,11 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root and subdir work', async () => {
-      const response = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('electron-releases.json')
-      );
-      app.mockHttpclient(
-        /https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/,
-        'GET',
-        {
-          data: response,
-          status: 200,
-        }
-      );
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('electron-releases.json'));
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/, 'GET', {
+        data: response,
+        status: 200,
+      });
       let result = await binary.fetch('/', 'electron');
       assert.ok(result);
       assert.ok(result.items.length > 0);
@@ -45,17 +39,11 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
     });
 
     it('should fetch skia-canvas', async () => {
-      const response = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('skia-canvas-releases.json')
-      );
-      app.mockHttpclient(
-        /https:\/\/api\.github\.com\/repos\/samizdatco\/skia-canvas\/releases/,
-        'GET',
-        {
-          data: response,
-          status: 200,
-        }
-      );
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('skia-canvas-releases.json'));
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/samizdatco\/skia-canvas\/releases/, 'GET', {
+        data: response,
+        status: 200,
+      });
       let result = await binary.fetch('/', 'skia-canvas');
       assert.ok(result);
       assert.ok(result.items.length > 0);
@@ -115,17 +103,11 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
     });
 
     it('should fetch protobuf', async () => {
-      const response = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('protobuf-releases.json')
-      );
-      app.mockHttpclient(
-        /https:\/\/api\.github\.com\/repos\/protocolbuffers\/protobuf\/releases/,
-        'GET',
-        {
-          data: response,
-          status: 200,
-        }
-      );
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('protobuf-releases.json'));
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/protocolbuffers\/protobuf\/releases/, 'GET', {
+        data: response,
+        status: 200,
+      });
       let result = await binary.fetch('/', 'protobuf');
       assert.ok(result);
       assert.ok(result.items.length > 0);
@@ -162,17 +144,11 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
     });
 
     it('should fetch ripgrep-prebuilt', async () => {
-      const response = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('ripgrep-prebuilt-releases.json')
-      );
-      app.mockHttpclient(
-        /https:\/\/api\.github\.com\/repos\/microsoft\/ripgrep-prebuilt\/releases/,
-        'GET',
-        {
-          data: response,
-          status: 200,
-        }
-      );
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('ripgrep-prebuilt-releases.json'));
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/microsoft\/ripgrep-prebuilt\/releases/, 'GET', {
+        data: response,
+        status: 200,
+      });
       let result = await binary.fetch('/', 'ripgrep-prebuilt');
       assert.ok(result);
       assert.ok(result.items.length > 0);
@@ -224,6 +200,43 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
       assert.ok(matchFile1);
       assert.ok(matchFile2);
       assert.ok(matchFile3);
+    });
+
+    it('should use custom perPage config for python-build-standalone', async () => {
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('python-build-standalone-releases.json'));
+      let requestUrl = '';
+      app.mockHttpclient(
+        /https:\/\/api\.github\.com\/repos\/astral-sh\/python-build-standalone\/releases/,
+        'GET',
+        (_url: string) => {
+          requestUrl = _url;
+          return {
+            data: response,
+            status: 200,
+          };
+        }
+      );
+      const result = await binary.fetch('/', 'python-build-standalone');
+      assert.ok(result);
+      // Verify that perPage=10 is used instead of default 100
+      assert.ok(requestUrl.includes('per_page=10'), `Expected per_page=10 in URL: ${requestUrl}`);
+      assert.ok(requestUrl.includes('page=1'));
+    });
+
+    it('should use default perPage=100 when not configured', async () => {
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('electron-releases.json'));
+      let requestUrl = '';
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/, 'GET', (_url: string) => {
+        requestUrl = _url;
+        return {
+          data: response,
+          status: 200,
+        };
+      });
+      const result = await binary.fetch('/', 'electron');
+      assert.ok(result);
+      // Verify that default per_page=100 is used
+      assert.ok(requestUrl.includes('per_page=100'), `Expected per_page=100 in URL: ${requestUrl}`);
     });
   });
 });
