@@ -1,15 +1,7 @@
 import { SingletonProto } from '@eggjs/tegg';
-import binaries, {
-  type BinaryName,
-  type BinaryTaskConfig,
-} from '../../../../config/binaries.js';
+import binaries, { type BinaryName, type BinaryTaskConfig } from '../../../../config/binaries.js';
 import { BinaryType } from '../../enum/Binary.js';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.js';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.js';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.GitHub)
@@ -21,10 +13,7 @@ export class GithubBinary extends AbstractBinary {
     this.releases[binaryName] = undefined;
   }
 
-  protected async initReleases(
-    binaryName: BinaryName,
-    binaryConfig: BinaryTaskConfig
-  ) {
+  protected async initReleases(binaryName: BinaryName, binaryConfig: BinaryTaskConfig) {
     if (!this.releases[binaryName]) {
       // https://docs.github.com/en/rest/reference/releases get three pages
       // https://api.github.com/repos/electron/electron/releases
@@ -32,8 +21,9 @@ export class GithubBinary extends AbstractBinary {
       // oxlint-disable-next-line typescript-eslint/no-explicit-any
       let releases: any[] = [];
       const maxPage = binaryConfig.options?.maxPage || 1;
+      const perPage = binaryConfig.options?.perPage || 100;
       for (let i = 0; i < maxPage; i++) {
-        const url = `https://api.github.com/repos/${binaryConfig.repo}/releases?per_page=100&page=${i + 1}`;
+        const url = `https://api.github.com/repos/${binaryConfig.repo}/releases?per_page=${perPage}&page=${i + 1}`;
         const requestHeaders: Record<string, string> = {};
         if (process.env.GITHUB_TOKEN) {
           requestHeaders.Authorization = `token ${process.env.GITHUB_TOKEN}`;
@@ -41,22 +31,11 @@ export class GithubBinary extends AbstractBinary {
         const data = await this.requestJSON(url, requestHeaders);
         if (!Array.isArray(data)) {
           // {"message":"API rate limit exceeded for 47.57.239.54. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
-          if (
-            typeof data?.message === 'string' &&
-            data.message.includes('rate limit')
-          ) {
-            this.logger.info(
-              '[GithubBinary.fetch:hit-rate-limit] skip sync this time, data: %j, url: %s',
-              data,
-              url
-            );
+          if (typeof data?.message === 'string' && data.message.includes('rate limit')) {
+            this.logger.info('[GithubBinary.fetch:hit-rate-limit] skip sync this time, data: %j, url: %s', data, url);
             return;
           }
-          this.logger.warn(
-            '[GithubBinary.fetch:response-data-not-array] data: %j, url: %s',
-            data,
-            url
-          );
+          this.logger.warn('[GithubBinary.fetch:response-data-not-array] data: %j, url: %s', data, url);
           return;
         }
         releases = releases.concat(data);
@@ -111,10 +90,7 @@ export class GithubBinary extends AbstractBinary {
     return items;
   }
 
-  async fetch(
-    dir: string,
-    binaryName: BinaryName
-  ): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const releases = await this.initReleases(binaryName, binaryConfig);
     if (!releases) return;
