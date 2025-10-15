@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.11.0 (2025-10-15)
+
+* feat: perpage config (#843) ([3e1dbd8](https://github.com/cnpm/cnpmcore/commit/3e1dbd8)), closes [#843](https://github.com/cnpm/cnpmcore/issues/843)
+
 ## 4.10.0 (2025-10-15)
 
 * feat: Add time field to abbreviated metadata for pnpm time-based resolution (#834) ([2e51399](https://github.com/cnpm/cnpmcore/commit/2e51399)), closes [#834](https://github.com/cnpm/cnpmcore/issues/834)
