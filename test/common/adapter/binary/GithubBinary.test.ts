@@ -216,6 +216,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           };
         }
       );
+      await binary.initFetch('python-build-standalone');
       const result = await binary.fetch('/', 'python-build-standalone');
       assert.ok(result);
       // Verify that perPage=10 is used instead of default 100
@@ -233,6 +234,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           status: 200,
         };
       });
+      await binary.initFetch('electron');
       const result = await binary.fetch('/', 'electron');
       assert.ok(result);
       // Verify that default per_page=100 is used
