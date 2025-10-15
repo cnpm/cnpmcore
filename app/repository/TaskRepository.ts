@@ -86,18 +86,16 @@ export class TaskRepository extends AbstractRepository {
   ): Promise<void> {
     const model = await this.Task.findOne({ id: task.id });
     if (!model || !model.data.specificVersions) return;
+    const data = model.data;
     if (specificVersions) {
-      const data = model.data;
       const combinedVersions = uniq<string>(
         data.specificVersions.concat(specificVersions)
       );
       data.specificVersions = combinedVersions;
-      await model.update({ data });
     } else {
-      const data = model.data;
       Reflect.deleteProperty(data, 'specificVersions');
-      await model.update({ data });
     }
+    await model.update({ data });
   }
 
   async findTask(taskId: string) {
