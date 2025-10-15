@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.10.0 (2025-10-15)
+
+* feat: Add time field to abbreviated metadata for pnpm time-based resolution (#834) ([2e51399](https://github.com/cnpm/cnpmcore/commit/2e51399)), closes [#834](https://github.com/cnpm/cnpmcore/issues/834)
+* feat: mirror microsoft/ripgrep-prebuilt binary (#842) ([606c983](https://github.com/cnpm/cnpmcore/commit/606c983)), closes [#842](https://github.com/cnpm/cnpmcore/issues/842) [cnpm/cnpmcore#841](https://github.com/cnpm/cnpmcore/issues/841)
+* docs: Add comprehensive internal API documentation for direct HTTP requests (#832) ([5b1da74](https://github.com/cnpm/cnpmcore/commit/5b1da74)), closes [#832](https://github.com/cnpm/cnpmcore/issues/832) [#709](https://github.com/cnpm/cnpmcore/issues/709)
+* docs: Enhance Copilot instructions with DDD architecture [skip ci] (#838) ([cb93141](https://github.com/cnpm/cnpmcore/commit/cb93141)), closes [#838](https://github.com/cnpm/cnpmcore/issues/838) [cnpm/cnpmcore#837](https://github.com/cnpm/cnpmcore/issues/837)
+* test: enable test shard (#839) ([324511d](https://github.com/cnpm/cnpmcore/commit/324511d)), closes [#839](https://github.com/cnpm/cnpmcore/issues/839)
+* refactor: use tegg and egg v4 beta (#836) ([c7df471](https://github.com/cnpm/cnpmcore/commit/c7df471)), closes [#836](https://github.com/cnpm/cnpmcore/issues/836)
+
 ## 4.9.0 (2025-09-12)
 
 * feat: add Firefox binary mirroring support for Puppeteer with version filtering and comprehensive te ([17b1b81](https://github.com/cnpm/cnpmcore/commit/17b1b81)), closes [#828](https://github.com/cnpm/cnpmcore/issues/828) [#826](https://github.com/cnpm/cnpmcore/issues/826)
