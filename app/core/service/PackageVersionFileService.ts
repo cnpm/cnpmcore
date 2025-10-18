@@ -335,6 +335,33 @@ export class PackageVersionFileService extends AbstractService {
     }
   }
 
+  async removePackageVersionFiles(pkgVersion: PackageVersion) {
+    const files: PackageVersionFile[] = [];
+    if (!this.config.cnpmcore.enableUnpkg) return files;
+    if (!this.config.cnpmcore.enableSyncUnpkgFiles) return files;
+    const pkg = await this.packageRepository.findPackageByPackageId(
+      pkgVersion.packageId
+    );
+    if (!pkg) return files;
+
+    const fileDists =
+      await this.packageManagerService.removePackageVersionFileAndDist(
+        pkgVersion
+      );
+
+    return fileDists.map(dist => {
+      const { directory, name } = this.#getDirectoryAndName(dist.path);
+      return PackageVersionFile.create({
+        packageVersionId: pkgVersion.packageVersionId,
+        directory,
+        name,
+        dist,
+        contentType: mimeLookup(dist.path),
+        mtime: pkgVersion.publishTime,
+      });
+    });
+  }
+
   async #savePackageVersionFile(
     pkg: Package,
     pkgVersion: PackageVersion,
