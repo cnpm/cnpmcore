@@ -147,6 +147,7 @@
     "@types/mime-types": "^2.1.1",
     "@types/mocha": "^10.0.1",
     "@types/mysql": "^2.15.21",
+    "@types/node": "^22.18.12",
     "@types/node-rsa": "^1.1.4",
     "@types/npm-package-arg": "^6.1.1",
     "@types/pg": "^8.11.10",
@@ -160,7 +161,6 @@
     "oxlint": "^1.11.0",
     "oxlint-tsgolint": "^0.2.0",
     "prettier": "^3.5.3",
-    "tsx": "^4.20.6",
     "typescript": "5"
   },
   "author": "killagu",
