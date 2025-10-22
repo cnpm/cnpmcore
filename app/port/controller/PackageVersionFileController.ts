@@ -144,7 +144,7 @@ export class PackageVersionFileController extends AbstractController {
       );
     // GET /foo/1.0.0/files => /foo/1.0.0/files/{main}
     // ignore empty entry exp: @types/node@20.2.5/
-    const indexFile = manifest?.main || 'index.ts';
+    const indexFile = manifest?.main || 'index.js';
     ctx.redirect(join(ctx.path, indexFile));
   }
 
