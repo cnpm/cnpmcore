@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>4.11.1 (2025-10-22)</small>
+
+* fix: improve TypeScript type definitions across codebase (#844) ([e5162f2](https://github.com/cnpm/cnpmcore/commit/e5162f2)), closes [#844](https://github.com/cnpm/cnpmcore/issues/844)
+
 ## 4.11.0 (2025-10-15)
 
 * feat: perpage config (#843) ([3e1dbd8](https://github.com/cnpm/cnpmcore/commit/3e1dbd8)), closes [#843](https://github.com/cnpm/cnpmcore/issues/843)
