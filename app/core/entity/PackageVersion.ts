@@ -1,7 +1,7 @@
-import type { Dist } from './Dist.js';
-import { Entity, type EntityData } from './Entity.js';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
-import { PaddingSemVer } from './PaddingSemVer.js';
+import type { Dist } from './Dist.ts';
+import { Entity, type EntityData } from './Entity.ts';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import { PaddingSemVer } from './PaddingSemVer.ts';
 
 interface PackageVersionData extends EntityData {
   packageId: string;

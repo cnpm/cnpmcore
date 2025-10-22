@@ -1,8 +1,8 @@
 import { Middleware } from '@eggjs/tegg';
 
-import { AlwaysAuth } from './AlwaysAuth.js';
-import { ErrorHandler } from './ErrorHandler.js';
-import { Tracing } from './Tracing.js';
+import { AlwaysAuth } from './AlwaysAuth.ts';
+import { ErrorHandler } from './ErrorHandler.ts';
+import { Tracing } from './Tracing.ts';
 
 @Middleware(AlwaysAuth)
 @Middleware(Tracing)

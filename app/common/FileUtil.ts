@@ -7,7 +7,7 @@ import url from 'node:url';
 import { randomBytes } from 'node:crypto';
 import type { EggContextHttpClient, HttpClientResponse } from 'egg';
 import mime from 'mime-types';
-import dayjs from './dayjs.js';
+import dayjs from './dayjs.ts';
 
 async function _downloadToTempfile(
   httpclient: EggContextHttpClient,

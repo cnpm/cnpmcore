@@ -5,7 +5,7 @@ import {
 } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
-import type { PackageManagerService } from '../../core/service/PackageManagerService.js';
+import type { PackageManagerService } from '../../core/service/PackageManagerService.ts';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,

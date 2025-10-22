@@ -9,11 +9,11 @@ import {
   Inject,
 } from '@eggjs/tegg';
 
-import { AbstractController } from '../AbstractController.js';
-import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';
-import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
-import type { Package } from '../../../core/entity/Package.js';
-import type { PackageVersion } from '../../../core/entity/PackageVersion.js';
+import { AbstractController } from '../AbstractController.ts';
+import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.ts';
+import type { PackageManagerService } from '../../../core/service/PackageManagerService.ts';
+import type { Package } from '../../../core/entity/Package.ts';
+import type { PackageVersion } from '../../../core/entity/PackageVersion.ts';
 
 @HTTPController()
 export class RemovePackageVersionController extends AbstractController {

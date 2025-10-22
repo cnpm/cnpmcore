@@ -7,13 +7,13 @@ import {
 } from '@eggjs/tegg';
 import { NotFoundError, UnprocessableEntityError } from 'egg-errors';
 
-import { AbstractController } from './AbstractController.js';
+import { AbstractController } from './AbstractController.ts';
 import {
   FULLNAME_REG_STRING,
   getScopeAndName,
-} from '../../common/PackageUtil.js';
-import dayjs from '../../common/dayjs.js';
-import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
+} from '../../common/PackageUtil.ts';
+import dayjs from '../../common/dayjs.ts';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 

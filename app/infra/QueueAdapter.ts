@@ -1,7 +1,7 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { Redis } from 'ioredis';
 
-import type { QueueAdapter } from '../common/typing.js';
+import type { QueueAdapter } from '../common/typing.ts';
 
 /**
  * Use sort set to keep queue in order and keep same value only insert once

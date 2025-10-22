@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import type { EggProtoImplClass } from '@eggjs/tegg';
 
-import { ModelConvertorUtil } from './ModelConvertorUtil.js';
+import { ModelConvertorUtil } from './ModelConvertorUtil.ts';
 
 export function EntityProperty(entityProperty: string) {
   // oxlint-disable-next-line typescript-eslint/no-explicit-any

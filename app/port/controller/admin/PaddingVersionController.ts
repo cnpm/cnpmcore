@@ -8,8 +8,8 @@ import {
   Inject,
 } from '@eggjs/tegg';
 
-import { AbstractController } from '../AbstractController.js';
-import type { FixNoPaddingVersionService } from '../../../core/service/FixNoPaddingVersionService.js';
+import { AbstractController } from '../AbstractController.ts';
+import type { FixNoPaddingVersionService } from '../../../core/service/FixNoPaddingVersionService.ts';
 
 @HTTPController()
 export class PaddingVersionController extends AbstractController {

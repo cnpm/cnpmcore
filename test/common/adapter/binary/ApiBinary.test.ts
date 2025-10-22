@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { ApiBinary } from '../../../../app/common/adapter/binary/ApiBinary.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { ApiBinary } from '../../../../app/common/adapter/binary/ApiBinary.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/common/adapter/binary/ApiBinary.test.ts', () => {
   let binary: ApiBinary;

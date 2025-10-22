@@ -1,14 +1,14 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
-import { ModelConvertor } from './util/ModelConvertor.js';
-import { AbstractRepository } from './AbstractRepository.js';
-import type { Scope as ScopeModel } from './model/Scope.js';
-import { Scope } from '../core/entity/Scope.js';
+import { ModelConvertor } from './util/ModelConvertor.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
+import type { Scope as ScopeModel } from './model/Scope.ts';
+import { Scope } from '../core/entity/Scope.ts';
 import {
   EntityUtil,
   type PageOptions,
   type PageResult,
-} from '../core/util/EntityUtil.js';
+} from '../core/util/EntityUtil.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

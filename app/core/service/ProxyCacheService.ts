@@ -9,32 +9,32 @@ import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { valid as semverValid } from 'semver';
 
-import { AbstractService } from '../../common/AbstractService.js';
-import type { TaskService } from './TaskService.js';
-import type { CacheService } from './CacheService.js';
-import type { RegistryManagerService } from './RegistryManagerService.js';
-import type { NPMRegistry } from '../../common/adapter/NPMRegistry.js';
-import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
-import { ProxyCache } from '../entity/ProxyCache.js';
+import { AbstractService } from '../../common/AbstractService.ts';
+import type { TaskService } from './TaskService.ts';
+import type { CacheService } from './CacheService.ts';
+import type { RegistryManagerService } from './RegistryManagerService.ts';
+import type { NPMRegistry } from '../../common/adapter/NPMRegistry.ts';
+import type { NFSAdapter } from '../../common/adapter/NFSAdapter.ts';
+import { ProxyCache } from '../entity/ProxyCache.ts';
 import {
   type CreateUpdateProxyCacheTask,
   type UpdateProxyCacheTaskOptions,
   Task,
-} from '../entity/Task.js';
-import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
-import { TaskState, TaskType } from '../../common/enum/Task.js';
-import { calculateIntegrity } from '../../common/PackageUtil.js';
+} from '../entity/Task.ts';
+import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';
+import { TaskState, TaskType } from '../../common/enum/Task.ts';
+import { calculateIntegrity } from '../../common/PackageUtil.ts';
 import {
   ABBREVIATED_META_TYPE,
   PROXY_CACHE_DIR_NAME,
-} from '../../common/constants.js';
-import { DIST_NAMES, isPkgManifest } from '../entity/Package.js';
+} from '../../common/constants.ts';
+import { DIST_NAMES, isPkgManifest } from '../entity/Package.ts';
 import type {
   AbbreviatedPackageJSONType,
   AbbreviatedPackageManifestType,
   PackageJSONType,
   PackageManifestType,
-} from '../../repository/PackageRepository.js';
+} from '../../repository/PackageRepository.ts';
 
 function isoNow() {
   return new Date().toISOString();

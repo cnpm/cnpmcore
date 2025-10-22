@@ -1,13 +1,13 @@
 import util from 'node:util';
 import path from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary.js';
+import { BinaryType } from '../../enum/Binary.ts';
 import {
   AbstractBinary,
   BinaryAdapter,
   type BinaryItem,
   type FetchResult,
-} from './AbstractBinary.js';
+} from './AbstractBinary.ts';
 
 const PACKAGE_URL = 'https://registry.npmjs.com/playwright-core';
 const DOWNLOAD_HOST = 'https://playwright.azureedge.net/';

@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
-import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
-import { TaskState } from '../../../../app/common/enum/Task.js';
-import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
+import { TaskState } from '../../../../app/common/enum/Task.ts';
+import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter.ts';
 
 describe('test/port/controller/PackageSyncController/showSyncTaskLog.test.ts', () => {
   let publisher: TestUser;

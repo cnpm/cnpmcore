@@ -1,13 +1,13 @@
 import { SingletonProto } from '@eggjs/tegg';
 import { XMLParser } from 'fast-xml-parser';
 
-import { BinaryType } from '../../enum/Binary.js';
+import { BinaryType } from '../../enum/Binary.ts';
 import {
   AbstractBinary,
   BinaryAdapter,
   type BinaryItem,
   type FetchResult,
-} from './AbstractBinary.js';
+} from './AbstractBinary.ts';
 
 export const platforms = ['Linux_x64', 'Mac', 'Mac_Arm', 'Win', 'Win_x64'];
 

@@ -28,13 +28,13 @@ import type {
   PublicKeyCredentialRequestOptionsJSON,
 } from '@simplewebauthn/typescript-types';
 
-import { LoginResultCode, WanStatusCode } from '../../common/enum/User.js';
-import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
-import type { UserService } from '../../core/service/UserService.js';
-import { MiddlewareController } from '../middleware/index.js';
-import type { AuthAdapter } from '../../infra/AuthAdapter.js';
-import { decryptRSA, genRSAKeys } from '../../common/CryptoUtil.js';
-import { getBrowserTypeForWebauthn } from '../../common/UserUtil.js';
+import { LoginResultCode, WanStatusCode } from '../../common/enum/User.ts';
+import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
+import type { UserService } from '../../core/service/UserService.ts';
+import { MiddlewareController } from '../middleware/index.ts';
+import type { AuthAdapter } from '../../infra/AuthAdapter.ts';
+import { decryptRSA, genRSAKeys } from '../../common/CryptoUtil.ts';
+import { getBrowserTypeForWebauthn } from '../../common/UserUtil.ts';
 
 const LoginRequestRule = Type.Object({
   // cli 所在机器的 hostname，最新版本 npm cli 已经不会上报 hostname

@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TaskType } from '../../../../app/common/enum/Task.js';
-import type { Registry } from '../../../../app/core/entity/Registry.js';
-import type { ChangesStreamTaskData } from '../../../../app/core/entity/Task.js';
-import { TaskService } from '../../../../app/core/service/TaskService.js';
-import { type TestUser, TestUtil } from '../../../../test/TestUtil.js';
+import { TaskType } from '../../../../app/common/enum/Task.ts';
+import type { Registry } from '../../../../app/core/entity/Registry.ts';
+import type { ChangesStreamTaskData } from '../../../../app/core/entity/Task.ts';
+import { TaskService } from '../../../../app/core/service/TaskService.ts';
+import { type TestUser, TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/RegistryController/index.test.ts', () => {
   let adminUser: TestUser;

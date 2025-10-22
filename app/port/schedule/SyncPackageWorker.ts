@@ -6,8 +6,8 @@ import {
 import { Inject } from '@eggjs/tegg';
 import type { EggAppConfig, EggLogger } from 'egg';
 
-import type { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
-import { SyncMode } from '../../common/constants.js';
+import type { PackageSyncerService } from '../../core/service/PackageSyncerService.ts';
+import { SyncMode } from '../../common/constants.ts';
 
 let executingCount = 0;
 

@@ -1,5 +1,5 @@
 import '@eggjs/tegg';
-import type { User } from '../entity/User.js';
+import type { User } from '../entity/User.ts';
 
 export const PACKAGE_ADDED = 'PACKAGE_ADDED';
 export const PACKAGE_UNPUBLISHED = 'PACKAGE_UNPUBLISHED';

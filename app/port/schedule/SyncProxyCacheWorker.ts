@@ -6,8 +6,8 @@ import {
 } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
-import type { ProxyCacheService } from '../../core/service/ProxyCacheService.js';
-import { SyncMode } from '../../common/constants.js';
+import type { ProxyCacheService } from '../../core/service/ProxyCacheService.ts';
+import { SyncMode } from '../../common/constants.ts';
 
 let executingCount = 0;
 

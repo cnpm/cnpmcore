@@ -2,10 +2,10 @@ import type {
   ChangesStreamMode,
   SyncDeleteMode,
   SyncMode,
-} from '../common/constants.js';
-import type { DATABASE_TYPE } from '../../config/database.js';
+} from '../common/constants.ts';
+import type { DATABASE_TYPE } from '../../config/database.ts';
 
-export { cnpmcoreConfig } from '../../config/config.default.js';
+export { cnpmcoreConfig } from '../../config/config.default.ts';
 
 export interface CnpmcoreConfig {
   name: string;

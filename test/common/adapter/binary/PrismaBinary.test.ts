@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { PrismaBinary } from '../../../../app/common/adapter/binary/PrismaBinary.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { PrismaBinary } from '../../../../app/common/adapter/binary/PrismaBinary.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
   let binary: PrismaBinary;

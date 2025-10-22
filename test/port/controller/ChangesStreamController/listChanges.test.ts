@@ -3,7 +3,7 @@ import { setTimeout } from 'node:timers/promises';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () => {
   describe('[GET /_changes] listChanges()', () => {

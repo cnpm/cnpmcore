@@ -3,12 +3,12 @@ import { setTimeout } from 'node:timers/promises';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
-import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
+import { calculateIntegrity } from '../../../../app/common/PackageUtil.ts';
 import {
   PackageTagAddedSyncPackageVersionFileEvent,
   PackageTagChangedSyncPackageVersionFileEvent,
-} from '../../../../app/core/event/SyncPackageVersionFile.js';
+} from '../../../../app/core/event/SyncPackageVersionFile.ts';
 
 describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => {
   let publisher: TestUser;

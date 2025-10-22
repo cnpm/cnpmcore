@@ -12,19 +12,19 @@ import {
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
 
-import { AbstractController } from './AbstractController.js';
-import { AdminAccess } from '../middleware/AdminAccess.js';
+import { AbstractController } from './AbstractController.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
 import {
   FULLNAME_REG_STRING,
   getScopeAndName,
-} from '../../common/PackageUtil.js';
-import type { PackageVersionFileService } from '../../core/service/PackageVersionFileService.js';
-import type { PackageManagerService } from '../../core/service/PackageManagerService.js';
-import type { PackageVersionFile } from '../../core/entity/PackageVersionFile.js';
-import type { PackageVersion } from '../../core/entity/PackageVersion.js';
-import type { DistRepository } from '../../repository/DistRepository.js';
-import { Spec } from '../typebox.js';
-import { ensureContentType } from '../../common/FileUtil.js';
+} from '../../common/PackageUtil.ts';
+import type { PackageVersionFileService } from '../../core/service/PackageVersionFileService.ts';
+import type { PackageManagerService } from '../../core/service/PackageManagerService.ts';
+import type { PackageVersionFile } from '../../core/entity/PackageVersionFile.ts';
+import type { PackageVersion } from '../../core/entity/PackageVersion.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
+import { Spec } from '../typebox.ts';
+import { ensureContentType } from '../../common/FileUtil.ts';
 
 interface FileItem {
   path: string;
@@ -144,7 +144,7 @@ export class PackageVersionFileController extends AbstractController {
       );
     // GET /foo/1.0.0/files => /foo/1.0.0/files/{main}
     // ignore empty entry exp: @types/node@20.2.5/
-    const indexFile = manifest?.main || 'index.js';
+    const indexFile = manifest?.main || 'index.ts';
     ctx.redirect(join(ctx.path, indexFile));
   }
 

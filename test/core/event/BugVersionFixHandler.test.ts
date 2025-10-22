@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { BUG_VERSIONS } from '../../../app/common/constants.js';
-import { CacheService } from '../../../app/core/service/CacheService.js';
-import { BugVersionFixHandler } from '../../../app/core/event/BugVersionFixHandler.js';
-import { BugVersion } from '../../../app/core/entity/BugVersion.js';
-import { BugVersionService } from '../../../app/core/service/BugVersionService.js';
+import { BUG_VERSIONS } from '../../../app/common/constants.ts';
+import { CacheService } from '../../../app/core/service/CacheService.ts';
+import { BugVersionFixHandler } from '../../../app/core/event/BugVersionFixHandler.ts';
+import { BugVersion } from '../../../app/core/entity/BugVersion.ts';
+import { BugVersionService } from '../../../app/core/service/BugVersionService.ts';
 
 describe('test/core/event/BugVersionFixHandler.test.ts', () => {
   let cacheService: CacheService;

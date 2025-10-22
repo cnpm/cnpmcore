@@ -1,12 +1,12 @@
 import { basename } from 'node:path';
 import { SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary.js';
+import { BinaryType } from '../../enum/Binary.ts';
 import {
   AbstractBinary,
   BinaryAdapter,
   type BinaryItem,
   type FetchResult,
-} from './AbstractBinary.js';
+} from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.ChromeForTesting)

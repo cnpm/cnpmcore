@@ -10,17 +10,17 @@ import {
   Inject,
 } from '@eggjs/tegg';
 
-import { AbstractController } from '../AbstractController.js';
+import { AbstractController } from '../AbstractController.ts';
 import {
   FULLNAME_REG_STRING,
   getScopeAndName,
-} from '../../../common/PackageUtil.js';
-import { SyncMode } from '../../../common/constants.js';
-import type { NFSAdapter } from '../../../common/adapter/NFSAdapter.js';
-import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
-import type { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
-import type { PackageSyncerService } from '../../../core/service/PackageSyncerService.js';
-import type { RegistryManagerService } from '../../../core/service/RegistryManagerService.js';
+} from '../../../common/PackageUtil.ts';
+import { SyncMode } from '../../../common/constants.ts';
+import type { NFSAdapter } from '../../../common/adapter/NFSAdapter.ts';
+import type { PackageManagerService } from '../../../core/service/PackageManagerService.ts';
+import type { ProxyCacheService } from '../../../core/service/ProxyCacheService.ts';
+import type { PackageSyncerService } from '../../../core/service/PackageSyncerService.ts';
+import type { RegistryManagerService } from '../../../core/service/RegistryManagerService.ts';
 
 @HTTPController()
 export class DownloadPackageVersionTarController extends AbstractController {

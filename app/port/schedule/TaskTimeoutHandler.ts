@@ -6,8 +6,8 @@ import {
 import { Inject } from '@eggjs/tegg';
 import type { EggLogger } from 'egg';
 
-import type { TaskService } from '../../core/service/TaskService.js';
-import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
+import type { TaskService } from '../../core/service/TaskService.ts';
+import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
 
 @Schedule<IntervalParams>(
   {

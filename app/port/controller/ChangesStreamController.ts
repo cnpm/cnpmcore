@@ -9,8 +9,8 @@ import {
 } from '@eggjs/tegg';
 import { Type } from '@eggjs/typebox-validate/typebox';
 
-import { AbstractController } from './AbstractController.js';
-import type { ChangeRepository } from '../../repository/ChangeRepository.js';
+import { AbstractController } from './AbstractController.ts';
+import type { ChangeRepository } from '../../repository/ChangeRepository.ts';
 
 const ChangeRule = Type.Object({
   since: Type.Integer({ minimum: 0 }),

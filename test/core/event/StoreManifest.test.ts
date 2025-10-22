@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { getScopeAndName } from '../../../app/common/PackageUtil.js';
-import { PackageRepository } from '../../../app/repository/PackageRepository.js';
-import { TestUtil } from '../../../test/TestUtil.js';
+import { getScopeAndName } from '../../../app/common/PackageUtil.ts';
+import { PackageRepository } from '../../../app/repository/PackageRepository.ts';
+import { TestUtil } from '../../../test/TestUtil.ts';
 
 describe('test/core/event/StoreManifest.test.ts', () => {
   let packageRepository: PackageRepository;

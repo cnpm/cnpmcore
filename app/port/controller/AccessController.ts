@@ -6,13 +6,13 @@ import {
 } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 
-import { AbstractController } from './AbstractController.js';
+import { AbstractController } from './AbstractController.ts';
 import {
   FULLNAME_REG_STRING,
   getFullname,
   getScopeAndName,
-} from '../../common/PackageUtil.js';
-import { PackageAccessLevel } from '../../common/constants.js';
+} from '../../common/PackageUtil.ts';
+import { PackageAccessLevel } from '../../common/constants.ts';
 
 @HTTPController()
 export class AccessController extends AbstractController {

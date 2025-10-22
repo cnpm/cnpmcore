@@ -1,10 +1,10 @@
 import { Event, Inject } from '@eggjs/tegg';
 import type { EggAppConfig } from 'egg';
-import { PACKAGE_VERSION_ADDED } from './index.js';
-import { getScopeAndName } from '../../common/PackageUtil.js';
-import { PackageVersionManifest as PackageVersionManifestEntity } from '../entity/PackageVersionManifest.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import type { DistRepository } from '../../repository/DistRepository.js';
+import { PACKAGE_VERSION_ADDED } from './index.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
+import { PackageVersionManifest as PackageVersionManifestEntity } from '../entity/PackageVersionManifest.ts';
+import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
 
 class StoreManifestEvent {
   @Inject()

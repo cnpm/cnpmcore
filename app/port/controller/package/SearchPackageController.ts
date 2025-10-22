@@ -12,11 +12,11 @@ import {
 import type { Static } from '@eggjs/typebox-validate/typebox';
 import { E451 } from 'egg-errors';
 
-import { AbstractController } from '../AbstractController.js';
-import type { SearchQueryOptions } from '../../typebox.js';
-import type { PackageSearchService } from '../../../core/service/PackageSearchService.js';
-import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';
-import { AdminAccess } from '../../middleware/AdminAccess.js';
+import { AbstractController } from '../AbstractController.ts';
+import type { SearchQueryOptions } from '../../typebox.ts';
+import type { PackageSearchService } from '../../../core/service/PackageSearchService.ts';
+import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.ts';
+import { AdminAccess } from '../../middleware/AdminAccess.ts';
 
 @HTTPController()
 export class SearchPackageController extends AbstractController {

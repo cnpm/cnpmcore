@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../TestUtil.js';
+import { TestUtil } from '../../TestUtil.ts';
 
 describe('test/port/middleware/AlwaysAuth.test.ts', () => {
   it('should 401 when config.cnpmcore.alwaysAuth = true', async () => {

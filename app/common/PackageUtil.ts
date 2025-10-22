@@ -9,7 +9,7 @@ import tar from '@fengmk2/tar';
 import type {
   AuthorType,
   PackageJSONType,
-} from '../repository/PackageRepository.js';
+} from '../repository/PackageRepository.ts';
 
 // /@cnpm%2ffoo
 // /@cnpm%2Ffoo

@@ -1,16 +1,16 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { EggLogger } from 'egg';
 import pMap from 'p-map';
-import { BugVersion } from '../entity/BugVersion.js';
+import { BugVersion } from '../entity/BugVersion.ts';
 import type {
   PackageJSONType,
   PackageRepository,
-} from '../../repository/PackageRepository.js';
-import type { DistRepository } from '../../repository/DistRepository.js';
-import { getScopeAndName } from '../../common/PackageUtil.js';
-import type { CacheService } from './CacheService.js';
-import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants.js';
-import type { BugVersionStore } from '../../common/adapter/BugVersionStore.js';
+} from '../../repository/PackageRepository.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
+import type { CacheService } from './CacheService.ts';
+import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants.ts';
+import type { BugVersionStore } from '../../common/adapter/BugVersionStore.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

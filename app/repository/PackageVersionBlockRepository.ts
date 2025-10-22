@@ -1,9 +1,9 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
-import { ModelConvertor } from './util/ModelConvertor.js';
-import type { PackageVersionBlock as PackageVersionBlockModel } from './model/PackageVersionBlock.js';
-import { PackageVersionBlock as PackageVersionBlockEntity } from '../core/entity/PackageVersionBlock.js';
-import { AbstractRepository } from './AbstractRepository.js';
+import { ModelConvertor } from './util/ModelConvertor.ts';
+import type { PackageVersionBlock as PackageVersionBlockModel } from './model/PackageVersionBlock.ts';
+import { PackageVersionBlock as PackageVersionBlockEntity } from '../core/entity/PackageVersionBlock.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

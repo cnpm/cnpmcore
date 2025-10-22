@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import type { Registry } from '../../../../app/core/entity/Registry.js';
-import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import type { Task } from '../../../../app/core/entity/Task.js';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import type { Registry } from '../../../../app/core/entity/Registry.ts';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
+import type { Task } from '../../../../app/core/entity/Task.ts';
 
 describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () => {
   let packageSyncerService: PackageSyncerService;

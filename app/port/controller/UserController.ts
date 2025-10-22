@@ -15,10 +15,10 @@ import {
 } from 'egg-errors';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 
-import { AbstractController } from './AbstractController.js';
-import { LoginResultCode } from '../../common/enum/User.js';
-import { sha512 } from '../../common/UserUtil.js';
-import { isGranularToken } from '../../core/entity/Token.js';
+import { AbstractController } from './AbstractController.ts';
+import { LoginResultCode } from '../../common/enum/User.ts';
+import { sha512 } from '../../common/UserUtil.ts';
+import { isGranularToken } from '../../core/entity/Token.ts';
 
 // body: {
 //   _id: 'org.couchdb.user:dddd',

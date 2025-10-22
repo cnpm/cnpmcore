@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { BugVersionStore } from '../../../app/common/adapter/BugVersionStore.js';
-import { BugVersion } from '../../../app/core/entity/BugVersion.js';
+import { BugVersionStore } from '../../../app/common/adapter/BugVersionStore.ts';
+import { BugVersion } from '../../../app/core/entity/BugVersion.ts';
 
 describe('test/common/adapter/BugVersionStore.test.ts', () => {
   let bugVersionStore: BugVersionStore;

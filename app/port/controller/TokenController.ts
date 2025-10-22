@@ -11,9 +11,9 @@ import {
 } from '@eggjs/tegg';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 
-import type { AuthAdapter } from '../../infra/AuthAdapter.js';
-import { AbstractController } from './AbstractController.js';
-import { TokenType, isGranularToken } from '../../core/entity/Token.js';
+import type { AuthAdapter } from '../../infra/AuthAdapter.ts';
+import { AbstractController } from './AbstractController.ts';
+import { TokenType, isGranularToken } from '../../core/entity/Token.ts';
 
 // Creating and viewing access tokens
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#viewing-access-tokens

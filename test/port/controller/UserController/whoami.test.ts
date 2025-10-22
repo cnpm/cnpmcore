@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import dayjs from 'dayjs';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { AuthAdapter } from '../../../../app/infra/AuthAdapter.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { AuthAdapter } from '../../../../app/infra/AuthAdapter.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/UserController/whoami.test.ts', () => {
   describe('[GET /-/whoami] whoami()', () => {

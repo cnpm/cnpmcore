@@ -1,7 +1,7 @@
-import { Entity, type EntityData } from './Entity.js';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
-import { Dist } from './Dist.js';
-import { getFullname } from '../../common/PackageUtil.js';
+import { Entity, type EntityData } from './Entity.ts';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import { Dist } from './Dist.ts';
+import { getFullname } from '../../common/PackageUtil.ts';
 
 interface PackageData extends EntityData {
   scope: string;

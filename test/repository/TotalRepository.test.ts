@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TotalRepository } from '../../app/repository/TotalRepository.js';
+import { TotalRepository } from '../../app/repository/TotalRepository.ts';
 
 describe('test/repository/TotalRepository.test.ts', () => {
   let totalRepository: TotalRepository;

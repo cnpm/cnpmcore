@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
-import type { Task } from '../../../../app/core/entity/Task.js';
-import { TaskState } from '../../../../app/common/enum/Task.js';
-import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
-import { TaskService } from '../../../../app/core/service/TaskService.js';
+import { TestUtil } from '../../../../test/TestUtil.ts';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.ts';
+import type { Task } from '../../../../app/core/entity/Task.ts';
+import { TaskState } from '../../../../app/common/enum/Task.ts';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
+import { TaskService } from '../../../../app/core/service/TaskService.ts';
 
 describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
   const pkgName = '@cnpmcore/foo';

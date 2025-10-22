@@ -11,7 +11,7 @@ import type {
   AuthClient,
   AuthUrlResult,
   userResult,
-} from '../common/typing.js';
+} from '../common/typing.ts';
 
 const ONE_DAY = 3600 * 24;
 

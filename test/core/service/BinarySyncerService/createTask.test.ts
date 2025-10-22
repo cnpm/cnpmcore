@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService.js';
-import type { BinaryName } from '../../../../config/binaries.js';
+import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService.ts';
+import type { BinaryName } from '../../../../config/binaries.ts';
 
 describe('test/core/service/BinarySyncerService/createTask.test.ts', () => {
   let binarySyncerService: BinarySyncerService;

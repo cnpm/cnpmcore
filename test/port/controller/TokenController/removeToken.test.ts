@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TokenType, type Token } from '../../../../app/core/entity/Token.js';
-import { UserService } from '../../../../app/core/service/UserService.js';
-import { AuthAdapter } from '../../../../app/infra/AuthAdapter.js';
-import { TokenPackage } from '../../../../app/repository/model/TokenPackage.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TokenType, type Token } from '../../../../app/core/entity/Token.ts';
+import { UserService } from '../../../../app/core/service/UserService.ts';
+import { AuthAdapter } from '../../../../app/infra/AuthAdapter.ts';
+import { TokenPackage } from '../../../../app/repository/model/TokenPackage.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/TokenController/removeToken.test.ts', () => {
   describe('[DELETE /-/npm/v1/tokens/token/:tokenKey] removeToken()', () => {

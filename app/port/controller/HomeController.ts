@@ -9,13 +9,13 @@ import {
 } from '@eggjs/tegg';
 import pkg from 'egg/package.json' with { type: 'json' };
 
-import { AbstractController } from './AbstractController.js';
+import { AbstractController } from './AbstractController.ts';
 import type {
   CacheService,
   DownloadInfo,
   UpstreamRegistryInfo,
-} from '../../core/service/CacheService.js';
-import type { HomeService } from '../../core/service/HomeService.js';
+} from '../../core/service/CacheService.ts';
+import type { HomeService } from '../../core/service/HomeService.ts';
 
 const EggVersion = pkg.version;
 const startTime = new Date();

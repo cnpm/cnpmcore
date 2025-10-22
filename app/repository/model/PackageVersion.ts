@@ -1,8 +1,8 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 
-import { Bone, DataTypes } from '../util/leoric.js';
-import { EntityProperty } from '../util/EntityProperty.js';
-import { PaddingSemVer } from '../../core/entity/PaddingSemVer.js';
+import { Bone, DataTypes } from '../util/leoric.ts';
+import { EntityProperty } from '../util/EntityProperty.ts';
+import { PaddingSemVer } from '../../core/entity/PaddingSemVer.ts';
 
 @Model()
 export class PackageVersion extends Bone {

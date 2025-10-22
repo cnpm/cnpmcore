@@ -8,18 +8,18 @@ import {
   Inject,
 } from '@eggjs/tegg';
 
-import { AbstractController } from '../AbstractController.js';
+import { AbstractController } from '../AbstractController.ts';
 import {
   FULLNAME_REG_STRING,
   getScopeAndName,
   calculateIntegrity,
-} from '../../../common/PackageUtil.js';
-import { isSyncWorkerRequest } from '../../../common/SyncUtil.js';
-import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
-import type { CacheService } from '../../../core/service/CacheService.js';
-import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants.js';
-import type { ProxyCacheService } from '../../../core/service/ProxyCacheService.js';
-import { DIST_NAMES } from '../../../core/entity/Package.js';
+} from '../../../common/PackageUtil.ts';
+import { isSyncWorkerRequest } from '../../../common/SyncUtil.ts';
+import type { PackageManagerService } from '../../../core/service/PackageManagerService.ts';
+import type { CacheService } from '../../../core/service/CacheService.ts';
+import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants.ts';
+import type { ProxyCacheService } from '../../../core/service/ProxyCacheService.ts';
+import { DIST_NAMES } from '../../../core/entity/Package.ts';
 
 @HTTPController()
 export class ShowPackageController extends AbstractController {

@@ -2,8 +2,8 @@ import { ModelMetadataUtil } from '@eggjs/tegg/orm';
 import type { EggProtoImplClass } from '@eggjs/tegg';
 import { get as lodashGet, set as lodashSet } from 'lodash-es';
 
-import { ModelConvertorUtil } from './ModelConvertorUtil.js';
-import type { LeoricBone, Bone } from './leoric.js';
+import { ModelConvertorUtil } from './ModelConvertorUtil.ts';
+import type { LeoricBone, Bone } from './leoric.ts';
 
 const CREATED_AT = 'createdAt';
 const UPDATED_AT = 'updatedAt';

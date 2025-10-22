@@ -1,14 +1,14 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
-import { ModelConvertor } from './util/ModelConvertor.js';
-import { Registry as RegistryEntity } from '../core/entity/Registry.js';
-import { AbstractRepository } from './AbstractRepository.js';
-import type { Registry as RegistryModel } from './model/Registry.js';
+import { ModelConvertor } from './util/ModelConvertor.ts';
+import { Registry as RegistryEntity } from '../core/entity/Registry.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
+import type { Registry as RegistryModel } from './model/Registry.ts';
 import {
   EntityUtil,
   type PageOptions,
   type PageResult,
-} from '../core/util/EntityUtil.js';
+} from '../core/util/EntityUtil.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

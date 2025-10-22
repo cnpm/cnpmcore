@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { ImageminBinary } from '../../../../app/common/adapter/binary/ImageminBinary.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { ImageminBinary } from '../../../../app/common/adapter/binary/ImageminBinary.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/common/adapter/binary/ImageminBinary.test.ts', () => {
   let binary: ImageminBinary;

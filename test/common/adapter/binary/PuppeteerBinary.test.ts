@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { PuppeteerBinary } from '../../../../app/common/adapter/binary/PuppeteerBinary.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { PuppeteerBinary } from '../../../../app/common/adapter/binary/PuppeteerBinary.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
   let binary: PuppeteerBinary;

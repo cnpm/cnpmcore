@@ -1,12 +1,12 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { estypes } from '@elastic/elasticsearch';
 
-import type { SearchAdapter } from '../common/typing.js';
+import type { SearchAdapter } from '../common/typing.ts';
 import type {
   AuthorType,
   CnpmcorePatchInfo,
   PackageManifestType,
-} from './PackageRepository.js';
+} from './PackageRepository.ts';
 
 export type SearchJSONPickKey =
   | '_rev'

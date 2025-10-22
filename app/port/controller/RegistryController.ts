@@ -13,19 +13,19 @@ import {
 import { NotFoundError } from 'egg-errors';
 import type { Static } from '@eggjs/typebox-validate/typebox';
 
-import { AbstractController } from './AbstractController.js';
+import { AbstractController } from './AbstractController.ts';
 import type {
   RegistryManagerService,
   UpdateRegistryCmd,
-} from '../../core/service/RegistryManagerService.js';
-import { AdminAccess } from '../middleware/AdminAccess.js';
-import type { ScopeManagerService } from '../../core/service/ScopeManagerService.js';
+} from '../../core/service/RegistryManagerService.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
+import type { ScopeManagerService } from '../../core/service/ScopeManagerService.ts';
 import {
   RegistryCreateOptions,
   RegistryCreateSyncOptions,
   RegistryUpdateOptions,
   type QueryPageOptions,
-} from '../typebox.js';
+} from '../typebox.ts';
 
 @HTTPController()
 export class RegistryController extends AbstractController {

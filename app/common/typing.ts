@@ -2,7 +2,7 @@ import type { Readable } from 'node:stream';
 import type { IncomingHttpHeaders } from 'node:http';
 import type { EggContext } from '@eggjs/tegg';
 import type { estypes } from '@elastic/elasticsearch';
-import type { CnpmcoreConfig } from '../port/config.js';
+import type { CnpmcoreConfig } from '../port/config.ts';
 
 export interface UploadResult {
   key: string;

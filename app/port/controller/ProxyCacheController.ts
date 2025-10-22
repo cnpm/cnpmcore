@@ -15,15 +15,15 @@ import {
   UnauthorizedError,
 } from 'egg-errors';
 
-import { AbstractController } from './AbstractController.js';
-import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
+import { AbstractController } from './AbstractController.ts';
+import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';
 import type { Static } from '@eggjs/typebox-validate/typebox';
-import type { QueryPageOptions } from '../typebox.js';
-import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
-import type { ProxyCacheService } from '../../core/service/ProxyCacheService.js';
-import { SyncMode } from '../../common/constants.js';
-import type { CacheService } from '../../core/service/CacheService.js';
-import { isPkgManifest } from '../../core/entity/Package.js';
+import type { QueryPageOptions } from '../typebox.ts';
+import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
+import type { ProxyCacheService } from '../../core/service/ProxyCacheService.ts';
+import { SyncMode } from '../../common/constants.ts';
+import type { CacheService } from '../../core/service/CacheService.ts';
+import { isPkgManifest } from '../../core/entity/Package.ts';
 
 @HTTPController()
 export class ProxyCacheController extends AbstractController {

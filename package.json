@@ -160,6 +160,7 @@
     "oxlint": "^1.11.0",
     "oxlint-tsgolint": "^0.2.0",
     "prettier": "^3.5.3",
+    "tsx": "^4.20.6",
     "typescript": "5"
   },
   "author": "killagu",

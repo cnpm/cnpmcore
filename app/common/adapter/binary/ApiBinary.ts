@@ -1,12 +1,12 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
 import type { EggAppConfig } from 'egg';
-import { BinaryType } from '../../enum/Binary.js';
+import { BinaryType } from '../../enum/Binary.ts';
 import {
   AbstractBinary,
   BinaryAdapter,
   type BinaryItem,
   type FetchResult,
-} from './AbstractBinary.js';
+} from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Api)

@@ -1,7 +1,7 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
-import { AbstractService } from '../../common/AbstractService.js';
-import type { ChangesStreamTaskData } from '../entity/Task.js';
+import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
+import { AbstractService } from '../../common/AbstractService.ts';
+import type { ChangesStreamTaskData } from '../entity/Task.ts';
 
 type PackageCacheAttribute = 'etag' | 'manifests';
 

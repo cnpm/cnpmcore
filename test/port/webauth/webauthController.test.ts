@@ -3,11 +3,11 @@ import crypto from 'node:crypto';
 import { basename } from 'node:path';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { AuthAdapter } from '../../../app/infra/AuthAdapter.js';
-import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter.js';
-import { UserService } from '../../../app/core/service/UserService.js';
-import { UserRepository } from '../../../app/repository/UserRepository.js';
-import { encryptRSA, genRSAKeys } from '../../../app/common/CryptoUtil.js';
+import { AuthAdapter } from '../../../app/infra/AuthAdapter.ts';
+import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter.ts';
+import { UserService } from '../../../app/core/service/UserService.ts';
+import { UserRepository } from '../../../app/repository/UserRepository.ts';
+import { encryptRSA, genRSAKeys } from '../../../app/common/CryptoUtil.ts';
 
 describe('test/port/webauth/webauthController.test.ts', () => {
   describe('/-/v1/login', () => {

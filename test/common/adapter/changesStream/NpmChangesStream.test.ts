@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import type { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';
-import { NpmChangesStream } from '../../../../app/common/adapter/changesStream/NpmChangesStream.js';
-import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import type { Registry } from '../../../../app/core/entity/Registry.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
+import type { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.ts';
+import { NpmChangesStream } from '../../../../app/common/adapter/changesStream/NpmChangesStream.ts';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
+import type { Registry } from '../../../../app/core/entity/Registry.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
 
 describe('test/common/adapter/changesStream/NpmChangesStream.test.ts', () => {
   let npmChangesStream: NpmChangesStream;

@@ -1,17 +1,17 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { E400, NotFoundError } from 'egg-errors';
-import type { RegistryRepository } from '../../repository/RegistryRepository.js';
-import { AbstractService } from '../../common/AbstractService.js';
-import { Registry } from '../entity/Registry.js';
-import type { PageOptions, PageResult } from '../util/EntityUtil.js';
-import type { ScopeManagerService } from './ScopeManagerService.js';
-import type { TaskService } from './TaskService.js';
-import { Task } from '../entity/Task.js';
+import type { RegistryRepository } from '../../repository/RegistryRepository.ts';
+import { AbstractService } from '../../common/AbstractService.ts';
+import { Registry } from '../entity/Registry.ts';
+import type { PageOptions, PageResult } from '../util/EntityUtil.ts';
+import type { ScopeManagerService } from './ScopeManagerService.ts';
+import type { TaskService } from './TaskService.ts';
+import { Task } from '../entity/Task.ts';
 import {
   ChangesStreamMode,
   PresetRegistryName,
-} from '../../common/constants.js';
-import { RegistryType } from '../../common/enum/Registry.js';
+} from '../../common/constants.ts';
+import { RegistryType } from '../../common/enum/Registry.ts';
 
 export interface CreateRegistryCmd
   extends Pick<

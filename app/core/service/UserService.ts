@@ -3,21 +3,21 @@ import crypto from 'node:crypto';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 
-import type { UserRepository } from '../../repository/UserRepository.js';
-import { User as UserEntity } from '../entity/User.js';
-import { Token as TokenEntity, type TokenType } from '../entity/Token.js';
-import { WebauthnCredential as WebauthnCredentialEntity } from '../entity/WebauthnCredential.js';
-import { LoginResultCode } from '../../common/enum/User.js';
+import type { UserRepository } from '../../repository/UserRepository.ts';
+import { User as UserEntity } from '../entity/User.ts';
+import { Token as TokenEntity, type TokenType } from '../entity/Token.ts';
+import { WebauthnCredential as WebauthnCredentialEntity } from '../entity/WebauthnCredential.ts';
+import { LoginResultCode } from '../../common/enum/User.ts';
 import {
   checkIntegrity,
   integrity,
   randomToken,
   sha512,
-} from '../../common/UserUtil.js';
-import { AbstractService } from '../../common/AbstractService.js';
-import type { RegistryManagerService } from './RegistryManagerService.js';
-import { getPrefixedName } from '../../common/PackageUtil.js';
-import type { Registry } from '../entity/Registry.js';
+} from '../../common/UserUtil.ts';
+import { AbstractService } from '../../common/AbstractService.ts';
+import type { RegistryManagerService } from './RegistryManagerService.ts';
+import { getPrefixedName } from '../../common/PackageUtil.ts';
+import type { Registry } from '../entity/Registry.ts';
 
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 

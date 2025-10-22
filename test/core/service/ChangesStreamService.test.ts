@@ -3,15 +3,15 @@ import { Readable } from 'node:stream';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../test/TestUtil.js';
-import { ChangesStreamService } from '../../../app/core/service/ChangesStreamService.js';
-import { TaskService } from '../../../app/core/service/TaskService.js';
-import { Task, type ChangesStreamTask } from '../../../app/core/entity/Task.js';
-import { RegistryManagerService } from '../../../app/core/service/RegistryManagerService.js';
-import { RegistryType } from '../../../app/common/enum/Registry.js';
-import { ScopeManagerService } from '../../../app/core/service/ScopeManagerService.js';
-import type { Registry } from '../../../app/core/entity/Registry.js';
-import { RedisQueueAdapter } from '../../../app/infra/QueueAdapter.js';
+import { TestUtil } from '../../../test/TestUtil.ts';
+import { ChangesStreamService } from '../../../app/core/service/ChangesStreamService.ts';
+import { TaskService } from '../../../app/core/service/TaskService.ts';
+import { Task, type ChangesStreamTask } from '../../../app/core/entity/Task.ts';
+import { RegistryManagerService } from '../../../app/core/service/RegistryManagerService.ts';
+import { RegistryType } from '../../../app/common/enum/Registry.ts';
+import { ScopeManagerService } from '../../../app/core/service/ScopeManagerService.ts';
+import type { Registry } from '../../../app/core/entity/Registry.ts';
+import { RedisQueueAdapter } from '../../../app/infra/QueueAdapter.ts';
 
 describe('test/core/service/ChangesStreamService.test.ts', () => {
   let changesStreamService: ChangesStreamService;

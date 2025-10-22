@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import dayjs from 'dayjs';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TokenType, type Token } from '../../../../app/core/entity/Token.js';
-import { AuthAdapter } from '../../../../app/infra/AuthAdapter.js';
-import { UserRepository } from '../../../../app/repository/UserRepository.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TokenType, type Token } from '../../../../app/core/entity/Token.ts';
+import { AuthAdapter } from '../../../../app/infra/AuthAdapter.ts';
+import { UserRepository } from '../../../../app/repository/UserRepository.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/TokenController/createToken.test.ts', () => {
   describe('[POST /-/npm/v1/tokens] createToken()', () => {

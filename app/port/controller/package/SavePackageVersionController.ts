@@ -19,23 +19,23 @@ import { checkData, fromData } from 'ssri';
 import validateNpmPackageName from 'validate-npm-package-name';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 
-import { AbstractController } from '../AbstractController.js';
+import { AbstractController } from '../AbstractController.ts';
 import {
   FULLNAME_REG_STRING,
   extractPackageJSON,
   getScopeAndName,
-} from '../../../common/PackageUtil.js';
-import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
-import type { PackageVersion as PackageVersionEntity } from '../../../core/entity/PackageVersion.js';
+} from '../../../common/PackageUtil.ts';
+import type { PackageManagerService } from '../../../core/service/PackageManagerService.ts';
+import type { PackageVersion as PackageVersionEntity } from '../../../core/entity/PackageVersion.ts';
 import {
   Description as DescriptionType,
   Name as NameType,
   TagWithVersionRule,
   VersionRule,
-} from '../../typebox.js';
-import type { RegistryManagerService } from '../../../core/service/RegistryManagerService.js';
-import type { PackageJSONType } from '../../../repository/PackageRepository.js';
-import type { CacheAdapter } from '../../../common/adapter/CacheAdapter.js';
+} from '../../typebox.ts';
+import type { RegistryManagerService } from '../../../core/service/RegistryManagerService.ts';
+import type { PackageJSONType } from '../../../repository/PackageRepository.ts';
+import type { CacheAdapter } from '../../../common/adapter/CacheAdapter.ts';
 
 const STRICT_CHECK_TARBALL_FIELDS: (keyof PackageJson)[] = [
   'name',

@@ -1,11 +1,11 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
-import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
-import { TaskState, TaskType } from '../../common/enum/Task.js';
-import { AbstractService } from '../../common/AbstractService.js';
-import type { TaskRepository } from '../../repository/TaskRepository.js';
-import type { Task, CreateSyncPackageTaskData } from '../entity/Task.js';
-import type { QueueAdapter } from '../../common/typing.js';
+import type { NFSAdapter } from '../../common/adapter/NFSAdapter.ts';
+import { TaskState, TaskType } from '../../common/enum/Task.ts';
+import { AbstractService } from '../../common/AbstractService.ts';
+import type { TaskRepository } from '../../repository/TaskRepository.ts';
+import type { Task, CreateSyncPackageTaskData } from '../entity/Task.ts';
+import type { QueueAdapter } from '../../common/typing.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

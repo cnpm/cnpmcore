@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
-import { Task as TaskModel } from '../../../../app/repository/model/Task.js';
-import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.js';
-import { TaskService } from '../../../../app/core/service/TaskService.js';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.ts';
+import { Task as TaskModel } from '../../../../app/repository/model/Task.ts';
+import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.ts';
+import { TaskService } from '../../../../app/core/service/TaskService.ts';
 
 describe('test/core/service/PackageSyncerService/findExecuteTask.test.ts', () => {
   let packageSyncerService: PackageSyncerService;

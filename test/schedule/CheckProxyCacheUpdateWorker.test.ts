@@ -3,12 +3,12 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { SyncMode } from '../../app/common/constants.js';
-import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository.js';
-import { ProxyCache } from '../../app/core/entity/ProxyCache.js';
-import { DIST_NAMES } from '../../app/core/entity/Package.js';
-import { TaskService } from '../../app/core/service/TaskService.js';
-import { TaskType } from '../../app/common/enum/Task.js';
+import { SyncMode } from '../../app/common/constants.ts';
+import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository.ts';
+import { ProxyCache } from '../../app/core/entity/ProxyCache.ts';
+import { DIST_NAMES } from '../../app/core/entity/Package.ts';
+import { TaskService } from '../../app/core/service/TaskService.ts';
+import { TaskType } from '../../app/common/enum/Task.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

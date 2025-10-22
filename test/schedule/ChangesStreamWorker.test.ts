@@ -3,10 +3,10 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { ChangesStreamService } from '../../app/core/service/ChangesStreamService.js';
-import { TaskService } from '../../app/core/service/TaskService.js';
-import { Task } from '../../app/repository/model/Task.js';
-import { TestUtil } from '../../test/TestUtil.js';
+import { ChangesStreamService } from '../../app/core/service/ChangesStreamService.ts';
+import { TaskService } from '../../app/core/service/TaskService.ts';
+import { Task } from '../../app/repository/model/Task.ts';
+import { TestUtil } from '../../test/TestUtil.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

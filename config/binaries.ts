@@ -1,4 +1,4 @@
-import { BinaryType } from '../app/common/enum/Binary.js';
+import { BinaryType } from '../app/common/enum/Binary.ts';
 
 const binaries = {
   // NwjsBinary
