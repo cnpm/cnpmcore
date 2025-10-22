@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import type { EggAppConfig, PowerPartial } from 'egg';
 import Mock from '@elastic/elasticsearch-mock';
 
-import { database } from './database.js';
+import { database } from './database.ts';
 
 // @ts-expect-error has no construct signatures
 export const mockES = new Mock();

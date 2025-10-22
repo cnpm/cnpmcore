@@ -12,13 +12,13 @@ import {
   PACKAGE_UNPUBLISHED,
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
-} from './index.js';
-import type { ChangeRepository } from '../../repository/ChangeRepository.js';
-import { Change } from '../entity/Change.js';
-import { HookEvent } from '../entity/HookEvent.js';
-import { Task } from '../entity/Task.js';
-import type { User } from '../entity/User.js';
-import type { TaskService } from '../service/TaskService.js';
+} from './index.ts';
+import type { ChangeRepository } from '../../repository/ChangeRepository.ts';
+import { Change } from '../entity/Change.ts';
+import { HookEvent } from '../entity/HookEvent.ts';
+import { Task } from '../entity/Task.ts';
+import type { User } from '../entity/User.ts';
+import type { TaskService } from '../service/TaskService.ts';
 
 class ChangesStreamEvent {
   @Inject()

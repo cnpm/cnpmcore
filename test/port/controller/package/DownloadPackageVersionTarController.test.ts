@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { type TestUser, TestUtil } from '../../../../test/TestUtil.js';
-import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.js';
-import { SyncMode } from '../../../../app/common/constants.js';
+import { type TestUser, TestUtil } from '../../../../test/TestUtil.ts';
+import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.ts';
+import { SyncMode } from '../../../../app/common/constants.ts';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let publisher: TestUser;

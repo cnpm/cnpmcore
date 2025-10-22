@@ -14,7 +14,7 @@ import type {
   NFSClient,
   UploadOptions,
   UploadResult,
-} from '../common/typing.js';
+} from '../common/typing.ts';
 
 @SingletonProto({
   name: 'nfsClient',

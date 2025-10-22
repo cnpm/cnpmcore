@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
-import { UserService } from '../../../../app/core/service/UserService.js';
-import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
-import type { User } from '../../../../app/core/entity/User.js';
+import { TestUtil } from '../../../../test/TestUtil.ts';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.ts';
+import { UserService } from '../../../../app/core/service/UserService.ts';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
+import type { User } from '../../../../app/core/entity/User.ts';
 
 describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   let packageManagerService: PackageManagerService;

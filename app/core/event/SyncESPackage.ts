@@ -14,8 +14,8 @@ import {
   PACKAGE_UNPUBLISHED,
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
-} from './index.js';
-import type { PackageSearchService } from '../service/PackageSearchService.js';
+} from './index.ts';
+import type { PackageSearchService } from '../service/PackageSearchService.ts';
 
 class SyncESPackage {
   @Inject()

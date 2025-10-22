@@ -3,8 +3,8 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { PackageSyncerService } from '../../app/core/service/PackageSyncerService.js';
-import { TestUtil } from '../../test/TestUtil.js';
+import { PackageSyncerService } from '../../app/core/service/PackageSyncerService.ts';
+import { TestUtil } from '../../test/TestUtil.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

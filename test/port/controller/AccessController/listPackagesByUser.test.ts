@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/AccessController/listPackagesByUser.test.ts', () => {
   describe('[GET /-/org/:username/package] listPackagesByUser()', () => {

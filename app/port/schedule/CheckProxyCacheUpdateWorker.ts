@@ -2,10 +2,10 @@ import { Schedule, ScheduleType, type CronParams } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import type { EggAppConfig, EggLogger } from 'egg';
 
-import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
-import { SyncMode } from '../../common/constants.js';
-import type { ProxyCacheService } from '../../core/service/ProxyCacheService.js';
-import { isPkgManifest } from '../../core/entity/Package.js';
+import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';
+import { SyncMode } from '../../common/constants.ts';
+import type { ProxyCacheService } from '../../core/service/ProxyCacheService.ts';
+import { isPkgManifest } from '../../core/entity/Package.ts';
 
 @Schedule<CronParams>({
   type: ScheduleType.WORKER,

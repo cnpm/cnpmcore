@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
+import { TestUtil } from '../../../../test/TestUtil.ts';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.ts';
 
 describe('test/core/service/PackageManagerService/block.test.ts', () => {
   let packageManagerService: PackageManagerService;

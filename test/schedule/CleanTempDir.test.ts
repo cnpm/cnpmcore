@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { app } from '@eggjs/mock/bootstrap';
 
-import dayjs from '../../app/common/dayjs.js';
+import dayjs from '../../app/common/dayjs.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

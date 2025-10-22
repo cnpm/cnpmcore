@@ -1,7 +1,7 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { Total } from './model/Total.js';
-import { AbstractRepository } from './AbstractRepository.js';
-import { TotalType } from '../common/enum/Total.js';
+import type { Total } from './model/Total.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
+import { TotalType } from '../common/enum/Total.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

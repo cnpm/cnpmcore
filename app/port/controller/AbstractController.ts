@@ -2,17 +2,17 @@ import { NotFoundError, UnavailableForLegalReasonsError } from 'egg-errors';
 import { type EggContext, Inject } from '@eggjs/tegg';
 import type { EggAppConfig, EggLogger } from 'egg';
 
-import { MiddlewareController } from '../middleware/index.js';
-import type { UserRoleManager } from '../UserRoleManager.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import type { UserRepository } from '../../repository/UserRepository.js';
-import { getFullname, getScopeAndName } from '../../common/PackageUtil.js';
-import type { Package as PackageEntity } from '../../core/entity/Package.js';
-import type { PackageVersion as PackageVersionEntity } from '../../core/entity/PackageVersion.js';
-import type { UserService } from '../../core/service/UserService.js';
-import type { User as UserEntity } from '../../core/entity/User.js';
-import { VersionRule } from '../typebox.js';
-import { SyncMode } from '../../common/constants.js';
+import { MiddlewareController } from '../middleware/index.ts';
+import type { UserRoleManager } from '../UserRoleManager.ts';
+import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import type { UserRepository } from '../../repository/UserRepository.ts';
+import { getFullname, getScopeAndName } from '../../common/PackageUtil.ts';
+import type { Package as PackageEntity } from '../../core/entity/Package.ts';
+import type { PackageVersion as PackageVersionEntity } from '../../core/entity/PackageVersion.ts';
+import type { UserService } from '../../core/service/UserService.ts';
+import type { User as UserEntity } from '../../core/entity/User.ts';
+import { VersionRule } from '../typebox.ts';
+import { SyncMode } from '../../common/constants.ts';
 
 class PackageNotFoundError extends NotFoundError {
   redirectToSourceRegistry?: string;

@@ -4,9 +4,9 @@ import { fileURLToPath } from 'node:url';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
-import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
-import { TaskState } from '../../../../app/common/enum/Task.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
+import { TaskState } from '../../../../app/common/enum/Task.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

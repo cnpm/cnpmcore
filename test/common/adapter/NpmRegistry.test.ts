@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { NPMRegistry } from '../../../app/common/adapter/NPMRegistry.js';
+import { NPMRegistry } from '../../../app/common/adapter/NPMRegistry.ts';
 
 describe('test/common/adapter/CacheAdapter.test.ts', () => {
   let npmRegistry: NPMRegistry;

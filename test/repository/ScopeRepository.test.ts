@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { ScopeRepository } from '../../app/repository/ScopeRepository.js';
-import { Scope } from '../../app/core/entity/Scope.js';
+import { ScopeRepository } from '../../app/repository/ScopeRepository.ts';
+import { Scope } from '../../app/core/entity/Scope.ts';
 
 describe('test/repository/ScopeRepository.test.ts', () => {
   let scopeRepository: ScopeRepository;

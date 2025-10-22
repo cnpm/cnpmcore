@@ -3,16 +3,16 @@ import assert from 'node:assert/strict';
 import { uniq } from 'lodash-es';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
-import { ModelConvertor } from './util/ModelConvertor.js';
-import { isDuplicateKeyError } from './util/ErrorUtil.js';
-import type { Task as TaskModel } from './model/Task.js';
-import type { HistoryTask as HistoryTaskModel } from './model/HistoryTask.js';
-import { AbstractRepository } from './AbstractRepository.js';
-import type { TaskState, TaskType } from '../../app/common/enum/Task.js';
+import { ModelConvertor } from './util/ModelConvertor.ts';
+import { isDuplicateKeyError } from './util/ErrorUtil.ts';
+import type { Task as TaskModel } from './model/Task.ts';
+import type { HistoryTask as HistoryTaskModel } from './model/HistoryTask.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
+import type { TaskState, TaskType } from '../../app/common/enum/Task.ts';
 import {
   Task as TaskEntity,
   type TaskUpdateCondition,
-} from '../core/entity/Task.js';
+} from '../core/entity/Task.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

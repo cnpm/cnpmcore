@@ -6,8 +6,8 @@ import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
 import semver from 'semver';
 
-import { TestUtil } from '../../../test/TestUtil.js';
-import { npmLogin } from '../CliUtil.js';
+import { TestUtil } from '../../../test/TestUtil.ts';
+import { npmLogin } from '../CliUtil.ts';
 
 describe('test/cli/npm/access.test.ts', () => {
   let server: Server;

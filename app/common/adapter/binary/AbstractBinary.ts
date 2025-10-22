@@ -4,11 +4,11 @@ import {
   type ImplDecorator,
 } from '@eggjs/tegg';
 import type { EggHttpClient, EggLogger } from 'egg';
-import type { BinaryType } from '../../enum/Binary.js';
+import type { BinaryType } from '../../enum/Binary.ts';
 import type {
   BinaryName,
   BinaryTaskConfig,
-} from '../../../../config/binaries.js';
+} from '../../../../config/binaries.ts';
 
 const platforms = ['darwin', 'linux', 'win32'] as const;
 export interface BinaryItem {

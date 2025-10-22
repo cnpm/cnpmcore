@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/UserController/showUser.test.ts', () => {
   describe('[GET /-/user/org.couchdb.user::username] showUser()', () => {

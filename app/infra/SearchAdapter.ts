@@ -5,7 +5,7 @@ import type {
   estypes,
 } from '@elastic/elasticsearch';
 
-import type { SearchAdapter } from '../common/typing.js';
+import type { SearchAdapter } from '../common/typing.ts';
 
 /**
  * Use elasticsearch to search the huge npm packages.

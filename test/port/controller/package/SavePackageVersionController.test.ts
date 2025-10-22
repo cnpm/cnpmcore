@@ -5,16 +5,16 @@ import { app, mock } from '@eggjs/mock/bootstrap';
 import { ForbiddenError } from 'egg-errors';
 import dayjs from 'dayjs';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
-import { UserRepository } from '../../../../app/repository/UserRepository.js';
-import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
-import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import { UserService } from '../../../../app/core/service/UserService.js';
-import { TokenType, type Token } from '../../../../app/core/entity/Token.js';
-import { Token as TokenModel } from '../../../../app/repository/model/Token.js';
-import type { User } from '../../../../app/core/entity/User.js';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
+import { UserRepository } from '../../../../app/repository/UserRepository.ts';
+import { calculateIntegrity } from '../../../../app/common/PackageUtil.ts';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import { UserService } from '../../../../app/core/service/UserService.ts';
+import { TokenType, type Token } from '../../../../app/core/entity/Token.ts';
+import { Token as TokenModel } from '../../../../app/repository/model/Token.ts';
+import type { User } from '../../../../app/core/entity/User.ts';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.ts';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let userRepository: UserRepository;

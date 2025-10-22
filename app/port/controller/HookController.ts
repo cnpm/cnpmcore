@@ -9,13 +9,13 @@ import {
   Inject,
 } from '@eggjs/tegg';
 
-import type { HookManageService } from '../../core/service/HookManageService.js';
-import type { TaskService } from '../../core/service/TaskService.js';
-import type { UserRoleManager } from '../UserRoleManager.js';
-import type { HookType } from '../../common/enum/Hook.js';
-import type { TriggerHookTask } from '../../core/entity/Task.js';
-import { HookConvertor } from './convertor/HookConvertor.js';
-import { CreateHookRequestRule, UpdateHookRequestRule } from '../typebox.js';
+import type { HookManageService } from '../../core/service/HookManageService.ts';
+import type { TaskService } from '../../core/service/TaskService.ts';
+import type { UserRoleManager } from '../UserRoleManager.ts';
+import type { HookType } from '../../common/enum/Hook.ts';
+import type { TriggerHookTask } from '../../core/entity/Task.ts';
+import { HookConvertor } from './convertor/HookConvertor.ts';
+import { CreateHookRequestRule, UpdateHookRequestRule } from '../typebox.ts';
 
 export interface CreateHookRequest {
   type: string;

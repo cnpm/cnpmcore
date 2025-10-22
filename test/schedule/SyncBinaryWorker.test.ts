@@ -2,8 +2,8 @@ import { app, mock } from '@eggjs/mock/bootstrap';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-import { NodeBinary } from '../../app/common/adapter/binary/NodeBinary.js';
-import { TestUtil } from '../../test/TestUtil.js';
+import { NodeBinary } from '../../app/common/adapter/binary/NodeBinary.ts';
+import { TestUtil } from '../../test/TestUtil.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
   let publisher: TestUser;

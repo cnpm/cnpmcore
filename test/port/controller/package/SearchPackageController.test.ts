@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 import { errors } from '@elastic/elasticsearch';
 
-import { mockES } from '../../../../config/config.unittest.js';
-import { TestUtil, type TestUser } from '../../../TestUtil.js';
+import { mockES } from '../../../../config/config.unittest.ts';
+import { TestUtil, type TestUser } from '../../../TestUtil.ts';
 
 describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   let publisher: TestUser;

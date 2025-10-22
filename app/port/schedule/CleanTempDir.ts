@@ -5,7 +5,7 @@ import type { EggAppConfig, EggLogger } from 'egg';
 import { Schedule, ScheduleType, type CronParams } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
-import dayjs from '../../common/dayjs.js';
+import dayjs from '../../common/dayjs.ts';
 
 @Schedule<CronParams>({
   type: ScheduleType.WORKER,

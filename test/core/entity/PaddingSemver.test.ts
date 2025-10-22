@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-import { PaddingSemVer } from '../../../app/core/entity/PaddingSemVer.js';
+import { PaddingSemVer } from '../../../app/core/entity/PaddingSemVer.ts';
 
 describe('test/core/entity/PaddingSemver.test.ts', () => {
   it('should parse 16 length version ok', () => {

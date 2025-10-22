@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { Task } from '../../../app/core/entity/Task.js';
+import { Task } from '../../../app/core/entity/Task.ts';
 
 describe('test/core/entity/Task.js', () => {
   describe('needMergeWhenWaiting', () => {

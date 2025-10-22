@@ -11,8 +11,8 @@ import {
   PACKAGE_UNPUBLISHED,
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
-} from './index.js';
-import type { CacheService } from '../../core/service/CacheService.js';
+} from './index.ts';
+import type { CacheService } from '../../core/service/CacheService.ts';
 
 class CacheCleanerEvent {
   @Inject()

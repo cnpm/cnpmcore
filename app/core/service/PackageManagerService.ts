@@ -21,25 +21,25 @@ import {
   getFullname,
   getScopeAndName,
   hasShrinkWrapInTgz,
-} from '../../common/PackageUtil.js';
-import { AbstractService } from '../../common/AbstractService.js';
+} from '../../common/PackageUtil.ts';
+import { AbstractService } from '../../common/AbstractService.ts';
 import type {
   AbbreviatedPackageJSONType,
   AbbreviatedPackageManifestType,
   PackageJSONType,
   PackageManifestType,
   PackageRepository,
-} from '../../repository/PackageRepository.js';
-import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
-import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
-import type { DistRepository } from '../../repository/DistRepository.js';
-import { isDuplicateKeyError } from '../../repository/util/ErrorUtil.js';
-import { Package } from '../entity/Package.js';
-import { PackageVersion } from '../entity/PackageVersion.js';
-import { PackageVersionBlock } from '../entity/PackageVersionBlock.js';
-import { PackageTag } from '../entity/PackageTag.js';
-import type { User } from '../entity/User.js';
-import type { Dist } from '../entity/Dist.js';
+} from '../../repository/PackageRepository.ts';
+import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
+import { isDuplicateKeyError } from '../../repository/util/ErrorUtil.ts';
+import { Package } from '../entity/Package.ts';
+import { PackageVersion } from '../entity/PackageVersion.ts';
+import { PackageVersionBlock } from '../entity/PackageVersionBlock.ts';
+import { PackageTag } from '../entity/PackageTag.ts';
+import type { User } from '../entity/User.ts';
+import type { Dist } from '../entity/Dist.ts';
 import {
   PACKAGE_ADDED,
   PACKAGE_BLOCKED,
@@ -53,12 +53,12 @@ import {
   PACKAGE_UNPUBLISHED,
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
-} from '../event/index.js';
-import type { BugVersionService } from './BugVersionService.js';
-import type { BugVersion } from '../entity/BugVersion.js';
-import type { RegistryManagerService } from './RegistryManagerService.js';
-import type { Registry } from '../entity/Registry.js';
-import type { PackageVersionService } from './PackageVersionService.js';
+} from '../event/index.ts';
+import type { BugVersionService } from './BugVersionService.ts';
+import type { BugVersion } from '../entity/BugVersion.ts';
+import type { RegistryManagerService } from './RegistryManagerService.ts';
+import type { Registry } from '../entity/Registry.ts';
+import type { PackageVersionService } from './PackageVersionService.ts';
 
 const TOTAL = '@@TOTAL@@';
 const SCOPE_TOTAL_PREFIX = '@@SCOPE@@:';

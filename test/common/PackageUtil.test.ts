@@ -4,8 +4,8 @@ import {
   formatAuthor,
   formatTarball,
   hasShrinkWrapInTgz,
-} from '../../app/common/PackageUtil.js';
-import { TestUtil } from '../TestUtil.js';
+} from '../../app/common/PackageUtil.ts';
+import { TestUtil } from '../TestUtil.ts';
 
 describe('test/common/PackageUtil.test.ts', () => {
   describe('formatTarball()', () => {

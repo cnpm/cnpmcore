@@ -5,8 +5,8 @@ import {
   BinaryAdapter,
   type BinaryItem,
   type FetchResult,
-} from './AbstractBinary.js';
-import { BinaryType } from '../../enum/Binary.js';
+} from './AbstractBinary.ts';
+import { BinaryType } from '../../enum/Binary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Edgedriver)

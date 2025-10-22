@@ -12,20 +12,20 @@ import { E500 } from 'egg-errors';
 import {
   RegistryNotMatchError,
   type PackageSyncerService,
-} from './PackageSyncerService.js';
-import type { TaskService } from './TaskService.js';
-import type { RegistryManagerService } from './RegistryManagerService.js';
-import type { ScopeManagerService } from './ScopeManagerService.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import type { TaskRepository } from '../../repository/TaskRepository.js';
-import { HOST_NAME, Task, type ChangesStreamTask } from '../entity/Task.js';
-import type { Registry } from '../entity/Registry.js';
-import { AbstractChangeStream } from '../../common/adapter/changesStream/AbstractChangesStream.js';
-import { getScopeAndName } from '../../common/PackageUtil.js';
-import { isTimeoutError } from '../../common/ErrorUtil.js';
-import { GLOBAL_WORKER } from '../../common/constants.js';
-import { TaskState, TaskType } from '../../common/enum/Task.js';
-import { AbstractService } from '../../common/AbstractService.js';
+} from './PackageSyncerService.ts';
+import type { TaskService } from './TaskService.ts';
+import type { RegistryManagerService } from './RegistryManagerService.ts';
+import type { ScopeManagerService } from './ScopeManagerService.ts';
+import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import type { TaskRepository } from '../../repository/TaskRepository.ts';
+import { HOST_NAME, Task, type ChangesStreamTask } from '../entity/Task.ts';
+import type { Registry } from '../entity/Registry.ts';
+import { AbstractChangeStream } from '../../common/adapter/changesStream/AbstractChangesStream.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
+import { isTimeoutError } from '../../common/ErrorUtil.ts';
+import { GLOBAL_WORKER } from '../../common/constants.ts';
+import { TaskState, TaskType } from '../../common/enum/Task.ts';
+import { AbstractService } from '../../common/AbstractService.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

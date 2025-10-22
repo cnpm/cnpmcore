@@ -1,8 +1,8 @@
 import crypto from 'node:crypto';
 
-import { Entity, type EntityData } from './Entity.js';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
-import type { HookType } from '../../common/enum/Hook.js';
+import { Entity, type EntityData } from './Entity.ts';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import type { HookType } from '../../common/enum/Hook.ts';
 
 export type CreateHookData = Omit<
   EasyData<HookData, 'hookId'>,

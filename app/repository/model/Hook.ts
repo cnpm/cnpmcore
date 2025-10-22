@@ -1,7 +1,7 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 
-import { Bone, DataTypes } from '../util/leoric.js';
-import type { HookType } from '../../common/enum/Hook.js';
+import { Bone, DataTypes } from '../util/leoric.ts';
+import type { HookType } from '../../common/enum/Hook.ts';
 
 @Model()
 export class Hook extends Bone {

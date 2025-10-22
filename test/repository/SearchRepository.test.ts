@@ -5,11 +5,11 @@ import { app, mock } from '@eggjs/mock/bootstrap';
 import {
   SearchRepository,
   type SearchManifestType,
-} from '../../app/repository/SearchRepository.js';
-import { mockES } from '../../config/config.unittest.js';
-import { PackageManagerService } from '../../app/core/service/PackageManagerService.js';
-import { TestUtil } from '../TestUtil.js';
-import { PackageSearchService } from '../../app/core/service/PackageSearchService.js';
+} from '../../app/repository/SearchRepository.ts';
+import { mockES } from '../../config/config.unittest.ts';
+import { PackageManagerService } from '../../app/core/service/PackageManagerService.ts';
+import { TestUtil } from '../TestUtil.ts';
+import { PackageSearchService } from '../../app/core/service/PackageSearchService.ts';
 
 describe('test/repository/SearchRepository.test.ts', () => {
   let searchRepository: SearchRepository;

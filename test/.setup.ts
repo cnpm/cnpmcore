@@ -1,6 +1,6 @@
 import { mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from './TestUtil.js';
+import { TestUtil } from './TestUtil.ts';
 
 beforeEach(async () => {
   // don't show console log on unittest by default

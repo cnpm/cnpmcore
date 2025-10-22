@@ -3,13 +3,13 @@ import path from 'node:path';
 
 import { InternalServerError } from 'egg-errors';
 
-import { Entity, type EntityData } from './Entity.js';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
-import { TaskState, TaskType } from '../../common/enum/Task.js';
-import { PROXY_CACHE_DIR_NAME } from '../../common/constants.js';
-import dayjs from '../../common/dayjs.js';
-import type { HookEvent } from './HookEvent.js';
-import { isPkgManifest, type DIST_NAMES } from './Package.js';
+import { Entity, type EntityData } from './Entity.ts';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import { TaskState, TaskType } from '../../common/enum/Task.ts';
+import { PROXY_CACHE_DIR_NAME } from '../../common/constants.ts';
+import dayjs from '../../common/dayjs.ts';
+import type { HookEvent } from './HookEvent.ts';
+import { isPkgManifest, type DIST_NAMES } from './Package.ts';
 
 export const HOST_NAME = os.hostname();
 export const PID = process.pid;

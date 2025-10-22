@@ -13,12 +13,12 @@ import {
 import path from 'node:path';
 import { NotFoundError } from 'egg-errors';
 
-import { AbstractController } from './AbstractController.js';
-import type { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
-import type { Binary } from '../../core/entity/Binary.js';
-import binaries, { type BinaryName } from '../../../config/binaries.js';
-import { BinaryNameRule, BinarySubpathRule } from '../typebox.js';
-import { AdminAccess } from '../middleware/AdminAccess.js';
+import { AbstractController } from './AbstractController.ts';
+import type { BinarySyncerService } from '../../core/service/BinarySyncerService.ts';
+import type { Binary } from '../../core/entity/Binary.ts';
+import binaries, { type BinaryName } from '../../../config/binaries.ts';
+import { BinaryNameRule, BinarySubpathRule } from '../typebox.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
 
 @HTTPController()
 export class BinarySyncController extends AbstractController {

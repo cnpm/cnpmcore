@@ -12,17 +12,17 @@ import {
 } from '@eggjs/tegg';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 
-import { AbstractController } from './AbstractController.js';
+import { AbstractController } from './AbstractController.ts';
 import {
   FULLNAME_REG_STRING,
   getScopeAndName,
-} from '../../common/PackageUtil.js';
-import type { Task } from '../../core/entity/Task.js';
-import type { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
-import type { RegistryManagerService } from '../../core/service/RegistryManagerService.js';
-import { TaskState } from '../../common/enum/Task.js';
-import { SyncPackageTaskRule, type SyncPackageTaskType } from '../typebox.js';
-import { SyncMode } from '../../common/constants.js';
+} from '../../common/PackageUtil.ts';
+import type { Task } from '../../core/entity/Task.ts';
+import type { PackageSyncerService } from '../../core/service/PackageSyncerService.ts';
+import type { RegistryManagerService } from '../../core/service/RegistryManagerService.ts';
+import { TaskState } from '../../common/enum/Task.ts';
+import { SyncPackageTaskRule, type SyncPackageTaskType } from '../typebox.ts';
+import { SyncMode } from '../../common/constants.ts';
 
 @HTTPController()
 export class PackageSyncController extends AbstractController {

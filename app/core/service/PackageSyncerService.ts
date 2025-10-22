@@ -12,38 +12,38 @@ import { BadRequestError } from 'egg-errors';
 import type {
   NPMRegistry,
   RegistryResponse,
-} from '../../common/adapter/NPMRegistry.js';
+} from '../../common/adapter/NPMRegistry.ts';
 import {
   detectInstallScript,
   getScopeAndName,
-} from '../../common/PackageUtil.js';
-import { downloadToTempfile } from '../../common/FileUtil.js';
-import { TaskState, TaskType } from '../../common/enum/Task.js';
-import { AbstractService } from '../../common/AbstractService.js';
-import type { TaskRepository } from '../../repository/TaskRepository.js';
+} from '../../common/PackageUtil.ts';
+import { downloadToTempfile } from '../../common/FileUtil.ts';
+import { TaskState, TaskType } from '../../common/enum/Task.ts';
+import { AbstractService } from '../../common/AbstractService.ts';
+import type { TaskRepository } from '../../repository/TaskRepository.ts';
 import type {
   PackageJSONType,
   PackageManifestType,
   PackageRepository,
-} from '../../repository/PackageRepository.js';
-import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
-import type { UserRepository } from '../../repository/UserRepository.js';
+} from '../../repository/PackageRepository.ts';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
+import type { UserRepository } from '../../repository/UserRepository.ts';
 import {
   type CreateSyncPackageTask,
   type SyncPackageTaskOptions,
   Task,
-} from '../entity/Task.js';
-import type { Package } from '../entity/Package.js';
-import type { UserService } from './UserService.js';
-import type { TaskService } from './TaskService.js';
-import type { PackageManagerService } from './PackageManagerService.js';
-import type { CacheService } from './CacheService.js';
-import type { User } from '../entity/User.js';
-import type { RegistryManagerService } from './RegistryManagerService.js';
-import type { Registry } from '../entity/Registry.js';
-import type { ScopeManagerService } from './ScopeManagerService.js';
-import { EventCorkAdvice } from './EventCorkerAdvice.js';
-import { PresetRegistryName, SyncDeleteMode } from '../../common/constants.js';
+} from '../entity/Task.ts';
+import type { Package } from '../entity/Package.ts';
+import type { UserService } from './UserService.ts';
+import type { TaskService } from './TaskService.ts';
+import type { PackageManagerService } from './PackageManagerService.ts';
+import type { CacheService } from './CacheService.ts';
+import type { User } from '../entity/User.ts';
+import type { RegistryManagerService } from './RegistryManagerService.ts';
+import type { Registry } from '../entity/Registry.ts';
+import type { ScopeManagerService } from './ScopeManagerService.ts';
+import { EventCorkAdvice } from './EventCorkerAdvice.ts';
+import { PresetRegistryName, SyncDeleteMode } from '../../common/constants.ts';
 
 interface syncDeletePkgOptions {
   task: Task;

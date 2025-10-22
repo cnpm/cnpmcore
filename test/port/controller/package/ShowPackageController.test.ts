@@ -2,17 +2,17 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 import {
   PackageRepository,
   type PackageManifestType,
-} from '../../../../app/repository/PackageRepository.js';
-import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
-import { CacheService } from '../../../../app/core/service/CacheService.js';
-import { DistRepository } from '../../../../app/repository/DistRepository.js';
-import { BugVersionService } from '../../../../app/core/service/BugVersionService.js';
-import { SyncMode } from '../../../../app/common/constants.js';
+} from '../../../../app/repository/PackageRepository.ts';
+import { BugVersion } from '../../../../app/core/entity/BugVersion.ts';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.ts';
+import { CacheService } from '../../../../app/core/service/CacheService.ts';
+import { DistRepository } from '../../../../app/repository/DistRepository.ts';
+import { BugVersionService } from '../../../../app/core/service/BugVersionService.ts';
+import { SyncMode } from '../../../../app/common/constants.ts';
 
 describe('test/port/controller/package/ShowPackageController.test.ts', () => {
   let packageRepository: PackageRepository;

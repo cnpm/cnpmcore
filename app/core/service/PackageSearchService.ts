@@ -2,17 +2,17 @@ import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { errors, type estypes } from '@elastic/elasticsearch';
 import dayjs from 'dayjs';
 
-import { AbstractService } from '../../common/AbstractService.js';
-import { formatAuthor, getScopeAndName } from '../../common/PackageUtil.js';
-import type { PackageManagerService } from './PackageManagerService.js';
+import { AbstractService } from '../../common/AbstractService.ts';
+import { formatAuthor, getScopeAndName } from '../../common/PackageUtil.ts';
+import type { PackageManagerService } from './PackageManagerService.ts';
 import type {
   SearchManifestType,
   SearchMappingType,
   SearchRepository,
-} from '../../repository/SearchRepository.js';
-import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
+} from '../../repository/SearchRepository.ts';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
+import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

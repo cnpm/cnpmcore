@@ -4,9 +4,9 @@ import npa from 'npm-package-arg';
 import { uniq } from 'lodash-es';
 import type { Ajv } from '@eggjs/typebox-validate';
 
-import { RegistryType } from '../common/enum/Registry.js';
-import { HookType } from '../common/enum/Hook.js';
-import binaryConfig, { type BinaryName } from '../../config/binaries.js';
+import { RegistryType } from '../common/enum/Registry.ts';
+import { HookType } from '../common/enum/Hook.ts';
+import binaryConfig, { type BinaryName } from '../../config/binaries.ts';
 
 export const Name = Type.String({
   transform: ['trim'],

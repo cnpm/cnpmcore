@@ -7,15 +7,15 @@ import OSSClient from 'oss-cnpm';
 import S3Client from 's3-cnpmcore';
 import { env } from 'read-env-value';
 
-import { patchAjv } from '../app/port/typebox.js';
+import { patchAjv } from '../app/port/typebox.ts';
 import {
   ChangesStreamMode,
   NOT_IMPLEMENTED_PATH,
   SyncDeleteMode,
   SyncMode,
-} from '../app/common/constants.js';
-import type { CnpmcoreConfig } from '../app/port/config.js';
-import { database } from './database.js';
+} from '../app/common/constants.ts';
+import type { CnpmcoreConfig } from '../app/port/config.ts';
+import { database } from './database.ts';
 
 export const cnpmcoreConfig: CnpmcoreConfig = {
   name: 'cnpm',

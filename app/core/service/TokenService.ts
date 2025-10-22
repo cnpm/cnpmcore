@@ -3,15 +3,15 @@ import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { isEmpty } from 'lodash-es';
 import { ForbiddenError, UnauthorizedError } from 'egg-errors';
 
-import { AbstractService } from '../../common/AbstractService.js';
-import { isGranularToken, type Token } from '../entity/Token.js';
-import type { TokenPackage as TokenPackageModel } from '../../../app/repository/model/TokenPackage.js';
-import type { Package as PackageModel } from '../../../app/repository/model/Package.js';
-import { ModelConvertor } from '../../../app/repository/util/ModelConvertor.js';
-import { Package as PackageEntity } from '../entity/Package.js';
-import { getScopeAndName } from '../../../app/common/PackageUtil.js';
-import { sha512 } from '../../../app/common/UserUtil.js';
-import type { UserRepository } from '../../../app/repository/UserRepository.js';
+import { AbstractService } from '../../common/AbstractService.ts';
+import { isGranularToken, type Token } from '../entity/Token.ts';
+import type { TokenPackage as TokenPackageModel } from '../../../app/repository/model/TokenPackage.ts';
+import type { Package as PackageModel } from '../../../app/repository/model/Package.ts';
+import { ModelConvertor } from '../../../app/repository/util/ModelConvertor.ts';
+import { Package as PackageEntity } from '../entity/Package.ts';
+import { getScopeAndName } from '../../../app/common/PackageUtil.ts';
+import { sha512 } from '../../../app/common/UserUtil.ts';
+import type { UserRepository } from '../../../app/repository/UserRepository.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

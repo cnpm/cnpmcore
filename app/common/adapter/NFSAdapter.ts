@@ -3,8 +3,8 @@ import type { IncomingHttpHeaders } from 'node:http';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { Pointcut } from '@eggjs/tegg/aop';
 import type { EggLogger } from 'egg';
-import { AsyncTimer } from '../aop/AsyncTimer.js';
-import type { NFSClient } from '../typing.js';
+import { AsyncTimer } from '../aop/AsyncTimer.ts';
+import type { NFSClient } from '../typing.ts';
 
 const INSTANCE_NAME = 'nfsAdapter';
 

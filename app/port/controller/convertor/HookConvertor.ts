@@ -1,7 +1,7 @@
-import type { Hook } from '../../../core/entity/Hook.js';
-import type { TriggerHookTask } from '../../../core/entity/Task.js';
-import type { User } from '../../../core/entity/User.js';
-import type { HookType } from '../../../common/enum/Hook.js';
+import type { Hook } from '../../../core/entity/Hook.ts';
+import type { TriggerHookTask } from '../../../core/entity/Task.ts';
+import type { User } from '../../../core/entity/User.ts';
+import type { HookType } from '../../../common/enum/Hook.ts';
 
 export interface HookVo {
   id: string;

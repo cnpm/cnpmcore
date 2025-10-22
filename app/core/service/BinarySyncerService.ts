@@ -12,22 +12,22 @@ import { sortBy } from 'lodash-es';
 import binaries, {
   type BinaryName,
   type CategoryName,
-} from '../../../config/binaries.js';
-import type { BinaryRepository } from '../../repository/BinaryRepository.js';
-import { Task, type SyncBinaryTask } from '../entity/Task.js';
-import { Binary } from '../entity/Binary.js';
-import type { TaskService } from './TaskService.js';
-import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
-import { downloadToTempfile } from '../../common/FileUtil.js';
-import { isTimeoutError } from '../../common/ErrorUtil.js';
+} from '../../../config/binaries.ts';
+import type { BinaryRepository } from '../../repository/BinaryRepository.ts';
+import { Task, type SyncBinaryTask } from '../entity/Task.ts';
+import { Binary } from '../entity/Binary.ts';
+import type { TaskService } from './TaskService.ts';
+import type { NFSAdapter } from '../../common/adapter/NFSAdapter.ts';
+import { downloadToTempfile } from '../../common/FileUtil.ts';
+import { isTimeoutError } from '../../common/ErrorUtil.ts';
 import {
   AbstractBinary,
   type BinaryItem,
-} from '../../common/adapter/binary/AbstractBinary.js';
-import { AbstractService } from '../../common/AbstractService.js';
-import { BinaryType } from '../../common/enum/Binary.js';
-import { TaskState, TaskType } from '../../common/enum/Task.js';
-import { platforms } from '../../common/adapter/binary/PuppeteerBinary.js';
+} from '../../common/adapter/binary/AbstractBinary.ts';
+import { AbstractService } from '../../common/AbstractService.ts';
+import { BinaryType } from '../../common/enum/Binary.ts';
+import { TaskState, TaskType } from '../../common/enum/Task.ts';
+import { platforms } from '../../common/adapter/binary/PuppeteerBinary.ts';
 
 function isoNow() {
   return new Date().toISOString();

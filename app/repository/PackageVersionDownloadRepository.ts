@@ -1,7 +1,7 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 
-import { AbstractRepository } from './AbstractRepository.js';
-import type { PackageVersionDownload as PackageVersionDownloadModel } from './model/PackageVersionDownload.js';
+import { AbstractRepository } from './AbstractRepository.ts';
+import type { PackageVersionDownload as PackageVersionDownloadModel } from './model/PackageVersionDownload.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

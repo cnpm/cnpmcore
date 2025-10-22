@@ -10,10 +10,10 @@ import {
 } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
 
-import { AbstractController } from './AbstractController.js';
-import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
-import type { PackageManagerService } from '../../core/service/PackageManagerService.js';
-import { TagRule, TagWithVersionRule } from '../typebox.js';
+import { AbstractController } from './AbstractController.ts';
+import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
+import type { PackageManagerService } from '../../core/service/PackageManagerService.ts';
+import { TagRule, TagWithVersionRule } from '../typebox.ts';
 
 @HTTPController()
 export class PackageTagController extends AbstractController {

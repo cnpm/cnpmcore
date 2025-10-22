@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { FirefoxBinary } from '../../../../app/common/adapter/binary/FirefoxBinary.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { FirefoxBinary } from '../../../../app/common/adapter/binary/FirefoxBinary.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
   let binary: FirefoxBinary;

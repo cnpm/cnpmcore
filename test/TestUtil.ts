@@ -13,10 +13,10 @@ import crypto from 'node:crypto';
 import semver from 'semver';
 import { app as globalApp } from '@eggjs/mock/bootstrap';
 
-import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.js';
-import type { PackageJSONType } from '../app/repository/PackageRepository.js';
-import { DATABASE_TYPE, database } from '../config/database.js';
-import { Package as PackageModel } from '../app/repository/model/Package.js';
+import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.ts';
+import type { PackageJSONType } from '../app/repository/PackageRepository.ts';
+import { DATABASE_TYPE, database } from '../config/database.ts';
+import { Package as PackageModel } from '../app/repository/model/Package.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

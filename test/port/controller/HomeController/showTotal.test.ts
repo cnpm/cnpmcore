@@ -4,18 +4,18 @@ import path from 'node:path';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
-import { PackageVersionDownload } from '../../../../app/repository/model/PackageVersionDownload.js';
-import dayjs from '../../../../app/common/dayjs.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import { ChangesStreamService } from '../../../../app/core/service/ChangesStreamService.js';
-import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
-import { TaskType } from '../../../../app/common/enum/Task.js';
-import type { ChangesStreamTask } from '../../../../app/core/entity/Task.js';
-import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
-import type { UpstreamRegistryInfo } from '../../../../app/core/service/CacheService.js';
-import { TotalRepository } from '../../../../app/repository/TotalRepository.js';
+import { TestUtil } from '../../../../test/TestUtil.ts';
+import { PackageVersionDownload } from '../../../../app/repository/model/PackageVersionDownload.ts';
+import dayjs from '../../../../app/common/dayjs.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import { ChangesStreamService } from '../../../../app/core/service/ChangesStreamService.ts';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
+import { TaskType } from '../../../../app/common/enum/Task.ts';
+import type { ChangesStreamTask } from '../../../../app/core/entity/Task.ts';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.ts';
+import type { UpstreamRegistryInfo } from '../../../../app/core/service/CacheService.ts';
+import { TotalRepository } from '../../../../app/repository/TotalRepository.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

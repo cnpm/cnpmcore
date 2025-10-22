@@ -6,10 +6,10 @@ import {
 import { Inject } from '@eggjs/tegg';
 import type { EggAppConfig, EggHttpClient, EggLogger } from 'egg';
 
-import type { PackageSyncerService } from '../../core/service/PackageSyncerService.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import { getScopeAndName } from '../../common/PackageUtil.js';
-import { SyncMode } from '../../common/constants.js';
+import type { PackageSyncerService } from '../../core/service/PackageSyncerService.ts';
+import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
+import { SyncMode } from '../../common/constants.ts';
 
 // https://github.com/cnpm/cnpmcore/issues/9
 @Schedule<IntervalParams>({

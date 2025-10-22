@@ -2,12 +2,12 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TaskState } from '../../app/common/enum/Task.js';
-import { PackageSyncerService } from '../../app/core/service/PackageSyncerService.js';
-import { HistoryTask } from '../../app/repository/model/HistoryTask.js';
-import { ModelConvertor } from '../../app/repository/util/ModelConvertor.js';
-import { Task as TaskModel } from '../../app/repository/model/Task.js';
-import { TaskService } from '../../app/core/service/TaskService.js';
+import { TaskState } from '../../app/common/enum/Task.ts';
+import { PackageSyncerService } from '../../app/core/service/PackageSyncerService.ts';
+import { HistoryTask } from '../../app/repository/model/HistoryTask.ts';
+import { ModelConvertor } from '../../app/repository/util/ModelConvertor.ts';
+import { Task as TaskModel } from '../../app/repository/model/Task.ts';
+import { TaskService } from '../../app/core/service/TaskService.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

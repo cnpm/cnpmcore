@@ -3,15 +3,15 @@ import { setTimeout } from 'node:timers/promises';
 import os from 'node:os';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TaskRepository } from '../../app/repository/TaskRepository.js';
-import { Task as TaskModel } from '../../app/repository/model/Task.js';
+import { TaskRepository } from '../../app/repository/TaskRepository.ts';
+import { Task as TaskModel } from '../../app/repository/model/Task.ts';
 import {
   Task,
   type TaskData,
   type ChangesStreamTaskData,
-} from '../../app/core/entity/Task.js';
-import { EntityUtil, type EasyData } from '../../app/core/util/EntityUtil.js';
-import { TaskState, TaskType } from '../../app/common/enum/Task.js';
+} from '../../app/core/entity/Task.ts';
+import { EntityUtil, type EasyData } from '../../app/core/util/EntityUtil.ts';
+import { TaskState, TaskType } from '../../app/common/enum/Task.ts';
 
 describe('test/repository/TaskRepository.test.ts', () => {
   let taskRepository: TaskRepository;

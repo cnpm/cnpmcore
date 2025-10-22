@@ -1,6 +1,6 @@
 import { Attribute, Model } from '@eggjs/tegg/orm';
 
-import { Bone, DataTypes } from '../util/leoric.js';
+import { Bone, DataTypes } from '../util/leoric.ts';
 
 @Model()
 export class Token extends Bone {

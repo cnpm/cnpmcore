@@ -1,7 +1,7 @@
 import ObjectID from 'bson-objectid';
 import { E400 } from 'egg-errors';
 
-import type { EntityData } from '../entity/Entity.js';
+import type { EntityData } from '../entity/Entity.ts';
 
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 

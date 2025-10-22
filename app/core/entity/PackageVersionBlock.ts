@@ -1,5 +1,5 @@
-import { Entity, type EntityData } from './Entity.js';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
+import { Entity, type EntityData } from './Entity.ts';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
 
 interface PackageVersionBlockData extends EntityData {
   packageVersionBlockId: string;

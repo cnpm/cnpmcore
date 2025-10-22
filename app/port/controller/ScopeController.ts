@@ -12,11 +12,11 @@ import {
 import { E400 } from 'egg-errors';
 import type { Static } from '@eggjs/typebox-validate/typebox';
 
-import { AbstractController } from './AbstractController.js';
-import { AdminAccess } from '../middleware/AdminAccess.js';
-import type { ScopeManagerService } from '../../core/service/ScopeManagerService.js';
-import type { RegistryManagerService } from '../../core/service/RegistryManagerService.js';
-import { ScopeCreateOptions } from '../typebox.js';
+import { AbstractController } from './AbstractController.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
+import type { ScopeManagerService } from '../../core/service/ScopeManagerService.ts';
+import type { RegistryManagerService } from '../../core/service/RegistryManagerService.ts';
+import { ScopeCreateOptions } from '../typebox.ts';
 
 @HTTPController()
 export class ScopeController extends AbstractController {

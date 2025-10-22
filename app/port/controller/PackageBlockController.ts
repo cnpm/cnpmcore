@@ -11,12 +11,12 @@ import {
 } from '@eggjs/tegg';
 import { ForbiddenError } from 'egg-errors';
 
-import { AbstractController } from './AbstractController.js';
-import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
-import type { PackageManagerService } from '../../core/service/PackageManagerService.js';
-import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
-import { BlockPackageRule, type BlockPackageType } from '../typebox.js';
-import { AdminAccess } from '../middleware/AdminAccess.js';
+import { AbstractController } from './AbstractController.ts';
+import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
+import type { PackageManagerService } from '../../core/service/PackageManagerService.ts';
+import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
+import { BlockPackageRule, type BlockPackageType } from '../typebox.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
 
 @HTTPController()
 export class PackageBlockController extends AbstractController {

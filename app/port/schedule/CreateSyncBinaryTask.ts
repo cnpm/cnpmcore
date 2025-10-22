@@ -6,8 +6,8 @@ import {
 } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 
-import type { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
-import binaries, { type BinaryName } from '../../../config/binaries.js';
+import type { BinarySyncerService } from '../../core/service/BinarySyncerService.ts';
+import binaries, { type BinaryName } from '../../../config/binaries.ts';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,

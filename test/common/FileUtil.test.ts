@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-import { mimeLookup } from '../../app/common/FileUtil.js';
+import { mimeLookup } from '../../app/common/FileUtil.ts';
 
 describe('test/common/FileUtil.test.ts', () => {
   describe('mimeLookup()', () => {

@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { DIST_NAMES } from '../../../../app/core/entity/Package.js';
-import { ProxyCache } from '../../../../app/core/entity/ProxyCache.js';
-import { ProxyCacheRepository } from '../../../../app/repository/ProxyCacheRepository.js';
-import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
-import { SyncMode } from '../../../../app/common/constants.js';
-import { TestUtil } from '../../../TestUtil.js';
+import { DIST_NAMES } from '../../../../app/core/entity/Package.ts';
+import { ProxyCache } from '../../../../app/core/entity/ProxyCache.ts';
+import { ProxyCacheRepository } from '../../../../app/repository/ProxyCacheRepository.ts';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
+import { SyncMode } from '../../../../app/common/constants.ts';
+import { TestUtil } from '../../../TestUtil.ts';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let proxyCacheRepository: ProxyCacheRepository;

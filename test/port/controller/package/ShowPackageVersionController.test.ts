@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
-import { BugVersion } from '../../../../app/core/entity/BugVersion.js';
-import { BugVersionService } from '../../../../app/core/service/BugVersionService.js';
-import { SyncMode } from '../../../../app/common/constants.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
+import { BugVersion } from '../../../../app/core/entity/BugVersion.ts';
+import { BugVersionService } from '../../../../app/core/service/BugVersionService.ts';
+import { SyncMode } from '../../../../app/common/constants.ts';
 
 describe('test/port/controller/package/ShowPackageVersionController.test.ts', () => {
   let publisher: TestUser;

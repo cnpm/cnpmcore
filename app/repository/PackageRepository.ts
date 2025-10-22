@@ -1,21 +1,21 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { Package as PackageModel } from './model/Package.js';
-import { Package as PackageEntity } from '../core/entity/Package.js';
-import { ModelConvertor } from './util/ModelConvertor.js';
-import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVersion.js';
-import type { PackageVersion as PackageVersionModel } from './model/PackageVersion.js';
-import type { PackageVersionManifest as PackageVersionManifestEntity } from '../core/entity/PackageVersionManifest.js';
-import type { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest.js';
-import type { Dist as DistModel } from './model/Dist.js';
-import { Dist as DistEntity } from '../core/entity/Dist.js';
-import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag.js';
-import type { PackageTag as PackageTagModel } from './model/PackageTag.js';
-import type { Maintainer as MaintainerModel } from './model/Maintainer.js';
-import type { User as UserModel } from './model/User.js';
-import { User as UserEntity } from '../core/entity/User.js';
-import { AbstractRepository } from './AbstractRepository.js';
-import type { BugVersionPackages } from '../core/entity/BugVersion.js';
-import type { TotalRepository } from './TotalRepository.js';
+import type { Package as PackageModel } from './model/Package.ts';
+import { Package as PackageEntity } from '../core/entity/Package.ts';
+import { ModelConvertor } from './util/ModelConvertor.ts';
+import { PackageVersion as PackageVersionEntity } from '../core/entity/PackageVersion.ts';
+import type { PackageVersion as PackageVersionModel } from './model/PackageVersion.ts';
+import type { PackageVersionManifest as PackageVersionManifestEntity } from '../core/entity/PackageVersionManifest.ts';
+import type { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest.ts';
+import type { Dist as DistModel } from './model/Dist.ts';
+import { Dist as DistEntity } from '../core/entity/Dist.ts';
+import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag.ts';
+import type { PackageTag as PackageTagModel } from './model/PackageTag.ts';
+import type { Maintainer as MaintainerModel } from './model/Maintainer.ts';
+import type { User as UserModel } from './model/User.ts';
+import { User as UserEntity } from '../core/entity/User.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
+import type { BugVersionPackages } from '../core/entity/BugVersion.ts';
+import type { TotalRepository } from './TotalRepository.ts';
 
 export type PackageManifestType = Pick<PackageJSONType, PackageJSONPickKey> & {
   _id: string;

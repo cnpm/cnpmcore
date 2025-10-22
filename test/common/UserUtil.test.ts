@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-import { checkToken, randomToken } from '../../app/common/UserUtil.js';
+import { checkToken, randomToken } from '../../app/common/UserUtil.ts';
 
 describe('test/common/UserUtil.test.ts', () => {
   describe('randomToken()', () => {

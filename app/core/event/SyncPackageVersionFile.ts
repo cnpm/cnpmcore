@@ -5,10 +5,10 @@ import {
   PACKAGE_TAG_ADDED,
   PACKAGE_TAG_CHANGED,
   PACKAGE_VERSION_ADDED,
-} from './index.js';
-import { getScopeAndName } from '../../common/PackageUtil.js';
-import type { PackageManagerService } from '../service/PackageManagerService.js';
-import type { PackageVersionFileService } from '../service/PackageVersionFileService.js';
+} from './index.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
+import type { PackageManagerService } from '../service/PackageManagerService.ts';
+import type { PackageVersionFileService } from '../service/PackageVersionFileService.ts';
 
 class SyncPackageVersionFileEvent {
   @Inject()

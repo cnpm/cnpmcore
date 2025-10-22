@@ -2,7 +2,7 @@ import path from 'node:path';
 import { readFile } from 'node:fs/promises';
 import type { Application, ILifecycleBoot } from 'egg';
 
-import { ChangesStreamService } from './app/core/service/ChangesStreamService.js';
+import { ChangesStreamService } from './app/core/service/ChangesStreamService.ts';
 
 declare module 'egg' {
   interface Application {

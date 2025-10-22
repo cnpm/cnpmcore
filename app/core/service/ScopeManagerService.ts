@@ -1,8 +1,8 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { ScopeRepository } from '../../repository/ScopeRepository.js';
-import { AbstractService } from '../../common/AbstractService.js';
-import { Scope } from '../entity/Scope.js';
-import type { PageOptions, PageResult } from '../util/EntityUtil.js';
+import type { ScopeRepository } from '../../repository/ScopeRepository.ts';
+import { AbstractService } from '../../common/AbstractService.ts';
+import { Scope } from '../entity/Scope.ts';
+import type { PageOptions, PageResult } from '../util/EntityUtil.ts';
 
 export interface CreateScopeCmd extends Pick<Scope, 'name' | 'registryId'> {
   operatorId?: string;

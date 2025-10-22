@@ -1,17 +1,17 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import pMap from 'p-map';
 
-import { AbstractService } from '../../common/AbstractService.js';
-import { HookType } from '../../common/enum/Hook.js';
-import { TaskState } from '../../common/enum/Task.js';
-import { Task, type CreateHookTask } from '../entity/Task.js';
-import type { HookEvent } from '../entity/HookEvent.js';
-import type { HookRepository } from '../../repository/HookRepository.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import type { Hook } from '../entity/Hook.js';
-import type { TaskService } from './TaskService.js';
-import { isoNow } from '../../common/LogUtil.js';
-import { getScopeAndName } from '../../common/PackageUtil.js';
+import { AbstractService } from '../../common/AbstractService.ts';
+import { HookType } from '../../common/enum/Hook.ts';
+import { TaskState } from '../../common/enum/Task.ts';
+import { Task, type CreateHookTask } from '../entity/Task.ts';
+import type { HookEvent } from '../entity/HookEvent.ts';
+import type { HookRepository } from '../../repository/HookRepository.ts';
+import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import type { Hook } from '../entity/Hook.ts';
+import type { TaskService } from './TaskService.ts';
+import { isoNow } from '../../common/LogUtil.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

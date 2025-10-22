@@ -11,10 +11,10 @@ import {
 } from '@eggjs/tegg';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 
-import { AbstractController } from '../AbstractController.js';
-import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';
-import type { User as UserEntity } from '../../../core/entity/User.js';
-import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
+import { AbstractController } from '../AbstractController.ts';
+import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.ts';
+import type { User as UserEntity } from '../../../core/entity/User.ts';
+import type { PackageManagerService } from '../../../core/service/PackageManagerService.ts';
 
 const MaintainerDataRule = Type.Object({
   maintainers: Type.Array(

@@ -1,6 +1,6 @@
-import { Entity, type EntityData } from './Entity.js';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
-import type { Dist } from './Dist.js';
+import { Entity, type EntityData } from './Entity.ts';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import type { Dist } from './Dist.ts';
 
 interface PackageVersionFileData extends EntityData {
   packageVersionFileId: string;

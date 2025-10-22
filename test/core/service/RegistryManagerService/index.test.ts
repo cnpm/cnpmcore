@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
 import { app } from '@eggjs/mock/bootstrap';
 
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.js';
-import type { Registry } from '../../../../app/core/entity/Registry.js';
-import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
-import { TaskType } from '../../../../app/common/enum/Task.js';
-import type { ChangesStreamTaskData } from '../../../../app/core/entity/Task.js';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.ts';
+import type { Registry } from '../../../../app/core/entity/Registry.ts';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
+import { TaskType } from '../../../../app/common/enum/Task.ts';
+import type { ChangesStreamTaskData } from '../../../../app/core/entity/Task.ts';
 
 describe('test/core/service/RegistryManagerService/index.test.ts', () => {
   let registryManagerService: RegistryManagerService;
