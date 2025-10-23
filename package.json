@@ -81,10 +81,10 @@
     "registry"
   ],
   "overrides": {
-    "mocha": "11.6.0"
+    "mocha": "11.7.4"
   },
   "resolutions": {
-    "mocha": "11.6.0"
+    "mocha": "11.7.4"
   },
   "dependencies": {
     "@eggjs/redis": "beta",
