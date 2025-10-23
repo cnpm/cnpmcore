@@ -144,7 +144,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:9.5
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_DATABASE: cnpmcore_unittest
@@ -194,7 +194,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:9.5
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_DATABASE: cnpmcore_unittest
