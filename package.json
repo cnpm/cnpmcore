@@ -157,7 +157,7 @@
     "@types/validate-npm-package-name": "^4.0.2",
     "coffee": "^5.4.0",
     "husky": "^9.1.7",
-    "lint-staged": "^15.5.0",
+    "lint-staged": "^16.0.0",
     "oxlint": "^1.11.0",
     "oxlint-tsgolint": "^0.2.0",
     "prettier": "^3.5.3",
