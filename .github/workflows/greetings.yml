@@ -9,7 +9,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-    - uses: actions/first-interaction@v1
+    - uses: actions/first-interaction@v3
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         issue-message: '我们已经看到你的反馈，如果是功能缺陷，可以提供一下重现该问题的方式；如果是新功能需求，我们会尽快加入讨论。同时我们非常期待你可以加入我们的贡献者行列，让项目可以长期可持续发展。'
