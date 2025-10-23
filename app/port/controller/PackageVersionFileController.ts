@@ -77,7 +77,7 @@ export class PackageVersionFileController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async sync(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() versionSpec: string
   ) {
@@ -108,7 +108,7 @@ export class PackageVersionFileController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async listFiles(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() versionSpec: string,
     @HTTPQuery() meta: string
@@ -155,7 +155,7 @@ export class PackageVersionFileController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async raw(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() versionSpec: string,
     @HTTPParam() path: string,

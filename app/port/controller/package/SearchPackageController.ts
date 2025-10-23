@@ -29,7 +29,7 @@ export class SearchPackageController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async search(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPQuery() text: Static<typeof SearchQueryOptions>['text'],
     @HTTPQuery() from: Static<typeof SearchQueryOptions>['from'],
     @HTTPQuery() size: Static<typeof SearchQueryOptions>['size']

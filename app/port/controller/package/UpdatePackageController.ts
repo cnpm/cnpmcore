@@ -39,7 +39,7 @@ export class UpdatePackageController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async update(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPBody() data: Maintainer
   ) {

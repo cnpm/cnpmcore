@@ -32,7 +32,7 @@ export class ScopeController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async createScope(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPBody() scopeOptions: Static<typeof ScopeCreateOptions>
   ) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
@@ -61,7 +61,7 @@ export class ScopeController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   @Middleware(AdminAccess)
-  async removeScope(@Context() ctx: EggContext, @HTTPParam() id: string) {
+  async removeScope(@HTTPContext() ctx: EggContext, @HTTPParam() id: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
       ctx,
       'setting'

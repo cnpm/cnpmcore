@@ -47,7 +47,7 @@ export class PackageTagController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async saveTag(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() tag: string,
     @HTTPBody() version: string
@@ -75,7 +75,7 @@ export class PackageTagController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   async removeTag(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() tag: string
   ) {

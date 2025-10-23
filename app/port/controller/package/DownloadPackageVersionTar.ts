@@ -41,7 +41,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:filenameWithVersion.tgz`,
     method: HTTPMethodEnum.OPTIONS,
   })
-  async downloadForOptions(@Context() ctx: EggContext) {
+  async downloadForOptions(@HTTPContext() ctx: EggContext) {
     ctx.set('access-control-allow-origin', '*');
     ctx.set('access-control-allow-methods', 'GET,HEAD');
     ctx.status = 204;
@@ -53,7 +53,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async download(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() filenameWithVersion: string
   ) {
@@ -132,7 +132,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async deprecatedDownload(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() fullnameWithVersion: string
   ) {
@@ -175,7 +175,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:scope/:filenameWithVersion.tgz`,
     method: HTTPMethodEnum.OPTIONS,
   })
-  async downloadVerdaccioPathStyleorOptions(@Context() ctx: EggContext) {
+  async downloadVerdaccioPathStyleorOptions(@HTTPContext() ctx: EggContext) {
     return this.downloadForOptions(ctx);
   }
 
@@ -185,7 +185,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async downloadVerdaccioPathStyle(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() filenameWithVersion: string
   ) {

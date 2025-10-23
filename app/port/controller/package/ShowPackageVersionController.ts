@@ -34,7 +34,7 @@ export class ShowPackageVersionController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async show(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() versionSpec: string
   ) {

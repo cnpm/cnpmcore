@@ -87,7 +87,7 @@ export class RegistryController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async createRegistry(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPBody() registryOptions: Static<typeof RegistryCreateOptions>
   ) {
     ctx.tValidate(RegistryCreateOptions, registryOptions);
@@ -121,7 +121,7 @@ export class RegistryController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async createRegistrySyncTask(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() id: string,
     @HTTPBody() registryOptions: Static<typeof RegistryCreateSyncOptions>
   ) {
@@ -148,7 +148,7 @@ export class RegistryController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   @Middleware(AdminAccess)
-  async removeRegistry(@Context() ctx: EggContext, @HTTPParam() id: string) {
+  async removeRegistry(@HTTPContext() ctx: EggContext, @HTTPParam() id: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
       ctx,
       'setting'
@@ -166,7 +166,7 @@ export class RegistryController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async updateRegistry(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() id: string,
     @HTTPBody() updateRegistryOptions: Partial<UpdateRegistryCmd>
   ) {

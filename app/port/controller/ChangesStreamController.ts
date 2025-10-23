@@ -27,7 +27,7 @@ export class ChangesStreamController extends AbstractController {
     path: '/_changes',
     method: HTTPMethodEnum.GET,
   })
-  async listChanges(@Context() ctx: EggContext, @HTTPQuery() since: string) {
+  async listChanges(@HTTPContext() ctx: EggContext, @HTTPQuery() since: string) {
     const params = { since: since ? Number(since) : 0 };
     ctx.tValidate(ChangeRule, params);
     const limit = 1000;

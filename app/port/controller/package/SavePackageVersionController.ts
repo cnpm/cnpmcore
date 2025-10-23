@@ -110,7 +110,7 @@ export class SavePackageVersionController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async save(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPBody() pkg: FullPackage
   ) {

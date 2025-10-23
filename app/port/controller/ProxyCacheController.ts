@@ -140,7 +140,7 @@ export class ProxyCacheController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
     path: '/-/proxy-cache',
   })
-  async truncateProxyCaches(@Context() ctx: EggContext) {
+  async truncateProxyCaches(@HTTPContext() ctx: EggContext) {
     const isAdmin = await this.userRoleManager.isAdmin(ctx);
     if (!isAdmin) {
       throw new UnauthorizedError('only admin can do this');

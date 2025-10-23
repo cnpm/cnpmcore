@@ -32,7 +32,7 @@ export class PackageBlockController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async blockPackage(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPBody() data: BlockPackageType
   ) {
@@ -74,7 +74,7 @@ export class PackageBlockController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async unblockPackage(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string
   ) {
     const packageEntity = await this.getPackageEntityByFullname(fullname);
