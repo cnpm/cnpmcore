@@ -70,7 +70,7 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async createSyncTask(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPBody() data: SyncPackageTaskType
   ) {
@@ -204,7 +204,7 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showSyncTaskLog(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() taskId: string
   ) {
@@ -239,7 +239,7 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async deprecatedCreateSyncTask(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPQuery() nodeps: string
   ) {

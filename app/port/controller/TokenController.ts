@@ -57,7 +57,7 @@ export class TokenController extends AbstractController {
     method: HTTPMethodEnum.POST,
   })
   async createToken(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPBody() tokenOptions: TokenOptions
   ) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
@@ -93,7 +93,7 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens/token/:tokenKey',
     method: HTTPMethodEnum.DELETE,
   })
-  async removeToken(@Context() ctx: EggContext, @HTTPParam() tokenKey: string) {
+  async removeToken(@HTTPContext() ctx: EggContext, @HTTPParam() tokenKey: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
       ctx,
       'setting'
@@ -107,7 +107,7 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens',
     method: HTTPMethodEnum.GET,
   })
-  async listTokens(@Context() ctx: EggContext) {
+  async listTokens(@HTTPContext() ctx: EggContext) {
     // {
     //   'user-agent': 'npm/8.1.2 node/v16.13.1 darwin arm64 workspaces/false',
     //   'npm-command': 'token',
@@ -177,7 +177,7 @@ export class TokenController extends AbstractController {
   // 2. Optional to submit description, allowScopes, allowPackages information
   // 3. Need to implement ensureCurrentUser method in AuthAdapter, or pass in this.user
   async createGranularToken(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPBody() tokenOptions: GranularTokenOptions
   ) {
     ctx.tValidate(GranularTokenOptionsRule, tokenOptions);

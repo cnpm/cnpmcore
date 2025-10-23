@@ -29,7 +29,7 @@ export class BinarySyncController extends AbstractController {
     path: '/binary.html',
     method: HTTPMethodEnum.GET,
   })
-  async showBinaryHTML(@Context() ctx: EggContext) {
+  async showBinaryHTML(@HTTPContext() ctx: EggContext) {
     ctx.type = 'html';
     return ctx.app.binaryHTML;
   }
@@ -59,7 +59,7 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showBinary(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() binaryName: BinaryName,
     @HTTPParam() subpath: string,
     @HTTPQuery() since: string,
@@ -154,7 +154,7 @@ export class BinarySyncController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async syncBinary(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() binaryName: BinaryName,
     @HTTPBody() lastData?: Record<string, string>
   ) {
@@ -181,7 +181,7 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showBinaryIndex(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() binaryName: BinaryName,
     @HTTPQuery() since: string,
     @HTTPQuery() limit: string

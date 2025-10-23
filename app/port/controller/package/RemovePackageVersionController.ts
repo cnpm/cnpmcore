@@ -34,7 +34,7 @@ export class RemovePackageVersionController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   async removeByTarballUrl(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string,
     @HTTPParam() filenameWithVersion: string
   ) {
@@ -68,7 +68,7 @@ export class RemovePackageVersionController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   async removeByPkgUri(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() fullname: string
   ) {
     const npmCommand = ctx.get('npm-command');

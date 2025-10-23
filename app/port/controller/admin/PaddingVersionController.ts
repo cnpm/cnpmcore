@@ -21,7 +21,7 @@ export class PaddingVersionController extends AbstractController {
     path: '/-/admin/npm/fixPaddingVersion',
   })
   async fixNoPaddingVersion(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPQuery() id: string
   ) {
     const isAdmin = await this.userRoleManager.isAdmin(ctx);

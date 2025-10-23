@@ -103,7 +103,7 @@ export class HomeController extends AbstractController {
     path: '/-/ping',
     method: HTTPMethodEnum.GET,
   })
-  async ping(@Context() ctx: EggContext) {
+  async ping(@HTTPContext() ctx: EggContext) {
     return {
       pong: true,
       use: performance.now() - ctx.performanceStarttime,
@@ -115,7 +115,7 @@ export class HomeController extends AbstractController {
     method: HTTPMethodEnum.POST,
     priority: Number.NEGATIVE_INFINITY,
   })
-  async miscPost(@Context() ctx: EggContext) {
+  async miscPost(@HTTPContext() ctx: EggContext) {
     await this.homeService.misc(ctx.path);
   }
 
@@ -124,7 +124,7 @@ export class HomeController extends AbstractController {
     method: HTTPMethodEnum.GET,
     priority: Number.NEGATIVE_INFINITY,
   })
-  async miscGet(@Context() ctx: EggContext) {
+  async miscGet(@HTTPContext() ctx: EggContext) {
     await this.homeService.misc(ctx.path);
   }
 }
