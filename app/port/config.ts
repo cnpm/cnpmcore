@@ -182,6 +182,20 @@ export interface CnpmcoreConfig {
   strictValidatePackageDeps?: boolean;
 
   /**
+   * Filter deprecated packages from search results
+   * Default: true (filter out deprecated packages)
+   */
+  searchFilterDeprecated?: boolean;
+
+  /**
+   * Minimum publish time before packages appear in search results
+   * Format: number + unit (h=hours, d=days, w=weeks)
+   * Examples: '2w' (2 weeks), '1d' (1 day), '24h' (24 hours)
+   * Default: '' (no filtering)
+   */
+  searchMinPublishTime?: string;
+
+  /**
    * database config
    */
   database: {
