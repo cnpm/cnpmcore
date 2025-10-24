@@ -74,6 +74,16 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   elasticsearchIndex: 'cnpmcore_packages',
   strictValidateTarballPkg: false,
   strictValidatePackageDeps: false,
+  searchFilterDeprecated: env(
+    'CNPMCORE_CONFIG_SEARCH_FILTER_DEPRECATED',
+    'boolean',
+    true
+  ),
+  searchMinPublishTime: env(
+    'CNPMCORE_CONFIG_SEARCH_MIN_PUBLISH_TIME',
+    'string',
+    ''
+  ),
   database: {
     type: database.type,
   },
