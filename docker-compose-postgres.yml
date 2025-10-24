@@ -12,7 +12,7 @@ services:
   redis:
     env_file:
       - .env
-    image: redis:6-alpine
+    image: redis:8-alpine
     # command: redis-server --appendonly yes --requirepass cnpm
     restart: always
     volumes:
