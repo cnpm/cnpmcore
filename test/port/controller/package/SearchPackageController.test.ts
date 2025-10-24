@@ -93,6 +93,166 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
       assert.equal(res.body.objects[0].package.name, 'example');
       assert.equal(res.body.total, 1);
     });
+
+    it('should filter deprecated packages by default', async () => {
+      let capturedQuery: any;
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        (params: any) => {
+          capturedQuery = params.body;
+          return {
+            hits: {
+              total: { value: 0, relation: 'eq' },
+              hits: [],
+            },
+          };
+        }
+      );
+      await app
+        .httpRequest()
+        .get('/-/v1/search?text=example&from=0&size=1')
+        .expect(200);
+
+      // Verify that the query includes deprecated filter
+      assert(capturedQuery);
+      assert(capturedQuery.query.function_score.query.bool.filter);
+      const filters = capturedQuery.query.function_score.query.bool.filter;
+      const deprecatedFilter = filters.find((f: any) =>
+        f.bool?.must_not?.exists?.field === 'package.deprecated'
+      );
+      assert(deprecatedFilter, 'Should include deprecated filter');
+    });
+
+    it('should not filter deprecated packages when searchExcludeDeprecated is false', async () => {
+      mock(app.config.cnpmcore, 'searchExcludeDeprecated', false);
+      let capturedQuery: any;
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        (params: any) => {
+          capturedQuery = params.body;
+          return {
+            hits: {
+              total: { value: 1, relation: 'eq' },
+              hits: [
+                {
+                  _source: {
+                    downloads: { all: 0 },
+                    package: {
+                      name: 'deprecated-package',
+                      deprecated: 'This package is deprecated',
+                    },
+                  },
+                },
+              ],
+            },
+          };
+        }
+      );
+      await app
+        .httpRequest()
+        .get('/-/v1/search?text=example&from=0&size=1')
+        .expect(200);
+
+      // Verify that the query does not include deprecated filter
+      const filters = capturedQuery.query.function_score.query.bool.filter || [];
+      const deprecatedFilter = filters.find((f: any) =>
+        f.bool?.must_not?.exists?.field === 'package.deprecated'
+      );
+      assert(!deprecatedFilter, 'Should not include deprecated filter');
+    });
+
+    it('should filter newly published packages when searchPackageMinAge is set', async () => {
+      mock(app.config.cnpmcore, 'searchPackageMinAge', '2w');
+      let capturedQuery: any;
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        (params: any) => {
+          capturedQuery = params.body;
+          return {
+            hits: {
+              total: { value: 0, relation: 'eq' },
+              hits: [],
+            },
+          };
+        }
+      );
+      await app
+        .httpRequest()
+        .get('/-/v1/search?text=example&from=0&size=1')
+        .expect(200);
+
+      // Verify that the query includes date range filter
+      assert(capturedQuery);
+      const filters = capturedQuery.query.function_score.query.bool.filter;
+      const dateFilter = filters.find((f: any) => f.range?.['package.date']);
+      assert(dateFilter, 'Should include date range filter');
+      assert(dateFilter.range['package.date'].lte, 'Should have lte date threshold');
+    });
+
+    it('should parse time string correctly in hours', async () => {
+      mock(app.config.cnpmcore, 'searchPackageMinAge', '48h');
+      let capturedQuery: any;
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        (params: any) => {
+          capturedQuery = params.body;
+          return {
+            hits: {
+              total: { value: 0, relation: 'eq' },
+              hits: [],
+            },
+          };
+        }
+      );
+      await app
+        .httpRequest()
+        .get('/-/v1/search?text=example&from=0&size=1')
+        .expect(200);
+
+      const filters = capturedQuery.query.function_score.query.bool.filter;
+      const dateFilter = filters.find((f: any) => f.range?.['package.date']);
+      assert(dateFilter, 'Should include date range filter for hours');
+    });
+
+    it('should parse time string correctly in days', async () => {
+      mock(app.config.cnpmcore, 'searchPackageMinAge', '14d');
+      let capturedQuery: any;
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        (params: any) => {
+          capturedQuery = params.body;
+          return {
+            hits: {
+              total: { value: 0, relation: 'eq' },
+              hits: [],
+            },
+          };
+        }
+      );
+      await app
+        .httpRequest()
+        .get('/-/v1/search?text=example&from=0&size=1')
+        .expect(200);
+
+      const filters = capturedQuery.query.function_score.query.bool.filter;
+      const dateFilter = filters.find((f: any) => f.range?.['package.date']);
+      assert(dateFilter, 'Should include date range filter for days');
+    });
   });
 
   describe('[PUT /-/v1/search/sync/:fullname] sync()', async () => {
