@@ -2,9 +2,8 @@ import {
   Schedule,
   ScheduleType,
   type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
+} from 'egg/schedule';
+import { Inject, Config, Logger } from 'egg';
 
 import type { PackageSyncerService } from '../../core/service/PackageSyncerService.ts';
 import { SyncMode } from '../../common/constants.ts';
@@ -22,10 +21,10 @@ export class SyncPackageWorker {
   private readonly packageSyncerService: PackageSyncerService;
 
   @Inject()
-  private readonly config: EggAppConfig;
+  private readonly config: Config;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async subscribe() {
     if (this.config.cnpmcore.syncMode === SyncMode.none) return;

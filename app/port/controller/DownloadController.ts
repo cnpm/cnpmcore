@@ -4,7 +4,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 import { NotFoundError, UnprocessableEntityError } from 'egg-errors';
 
 import { AbstractController } from './AbstractController.ts';

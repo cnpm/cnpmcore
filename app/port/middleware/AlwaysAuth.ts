@@ -1,8 +1,8 @@
-import type { EggContext, Next } from '@eggjs/tegg';
+import type { Context, Next } from 'egg';
 
 import { UserRoleManager } from '../UserRoleManager.ts';
 
-export async function AlwaysAuth(ctx: EggContext, next: Next) {
+export async function AlwaysAuth(ctx: Context, next: Next) {
   if (ctx.app.config.cnpmcore.alwaysAuth) {
     // ignore login request: `PUT /-/user/org.couchdb.user::username`
     const isLoginRequest =

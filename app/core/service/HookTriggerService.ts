@@ -1,5 +1,5 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { EggContextHttpClient } from 'egg';
+import { AccessLevel, Inject, SingletonProto, HttpClient } from 'egg';
+
 import type { TriggerHookTask } from '../entity/Task.ts';
 import type { HookEvent } from '../entity/HookEvent.ts';
 import type { HookRepository } from '../../repository/HookRepository.ts';
@@ -30,7 +30,7 @@ export class HookTriggerService {
   private readonly userRepository: UserRepository;
 
   @Inject()
-  private readonly httpclient: EggContextHttpClient;
+  private readonly httpClient: HttpClient;
 
   @Inject()
   private readonly taskService: TaskService;
@@ -80,7 +80,7 @@ export class HookTriggerService {
   async doExecuteTrigger(hook: Hook, payload: object): Promise<number> {
     const { digest, payloadStr } = hook.signPayload(payload);
     const url = new URL(hook.endpoint);
-    const res = await this.httpclient.request(hook.endpoint, {
+    const res = await this.httpClient.request(hook.endpoint, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

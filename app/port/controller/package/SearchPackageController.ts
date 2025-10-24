@@ -1,5 +1,5 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
@@ -8,7 +8,7 @@ import {
   HTTPQuery,
   Inject,
   Middleware,
-} from '@eggjs/tegg';
+} from 'egg';
 import type { Static } from '@eggjs/typebox-validate/typebox';
 import { E451 } from 'egg-errors';
 
@@ -29,7 +29,7 @@ export class SearchPackageController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async search(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPQuery() text: Static<typeof SearchQueryOptions>['text'],
     @HTTPQuery() from: Static<typeof SearchQueryOptions>['from'],
     @HTTPQuery() size: Static<typeof SearchQueryOptions>['size']

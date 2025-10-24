@@ -1,5 +1,5 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
@@ -7,7 +7,7 @@ import {
   HTTPParam,
   HTTPQuery,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 import {
   ForbiddenError,
   NotFoundError,
@@ -140,7 +140,7 @@ export class ProxyCacheController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
     path: '/-/proxy-cache',
   })
-  async truncateProxyCaches(@HTTPContext() ctx: EggContext) {
+  async truncateProxyCaches(@HTTPContext() ctx: Context) {
     const isAdmin = await this.userRoleManager.isAdmin(ctx);
     if (!isAdmin) {
       throw new UnauthorizedError('only admin can do this');

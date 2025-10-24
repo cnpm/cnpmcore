@@ -6,7 +6,7 @@ import {
   Inject,
   SingletonProto,
   type EggObjectFactory,
-} from '@eggjs/tegg';
+} from 'egg';
 import { E500 } from 'egg-errors';
 
 import {

@@ -1,4 +1,4 @@
-import '@eggjs/tegg';
+// import '@eggjs/tegg';
 import type { User } from '../entity/User.ts';
 
 export const PACKAGE_ADDED = 'PACKAGE_ADDED';

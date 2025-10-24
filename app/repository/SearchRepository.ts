@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 import type { estypes } from '@elastic/elasticsearch';
 
 import type { SearchAdapter } from '../common/typing.ts';

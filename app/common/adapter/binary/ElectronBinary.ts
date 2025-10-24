@@ -1,4 +1,5 @@
-import { SingletonProto } from '@eggjs/tegg';
+import { SingletonProto } from 'egg';
+
 import binaries, { type BinaryName } from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
 import { GithubBinary } from './GithubBinary.ts';

@@ -1,12 +1,12 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 
 import { AbstractController } from '../AbstractController.ts';
 import {
@@ -36,7 +36,7 @@ export class ShowPackageController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.GET,
   })
-  async show(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string) {
+  async show(@HTTPContext() ctx: Context, @HTTPParam() fullname: string) {
     const [scope, name] = getScopeAndName(fullname);
     const isSync = isSyncWorkerRequest(ctx);
     const isFullManifests =

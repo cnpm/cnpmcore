@@ -123,7 +123,7 @@ export default () => {
 * 添加 `XXXAdapter.ts` 在对应的 Adapter 中继承 cnpmcore 默认的 Adapter，以 AuthAdapter 为例
 
     ```typescript
-      import { AccessLevel, SingletonProto } from '@eggjs/tegg';
+      import { AccessLevel, SingletonProto } from 'egg';
       import { AuthAdapter } from 'cnpmcore/infra/AuthAdapter';
 
       @SingletonProto({
@@ -173,7 +173,7 @@ export default () => {
 修改 AuthAdapter.ts 文件
 
 ```typescript
-import { AccessLevel, EggContext, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Context, SingletonProto } from 'egg';
 import { AuthAdapter } from 'cnpmcore/infra/AuthAdapter';
 import { randomUUID } from 'crypto';
 import { AuthUrlResult, userResult } from 'node_modules/cnpmcore/dist/app/common/typing';
@@ -185,7 +185,7 @@ const ONE_DAY = 3600 * 24;
   accessLevel: AccessLevel.PUBLIC,
 })
 export class MyAuthAdapter extends AuthAdapter {
-  async getAuthUrl(ctx: EggContext): Promise<AuthUrlResult> {
+  async getAuthUrl(ctx: Context): Promise<AuthUrlResult> {
     const sessionId = randomUUID();
     await this.redis.setex(sessionId, ONE_DAY, '');
     return {

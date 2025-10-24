@@ -1,12 +1,15 @@
 import { setTimeout } from 'node:timers/promises';
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
-import type {
+
+import {
+  ContextProto,
+  AccessLevel, Inject,
   EggAppConfig,
-  EggContextHttpClient,
-  EggLogger,
+  HttpClient,
+  Logger,
   HttpClientRequestOptions,
   HttpClientResponse,
 } from 'egg';
+
 import type { PackageManifestType } from '../../repository/PackageRepository.ts';
 import { isTimeoutError } from '../ErrorUtil.ts';
 
@@ -22,9 +25,9 @@ export type RegistryResponse = { method: HttpMethod } & HttpClientResponse;
 })
 export class NPMRegistry {
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
   @Inject()
-  private readonly httpclient: EggContextHttpClient;
+  private readonly httpClient: HttpClient;
   @Inject()
   private config: EggAppConfig;
   private timeout = 10_000;
@@ -127,7 +130,7 @@ export class NPMRegistry {
     params?: object,
     options?: object
   ): Promise<RegistryResponse> {
-    const res = (await this.httpclient.request(url, {
+    const res = (await this.httpClient.request(url, {
       method,
       data: params,
       dataType: 'json',

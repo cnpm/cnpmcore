@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 import pMap from 'p-map';
 
 import { AbstractService } from '../../common/AbstractService.ts';

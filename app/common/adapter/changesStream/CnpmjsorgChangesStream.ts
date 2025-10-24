@@ -1,5 +1,6 @@
-import { SingletonProto } from '@eggjs/tegg';
+import { SingletonProto } from 'egg';
 import { E500 } from 'egg-errors';
+
 import { RegistryType } from '../../../common/enum/Registry.ts';
 import type { Registry } from '../../../core/entity/Registry.ts';
 import {
@@ -44,7 +45,7 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
     }
     const db = this.getChangesStreamUrl(registry, since, limit);
     // json mode
-    const res = await this.httpclient.request<FetchResults>(db, {
+    const res = await this.httpClient.request<FetchResults>(db, {
       followRedirect: true,
       timeout: 30_000,
       dataType: 'json',

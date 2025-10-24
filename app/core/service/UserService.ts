@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 import { ForbiddenError, NotFoundError } from 'egg-errors';
 
 import type { UserRepository } from '../../repository/UserRepository.ts';

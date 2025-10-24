@@ -1,12 +1,12 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPQuery,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 
 import { AbstractController } from '../AbstractController.ts';
 import type { FixNoPaddingVersionService } from '../../../core/service/FixNoPaddingVersionService.ts';
@@ -21,7 +21,7 @@ export class PaddingVersionController extends AbstractController {
     path: '/-/admin/npm/fixPaddingVersion',
   })
   async fixNoPaddingVersion(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPQuery() id: string
   ) {
     const isAdmin = await this.userRoleManager.isAdmin(ctx);

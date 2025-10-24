@@ -1,9 +1,8 @@
 import { access, rm } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { EggAppConfig, EggLogger } from 'egg';
-import { Schedule, ScheduleType, type CronParams } from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
+import { Schedule, ScheduleType, type CronParams } from 'egg/schedule';
+import { Inject, Logger, EggAppConfig } from 'egg';
 
 import dayjs from '../../common/dayjs.ts';
 
@@ -18,7 +17,7 @@ export class CleanTempDir {
   private readonly config: EggAppConfig;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async subscribe() {
     const downloadDir = path.join(this.config.dataDir, 'downloads');

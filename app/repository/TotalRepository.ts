@@ -1,4 +1,5 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
+
 import type { Total } from './model/Total.ts';
 import { AbstractRepository } from './AbstractRepository.ts';
 import { TotalType } from '../common/enum/Total.ts';

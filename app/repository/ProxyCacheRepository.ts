@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import { ModelConvertor } from './util/ModelConvertor.ts';
 import type { ProxyCache as ProxyModeCachedFilesModel } from './model/ProxyCache.ts';

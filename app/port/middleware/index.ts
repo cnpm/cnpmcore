@@ -1,4 +1,4 @@
-import { Middleware } from '@eggjs/tegg';
+import { Middleware } from 'egg';
 
 import { AlwaysAuth } from './AlwaysAuth.ts';
 import { ErrorHandler } from './ErrorHandler.ts';

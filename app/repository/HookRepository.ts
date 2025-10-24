@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import { Hook } from '../core/entity/Hook.ts';
 import type { Hook as HookModel } from './model/Hook.ts';

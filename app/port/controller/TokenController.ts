@@ -1,6 +1,6 @@
 import { ForbiddenError, UnauthorizedError } from 'egg-errors';
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPBody,
   HTTPController,
@@ -8,7 +8,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 
 import type { AuthAdapter } from '../../infra/AuthAdapter.ts';
@@ -57,7 +57,7 @@ export class TokenController extends AbstractController {
     method: HTTPMethodEnum.POST,
   })
   async createToken(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPBody() tokenOptions: TokenOptions
   ) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
@@ -93,7 +93,7 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens/token/:tokenKey',
     method: HTTPMethodEnum.DELETE,
   })
-  async removeToken(@HTTPContext() ctx: EggContext, @HTTPParam() tokenKey: string) {
+  async removeToken(@HTTPContext() ctx: Context, @HTTPParam() tokenKey: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
       ctx,
       'setting'
@@ -107,7 +107,7 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens',
     method: HTTPMethodEnum.GET,
   })
-  async listTokens(@HTTPContext() ctx: EggContext) {
+  async listTokens(@HTTPContext() ctx: Context) {
     // {
     //   'user-agent': 'npm/8.1.2 node/v16.13.1 darwin arm64 workspaces/false',
     //   'npm-command': 'token',
@@ -177,7 +177,7 @@ export class TokenController extends AbstractController {
   // 2. Optional to submit description, allowScopes, allowPackages information
   // 3. Need to implement ensureCurrentUser method in AuthAdapter, or pass in this.user
   async createGranularToken(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPBody() tokenOptions: GranularTokenOptions
   ) {
     ctx.tValidate(GranularTokenOptionsRule, tokenOptions);

@@ -5,8 +5,8 @@ import {
   Inject,
   SingletonProto,
   type EggObjectFactory,
-} from '@eggjs/tegg';
-import type { EggHttpClient } from 'egg';
+  HttpClient,
+} from 'egg';
 import { sortBy } from 'lodash-es';
 
 import binaries, {
@@ -42,7 +42,7 @@ export class BinarySyncerService extends AbstractService {
   @Inject()
   private readonly taskService: TaskService;
   @Inject()
-  private readonly httpclient: EggHttpClient;
+  private readonly httpClient: HttpClient;
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
   @Inject()
@@ -306,7 +306,7 @@ export class BinarySyncerService extends AbstractService {
           let localFile = '';
           try {
             const { tmpfile, headers, timing } = await downloadToTempfile(
-              this.httpclient,
+              this.httpClient,
               this.config.dataDir,
               item.sourceUrl,
               { ignoreDownloadStatuses: item.ignoreDownloadStatuses }

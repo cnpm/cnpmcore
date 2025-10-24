@@ -2,9 +2,8 @@ import {
   Schedule,
   ScheduleType,
   type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
+} from 'egg/schedule';
+import { Inject, Logger, EggAppConfig } from 'egg';
 
 import type { BinarySyncerService } from '../../core/service/BinarySyncerService.ts';
 import { isTimeoutError } from '../../common/ErrorUtil.ts';
@@ -23,7 +22,7 @@ export class SyncBinaryWorker {
   private readonly config: EggAppConfig;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async subscribe() {
     if (!this.config.cnpmcore.enableSyncBinary) return;

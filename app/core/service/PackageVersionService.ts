@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 import semver, { Range } from 'semver';
 import type { AliasResult, Result } from 'npm-package-arg';
 

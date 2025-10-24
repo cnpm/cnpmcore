@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 import { isEmpty } from 'lodash-es';
 import { ForbiddenError, UnauthorizedError } from 'egg-errors';
 

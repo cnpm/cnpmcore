@@ -1,6 +1,6 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { EggLogger } from 'egg';
+import { AccessLevel, Inject, SingletonProto, Logger } from 'egg';
 import pMap from 'p-map';
+
 import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.ts';
 import { PaddingSemVer } from '../entity/PaddingSemVer.ts';
 
@@ -12,7 +12,7 @@ export class FixNoPaddingVersionService {
   private readonly packageVersionRepository: PackageVersionRepository;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async fixPaddingVersion(id?: number): Promise<void> {
     while (true) {

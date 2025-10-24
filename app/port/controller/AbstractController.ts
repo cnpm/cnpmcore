@@ -1,6 +1,5 @@
 import { NotFoundError, UnavailableForLegalReasonsError } from 'egg-errors';
-import { type EggContext, Inject } from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
+import { type Context, Inject, EggAppConfig, Logger } from 'egg';
 
 import { MiddlewareController } from '../middleware/index.ts';
 import type { UserRoleManager } from '../UserRoleManager.ts';
@@ -28,7 +27,7 @@ class ControllerRedirectError extends NotFoundError {
 
 export abstract class AbstractController extends MiddlewareController {
   @Inject()
-  protected logger: EggLogger;
+  protected logger: Logger;
   @Inject()
   protected config: EggAppConfig;
   @Inject()
@@ -53,7 +52,7 @@ export abstract class AbstractController extends MiddlewareController {
   }
 
   protected async ensurePublishAccess<C extends boolean>(
-    ctx: EggContext,
+    ctx: Context,
     fullname: string,
     checkPkgExist: C = true as C
   ): Promise<{
@@ -87,7 +86,7 @@ export abstract class AbstractController extends MiddlewareController {
     return this.config.cnpmcore.redirectNotFound;
   }
 
-  protected getAllowSync(ctx: EggContext): boolean {
+  protected getAllowSync(ctx: Context): boolean {
     let allowSync = false;
 
     // request not by node, consider it request from web, don't sync
@@ -208,7 +207,7 @@ export abstract class AbstractController extends MiddlewareController {
   }
 
   protected getAndCheckVersionFromFilename(
-    ctx: EggContext,
+    ctx: Context,
     fullname: string,
     filenameWithVersion: string
   ) {
@@ -223,7 +222,7 @@ export abstract class AbstractController extends MiddlewareController {
     return data.version;
   }
 
-  protected setCDNHeaders(ctx: EggContext) {
+  protected setCDNHeaders(ctx: Context) {
     const config = this.config.cnpmcore;
     if (config.enableCDN) {
       ctx.set('cache-control', config.cdnCacheControlHeader);
