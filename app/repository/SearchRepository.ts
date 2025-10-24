@@ -16,7 +16,8 @@ export type SearchJSONPickKey =
   | 'license'
   | 'maintainers'
   | 'dist-tags'
-  | '_source_registry_name';
+  | '_source_registry_name'
+  | 'deprecated';
 
 export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> &
   CnpmcorePatchInfo & {
