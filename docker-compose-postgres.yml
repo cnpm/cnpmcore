@@ -23,7 +23,7 @@ services:
   postgres:
     env_file:
       - .env
-    image: postgres:17
+    image: postgres:18
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
