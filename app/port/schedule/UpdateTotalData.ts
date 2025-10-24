@@ -2,9 +2,8 @@ import {
   Schedule,
   ScheduleType,
   type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
-import type { EggLogger } from 'egg';
+} from 'egg/schedule';
+import { Inject, Logger } from 'egg';
 
 import type { ChangesStreamTaskData } from '../../core/entity/Task.ts';
 import type { RegistryManagerService } from '../../core/service/RegistryManagerService.ts';
@@ -35,7 +34,7 @@ import dayjs from '../../common/dayjs.ts';
 )
 export class UpdateTotalData {
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   @Inject()
   private readonly packageRepository: PackageRepository;

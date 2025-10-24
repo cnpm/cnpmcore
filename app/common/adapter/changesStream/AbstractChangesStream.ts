@@ -2,10 +2,12 @@ import {
   Inject,
   QualifierImplDecoratorUtil,
   type ImplDecorator,
-} from '@eggjs/tegg';
+  Logger,
+  HttpClient,
+} from 'egg';
+
 import type { RegistryType } from '../../../common/enum/Registry.ts';
 import type { Registry } from '../../../core/entity/Registry.ts';
-import type { EggHttpClient, EggLogger } from 'egg';
 
 export const CHANGE_STREAM_ATTRIBUTE = 'CHANGE_STREAM_ATTRIBUTE';
 export interface ChangesStreamChange {
@@ -15,10 +17,10 @@ export interface ChangesStreamChange {
 
 export abstract class AbstractChangeStream {
   @Inject()
-  protected logger: EggLogger;
+  protected logger: Logger;
 
   @Inject()
-  protected httpclient: EggHttpClient;
+  protected httpClient: HttpClient;
 
   abstract getInitialSince(registry: Registry): Promise<string>;
   abstract fetchChanges(

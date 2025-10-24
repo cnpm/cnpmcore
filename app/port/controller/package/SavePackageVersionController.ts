@@ -6,7 +6,7 @@ import {
   UnprocessableEntityError,
 } from 'egg-errors';
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPBody,
   HTTPController,
@@ -14,7 +14,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 import { checkData, fromData } from 'ssri';
 import validateNpmPackageName from 'validate-npm-package-name';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
@@ -110,7 +110,7 @@ export class SavePackageVersionController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async save(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPBody() pkg: FullPackage
   ) {
@@ -334,7 +334,7 @@ export class SavePackageVersionController extends AbstractController {
     return { ok: true };
   }
 
-  private validateNpmCommand(ctx: EggContext) {
+  private validateNpmCommand(ctx: Context) {
     // forbidden star/unstar request
     // npm@6: referer: 'star [REDACTED]'
     // npm@>=7: 'npm-command': 'star'

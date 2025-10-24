@@ -1,7 +1,9 @@
 import { basename } from 'node:path';
-import { SingletonProto } from '@eggjs/tegg';
-import binaries, { type BinaryName } from '../../../../config/binaries.ts';
+
+import { SingletonProto } from 'egg';
 import dayjs from 'dayjs';
+
+import binaries, { type BinaryName } from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
 import {
   AbstractBinary,

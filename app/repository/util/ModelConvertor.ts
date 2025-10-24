@@ -1,5 +1,5 @@
 import { ModelMetadataUtil } from '@eggjs/tegg/orm';
-import type { EggProtoImplClass } from '@eggjs/tegg';
+import type { EggProtoImplClass } from 'egg';
 import { get as lodashGet, set as lodashSet } from 'lodash-es';
 
 import { ModelConvertorUtil } from './ModelConvertorUtil.ts';

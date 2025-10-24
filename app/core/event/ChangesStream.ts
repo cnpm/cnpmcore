@@ -1,5 +1,5 @@
-import type { EggAppConfig } from 'egg';
-import { Event, Inject } from '@eggjs/tegg';
+
+import { Event, Inject, Config } from 'egg';
 
 import {
   type PackageMetaChange,
@@ -28,7 +28,7 @@ class ChangesStreamEvent {
   protected readonly taskService: TaskService;
 
   @Inject()
-  protected readonly config: EggAppConfig;
+  protected readonly config: Config;
 
   protected get hookEnable() {
     return this.config.cnpmcore.hookEnable;

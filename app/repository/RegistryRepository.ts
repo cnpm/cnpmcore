@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import { ModelConvertor } from './util/ModelConvertor.ts';
 import { Registry as RegistryEntity } from '../core/entity/Registry.ts';

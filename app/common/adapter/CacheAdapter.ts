@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 // FIXME: @eggjs/redis should use ioredis v5
 // https://github.com/eggjs/redis/issues/35
 import type { Redis } from 'ioredis';

@@ -1,5 +1,5 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPBody,
   HTTPController,
@@ -9,7 +9,7 @@ import {
   HTTPQuery,
   Inject,
   Middleware,
-} from '@eggjs/tegg';
+} from 'egg';
 import { NotFoundError } from 'egg-errors';
 import type { Static } from '@eggjs/typebox-validate/typebox';
 
@@ -87,7 +87,7 @@ export class RegistryController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async createRegistry(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPBody() registryOptions: Static<typeof RegistryCreateOptions>
   ) {
     ctx.tValidate(RegistryCreateOptions, registryOptions);
@@ -121,7 +121,7 @@ export class RegistryController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async createRegistrySyncTask(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() id: string,
     @HTTPBody() registryOptions: Static<typeof RegistryCreateSyncOptions>
   ) {
@@ -148,7 +148,7 @@ export class RegistryController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   @Middleware(AdminAccess)
-  async removeRegistry(@HTTPContext() ctx: EggContext, @HTTPParam() id: string) {
+  async removeRegistry(@HTTPContext() ctx: Context, @HTTPParam() id: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
       ctx,
       'setting'
@@ -166,7 +166,7 @@ export class RegistryController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async updateRegistry(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() id: string,
     @HTTPBody() updateRegistryOptions: Partial<UpdateRegistryCmd>
   ) {

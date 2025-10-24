@@ -1,6 +1,6 @@
 import {
-  type EggContext,
   Context,
+  HTTPContext,
   HTTPBody,
   HTTPController,
   HTTPMethod,
@@ -8,7 +8,7 @@ import {
   HTTPParam,
   Inject,
   Middleware,
-} from '@eggjs/tegg';
+} from 'egg';
 import { E400 } from 'egg-errors';
 import type { Static } from '@eggjs/typebox-validate/typebox';
 
@@ -32,7 +32,7 @@ export class ScopeController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async createScope(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPBody() scopeOptions: Static<typeof ScopeCreateOptions>
   ) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
@@ -61,7 +61,7 @@ export class ScopeController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   @Middleware(AdminAccess)
-  async removeScope(@HTTPContext() ctx: EggContext, @HTTPParam() id: string) {
+  async removeScope(@HTTPContext() ctx: Context, @HTTPParam() id: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
       ctx,
       'setting'

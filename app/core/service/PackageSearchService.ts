@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 import { errors, type estypes } from '@elastic/elasticsearch';
 import dayjs from 'dayjs';
 

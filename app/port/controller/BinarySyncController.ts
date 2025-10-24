@@ -1,5 +1,5 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
@@ -9,7 +9,7 @@ import {
   Inject,
   Middleware,
   HTTPBody,
-} from '@eggjs/tegg';
+} from 'egg';
 import path from 'node:path';
 import { NotFoundError } from 'egg-errors';
 
@@ -29,7 +29,7 @@ export class BinarySyncController extends AbstractController {
     path: '/binary.html',
     method: HTTPMethodEnum.GET,
   })
-  async showBinaryHTML(@HTTPContext() ctx: EggContext) {
+  async showBinaryHTML(@HTTPContext() ctx: Context) {
     ctx.type = 'html';
     return ctx.app.binaryHTML;
   }
@@ -59,7 +59,7 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showBinary(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() binaryName: BinaryName,
     @HTTPParam() subpath: string,
     @HTTPQuery() since: string,
@@ -154,7 +154,7 @@ export class BinarySyncController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async syncBinary(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() binaryName: BinaryName,
     @HTTPBody() lastData?: Record<string, string>
   ) {
@@ -181,7 +181,7 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showBinaryIndex(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() binaryName: BinaryName,
     @HTTPQuery() since: string,
     @HTTPQuery() limit: string

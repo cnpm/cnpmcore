@@ -2,9 +2,8 @@ import {
   Schedule,
   ScheduleType,
   type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
+} from 'egg/schedule';
+import { Inject, Config, Logger } from 'egg';
 
 import type { ChangesStreamService } from '../../core/service/ChangesStreamService.ts';
 
@@ -19,10 +18,10 @@ export class ChangesStreamWorker {
   private readonly changesStreamService: ChangesStreamService;
 
   @Inject()
-  private readonly config: EggAppConfig;
+  private readonly config: Config;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async subscribe() {
     if (

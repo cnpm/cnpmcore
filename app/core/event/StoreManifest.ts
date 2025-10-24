@@ -1,5 +1,5 @@
-import { Event, Inject } from '@eggjs/tegg';
-import type { EggAppConfig } from 'egg';
+import { Config, Event, Inject } from 'egg';
+
 import { PACKAGE_VERSION_ADDED } from './index.ts';
 import { getScopeAndName } from '../../common/PackageUtil.ts';
 import { PackageVersionManifest as PackageVersionManifestEntity } from '../entity/PackageVersionManifest.ts';
@@ -8,7 +8,7 @@ import type { DistRepository } from '../../repository/DistRepository.ts';
 
 class StoreManifestEvent {
   @Inject()
-  protected readonly config: EggAppConfig;
+  protected readonly config: Config;
   @Inject()
   private readonly packageRepository: PackageRepository;
   @Inject()

@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import { AbstractRepository } from './AbstractRepository.ts';
 import type { PackageVersionDownload as PackageVersionDownloadModel } from './model/PackageVersionDownload.ts';

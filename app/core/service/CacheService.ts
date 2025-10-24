@@ -1,4 +1,5 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
+
 import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
 import { AbstractService } from '../../common/AbstractService.ts';
 import type { ChangesStreamTaskData } from '../entity/Task.ts';

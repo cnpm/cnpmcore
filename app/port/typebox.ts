@@ -41,7 +41,7 @@ export const BinaryNameRule = Type.String({
 
 // `[ -~]` matches all printable ASCII characters
 // https://catonmat.net/my-favorite-regex
-export const BinarySubpathRule = Type.RegEx(/^[ -~]{1,1024}$/);
+export const BinarySubpathRule = Type.RegExp(/^[ -~]{1,1024}$/);
 
 export const Tag = Type.String({
   format: 'semver-tag',

@@ -4,8 +4,9 @@ import {
   Inject,
   LifecycleInit,
   SingletonProto,
-} from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
+  Logger,
+  Config,
+} from 'egg';
 import FSClient from 'fs-cnpm';
 
 import type {
@@ -22,10 +23,10 @@ import type {
 })
 export class NFSClientAdapter implements NFSClient {
   @Inject()
-  private logger: EggLogger;
+  private logger: Logger;
 
   @Inject()
-  private config: EggAppConfig;
+  private config: Config;
 
   // oxlint-disable-next-line typescript-eslint/no-explicit-any
   private _client: any;

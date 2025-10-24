@@ -1,12 +1,12 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-} from '@eggjs/tegg';
+} from 'egg';
 import {
   ForbiddenError,
   NotFoundError,
@@ -58,7 +58,7 @@ export class UserController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async loginOrCreateUser(
-    @HTTPContext() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() username: string,
     @HTTPBody() user: User
   ) {
@@ -132,7 +132,7 @@ export class UserController extends AbstractController {
     path: '/-/user/token/:token',
     method: HTTPMethodEnum.DELETE,
   })
-  async logout(@HTTPContext() ctx: EggContext, @HTTPParam() token: string) {
+  async logout(@HTTPContext() ctx: Context, @HTTPParam() token: string) {
     const authorizedUserAndToken =
       await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) return { ok: false };
@@ -151,7 +151,7 @@ export class UserController extends AbstractController {
     path: '/-/user/org.couchdb.user::username',
     method: HTTPMethodEnum.GET,
   })
-  async showUser(@HTTPContext() ctx: EggContext, @HTTPParam() username: string) {
+  async showUser(@HTTPContext() ctx: Context, @HTTPParam() username: string) {
     const user = await this.userService.findUserByNameOrDisplayName(username);
     if (!user) {
       throw new NotFoundError(`User "${username}" not found`);
@@ -170,7 +170,7 @@ export class UserController extends AbstractController {
     path: '/-/whoami',
     method: HTTPMethodEnum.GET,
   })
-  async whoami(@HTTPContext() ctx: EggContext) {
+  async whoami(@HTTPContext() ctx: Context) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const authorizedRes =
       await this.userRoleManager.getAuthorizedUserAndToken(ctx);
@@ -224,7 +224,7 @@ export class UserController extends AbstractController {
     path: '/-/npm/v1/user',
     method: HTTPMethodEnum.GET,
   })
-  async showProfile(@HTTPContext() ctx: EggContext) {
+  async showProfile(@HTTPContext() ctx: Context) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
       ctx,
       'read'
