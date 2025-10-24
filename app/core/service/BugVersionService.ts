@@ -1,5 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { EggLogger } from 'egg';
+import { AccessLevel, Inject, SingletonProto, Logger } from 'egg';
 import pMap from 'p-map';
 import { BugVersion } from '../entity/BugVersion.ts';
 import type {
@@ -23,7 +22,7 @@ export class BugVersionService {
   private readonly distRepository: DistRepository;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   @Inject()
   private readonly cacheService: CacheService;

@@ -1,5 +1,5 @@
-import { Inject, SingletonProto } from '@eggjs/tegg';
-import type { EggAppConfig } from 'egg';
+import { Inject, SingletonProto, EggAppConfig } from 'egg';
+
 import { BinaryType } from '../../enum/Binary.ts';
 import {
   AbstractBinary,

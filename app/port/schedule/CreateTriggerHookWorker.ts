@@ -2,9 +2,8 @@ import {
   Schedule,
   ScheduleType,
   type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
+} from 'egg/schedule';
+import { Inject, Logger, EggAppConfig } from 'egg';
 
 import type { TaskService } from '../../core/service/TaskService.ts';
 import { TaskType } from '../../common/enum/Task.ts';
@@ -24,7 +23,7 @@ export class CreateTriggerHookWorker {
   private readonly config: EggAppConfig;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   @Inject()
   private readonly createHookTriggerService: CreateHookTriggerService;

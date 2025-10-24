@@ -1,10 +1,10 @@
-import type { EggContext, Next } from '@eggjs/tegg';
+import type { Context, Next } from 'egg';
 
 import { PackageSyncerService } from '../../core/service/PackageSyncerService.ts';
 
 const DEFAULT_SERVER_ERROR_STATUS = 500;
 
-export async function ErrorHandler(ctx: EggContext, next: Next) {
+export async function ErrorHandler(ctx: Context, next: Next) {
   try {
     await next();
   } catch (err) {

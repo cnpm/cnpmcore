@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import type { PaddingSemVer } from '../core/entity/PaddingSemVer.ts';
 import type { Package as PackageModel } from './model/Package.ts';

@@ -2,9 +2,8 @@ import os from 'node:os';
 import { setTimeout } from 'node:timers/promises';
 import { rm } from 'node:fs/promises';
 
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto, HttpClient } from 'egg';
 import { Pointcut } from '@eggjs/tegg/aop';
-import type { EggHttpClient } from 'egg';
 import { isEmpty, isEqual } from 'lodash-es';
 import semver from 'semver';
 import { BadRequestError } from 'egg-errors';
@@ -83,7 +82,7 @@ export class PackageSyncerService extends AbstractService {
   @Inject()
   private readonly cacheService: CacheService;
   @Inject()
-  private readonly httpclient: EggHttpClient;
+  private readonly httpClient: HttpClient;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
@@ -978,7 +977,7 @@ export class PackageSyncerService extends AbstractService {
       let localFile: string;
       try {
         const { tmpfile, headers, timing } = await downloadToTempfile(
-          this.httpclient,
+          this.httpClient,
           this.config.dataDir,
           tarball,
           { remoteAuthToken }

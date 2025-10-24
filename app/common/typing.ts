@@ -1,6 +1,7 @@
 import type { Readable } from 'node:stream';
 import type { IncomingHttpHeaders } from 'node:http';
-import type { EggContext } from '@eggjs/tegg';
+
+import type { Context } from 'egg';
 import type { estypes } from '@elastic/elasticsearch';
 import type { CnpmcoreConfig } from '../port/config.ts';
 
@@ -72,7 +73,7 @@ export interface userResult {
   email: string;
 }
 export interface AuthClient {
-  getAuthUrl(ctx: EggContext): Promise<AuthUrlResult>;
+  getAuthUrl(ctx: Context): Promise<AuthUrlResult>;
   ensureCurrentUser(): Promise<userResult | null>;
 }
 

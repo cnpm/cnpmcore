@@ -1,6 +1,5 @@
-import { Schedule, ScheduleType, type CronParams } from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
+import { Schedule, ScheduleType, type CronParams } from 'egg/schedule';
+import { Inject, Logger, EggAppConfig } from 'egg';
 
 import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';
 import { SyncMode } from '../../common/constants.ts';
@@ -18,7 +17,7 @@ export class CheckProxyCacheUpdateWorker {
   private readonly config: EggAppConfig;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   @Inject()
   private proxyCacheService: ProxyCacheService;
