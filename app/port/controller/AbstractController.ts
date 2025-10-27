@@ -1,4 +1,4 @@
-import { NotFoundError, UnavailableForLegalReasonsError } from 'egg-errors';
+import { NotFoundError, UnavailableForLegalReasonsError } from '@eggjs/errors';
 import { type Context, Inject, EggAppConfig, Logger } from 'egg';
 
 import { MiddlewareController } from '../middleware/index.ts';

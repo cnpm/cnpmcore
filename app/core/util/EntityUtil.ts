@@ -1,5 +1,5 @@
 import ObjectID from 'bson-objectid';
-import { E400 } from 'egg-errors';
+import { E400 } from '@eggjs/errors';
 
 import type { EntityData } from '../entity/Entity.ts';
 

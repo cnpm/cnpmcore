@@ -10,7 +10,7 @@ import {
   Middleware,
 } from 'egg';
 import type { Static } from '@eggjs/typebox-validate/typebox';
-import { E451 } from 'egg-errors';
+import { E451 } from '@eggjs/errors';
 
 import { AbstractController } from '../AbstractController.ts';
 import type { SearchQueryOptions } from '../../typebox.ts';

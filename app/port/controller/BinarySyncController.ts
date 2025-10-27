@@ -11,7 +11,7 @@ import {
   HTTPBody,
 } from 'egg';
 import path from 'node:path';
-import { NotFoundError } from 'egg-errors';
+import { NotFoundError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import type { BinarySyncerService } from '../../core/service/BinarySyncerService.ts';

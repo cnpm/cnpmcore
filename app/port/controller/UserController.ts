@@ -12,7 +12,7 @@ import {
   NotFoundError,
   UnauthorizedError,
   UnprocessableEntityError,
-} from 'egg-errors';
+} from '@eggjs/errors';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.ts';

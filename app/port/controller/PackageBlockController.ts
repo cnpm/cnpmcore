@@ -9,7 +9,7 @@ import {
   Inject,
   Middleware,
 } from 'egg';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';

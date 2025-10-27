@@ -13,7 +13,7 @@ import {
   NotFoundError,
   NotImplementedError,
   UnauthorizedError,
-} from 'egg-errors';
+} from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';

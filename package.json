@@ -87,6 +87,7 @@
     "mocha": "11.7.4"
   },
   "dependencies": {
+    "@eggjs/errors": "beta",
     "@eggjs/redis": "beta",
     "@eggjs/scripts": "beta",
     "@eggjs/tracer": "beta",
@@ -101,7 +102,6 @@
     "dayjs": "^1.10.7",
     "egg": "beta",
     "egg-cors": "^3.0.0",
-    "egg-errors": "^2.3.0",
     "egg-status": "^1.0.0",
     "egg-view-nunjucks": "^2.3.0",
     "eggjs-elasticsearch": "^0.0.6",

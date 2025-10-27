@@ -4,7 +4,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
 } from 'egg';
-import { ForbiddenError, NotFoundError } from 'egg-errors';
+import { ForbiddenError, NotFoundError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import {

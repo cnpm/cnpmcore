@@ -1,5 +1,5 @@
 import { Event, Inject, Config, Logger } from 'egg';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError } from '@eggjs/errors';
 
 import {
   PACKAGE_TAG_ADDED,

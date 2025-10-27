@@ -1,7 +1,7 @@
 import os from 'node:os';
 import path from 'node:path';
 
-import { InternalServerError } from 'egg-errors';
+import { InternalServerError } from '@eggjs/errors';
 
 import { Entity, type EntityData } from './Entity.ts';
 import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';

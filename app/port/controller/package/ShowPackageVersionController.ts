@@ -7,7 +7,7 @@ import {
   HTTPParam,
   Inject,
 } from 'egg';
-import { NotFoundError } from 'egg-errors';
+import { NotFoundError } from '@eggjs/errors';
 
 import { AbstractController } from '../AbstractController.ts';
 import {
