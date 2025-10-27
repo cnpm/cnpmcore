@@ -3,7 +3,7 @@ import { setTimeout } from 'node:timers/promises';
 import { rm } from 'node:fs/promises';
 
 import { AccessLevel, Inject, SingletonProto, HttpClient } from 'egg';
-import { Pointcut } from '@eggjs/tegg/aop';
+import { Pointcut } from 'egg/aop';
 import { isEmpty, isEqual } from 'lodash-es';
 import semver from 'semver';
 import { BadRequestError } from 'egg-errors';

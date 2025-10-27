@@ -37,7 +37,7 @@
   },
   "scripts": {
     "predev": "npm run clean",
-    "dev": "NODE_OPTIONS='--experimental-transform-types' egg-bin dev",
+    "dev": "egg-bin dev",
     "dev:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin dev",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",
@@ -133,6 +133,7 @@
     "@eggjs/oxlint-config": "^1.0.0",
     "@eggjs/tsconfig": "beta",
     "@elastic/elasticsearch-mock": "^2.0.0",
+    "@oxc-node/core": "^0.0.32",
     "@simplewebauthn/typescript-types": "^7.0.0",
     "@types/lodash-es": "^4.17.12",
     "@types/mime-types": "^2.1.1",

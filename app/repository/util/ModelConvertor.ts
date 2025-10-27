@@ -1,4 +1,4 @@
-import { ModelMetadataUtil } from '@eggjs/tegg/orm';
+import { ModelMetadataUtil } from 'egg/orm';
 import type { EggProtoImplClass } from 'egg';
 import { get as lodashGet, set as lodashSet } from 'lodash-es';
 

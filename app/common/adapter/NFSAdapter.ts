@@ -2,7 +2,7 @@ import type { Readable } from 'node:stream';
 import type { IncomingHttpHeaders } from 'node:http';
 
 import { AccessLevel, Inject, SingletonProto, Logger } from 'egg';
-import { Pointcut } from '@eggjs/tegg/aop';
+import { Pointcut } from 'egg/aop';
 
 import { AsyncTimer } from '../aop/AsyncTimer.ts';
 import type { NFSClient } from '../typing.ts';

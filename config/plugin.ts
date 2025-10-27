@@ -1,6 +1,6 @@
 import type { EggPlugin } from 'egg';
 
-import tracer from '@eggjs/tracer';
+import tracerPlugin from '@eggjs/tracer';
 
 const plugin: EggPlugin = {
   view: {
@@ -10,7 +10,7 @@ const plugin: EggPlugin = {
     enable: true,
     package: 'egg-view-nunjucks',
   },
-  ...tracer,
+  ...tracerPlugin(),
   typeboxValidate: {
     enable: true,
     package: '@eggjs/typebox-validate',

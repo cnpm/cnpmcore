@@ -23,7 +23,7 @@ export interface PackageMetaChange {
   deprecateds?: PackageDeprecated[];
 }
 
-declare module '@eggjs/tegg' {
+declare module 'egg' {
   interface Events {
     [PACKAGE_ADDED]: (fullname: string) => Promise<void>;
     [PACKAGE_UNPUBLISHED]: (fullname: string) => Promise<void>;

@@ -1,6 +1,6 @@
 import { performance } from 'node:perf_hooks';
 
-import { Advice, type AdviceContext, type IAdvice } from '@eggjs/tegg/aop';
+import { Advice, type AdviceContext, type IAdvice } from 'egg/aop';
 import { Inject, Logger } from 'egg';
 
 const START = Symbol('AsyncTimer#start');
