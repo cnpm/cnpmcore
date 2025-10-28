@@ -20,7 +20,7 @@ export default class CnpmcoreAppHook implements ILifecycleBoot {
 
   configWillLoad() {
     const app = this.app;
-    // https://github.com/eggjs/tegg/blob/master/plugin/orm/app.ts#L37
+    // https://github.com/eggjs/egg/blob/next/tegg/plugin/orm/src/app.ts#L37
     // store query sql to log
     app.config.orm.logger = {
       ...app.config.orm.logger,
