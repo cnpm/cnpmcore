@@ -137,7 +137,7 @@
     "@types/mime-types": "^2.1.1",
     "@types/mocha": "^10.0.1",
     "@types/mysql": "^2.15.21",
-    "@types/node": "^22.18.12",
+    "@types/node": "^24.0.0",
     "@types/node-rsa": "^1.1.4",
     "@types/npm-package-arg": "^6.1.1",
     "@types/pg": "^8.11.10",
