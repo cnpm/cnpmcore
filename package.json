@@ -116,7 +116,7 @@
     "oss-cnpm": "^5.0.1",
     "p-map": "^4.0.0",
     "pg": "^8.13.1",
-    "read-env-value": "^1.0.0",
+    "read-env-value": "^2.0.0",
     "semver": "^7.3.5",
     "ssri": "^8.0.1",
     "type-fest": "^2.5.3",
