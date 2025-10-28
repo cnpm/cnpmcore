@@ -94,7 +94,7 @@
     "@elastic/elasticsearch": "^8.8.1",
     "@fengmk2/tar": "^6.2.0",
     "@node-rs/crc32": "^1.2.2",
-    "@simplewebauthn/server": "^7.0.1",
+    "@simplewebauthn/server": "^13.0.0",
     "base-x": "^3.0.9",
     "base64url": "^3.0.1",
     "bson-objectid": "^2.0.4",
