@@ -3,7 +3,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
 import { fromData, fromStream, type HashLike } from 'ssri';
-// @ts-expect-error no typed
+// @ts-expect-error no types available
 import tar from '@fengmk2/tar';
 
 import type {

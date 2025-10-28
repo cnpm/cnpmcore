@@ -14,6 +14,10 @@ jobs:
   typecheck:
     runs-on: ubuntu-latest
 
+    concurrency:
+      group: typecheck-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+      cancel-in-progress: true
+
     steps:
       - name: Checkout Git Source
         uses: actions/checkout@v5
@@ -46,6 +50,9 @@ jobs:
         shardTotal: [3]
 
     name: test on postgresql (node@${{ matrix.node-version }}, shard@${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    concurrency:
+      group: test-postgresql-fs-nfs-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.node-version }}-${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      cancel-in-progress: true
 
     runs-on: ${{ matrix.os }}
 
@@ -139,6 +146,9 @@ jobs:
         shardTotal: [3]
 
     name: test on mysql (node@${{ matrix.node-version }}, shard@${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    concurrency:
+      group: test-mysql57-fs-nfs-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.node-version }}-${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      cancel-in-progress: true
 
     runs-on: ${{ matrix.os }}
 
@@ -189,6 +199,10 @@ jobs:
       matrix:
         node-version: [20, 22]
         os: [ubuntu-latest]
+
+    concurrency:
+      group: test-mysql57-s3-nfs-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.node-version }}
+      cancel-in-progress: true
 
     runs-on: ${{ matrix.os }}
 
