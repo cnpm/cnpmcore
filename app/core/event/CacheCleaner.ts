@@ -1,4 +1,5 @@
-import { Event, Inject } from '@eggjs/tegg';
+import { Event, Inject } from 'egg';
+
 import {
   PACKAGE_BLOCKED,
   PACKAGE_MAINTAINER_CHANGED,

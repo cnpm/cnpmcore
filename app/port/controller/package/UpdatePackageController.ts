@@ -1,6 +1,6 @@
-import { BadRequestError, UnprocessableEntityError } from 'egg-errors';
+import { BadRequestError, UnprocessableEntityError } from 'egg/errors';
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPBody,
   HTTPController,
@@ -8,7 +8,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from '../AbstractController.ts';
@@ -39,7 +39,7 @@ export class UpdatePackageController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async update(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPBody() data: Maintainer
   ) {
@@ -83,7 +83,7 @@ export class UpdatePackageController extends AbstractController {
     return { ok: true };
   }
 
-  private getNpmCommand(ctx: EggContext) {
+  private getNpmCommand(ctx: Context) {
     // npm@6: referer: 'xxx [REDACTED]'
     // npm@>=7: 'npm-command': 'xxx'
     let npmCommand = ctx.get<string>('npm-command');
@@ -94,7 +94,7 @@ export class UpdatePackageController extends AbstractController {
     return npmCommand;
   }
 
-  private isNpmCommandValid(ctx: EggContext, expectCommand: string) {
+  private isNpmCommandValid(ctx: Context, expectCommand: string) {
     const npmCommand = this.getNpmCommand(ctx);
 
     return npmCommand === expectCommand;

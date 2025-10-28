@@ -1,11 +1,13 @@
 import fs from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
+
 // @ts-expect-error type error
 import tar from '@fengmk2/tar';
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import { ConflictError, ForbiddenError } from 'egg-errors';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
+import { ConflictError, ForbiddenError } from 'egg/errors';
 import semver from 'semver';
+
 import { AbstractService } from '../../common/AbstractService.ts';
 import { calculateIntegrity, getFullname } from '../../common/PackageUtil.ts';
 import { createTempDir, mimeLookup } from '../../common/FileUtil.ts';

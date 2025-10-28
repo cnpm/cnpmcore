@@ -6,8 +6,8 @@ import {
   Inject,
   SingletonProto,
   type EventBus,
-} from '@eggjs/tegg';
-import { BadRequestError, ForbiddenError, NotFoundError } from 'egg-errors';
+} from 'egg';
+import { BadRequestError, ForbiddenError, NotFoundError } from 'egg/errors';
 import type { RequireAtLeastOne } from 'type-fest';
 import npa from 'npm-package-arg';
 import semver from 'semver';

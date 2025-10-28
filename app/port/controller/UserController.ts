@@ -1,18 +1,18 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-} from '@eggjs/tegg';
+} from 'egg';
 import {
   ForbiddenError,
   NotFoundError,
   UnauthorizedError,
   UnprocessableEntityError,
-} from 'egg-errors';
+} from 'egg/errors';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.ts';
@@ -58,7 +58,7 @@ export class UserController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async loginOrCreateUser(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() username: string,
     @HTTPBody() user: User
   ) {
@@ -132,7 +132,7 @@ export class UserController extends AbstractController {
     path: '/-/user/token/:token',
     method: HTTPMethodEnum.DELETE,
   })
-  async logout(@Context() ctx: EggContext, @HTTPParam() token: string) {
+  async logout(@HTTPContext() ctx: Context, @HTTPParam() token: string) {
     const authorizedUserAndToken =
       await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) return { ok: false };
@@ -151,7 +151,7 @@ export class UserController extends AbstractController {
     path: '/-/user/org.couchdb.user::username',
     method: HTTPMethodEnum.GET,
   })
-  async showUser(@Context() ctx: EggContext, @HTTPParam() username: string) {
+  async showUser(@HTTPContext() ctx: Context, @HTTPParam() username: string) {
     const user = await this.userService.findUserByNameOrDisplayName(username);
     if (!user) {
       throw new NotFoundError(`User "${username}" not found`);
@@ -170,7 +170,7 @@ export class UserController extends AbstractController {
     path: '/-/whoami',
     method: HTTPMethodEnum.GET,
   })
-  async whoami(@Context() ctx: EggContext) {
+  async whoami(@HTTPContext() ctx: Context) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const authorizedRes =
       await this.userRoleManager.getAuthorizedUserAndToken(ctx);
@@ -224,7 +224,7 @@ export class UserController extends AbstractController {
     path: '/-/npm/v1/user',
     method: HTTPMethodEnum.GET,
   })
-  async showProfile(@Context() ctx: EggContext) {
+  async showProfile(@HTTPContext() ctx: Context) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
       ctx,
       'read'

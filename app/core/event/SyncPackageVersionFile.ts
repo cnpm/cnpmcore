@@ -1,6 +1,6 @@
-import { Event, Inject } from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
-import { ForbiddenError } from 'egg-errors';
+import { Event, Inject, Config, Logger } from 'egg';
+import { ForbiddenError } from 'egg/errors';
+
 import {
   PACKAGE_TAG_ADDED,
   PACKAGE_TAG_CHANGED,
@@ -12,9 +12,9 @@ import type { PackageVersionFileService } from '../service/PackageVersionFileSer
 
 class SyncPackageVersionFileEvent {
   @Inject()
-  protected readonly config: EggAppConfig;
+  protected readonly config: Config;
   @Inject()
-  protected readonly logger: EggLogger;
+  protected readonly logger: Logger;
   @Inject()
   private readonly packageManagerService: PackageManagerService;
   @Inject()

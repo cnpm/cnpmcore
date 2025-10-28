@@ -1,6 +1,7 @@
 import { join } from 'node:path';
+
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
@@ -9,8 +10,8 @@ import {
   HTTPQuery,
   Inject,
   Middleware,
-} from '@eggjs/tegg';
-import { NotFoundError } from 'egg-errors';
+} from 'egg';
+import { NotFoundError } from 'egg/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import { AdminAccess } from '../middleware/AdminAccess.ts';
@@ -77,7 +78,7 @@ export class PackageVersionFileController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async sync(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() versionSpec: string
   ) {
@@ -108,7 +109,7 @@ export class PackageVersionFileController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async listFiles(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() versionSpec: string,
     @HTTPQuery() meta: string
@@ -155,7 +156,7 @@ export class PackageVersionFileController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async raw(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() versionSpec: string,
     @HTTPParam() path: string,
@@ -252,7 +253,7 @@ export class PackageVersionFileController extends AbstractController {
   }
 
   async #getPackageVersion(
-    ctx: EggContext,
+    ctx: Context,
     fullname: string,
     scope: string,
     name: string,

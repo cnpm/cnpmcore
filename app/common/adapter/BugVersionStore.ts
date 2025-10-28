@@ -1,4 +1,5 @@
-import { AccessLevel, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto } from 'egg';
+
 import type { BugVersion } from '../../core/entity/BugVersion.ts';
 
 @SingletonProto({

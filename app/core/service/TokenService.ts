@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 import { isEmpty } from 'lodash-es';
-import { ForbiddenError, UnauthorizedError } from 'egg-errors';
+import { ForbiddenError, UnauthorizedError } from 'egg/errors';
 
 import { AbstractService } from '../../common/AbstractService.ts';
 import { isGranularToken, type Token } from '../entity/Token.ts';

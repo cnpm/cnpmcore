@@ -1,5 +1,5 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPBody,
   HTTPController,
@@ -7,8 +7,8 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
-import { ForbiddenError } from 'egg-errors';
+} from 'egg';
+import { ForbiddenError } from 'egg/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
@@ -47,7 +47,7 @@ export class PackageTagController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async saveTag(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() tag: string,
     @HTTPBody() version: string
@@ -75,7 +75,7 @@ export class PackageTagController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   async removeTag(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() tag: string
   ) {

@@ -1,4 +1,5 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
+
 import type { ScopeRepository } from '../../repository/ScopeRepository.ts';
 import { AbstractService } from '../../common/AbstractService.ts';
 import { Scope } from '../entity/Scope.ts';

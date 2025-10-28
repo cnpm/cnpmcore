@@ -1,4 +1,4 @@
-import type { EggContext, Next } from '@eggjs/tegg';
+import type { EggContext, Next } from 'egg';
 
 export async function Tracing(ctx: EggContext, next: Next) {
   // headers: {

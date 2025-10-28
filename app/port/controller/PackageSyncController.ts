@@ -1,6 +1,6 @@
 import {
-  type EggContext,
-  type BackgroundTaskHelper,
+  HTTPContext,
+  BackgroundTaskHelper,
   Context,
   HTTPBody,
   HTTPController,
@@ -9,8 +9,8 @@ import {
   HTTPParam,
   HTTPQuery,
   Inject,
-} from '@eggjs/tegg';
-import { ForbiddenError, NotFoundError } from 'egg-errors';
+} from 'egg';
+import { ForbiddenError, NotFoundError } from 'egg/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import {
@@ -70,7 +70,7 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async createSyncTask(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPBody() data: SyncPackageTaskType
   ) {
@@ -204,7 +204,7 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showSyncTaskLog(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() taskId: string
   ) {
@@ -239,7 +239,7 @@ export class PackageSyncController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async deprecatedCreateSyncTask(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPQuery() nodeps: string
   ) {

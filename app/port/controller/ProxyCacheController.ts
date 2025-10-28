@@ -1,5 +1,5 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
@@ -7,13 +7,13 @@ import {
   HTTPParam,
   HTTPQuery,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 import {
   ForbiddenError,
   NotFoundError,
   NotImplementedError,
   UnauthorizedError,
-} from 'egg-errors';
+} from 'egg/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';
@@ -140,7 +140,7 @@ export class ProxyCacheController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
     path: '/-/proxy-cache',
   })
-  async truncateProxyCaches(@Context() ctx: EggContext) {
+  async truncateProxyCaches(@HTTPContext() ctx: Context) {
     const isAdmin = await this.userRoleManager.isAdmin(ctx);
     if (!isAdmin) {
       throw new UnauthorizedError('only admin can do this');

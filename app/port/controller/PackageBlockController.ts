@@ -1,5 +1,5 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPBody,
   HTTPController,
@@ -8,8 +8,8 @@ import {
   HTTPParam,
   Inject,
   Middleware,
-} from '@eggjs/tegg';
-import { ForbiddenError } from 'egg-errors';
+} from 'egg';
+import { ForbiddenError } from 'egg/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
@@ -32,7 +32,7 @@ export class PackageBlockController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async blockPackage(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPBody() data: BlockPackageType
   ) {
@@ -74,7 +74,7 @@ export class PackageBlockController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async unblockPackage(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string
   ) {
     const packageEntity = await this.getPackageEntityByFullname(fullname);

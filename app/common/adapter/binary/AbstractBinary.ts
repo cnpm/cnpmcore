@@ -2,8 +2,10 @@ import {
   Inject,
   QualifierImplDecoratorUtil,
   type ImplDecorator,
-} from '@eggjs/tegg';
-import type { EggHttpClient, EggLogger } from 'egg';
+  HttpClient,
+  Logger,
+} from 'egg';
+
 import type { BinaryType } from '../../enum/Binary.ts';
 import type {
   BinaryName,
@@ -30,10 +32,10 @@ export const BINARY_ADAPTER_ATTRIBUTE = Symbol('BINARY_ADAPTER_ATTRIBUTE');
 
 export abstract class AbstractBinary {
   @Inject()
-  protected logger: EggLogger;
+  protected logger: Logger;
 
   @Inject()
-  protected httpclient: EggHttpClient;
+  protected httpclient: HttpClient;
 
   abstract initFetch(binaryName: BinaryName): Promise<void>;
   abstract fetch(

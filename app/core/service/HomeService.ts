@@ -1,8 +1,9 @@
 import {
   AccessLevel,
   SingletonProto,
-} from '@eggjs/tegg';
-import { NotFoundError, NotImplementedError } from 'egg-errors';
+} from 'egg';
+import { NotFoundError, NotImplementedError } from 'egg/errors';
+
 import { AbstractService } from '../../common/AbstractService.ts';
 import { NOT_IMPLEMENTED_PATH } from '../../common/constants.ts';
 

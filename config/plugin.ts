@@ -1,34 +1,8 @@
 import type { EggPlugin } from 'egg';
 
+import tracerPlugin from '@eggjs/tracer';
+
 const plugin: EggPlugin = {
-  tegg: {
-    enable: true,
-    package: '@eggjs/tegg-plugin',
-  },
-  teggConfig: {
-    enable: true,
-    package: '@eggjs/tegg-config',
-  },
-  teggController: {
-    enable: true,
-    package: '@eggjs/tegg-controller-plugin',
-  },
-  teggSchedule: {
-    enable: true,
-    package: '@eggjs/tegg-schedule-plugin',
-  },
-  teggOrm: {
-    enable: true,
-    package: '@eggjs/tegg-orm-plugin',
-  },
-  eventbusModule: {
-    enable: true,
-    package: '@eggjs/tegg-eventbus-plugin',
-  },
-  aopModule: {
-    enable: true,
-    package: '@eggjs/tegg-aop-plugin',
-  },
   view: {
     enable: true,
   },
@@ -36,10 +10,7 @@ const plugin: EggPlugin = {
     enable: true,
     package: 'egg-view-nunjucks',
   },
-  tracer: {
-    enable: true,
-    package: '@eggjs/tracer',
-  },
+  ...tracerPlugin(),
   typeboxValidate: {
     enable: true,
     package: '@eggjs/typebox-validate',

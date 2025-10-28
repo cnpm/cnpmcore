@@ -17,6 +17,9 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    concurrency:
+      group: build-and-push-image-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+      cancel-in-progress: true
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
       contents: read

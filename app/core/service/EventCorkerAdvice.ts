@@ -1,6 +1,6 @@
 
-import { Inject, ObjectInitType, type ContextEventBus } from '@eggjs/tegg';
-import { Advice, type IAdvice } from '@eggjs/tegg/aop';
+import { Inject, ObjectInitType, type ContextEventBus } from 'egg';
+import { Advice, type IAdvice } from 'egg/aop';
 
 @Advice({
   initType: ObjectInitType.CONTEXT,

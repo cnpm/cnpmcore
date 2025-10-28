@@ -1,6 +1,6 @@
-import type { EggContext } from '@eggjs/tegg';
+import type { Context } from 'egg';
 
-export function isSyncWorkerRequest(ctx: EggContext) {
+export function isSyncWorkerRequest(ctx: Context) {
   // sync request will contain this query params
   let isSyncWorkerRequest = ctx.query.cache === '0';
   if (!isSyncWorkerRequest) {

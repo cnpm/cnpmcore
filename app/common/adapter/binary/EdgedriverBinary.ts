@@ -1,5 +1,7 @@
 import path from 'node:path';
-import { SingletonProto } from '@eggjs/tegg';
+
+import { SingletonProto } from 'egg';
+
 import {
   AbstractBinary,
   BinaryAdapter,

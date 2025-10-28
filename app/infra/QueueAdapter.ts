@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 import type { Redis } from 'ioredis';
 
 import type { QueueAdapter } from '../common/typing.ts';

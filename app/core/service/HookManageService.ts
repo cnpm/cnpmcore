@@ -1,6 +1,6 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import { ForbiddenError, NotFoundError } from 'egg-errors';
-import type { EggAppConfig } from 'egg';
+import { AccessLevel, Inject, SingletonProto, Config } from 'egg';
+import { ForbiddenError, NotFoundError } from 'egg/errors';
+
 import type { HookRepository } from '../../repository/HookRepository.ts';
 import { Hook } from '../entity/Hook.ts';
 import type { HookType } from '../../common/enum/Hook.ts';
@@ -33,7 +33,7 @@ export class HookManageService {
   private readonly hookRepository: HookRepository;
 
   @Inject()
-  private readonly config: EggAppConfig;
+  private readonly config: Config;
 
   get hooksLimit() {
     return this.config.cnpmcore.hooksLimit;

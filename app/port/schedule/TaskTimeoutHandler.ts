@@ -2,9 +2,8 @@ import {
   Schedule,
   ScheduleType,
   type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
-import type { EggLogger } from 'egg';
+} from 'egg/schedule';
+import { Inject, Logger } from 'egg';
 
 import type { TaskService } from '../../core/service/TaskService.ts';
 import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
@@ -28,7 +27,7 @@ export class TaskTimeoutHandler {
   private readonly cacheAdapter: CacheAdapter;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async subscribe() {
     await this.cacheAdapter.usingLock('TaskTimeoutHandler', 60, async () => {

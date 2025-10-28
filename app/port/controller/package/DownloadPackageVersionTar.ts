@@ -1,14 +1,15 @@
 import { PassThrough } from 'node:stream';
-import { NotFoundError } from 'egg-errors';
+
+import { NotFoundError } from 'egg/errors';
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 
 import { AbstractController } from '../AbstractController.ts';
 import {
@@ -41,7 +42,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:filenameWithVersion.tgz`,
     method: HTTPMethodEnum.OPTIONS,
   })
-  async downloadForOptions(@Context() ctx: EggContext) {
+  async downloadForOptions(@HTTPContext() ctx: Context) {
     ctx.set('access-control-allow-origin', '*');
     ctx.set('access-control-allow-methods', 'GET,HEAD');
     ctx.status = 204;
@@ -53,7 +54,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async download(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() filenameWithVersion: string
   ) {
@@ -132,7 +133,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async deprecatedDownload(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() fullnameWithVersion: string
   ) {
@@ -143,7 +144,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
   }
 
   private async getTgzProxyStream(
-    ctx: EggContext,
+    ctx: Context,
     fullname: string,
     version: string
   ) {
@@ -175,7 +176,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:scope/:filenameWithVersion.tgz`,
     method: HTTPMethodEnum.OPTIONS,
   })
-  async downloadVerdaccioPathStyleorOptions(@Context() ctx: EggContext) {
+  async downloadVerdaccioPathStyleorOptions(@HTTPContext() ctx: Context) {
     return this.downloadForOptions(ctx);
   }
 
@@ -185,7 +186,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async downloadVerdaccioPathStyle(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() filenameWithVersion: string
   ) {

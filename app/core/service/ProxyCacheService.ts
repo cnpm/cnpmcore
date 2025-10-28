@@ -1,12 +1,12 @@
-import type {
+import {
   Context,
-  EggHttpClient,
+  HttpClient,
   HttpClientRequestOptions,
   HttpClientResponse,
+  AccessLevel, Inject, SingletonProto,
+  BackgroundTaskHelper,
 } from 'egg';
-import { ForbiddenError } from 'egg-errors';
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
+import { ForbiddenError } from 'egg/errors';
 import { valid as semverValid } from 'semver';
 
 import { AbstractService } from '../../common/AbstractService.ts';
@@ -53,7 +53,7 @@ type GetSourceManifestAndCacheReturnType<T> = T extends
 })
 export class ProxyCacheService extends AbstractService {
   @Inject()
-  private readonly httpclient: EggHttpClient;
+  private readonly httpClient: HttpClient;
   @Inject()
   private readonly npmRegistry: NPMRegistry;
   @Inject()
@@ -409,7 +409,7 @@ export class ProxyCacheService extends AbstractService {
 
     const url = `${this.npmRegistry.registry}${ctx.url}`;
 
-    const res = (await this.httpclient.request(url, {
+    const res = (await this.httpClient.request(url, {
       timing: true,
       followRedirect: true,
       // once redirection is also count as a retry

@@ -1,10 +1,10 @@
-import type { EggAppConfig, EggLogger } from 'egg';
+
 import {
   Schedule,
   ScheduleType,
   type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
+} from 'egg/schedule';
+import { Inject, Logger, EggAppConfig } from 'egg';
 
 import type { ProxyCacheService } from '../../core/service/ProxyCacheService.ts';
 import { SyncMode } from '../../common/constants.ts';
@@ -25,7 +25,7 @@ export class SyncProxyCacheWorker {
   private readonly config: EggAppConfig;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async subscribe() {
     if (this.config.cnpmcore.syncMode !== SyncMode.proxy) return;

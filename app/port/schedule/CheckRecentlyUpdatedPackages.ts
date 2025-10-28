@@ -2,9 +2,8 @@ import {
   Schedule,
   ScheduleType,
   type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
-import type { EggAppConfig, EggHttpClient, EggLogger } from 'egg';
+} from 'egg/schedule';
+import { Inject, EggAppConfig, HttpClient, Logger } from 'egg';
 
 import type { PackageSyncerService } from '../../core/service/PackageSyncerService.ts';
 import type { PackageRepository } from '../../repository/PackageRepository.ts';
@@ -29,10 +28,10 @@ export class CheckRecentlyUpdatedPackages {
   private readonly config: EggAppConfig;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   @Inject()
-  private readonly httpclient: EggHttpClient;
+  private readonly httpClient: HttpClient;
 
   async subscribe() {
     const notAllowUpdateModeList = [
@@ -52,7 +51,7 @@ export class CheckRecentlyUpdatedPackages {
       const pageUrl = `https://www.npmjs.com/browse/updated?offset=${offset}`;
       let html = '';
       try {
-        const { status, data } = await this.httpclient.request(pageUrl, {
+        const { status, data } = await this.httpClient.request(pageUrl, {
           followRedirect: true,
           timeout: 10_000,
         });

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError } from 'egg/errors';
 import dayjs from 'dayjs';
 
 import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';

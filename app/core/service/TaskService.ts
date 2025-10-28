@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import type { NFSAdapter } from '../../common/adapter/NFSAdapter.ts';
 import { TaskState, TaskType } from '../../common/enum/Task.ts';

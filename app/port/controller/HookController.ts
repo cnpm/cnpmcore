@@ -1,5 +1,5 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPBody,
   HTTPController,
@@ -7,7 +7,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 
 import type { HookManageService } from '../../core/service/HookManageService.ts';
 import type { TaskService } from '../../core/service/TaskService.ts';
@@ -47,7 +47,7 @@ export class HookController {
     method: HTTPMethodEnum.POST,
   })
   async createHook(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPBody() req: CreateHookRequest
   ) {
     ctx.tValidate(CreateHookRequestRule, req);
@@ -70,7 +70,7 @@ export class HookController {
     method: HTTPMethodEnum.PUT,
   })
   async updateHook(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() id: string,
     @HTTPBody() req: UpdateHookRequest
   ) {
@@ -98,7 +98,7 @@ export class HookController {
     path: '/v1/hooks/hook/:id',
     method: HTTPMethodEnum.DELETE,
   })
-  async deleteHook(@Context() ctx: EggContext, @HTTPParam() id: string) {
+  async deleteHook(@HTTPContext() ctx: Context, @HTTPParam() id: string) {
     const user = await this.userRoleManager.requiredAuthorizedUser(
       ctx,
       'setting'
@@ -120,7 +120,7 @@ export class HookController {
     path: '/v1/hooks',
     method: HTTPMethodEnum.GET,
   })
-  async listHooks(@Context() ctx: EggContext) {
+  async listHooks(@HTTPContext() ctx: Context) {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const hooks = await this.hookManageService.listHooksByOwnerId(user.userId);
     const tasks = await this.taskService.findTasks(
@@ -141,7 +141,7 @@ export class HookController {
     path: '/v1/hooks/hook/:id',
     method: HTTPMethodEnum.GET,
   })
-  async getHook(@Context() ctx: EggContext, @HTTPParam() id: string) {
+  async getHook(@HTTPContext() ctx: Context, @HTTPParam() id: string) {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const hook = await this.hookManageService.getHookByOwnerId(id, user.userId);
     let task: TriggerHookTask | null = null;

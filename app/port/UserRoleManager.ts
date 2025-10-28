@@ -1,11 +1,11 @@
 import {
-  type EggContext,
+  Context,
   AccessLevel,
   ContextProto,
   Inject,
-} from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
-import { ForbiddenError, UnauthorizedError } from 'egg-errors';
+  Config, Logger,
+} from 'egg';
+import { ForbiddenError, UnauthorizedError } from 'egg/errors';
 
 import type { PackageRepository } from '../repository/PackageRepository.ts';
 import type { Package as PackageEntity } from '../core/entity/Package.ts';
@@ -26,9 +26,9 @@ export class UserRoleManager {
   @Inject()
   private readonly packageRepository: PackageRepository;
   @Inject()
-  private readonly config: EggAppConfig;
+  private readonly config: Config;
   @Inject()
-  protected logger: EggLogger;
+  protected logger: Logger;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
@@ -43,7 +43,7 @@ export class UserRoleManager {
   // 2. has published in current registry
   // 3. pkg scope is allowed to publish
   // use AbstractController#ensurePublishAccess ensure pkg exists;
-  public async checkPublishAccess(ctx: EggContext, fullname: string) {
+  public async checkPublishAccess(ctx: Context, fullname: string) {
     const user = await this.requiredAuthorizedUser(ctx, 'publish');
 
     // 1. admin has all access
@@ -97,7 +97,7 @@ export class UserRoleManager {
   //   host: 'localhost:7001',
   //   connection: 'keep-alive'
   // }
-  public async getAuthorizedUserAndToken(ctx: EggContext) {
+  public async getAuthorizedUserAndToken(ctx: Context) {
     if (this.handleAuthorized) {
       if (!this.currentAuthorizedUser) return null;
       return {
@@ -122,7 +122,7 @@ export class UserRoleManager {
     return authorizedUserAndToken;
   }
 
-  public async requiredAuthorizedUser(ctx: EggContext, role: TokenRole) {
+  public async requiredAuthorizedUser(ctx: Context, role: TokenRole) {
     const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) {
       const authorization = ctx.get('authorization');
@@ -201,7 +201,7 @@ export class UserRoleManager {
     }
   }
 
-  public async isAdmin(ctx: EggContext) {
+  public async isAdmin(ctx: Context) {
     const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) return false;
     const { user, token } = authorizedUserAndToken;

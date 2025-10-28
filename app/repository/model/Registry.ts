@@ -1,4 +1,4 @@
-import { Attribute, Model } from '@eggjs/tegg/orm';
+import { Attribute, Model } from 'egg/orm';
 
 import { Bone, DataTypes } from '../util/leoric.ts';
 import type { RegistryType } from '../../common/enum/Registry.ts';

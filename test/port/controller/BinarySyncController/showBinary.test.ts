@@ -90,7 +90,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       ]);
     });
 
-    it('should 404 when binary not exists', async () => {
+    it('should 404 when binary name not exists', async () => {
       let res = await app
         .httpRequest()
         .get('/-/binary/node-canvas-prebuilt-not-exists/');
@@ -142,9 +142,10 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       const res = await app
         .httpRequest()
         .get('/-/binary/node-canvas-prebuilt/');
-      assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
+      assert.equal(res.status, 200);
+      assert.equal(
+        res.headers['content-type'],
+        'application/json; charset=utf-8'
       );
       const items = TestUtil.pickKeys(res.body, [
         'category',
@@ -188,9 +189,10 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       const res = await app
         .httpRequest()
         .get('/-/binary/node-canvas-prebuilt/v2.6.1/');
-      assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
+      assert.equal(res.status, 200);
+      assert.equal(
+        res.headers['content-type'],
+        'application/json; charset=utf-8'
       );
       const items = TestUtil.pickKeys(res.body, [
         'category',
@@ -199,8 +201,6 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         'type',
         'url',
       ]);
-      assert.ok(items.length > 0);
-
       assert.deepStrictEqual(items, [
         {
           category: 'node-canvas-prebuilt',

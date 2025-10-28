@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { uniq } from 'lodash-es';
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import { ModelConvertor } from './util/ModelConvertor.ts';
 import { isDuplicateKeyError } from './util/ErrorUtil.ts';

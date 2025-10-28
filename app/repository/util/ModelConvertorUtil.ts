@@ -1,4 +1,4 @@
-import { type EggProtoImplClass, MetadataUtil } from '@eggjs/tegg';
+import { type EggProtoImplClass, MetadataUtil } from 'egg';
 
 const ENTITY_PROPERTY_MAP_ATTRIBUTE = Symbol.for(
   'EggPrototype#model#entityPropertyMap'

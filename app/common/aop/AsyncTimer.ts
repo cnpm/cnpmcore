@@ -1,8 +1,7 @@
 import { performance } from 'node:perf_hooks';
 
-import { Advice, type AdviceContext, type IAdvice } from '@eggjs/tegg/aop';
-import { Inject } from '@eggjs/tegg';
-import type { EggLogger } from 'egg';
+import { Advice, type AdviceContext, type IAdvice } from 'egg/aop';
+import { Inject, Logger } from 'egg';
 
 const START = Symbol('AsyncTimer#start');
 const SUCCEED = Symbol('AsyncTimer#succeed');
@@ -11,7 +10,7 @@ const SUCCEED = Symbol('AsyncTimer#succeed');
 @Advice()
 export class AsyncTimer implements IAdvice {
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async beforeCall(ctx: AdviceContext) {
     ctx.set(START, performance.now());

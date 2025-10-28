@@ -1,13 +1,13 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
-import { NotFoundError } from 'egg-errors';
+} from 'egg';
+import { NotFoundError } from 'egg/errors';
 
 import { AbstractController } from '../AbstractController.ts';
 import {
@@ -34,7 +34,7 @@ export class ShowPackageVersionController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async show(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() versionSpec: string
   ) {

@@ -1,4 +1,5 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
+
 import type { Package as PackageModel } from './model/Package.ts';
 import { Package as PackageEntity } from '../core/entity/Package.ts';
 import { ModelConvertor } from './util/ModelConvertor.ts';

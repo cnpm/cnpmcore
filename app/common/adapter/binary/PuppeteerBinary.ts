@@ -1,4 +1,4 @@
-import { SingletonProto } from '@eggjs/tegg';
+import { SingletonProto } from 'egg';
 import { XMLParser } from 'fast-xml-parser';
 
 import { BinaryType } from '../../enum/Binary.ts';

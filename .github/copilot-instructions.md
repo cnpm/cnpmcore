@@ -424,8 +424,7 @@ These adapters allow cnpmcore to integrate with different cloud providers and en
 **Example Controller Implementation:**
 ```typescript
 import { AbstractController } from './AbstractController';
-import { Inject } from '@eggjs/tegg';
-import { HTTPController, HTTPMethod, HTTPQuery } from '@eggjs/tegg-controller-plugin';
+import { HTTPController, HTTPMethod, HTTPQuery, Inject } from 'egg';
 
 @HTTPController()
 export class YourController extends AbstractController {

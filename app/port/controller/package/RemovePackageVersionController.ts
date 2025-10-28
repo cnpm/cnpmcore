@@ -1,13 +1,13 @@
-import { BadRequestError, ForbiddenError } from 'egg-errors';
+import { BadRequestError, ForbiddenError } from 'egg/errors';
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
+} from 'egg';
 
 import { AbstractController } from '../AbstractController.ts';
 import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.ts';
@@ -34,7 +34,7 @@ export class RemovePackageVersionController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   async removeByTarballUrl(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() filenameWithVersion: string
   ) {
@@ -68,7 +68,7 @@ export class RemovePackageVersionController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   async removeByPkgUri(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string
   ) {
     const npmCommand = ctx.get('npm-command');

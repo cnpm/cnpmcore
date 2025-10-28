@@ -1,5 +1,6 @@
-import { SingletonProto } from '@eggjs/tegg';
-import { E500 } from 'egg-errors';
+import { SingletonProto } from 'egg';
+import { E500 } from 'egg/errors';
+
 import { RegistryType } from '../../../common/enum/Registry.ts';
 import type { Registry } from '../../../core/entity/Registry.ts';
 import {
@@ -12,7 +13,7 @@ import {
 export class CnpmcoreChangesStream extends AbstractChangeStream {
   async getInitialSince(registry: Registry): Promise<string> {
     const db = new URL(registry.changeStream).origin;
-    const { status, data } = await this.httpclient.request(db, {
+    const { status, data } = await this.httpClient.request(db, {
       followRedirect: true,
       timeout: 10_000,
       dataType: 'json',
@@ -34,7 +35,7 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
   async *fetchChanges(registry: Registry, since: string) {
     const db = this.getChangesStreamUrl(registry, since);
     // json mode
-    const { data } = await this.httpclient.request(db, {
+    const { data } = await this.httpClient.request(db, {
       followRedirect: true,
       timeout: 30_000,
       dataType: 'json',
