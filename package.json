@@ -87,7 +87,6 @@
     "mocha": "11.7.4"
   },
   "dependencies": {
-    "@eggjs/errors": "beta",
     "@eggjs/redis": "beta",
     "@eggjs/scripts": "beta",
     "@eggjs/tracer": "beta",

@@ -13,7 +13,7 @@ import {
 } from 'egg';
 import '@eggjs/typebox-validate';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
-import { ForbiddenError, NotFoundError } from '@eggjs/errors';
+import { ForbiddenError, NotFoundError } from 'egg/errors';
 import { createHash } from 'node:crypto';
 import base64url from 'base64url';
 import {

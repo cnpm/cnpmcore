@@ -6,7 +6,7 @@ import { AccessLevel, Inject, SingletonProto, HttpClient } from 'egg';
 import { Pointcut } from 'egg/aop';
 import { isEmpty, isEqual } from 'lodash-es';
 import semver from 'semver';
-import { BadRequestError } from '@eggjs/errors';
+import { BadRequestError } from 'egg/errors';
 
 import type {
   NPMRegistry,

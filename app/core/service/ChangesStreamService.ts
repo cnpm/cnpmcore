@@ -7,7 +7,7 @@ import {
   SingletonProto,
   type EggObjectFactory,
 } from 'egg';
-import { E500 } from '@eggjs/errors';
+import { E500 } from 'egg/errors';
 
 import {
   RegistryNotMatchError,

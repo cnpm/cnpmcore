@@ -1,5 +1,5 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
-import { E400, NotFoundError } from '@eggjs/errors';
+import { E400, NotFoundError } from 'egg/errors';
 
 import type { RegistryRepository } from '../../repository/RegistryRepository.ts';
 import { AbstractService } from '../../common/AbstractService.ts';

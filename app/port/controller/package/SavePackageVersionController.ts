@@ -4,7 +4,7 @@ import {
   ConflictError,
   ForbiddenError,
   UnprocessableEntityError,
-} from '@eggjs/errors';
+} from 'egg/errors';
 import {
   HTTPContext,
   Context,

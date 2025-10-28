@@ -11,7 +11,7 @@ import {
   Inject,
   Middleware,
 } from 'egg';
-import { NotFoundError } from '@eggjs/errors';
+import { NotFoundError } from 'egg/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import { AdminAccess } from '../middleware/AdminAccess.ts';

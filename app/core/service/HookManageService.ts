@@ -1,5 +1,5 @@
 import { AccessLevel, Inject, SingletonProto, Config } from 'egg';
-import { ForbiddenError, NotFoundError } from '@eggjs/errors';
+import { ForbiddenError, NotFoundError } from 'egg/errors';
 
 import type { HookRepository } from '../../repository/HookRepository.ts';
 import { Hook } from '../entity/Hook.ts';

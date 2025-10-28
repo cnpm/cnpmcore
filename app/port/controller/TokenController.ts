@@ -1,4 +1,4 @@
-import { ForbiddenError, UnauthorizedError } from '@eggjs/errors';
+import { ForbiddenError, UnauthorizedError } from 'egg/errors';
 import {
   HTTPContext,
   Context,

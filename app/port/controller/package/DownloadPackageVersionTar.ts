@@ -1,6 +1,6 @@
 import { PassThrough } from 'node:stream';
 
-import { NotFoundError } from '@eggjs/errors';
+import { NotFoundError } from 'egg/errors';
 import {
   HTTPContext,
   Context,

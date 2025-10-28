@@ -1,5 +1,5 @@
 import type { Context, Next } from 'egg';
-import { ForbiddenError } from '@eggjs/errors';
+import { ForbiddenError } from 'egg/errors';
 
 import { UserRoleManager } from '../UserRoleManager.ts';
 

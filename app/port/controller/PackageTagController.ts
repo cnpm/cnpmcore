@@ -8,7 +8,7 @@ import {
   HTTPParam,
   Inject,
 } from 'egg';
-import { ForbiddenError } from '@eggjs/errors';
+import { ForbiddenError } from 'egg/errors';
 
 import { AbstractController } from './AbstractController.ts';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';

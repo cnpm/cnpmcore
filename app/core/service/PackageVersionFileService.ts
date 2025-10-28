@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 // @ts-expect-error type error
 import tar from '@fengmk2/tar';
 import { AccessLevel, Inject, SingletonProto } from 'egg';
-import { ConflictError, ForbiddenError } from '@eggjs/errors';
+import { ConflictError, ForbiddenError } from 'egg/errors';
 import semver from 'semver';
 
 import { AbstractService } from '../../common/AbstractService.ts';

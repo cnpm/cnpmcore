@@ -5,7 +5,7 @@ import {
   Inject,
   Config, Logger,
 } from 'egg';
-import { ForbiddenError, UnauthorizedError } from '@eggjs/errors';
+import { ForbiddenError, UnauthorizedError } from 'egg/errors';
 
 import type { PackageRepository } from '../repository/PackageRepository.ts';
 import type { Package as PackageEntity } from '../core/entity/Package.ts';

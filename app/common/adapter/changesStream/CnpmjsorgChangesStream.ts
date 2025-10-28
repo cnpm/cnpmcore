@@ -1,5 +1,5 @@
 import { SingletonProto } from 'egg';
-import { E500 } from '@eggjs/errors';
+import { E500 } from 'egg/errors';
 
 import { RegistryType } from '../../../common/enum/Registry.ts';
 import type { Registry } from '../../../core/entity/Registry.ts';

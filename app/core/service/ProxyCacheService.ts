@@ -6,7 +6,7 @@ import {
   AccessLevel, Inject, SingletonProto,
   BackgroundTaskHelper,
 } from 'egg';
-import { ForbiddenError } from '@eggjs/errors';
+import { ForbiddenError } from 'egg/errors';
 import { valid as semverValid } from 'semver';
 
 import { AbstractService } from '../../common/AbstractService.ts';

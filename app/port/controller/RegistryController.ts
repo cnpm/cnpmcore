@@ -10,7 +10,7 @@ import {
   Inject,
   Middleware,
 } from 'egg';
-import { NotFoundError } from '@eggjs/errors';
+import { NotFoundError } from 'egg/errors';
 import type { Static } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.ts';

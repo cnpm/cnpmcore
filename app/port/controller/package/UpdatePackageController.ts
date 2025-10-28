@@ -1,4 +1,4 @@
-import { BadRequestError, UnprocessableEntityError } from '@eggjs/errors';
+import { BadRequestError, UnprocessableEntityError } from 'egg/errors';
 import {
   HTTPContext,
   Context,
