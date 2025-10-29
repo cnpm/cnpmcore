@@ -83,14 +83,16 @@ jobs:
           CNPMCORE_FORCE_LOCAL_FS=true npm run start:foreground &
           sleep 15
           echo "Checking cnpmcore is ready..."
-          curl -v http://127.0.0.1:7001
+          curl -v http://127.0.0.1:7001 -o /tmp/curl_out
+          cat /tmp/curl_out
           sleep 1
           curl -fsSL -w "%{http_code}" http://127.0.0.1:7001 -o /tmp/curl_out | {
             read code
+            cat /tmp/curl_out
             if [ "$code" = "200" ] && grep -q "instance_start_time" /tmp/curl_out; then
               echo "✅ cnpmcore is ready"
             else
-              echo "❌ cnpmcore is not ready, status code=$code"
+              echo "❌ cnpmcore is not ready, status=$code"
               cat /tmp/curl_out
               exit 1
             fi
