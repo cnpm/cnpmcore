@@ -80,8 +80,16 @@ jobs:
           CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
           CNPMCORE_FORCE_LOCAL_FS=true npm run start:foreground &
           sleep 15
-          curl -v http://localhost:7001
-          curl -v http://localhost:7001/egg.status
+          curl -fsSL -w "%{http_code}" http://127.0.0.1:7001 -o /tmp/curl_out | {
+            read code
+            if [ "$code" = "200" ] && grep -q "instance_start_time" /tmp/curl_out; then
+              echo "✅ cnpmcore is ready"
+            else
+              echo "❌ cnpmcore is not ready, status code=$code"
+              cat /tmp/curl_out
+              exit 1
+            fi
+          }
           npx eggctl stop
   
   test-postgresql-fs-nfs:
