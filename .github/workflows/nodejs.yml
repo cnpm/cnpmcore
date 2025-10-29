@@ -28,7 +28,7 @@ jobs:
           node-version: 22
 
       - name: Install Dependencies
-        run: npm i -g npminstall && npminstall
+        run: npm i
 
       - name: Lint
         run: npm run lint
@@ -38,6 +38,34 @@ jobs:
 
       - name: Build
         run: npm run tsc && npm run tsc:prod
+
+  test-deployment:
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: typecheck-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout Git Source
+        uses: actions/checkout@v5
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Test Deployment
+        run: |
+          npm run build
+          CNPMCORE_FORCE_LOCAL_FS=true npm run start:foreground &
+          sleep 5
+          curl -v http://localhost:7001
+          curl -v http://localhost:7001/egg.status
+          npx eggctl stop
   
   test-postgresql-fs-nfs:
     strategy:
@@ -91,7 +119,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install Dependencies
-        run: npm i -g npminstall && npminstall
+        run: npm i
 
       # https://github.com/elastic/elastic-github-actions/blob/master/elasticsearch/README.md
       - name: Configure sysctl limits
@@ -178,7 +206,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install Dependencies
-        run: npm i -g npminstall && npminstall
+        run: npm i
 
       - name: Continuous Integration
         run: npm run ci

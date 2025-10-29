@@ -43,7 +43,8 @@ export class NFSClientAdapter implements NFSClient {
     if (this.config.nfs.client) {
       this._client = this.config.nfs.client;
     } else {
-      if (this.config.env === 'prod') {
+      // Please do not set the CNPMCORE_FORCE_LOCAL_FS environment variable unless you know what you are doing.
+      if (this.config.env === 'prod' && process.env.CNPMCORE_FORCE_LOCAL_FS !== 'true') {
         throw new Error(
           "[NFSAdapter] Can't use local fs NFS on production env"
         );
