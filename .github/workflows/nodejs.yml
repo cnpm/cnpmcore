@@ -81,7 +81,7 @@ jobs:
           CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
           echo "Starting cnpmcore..."
           CNPMCORE_FORCE_LOCAL_FS=true npm run start:foreground &
-          sleep 15
+          sleep 5
           echo "Checking cnpmcore is ready..."
           
           set -Eeuo pipefail
