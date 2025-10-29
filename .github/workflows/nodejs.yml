@@ -83,22 +83,32 @@ jobs:
           CNPMCORE_FORCE_LOCAL_FS=true npm run start:foreground &
           sleep 15
           echo "Checking cnpmcore is ready..."
-          curl -v http://127.0.0.1:7001 -o /tmp/curl_out || echo "curl failed"
-          cat /tmp/curl_out
-          sleep 1
-          curl -fsSL -w "%{http_code}" http://127.0.0.1:7001 -o /tmp/curl_out | {
-            read code
-            cat /tmp/curl_out
-            if [ "$code" = "200" ] && grep -q "instance_start_time" /tmp/curl_out; then
-              echo "✅ cnpmcore is ready"
-            else
-              echo "❌ cnpmcore is not ready, status=$code"
-              cat /tmp/curl_out
-              # exit 1
+          
+          set -Eeuo pipefail
+          URL="http://127.0.0.1:7001"
+          PATTERN="instance_start_time"
+          TIMEOUT=60
+          TMP="$(mktemp)"
+          echo "🔎 Health check $URL, expect 200 & body contains: $PATTERN"
+          deadline=$((SECONDS + TIMEOUT))
+          last_status=""
+          
+          while (( SECONDS < deadline )); do
+            last_status="$(curl -sS -o "$TMP" -w '%{http_code}' "$URL" || true)"
+            if [[ "$last_status" == "200" ]] && grep -q "$PATTERN" "$TMP"; then
+              echo "✅ OK"
+              rm -f "$TMP"
+              npx eggctl stop
+              exit 0
             fi
-          }
-          echo "Stopping cnpmcore..."
-          npx eggctl stop
+            sleep 1
+          done
+
+          echo "::error::❌ Health check failed: status=$last_status"
+          echo "---- Response body (last try) ----"
+          cat "$TMP" || true
+          rm -f "$TMP"
+          exit 1
   
   test-postgresql-fs-nfs:
     strategy:
