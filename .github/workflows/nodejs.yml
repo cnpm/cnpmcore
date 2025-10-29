@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
 
     concurrency:
-      group: typecheck-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+      group: test-deployment-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
       cancel-in-progress: true
 
     steps:
