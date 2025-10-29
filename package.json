@@ -121,7 +121,7 @@
     "ssri": "^8.0.1",
     "type-fest": "^2.5.3",
     "ua-parser-js": "^1.0.34",
-    "validate-npm-package-name": "^6.0.0"
+    "validate-npm-package-name": "^7.0.0"
   },
   "optionalDependencies": {
     "s3-cnpmcore": "^1.1.2"
