@@ -79,7 +79,7 @@ jobs:
           npm run build
           CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
           CNPMCORE_FORCE_LOCAL_FS=true npm run start:foreground &
-          sleep 5
+          sleep 15
           curl -v http://localhost:7001
           curl -v http://localhost:7001/egg.status
           npx eggctl stop
