@@ -92,9 +92,11 @@ jobs:
           echo "🔎 Health check $URL, expect 200 & body contains: $PATTERN"
           deadline=$((SECONDS + TIMEOUT))
           last_status=""
-          
+
           while (( SECONDS < deadline )); do
             last_status="$(curl -sS -o "$TMP" -w '%{http_code}' "$URL" || true)"
+            echo "last_status=$last_status"
+            echo "body=$(cat $TMP)"
             if [[ "$last_status" == "200" ]] && grep -q "$PATTERN" "$TMP"; then
               echo "✅ OK"
               rm -f "$TMP"
