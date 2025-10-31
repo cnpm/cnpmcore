@@ -955,6 +955,13 @@ const binaries = {
     repo: 'microsoft/ripgrep-prebuilt',
     distUrl: 'https://github.com/microsoft/ripgrep-prebuilt/releases',
   },
+  'ffmpeg-builds': {
+    category: 'ffmpeg-builds',
+    description: 'Static Windows (x86_64) and Linux (x86_64) Builds of ffmpeg master and latest release branch.',
+    type: BinaryType.GitHub,
+    repo: 'BtbN/FFmpeg-Builds',
+    distUrl: 'https://github.com/BtbN/FFmpeg-Builds/releases',
+  },
 } as const;
 
 export interface BinaryTaskConfig {
