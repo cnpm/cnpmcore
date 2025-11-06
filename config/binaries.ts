@@ -959,8 +959,8 @@ const binaries = {
     category: 'ffmpeg-builds',
     description: 'Static Windows (x86_64) and Linux (x86_64) Builds of ffmpeg master and latest release branch.',
     type: BinaryType.GitHub,
-    repo: 'BtbN/FFmpeg-Builds',
-    distUrl: 'https://github.com/BtbN/FFmpeg-Builds/releases',
+    repo: 'KarinJS/FFmpeg-Builds',
+    distUrl: 'https://github.com/KarinJS/FFmpeg-Builds/releases',
   },
 } as const;
 
