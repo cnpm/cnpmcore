@@ -2,6 +2,7 @@ import { AccessLevel, Inject, SingletonProto, Logger } from 'egg';
 import pMap from 'p-map';
 import { BugVersion } from '../entity/BugVersion.ts';
 import type {
+  AbbreviatedPackageJSONType,
   PackageJSONType,
   PackageRepository,
 } from '../../repository/PackageRepository.ts';
@@ -69,29 +70,41 @@ export class BugVersionService {
     );
   }
 
+  /**
+   * Fix package bug version with all versions
+   * @param bugVersion - The bug version
+   * @param fullname - The fullname of the package
+   * @param manifests - The manifests of the package
+   * @returns The versions of the fixed manifests
+   */
   async fixPackageBugVersions(
     bugVersion: BugVersion,
     fullname: string,
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
-    manifests: Record<string, any>
+    manifests: Record<string, PackageJSONType | AbbreviatedPackageJSONType | undefined>
   ) {
+    const fixedVersions: string[] = [];
     // If package all version unpublished(like pinyin-tool), versions is undefined
-    if (!manifests) return;
+    if (!manifests) {
+      return fixedVersions;
+    }
     for (const manifest of Object.values(manifests)) {
-      this.fixPackageBugVersionWithAllVersions(
+      const fixedVersion = this.fixPackageBugVersionWithAllVersions(
         fullname,
         bugVersion,
-        manifest,
-        manifests
+        manifest as PackageJSONType,
+        manifests as Record<string, PackageJSONType>
       );
+      if (fixedVersion) {
+        fixedVersions.push(fixedVersion);
+      }
     }
+    return fixedVersions;
   }
 
   async fixPackageBugVersion(
     bugVersion: BugVersion,
     fullname: string,
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
-    manifest: any
+    manifest: PackageJSONType
   ) {
     const advice = bugVersion.fixVersion(fullname, manifest.version);
     if (!advice) {
@@ -119,13 +132,19 @@ export class BugVersionService {
     return bugVersion.fixManifest(manifest, fixedManifest);
   }
 
+  /**
+   * Fix package bug version with all versions
+   * @param fullname - The fullname of the package
+   * @param bugVersion - The bug version
+   * @param manifest - The manifest of the package
+   * @param manifests - The manifests of the package
+   * @returns The version of the fixed manifest
+   */
   private fixPackageBugVersionWithAllVersions(
     fullname: string,
     bugVersion: BugVersion,
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
-    manifest: any,
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
-    manifests: Record<string, any>
+    manifest: PackageJSONType,
+    manifests: Record<string, PackageJSONType>
   ) {
     const advice = bugVersion.fixVersion(fullname, manifest.version);
     if (!advice) {
@@ -142,5 +161,7 @@ export class BugVersionService {
     }
     const newManifest = bugVersion.fixManifest(manifest, fixedManifest);
     manifests[manifest.version] = newManifest;
+
+    return manifest.version;
   }
 }

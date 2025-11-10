@@ -1177,7 +1177,10 @@ export class PackageManagerService extends AbstractService {
     let etag = '';
     let blockReason = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return { etag, data: null, blockReason };
+    if (!pkg) {
+      return { etag, data: null, blockReason };
+    }
+  
     const registry = await this.getSourceRegistry(pkg);
 
     const block = await this.packageVersionBlockRepository.findPackageBlock(
@@ -1199,25 +1202,34 @@ export class PackageManagerService extends AbstractService {
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
       const data = (await this.distRepository.readDistBytesToJSON(dist)) as T;
+      let needCaculateIntegrity = false;
       if (bugVersion) {
-        await this.bugVersionService.fixPackageBugVersions(
+        const fixedVersions = await this.bugVersionService.fixPackageBugVersions(
           bugVersion,
           fullname,
           data.versions
         );
+        if (fixedVersions.length > 0) {
+          // caculate integrity after fix bug version
+          needCaculateIntegrity = true;
+        }
       }
       // set _source_registry_name in full manifestDist
-      if (registry) {
-        data._source_registry_name = registry?.name;
+      if (registry?.name && data._source_registry_name !== registry.name) {
+        data._source_registry_name = registry.name;
+        // caculate integrity after set _source_registry_name
+        needCaculateIntegrity = true;
       }
 
-      const distBytes = Buffer.from(JSON.stringify(data));
-      const distIntegrity = await calculateIntegrity(distBytes);
-      etag = `"${distIntegrity.shasum}"`;
+      if (needCaculateIntegrity) {
+        const distBytes = Buffer.from(JSON.stringify(data));
+        const distIntegrity = await calculateIntegrity(distBytes);
+        etag = `"${distIntegrity.shasum}"`;
+      }
       return { etag, data, blockReason };
     }
 
-    // read from database
+    // read from database then update to dist, the next time will read from dist
     const fullManifests = isFullManifests
       ? await this._listPackageFullManifests(pkg)
       : null;
@@ -1228,22 +1240,26 @@ export class PackageManagerService extends AbstractService {
       // not exists
       return { etag, data: null, blockReason };
     }
+
+    // update to dist, the next time will read from dist
     await this._updatePackageManifestsToDists(
       pkg,
       fullManifests,
       abbreviatedManifests
     );
     const manifests = (fullManifests || abbreviatedManifests) as T;
-    /* c8 ignore next 5 */
     if (bugVersion) {
-      await this.bugVersionService.fixPackageBugVersions(
+      const fixedVersions = await this.bugVersionService.fixPackageBugVersions(
         bugVersion,
         fullname,
         manifests.versions
       );
-      const distBytes = Buffer.from(JSON.stringify(manifests));
-      const distIntegrity = await calculateIntegrity(distBytes);
-      etag = `"${distIntegrity.shasum}"`;
+      if (fixedVersions.length > 0) {
+        // caculate integrity after fix bug version
+        const distBytes = Buffer.from(JSON.stringify(manifests));
+        const distIntegrity = await calculateIntegrity(distBytes);
+        etag = `"${distIntegrity.shasum}"`;
+      }
     } else {
       dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
       // oxlint-disable-next-line typescript-eslint/no-non-null-assertion

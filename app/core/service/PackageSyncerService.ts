@@ -810,6 +810,7 @@ export class PackageSyncerService extends AbstractService {
       );
       specificVersions.push(distTags.latest);
     }
+    // 获取本次同步的版本列表
     const versions = specificVersions
       ? Object.values<PackageJSONType>(versionMap).filter(verItem =>
           specificVersions.includes(verItem.version)
@@ -858,6 +859,7 @@ export class PackageSyncerService extends AbstractService {
     let syncIndex = 0;
     for (const item of versions) {
       const version: string = item.version;
+      // 跳过空版本，异常数据处理
       if (!version) continue;
       let existsItem: (typeof existsVersionMap)[string] | undefined =
         existsVersionMap[version];
@@ -945,10 +947,16 @@ export class PackageSyncerService extends AbstractService {
           diffMeta.readme = undefined;
         }
         if (!isEmpty(diffMeta)) {
+          // 发现差异，需要同步差异数据
           differentMetas.push([existsItem, diffMeta]);
         }
+        
+        // 跳过已同步的版本
+        // 避免重复同步
         continue;
       }
+
+      // 发现新版本，开始同步
       syncIndex++;
       const description = item.description;
       // "dist": {
