@@ -859,7 +859,7 @@ export class PackageSyncerService extends AbstractService {
     let syncIndex = 0;
     for (const item of versions) {
       const version: string = item.version;
-      // 跳过空版本，异常数据处理
+      // Skip empty versions, handle abnormal data
       if (!version) continue;
       let existsItem: (typeof existsVersionMap)[string] | undefined =
         existsVersionMap[version];
