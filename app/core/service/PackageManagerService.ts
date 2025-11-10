@@ -1202,7 +1202,7 @@ export class PackageManagerService extends AbstractService {
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
       const data = (await this.distRepository.readDistBytesToJSON(dist)) as T;
-      let needCaculateIntegrity = false;
+      let needCalculateIntegrity = false;
       if (bugVersion) {
         const fixedVersions = await this.bugVersionService.fixPackageBugVersions(
           bugVersion,
@@ -1210,18 +1210,18 @@ export class PackageManagerService extends AbstractService {
           data.versions
         );
         if (fixedVersions.length > 0) {
-          // caculate integrity after fix bug version
-          needCaculateIntegrity = true;
+          // calculate integrity after fix bug version
+          needCalculateIntegrity = true;
         }
       }
       // set _source_registry_name in full manifestDist
       if (registry?.name && data._source_registry_name !== registry.name) {
         data._source_registry_name = registry.name;
-        // caculate integrity after set _source_registry_name
-        needCaculateIntegrity = true;
+        // calculate integrity after set _source_registry_name
+        needCalculateIntegrity = true;
       }
 
-      if (needCaculateIntegrity) {
+      if (needCalculateIntegrity) {
         const distBytes = Buffer.from(JSON.stringify(data));
         const distIntegrity = await calculateIntegrity(distBytes);
         etag = `"${distIntegrity.shasum}"`;
@@ -1255,14 +1255,13 @@ export class PackageManagerService extends AbstractService {
         manifests.versions
       );
       if (fixedVersions.length > 0) {
-        // caculate integrity after fix bug version
+        // calculate integrity after fix bug version
         const distBytes = Buffer.from(JSON.stringify(manifests));
         const distIntegrity = await calculateIntegrity(distBytes);
         etag = `"${distIntegrity.shasum}"`;
       }
     } else {
       dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
-      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       etag = `"${dist!.shasum}"`;
     }
     return { etag, data: manifests, blockReason };
