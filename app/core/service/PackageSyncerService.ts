@@ -810,7 +810,7 @@ export class PackageSyncerService extends AbstractService {
       );
       specificVersions.push(distTags.latest);
     }
-    // 获取本次同步的版本列表
+    // Get the list of versions to sync this time
     const versions = specificVersions
       ? Object.values<PackageJSONType>(versionMap).filter(verItem =>
           specificVersions.includes(verItem.version)
