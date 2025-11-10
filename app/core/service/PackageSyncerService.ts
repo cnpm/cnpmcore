@@ -947,16 +947,16 @@ export class PackageSyncerService extends AbstractService {
           diffMeta.readme = undefined;
         }
         if (!isEmpty(diffMeta)) {
-          // 发现差异，需要同步差异数据
+          // Differences found, need to sync the changed metadata
           differentMetas.push([existsItem, diffMeta]);
         }
         
-        // 跳过已同步的版本
-        // 避免重复同步
+        // Skip versions that have already been synced
+        // Avoid duplicate syncing
         continue;
       }
 
-      // 发现新版本，开始同步
+      // New version found, start syncing
       syncIndex++;
       const description = item.description;
       // "dist": {
