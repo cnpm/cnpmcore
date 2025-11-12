@@ -382,6 +382,13 @@ export class PlaywrightBinary extends AbstractBinary {
           date: nowDateISO,
         });
       }
+      buildDirs.push({
+        name: 'driver/',
+        isDir: true,
+        url: '',
+        size: '-',
+        date: nowDateISO,
+      })
       this.dirItems = {
         '/': [
           {
@@ -409,6 +416,34 @@ export class PlaywrightBinary extends AbstractBinary {
         .filter(version => version.match(/^(?:\d+\.\d+\.\d+)(?:-beta-\d+)?$/))
         // select recently update 20 items
         .slice(-20);
+      // Add driver to dirItems
+      this.dirItems["/builds/driver/"] = []
+      if (packageVersions.some(version => version.includes('-beta-'))) {
+        this.dirItems["/builds/driver/"].push({
+          name: 'next/',
+          isDir: true,
+          url: '',
+          size: '-',
+          date: 'next',
+        })
+      }
+      packageVersions.forEach(version => {
+        // https://github.com/playwright-community/playwright-go/blob/56e30d60f8b42785982469eaca6ad969bc2e1946/run.go#L341-L374
+        ["win32_x64", "mac-arm64", "mac", "linux-arm64", "linux"].forEach(arch => {
+          let dirverURI = `builds/driver/playwright-${version}-${arch}.zip`
+          if (version.includes('-beta-')) {
+            dirverURI = `builds/driver/next/playwright-${version}-${arch}.zip`
+          }
+          this.dirItems["/builds/driver/"].push({
+              name: `playwright-${version}-${arch}.zip`,
+              isDir: false,
+              url: DOWNLOAD_HOST + dirverURI,
+              size: '-',
+              date: version,
+            })
+        });
+      });
+
       const browsers: {
         name: keyof typeof DOWNLOAD_PATHS;
         revision: string;

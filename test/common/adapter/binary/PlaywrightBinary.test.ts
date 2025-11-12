@@ -71,7 +71,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         .persist();
       let result = await binary.fetch('/builds/');
       assert.ok(result);
-      assert.equal(result.items.length, 8, JSON.stringify(result, null, 2));
+      assert.equal(result.items.length, 9, JSON.stringify(result, null, 2));
       assert.equal(result.items[0].name, 'chromium/');
       assert.equal(result.items[1].name, 'chromium-tip-of-tree/');
       assert.equal(result.items[2].name, 'firefox/');
@@ -80,6 +80,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       assert.equal(result.items[5].name, 'ffmpeg/');
       assert.equal(result.items[6].name, 'winldd/');
       assert.equal(result.items[7].name, 'android/');
+      assert.equal(result.items[8].name, 'driver/');
       assert.equal(result.items[0].isDir, true);
 
       const names = [
