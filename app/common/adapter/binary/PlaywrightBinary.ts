@@ -436,8 +436,8 @@ export class PlaywrightBinary extends AbstractBinary {
           const isBetaVersion = version.includes('-beta-');
           const driverFileName = `playwright-${version}-${arch}.zip`;
           const driverURL = isBetaVersion
-            ? DOWNLOAD_HOST + `builds/driver/next/playwright-${version}-${arch}.zip`
-            : DOWNLOAD_HOST + `builds/driver/playwright-${version}-${arch}.zip`;
+            ? DOWNLOAD_HOST + `builds/driver/next/${driverFileName}`
+            : DOWNLOAD_HOST + `builds/driver/${driverFileName}`;
           const driverItem = {
             name: driverFileName,
             isDir: false,
