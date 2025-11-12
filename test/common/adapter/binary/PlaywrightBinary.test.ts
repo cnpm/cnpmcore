@@ -89,6 +89,8 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       ];
       for (const dirname of driverDirs) {
         result = await binary.fetch(`/builds/${dirname}`);
+        assert.ok(result);
+        assert.ok(Array.isArray(result.items), 'result.items should be an array');
         for (const item of result.items) {
           if (item.isDir) {
             assert.ok(item.name === 'next/');

@@ -13,6 +13,7 @@ import {
 
 const PACKAGE_URL = 'https://registry.npmjs.com/playwright-core';
 const DOWNLOAD_HOST = 'https://playwright.azureedge.net/';
+// https://github.com/playwright-community/playwright-go/blob/56e30d60f8b42785982469eaca6ad969bc2e1946/run.go#L341-L374
 const PLAYWRIGHT_DRIVER_ARCHS = ['win32_x64', 'mac-arm64', 'mac', 'linux-arm64', 'linux'];
 
 // https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/registry/index.ts
@@ -430,9 +431,8 @@ export class PlaywrightBinary extends AbstractBinary {
         });
         this.dirItems['/builds/driver/next/'] = [];
       }
-      packageVersions.forEach(version => {
-        // https://github.com/playwright-community/playwright-go/blob/56e30d60f8b42785982469eaca6ad969bc2e1946/run.go#L341-L374
-        PLAYWRIGHT_DRIVER_ARCHS.forEach(arch => {
+      for (const version of packageVersions) {
+        for (const arch of PLAYWRIGHT_DRIVER_ARCHS) {
           const isBetaVersion = version.includes('-beta-');
           const driverFileName = `playwright-${version}-${arch}.zip`;
           const driverURL = isBetaVersion
@@ -449,8 +449,8 @@ export class PlaywrightBinary extends AbstractBinary {
           if (isBetaVersion) {
             this.dirItems['/builds/driver/next/'].push(driverItem);
           }
-        });
-      });
+        }
+      }
 
       const browsers: {
         name: keyof typeof DOWNLOAD_PATHS;
