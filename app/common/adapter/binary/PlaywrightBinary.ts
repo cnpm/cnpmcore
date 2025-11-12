@@ -13,6 +13,7 @@ import {
 
 const PACKAGE_URL = 'https://registry.npmjs.com/playwright-core';
 const DOWNLOAD_HOST = 'https://playwright.azureedge.net/';
+const PLAYWRIGHT_DRIVER_ARCHS = ["win32_x64", "mac-arm64", "mac", "linux-arm64", "linux"];
 
 // https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/registry/index.ts
 /* eslint-disable quote-props */
@@ -417,8 +418,9 @@ export class PlaywrightBinary extends AbstractBinary {
         // select recently update 20 items
         .slice(-20);
       // Add driver to dirItems
-      this.dirItems["/builds/driver/"] = []
-      if (packageVersions.some(version => version.includes('-beta-'))) {
+      this.dirItems["/builds/driver/"] = [];
+      const hasBetaVersions = packageVersions.some(version => version.includes('-beta-'));
+      if (hasBetaVersions) {
         this.dirItems["/builds/driver/"].push({
           name: 'next/',
           isDir: true,
@@ -426,21 +428,26 @@ export class PlaywrightBinary extends AbstractBinary {
           size: '-',
           date: 'next',
         })
+        this.dirItems["/builds/driver/next/"] = [];
       }
       packageVersions.forEach(version => {
         // https://github.com/playwright-community/playwright-go/blob/56e30d60f8b42785982469eaca6ad969bc2e1946/run.go#L341-L374
-        ["win32_x64", "mac-arm64", "mac", "linux-arm64", "linux"].forEach(arch => {
-          let dirverURI = `builds/driver/playwright-${version}-${arch}.zip`
+        PLAYWRIGHT_DRIVER_ARCHS.forEach(arch => {
+          let driverURL = DOWNLOAD_HOST + `builds/driver/playwright-${version}-${arch}.zip`
           if (version.includes('-beta-')) {
-            dirverURI = `builds/driver/next/playwright-${version}-${arch}.zip`
+            driverURL = DOWNLOAD_HOST + `builds/driver/next/playwright-${version}-${arch}.zip`
           }
-          this.dirItems["/builds/driver/"].push({
-              name: `playwright-${version}-${arch}.zip`,
-              isDir: false,
-              url: DOWNLOAD_HOST + dirverURI,
-              size: '-',
-              date: version,
-            })
+          const driverItem = {
+            name: `playwright-${version}-${arch}.zip`,
+            isDir: false,
+            url: driverURL,
+            size: '-',
+            date: version,
+          }
+          this.dirItems["/builds/driver/"].push(driverItem)
+          if (version.includes('-beta-')) {
+            this.dirItems["/builds/driver/next/"].push(driverItem)
+          }
         });
       });
 
