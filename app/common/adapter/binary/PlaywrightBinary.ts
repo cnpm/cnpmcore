@@ -433,12 +433,13 @@ export class PlaywrightBinary extends AbstractBinary {
       packageVersions.forEach(version => {
         // https://github.com/playwright-community/playwright-go/blob/56e30d60f8b42785982469eaca6ad969bc2e1946/run.go#L341-L374
         PLAYWRIGHT_DRIVER_ARCHS.forEach(arch => {
-          let driverURL = DOWNLOAD_HOST + `builds/driver/playwright-${version}-${arch}.zip`
+          const driverFileName = `playwright-${version}-${arch}.zip`
+          let driverURL = DOWNLOAD_HOST + `builds/driver/${driverFileName}`
           if (version.includes('-beta-')) {
-            driverURL = DOWNLOAD_HOST + `builds/driver/next/playwright-${version}-${arch}.zip`
+            driverURL = DOWNLOAD_HOST + `builds/driver/next/${driverFileName}`
           }
           const driverItem = {
-            name: `playwright-${version}-${arch}.zip`,
+            name: driverFileName,
             isDir: false,
             url: driverURL,
             size: '-',

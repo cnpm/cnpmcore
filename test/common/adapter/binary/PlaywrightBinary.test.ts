@@ -83,6 +83,29 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       assert.equal(result.items[8].name, 'driver/');
       assert.equal(result.items[0].isDir, true);
 
+      const driverDirs = [
+        "driver/",
+        "driver/next/"
+      ]
+      for (const dirname of driverDirs) {
+        result = await binary.fetch(`/builds/${dirname}`);
+        for (const item of result.items) {
+          if (item.isDir) {
+            assert.ok(item.name === "next/");
+          } else {
+            assert.ok(item.isDir === false);
+            assert.ok(item.name.endsWith('.zip'));
+            assert.ok(item.size === '-');
+            assert.ok(item.url);
+            assert.ok(item.date);
+            assert.match(
+              item.url,
+              /https:\/\/playwright\.azureedge\.net\/builds\/driver\/(?:next\/)?playwright-\S+-\S+.zip/
+            );
+          }
+        }
+      }
+
       const names = [
         'chromium',
         'chromium-tip-of-tree',
