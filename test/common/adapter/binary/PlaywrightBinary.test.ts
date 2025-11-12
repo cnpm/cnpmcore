@@ -84,14 +84,14 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       assert.equal(result.items[0].isDir, true);
 
       const driverDirs = [
-        "driver/",
-        "driver/next/"
-      ]
+        'driver/',
+        'driver/next/'
+      ];
       for (const dirname of driverDirs) {
         result = await binary.fetch(`/builds/${dirname}`);
         for (const item of result.items) {
           if (item.isDir) {
-            assert.ok(item.name === "next/");
+            assert.ok(item.name === 'next/');
           } else {
             assert.ok(item.isDir === false);
             assert.ok(item.name.endsWith('.zip'));
