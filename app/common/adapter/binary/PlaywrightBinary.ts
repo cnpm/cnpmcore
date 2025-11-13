@@ -445,10 +445,8 @@ export class PlaywrightBinary extends AbstractBinary {
             size: '-',
             date: version,
           };
-          this.dirItems['/builds/driver/'].push(driverItem);
-          if (isBetaVersion) {
-            this.dirItems['/builds/driver/next/'].push(driverItem);
-          }
+          const targetDir = isBetaVersion ? '/builds/driver/next/' : '/builds/driver/';
++         this.dirItems[targetDir].push(driverItem);
         }
       }
 
