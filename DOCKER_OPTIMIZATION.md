@@ -2,6 +2,18 @@
 
 This document describes the optimizations applied to reduce Docker image size based on best practices from [A Step-by-Step Guide to Docker Image Optimisation](https://blog.prateekjain.dev/a-step-by-step-guide-to-docker-image-optimisation-reduce-size-by-over-95-d90bcab3819d).
 
+## Summary of Changes
+
+| Aspect | Before | After | Benefit |
+|--------|--------|-------|---------|
+| Build stages | Single stage | Multi-stage (builder + production) | Dev dependencies excluded from final image |
+| Dependency installation | All deps + manual cleanup | Separate install per stage | Cleaner separation, smaller final image |
+| Layer caching | Copy all → install | Copy package.json → install → copy source | Faster rebuilds |
+| npm cache | Manual cleanup in script | `npm cache clean --force` in RUN | Guaranteed cleanup in same layer |
+| Source files | All source in final image | Only built dist/ directory | Smaller image, no source code |
+| Signal handling | npm directly | dumb-init wrapper | Proper signal handling |
+| .dockerignore | 7 entries | 30+ entries | Smaller build context |
+
 ## Optimizations Applied
 
 ### 1. Multi-Stage Builds
@@ -160,9 +172,28 @@ docker stop cnpmcore-test
 docker rm cnpmcore-test
 ```
 
+## Migration Notes
+
+### build.sh Script
+
+The previous Dockerfiles used `.docker/build.sh` which performed a single-stage build with:
+- Global installation of npminstall
+- Custom install command (npminstall -c)
+- Build with npm run tsc
+- Update to production deps (npmupdate -c --production)
+
+The new multi-stage approach replaces this with:
+- Standard `npm ci` in builder stage for all dependencies
+- `npm run tsc` for TypeScript compilation
+- Standard `npm ci --only=production` in production stage
+- No need for npminstall/npmupdate tools
+
+The build.sh script is kept for backwards compatibility but is no longer used by the optimized Dockerfiles.
+
 ## Future Optimization Opportunities
 
 1. **Distroless images**: Consider using distroless Node.js images for even smaller size
 2. **Binary compilation**: Investigate node-prune or similar tools to remove unnecessary files from node_modules
 3. **Compression**: Use tools like upx to compress binaries (trade-off with startup time)
 4. **Alpine optimization**: Further reduce Alpine image by removing unnecessary packages
+5. **Layer squashing**: Consider squashing final layers for additional size reduction
