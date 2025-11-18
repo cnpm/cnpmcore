@@ -810,6 +810,7 @@ export class PackageSyncerService extends AbstractService {
       );
       specificVersions.push(distTags.latest);
     }
+    // Get the list of versions to sync this time
     const versions = specificVersions
       ? Object.values<PackageJSONType>(versionMap).filter(verItem =>
           specificVersions.includes(verItem.version)
@@ -858,6 +859,7 @@ export class PackageSyncerService extends AbstractService {
     let syncIndex = 0;
     for (const item of versions) {
       const version: string = item.version;
+      // Skip empty versions, handle abnormal data
       if (!version) continue;
       let existsItem: (typeof existsVersionMap)[string] | undefined =
         existsVersionMap[version];
@@ -945,10 +947,16 @@ export class PackageSyncerService extends AbstractService {
           diffMeta.readme = undefined;
         }
         if (!isEmpty(diffMeta)) {
+          // Differences found, need to sync the changed metadata
           differentMetas.push([existsItem, diffMeta]);
         }
+        
+        // Skip versions that have already been synced
+        // Avoid duplicate syncing
         continue;
       }
+
+      // New version found, start syncing
       syncIndex++;
       const description = item.description;
       // "dist": {

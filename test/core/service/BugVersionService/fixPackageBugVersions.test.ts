@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { TestUtil } from '../../../../test/TestUtil.ts';
 import { BugVersionService } from '../../../../app/core/service/BugVersionService.ts';
 import { BugVersion } from '../../../../app/core/entity/BugVersion.ts';
+import { AbbreviatedPackageJSONType } from '../../../../app/repository/PackageRepository.ts';
 
 describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', () => {
   let bugVersionService: BugVersionService;
@@ -89,7 +91,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
     await bugVersionService.fixPackageBugVersions(
       bugVersion,
       'colors',
-      manifests
+      manifests as unknown as Record<string, AbbreviatedPackageJSONType>
     );
     assert.deepStrictEqual(manifests, {
       '1.4.0': {
