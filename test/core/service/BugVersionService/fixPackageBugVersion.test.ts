@@ -4,7 +4,7 @@ import { app, mock } from '@eggjs/mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil.ts';
 import { BugVersionService } from '../../../../app/core/service/BugVersionService.ts';
 import { DistRepository } from '../../../../app/repository/DistRepository.ts';
-import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
+import { PackageJSONType, PackageRepository } from '../../../../app/repository/PackageRepository.ts';
 import { BugVersion } from '../../../../app/core/entity/BugVersion.ts';
 import { Package } from '../../../../app/core/entity/Package.ts';
 import { PackageVersion } from '../../../../app/core/entity/PackageVersion.ts';
@@ -145,7 +145,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () 
     const newManifest = await bugVersionService.fixPackageBugVersion(
       bugVersion,
       'colors',
-      manifest
+      manifest as unknown as PackageJSONType
     );
     assert.deepStrictEqual(newManifest, {
       name: 'colors',
@@ -197,7 +197,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () 
     const newManifest = await bugVersionService.fixPackageBugVersion(
       bugVersion,
       'colors',
-      manifest
+      manifest as unknown as PackageJSONType
     );
     assert.ok(newManifest === manifest);
   });
@@ -227,7 +227,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersion.test.ts', () 
     const newManifest = await bugVersionService.fixPackageBugVersion(
       bugVersion,
       'colors',
-      manifest
+      manifest as unknown as PackageJSONType
     );
     assert.ok(newManifest === manifest);
   });
