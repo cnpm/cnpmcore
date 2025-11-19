@@ -124,6 +124,8 @@ export class PackageSearchService extends AbstractService {
       _npmUser: latestManifest?._npmUser,
       // 最新版本发布信息
       publish_time: latestManifest?.publish_time,
+      // 最新版本的 deprecated 信息
+      deprecated: latestManifest?.deprecated as string | undefined,
     };
 
     // http://npmmirror.com/package/npm/files/lib/utils/format-search-stream.js#L147-L148
@@ -157,6 +159,7 @@ export class PackageSearchService extends AbstractService {
       text,
       scoreEffect: 0.25,
     });
+    const filterQueries = this._buildFilterQueries();
 
     const res = await this.searchRepository.searchPackage({
       body: {
@@ -169,6 +172,7 @@ export class PackageSearchService extends AbstractService {
               bool: {
                 should: matchQueries,
                 minimum_should_match: matchQueries.length > 0 ? 1 : 0,
+                filter: filterQueries,
               },
             },
             script_score: scriptScore,
@@ -302,5 +306,75 @@ export class PackageSearchService extends AbstractService {
         },
       },
     };
+  }
+
+  private _buildFilterQueries() {
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
+    const filters: any[] = [];
+
+    // Filter deprecated packages
+    const excludeDeprecated = this.config.cnpmcore.searchExcludeDeprecated ?? true;
+    if (excludeDeprecated) {
+      filters.push({
+        bool: {
+          must_not: {
+            exists: {
+              field: 'package.deprecated',
+            },
+          },
+        },
+      });
+    }
+
+    // Filter newly published packages
+    const minAge = this.config.cnpmcore.searchPackageMinAge;
+    if (minAge) {
+      const minAgeMs = this._parseTimeString(minAge);
+      if (minAgeMs > 0) {
+        const thresholdDate = new Date(Date.now() - minAgeMs);
+        filters.push({
+          range: {
+            'package.date': {
+              lte: thresholdDate.toISOString(),
+            },
+          },
+        });
+      }
+    }
+
+    return filters;
+  }
+
+  /**
+   * Parse time string to milliseconds
+   * Supports formats: '2w' (weeks), '14d' (days), '336h' (hours)
+   * @param timeStr - time string like '2w', '14d', '336h'
+   * @returns milliseconds, or 0 if invalid
+   */
+  private _parseTimeString(timeStr: string): number {
+    if (!timeStr) return 0;
+
+    const match = timeStr.match(/^(\d+)([hdw])$/);
+    if (!match) {
+      this.logger.warn(
+        '[PackageSearchService._parseTimeString] Invalid time format: %s, expected format like "2w", "14d", or "336h"',
+        timeStr
+      );
+      return 0;
+    }
+
+    const value = parseInt(match[1], 10);
+    const unit = match[2];
+
+    switch (unit) {
+      case 'h': // hours
+        return value * 60 * 60 * 1000;
+      case 'd': // days
+        return value * 24 * 60 * 60 * 1000;
+      case 'w': // weeks
+        return value * 7 * 24 * 60 * 60 * 1000;
+      default:
+        return 0;
+    }
   }
 }

@@ -77,6 +77,8 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   database: {
     type: database.type,
   },
+  searchPackageMinAge: env('CNPMCORE_CONFIG_SEARCH_PACKAGE_MIN_AGE', 'string', ''),
+  searchExcludeDeprecated: env('CNPMCORE_CONFIG_SEARCH_EXCLUDE_DEPRECATED', 'boolean', true),
 };
 
 export interface NFSConfig {
