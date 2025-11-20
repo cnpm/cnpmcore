@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -64,7 +64,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -156,7 +156,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -243,7 +243,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -296,7 +296,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
