@@ -124,6 +124,8 @@ export class PackageSearchService extends AbstractService {
       _npmUser: latestManifest?._npmUser,
       // 最新版本发布信息
       publish_time: latestManifest?.publish_time,
+      // deprecated message from latest version
+      deprecated: latestManifest?.deprecated,
     };
 
     // http://npmmirror.com/package/npm/files/lib/utils/format-search-stream.js#L147-L148
@@ -157,6 +159,7 @@ export class PackageSearchService extends AbstractService {
       text,
       scoreEffect: 0.25,
     });
+    const filterQueries = this._buildFilterQueries();
 
     const res = await this.searchRepository.searchPackage({
       body: {
@@ -169,6 +172,7 @@ export class PackageSearchService extends AbstractService {
               bool: {
                 should: matchQueries,
                 minimum_should_match: matchQueries.length > 0 ? 1 : 0,
+                filter: filterQueries,
               },
             },
             script_score: scriptScore,
@@ -284,6 +288,74 @@ export class PackageSearchService extends AbstractService {
         },
       },
     ];
+  }
+
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
+  private _buildFilterQueries(): any[] {
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
+    const filters: any[] = [];
+
+    // Filter deprecated packages if enabled
+    if (this.config.cnpmcore.searchFilterDeprecated) {
+      filters.push({
+        bool: {
+          should: [
+            { bool: { must_not: { exists: { field: 'package.deprecated' } } } },
+            { term: { 'package.deprecated': '' } },
+          ],
+        },
+      });
+    }
+
+    // Filter by minimum publish time if configured
+    const minPublishTime = this.config.cnpmcore.searchMinPublishTime;
+    if (minPublishTime) {
+      const minDate = this._parseMinPublishTime(minPublishTime);
+      if (minDate) {
+        filters.push({
+          range: {
+            'package.date': {
+              lte: minDate.toISOString(),
+            },
+          },
+        });
+      }
+    }
+
+    return filters;
+  }
+
+  private _parseMinPublishTime(timeStr: string): Date | null {
+    const match = timeStr.match(/^(\d+)([hdw])$/);
+    if (!match) {
+      this.logger.warn(
+        '[PackageSearchService._parseMinPublishTime] Invalid format: %s, expected format like "2w", "1d", "24h"',
+        timeStr
+      );
+      return null;
+    }
+
+    const value = parseInt(match[1], 10);
+    const unit = match[2];
+
+    const now = dayjs();
+    let minDate: dayjs.Dayjs;
+
+    switch (unit) {
+      case 'h':
+        minDate = now.subtract(value, 'hour');
+        break;
+      case 'd':
+        minDate = now.subtract(value, 'day');
+        break;
+      case 'w':
+        minDate = now.subtract(value, 'week');
+        break;
+      default:
+        return null;
+    }
+
+    return minDate.toDate();
   }
 
   private _buildScriptScore(params: {
