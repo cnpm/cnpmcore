@@ -187,4 +187,18 @@ export interface CnpmcoreConfig {
   database: {
     type: DATABASE_TYPE | string;
   };
+
+  /**
+   * search package minimum age filter
+   * packages published within this time range will be excluded from search results
+   * support format: '2w' (weeks), '14d' (days), '336h' (hours)
+   * default is empty string (no filter)
+   */
+  searchPackageMinAge?: string;
+
+  /**
+   * exclude deprecated packages from search results
+   * default is true
+   */
+  searchExcludeDeprecated?: boolean;
 }
