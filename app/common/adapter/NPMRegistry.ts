@@ -46,7 +46,7 @@ export class NPMRegistry {
     optionalConfig?: { retries?: number; remoteAuthToken?: string }
   ): Promise<RegistryResponse<PackageManifestType>> {
     const res = await this.getFullManifestsBuffer(fullname, optionalConfig);
-    // @ts-expect-error JSON.parse support Buffer input
+    // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
     res.data = JSON.parse(res.data);
     return res as unknown as RegistryResponse<PackageManifestType>;
   }

@@ -693,7 +693,7 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    // @ts-expect-error JSON.parse support binary data
+    // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
     const data: PackageManifestType = JSON.parse(remoteData);
     let readme = data.readme || '';
     if (typeof readme !== 'string') {
@@ -1508,7 +1508,7 @@ export class PackageSyncerService extends AbstractService {
     let syncIndex = 0;
     // #region sync added versions
     for (const [version, [offsetStart, offsetEnd]] of diff.addedVersions) {
-      // @ts-expect-error JSON.parse support binary data
+      // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
       const item: PackageJSONType = JSON.parse(remoteData.subarray(offsetStart, offsetEnd));
       // New version found, start syncing
       syncIndex++;
@@ -1588,7 +1588,7 @@ export class PackageSyncerService extends AbstractService {
       try {
         // if version record already exists, need to check if pkg.manifests exists
         const npmUserName = item._npmUser?.name;
-        const publisher = npmUserName && users.find(user => user.displayName === npmUserName) || firstUser;
+        const publisher = (npmUserName && users.find(user => user.displayName === npmUserName)) || firstUser;
         const pkgVersion = await this.packageManagerService.publish(
           publishCmd,
           publisher
@@ -1664,7 +1664,7 @@ export class PackageSyncerService extends AbstractService {
     }
 
     // #region sync removed versions
-    for (const version in diff.removedVersions) {
+    for (const version of diff.removedVersions) {
       const pkgVersion = await this.packageRepository.findPackageVersion(
         pkg.packageId,
         version
