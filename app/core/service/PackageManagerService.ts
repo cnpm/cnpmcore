@@ -971,9 +971,9 @@ export class PackageManagerService extends AbstractService {
     return registry;
   }
 
-  async distTags(pkg: Package): Promise<Record<string, string>> {
+  async distTags(pkg: Package): Promise<PackageManifestType['dist-tags']> {
     const entities = await this.packageRepository.listPackageTags(pkg.packageId);
-    const distTags: Record<string, string> = {};
+    const distTags: PackageManifestType['dist-tags'] = {};
     for (const entity of entities) {
       distTags[entity.tag] = entity.version;
     }
