@@ -1,3 +1,5 @@
+import { debuglog } from 'node:util';
+
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import type { NFSAdapter } from '../../common/adapter/NFSAdapter.ts';
@@ -6,6 +8,8 @@ import { AbstractService } from '../../common/AbstractService.ts';
 import type { TaskRepository } from '../../repository/TaskRepository.ts';
 import type { Task, CreateSyncPackageTaskData } from '../entity/Task.ts';
 import type { QueueAdapter } from '../../common/typing.ts';
+
+const debug = debuglog('cnpmcore/app/core/service/TaskService');
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -237,6 +241,7 @@ export class TaskService extends AbstractService {
   }
 
   private async appendLogToNFS(task: Task, appendLog: string) {
+    debug('appendLogToNFS: %s\n%s', task.logPath, appendLog);
     try {
       const nextPosition = await this.nfsAdapter.appendBytes(
         task.logPath,

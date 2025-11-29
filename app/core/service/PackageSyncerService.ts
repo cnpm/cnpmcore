@@ -170,7 +170,7 @@ export class PackageSyncerService extends AbstractService {
         `[${isoNow()}][DownloadData] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, downloads: ${downloads.length}`
       );
     } catch (err) {
-      const status = err.status || 'unknow';
+      const status = err.status || 'unknown';
       logs.push(
         `[${isoNow()}][DownloadData] ❌ Get download data error: ${err}, status: ${status}`
       );
@@ -231,7 +231,7 @@ export class PackageSyncerService extends AbstractService {
       );
       logId = data.logId;
     } catch (err) {
-      const status = err.status || 'unknow';
+      const status = err.status || 'unknown';
       // 可能会抛出 AggregateError 异常
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError
       logs.push(
@@ -285,7 +285,7 @@ export class PackageSyncerService extends AbstractService {
         logs = [];
       } catch (err) {
         useTime = Date.now() - startTime;
-        const status = err.status || 'unknow';
+        const status = err.status || 'unknown';
         logs.push(
           `[${isoNow()}][UP] 🚧 HTTP [${status}] [${useTime}ms] error: ${err}`
         );
@@ -528,7 +528,10 @@ export class PackageSyncerService extends AbstractService {
       logUrl
     );
     logs.push(
-      `[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, forceSyncHistory: ${!!forceSyncHistory} attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`
+      `[${isoNow()}] 🚧🚧🚧🚧🚧 Syncing from ${registryHost}/${fullname}, \
+skipDependencies: ${skipDependencies}, syncUpstream: ${syncUpstream}, syncDownloadData: ${!!syncDownloadData}, \
+forceSyncHistory: ${!!forceSyncHistory}, attempts: ${task.attempts}, worker: "${os.hostname()}/${process.pid}", \
+taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`
     );
     if (specificVersions) {
       logs.push(
@@ -641,7 +644,8 @@ export class PackageSyncerService extends AbstractService {
       // GET https://registry.npmjs.org/%40modern-js%2Fstyle-compiler?t=1683348626499&cache=0, status: 522
       // registry will response status 522 and data will be null
       // > TypeError: Cannot read properties of null (reading 'readme')
-      task.error = `request manifests response error, status: ${status}, data size: ${remoteData.length}, data sample: ${remoteData.subarray(0, 200).toString()}`;
+      task.error = `request manifests response error, status: ${status}, data size: ${remoteData.length}, \
+data sample: ${remoteData.subarray(0, 200).toString()}`;
       logs.push(
         `[${isoNow()}] ❌ response headers: ${JSON.stringify(headers)}`
       );
@@ -683,13 +687,12 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    const contentLength = headers['content-length'] || '-';
     logs.push(
-      `[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`
+      `[${isoNow()}] HTTP [${status}] body size: ${remoteData.length}, timing: ${JSON.stringify(res.timing)}`
     );
 
     if (this.config.cnpmcore.experimental.syncPackageWithPackument && !this.config.cnpmcore.strictSyncSpecivicVersion) {
-      await this.syncPackageWithPackument(task, remoteData, pkg, registry, logUrl, remoteUrl);
+      await this.syncPackageWithPackument({ task, remoteData, pkg, registry, logUrl, remoteUrl, logs });
       return;
     }
 
@@ -1371,14 +1374,19 @@ export class PackageSyncerService extends AbstractService {
    * TODO:
    *  - [ ] support specificVersions
    */
-  private async syncPackageWithPackument(task: Task, remoteData: Buffer, pkg: Package | null, registry: Registry, logUrl: string, remoteUrl: string) {
+  private async syncPackageWithPackument(options: {
+    task: Task,
+    remoteData: Buffer,
+    pkg: Package | null,
+    registry: Registry,
+    logUrl: string,
+    remoteUrl: string,
+    logs: string[],
+  }) {
+    let { task, remoteData, pkg, registry, logUrl, remoteUrl, logs } = options;
     const fullname = task.targetName;
+    const { syncDownloadData, skipDependencies, forceSyncHistory } = task.data as SyncPackageTaskOptions;
     const [scope, name] = getScopeAndName(fullname);
-    const {
-      syncDownloadData,
-      skipDependencies,
-    } = task.data as SyncPackageTaskOptions;
-    let logs: string[] = [];
 
     const packument = new Packument(remoteData);
     let readme = packument.readme ?? '';
@@ -1392,12 +1400,13 @@ export class PackageSyncerService extends AbstractService {
     //   { name: 'bar', email: 'bar.laster.11@gmail.com' }
     // ],
     let maintainers = (packument.maintainers ?? []) as AuthorType[];
-    const failEnd = `❌❌❌❌❌ ${remoteUrl || fullname} ❌❌❌❌❌`;
-    if (this.isRemovedInRemote(maintainers, timeMap)) {
+    // only maintainers is empty and package is unpublished, then delete the package
+    if (maintainers.length === 0 && packument.isUnpublished) {
       await this.syncDeletePkg({ task, pkg, logs, logUrl, url: remoteUrl, data: remoteData });
       return;
     }
 
+    const failEnd = `❌❌❌❌❌ ${remoteUrl || fullname} ❌❌❌❌❌`;
     const distTags = packument.distTags ?? {};
     // show latest information
     if (distTags.latest) {
@@ -1496,8 +1505,29 @@ export class PackageSyncerService extends AbstractService {
 
     let lastErrorMessage = '';
     const dependenciesSet = new Set<string>();
-    const existsVersions = await this.packageVersionRepository.findAllVersions(scope, name);
+    let existsVersions = await this.packageVersionRepository.findAllVersions(scope, name);
+    // remove all versions for force sync history, only allow by admin
+    if (forceSyncHistory === true && pkg) {
+      for (const version of existsVersions) {
+        const pkgVer = await this.packageRepository.findPackageVersion(
+          pkg.packageId,
+          version
+        );
+        if (pkgVer) {
+          logs.push(
+            `[${isoNow()}] 🚧 Remove version ${version} for force sync history`
+          );
+          await this.packageManagerService.removePackageVersion(
+            pkg,
+            pkgVer,
+            true
+          );
+        }
+      }
+      existsVersions = [];
+    }
     const existsVersionsSet = new Set(existsVersions);
+
     const diff = packument.diff(existsVersions);
     const totalVersionCount = existsVersions.length + diff.addedVersions.length - diff.removedVersions.length;
     logs.push(
