@@ -68,6 +68,25 @@ export class PackageVersionRepository {
   }
 
   /**
+   * find all versions of a package
+   * @param scope - the scope of the package
+   * @param name - the name of the package
+   * @returns the versions of the package
+   */
+  async findAllVersions(
+    scope: string,
+    name: string
+  ): Promise<string[]> {
+    const versions = await this.PackageVersion.select('packageVersions.version', 'packages.packageId')
+      .join(this.Package, 'packageVersions.packageId = packages.packageId')
+      .where({
+        scope,
+        name,
+      } as object) as { version: string }[];
+    return Array.from(versions.map(r => r.version));
+  }
+
+  /**
    * if sql version not contains prerelease, find the max version
    */
   async findMaxSatisfyVersion(

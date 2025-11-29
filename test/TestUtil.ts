@@ -270,13 +270,15 @@ export class TestUtil {
   ) {
     const pkg = await this.getFullPackage(options);
     const user = await this.createUser(userOptions);
-    await this.app
+    const res = await this.app
       .httpRequest()
       .put(`/${pkg.name}`)
       .set('authorization', user.authorization)
       .set('user-agent', user.ua)
-      .send(pkg)
-      .expect(201);
+      .send(pkg);
+    if (res.status !== 201) {
+      throw new Error(`Failed to create package: ${JSON.stringify(res.body)}`);
+    }
 
     if (options?.isPrivate === false) {
       const [scope, name] = getScopeAndName(pkg.name);
