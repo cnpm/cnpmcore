@@ -16,7 +16,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('dl.nwjs.io/index.html'),
         persist: false,
       });
-      const result = await binary.fetch('/');
+      const result = await binary.fetch('/', 'nwjs');
       assert.ok(result);
       assert.ok(result.items.length > 0);
       let matchDir = false;
@@ -38,7 +38,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
         ),
         persist: false,
       });
-      const result = await binary.fetch('/v0.59.0/');
+      const result = await binary.fetch('/v0.59.0/', 'nwjs');
       assert.ok(result);
       assert.ok(result.items.length > 0);
       let matchDir = false;
@@ -71,7 +71,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
         ),
         persist: false,
       });
-      const result = await binary.fetch('/v0.59.1/x64/');
+      const result = await binary.fetch('/v0.59.1/x64/', 'nwjs');
       assert.ok(result);
       assert.ok(result.items.length === 2);
       let matchFile1 = false;

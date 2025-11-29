@@ -1,6 +1,6 @@
 import { SingletonProto } from 'egg';
 
-import binaries from '../../../../config/binaries.ts';
+import binaries, { type BinaryName } from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
 import {
   AbstractBinary,
@@ -12,12 +12,16 @@ import {
 @SingletonProto()
 @BinaryAdapter(BinaryType.Nwjs)
 export class NwjsBinary extends AbstractBinary {
-  async initFetch() {
+  async initFetch(_binaryName: BinaryName) {
     // do nothing
     return;
   }
 
-  async fetch(dir: string): Promise<FetchResult | undefined> {
+  async fetch(
+    dir: string,
+    _binaryName: BinaryName,
+    _lastData?: Record<string, unknown>
+  ): Promise<FetchResult | undefined> {
     const binaryConfig = binaries.nwjs;
     // Fetch all directories from dl.nwjs.io directly (HTML format)
     const url = `${binaryConfig.distUrl}${dir.slice(1)}`;
