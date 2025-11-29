@@ -67,7 +67,7 @@ export type PackageJSONType = CnpmcorePatchInfo & {
       };
   man?: string | string[];
   directories?: DirectoriesType;
-  repository?: RepositoryType;
+  repository?: RepositoryType | string;
   scripts?: Record<string, string>;
   config?: {
     'bug-versions'?: BugVersionPackages;

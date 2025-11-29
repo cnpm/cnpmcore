@@ -7,6 +7,7 @@ import { Pointcut } from 'egg/aop';
 import { isEmpty, isEqual } from 'lodash-es';
 import semver from 'semver';
 import { BadRequestError } from 'egg/errors';
+import { Package as Packument } from '@cnpmjs/packument';
 
 import type {
   NPMRegistry,
@@ -21,11 +22,13 @@ import { TaskState, TaskType } from '../../common/enum/Task.ts';
 import { AbstractService } from '../../common/AbstractService.ts';
 import type { TaskRepository } from '../../repository/TaskRepository.ts';
 import type {
+  AuthorType,
   PackageJSONType,
   PackageManifestType,
   PackageRepository,
 } from '../../repository/PackageRepository.ts';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
+import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.ts';
 import type { UserRepository } from '../../repository/UserRepository.ts';
 import {
   type CreateSyncPackageTask,
@@ -35,7 +38,7 @@ import {
 import type { Package } from '../entity/Package.ts';
 import type { UserService } from './UserService.ts';
 import type { TaskService } from './TaskService.ts';
-import type { PackageManagerService } from './PackageManagerService.ts';
+import type { PackageManagerService, PublishPackageCmd } from './PackageManagerService.ts';
 import type { CacheService } from './CacheService.ts';
 import type { User } from '../entity/User.ts';
 import type { RegistryManagerService } from './RegistryManagerService.ts';
@@ -50,7 +53,7 @@ interface syncDeletePkgOptions {
   logUrl: string;
   url: string;
   logs: string[];
-  data: unknown;
+  data: Buffer;
 }
 
 function isoNow() {
@@ -69,6 +72,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly packageRepository: PackageRepository;
   @Inject()
   private readonly packageVersionDownloadRepository: PackageVersionDownloadRepository;
+  @Inject()
+  private readonly packageVersionRepository: PackageVersionRepository;
   @Inject()
   private readonly userRepository: UserRepository;
   @Inject()
@@ -294,23 +299,34 @@ export class PackageSyncerService extends AbstractService {
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
 
-  private isRemovedInRemote(remoteFetchResult: RegistryResponse) {
-    const { status, data } = remoteFetchResult;
-
-    // deleted or blocked
-    if (status === 451) {
-      return true;
-    }
-
-    const hasMaintainers = data?.maintainers && data?.maintainers.length !== 0;
-    if (hasMaintainers) {
+  private isRemovedInRemote(maintainers?: AuthorType[], time?: Record<string, string>, versions?: Record<string, any>) {
+    if (maintainers && maintainers.length > 0) {
       return false;
     }
 
     // unpublished
-    const timeMap = data.time || {};
-    if (timeMap.unpublished) {
+    // https://registry.npmjs.com/babel-plugin-autocss
+    // {
+    //   "_id": "babel-plugin-autocss",
+    //   "name": "babel-plugin-autocss",
+    //   "time": {
+    //     "created": "2021-10-29T08:21:56.032Z",
+    //     "0.0.1": "2021-10-29T08:21:56.206Z",
+    //     "modified": "2022-01-14T12:34:23.941Z",
+    //     "unpublished": {
+    //       "time": "2022-01-14T12:34:23.941Z",
+    //       "versions": [
+    //         "0.0.1"
+    //       ]
+    //     }
+    //   }
+    // }
+    if (time?.unpublished) {
       return true;
+    }
+
+    if (!versions) {
+      return false;
     }
 
     // security holder
@@ -333,9 +349,7 @@ export class PackageSyncerService extends AbstractService {
     //   "_attachments": {}
     // }
     let isSecurityHolder = true;
-    for (const versionInfo of Object.entries<{ _npmUser?: { name: string } }>(
-      data.versions || {}
-    )) {
+    for (const versionInfo of Object.entries<{ _npmUser?: { name: string } }>(versions)) {
       const [v, info] = versionInfo;
       // >=0.0.1-security <0.0.2-0
       const isSecurityVersion = semver.satisfies(v, '^0.0.1-security');
@@ -368,13 +382,14 @@ export class PackageSyncerService extends AbstractService {
     const fullname = task.targetName;
     const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
     const syncDeleteMode: SyncDeleteMode = this.config.cnpmcore.syncDeleteMode;
+    const dataString = data.toString().substring(0, 1024);
     logs.push(
-      `[${isoNow()}] 🟢 Package "${fullname}" was removed in remote registry, response data: ${JSON.stringify(data)}, config.syncDeleteMode = ${syncDeleteMode}`
+      `[${isoNow()}] 🟢 Package "${fullname}" was removed in remote registry, response data: ${dataString}, config.syncDeleteMode = ${syncDeleteMode}`
     );
 
     // pkg not exists in local registry
     if (!pkg) {
-      task.error = `Package not exists, response data: ${JSON.stringify(data)}`;
+      task.error = `Package not exists, response data: ${dataString}`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(`[${isoNow()}] ${failEnd}`);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
@@ -535,7 +550,7 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    if (pkg && pkg?.registryId !== registry.registryId) {
+    if (pkg && pkg.registryId !== registry.registryId) {
       if (pkg.registryId) {
         logs.push(
           `[${isoNow()}] ❌❌❌❌❌ ${fullname} registry is ${pkg.registryId} not belong to ${registry.registryId}, skip sync ❌❌❌❌❌`
@@ -599,9 +614,9 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    let registryFetchResult: RegistryResponse;
+    let registryFetchResult: RegistryResponse<Buffer>;
     try {
-      registryFetchResult = await this.npmRegistry.getFullManifests(fullname, {
+      registryFetchResult = await this.npmRegistry.getFullManifestsBuffer(fullname, {
         remoteAuthToken,
       });
     } catch (err) {
@@ -621,13 +636,12 @@ export class PackageSyncerService extends AbstractService {
       return;
     }
 
-    const { url, data, headers, res, status } = registryFetchResult;
-    /* c8 ignore next 13 */
-    if (status >= 500 || !data) {
+    const { url: remoteUrl, data: remoteData, headers, res, status } = registryFetchResult;
+    if (status >= 500) {
       // GET https://registry.npmjs.org/%40modern-js%2Fstyle-compiler?t=1683348626499&cache=0, status: 522
       // registry will response status 522 and data will be null
       // > TypeError: Cannot read properties of null (reading 'readme')
-      task.error = `request manifests response error, status: ${status}, data: ${JSON.stringify(data)}`;
+      task.error = `request manifests response error, status: ${status}, data size: ${remoteData.length}, data sample: ${remoteData.subarray(0, 200).toString()}`;
       logs.push(
         `[${isoNow()}] ❌ response headers: ${JSON.stringify(headers)}`
       );
@@ -647,8 +661,8 @@ export class PackageSyncerService extends AbstractService {
 
     if (status === 404) {
       // ignore 404 status
-      // https://github.com/node-modules/detect-port/issues/57
-      task.error = `Package not found, status 404, data: ${JSON.stringify(data)}`;
+      // https://github.com/cnpm/cnpmcore/issues/739
+      task.error = `Package not found, status 404, data size: ${remoteData.length}, data sample: ${remoteData.subarray(0, 200).toString()}`;
       logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
       logs.push(
         `[${isoNow()}] ❌ Synced ${fullname} fail, ${task.error}, log: ${logUrl}`
@@ -663,7 +677,24 @@ export class PackageSyncerService extends AbstractService {
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
+    // deleted or blocked
+    if (status === 451) {
+      await this.syncDeletePkg({ task, pkg, logs, logUrl, url: remoteUrl, data: remoteData });
+      return;
+    }
 
+    const contentLength = headers['content-length'] || '-';
+    logs.push(
+      `[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`
+    );
+
+    if (this.config.cnpmcore.experimental.syncPackageWithPackument && !this.config.cnpmcore.strictSyncSpecivicVersion) {
+      await this.syncPackageWithPackument(task, remoteData, pkg, registry, logUrl, remoteUrl);
+      return;
+    }
+
+    // @ts-expect-error JSON.parse support binary data
+    const data: PackageManifestType = JSON.parse(remoteData);
     let readme = data.readme || '';
     if (typeof readme !== 'string') {
       readme = JSON.stringify(readme);
@@ -672,19 +703,15 @@ export class PackageSyncerService extends AbstractService {
     //   "created": "2021-03-27T12:30:23.891Z",
     //   "0.0.2": "2021-03-27T12:30:24.349Z",
     //   "modified": "2021-12-08T14:59:57.264Z",
-    const timeMap = data.time || {};
-    const failEnd = `❌❌❌❌❌ ${url || fullname} ❌❌❌❌❌`;
-    const contentLength = headers['content-length'] || '-';
-    logs.push(
-      `[${isoNow()}] HTTP [${status}] content-length: ${contentLength}, timing: ${JSON.stringify(res.timing)}`
-    );
+    const timeMap = (data.time ?? {}) as unknown as Record<string, string>;
+    const failEnd = `❌❌❌❌❌ ${remoteUrl || fullname} ❌❌❌❌❌`;
 
-    if (this.isRemovedInRemote(registryFetchResult)) {
-      await this.syncDeletePkg({ task, pkg, logs, logUrl, url, data });
+    if (this.isRemovedInRemote(data.maintainers, timeMap, data.versions)) {
+      await this.syncDeletePkg({ task, pkg, logs, logUrl, url: remoteUrl, data: remoteData });
       return;
     }
 
-    const versionMap = data.versions || {};
+    const versionMap = (data.versions || {}) as Record<string, PackageJSONType>;
     const distTags = data['dist-tags'] || {};
 
     // show latest information
@@ -696,12 +723,11 @@ export class PackageSyncerService extends AbstractService {
 
     // 1. save maintainers
     // maintainers: [
-    //   { name: 'bomsy', email: 'b4bomsy@gmail.com' },
-    //   { name: 'jasonlaster11', email: 'jason.laster.11@gmail.com' }
+    //   { name: 'foo', email: 'foo@gmail.com' },
+    //   { name: 'bar', email: 'bar.laster.11@gmail.com' }
     // ],
     let maintainers = data.maintainers;
-    const maintainersMap: Record<string, PackageManifestType['maintainers']> =
-      {};
+    const maintainersMap: Record<string, AuthorType> = {};
     const users: User[] = [];
     let changedUserCount = 0;
     if (!Array.isArray(maintainers) || maintainers.length === 0) {
@@ -724,7 +750,7 @@ export class PackageSyncerService extends AbstractService {
           latestPackageVersion &&
           Array.isArray(latestPackageVersion.maintainers)
         ) {
-          maintainers = latestPackageVersion.maintainers;
+          maintainers = latestPackageVersion.maintainers as PackageManifestType['maintainers'];
           logs.push(
             `[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`
           );
@@ -797,7 +823,8 @@ export class PackageSyncerService extends AbstractService {
         name
       );
     const existsVersionMap = existsData?.versions ?? {};
-    const existsVersionCount = Object.keys(existsVersionMap).length;
+    const existsVersions = Object.keys(existsVersionMap);
+    const existsVersionCount = existsVersions.length;
     const abbreviatedVersionMap = abbreviatedManifests?.versions ?? {};
     // 2. save versions
     if (
@@ -1220,7 +1247,7 @@ export class PackageSyncerService extends AbstractService {
       }
     }
     // 3.2 should add latest tag
-    // 在同步 sepcific version 时如果没有同步 latestTag 的版本会出现 latestTag 丢失或指向版本不正确的情况
+    // 在同步 specific version 时如果没有同步 latestTag 的版本会出现 latestTag 丢失或指向版本不正确的情况
     if (specificVersions && this.config.cnpmcore.strictSyncSpecivicVersion) {
       // 不允许自动同步 latest 版本，从已同步版本中选出 latest
       let latestStableVersion = semver.maxSatisfying(
@@ -1329,7 +1356,483 @@ export class PackageSyncerService extends AbstractService {
     await this.cacheService.removeCache(fullname);
     logs.push(`[${isoNow()}] 🗑️ Clean cache`);
     logs.push(`[${isoNow()}] 📝 Log URL: ${logUrl}`);
-    logs.push(`[${isoNow()}] 🔗 ${url}`);
+    logs.push(`[${isoNow()}] 🔗 ${remoteUrl}`);
+    task.error = lastErrorMessage;
+    this.logger.info(
+      '[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',
+      task.taskId,
+      task.targetName
+    );
+    await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
+  }
+
+  /**
+   * sync package with packument
+   * TODO:
+   *  - [ ] support specificVersions
+   */
+  private async syncPackageWithPackument(task: Task, remoteData: Buffer, pkg: Package | null, registry: Registry, logUrl: string, remoteUrl: string) {
+    const fullname = task.targetName;
+    const [scope, name] = getScopeAndName(fullname);
+    const {
+      syncDownloadData,
+      skipDependencies,
+    } = task.data as SyncPackageTaskOptions;
+    let logs: string[] = [];
+
+    const packument = new Packument(remoteData);
+    let readme = packument.readme ?? '';
+    // "time": {
+    //   "created": "2021-03-27T12:30:23.891Z",
+    //   "0.0.2": "2021-03-27T12:30:24.349Z",
+    //   "modified": "2021-12-08T14:59:57.264Z",
+    const timeMap = packument.time ?? {};
+    // maintainers: [
+    //   { name: 'foo', email: 'foo@gmail.com' },
+    //   { name: 'bar', email: 'bar.laster.11@gmail.com' }
+    // ],
+    let maintainers = (packument.maintainers ?? []) as AuthorType[];
+    const failEnd = `❌❌❌❌❌ ${remoteUrl || fullname} ❌❌❌❌❌`;
+    if (this.isRemovedInRemote(maintainers, timeMap)) {
+      await this.syncDeletePkg({ task, pkg, logs, logUrl, url: remoteUrl, data: remoteData });
+      return;
+    }
+
+    const distTags = packument.distTags ?? {};
+    // show latest information
+    if (distTags.latest) {
+      logs.push(
+        `[${isoNow()}] 📖 ${fullname} latest version: ${distTags.latest ?? '-'}, published time: ${JSON.stringify(timeMap[distTags.latest])}`
+      );
+    }
+
+    // 1. save maintainers
+    const maintainersMap: Record<string, AuthorType> = {};
+    const users: User[] = [];
+    let changedUserCount = 0;
+    if (maintainers.length === 0) {
+      const description = packument.description;
+      const repository = packument.repository;
+      // https://r.cnpmjs.org/webpack.js.org/sync/log/61dbc7c8ff747911a5701068
+      // https://registry.npmjs.org/webpack.js.org
+      // security holding package will not contains maintainers, auto set npm and npm@npmjs.com to maintainer
+      // "description": "security holding package",
+      // "repository": "npm/security-holder"
+      if (
+        description === 'security holding package' ||
+        repository === 'npm/security-holder'
+      ) {
+        maintainers = [{ name: 'npm', email: 'npm@npmjs.com' }];
+      } else {
+        // try to use latest tag version's maintainers instead
+        const latestPackageVersion = packument.getLatestVersion();
+        if (
+          latestPackageVersion &&
+          Array.isArray(latestPackageVersion.maintainers)
+        ) {
+          maintainers = latestPackageVersion.maintainers as AuthorType[];
+          logs.push(
+            `[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`
+          );
+        }
+      }
+    }
+
+    if (maintainers.length > 0) {
+      logs.push(
+        `[${isoNow()}] 🚧 Syncing maintainers: ${JSON.stringify(maintainers)}`
+      );
+      for (const maintainer of maintainers) {
+        if (maintainer.name && maintainer.email) {
+          maintainersMap[maintainer.name] = maintainer as AuthorType;
+          const { changed, user } = await this.userService.saveUser(
+            maintainer.name,
+            maintainer.email,
+            registry.userPrefix
+          );
+          users.push(user);
+          if (changed) {
+            changedUserCount++;
+            logs.push(
+              `[${isoNow()}] 🟢 [${changedUserCount}] Synced ${maintainer.name} => ${user.name}(${user.userId})`
+            );
+          }
+        }
+      }
+    }
+
+    const firstUser = users[0];
+    if (users.length === 0) {
+      // check unpublished
+      // https://r.cnpmjs.org/-/package/babel-plugin-autocss/syncs/61e4be46c7cbfac94d2ec597/log
+      // {
+      //   "name": "babel-plugin-autocss",
+      //   "time": {
+      //     "created": "2021-10-29T08:21:56.032Z",
+      //     "0.0.1": "2021-10-29T08:21:56.206Z",
+      //     "modified": "2022-01-14T12:34:23.941Z",
+      //     "unpublished": {
+      //       "time": "2022-01-14T12:34:23.941Z",
+      //       "versions": [
+      //         "0.0.1"
+      //       ]
+      //     }
+      //   }
+      // }
+
+      // invalid maintainers, sync fail, should be a bug here
+      task.error = `invalid maintainers: ${JSON.stringify(maintainers)}`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ${failEnd}`);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-invalid-maintainers] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error
+      );
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      return;
+    }
+
+    let lastErrorMessage = '';
+    const dependenciesSet = new Set<string>();
+    const existsVersions = await this.packageVersionRepository.findAllVersions(scope, name);
+    const existsVersionsSet = new Set(existsVersions);
+    const diff = packument.diff(existsVersions);
+    const totalVersionCount = existsVersions.length + diff.addedVersions.length - diff.removedVersions.length;
+    logs.push(
+      `[${isoNow()}] 🚧 Syncing versions ${existsVersions.length} => ${totalVersionCount}, ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed`
+    );
+
+    const updateVersions: string[] = [];
+    let syncIndex = 0;
+    // #region sync added versions
+    for (const [version, [offsetStart, offsetEnd]] of diff.addedVersions) {
+      // @ts-expect-error JSON.parse support binary data
+      const item: PackageJSONType = JSON.parse(remoteData.subarray(offsetStart, offsetEnd));
+      // New version found, start syncing
+      syncIndex++;
+      const description = item.description;
+      // "dist": {
+      //   "shasum": "943e0ec03df00ebeb6273a5b94b916ba54b47581",
+      //   "tarball": "https://registry.npmjs.org/foo/-/foo-1.0.0.tgz"
+      // },
+      const dist = item.dist;
+      const tarball = dist?.tarball;
+      if (!tarball) {
+        lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
+        logs.push(
+          `[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`
+        );
+        await this.taskService.appendTaskLog(task, logs.join('\n'));
+        logs = [];
+        continue;
+      }
+      const publishTimeISO = timeMap[version];
+      const publishTime = publishTimeISO
+        ? new Date(publishTimeISO)
+        : new Date();
+      const delay = Date.now() - publishTime.getTime();
+      logs.push(
+        `[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`
+      );
+      let localFile: string;
+      try {
+        const { tmpfile, headers, timing } = await downloadToTempfile(
+          this.httpClient,
+          this.config.dataDir,
+          tarball,
+          { remoteAuthToken: registry.authToken }
+        );
+        localFile = tmpfile;
+        logs.push(
+          `[${isoNow()}] 🚧 [${syncIndex}] HTTP content-length: ${headers['content-length']}, timing: ${JSON.stringify(timing)} => ${localFile}`
+        );
+      } catch (err) {
+        if (
+          err.name === 'DownloadNotFoundError' ||
+          err.name === 'DownloadStatusInvalidError'
+        ) {
+          this.logger.warn('Download tarball %s error: %s', tarball, err);
+        } else {
+          this.logger.error('Download tarball %s error: %s', tarball, err);
+        }
+        lastErrorMessage = `download tarball error: ${err}`;
+        logs.push(
+          `[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`
+        );
+        await this.taskService.appendTaskLog(task, logs.join('\n'));
+        logs = [];
+        continue;
+      }
+      if (!pkg) {
+        // try to read package entity again after first sync
+        pkg = await this.packageRepository.findPackage(scope, name);
+      }
+
+      const publishCmd: PublishPackageCmd = {
+        scope,
+        name,
+        version,
+        description,
+        packageJson: item,
+        readme,
+        registryId: registry.registryId,
+        dist: {
+          localFile,
+        },
+        isPrivate: false,
+        publishTime,
+        skipRefreshPackageManifests: true,
+      };
+      try {
+        // if version record already exists, need to check if pkg.manifests exists
+        const npmUserName = item._npmUser?.name;
+        const publisher = npmUserName && users.find(user => user.displayName === npmUserName) || firstUser;
+        const pkgVersion = await this.packageManagerService.publish(
+          publishCmd,
+          publisher
+        );
+        updateVersions.push(pkgVersion.version);
+        logs.push(
+          `[${isoNow()}] 🎉 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`
+        );
+      } catch (err) {
+        if (err.name === 'ForbiddenError') {
+          logs.push(
+            `[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`
+          );
+          // if pkg.maintainers not exists, need to supplement it
+          updateVersions.push(version);
+        } else {
+          err.taskId = task.taskId;
+          this.logger.error(err);
+          lastErrorMessage = `publish error: ${err}`;
+          logs.push(
+            `[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} error, ${lastErrorMessage}`
+          );
+          if (err.name === 'BadRequestError') {
+            // if current version's dependencies not satisfied, try to retry
+            // will retry at the end of the current queue
+            this.logger.info(
+              '[PackageSyncerService.executeTask:fail-validate-deps] taskId: %s, targetName: %s, %s',
+              task.taskId,
+              task.targetName,
+              task.error
+            );
+            await this.taskService.retryTask(task, logs.join('\n'));
+            return;
+          }
+        }
+      }
+
+      await this.taskService.appendTaskLog(task, logs.join('\n'));
+      logs = [];
+      await rm(localFile, { force: true });
+      if (!skipDependencies) {
+        const dependencies: Record<string, string> = item.dependencies || {};
+        for (const dependencyName in dependencies) {
+          dependenciesSet.add(dependencyName);
+        }
+        const optionalDependencies: Record<string, string> =
+          item.optionalDependencies || {};
+        for (const dependencyName in optionalDependencies) {
+          dependenciesSet.add(dependencyName);
+        }
+      }
+    }
+    // #endregion
+
+    // try to read package entity again after new versions sync
+    if (!pkg) {
+      pkg = await this.packageRepository.findPackage(scope, name);
+    }
+    if (!pkg?.id) {
+      // sync all versions fail in the first time
+      logs.push(
+        `[${isoNow()}] ❌ All versions sync fail, package not exists, log: ${logUrl}`
+      );
+      logs.push(`[${isoNow()}] ${failEnd}`);
+      task.error = lastErrorMessage;
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail] taskId: %s, targetName: %s, package not exists',
+        task.taskId,
+        task.targetName
+      );
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      return;
+    }
+
+    // #region sync removed versions
+    for (const version in diff.removedVersions) {
+      const pkgVersion = await this.packageRepository.findPackageVersion(
+        pkg.packageId,
+        version
+      );
+      if (pkgVersion) {
+        await this.packageManagerService.removePackageVersion(
+          pkg,
+          pkgVersion,
+          true
+        );
+        logs.push(
+          `[${isoNow()}] 🟢 Removed version ${version} success`
+        );
+      }
+    }
+
+    logs.push(
+      `[${isoNow()}] 🟢 Synced updated ${updateVersions.length} versions, removed ${diff.removedVersions.length} versions`
+    );
+    if (updateVersions.length > 0 || diff.removedVersions.length > 0) {
+      logs.push(`[${isoNow()}] 🚧 Refreshing manifests to dists ......`);
+      const start = Date.now();
+      await this.taskService.appendTaskLog(task, logs.join('\n'));
+      logs = [];
+      await this.packageManagerService.refreshPackageChangeVersionsToDists(
+        pkg,
+        updateVersions,
+        diff.removedVersions
+      );
+      logs.push(`[${isoNow()}] 🟢 Refresh use ${Date.now() - start}ms`);
+    }
+    // #endregion
+
+    // #region update tags
+    // "dist-tags": {
+    //   "latest": "0.0.7"
+    // },
+    const changedTags: { tag: string; version?: string; action: string }[] = [];
+    const existsDistTags = await this.packageManagerService.distTags(pkg);
+    let shouldRefreshDistTags = false;
+    for (const tag in distTags) {
+      const version = distTags[tag];
+      const utf8mb3Regex = /[\u0020-\uD7FF\uE000-\uFFFD]/;
+      if (!utf8mb3Regex.test(tag)) {
+        logs.push(
+          `[${isoNow()}] 🚧 invalid tag(${tag}: ${version}), tag name is out of utf8mb3, skip`
+        );
+        continue;
+      }
+      // new tag's version is not exists in exists versions and update versions
+      // e.g: if latest version's version write failed, skip it
+      if (!existsVersionsSet.has(version) && !updateVersions.includes(version)) {
+        logs.push(
+          `[${isoNow()}] 🚧 invalid tag(${tag}: ${version}), version is not exists, skip`
+        );
+        continue;
+      }
+      const changed = await this.packageManagerService.savePackageTag(
+        pkg,
+        tag,
+        version
+      );
+      if (changed) {
+        changedTags.push({ action: 'change', tag, version });
+        shouldRefreshDistTags = false;
+      } else if (version !== existsDistTags[tag]) {
+        shouldRefreshDistTags = true;
+        logs.push(
+          `[${isoNow()}] 🚧 Remote tag(${tag}: ${version}) not exists in local dist-tags`
+        );
+      }
+    }
+    // find out remove tags
+    for (const tag in existsDistTags) {
+      if (!(tag in distTags)) {
+        const changed = await this.packageManagerService.removePackageTag(
+          pkg,
+          tag
+        );
+        if (changed) {
+          changedTags.push({ action: 'remove', tag });
+          shouldRefreshDistTags = false;
+        }
+      }
+    }
+
+    if (changedTags.length > 0) {
+      logs.push(
+        `[${isoNow()}] 🟢 Synced ${changedTags.length} tags: ${JSON.stringify(changedTags)}`
+      );
+    }
+    if (shouldRefreshDistTags) {
+      await this.packageManagerService.refreshPackageDistTagsToDists(pkg);
+      logs.push(`[${isoNow()}] 🟢 Refresh dist-tags`);
+    }
+    // #endregion
+
+    // #region update package maintainers
+    const hasNewMaintainers = await this.packageManagerService.savePackageMaintainers(pkg, users);
+    // find out remove maintainers
+    const removedMaintainers: unknown[] = [];
+    const existsMaintainers = await this.packageManagerService.maintainers(pkg);
+    for (const maintainer of existsMaintainers) {
+      const { name } = maintainer;
+      if (!(name in maintainersMap)) {
+        const user = await this.userRepository.findUserByName(
+          `${registry.userPrefix || 'npm:'}${name}`
+        );
+        if (user) {
+          await this.packageManagerService.removePackageMaintainer(pkg, user);
+          removedMaintainers.push(maintainer);
+        }
+      }
+    }
+    if (removedMaintainers.length > 0) {
+      logs.push(
+        `[${isoNow()}] 🟢 Removed ${removedMaintainers.length} maintainers: ${JSON.stringify(removedMaintainers)}`
+      );
+    }
+
+    // update package maintainers in dist
+    // The event is initialized in the repository and distributed after uncork.
+    // maintainers' information is updated in bulk to ensure consistency.
+    if (hasNewMaintainers || removedMaintainers.length > 0) {
+      logs.push(
+        `[${isoNow()}] 🚧 Syncing maintainers to package manifest, from: ${JSON.stringify(maintainers)} to: ${JSON.stringify(existsMaintainers)}`
+      );
+      await this.packageManagerService.refreshPackageMaintainersToDists(pkg);
+      logs.push(
+        `[${isoNow()}] 🟢 Syncing maintainers to package manifest done`
+      );
+    }
+    // #endregion
+
+    // #region add deps sync task
+    for (const dependencyName of dependenciesSet) {
+      const existsTask = await this.taskRepository.findTaskByTargetName(
+        dependencyName,
+        TaskType.SyncPackage,
+        TaskState.Waiting
+      );
+      if (existsTask) {
+        logs.push(
+          `[${isoNow()}] 📖 Has dependency "${dependencyName}" sync task: ${existsTask.taskId}, db id: ${existsTask.id}`
+        );
+        continue;
+      }
+      const tips = `Sync cause by "${fullname}" dependencies, parent task: ${task.taskId}`;
+      const dependencyTask = await this.createTask(dependencyName, {
+        authorId: task.authorId,
+        authorIp: task.authorIp,
+        tips,
+      });
+      logs.push(
+        `[${isoNow()}] 📦 Add dependency "${dependencyName}" sync task: ${dependencyTask.taskId}, db id: ${dependencyTask.id}`
+      );
+    }
+    // #endregion
+
+    if (syncDownloadData) {
+      await this.syncDownloadData(task, pkg);
+    }
+
+    // clean cache
+    await this.cacheService.removeCache(fullname);
+    logs.push(`[${isoNow()}] 🗑️ Clean cache`);
+    logs.push(`[${isoNow()}] 📝 Log URL: ${logUrl}`);
+    logs.push(`[${isoNow()}] 🔗 ${remoteUrl}`);
     task.error = lastErrorMessage;
     this.logger.info(
       '[PackageSyncerService.executeTask:success] taskId: %s, targetName: %s',

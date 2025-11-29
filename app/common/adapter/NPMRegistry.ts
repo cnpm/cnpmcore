@@ -17,7 +17,7 @@ type HttpMethod = HttpClientRequestOptions['method'];
 
 const INSTANCE_NAME = 'npmRegistry';
 
-export type RegistryResponse = { method: HttpMethod } & HttpClientResponse;
+export type RegistryResponse<T = any> = { method: HttpMethod } & HttpClientResponse<T>;
 
 @ContextProto({
   name: INSTANCE_NAME,
@@ -44,7 +44,17 @@ export class NPMRegistry {
   public async getFullManifests(
     fullname: string,
     optionalConfig?: { retries?: number; remoteAuthToken?: string }
-  ): Promise<{ method: HttpMethod } & HttpClientResponse<PackageManifestType>> {
+  ): Promise<RegistryResponse<PackageManifestType>> {
+    const res = await this.getFullManifestsBuffer(fullname, optionalConfig);
+    // @ts-expect-error JSON.parse support Buffer input
+    res.data = JSON.parse(res.data);
+    return res as unknown as RegistryResponse<PackageManifestType>;
+  }
+
+  public async getFullManifestsBuffer(
+    fullname: string,
+    optionalConfig?: { retries?: number; remoteAuthToken?: string }
+  ): Promise<RegistryResponse<Buffer>> {
     let retries = optionalConfig?.retries || 3;
     // set query t=timestamp, make sure CDN cache disable
     // cache=0 is sync worker request flag
@@ -57,7 +67,7 @@ export class NPMRegistry {
         const authorization = this.genAuthorizationHeader(
           optionalConfig?.remoteAuthToken
         );
-        return await this.request('GET', url, undefined, {
+        return await this.requestBuffer('GET', url, undefined, {
           timeout: 120_000,
           headers: { authorization },
         });
@@ -75,7 +85,6 @@ export class NPMRegistry {
         await setTimeout(delay);
       }
     }
-    // oxlint-disable-next-line no-throw-literal
     throw lastError;
   }
 
@@ -92,7 +101,7 @@ export class NPMRegistry {
     //   ok: true,
     //   logId: logId
     // };
-    return await this.request('PUT', url, undefined, { authorization });
+    return await this.requestJSON('PUT', url, undefined, { authorization });
   }
 
   // app.get('/:name/sync/log/:id', sync.getSyncLog);
@@ -107,7 +116,7 @@ export class NPMRegistry {
     );
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync/log/${id}?offset=${offset}`;
     // { ok: true, syncDone: syncDone, log: log }
-    return await this.request('GET', url, undefined, { authorization });
+    return await this.requestJSON('GET', url, undefined, { authorization });
   }
 
   public async getDownloadRanges(
@@ -121,7 +130,31 @@ export class NPMRegistry {
       optionalConfig?.remoteAuthToken
     );
     const url = `${registry}/downloads/range/${start}:${end}/${encodeURIComponent(fullname)}`;
-    return await this.request('GET', url, undefined, { authorization });
+    return await this.requestJSON('GET', url, undefined, { authorization });
+  }
+
+  private async requestJSON(
+    method: HttpMethod,
+    url: string,
+    params?: object,
+    options?: object
+  ): Promise<RegistryResponse> {
+    return await this.request(method, url, params, {
+      ...options,
+      dataType: 'json',
+    });
+  }
+
+  private async requestBuffer(
+    method: HttpMethod,
+    url: string,
+    params?: object,
+    options?: object
+  ): Promise<RegistryResponse<Buffer>> {
+    return await this.request(method, url, params, {
+      ...options,
+      dataType: 'buffer',
+    });
   }
 
   private async request(
@@ -133,7 +166,6 @@ export class NPMRegistry {
     const res = (await this.httpClient.request(url, {
       method,
       data: params,
-      dataType: 'json',
       timing: true,
       retry: 3,
       timeout: this.timeout,

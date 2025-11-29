@@ -77,6 +77,9 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   database: {
     type: database.type,
   },
+  experimental: {
+    syncPackageWithPackument: false,
+  },
 };
 
 export interface NFSConfig {

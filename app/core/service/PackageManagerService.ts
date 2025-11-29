@@ -26,6 +26,7 @@ import { AbstractService } from '../../common/AbstractService.ts';
 import type {
   AbbreviatedPackageJSONType,
   AbbreviatedPackageManifestType,
+  AuthorType,
   PackageJSONType,
   PackageManifestType,
   PackageRepository,
@@ -456,7 +457,7 @@ export class PackageManagerService extends AbstractService {
     this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname, maintainers);
   }
 
-  async savePackageMaintainers(pkg: Package, maintainers: User[]) {
+  async savePackageMaintainers(pkg: Package, maintainers: User[]): Promise<boolean> {
     let hasNewRecord = false;
     for (const maintainer of maintainers) {
       const newRecord = await this.packageRepository.savePackageMaintainer(
@@ -470,6 +471,7 @@ export class PackageManagerService extends AbstractService {
     if (hasNewRecord) {
       this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname, maintainers);
     }
+    return hasNewRecord;
   }
 
   async removePackageMaintainer(pkg: Package, maintainer: User) {
@@ -936,13 +938,9 @@ export class PackageManagerService extends AbstractService {
     }
     if (removeVersions) {
       for (const version of removeVersions) {
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete fullManifests.versions[version];
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete fullManifests.time[version];
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete abbreviatedManifests.versions[version];
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete abbreviatedManifests.time?.[version];
       }
     }
@@ -973,11 +971,11 @@ export class PackageManagerService extends AbstractService {
     return registry;
   }
 
-  private async _listPackageDistTags(pkg: Package) {
-    const tags = await this.packageRepository.listPackageTags(pkg.packageId);
-    const distTags: { [key: string]: string } = {};
-    for (const tag of tags) {
-      distTags[tag.tag] = tag.version;
+  async distTags(pkg: Package): Promise<Record<string, string>> {
+    const entities = await this.packageRepository.listPackageTags(pkg.packageId);
+    const distTags: Record<string, string> = {};
+    for (const entity of entities) {
+      distTags[entity.tag] = entity.version;
     }
     return distTags;
   }
@@ -1006,7 +1004,7 @@ export class PackageManagerService extends AbstractService {
           // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
           pkg.manifestsDist!
         );
-      const maintainers = await this._listPackageMaintainers(pkg);
+      const maintainers = await this.maintainers(pkg);
       if (fullManifests) {
         fullManifests.maintainers = maintainers;
         await this._updatePackageManifestsToDists(pkg, fullManifests, null);
@@ -1069,7 +1067,7 @@ export class PackageManagerService extends AbstractService {
     fullManifests: PackageManifestType,
     abbreviatedManifests: AbbreviatedPackageManifestType
   ) {
-    const distTags = await this._listPackageDistTags(pkg);
+    const distTags = await this.distTags(pkg);
     if (distTags.latest) {
       const packageVersion = await this.packageRepository.findPackageVersion(
         pkg.packageId,
@@ -1267,7 +1265,7 @@ export class PackageManagerService extends AbstractService {
     return { etag, data: manifests, blockReason };
   }
 
-  private async _listPackageMaintainers(pkg: Package) {
+  async maintainers(pkg: Package): Promise<AuthorType[]> {
     const users = await this.packageRepository.listPackageMaintainers(
       pkg.packageId
     );
@@ -1280,14 +1278,14 @@ export class PackageManagerService extends AbstractService {
   private async _listPackageFullManifests(
     pkg: Package
   ): Promise<PackageManifestType | null> {
-    // read all verions from db
+    // read all versions from db
     const packageVersions = await this.packageRepository.listPackageVersions(
       pkg.packageId
     );
     if (packageVersions.length === 0) return null;
 
-    const distTags = await this._listPackageDistTags(pkg);
-    const maintainers = await this._listPackageMaintainers(pkg);
+    const distTags = await this.distTags(pkg);
+    const maintainers = await this.maintainers(pkg);
     const registry = await this.getSourceRegistry(pkg);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const data: PackageManifestType = {
@@ -1371,7 +1369,7 @@ export class PackageManagerService extends AbstractService {
     );
     if (packageVersions.length === 0) return null;
 
-    const distTags = await this._listPackageDistTags(pkg);
+    const distTags = await this.distTags(pkg);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     // tiny-tarball is a small package with only one version and no dependencies.
     const data: AbbreviatedPackageManifestType = {

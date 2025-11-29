@@ -187,4 +187,14 @@ export interface CnpmcoreConfig {
   database: {
     type: DATABASE_TYPE | string;
   };
+
+  /**
+   * experimental features
+   */
+  experimental: {
+    /**
+     * enable sync package with packument
+     */
+    syncPackageWithPackument: boolean;
+  }
 }
