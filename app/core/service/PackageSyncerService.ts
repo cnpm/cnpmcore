@@ -841,8 +841,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         name
       );
     const existsVersionMap = existsData?.versions ?? {};
-    const existsVersions = Object.keys(existsVersionMap);
-    const existsVersionCount = existsVersions.length;
+    const existsVersionCount = Object.keys(existsVersionMap).length;
     const abbreviatedVersionMap = abbreviatedManifests?.versions ?? {};
     // 2. save versions
     if (
