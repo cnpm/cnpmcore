@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -64,7 +64,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -116,7 +116,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22, 24]
+        node-version: [22, 24]
         os: [ubuntu-latest]
         # 0-based index
         shardIndex: [0, 1, 2]
@@ -156,7 +156,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -212,7 +212,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22, 24]
+        node-version: [22, 24]
         os: [ubuntu-latest]
         # 0-based index
         shardIndex: [0, 1, 2]
@@ -243,7 +243,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -270,7 +270,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22]
+        node-version: [22, 24]
         os: [ubuntu-latest]
 
     concurrency:
@@ -296,7 +296,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6

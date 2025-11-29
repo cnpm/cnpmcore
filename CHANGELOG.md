@@ -1,5 +1,28 @@
 # Changelog
 
+## 4.12.0 (2025-11-18)
+
+* feat: add builds/driver for playwright (#884) ([93034bf](https://github.com/cnpm/cnpmcore/commit/93034bf)), closes [#884](https://github.com/cnpm/cnpmcore/issues/884) [#883](https://github.com/cnpm/cnpmcore/issues/883)
+* feat: add ffmpeg-builds binary mirror (#879) ([d7de1cd](https://github.com/cnpm/cnpmcore/commit/d7de1cd)), closes [#879](https://github.com/cnpm/cnpmcore/issues/879)
+* feat: try to avoid recalculating integrity (#880) ([4859ce8](https://github.com/cnpm/cnpmcore/commit/4859ce8)), closes [#880](https://github.com/cnpm/cnpmcore/issues/880)
+* chore: add deployment test (#874) ([0d32146](https://github.com/cnpm/cnpmcore/commit/0d32146)), closes [#874](https://github.com/cnpm/cnpmcore/issues/874)
+* chore: Configure Renovate (#845) ([f3f3584](https://github.com/cnpm/cnpmcore/commit/f3f3584)), closes [#845](https://github.com/cnpm/cnpmcore/issues/845)
+* chore(deps): update actions/attest-build-provenance action to v3 (#847) ([957f43d](https://github.com/cnpm/cnpmcore/commit/957f43d)), closes [#847](https://github.com/cnpm/cnpmcore/issues/847)
+* chore(deps): update actions/checkout action to v5 (#849) ([e8a3ee5](https://github.com/cnpm/cnpmcore/commit/e8a3ee5)), closes [#849](https://github.com/cnpm/cnpmcore/issues/849)
+* chore(deps): update actions/first-interaction action to v3 (#850) ([35a7be3](https://github.com/cnpm/cnpmcore/commit/35a7be3)), closes [#850](https://github.com/cnpm/cnpmcore/issues/850)
+* chore(deps): update actions/setup-node action to v6 (#851) ([3671c52](https://github.com/cnpm/cnpmcore/commit/3671c52)), closes [#851](https://github.com/cnpm/cnpmcore/issues/851)
+* chore(deps): update dependency lint-staged to v16 (#853) ([e1848c7](https://github.com/cnpm/cnpmcore/commit/e1848c7)), closes [#853](https://github.com/cnpm/cnpmcore/issues/853)
+* chore(deps): update dependency mocha to v11.7.4 (#846) ([4213bd8](https://github.com/cnpm/cnpmcore/commit/4213bd8)), closes [#846](https://github.com/cnpm/cnpmcore/issues/846)
+* chore(deps): update dependency oxlint-tsgolint to ^0.3.0 (#863) ([0c987a7](https://github.com/cnpm/cnpmcore/commit/0c987a7)), closes [#863](https://github.com/cnpm/cnpmcore/issues/863)
+* chore(deps): update dependency oxlint-tsgolint to ^0.5.0 (#875) ([95543b1](https://github.com/cnpm/cnpmcore/commit/95543b1)), closes [#875](https://github.com/cnpm/cnpmcore/issues/875)
+* chore(deps): update dependency oxlint-tsgolint to ^0.7.0 (#885) ([06a3ae1](https://github.com/cnpm/cnpmcore/commit/06a3ae1)), closes [#885](https://github.com/cnpm/cnpmcore/issues/885)
+* chore(deps): update dependency type-fest to v5 [skip ci] (#871) ([01385f4](https://github.com/cnpm/cnpmcore/commit/01385f4)), closes [#871](https://github.com/cnpm/cnpmcore/issues/871)
+* fix(deps): update dependency npm-package-arg to v13 (#866) ([c3059c7](https://github.com/cnpm/cnpmcore/commit/c3059c7)), closes [#866](https://github.com/cnpm/cnpmcore/issues/866)
+* fix(deps): update dependency read-env-value to v2 (#869) ([098c75a](https://github.com/cnpm/cnpmcore/commit/098c75a)), closes [#869](https://github.com/cnpm/cnpmcore/issues/869)
+* fix(deps): update dependency ssri to v13 (#870) ([0f11e77](https://github.com/cnpm/cnpmcore/commit/0f11e77)), closes [#870](https://github.com/cnpm/cnpmcore/issues/870)
+* fix(deps): update dependency validate-npm-package-name to v7 [skip ci] (#873) ([6c29f08](https://github.com/cnpm/cnpmcore/commit/6c29f08)), closes [#873](https://github.com/cnpm/cnpmcore/issues/873)
+* refactor: use all in one egg v4 (#855) ([89f1250](https://github.com/cnpm/cnpmcore/commit/89f1250)), closes [#855](https://github.com/cnpm/cnpmcore/issues/855)
+
 ## <small>4.11.1 (2025-10-22)</small>
 
 * fix: improve TypeScript type definitions across codebase (#844) ([e5162f2](https://github.com/cnpm/cnpmcore/commit/e5162f2)), closes [#844](https://github.com/cnpm/cnpmcore/issues/844)
