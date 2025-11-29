@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.13.0 (2025-11-29)
+
+* feat: use packument to parse full manifest json (#894) ([b70a9af](https://github.com/cnpm/cnpmcore/commit/b70a9af)), closes [#894](https://github.com/cnpm/cnpmcore/issues/894) [hi#level](https://github.com/hi/issues/level)
+* chore(deps): update actions/checkout action to v6 (#890) ([c5caee6](https://github.com/cnpm/cnpmcore/commit/c5caee6)), closes [#890](https://github.com/cnpm/cnpmcore/issues/890)
+* chore(deps): update dependency oxlint-tsgolint to ^0.8.0 (#889) ([fd63422](https://github.com/cnpm/cnpmcore/commit/fd63422)), closes [#889](https://github.com/cnpm/cnpmcore/issues/889)
+
 ## 4.12.0 (2025-11-18)
 
 * feat: add builds/driver for playwright (#884) ([93034bf](https://github.com/cnpm/cnpmcore/commit/93034bf)), closes [#884](https://github.com/cnpm/cnpmcore/issues/884) [#883](https://github.com/cnpm/cnpmcore/issues/883)
