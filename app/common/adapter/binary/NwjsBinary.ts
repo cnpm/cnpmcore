@@ -3,54 +3,59 @@ import { SingletonProto } from 'egg';
 import binaries from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
 import {
+  AbstractBinary,
   BinaryAdapter,
   type BinaryItem,
   type FetchResult,
 } from './AbstractBinary.ts';
-import { BucketBinary } from './BucketBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Nwjs)
-export class NwjsBinary extends BucketBinary {
-  private s3Url = 'https://nwjs2.s3.amazonaws.com/?delimiter=/&prefix=';
+export class NwjsBinary extends AbstractBinary {
+  async initFetch() {
+    // do nothing
+    return;
+  }
 
   async fetch(dir: string): Promise<FetchResult | undefined> {
     const binaryConfig = binaries.nwjs;
-    const isRootDir = dir === '/';
-    // /foo/ => foo/
-    const subDir = dir.slice(1);
-    const url = isRootDir
-      ? binaryConfig.distUrl
-      : `${this.s3Url}${encodeURIComponent(subDir)}`;
-    const xml = await this.requestXml(url);
-    if (!xml) return;
+    // Fetch all directories from dl.nwjs.io directly (HTML format)
+    const url = `${binaryConfig.distUrl}${dir.slice(1)}`;
+    const html = await this.requestXml(url);
+    if (!html) return;
 
-    if (isRootDir) {
-      // <tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="v0.14.7/">v0.14.7/</a></td><td align="right">22-Jul-2016 17:08  </td><td align="right">  - </td><td>&nbsp;</td></tr>
-      // <tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="v0.15.0-beta1/">v0.15.0-beta1/</a></td><td align="right">27-Apr-2016 12:17  </td><td align="right">  - </td><td>&nbsp;</td></tr>
-      // <tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="v0.15.0-beta2/">v0.15.0-beta2/</a></td><td align="right">03-May-2016 17:17  </td><td align="right">  - </td><td>&nbsp;</td></tr>
-      // <tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="v0.15.0-rc1/">v0.15.0-rc1/</a></td><td align="right">06-May-2016 12:24  </td><td align="right">  - </td><td>&nbsp;</td></tr>
-      // <tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="v0.15.0-rc2/">v0.15.0-rc2/</a></td><td align="right">13-May-2016 20:13  </td><td align="right">  - </td><td>&nbsp;</td></tr>
-      const items: BinaryItem[] = [];
-      const re =
-        /<td><a [^>]+?>([^<]+?\/)<\/a><\/td><td [^>]+?>([^>]+?)<\/td>/gi;
-      const matchs = xml.matchAll(re);
-      for (const m of matchs) {
-        const name = m[1].trim();
-        // ignore	live-build/ name
-        if (name === 'live-build/') continue;
-        const date = m[2].trim();
-        items.push({
-          name,
-          isDir: true,
-          url: '',
-          size: '-',
-          date,
-        });
-      }
-      return { items, nextParams: null };
+    const items: BinaryItem[] = [];
+    // Parse Apache directory listing HTML format:
+    // Directories:
+    // <tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="v0.14.7/">v0.14.7/</a></td><td align="right">22-Jul-2016 17:08  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+    // Files:
+    // <tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="MD5SUMS">MD5SUMS</a></td><td align="right">30-Jul-2015 02:21  </td><td align="right"> 31K</td><td>&nbsp;</td></tr>
+    // <tr><td valign="top"><img src="/icons/compressed.gif" alt="[   ]"></td><td><a href="nwjs-v0.59.0-win-x64.zip">nwjs-v0.59.0-win-x64.zip</a></td><td align="right">02-Dec-2021 23:35  </td><td align="right">106M</td><td>&nbsp;</td></tr>
+    const re =
+      /<td><a [^>]*href="([^"]+)"[^>]*>([^<]+)<\/a><\/td><td[^>]*>([^<]*)<\/td><td[^>]*>([^<]*)<\/td>/gi;
+    const matchs = html.matchAll(re);
+    for (const m of matchs) {
+      const href = m[1].trim();
+      const name = m[2].trim();
+      const date = m[3].trim();
+      const sizeStr = m[4].trim();
+
+      // Skip parent directory and certain special directories
+      if (name === 'Parent Directory') continue;
+      if (href === 'live-build/') continue;
+
+      const isDir = href.endsWith('/');
+      const fileUrl = isDir ? '' : `${binaryConfig.distUrl}${dir.slice(1)}${href}`;
+
+      items.push({
+        name: isDir ? href : name,
+        isDir,
+        url: fileUrl,
+        size: sizeStr === '-' ? '-' : sizeStr,
+        date: date || '-',
+      });
     }
 
-    return { items: this.parseItems(xml, dir, binaryConfig), nextParams: null };
+    return { items, nextParams: null };
   }
 }
