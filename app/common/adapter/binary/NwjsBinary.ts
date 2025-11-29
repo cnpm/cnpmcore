@@ -35,6 +35,12 @@ export class NwjsBinary extends AbstractBinary {
     // Files:
     // <tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="MD5SUMS">MD5SUMS</a></td><td align="right">30-Jul-2015 02:21  </td><td align="right"> 31K</td><td>&nbsp;</td></tr>
     // <tr><td valign="top"><img src="/icons/compressed.gif" alt="[   ]"></td><td><a href="nwjs-v0.59.0-win-x64.zip">nwjs-v0.59.0-win-x64.zip</a></td><td align="right">02-Dec-2021 23:35  </td><td align="right">106M</td><td>&nbsp;</td></tr>
+    //
+    // Regex capture groups:
+    //   [1] href - the link target (e.g., "v0.14.7/" or "MD5SUMS")
+    //   [2] name - the display text (e.g., "v0.14.7/" or "MD5SUMS")
+    //   [3] date - the last modified date (e.g., "22-Jul-2016 17:08")
+    //   [4] size - the file size (e.g., "31K" or "-" for directories)
     const re =
       /<td><a [^>]*href="([^"]+)"[^>]*>([^<]+)<\/a><\/td><td[^>]*>([^<]*)<\/td><td[^>]*>([^<]*)<\/td>/gi;
     const matchs = html.matchAll(re);
