@@ -1445,7 +1445,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       );
     }
 
-    // 1. save maintainers
+    // #region save maintainers
     const maintainersMap: Record<string, AuthorType> = {};
     const users: User[] = [];
     let changedUserCount = 0;
@@ -1499,6 +1499,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         }
       }
     }
+    // #endregion
 
     const firstUser = users[0];
     if (users.length === 0) {
