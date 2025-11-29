@@ -2592,6 +2592,26 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       app.mockAgent().assertNoPendingInterceptors();
     });
 
+    it('should mock getFullManifestsBuffer json parse error', async () => {
+      mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
+        data: Buffer.from('{"foo":"bar", invalid json'),
+        res: {},
+        headers: {},
+      });
+      const name = 'cnpmcore-test-sync-json-parse-error';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      assert.match(log, /❌❌❌❌❌ cnpmcore-test-sync-json-parse-error ❌❌❌❌❌/);
+      assert.match(log, /❌ parse packument error: Error: Expected this character to be/);
+      app.mockAgent().assertNoPendingInterceptors();
+    });
+
     it('should mock downloadTarball status !== 200', async () => {
       app.mockHttpclient('http://foo.com/a.tgz', 'GET', {
         status: 500,

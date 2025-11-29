@@ -696,8 +696,23 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       return;
     }
 
-    // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
-    const data: PackageManifestType = JSON.parse(remoteData);
+    let data: PackageManifestType;
+    try {
+      // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
+      data = JSON.parse(remoteData);
+    } catch (err) {
+      task.error = `parse manifest error: ${err}, data: ${remoteData.toString().substring(0, 1024)}`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-parse-manifest] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error
+      );
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      return;
+    }
     let readme = data.readme || '';
     if (typeof readme !== 'string') {
       readme = JSON.stringify(readme);
@@ -753,7 +768,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
           latestPackageVersion &&
           Array.isArray(latestPackageVersion.maintainers)
         ) {
-          maintainers = latestPackageVersion.maintainers as PackageManifestType['maintainers'];
+          maintainers = latestPackageVersion.maintainers as AuthorType[];
           logs.push(
             `[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`
           );
@@ -1388,7 +1403,22 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
     const { syncDownloadData, skipDependencies, forceSyncHistory } = task.data as SyncPackageTaskOptions;
     const [scope, name] = getScopeAndName(fullname);
 
-    const packument = new Packument(remoteData);
+    let packument: Packument;
+    try {
+      packument = new Packument(remoteData);
+    } catch (err) {
+      task.error = `parse packument error: ${err}, data: ${remoteData.toString().substring(0, 1024)}`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-parse-packument] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error
+      );
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      return;
+    }
     let readme = packument.readme ?? '';
     // "time": {
     //   "created": "2021-03-27T12:30:23.891Z",
