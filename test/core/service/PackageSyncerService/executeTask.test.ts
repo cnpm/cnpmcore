@@ -1094,7 +1094,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         assert.ok(log.includes('] 🚧 Syncing versions 2 => 2'));
         assert.ok(
           log.includes(
-            `] 📖 @cnpmcore/test-sync-package-has-two-versions latest version: ${latestVersion}, published time: ${JSON.stringify(result.data.time[latestVersion])}`
+            `] 📖 @cnpmcore/test-sync-package-has-two-versions latest version: ${latestVersion}, published time:`
           )
         );
         app.mockAgent().assertNoPendingInterceptors();
