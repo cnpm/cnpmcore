@@ -735,7 +735,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
     // show latest information
     if (distTags.latest) {
       logs.push(
-        `[${isoNow()}] 📖 ${fullname} latest version: ${distTags.latest ?? '-'}, published time: ${JSON.stringify(timeMap[distTags.latest])}`
+        `[${isoNow()}] 📖 ${fullname} latest version: ${distTags.latest}, published time: ${timeMap[distTags.latest]}`
       );
     }
 
@@ -1441,7 +1441,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
     // show latest information
     if (distTags.latest) {
       logs.push(
-        `[${isoNow()}] 📖 ${fullname} latest version: ${distTags.latest ?? '-'}, published time: ${JSON.stringify(timeMap[distTags.latest])}`
+        `[${isoNow()}] 📖 ${fullname} latest version: ${distTags.latest}, published time: ${timeMap[distTags.latest]}`
       );
     }
 
