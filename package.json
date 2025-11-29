@@ -82,10 +82,10 @@
     "registry"
   ],
   "overrides": {
-    "mocha": "11.7.4"
+    "mocha": "11.7.5"
   },
   "resolutions": {
-    "mocha": "11.7.4"
+    "mocha": "11.7.5"
   },
   "dependencies": {
     "@cnpmjs/packument": "^1.1.1",
