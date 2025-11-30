@@ -23,7 +23,9 @@ export function checkToken(token: string, prefix: string): boolean {
   try {
     const bytes = base62.decode(splits[1]);
     const crcBytes = base62.decode(splits[2]);
-    return crcBytes.readUInt32BE(0) === crc32(bytes);
+    // base-x v5 returns Uint8Array instead of Buffer, use DataView to read UInt32BE
+    const dataView = new DataView(crcBytes.buffer, crcBytes.byteOffset, crcBytes.byteLength);
+    return dataView.getUint32(0, false) === crc32(bytes);
   } catch {
     return false;
   }
