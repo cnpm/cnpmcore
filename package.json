@@ -141,7 +141,6 @@
     "@types/pg": "^8.15.6",
     "@types/semver": "^7.7.1",
     "@types/tar": "^6.1.13",
-    "@types/ua-parser-js": "^0.7.39",
     "@types/validate-npm-package-name": "^4.0.2",
     "coffee": "^5.5.1",
     "husky": "^9.1.7",
