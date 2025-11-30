@@ -112,7 +112,7 @@
     "node-rsa": "^1.1.1",
     "npm-package-arg": "^13.0.2",
     "oss-cnpm": "^5.0.1",
-    "p-map": "^4.0.0",
+    "p-map": "^7.0.0",
     "pg": "^8.16.3",
     "read-env-value": "^2.0.2",
     "semver": "^7.7.3",
