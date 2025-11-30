@@ -93,7 +93,7 @@
     "@fengmk2/tar": "^6.2.0",
     "@node-rs/crc32": "^1.10.6",
     "@simplewebauthn/server": "^7.4.0",
-    "base-x": "^3.0.11",
+    "base-x": "^5.0.0",
     "base64url": "^3.0.1",
     "bson-objectid": "^2.0.4",
     "dayjs": "^1.11.19",
