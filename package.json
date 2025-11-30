@@ -118,7 +118,7 @@
     "semver": "^7.7.3",
     "ssri": "^13.0.0",
     "type-fest": "^5.2.0",
-    "ua-parser-js": "^1.0.41",
+    "ua-parser-js": "^2.0.0",
     "validate-npm-package-name": "^7.0.0"
   },
   "optionalDependencies": {
