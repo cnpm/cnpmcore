@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import dayjs from '../../app/common/dayjs.ts';

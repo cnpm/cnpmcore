@@ -1,16 +1,7 @@
-import {
-  Inject,
-  QualifierImplDecoratorUtil,
-  type ImplDecorator,
-  HttpClient,
-  Logger,
-} from 'egg';
+import { Inject, QualifierImplDecoratorUtil, type ImplDecorator, HttpClient, Logger } from 'egg';
 
+import type { BinaryName, BinaryTaskConfig } from '../../../../config/binaries.ts';
 import type { BinaryType } from '../../enum/Binary.ts';
-import type {
-  BinaryName,
-  BinaryTaskConfig,
-} from '../../../../config/binaries.ts';
 
 const platforms = ['darwin', 'linux', 'win32'] as const;
 export interface BinaryItem {
@@ -41,7 +32,7 @@ export abstract class AbstractBinary {
   abstract fetch(
     dir: string,
     binaryName: BinaryName,
-    lastData?: Record<string, unknown>
+    lastData?: Record<string, unknown>,
   ): Promise<FetchResult | undefined>;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -62,7 +53,7 @@ export abstract class AbstractBinary {
         url,
         status,
         headers,
-        xml
+        xml,
       );
       return '';
     }
@@ -70,10 +61,7 @@ export abstract class AbstractBinary {
   }
 
   // oxlint-disable-next-line typescript-eslint/no-explicit-any
-  protected async requestJSON<T = any>(
-    url: string,
-    requestHeaders?: Record<string, string>
-  ): Promise<T> {
+  protected async requestJSON<T = any>(url: string, requestHeaders?: Record<string, string>): Promise<T> {
     const { status, data, headers } = await this.httpclient.request(url, {
       timeout: 30_000,
       dataType: 'json',
@@ -86,7 +74,7 @@ export abstract class AbstractBinary {
         '[AbstractBinary.requestJSON:non-200-status] url: %s, status: %s, headers: %j',
         url,
         status,
-        headers
+        headers,
       );
       return data as T;
     }
@@ -96,9 +84,7 @@ export abstract class AbstractBinary {
   // https://nodejs.org/api/n-api.html#n_api_node_api_version_matrix
   protected async listNodeABIVersions() {
     const nodeABIVersions: number[] = [];
-    const versions = await this.requestJSON(
-      'https://nodejs.org/dist/index.json'
-    );
+    const versions = await this.requestJSON('https://nodejs.org/dist/index.json');
     for (const version of versions) {
       if (!version.modules) continue;
       const modulesVersion = Number.parseInt(version.modules);
@@ -136,7 +122,4 @@ export abstract class AbstractBinary {
 }
 
 export const BinaryAdapter: ImplDecorator<AbstractBinary, typeof BinaryType> =
-  QualifierImplDecoratorUtil.generatorDecorator(
-    AbstractBinary,
-    BINARY_ADAPTER_ATTRIBUTE
-  );
+  QualifierImplDecoratorUtil.generatorDecorator(AbstractBinary, BINARY_ADAPTER_ATTRIBUTE);

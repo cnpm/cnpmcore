@@ -1,8 +1,5 @@
+import type { Client as ElasticsearchClient, estypes } from '@elastic/elasticsearch';
 import { AccessLevel, Inject, SingletonProto, Config } from 'egg';
-import type {
-  Client as ElasticsearchClient,
-  estypes,
-} from '@elastic/elasticsearch';
 
 import type { SearchAdapter } from '../common/typing.ts';
 

@@ -1,22 +1,11 @@
 import { performance } from 'node:perf_hooks';
 
-import {
-  type Context,
-  HTTPContext,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  Inject,
-} from 'egg';
+import { type Context, HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum, Inject } from 'egg';
 import pkg from 'egg/package.json' with { type: 'json' };
 
-import { AbstractController } from './AbstractController.ts';
-import type {
-  CacheService,
-  DownloadInfo,
-  UpstreamRegistryInfo,
-} from '../../core/service/CacheService.ts';
+import type { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService.ts';
 import type { HomeService } from '../../core/service/HomeService.ts';
+import { AbstractController } from './AbstractController.ts';
 
 const EggVersion = pkg.version;
 const startTime = new Date();

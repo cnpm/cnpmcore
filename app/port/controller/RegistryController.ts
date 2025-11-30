@@ -1,3 +1,4 @@
+import type { Static } from '@eggjs/typebox-validate/typebox';
 import {
   HTTPContext,
   Context,
@@ -11,21 +12,17 @@ import {
   Middleware,
 } from 'egg';
 import { NotFoundError } from 'egg/errors';
-import type { Static } from '@eggjs/typebox-validate/typebox';
 
-import { AbstractController } from './AbstractController.ts';
-import type {
-  RegistryManagerService,
-  UpdateRegistryCmd,
-} from '../../core/service/RegistryManagerService.ts';
-import { AdminAccess } from '../middleware/AdminAccess.ts';
+import type { RegistryManagerService, UpdateRegistryCmd } from '../../core/service/RegistryManagerService.ts';
 import type { ScopeManagerService } from '../../core/service/ScopeManagerService.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
 import {
   RegistryCreateOptions,
   RegistryCreateSyncOptions,
   RegistryUpdateOptions,
   type QueryPageOptions,
 } from '../typebox.ts';
+import { AbstractController } from './AbstractController.ts';
 
 @HTTPController()
 export class RegistryController extends AbstractController {
@@ -40,7 +37,7 @@ export class RegistryController extends AbstractController {
   })
   async listRegistries(
     @HTTPQuery() pageSize: Static<typeof QueryPageOptions>['pageSize'],
-    @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex']
+    @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex'],
   ) {
     const registries = await this.registryManagerService.listRegistries({
       pageSize,
@@ -68,7 +65,7 @@ export class RegistryController extends AbstractController {
   async showRegistryScopes(
     @HTTPParam() id: string,
     @HTTPQuery() pageSize: Static<typeof QueryPageOptions>['pageSize'],
-    @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex']
+    @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex'],
   ) {
     const registry = await this.registryManagerService.findByRegistryId(id);
     if (!registry) {
@@ -86,23 +83,10 @@ export class RegistryController extends AbstractController {
     method: HTTPMethodEnum.POST,
   })
   @Middleware(AdminAccess)
-  async createRegistry(
-    @HTTPContext() ctx: Context,
-    @HTTPBody() registryOptions: Static<typeof RegistryCreateOptions>
-  ) {
+  async createRegistry(@HTTPContext() ctx: Context, @HTTPBody() registryOptions: Static<typeof RegistryCreateOptions>) {
     ctx.tValidate(RegistryCreateOptions, registryOptions);
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
-      ctx,
-      'setting'
-    );
-    const {
-      name,
-      changeStream,
-      host,
-      userPrefix = '',
-      type,
-      authToken,
-    } = registryOptions;
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
+    const { name, changeStream, host, userPrefix = '', type, authToken } = registryOptions;
     await this.registryManagerService.createRegistry({
       name,
       changeStream,
@@ -123,7 +107,7 @@ export class RegistryController extends AbstractController {
   async createRegistrySyncTask(
     @HTTPContext() ctx: Context,
     @HTTPParam() id: string,
-    @HTTPBody() registryOptions: Static<typeof RegistryCreateSyncOptions>
+    @HTTPBody() registryOptions: Static<typeof RegistryCreateSyncOptions>,
   ) {
     ctx.tValidate(RegistryCreateSyncOptions, registryOptions);
     const { since } = registryOptions;
@@ -131,10 +115,7 @@ export class RegistryController extends AbstractController {
     if (!registry) {
       throw new NotFoundError('registry not found');
     }
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
-      ctx,
-      'setting'
-    );
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     await this.registryManagerService.createSyncChangesStream({
       registryId: registry.registryId,
       since,
@@ -149,10 +130,7 @@ export class RegistryController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async removeRegistry(@HTTPContext() ctx: Context, @HTTPParam() id: string) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
-      ctx,
-      'setting'
-    );
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     await this.registryManagerService.remove({
       registryId: id,
       operatorId: authorizedUser.userId,
@@ -168,7 +146,7 @@ export class RegistryController extends AbstractController {
   async updateRegistry(
     @HTTPContext() ctx: Context,
     @HTTPParam() id: string,
-    @HTTPBody() updateRegistryOptions: Partial<UpdateRegistryCmd>
+    @HTTPBody() updateRegistryOptions: Partial<UpdateRegistryCmd>,
   ) {
     ctx.tValidate(RegistryUpdateOptions, updateRegistryOptions);
     const registry = await this.registryManagerService.findByRegistryId(id);
@@ -185,10 +163,7 @@ export class RegistryController extends AbstractController {
       authToken,
       ...updateRegistryOptions,
     };
-    await this.registryManagerService.updateRegistry(
-      registry.registryId,
-      _updateRegistryOptions
-    );
+    await this.registryManagerService.updateRegistry(registry.registryId, _updateRegistryOptions);
     return { ok: true };
   }
 }

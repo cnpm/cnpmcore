@@ -2,14 +2,11 @@ import { createReadStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
-import { fromData, fromStream, type HashLike } from 'ssri';
 // @ts-expect-error no types available
 import tar from '@fengmk2/tar';
+import { fromData, fromStream, type HashLike } from 'ssri';
 
-import type {
-  AuthorType,
-  PackageJSONType,
-} from '../repository/PackageRepository.ts';
+import type { AuthorType, PackageJSONType } from '../repository/PackageRepository.ts';
 
 // /@cnpm%2ffoo
 // /@cnpm%2Ffoo
@@ -17,8 +14,7 @@ import type {
 // /foo
 // name max length is 214 chars
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
-export const FULLNAME_REG_STRING =
-  '@[^/]{1,220}/[^/]{1,220}|@[^%]+%2[fF][^/]{1,220}|[^@/]{1,220}';
+export const FULLNAME_REG_STRING = '@[^/]{1,220}/[^/]{1,220}|@[^%]+%2[fF][^/]{1,220}|[^@/]{1,220}';
 
 export function getScopeAndName(fullname: string): string[] {
   if (fullname.startsWith('@')) {
@@ -44,9 +40,7 @@ export interface Integrity {
   shasum: string;
 }
 
-export async function calculateIntegrity(
-  contentOrFile: Uint8Array | string
-): Promise<Integrity> {
+export async function calculateIntegrity(contentOrFile: Uint8Array | string): Promise<Integrity> {
   let integrityObj: HashLike;
   if (typeof contentOrFile === 'string') {
     integrityObj = await fromStream(createReadStream(contentOrFile), {
@@ -62,19 +56,12 @@ export async function calculateIntegrity(
   return { integrity, shasum };
 }
 
-export function formatTarball(
-  registry: string,
-  scope: string,
-  name: string,
-  version: string
-) {
+export function formatTarball(registry: string, scope: string, name: string, version: string) {
   const fullname = getFullname(scope, name);
   return `${registry}/${fullname}/-/${name}-${version}.tgz`;
 }
 
-export function detectInstallScript(manifest: {
-  scripts?: Record<string, string>;
-}) {
+export function detectInstallScript(manifest: { scripts?: Record<string, string> }) {
   // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
   let hasInstallScript = false;
   const scripts = manifest.scripts;
@@ -86,9 +73,7 @@ export function detectInstallScript(manifest: {
 }
 
 /** 判断一个版本压缩包中是否包含 npm-shrinkwrap.json */
-export async function hasShrinkWrapInTgz(
-  contentOrFile: Uint8Array | string
-): Promise<boolean> {
+export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Promise<boolean> {
   let readable: Readable;
   if (typeof contentOrFile === 'string') {
     readable = createReadStream(contentOrFile);
@@ -122,17 +107,12 @@ export async function hasShrinkWrapInTgz(
     if (e.code === 'ABORT_ERR') {
       return hasShrinkWrap;
     }
-    throw Object.assign(
-      new Error('[hasShrinkWrapInTgz] Fail to parse input file'),
-      { cause: e }
-    );
+    throw Object.assign(new Error('[hasShrinkWrapInTgz] Fail to parse input file'), { cause: e });
   }
 }
 
 /** 写入 ES 时，格式化 author */
-export function formatAuthor(
-  author: string | AuthorType | undefined
-): AuthorType | undefined {
+export function formatAuthor(author: string | AuthorType | undefined): AuthorType | undefined {
   if (author === undefined) {
     return author;
   }
@@ -144,9 +124,7 @@ export function formatAuthor(
   return author;
 }
 
-export async function extractPackageJSON(
-  tarballBytes: Buffer
-): Promise<PackageJSONType> {
+export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJSONType> {
   // oxlint-disable-next-line promise/avoid-new
   return new Promise((resolve, reject) => {
     Readable.from(tarballBytes).pipe(
@@ -164,7 +142,7 @@ export async function extractPackageJSON(
             reject(new Error('Error parsing package.json'));
           }
         },
-      })
+      }),
     );
   });
 }

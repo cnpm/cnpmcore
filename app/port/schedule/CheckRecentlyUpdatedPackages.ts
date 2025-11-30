@@ -1,14 +1,10 @@
-import {
-  Schedule,
-  ScheduleType,
-  type IntervalParams,
-} from 'egg/schedule';
 import { Inject, EggAppConfig, HttpClient, Logger } from 'egg';
+import { Schedule, ScheduleType, type IntervalParams } from 'egg/schedule';
 
+import { SyncMode } from '../../common/constants.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
 import type { PackageSyncerService } from '../../core/service/PackageSyncerService.ts';
 import type { PackageRepository } from '../../repository/PackageRepository.ts';
-import { getScopeAndName } from '../../common/PackageUtil.ts';
-import { SyncMode } from '../../common/constants.ts';
 
 // https://github.com/cnpm/cnpmcore/issues/9
 @Schedule<IntervalParams>({
@@ -34,11 +30,7 @@ export class CheckRecentlyUpdatedPackages {
   private readonly httpClient: HttpClient;
 
   async subscribe() {
-    const notAllowUpdateModeList = [
-      SyncMode.none,
-      SyncMode.admin,
-      SyncMode.proxy,
-    ];
+    const notAllowUpdateModeList = [SyncMode.none, SyncMode.admin, SyncMode.proxy];
     if (
       notAllowUpdateModeList.includes(this.config.cnpmcore.syncMode) ||
       !this.config.cnpmcore.enableCheckRecentlyUpdated
@@ -60,7 +52,7 @@ export class CheckRecentlyUpdatedPackages {
           pageIndex,
           pageUrl,
           status,
-          data.length
+          data.length,
         );
         if (status === 200) {
           html = data.toString();
@@ -70,7 +62,7 @@ export class CheckRecentlyUpdatedPackages {
           '[CheckRecentlyUpdatedPackages.subscribe:error][%s] request %s error: %s',
           pageIndex,
           pageUrl,
-          err
+          err,
         );
         this.logger.error(err);
         continue;
@@ -87,16 +79,13 @@ export class CheckRecentlyUpdatedPackages {
             '[CheckRecentlyUpdatedPackages.subscribe][%s] parse %d packages on %s',
             pageIndex,
             packages.length,
-            pageUrl
+            pageUrl,
           );
           for (const pkg of packages) {
             // skip update when package does not exist
             if (this.config.cnpmcore.syncMode === 'exist') {
               const [scope, name] = getScopeAndName(pkg.name);
-              const pkgId = await this.packageRepository.findPackageId(
-                scope,
-                name
-              );
+              const pkgId = await this.packageRepository.findPackageId(scope, name);
               if (!pkgId) {
                 continue;
               }
@@ -108,7 +97,7 @@ export class CheckRecentlyUpdatedPackages {
               '[CheckRecentlyUpdatedPackages.subscribe:createTask][%s] taskId: %s, targetName: %s',
               pageIndex,
               task.taskId,
-              task.targetName
+              task.targetName,
             );
           }
         }
@@ -117,7 +106,7 @@ export class CheckRecentlyUpdatedPackages {
           '[CheckRecentlyUpdatedPackages.subscribe:error][%s] parse %s context json error: %s',
           pageIndex,
           pageUrl,
-          err
+          err,
         );
         this.logger.error(err);
       }

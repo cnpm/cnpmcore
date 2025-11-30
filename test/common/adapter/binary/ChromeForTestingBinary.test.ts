@@ -18,23 +18,15 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
         'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'chrome-for-testing/known-good-versions-with-downloads.json'
-          ),
+          data: await TestUtil.readFixturesFile('chrome-for-testing/known-good-versions-with-downloads.json'),
           persist: false,
-        }
+        },
       );
       const result = await binary.fetch('/');
-      assert.equal(
-        result?.items[0].name,
-        'known-good-versions-with-downloads.json'
-      );
+      assert.equal(result?.items[0].name, 'known-good-versions-with-downloads.json');
       assert.equal(result?.items[0].date, '2023-09-16T00:21:21.964Z');
       assert.equal(result?.items[0].isDir, false);
-      assert.equal(
-        result?.items[1].name,
-        'latest-patch-versions-per-build.json'
-      );
+      assert.equal(result?.items[1].name, 'latest-patch-versions-per-build.json');
       assert.equal(result?.items[1].date, '2023-09-16T00:21:21.964Z');
       assert.equal(result?.items[1].isDir, false);
       assert.equal(result?.items[2].name, 'last-known-good-versions.json');
@@ -45,19 +37,13 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
       assert.equal(latestVersion, '119.0.6008.0/');
 
       const platformRes = await binary.fetch(`/${latestVersion}`);
-      const platforms = platformRes?.items.map(item => item.name);
+      const platforms = platformRes?.items.map((item) => item.name);
       assert.ok(platforms);
-      assert.deepEqual(platforms, [
-        'linux64/',
-        'mac-arm64/',
-        'mac-x64/',
-        'win32/',
-        'win64/',
-      ]);
+      assert.deepEqual(platforms, ['linux64/', 'mac-arm64/', 'mac-x64/', 'win32/', 'win64/']);
 
       for (const platform of platforms) {
         const versionRes = await binary.fetch(`/${latestVersion}${platform}`);
-        const versions = versionRes?.items.map(item => item.name);
+        const versions = versionRes?.items.map((item) => item.name);
         assert.equal(versions?.length, 3);
         assert.ok(versionRes?.items[0].name);
         assert.equal(versionRes?.items[0].isDir, false);
@@ -76,11 +62,9 @@ describe('test/common/adapter/binary/ChromeForTestingBinary.test.ts', () => {
         'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'chrome-for-testing/known-good-versions-with-downloads.json'
-          ),
+          data: await TestUtil.readFixturesFile('chrome-for-testing/known-good-versions-with-downloads.json'),
           persist: false,
-        }
+        },
       );
       const result = await binary.fetch('/');
       assert.equal(result?.items.length, 0);

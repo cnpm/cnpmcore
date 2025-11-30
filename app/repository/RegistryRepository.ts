@@ -1,14 +1,10 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { ModelConvertor } from './util/ModelConvertor.ts';
 import { Registry as RegistryEntity } from '../core/entity/Registry.ts';
+import { EntityUtil, type PageOptions, type PageResult } from '../core/util/EntityUtil.ts';
 import { AbstractRepository } from './AbstractRepository.ts';
 import type { Registry as RegistryModel } from './model/Registry.ts';
-import {
-  EntityUtil,
-  type PageOptions,
-  type PageResult,
-} from '../core/util/EntityUtil.ts';
+import { ModelConvertor } from './util/ModelConvertor.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -23,9 +19,7 @@ export class RegistryRepository extends AbstractRepository {
     const models = await this.Registry.find().offset(offset).limit(limit);
     return {
       count,
-      data: models.map(model =>
-        ModelConvertor.convertModelToEntity(model, RegistryEntity)
-      ),
+      data: models.map((model) => ModelConvertor.convertModelToEntity(model, RegistryEntity)),
     };
   }
 
@@ -37,9 +31,7 @@ export class RegistryRepository extends AbstractRepository {
     return null;
   }
 
-  async findRegistryByRegistryId(
-    registryId: string
-  ): Promise<RegistryEntity | null> {
+  async findRegistryByRegistryId(registryId: string): Promise<RegistryEntity | null> {
     const model = await this.Registry.findOne({ registryId });
     if (model) {
       return ModelConvertor.convertModelToEntity(model, RegistryEntity);
@@ -47,9 +39,7 @@ export class RegistryRepository extends AbstractRepository {
     return null;
   }
 
-  async findRegistryByRegistryHost(
-    host: string
-  ): Promise<RegistryEntity | null> {
+  async findRegistryByRegistryHost(host: string): Promise<RegistryEntity | null> {
     const model = await this.Registry.findOne({ host });
     if (model) {
       return ModelConvertor.convertModelToEntity(model, RegistryEntity);
@@ -64,15 +54,8 @@ export class RegistryRepository extends AbstractRepository {
       await ModelConvertor.saveEntityToModel(registry, model);
       return model;
     }
-    const model = await ModelConvertor.convertEntityToModel(
-      registry,
-      this.Registry
-    );
-    this.logger.info(
-      '[RegistryRepository:saveRegistry:new] id: %s, registryId: %s',
-      model.id,
-      model.registryId
-    );
+    const model = await ModelConvertor.convertEntityToModel(registry, this.Registry);
+    this.logger.info('[RegistryRepository:saveRegistry:new] id: %s, registryId: %s', model.id, model.registryId);
     return model;
   }
 

@@ -4,14 +4,14 @@ import pMap from 'p-map';
 import { AbstractService } from '../../common/AbstractService.ts';
 import { HookType } from '../../common/enum/Hook.ts';
 import { TaskState } from '../../common/enum/Task.ts';
-import { Task, type CreateHookTask } from '../entity/Task.ts';
-import type { HookEvent } from '../entity/HookEvent.ts';
+import { isoNow } from '../../common/LogUtil.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
 import type { HookRepository } from '../../repository/HookRepository.ts';
 import type { PackageRepository } from '../../repository/PackageRepository.ts';
 import type { Hook } from '../entity/Hook.ts';
+import type { HookEvent } from '../entity/HookEvent.ts';
+import { Task, type CreateHookTask } from '../entity/Task.ts';
 import type { TaskService } from './TaskService.ts';
-import { isoNow } from '../../common/LogUtil.ts';
-import { getScopeAndName } from '../../common/PackageUtil.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -34,7 +34,7 @@ export class CreateHookTriggerService extends AbstractService {
       await this.taskService.finishTask(
         task,
         TaskState.Success,
-        `[${isoNow()}][Hooks] package ${hookEvent.fullname} not exits`
+        `[${isoNow()}][Hooks] package ${hookEvent.fullname} not exits`,
       );
       return;
     }
@@ -43,82 +43,41 @@ export class CreateHookTriggerService extends AbstractService {
       `[${isoNow()}][Hooks] Start Create Trigger for ${pkg.fullname} ${task.data.hookEvent.changeId}`,
       `[${isoNow()}][Hooks] change content ${JSON.stringify(task.data.hookEvent.change)}`,
     ];
-    await this.taskService.finishTask(
-      task,
-      TaskState.Processing,
-      startLog.join('\n')
-    );
+    await this.taskService.finishTask(task, TaskState.Processing, startLog.join('\n'));
 
     try {
       await this.taskService.appendTaskLog(
         task,
-        `[${isoNow()}][Hooks] PushHooks to ${HookType.Package} ${pkg.fullname}\n`
+        `[${isoNow()}][Hooks] PushHooks to ${HookType.Package} ${pkg.fullname}\n`,
       );
-      await this.createTriggerByMethod(
-        task,
-        HookType.Package,
-        pkg.fullname,
-        hookEvent
-      );
-      await this.taskService.appendTaskLog(
-        task,
-        `[${isoNow()}][Hooks] PushHooks to ${HookType.Scope} ${pkg.scope}\n`
-      );
-      await this.createTriggerByMethod(
-        task,
-        HookType.Scope,
-        pkg.scope,
-        hookEvent
-      );
+      await this.createTriggerByMethod(task, HookType.Package, pkg.fullname, hookEvent);
+      await this.taskService.appendTaskLog(task, `[${isoNow()}][Hooks] PushHooks to ${HookType.Scope} ${pkg.scope}\n`);
+      await this.createTriggerByMethod(task, HookType.Scope, pkg.scope, hookEvent);
 
-      const maintainers = await this.packageRepository.listPackageMaintainers(
-        pkg.packageId
-      );
+      const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
       for (const maintainer of maintainers) {
         await this.taskService.appendTaskLog(
           task,
-          `[${isoNow()}][Hooks] PushHooks to ${HookType.Owner} ${maintainer.name}\n`
+          `[${isoNow()}][Hooks] PushHooks to ${HookType.Owner} ${maintainer.name}\n`,
         );
-        await this.createTriggerByMethod(
-          task,
-          HookType.Owner,
-          maintainer.name,
-          hookEvent
-        );
+        await this.createTriggerByMethod(task, HookType.Owner, maintainer.name, hookEvent);
       }
-      await this.taskService.finishTask(
-        task,
-        TaskState.Success,
-        `[${isoNow()}][Hooks] create trigger succeed \n`
-      );
+      await this.taskService.finishTask(task, TaskState.Success, `[${isoNow()}][Hooks] create trigger succeed \n`);
     } catch (e) {
       e.message = `create trigger failed: ${e.message}`;
-      await this.taskService.finishTask(
-        task,
-        TaskState.Fail,
-        `[${isoNow()}][Hooks] ${e.stack} \n`
-      );
+      await this.taskService.finishTask(task, TaskState.Fail, `[${isoNow()}][Hooks] ${e.stack} \n`);
       return;
     }
   }
 
-  private async createTriggerByMethod(
-    task: Task,
-    type: HookType,
-    name: string,
-    hookEvent: HookEvent
-  ) {
+  private async createTriggerByMethod(task: Task, type: HookType, name: string, hookEvent: HookEvent) {
     let hooks = await this.hookRepository.listHooksByTypeAndName(type, name);
     while (hooks.length > 0) {
       await this.createTriggerTasks(hooks, hookEvent);
-      hooks = await this.hookRepository.listHooksByTypeAndName(
-        type,
-        name,
-        hooks[hooks.length - 1].id
-      );
+      hooks = await this.hookRepository.listHooksByTypeAndName(type, name, hooks[hooks.length - 1].id);
       await this.taskService.appendTaskLog(
         task,
-        `[${isoNow()}][Hooks] PushHooks to ${type} ${name} ${hooks.length} \n`
+        `[${isoNow()}][Hooks] PushHooks to ${type} ${name} ${hooks.length} \n`,
       );
     }
   }
@@ -126,14 +85,11 @@ export class CreateHookTriggerService extends AbstractService {
   private async createTriggerTasks(hooks: Hook[], hookEvent: HookEvent) {
     await pMap(
       hooks,
-      async hook => {
-        const triggerHookTask = Task.createTriggerHookTask(
-          hookEvent,
-          hook.hookId
-        );
+      async (hook) => {
+        const triggerHookTask = Task.createTriggerHookTask(hookEvent, hook.hookId);
         await this.taskService.createTask(triggerHookTask, true);
       },
-      { concurrency: 5 }
+      { concurrency: 5 },
     );
   }
 }

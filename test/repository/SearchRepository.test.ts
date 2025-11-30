@@ -2,14 +2,11 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import {
-  SearchRepository,
-  type SearchManifestType,
-} from '../../app/repository/SearchRepository.ts';
-import { mockES } from '../../config/config.unittest.ts';
 import { PackageManagerService } from '../../app/core/service/PackageManagerService.ts';
-import { TestUtil } from '../TestUtil.ts';
 import { PackageSearchService } from '../../app/core/service/PackageSearchService.ts';
+import { SearchRepository, type SearchManifestType } from '../../app/repository/SearchRepository.ts';
+import { mockES } from '../../config/config.unittest.ts';
+import { TestUtil } from '../TestUtil.ts';
 
 describe('test/repository/SearchRepository.test.ts', () => {
   let searchRepository: SearchRepository;
@@ -54,7 +51,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
               ],
             },
           };
-        }
+        },
       );
       const res = await searchRepository.searchPackage({
         body: {
@@ -106,7 +103,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
           return {
             _id: manifest.package.name,
           };
-        }
+        },
       );
       const id = await searchRepository.upsertPackage(manifest);
       assert.equal(id, manifest.package.name);
@@ -123,7 +120,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
           return {
             _id: 'example',
           };
-        }
+        },
       );
       const id = await searchRepository.removePackage(mockedPackageName);
       assert.equal(id, mockedPackageName);
@@ -160,7 +157,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
               ],
             },
           };
-        }
+        },
       );
 
       let res = await searchRepository.searchPackage({
@@ -187,20 +184,13 @@ describe('test/repository/SearchRepository.test.ts', () => {
 
       let called = false;
 
-      mock(
-        PackageSearchService.prototype,
-        'removePackage',
-        async (fullname: string) => {
-          if (fullname === '@cnpm/example') {
-            called = true;
-          }
+      mock(PackageSearchService.prototype, 'removePackage', async (fullname: string) => {
+        if (fullname === '@cnpm/example') {
+          called = true;
         }
-      );
+      });
 
-      await packageManagerService.blockPackageByFullname(
-        '@cnpm/example',
-        'test'
-      );
+      await packageManagerService.blockPackageByFullname('@cnpm/example', 'test');
       if (!called) {
         // oxlint-disable-next-line no-console
         console.warn('called not called');

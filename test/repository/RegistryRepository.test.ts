@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { RegistryRepository } from '../../app/repository/RegistryRepository.ts';
-import { Registry } from '../../app/core/entity/Registry.ts';
 import type { RegistryType } from '../../app/common/enum/Registry.ts';
+import { Registry } from '../../app/core/entity/Registry.ts';
+import { RegistryRepository } from '../../app/repository/RegistryRepository.ts';
 
 describe('test/repository/RegistryRepository.test.ts', () => {
   let registryRepository: RegistryRepository;
@@ -19,7 +20,7 @@ describe('test/repository/RegistryRepository.test.ts', () => {
         host: 'https://registry.npmjs.org',
         type: 'cnpmcore' as RegistryType,
         authToken: '',
-      })
+      }),
     )) as Registry;
   });
 
@@ -33,7 +34,7 @@ describe('test/repository/RegistryRepository.test.ts', () => {
           host: 'https://registry.npmjs.org',
           type: 'cnpmcore' as RegistryType,
           authToken: '',
-        })
+        }),
       )) as Registry;
       assert.ok(newRegistry);
       assert.ok(newRegistry.type === 'cnpmcore');

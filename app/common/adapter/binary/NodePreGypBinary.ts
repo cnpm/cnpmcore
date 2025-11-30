@@ -4,12 +4,7 @@ import { SingletonProto } from 'egg';
 
 import binaries, { type BinaryName } from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.NodePreGyp)
@@ -20,10 +15,7 @@ export class NodePreGypBinary extends AbstractBinary {
   }
 
   // https://github.com/mapbox/node-pre-gyp
-  async fetch(
-    dir: string,
-    binaryName: BinaryName
-  ): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const npmPackageName = binaryConfig.options?.npmPackageName ?? binaryName;
     const pkgUrl = `https://registry.npmjs.com/${npmPackageName}`;
@@ -43,28 +35,18 @@ export class NodePreGypBinary extends AbstractBinary {
       if (!pkgVersion.binary) continue;
       // https://github.com/mapbox/node-pre-gyp#package_name
       // defaults to {module_name}-v{version}-{node_abi}-{platform}-{arch}.tar.gz
-      let binaryFile =
-        pkgVersion.binary.package_name ||
-        '{module_name}-v{version}-{node_abi}-{platform}-{arch}.tar.gz';
+      let binaryFile = pkgVersion.binary.package_name || '{module_name}-v{version}-{node_abi}-{platform}-{arch}.tar.gz';
       if (!binaryFile) continue;
       const moduleName = pkgVersion.binary.module_name || pkgVersion.name;
-      binaryFile = binaryFile
-        .replace('{version}', version)
-        .replace('{module_name}', moduleName);
+      binaryFile = binaryFile.replace('{version}', version).replace('{module_name}', moduleName);
 
       let currentDir = dirItems['/'];
       let versionPrefix = '';
       let remotePath = pkgVersion.binary.remote_path;
       const napiVersions = pkgVersion.binary.napi_versions ?? [];
-      if (
-        binaryConfig.options?.requiredNapiVersions &&
-        napiVersions.length === 0
-      )
-        continue;
+      if (binaryConfig.options?.requiredNapiVersions && napiVersions.length === 0) continue;
       if (remotePath?.includes('{version}')) {
-        const dirName = remotePath.includes('v{version}')
-          ? `v${version}`
-          : version;
+        const dirName = remotePath.includes('v{version}') ? `v${version}` : version;
         versionPrefix = `/${dirName}`;
         dirItems['/'].push({
           name: `${dirName}/`,
@@ -139,10 +121,7 @@ export class NodePreGypBinary extends AbstractBinary {
             }
           }
         }
-      } else if (
-        binaryFile.includes('{platform}-{arch}-{node_napi_label}-{libc}') &&
-        napiVersions.length > 0
-      ) {
+      } else if (binaryFile.includes('{platform}-{arch}-{node_napi_label}-{libc}') && napiVersions.length > 0) {
         // https://skia-canvas.s3.us-east-1.amazonaws.com/v0.9.30/darwin-arm64-napi-v6-unknown.tar.gz
         // https://github.com/samizdatco/skia-canvas/blob/2a75801d7cce3b4e4e6ad015a173daefaa8465e6/package.json#L48
         // "binary": {
@@ -216,10 +195,7 @@ export class NodePreGypBinary extends AbstractBinary {
             }
           }
         }
-      } else if (
-        binaryFile.includes('{platform}') &&
-        binaryFile.includes('{arch}')
-      ) {
+      } else if (binaryFile.includes('{platform}') && binaryFile.includes('{arch}')) {
         // https://github.com/grpc/grpc-node/blob/master/packages/grpc-tools/package.json#L29
         // "binary": {
         //   "module_name": "grpc_tools",
@@ -239,9 +215,7 @@ export class NodePreGypBinary extends AbstractBinary {
         for (const platform of nodePlatforms) {
           const archs = nodeArchs[platform];
           for (const arch of archs) {
-            const binaryFileName = binaryFile
-              .replace('{platform}', platform)
-              .replace('{arch}', arch);
+            const binaryFileName = binaryFile.replace('{platform}', platform).replace('{arch}', arch);
             remotePath = remotePath
               .replace('{module_name}', moduleName)
               .replace('{name}', binaryName)

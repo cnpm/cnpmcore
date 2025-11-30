@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
+import { setTimeout } from 'node:timers/promises';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { PackageRepository } from '../../app/repository/PackageRepository.ts';
 import { PackageManagerService } from '../../app/core/service/PackageManagerService.ts';
 import { UserService } from '../../app/core/service/UserService.ts';
+import { PackageRepository } from '../../app/repository/PackageRepository.ts';
 import { TestUtil } from '../../test/TestUtil.ts';
-import { setTimeout } from 'node:timers/promises';
 
 describe('test/repository/PackageRepository.test.ts', () => {
   let packageRepository: PackageRepository;
@@ -19,8 +20,7 @@ describe('test/repository/PackageRepository.test.ts', () => {
       userService = await app.getEggObject(UserService);
     });
     it('should work', async () => {
-      const { packageCount, packageVersionCount } =
-        await packageRepository.queryTotal();
+      const { packageCount, packageVersionCount } = await packageRepository.queryTotal();
       const { user } = await userService.create({
         name: 'test-user',
         password: 'this-is-password',
@@ -41,7 +41,7 @@ describe('test/repository/PackageRepository.test.ts', () => {
           version: '1.0.0',
           isPrivate: true,
         },
-        user
+        user,
       );
       await setTimeout(1000);
       const res = await packageRepository.queryTotal();

@@ -1,12 +1,8 @@
-import {
-  Schedule,
-  ScheduleType,
-  type IntervalParams,
-} from 'egg/schedule';
 import { Inject, Config } from 'egg';
+import { Schedule, ScheduleType, type IntervalParams } from 'egg/schedule';
 
-import type { BinarySyncerService } from '../../core/service/BinarySyncerService.ts';
 import binaries, { type BinaryName } from '../../../config/binaries.ts';
+import type { BinarySyncerService } from '../../core/service/BinarySyncerService.ts';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,

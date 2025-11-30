@@ -1,19 +1,10 @@
-import {
-  HTTPContext,
-  Context,
-  HTTPBody,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPParam,
-  Inject,
-} from 'egg';
+import { HTTPContext, Context, HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
 import { ForbiddenError } from 'egg/errors';
 
-import { AbstractController } from './AbstractController.ts';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
 import type { PackageManagerService } from '../../core/service/PackageManagerService.ts';
 import { TagRule, TagWithVersionRule } from '../typebox.ts';
+import { AbstractController } from './AbstractController.ts';
 
 @HTTPController()
 export class PackageTagController extends AbstractController {
@@ -43,21 +34,14 @@ export class PackageTagController extends AbstractController {
     @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() tag: string,
-    @HTTPBody() version: string
+    @HTTPBody() version: string,
   ) {
     const data = { tag, version };
     ctx.tValidate(TagWithVersionRule, data);
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
     const pkg = ensureRes.pkg;
-    const packageVersion = await this.getPackageVersionEntity(
-      pkg,
-      data.version
-    );
-    await this.packageManagerService.savePackageTag(
-      pkg,
-      data.tag,
-      packageVersion.version
-    );
+    const packageVersion = await this.getPackageVersionEntity(pkg, data.version);
+    await this.packageManagerService.savePackageTag(pkg, data.tag, packageVersion.version);
     return { ok: true };
   }
 
@@ -67,11 +51,7 @@ export class PackageTagController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/dist-tags/:tag`,
     method: HTTPMethodEnum.DELETE,
   })
-  async removeTag(
-    @HTTPContext() ctx: Context,
-    @HTTPParam() fullname: string,
-    @HTTPParam() tag: string
-  ) {
+  async removeTag(@HTTPContext() ctx: Context, @HTTPParam() fullname: string, @HTTPParam() tag: string) {
     const data = { tag };
     ctx.tValidate(TagRule, data);
     if (tag === 'latest') {

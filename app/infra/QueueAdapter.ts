@@ -28,11 +28,7 @@ export class RedisQueueAdapter implements QueueAdapter {
    */
   async push<T>(key: string, item: T): Promise<boolean> {
     const score = await this.redis.incr(this.getQueueScoreName(key));
-    const res = await this.redis.zadd(
-      this.getQueueName(key),
-      score,
-      JSON.stringify(item)
-    );
+    const res = await this.redis.zadd(this.getQueueName(key), score, JSON.stringify(item));
     return res !== 0;
   }
 

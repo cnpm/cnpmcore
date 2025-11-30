@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 
-import { Entity, type EntityData } from './Entity.ts';
 import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import { Entity, type EntityData } from './Entity.ts';
 
 export enum TokenType {
   granular = 'granular',
@@ -32,9 +32,7 @@ interface GranularTokenData extends BaseTokenData {
 
 type TokenData = ClassicTokenData | GranularTokenData;
 
-export function isGranularToken(
-  data: TokenData | Token
-): data is GranularTokenData {
+export function isGranularToken(data: TokenData | Token): data is GranularTokenData {
   return data.type === TokenType.granular;
 }
 
@@ -82,9 +80,7 @@ export class Token extends Entity {
   static create(data: EasyData<TokenData, 'tokenId'>): Token {
     const newData = EntityUtil.defaultData(data, 'tokenId');
     if (isGranularToken(newData) && !newData.expiredAt) {
-      newData.expiredAt = dayjs(newData.createdAt)
-        .add(newData.expires, 'days')
-        .toDate();
+      newData.expiredAt = dayjs(newData.createdAt).add(newData.expires, 'days').toDate();
     }
     return new Token(newData);
   }

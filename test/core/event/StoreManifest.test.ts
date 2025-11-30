@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { getScopeAndName } from '../../../app/common/PackageUtil.ts';
@@ -18,27 +19,17 @@ describe('test/core/event/StoreManifest.test.ts', () => {
       const [scope, name] = getScopeAndName(pkg.name);
       const packageId = await packageRepository.findPackageId(scope, name);
       assert.ok(packageId);
-      const packageVersion = await packageRepository.findPackageVersion(
-        packageId,
-        '1.0.0'
-      );
+      const packageVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
       assert.ok(packageVersion);
-      const packageVersionManifest =
-        await packageRepository.findPackageVersionManifest(
-          packageVersion.packageVersionId
-        );
-      assert.ok(!packageVersionManifest);
-      app.notExpectLog(
-        '[PackageRepository:savePackageVersionManifest:new] id: '
+      const packageVersionManifest = await packageRepository.findPackageVersionManifest(
+        packageVersion.packageVersionId,
       );
+      assert.ok(!packageVersionManifest);
+      app.notExpectLog('[PackageRepository:savePackageVersionManifest:new] id: ');
     });
 
     it('should store manifest when enableStoreFullPackageVersionManifestsToDatabase = true', async () => {
-      mock(
-        app.config.cnpmcore,
-        'enableStoreFullPackageVersionManifestsToDatabase',
-        true
-      );
+      mock(app.config.cnpmcore, 'enableStoreFullPackageVersionManifestsToDatabase', true);
       const { pkg, user } = await TestUtil.createPackage({
         version: '1.0.0',
         readme: 'test store manifest',
@@ -48,39 +39,29 @@ describe('test/core/event/StoreManifest.test.ts', () => {
       const [scope, name] = getScopeAndName(pkg.name);
       const packageId = await packageRepository.findPackageId(scope, name);
       assert.ok(packageId);
-      const packageVersion = await packageRepository.findPackageVersion(
-        packageId,
-        '1.0.0'
-      );
+      const packageVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
       assert.ok(packageVersion);
-      const packageVersionManifest =
-        await packageRepository.findPackageVersionManifest(
-          packageVersion.packageVersionId
-        );
+      const packageVersionManifest = await packageRepository.findPackageVersionManifest(
+        packageVersion.packageVersionId,
+      );
       assert.ok(packageVersionManifest);
       app.expectLog('[PackageRepository:savePackageVersionManifest:new] id: ');
-      assert.ok(
-        packageVersionManifest.manifest.readme === 'test store manifest'
-      );
+      assert.ok(packageVersionManifest.manifest.readme === 'test store manifest');
       assert.ok(packageVersionManifest.manifest.description);
       assert.ok(packageVersionManifest.manifest.version === '1.0.0');
       // console.log(packageVersionManifest.manifest);
 
       await TestUtil.createPackage(
         { version: '2.0.0', readme: 'test store manifest' },
-        { name: user.name, password: user.password }
+        { name: user.name, password: user.password },
       );
       eventWaiter = await app.getEventWaiter();
       await eventWaiter.await('PACKAGE_VERSION_ADDED');
-      const packageVersion2 = await packageRepository.findPackageVersion(
-        packageId,
-        '2.0.0'
-      );
+      const packageVersion2 = await packageRepository.findPackageVersion(packageId, '2.0.0');
       assert.ok(packageVersion2);
-      const packageVersionManifest2 =
-        await packageRepository.findPackageVersionManifest(
-          packageVersion2.packageVersionId
-        );
+      const packageVersionManifest2 = await packageRepository.findPackageVersionManifest(
+        packageVersion2.packageVersionId,
+      );
       assert.ok(packageVersionManifest2);
       assert.ok(packageVersionManifest2.manifest.version === '2.0.0');
       // console.log(packageVersionManifest2.manifest);
@@ -90,9 +71,7 @@ describe('test/core/event/StoreManifest.test.ts', () => {
       eventbus.emit('PACKAGE_VERSION_ADDED', pkg.name, '2.0.0');
       eventWaiter = await app.getEventWaiter();
       await eventWaiter.await('PACKAGE_VERSION_ADDED');
-      app.notExpectLog(
-        '[EventBus] process event PACKAGE_VERSION_ADDED failed: ER_DUP_ENTRY: Duplicate entry'
-      );
+      app.notExpectLog('[EventBus] process event PACKAGE_VERSION_ADDED failed: ER_DUP_ENTRY: Duplicate entry');
     });
   });
 });

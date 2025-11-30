@@ -1,15 +1,11 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { ModelConvertor } from './util/ModelConvertor.ts';
-import type { ProxyCache as ProxyModeCachedFilesModel } from './model/ProxyCache.ts';
-import { ProxyCache as ProxyCacheEntity } from '../core/entity/ProxyCache.ts';
-import { AbstractRepository } from './AbstractRepository.ts';
 import type { DIST_NAMES } from '../core/entity/Package.ts';
-import {
-  EntityUtil,
-  type PageOptions,
-  type PageResult,
-} from '../core/util/EntityUtil.ts';
+import { ProxyCache as ProxyCacheEntity } from '../core/entity/ProxyCache.ts';
+import { EntityUtil, type PageOptions, type PageResult } from '../core/util/EntityUtil.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
+import type { ProxyCache as ProxyModeCachedFilesModel } from './model/ProxyCache.ts';
+import { ModelConvertor } from './util/ModelConvertor.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -34,10 +30,7 @@ export class ProxyCacheRepository extends AbstractRepository {
       await model.save();
     } else {
       try {
-        model = await ModelConvertor.convertEntityToModel(
-          proxyCacheEntity,
-          this.ProxyCache
-        );
+        model = await ModelConvertor.convertEntityToModel(proxyCacheEntity, this.ProxyCache);
       } catch (e) {
         e.message = `[ProxyCacheRepository] insert ProxyCache failed: ${e.message}`;
         throw e;
@@ -46,16 +39,11 @@ export class ProxyCacheRepository extends AbstractRepository {
     return model;
   }
 
-  async findProxyCache(
-    fullname: string,
-    fileType: DIST_NAMES,
-    version?: string
-  ): Promise<ProxyCacheEntity | null> {
+  async findProxyCache(fullname: string, fileType: DIST_NAMES, version?: string): Promise<ProxyCacheEntity | null> {
     const model = version
       ? await this.ProxyCache.findOne({ fullname, version, fileType })
       : await this.ProxyCache.findOne({ fullname, fileType });
-    if (model)
-      return ModelConvertor.convertModelToEntity(model, ProxyCacheEntity);
+    if (model) return ModelConvertor.convertModelToEntity(model, ProxyCacheEntity);
     return null;
   }
 
@@ -67,22 +55,15 @@ export class ProxyCacheRepository extends AbstractRepository {
     return models;
   }
 
-  async listCachedFiles(
-    page: PageOptions,
-    fullname?: string
-  ): Promise<PageResult<ProxyCacheEntity>> {
+  async listCachedFiles(page: PageOptions, fullname?: string): Promise<PageResult<ProxyCacheEntity>> {
     const { offset, limit } = EntityUtil.convertPageOptionsToLimitOption(page);
-    const count = fullname
-      ? await this.ProxyCache.find({ fullname }).count()
-      : await this.ProxyCache.find().count();
+    const count = fullname ? await this.ProxyCache.find({ fullname }).count() : await this.ProxyCache.find().count();
     const models = fullname
       ? await this.ProxyCache.find({ fullname }).offset(offset).limit(limit)
       : await this.ProxyCache.find().offset(offset).limit(limit);
     return {
       count,
-      data: models.map(model =>
-        ModelConvertor.convertModelToEntity(model, ProxyCacheEntity)
-      ),
+      data: models.map((model) => ModelConvertor.convertModelToEntity(model, ProxyCacheEntity)),
     };
   }
 

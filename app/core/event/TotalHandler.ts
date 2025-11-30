@@ -1,7 +1,7 @@
 import { Event, Inject } from 'egg';
 
-import { PACKAGE_ADDED, PACKAGE_VERSION_ADDED } from './index.ts';
 import type { TotalRepository } from '../../repository/TotalRepository.ts';
+import { PACKAGE_ADDED, PACKAGE_VERSION_ADDED } from './index.ts';
 
 class TotalHandlerEvent {
   @Inject()

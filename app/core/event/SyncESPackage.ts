@@ -1,5 +1,7 @@
 // TODO sync event
 import { Config, Event, Inject } from 'egg';
+
+import type { PackageSearchService } from '../service/PackageSearchService.ts';
 import {
   PACKAGE_BLOCKED,
   PACKAGE_MAINTAINER_CHANGED,
@@ -13,7 +15,6 @@ import {
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
 } from './index.ts';
-import type { PackageSearchService } from '../service/PackageSearchService.ts';
 
 class SyncESPackage {
   @Inject()

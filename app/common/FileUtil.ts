@@ -1,19 +1,21 @@
+import { randomBytes } from 'node:crypto';
+import { createWriteStream } from 'node:fs';
 // oxlint-disable import/exports-last
 import { mkdir, rm } from 'node:fs/promises';
-import { createWriteStream } from 'node:fs';
-import { setTimeout } from 'node:timers/promises';
 import path from 'node:path';
+import { setTimeout } from 'node:timers/promises';
 import url from 'node:url';
-import { randomBytes } from 'node:crypto';
+
 import type { EggContextHttpClient, HttpClientResponse } from 'egg';
 import mime from 'mime-types';
+
 import dayjs from './dayjs.ts';
 
 async function _downloadToTempfile(
   httpclient: EggContextHttpClient,
   dataDir: string,
   url: string,
-  optionalConfig?: DownloadToTempfileOptionalConfig
+  optionalConfig?: DownloadToTempfileOptionalConfig,
 ): Promise<Tempfile> {
   const tmpfile = await createTempfile(dataDir, url);
   const writeStream = createWriteStream(tmpfile);
@@ -33,8 +35,7 @@ async function _downloadToTempfile(
     })) as HttpClientResponse;
     if (
       status === 404 ||
-      (optionalConfig?.ignoreDownloadStatuses &&
-        optionalConfig.ignoreDownloadStatuses.includes(status))
+      (optionalConfig?.ignoreDownloadStatuses && optionalConfig.ignoreDownloadStatuses.includes(status))
     ) {
       const err = new Error(`Not found, status(${status})`);
       err.name = 'DownloadNotFoundError';
@@ -79,7 +80,7 @@ export async function createTempfile(dataDir: string, filename: string) {
   const tmpfile = path.join(
     tmpdir,
     // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
-    `${randomBytes(10).toString('hex')}-${path.basename(url.parse(filename).pathname!)}`
+    `${randomBytes(10).toString('hex')}-${path.basename(url.parse(filename).pathname!)}`,
   );
   return tmpfile;
 }
@@ -88,18 +89,13 @@ export async function downloadToTempfile(
   httpclient: EggContextHttpClient,
   dataDir: string,
   url: string,
-  optionalConfig?: DownloadToTempfileOptionalConfig
+  optionalConfig?: DownloadToTempfileOptionalConfig,
 ) {
   let retries = optionalConfig?.retries || 3;
   let lastError: Error | undefined;
   while (retries > 0) {
     try {
-      return await _downloadToTempfile(
-        httpclient,
-        dataDir,
-        url,
-        optionalConfig
-      );
+      return await _downloadToTempfile(httpclient, dataDir, url, optionalConfig);
     } catch (err) {
       if (err.name === 'DownloadNotFoundError') throw err;
       lastError = err;
@@ -107,8 +103,7 @@ export async function downloadToTempfile(
     retries--;
     if (retries > 0) {
       // sleep 1s ~ 4s in random
-      const delay =
-        process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
+      const delay = process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
       await setTimeout(delay);
     }
   }
@@ -152,9 +147,7 @@ export function mimeLookup(filepath: string) {
   // https://github.com/cnpm/cnpmcore/issues/693#issuecomment-2955268229
   const contentType =
     defaultContentType ||
-    WHITE_FILENAME_CONTENT_TYPES[
-      filename as keyof typeof WHITE_FILENAME_CONTENT_TYPES
-    ] ||
+    WHITE_FILENAME_CONTENT_TYPES[filename as keyof typeof WHITE_FILENAME_CONTENT_TYPES] ||
     DEFAULT_CONTENT_TYPE;
 
   return ensureContentType(contentType);

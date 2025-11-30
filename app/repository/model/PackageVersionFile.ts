@@ -1,7 +1,7 @@
 import { Attribute, Model } from 'egg/orm';
 
-import { Bone, DataTypes } from '../util/leoric.ts';
 import { EntityProperty } from '../util/EntityProperty.ts';
+import { Bone, DataTypes } from '../util/leoric.ts';
 
 @Model()
 export class PackageVersionFile extends Bone {

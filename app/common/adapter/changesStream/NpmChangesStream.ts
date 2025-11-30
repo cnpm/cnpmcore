@@ -3,11 +3,7 @@ import { E500 } from 'egg/errors';
 
 import { RegistryType } from '../../../common/enum/Registry.ts';
 import type { Registry } from '../../../core/entity/Registry.ts';
-import {
-  AbstractChangeStream,
-  RegistryChangesStream,
-  type ChangesStreamChange,
-} from './AbstractChangesStream.ts';
+import { AbstractChangeStream, RegistryChangesStream, type ChangesStreamChange } from './AbstractChangesStream.ts';
 
 @SingletonProto()
 @RegistryChangesStream(RegistryType.Npm)
@@ -32,15 +28,12 @@ export class NpmChangesStream extends AbstractChangeStream {
       registry.changeStream,
       status,
       data,
-      since
+      since,
     );
     return since;
   }
 
-  async *fetchChanges(
-    registry: Registry,
-    since: string
-  ): AsyncGenerator<ChangesStreamChange> {
+  async *fetchChanges(registry: Registry, since: string): AsyncGenerator<ChangesStreamChange> {
     // https://github.com/orgs/community/discussions/152515
     const db = this.getChangesStreamUrl(registry, since);
     const { data, headers } = await this.httpClient.request(db, {
@@ -58,7 +51,7 @@ export class NpmChangesStream extends AbstractChangeStream {
       db,
       count,
       last_seq,
-      headers
+      headers,
     );
 
     if (data.results?.length > 0) {

@@ -1,19 +1,24 @@
 import { generateKeyPairSync } from 'node:crypto';
+
 import NodeRSA from 'node-rsa';
 
 // generate rsa key pair
-export function genRSAKeys(): { publicKey: string, privateKey: string } {
+export function genRSAKeys(): { publicKey: string; privateKey: string } {
   const key = generateKeyPairSync('rsa', {
     modulusLength: 512,
   });
-  const publicKey = key.publicKey.export({
-    type: 'pkcs1',
-    format: 'pem',
-  }).toString('base64');
-  const privateKey = key.privateKey.export({
-    type: 'pkcs1',
-    format: 'pem',
-  }).toString('base64');
+  const publicKey = key.publicKey
+    .export({
+      type: 'pkcs1',
+      format: 'pem',
+    })
+    .toString('base64');
+  const privateKey = key.privateKey
+    .export({
+      type: 'pkcs1',
+      format: 'pem',
+    })
+    .toString('base64');
   return { publicKey, privateKey };
 }
 

@@ -5,8 +5,7 @@ import { UserRoleManager } from '../UserRoleManager.ts';
 export async function AlwaysAuth(ctx: Context, next: Next) {
   if (ctx.app.config.cnpmcore.alwaysAuth) {
     // ignore login request: `PUT /-/user/org.couchdb.user::username`
-    const isLoginRequest =
-      ctx.method === 'PUT' && ctx.path.startsWith('/-/user/org.couchdb.user:');
+    const isLoginRequest = ctx.method === 'PUT' && ctx.path.startsWith('/-/user/org.couchdb.user:');
     if (!isLoginRequest) {
       const userRoleManager = await ctx.getEggObject(UserRoleManager);
       await userRoleManager.requiredAuthorizedUser(ctx, 'read');

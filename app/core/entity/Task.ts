@@ -3,11 +3,11 @@ import path from 'node:path';
 
 import { InternalServerError } from 'egg/errors';
 
-import { Entity, type EntityData } from './Entity.ts';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
-import { TaskState, TaskType } from '../../common/enum/Task.ts';
 import { PROXY_CACHE_DIR_NAME } from '../../common/constants.ts';
 import dayjs from '../../common/dayjs.ts';
+import { TaskState, TaskType } from '../../common/enum/Task.ts';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import { Entity, type EntityData } from './Entity.ts';
 import type { HookEvent } from './HookEvent.ts';
 import { isPkgManifest, type DIST_NAMES } from './Package.ts';
 
@@ -139,17 +139,12 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     this.data.taskWorker = `${HOST_NAME}:${PID}`;
   }
 
-  private static create<T extends TaskBaseData>(
-    data: EasyData<TaskData<T>, 'taskId'>
-  ): Task<T> {
+  private static create<T extends TaskBaseData>(data: EasyData<TaskData<T>, 'taskId'>): Task<T> {
     const newData = EntityUtil.defaultData(data, 'taskId');
     return new Task(newData);
   }
 
-  public static createSyncPackage(
-    fullname: string,
-    options?: SyncPackageTaskOptions
-  ): CreateSyncPackageTask {
+  public static createSyncPackage(fullname: string, options?: SyncPackageTaskOptions): CreateSyncPackageTask {
     const data = {
       type: TaskType.SyncPackage,
       state: TaskState.Waiting,
@@ -172,11 +167,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static createChangesStream(
-    targetName: string,
-    registryId = '',
-    since = ''
-  ): ChangesStreamTask {
+  public static createChangesStream(targetName: string, registryId = '', since = ''): ChangesStreamTask {
     const data = {
       type: TaskType.ChangesStream,
       state: TaskState.Waiting,
@@ -224,10 +215,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static createTriggerHookTask(
-    hookEvent: HookEvent,
-    hookId: string
-  ): TriggerHookTask {
+  public static createTriggerHookTask(hookEvent: HookEvent, hookId: string): TriggerHookTask {
     const data = {
       type: TaskType.TriggerHook,
       state: TaskState.Waiting,
@@ -247,10 +235,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
     return task;
   }
 
-  public static createSyncBinary(
-    targetName: string,
-    lastData?: Record<string, unknown>
-  ): Task {
+  public static createSyncBinary(targetName: string, lastData?: Record<string, unknown>): Task {
     const data = {
       type: TaskType.SyncBinary,
       state: TaskState.Waiting,
@@ -281,12 +266,10 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
 
   public static createUpdateProxyCache(
     targetName: string,
-    options: UpdateProxyCacheTaskOptions
+    options: UpdateProxyCacheTaskOptions,
   ): CreateUpdateProxyCacheTask {
     if (!isPkgManifest(options.fileType)) {
-      throw new InternalServerError(
-        'should not update package version manifest.'
-      );
+      throw new InternalServerError('should not update package version manifest.');
     }
     const filePath = `/${PROXY_CACHE_DIR_NAME}/${options.fullname}/${options.fileType}`;
     const data = {

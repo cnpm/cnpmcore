@@ -1,9 +1,9 @@
 import { AccessLevel, Inject, SingletonProto, Config } from 'egg';
 import { ForbiddenError, NotFoundError } from 'egg/errors';
 
+import type { HookType } from '../../common/enum/Hook.ts';
 import type { HookRepository } from '../../repository/HookRepository.ts';
 import { Hook } from '../entity/Hook.ts';
-import type { HookType } from '../../common/enum/Hook.ts';
 
 export interface CreateHookCommand {
   type: HookType;
@@ -56,9 +56,7 @@ export class HookManageService {
       throw new NotFoundError(`hook ${cmd.hookId} not found`);
     }
     if (hook.ownerId !== cmd.operatorId) {
-      throw new ForbiddenError(
-        `hook ${cmd.hookId} not belong to ${cmd.operatorId}`
-      );
+      throw new ForbiddenError(`hook ${cmd.hookId} not belong to ${cmd.operatorId}`);
     }
     hook.endpoint = cmd.endpoint;
     hook.secret = cmd.secret;
@@ -72,9 +70,7 @@ export class HookManageService {
       throw new NotFoundError(`hook ${cmd.hookId} not found`);
     }
     if (hook.ownerId !== cmd.operatorId) {
-      throw new ForbiddenError(
-        `hook ${cmd.hookId} not belong to ${cmd.operatorId}`
-      );
+      throw new ForbiddenError(`hook ${cmd.hookId} not belong to ${cmd.operatorId}`);
     }
     await this.hookRepository.removeHook(cmd.hookId);
     return hook;

@@ -1,18 +1,15 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
-import semver, { Range } from 'semver';
 import type { AliasResult, Result } from 'npm-package-arg';
+import semver, { Range } from 'semver';
 
-import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.ts';
 import { getScopeAndName } from '../../common/PackageUtil.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
+import type { PackageJSONType, PackageRepository } from '../../repository/PackageRepository.ts';
+import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
+import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.ts';
+import type { BugVersionAdvice } from '../entity/BugVersion.ts';
 import { SqlRange } from '../entity/SqlRange.ts';
 import type { BugVersionService } from './BugVersionService.ts';
-import type {
-  PackageJSONType,
-  PackageRepository,
-} from '../../repository/PackageRepository.ts';
-import type { DistRepository } from '../../repository/DistRepository.ts';
-import type { BugVersionAdvice } from '../entity/BugVersion.ts';
-import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -37,7 +34,7 @@ export class PackageVersionService {
     pkgId: string,
     spec: Result,
     isFullManifests: boolean,
-    withBugVersion = true
+    withBugVersion = true,
   ): Promise<PackageJSONType | undefined> {
     const realSpec = this.findRealSpec(spec);
     let version = await this.getVersion(realSpec, false);
@@ -65,15 +62,9 @@ export class PackageVersionService {
     }
     let manifest;
     if (isFullManifests) {
-      manifest = await this.distRepository.findPackageVersionManifest(
-        pkgId,
-        version
-      );
+      manifest = await this.distRepository.findPackageVersionManifest(pkgId, version);
     } else {
-      manifest = await this.distRepository.findPackageAbbreviatedManifest(
-        pkgId,
-        version
-      );
+      manifest = await this.distRepository.findPackageAbbreviatedManifest(pkgId, version);
     }
     if (manifest && bugVersionAdvice) {
       manifest.deprecated = `[WARNING] Use ${bugVersionAdvice.advice.version} instead of ${bugVersionAdvice.version}, reason: ${bugVersionAdvice.advice.reason}`;
@@ -102,20 +93,13 @@ export class PackageVersionService {
     return realSpec;
   }
 
-  async getVersion(
-    spec: Result,
-    withBugVersion = true
-  ): Promise<string | undefined | null> {
+  async getVersion(spec: Result, withBugVersion = true): Promise<string | undefined | null> {
     let version: string | undefined | null;
     const [scope, name] = getScopeAndName(spec.name as string);
     const fetchSpec = spec.fetchSpec as string;
     // 优先通过 tag 来进行判断
     if (spec.type === 'tag') {
-      version = await this.packageVersionRepository.findVersionByTag(
-        scope,
-        name,
-        fetchSpec
-      );
+      version = await this.packageVersionRepository.findVersionByTag(scope, name, fetchSpec);
     } else if (spec.type === 'version') {
       // 1.0.0
       // '=1.0.0' => '1.0.0'
@@ -125,31 +109,21 @@ export class PackageVersionService {
       // a@1.1 情况下，1.1 会解析为 range，如果有对应的 distTag 时会失效
       // 这里需要进行兼容
       // 仅当 spec 不为 version 时才查询，减少请求次数
-      const versionMatchTag =
-        await this.packageVersionRepository.findVersionByTag(
-          scope,
-          name,
-          fetchSpec
-        );
+      const versionMatchTag = await this.packageVersionRepository.findVersionByTag(scope, name, fetchSpec);
       if (versionMatchTag) {
         version = versionMatchTag;
       } else {
         const range = new Range(fetchSpec);
         const paddingSemVer = new SqlRange(range);
         if (paddingSemVer.containPreRelease) {
-          const versions =
-            await this.packageVersionRepository.findSatisfyVersionsWithPrerelease(
-              scope,
-              name,
-              paddingSemVer
-            );
-          version = semver.maxSatisfying(versions, range);
-        } else {
-          version = await this.packageVersionRepository.findMaxSatisfyVersion(
+          const versions = await this.packageVersionRepository.findSatisfyVersionsWithPrerelease(
             scope,
             name,
-            paddingSemVer
+            paddingSemVer,
           );
+          version = semver.maxSatisfying(versions, range);
+        } else {
+          version = await this.packageVersionRepository.findMaxSatisfyVersion(scope, name, paddingSemVer);
         }
       }
     }

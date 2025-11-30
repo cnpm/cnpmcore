@@ -2,17 +2,9 @@ import path from 'node:path';
 
 import { SingletonProto } from 'egg';
 
-import binaries, {
-  type BinaryName,
-  type BinaryTaskConfig,
-} from '../../../../config/binaries.ts';
+import binaries, { type BinaryName, type BinaryTaskConfig } from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Bucket)
@@ -22,10 +14,7 @@ export class BucketBinary extends AbstractBinary {
     return;
   }
 
-  async fetch(
-    dir: string,
-    binaryName: BinaryName
-  ): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     // /foo/ => foo/
     const binaryConfig = binaries[binaryName];
     const subDir = dir.slice(1);
@@ -34,11 +23,7 @@ export class BucketBinary extends AbstractBinary {
     return { items: this.parseItems(xml, dir, binaryConfig), nextParams: null };
   }
 
-  protected parseItems(
-    xml: string,
-    dir: string,
-    binaryConfig: BinaryTaskConfig
-  ): BinaryItem[] {
+  protected parseItems(xml: string, dir: string, binaryConfig: BinaryTaskConfig): BinaryItem[] {
     const items: BinaryItem[] = [];
     // https://nwjs2.s3.amazonaws.com/?prefix=v0.59.0%2Fx64%2F
     // https://chromedriver.storage.googleapis.com/?delimiter=/&prefix=
@@ -70,8 +55,7 @@ export class BucketBinary extends AbstractBinary {
       });
     }
     // <CommonPrefixes><Prefix>v0.59.0/x64/</Prefix></CommonPrefixes>
-    const dirRe =
-      /<CommonPrefixes><Prefix>([^<]+?)<\/Prefix><\/CommonPrefixes>/g;
+    const dirRe = /<CommonPrefixes><Prefix>([^<]+?)<\/Prefix><\/CommonPrefixes>/g;
     matchs = xml.matchAll(dirRe);
     for (const m of matchs) {
       // <Prefix>AWSLogs/</Prefix>

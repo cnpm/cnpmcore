@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { basename } from 'node:path';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { AuthAdapter } from '../../../app/infra/AuthAdapter.ts';
 import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter.ts';
-import { UserService } from '../../../app/core/service/UserService.ts';
-import { UserRepository } from '../../../app/repository/UserRepository.ts';
 import { encryptRSA, genRSAKeys } from '../../../app/common/CryptoUtil.ts';
+import { UserService } from '../../../app/core/service/UserService.ts';
+import { AuthAdapter } from '../../../app/infra/AuthAdapter.ts';
+import { UserRepository } from '../../../app/repository/UserRepository.ts';
 
 describe('test/port/webauth/webauthController.test.ts', () => {
   describe('/-/v1/login', () => {
@@ -43,21 +44,14 @@ describe('test/port/webauth/webauthController.test.ts', () => {
     });
 
     it('should check sessionId type', async () => {
-      const res = await app
-        .httpRequest()
-        .get('/-/v1/login/request/session/123');
+      const res = await app.httpRequest().get('/-/v1/login/request/session/123');
 
       assert.equal(res.status, 422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters');
     });
 
     it('should check sessionId exists', async () => {
-      const res = await app
-        .httpRequest()
-        .get(`/-/v1/login/request/session/${crypto.randomUUID()}`);
+      const res = await app.httpRequest().get(`/-/v1/login/request/session/${crypto.randomUUID()}`);
 
       assert.equal(res.status, 404);
       assert.ok(/Session not found/.test(res.text));
@@ -65,9 +59,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
     });
 
     it('should render login.html', async () => {
-      const res = await app
-        .httpRequest()
-        .get(`/-/v1/login/request/session/${sessionId}`);
+      const res = await app.httpRequest().get(`/-/v1/login/request/session/${sessionId}`);
 
       assert.equal(res.status, 200);
       assert.ok(/<title>Sign in to CNPM<\/title>/.test(res.text));
@@ -85,28 +77,18 @@ describe('test/port/webauth/webauthController.test.ts', () => {
     });
 
     it('should check sessionId type', async () => {
-      const res = await app
-        .httpRequest()
-        .post('/-/v1/login/request/session/123');
+      const res = await app.httpRequest().post('/-/v1/login/request/session/123');
 
       assert.equal(res.status, 422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters');
     });
 
     it('should check sessionId exists', async () => {
-      const res = await app
-        .httpRequest()
-        .post(`/-/v1/login/request/session/${crypto.randomUUID()}`);
+      const res = await app.httpRequest().post(`/-/v1/login/request/session/${crypto.randomUUID()}`);
 
       assert.equal(res.status, 200);
       assert.ok(/Session not found/.test(res.text));
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
     });
 
     describe('should verify login request body', () => {
@@ -149,9 +131,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
           });
 
         assert.equal(res.status, 200);
-        assert.ok(
-          /Please check your login name and password/.test(res.body.message)
-        );
+        assert.ok(/Please check your login name and password/.test(res.body.message));
       });
 
       it('should check user params', async () => {
@@ -186,9 +166,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
           });
 
         assert.equal(res.status, 200);
-        assert.ok(
-          /Unauthorized, Please check your login name/.test(res.body.message)
-        );
+        assert.ok(/Unauthorized, Please check your login name/.test(res.body.message));
       });
 
       it('should add user', async () => {
@@ -252,43 +230,29 @@ describe('test/port/webauth/webauthController.test.ts', () => {
     });
 
     it('should check sessionId type', async () => {
-      const res = await app
-        .httpRequest()
-        .get('/-/v1/login/request/prepare/123?name=banana');
+      const res = await app.httpRequest().get('/-/v1/login/request/prepare/123?name=banana');
 
       assert.equal(res.status, 422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters');
     });
 
     it('should check sessionId exists', async () => {
-      const res = await app
-        .httpRequest()
-        .get(`/-/v1/login/request/prepare/${crypto.randomUUID()}?name=banana`);
+      const res = await app.httpRequest().get(`/-/v1/login/request/prepare/${crypto.randomUUID()}?name=banana`);
 
       assert.equal(res.status, 200);
       assert.ok(/Session not found/.test(res.text));
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
     });
 
     it('should get prepare with authentication options', async () => {
-      const res = await app
-        .httpRequest()
-        .get(`/-/v1/login/request/prepare/${sessionId}?name=banana`);
+      const res = await app.httpRequest().get(`/-/v1/login/request/prepare/${sessionId}?name=banana`);
 
       assert.equal(res.status, 200);
       assert.ok(typeof res.body.wanCredentialAuthOption === 'object');
     });
 
     it('should get prepare with registration options', async () => {
-      const res = await app
-        .httpRequest()
-        .get(`/-/v1/login/request/prepare/${sessionId}?name=apple`);
+      const res = await app.httpRequest().get(`/-/v1/login/request/prepare/${sessionId}?name=apple`);
 
       assert.equal(res.status, 200);
       assert.ok(typeof res.body.wanCredentialRegiOption === 'object');
@@ -319,10 +283,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
       const res = await app.httpRequest().post('/-/v1/login/sso/banana');
 
       assert.equal(res.status, 422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters');
     });
 
     it('should ensure sessionId valid', async () => {
@@ -367,25 +328,18 @@ describe('test/port/webauth/webauthController.test.ts', () => {
       const res = await app.httpRequest().get('/-/v1/login/done/session/123');
 
       assert.equal(res.status, 422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] sessionId: must NOT have fewer than 36 characters');
     });
 
     it('should check sessionId exists', async () => {
-      const res = await app
-        .httpRequest()
-        .get(`/-/v1/login/done/session/${crypto.randomUUID()}`);
+      const res = await app.httpRequest().get(`/-/v1/login/done/session/${crypto.randomUUID()}`);
 
       assert.equal(res.status, 404);
       assert.equal(res.body.error, '[NOT_FOUND] session not found');
     });
 
     it('should re-validate sessionId', async () => {
-      const res = await app
-        .httpRequest()
-        .get(`/-/v1/login/done/session/${sessionId}`);
+      const res = await app.httpRequest().get(`/-/v1/login/done/session/${sessionId}`);
 
       assert.equal(res.status, 202);
       assert.equal(res.body.message, 'processing');
@@ -395,9 +349,7 @@ describe('test/port/webauth/webauthController.test.ts', () => {
     it('should check sessionId exists', async () => {
       const cacheAdapter = await app.getEggObject(CacheAdapter);
       await cacheAdapter.set(sessionId, 'banana');
-      const res = await app
-        .httpRequest()
-        .get(`/-/v1/login/done/session/${sessionId}`);
+      const res = await app.httpRequest().get(`/-/v1/login/done/session/${sessionId}`);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.token, 'banana');

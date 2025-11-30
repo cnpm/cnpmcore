@@ -1,3 +1,4 @@
+import type { Static } from '@eggjs/typebox-validate/typebox';
 import {
   HTTPContext,
   Context,
@@ -9,14 +10,13 @@ import {
   Inject,
   Middleware,
 } from 'egg';
-import type { Static } from '@eggjs/typebox-validate/typebox';
 import { E451 } from 'egg/errors';
 
-import { AbstractController } from '../AbstractController.ts';
-import type { SearchQueryOptions } from '../../typebox.ts';
-import type { PackageSearchService } from '../../../core/service/PackageSearchService.ts';
 import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.ts';
+import type { PackageSearchService } from '../../../core/service/PackageSearchService.ts';
 import { AdminAccess } from '../../middleware/AdminAccess.ts';
+import type { SearchQueryOptions } from '../../typebox.ts';
+import { AbstractController } from '../AbstractController.ts';
 
 @HTTPController()
 export class SearchPackageController extends AbstractController {
@@ -32,18 +32,12 @@ export class SearchPackageController extends AbstractController {
     @HTTPContext() ctx: Context,
     @HTTPQuery() text: Static<typeof SearchQueryOptions>['text'],
     @HTTPQuery() from: Static<typeof SearchQueryOptions>['from'],
-    @HTTPQuery() size: Static<typeof SearchQueryOptions>['size']
+    @HTTPQuery() size: Static<typeof SearchQueryOptions>['size'],
   ) {
     if (!this.config.cnpmcore.enableElasticsearch) {
-      throw new E451(
-        'search feature not enabled in `config.cnpmcore.enableElasticsearch`'
-      );
+      throw new E451('search feature not enabled in `config.cnpmcore.enableElasticsearch`');
     }
-    const data = await this.packageSearchService.searchPackage(
-      text,
-      from,
-      size
-    );
+    const data = await this.packageSearchService.searchPackage(text, from, size);
     this.setCDNHeaders(ctx);
     return data;
   }
@@ -54,9 +48,7 @@ export class SearchPackageController extends AbstractController {
   })
   async sync(@HTTPParam() fullname: string) {
     if (!this.config.cnpmcore.enableElasticsearch) {
-      throw new E451(
-        'search feature not enabled in `config.cnpmcore.enableElasticsearch`'
-      );
+      throw new E451('search feature not enabled in `config.cnpmcore.enableElasticsearch`');
     }
     const name = await this.packageSearchService.syncPackage(fullname, true);
     return { package: name };
@@ -69,9 +61,7 @@ export class SearchPackageController extends AbstractController {
   @Middleware(AdminAccess)
   async delete(@HTTPParam() fullname: string) {
     if (!this.config.cnpmcore.enableElasticsearch) {
-      throw new E451(
-        'search feature not enabled in `config.cnpmcore.enableElasticsearch`'
-      );
+      throw new E451('search feature not enabled in `config.cnpmcore.enableElasticsearch`');
     }
     const name = await this.packageSearchService.removePackage(fullname);
     return { package: name };

@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { BUG_VERSIONS } from '../../../app/common/constants.ts';
-import { CacheService } from '../../../app/core/service/CacheService.ts';
-import { BugVersionFixHandler } from '../../../app/core/event/BugVersionFixHandler.ts';
 import { BugVersion } from '../../../app/core/entity/BugVersion.ts';
+import { BugVersionFixHandler } from '../../../app/core/event/BugVersionFixHandler.ts';
 import { BugVersionService } from '../../../app/core/service/BugVersionService.ts';
+import { CacheService } from '../../../app/core/service/CacheService.ts';
 
 describe('test/core/event/BugVersionFixHandler.test.ts', () => {
   let cacheService: CacheService;
@@ -24,8 +25,7 @@ describe('test/core/event/BugVersionFixHandler.test.ts', () => {
         faker: {
           '6.6.6': {
             version: '5.5.3',
-            reason:
-              'Please use https://github.com/MilosPaunovic/community-faker instead',
+            reason: 'Please use https://github.com/MilosPaunovic/community-faker instead',
           },
         },
       });

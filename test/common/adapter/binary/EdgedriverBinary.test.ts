@@ -13,14 +13,10 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should work', async () => {
-      app.mockHttpclient(
-        'https://edgeupdates.microsoft.com/api/products',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile('edgeupdates.json'),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://edgeupdates.microsoft.com/api/products', 'GET', {
+        data: await TestUtil.readFixturesFile('edgeupdates.json'),
+        persist: false,
+      });
       let result = await binary.fetch('/');
       assert.deepEqual(result, {
         items: [

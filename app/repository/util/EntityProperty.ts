@@ -9,12 +9,8 @@ export function EntityProperty(entityProperty: string) {
     const clazz = target.constructor as EggProtoImplClass;
     assert.ok(
       typeof modelProperty === 'string',
-      `[model/${clazz.name}] expect method name be typeof string, but now is ${String(modelProperty)}`
+      `[model/${clazz.name}] expect method name be typeof string, but now is ${String(modelProperty)}`,
     );
-    ModelConvertorUtil.addEntityPropertyName(
-      entityProperty,
-      clazz,
-      modelProperty as string
-    );
+    ModelConvertorUtil.addEntityPropertyName(entityProperty, clazz, modelProperty as string);
   };
 }

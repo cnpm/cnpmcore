@@ -1,7 +1,7 @@
 import { Attribute, Model } from 'egg/orm';
 
-import { Bone, DataTypes, LENGTH_VARIANTS } from '../util/leoric.ts';
 import type { TaskState, TaskType } from '../../common/enum/Task.ts';
+import { Bone, DataTypes, LENGTH_VARIANTS } from '../util/leoric.ts';
 
 @Model()
 export class Task extends Bone {

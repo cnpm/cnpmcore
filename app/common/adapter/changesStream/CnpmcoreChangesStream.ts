@@ -3,10 +3,7 @@ import { E500 } from 'egg/errors';
 
 import { RegistryType } from '../../../common/enum/Registry.ts';
 import type { Registry } from '../../../core/entity/Registry.ts';
-import {
-  AbstractChangeStream,
-  RegistryChangesStream,
-} from './AbstractChangesStream.ts';
+import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesStream.ts';
 
 @SingletonProto()
 @RegistryChangesStream(RegistryType.Cnpmcore)
@@ -27,7 +24,7 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
       registry.name,
       status,
       data,
-      since
+      since,
     );
     return since;
   }

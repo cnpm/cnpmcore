@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
-import dayjs from 'dayjs';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
+import dayjs from 'dayjs';
 
 import { AuthAdapter } from '../../../../app/infra/AuthAdapter.ts';
 import { TestUtil } from '../../../../test/TestUtil.ts';
@@ -9,11 +10,7 @@ describe('test/port/controller/UserController/whoami.test.ts', () => {
   describe('[GET /-/whoami] whoami()', () => {
     it('should 200', async () => {
       const { authorization, name } = await TestUtil.createUser();
-      const res = await app
-        .httpRequest()
-        .get('/-/whoami')
-        .set('authorization', authorization)
-        .expect(200);
+      const res = await app.httpRequest().get('/-/whoami').set('authorization', authorization).expect(200);
       assert.deepStrictEqual(res.body, { username: name });
     });
 
@@ -21,11 +18,7 @@ describe('test/port/controller/UserController/whoami.test.ts', () => {
       let res = await app.httpRequest().get('/-/whoami').expect(401);
       assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
 
-      res = await app
-        .httpRequest()
-        .get('/-/whoami')
-        .set('authorization', 'Bearer foo-token')
-        .expect(401);
+      res = await app.httpRequest().get('/-/whoami').set('authorization', 'Bearer foo-token').expect(401);
       assert.equal(res.body.error, '[UNAUTHORIZED] Invalid token');
     });
 
@@ -50,11 +43,7 @@ describe('test/port/controller/UserController/whoami.test.ts', () => {
         })
         .expect(200);
 
-      res = await app
-        .httpRequest()
-        .get('/-/whoami')
-        .set('authorization', `Bearer ${res.body.token}`)
-        .expect(200);
+      res = await app.httpRequest().get('/-/whoami').set('authorization', `Bearer ${res.body.token}`).expect(200);
 
       assert.equal(res.body.username, name);
       assert.equal(res.body.name, 'apple');

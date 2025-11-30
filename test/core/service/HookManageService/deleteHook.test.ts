@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.ts';
-import { HookManageService } from '../../../../app/core/service/HookManageService.ts';
-import type { Hook } from '../../../../app/core/entity/Hook.ts';
 import { HookType } from '../../../../app/common/enum/Hook.ts';
+import type { Hook } from '../../../../app/core/entity/Hook.ts';
+import { HookManageService } from '../../../../app/core/service/HookManageService.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/core/service/HookManageService/deleteHook.test.ts', () => {
   let hookManageService: HookManageService;
@@ -46,7 +47,7 @@ describe('test/core/service/HookManageService/deleteHook.test.ts', () => {
             operatorId: 'not_exits_owner_id',
           });
         },
-        new RegExp(`hook ${hook.hookId} not belong to not_exits_owner_id`)
+        new RegExp(`hook ${hook.hookId} not belong to not_exits_owner_id`),
       );
     });
   });

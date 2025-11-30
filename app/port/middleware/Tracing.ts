@@ -18,7 +18,7 @@ export async function Tracing(ctx: EggContext, next: Next) {
       ctx.get('authorization') ? 1 : 0,
       ctx.get('npm-command') || '-',
       ctx.get('referer') || '-',
-      ctx.get('user-agent')
+      ctx.get('user-agent'),
     );
   }
   await next();

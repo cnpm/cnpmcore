@@ -1,9 +1,5 @@
-import type {
-  ChangesStreamMode,
-  SyncDeleteMode,
-  SyncMode,
-} from '../common/constants.ts';
 import type { DATABASE_TYPE } from '../../config/database.ts';
+import type { ChangesStreamMode, SyncDeleteMode, SyncMode } from '../common/constants.ts';
 
 export { cnpmcoreConfig } from '../../config/config.default.ts';
 
@@ -196,5 +192,5 @@ export interface CnpmcoreConfig {
      * enable sync package with packument
      */
     syncPackageWithPackument: boolean;
-  }
+  };
 }

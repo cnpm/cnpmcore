@@ -3,12 +3,7 @@ import { basename } from 'node:path';
 import { SingletonProto } from 'egg';
 
 import { BinaryType } from '../../enum/Binary.ts';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.ChromeForTesting)
@@ -25,11 +20,7 @@ export class ChromeForTestingBinary extends AbstractBinary {
   }
 
   async finishFetch(success: boolean) {
-    if (
-      success &&
-      this.#timestamp &&
-      ChromeForTestingBinary.lastTimestamp !== this.#timestamp
-    ) {
+    if (success && this.#timestamp && ChromeForTestingBinary.lastTimestamp !== this.#timestamp) {
       ChromeForTestingBinary.lastTimestamp = this.#timestamp;
     }
   }
@@ -39,22 +30,19 @@ export class ChromeForTestingBinary extends AbstractBinary {
     this.dirItems['/'] = [];
     const jsonApiEndpoint =
       'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json';
-    const { data, status, headers } = await this.httpclient.request(
-      jsonApiEndpoint,
-      {
-        dataType: 'json',
-        timeout: 30_000,
-        followRedirect: true,
-        gzip: true,
-      }
-    );
+    const { data, status, headers } = await this.httpclient.request(jsonApiEndpoint, {
+      dataType: 'json',
+      timeout: 30_000,
+      followRedirect: true,
+      gzip: true,
+    });
     if (status !== 200) {
       this.logger.warn(
         '[ChromeForTestingBinary.request:non-200-status] url: %s, status: %s, headers: %j, data: %j',
         jsonApiEndpoint,
         status,
         headers,
-        data
+        data,
       );
       return;
     }
@@ -64,7 +52,7 @@ export class ChromeForTestingBinary extends AbstractBinary {
       '[ChromeForTestingBinary] remote data timestamp: %j, last timestamp: %j, hasNewData: %s',
       this.#timestamp,
       ChromeForTestingBinary.lastTimestamp,
-      hasNewData
+      hasNewData,
     );
     if (!hasNewData) {
       return;

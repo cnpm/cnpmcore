@@ -37,10 +37,7 @@ export class BugVersion {
     if (bugVersionManifest.dist.tarball === fixVersionManifest.dist.tarball) {
       return;
     }
-    const advice = this.fixVersion(
-      bugVersionManifest.name,
-      bugVersionManifest.version
-    );
+    const advice = this.fixVersion(bugVersionManifest.name, bugVersionManifest.version);
     if (!advice) {
       return;
     }

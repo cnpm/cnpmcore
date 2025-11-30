@@ -1,5 +1,6 @@
 import { Event, Inject } from 'egg';
 
+import type { CacheService } from '../../core/service/CacheService.ts';
 import {
   PACKAGE_BLOCKED,
   PACKAGE_MAINTAINER_CHANGED,
@@ -13,7 +14,6 @@ import {
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
 } from './index.ts';
-import type { CacheService } from '../../core/service/CacheService.ts';
 
 class CacheCleanerEvent {
   @Inject()

@@ -1,21 +1,9 @@
 import type { Readable } from 'node:stream';
-import {
-  AccessLevel,
-  Inject,
-  LifecycleInit,
-  SingletonProto,
-  Logger,
-  Config,
-} from 'egg';
+
+import { AccessLevel, Inject, LifecycleInit, SingletonProto, Logger, Config } from 'egg';
 import FSClient from 'fs-cnpm';
 
-import type {
-  AppendResult,
-  DownloadOptions,
-  NFSClient,
-  UploadOptions,
-  UploadResult,
-} from '../common/typing.ts';
+import type { AppendResult, DownloadOptions, NFSClient, UploadOptions, UploadResult } from '../common/typing.ts';
 
 @SingletonProto({
   name: 'nfsClient',
@@ -45,16 +33,11 @@ export class NFSClientAdapter implements NFSClient {
     } else {
       // Please do not set the CNPMCORE_FORCE_LOCAL_FS environment variable unless you know what you are doing.
       if (this.config.env === 'prod' && process.env.CNPMCORE_FORCE_LOCAL_FS !== 'true') {
-        throw new Error(
-          "[NFSAdapter] Can't use local fs NFS on production env"
-        );
+        throw new Error("[NFSAdapter] Can't use local fs NFS on production env");
       }
 
       // try to use fs-cnpm, don't use it on production env
-      this.logger.warn(
-        "[NFSAdapter] Don't use local fs NFS on production env, store on %s",
-        this.config.nfs.dir
-      );
+      this.logger.warn("[NFSAdapter] Don't use local fs NFS on production env, store on %s", this.config.nfs.dir);
       this._client = new FSClient({ dir: this.config.nfs.dir });
     }
 
@@ -63,10 +46,7 @@ export class NFSClientAdapter implements NFSClient {
     }
   }
 
-  async appendBytes(
-    bytes: Uint8Array,
-    options: UploadOptions
-  ): Promise<AppendResult> {
+  async appendBytes(bytes: Uint8Array, options: UploadOptions): Promise<AppendResult> {
     if (this._client.appendBytes) {
       return await this._client.appendBytes(bytes, options);
     }
@@ -85,20 +65,14 @@ export class NFSClientAdapter implements NFSClient {
     return await this._client.remove(key);
   }
 
-  async upload(
-    filePath: string,
-    options: UploadOptions
-  ): Promise<UploadResult> {
+  async upload(filePath: string, options: UploadOptions): Promise<UploadResult> {
     if (this.config.nfs.removeBeforeUpload) {
       await this.remove(options.key);
     }
     return await this._client.upload(filePath, options);
   }
 
-  async uploadBytes(
-    bytes: Uint8Array,
-    options: UploadOptions
-  ): Promise<UploadResult> {
+  async uploadBytes(bytes: Uint8Array, options: UploadOptions): Promise<UploadResult> {
     if (this.config.nfs.removeBeforeUpload) {
       await this.remove(options.key);
     }
@@ -108,11 +82,7 @@ export class NFSClientAdapter implements NFSClient {
     return await this._client.uploadBuffer(bytes, options);
   }
 
-  async download(
-    key: string,
-    filePath: string,
-    options: DownloadOptions
-  ): Promise<void> {
+  async download(key: string, filePath: string, options: DownloadOptions): Promise<void> {
     return await this._client.download(key, filePath, options);
   }
 }

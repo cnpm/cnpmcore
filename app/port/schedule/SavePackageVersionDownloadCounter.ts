@@ -1,9 +1,5 @@
-import {
-  Schedule,
-  ScheduleType,
-  type IntervalParams,
-} from 'egg/schedule';
 import { Inject } from 'egg';
+import { Schedule, ScheduleType, type IntervalParams } from 'egg/schedule';
 
 import type { PackageManagerService } from '../../core/service/PackageManagerService.ts';
 

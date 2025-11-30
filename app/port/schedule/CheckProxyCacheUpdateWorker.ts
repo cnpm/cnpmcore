@@ -1,10 +1,10 @@
-import { Schedule, ScheduleType, type CronParams } from 'egg/schedule';
 import { Inject, Logger, EggAppConfig } from 'egg';
+import { Schedule, ScheduleType, type CronParams } from 'egg/schedule';
 
-import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';
 import { SyncMode } from '../../common/constants.ts';
-import type { ProxyCacheService } from '../../core/service/ProxyCacheService.ts';
 import { isPkgManifest } from '../../core/entity/Package.ts';
+import type { ProxyCacheService } from '../../core/service/ProxyCacheService.ts';
+import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';
 
 @Schedule<CronParams>({
   type: ScheduleType.WORKER,
@@ -37,18 +37,15 @@ export class CheckProxyCacheUpdateWorker {
         try {
           if (isPkgManifest(item.fileType)) {
             // 仅manifests需要更新，指定版本的package.json文件发布后不会改变
-            const task = await this.proxyCacheService.createTask(
-              `${item.fullname}/${item.fileType}`,
-              {
-                fullname: item.fullname,
-                fileType: item.fileType,
-              }
-            );
+            const task = await this.proxyCacheService.createTask(`${item.fullname}/${item.fileType}`, {
+              fullname: item.fullname,
+              fileType: item.fileType,
+            });
             this.logger.info(
               '[CheckProxyCacheUpdateWorker.subscribe:createTask][%s] taskId: %s, targetName: %s',
               pageIndex,
               task.taskId,
-              task.targetName
+              task.targetName,
             );
           }
         } catch (err) {

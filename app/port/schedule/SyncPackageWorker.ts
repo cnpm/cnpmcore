@@ -1,12 +1,8 @@
-import {
-  Schedule,
-  ScheduleType,
-  type IntervalParams,
-} from 'egg/schedule';
 import { Inject, Config, Logger } from 'egg';
+import { Schedule, ScheduleType, type IntervalParams } from 'egg/schedule';
 
-import type { PackageSyncerService } from '../../core/service/PackageSyncerService.ts';
 import { SyncMode } from '../../common/constants.ts';
+import type { PackageSyncerService } from '../../core/service/PackageSyncerService.ts';
 
 let executingCount = 0;
 
@@ -28,10 +24,7 @@ export class SyncPackageWorker {
 
   async subscribe() {
     if (this.config.cnpmcore.syncMode === SyncMode.none) return;
-    if (
-      executingCount >= this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks
-    )
-      return;
+    if (executingCount >= this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks) return;
 
     executingCount++;
     try {
@@ -46,7 +39,7 @@ export class SyncPackageWorker {
           task.attempts,
           task.data,
           task.updatedAt,
-          startTime - task.updatedAt.getTime()
+          startTime - task.updatedAt.getTime(),
         );
         await this.packageSyncerService.executeTask(task);
         const use = Date.now() - startTime;
@@ -55,16 +48,13 @@ export class SyncPackageWorker {
           executingCount,
           task.taskId,
           task.targetName,
-          use
+          use,
         );
-        if (
-          executingCount >=
-          this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks
-        ) {
+        if (executingCount >= this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks) {
           this.logger.info(
             '[SyncPackageWorker:subscribe:executeTask] current sync task count %s, exceed max concurrent tasks %s',
             executingCount,
-            this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks
+            this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks,
           );
           break;
         }
@@ -72,11 +62,7 @@ export class SyncPackageWorker {
         task = await this.packageSyncerService.findExecuteTask();
       }
     } catch (err) {
-      this.logger.error(
-        '[SyncPackageWorker:subscribe:executeTask:error][%s] %s',
-        executingCount,
-        err
-      );
+      this.logger.error('[SyncPackageWorker:subscribe:executeTask:error][%s] %s', executingCount, err);
     } finally {
       executingCount--;
     }
