@@ -298,7 +298,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       // .get(`/${pkg.name}/1.0.0/files/resource/ToOneFromχ.js`);
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/resource/ToOneFrom%CF%87.js`);
       assert.equal(res.status, 200);
-      assert.equal(res.headers['content-type'], 'application/javascript; charset=utf-8');
+      assert.equal(res.headers['content-type'], 'text/javascript; charset=utf-8');
       // console.log(res.text);
       assert.match(res.text, /ToOneFromχ/);
     });
@@ -459,7 +459,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.status, 200);
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
-      assert.equal(res.headers['content-type'], 'application/javascript; charset=utf-8');
+      assert.equal(res.headers['content-type'], 'text/javascript; charset=utf-8');
       assert.equal(res.headers['transfer-encoding'], 'chunked');
 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/docs/_site/getting-started.html`);
@@ -504,7 +504,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/tests/integration/test.http.js`);
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
-      assert.equal(res.headers['content-type'], 'application/javascript; charset=utf-8');
+      assert.equal(res.headers['content-type'], 'text/javascript; charset=utf-8');
       assert.ok(!res.headers['content-disposition']);
       assert.equal(res.headers['transfer-encoding'], 'chunked');
       assert.match(res.text, /describe\(/);
@@ -517,7 +517,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.deepEqual(res.body, {
         path: '/tests/integration/test.http.js',
         type: 'file',
-        contentType: 'application/javascript',
+        contentType: 'text/javascript',
         integrity: 'sha512-yysF4V48yKDI9yWuROuPd9cn9dn3nFQaAGkGMe46l6htQ6ZsoX4SAw9+FkhmmPez2VjxW/lYhWy21R1oOOu8Fw==',
         lastModified: publishTime,
         size: 1917,
