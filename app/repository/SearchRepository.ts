@@ -27,6 +27,7 @@ export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> &
     created: Date;
     modified: Date;
     author?: AuthorType | undefined;
+    deprecated?: string;
     _npmUser?: {
       name: string;
       email: string;

@@ -35,6 +35,7 @@ interface PackageOptions {
   description?: string;
   registryId?: string;
   main?: string;
+  deprecated?: string;
 }
 
 interface UserOptions {
@@ -259,6 +260,9 @@ export class TestUtil {
       }
       if ('main' in options) {
         version.main = options.main;
+      }
+      if (options.deprecated) {
+        version.deprecated = options.deprecated;
       }
     }
     return pkg;
