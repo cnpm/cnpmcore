@@ -1,6 +1,5 @@
-import type { EggPlugin } from 'egg';
-
 import tracerPlugin from '@eggjs/tracer';
+import type { EggPlugin } from 'egg';
 
 const plugin: EggPlugin = {
   view: {

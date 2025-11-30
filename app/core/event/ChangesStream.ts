@@ -1,6 +1,11 @@
-
 import { Event, Inject, Config } from 'egg';
 
+import type { ChangeRepository } from '../../repository/ChangeRepository.ts';
+import { Change } from '../entity/Change.ts';
+import { HookEvent } from '../entity/HookEvent.ts';
+import { Task } from '../entity/Task.ts';
+import type { User } from '../entity/User.ts';
+import type { TaskService } from '../service/TaskService.ts';
 import {
   type PackageMetaChange,
   PACKAGE_MAINTAINER_CHANGED,
@@ -13,12 +18,6 @@ import {
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
 } from './index.ts';
-import type { ChangeRepository } from '../../repository/ChangeRepository.ts';
-import { Change } from '../entity/Change.ts';
-import { HookEvent } from '../entity/HookEvent.ts';
-import { Task } from '../entity/Task.ts';
-import type { User } from '../entity/User.ts';
-import type { TaskService } from '../service/TaskService.ts';
 
 class ChangesStreamEvent {
   @Inject()
@@ -34,11 +33,7 @@ class ChangesStreamEvent {
     return this.config.cnpmcore.hookEnable;
   }
 
-  protected async addChange(
-    type: string,
-    fullname: string,
-    data: object
-  ): Promise<Change> {
+  protected async addChange(type: string, fullname: string, data: object): Promise<Change> {
     const change = Change.create({
       type,
       targetName: fullname,
@@ -54,9 +49,7 @@ export class PackageUnpublishedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string) {
     const change = await this.addChange(PACKAGE_UNPUBLISHED, fullname, {});
     if (this.hookEnable) {
-      const task = Task.createCreateHookTask(
-        HookEvent.createUnpublishEvent(fullname, change.changeId)
-      );
+      const task = Task.createCreateHookTask(HookEvent.createUnpublishEvent(fullname, change.changeId));
       await this.taskService.createTask(task, true);
     }
   }
@@ -69,9 +62,7 @@ export class PackageVersionAddedChangesStreamEvent extends ChangesStreamEvent {
       version,
     });
     if (this.hookEnable) {
-      const task = Task.createCreateHookTask(
-        HookEvent.createPublishEvent(fullname, change.changeId, version, tag)
-      );
+      const task = Task.createCreateHookTask(HookEvent.createPublishEvent(fullname, change.changeId, version, tag));
       await this.taskService.createTask(task, true);
     }
   }
@@ -84,9 +75,7 @@ export class PackageVersionRemovedChangesStreamEvent extends ChangesStreamEvent 
       version,
     });
     if (this.hookEnable) {
-      const task = Task.createCreateHookTask(
-        HookEvent.createUnpublishEvent(fullname, change.changeId, version, tag)
-      );
+      const task = Task.createCreateHookTask(HookEvent.createUnpublishEvent(fullname, change.changeId, version, tag));
       await this.taskService.createTask(task, true);
     }
   }
@@ -97,9 +86,7 @@ export class PackageTagAddedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, tag: string) {
     const change = await this.addChange(PACKAGE_TAG_ADDED, fullname, { tag });
     if (this.hookEnable) {
-      const task = Task.createCreateHookTask(
-        HookEvent.createDistTagEvent(fullname, change.changeId, tag)
-      );
+      const task = Task.createCreateHookTask(HookEvent.createDistTagEvent(fullname, change.changeId, tag));
       await this.taskService.createTask(task, true);
     }
   }
@@ -110,9 +97,7 @@ export class PackageTagChangedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, tag: string) {
     const change = await this.addChange(PACKAGE_TAG_CHANGED, fullname, { tag });
     if (this.hookEnable) {
-      const task = Task.createCreateHookTask(
-        HookEvent.createDistTagEvent(fullname, change.changeId, tag)
-      );
+      const task = Task.createCreateHookTask(HookEvent.createDistTagEvent(fullname, change.changeId, tag));
       await this.taskService.createTask(task, true);
     }
   }
@@ -123,9 +108,7 @@ export class PackageTagRemovedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, tag: string) {
     const change = await this.addChange(PACKAGE_TAG_REMOVED, fullname, { tag });
     if (this.hookEnable) {
-      const task = Task.createCreateHookTask(
-        HookEvent.createDistTagRmEvent(fullname, change.changeId, tag)
-      );
+      const task = Task.createCreateHookTask(HookEvent.createDistTagRmEvent(fullname, change.changeId, tag));
       await this.taskService.createTask(task, true);
     }
   }
@@ -134,17 +117,11 @@ export class PackageTagRemovedChangesStreamEvent extends ChangesStreamEvent {
 @Event(PACKAGE_MAINTAINER_CHANGED)
 export class PackageMaintainerChangedChangesStreamEvent extends ChangesStreamEvent {
   async handle(fullname: string, maintainers: User[]) {
-    const change = await this.addChange(
-      PACKAGE_MAINTAINER_CHANGED,
-      fullname,
-      {}
-    );
+    const change = await this.addChange(PACKAGE_MAINTAINER_CHANGED, fullname, {});
     // TODO 应该比较差值，而不是全量推送
     if (this.hookEnable) {
       for (const maintainer of maintainers) {
-        const task = Task.createCreateHookTask(
-          HookEvent.createOwnerEvent(fullname, change.changeId, maintainer.name)
-        );
+        const task = Task.createCreateHookTask(HookEvent.createOwnerEvent(fullname, change.changeId, maintainer.name));
         await this.taskService.createTask(task, true);
       }
     }
@@ -158,9 +135,7 @@ export class PackageMaintainerRemovedChangesStreamEvent extends ChangesStreamEve
       maintainer,
     });
     if (this.hookEnable) {
-      const task = Task.createCreateHookTask(
-        HookEvent.createOwnerRmEvent(fullname, change.changeId, maintainer)
-      );
+      const task = Task.createCreateHookTask(HookEvent.createOwnerRmEvent(fullname, change.changeId, maintainer));
       await this.taskService.createTask(task, true);
     }
   }
@@ -176,11 +151,7 @@ export class PackageMetaChangedChangesStreamEvent extends ChangesStreamEvent {
     if (this.hookEnable) {
       for (const deprecated of deprecateds || []) {
         const task = Task.createCreateHookTask(
-          HookEvent.createDeprecatedEvent(
-            fullname,
-            change.changeId,
-            deprecated.version
-          )
+          HookEvent.createDeprecatedEvent(fullname, change.changeId, deprecated.version),
         );
         await this.taskService.createTask(task, true);
       }

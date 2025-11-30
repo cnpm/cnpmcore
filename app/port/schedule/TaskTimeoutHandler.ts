@@ -1,12 +1,8 @@
-import {
-  Schedule,
-  ScheduleType,
-  type IntervalParams,
-} from 'egg/schedule';
 import { Inject, Logger } from 'egg';
+import { Schedule, ScheduleType, type IntervalParams } from 'egg/schedule';
 
-import type { TaskService } from '../../core/service/TaskService.ts';
 import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
+import type { TaskService } from '../../core/service/TaskService.ts';
 
 @Schedule<IntervalParams>(
   {
@@ -17,7 +13,7 @@ import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
   },
   {
     immediate: process.env.NODE_ENV !== 'test',
-  }
+  },
 )
 export class TaskTimeoutHandler {
   @Inject()
@@ -32,10 +28,7 @@ export class TaskTimeoutHandler {
   async subscribe() {
     await this.cacheAdapter.usingLock('TaskTimeoutHandler', 60, async () => {
       const result = await this.taskService.retryExecuteTimeoutTasks();
-      this.logger.info(
-        '[TaskTimeoutHandler:subscribe] retry execute timeout tasks: %j',
-        result
-      );
+      this.logger.info('[TaskTimeoutHandler:subscribe] retry execute timeout tasks: %j', result);
     });
   }
 }

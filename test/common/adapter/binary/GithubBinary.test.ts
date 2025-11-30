@@ -58,7 +58,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
       assert.ok(matchDir);
 
       result = await binary.fetch('/v0.9.24/', 'skia-canvas');
-      assert.ok(result?.items.every(item => !/{.*}/.test(item.url)));
+      assert.ok(result?.items.every((item) => !/{.*}/.test(item.url)));
 
       result = await binary.fetch('/v0.9.30/', 'skia-canvas');
       assert.ok(result);
@@ -74,7 +74,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.ok(item.size === 7_547_563);
           assert.equal(
             item.url,
-            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-darwin-arm64.tar.gz'
+            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-darwin-arm64.tar.gz',
           );
           matchFile1 = true;
         }
@@ -83,7 +83,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.ok(item.size === 8_836_353);
           assert.equal(
             item.url,
-            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-linux-arm-glibc.tar.gz'
+            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-linux-arm-glibc.tar.gz',
           );
           matchFile2 = true;
         }
@@ -92,7 +92,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.ok(item.size === 7_497_076);
           assert.equal(
             item.url,
-            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-win32-x64.tar.gz'
+            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-win32-x64.tar.gz',
           );
           matchFile3 = true;
         }
@@ -121,7 +121,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
       assert.ok(matchDir);
 
       result = await binary.fetch('/v28.2/', 'protobuf');
-      assert.ok(result?.items.every(item => !/{.*}/.test(item.url)));
+      assert.ok(result?.items.every((item) => !/{.*}/.test(item.url)));
 
       result = await binary.fetch('/v28.2/', 'protobuf');
       assert.ok(result);
@@ -135,7 +135,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.ok(item.size === 3_218_760);
           assert.equal(
             item.url,
-            'https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-aarch_64.zip'
+            'https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-aarch_64.zip',
           );
           matchFile1 = true;
         }
@@ -174,7 +174,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.equal(item.size, 1_234_567);
           assert.equal(
             item.url,
-            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-pc-windows-msvc.zip'
+            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-pc-windows-msvc.zip',
           );
           matchFile1 = true;
         }
@@ -183,7 +183,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.equal(item.size, 2_345_678);
           assert.equal(
             item.url,
-            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-apple-darwin.tar.gz'
+            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-apple-darwin.tar.gz',
           );
           matchFile2 = true;
         }
@@ -192,7 +192,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.equal(item.size, 3_456_789);
           assert.equal(
             item.url,
-            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar.gz'
+            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar.gz',
           );
           matchFile3 = true;
         }
@@ -214,7 +214,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
             data: response,
             status: 200,
           };
-        }
+        },
       );
       await binary.initFetch('python-build-standalone');
       const result = await binary.fetch('/', 'python-build-standalone');

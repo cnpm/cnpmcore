@@ -1,11 +1,11 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { ModelConvertor } from './util/ModelConvertor.ts';
-import type { PackageVersionFile as PackageVersionFileModel } from './model/PackageVersionFile.ts';
-import type { Dist as DistModel } from './model/Dist.ts';
 import { Dist as DistEntity } from '../core/entity/Dist.ts';
 import { PackageVersionFile as PackageVersionFileEntity } from '../core/entity/PackageVersionFile.ts';
 import { AbstractRepository } from './AbstractRepository.ts';
+import type { Dist as DistModel } from './model/Dist.ts';
+import type { PackageVersionFile as PackageVersionFileModel } from './model/PackageVersionFile.ts';
+import { ModelConvertor } from './util/ModelConvertor.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -17,23 +17,15 @@ export class PackageVersionFileRepository extends AbstractRepository {
   private readonly Dist: typeof DistModel;
 
   async createPackageVersionFile(file: PackageVersionFileEntity) {
-    await this.PackageVersionFile.transaction(async transaction => {
+    await this.PackageVersionFile.transaction(async (transaction) => {
       await Promise.all([
-        ModelConvertor.convertEntityToModel(
-          file,
-          this.PackageVersionFile,
-          transaction
-        ),
+        ModelConvertor.convertEntityToModel(file, this.PackageVersionFile, transaction),
         ModelConvertor.convertEntityToModel(file.dist, this.Dist, transaction),
       ]);
     });
   }
 
-  async findPackageVersionFile(
-    packageVersionId: string,
-    directory: string,
-    name: string
-  ) {
+  async findPackageVersionFile(packageVersionId: string, directory: string, name: string) {
     const model = await this.PackageVersionFile.findOne({
       packageVersionId,
       directory,
@@ -41,13 +33,8 @@ export class PackageVersionFileRepository extends AbstractRepository {
     });
     if (!model) return null;
     const distModel = await this.Dist.findOne({ distId: model.distId });
-    const dist =
-      distModel && ModelConvertor.convertModelToEntity(distModel, DistEntity);
-    return ModelConvertor.convertModelToEntity(
-      model,
-      PackageVersionFileEntity,
-      { dist }
-    );
+    const dist = distModel && ModelConvertor.convertModelToEntity(distModel, DistEntity);
+    return ModelConvertor.convertModelToEntity(model, PackageVersionFileEntity, { dist });
   }
 
   async listPackageVersionFiles(packageVersionId: string, directory: string) {
@@ -73,9 +60,7 @@ export class PackageVersionFileRepository extends AbstractRepository {
       } else {
         // only keep directory = '/' or sub directory like `/dist` but not `/dist/foo`
         // sub directory
-        const subDirectoryName = item.directory
-          .slice(prefix.length)
-          .split('/')[0];
+        const subDirectoryName = item.directory.slice(prefix.length).split('/')[0];
         subDirectories.add(`${prefix}${subDirectoryName}`);
       }
     }
@@ -85,13 +70,9 @@ export class PackageVersionFileRepository extends AbstractRepository {
       const dist = ModelConvertor.convertModelToEntity(distModel, DistEntity);
       distEntitiesMap.set(distModel.distId, dist);
     }
-    const files = needModels.map(model => {
+    const files = needModels.map((model) => {
       const dist = distEntitiesMap.get(model.distId);
-      return ModelConvertor.convertModelToEntity(
-        model,
-        PackageVersionFileEntity,
-        { dist }
-      );
+      return ModelConvertor.convertModelToEntity(model, PackageVersionFileEntity, { dist });
     });
     return { files, directories: Array.from(subDirectories) };
   }

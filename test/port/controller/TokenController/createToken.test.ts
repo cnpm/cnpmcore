@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
-import dayjs from 'dayjs';
 import { app, mock } from '@eggjs/mock/bootstrap';
+import dayjs from 'dayjs';
 
 import { TokenType, type Token } from '../../../../app/core/entity/Token.ts';
 import { AuthAdapter } from '../../../../app/infra/AuthAdapter.ts';
@@ -21,11 +21,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
           password,
         })
         .expect(200);
-      let res = await app
-        .httpRequest()
-        .get('/-/npm/v1/tokens')
-        .set('authorization', authorization)
-        .expect(200);
+      let res = await app.httpRequest().get('/-/npm/v1/tokens').set('authorization', authorization).expect(200);
       let tokens = res.body.objects;
       assert.equal(tokens.length, 2);
       assert.equal(tokens[1].readonly, false);
@@ -43,11 +39,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
           readonly: true,
         })
         .expect(200);
-      res = await app
-        .httpRequest()
-        .get('/-/npm/v1/tokens')
-        .set('authorization', authorization)
-        .expect(200);
+      res = await app.httpRequest().get('/-/npm/v1/tokens').set('authorization', authorization).expect(200);
       tokens = res.body.objects;
       assert.equal(tokens.length, 3);
       assert.equal(tokens[2].readonly, true);
@@ -66,11 +58,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         })
         .expect(200);
 
-      res = await app
-        .httpRequest()
-        .get('/-/npm/v1/tokens')
-        .set('authorization', authorization)
-        .expect(200);
+      res = await app.httpRequest().get('/-/npm/v1/tokens').set('authorization', authorization).expect(200);
       tokens = res.body.objects;
       assert.equal(tokens.length, 4);
       assert.equal(tokens[3].readonly, false);
@@ -90,11 +78,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         })
         .expect(200);
 
-      res = await app
-        .httpRequest()
-        .get('/-/npm/v1/tokens')
-        .set('authorization', authorization)
-        .expect(200);
+      res = await app.httpRequest().get('/-/npm/v1/tokens').set('authorization', authorization).expect(200);
       tokens = res.body.objects;
       assert.equal(tokens.length, 5);
       assert.equal(tokens[4].readonly, false);
@@ -113,10 +97,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         .set('user-agent', ua)
         .send({ password })
         .expect(403);
-      assert.match(
-        res.body.error,
-        /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/
-      );
+      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/);
     });
   });
 
@@ -129,10 +110,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
           name: 'banana',
         })
         .expect(422);
-      assert.match(
-        res.body.error,
-        /\[INVALID_PARAM\] must have required property 'expires'/
-      );
+      assert.match(res.body.error, /\[INVALID_PARAM\] must have required property 'expires'/);
 
       res = await app
         .httpRequest()
@@ -205,9 +183,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         assert.ok(user);
         const tokens = await userRepository.listTokens(user.userId);
 
-        let granularToken = tokens.find(
-          token => token.type === TokenType.granular
-        );
+        let granularToken = tokens.find((token) => token.type === TokenType.granular);
 
         assert.ok(granularToken);
         assert.ok(granularToken.lastUsedAt === null);
@@ -218,24 +194,15 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
         assert.ok(expiredDate.isBefore(dayjs().add(30, 'days')));
 
         // should ignore granularToken when use v1 query
-        res = await app
-          .httpRequest()
-          .get('/-/npm/v1/tokens')
-          .set('authorization', `Bearer ${res.body.token}`);
+        res = await app.httpRequest().get('/-/npm/v1/tokens').set('authorization', `Bearer ${res.body.token}`);
 
         assert.ok(res.body.objects.length > 0);
-        assert.ok(
-          res.body.objects.every(
-            (token: Token) => token.type !== TokenType.granular
-          )
-        );
+        assert.ok(res.body.objects.every((token: Token) => token.type !== TokenType.granular));
 
         // should update lastUsedAt
         res = await app.httpRequest().get('/-/npm/v1/tokens/gat').expect(200);
 
-        granularToken = res.body.objects.find(
-          (token: Token) => token.type === TokenType.granular
-        );
+        granularToken = res.body.objects.find((token: Token) => token.type === TokenType.granular);
         assert.ok(granularToken?.lastUsedAt);
         assert.ok(dayjs(granularToken?.lastUsedAt).isAfter(start));
       });
@@ -265,10 +232,7 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
             expires: 30,
           });
 
-        assert.match(
-          res.body.error,
-          /ER_DUP_ENTRY|duplicate key value violates unique constraint/
-        );
+        assert.match(res.body.error, /ER_DUP_ENTRY|duplicate key value violates unique constraint/);
       });
     });
   });

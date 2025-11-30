@@ -1,9 +1,9 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { ModelConvertor } from './util/ModelConvertor.ts';
-import type { PackageVersionBlock as PackageVersionBlockModel } from './model/PackageVersionBlock.ts';
 import { PackageVersionBlock as PackageVersionBlockEntity } from '../core/entity/PackageVersionBlock.ts';
 import { AbstractRepository } from './AbstractRepository.ts';
+import type { PackageVersionBlock as PackageVersionBlockModel } from './model/PackageVersionBlock.ts';
+import { ModelConvertor } from './util/ModelConvertor.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -18,14 +18,11 @@ export class PackageVersionBlockRepository extends AbstractRepository {
       if (!model) return;
       await ModelConvertor.saveEntityToModel(block, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(
-        block,
-        this.PackageVersionBlock
-      );
+      const model = await ModelConvertor.convertEntityToModel(block, this.PackageVersionBlock);
       this.logger.info(
         '[PackageVersionBlockRepository:savePackageVersionBlock:new] id: %s, packageVersionBlockId: %s',
         model.id,
-        model.packageVersionBlockId
+        model.packageVersionBlockId,
       );
     }
   }
@@ -39,11 +36,7 @@ export class PackageVersionBlockRepository extends AbstractRepository {
       packageId,
       version,
     });
-    if (model)
-      return ModelConvertor.convertModelToEntity(
-        model,
-        PackageVersionBlockEntity
-      );
+    if (model) return ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity);
     return null;
   }
 
@@ -58,7 +51,7 @@ export class PackageVersionBlockRepository extends AbstractRepository {
     this.logger.info(
       '[PackageVersionBlockRepository:removePackageVersionBlock:remove] %d rows, packageVersionBlockId: %s',
       removeCount,
-      packageVersionBlockId
+      packageVersionBlockId,
     );
   }
 }

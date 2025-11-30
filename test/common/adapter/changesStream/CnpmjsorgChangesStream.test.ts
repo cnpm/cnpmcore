@@ -90,23 +90,19 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
     });
 
     it('should reject max limit', async () => {
-      app.mockHttpclient(
-        'https://r2.cnpmjs.org/_changes?since=1&limit=',
-        'GET',
-        (url = '') => {
-          const limit = new URL(url).searchParams.get('limit');
-          return {
-            data: {
-              results: Array.from({ length: Number(limit) }).map((_, i) => ({
-                type: 'PACKAGE_TAG_ADDED',
-                id: `abc-cli-${i}`,
-                changes: [{ tag: 'latest' }],
-                gmt_modified: '2014-01-15T19:35:09.000Z',
-              })),
-            },
-          };
-        }
-      );
+      app.mockHttpclient('https://r2.cnpmjs.org/_changes?since=1&limit=', 'GET', (url = '') => {
+        const limit = new URL(url).searchParams.get('limit');
+        return {
+          data: {
+            results: Array.from({ length: Number(limit) }).map((_, i) => ({
+              type: 'PACKAGE_TAG_ADDED',
+              id: `abc-cli-${i}`,
+              changes: [{ tag: 'latest' }],
+              gmt_modified: '2014-01-15T19:35:09.000Z',
+            })),
+          },
+        };
+      });
       const stream = cnpmjsorgChangesStream.fetchChanges(registry, '1');
       await assert.rejects(async () => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

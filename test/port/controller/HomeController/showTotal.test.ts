@@ -1,33 +1,30 @@
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.ts';
-import { PackageVersionDownload } from '../../../../app/repository/model/PackageVersionDownload.ts';
 import dayjs from '../../../../app/common/dayjs.ts';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
-import { ChangesStreamService } from '../../../../app/core/service/ChangesStreamService.ts';
-import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
 import { TaskType } from '../../../../app/common/enum/Task.ts';
 import type { ChangesStreamTask } from '../../../../app/core/entity/Task.ts';
-import { RegistryType } from '../../../../app/common/enum/Registry.ts';
-import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.ts';
 import type { UpstreamRegistryInfo } from '../../../../app/core/service/CacheService.ts';
+import { ChangesStreamService } from '../../../../app/core/service/ChangesStreamService.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.ts';
+import { PackageVersionDownload } from '../../../../app/repository/model/PackageVersionDownload.ts';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
 import { TotalRepository } from '../../../../app/repository/TotalRepository.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const SavePackageVersionDownloadCounterPath = path.join(
   __dirname,
-  '../../../../app/port/schedule/SavePackageVersionDownloadCounter.js'
+  '../../../../app/port/schedule/SavePackageVersionDownloadCounter.js',
 );
-const UpdateTotalDataPath = path.join(
-  __dirname,
-  '../../../../app/port/schedule/UpdateTotalData.js'
-);
+const UpdateTotalDataPath = path.join(__dirname, '../../../../app/port/schedule/UpdateTotalData.js');
 
 describe('test/port/controller/HomeController/showTotal.test.ts', () => {
   describe('[GET /] showTotal()', () => {
@@ -41,9 +38,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
       await totalRepository.reset();
       let res = await app.httpRequest().get('/');
       assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
       let data = res.body;
       assert.ok(typeof data.doc_count === 'number');
       assert.ok(typeof data.doc_version_count === 'number');
@@ -119,31 +114,14 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
 
       // mock yesterday lastweek lastmonth
       const today = dayjs();
-      const yesterdayYearMonthInt = Number(
-        today.subtract(1, 'day').format('YYYYMM')
-      );
+      const yesterdayYearMonthInt = Number(today.subtract(1, 'day').format('YYYYMM'));
       const yesterdayDate = today.subtract(1, 'day').format('DD');
-      const lastWeekYearMonthInt = Number(
-        today.subtract(1, 'week').startOf('week').format('YYYYMM')
-      );
-      const lastWeekDate = today
-        .subtract(1, 'week')
-        .startOf('week')
-        .format('DD');
-      const lastMonthYearMonthInt = Number(
-        today.subtract(1, 'month').startOf('month').format('YYYYMM')
-      );
-      const lastMonthDate = today
-        .subtract(1, 'month')
-        .startOf('month')
-        .format('DD');
-      const lastYearYearMonthInt = Number(
-        today.subtract(1, 'year').startOf('year').format('YYYYMM')
-      );
-      const lastYearDate = today
-        .subtract(1, 'month')
-        .startOf('year')
-        .format('DD');
+      const lastWeekYearMonthInt = Number(today.subtract(1, 'week').startOf('week').format('YYYYMM'));
+      const lastWeekDate = today.subtract(1, 'week').startOf('week').format('DD');
+      const lastMonthYearMonthInt = Number(today.subtract(1, 'month').startOf('month').format('YYYYMM'));
+      const lastMonthDate = today.subtract(1, 'month').startOf('month').format('DD');
+      const lastYearYearMonthInt = Number(today.subtract(1, 'year').startOf('year').format('YYYYMM'));
+      const lastYearDate = today.subtract(1, 'month').startOf('year').format('DD');
       let row = await PackageVersionDownload.findOne({
         packageId: 'total',
         yearMonth: yesterdayYearMonthInt,
@@ -286,10 +264,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         assert.ok(data.upstream_registries.length === 1);
         const [upstream] = data.upstream_registries;
         assert.ok(upstream.registry_name === 'default');
-        assert.ok(
-          upstream.changes_stream_url ===
-            'https://replicate.npmjs.com/registry/_changes'
-        );
+        assert.ok(upstream.changes_stream_url === 'https://replicate.npmjs.com/registry/_changes');
         assert.ok(upstream.source_registry === 'https://registry.npmjs.org');
       });
 
@@ -332,24 +307,17 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
         const data = res.body;
         assert.ok(data.upstream_registries.length === 2);
         const defaultRegistry = data.upstream_registries.find(
-          (item: UpstreamRegistryInfo) => item.registry_name === 'default'
+          (item: UpstreamRegistryInfo) => item.registry_name === 'default',
         );
         assert.ok(defaultRegistry.registry_name === 'default');
-        assert.ok(
-          defaultRegistry.changes_stream_url ===
-            'https://replicate.npmjs.com/registry/_changes'
-        );
-        assert.ok(
-          defaultRegistry.source_registry === 'https://registry.npmjs.org'
-        );
+        assert.ok(defaultRegistry.changes_stream_url === 'https://replicate.npmjs.com/registry/_changes');
+        assert.ok(defaultRegistry.source_registry === 'https://registry.npmjs.org');
 
         const customRegistry = data.upstream_registries.find(
-          (item: UpstreamRegistryInfo) => item.registry_name === 'custom'
+          (item: UpstreamRegistryInfo) => item.registry_name === 'custom',
         );
         assert.ok(customRegistry.registry_name === 'custom');
-        assert.ok(
-          customRegistry.changes_stream_url === 'https://r.cnpmjs.org/_changes'
-        );
+        assert.ok(customRegistry.changes_stream_url === 'https://r.cnpmjs.org/_changes');
         assert.ok(customRegistry.source_registry === 'https://cnpmjs.org');
       });
     });

@@ -1,4 +1,3 @@
-
 import { Inject, ObjectInitType, type ContextEventBus } from 'egg';
 import { Advice, type IAdvice } from 'egg/aop';
 

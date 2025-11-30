@@ -1,29 +1,15 @@
-import {
-  HTTPContext,
-  Context,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPParam,
-  HTTPQuery,
-  Inject,
-} from 'egg';
-import {
-  ForbiddenError,
-  NotFoundError,
-  NotImplementedError,
-  UnauthorizedError,
-} from 'egg/errors';
-
-import { AbstractController } from './AbstractController.ts';
-import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';
 import type { Static } from '@eggjs/typebox-validate/typebox';
-import type { QueryPageOptions } from '../typebox.ts';
-import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
-import type { ProxyCacheService } from '../../core/service/ProxyCacheService.ts';
+import { HTTPContext, Context, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, HTTPQuery, Inject } from 'egg';
+import { ForbiddenError, NotFoundError, NotImplementedError, UnauthorizedError } from 'egg/errors';
+
 import { SyncMode } from '../../common/constants.ts';
-import type { CacheService } from '../../core/service/CacheService.ts';
+import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
 import { isPkgManifest } from '../../core/entity/Package.ts';
+import type { CacheService } from '../../core/service/CacheService.ts';
+import type { ProxyCacheService } from '../../core/service/ProxyCacheService.ts';
+import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';
+import type { QueryPageOptions } from '../typebox.ts';
+import { AbstractController } from './AbstractController.ts';
 
 @HTTPController()
 export class ProxyCacheController extends AbstractController {
@@ -40,7 +26,7 @@ export class ProxyCacheController extends AbstractController {
   })
   async listProxyCache(
     @HTTPQuery() pageSize: Static<typeof QueryPageOptions>['pageSize'],
-    @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex']
+    @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex'],
   ) {
     if (this.config.cnpmcore.syncMode !== SyncMode.proxy) {
       throw new ForbiddenError('proxy mode is not enabled');
@@ -58,7 +44,7 @@ export class ProxyCacheController extends AbstractController {
   async showProxyCaches(
     @HTTPQuery() pageSize: Static<typeof QueryPageOptions>['pageSize'],
     @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex'],
-    @HTTPParam() fullname: string
+    @HTTPParam() fullname: string,
   ) {
     if (this.config.cnpmcore.syncMode !== SyncMode.proxy) {
       throw new ForbiddenError('proxy mode is not enabled');
@@ -68,7 +54,7 @@ export class ProxyCacheController extends AbstractController {
         pageSize,
         pageIndex,
       },
-      fullname
+      fullname,
     );
   }
 
@@ -81,23 +67,19 @@ export class ProxyCacheController extends AbstractController {
       throw new ForbiddenError('proxy mode is not enabled');
     }
 
-    const refreshList =
-      await this.proxyCacheRepository.findProxyCaches(fullname);
+    const refreshList = await this.proxyCacheRepository.findProxyCaches(fullname);
     if (refreshList.length === 0) {
       throw new NotFoundError();
     }
     await this.cacheService.removeCache(fullname);
     const taskList = refreshList
       // only refresh package.json and abbreviated.json
-      .filter(i => isPkgManifest(i.fileType))
-      .map(item => {
-        const task = this.proxyCacheService.createTask(
-          `${item.fullname}/${item.fileType}`,
-          {
-            fullname: item.fullname,
-            fileType: item.fileType,
-          }
-        );
+      .filter((i) => isPkgManifest(i.fileType))
+      .map((item) => {
+        const task = this.proxyCacheService.createTask(`${item.fullname}/${item.fileType}`, {
+          fullname: item.fullname,
+          fileType: item.fileType,
+        });
         return task;
       });
     const tasks = await Promise.all(taskList);
@@ -116,18 +98,13 @@ export class ProxyCacheController extends AbstractController {
       throw new ForbiddenError('proxy mode is not enabled');
     }
 
-    const proxyCachesList =
-      await this.proxyCacheRepository.findProxyCaches(fullname);
+    const proxyCachesList = await this.proxyCacheRepository.findProxyCaches(fullname);
     if (proxyCachesList.length === 0) {
       throw new NotFoundError();
     }
     await this.cacheService.removeCache(fullname);
-    const removingList = proxyCachesList.map(item =>
-      this.proxyCacheService.removeProxyCache(
-        item.fullname,
-        item.fileType,
-        item.version
-      )
+    const removingList = proxyCachesList.map((item) =>
+      this.proxyCacheService.removeProxyCache(item.fullname, item.fileType, item.version),
     );
     await Promise.all(removingList);
     return {

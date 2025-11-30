@@ -1,11 +1,8 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import type { NFSAdapter } from '../common/adapter/NFSAdapter.ts';
-import type {
-  PackageJSONType,
-  PackageRepository,
-} from './PackageRepository.ts';
 import type { Dist } from '../core/entity/Dist.ts';
+import type { PackageJSONType, PackageRepository } from './PackageRepository.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -17,14 +14,8 @@ export class DistRepository {
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
 
-  async findPackageVersionManifest(
-    packageId: string,
-    version: string
-  ): Promise<PackageJSONType | undefined> {
-    const packageVersion = await this.packageRepository.findPackageVersion(
-      packageId,
-      version
-    );
+  async findPackageVersionManifest(packageId: string, version: string): Promise<PackageJSONType | undefined> {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       const [packageVersionJson, readme] = await Promise.all([
         this.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist),
@@ -37,14 +28,8 @@ export class DistRepository {
     }
   }
 
-  async findPackageAbbreviatedManifest(
-    packageId: string,
-    version: string
-  ): Promise<PackageJSONType | undefined> {
-    const packageVersion = await this.packageRepository.findPackageVersion(
-      packageId,
-      version
-    );
+  async findPackageAbbreviatedManifest(packageId: string, version: string): Promise<PackageJSONType | undefined> {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       return await this.readDistBytesToJSON(packageVersion.abbreviatedDist);
     }

@@ -1,14 +1,10 @@
-import {
-  Schedule,
-  ScheduleType,
-  type IntervalParams,
-} from 'egg/schedule';
 import { Inject, Logger, EggAppConfig } from 'egg';
+import { Schedule, ScheduleType, type IntervalParams } from 'egg/schedule';
 
-import type { HookTriggerService } from '../../core/service/HookTriggerService.ts';
-import type { TaskService } from '../../core/service/TaskService.ts';
 import { TaskType } from '../../common/enum/Task.ts';
 import type { TriggerHookTask } from '../../core/entity/Task.ts';
+import type { HookTriggerService } from '../../core/service/HookTriggerService.ts';
+import type { TaskService } from '../../core/service/TaskService.ts';
 
 let executingCount = 0;
 @Schedule<IntervalParams>({
@@ -32,16 +28,11 @@ export class TriggerHookWorker {
 
   async subscribe() {
     if (!this.config.cnpmcore.hookEnable) return;
-    if (
-      executingCount >= this.config.cnpmcore.triggerHookWorkerMaxConcurrentTasks
-    )
-      return;
+    if (executingCount >= this.config.cnpmcore.triggerHookWorkerMaxConcurrentTasks) return;
 
     executingCount++;
     try {
-      let task = (await this.taskService.findExecuteTask(
-        TaskType.TriggerHook
-      )) as TriggerHookTask;
+      let task = (await this.taskService.findExecuteTask(TaskType.TriggerHook)) as TriggerHookTask;
       while (task) {
         const startTime = Date.now();
         this.logger.info(
@@ -52,7 +43,7 @@ export class TriggerHookWorker {
           task.attempts,
           task.data,
           task.updatedAt,
-          startTime - task.updatedAt.getTime()
+          startTime - task.updatedAt.getTime(),
         );
         await this.hookTriggerService.executeTask(task);
         const use = Date.now() - startTime;
@@ -61,30 +52,21 @@ export class TriggerHookWorker {
           executingCount,
           task.taskId,
           task.targetName,
-          use
+          use,
         );
-        if (
-          executingCount >=
-          this.config.cnpmcore.triggerHookWorkerMaxConcurrentTasks
-        ) {
+        if (executingCount >= this.config.cnpmcore.triggerHookWorkerMaxConcurrentTasks) {
           this.logger.info(
             '[TriggerHookWorker:subscribe:executeTask] current sync task count %s, exceed max concurrent tasks %s',
             executingCount,
-            this.config.cnpmcore.triggerHookWorkerMaxConcurrentTasks
+            this.config.cnpmcore.triggerHookWorkerMaxConcurrentTasks,
           );
           break;
         }
         // try next task
-        task = (await this.taskService.findExecuteTask(
-          TaskType.TriggerHook
-        )) as TriggerHookTask;
+        task = (await this.taskService.findExecuteTask(TaskType.TriggerHook)) as TriggerHookTask;
       }
     } catch (err) {
-      this.logger.error(
-        '[TriggerHookWorker:subscribe:executeTask:error][%s] %s',
-        executingCount,
-        err
-      );
+      this.logger.error('[TriggerHookWorker:subscribe:executeTask:error][%s] %s', executingCount, err);
     } finally {
       executingCount--;
     }

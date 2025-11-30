@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => {
@@ -12,10 +13,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
           type: 'user',
         })
         .expect(422);
-      assert.equal(
-        res.body.error,
-        "[INVALID_PARAM] must have required property 'name'"
-      );
+      assert.equal(res.body.error, "[INVALID_PARAM] must have required property 'name'");
       res = await app
         .httpRequest()
         .put('/-/user/org.couchdb.user:leo')
@@ -25,10 +23,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
           type: 'user',
         })
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] password: must NOT have fewer than 8 characters'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] password: must NOT have fewer than 8 characters');
     });
 
     it('should login fail, without email', async () => {
@@ -56,10 +51,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
           email: 'leo@example.com',
         })
         .expect(403);
-      assert.equal(
-        res.body.error,
-        '[FORBIDDEN] Public registration is not allowed'
-      );
+      assert.equal(res.body.error, '[FORBIDDEN] Public registration is not allowed');
     });
 
     it('should admin registration success when allowPublicRegistration = false', async () => {
@@ -123,10 +115,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
           type: 'user',
         })
         .expect(401);
-      assert.equal(
-        res.body.error,
-        '[UNAUTHORIZED] Please check your login name and password'
-      );
+      assert.equal(res.body.error, '[UNAUTHORIZED] Please check your login name and password');
     });
 
     it('should create new user, with email when config.cnpmcore.alwaysAuth = true', async () => {
@@ -173,10 +162,7 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
           type: 'user',
         })
         .expect(401);
-      assert.equal(
-        res.body.error,
-        '[UNAUTHORIZED] Please check your login name and password'
-      );
+      assert.equal(res.body.error, '[UNAUTHORIZED] Please check your login name and password');
     });
   });
 });

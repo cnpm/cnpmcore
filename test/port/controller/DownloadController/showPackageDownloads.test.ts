@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const SavePackageVersionDownloadCounterPath = path.join(
   __dirname,
-  '../../../../app/port/schedule/SavePackageVersionDownloadCounter.ts'
+  '../../../../app/port/schedule/SavePackageVersionDownloadCounter.ts',
 );
 
 describe('test/port/controller/DownloadController/showPackageDownloads.test.ts', () => {
@@ -73,14 +73,8 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         await app.httpRequest().get(`/${pkg.name}/-/koa-1.0.0.tgz`).expect(302);
         await app.httpRequest().get(`/${pkg.name}/-/koa-1.0.0.tgz`).expect(302);
         await app.httpRequest().get(`/${pkg.name}/-/koa-2.0.0.tgz`).expect(302);
-        await app
-          .httpRequest()
-          .get(`/${pkg2.name}/-/foo-1.0.0.tgz`)
-          .expect(302);
-        await app
-          .httpRequest()
-          .get(`/${pkg3.name}/-/foo-1.0.0.tgz`)
-          .expect(302);
+        await app.httpRequest().get(`/${pkg2.name}/-/foo-1.0.0.tgz`).expect(302);
+        await app.httpRequest().get(`/${pkg3.name}/-/foo-1.0.0.tgz`).expect(302);
       } else {
         await app
           .httpRequest()
@@ -284,7 +278,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(res.status, 422);
       assert.equal(
         data.error,
-        '[UNPROCESSABLE_ENTITY] range(f:b) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style'
+        '[UNPROCESSABLE_ENTITY] range(f:b) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style',
       );
 
       res = await app
@@ -295,7 +289,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(res.status, 422);
       assert.equal(
         data.error,
-        '[UNPROCESSABLE_ENTITY] range(2017-10-1:2017-09-10) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style'
+        '[UNPROCESSABLE_ENTITY] range(2017-10-1:2017-09-10) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style',
       );
 
       res = await app
@@ -306,7 +300,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(res.status, 422);
       assert.equal(
         data.error,
-        '[UNPROCESSABLE_ENTITY] range(2017-10-91:2017-09-10) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style'
+        '[UNPROCESSABLE_ENTITY] range(2017-10-91:2017-09-10) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style',
       );
 
       res = await app
@@ -317,7 +311,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(res.status, 422);
       assert.equal(
         data.error,
-        '[UNPROCESSABLE_ENTITY] range(2017-10-91:2017-00-10) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style'
+        '[UNPROCESSABLE_ENTITY] range(2017-10-91:2017-00-10) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style',
       );
 
       res = await app
@@ -328,7 +322,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(res.status, 422);
       assert.equal(
         data.error,
-        '[UNPROCESSABLE_ENTITY] range(2017-10-11:2017-09-99) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style'
+        '[UNPROCESSABLE_ENTITY] range(2017-10-11:2017-09-99) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style',
       );
     });
   });

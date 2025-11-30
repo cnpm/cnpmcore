@@ -1,31 +1,23 @@
 import os from 'node:os';
 import { setTimeout } from 'node:timers/promises';
 
-import {
-  AccessLevel,
-  Inject,
-  SingletonProto,
-  type EggObjectFactory,
-} from 'egg';
+import { AccessLevel, Inject, SingletonProto, type EggObjectFactory } from 'egg';
 import { E500 } from 'egg/errors';
 
-import {
-  RegistryNotMatchError,
-  type PackageSyncerService,
-} from './PackageSyncerService.ts';
-import type { TaskService } from './TaskService.ts';
-import type { RegistryManagerService } from './RegistryManagerService.ts';
-import type { ScopeManagerService } from './ScopeManagerService.ts';
-import type { PackageRepository } from '../../repository/PackageRepository.ts';
-import type { TaskRepository } from '../../repository/TaskRepository.ts';
-import { HOST_NAME, Task, type ChangesStreamTask } from '../entity/Task.ts';
-import type { Registry } from '../entity/Registry.ts';
+import { AbstractService } from '../../common/AbstractService.ts';
 import { AbstractChangeStream } from '../../common/adapter/changesStream/AbstractChangesStream.ts';
-import { getScopeAndName } from '../../common/PackageUtil.ts';
-import { isTimeoutError } from '../../common/ErrorUtil.ts';
 import { GLOBAL_WORKER } from '../../common/constants.ts';
 import { TaskState, TaskType } from '../../common/enum/Task.ts';
-import { AbstractService } from '../../common/AbstractService.ts';
+import { isTimeoutError } from '../../common/ErrorUtil.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
+import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import type { TaskRepository } from '../../repository/TaskRepository.ts';
+import type { Registry } from '../entity/Registry.ts';
+import { HOST_NAME, Task, type ChangesStreamTask } from '../entity/Task.ts';
+import { RegistryNotMatchError, type PackageSyncerService } from './PackageSyncerService.ts';
+import type { RegistryManagerService } from './RegistryManagerService.ts';
+import type { ScopeManagerService } from './ScopeManagerService.ts';
+import type { TaskService } from './TaskService.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -51,22 +43,14 @@ export class ChangesStreamService extends AbstractService {
   // `{registryName}_WORKER`: 自定义 scope 的同步源
   public async findExecuteTask(): Promise<ChangesStreamTask | null> {
     const targetName = GLOBAL_WORKER;
-    const globalRegistryTask = await this.taskRepository.findTaskByTargetName(
-      targetName,
-      TaskType.ChangesStream
-    );
+    const globalRegistryTask = await this.taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
     // 如果没有配置默认同步源，先进行初始化
     if (!globalRegistryTask) {
-      await this.taskService.createTask(
-        Task.createChangesStream(targetName),
-        false
-      );
+      await this.taskService.createTask(Task.createChangesStream(targetName), false);
     }
     // 自定义 scope 由 admin 手动创建
     // 根据 TaskType.ChangesStream 从队列中获取
-    return (await this.taskService.findExecuteTask(
-      TaskType.ChangesStream
-    )) as ChangesStreamTask;
+    return (await this.taskService.findExecuteTask(TaskType.ChangesStream)) as ChangesStreamTask;
   }
 
   public async suspendSync(exit = false) {
@@ -78,16 +62,10 @@ export class ChangesStreamService extends AbstractService {
       }
       const authorIp = os.hostname();
       // 暂停当前机器所有的 changesStream 任务
-      const tasks = await this.taskRepository.findTaskByAuthorIpAndType(
-        authorIp,
-        TaskType.ChangesStream
-      );
+      const tasks = await this.taskRepository.findTaskByAuthorIpAndType(authorIp, TaskType.ChangesStream);
       for (const task of tasks) {
         if (task.state === TaskState.Processing) {
-          this.logger.info(
-            '[ChangesStreamService.suspendSync:suspend] taskId: %s',
-            task.taskId
-          );
+          this.logger.info('[ChangesStreamService.suspendSync:suspend] taskId: %s', task.taskId);
           // 1. 更新任务状态为 waiting
           // 2. 重新推入任务队列供其他机器执行
           await this.taskService.retryTask(task);
@@ -118,7 +96,7 @@ export class ChangesStreamService extends AbstractService {
           lastSince,
           taskCount,
           task.taskId,
-          task.updatedAt
+          task.updatedAt,
         );
         since = lastSince;
         if (taskCount === 0 && this.config.env === 'unittest') {
@@ -127,10 +105,7 @@ export class ChangesStreamService extends AbstractService {
         await setTimeout(this.config.cnpmcore.checkChangesStreamInterval);
       }
     } catch (err) {
-      this.logger.warn(
-        '[ChangesStreamService.executeTask:error] %s, exit now',
-        err.message
-      );
+      this.logger.warn('[ChangesStreamService.executeTask:error] %s, exit now', err.message);
       if (isTimeoutError(err)) {
         this.logger.warn(err);
       } else {
@@ -147,13 +122,9 @@ export class ChangesStreamService extends AbstractService {
     const { registryId } = task.data || {};
     // 如果已有 registryId, 查询 DB 直接获取
     if (registryId) {
-      const registry =
-        await this.registryManagerService.findByRegistryId(registryId);
+      const registry = await this.registryManagerService.findByRegistryId(registryId);
       if (!registry) {
-        this.logger.error(
-          '[ChangesStreamService.getRegistry:error] registryId %s not found',
-          registryId
-        );
+        this.logger.error('[ChangesStreamService.getRegistry:error] registryId %s not found', registryId);
         throw new E500(`invalid change stream registry: ${registryId}`);
       }
       return registry;
@@ -173,15 +144,9 @@ export class ChangesStreamService extends AbstractService {
   // 1. 如果该包已经指定了 registryId 则以 registryId 为准
   // 1. 该包的 scope 在当前 registry 下
   // 2. 如果 registry 下没有配置 scope (认为是通用 registry 地址) ，且该包的 scope 不在其他 registry 下
-  public async needSync(
-    registry: Registry,
-    fullname: string
-  ): Promise<boolean> {
+  public async needSync(registry: Registry, fullname: string): Promise<boolean> {
     const [scopeName, name] = getScopeAndName(fullname);
-    const packageEntity = await this.packageRepository.findPackage(
-      scopeName,
-      name
-    );
+    const packageEntity = await this.packageRepository.findPackage(scopeName, name);
 
     // 如果包不存在，且处在 exist 模式下，则不同步
     if (this.config.cnpmcore.syncMode === 'exist' && !packageEntity) {
@@ -193,15 +158,12 @@ export class ChangesStreamService extends AbstractService {
     }
 
     const scope = await this.scopeManagerService.findByName(scopeName);
-    const inCurrentRegistry =
-      scope && scope?.registryId === registry.registryId;
+    const inCurrentRegistry = scope && scope?.registryId === registry.registryId;
     if (inCurrentRegistry) {
       return true;
     }
 
-    const registryScopeCount = await this.scopeManagerService.countByRegistryId(
-      registry.registryId
-    );
+    const registryScopeCount = await this.scopeManagerService.countByRegistryId(registry.registryId);
     // 当前包没有 scope 信息，且当前 registry 下没有 scope，是通用 registry，需要同步
     return !scope && !registryScopeCount;
   }
@@ -209,7 +171,7 @@ export class ChangesStreamService extends AbstractService {
     const registry = await this.prepareRegistry(task);
     const changesStreamAdapter = (await this.eggObjectFactory.getEggObject(
       AbstractChangeStream,
-      registry.type
+      registry.type,
     )) as AbstractChangeStream;
     const since = await changesStreamAdapter.getInitialSince(registry);
     return since;
@@ -221,7 +183,7 @@ export class ChangesStreamService extends AbstractService {
     const registry = await this.prepareRegistry(task);
     const changesStreamAdapter = (await this.eggObjectFactory.getEggObject(
       AbstractChangeStream,
-      registry.type
+      registry.type,
     )) as AbstractChangeStream;
     let taskCount = 0;
     let lastSince = since;
@@ -252,7 +214,7 @@ export class ChangesStreamService extends AbstractService {
             '[ChangesStreamService.createTask:success] fullname: %s, task: %s, tips: %s',
             fullname,
             task.id,
-            tips
+            tips,
           );
         } catch (err) {
           if (err instanceof RegistryNotMatchError) {
@@ -260,7 +222,7 @@ export class ChangesStreamService extends AbstractService {
               '[ChangesStreamService.executeSync:skip] fullname: %s, error: %s, tips: %s',
               fullname,
               err,
-              tips
+              tips,
             );
             continue;
           }
@@ -269,7 +231,7 @@ export class ChangesStreamService extends AbstractService {
             '[ChangesStreamService.executeSync:error] fullname: %s, error: %s, tips: %s',
             fullname,
             err,
-            tips
+            tips,
           );
           this.logger.error(err);
           continue;

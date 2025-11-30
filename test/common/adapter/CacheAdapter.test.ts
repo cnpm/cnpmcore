@@ -55,7 +55,7 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
         cache.lock('unittest-concurrency', 1),
         cache.lock('unittest-concurrency', 1),
       ]);
-      assert.ok(locks.filter(lockId => !!lockId).length === 1);
+      assert.ok(locks.filter((lockId) => !!lockId).length === 1);
     });
 
     it('should mock lock timeout', async () => {

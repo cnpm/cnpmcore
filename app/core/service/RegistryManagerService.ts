@@ -1,31 +1,23 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 import { E400, NotFoundError } from 'egg/errors';
 
-import type { RegistryRepository } from '../../repository/RegistryRepository.ts';
 import { AbstractService } from '../../common/AbstractService.ts';
+import { ChangesStreamMode, PresetRegistryName } from '../../common/constants.ts';
+import { RegistryType } from '../../common/enum/Registry.ts';
+import type { RegistryRepository } from '../../repository/RegistryRepository.ts';
 import { Registry } from '../entity/Registry.ts';
+import { Task } from '../entity/Task.ts';
 import type { PageOptions, PageResult } from '../util/EntityUtil.ts';
 import type { ScopeManagerService } from './ScopeManagerService.ts';
 import type { TaskService } from './TaskService.ts';
-import { Task } from '../entity/Task.ts';
-import {
-  ChangesStreamMode,
-  PresetRegistryName,
-} from '../../common/constants.ts';
-import { RegistryType } from '../../common/enum/Registry.ts';
 
-export interface CreateRegistryCmd
-  extends Pick<
-    Registry,
-    'changeStream' | 'host' | 'userPrefix' | 'type' | 'name' | 'authToken'
-  > {
+export interface CreateRegistryCmd extends Pick<
+  Registry,
+  'changeStream' | 'host' | 'userPrefix' | 'type' | 'name' | 'authToken'
+> {
   operatorId?: string;
 }
-export interface UpdateRegistryCmd
-  extends Pick<
-    Registry,
-    'changeStream' | 'host' | 'type' | 'name' | 'authToken'
-  > {
+export interface UpdateRegistryCmd extends Pick<Registry, 'changeStream' | 'host' | 'type' | 'name' | 'authToken'> {
   operatorId?: string;
 }
 export interface RemoveRegistryCmd extends Pick<Registry, 'registryId'> {
@@ -55,45 +47,30 @@ export class RegistryManagerService extends AbstractService {
       '[RegistryManagerService.startSyncChangesStream:prepare] operatorId: %s, registryId: %s, since: %s',
       operatorId,
       registryId,
-      since
+      since,
     );
-    const registry =
-      await this.registryRepository.findRegistryByRegistryId(registryId);
+    const registry = await this.registryRepository.findRegistryByRegistryId(registryId);
     if (!registry) {
       throw new NotFoundError(`registry ${registryId} not found`);
     }
 
     // 防止和 GLOBAL_WORKER 冲突，只能有一个默认的全局 registry
-    const scopesCount =
-      await this.scopeManagerService.countByRegistryId(registryId);
+    const scopesCount = await this.scopeManagerService.countByRegistryId(registryId);
     if (scopesCount === 0) {
-      throw new E400(
-        `registry ${registryId} has no scopes, please create scopes first`
-      );
+      throw new E400(`registry ${registryId} has no scopes, please create scopes first`);
     }
 
     // 启动 changeStream
     const targetName = `${registry.name.toUpperCase()}_WORKER`;
-    await this.taskService.createTask(
-      Task.createChangesStream(targetName, registryId, since),
-      false
-    );
+    await this.taskService.createTask(Task.createChangesStream(targetName, registryId, since), false);
   }
 
   async createRegistry(createCmd: CreateRegistryCmd): Promise<Registry> {
-    const {
-      name,
-      changeStream = '',
-      host,
-      userPrefix = '',
-      type,
-      operatorId = '-',
-      authToken,
-    } = createCmd;
+    const { name, changeStream = '', host, userPrefix = '', type, operatorId = '-', authToken } = createCmd;
     this.logger.info(
       '[RegistryManagerService.createRegistry:prepare] operatorId: %s, createCmd: %j',
       operatorId,
-      createCmd
+      createCmd,
     );
     const registry = Registry.create({
       name,
@@ -110,21 +87,13 @@ export class RegistryManagerService extends AbstractService {
   // 更新部分 registry 信息
   // 不允许 userPrefix 字段变更
   async updateRegistry(registryId: string, updateCmd: UpdateRegistryCmd) {
-    const {
-      name,
-      changeStream,
-      host,
-      type,
-      operatorId = '-',
-      authToken,
-    } = updateCmd;
+    const { name, changeStream, host, type, operatorId = '-', authToken } = updateCmd;
     this.logger.info(
       '[RegistryManagerService.updateRegistry:prepare] operatorId: %s, updateCmd: %j',
       operatorId,
-      updateCmd
+      updateCmd,
     );
-    const registry =
-      await this.registryRepository.findRegistryByRegistryId(registryId);
+    const registry = await this.registryRepository.findRegistryByRegistryId(registryId);
     if (!registry) {
       throw new NotFoundError(`registry ${registryId} not found`);
     }
@@ -152,9 +121,7 @@ export class RegistryManagerService extends AbstractService {
   }
 
   async findByRegistryHost(host?: string): Promise<Registry | null> {
-    return host
-      ? await this.registryRepository.findRegistryByRegistryHost(host)
-      : null;
+    return host ? await this.registryRepository.findRegistryByRegistryHost(host) : null;
   }
 
   // 删除 Registry 方法
@@ -162,11 +129,7 @@ export class RegistryManagerService extends AbstractService {
   // 同时删除对应的 scope 数据
   async remove(removeCmd: RemoveRegistryCmd): Promise<void> {
     const { registryId, operatorId = '-' } = removeCmd;
-    this.logger.info(
-      '[RegistryManagerService.remove:prepare] operatorId: %s, registryId: %s',
-      operatorId,
-      registryId
-    );
+    this.logger.info('[RegistryManagerService.remove:prepare] operatorId: %s, registryId: %s', operatorId, registryId);
     await this.registryRepository.removeRegistry(registryId);
     await this.scopeManagerService.removeByRegistryId({
       registryId,
@@ -175,9 +138,7 @@ export class RegistryManagerService extends AbstractService {
   }
 
   async ensureSelfRegistry(): Promise<Registry> {
-    const existRegistry = await this.registryRepository.findRegistry(
-      PresetRegistryName.self
-    );
+    const existRegistry = await this.registryRepository.findRegistry(PresetRegistryName.self);
     if (existRegistry) {
       return existRegistry;
     }
@@ -196,9 +157,7 @@ export class RegistryManagerService extends AbstractService {
   }
 
   async ensureDefaultRegistry(): Promise<Registry> {
-    const existRegistry = await this.registryRepository.findRegistry(
-      PresetRegistryName.default
-    );
+    const existRegistry = await this.registryRepository.findRegistry(PresetRegistryName.default);
     if (existRegistry) {
       return existRegistry;
     }
@@ -209,10 +168,7 @@ export class RegistryManagerService extends AbstractService {
       changesStreamRegistry: changesStreamHost,
       sourceRegistry: host,
     } = this.config.cnpmcore;
-    const type =
-      changesStreamRegistryMode === ChangesStreamMode.json
-        ? RegistryType.Cnpmcore
-        : RegistryType.Npm;
+    const type = changesStreamRegistryMode === ChangesStreamMode.json ? RegistryType.Cnpmcore : RegistryType.Npm;
     const registry = await this.createRegistry({
       name: PresetRegistryName.default,
       type,

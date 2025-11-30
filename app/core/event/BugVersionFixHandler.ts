@@ -1,8 +1,8 @@
 import { Event, Inject, Logger } from 'egg';
 
-import { PACKAGE_VERSION_ADDED } from './index.ts';
 import { BUG_VERSIONS } from '../../common/constants.ts';
 import type { BugVersionService } from '../service/BugVersionService.ts';
+import { PACKAGE_VERSION_ADDED } from './index.ts';
 
 @Event(PACKAGE_VERSION_ADDED)
 export class BugVersionFixHandler {

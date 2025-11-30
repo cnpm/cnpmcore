@@ -55,7 +55,7 @@ export class GithubBinary extends AbstractBinary {
       if (asset.size > maxFileSize) {
         this.logger.info(
           '[GithubBinary.formatItems] asset reach max file size(> 250MB), ignore download it, asset: %j',
-          asset
+          asset,
         );
         continue;
       }

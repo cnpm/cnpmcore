@@ -42,6 +42,8 @@
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",
     "typecheck": "tsc --noEmit",
+    "fmt": "oxfmt",
+    "fmtcheck": "oxfmt --check",
     "test:postgresql": "npm run test:local:postgresql",
     "pretest:local:postgresql": "bash prepare-database-postgresql.sh",
     "test:local:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin test",
@@ -144,6 +146,7 @@
     "coffee": "^5.5.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
+    "oxfmt": "^0.15.0",
     "oxlint": "^1.30.0",
     "oxlint-tsgolint": "^0.8.3",
     "prettier": "^3.7.3",
@@ -156,13 +159,15 @@
   },
   "homepage": "https://github.com/cnpm/cnpmcore#readme",
   "engines": {
-    "node": "^20.18.0 || >=22.18.0"
+    "node": "^20.18.0 || ^22.18.0 || ^24.11.0"
   },
   "lint-staged": {
-    "*": "prettier --write --ignore-unknown --cache",
-    "*.{ts,js}": [
-      "prettier --ignore-unknown --write",
-      "oxlint --fix"
+    "!(*.{ts,mts,cts,js,mjs,cjs,jsx,tsx})": [
+      "prettier --ignore-unknown --write"
+    ],
+    "*.{ts,mts,cts,js,mjs,cjs,jsx,tsx}": [
+      "oxfmt",
+      "oxlint --type-aware --fix"
     ]
   }
 }

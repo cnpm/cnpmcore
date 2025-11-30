@@ -1,9 +1,9 @@
-import { ModelMetadataUtil } from 'egg/orm';
 import type { EggProtoImplClass } from 'egg';
+import { ModelMetadataUtil } from 'egg/orm';
 import { get as lodashGet, set as lodashSet } from 'lodash-es';
 
-import { ModelConvertorUtil } from './ModelConvertorUtil.ts';
 import type { LeoricBone, Bone } from './leoric.ts';
+import { ModelConvertorUtil } from './ModelConvertorUtil.ts';
 
 const CREATED_AT = 'createdAt';
 const UPDATED_AT = 'updatedAt';
@@ -20,7 +20,7 @@ export class ModelConvertor {
   static async convertEntityToModel<T extends PatchedBone>(
     entity: object,
     ModelClazz: EggProtoImplClass<T>,
-    options?: object
+    options?: object,
   ): Promise<T> {
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
@@ -29,23 +29,12 @@ export class ModelConvertor {
     const attributes: Record<string, unknown> = {};
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
-      const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(
-        ModelClazz,
-        modelPropertyName
-      );
-      if (
-        entityPropertyName === UPDATED_AT ||
-        entityPropertyName === CREATED_AT ||
-        entityPropertyName === ID
-      )
-        continue;
+      const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
+      if (entityPropertyName === UPDATED_AT || entityPropertyName === CREATED_AT || entityPropertyName === ID) continue;
       const attributeValue = lodashGet(entity, entityPropertyName);
       attributes[modelPropertyName] = attributeValue;
     }
-    const model = (await (ModelClazz as unknown as typeof Bone).create(
-      attributes,
-      options
-    )) as PatchedBone;
+    const model = (await (ModelClazz as unknown as typeof Bone).create(attributes, options)) as PatchedBone;
     // auto set entity id to model id
     (entity as Record<string, unknown>)[ID] = model[ID];
     // use model dates
@@ -54,10 +43,7 @@ export class ModelConvertor {
     return model as T;
   }
 
-  static convertEntityToChanges<T extends LeoricBone>(
-    entity: object,
-    ModelClazz: EggProtoImplClass<T>
-  ) {
+  static convertEntityToChanges<T extends LeoricBone>(entity: object, ModelClazz: EggProtoImplClass<T>) {
     const changes: Record<string, unknown> = {};
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
@@ -65,10 +51,7 @@ export class ModelConvertor {
     }
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
-      const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(
-        ModelClazz,
-        modelPropertyName
-      );
+      const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
       if (entityPropertyName === CREATED_AT) continue;
       const attributeValue = lodashGet(entity, entityPropertyName);
       changes[modelPropertyName] = attributeValue;
@@ -83,7 +66,7 @@ export class ModelConvertor {
   static async saveEntityToModel<T extends LeoricBone>(
     entity: object,
     model: T & PatchedBone,
-    options?: object
+    options?: object,
   ): Promise<boolean> {
     const ModelClazz = model.constructor as EggProtoImplClass<T>;
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
@@ -92,16 +75,12 @@ export class ModelConvertor {
     }
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
-      const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(
-        ModelClazz,
-        modelPropertyName
-      );
+      const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
       if (entityPropertyName === CREATED_AT) continue;
       // Restricted updates to the primary key
       if (entityPropertyName === ID && model[ID]) continue;
       const attributeValue = lodashGet(entity, entityPropertyName);
-      (model as unknown as Record<string, unknown>)[modelPropertyName] =
-        attributeValue;
+      (model as unknown as Record<string, unknown>)[modelPropertyName] = attributeValue;
     }
 
     // Restricted updates to the UPDATED_AT
@@ -112,11 +91,7 @@ export class ModelConvertor {
     return true;
   }
 
-  static convertModelToEntity<T>(
-    bone: LeoricBone,
-    entityClazz: EggProtoImplClass<T>,
-    data?: object
-  ): T {
+  static convertModelToEntity<T>(bone: LeoricBone, entityClazz: EggProtoImplClass<T>, data?: object): T {
     const entityData = data ?? {};
     const ModelClazz = bone.constructor as EggProtoImplClass;
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
@@ -125,12 +100,8 @@ export class ModelConvertor {
     }
     for (const attributeMeta of metadata.attributes) {
       const modelPropertyName = attributeMeta.propertyName;
-      const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(
-        ModelClazz,
-        modelPropertyName
-      );
-      const attributeValue =
-        bone[attributeMeta.propertyName as keyof LeoricBone];
+      const entityPropertyName = ModelConvertorUtil.getEntityPropertyName(ModelClazz, modelPropertyName);
+      const attributeValue = bone[attributeMeta.propertyName as keyof LeoricBone];
       lodashSet(entityData, entityPropertyName, attributeValue);
     }
     const model = Reflect.construct(entityClazz, [entityData]);

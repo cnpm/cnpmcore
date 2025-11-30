@@ -1,7 +1,7 @@
-import { Entity, type EntityData } from './Entity.ts';
+import { getFullname } from '../../common/PackageUtil.ts';
 import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
 import { Dist } from './Dist.ts';
-import { getFullname } from '../../common/PackageUtil.ts';
+import { Entity, type EntityData } from './Entity.ts';
 
 interface PackageData extends EntityData {
   scope: string;
@@ -23,10 +23,7 @@ export enum DIST_NAMES {
 }
 
 export function isPkgManifest(fileType: DIST_NAMES) {
-  return (
-    fileType === DIST_NAMES.FULL_MANIFESTS ||
-    fileType === DIST_NAMES.ABBREVIATED_MANIFESTS
-  );
+  return fileType === DIST_NAMES.FULL_MANIFESTS || fileType === DIST_NAMES.ABBREVIATED_MANIFESTS;
 }
 
 interface FileInfo {

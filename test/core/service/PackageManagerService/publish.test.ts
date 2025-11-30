@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.ts';
+import type { User } from '../../../../app/core/entity/User.ts';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.ts';
 import { UserService } from '../../../../app/core/service/UserService.ts';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
-import type { User } from '../../../../app/core/entity/User.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   let packageManagerService: PackageManagerService;
@@ -49,12 +50,9 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
           version: '1.0.0',
           isPrivate: true,
         },
-        publisher
+        publisher,
       );
-      let pkgVersion = await packageRepository.findPackageVersion(
-        packageId,
-        '1.0.0'
-      );
+      let pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
       assert.ok(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.0');
       // another version
@@ -72,12 +70,9 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
           version: '1.0.1',
           isPrivate: true,
         },
-        publisher
+        publisher,
       );
-      pkgVersion = await packageRepository.findPackageVersion(
-        packageId,
-        '1.0.1'
-      );
+      pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.1');
       assert.ok(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.1');
       // expect aop async timer
@@ -101,12 +96,9 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
           version: '1.0.0',
           isPrivate: true,
         },
-        publisher
+        publisher,
       );
-      const pkgVersion = await packageRepository.findPackageVersion(
-        packageId,
-        '1.0.0'
-      );
+      const pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
       assert.ok(pkgVersion);
       assert.equal(pkgVersion.version, '1.0.0');
       const pkg = await packageRepository.findPackage('', 'foo');
@@ -117,9 +109,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
       const { packageId } = await packageManagerService.publish(
         {
           dist: {
-            localFile: TestUtil.getFixtures(
-              'registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'
-            ),
+            localFile: TestUtil.getFixtures('registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'),
           },
           tags: [''],
           scope: '',
@@ -130,12 +120,9 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
           version: '1.1.0',
           isPrivate: false,
         },
-        publisher
+        publisher,
       );
-      const pkgVersion = await packageRepository.findPackageVersion(
-        packageId,
-        '1.1.0'
-      );
+      const pkgVersion = await packageRepository.findPackageVersion(packageId, '1.1.0');
       assert.ok(pkgVersion);
       assert.equal(pkgVersion.version, '1.1.0');
       assert.equal(pkgVersion.tarDist.size, 2672);
@@ -150,9 +137,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
         await packageManagerService.publish(
           {
             dist: {
-              localFile: TestUtil.getFixtures(
-                'registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'
-              ),
+              localFile: TestUtil.getFixtures('registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'),
             },
             tags: [''],
             scope: '',
@@ -168,7 +153,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
             version: '1.1.0',
             isPrivate: false,
           },
-          publisher
+          publisher,
         );
       }, /deps invalid-pkg@some-semver-not-exits not found/);
 

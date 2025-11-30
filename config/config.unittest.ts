@@ -1,6 +1,7 @@
 import { join } from 'node:path';
-import type { EggAppConfig, PowerPartial } from 'egg';
+
 import Mock from '@elastic/elasticsearch-mock';
+import type { EggAppConfig, PowerPartial } from 'egg';
 
 import { database } from './database.ts';
 

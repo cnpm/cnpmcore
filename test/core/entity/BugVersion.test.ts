@@ -7,8 +7,7 @@ describe('test/core/entity/BugVersion.test.ts', () => {
     faker: {
       '6.6.6': {
         version: '5.5.3',
-        reason:
-          'Please use https://github.com/MilosPaunovic/community-faker instead',
+        reason: 'Please use https://github.com/MilosPaunovic/community-faker instead',
       },
     },
     colors: {
@@ -37,11 +36,7 @@ describe('test/core/entity/BugVersion.test.ts', () => {
   describe('listBugVersions', () => {
     it('should work', () => {
       const bugVersions = bugVersion.listBugVersions('colors');
-      assert.deepStrictEqual(bugVersions, [
-        '1.4.44-liberty-2',
-        '1.4.1',
-        '1.4.2',
-      ]);
+      assert.deepStrictEqual(bugVersions, ['1.4.44-liberty-2', '1.4.1', '1.4.2']);
     });
 
     it('should return [] if no bug version exits', () => {
@@ -109,20 +104,18 @@ describe('test/core/entity/BugVersion.test.ts', () => {
           engines: {
             node: '>=0.1.90',
           },
-        }
+        },
       );
       assert.deepStrictEqual(fixedManifest, {
         name: 'colors',
         version: '1.4.2',
-        deprecated:
-          '[WARNING] Use 1.4.0 instead of 1.4.2, reason: https://github.com/Marak/colors.js/issues/289',
+        deprecated: '[WARNING] Use 1.4.0 instead of 1.4.2, reason: https://github.com/Marak/colors.js/issues/289',
         devDependencies: {
           eslint: '^5.2.0',
           'eslint-config-google': '^0.11.0',
         },
         dist: {
-          integrity:
-            'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
+          integrity: 'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
           shasum: 'c50491479d4c1bdaed2c9ced32cf7c7dc2360f78',
           tarball: 'https://registry.npmjs.org/colors/-/colors-1.4.0.tgz',
           fileCount: 21,
@@ -145,8 +138,7 @@ describe('test/core/entity/BugVersion.test.ts', () => {
           'eslint-config-google': '^0.11.0',
         },
         dist: {
-          integrity:
-            'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
+          integrity: 'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
           shasum: 'c50491479d4c1bdaed2c9ced32cf7c7dc2360f78',
           tarball: 'https://registry.npmjs.org/colors/-/colors-1.4.0.tgz',
           fileCount: 21,
@@ -166,8 +158,7 @@ describe('test/core/entity/BugVersion.test.ts', () => {
           'eslint-config-google': '^0.11.0',
         },
         dist: {
-          integrity:
-            'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
+          integrity: 'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
           shasum: 'c50491479d4c1bdaed2c9ced32cf7c7dc2360f78',
           tarball: 'https://registry.npmjs.org/colors/-/colors-1.4.0.tgz',
           fileCount: 21,
@@ -191,8 +182,7 @@ describe('test/core/entity/BugVersion.test.ts', () => {
           'eslint-config-google': '^0.11.0',
         },
         dist: {
-          integrity:
-            'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
+          integrity: 'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
           shasum: 'c50491479d4c1bdaed2c9ced32cf7c7dc2360f78',
           tarball: 'https://registry.npmjs.org/colors/-/colors-1.4.0.tgz',
           fileCount: 21,
@@ -212,8 +202,7 @@ describe('test/core/entity/BugVersion.test.ts', () => {
           'eslint-config-google': '^0.11.0',
         },
         dist: {
-          integrity:
-            'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
+          integrity: 'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
           shasum: 'c50491479d4c1bdaed2c9ced32cf7c7dc2360f78',
           tarball: 'https://registry.npmjs.org/colors/-/colors-1.4.0.tgz',
           fileCount: 21,

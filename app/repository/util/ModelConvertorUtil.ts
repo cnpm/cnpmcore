@@ -1,19 +1,13 @@
 import { type EggProtoImplClass, MetadataUtil } from 'egg';
 
-const ENTITY_PROPERTY_MAP_ATTRIBUTE = Symbol.for(
-  'EggPrototype#model#entityPropertyMap'
-);
+const ENTITY_PROPERTY_MAP_ATTRIBUTE = Symbol.for('EggPrototype#model#entityPropertyMap');
 
 export class ModelConvertorUtil {
-  static addEntityPropertyName(
-    entityProperty: string,
-    clazz: EggProtoImplClass,
-    modelProperty: string
-  ) {
+  static addEntityPropertyName(entityProperty: string, clazz: EggProtoImplClass, modelProperty: string) {
     const propertyMap: Map<string, string> = MetadataUtil.initOwnMapMetaData(
       ENTITY_PROPERTY_MAP_ATTRIBUTE,
       clazz,
-      new Map()
+      new Map(),
     );
     propertyMap.set(modelProperty, entityProperty);
   }
@@ -21,12 +15,8 @@ export class ModelConvertorUtil {
   /**
    * If has no entity property info, use modelProperty as default value
    */
-  static getEntityPropertyName(
-    clazz: EggProtoImplClass,
-    modelProperty: string
-  ): string {
-    const propertyMap: Map<string, string> | undefined =
-      MetadataUtil.getMetaData(ENTITY_PROPERTY_MAP_ATTRIBUTE, clazz);
+  static getEntityPropertyName(clazz: EggProtoImplClass, modelProperty: string): string {
+    const propertyMap: Map<string, string> | undefined = MetadataUtil.getMetaData(ENTITY_PROPERTY_MAP_ATTRIBUTE, clazz);
     return propertyMap?.get(modelProperty) ?? modelProperty;
   }
 }

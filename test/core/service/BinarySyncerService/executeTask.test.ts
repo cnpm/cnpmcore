@@ -1,14 +1,15 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.ts';
-import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService.ts';
-import { Task as TaskModel } from '../../../../app/repository/model/Task.ts';
-import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.ts';
-import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary.ts';
 import { ApiBinary } from '../../../../app/common/adapter/binary/ApiBinary.ts';
-import { BinaryRepository } from '../../../../app/repository/BinaryRepository.ts';
+import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary.ts';
 import type { SyncBinaryTaskData } from '../../../../app/core/entity/Task.ts';
+import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService.ts';
+import { BinaryRepository } from '../../../../app/repository/BinaryRepository.ts';
+import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.ts';
+import { Task as TaskModel } from '../../../../app/repository/model/Task.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
   let binarySyncerService: BinarySyncerService;
@@ -23,16 +24,10 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
       });
-      app.mockHttpclient(
-        'https://nodejs.org/dist/latest/docs/apilinks.json',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'nodejs.org/site/latest/docs/apilinks.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+        persist: false,
+      });
       await binarySyncerService.createTask('node', {});
       let task = await binarySyncerService.findExecuteTask();
       assert.ok(task);
@@ -206,22 +201,14 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         }
         return { items: [] };
       });
-      app.mockHttpclient(
-        'https://nodejs.org/dist/index-not-exists.json',
-        'GET',
-        {
-          status: 500,
-          data: 'mock error',
-        }
-      );
-      app.mockHttpclient(
-        'https://nodejs.org/dist/latest/docs/apilinks-not-exists.json',
-        'GET',
-        {
-          status: 500,
-          data: 'mock error',
-        }
-      );
+      app.mockHttpclient('https://nodejs.org/dist/index-not-exists.json', 'GET', {
+        status: 500,
+        data: 'mock error',
+      });
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks-not-exists.json', 'GET', {
+        status: 500,
+        data: 'mock error',
+      });
       await binarySyncerService.executeTask(task);
       assert.ok(!(await TaskModel.findOne({ taskId: task.taskId })));
       assert.ok(await HistoryTaskModel.findOne({ taskId: task.taskId }));
@@ -230,16 +217,8 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(log.includes('Syncing diff: 2 => 2'));
-      assert.ok(
-        log.includes(
-          '❌ [0.0.0] Download https://nodejs.org/dist/latest/docs/apilinks-not-exists.json'
-        )
-      );
-      assert.ok(
-        log.includes(
-          '❌ [1] Download https://nodejs.org/dist/index-not-exists.json'
-        )
-      );
+      assert.ok(log.includes('❌ [0.0.0] Download https://nodejs.org/dist/latest/docs/apilinks-not-exists.json'));
+      assert.ok(log.includes('❌ [1] Download https://nodejs.org/dist/index-not-exists.json'));
       assert.ok(log.includes('[/] ❌ Synced dir fail'));
       assert.ok(log.includes('[/latest/] ❌ Synced dir fail'));
       assert.ok(log.includes('[/latest/docs/] ❌ Synced dir fail'));
@@ -298,22 +277,14 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         }
         return { items: [] };
       });
-      app.mockHttpclient(
-        'https://nodejs.org/dist/index-not-exists.json',
-        'GET',
-        {
-          status: 404,
-          data: 'not found',
-        }
-      );
-      app.mockHttpclient(
-        'https://nodejs.org/dist/latest/docs/apilinks-not-exists.json',
-        'GET',
-        {
-          status: 404,
-          data: 'not found',
-        }
-      );
+      app.mockHttpclient('https://nodejs.org/dist/index-not-exists.json', 'GET', {
+        status: 404,
+        data: 'not found',
+      });
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks-not-exists.json', 'GET', {
+        status: 404,
+        data: 'not found',
+      });
       await binarySyncerService.executeTask(task);
       assert.ok(!(await TaskModel.findOne({ taskId: task.taskId })));
       assert.ok(await HistoryTaskModel.findOne({ taskId: task.taskId }));
@@ -324,14 +295,10 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert.ok(log.includes('Syncing diff: 2 => 2'));
       assert.ok(
         log.includes(
-          '🧪️ [0.0.0] Download https://nodejs.org/dist/latest/docs/apilinks-not-exists.json not found, skip it'
-        )
+          '🧪️ [0.0.0] Download https://nodejs.org/dist/latest/docs/apilinks-not-exists.json not found, skip it',
+        ),
       );
-      assert.ok(
-        log.includes(
-          '🧪️ [1] Download https://nodejs.org/dist/index-not-exists.json not found, skip it'
-        )
-      );
+      assert.ok(log.includes('🧪️ [1] Download https://nodejs.org/dist/index-not-exists.json not found, skip it'));
       assert.ok(log.includes('[/] 🟢 Synced dir success'));
       assert.ok(log.includes('[/latest/] 🟢 Synced dir success'));
       assert.ok(log.includes('[/latest/docs/] 🟢 Synced dir success'));
@@ -342,16 +309,10 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
       });
-      app.mockHttpclient(
-        'https://cnpmjs.org/mirrors/node/latest/docs/apilinks.json',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'nodejs.org/site/latest/docs/apilinks.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://cnpmjs.org/mirrors/node/latest/docs/apilinks.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+        persist: false,
+      });
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
       await binarySyncerService.createTask('node', {});
       let task = await binarySyncerService.findExecuteTask();
@@ -437,16 +398,10 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
       });
-      app.mockHttpclient(
-        'https://nodejs.org/dist/latest/docs/apilinks.json',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'nodejs.org/site/latest/docs/apilinks.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+        persist: false,
+      });
       await binarySyncerService.createTask('node', {});
       let task = await binarySyncerService.findExecuteTask();
       assert.ok(task);
@@ -599,10 +554,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert.ok(log.includes('[/] 🟢 Synced dir success'));
       app.mockAgent().assertNoPendingInterceptors();
       const binaryRepository = await app.getEggObject(BinaryRepository);
-      const BinaryItems = await binaryRepository.listBinaries(
-        'node',
-        '/latest/docs/'
-      );
+      const BinaryItems = await binaryRepository.listBinaries('node', '/latest/docs/');
       assert.ok(BinaryItems.length === 2);
     });
 
@@ -611,16 +563,10 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
       });
-      app.mockHttpclient(
-        'https://nodejs.org/dist/latest/docs/apilinks.json',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'nodejs.org/site/latest/docs/apilinks.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+        persist: false,
+      });
       await binarySyncerService.createTask('node', {
         'mock-data': '2333',
       });
@@ -628,19 +574,11 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert.ok(task);
       let binaryName: string | undefined;
       let lastData: SyncBinaryTaskData | undefined;
-      mock(
-        NodeBinary.prototype,
-        'fetch',
-        async (
-          _dir: string,
-          aBinaryName: string,
-          aLastData?: SyncBinaryTaskData
-        ) => {
-          binaryName = aBinaryName;
-          lastData = aLastData;
-          return { items: [] };
-        }
-      );
+      mock(NodeBinary.prototype, 'fetch', async (_dir: string, aBinaryName: string, aLastData?: SyncBinaryTaskData) => {
+        binaryName = aBinaryName;
+        lastData = aLastData;
+        return { items: [] };
+      });
       await binarySyncerService.executeTask(task);
       assert.equal(binaryName, 'node');
       assert.equal(lastData?.['mock-data'], '2333');

@@ -2,20 +2,13 @@ import { SingletonProto } from 'egg';
 
 import binaries, { type BinaryName } from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
+import { BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 import { GithubBinary } from './GithubBinary.ts';
-import {
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Electron)
 export class ElectronBinary extends GithubBinary {
-  async fetch(
-    dir: string,
-    binaryName: BinaryName = 'electron'
-  ): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName = 'electron'): Promise<FetchResult | undefined> {
     const releases = await this.initReleases(binaryName, binaries.electron);
     if (!releases) return;
 
@@ -42,10 +35,7 @@ export class ElectronBinary extends GithubBinary {
       }
     } else {
       for (const item of releases) {
-        if (
-          dir === `/${item.tag_name}/` ||
-          dir === `/${item.tag_name.slice(1)}/`
-        ) {
+        if (dir === `/${item.tag_name}/` || dir === `/${item.tag_name.slice(1)}/`) {
           items = this.formatItems(item, binaries.electron);
           break;
         }

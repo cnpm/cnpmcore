@@ -3,10 +3,7 @@ import { E500 } from 'egg/errors';
 
 import { RegistryType } from '../../../common/enum/Registry.ts';
 import type { Registry } from '../../../core/entity/Registry.ts';
-import {
-  AbstractChangeStream,
-  RegistryChangesStream,
-} from './AbstractChangesStream.ts';
+import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesStream.ts';
 
 const MAX_LIMIT = 10_000;
 
@@ -27,21 +24,13 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
   // 默认返回当前时间戳字符串
   async getInitialSince(registry: Registry): Promise<string> {
     const since = String(Date.now());
-    this.logger.warn(
-      `[CnpmjsorgChangesStream.getInitialSince] since: ${since}, skip query ${registry.changeStream}`
-    );
+    this.logger.warn(`[CnpmjsorgChangesStream.getInitialSince] since: ${since}, skip query ${registry.changeStream}`);
     return since;
   }
 
-  private async tryFetch(
-    registry: Registry,
-    since: string,
-    limit = 1000
-  ): Promise<{ data: FetchResults }> {
+  private async tryFetch(registry: Registry, since: string, limit = 1000): Promise<{ data: FetchResults }> {
     if (limit > MAX_LIMIT) {
-      throw new E500(
-        `limit too large, current since: ${since}, limit: ${limit}`
-      );
+      throw new E500(`limit too large, current since: ${since}, limit: ${limit}`);
     }
     const db = this.getChangesStreamUrl(registry, since, limit);
     // json mode

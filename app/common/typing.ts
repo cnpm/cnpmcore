@@ -1,8 +1,9 @@
-import type { Readable } from 'node:stream';
 import type { IncomingHttpHeaders } from 'node:http';
+import type { Readable } from 'node:stream';
 
-import type { Context } from 'egg';
 import type { estypes } from '@elastic/elasticsearch';
+import type { Context } from 'egg';
+
 import type { CnpmcoreConfig } from '../port/config.ts';
 
 export interface UploadResult {
@@ -41,11 +42,7 @@ export interface NFSClient {
 
   createDownloadStream(key: string): Promise<Readable | undefined>;
 
-  download(
-    key: string,
-    filepath: string,
-    options: DownloadOptions
-  ): Promise<void>;
+  download(key: string, filepath: string, options: DownloadOptions): Promise<void>;
 
   url?(key: string): string;
 }

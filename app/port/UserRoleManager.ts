@@ -1,19 +1,13 @@
-import {
-  Context,
-  AccessLevel,
-  ContextProto,
-  Inject,
-  Config, Logger,
-} from 'egg';
+import { Context, AccessLevel, ContextProto, Inject, Config, Logger } from 'egg';
 import { ForbiddenError, UnauthorizedError } from 'egg/errors';
 
-import type { PackageRepository } from '../repository/PackageRepository.ts';
-import type { Package as PackageEntity } from '../core/entity/Package.ts';
-import type { User as UserEntity } from '../core/entity/User.ts';
-import type { Token as TokenEntity } from '../core/entity/Token.ts';
 import { getScopeAndName } from '../common/PackageUtil.ts';
+import type { Package as PackageEntity } from '../core/entity/Package.ts';
+import type { Token as TokenEntity } from '../core/entity/Token.ts';
+import type { User as UserEntity } from '../core/entity/User.ts';
 import type { RegistryManagerService } from '../core/service/RegistryManagerService.ts';
 import type { TokenService } from '../core/service/TokenService.ts';
+import type { PackageRepository } from '../repository/PackageRepository.ts';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
@@ -108,8 +102,7 @@ export class UserRoleManager {
     this.handleAuthorized = true;
     const authorization = ctx.get<string>('authorization');
     if (!authorization) return null;
-    const authorizedUserAndToken =
-      await this.tokenService.getUserAndToken(authorization);
+    const authorizedUserAndToken = await this.tokenService.getUserAndToken(authorization);
     if (!authorizedUserAndToken) {
       return null;
     }
@@ -131,14 +124,9 @@ export class UserRoleManager {
     }
     const { user, token } = authorizedUserAndToken;
     // only enable npm client and version check setting will go into this condition
-    if (
-      this.config.cnpmcore.enableNpmClientAndVersionCheck &&
-      role === 'publish'
-    ) {
+    if (this.config.cnpmcore.enableNpmClientAndVersionCheck && role === 'publish') {
       if (token.isReadonly) {
-        throw new ForbiddenError(
-          `Read-only Token "${token.tokenMark}" can't publish`
-        );
+        throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't publish`);
       }
       const userAgent: string = ctx.get('user-agent');
       // only support npm >= 7.0.0 allow publish action
@@ -157,28 +145,22 @@ export class UserRoleManager {
     }
     if (role === 'setting') {
       if (token.isReadonly) {
-        throw new ForbiddenError(
-          `Read-only Token "${token.tokenMark}" can't setting`
-        );
+        throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't setting`);
       }
       if (token.isAutomation) {
-        throw new ForbiddenError(
-          `Automation Token "${token.tokenMark}" can't setting`
-        );
+        throw new ForbiddenError(`Automation Token "${token.tokenMark}" can't setting`);
       }
     }
     return user;
   }
 
   public async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
-    const maintainers = await this.packageRepository.listPackageMaintainers(
-      pkg.packageId
-    );
-    const maintainer = maintainers.find(m => m.userId === user.userId);
+    const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
+    const maintainer = maintainers.find((m) => m.userId === user.userId);
     if (!maintainer) {
-      const names = maintainers.map(m => m.name).join(', ');
+      const names = maintainers.map((m) => m.name).join(', ');
       throw new ForbiddenError(
-        `"${user.name}" not authorized to modify ${pkg.fullname}, please contact maintainers: "${names}"`
+        `"${user.name}" not authorized to modify ${pkg.fullname}, please contact maintainers: "${names}"`,
       );
     }
   }
@@ -190,14 +172,10 @@ export class UserRoleManager {
     }
     const allowScopes = user.scopes ?? cnpmcoreConfig.allowScopes;
     if (!scope) {
-      throw new ForbiddenError(
-        `Package scope required, legal scopes: "${allowScopes.join(', ')}"`
-      );
+      throw new ForbiddenError(`Package scope required, legal scopes: "${allowScopes.join(', ')}"`);
     }
     if (!allowScopes.includes(scope)) {
-      throw new ForbiddenError(
-        `Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`
-      );
+      throw new ForbiddenError(`Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`);
     }
   }
 

@@ -22,10 +22,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   describe('[GET /-/v1/search] search()', async () => {
     it('should throw 451 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
-      await app
-        .httpRequest()
-        .get('/-/v1/search?text=example&from=0&size=1')
-        .expect(451);
+      await app.httpRequest().get('/-/v1/search?text=example&from=0&size=1').expect(451);
     });
 
     it('should get example package', async () => {
@@ -53,11 +50,9 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
               ],
             },
           };
-        }
+        },
       );
-      const res = await app
-        .httpRequest()
-        .get('/-/v1/search?text=example&from=0&size=1');
+      const res = await app.httpRequest().get('/-/v1/search?text=example&from=0&size=1');
       assert.equal(res.body.objects[0].package.name, 'example');
       assert.equal(res.body.total, 1);
     });
@@ -87,7 +82,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
               ],
             },
           };
-        }
+        },
       );
       const res = await app.httpRequest().get('/-/v1/search?from=0&size=1');
       assert.equal(res.body.objects[0].package.name, 'example');
@@ -112,7 +107,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
           return {
             _id: name,
           };
-        }
+        },
       );
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       mock(app.config.cnpmcore, 'registry', 'https://registry.example.com');
@@ -139,11 +134,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
     });
     it('should throw 451 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
-      await app
-        .httpRequest()
-        .delete('/-/v1/search/sync/example')
-        .set('authorization', admin.authorization)
-        .expect(451);
+      await app.httpRequest().delete('/-/v1/search/sync/example').set('authorization', admin.authorization).expect(451);
     });
 
     it('should delete a example package', async () => {
@@ -157,16 +148,13 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
           return {
             _id: name,
           };
-        }
+        },
       );
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       mock(app.config.cnpmcore, 'enableElasticsearch', true);
       mock(app.config.cnpmcore, 'registry', 'https://registry.example.com');
 
-      const res = await app
-        .httpRequest()
-        .delete(`/-/v1/search/sync/${name}`)
-        .set('authorization', admin.authorization);
+      const res = await app.httpRequest().delete(`/-/v1/search/sync/${name}`).set('authorization', admin.authorization);
       assert.equal(res.body.package, name);
     });
 
@@ -198,16 +186,13 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
               aborted: true,
             },
           });
-        }
+        },
       );
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       mock(app.config.cnpmcore, 'enableElasticsearch', true);
       mock(app.config.cnpmcore, 'registry', 'https://registry.example.com');
 
-      const res = await app
-        .httpRequest()
-        .delete(`/-/v1/search/sync/${name}`)
-        .set('authorization', admin.authorization);
+      const res = await app.httpRequest().delete(`/-/v1/search/sync/${name}`).set('authorization', admin.authorization);
       assert.equal(res.body.package, name);
     });
   });

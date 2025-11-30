@@ -1,7 +1,7 @@
 import { performance } from 'node:perf_hooks';
 
-import { Advice, type AdviceContext, type IAdvice } from 'egg/aop';
 import { Inject, Logger } from 'egg';
+import { Advice, type AdviceContext, type IAdvice } from 'egg/aop';
 
 const START = Symbol('AsyncTimer#start');
 const SUCCEED = Symbol('AsyncTimer#succeed');
@@ -23,12 +23,6 @@ export class AsyncTimer implements IAdvice {
 
   async afterFinally(ctx: AdviceContext) {
     const ms = Math.floor((performance.now() - ctx.get(START)) * 1000) / 1000;
-    this.logger.info(
-      '[%s] [%s:%s|%s]',
-      ms,
-      ctx.that.constructor.name,
-      ctx.method,
-      ctx.get(SUCCEED) ? 'T' : 'F'
-    );
+    this.logger.info('[%s] [%s:%s|%s]', ms, ctx.that.constructor.name, ctx.method, ctx.get(SUCCEED) ? 'T' : 'F');
   }
 }

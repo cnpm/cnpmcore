@@ -15,18 +15,9 @@ describe('test/common/FileUtil.test.ts', () => {
       assert.equal(mimeLookup('/.jshintignore'), 'text/plain');
       assert.equal(mimeLookup('/.eslintignore'), 'text/plain');
       assert.equal(mimeLookup('/.eslintrc'), 'application/json');
-      assert.equal(
-        mimeLookup('/docs/_plugins/markdown.rb'),
-        'application/octet-stream'
-      );
-      assert.equal(
-        mimeLookup('/docs/static/less/pouchdb/anchors.less'),
-        'text/less'
-      );
-      assert.equal(
-        mimeLookup('/docs/static/less/pouchdb/anchors.css'),
-        'text/css'
-      );
+      assert.equal(mimeLookup('/docs/_plugins/markdown.rb'), 'application/octet-stream');
+      assert.equal(mimeLookup('/docs/static/less/pouchdb/anchors.less'), 'text/less');
+      assert.equal(mimeLookup('/docs/static/less/pouchdb/anchors.css'), 'text/css');
       assert.equal(mimeLookup('/foo/bar.xml'), 'text/plain');
       assert.equal(mimeLookup('/foo/bar.html'), 'text/plain');
       assert.equal(mimeLookup('/favicon.ico'), 'image/vnd.microsoft.icon');

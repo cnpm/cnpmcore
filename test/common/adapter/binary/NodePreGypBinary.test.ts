@@ -55,9 +55,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
 
     it('should fetch grpc-tools', async () => {
       app.mockHttpclient('https://registry.npmjs.com/grpc-tools', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.com/grpc-tools.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/grpc-tools.json'),
       });
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
@@ -100,9 +98,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
 
     it('should fetch nodegit', async () => {
       app.mockHttpclient('https://registry.npmjs.com/nodegit', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.com/nodegit.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/nodegit.json'),
       });
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
@@ -121,7 +117,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert.ok(item.size === '-');
           assert.ok(
             item.url ===
-              'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.27.0-node-v64-linux-x64.tar.gz'
+              'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.27.0-node-v64-linux-x64.tar.gz',
           );
           matchFile1 = true;
         }
@@ -130,7 +126,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert.ok(item.size === '-');
           assert.ok(
             item.url ===
-              'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.25.0-node-v64-darwin-x64.tar.gz'
+              'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.25.0-node-v64-darwin-x64.tar.gz',
           );
           matchFile2 = true;
         }
@@ -139,7 +135,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert.ok(item.size === '-');
           assert.ok(
             item.url ===
-              'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.26.0-node-v57-win32-x64.tar.gz'
+              'https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.26.0-node-v57-win32-x64.tar.gz',
           );
           matchFile3 = true;
         }
@@ -185,28 +181,19 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
         if (item.name === 'linux-arm64.tar.gz') {
           assert.ok(item.date === '2021-01-10T15:43:35.384Z');
           assert.ok(item.size === '-');
-          assert.ok(
-            item.url ===
-              'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/linux-arm64.tar.gz'
-          );
+          assert.ok(item.url === 'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/linux-arm64.tar.gz');
           matchFile1 = true;
         }
         if (item.name === 'linux-x64.tar.gz') {
           assert.ok(item.date === '2021-01-10T15:43:35.384Z');
           assert.ok(item.size === '-');
-          assert.ok(
-            item.url ===
-              'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/linux-x64.tar.gz'
-          );
+          assert.ok(item.url === 'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/linux-x64.tar.gz');
           matchFile2 = true;
         }
         if (item.name === 'darwin-x64.tar.gz') {
           assert.ok(item.date === '2021-01-10T15:43:35.384Z');
           assert.ok(item.size === '-');
-          assert.ok(
-            item.url ===
-              'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/darwin-x64.tar.gz'
-          );
+          assert.ok(item.url === 'https://node-webrtc.s3.amazonaws.com/wrtc/v0.4.7/Release/darwin-x64.tar.gz');
           matchFile3 = true;
         }
       }
@@ -217,9 +204,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
 
     it('should fetch libpg-query', async () => {
       app.mockHttpclient('https://registry.npmjs.com/libpg-query', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.com/libpg-query.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/libpg-query.json'),
       });
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
@@ -240,7 +225,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert.ok(item.size === '-');
           assert.equal(
             item.url,
-            'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-darwin-arm64.tar.gz'
+            'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-darwin-arm64.tar.gz',
           );
           matchFile1 = true;
         }
@@ -249,7 +234,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert.ok(item.size === '-');
           assert.equal(
             item.url,
-            'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-darwin-x64.tar.gz'
+            'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-darwin-x64.tar.gz',
           );
           matchFile2 = true;
         }
@@ -258,7 +243,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert.ok(item.size === '-');
           assert.equal(
             item.url,
-            'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-linux-arm.tar.gz'
+            'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-linux-arm.tar.gz',
           );
           matchFile3 = true;
         }
@@ -267,7 +252,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert.ok(item.size === '-');
           assert.equal(
             item.url,
-            'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-linux-x64.tar.gz'
+            'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.2.1-node-v108-linux-x64.tar.gz',
           );
           matchFile4 = true;
         }
@@ -276,7 +261,7 @@ describe('test/common/adapter/binary/NodePreGypBinary.test.ts', () => {
           assert.equal(item.size, '-');
           assert.equal(
             item.url,
-            'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.3.1-node-v93-darwin-arm64.tar.gz'
+            'https://supabase-public-artifacts-bucket.s3.amazonaws.com/libpg-query-node/queryparser-v13.3.1-node-v93-darwin-arm64.tar.gz',
           );
           matchFile5 = true;
         }

@@ -1,12 +1,7 @@
 import { SingletonProto } from 'egg';
 
 import { BinaryType } from '../../enum/Binary.ts';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Sqlcipher)
@@ -22,8 +17,7 @@ export class SqlcipherBinary extends AbstractBinary {
     } = {
       '/': [],
     };
-    const s3Url =
-      'https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher';
+    const s3Url = 'https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher';
     const pkgUrl = 'https://registry.npmjs.com/@journeyapps/sqlcipher';
     const data = await this.requestJSON(pkgUrl);
     // https://github.com/journeyapps/node-sqlcipher/blob/master/.circleci/config.yml#L407
@@ -42,21 +36,13 @@ export class SqlcipherBinary extends AbstractBinary {
     // https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher/v5.3.0/napi-v6-win32-ia32.tar.gz
     // https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher/v5.3.0/napi-v3-win32-x64.tar.gz
     // https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher/v5.3.0/napi-v6-win32-x64.tar.gz
-    const nodePlatformAndArchs = [
-      'linux-x64',
-      'darwin-x64',
-      'darwin-arm64',
-      'win32-x64',
-      'win32-arm64',
-      'win32-ia32',
-    ];
+    const nodePlatformAndArchs = ['linux-x64', 'darwin-x64', 'darwin-arm64', 'win32-x64', 'win32-arm64', 'win32-ia32'];
     for (const version in data.versions) {
       const major = Number.parseInt(version.split('.', 1)[0]);
       if (major < 5) continue;
       // >= 5.0.0
       const pkgVersion = data.versions[version];
-      const napiVersions =
-        (pkgVersion.binary && pkgVersion.binary.napi_versions) || [];
+      const napiVersions = (pkgVersion.binary && pkgVersion.binary.napi_versions) || [];
       const date = data.time[version];
       dirItems['/'].push({
         name: `v${version}/`,

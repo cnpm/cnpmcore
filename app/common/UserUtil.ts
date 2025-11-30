@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
-import base from 'base-x';
+
 import { crc32 } from '@node-rs/crc32';
+import base from 'base-x';
 import { checkData, create } from 'ssri';
 import UAParser from 'ua-parser-js';
 
@@ -29,8 +30,7 @@ export function checkToken(token: string, prefix: string): boolean {
 }
 
 export function integrity(plain: string): string {
-  return create().update(plain).digest()
-    .toString();
+  return create().update(plain).digest().toString();
 }
 
 export function checkIntegrity(plain: string, expectedIntegrity: string): boolean {

@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
-import { HookManageService } from '../../../../app/core/service/HookManageService.ts';
-import type { Hook } from '../../../../app/core/entity/Hook.ts';
-import { UserRepository } from '../../../../app/repository/UserRepository.ts';
 import { HookType } from '../../../../app/common/enum/Hook.ts';
+import type { Hook } from '../../../../app/core/entity/Hook.ts';
+import { HookManageService } from '../../../../app/core/service/HookManageService.ts';
+import { UserRepository } from '../../../../app/repository/UserRepository.ts';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/hook/HookController.test.ts', () => {
   let hookManageService: HookManageService;

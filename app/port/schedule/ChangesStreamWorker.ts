@@ -1,9 +1,5 @@
-import {
-  Schedule,
-  ScheduleType,
-  type IntervalParams,
-} from 'egg/schedule';
 import { Inject, Config, Logger } from 'egg';
+import { Schedule, ScheduleType, type IntervalParams } from 'egg/schedule';
 
 import type { ChangesStreamService } from '../../core/service/ChangesStreamService.ts';
 
@@ -24,11 +20,7 @@ export class ChangesStreamWorker {
   private readonly logger: Logger;
 
   async subscribe() {
-    if (
-      this.config.cnpmcore.syncMode === 'none' ||
-      !this.config.cnpmcore.enableChangesStream
-    )
-      return;
+    if (this.config.cnpmcore.syncMode === 'none' || !this.config.cnpmcore.enableChangesStream) return;
     const task = await this.changesStreamService.findExecuteTask();
     if (!task) return;
     this.logger.info('[ChangesStreamWorker:start] taskId: %s', task.taskId);

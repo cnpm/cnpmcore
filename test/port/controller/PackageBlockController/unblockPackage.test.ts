@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import { type TestUser, TestUtil } from '../../../../test/TestUtil.ts';
@@ -75,10 +76,7 @@ describe('test/port/controller/PackageBlockController/unblockPackage.test.ts', (
         .delete(`/-/package/${pkg.name}/blocks`)
         .set('authorization', adminUser.authorization);
       assert.ok(res.status === 403);
-      assert.ok(
-        res.body.error ===
-          '[FORBIDDEN] Can\'t unblock private package "@cnpm/testmodule"'
-      );
+      assert.ok(res.body.error === '[FORBIDDEN] Can\'t unblock private package "@cnpm/testmodule"');
     });
 
     it('should 403 when user is not admin', async () => {

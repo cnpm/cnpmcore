@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.ts';
-import { BugVersionService } from '../../../../app/core/service/BugVersionService.ts';
 import { BugVersion } from '../../../../app/core/entity/BugVersion.ts';
+import { BugVersionService } from '../../../../app/core/service/BugVersionService.ts';
 import { AbbreviatedPackageJSONType } from '../../../../app/repository/PackageRepository.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', () => {
   let bugVersionService: BugVersionService;
@@ -17,8 +17,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
       faker: {
         '6.6.6': {
           version: '5.5.3',
-          reason:
-            'Please use https://github.com/MilosPaunovic/community-faker instead',
+          reason: 'Please use https://github.com/MilosPaunovic/community-faker instead',
         },
       },
       colors: {
@@ -53,8 +52,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
           'eslint-config-google': '^0.11.0',
         },
         dist: {
-          integrity:
-            'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
+          integrity: 'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
           shasum: 'c50491479d4c1bdaed2c9ced32cf7c7dc2360f78',
           tarball: 'https://registry.npmjs.org/colors/-/colors-1.4.0.tgz',
           fileCount: 21,
@@ -91,7 +89,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
     await bugVersionService.fixPackageBugVersions(
       bugVersion,
       'colors',
-      manifests as unknown as Record<string, AbbreviatedPackageJSONType>
+      manifests as unknown as Record<string, AbbreviatedPackageJSONType>,
     );
     assert.deepStrictEqual(manifests, {
       '1.4.0': {
@@ -102,8 +100,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
           'eslint-config-google': '^0.11.0',
         },
         dist: {
-          integrity:
-            'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
+          integrity: 'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
           shasum: 'c50491479d4c1bdaed2c9ced32cf7c7dc2360f78',
           tarball: 'https://registry.npmjs.org/colors/-/colors-1.4.0.tgz',
           fileCount: 21,
@@ -118,15 +115,13 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
       '1.4.2': {
         name: 'colors',
         version: '1.4.2',
-        deprecated:
-          '[WARNING] Use 1.4.0 instead of 1.4.2, reason: https://github.com/Marak/colors.js/issues/289',
+        deprecated: '[WARNING] Use 1.4.0 instead of 1.4.2, reason: https://github.com/Marak/colors.js/issues/289',
         devDependencies: {
           eslint: '^5.2.0',
           'eslint-config-google': '^0.11.0',
         },
         dist: {
-          integrity:
-            'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
+          integrity: 'sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==',
           shasum: 'c50491479d4c1bdaed2c9ced32cf7c7dc2360f78',
           tarball: 'https://registry.npmjs.org/colors/-/colors-1.4.0.tgz',
           fileCount: 21,

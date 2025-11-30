@@ -1,13 +1,14 @@
 import assert from 'node:assert';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../TestUtil.ts';
-import { ProxyCacheService } from '../../../app/core/service/ProxyCacheService.ts';
-import { ProxyCacheRepository } from '../../../app/repository/ProxyCacheRepository.ts';
-import { DIST_NAMES } from '../../../app/core/entity/Package.ts';
 import { NFSAdapter } from '../../../app/common/adapter/NFSAdapter.ts';
+import { DIST_NAMES } from '../../../app/core/entity/Package.ts';
 import { ProxyCache } from '../../../app/core/entity/ProxyCache.ts';
+import { ProxyCacheService } from '../../../app/core/service/ProxyCacheService.ts';
 import { TaskService } from '../../../app/core/service/TaskService.ts';
+import { ProxyCacheRepository } from '../../../app/repository/ProxyCacheRepository.ts';
+import { TestUtil } from '../../TestUtil.ts';
 
 describe('test/core/service/ProxyCacheService/index.test.ts', () => {
   let proxyCacheService: ProxyCacheService;
@@ -23,10 +24,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       const name = 'cnpmcore-test-sync-blocklist';
       mock(app.config.cnpmcore, 'syncPackageBlockList', [name]);
       try {
-        await proxyCacheService.getPackageVersionTarResponse(
-          name,
-          app.mockContext()
-        );
+        await proxyCacheService.getPackageVersionTarResponse(name, app.mockContext());
       } catch (error) {
         assert.ok(error.options.message.includes('block list'));
       }
@@ -38,10 +36,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       mock(proxyCacheService, 'getRewrittenManifest', async () => {
         return { name: 'mock info' };
       });
-      const manifest = await proxyCacheService.getPackageManifest(
-        'foo',
-        DIST_NAMES.FULL_MANIFESTS
-      );
+      const manifest = await proxyCacheService.getPackageManifest('foo', DIST_NAMES.FULL_MANIFESTS);
       assert.equal(manifest.name, 'mock info');
     });
 
@@ -54,15 +49,12 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
         ProxyCache.create({
           fullname: 'foo',
           fileType: DIST_NAMES.FULL_MANIFESTS,
-        })
+        }),
       );
       mock(nfsAdapter, 'getBytes', async () => {
         return Buffer.from('{"name": "nfs mock info"}');
       });
-      const manifest = await proxyCacheService.getPackageManifest(
-        'foo',
-        DIST_NAMES.FULL_MANIFESTS
-      );
+      const manifest = await proxyCacheService.getPackageManifest('foo', DIST_NAMES.FULL_MANIFESTS);
       assert.equal(manifest.name, 'nfs mock info');
     });
   });
@@ -72,11 +64,7 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       mock(proxyCacheService, 'getRewrittenManifest', async () => {
         return { name: 'mock package version info' };
       });
-      const manifest = await proxyCacheService.getPackageVersionManifest(
-        'foo',
-        DIST_NAMES.MANIFEST,
-        '1.0.0'
-      );
+      const manifest = await proxyCacheService.getPackageVersionManifest('foo', DIST_NAMES.MANIFEST, '1.0.0');
       assert.equal(manifest.name, 'mock package version info');
     });
 
@@ -90,42 +78,33 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           fullname: 'foo',
           fileType: DIST_NAMES.MANIFEST,
           version: '1.0.0',
-        })
+        }),
       );
       mock(nfsAdapter, 'getBytes', async () => {
         return Buffer.from('{"name": "package version nfs mock info"}');
       });
-      const manifest = await proxyCacheService.getPackageVersionManifest(
-        'foo',
-        DIST_NAMES.MANIFEST,
-        '1.0.0'
-      );
+      const manifest = await proxyCacheService.getPackageVersionManifest('foo', DIST_NAMES.MANIFEST, '1.0.0');
       assert.equal(manifest.name, 'package version nfs mock info');
     });
 
     it('should get correct verison via tag and cache the pkg manifest', async () => {
       app.mockHttpclient('https://registry.npmjs.org/foobar/latest', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.org/foobar/1.0.0/abbreviated.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/1.0.0/abbreviated.json'),
         persist: false,
       });
 
       mock(proxyCacheService, 'getUpstreamAbbreviatedManifests', async () => {
         return {
           status: 200,
-          data: await TestUtil.readJSONFile(
-            TestUtil.getFixtures('registry.npmjs.org/abbreviated_foobar.json')
-          ),
+          data: await TestUtil.readJSONFile(TestUtil.getFixtures('registry.npmjs.org/abbreviated_foobar.json')),
         };
       });
       // get manifest by http
-      const pkgVersionManifest =
-        await proxyCacheService.getPackageVersionManifest(
-          'foobar',
-          DIST_NAMES.MANIFEST,
-          'latest'
-        );
+      const pkgVersionManifest = await proxyCacheService.getPackageVersionManifest(
+        'foobar',
+        DIST_NAMES.MANIFEST,
+        'latest',
+      );
       assert.ok(pkgVersionManifest);
       assert.equal(pkgVersionManifest.version, '1.0.0');
     });
@@ -138,33 +117,22 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
           fullname: 'foo-bar',
           fileType: DIST_NAMES.ABBREVIATED,
           version: '1.0.0',
-        })
+        }),
       );
 
-      await proxyCacheService.removeProxyCache(
-        'foobar',
-        DIST_NAMES.ABBREVIATED,
-        '1.0.0'
-      );
+      await proxyCacheService.removeProxyCache('foobar', DIST_NAMES.ABBREVIATED, '1.0.0');
 
-      const resultAfter = await proxyCacheRepository.findProxyCache(
-        'foobar',
-        DIST_NAMES.ABBREVIATED,
-        '1.0.0'
-      );
+      const resultAfter = await proxyCacheRepository.findProxyCache('foobar', DIST_NAMES.ABBREVIATED, '1.0.0');
       assert.equal(resultAfter, undefined);
     });
   });
 
   describe('createTask(), findExecuteTask()', () => {
     it('should create task, and can be found.', async () => {
-      const task = await proxyCacheService.createTask(
-        `foobar/${DIST_NAMES.FULL_MANIFESTS}`,
-        {
-          fullname: 'foo',
-          fileType: DIST_NAMES.FULL_MANIFESTS,
-        }
-      );
+      const task = await proxyCacheService.createTask(`foobar/${DIST_NAMES.FULL_MANIFESTS}`, {
+        fullname: 'foo',
+        fileType: DIST_NAMES.FULL_MANIFESTS,
+      });
       assert.ok(task);
       assert.equal(task.targetName, `foobar/${DIST_NAMES.FULL_MANIFESTS}`);
       const task2 = await proxyCacheService.findExecuteTask();
@@ -173,13 +141,10 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
 
     it('should be 500 when file type is package version manifest.', async () => {
       try {
-        await proxyCacheService.createTask(
-          `foobar/${DIST_NAMES.FULL_MANIFESTS}`,
-          {
-            fullname: 'foo',
-            fileType: DIST_NAMES.MANIFEST,
-          }
-        );
+        await proxyCacheService.createTask(`foobar/${DIST_NAMES.FULL_MANIFESTS}`, {
+          fullname: 'foo',
+          fileType: DIST_NAMES.MANIFEST,
+        });
       } catch (error) {
         assert.equal(error.status, 500);
       }
@@ -189,13 +154,10 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
   describe('executeTask()', () => {
     it('should throw not found error', async () => {
       const taskService = await app.getEggObject(TaskService);
-      const task = await proxyCacheService.createTask(
-        `foobar/${DIST_NAMES.FULL_MANIFESTS}`,
-        {
-          fullname: 'foo',
-          fileType: DIST_NAMES.FULL_MANIFESTS,
-        }
-      );
+      const task = await proxyCacheService.createTask(`foobar/${DIST_NAMES.FULL_MANIFESTS}`, {
+        fullname: 'foo',
+        fileType: DIST_NAMES.FULL_MANIFESTS,
+      });
       await proxyCacheService.executeTask(task);
       const stream = await taskService.findTaskLog(task);
       assert.ok(stream);
@@ -209,20 +171,15 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
         ProxyCache.create({
           fullname: 'foobar',
           fileType: DIST_NAMES.FULL_MANIFESTS,
-        })
+        }),
       );
-      const task = await proxyCacheService.createTask(
-        `foobar/${DIST_NAMES.FULL_MANIFESTS}`,
-        {
-          fullname: 'foobar',
-          fileType: DIST_NAMES.FULL_MANIFESTS,
-        }
-      );
+      const task = await proxyCacheService.createTask(`foobar/${DIST_NAMES.FULL_MANIFESTS}`, {
+        fullname: 'foobar',
+        fileType: DIST_NAMES.FULL_MANIFESTS,
+      });
       mock(proxyCacheService, 'getPackageVersionManifest', async () => ({
         status: 200,
-        data: await TestUtil.readJSONFile(
-          TestUtil.getFixtures('registry.npmjs.org/foobar.json')
-        ),
+        data: await TestUtil.readJSONFile(TestUtil.getFixtures('registry.npmjs.org/foobar.json')),
       }));
       await proxyCacheService.executeTask(task);
       const stream = await taskService.findTaskLog(task);

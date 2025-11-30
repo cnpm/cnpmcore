@@ -1,21 +1,19 @@
 import assert from 'node:assert';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { SyncMode } from '../../app/common/constants.ts';
-import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository.ts';
-import { ProxyCache } from '../../app/core/entity/ProxyCache.ts';
-import { DIST_NAMES } from '../../app/core/entity/Package.ts';
-import { TaskService } from '../../app/core/service/TaskService.ts';
 import { TaskType } from '../../app/common/enum/Task.ts';
+import { DIST_NAMES } from '../../app/core/entity/Package.ts';
+import { ProxyCache } from '../../app/core/entity/ProxyCache.ts';
+import { TaskService } from '../../app/core/service/TaskService.ts';
+import { ProxyCacheRepository } from '../../app/repository/ProxyCacheRepository.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CheckProxyCacheUpdateWorkerPath = path.join(
-  __dirname,
-  '../../app/port/schedule/CheckProxyCacheUpdateWorker.ts'
-);
+const CheckProxyCacheUpdateWorkerPath = path.join(__dirname, '../../app/port/schedule/CheckProxyCacheUpdateWorker.ts');
 
 describe('test/schedule/CheckProxyCacheUpdateWorker.test.ts', () => {
   it('should create update task by repo', async () => {
@@ -27,7 +25,7 @@ describe('test/schedule/CheckProxyCacheUpdateWorker.test.ts', () => {
       ProxyCache.create({
         fullname: 'foo-bar',
         fileType: DIST_NAMES.FULL_MANIFESTS,
-      })
+      }),
     );
     await app.runSchedule(CheckProxyCacheUpdateWorkerPath);
     const task = await taskService.findExecuteTask(TaskType.UpdateProxyCache);

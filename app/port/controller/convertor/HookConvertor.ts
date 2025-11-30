@@ -1,7 +1,7 @@
+import type { HookType } from '../../../common/enum/Hook.ts';
 import type { Hook } from '../../../core/entity/Hook.ts';
 import type { TriggerHookTask } from '../../../core/entity/Task.ts';
 import type { User } from '../../../core/entity/User.ts';
-import type { HookType } from '../../../common/enum/Hook.ts';
 
 export interface HookVo {
   id: string;
@@ -35,11 +35,7 @@ export interface DeleteHookVo {
 }
 
 export class HookConvertor {
-  static convertToHookVo(
-    hook: Hook,
-    user: User,
-    task?: TriggerHookTask | null | undefined
-  ): HookVo {
+  static convertToHookVo(hook: Hook, user: User, task?: TriggerHookTask | null | undefined): HookVo {
     return {
       id: hook.hookId,
       username: user.name,
@@ -56,11 +52,7 @@ export class HookConvertor {
     };
   }
 
-  static convertToDeleteHookVo(
-    hook: Hook,
-    user: User,
-    task?: TriggerHookTask | null
-  ): DeleteHookVo {
+  static convertToDeleteHookVo(hook: Hook, user: User, task?: TriggerHookTask | null): DeleteHookVo {
     const vo = HookConvertor.convertToHookVo(hook, user, task);
     return Object.assign(vo, {
       deleted: true,

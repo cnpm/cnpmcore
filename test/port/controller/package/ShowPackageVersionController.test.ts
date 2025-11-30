@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
+import { SyncMode } from '../../../../app/common/constants.ts';
 import { BugVersion } from '../../../../app/core/entity/BugVersion.ts';
 import { BugVersionService } from '../../../../app/core/service/BugVersionService.ts';
-import { SyncMode } from '../../../../app/common/constants.ts';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/package/ShowPackageVersionController.test.ts', () => {
   let publisher: TestUser;
@@ -38,19 +38,13 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.body.name, 'foo');
       assert.match(res.body.dist.tarball, /^http:\/\//);
       assert.ok(res.body.dist.tarball.endsWith('/foo/-/foo-1.0.0.tgz'));
-      assert.equal(
-        res.body.dist.shasum,
-        'fa475605f88bab9b1127833633ca3ae0a477224c'
-      );
+      assert.equal(res.body.dist.shasum, 'fa475605f88bab9b1127833633ca3ae0a477224c');
       assert.equal(
         res.body.dist.integrity,
-        'sha512-n+4CQg0Rp1Qo0p9a0R5E5io67T9iD3Lcgg6exmpmt0s8kd4XcOoHu2kiu6U7xd69cGq0efkNGWUBP229ObfRSA=='
+        'sha512-n+4CQg0Rp1Qo0p9a0R5E5io67T9iD3Lcgg6exmpmt0s8kd4XcOoHu2kiu6U7xd69cGq0efkNGWUBP229ObfRSA==',
       );
       assert.equal(res.body.dist.size, 251);
-      assert.equal(
-        res.body.description,
-        'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻'
-      );
+      assert.equal(res.body.description, 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻');
 
       // support semver spec
       await app.httpRequest().get('/foo/%5E1.0').expect(200);
@@ -60,10 +54,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       // not support alias
       await app.httpRequest().get('/alias-a-pkg/npm:foo@^1.0').expect(422);
 
-      await app
-        .httpRequest()
-        .get('/npm/@babel%2fhelper-compilation-targets ')
-        .expect(422);
+      await app.httpRequest().get('/npm/@babel%2fhelper-compilation-targets ').expect(422);
     });
 
     it('should fix bug version', async () => {
@@ -131,13 +122,8 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
 
-      assert.ok(
-        new URL(res.body.dist.tarball).pathname === '/foo/-/foo-1.0.0.tgz'
-      );
-      assert.ok(
-        res.body.deprecated ===
-          '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason'
-      );
+      assert.ok(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-1.0.0.tgz');
+      assert.ok(res.body.deprecated === '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
       // don't change version
       assert.ok(res.body.version === '2.0.0');
 
@@ -148,9 +134,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
 
-      assert.ok(
-        new URL(res.body.dist.tarball).pathname === '/foo/-/foo-3.0.0.tgz'
-      );
+      assert.ok(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-3.0.0.tgz');
       assert.ok(!res.body.deprecated);
       assert.ok(res.body.version === '3.0.0');
 
@@ -160,9 +144,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .get(`/${pkgV1.name}/2.0.0?cache=0`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
-      assert.ok(
-        new URL(res.body.dist.tarball).pathname === '/foo/-/foo-2.0.0.tgz'
-      );
+      assert.ok(new URL(res.body.dist.tarball).pathname === '/foo/-/foo-2.0.0.tgz');
       assert.ok(!res.body.deprecated);
       assert.ok(res.body.version === '2.0.0');
     });
@@ -196,7 +178,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .httpRequest()
         .get('/@cnpm/foo/1.0.0')
         .expect(200)
-        .expect(res => {
+        .expect((res) => {
           assert.ok(res.body);
         });
     });
@@ -271,10 +253,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       res = await app.httpRequest().get(`/${pkg.name}/beta-not-exists`);
       assert.equal(res.status, 404);
       assert.ok(!res.headers.etag);
-      assert.equal(
-        res.body.error,
-        `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`
-      );
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`);
     });
 
     it('should 404 when version not exists', async () => {
@@ -293,72 +272,43 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
 
-      let res = await app
-        .httpRequest()
-        .get(`/${pkg.name}/1.0.40000404`)
-        .expect(404);
+      let res = await app.httpRequest().get(`/${pkg.name}/1.0.40000404`).expect(404);
       assert.ok(!res.headers.etag);
-      assert.equal(
-        res.body.error,
-        `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`
-      );
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
 
       // should 404 on syncMode=all when package exists
       mock(app.config.cnpmcore, 'syncMode', 'all');
-      res = await app
-        .httpRequest()
-        .get(`/${pkg.name}/1.0.40000404`)
-        .expect(404);
+      res = await app.httpRequest().get(`/${pkg.name}/1.0.40000404`).expect(404);
       assert.ok(!res.headers.etag);
-      assert.ok(
-        res.body.error === `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`
-      );
+      assert.ok(res.body.error === `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
     });
 
     it('should 404 when package not exists', async () => {
-      const res = await app
-        .httpRequest()
-        .get('/@cnpm/foonot-exists/1.0.40000404')
-        .expect(404);
+      const res = await app.httpRequest().get('/@cnpm/foonot-exists/1.0.40000404').expect(404);
       assert.ok(!res.headers.etag);
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
 
     it('should not redirect public package version to source registry when syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
-      let res = await app
-        .httpRequest()
-        .get('/foonot-not-exists/1.0.40000404')
-        .expect(404);
+      let res = await app.httpRequest().get('/foonot-not-exists/1.0.40000404').expect(404);
       assert.ok(res.body.error === '[NOT_FOUND] foonot-not-exists not found');
 
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       await TestUtil.createPackage({ name: 'foo-exists', isPrivate: false });
-      res = await app
-        .httpRequest()
-        .get('/foo-exists/1.0.40000404?t=123')
-        .expect(404);
-      assert.equal(
-        res.body.error,
-        '[NOT_FOUND] foo-exists@1.0.40000404 not found'
-      );
+      res = await app.httpRequest().get('/foo-exists/1.0.40000404?t=123').expect(404);
+      assert.equal(res.body.error, '[NOT_FOUND] foo-exists@1.0.40000404 not found');
     });
 
     it('should not redirect private scope package to source registry when syncMode=all', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'all');
-      const res = await app
-        .httpRequest()
-        .get('/@cnpm/foonot-exists/1.0.40000404')
-        .expect(404);
+      const res = await app.httpRequest().get('/@cnpm/foonot-exists/1.0.40000404').expect(404);
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
 
     it('should not redirect private scope package to source registry when syncMode=none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
-      const res = await app
-        .httpRequest()
-        .get('/@cnpm/foonot-exists/1.0.40000404')
-        .expect(404);
+      const res = await app.httpRequest().get('/@cnpm/foonot-exists/1.0.40000404').expect(404);
       assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists not found');
     });
 
@@ -367,20 +317,12 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       let res = await app.httpRequest().get('/@egg/foonot-exists/1.0.40000404');
       assert.ok(res.status === 302);
       assert.ok(!res.headers.etag);
-      assert.ok(
-        res.headers.location ===
-          'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404'
-      );
+      assert.ok(res.headers.location === 'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404');
 
-      res = await app
-        .httpRequest()
-        .get('/@egg/foonot-exists/1.0.40000404?t=123');
+      res = await app.httpRequest().get('/@egg/foonot-exists/1.0.40000404?t=123');
       assert.ok(res.status === 302);
       assert.ok(!res.headers.etag);
-      assert.ok(
-        res.headers.location ===
-          'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404?t=123'
-      );
+      assert.ok(res.headers.location === 'https://registry.npmjs.org/@egg/foonot-exists/1.0.40000404?t=123');
     });
 
     it('should redirect public non scope package to source registry when syncMode=none', async () => {
@@ -388,19 +330,13 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       await app
         .httpRequest()
         .get('/foonot-exists/1.0.40000404')
-        .expect(
-          'location',
-          'https://registry.npmjs.org/foonot-exists/1.0.40000404'
-        )
+        .expect('location', 'https://registry.npmjs.org/foonot-exists/1.0.40000404')
         .expect(302);
 
       await app
         .httpRequest()
         .get('/foonot-exists/1.0.40000404?t=123')
-        .expect(
-          'location',
-          'https://registry.npmjs.org/foonot-exists/1.0.40000404?t=123'
-        )
+        .expect('location', 'https://registry.npmjs.org/foonot-exists/1.0.40000404?t=123')
         .expect(302);
     });
 
@@ -424,7 +360,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       mock(app.config.cnpmcore, 'syncMode', SyncMode.proxy);
       mock(app.config.cnpmcore, 'redirectNotFound', false);
       const data = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('registry.npmjs.org/foobar/1.0.0/abbreviated.json')
+        TestUtil.getFixtures('registry.npmjs.org/foobar/1.0.0/abbreviated.json'),
       );
       app.mockHttpclient('https://registry.npmjs.org/foobar/1.0.0', 'GET', {
         data,

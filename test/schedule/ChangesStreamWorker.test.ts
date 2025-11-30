@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { ChangesStreamService } from '../../app/core/service/ChangesStreamService.ts';
@@ -10,10 +11,7 @@ import { TestUtil } from '../../test/TestUtil.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const ChangesStreamWorkerPath = path.join(
-  __dirname,
-  '../../app/port/schedule/ChangesStreamWorker.ts'
-);
+const ChangesStreamWorkerPath = path.join(__dirname, '../../app/port/schedule/ChangesStreamWorker.ts');
 
 describe('test/schedule/ChangesStreamWorker.test.ts', () => {
   let changesStreamService: ChangesStreamService;
@@ -53,9 +51,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     // mock no changed after 10 mins
     const existsTask = await Task.findOne({ type: 'changes_stream' });
     assert.ok(existsTask);
-    existsTask.updatedAt = new Date(
-      existsTask.updatedAt.getTime() - 60_000 * 10 - 1
-    );
+    existsTask.updatedAt = new Date(existsTask.updatedAt.getTime() - 60_000 * 10 - 1);
     await existsTask.save();
     const result = await taskService.retryExecuteTimeoutTasks();
     assert.ok(result.processing === 1);
@@ -98,9 +94,7 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     // mock no changed after 10 mins
     const existsTask = await Task.findOne({ type: 'changes_stream' });
     assert.ok(existsTask);
-    existsTask.updatedAt = new Date(
-      existsTask.updatedAt.getTime() - 60_000 * 10 - 1
-    );
+    existsTask.updatedAt = new Date(existsTask.updatedAt.getTime() - 60_000 * 10 - 1);
     await existsTask.save();
     const result = await taskService.retryExecuteTimeoutTasks();
     assert.ok(result.processing === 1);

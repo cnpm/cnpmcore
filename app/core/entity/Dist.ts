@@ -1,5 +1,5 @@
-import { Entity, type EntityData } from './Entity.ts';
 import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import { Entity, type EntityData } from './Entity.ts';
 
 interface DistData extends EntityData {
   distId: string;

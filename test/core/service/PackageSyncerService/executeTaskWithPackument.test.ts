@@ -1,26 +1,27 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { getScopeAndName } from '../../../../app/common/PackageUtil.ts';
-import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.ts';
 import { NFSAdapter } from '../../../../app/common/adapter/NFSAdapter.ts';
 import { NPMRegistry } from '../../../../app/common/adapter/NPMRegistry.ts';
-import { Package as PackageModel } from '../../../../app/repository/model/Package.ts';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
+import { TaskState } from '../../../../app/common/enum/Task.ts';
+import { getScopeAndName } from '../../../../app/common/PackageUtil.ts';
+import type { Registry } from '../../../../app/core/entity/Registry.ts';
+import { Task as TaskEntity } from '../../../../app/core/entity/Task.ts';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.ts';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.ts';
+import { TaskService } from '../../../../app/core/service/TaskService.ts';
+import { UserService } from '../../../../app/core/service/UserService.ts';
+import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.ts';
+import { Package as PackageModel } from '../../../../app/repository/model/Package.ts';
+import { PackageVersion } from '../../../../app/repository/model/PackageVersion.ts';
+import { Task as TaskModel } from '../../../../app/repository/model/Task.ts';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
 import { PackageVersionRepository } from '../../../../app/repository/PackageVersionRepository.ts';
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.ts';
-import { PackageVersion } from '../../../../app/repository/model/PackageVersion.ts';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
-import { RegistryType } from '../../../../app/common/enum/Registry.ts';
-import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.ts';
-import { Task as TaskEntity } from '../../../../app/core/entity/Task.ts';
-import { Task as TaskModel } from '../../../../app/repository/model/Task.ts';
-import { TaskService } from '../../../../app/core/service/TaskService.ts';
-import { TaskState } from '../../../../app/common/enum/Task.ts';
 import { TestUtil } from '../../../../test/TestUtil.ts';
-import { UserService } from '../../../../app/core/service/UserService.ts';
-import type { Registry } from '../../../../app/core/entity/Registry.ts';
 
 describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.ts', () => {
   let packageSyncerService: PackageSyncerService;
@@ -51,26 +52,14 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         persist: false,
         repeats: 2,
       });
-      app.mockHttpclient(
-        'https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
+        persist: false,
+      });
       await packageSyncerService.createTask('foobar', {
         skipDependencies: true,
       });
@@ -93,19 +82,12 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
       await packageSyncerService.executeTask(task);
-      const manifests = await packageManagerService.listPackageFullManifests(
-        '',
-        'foobar'
-      );
+      const manifests = await packageManagerService.listPackageFullManifests('', 'foobar');
       // console.log(JSON.stringify(manifests, null, 2));
       // should have 2 maintainers
       assert.ok(manifests.data?.maintainers);
       assert.ok(manifests.data.maintainers.length > 0);
-      const abbreviatedManifests =
-        await packageManagerService.listPackageAbbreviatedManifests(
-          '',
-          'foobar'
-        );
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', 'foobar');
       // console.log(JSON.stringify(abbreviatedManifests, null, 2));
       assert.ok(abbreviatedManifests.data);
       assert.equal(abbreviatedManifests.data.name, manifests.data.name);
@@ -118,28 +100,16 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         persist: false,
         repeats: 2,
       });
-      app.mockHttpclient(
-        'https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-          repeats: 2,
-        }
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'
-          ),
-          persist: false,
-          repeats: 2,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+        repeats: 2,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
+        persist: false,
+        repeats: 2,
+      });
       await packageSyncerService.createTask('foobar', {
         skipDependencies: true,
       });
@@ -168,26 +138,14 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
         persist: false,
       });
-      app.mockHttpclient(
-        'https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
+        persist: false,
+      });
       mock(app.config.cnpmcore, 'taskQueueHighWaterSize', 2);
       await packageSyncerService.createTask('foobar', {
         skipDependencies: false,
@@ -216,24 +174,14 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
     });
 
     it('should execute @node-rs/xxhash task, contains optionalDependencies', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/%40node-rs%2Fxxhash',
-        'GET',
-        {
-          data: '{"_id":"@node-rs/xxhash","_rev":"12-c16041461d207648f8785b03ff497026","name":"@node-rs/xxhash","dist-tags":{"latest":"1.2.1","depracated":"1.1.2"},"versions":{"1.0.0":{"name":"@node-rs/xxhash","version":"1.0.0","description":"Fastest xxhash implementation in Node.js","keywords":["hash","xxhash","xxhashjs","Rust","node-rs","napi","napi-rs","N-API","Node-API"],"author":{"name":"LongYinan","email":"lynweklm@gmail.com"},"homepage":"https://github.com/napi-rs/node-rs","license":"MIT","main":"index.js","typings":"index.d.ts","napi":{"name":"xxhash","triples":{"defaults":true,"additional":["i686-pc-windows-msvc","x86_64-unknown-linux-musl","aarch64-unknown-linux-gnu","armv7-unknown-linux-gnueabihf","aarch64-apple-darwin","aarch64-linux-android","x86_64-unknown-freebsd","aarch64-unknown-linux-musl","aarch64-pc-windows-msvc"]}},"engines":{"node":">= 12"},"publishConfig":{"registry":"https://registry.npmjs.org/","access":"public"},"repository":{"type":"git","url":"git+https://github.com/napi-rs/node-rs.git"},"scripts":{"artifacts":"napi artifacts -d ../../artifacts","bench":"cross-env NODE_ENV=production node benchmark/xxhash.js","build":"napi build --platform --release","build:debug":"napi build --platform","prepublishOnly":"napi prepublish","version":"napi version"},"dependencies":{"@node-rs/helper":"^1.2.1","@node-rs/xxhash-win32-x64-msvc":"1.0.0","@node-rs/xxhash-darwin-x64":"1.0.0","@node-rs/xxhash-linux-x64-gnu":"1.0.0","@node-rs/xxhash-win32-ia32-msvc":"1.0.0","@node-rs/xxhash-linux-x64-musl":"1.0.0","@node-rs/xxhash-linux-arm64-gnu":"1.0.0","@node-rs/xxhash-linux-arm-gnueabihf":"1.0.0","@node-rs/xxhash-darwin-arm64":"1.0.0","@node-rs/xxhash-android-arm64":"1.0.0","@node-rs/xxhash-freebsd-x64":"1.0.0","@node-rs/xxhash-linux-arm64-musl":"1.0.0","@node-rs/xxhash-win32-arm64-msvc":"1.0.0"},"devDependencies":{"@types/xxhashjs":"^0.2.2","webpack":"^5.59.1","xxhash":"^0.3.0","xxhashjs":"^0.2.2"},"funding":{"type":"github","url":"https://github.com/sponsors/Brooooooklyn"},"gitHead":"dd157413b2c918c5d29c0d47071606bfabbddb64","optionalDependencies":{"@node-rs/xxhash-win32-x64-msvc":"1.0.0","@node-rs/xxhash-darwin-x64":"1.0.0","@node-rs/xxhash-linux-x64-gnu":"1.0.0","@node-rs/xxhash-win32-ia32-msvc":"1.0.0","@node-rs/xxhash-linux-x64-musl":"1.0.0","@node-rs/xxhash-linux-arm64-gnu":"1.0.0","@node-rs/xxhash-linux-arm-gnueabihf":"1.0.0","@node-rs/xxhash-darwin-arm64":"1.0.0","@node-rs/xxhash-android-arm64":"1.0.0","@node-rs/xxhash-freebsd-x64":"1.0.0","@node-rs/xxhash-linux-arm64-musl":"1.0.0","@node-rs/xxhash-win32-arm64-msvc":"1.0.0"},"_id":"@node-rs/xxhash@1.0.0","_nodeVersion":"14.18.1","_npmVersion":"lerna/4.0.0/node@v14.18.1+x64 (linux)","dist":{"integrity":"sha512-wVhbJT3QumfE7zlMLAZoAllaUufN5r3ia8vatKaqcG/Bau9SdFmcZpo8IuWDfSX+Jqyh9dViSRpUYChrVUvyFw==","shasum":"8c9a8c3be47b82de1a5cb42b2d38f652520bf73c","tarball":"https://registry.npmjs.org/@node-rs/xxhash/-/xxhash-1.0.0.tgz","fileCount":5,"unpackedSize":10143,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEUCIQD+Dksaw6q6YpTDITfpfAwI15qCuQT84NvQKOpMqq4ZdQIgHvVlZ7+kJk4gzGM7hD10eILXlpOfqQa6Z6NZtcOvX+M="}]},"_npmUser":{"name":"broooooklyn","email":"lynweklm@gmail.com"},"directories":{},"maintainers":[{"name":"broooooklyn","email":"lynweklm@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/xxhash_1.0.0_1634889276349_0.690262990489863"},"_hasShrinkwrap":false}},"time":{"created":"2021-10-22T07:54:36.303Z","1.0.0":"2021-10-22T07:54:36.493Z","modified":"2022-05-14T10:40:20.461Z"},"maintainers":[{"name":"dxd_sjtu","email":"dxd_sjtu@outlook.com"},{"name":"broooooklyn","email":"lynweklm@gmail.com"}],"description":"Fastest xxhash implementation in Node.js","homepage":"https://github.com/napi-rs/node-rs","keywords":["hash","xxhash","xxhashjs","Rust","node-rs","napi","napi-rs","N-API","Node-API"],"repository":{"type":"git","url":"git+https://github.com/napi-rs/node-rs.git"},"author":{"name":"LongYinan","email":"lynweklm@gmail.com"},"bugs":{"url":"https://github.com/napi-rs/node-rs/issues"},"license":"MIT","readme":"mock readme","readmeFilename":"README.md"}',
-          persist: false,
-        }
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/@node-rs/xxhash/-/xxhash-1.0.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/%40node-rs%2Fxxhash', 'GET', {
+        data: '{"_id":"@node-rs/xxhash","_rev":"12-c16041461d207648f8785b03ff497026","name":"@node-rs/xxhash","dist-tags":{"latest":"1.2.1","depracated":"1.1.2"},"versions":{"1.0.0":{"name":"@node-rs/xxhash","version":"1.0.0","description":"Fastest xxhash implementation in Node.js","keywords":["hash","xxhash","xxhashjs","Rust","node-rs","napi","napi-rs","N-API","Node-API"],"author":{"name":"LongYinan","email":"lynweklm@gmail.com"},"homepage":"https://github.com/napi-rs/node-rs","license":"MIT","main":"index.js","typings":"index.d.ts","napi":{"name":"xxhash","triples":{"defaults":true,"additional":["i686-pc-windows-msvc","x86_64-unknown-linux-musl","aarch64-unknown-linux-gnu","armv7-unknown-linux-gnueabihf","aarch64-apple-darwin","aarch64-linux-android","x86_64-unknown-freebsd","aarch64-unknown-linux-musl","aarch64-pc-windows-msvc"]}},"engines":{"node":">= 12"},"publishConfig":{"registry":"https://registry.npmjs.org/","access":"public"},"repository":{"type":"git","url":"git+https://github.com/napi-rs/node-rs.git"},"scripts":{"artifacts":"napi artifacts -d ../../artifacts","bench":"cross-env NODE_ENV=production node benchmark/xxhash.js","build":"napi build --platform --release","build:debug":"napi build --platform","prepublishOnly":"napi prepublish","version":"napi version"},"dependencies":{"@node-rs/helper":"^1.2.1","@node-rs/xxhash-win32-x64-msvc":"1.0.0","@node-rs/xxhash-darwin-x64":"1.0.0","@node-rs/xxhash-linux-x64-gnu":"1.0.0","@node-rs/xxhash-win32-ia32-msvc":"1.0.0","@node-rs/xxhash-linux-x64-musl":"1.0.0","@node-rs/xxhash-linux-arm64-gnu":"1.0.0","@node-rs/xxhash-linux-arm-gnueabihf":"1.0.0","@node-rs/xxhash-darwin-arm64":"1.0.0","@node-rs/xxhash-android-arm64":"1.0.0","@node-rs/xxhash-freebsd-x64":"1.0.0","@node-rs/xxhash-linux-arm64-musl":"1.0.0","@node-rs/xxhash-win32-arm64-msvc":"1.0.0"},"devDependencies":{"@types/xxhashjs":"^0.2.2","webpack":"^5.59.1","xxhash":"^0.3.0","xxhashjs":"^0.2.2"},"funding":{"type":"github","url":"https://github.com/sponsors/Brooooooklyn"},"gitHead":"dd157413b2c918c5d29c0d47071606bfabbddb64","optionalDependencies":{"@node-rs/xxhash-win32-x64-msvc":"1.0.0","@node-rs/xxhash-darwin-x64":"1.0.0","@node-rs/xxhash-linux-x64-gnu":"1.0.0","@node-rs/xxhash-win32-ia32-msvc":"1.0.0","@node-rs/xxhash-linux-x64-musl":"1.0.0","@node-rs/xxhash-linux-arm64-gnu":"1.0.0","@node-rs/xxhash-linux-arm-gnueabihf":"1.0.0","@node-rs/xxhash-darwin-arm64":"1.0.0","@node-rs/xxhash-android-arm64":"1.0.0","@node-rs/xxhash-freebsd-x64":"1.0.0","@node-rs/xxhash-linux-arm64-musl":"1.0.0","@node-rs/xxhash-win32-arm64-msvc":"1.0.0"},"_id":"@node-rs/xxhash@1.0.0","_nodeVersion":"14.18.1","_npmVersion":"lerna/4.0.0/node@v14.18.1+x64 (linux)","dist":{"integrity":"sha512-wVhbJT3QumfE7zlMLAZoAllaUufN5r3ia8vatKaqcG/Bau9SdFmcZpo8IuWDfSX+Jqyh9dViSRpUYChrVUvyFw==","shasum":"8c9a8c3be47b82de1a5cb42b2d38f652520bf73c","tarball":"https://registry.npmjs.org/@node-rs/xxhash/-/xxhash-1.0.0.tgz","fileCount":5,"unpackedSize":10143,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEUCIQD+Dksaw6q6YpTDITfpfAwI15qCuQT84NvQKOpMqq4ZdQIgHvVlZ7+kJk4gzGM7hD10eILXlpOfqQa6Z6NZtcOvX+M="}]},"_npmUser":{"name":"broooooklyn","email":"lynweklm@gmail.com"},"directories":{},"maintainers":[{"name":"broooooklyn","email":"lynweklm@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/xxhash_1.0.0_1634889276349_0.690262990489863"},"_hasShrinkwrap":false}},"time":{"created":"2021-10-22T07:54:36.303Z","1.0.0":"2021-10-22T07:54:36.493Z","modified":"2022-05-14T10:40:20.461Z"},"maintainers":[{"name":"dxd_sjtu","email":"dxd_sjtu@outlook.com"},{"name":"broooooklyn","email":"lynweklm@gmail.com"}],"description":"Fastest xxhash implementation in Node.js","homepage":"https://github.com/napi-rs/node-rs","keywords":["hash","xxhash","xxhashjs","Rust","node-rs","napi","napi-rs","N-API","Node-API"],"repository":{"type":"git","url":"git+https://github.com/napi-rs/node-rs.git"},"author":{"name":"LongYinan","email":"lynweklm@gmail.com"},"bugs":{"url":"https://github.com/napi-rs/node-rs/issues"},"license":"MIT","readme":"mock readme","readmeFilename":"README.md"}',
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/@node-rs/xxhash/-/xxhash-1.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
       await packageSyncerService.createTask('@node-rs/xxhash');
       const task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
@@ -241,90 +189,56 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(!(await TaskModel.findOne({ taskId: task.taskId })));
       assert.ok(await HistoryTaskModel.findOne({ taskId: task.taskId }));
 
-      const manifests = await packageManagerService.listPackageFullManifests(
-        '@node-rs',
-        'xxhash'
-      );
+      const manifests = await packageManagerService.listPackageFullManifests('@node-rs', 'xxhash');
       // console.log(JSON.stringify(manifests, null, 2));
       // assert.equal(manifests.data.maintainers.length, 2);
-      const abbreviatedManifests =
-        await packageManagerService.listPackageAbbreviatedManifests(
-          '@node-rs',
-          'xxhash'
-        );
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('@node-rs', 'xxhash');
       // console.log(JSON.stringify(abbreviatedManifests, null, 2));
       assert.ok(abbreviatedManifests.data);
       assert.ok(manifests.data);
       assert.equal(abbreviatedManifests.data.name, manifests.data.name);
       assert.ok(abbreviatedManifests.data.versions['1.0.0']);
-      assert.ok(
-        abbreviatedManifests.data.versions['1.0.0'].optionalDependencies
-      );
+      assert.ok(abbreviatedManifests.data.versions['1.0.0'].optionalDependencies);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should sync cnpmcore-test-sync-deprecated and mock 451', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
       await packageSyncerService.executeTask(task);
-      let manifests = await packageManagerService.listPackageFullManifests(
-        '',
-        name
-      );
+      let manifests = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(manifests.data);
       assert.ok(manifests.data.versions['0.0.0']);
 
-      assert.equal(
-        manifests.data.versions['0.0.0'].deprecated,
-        'only test for cnpmcore'
-      );
+      assert.equal(manifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
-      let abbreviatedManifests =
-        await packageManagerService.listPackageAbbreviatedManifests('', name);
+      let abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
       assert.ok(abbreviatedManifests.data);
       assert.ok(abbreviatedManifests.data.versions['0.0.0']);
-      assert.equal(
-        abbreviatedManifests.data.versions['0.0.0'].deprecated,
-        'only test for cnpmcore'
-      );
-      assert.equal(
-        abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap,
-        false
-      );
+      assert.equal(abbreviatedManifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
+      assert.equal(abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap, false);
       app.mockAgent().assertNoPendingInterceptors();
 
       // mock 451 and unpublished
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          status: 451,
-          data: '{"error":"Not found"}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        status: 451,
+        data: '{"error":"Not found"}',
+        persist: false,
+      });
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
@@ -333,42 +247,28 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
-      );
+      assert.ok(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
 
-      manifests = await packageManagerService.listPackageFullManifests(
-        '',
-        name
-      );
+      manifests = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(manifests.data);
       assert.ok(manifests.data.time.unpublished);
-      abbreviatedManifests =
-        await packageManagerService.listPackageAbbreviatedManifests('', name);
+      abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
       assert.ok(abbreviatedManifests.data);
       assert.ok(abbreviatedManifests.data.time?.unpublished);
       app.mockAgent().assertNoPendingInterceptors();
 
       // sync again
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
@@ -378,95 +278,57 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      manifests = await packageManagerService.listPackageFullManifests(
-        '',
-        name
-      );
+      manifests = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(manifests.data);
       assert.ok(!manifests.data.time.unpublished);
       assert.ok(manifests.data.versions['0.0.0']);
-      assert.equal(
-        manifests.data.versions['0.0.0'].deprecated,
-        'only test for cnpmcore'
-      );
+      assert.equal(manifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
-      abbreviatedManifests =
-        await packageManagerService.listPackageAbbreviatedManifests('', name);
+      abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
       assert.ok(abbreviatedManifests.data);
       assert.ok(!abbreviatedManifests.data.time?.unpublished);
       assert.ok(abbreviatedManifests.data.versions['0.0.0']);
-      assert.equal(
-        abbreviatedManifests.data.versions['0.0.0'].deprecated,
-        'only test for cnpmcore'
-      );
-      assert.equal(
-        abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap,
-        false
-      );
+      assert.equal(abbreviatedManifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
+      assert.equal(abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap, false);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should sync cnpmcore-test-sync-deprecated and ignore 404 in removed', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
       await packageSyncerService.executeTask(task);
-      const manifests = await packageManagerService.listPackageFullManifests(
-        '',
-        name
-      );
+      const manifests = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(manifests.data);
       assert.ok(manifests.data.versions['0.0.0']);
 
-      assert.equal(
-        manifests.data.versions['0.0.0'].deprecated,
-        'only test for cnpmcore'
-      );
+      assert.equal(manifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
       assert.equal(manifests.data.versions['0.0.0']._hasShrinkwrap, false);
-      const abbreviatedManifests =
-        await packageManagerService.listPackageAbbreviatedManifests('', name);
+      const abbreviatedManifests = await packageManagerService.listPackageAbbreviatedManifests('', name);
       assert.ok(abbreviatedManifests.data?.versions['0.0.0']);
-      assert.equal(
-        abbreviatedManifests.data.versions['0.0.0'].deprecated,
-        'only test for cnpmcore'
-      );
-      assert.equal(
-        abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap,
-        false
-      );
+      assert.equal(abbreviatedManifests.data.versions['0.0.0'].deprecated, 'only test for cnpmcore');
+      assert.equal(abbreviatedManifests.data.versions['0.0.0']._hasShrinkwrap, false);
       app.mockAgent().assertNoPendingInterceptors();
 
       // mock 404 and no unpublished
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          status: 404,
-          data: '{"error":"Not found"}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        status: 404,
+        data: '{"error":"Not found"}',
+        persist: false,
+      });
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
@@ -475,23 +337,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        !log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
-      );
+      assert.ok(!log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
       assert.ok(log.includes('Package not found, status 404'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should sync fail when package not exists', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-package-not-exists',
-        'GET',
-        {
-          status: 404,
-          data: '{"error":"Not found"}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-package-not-exists', 'GET', {
+        status: 404,
+        data: '{"error":"Not found"}',
+        persist: false,
+      });
       const name = 'cnpmcore-test-sync-package-not-exists';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
@@ -506,25 +362,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
     });
 
     it('should ignore PositionNotEqualToLength error', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org//foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org//foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const err = {
         name: 'PositionNotEqualToLengthError',
@@ -547,25 +395,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
     });
 
     it('should ignore ObjectNotAppendable error', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const err = {
         name: 'ObjectNotAppendableError',
@@ -588,25 +428,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
     });
 
     it('should sync cnpmcore-test-sync-dependencies => cnpmcore-test-sync-deprecated', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-dependencies',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-dependencies.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-dependencies.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-dependencies/-/cnpmcore-test-sync-dependencies-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       let name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
@@ -618,32 +450,20 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes(
-          '] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '
-        )
-      );
+      assert.ok(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
 
       // will sync cnpmcore-test-sync-deprecated
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
@@ -655,11 +475,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes(
-          'Sync cause by "cnpmcore-test-sync-dependencies" dependencies, parent task: '
-        )
-      );
+      assert.ok(log.includes('Sync cause by "cnpmcore-test-sync-dependencies" dependencies, parent task: '));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -667,25 +483,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       let name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
 
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-dependencies',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-dependencies.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-dependencies.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-dependencies/-/cnpmcore-test-sync-dependencies-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       name = 'cnpmcore-test-sync-dependencies';
       const task = await packageSyncerService.createTask(name);
@@ -696,16 +504,8 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        !log.includes(
-          '] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '
-        )
-      );
-      assert.ok(
-        log.includes(
-          '] 📖 Has dependency "cnpmcore-test-sync-deprecated" sync task: '
-        )
-      );
+      assert.ok(!log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
+      assert.ok(log.includes('] 📖 Has dependency "cnpmcore-test-sync-deprecated" sync task: '));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -713,21 +513,13 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const name = 'resvg-js';
       const task = await packageSyncerService.createTask(name);
       app.mockHttpclient('https://registry.npmjs.org/resvg-js', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.org/resvg-js.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/resvg-js.json'),
         persist: false,
       });
-      app.mockHttpclient(
-        'https://registry.npmjs.org/resvg-js/-/resvg-js-2.4.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/resvg-js/-/resvg-js-2.4.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
       assert.equal(task.targetName, name);
       await packageSyncerService.executeTask(task);
       app.mockAgent().assertNoPendingInterceptors();
@@ -735,11 +527,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes(
-          '] 📦 Add dependency "@resvg/resvg-js-win32-x64-msvc" sync task: '
-        )
-      );
+      assert.ok(log.includes('] 📦 Add dependency "@resvg/resvg-js-win32-x64-msvc" sync task: '));
     });
 
     it('should bring auth token which in registry database.', async () => {
@@ -749,53 +537,35 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         ...registry,
         authToken: testToken,
       });
-      const fullManifests = await TestUtil.readFixturesFile(
-        'registry.npmjs.org/foobar.json'
-      );
-      const tgzBuffer1_0_0 = await TestUtil.readFixturesFile(
-        'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-      );
-      const tgzBuffer1_1_0 = await TestUtil.readFixturesFile(
-        'registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'
-      );
+      const fullManifests = await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json');
+      const tgzBuffer1_0_0 = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz');
+      const tgzBuffer1_1_0 = await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz');
 
       let fullManifestsHeader: Record<string, string> = {};
       let tgzBuffer1_0_0Header: Record<string, string> = {};
       let tgzBuffer1_1_0Header: Record<string, string> = {};
-      app.mockHttpclient(
-        'https://registry.npmjs.org/foobar',
-        'GET',
-        (_, opts) => {
-          fullManifestsHeader = opts.headers as Record<string, string>;
-          return {
-            data: fullManifests,
-            persist: false,
-            repeats: 2,
-          };
-        }
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz',
-        'GET',
-        (_, opts) => {
-          tgzBuffer1_0_0Header = opts.headers as Record<string, string>;
-          return {
-            data: tgzBuffer1_0_0,
-            persist: false,
-          };
-        }
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz',
-        'GET',
-        (_, opts) => {
-          tgzBuffer1_1_0Header = opts.headers as Record<string, string>;
-          return {
-            data: tgzBuffer1_1_0,
-            persist: false,
-          };
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', (_, opts) => {
+        fullManifestsHeader = opts.headers as Record<string, string>;
+        return {
+          data: fullManifests,
+          persist: false,
+          repeats: 2,
+        };
+      });
+      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', (_, opts) => {
+        tgzBuffer1_0_0Header = opts.headers as Record<string, string>;
+        return {
+          data: tgzBuffer1_0_0,
+          persist: false,
+        };
+      });
+      app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', (_, opts) => {
+        tgzBuffer1_1_0Header = opts.headers as Record<string, string>;
+        return {
+          data: tgzBuffer1_1_0,
+          persist: false,
+        };
+      });
       await packageSyncerService.createTask('foobar', {
         skipDependencies: true,
       });
@@ -808,25 +578,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
     });
 
     it('should ignore publish error on sync task', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = 'cnpmcore-test-sync-deprecated';
       mock.error(packageManagerService.constructor.prototype, 'publish');
@@ -838,42 +600,27 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes(
-          '❌ [1] Synced version 0.0.0 error, publish error: MockError: mm mock error'
-        )
-      );
+      assert.ok(log.includes('❌ [1] Synced version 0.0.0 error, publish error: MockError: mm mock error'));
       assert.ok(log.includes('❌ All versions sync fail, package not exists'));
 
-      const res = await app
-        .httpRequest()
-        .get(`/-/package/${name}/syncs/${task.taskId}`)
-        .expect(200);
+      const res = await app.httpRequest().get(`/-/package/${name}/syncs/${task.taskId}`).expect(200);
       assert.equal(res.body.state, 'fail');
       assert.equal(res.body.error, 'publish error: MockError: mm mock error');
       app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should ignore when all version publish ForbiddenError', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = 'cnpmcore-test-sync-deprecated';
       const err = new Error('mock ForbiddenError');
@@ -886,25 +633,15 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const stream = await packageSyncerService.findTaskLog(task);
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      assert.ok(
-        log.includes(
-          '🐛 [1] Synced version 0.0.0 already exists, skip publish, try to set in local manifest'
-        )
-      );
+      assert.ok(log.includes('🐛 [1] Synced version 0.0.0 already exists, skip publish, try to set in local manifest'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should ignore download error error on sync task', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
@@ -913,7 +650,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           data: 'mock request error',
           persist: false,
           repeats: 3,
-        }
+        },
       );
       const name = 'cnpmcore-test-sync-deprecated';
       const task = await packageSyncerService.createTask(name);
@@ -927,42 +664,34 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       // console.log(log);
       assert.ok(
         log.includes(
-          '❌ [1] Synced version 0.0.0 fail, download tarball error: DownloadStatusInvalidError: Download https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz status(500) invalid'
-        )
+          '❌ [1] Synced version 0.0.0 fail, download tarball error: DownloadStatusInvalidError: Download https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz status(500) invalid',
+        ),
       );
       assert.ok(log.includes('❌ All versions sync fail, package not exists'));
     });
 
     describe('sync version idempotence', async () => {
       beforeEach(async () => {
-        app.mockHttpclient(
-          'https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions',
-          'GET',
-          {
-            data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-            persist: false,
-            repeats: 2,
-          }
-        );
+        app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+          persist: false,
+          repeats: 2,
+        });
         app.mockHttpclient(
           'https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz',
           'GET',
           {
-            data: await TestUtil.readFixturesFile(
-              'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-            ),
+            data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
             persist: false,
-          }
+          },
         );
         app.mockHttpclient(
           'https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz',
           'GET',
           {
-            data: await TestUtil.readFixturesFile(
-              'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-            ),
+            data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
             persist: false,
-          }
+          },
         );
       });
 
@@ -985,10 +714,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         // 如果 version publish 同步中断了，没有刷新 manifests，会导致下一次同步重新 version publish，然后报错
         // Avoid: Can't modify pre-existing version: 1.0.0
         const scopedAndName = getScopeAndName(name);
-        const manifests = await packageManagerService.listPackageFullManifests(
-          scopedAndName[0],
-          scopedAndName[1]
-        );
+        const manifests = await packageManagerService.listPackageFullManifests(scopedAndName[0], scopedAndName[1]);
         assert.ok(manifests.data);
         mock(packageVersionRepository, 'findAllVersions', async () => ['2.0.0']);
 
@@ -1008,18 +734,14 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
 
         // mock tag on database but not on manifest dist
         // https://github.com/cnpm/cnpmcore/issues/97
-        app.mockHttpclient(
-          'https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions',
-          'GET',
-          {
-            data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-            persist: false,
-          }
-        );
+        app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+          persist: false,
+        });
         await packageSyncerService.createTask(name);
         task = await packageSyncerService.findExecuteTask();
         assert.ok(task);
-        mock(packageManagerService, 'distTags', async () => ({ 'latest': '2.0.0' }));
+        mock(packageManagerService, 'distTags', async () => ({ latest: '2.0.0' }));
         mock(packageVersionRepository, 'findAllVersions', async () => ['1.0.0', '2.0.0']);
         await packageSyncerService.executeTask(task);
         stream = await packageSyncerService.findTaskLog(task);
@@ -1062,10 +784,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           publishTime: new Date(),
           skipRefreshPackageManifests: false,
         };
-        const pkgVersion = await packageManagerService.publish(
-          publishCmd,
-          user
-        );
+        const pkgVersion = await packageManagerService.publish(publishCmd, user);
         assert.equal(pkgVersion.version, '1.0.0');
 
         const publishCmd2 = {
@@ -1083,10 +802,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           publishTime: new Date(),
           skipRefreshPackageManifests: true,
         };
-        const pkgVersion2 = await packageManagerService.publish(
-          publishCmd2,
-          user
-        );
+        const pkgVersion2 = await packageManagerService.publish(publishCmd2, user);
         assert.equal(pkgVersion2.version, '2.0.0');
 
         mock(packageVersionRepository, 'findAllVersions', async () => ['1.0.0']);
@@ -1099,11 +815,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         assert.match(log, /Synced version 2.0.0 already exists, skip publish, try to set in local manifest/);
         assert.match(log, /] 🚧 Syncing versions 1 => 2/);
 
-        const fullManifests =
-          await packageManagerService.listPackageFullManifests(
-            '@cnpmcore',
-            'test-sync-package-has-two-versions'
-          );
+        const fullManifests = await packageManagerService.listPackageFullManifests(
+          '@cnpmcore',
+          'test-sync-package-has-two-versions',
+        );
         assert.ok(fullManifests.data);
         assert.ok(fullManifests.data.versions['2.0.0']);
       });
@@ -1134,10 +849,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           publishTime: new Date(),
           skipRefreshPackageManifests: false,
         };
-        const pkgVersion = await packageManagerService.publish(
-          publishCmd,
-          user
-        );
+        const pkgVersion = await packageManagerService.publish(publishCmd, user);
         assert.ok(pkgVersion.version === '1.0.0');
 
         await packageSyncerService.createTask(name);
@@ -1149,11 +861,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
         // console.log(log);
-        assert.ok(
-          log.includes(
-            `${name} has been published to the self registry, skip sync ❌❌❌❌❌`
-          )
-        );
+        assert.ok(log.includes(`${name} has been published to the self registry, skip sync ❌❌❌❌❌`));
       });
 
       it('should updated package manifests when version insert duplicated', async () => {
@@ -1186,10 +894,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           publishTime: new Date(),
           skipRefreshPackageManifests: false,
         };
-        const pkgVersion = await packageManagerService.publish(
-          publishCmd,
-          user
-        );
+        const pkgVersion = await packageManagerService.publish(publishCmd, user);
         assert.equal(pkgVersion.version, '1.0.0');
 
         const publishCmd2 = {
@@ -1207,10 +912,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           publishTime: new Date(),
           skipRefreshPackageManifests: true,
         };
-        const pkgVersion2 = await packageManagerService.publish(
-          publishCmd2,
-          user
-        );
+        const pkgVersion2 = await packageManagerService.publish(publishCmd2, user);
         assert.equal(pkgVersion2.version, '2.0.0');
 
         mock(packageVersionRepository, 'findAllVersions', async () => ['1.0.0']);
@@ -1255,10 +957,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           publishTime: new Date(),
           skipRefreshPackageManifests: false,
         };
-        const pkgVersion = await packageManagerService.publish(
-          publishCmd,
-          user
-        );
+        const pkgVersion = await packageManagerService.publish(publishCmd, user);
         assert.ok(pkgVersion.version === '1.0.0');
 
         // 模拟查询未发现版本重复，写入时异常
@@ -1272,9 +971,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         const stream = await packageSyncerService.findTaskLog(task);
         assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert.ok(
-          log.includes(' Synced updated 0 versions, removed 0 versions')
-        );
+        assert.ok(log.includes(' Synced updated 0 versions, removed 0 versions'));
       });
 
       it('should bulk update maintainer dist', async () => {
@@ -1286,20 +983,14 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         assert.equal(task.targetName, name);
         let called = 0;
 
-        mock(
-          packageManagerService,
-          'refreshPackageMaintainersToDists',
-          async () => {
-            called++;
-          }
-        );
+        mock(packageManagerService, 'refreshPackageMaintainersToDists', async () => {
+          called++;
+        });
         await packageSyncerService.executeTask(task);
         const stream = await packageSyncerService.findTaskLog(task);
         assert.ok(stream);
 
-        const finishedTask = (await taskService.findTask(
-          task.taskId
-        )) as TaskEntity;
+        const finishedTask = (await taskService.findTask(task.taskId)) as TaskEntity;
 
         assert.equal(finishedTask.state, TaskState.Success);
         assert.equal(called, 1);
@@ -1318,15 +1009,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes('] 🟢 Synced updated 2 versions, removed 0 versions')
-      );
+      assert.ok(log.includes('] 🟢 Synced updated 2 versions, removed 0 versions'));
       assert.ok(log.includes('] 🚧 Syncing versions 0 => 2'));
 
-      const pkg = await packageRepository.findPackage(
-        '@cnpmcore',
-        'test-sync-package-has-two-versions'
-      );
+      const pkg = await packageRepository.findPackage('@cnpmcore', 'test-sync-package-has-two-versions');
       assert.ok(pkg);
       await packageRepository.removePackageVersions(pkg.packageId);
 
@@ -1339,46 +1025,32 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        !log.includes('] 🟢 Synced updated 0 versions, removed 0 versions')
-      );
-      assert.ok(
-        log.includes('] 🐛 Remote version 1.0.0 not exists on database')
-      );
-      assert.ok(
-        log.includes('] 🐛 Remote version 2.0.0 not exists on database')
-      );
+      assert.ok(!log.includes('] 🟢 Synced updated 0 versions, removed 0 versions'));
+      assert.ok(log.includes('] 🐛 Remote version 1.0.0 not exists on database'));
+      assert.ok(log.includes('] 🐛 Remote version 2.0.0 not exists on database'));
       assert.ok(log.includes('] 🚧 Syncing versions 2 => 2'));
     });
 
     it('should sync removed versions', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions',
-        'GET',
-        {
-          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+        data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       app.mockHttpclient(
         'https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = '@cnpmcore/test-sync-package-has-two-versions';
       await packageSyncerService.createTask(name);
@@ -1393,15 +1065,11 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(log.includes('] 🟢 Synced updated 2 versions'));
       app.mockAgent().assertNoPendingInterceptors();
 
-      app.mockHttpclient(
-        'https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions',
-        'GET',
-        {
-          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-          persist: false,
-          repeats: 2,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+        data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+        persist: false,
+        repeats: 2,
+      });
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
@@ -1413,24 +1081,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       // console.log(log);
       assert.ok(log.includes('removed 1 versions'));
       assert.ok(log.includes('] 🟢 Removed version 1.0.0 success'));
-      const r = await packageManagerService.listPackageFullManifests(
-        '@cnpmcore',
-        'test-sync-package-has-two-versions'
-      );
+      const r = await packageManagerService.listPackageFullManifests('@cnpmcore', 'test-sync-package-has-two-versions');
       assert.ok(r.data);
       assert.equal(Object.keys(r.data.versions).length, 1);
       assert.ok(!r.data.versions['1.0.0'], '1.0.0 should not exists');
     });
 
     it('should work on unpublished package', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/rollup-config-mbp',
-        'GET',
-        {
-          data: '{"_id":"rollup-config-mbp","name":"rollup-config-mbp","time":{"created":"2020-09-25T09:18:36.405Z","0.0.1-alpha.1":"2020-09-25T09:18:36.552Z","modified":"2022-01-14T12:34:32.620Z","unpublished":{"time":"2022-01-14T12:34:32.620Z","versions":["0.0.1-alpha.1"]}}}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/rollup-config-mbp', 'GET', {
+        data: '{"_id":"rollup-config-mbp","name":"rollup-config-mbp","time":{"created":"2020-09-25T09:18:36.405Z","0.0.1-alpha.1":"2020-09-25T09:18:36.552Z","modified":"2022-01-14T12:34:32.620Z","unpublished":{"time":"2022-01-14T12:34:32.620Z","versions":["0.0.1-alpha.1"]}}}',
+        persist: false,
+      });
       let name = 'rollup-config-mbp';
       // ignore unpublished when local package not exists
       await packageSyncerService.createTask(name);
@@ -1441,32 +1102,22 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
-      );
+      assert.ok(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
       let data = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(data.data === null);
 
       // sync unpublished
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
@@ -1485,14 +1136,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(data.data.maintainers);
       app.mockAgent().assertNoPendingInterceptors();
 
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: '{"_id":"cnpmcore-test-sync-deprecated","name":"cnpmcore-test-sync-deprecated","time":{"created":"2020-09-25T09:18:36.405Z","0.0.1-alpha.1":"2020-09-25T09:18:36.552Z","modified":"2022-01-14T12:34:32.620Z","unpublished":{"time":"2022-01-14T12:34:32.620Z","versions":["0.0.1-alpha.1"]}}}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: '{"_id":"cnpmcore-test-sync-deprecated","name":"cnpmcore-test-sync-deprecated","time":{"created":"2020-09-25T09:18:36.405Z","0.0.1-alpha.1":"2020-09-25T09:18:36.552Z","modified":"2022-01-14T12:34:32.620Z","unpublished":{"time":"2022-01-14T12:34:32.620Z","versions":["0.0.1-alpha.1"]}}}',
+        persist: false,
+      });
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
@@ -1501,9 +1148,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
-      );
+      assert.ok(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
       data = await packageManagerService.listPackageFullManifests('', name);
       // console.log(data.data);
       assert.ok(data.data?.time.unpublished);
@@ -1513,28 +1158,20 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
 
     it('should work on mock package.readme is undefined', async () => {
       const pkg = await TestUtil.readJSONFile(
-        TestUtil.getFixtures(
-          'registry.npmjs.org/cnpmcore-test-sync-dependencies.json'
-        )
+        TestUtil.getFixtures('registry.npmjs.org/cnpmcore-test-sync-dependencies.json'),
       );
       delete pkg.readme;
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-dependencies',
-        'GET',
-        {
-          data: JSON.stringify(pkg),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-dependencies', 'GET', {
+        data: JSON.stringify(pkg),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-dependencies/-/cnpmcore-test-sync-dependencies-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = 'cnpmcore-test-sync-dependencies';
       await packageSyncerService.createTask(name);
@@ -1545,37 +1182,24 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes(
-          '] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '
-        )
-      );
-      const { data } = await packageManagerService.listPackageFullManifests(
-        '',
-        name
-      );
+      assert.ok(log.includes('] 📦 Add dependency "cnpmcore-test-sync-deprecated" sync task: '));
+      const { data } = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(data);
       assert.equal(data.readme, '');
     });
 
     it('should ignore package.version.readme exists', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":"mock readme content","readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":"mock readme content","readmeFilename":""}',
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
@@ -1586,38 +1210,25 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes(
-          '] 🔗 https://registry.npmjs.org/cnpmcore-test-sync-deprecated'
-        )
-      );
-      const { data } = await packageManagerService.listPackageFullManifests(
-        '',
-        name
-      );
+      assert.ok(log.includes('] 🔗 https://registry.npmjs.org/cnpmcore-test-sync-deprecated'));
+      const { data } = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(data);
       assert.equal(data.readme, 'mock readme content');
       assert.equal(data.versions['0.0.0']?.readme, undefined);
     });
 
     it('should work on mock package.readme is object', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
@@ -1626,33 +1237,24 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       await packageSyncerService.executeTask(task);
       const stream = await packageSyncerService.findTaskLog(task);
       assert.ok(stream);
-      const data = await packageManagerService.listPackageFullManifests(
-        '',
-        name
-      );
+      const data = await packageManagerService.listPackageFullManifests('', name);
       // convert to empty string
       assert.equal(data.data?.readme, '');
       app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should sync dist-tags change', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
@@ -1664,23 +1266,15 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(log.includes('[1] Synced version 0.0.0 success'));
-      assert.ok(
-        log.includes(
-          '🟢 Synced 1 tags: [{"action":"change","tag":"latest","version":"0.0.0"}]'
-        )
-      );
+      assert.ok(log.includes('🟢 Synced 1 tags: [{"action":"change","tag":"latest","version":"0.0.0"}]'));
       let data = await packageManagerService.listPackageFullManifests('', name);
       assert.deepEqual(data.data?.['dist-tags'], { latest: '0.0.0' });
 
       // update tags, add beta tag
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0","beta":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0","beta":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
+        persist: false,
+      });
 
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
@@ -1691,11 +1285,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(!log.includes('[1] Synced version 0.0.0 success'));
-      assert.ok(
-        log.includes(
-          '🟢 Synced 1 tags: [{"action":"change","tag":"beta","version":"0.0.0"}]'
-        )
-      );
+      assert.ok(log.includes('🟢 Synced 1 tags: [{"action":"change","tag":"beta","version":"0.0.0"}]'));
       data = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(data.data);
       assert.deepEqual(data.data['dist-tags'], {
@@ -1704,14 +1294,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       });
 
       // all tags exists
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0","beta":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0","beta":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
+        persist: false,
+      });
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
@@ -1730,14 +1316,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       });
 
       // sync remove beta tags
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
+        persist: false,
+      });
       await packageSyncerService.createTask(name);
       task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
@@ -1747,9 +1329,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(!log.includes('[1] Synced version 0.0.0 success'));
-      assert.ok(
-        log.includes('Synced 1 tags: [{"action":"remove","tag":"beta"}]')
-      );
+      assert.ok(log.includes('Synced 1 tags: [{"action":"remove","tag":"beta"}]'));
       data = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(data.data);
       assert.deepEqual(data.data['dist-tags'], { latest: '0.0.0' });
@@ -1758,33 +1338,25 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
 
     it('should only sync specific version when strictSyncSpecivicVersion is true.', async () => {
       mock(app.config.cnpmcore, 'strictSyncSpecivicVersion', true);
-      app.mockHttpclient(
-        'https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions',
-        'GET',
-        {
-          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+        data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       app.mockHttpclient(
         'https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = '@cnpmcore/test-sync-package-has-two-versions';
       await packageSyncerService.createTask(name, {
@@ -1803,33 +1375,25 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
 
     // TODO: not support yet
     it.skip('should sync specific versions and latest version.', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions',
-        'GET',
-        {
-          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+        data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       app.mockHttpclient(
         'https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = '@cnpmcore/test-sync-package-has-two-versions';
       await packageSyncerService.createTask(name, {
@@ -1848,23 +1412,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
 
     // TODO: not support yet
     it.skip('should sync specific versions and latest version.', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions',
-        'GET',
-        {
-          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+        data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = '@cnpmcore/test-sync-package-has-two-versions';
       await packageSyncerService.createTask(name, {
@@ -1877,30 +1435,22 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const stream = await packageSyncerService.findTaskLog(task);
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      assert.ok(
-        log.includes('🚧 Some specific versions are not available: 👉 9.99.9')
-      );
+      assert.ok(log.includes('🚧 Some specific versions are not available: 👉 9.99.9'));
     });
 
     it('should not sync nonexistent specific versions in strict mode.', async () => {
       mock(app.config.cnpmcore, 'strictSyncSpecivicVersion', true);
-      app.mockHttpclient(
-        'https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions',
-        'GET',
-        {
-          data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/%40cnpmcore%2Ftest-sync-package-has-two-versions', 'GET', {
+        data: '{"_id":"@cnpmcore/test-sync-package-has-two-versions","_rev":"4-541287ae0a14039fea89ac08fa5ec53d","name":"@cnpmcore/test-sync-package-has-two-versions","dist-tags":{"latest":"2.0.0","next":"2.0.0"},"versions":{"1.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"1.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@1.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-WR0T96H8t7ss1FK8GWPPblx+usbjU4bNGRjMHS9t/oVA5DgJDxitydPSFPeIUtXciyekI7R47do9Lc3GgC4P5A==","shasum":"2ddc6ee93b92be6d64139fb1a631d2610f43e946","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEYCIQDj5Ui2GU8nVmHFk0hCt/i3gPW9eQdOCZgKzpAlkvERwQIhAPZ0NCefLoEfOpnbdKAUr7Ng9Sy6FMnTsDxDaM2dQHNw"}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_1.0.0_1639442699824_0.6948988437963031"},"_hasShrinkwrap":false},"2.0.0":{"name":"@cnpmcore/test-sync-package-has-two-versions","version":"2.0.0","description":"cnpmcore local test package","main":"index.js","scripts":{"test":"echo \\"hello\\""},"author":"","license":"MIT","gitHead":"60cfb1cf401f87a60a1b0dfd7ee739f98ffd7847","_id":"@cnpmcore/test-sync-package-has-two-versions@2.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-qgHLQzXq+VN7q0JWibeBYrqb3Iajl4lpVuxlQstclRz4ejujfDFswBGSXmCv9FyIIdmSAe5bZo0oHQLsod3pAA==","shasum":"891eb8e08ceadbd86e75b6d66f31f7e5a28a8d68","tarball":"https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-2.0.0.tgz","fileCount":2,"unpackedSize":238,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIAWVz7mIHF23Gq4a+Swsj2ZSdn87991HcE1+fQm8shNCAiByOIuhaZAbo9hct24qYf7FWqx6Lyluo+Rpnrn91//Ibg=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/test-sync-package-has-two-versions_2.0.0_1639442732240_0.33204392278137207"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-14T00:44:59.775Z","1.0.0":"2021-12-14T00:44:59.940Z","modified":"2022-05-23T02:33:52.613Z","2.0.0":"2021-12-14T00:45:32.457Z"},"maintainers":[{"email":"killa07071201@gmail.com","name":"killagu"},{"email":"fengmk2@gmail.com","name":"fengmk2"}],"description":"cnpmcore local test package","license":"MIT","readme":"ERROR: No README data found!","readmeFilename":""}',
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/@cnpmcore/test-sync-package-has-two-versions/-/test-sync-package-has-two-versions-1.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       const name = '@cnpmcore/test-sync-package-has-two-versions';
       await packageSyncerService.createTask(name, {
@@ -1913,39 +1463,28 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const stream = await packageSyncerService.findTaskLog(task);
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
-      assert.ok(
-        log.includes('🚧 Some specific versions are not available: 👉 9.99.9')
+      assert.ok(log.includes('🚧 Some specific versions are not available: 👉 9.99.9'));
+      const manifest = await packageManagerService.listPackageAbbreviatedManifests(
+        '@cnpmcore',
+        'test-sync-package-has-two-versions',
       );
-      const manifest =
-        await packageManagerService.listPackageAbbreviatedManifests(
-          '@cnpmcore',
-          'test-sync-package-has-two-versions'
-        );
       assert.ok(manifest.data?.['dist-tags']);
       assert.equal(manifest.data?.['dist-tags'].latest, '1.0.0');
     });
 
     // 有任务积压，不一定能够同步完
     it.skip('should sync sourceRegistryIsCNpm = true && syncUpstreamFirst = true', async () => {
-      app.mockHttpclient(
-        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
@@ -1962,37 +1501,23 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       // console.log(log);
       assert.ok(log.includes(', syncUpstream: true'));
       assert.ok(
-        log.includes(
-          '][UP] 🚧🚧🚧🚧🚧 Waiting sync "cnpmcore-test-sync-deprecated" task on https://r.cnpmjs.org 🚧'
-        )
+        log.includes('][UP] 🚧🚧🚧🚧🚧 Waiting sync "cnpmcore-test-sync-deprecated" task on https://r.cnpmjs.org 🚧'),
       );
-      assert.ok(
-        log.includes(
-          '][UP] 🟢🟢🟢🟢🟢 https://r.cnpmjs.org/cnpmcore-test-sync-deprecated 🟢'
-        )
-      );
+      assert.ok(log.includes('][UP] 🟢🟢🟢🟢🟢 https://r.cnpmjs.org/cnpmcore-test-sync-deprecated 🟢'));
     });
 
     it('should not sync upstream when task queue too high', async () => {
-      app.mockHttpclient(
-        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
@@ -2012,32 +1537,22 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(log.includes(', syncUpstream: false'));
       assert.ok(log.includes(', taskQueue: 1/1'));
       assert.ok(
-        !log.includes(
-          '][UP] 🚧🚧🚧🚧🚧 Waiting sync "cnpmcore-test-sync-deprecated" task on https://r.cnpmjs.org 🚧'
-        )
+        !log.includes('][UP] 🚧🚧🚧🚧🚧 Waiting sync "cnpmcore-test-sync-deprecated" task on https://r.cnpmjs.org 🚧'),
       );
     });
 
     it('should sync sourceRegistryIsCNpm = true && syncUpstreamFirst = false', async () => {
-      app.mockHttpclient(
-        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
@@ -2052,34 +1567,22 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        !log.includes(
-          '][UP] 🟢🟢🟢🟢🟢 https://r.cnpmjs.org/cnpmcore-test-sync-deprecated 🟢'
-        )
-      );
+      assert.ok(!log.includes('][UP] 🟢🟢🟢🟢🟢 https://r.cnpmjs.org/cnpmcore-test-sync-deprecated 🟢'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should sync sourceRegistryIsCNpm = true and mock createSyncTask error', async () => {
-      app.mockHttpclient(
-        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
@@ -2096,32 +1599,22 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(log.includes('🚮 give up 🚮 ❌❌❌❌❌'));
-      assert.ok(
-        log.includes(`][UP] ❌ Sync ${name} fail, create sync task error:`)
-      );
+      assert.ok(log.includes(`][UP] ❌ Sync ${name} fail, create sync task error:`));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should sync sourceRegistryIsCNpm = true and mock createSyncTask return missing logId', async () => {
-      app.mockHttpclient(
-        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
@@ -2146,37 +1639,25 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
     });
 
     it('should sync sourceRegistryIsCNpm = true and mock getSyncTask syncDone = false', async () => {
-      app.mockHttpclient(
-        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
-      app.mockHttpclient(
-        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/sync',
-        'PUT',
-        {
-          data: {
-            ok: true,
-            logId: '633eea1359147b6066fae99f',
-          },
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/sync', 'PUT', {
+        data: {
+          ok: true,
+          logId: '633eea1359147b6066fae99f',
+        },
+        persist: false,
+      });
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
       mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
@@ -2206,17 +1687,13 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
     });
 
     it('should sync sourceRegistryIsCNpm = true and mock sync upstream timeout', async () => {
-      app.mockHttpclient(
-        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/sync',
-        'PUT',
-        {
-          data: {
-            ok: true,
-            logId: '633eea1359147b6066fae99f',
-          },
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/sync', 'PUT', {
+        data: {
+          ok: true,
+          logId: '633eea1359147b6066fae99f',
+        },
+        persist: false,
+      });
       app.mockHttpclient(
         'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/sync/log/633eea1359147b6066fae99f',
         'GET',
@@ -2227,27 +1704,19 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
             log: '',
           },
           persist: true,
-        }
+        },
       );
-      app.mockHttpclient(
-        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
       app.mockHttpclient(
         'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
       mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
@@ -2281,9 +1750,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert.ok(
-        log.includes(`❌ Synced ${name} fail, request manifests error`)
-      );
+      assert.ok(log.includes(`❌ Synced ${name} fail, request manifests error`));
       // retry task
       const task2 = await packageSyncerService.findExecuteTask();
       assert.ok(task2);
@@ -2292,9 +1759,11 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
 
     it('should mock getFullManifestsBuffer invalid maintainers error', async () => {
       mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
-        data: Buffer.from(JSON.stringify({
-          maintainers: [{ name: 'foo' }],
-        })),
+        data: Buffer.from(
+          JSON.stringify({
+            maintainers: [{ name: 'foo' }],
+          }),
+        ),
         res: {},
         headers: {},
       });
@@ -2313,23 +1782,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
     });
 
     it('should try to use latest tag version maintainers instead', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-deprecated',
-        'GET',
-        {
-          data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","readme":"foo readme","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_hasShrinkwrap":false,"deprecated":"only test for cnpmcore"}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[],"license":"ISC","readme":{"foo":"mock readme is object"},"readmeFilename":""}',
+        persist: false,
+      });
       app.mockHttpclient(
         'https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       // https://registry.npmjs.org/postman-jsdoc-theme
       const name = 'cnpmcore-test-sync-deprecated';
@@ -2342,9 +1805,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes('📖 Use the latest version(0.0.0) maintainers instead')
-      );
+      assert.ok(log.includes('📖 Use the latest version(0.0.0) maintainers instead'));
       assert.ok(log.includes('] 🔗'));
       app.mockAgent().assertNoPendingInterceptors();
     });
@@ -2360,11 +1821,9 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         'https://registry.npmjs.org/cnpmcore-test-block-from-upstream/-/cnpmcore-test-block-from-upstream-0.0.0.tgz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       await packageSyncerService.createTask(name);
       let task = await packageSyncerService.findExecuteTask();
@@ -2372,10 +1831,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
 
       const pkg = await packageRepository.findPackage('', name);
       assert.ok(pkg);
-      const pkgVersion = await packageRepository.findPackageVersion(
-        pkg.packageId,
-        '0.0.0'
-      );
+      const pkgVersion = await packageRepository.findPackageVersion(pkg.packageId, '0.0.0');
       assert.equal(pkg.name, name);
       assert.ok(pkgVersion);
 
@@ -2395,9 +1851,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
 
-      assert.ok(
-        log.includes(`] 🟢 Package "${name}" was removed in remote registry`)
-      );
+      assert.ok(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
     });
 
     it('should stop sync by block list', async () => {
@@ -2413,11 +1867,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert.ok(
-        log.includes(
-          '❌ stop sync by block list: ["cnpmcore-test-sync-blocklist","foo"]'
-        )
-      );
+      assert.ok(log.includes('❌ stop sync by block list: ["cnpmcore-test-sync-blocklist","foo"]'));
     });
 
     it('should sync upper case "D" success', async () => {
@@ -2426,15 +1876,11 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/D/-/D-0.0.1.tgz', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       app.mockHttpclient('https://registry.npmjs.org/D/-/D-1.0.0.tgz', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
       });
       const name = 'D';
@@ -2447,9 +1893,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes('🚧🚧🚧🚧🚧 Syncing from https://registry.npmjs.org/D, ')
-      );
+      assert.ok(log.includes('🚧🚧🚧🚧🚧 Syncing from https://registry.npmjs.org/D, '));
       assert.ok(log.includes('🔗'));
       const res = await app
         .httpRequest()
@@ -2459,9 +1903,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const data = res.body;
       assert.ok(data.name === name);
       // assert(data.dist === name);
-      assert.ok(
-        data.versions[data['dist-tags'].latest].dist.tarball.includes('/D/-/D-')
-      );
+      assert.ok(data.versions[data['dist-tags'].latest].dist.tarball.includes('/D/-/D-'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -2470,16 +1912,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         data: '{"_id":"Buffer","_rev":"5-b918bb11193c501a415c51047d6d68c7","name":"Buffer","description":"API-compatible Node.JS Buffer for Ender.js (browser)","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"author":{"name":"AJ ONeal","email":"coolaj86@gmail.com","url":"http://coolaj86.info"},"name":"Buffer","description":"API-compatible Node.JS Buffer for Ender.js (browser)","version":"0.0.0","repository":{"type":"git","url":"git://github.com/coolaj86/browser-buffer.git"},"main":"index.js","engines":{"node":">= 0.2.0"},"dependencies":{},"devDependencies":{},"_npmJsonOpts":{"file":"/Users/coolaj86/.npm/Buffer/0.0.0/package/package.json","wscript":false,"contributors":false,"serverjs":false},"_id":"Buffer@0.0.0","_engineSupported":true,"_npmVersion":"1.0.15","_nodeVersion":"v0.4.8","_defaultsLoaded":true,"dist":{"shasum":"82cf8e986a2109ff6d1d6f1c436e47d07127aea4","tarball":"https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz","integrity":"sha512-+zdncl8lI5TCkARStn9F1BwcuJYofYmD0oEHe5FNfCvGfeDJwf6+dSikCdQN6BMXXmHMhNNUagBN367WST1AIQ==","signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEUCIQDbPvXxxdsc/1aMyduDYXMbRVTFU71ajZ5BztZ3S07ofQIgBy/kpAuBDMIhlfOQW2l2XIq8eMs6BNqjEPXo3CJ5WrE="}]},"scripts":{},"maintainers":[{"name":"coolaj86","email":"coolaj86@gmail.com"}]}},"maintainers":[{"name":"coolaj86","email":"coolaj86@gmail.com"}],"time":{"modified":"2022-06-13T02:13:16.055Z","created":"2011-08-01T20:40:41.355Z","0.0.0":"2011-08-01T20:40:41.710Z"},"author":{"name":"AJ ONeal","email":"coolaj86@gmail.com","url":"http://coolaj86.info"},"repository":{"type":"git","url":"git://github.com/coolaj86/browser-buffer.git"}}',
         persist: false,
       });
-      app.mockHttpclient(
-        'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
       const name = 'Buffer';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
@@ -2490,11 +1926,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(
-        log.includes(
-          '🚧🚧🚧🚧🚧 Syncing from https://registry.npmjs.org/Buffer, '
-        )
-      );
+      assert.ok(log.includes('🚧🚧🚧🚧🚧 Syncing from https://registry.npmjs.org/Buffer, '));
       assert.ok(log.includes('🔗'));
       const res = await app
         .httpRequest()
@@ -2503,36 +1935,20 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
       assert.ok(data.name === name);
-      assert.ok(
-        data.versions[data['dist-tags'].latest].dist.tarball.includes(
-          '/Buffer/-/Buffer-'
-        )
-      );
+      assert.ok(data.versions[data['dist-tags'].latest].dist.tarball.includes('/Buffer/-/Buffer-'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
     // FIXME: not working
     it.skip('should mock security holding package', async () => {
-      app.mockHttpclient(
-        'https://registry.npmjs.org/cnpmcore-test-sync-security-holding-package',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/security-holding-package.json'
-          ),
-          persist: false,
-        }
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/webpack.js.org/-/webpack.js.org-0.0.1-security.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-security-holding-package', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/security-holding-package.json'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/webpack.js.org/-/webpack.js.org-0.0.1-security.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
       const name = 'cnpmcore-test-sync-security-holding-package';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
@@ -2555,19 +1971,21 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       });
       mock.error(NPMRegistry.prototype, 'downloadTarball');
       mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
-        data: Buffer.from(JSON.stringify({
-          maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],
-          versions: {
-            '1.0.0': {
-              version: '1.0.0',
-              dist: { tarball: '' },
+        data: Buffer.from(
+          JSON.stringify({
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],
+            versions: {
+              '1.0.0': {
+                version: '1.0.0',
+                dist: { tarball: '' },
+              },
+              '2.0.0': {
+                version: '2.0.0',
+                dist: { tarball: 'http://foo.com/a.tgz' },
+              },
             },
-            '2.0.0': {
-              version: '2.0.0',
-              dist: { tarball: 'http://foo.com/a.tgz' },
-            },
-          },
-        })),
+          }),
+        ),
         res: {},
         headers: {},
       });
@@ -2582,13 +2000,9 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
-      assert.ok(
-        log.includes('Synced version 1.0.0 fail, missing tarball, dist: ')
-      );
+      assert.ok(log.includes('Synced version 1.0.0 fail, missing tarball, dist: '));
       assert.ok(log.includes('❌ All versions sync fail, package not exists'));
-      assert.ok(
-        log.includes('Synced version 2.0.0 fail, download tarball error')
-      );
+      assert.ok(log.includes('Synced version 2.0.0 fail, download tarball error'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -2620,15 +2034,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         data: 'server error',
       });
       mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
-        data: Buffer.from(JSON.stringify({
-          maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],
-          versions: {
-            '2.0.0': {
-              version: '2.0.0',
-              dist: { tarball: 'http://foo.com/a.tgz' },
+        data: Buffer.from(
+          JSON.stringify({
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],
+            versions: {
+              '2.0.0': {
+                version: '2.0.0',
+                dist: { tarball: 'http://foo.com/a.tgz' },
+              },
             },
-          },
-        })),
+          }),
+        ),
         res: {},
         headers: {},
       });
@@ -2644,55 +2060,34 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       // console.log(log);
       assert.match(log, /❌❌❌❌❌ cnpmcore-test-sync-dependencies ❌❌❌❌❌/);
       assert.match(log, /❌ All versions sync fail, package not exists/);
-      assert.match(log, /Synced version 2.0.0 fail, download tarball error: DownloadStatusInvalidError: Download http:\/\/foo\.com\/a\.tgz status\(500\) invalid/);
+      assert.match(
+        log,
+        /Synced version 2.0.0 fail, download tarball error: DownloadStatusInvalidError: Download http:\/\/foo\.com\/a\.tgz status\(500\) invalid/,
+      );
       app.mockAgent().assertNoPendingInterceptors();
     });
 
     it('should sync download data work on enableSyncDownloadData = true', async () => {
-      mock(
-        app.config.cnpmcore,
-        'syncDownloadDataSourceRegistry',
-        'https://rold.cnpmjs.org'
-      );
+      mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
       mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
       mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
       app.mockHttpclient('https://registry.npmjs.org/pedding', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.org/pedding.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/pedding.json'),
         persist: false,
       });
-      app.mockHttpclient(
-        'https://registry.npmjs.org/pedding/-/pedding-1.0.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/pedding/-/pedding-1.1.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
-      const response = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('downloads.json')
-      );
-      app.mockHttpclient(
-        'https://rold.cnpmjs.org/downloads/range/2011-01-01:2021-12-28/pedding',
-        'GET',
-        {
-          data: response,
-          status: 200,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.1.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('downloads.json'));
+      app.mockHttpclient('https://rold.cnpmjs.org/downloads/range/2011-01-01:2021-12-28/pedding', 'GET', {
+        data: response,
+        status: 200,
+      });
 
       const name = 'pedding';
       await packageSyncerService.createTask(name, { syncDownloadData: true });
@@ -2730,11 +2125,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       // console.log(log);
       assert.ok(log.includes('][DownloadData] 🟢 202110: 31 days'));
       assert.ok(log.includes('][DownloadData] 🟢🟢🟢🟢🟢'));
-      assert.ok(
-        log.includes(
-          `] 🟢🟢🟢🟢🟢 Sync "${name}" download data success 🟢🟢🟢🟢🟢`
-        )
-      );
+      assert.ok(log.includes(`] 🟢🟢🟢🟢🟢 Sync "${name}" download data success 🟢🟢🟢🟢🟢`));
 
       res = await app
         .httpRequest()
@@ -2750,31 +2141,17 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
 
     it('should ignore sync download data work on enableSyncDownloadData = false', async () => {
       app.mockHttpclient('https://registry.npmjs.org/pedding', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.org/pedding.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/pedding.json'),
         persist: false,
       });
-      app.mockHttpclient(
-        'https://registry.npmjs.org/pedding/-/pedding-1.0.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/pedding/-/pedding-1.1.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.1.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
       mock(app.config.cnpmcore, 'enableSyncDownloadData', false);
       const name = 'pedding';
       await packageSyncerService.createTask(name, { syncDownloadData: true });
@@ -2801,36 +2178,18 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
 
     it('should sync download data and mock getDownloadRanges error', async () => {
       app.mockHttpclient('https://registry.npmjs.org/pedding', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.org/pedding.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/pedding.json'),
         persist: false,
       });
-      app.mockHttpclient(
-        'https://registry.npmjs.org/pedding/-/pedding-1.0.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
-      app.mockHttpclient(
-        'https://registry.npmjs.org/pedding/-/pedding-1.1.0.tgz',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
-          persist: false,
-        }
-      );
-      mock(
-        app.config.cnpmcore,
-        'syncDownloadDataSourceRegistry',
-        'https://rold.cnpmjs.org'
-      );
+      app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      app.mockHttpclient('https://registry.npmjs.org/pedding/-/pedding-1.1.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
       mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
       mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
       mock.error(NPMRegistry.prototype, 'getDownloadRanges');
@@ -2846,9 +2205,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(log.includes('][DownloadData] ❌ Get download data error: '));
-      assert.ok(
-        log.includes('][DownloadData] ❌❌❌❌❌ 🚮 give up 🚮 ❌❌❌❌❌')
-      );
+      assert.ok(log.includes('][DownloadData] ❌❌❌❌❌ 🚮 give up 🚮 ❌❌❌❌❌'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -2870,21 +2227,13 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           registryId: registry.registryId,
         });
         app.mockHttpclient('https://custom.npmjs.com/@dnpm/banana', 'GET', {
-          data: await TestUtil.readFixturesFile(
-            'r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'
-          ),
+          data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
           persist: false,
         });
-        app.mockHttpclient(
-          'https://custom.npmjs.com/@dnpm/banana/-/banana-0.0.0.tgz',
-          'GET',
-          {
-            data: await TestUtil.readFixturesFile(
-              'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-            ),
-            persist: false,
-          }
-        );
+        app.mockHttpclient('https://custom.npmjs.com/@dnpm/banana/-/banana-0.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        });
         mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
         mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
         mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
@@ -2920,9 +2269,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         let stream = await packageSyncerService.findTaskLog(task);
         assert.ok(stream);
         let log = await TestUtil.readStreamToLog(stream);
-        assert.ok(
-          log.includes('Syncing from https://custom.npmjs.com/cnpm-pkg')
-        );
+        assert.ok(log.includes('Syncing from https://custom.npmjs.com/cnpm-pkg'));
 
         // default registry
         app.mockHttpclient('https://default.npmjs.org/npm-pkg', 'GET', {
@@ -2932,18 +2279,12 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           repeats: 3,
         });
         task = await packageSyncerService.findExecuteTask();
-        mock(
-          app.config.cnpmcore,
-          'sourceRegistry',
-          'https://default.npmjs.org'
-        );
+        mock(app.config.cnpmcore, 'sourceRegistry', 'https://default.npmjs.org');
         await packageSyncerService.executeTask(task);
         stream = await packageSyncerService.findTaskLog(task);
         assert.ok(stream);
         log = await TestUtil.readStreamToLog(stream);
-        assert.ok(
-          log.includes('Syncing from https://default.npmjs.org/npm-pkg')
-        );
+        assert.ok(log.includes('Syncing from https://default.npmjs.org/npm-pkg'));
         app.mockAgent().assertNoPendingInterceptors();
       });
 
@@ -2957,35 +2298,24 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           },
           {
             name: 'mock_username',
-          }
+          },
         );
 
         // default registry
-        app.mockHttpclient(
-          'https://registry.npmjs.org/@cnpmcore/sync_not_match_registry_name',
-          'GET',
-          {
-            status: 500,
-            data: 'mock default.npmjs.org error',
-            persist: false,
-            repeats: 3,
-          }
-        );
+        app.mockHttpclient('https://registry.npmjs.org/@cnpmcore/sync_not_match_registry_name', 'GET', {
+          status: 500,
+          data: 'mock default.npmjs.org error',
+          persist: false,
+          repeats: 3,
+        });
 
-        await taskService.createTask(
-          TaskEntity.createSyncPackage(pkgName, {}),
-          true
-        );
+        await taskService.createTask(TaskEntity.createSyncPackage(pkgName, {}), true);
         const task = await packageSyncerService.findExecuteTask();
         await packageSyncerService.executeTask(task);
         const stream = await packageSyncerService.findTaskLog(task);
         assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert.ok(
-          log.includes(
-            'Syncing from https://registry.npmjs.org/@cnpmcore/sync_not_match_registry_name'
-          )
-        );
+        assert.ok(log.includes('Syncing from https://registry.npmjs.org/@cnpmcore/sync_not_match_registry_name'));
       });
 
       it('should sync from target registry when pkg.registryId is undefined', async () => {
@@ -2997,7 +2327,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           },
           {
             name: 'mock_username',
-          }
+          },
         );
         await packageSyncerService.createTask(pkgName);
         const task = await packageSyncerService.findExecuteTask();
@@ -3018,9 +2348,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         const stream = await packageSyncerService.findTaskLog(task);
         assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert.ok(
-          log.includes('Syncing from https://custom.npmjs.com/@cnpm/banana')
-        );
+        assert.ok(log.includes('Syncing from https://custom.npmjs.com/@cnpm/banana'));
 
         const pkg = await packageRepository.findPackage('@cnpm', 'banana');
         assert.equal(pkg?.registryId, registry.registryId);
@@ -3047,9 +2375,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         const stream = await packageSyncerService.findTaskLog(task);
         assert.ok(stream);
         const log = await TestUtil.readStreamToLog(stream);
-        assert.ok(
-          log.includes('Syncing from https://custom.npmjs.com/@cnpm/banana')
-        );
+        assert.ok(log.includes('Syncing from https://custom.npmjs.com/@cnpm/banana'));
       });
 
       it('should not sync from target registry if not match', async () => {
@@ -3062,13 +2388,13 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           },
           {
             name: 'mock_username',
-          }
+          },
         );
         await taskService.createTask(
           TaskEntity.createSyncPackage(pkgName, {
             registryId: registry.registryId,
           }),
-          true
+          true,
         );
         const task = await packageSyncerService.findExecuteTask();
         await packageSyncerService.executeTask(task);
@@ -3083,32 +2409,18 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       // already synced pkg
       beforeEach(async () => {
         app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar.json'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
           persist: false,
           repeats: 1,
         });
-        app.mockHttpclient(
-          'https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz',
-          'GET',
-          {
-            data: await TestUtil.readFixturesFile(
-              'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-            ),
-            persist: false,
-          }
-        );
-        app.mockHttpclient(
-          'https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz',
-          'GET',
-          {
-            data: await TestUtil.readFixturesFile(
-              'registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'
-            ),
-            persist: false,
-          }
-        );
+        app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        });
+        app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
+          persist: false,
+        });
         await packageSyncerService.createTask('foobar', {
           skipDependencies: true,
         });
@@ -3123,9 +2435,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         // removed in remote
         mock(app.config.cnpmcore, 'syncDeleteMode', 'ignore');
         app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/unpublished.json'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/unpublished.json'),
         });
         await packageSyncerService.createTask('foobar', {
           skipDependencies: true,
@@ -3153,9 +2463,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         // removed in remote
         mock(app.config.cnpmcore, 'syncDeleteMode', 'block');
         app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/unpublished.json'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/unpublished.json'),
         });
         await packageSyncerService.createTask('foobar', {
           skipDependencies: true,
@@ -3178,10 +2486,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         assert.equal(model.isPrivate, false);
         assert.equal(versions.length, 2, `should have 2 versions, but got versions: ${JSON.stringify(versions)}`);
 
-        const manifests = await packageManagerService.listPackageFullManifests(
-          '',
-          'foobar'
-        );
+        const manifests = await packageManagerService.listPackageFullManifests('', 'foobar');
         assert.equal(manifests.blockReason, 'Removed in remote registry');
         assert.ok(manifests.data);
         assert.equal(manifests.data.block, 'Removed in remote registry');
@@ -3199,9 +2504,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       // won't read all versions, skip this test
       it.skip('unpublish package idempotent', async () => {
         app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/security-holding-package.json'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/security-holding-package.json'),
         });
         await packageSyncerService.createTask('foobar', {
           skipDependencies: true,
@@ -3232,50 +2535,31 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         await packageSyncerService.executeTask(task);
         assert.ok(task);
         const pkg = await packageRepository.findPackage('', 'foobar');
-        app.expectLog(
-          `[packageManagerService.unpublishPackage:skip] ${pkg?.packageId} already unpublished`
-        );
+        app.expectLog(`[packageManagerService.unpublishPackage:skip] ${pkg?.packageId} already unpublished`);
       });
 
       it('should resync history version if forceSyncHistory is true', async () => {
-        const manifest = await TestUtil.readFixturesJSONFile(
-          'registry.npmjs.org/foobar.json'
-        );
+        const manifest = await TestUtil.readFixturesJSONFile('registry.npmjs.org/foobar.json');
         manifest.versions['1.0.0']._npmUser = {
           name: 'apple',
           email: 'apple@cnpmjs.org',
         };
-        manifest.maintainers = [
-          ...manifest.maintainers,
-          { name: 'apple', email: 'apple@cnpmjs.org' },
-        ];
+        manifest.maintainers = [...manifest.maintainers, { name: 'apple', email: 'apple@cnpmjs.org' }];
         app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
           data: manifest,
           persist: false,
           repeats: 1,
         });
-        app.mockHttpclient(
-          'https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz',
-          'GET',
-          {
-            data: await TestUtil.readFixturesFile(
-              'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-            ),
-            persist: false,
-            repeats: 2,
-          }
-        );
-        app.mockHttpclient(
-          'https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz',
-          'GET',
-          {
-            data: await TestUtil.readFixturesFile(
-              'registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'
-            ),
-            persist: false,
-            repeats: 2,
-          }
-        );
+        app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+          repeats: 2,
+        });
+        app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
+          persist: false,
+          repeats: 2,
+        });
         await packageSyncerService.createTask('foobar', {
           skipDependencies: true,
           forceSyncHistory: true,
@@ -3285,10 +2569,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         await packageSyncerService.executeTask(task);
 
         // should sync publisher
-        const syncInfo = await packageManagerService.listPackageFullManifests(
-          '',
-          'foobar'
-        );
+        const syncInfo = await packageManagerService.listPackageFullManifests('', 'foobar');
         assert.equal(syncInfo.data?.versions['1.0.0']?._npmUser?.name, 'apple');
       });
     });
@@ -3296,27 +2577,15 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
     describe('strictValidatePackageDeps = true', async () => {
       // already synced pkg
       beforeEach(async () => {
-        app.mockHttpclient(
-          /^https:\/\/registry\.npmjs\.org\/invalid-deps/,
-          'GET',
-          {
-            data: await TestUtil.readFixturesFile(
-              'registry.npmjs.org/invalid-deps.json'
-            ),
-            persist: false,
-          }
-        );
+        app.mockHttpclient(/^https:\/\/registry\.npmjs\.org\/invalid-deps/, 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/invalid-deps.json'),
+          persist: false,
+        });
 
-        app.mockHttpclient(
-          'https://registry.npmjs.org/invalid-deps/-/invalid-deps-1.0.0.tgz',
-          'GET',
-          {
-            data: await TestUtil.readFixturesFile(
-              'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-            ),
-            persist: false,
-          }
-        );
+        app.mockHttpclient('https://registry.npmjs.org/invalid-deps/-/invalid-deps-1.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        });
       });
 
       it('should not create pkg when invalid deps', async () => {

@@ -41,14 +41,24 @@ export class HookEvent<T = object> {
     this.time = Date.now();
   }
 
-  static createPublishEvent(fullname: string, changeId: string, version: string, distTag?: string): HookEvent<PublishChangePayload> {
+  static createPublishEvent(
+    fullname: string,
+    changeId: string,
+    version: string,
+    distTag?: string,
+  ): HookEvent<PublishChangePayload> {
     return new HookEvent(HookEventType.Publish, changeId, fullname, {
       'dist-tag': distTag,
       version,
     });
   }
 
-  static createUnpublishEvent(fullname: string, changeId: string, version?: string, distTag?: string): HookEvent<UnpublishChangePayload> {
+  static createUnpublishEvent(
+    fullname: string,
+    changeId: string,
+    version?: string,
+    distTag?: string,
+  ): HookEvent<UnpublishChangePayload> {
     return new HookEvent(HookEventType.Unpublish, changeId, fullname, {
       'dist-tag': distTag,
       version,
@@ -79,13 +89,21 @@ export class HookEvent<T = object> {
     });
   }
 
-  static createDeprecatedEvent(fullname: string, changeId: string, deprecated: string): HookEvent<DeprecatedChangePayload> {
+  static createDeprecatedEvent(
+    fullname: string,
+    changeId: string,
+    deprecated: string,
+  ): HookEvent<DeprecatedChangePayload> {
     return new HookEvent(HookEventType.Deprecated, changeId, fullname, {
       deprecated,
     });
   }
 
-  static createUndeprecatedEvent(fullname: string, changeId: string, deprecated: string): HookEvent<DeprecatedChangePayload> {
+  static createUndeprecatedEvent(
+    fullname: string,
+    changeId: string,
+    deprecated: string,
+  ): HookEvent<DeprecatedChangePayload> {
     return new HookEvent(HookEventType.Undeprecated, changeId, fullname, {
       deprecated,
     });

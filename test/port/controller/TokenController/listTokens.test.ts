@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 import dayjs from 'dayjs';
 
@@ -12,21 +13,13 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
     it('should 401', async () => {
       let res = await app.httpRequest().get('/-/npm/v1/tokens').expect(401);
       assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
-      res = await app
-        .httpRequest()
-        .get('/-/npm/v1/tokens')
-        .set('authorization', 'Bearer foo-token')
-        .expect(401);
+      res = await app.httpRequest().get('/-/npm/v1/tokens').set('authorization', 'Bearer foo-token').expect(401);
       assert.equal(res.body.error, '[UNAUTHORIZED] Invalid token');
     });
 
     it('should 200', async () => {
       const { authorization } = await TestUtil.createUser();
-      const res = await app
-        .httpRequest()
-        .get('/-/npm/v1/tokens')
-        .set('authorization', authorization)
-        .expect(200);
+      const res = await app.httpRequest().get('/-/npm/v1/tokens').set('authorization', authorization).expect(200);
       const tokens = res.body.objects;
       assert.equal(tokens.length, 1);
       assert.equal(tokens[0].token.length, 8);
@@ -41,17 +34,9 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
       const { authorization } = await TestUtil.createUser();
       const now = Date.now();
 
-      let res = await app
-        .httpRequest()
-        .get('/-/whoami')
-        .set('authorization', authorization)
-        .expect(200);
+      let res = await app.httpRequest().get('/-/whoami').set('authorization', authorization).expect(200);
 
-      res = await app
-        .httpRequest()
-        .get('/-/npm/v1/tokens')
-        .set('authorization', authorization)
-        .expect(200);
+      res = await app.httpRequest().get('/-/npm/v1/tokens').set('authorization', authorization).expect(200);
 
       const lastUsedAt = res.body.objects[0].lastUsedAt;
       assert.ok(dayjs(lastUsedAt).isAfter(now));
@@ -61,15 +46,8 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
       const { authorization } = await TestUtil.createUser({
         tokenOptions: { readonly: true },
       });
-      const res = await app
-        .httpRequest()
-        .get('/-/npm/v1/tokens')
-        .set('authorization', authorization)
-        .expect(403);
-      assert.match(
-        res.body.error,
-        /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/
-      );
+      const res = await app.httpRequest().get('/-/npm/v1/tokens').set('authorization', authorization).expect(403);
+      assert.match(res.body.error, /\[FORBIDDEN\] Read-only Token "cnpm_\w+" can't setting/);
     });
   });
 
@@ -97,10 +75,7 @@ describe('test/port/controller/TokenController/listTokens.test.ts', () => {
     });
 
     it('should 200', async () => {
-      const res = await app
-        .httpRequest()
-        .get('/-/npm/v1/tokens/gat')
-        .expect(200);
+      const res = await app.httpRequest().get('/-/npm/v1/tokens/gat').expect(200);
 
       assert.equal(res.body.objects.length, 1);
       assert.equal(res.body.objects[0].name, 'good');

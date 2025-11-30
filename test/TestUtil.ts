@@ -1,22 +1,23 @@
+import crypto from 'node:crypto';
+import { mkdtempSync, readFileSync } from 'node:fs';
 // oxlint-disable typescript-eslint/no-explicit-any
 import fs from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import type { Readable } from 'node:stream';
+import { fileURLToPath } from 'node:url';
+
+import { app as globalApp } from '@eggjs/mock/bootstrap';
 // 统一通过 coffee 执行 child_process，获取运行时的一些环境信息
 import coffee from 'coffee';
-import { tmpdir } from 'node:os';
-import { mkdtempSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import type { Readable } from 'node:stream';
 import mysql from 'mysql2/promise';
 import { Client } from 'pg';
-import path from 'node:path';
-import crypto from 'node:crypto';
 import semver from 'semver';
-import { app as globalApp } from '@eggjs/mock/bootstrap';
 
 import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.ts';
+import { Package as PackageModel } from '../app/repository/model/Package.ts';
 import type { PackageJSONType } from '../app/repository/PackageRepository.ts';
 import { DATABASE_TYPE, database } from '../config/database.ts';
-import { Package as PackageModel } from '../app/repository/model/Package.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -140,12 +141,11 @@ export class TestUtil {
         //     { TABLE_NAME: 'webauthn_credentials' }
         // ]
         const rows: { TABLE_NAME: string }[] = await this.query(sql);
-        this.tables = rows.map(row => row.TABLE_NAME);
+        this.tables = rows.map((row) => row.TABLE_NAME);
       } else if (config.type === DATABASE_TYPE.PostgreSQL) {
-        const sql =
-          "SELECT * FROM pg_catalog.pg_tables where schemaname = 'public';";
+        const sql = "SELECT * FROM pg_catalog.pg_tables where schemaname = 'public';";
         const rows: { tablename: string }[] = await this.query(sql);
-        this.tables = rows.map(row => row.tablename);
+        this.tables = rows.map((row) => row.tablename);
       }
     }
     return this.tables;
@@ -156,7 +156,7 @@ export class TestUtil {
     await Promise.all(
       tables.map(async (table: string) => {
         await this.query(`TRUNCATE TABLE ${table};`);
-      })
+      }),
     );
   }
 
@@ -205,7 +205,7 @@ export class TestUtil {
   }
 
   static async getFullPackage(
-    options?: PackageOptions
+    options?: PackageOptions,
   ): Promise<PackageJSONType & { versions: Record<string, PackageJSONType> }> {
     const pkg = await this.readFixturesJSONFile('exampleFullPackage.json');
     if (options) {
@@ -264,10 +264,7 @@ export class TestUtil {
     return pkg;
   }
 
-  static async createPackage(
-    options?: PackageOptions,
-    userOptions?: UserOptions
-  ) {
+  static async createPackage(options?: PackageOptions, userOptions?: UserOptions) {
     const pkg = await this.getFullPackage(options);
     const user = await this.createUser(userOptions);
     const res = await this.app
@@ -282,10 +279,7 @@ export class TestUtil {
 
     if (options?.isPrivate === false) {
       const [scope, name] = getScopeAndName(pkg.name);
-      await PackageModel.update(
-        { scope, name },
-        { isPrivate: false, registryId: options?.registryId }
-      );
+      await PackageModel.update({ scope, name }, { isPrivate: false, registryId: options?.registryId });
     }
     return { user, pkg };
   }
@@ -364,16 +358,12 @@ export class TestUtil {
   static async createRegistryAndScope() {
     // create success
     const adminUser = await this.createAdmin();
-    await this.app
-      .httpRequest()
-      .post('/-/registry')
-      .set('authorization', adminUser.authorization)
-      .send({
-        name: 'custom6',
-        host: 'https://r.cnpmjs.org/',
-        changeStream: 'https://r.cnpmjs.org/_changes',
-        type: 'cnpmcore',
-      });
+    await this.app.httpRequest().post('/-/registry').set('authorization', adminUser.authorization).send({
+      name: 'custom6',
+      host: 'https://r.cnpmjs.org/',
+      changeStream: 'https://r.cnpmjs.org/_changes',
+      type: 'cnpmcore',
+    });
   }
 
   static async readStreamToLog(urlOrStream: any) {

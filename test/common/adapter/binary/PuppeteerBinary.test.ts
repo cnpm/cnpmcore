@@ -12,23 +12,16 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
   });
   describe('fetch()', () => {
     it('should fetch work', async () => {
-      app.mockHttpclient(
-        'https://chromium-browser-snapshots.storage.googleapis.com',
-        url => {
-          if (url.includes('1441468')) {
-            return {
-              data: TestUtil.readFixturesFileSync(
-                'chromium-browser-snapshots.storage.googleapis.com/Linux.xml'
-              ),
-            };
-          }
+      app.mockHttpclient('https://chromium-browser-snapshots.storage.googleapis.com', (url) => {
+        if (url.includes('1441468')) {
           return {
-            data: TestUtil.readFixturesFileSync(
-              'chromium-browser-snapshots.storage.googleapis.com/Linux_end.xml'
-            ),
+            data: TestUtil.readFixturesFileSync('chromium-browser-snapshots.storage.googleapis.com/Linux.xml'),
           };
         }
-      );
+        return {
+          data: TestUtil.readFixturesFileSync('chromium-browser-snapshots.storage.googleapis.com/Linux_end.xml'),
+        };
+      });
 
       let result = await binary.fetch('/', 'chromium-browser-snapshots', {
         Linux_x64: '1441468',
@@ -70,10 +63,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       }
       assert.ok(matchDir);
 
-      result = await binary.fetch(
-        '/Linux_x64/1000015/',
-        'chromium-browser-snapshots'
-      );
+      result = await binary.fetch('/Linux_x64/1000015/', 'chromium-browser-snapshots');
       assert.ok(result);
       assert.ok(result.items.length === 1);
       // console.log(result.items);
@@ -81,10 +71,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert.ok(result.items[0].isDir === false);
       assert.ok(result.items[0].date);
       assert.ok(result.items[0].url);
-      result = await binary.fetch(
-        '/Mac/1000015/',
-        'chromium-browser-snapshots'
-      );
+      result = await binary.fetch('/Mac/1000015/', 'chromium-browser-snapshots');
       assert.ok(result);
       assert.ok(result.items.length === 1);
       // console.log(result.items);
@@ -92,10 +79,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert.ok(result.items[0].isDir === false);
       assert.ok(result.items[0].date);
       assert.ok(result.items[0].url);
-      result = await binary.fetch(
-        '/Mac_Arm/1000015/',
-        'chromium-browser-snapshots'
-      );
+      result = await binary.fetch('/Mac_Arm/1000015/', 'chromium-browser-snapshots');
       assert.ok(result);
       assert.ok(result.items.length === 1);
       // console.log(result.items);
@@ -103,10 +87,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert.ok(result.items[0].isDir === false);
       assert.ok(result.items[0].date);
       assert.ok(result.items[0].url);
-      result = await binary.fetch(
-        '/Win/1000015/',
-        'chromium-browser-snapshots'
-      );
+      result = await binary.fetch('/Win/1000015/', 'chromium-browser-snapshots');
       assert.ok(result);
       assert.ok(result.items.length === 1);
       // console.log(result.items);
@@ -114,10 +95,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert.ok(result.items[0].isDir === false);
       assert.ok(result.items[0].date);
       assert.ok(result.items[0].url);
-      result = await binary.fetch(
-        '/Win_x64/1000015/',
-        'chromium-browser-snapshots'
-      );
+      result = await binary.fetch('/Win_x64/1000015/', 'chromium-browser-snapshots');
       assert.ok(result);
       assert.ok(result.items.length === 1);
       // console.log(result.items);
@@ -126,10 +104,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert.ok(result.items[0].date);
       assert.ok(result.items[0].url);
 
-      result = await binary.fetch(
-        '/Linux_x64/100057/',
-        'chromium-browser-snapshots'
-      );
+      result = await binary.fetch('/Linux_x64/100057/', 'chromium-browser-snapshots');
       assert.ok(result);
       assert.ok(result.items.length === 1);
       // console.log(result.items);
@@ -138,10 +113,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert.ok(result.items[0].date);
       assert.ok(result.items[0].url);
 
-      result = await binary.fetch(
-        '/Linux_x64/1000569/',
-        'chromium-browser-snapshots'
-      );
+      result = await binary.fetch('/Linux_x64/1000569/', 'chromium-browser-snapshots');
       assert.ok(result);
       assert.ok(result.items?.length === 1);
       // console.log(result.items);
@@ -150,10 +122,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert.ok(result.items[0].date);
       assert.ok(result.items[0].url);
 
-      result = await binary.fetch(
-        '/Linux_x64/100056/',
-        'chromium-browser-snapshots'
-      );
+      result = await binary.fetch('/Linux_x64/100056/', 'chromium-browser-snapshots');
       assert.ok(result);
       assert.ok(result.items?.length === 1);
       // console.log(result.items);
@@ -162,10 +131,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert.ok(result.items[0].date);
       assert.ok(result.items[0].url);
 
-      result = await binary.fetch(
-        '/Linux_x64/1000557/',
-        'chromium-browser-snapshots'
-      );
+      result = await binary.fetch('/Linux_x64/1000557/', 'chromium-browser-snapshots');
       assert.ok(result);
       assert.ok(result.items?.length === 1);
       // console.log(result.items);
@@ -174,10 +140,7 @@ describe('test/common/adapter/binary/PuppeteerBinary.test.ts', () => {
       assert.ok(result.items[0].date);
       assert.ok(result.items[0].url);
 
-      result = await binary.fetch(
-        '/Linux_x64/100055/',
-        'chromium-browser-snapshots'
-      );
+      result = await binary.fetch('/Linux_x64/100055/', 'chromium-browser-snapshots');
       assert.ok(result);
       assert.ok(result.items?.length === 1);
       // console.log(result.items);

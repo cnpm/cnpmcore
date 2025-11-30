@@ -4,12 +4,7 @@ import { SingletonProto } from 'egg';
 
 import binaries, { type BinaryName } from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Firefox)
@@ -20,10 +15,7 @@ export class FirefoxBinary extends AbstractBinary {
   }
 
   // Only fetch Firefox versions >= 100.0.0 to avoid too old versions
-  async fetch(
-    dir: string,
-    binaryName: BinaryName
-  ): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const url = `${binaryConfig.distUrl}${dir}`;
     const html = await this.requestXml(url);
@@ -45,14 +37,15 @@ export class FirefoxBinary extends AbstractBinary {
     // Parse Mozilla directory listing format - handles two different formats:
     // Format 1 (main index): <td><a href="/path/">name/</a></td>
     // Format 2 (version dir): <td>Type</td><td><a href="/path/">name</a></td><td>size</td><td>date</td>
-    
+
     // Try the detailed format first (with Type/Size/Date columns)
-    const detailedRe = /<tr>\s*<td>(Dir|File)<\/td>\s*<td><a href="([^"]+?)"[^>]*?>[^<]+?<\/a><\/td>\s*<td>([^<]*?)<\/td>\s*<td>([^<]*?)<\/td>\s*<\/tr>/gi;
+    const detailedRe =
+      /<tr>\s*<td>(Dir|File)<\/td>\s*<td><a href="([^"]+?)"[^>]*?>[^<]+?<\/a><\/td>\s*<td>([^<]*?)<\/td>\s*<td>([^<]*?)<\/td>\s*<\/tr>/gi;
     const detailedMatches = Array.from(html.matchAll(detailedRe));
-    
+
     let matchs: RegExpMatchArray[];
     let useDetailedFormat = false;
-    
+
     if (detailedMatches.length > 0) {
       // Use detailed format
       matchs = detailedMatches;
@@ -62,15 +55,15 @@ export class FirefoxBinary extends AbstractBinary {
       const simpleRe = /<td><a href="([^"]+?)"[^>]*?>[^<]+?<\/a><\/td>/gi;
       matchs = Array.from(html.matchAll(simpleRe));
     }
-    
+
     const items: BinaryItem[] = [];
-    
+
     for (const m of matchs) {
       let href: string;
       let isDir: boolean;
       let size: string;
       let date: string;
-      
+
       if (useDetailedFormat) {
         // Detailed format: [fullMatch, type, href, size, date]
         const type = m[1]; // "Dir" or "File"
@@ -85,7 +78,7 @@ export class FirefoxBinary extends AbstractBinary {
         size = '-';
         date = '-';
       }
-      
+
       // Extract the name from the href path
       // href could be "/pub/firefox/releases/130.0/" or just "130.0/"
       let name = href;
@@ -97,15 +90,16 @@ export class FirefoxBinary extends AbstractBinary {
           name += '/';
         }
       }
-      
+
       if (!isDir) {
         // Keep the full name for files
         name = basename(name);
       }
-      
+
       // Skip parent directory links
-      if (name === '../' || href === '/pub/firefox/' || href.endsWith('/..') || href === '/pub/firefox/releases/') continue;
-      
+      if (name === '../' || href === '/pub/firefox/' || href.endsWith('/..') || href === '/pub/firefox/releases/')
+        continue;
+
       // Filter out old Firefox versions (< 100.0.0) for directories - apply to main index (root directory)
       if (isDir && name !== '../' && dir === '/') {
         const versionName = name.slice(0, -1); // Remove trailing '/'
@@ -126,7 +120,7 @@ export class FirefoxBinary extends AbstractBinary {
           continue;
         }
       }
-      
+
       const fileUrl = isDir ? '' : `${url}${name}`;
       if (binaryConfig.ignoreFiles?.includes(`${dir}${name}`)) continue;
 

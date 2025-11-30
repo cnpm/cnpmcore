@@ -2,12 +2,7 @@ import { SingletonProto } from 'egg';
 
 import binaries, { type BinaryName } from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Imagemin)
@@ -17,10 +12,7 @@ export class ImageminBinary extends AbstractBinary {
     return;
   }
 
-  async fetch(
-    dir: string,
-    binaryName: BinaryName
-  ): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const dirItems: {
       [key: string]: BinaryItem[];
@@ -90,8 +82,7 @@ export class ImageminBinary extends AbstractBinary {
             const platformArchDir = `/v${version}/vendor/${platform}/${arch}/`;
             dirItems[platformArchDir] = [];
 
-            for (const name of binaryConfig.options?.binFiles?.[platform] ??
-              []) {
+            for (const name of binaryConfig.options?.binFiles?.[platform] ?? []) {
               dirItems[platformArchDir].push({
                 name,
                 date,

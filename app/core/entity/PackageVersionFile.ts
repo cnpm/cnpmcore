@@ -1,6 +1,6 @@
-import { Entity, type EntityData } from './Entity.ts';
 import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
 import type { Dist } from './Dist.ts';
+import { Entity, type EntityData } from './Entity.ts';
 
 interface PackageVersionFileData extends EntityData {
   packageVersionFileId: string;
@@ -33,14 +33,10 @@ export class PackageVersionFile extends Entity {
   }
 
   get path() {
-    return this.directory === '/'
-      ? `/${this.name}`
-      : `${this.directory}/${this.name}`;
+    return this.directory === '/' ? `/${this.name}` : `${this.directory}/${this.name}`;
   }
 
-  static create(
-    data: EasyData<PackageVersionFileData, 'packageVersionFileId'>
-  ): PackageVersionFile {
+  static create(data: EasyData<PackageVersionFileData, 'packageVersionFileId'>): PackageVersionFile {
     const newData = EntityUtil.defaultData(data, 'packageVersionFileId');
     return new PackageVersionFile(newData);
   }

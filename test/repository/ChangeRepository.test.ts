@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import { ChangeRepository } from '../../app/repository/ChangeRepository.ts';
@@ -30,16 +31,10 @@ describe('test/repository/ChangeRepository.test.ts', () => {
 
     it('should list from header', async () => {
       const changes = await changeRepository.query(0, 5);
-      const ids = changes.map(t => t.id);
+      const ids = changes.map((t) => t.id);
       // pg truncate 后，id 不会重置
       const firstId = Number(ids[0]) - 1;
-      assert.deepStrictEqual(ids, [
-        firstId + 1,
-        firstId + 2,
-        firstId + 3,
-        firstId + 4,
-        firstId + 5,
-      ]);
+      assert.deepStrictEqual(ids, [firstId + 1, firstId + 2, firstId + 3, firstId + 4, firstId + 5]);
     });
   });
 });

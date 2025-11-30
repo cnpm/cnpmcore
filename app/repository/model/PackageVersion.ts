@@ -1,8 +1,8 @@
 import { Attribute, Model } from 'egg/orm';
 
-import { Bone, DataTypes } from '../util/leoric.ts';
-import { EntityProperty } from '../util/EntityProperty.ts';
 import { PaddingSemVer } from '../../core/entity/PaddingSemVer.ts';
+import { EntityProperty } from '../util/EntityProperty.ts';
+import { Bone, DataTypes } from '../util/leoric.ts';
 
 @Model()
 export class PackageVersion extends Bone {
@@ -56,11 +56,7 @@ export class PackageVersion extends Bone {
   @Attribute(DataTypes.BOOLEAN)
   isPreRelease: boolean;
 
-  static beforeCreate(instance: {
-    version: string;
-    paddingVersion: string;
-    isPreRelease: boolean;
-  }) {
+  static beforeCreate(instance: { version: string; paddingVersion: string; isPreRelease: boolean }) {
     if (!instance.paddingVersion) {
       const paddingSemVer = new PaddingSemVer(instance.version);
       instance.paddingVersion = paddingSemVer.paddingVersion;

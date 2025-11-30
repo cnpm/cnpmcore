@@ -40,20 +40,14 @@ describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () =
       app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, () => {
         throw new Error('mock request replicate _changes error');
       });
-      await assert.rejects(
-        cnpmcoreChangesStream.getInitialSince(registry),
-        /mock request/
-      );
+      await assert.rejects(cnpmcoreChangesStream.getInitialSince(registry), /mock request/);
     });
 
     it('should throw error invalid seq', async () => {
       app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, {
         data: { update_seqs: 'invalid' },
       });
-      await assert.rejects(
-        cnpmcoreChangesStream.getInitialSince(registry),
-        /get getInitialSince failed/
-      );
+      await assert.rejects(cnpmcoreChangesStream.getInitialSince(registry), /get getInitialSince failed/);
     });
   });
 

@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
 import { RegistryType } from '../../../../app/common/enum/Registry.ts';
-import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.ts';
-import type { Registry } from '../../../../app/core/entity/Registry.ts';
-import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
 import { TaskType } from '../../../../app/common/enum/Task.ts';
+import type { Registry } from '../../../../app/core/entity/Registry.ts';
 import type { ChangesStreamTaskData } from '../../../../app/core/entity/Task.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.ts';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
 
 describe('test/core/service/RegistryManagerService/index.test.ts', () => {
   let registryManagerService: RegistryManagerService;
@@ -97,7 +98,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
           ...registry,
           name: 'boo',
         }),
-        /not found/
+        /not found/,
       );
     });
 
@@ -129,15 +130,9 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
           registryId: registry.registryId,
         });
         const targetName = 'CUSTOM_WORKER';
-        const task = await taskRepository.findTaskByTargetName(
-          targetName,
-          TaskType.ChangesStream
-        );
+        const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
         assert.ok(task);
-        assert.equal(
-          (task.data as ChangesStreamTaskData).registryId,
-          registry.registryId
-        );
+        assert.equal((task.data as ChangesStreamTaskData).registryId, registry.registryId);
       });
 
       it('should preCheck registry', async () => {
@@ -145,7 +140,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
           registryManagerService.createSyncChangesStream({
             registryId: 'mock_invalid_registry_id',
           }),
-          /not found/
+          /not found/,
         );
       });
 
@@ -161,7 +156,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
           registryManagerService.createSyncChangesStream({
             registryId: newRegistry.registryId,
           }),
-          /please create scopes first/
+          /please create scopes first/,
         );
       });
 
@@ -179,10 +174,7 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
           since: '100',
         });
         const targetName = 'CUSTOM_WORKER';
-        const task = await taskRepository.findTaskByTargetName(
-          targetName,
-          TaskType.ChangesStream
-        );
+        const task = await taskRepository.findTaskByTargetName(targetName, TaskType.ChangesStream);
         assert.ok(task);
         assert.equal((task.data as ChangesStreamTaskData).since, '');
       });
