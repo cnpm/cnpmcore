@@ -690,6 +690,7 @@ export class PackageManagerService extends AbstractService {
 
   public async refreshPackageChangeVersionsToDists(pkg: Package, updateVersions?: string[], removeVersions?: string[]) {
     if (!pkg.manifestsDist?.distId || !pkg.abbreviatedsDist?.distId) {
+      // no dists, refresh all again, the first time sync package will not have dists
       return await this._refreshPackageManifestsToDists(pkg);
     }
     const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
@@ -776,17 +777,15 @@ export class PackageManagerService extends AbstractService {
   ) {
     if (refreshAttr === 'maintainers') {
       const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(
-        // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
         pkg.manifestsDist!,
       );
-      const maintainers = await this.maintainers(pkg);
       if (fullManifests) {
+        const maintainers = await this.maintainers(pkg);
         fullManifests.maintainers = maintainers;
         await this._updatePackageManifestsToDists(pkg, fullManifests, null);
       }
     } else if (refreshAttr === 'dist-tags') {
       const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(
-        // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
         pkg.manifestsDist!,
       );
       if (fullManifests) {

@@ -209,9 +209,9 @@ export class TestUtil {
   ): Promise<PackageJSONType & { versions: Record<string, PackageJSONType> }> {
     const pkg = await this.readFixturesJSONFile('exampleFullPackage.json');
     if (options) {
-      const attachs = pkg._attachments || {};
-      const firstFilename = Object.keys(attachs)[0];
-      const attach = attachs[firstFilename];
+      const attachments = pkg._attachments || {};
+      const firstFilename = Object.keys(attachments)[0];
+      const attach = attachments[firstFilename];
       const versions = pkg.versions || {};
       const firstVersion = Object.keys(versions)[0];
       const version = versions[firstVersion];
@@ -238,9 +238,8 @@ export class TestUtil {
         Object.assign(version.dist, options.dist);
       }
       if (updateAttach) {
-        attachs[`${version.name}-${version.version}.tgz`] = attach;
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
-        delete attachs[firstFilename];
+        attachments[`${version.name}-${version.version}.tgz`] = attach;
+        delete attachments[firstFilename];
       }
       if (options.readme === null) {
         delete pkg.readme;
