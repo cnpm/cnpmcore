@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.76.0 (2025-12-03)
+
+* feat: version block (#906) ([729c8ec](https://github.com/cnpm/cnpmcore/commit/729c8ec)), closes [#906](https://github.com/cnpm/cnpmcore/issues/906)
+* chore: auto release for 3.x (#907) ([f3bb6ce](https://github.com/cnpm/cnpmcore/commit/f3bb6ce)), closes [#907](https://github.com/cnpm/cnpmcore/issues/907)
+
 ## [3.75.2](https://github.com/cnpm/cnpmcore/compare/v3.75.1...v3.75.2) (2025-03-11)
 
 
