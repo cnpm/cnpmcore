@@ -1,15 +1,15 @@
 import { join } from 'node:path';
 
 import Mock from '@elastic/elasticsearch-mock';
-import type { EggAppConfig, PowerPartial } from 'egg';
+import type { PartialEggConfig, EggAppInfo } from 'egg';
 
 import { database } from './database.ts';
 
 // @ts-expect-error has no construct signatures
 export const mockES = new Mock();
 
-export default function startConfig(appInfo: EggAppConfig): PowerPartial<EggAppConfig> {
-  const config = {} as PowerPartial<EggAppConfig>;
+export default function startConfig(appInfo: EggAppInfo): PartialEggConfig {
+  const config = {} as PartialEggConfig;
   config.dataDir = join(appInfo.root, '.cnpmcore_unittest');
 
   config.orm = {
@@ -22,7 +22,13 @@ export default function startConfig(appInfo: EggAppConfig): PowerPartial<EggAppC
 
   config.cnpmcore = {
     checkChangesStreamInterval: 10,
+    experimental: {
+      enableJSONBuilder: process.env.CNPMCORE_CONFIG_ENABLE_JSON_BUILDER === 'true',
+    },
   };
+  if (config.cnpmcore.experimental?.enableJSONBuilder) {
+    console.log('enableJSONBuilder is true');
+  }
 
   config.elasticsearch = {
     client: {

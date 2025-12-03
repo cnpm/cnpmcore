@@ -3,6 +3,7 @@ import { AccessLevel, Inject, SingletonProto } from 'egg';
 import type { NFSAdapter } from '../common/adapter/NFSAdapter.ts';
 import type { Dist } from '../core/entity/Dist.ts';
 import type { PackageJSONType, PackageRepository } from './PackageRepository.ts';
+import { JSONBuilder } from '@cnpmjs/packument';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -50,6 +51,18 @@ export class DistRepository {
 
   async readDistBytes(dist: Dist): Promise<Uint8Array | undefined> {
     return await this.nfsAdapter.getBytes(dist.path);
+  }
+
+  async readDistBytesToBuffer(dist: Dist): Promise<Buffer | undefined> {
+    const bytes = await this.readDistBytes(dist);
+    if (!bytes) return undefined;
+    return Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
+  }
+
+  async readDistBytesToJSONBuilder(dist: Dist): Promise<JSONBuilder | undefined> {
+    const bytes = await this.readDistBytesToBuffer(dist);
+    if (!bytes) return undefined;
+    return new JSONBuilder(bytes);
   }
 
   async getDistStream(dist: Dist) {
