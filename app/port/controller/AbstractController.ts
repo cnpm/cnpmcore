@@ -13,6 +13,7 @@ import {
 import { MiddlewareController } from '../middleware';
 import { UserRoleManager } from '../UserRoleManager';
 import { PackageRepository } from '../../repository/PackageRepository';
+import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
 import { UserRepository } from '../../repository/UserRepository';
 import { getFullname, getScopeAndName } from '../../common/PackageUtil';
 import { Package as PackageEntity } from '../../core/entity/Package';
@@ -44,6 +45,8 @@ export abstract class AbstractController extends MiddlewareController {
   protected userRoleManager: UserRoleManager;
   @Inject()
   protected packageRepository: PackageRepository;
+  @Inject()
+  protected packageVersionBlockRepository: PackageVersionBlockRepository;
   @Inject()
   protected userRepository: UserRepository;
   @Inject()
@@ -166,6 +169,13 @@ export abstract class AbstractController extends MiddlewareController {
     if (!packageVersion) {
       throw this.createPackageNotFoundErrorWithRedirect(pkg.fullname, version, allowSync);
     }
+
+    // Check version block
+    const blockResult = await this.packageVersionBlockRepository.isVersionBlocked(pkg.packageId, version);
+    if (blockResult.blocked) {
+      throw this.createPackageBlockError(blockResult.reason!, pkg.fullname, version);
+    }
+
     return packageVersion;
   }
 

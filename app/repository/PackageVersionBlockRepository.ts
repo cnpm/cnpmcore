@@ -42,4 +42,49 @@ export class PackageVersionBlockRepository extends AbstractRepository {
     this.logger.info('[PackageVersionBlockRepository:removePackageVersionBlock:remove] %d rows, packageVersionBlockId: %s',
       removeCount, packageVersionBlockId);
   }
+
+  // Find a specific version block (not '*')
+  async findPackageVersionBlockExact(packageId: string, version: string) {
+    const model = await this.PackageVersionBlock.findOne({ packageId, version });
+    if (model) return ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity);
+    return null;
+  }
+
+  // Check if a version is blocked (including package-level block)
+  async isVersionBlocked(packageId: string, version: string): Promise<{
+    blocked: boolean;
+    reason?: string;
+    version?: string;
+  }> {
+    // First check package-level block (version='*')
+    const packageBlock = await this.findPackageBlock(packageId);
+    if (packageBlock) {
+      return {
+        blocked: true,
+        reason: packageBlock.reason,
+        version: '*',
+      };
+    }
+
+    // Then check version-level block
+    const versionBlock = await this.findPackageVersionBlockExact(packageId, version);
+    if (versionBlock) {
+      return {
+        blocked: true,
+        reason: versionBlock.reason,
+        version: versionBlock.version,
+      };
+    }
+
+    return { blocked: false };
+  }
+
+  // List all blocked versions (exclude '*')
+  async listBlockedVersions(packageId: string) {
+    const models = await this.PackageVersionBlock.find({
+      packageId,
+      version: { $ne: '*' },
+    });
+    return models.map(model => ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity));
+  }
 }

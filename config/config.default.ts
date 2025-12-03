@@ -62,6 +62,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   elasticsearchIndex: 'cnpmcore_packages',
   strictValidateTarballPkg: false,
   strictValidatePackageDeps: false,
+  enableBlockPackageVersion: env('CNPMCORE_CONFIG_ENABLE_BLOCK_PACKAGE_VERSION', 'boolean', false),
   database: {
     type: database.type,
   },

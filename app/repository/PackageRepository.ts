@@ -115,6 +115,7 @@ export type CnpmcorePatchInfo = {
   publish_time?: number;
   _source_registry_name?: string;
   block?: string;
+  blockVersions?: Record<string, string>; // version -> reason mapping for blocked versions
 };
 
 type AbbreviatedKey = 'name' | 'version' | 'deprecated' | 'dependencies' | 'optionalDependencies' |
