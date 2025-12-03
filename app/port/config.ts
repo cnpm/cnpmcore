@@ -178,6 +178,14 @@ export type CnpmcoreConfig = {
   strictValidatePackageDeps?: boolean,
 
   /**
+   * enable block specific package version feature
+   * when disabled, only package-level block (version='*') is supported
+   * when enabled, can block individual versions
+   * default is false
+   */
+  enableBlockPackageVersion?: boolean,
+
+  /**
    * database config
    */
   database: {

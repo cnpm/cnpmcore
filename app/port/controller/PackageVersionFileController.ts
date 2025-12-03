@@ -110,7 +110,12 @@ export class PackageVersionFileController extends AbstractController {
       }
       return files;
     }
-    const { manifest } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionSpec, false, true);
+    const { blockReason, manifest } = await this.packageManagerService.showPackageVersionManifest(scope, name, versionSpec, false, true);
+
+    if (blockReason) {
+      throw this.createPackageBlockError(blockReason, fullname, versionSpec);
+    }
+
     // GET /foo/1.0.0/files => /foo/1.0.0/files/{main}
     // ignore empty entry exp: @types/node@20.2.5/
     const indexFile = manifest?.main || 'index.js';

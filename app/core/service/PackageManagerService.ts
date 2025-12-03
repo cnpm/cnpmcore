@@ -360,6 +360,81 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
+  async blockPackageVersion(pkg: Package, version: string, reason: string) {
+    // Check if package-level block exists
+    const packageBlock = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
+    if (packageBlock) {
+      throw new ForbiddenError(`Package "${pkg.fullname}" is already blocked at package-level, cannot block individual versions`);
+    }
+
+    // Check if version exists
+    const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+    if (!pkgVersion) {
+      throw new NotFoundError(`Version ${version} not found for package ${pkg.fullname}`);
+    }
+
+    let block = await this.packageVersionBlockRepository.findPackageVersionBlockExact(pkg.packageId, version);
+    if (block) {
+      block.reason = reason;
+    } else {
+      block = PackageVersionBlock.create({
+        packageId: pkg.packageId,
+        version,
+        reason,
+      });
+    }
+    await this.packageVersionBlockRepository.savePackageVersionBlock(block);
+
+    // Update manifest to add blockVersions field
+    if (pkg.manifestsDist) {
+      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
+      if (fullManifests) {
+        // Get all blocked versions
+        const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
+        const blockVersionsMap: Record<string, string> = {};
+        for (const blockedVersion of blockedVersions) {
+          blockVersionsMap[blockedVersion.version] = blockedVersion.reason;
+        }
+        fullManifests.blockVersions = blockVersionsMap;
+        await this._updatePackageManifestsToDists(pkg, fullManifests, null);
+      }
+      this.eventBus.emit(PACKAGE_BLOCKED, pkg.fullname);
+      this.logger.info('[packageManagerService.blockPackageVersion:success] packageId: %s, version: %s, reason: %j',
+        pkg.packageId, version, reason);
+    }
+    return block;
+  }
+
+  async unblockPackageVersion(pkg: Package, version: string) {
+    const block = await this.packageVersionBlockRepository.findPackageVersionBlockExact(pkg.packageId, version);
+    if (block) {
+      await this.packageVersionBlockRepository.removePackageVersionBlock(block.packageVersionBlockId);
+    }
+
+    // Update manifest to remove from blockVersions field
+    if (pkg.manifestsDist) {
+      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
+      if (fullManifests) {
+        // Get all remaining blocked versions
+        const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
+        if (blockedVersions.length > 0) {
+          const blockVersionsMap: Record<string, string> = {};
+          for (const blockedVersion of blockedVersions) {
+            blockVersionsMap[blockedVersion.version] = blockedVersion.reason;
+          }
+          fullManifests.blockVersions = blockVersionsMap;
+        } else {
+          fullManifests.blockVersions = undefined;
+        }
+        await this._updatePackageManifestsToDists(pkg, fullManifests, null);
+      }
+      this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
+      this.logger.info('[packageManagerService.unblockPackageVersion:success] packageId: %s, version: %s',
+        pkg.packageId, version);
+    }
+  }
+
+
   async replacePackageMaintainersAndDist(pkg: Package, maintainers: User[]) {
     await this.packageRepository.replacePackageMaintainers(pkg.packageId, maintainers.map(m => m.userId));
     await this.refreshPackageMaintainersToDists(pkg);
@@ -424,13 +499,28 @@ export class PackageManagerService extends AbstractService {
   async showPackageVersionManifest(scope: string, name: string, spec: string, isSync = false, isFullManifests = false) {
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return {};
+
+    // Check package-level block first
     const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
       return { blockReason: block.reason, pkg };
     }
+
     const fullname = getFullname(scope, name);
     const result = npa(`${fullname}@${spec}`);
     const manifest = await this.packageVersionService.readManifest(pkg.packageId, result, isFullManifests, !isSync);
+
+    // Check version-level block if feature is enabled and manifest exists
+    if (this.config.cnpmcore.enableBlockPackageVersion && manifest?.version) {
+      const versionBlock = await this.packageVersionBlockRepository.findPackageVersionBlockExact(
+        pkg.packageId,
+        manifest.version,
+      );
+      if (versionBlock) {
+        return { blockReason: versionBlock.reason, pkg };
+      }
+    }
+
     return { manifest, blockReason: null, pkg };
   }
 

@@ -7,9 +7,11 @@ import { SyncMode } from '../../../../app/common/constants';
 
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let publisher: any;
+  let adminUser: any;
   let nfsClientAdapter: NFSClientAdapter;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
+    adminUser = await TestUtil.createAdmin();
     nfsClientAdapter = await app.getEggObject(NFSClientAdapter);
   });
 
@@ -414,6 +416,59 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       assert(res.status === 404);
       assert(res.headers['content-type'] === 'application/json; charset=utf-8');
       assert(res.body.error === `[NOT_FOUND] "${name}-1.0.0.tgz" not found`);
+    });
+  });
+
+  describe('blocked version', () => {
+    beforeEach(async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      mock(app.config.cnpmcore, 'enableBlockPackageVersion', true);
+    });
+
+    it('should 451 when downloading blocked version tarball', async () => {
+      const { pkg } = await TestUtil.createPackage({
+        name: 'foo-download-blocked',
+        version: '1.0.0',
+        isPrivate: false,
+      });
+
+      // Block the version
+      const blockRes = await app.httpRequest()
+        .put(`/-/package/${pkg.name}/blocks/1.0.0`)
+        .set('authorization', adminUser.authorization)
+        .set('user-agent', adminUser.ua)
+        .send({ reason: 'Malicious code detected' });
+      assert.equal(blockRes.status, 201, `Block failed: ${JSON.stringify(blockRes.body)}`);
+
+      // Try to download tarball
+      const res = await app.httpRequest()
+        .get(`/${pkg.name}/-/${pkg.name}-1.0.0.tgz`)
+        .expect(451)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert(res.body.error.includes('Malicious code detected'));
+    });
+
+    it('should 451 when downloading tarball of package-level blocked package', async () => {
+      const { pkg } = await TestUtil.createPackage({
+        name: 'bar-download-blocked',
+        version: '2.0.0',
+        isPrivate: false,
+      });
+
+      // Block the package
+      const blockRes = await app.httpRequest()
+        .put(`/-/package/${pkg.name}/blocks`)
+        .set('authorization', adminUser.authorization)
+        .set('user-agent', adminUser.ua)
+        .send({ reason: 'Package compromised' });
+      assert.equal(blockRes.status, 201, `Block failed: ${JSON.stringify(blockRes.body)}`);
+
+      // Try to download tarball
+      const res = await app.httpRequest()
+        .get(`/${pkg.name}/-/${pkg.name}-2.0.0.tgz`)
+        .expect(451)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert(res.body.error.includes('Package compromised'));
     });
   });
 });
