@@ -3,8 +3,9 @@ import { setTimeout } from 'node:timers/promises';
 import { app, mock } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../../test/TestUtil';
 import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService';
-import { calculateIntegrity } from '../../../../app/common/PackageUtil';
+import { calculateIntegrity, getScopeAndName } from '../../../../app/common/PackageUtil';
 import { database, DATABASE_TYPE } from '../../../../config/database';
+import { Package as PackageModel } from '../../../../app/repository/model/Package';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let publisher;
@@ -1038,6 +1039,78 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         assert.equal(res.status, 403);
         assert.equal(res.body.error,
           '[FORBIDDEN] "bar@0.3.0-rc15" not satisfies "1.0.0" to unpkg files, see https://github.com/cnpm/unpkg-white-list');
+      });
+    });
+
+    describe('blocked version', () => {
+      beforeEach(async () => {
+        mock(app.config.cnpmcore, 'enableUnpkg', true);
+        mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+        mock(app.config.cnpmcore, 'enableBlockPackageVersion', true);
+      });
+
+      it('should 451 when version is blocked', async () => {
+        const pkg = await TestUtil.getFullPackage({
+          name: 'foo-blocked',
+          version: '1.0.0',
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+
+        // Set package as public
+        const [ scope, name ] = getScopeAndName(pkg.name);
+        await PackageModel.update({ scope, name }, { isPrivate: false });
+
+        // Block the version
+        const blockRes = await app.httpRequest()
+          .put(`/-/package/${pkg.name}/blocks/1.0.0`)
+          .set('authorization', adminUser.authorization)
+          .set('user-agent', adminUser.ua)
+          .send({ reason: 'Security issue' });
+        assert.equal(blockRes.status, 201, `Block failed: ${JSON.stringify(blockRes.body)}`);
+
+        // Try to access files
+        const res = await app.httpRequest()
+          .get('/foo-blocked/1.0.0/files')
+          .expect(451)
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert(res.body.error.includes('Security issue'));
+      });
+
+      it('should 451 when package is blocked at package-level', async () => {
+        const pkg = await TestUtil.getFullPackage({
+          name: 'bar-blocked',
+          version: '1.0.0',
+        });
+        await app.httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
+
+        // Set package as public
+        const [ scope, name ] = getScopeAndName(pkg.name);
+        await PackageModel.update({ scope, name }, { isPrivate: false });
+
+        // Block the entire package
+        const blockRes = await app.httpRequest()
+          .put(`/-/package/${pkg.name}/blocks`)
+          .set('authorization', adminUser.authorization)
+          .set('user-agent', adminUser.ua)
+          .send({ reason: 'Malware detected' });
+        assert.equal(blockRes.status, 201, `Block failed: ${JSON.stringify(blockRes.body)}`);
+
+        // Try to access files
+        const res = await app.httpRequest()
+          .get('/bar-blocked/1.0.0/files')
+          .expect(451)
+          .expect('content-type', 'application/json; charset=utf-8');
+        assert(res.body.error.includes('Malware detected'));
       });
     });
   });

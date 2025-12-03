@@ -7,8 +7,10 @@ import { SyncMode } from '../../../../app/common/constants';
 
 describe('test/port/controller/package/ShowPackageVersionController.test.ts', () => {
   let publisher;
+  let adminUser;
   beforeEach(async () => {
     publisher = await TestUtil.createUser();
+    adminUser = await TestUtil.createAdmin();
   });
 
   describe('[GET /:fullname/:versionSpec] show()', () => {
@@ -384,6 +386,59 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .set('Accept', 'application/vnd.npm.install-v1+json');
       assert(res.status === 200);
       assert(res.body.dist.tarball.includes(app.config.cnpmcore.registry));
+    });
+  });
+
+  describe('blocked version', () => {
+    beforeEach(async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      mock(app.config.cnpmcore, 'enableBlockPackageVersion', true);
+    });
+
+    it('should 451 when showing blocked version', async () => {
+      const { pkg } = await TestUtil.createPackage({
+        name: 'foo-show-blocked',
+        version: '1.0.0',
+        isPrivate: false,
+      });
+
+      // Block the version
+      const blockRes = await app.httpRequest()
+        .put(`/-/package/${pkg.name}/blocks/1.0.0`)
+        .set('authorization', adminUser.authorization)
+        .set('user-agent', adminUser.ua)
+        .send({ reason: 'Security vulnerability' });
+      assert.equal(blockRes.status, 201, `Block failed: ${JSON.stringify(blockRes.body)}`);
+
+      // Try to show version
+      const res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`)
+        .expect(451)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert(res.body.error.includes('Security vulnerability'));
+    });
+
+    it('should 451 when showing version of package-level blocked package', async () => {
+      const { pkg } = await TestUtil.createPackage({
+        name: 'bar-show-blocked',
+        version: '1.0.0',
+        isPrivate: false,
+      });
+
+      // Block the package
+      const blockRes = await app.httpRequest()
+        .put(`/-/package/${pkg.name}/blocks`)
+        .set('authorization', adminUser.authorization)
+        .set('user-agent', adminUser.ua)
+        .send({ reason: 'Package deprecated' });
+      assert.equal(blockRes.status, 201, `Block failed: ${JSON.stringify(blockRes.body)}`);
+
+      // Try to show version
+      const res = await app.httpRequest()
+        .get(`/${pkg.name}/1.0.0`)
+        .expect(451)
+        .expect('content-type', 'application/json; charset=utf-8');
+      assert(res.body.error.includes('Package deprecated'));
     });
   });
 });
