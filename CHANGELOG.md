@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>3.76.1 (2025-12-04)</small>
+
+* fix: block version (#909) ([2d1f40d](https://github.com/cnpm/cnpmcore/commit/2d1f40d)), closes [#909](https://github.com/cnpm/cnpmcore/issues/909)
+
 ## 3.76.0 (2025-12-03)
 
 * feat: version block (#906) ([729c8ec](https://github.com/cnpm/cnpmcore/commit/729c8ec)), closes [#906](https://github.com/cnpm/cnpmcore/issues/906)
