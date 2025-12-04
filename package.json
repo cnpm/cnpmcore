@@ -84,7 +84,7 @@
     "registry"
   ],
   "dependencies": {
-    "@cnpmjs/packument": "^1.3.0",
+    "@cnpmjs/packument": "^1.4.0",
     "@eggjs/redis": "beta",
     "@eggjs/scripts": "beta",
     "@eggjs/tracer": "beta",

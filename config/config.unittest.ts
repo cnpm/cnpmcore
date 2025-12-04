@@ -26,9 +26,6 @@ export default function startConfig(appInfo: EggAppInfo): PartialEggConfig {
       enableJSONBuilder: process.env.CNPMCORE_CONFIG_ENABLE_JSON_BUILDER === 'true',
     },
   };
-  if (config.cnpmcore.experimental?.enableJSONBuilder) {
-    console.log('enableJSONBuilder is true');
-  }
 
   config.elasticsearch = {
     client: {

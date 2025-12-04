@@ -1237,8 +1237,15 @@ export class PackageManagerService extends AbstractService {
     // read from dist
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
-      const data = (await this.distRepository.readDistBytesToBuffer(dist)) as Buffer;
-      // let needCalculateIntegrity = false;
+      let builder = (await this.distRepository.readDistBytesToJSONBuilder(dist)) as JSONBuilder;
+      let needCalculateIntegrity = false;
+      // set _source_registry_name in full manifestDist
+      const registry = await this.getSourceRegistry(pkg);
+      if (registry?.name && builder.getIn<string>(['_source_registry_name']) !== registry.name) {
+        builder.setIn(['_source_registry_name'], registry.name);
+        // calculate integrity after set _source_registry_name
+        needCalculateIntegrity = true;
+      }
       // TODO: support bug version with builder
       // if (bugVersion) {
       //   const fixedVersions = await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
@@ -1247,11 +1254,11 @@ export class PackageManagerService extends AbstractService {
       //     needCalculateIntegrity = true;
       //   }
       // }
-      // if (needCalculateIntegrity) {
-      //   const distBytes = Buffer.from(JSON.stringify(data));
-      //   const distIntegrity = await calculateIntegrity(distBytes);
-      //   etag = `"${distIntegrity.shasum}"`;
-      // }
+      const data = builder.build();
+      if (needCalculateIntegrity) {
+        const distIntegrity = await calculateIntegrity(data);
+        etag = `"${distIntegrity.shasum}"`;
+      }
       return { etag, data, blockReason };
     }
 
