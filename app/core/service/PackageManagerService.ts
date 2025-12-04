@@ -630,6 +630,10 @@ export class PackageManagerService extends AbstractService {
     ]);
     // remove from repository
     await this.packageRepository.removePackageVersion(pkgVersion);
+    this.logger.info(
+      '[packageManagerService.removePackageVersionAndDist:success] packageVersionId: %s',
+      pkgVersion.packageVersionId,
+    );
   }
 
   public async unpublishPackage(pkg: Package) {
@@ -668,6 +672,11 @@ export class PackageManagerService extends AbstractService {
       unpublishedInfo,
     );
     this.eventBus.emit(PACKAGE_UNPUBLISHED, pkg.fullname);
+    this.logger.info(
+      '[packageManagerService.unpublishPackage:success] packageId: %s, fullname: %s',
+      pkg.packageId,
+      pkg.fullname,
+    );
   }
 
   public async removePackageVersion(pkg: Package, pkgVersion: PackageVersion, skipRefreshPackageManifests = false) {
