@@ -66,11 +66,7 @@ export class CacheService extends AbstractService {
     ]);
   }
 
-  public async savePackageEtagV2(
-    fullname: string,
-    isFullManifests: boolean,
-    etag: string,
-  ) {
+  public async savePackageEtagV2(fullname: string, isFullManifests: boolean, etag: string) {
     const key = this.cacheKey(fullname, isFullManifests, 'etag_v2');
     await this.cacheAdapter.set(key, etag);
   }
