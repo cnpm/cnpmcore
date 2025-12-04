@@ -1240,7 +1240,11 @@ export class PackageManagerService extends AbstractService {
     // read from dist
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
-      let builder = (await this.distRepository.readDistBytesToJSONBuilder(dist)) as JSONBuilder;
+      const builder = await this.distRepository.readDistBytesToJSONBuilder(dist);
+      if (!builder) {
+        this.logger.warn('[PackageManagerService] dist: %s not found', dist.distId);
+        return { etag, data: null, blockReason };
+      }
       let needCalculateIntegrity = false;
       // set _source_registry_name in full manifestDist
       const registry = await this.getSourceRegistry(pkg);
