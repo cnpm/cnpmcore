@@ -7,6 +7,7 @@ import { DIST_NAMES } from '../../../core/entity/Package.ts';
 import type { CacheService } from '../../../core/service/CacheService.ts';
 import type { PackageManagerService } from '../../../core/service/PackageManagerService.ts';
 import type { ProxyCacheService } from '../../../core/service/ProxyCacheService.ts';
+import { BugVersionService } from '../../../core/service/BugVersionService.ts';
 import { AbstractController } from '../AbstractController.ts';
 
 @HTTPController()
@@ -17,6 +18,8 @@ export class ShowPackageController extends AbstractController {
   private cacheService: CacheService;
   @Inject()
   private proxyCacheService: ProxyCacheService;
+  @Inject()
+  private bugVersionService: BugVersionService;
 
   @HTTPMethod({
     // GET /:fullname
@@ -27,7 +30,11 @@ export class ShowPackageController extends AbstractController {
   async show(@HTTPContext() ctx: Context, @HTTPParam() fullname: string) {
     // TODO: need to support proxy mode with JSONBuilder
     if (this.config.cnpmcore.experimental.enableJSONBuilder && this.config.cnpmcore.syncMode !== SyncMode.proxy) {
-      return await this.showWithJSONBuilder(ctx, fullname);
+      const hasBugVersions = await this.bugVersionService.hasBugVersions(fullname);
+      if (!hasBugVersions) {
+        // no bug versions, use JSONBuilder
+        return await this.showWithJSONBuilder(ctx, fullname);
+      }
     }
     const [scope, name] = getScopeAndName(fullname);
     const isSync = isSyncWorkerRequest(ctx);

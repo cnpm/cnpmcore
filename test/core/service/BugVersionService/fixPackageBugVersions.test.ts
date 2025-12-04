@@ -3,8 +3,7 @@ import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { BugVersion } from '../../../../app/core/entity/BugVersion.ts';
-import { BugVersionService } from '../../../../app/core/service/BugVersionService.ts';
-import { AbbreviatedPackageJSONType } from '../../../../app/repository/PackageRepository.ts';
+import { BugVersionService, type MixedManifests } from '../../../../app/core/service/BugVersionService.ts';
 import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', () => {
@@ -43,7 +42,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
   });
 
   it('should fix all bug versions with advice', async () => {
-    const manifests = {
+    const versions = {
       '1.4.0': {
         name: 'colors',
         version: '1.4.0',
@@ -89,9 +88,9 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
     await bugVersionService.fixPackageBugVersions(
       bugVersion,
       'colors',
-      manifests as unknown as Record<string, AbbreviatedPackageJSONType>,
+      { versions } as unknown as MixedManifests,
     );
-    assert.deepStrictEqual(manifests, {
+    assert.deepStrictEqual(versions, {
       '1.4.0': {
         name: 'colors',
         version: '1.4.0',

@@ -13,6 +13,8 @@ import type {
 import { BugVersion } from '../entity/BugVersion.ts';
 import type { CacheService } from './CacheService.ts';
 
+export type MixedManifests = { versions: Record<string, PackageJSONType | AbbreviatedPackageJSONType | undefined> };
+
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
@@ -32,11 +34,15 @@ export class BugVersionService {
   @Inject()
   private readonly bugVersionStore: BugVersionStore;
 
+  /**
+   * Get the "config.bug-versions" field in "bug-versions"'s package.json
+   * @see https://github.com/cnpm/bug-versions/blob/master/package.json#L136
+   * @returns The bug version
+   */
   async getBugVersion(): Promise<BugVersion | undefined> {
-    // TODO performance problem, cache bugVersion and update with schedule
+    // TODO: performance problem, cache bugVersion and update with schedule
     const pkg = await this.packageRepository.findPackage('', BUG_VERSIONS);
     if (!pkg) return;
-    /* c8 ignore next 10 */
     const tag = await this.packageRepository.findPackageTag(pkg.packageId, LATEST_TAG);
     if (!tag) return;
     let bugVersion = this.bugVersionStore.getBugVersion(tag.version);
@@ -46,15 +52,27 @@ export class BugVersionService {
         tag.version,
       )) as PackageJSONType;
       if (!packageVersionJson) return;
-      const data = packageVersionJson.config?.['bug-versions'];
-      bugVersion = new BugVersion(data || {});
+      const data = packageVersionJson.config?.['bug-versions'] ?? {};
+      bugVersion = new BugVersion(data);
       this.bugVersionStore.setBugVersion(bugVersion, tag.version);
     }
     return bugVersion;
   }
 
+  /**
+   * Check if the package has bug versions
+   * @param fullname - The fullname of the package
+   * @returns True if the package has bug versions, false otherwise
+   */
+  async hasBugVersions(fullname: string): Promise<boolean> {
+    const bugVersion = await this.getBugVersion();
+    if (!bugVersion) return false;
+    return bugVersion.hasBugVersions(fullname);
+  }
+
   async cleanBugVersionPackageCaches(bugVersion: BugVersion) {
     const fullnames = bugVersion.listAllPackagesHasBugs();
+    this.logger.info('[BugVersionService] cleaning %s packages cache', fullnames.length);
     await pMap(
       fullnames,
       async (fullname) => {
@@ -65,6 +83,7 @@ export class BugVersionService {
         stopOnError: false,
       },
     );
+    this.logger.info('[BugVersionService] cleaned %s packages cache', fullnames.length);
   }
 
   /**
@@ -77,22 +96,23 @@ export class BugVersionService {
   async fixPackageBugVersions(
     bugVersion: BugVersion,
     fullname: string,
-    manifests: Record<string, PackageJSONType | AbbreviatedPackageJSONType | undefined>,
-  ) {
+    manifests: MixedManifests,
+  ): Promise<string[]> {
     const fixedVersions: string[] = [];
     // If package all version unpublished(like pinyin-tool), versions is undefined
     if (!manifests) {
       return fixedVersions;
     }
-    for (const manifest of Object.values(manifests)) {
+    for (const manifest of Object.values(manifests.versions)) {
       const fixedVersion = this.fixPackageBugVersionWithAllVersions(
         fullname,
         bugVersion,
         manifest as PackageJSONType,
-        manifests as Record<string, PackageJSONType>,
+        manifests,
       );
       if (fixedVersion) {
         fixedVersions.push(fixedVersion);
+        this.logger.info('[BugVersionService] fixed %s@%s to %s', fullname, manifest?.version, fixedVersion);
       }
     }
     return fixedVersions;
@@ -134,20 +154,24 @@ export class BugVersionService {
     fullname: string,
     bugVersion: BugVersion,
     manifest: PackageJSONType,
-    manifests: Record<string, PackageJSONType>,
-  ) {
+    manifests: MixedManifests,
+  ): string | undefined {
     const advice = bugVersion.fixVersion(fullname, manifest.version);
     if (!advice) {
       return;
     }
-    const fixedManifest = manifests[advice.version];
+    const fixedManifest = manifests.versions[advice.version];
     if (!fixedManifest) {
       this.logger.warn('[BugVersionService] not found pkg for %s@%s manifest', fullname, advice.version);
       return;
     }
     const newManifest = bugVersion.fixManifest(manifest, fixedManifest);
-    manifests[manifest.version] = newManifest;
+    if (!newManifest) {
+      return;
+    }
 
+    // update manifests with fixed manifest
+    manifests.versions[manifest.version] = newManifest;
     return manifest.version;
   }
 }

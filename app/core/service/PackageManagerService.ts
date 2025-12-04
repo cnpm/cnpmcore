@@ -1169,7 +1169,7 @@ export class PackageManagerService extends AbstractService {
       const data = (await this.distRepository.readDistBytesToJSON(dist)) as T;
       let needCalculateIntegrity = false;
       if (bugVersion) {
-        const fixedVersions = await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
+        const fixedVersions = await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data);
         if (fixedVersions.length > 0) {
           // calculate integrity after fix bug version
           needCalculateIntegrity = true;
@@ -1205,7 +1205,7 @@ export class PackageManagerService extends AbstractService {
       const fixedVersions = await this.bugVersionService.fixPackageBugVersions(
         bugVersion,
         fullname,
-        manifests.versions,
+        manifests,
       );
       if (fixedVersions.length > 0) {
         // calculate integrity after fix bug version
@@ -1232,6 +1232,13 @@ export class PackageManagerService extends AbstractService {
     if (block) {
       blockReason = block.reason;
     }
+
+    // let bugVersion: BugVersion | undefined;
+    // // sync mode response no bug version fixed
+    // if (!isSync) {
+    //   bugVersion = await this.bugVersionService.getBugVersion();
+    // }
+    // const fullname = getFullname(scope, name);
 
     let dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
     // read from dist
@@ -1280,7 +1287,7 @@ export class PackageManagerService extends AbstractService {
     //   const fixedVersions = await this.bugVersionService.fixPackageBugVersions(
     //     bugVersion,
     //     fullname,
-    //     manifests.versions,
+    //     manifests as any,
     //   );
     //   if (fixedVersions.length > 0) {
     //     // calculate integrity after fix bug version
