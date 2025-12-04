@@ -4,10 +4,10 @@ import { ABBREVIATED_META_TYPE, SyncMode } from '../../../common/constants.ts';
 import { FULLNAME_REG_STRING, getScopeAndName, calculateIntegrity } from '../../../common/PackageUtil.ts';
 import { isSyncWorkerRequest } from '../../../common/SyncUtil.ts';
 import { DIST_NAMES } from '../../../core/entity/Package.ts';
+import { BugVersionService } from '../../../core/service/BugVersionService.ts';
 import type { CacheService } from '../../../core/service/CacheService.ts';
 import type { PackageManagerService } from '../../../core/service/PackageManagerService.ts';
 import type { ProxyCacheService } from '../../../core/service/ProxyCacheService.ts';
-import { BugVersionService } from '../../../core/service/BugVersionService.ts';
 import { AbstractController } from '../AbstractController.ts';
 
 @HTTPController()

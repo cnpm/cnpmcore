@@ -1,4 +1,4 @@
-import type { PackageJSONType, AbbreviatedPackageJSONType } from "../../repository/PackageRepository.ts";
+import type { PackageJSONType, AbbreviatedPackageJSONType } from '../../repository/PackageRepository.ts';
 
 export interface BugVersionAdvice {
   /**
@@ -60,7 +60,10 @@ export class BugVersion {
     return advice;
   }
 
-  fixManifest(bugVersionManifest: MixedBugVersionPackageType, fixVersionManifest: MixedBugVersionPackageType): MixedBugVersionPackageType | undefined {
+  fixManifest(
+    bugVersionManifest: MixedBugVersionPackageType,
+    fixVersionManifest: MixedBugVersionPackageType,
+  ): MixedBugVersionPackageType | undefined {
     // If the tarball is same, manifest has fixed.
     if (bugVersionManifest.dist?.tarball === fixVersionManifest.dist?.tarball) {
       return;

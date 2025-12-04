@@ -846,7 +846,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const shouldFixVersion = res.body.versions['2.0.0'];
       assert.equal(
         shouldFixVersion.dist.tarball,
-          'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz',
+        'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz',
       );
       assert.equal(shouldFixVersion.deprecated, '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
       // don't change version
@@ -861,7 +861,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const originalVersion = res.body.versions['2.0.0'];
       assert.equal(
         originalVersion.dist.tarball,
-          'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz',
+        'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz',
       );
       assert.equal(originalVersion.deprecated, undefined);
       assert.equal(originalVersion.version, '2.0.0');
@@ -891,7 +891,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const shouldFixVersion = res.body.versions['2.0.0'];
       assert.equal(
         shouldFixVersion.dist.tarball,
-          'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz',
+        'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz',
       );
       assert.equal(shouldFixVersion.deprecated, '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
       // don't change version
@@ -907,7 +907,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       const originalVersion = res.body.versions['2.0.0'];
       assert.equal(
         originalVersion.dist.tarball,
-          'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz',
+        'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz',
       );
       assert.equal(originalVersion.deprecated, undefined);
       assert.equal(originalVersion.version, '2.0.0');

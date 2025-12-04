@@ -1202,11 +1202,7 @@ export class PackageManagerService extends AbstractService {
     await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
     const manifests = (fullManifests || abbreviatedManifests) as T;
     if (bugVersion) {
-      const fixedVersions = await this.bugVersionService.fixPackageBugVersions(
-        bugVersion,
-        fullname,
-        manifests,
-      );
+      const fixedVersions = await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, manifests);
       if (fixedVersions.length > 0) {
         // calculate integrity after fix bug version
         const distBytes = Buffer.from(JSON.stringify(manifests));

@@ -85,11 +85,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
         },
       },
     };
-    await bugVersionService.fixPackageBugVersions(
-      bugVersion,
-      'colors',
-      { versions } as unknown as MixedManifests,
-    );
+    await bugVersionService.fixPackageBugVersions(bugVersion, 'colors', { versions } as unknown as MixedManifests);
     assert.deepStrictEqual(versions, {
       '1.4.0': {
         name: 'colors',

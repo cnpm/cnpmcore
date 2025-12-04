@@ -93,11 +93,7 @@ export class BugVersionService {
    * @param manifests - The manifests of the package
    * @returns The versions of the fixed manifests
    */
-  async fixPackageBugVersions(
-    bugVersion: BugVersion,
-    fullname: string,
-    manifests: MixedManifests,
-  ): Promise<string[]> {
+  async fixPackageBugVersions(bugVersion: BugVersion, fullname: string, manifests: MixedManifests): Promise<string[]> {
     const fixedVersions: string[] = [];
     // If package all version unpublished(like pinyin-tool), versions is undefined
     if (!manifests) {
