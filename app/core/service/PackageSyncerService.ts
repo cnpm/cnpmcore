@@ -18,7 +18,6 @@ import { AbstractService } from '../../common/AbstractService';
 import { TaskRepository } from '../../repository/TaskRepository';
 import { PackageJSONType, PackageManifestType, PackageRepository } from '../../repository/PackageRepository';
 import { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository';
-import { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository';
 import { UserRepository } from '../../repository/UserRepository';
 import { Task, SyncPackageTaskOptions, CreateSyncPackageTask } from '../entity/Task';
 import { Package } from '../entity/Package';
@@ -60,8 +59,6 @@ export class PackageSyncerService extends AbstractService {
   private readonly packageRepository: PackageRepository;
   @Inject()
   private readonly packageVersionDownloadRepository: PackageVersionDownloadRepository;
-  @Inject()
-  private readonly packageVersionBlockRepository: PackageVersionBlockRepository;
   @Inject()
   private readonly userRepository: UserRepository;
   @Inject()
@@ -630,18 +627,6 @@ export class PackageSyncerService extends AbstractService {
     for (const item of versions) {
       const version: string = item.version;
       if (!version) continue;
-
-      // Check if version is blocked (skip blocked versions during sync)
-      if (pkg && this.config.cnpmcore.enableBlockPackageVersion) {
-        const versionBlock = await this.packageVersionBlockRepository.findPackageVersionBlockExact(
-          pkg.packageId,
-          version,
-        );
-        if (versionBlock) {
-          logs.push(`[${isoNow()}] ⚠️ Skip blocked version ${version}: ${versionBlock.reason}`);
-          continue;
-        }
-      }
 
       let existsItem: typeof existsVersionMap[string] | undefined = existsVersionMap[version];
       let existsAbbreviatedItem: typeof abbreviatedVersionMap[string] | undefined = abbreviatedVersionMap[version];

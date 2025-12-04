@@ -361,6 +361,11 @@ export class PackageManagerService extends AbstractService {
   }
 
   async blockPackageVersion(pkg: Package, version: string, reason: string) {
+    // Check if manifests exist
+    if (!pkg.manifestsDist || !pkg.abbreviatedsDist) {
+      throw new Error(`Package "${pkg.fullname}" manifests not found`);
+    }
+
     // Check if package-level block exists
     const packageBlock = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (packageBlock) {
@@ -385,53 +390,33 @@ export class PackageManagerService extends AbstractService {
     }
     await this.packageVersionBlockRepository.savePackageVersionBlock(block);
 
-    // Update manifest to add blockVersions field
-    if (pkg.manifestsDist) {
-      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
-      if (fullManifests) {
-        // Get all blocked versions
-        const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
-        const blockVersionsMap: Record<string, string> = {};
-        for (const blockedVersion of blockedVersions) {
-          blockVersionsMap[blockedVersion.version] = blockedVersion.reason;
-        }
-        fullManifests.blockVersions = blockVersionsMap;
-        await this._updatePackageManifestsToDists(pkg, fullManifests, null);
-      }
-      this.eventBus.emit(PACKAGE_BLOCKED, pkg.fullname);
-      this.logger.info('[packageManagerService.blockPackageVersion:success] packageId: %s, version: %s, reason: %j',
-        pkg.packageId, version, reason);
-    }
+    // Refresh manifests to update dist files (will filter blocked versions and update dist-tags)
+    await this._refreshPackageManifestsToDists(pkg);
+
+    this.eventBus.emit(PACKAGE_BLOCKED, pkg.fullname);
+    this.logger.info('[packageManagerService.blockPackageVersion:success] packageId: %s, version: %s, reason: %j',
+      pkg.packageId, version, reason);
+
     return block;
   }
 
   async unblockPackageVersion(pkg: Package, version: string) {
+    // Check if manifests exist
+    if (!pkg.manifestsDist || !pkg.abbreviatedsDist) {
+      throw new Error(`Package "${pkg.fullname}" manifests not found`);
+    }
+
     const block = await this.packageVersionBlockRepository.findPackageVersionBlockExact(pkg.packageId, version);
     if (block) {
       await this.packageVersionBlockRepository.removePackageVersionBlock(block.packageVersionBlockId);
     }
 
-    // Update manifest to remove from blockVersions field
-    if (pkg.manifestsDist) {
-      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
-      if (fullManifests) {
-        // Get all remaining blocked versions
-        const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
-        if (blockedVersions.length > 0) {
-          const blockVersionsMap: Record<string, string> = {};
-          for (const blockedVersion of blockedVersions) {
-            blockVersionsMap[blockedVersion.version] = blockedVersion.reason;
-          }
-          fullManifests.blockVersions = blockVersionsMap;
-        } else {
-          fullManifests.blockVersions = undefined;
-        }
-        await this._updatePackageManifestsToDists(pkg, fullManifests, null);
-      }
-      this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
-      this.logger.info('[packageManagerService.unblockPackageVersion:success] packageId: %s, version: %s',
-        pkg.packageId, version);
-    }
+    // Refresh manifests to update dist files (will restore unblocked version and update dist-tags)
+    await this._refreshPackageManifestsToDists(pkg);
+
+    this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
+    this.logger.info('[packageManagerService.unblockPackageVersion:success] packageId: %s, version: %s',
+      pkg.packageId, version);
   }
 
 
@@ -784,8 +769,29 @@ export class PackageManagerService extends AbstractService {
   private async _listPackageDistTags(pkg: Package) {
     const tags = await this.packageRepository.listPackageTags(pkg.packageId);
     const distTags: { [key: string]: string } = {};
+
+    // Check if we need to handle blocked versions
+    let blockedVersionSet: Set<string> | undefined;
+    if (this.config.cnpmcore.enableBlockPackageVersion) {
+      const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
+      if (blockedVersions.length > 0) {
+        blockedVersionSet = new Set(blockedVersions.map(v => v.version));
+      }
+    }
+
     for (const tag of tags) {
-      distTags[tag.tag] = tag.version;
+      // Only handle 'latest' tag fallback when blocked
+      if (tag.tag === 'latest' && blockedVersionSet?.has(tag.version)) {
+        // Find the latest non-blocked version
+        const allVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
+        const nonBlockedVersion = allVersions.find(v => !blockedVersionSet!.has(v.version));
+        if (nonBlockedVersion) {
+          distTags[tag.tag] = nonBlockedVersion.version;
+        }
+        // If all versions are blocked, don't include latest tag
+      } else {
+        distTags[tag.tag] = tag.version;
+      }
     }
     return distTags;
   }
@@ -980,6 +986,17 @@ export class PackageManagerService extends AbstractService {
     const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     if (packageVersions.length === 0) return null;
 
+    // Get blocked versions if feature is enabled
+    const blockedVersionSet = new Set<string>();
+    const blockVersionsMap: Record<string, string> = {};
+    if (this.config.cnpmcore.enableBlockPackageVersion) {
+      const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
+      for (const blockedVersion of blockedVersions) {
+        blockedVersionSet.add(blockedVersion.version);
+        blockVersionsMap[blockedVersion.version] = blockedVersion.reason;
+      }
+    }
+
     const distTags = await this._listPackageDistTags(pkg);
     const maintainers = await this._listPackageMaintainers(pkg);
     const registry = await this.getSourceRegistry(pkg);
@@ -1029,6 +1046,11 @@ export class PackageManagerService extends AbstractService {
     let latestPackageVersion = packageVersions[0];
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
+      // Skip blocked versions if feature is enabled
+      if (blockedVersionSet.has(packageVersion.version)) {
+        continue;
+      }
+
       const manifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist);
       if (!manifest) continue;
       /* c8 ignore next 3 */
@@ -1048,6 +1070,12 @@ export class PackageManagerService extends AbstractService {
       latestManifest = data.versions[latestPackageVersion.version];
     }
     this._mergeLatestManifestFields(data, latestManifest);
+
+    // Add blockVersions field if there are any blocked versions
+    if (Object.keys(blockVersionsMap).length > 0) {
+      data.blockVersions = blockVersionsMap;
+    }
+
     return data;
   }
 
@@ -1055,6 +1083,13 @@ export class PackageManagerService extends AbstractService {
     // read all verions from db
     const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     if (packageVersions.length === 0) return null;
+
+    // Get blocked versions if feature is enabled
+    let blockedVersionSet = new Set<string>();
+    if (this.config.cnpmcore.enableBlockPackageVersion) {
+      const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
+      blockedVersionSet = new Set(blockedVersions.map(v => v.version));
+    }
 
     const distTags = await this._listPackageDistTags(pkg);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
@@ -1067,6 +1102,11 @@ export class PackageManagerService extends AbstractService {
     };
 
     for (const packageVersion of packageVersions) {
+      // Skip blocked versions if feature is enabled
+      if (blockedVersionSet.has(packageVersion.version)) {
+        continue;
+      }
+
       const manifest = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageJSONType>(packageVersion.abbreviatedDist);
       if (manifest) {
         data.versions[packageVersion.version] = manifest;

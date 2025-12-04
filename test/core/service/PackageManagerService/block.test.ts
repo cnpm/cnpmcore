@@ -131,6 +131,81 @@ describe('test/core/service/PackageManagerService/block.test.ts', () => {
       assert(data.blockVersions);
       assert.equal(data.blockVersions['1.0.0'], 'test reason');
     });
+
+    it('should filter blocked version from client response', async () => {
+      app.mockLog();
+      const { pkg: pkgManifest } = await TestUtil.createPackage({ isPrivate: false, version: '1.0.0' });
+      const [ scope, name ] = getScopeAndName(pkgManifest.name);
+      const pkg = await packageRepository.findPackage(scope, name);
+      assert(pkg);
+
+      // Verify version exists before blocking
+      const beforeBlock = await packageManagerService.listPackageFullManifests(scope, name);
+      assert(beforeBlock.data);
+      assert(beforeBlock.data.versions['1.0.0']);
+
+      await packageManagerService.blockPackageVersion(pkg, '1.0.0', 'test reason');
+
+      // Check that blocked version is filtered from client response
+      const afterBlock = await packageManagerService.listPackageFullManifests(scope, name);
+      assert(afterBlock.data);
+      assert.equal(afterBlock.data.versions['1.0.0'], undefined);
+      assert(afterBlock.data.blockVersions);
+      assert.equal(afterBlock.data.blockVersions['1.0.0'], 'test reason');
+    });
+
+    it('should restore blocked version to client response when unblocked', async () => {
+      app.mockLog();
+      const { pkg: pkgManifest } = await TestUtil.createPackage({ isPrivate: false, version: '1.0.0' });
+      const [ scope, name ] = getScopeAndName(pkgManifest.name);
+      const pkg = await packageRepository.findPackage(scope, name);
+      assert(pkg);
+
+      await packageManagerService.blockPackageVersion(pkg, '1.0.0', 'test reason');
+
+      // Verify version is filtered in client response
+      const afterBlock = await packageManagerService.listPackageFullManifests(scope, name);
+      assert(afterBlock.data);
+      assert.equal(afterBlock.data.versions['1.0.0'], undefined);
+
+      await packageManagerService.unblockPackageVersion(pkg, '1.0.0');
+
+      // Check that unblocked version appears in client response again
+      const afterUnblock = await packageManagerService.listPackageFullManifests(scope, name);
+      assert(afterUnblock.data);
+      assert(afterUnblock.data.versions['1.0.0']);
+      assert.equal(afterUnblock.data.blockVersions, undefined);
+    });
+
+    it('should update dist-tags when blocking a version', async () => {
+      app.mockLog();
+      // Create a package with two versions
+      const { pkg: pkg1, user } = await TestUtil.createPackage({ isPrivate: false, version: '1.0.0' });
+      await TestUtil.createPackage({
+        isPrivate: false,
+        name: pkg1.name,
+        version: '2.0.0',
+        attachment: undefined,
+      }, { name: user.name, password: 'password-is-here' });
+      const [ scope, name ] = getScopeAndName(pkg1.name);
+      const pkg = await packageRepository.findPackage(scope, name);
+      assert(pkg);
+
+      // Verify latest tag points to 2.0.0
+      const before = await packageManagerService.listPackageFullManifests(scope, name);
+      assert(before.data);
+      assert.equal(before.data['dist-tags'].latest, '2.0.0');
+
+      // Block version 2.0.0
+      await packageManagerService.blockPackageVersion(pkg, '2.0.0', 'has security issue');
+
+      // Latest tag should now point to 1.0.0
+      const after = await packageManagerService.listPackageFullManifests(scope, name);
+      assert(after.data);
+      assert.equal(after.data['dist-tags'].latest, '1.0.0', 'Latest tag should fall back to 1.0.0');
+      assert.equal(after.data.versions['2.0.0'], undefined, '2.0.0 should be filtered');
+      assert(after.data.versions['1.0.0'], '1.0.0 should still exist');
+    });
   });
 
   describe('isVersionBlocked()', () => {
