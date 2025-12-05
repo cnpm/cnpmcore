@@ -584,6 +584,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       return;
     }
 
+    const startTime = Date.now();
     let data: PackageManifestType;
     try {
       // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
@@ -601,6 +602,8 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
+    const useTime = Date.now() - startTime;
+    logs.push(`[${isoNow()}] 📖 Manifest parse use ${useTime}ms`);
     let readme = data.readme || '';
     if (typeof readme !== 'string') {
       readme = JSON.stringify(readme);
@@ -1306,10 +1309,13 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
     }
     const existsVersionsSet = new Set(existsVersions);
 
+    const startTime = Date.now();
     const diff = packument.diff(existsVersions);
+    const useTime = Date.now() - startTime;
     const totalVersionCount = existsVersions.length + diff.addedVersions.length - diff.removedVersions.length;
     logs.push(
-      `[${isoNow()}] 🚧 Syncing versions ${existsVersions.length} => ${totalVersionCount}, ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed`,
+      `[${isoNow()}] 🚧 Syncing versions ${existsVersions.length} => ${totalVersionCount}, \
+${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calculate diff use ${useTime}ms`,
     );
 
     const updateVersions: string[] = [];

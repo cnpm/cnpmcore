@@ -91,7 +91,6 @@ export async function hasShrinkWrapInTgz(contentOrFile: Uint8Array | string): Pr
   const parser = tar.t({
     // options.strict 默认为 false，会忽略 Recoverable errors，例如 tar 解析失败
     // 详见 https://github.com/isaacs/node-tar#warnings-and-errors
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     onentry(entry: any) {
       if (entry.path === 'package/npm-shrinkwrap.json') {
         hasShrinkWrap = true;
@@ -125,7 +124,6 @@ export function formatAuthor(author: string | AuthorType | undefined): AuthorTyp
 }
 
 export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJSONType> {
-  // oxlint-disable-next-line promise/avoid-new
   return new Promise((resolve, reject) => {
     Readable.from(tarballBytes).pipe(
       tar.t({

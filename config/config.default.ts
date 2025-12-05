@@ -66,6 +66,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   },
   experimental: {
     syncPackageWithPackument: false,
+    enableJSONBuilder: false,
   },
 };
 

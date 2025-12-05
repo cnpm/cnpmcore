@@ -192,5 +192,10 @@ export interface CnpmcoreConfig {
      * enable sync package with packument
      */
     syncPackageWithPackument: boolean;
+    /**
+     * enable use JSONBuilder to update package manifests
+     * it would improve the performance of update package manifests and reduce the memory usage
+     */
+    enableJSONBuilder: boolean;
   };
 }

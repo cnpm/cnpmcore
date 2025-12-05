@@ -68,11 +68,11 @@ export class CheckRecentlyUpdatedPackages {
         continue;
       }
 
-      const matchs = /window\.__context__ = ([^<]+?)<\/script>/.exec(html);
-      if (!matchs) continue;
+      const matches = /window\.__context__ = ([^<]+?)<\/script>/.exec(html);
+      if (!matches) continue;
 
       try {
-        const data = JSON.parse(matchs[1]);
+        const data = JSON.parse(matches[1]);
         const packages = data.context.packages || [];
         if (Array.isArray(packages)) {
           this.logger.info(
