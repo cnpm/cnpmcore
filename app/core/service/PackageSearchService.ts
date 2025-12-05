@@ -4,12 +4,12 @@ import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import { AbstractService } from '../../common/AbstractService.ts';
 import { formatAuthor, getScopeAndName } from '../../common/PackageUtil.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
 import type { AuthorType, PackageRepository } from '../../repository/PackageRepository.ts';
 import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
-import type { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository.ts';
 import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.ts';
-import type { DistRepository } from '../../repository/DistRepository.ts';
+import type { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository.ts';
 import type { PackageManagerService } from './PackageManagerService.ts';
 
 @SingletonProto({
@@ -33,13 +33,11 @@ export class PackageSearchService extends AbstractService {
 
   async syncPackage(fullname: string, isSync = true) {
     const [scope, name] = getScopeAndName(fullname);
-    const { blockReason, manifest: latestManifest, pkg } = await this.packageManagerService.showPackageVersionManifest(
-      scope,
-      name,
-      'latest',
-      isSync,
-      true,
-    );
+    const {
+      blockReason,
+      manifest: latestManifest,
+      pkg,
+    } = await this.packageManagerService.showPackageVersionManifest(scope, name, 'latest', isSync, true);
     if (!pkg || !latestManifest) {
       this.logger.warn('[PackageSearchService.syncPackage] findPackage:%s not found', fullname);
       return;

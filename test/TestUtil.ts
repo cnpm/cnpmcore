@@ -292,15 +292,12 @@ export class TestUtil {
     }
     const password = user.password ?? 'password-is-here';
     const email = cleanUserPrefix(user.email ?? `${user.name}@example.com`);
-    let res = await this.app
-      .httpRequest()
-      .put(`/-/user/org.couchdb.user:${user.name}`)
-      .send({
-        name: user.name,
-        password,
-        type: 'user',
-        email,
-      });
+    let res = await this.app.httpRequest().put(`/-/user/org.couchdb.user:${user.name}`).send({
+      name: user.name,
+      password,
+      type: 'user',
+      email,
+    });
     if (res.status !== 201) {
       throw new Error(`Failed to create user: ${JSON.stringify(res.body)}, status: ${res.status}`);
     }
