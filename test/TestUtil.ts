@@ -300,8 +300,10 @@ export class TestUtil {
         password,
         type: 'user',
         email,
-      })
-      .expect(201);
+      });
+    if (res.status !== 201) {
+      throw new Error(`Failed to create user: ${JSON.stringify(res.body)}, status: ${res.status}`);
+    }
     let token: string = res.body.token;
     if (user.tokenOptions) {
       res = await this.app
