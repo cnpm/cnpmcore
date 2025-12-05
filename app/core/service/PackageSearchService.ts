@@ -87,7 +87,7 @@ export class PackageSearchService extends AbstractService {
       version: latestManifest.version,
       _rev,
       scope: scope ? scope.replace('@', '') : 'unscoped',
-      keywords,
+      keywords: keywords || latestManifest.keywords || [],
       versions,
       description,
       license: typeof latestManifest.license === 'object' ? latestManifest.license?.type : latestManifest.license,
