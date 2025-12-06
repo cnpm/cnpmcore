@@ -106,7 +106,6 @@ export class ShowPackageController extends AbstractController {
     }
 
     const [scope, name] = getScopeAndName(fullname);
-    let result: { etag: string; data: unknown; blockReason: string };
     if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
       // proxy mode
       const fileType = isFullManifests ? DIST_NAMES.FULL_MANIFESTS : DIST_NAMES.ABBREVIATED_MANIFESTS;
@@ -117,18 +116,20 @@ export class ShowPackageController extends AbstractController {
 
       const nfsBytes = Buffer.from(JSON.stringify(pkgManifest));
       const { shasum: etag } = await calculateIntegrity(nfsBytes);
-      result = { data: pkgManifest, etag, blockReason: '' };
-    } else {
-      // sync mode
-      if (isFullManifests) {
-        result = await this.packageManagerService.listPackageFullManifests(scope, name, isSync);
-      } else {
-        result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, isSync);
-      }
+      return { data: nfsBytes, etag, blockReason: '' };
     }
 
-    const { etag, data, blockReason } = result;
-    return { blockReason, etag, data: Buffer.from(JSON.stringify(data)) };
+    // sync mode
+    let result: { etag: string; data: unknown; blockReason: string };
+    if (isFullManifests) {
+      result = await this.packageManagerService.listPackageFullManifests(scope, name, isSync);
+    } else {
+      result = await this.packageManagerService.listPackageAbbreviatedManifests(scope, name, isSync);
+    }
+    return {
+      ...result,
+      data: Buffer.from(JSON.stringify(result.data)),
+    };
   }
 
   private async getFullManifestsBytesWithJSONBuilder(fullname: string, isFullManifests: boolean) {
