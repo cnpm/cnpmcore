@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>4.13.2 (2025-12-06)</small>
+
+* fix: enable show package cache (#915) ([dc20401](https://github.com/cnpm/cnpmcore/commit/dc20401)), closes [#915](https://github.com/cnpm/cnpmcore/issues/915) [hi#level](https://github.com/hi/issues/level)
+
 ## <small>4.13.1 (2025-12-06)</small>
 
 * fix: auto sync _npmUser field (#912) ([cd57073](https://github.com/cnpm/cnpmcore/commit/cd57073)), closes [#912](https://github.com/cnpm/cnpmcore/issues/912) [hi#level](https://github.com/hi/issues/level)
