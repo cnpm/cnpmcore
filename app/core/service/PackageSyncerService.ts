@@ -1523,7 +1523,11 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
         }
       }
       if (hasDifferent) {
-        await this.packageManagerService.savePackageVersionManifestWithBuilder(pkgVersion, manifestBuilder, abbreviatedManifestBuilder);
+        await this.packageManagerService.savePackageVersionManifestWithBuilder(
+          pkgVersion,
+          manifestBuilder,
+          abbreviatedManifestBuilder,
+        );
         updateVersions.push(version);
         logs.push(`[${isoNow()}] 🟢 Synced version ${version} success, different meta: ${JSON.stringify(diffMeta)}`);
       }
