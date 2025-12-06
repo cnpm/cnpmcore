@@ -22,9 +22,6 @@ export default function startConfig(appInfo: EggAppInfo): PartialEggConfig {
 
   config.cnpmcore = {
     checkChangesStreamInterval: 10,
-    experimental: {
-      enableJSONBuilder: process.env.CNPMCORE_CONFIG_ENABLE_JSON_BUILDER === 'true',
-    },
   };
 
   config.elasticsearch = {
