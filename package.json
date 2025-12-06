@@ -70,7 +70,7 @@
     "start": "eggctl start --daemon && touch egg.status",
     "start:foreground": "eggctl start",
     "stop": "rm -f egg.status && sleep 15 && eggctl stop",
-    "benchmark:show-package": "npx tsc benchmark/show-package-controller.ts --module Node16 --target ES2021 --moduleResolution Node16 && node benchmark/show-package-controller.js"
+    "benchmark:show-package": "npx tsc benchmark/show-package-controller.ts --module Node16 --target ES2021 --moduleResolution Node16 --esModuleInterop && node benchmark/show-package-controller.js"
   },
   "repository": {
     "type": "git",

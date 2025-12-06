@@ -1,4 +1,5 @@
 // oxlint-disable eslint/no-console
+import { pathToFileURL } from 'node:url';
 import autocannon from 'autocannon';
 
 interface BenchmarkOptions {
@@ -97,7 +98,6 @@ async function runBenchmark(options: BenchmarkOptions = {}) {
     console.log(`  Max: ${results.requests.max}`);
     console.log('');
     console.log('Latency:');
-    console.log(`  Average: ${results.latency.mean} ms`);
     console.log(`  Mean: ${results.latency.mean} ms`);
     console.log(`  Stddev: ${results.latency.stddev} ms`);
     console.log(`  Min: ${results.latency.min} ms`);
@@ -142,7 +142,7 @@ async function runBenchmark(options: BenchmarkOptions = {}) {
 }
 
 // Run the benchmark if executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   runBenchmark().catch(err => {
     console.error(err);
     process.exit(1);
