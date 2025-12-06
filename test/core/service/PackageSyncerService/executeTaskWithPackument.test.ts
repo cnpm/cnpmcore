@@ -158,10 +158,35 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       res = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(res.data?.versions);
       assert.equal(res.data.versions[res.data['dist-tags'].latest]?.deprecated, 'value 2 changed');
-      const abbrRes = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      let abbrRes = await packageManagerService.listPackageAbbreviatedManifests('', name);
       assert.ok(abbrRes.data);
       // abbreviated manifests should update too
       assert.equal((abbrRes.data as any).versions[abbrRes.data['dist-tags'].latest]?.deprecated, 'value 2 changed');
+      app.mockAgent().assertNoPendingInterceptors();
+
+      // remove deprecated
+      app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: '{"_id":"cnpmcore-test-sync-deprecated","_rev":"2-bc8b9a2f6532d1bb3f94eaa4e82dbfe0","name":"cnpmcore-test-sync-deprecated","dist-tags":{"latest":"0.0.0"},"versions":{"0.0.0":{"name":"cnpmcore-test-sync-deprecated","version":"0.0.0","description":"","main":"index.js","scripts":{},"author":"","license":"ISC","dependencies":{},"_id":"cnpmcore-test-sync-deprecated@0.0.0","_nodeVersion":"16.13.1","_npmVersion":"8.1.2","dist":{"integrity":"sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==","shasum":"c73398ff6db39d138a56c04c7a90f35b70d7b78f","tarball":"https://registry.npmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz","fileCount":1,"unpackedSize":250,"signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCIFqvSEQ9eD3eZ09kfQOKO1j6LnjPeqAfbyYLWlEpxmJHAiAzD+2a4RHF8Vu5N+2wT4kagARnRb47FqpgD08elWVBgA=="}]},"_npmUser":{"name":"fengmk2","email":"fengmk2@gmail.com"},"directories":{},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/cnpmcore-test-sync-deprecated_0.0.0_1639246164624_0.5739637441745657"},"_hasShrinkwrap":false}},"time":{"created":"2021-12-11T18:09:24.624Z","0.0.0":"2021-12-11T18:09:24.768Z","modified":"2022-04-12T06:56:55.617Z"},"maintainers":[{"name":"fengmk2","email":"fengmk2@gmail.com"}],"license":"ISC","readme":"ERROR: No README data found!","readmeFilename":""}',
+        persist: false,
+      });
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert.ok(log.includes('🚧 Syncing versions 1 => 1'));
+      assert.match(log, /🟢 Synced version 0.0.0 success, different meta: {"deprecated":"\$\$delete\$\$"}/);
+      assert.ok(res.data);
+      res = await packageManagerService.listPackageFullManifests('', name);
+      assert.ok(res.data?.versions);
+      assert.equal(res.data.versions[res.data['dist-tags'].latest]?.deprecated, undefined);
+      abbrRes = await packageManagerService.listPackageAbbreviatedManifests('', name);
+      assert.ok(abbrRes.data);
+      // abbreviated manifests should update too
+      assert.equal((abbrRes.data as any).versions[abbrRes.data['dist-tags'].latest]?.deprecated, undefined);
       app.mockAgent().assertNoPendingInterceptors();
     });
   

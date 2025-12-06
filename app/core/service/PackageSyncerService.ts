@@ -1504,12 +1504,13 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
             // delete
             manifestBuilder.deleteIn([field]);
             abbreviatedManifestBuilder?.deleteIn([field]);
+            diffMeta[field] = '$$delete$$';
           } else {
             // update
             manifestBuilder.setIn([field], newValue);
             abbreviatedManifestBuilder?.setIn([field], newValue);
+            diffMeta[field] = newValue;
           }
-          diffMeta[field] = newValue;
           hasDifferent = true;
         }
       }
