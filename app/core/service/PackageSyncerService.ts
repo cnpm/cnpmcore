@@ -1498,7 +1498,7 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
       for (const field of fieldsToCheck) {
         const remoteValue = packument.getBufferIn(['versions', version, field]);
         const localValue = manifestBuilder.getBufferIn([field]);
-        if (remoteValue !== localValue) {
+        if (remoteValue?.toString() !== localValue?.toString()) {
           const newValue = remoteValue ? JSON.parse(remoteValue.toString()) : undefined;
           if (newValue === undefined) {
             // delete
