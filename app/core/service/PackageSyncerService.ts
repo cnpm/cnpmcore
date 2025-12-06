@@ -1499,10 +1499,10 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
       let hasDifferent = false;
       const diffMeta: Record<string, unknown> = {};
       for (const field of fieldsToCheck) {
-        const remoteValue = packument.getBufferIn(['versions', version, field]);
-        const localValue = manifestBuilder.getBufferIn([field]);
-        if (remoteValue?.toString() !== localValue?.toString()) {
-          const newValue = remoteValue ? JSON.parse(remoteValue.toString()) : undefined;
+        const remoteValue = packument.getBufferIn(['versions', version, field])?.toString();
+        const localValue = manifestBuilder.getBufferIn([field])?.toString();
+        if (remoteValue !== localValue) {
+          const newValue = remoteValue ? JSON.parse(remoteValue) : undefined;
           if (newValue === undefined) {
             // delete
             manifestBuilder.deleteIn([field]);
