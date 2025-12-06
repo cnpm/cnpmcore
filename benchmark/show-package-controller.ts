@@ -41,19 +41,23 @@ async function runBenchmark(options: BenchmarkOptions = {}) {
   
   for (const arg of args) {
     if (arg.startsWith('--package=')) {
-      packageName = arg.split('=')[1];
+      const value = arg.split('=')[1];
+      if (value) packageName = value;
     } else if (arg.startsWith('--duration=')) {
-      const customDuration = parseInt(arg.split('=')[1], 10);
-      if (!isNaN(customDuration)) {
+      const value = arg.split('=')[1];
+      const customDuration = parseInt(value, 10);
+      if (!isNaN(customDuration) && customDuration > 0) {
         options.duration = customDuration;
       }
     } else if (arg.startsWith('--connections=')) {
-      const customConnections = parseInt(arg.split('=')[1], 10);
-      if (!isNaN(customConnections)) {
+      const value = arg.split('=')[1];
+      const customConnections = parseInt(value, 10);
+      if (!isNaN(customConnections) && customConnections > 0) {
         options.connections = customConnections;
       }
     } else if (arg.startsWith('--url=')) {
-      options.url = arg.split('=')[1];
+      const value = arg.split('=')[1];
+      if (value) options.url = value;
     }
   }
 
