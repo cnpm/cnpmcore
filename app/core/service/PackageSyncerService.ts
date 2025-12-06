@@ -1475,7 +1475,7 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
     const fieldsToCheck = [
       'deprecated',
       'funding',
-      // this field won't changed, but this is a bug(#910) on cnpmcore, so we need to check if it is different
+      // this field won't change, but this is a bug(#910) on cnpmcore, so we need to check if it is different
       '_npmUser',
     ];
     // for performance reason, we won't check all versions by default, only check those versions on dist-tags
