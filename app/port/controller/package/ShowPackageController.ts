@@ -128,7 +128,7 @@ export class ShowPackageController extends AbstractController {
     }
     return {
       ...result,
-      data: Buffer.from(JSON.stringify(result.data)),
+      data: result.data ? Buffer.from(JSON.stringify(result.data)) : null,
     };
   }
 
