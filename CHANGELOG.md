@@ -1,5 +1,11 @@
 # Changelog
 
+## <small>4.13.3 (2025-12-06)</small>
+
+* fix: zero copy to create a new Buffer (#916) ([683ee1d](https://github.com/cnpm/cnpmcore/commit/683ee1d)), closes [#916](https://github.com/cnpm/cnpmcore/issues/916) [hi#level](https://github.com/hi/issues/level)
+* chore(deps): update mime-types to v3 (#899) ([0a5c90c](https://github.com/cnpm/cnpmcore/commit/0a5c90c)), closes [#899](https://github.com/cnpm/cnpmcore/issues/899) [#865](https://github.com/cnpm/cnpmcore/issues/865)
+* chore(deps): upgrade base-x to v5 (#897) ([d3e4fae](https://github.com/cnpm/cnpmcore/commit/d3e4fae)), closes [#897](https://github.com/cnpm/cnpmcore/issues/897) [#864](https://github.com/cnpm/cnpmcore/issues/864)
+
 ## <small>4.13.2 (2025-12-06)</small>
 
 * fix: enable show package cache (#915) ([dc20401](https://github.com/cnpm/cnpmcore/commit/dc20401)), closes [#915](https://github.com/cnpm/cnpmcore/issues/915) [hi#level](https://github.com/hi/issues/level)
