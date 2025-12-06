@@ -36,6 +36,7 @@ import type { RegistryManagerService } from './RegistryManagerService.ts';
 import type { ScopeManagerService } from './ScopeManagerService.ts';
 import type { TaskService } from './TaskService.ts';
 import type { UserService } from './UserService.ts';
+import { DistRepository } from '../../repository/DistRepository.ts';
 
 interface syncDeletePkgOptions {
   task: Task;
@@ -82,6 +83,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
   private readonly scopeManagerService: ScopeManagerService;
+  @Inject()
+  private readonly distRepository: DistRepository;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
     const [scope, name] = getScopeAndName(fullname);
@@ -1465,6 +1468,61 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
         logs.push(`[${isoNow()}] 🟢 Removed version ${version} success`);
       }
     }
+    // #endregion
+
+    // #region check different meta data
+    // these fields will be changed after publish, so we need to check if they are different
+    const fieldsToCheck = [
+      'deprecated',
+      'funding',
+      // this field won't changed, but this is a bug(#910) on cnpmcore, so we need to check if it is different
+      '_npmUser',
+    ];
+    // for performance reason, we won't check all versions by default, only check those versions on dist-tags
+    for (const version of Object.values(distTags)) {
+      // ignore already synced versions
+      if (updateVersions.includes(version) || diff.removedVersions.includes(version)) {
+        continue;
+      }
+      const manifestBuilder = await this.distRepository.findPackageVersionManifestJSONBuilder(pkg.packageId, version);
+      if (!manifestBuilder) {
+        logs.push(`[${isoNow()}] 🚧 version ${version} manifest not exists, skip check different meta data`);
+        continue;
+      }
+      const abbreviatedManifestBuilder = await this.distRepository.findPackageAbbreviatedManifestJSONBuilder(pkg.packageId, version);
+      if (!abbreviatedManifestBuilder) {
+        logs.push(`[${isoNow()}] 🚧 version ${version} abbreviated manifest not exists, may be a bug here`);
+      }
+      let hasDifferent = false;
+      const diffMeta: Record<string, unknown> = {};
+      for (const field of fieldsToCheck) {
+        const remoteValue = packument.getBufferIn(['versions', version, field]);
+        const localValue = manifestBuilder.getBufferIn([field]);
+        if (remoteValue !== localValue) {
+          const newValue = remoteValue ? JSON.parse(remoteValue.toString()) : undefined;
+          if (newValue === undefined) {
+            // delete
+            manifestBuilder.deleteIn([field]);
+            abbreviatedManifestBuilder?.deleteIn([field]);
+          } else {
+            // update
+            manifestBuilder.setIn([field], newValue);
+            abbreviatedManifestBuilder?.setIn([field], newValue);
+          }
+          diffMeta[field] = newValue;
+          hasDifferent = true;
+        }
+      }
+      if (hasDifferent) {
+        await this.distRepository.savePackageVersionManifestJSONBuilder(pkg.packageId, version, manifestBuilder);
+        if (abbreviatedManifestBuilder) {
+          await this.distRepository.savePackageAbbreviatedManifestJSONBuilder(pkg.packageId, version, abbreviatedManifestBuilder);
+        }
+        updateVersions.push(version);
+        logs.push(`[${isoNow()}] 🟢 Synced version ${version} success, different meta: ${JSON.stringify(diffMeta)}`);
+      }
+    }
+    // #endregion
 
     logs.push(
       `[${isoNow()}] 🟢 Synced updated ${updateVersions.length} versions, removed ${diff.removedVersions.length} versions`,
@@ -1477,7 +1535,6 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
       await this.packageManagerService.refreshPackageChangeVersionsToDists(pkg, updateVersions, diff.removedVersions);
       logs.push(`[${isoNow()}] 🟢 Refresh use ${Date.now() - start}ms`);
     }
-    // #endregion
 
     // #region update tags
     // "dist-tags": {
