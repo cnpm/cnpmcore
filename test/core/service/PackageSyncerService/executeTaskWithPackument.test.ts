@@ -92,7 +92,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(log.includes('🚧 Syncing versions 1 => 1'));
-      assert.match(log, /🟢 Synced version 0.0.0 success, different meta: {"_npmUser":{"name":"fengmk2-changed","email":"fengmk2@gmail.com"}}/);
+      assert.match(
+        log,
+        /🟢 Synced version 0.0.0 success, different meta: {"_npmUser":{"name":"fengmk2-changed","email":"fengmk2@gmail.com"}}/,
+      );
       assert.ok(res.data);
       res = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(res.data?.versions);
@@ -189,7 +192,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.equal((abbrRes.data as any).versions[abbrRes.data['dist-tags'].latest]?.deprecated, undefined);
       app.mockAgent().assertNoPendingInterceptors();
     });
-  
+
     it('should execute "foobar" task', async () => {
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),

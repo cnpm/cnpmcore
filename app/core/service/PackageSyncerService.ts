@@ -15,6 +15,7 @@ import { PresetRegistryName, SyncDeleteMode } from '../../common/constants.ts';
 import { TaskState, TaskType } from '../../common/enum/Task.ts';
 import { downloadToTempfile } from '../../common/FileUtil.ts';
 import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil.ts';
+import { DistRepository } from '../../repository/DistRepository.ts';
 import type {
   AuthorType,
   PackageJSONType,
@@ -36,7 +37,6 @@ import type { RegistryManagerService } from './RegistryManagerService.ts';
 import type { ScopeManagerService } from './ScopeManagerService.ts';
 import type { TaskService } from './TaskService.ts';
 import type { UserService } from './UserService.ts';
-import { DistRepository } from '../../repository/DistRepository.ts';
 
 interface syncDeletePkgOptions {
   task: Task;
@@ -1489,7 +1489,10 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
         logs.push(`[${isoNow()}] 🚧 version ${version} manifest not exists, skip check different meta data`);
         continue;
       }
-      const abbreviatedManifestBuilder = await this.distRepository.findPackageAbbreviatedManifestJSONBuilder(pkg.packageId, version);
+      const abbreviatedManifestBuilder = await this.distRepository.findPackageAbbreviatedManifestJSONBuilder(
+        pkg.packageId,
+        version,
+      );
       if (!abbreviatedManifestBuilder) {
         logs.push(`[${isoNow()}] 🚧 version ${version} abbreviated manifest not exists, may be a bug here`);
       }
@@ -1517,7 +1520,11 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
       if (hasDifferent) {
         await this.distRepository.savePackageVersionManifestJSONBuilder(pkg.packageId, version, manifestBuilder);
         if (abbreviatedManifestBuilder) {
-          await this.distRepository.savePackageAbbreviatedManifestJSONBuilder(pkg.packageId, version, abbreviatedManifestBuilder);
+          await this.distRepository.savePackageAbbreviatedManifestJSONBuilder(
+            pkg.packageId,
+            version,
+            abbreviatedManifestBuilder,
+          );
         }
         updateVersions.push(version);
         logs.push(`[${isoNow()}] 🟢 Synced version ${version} success, different meta: ${JSON.stringify(diffMeta)}`);

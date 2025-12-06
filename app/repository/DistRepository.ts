@@ -29,7 +29,11 @@ export class DistRepository {
     }
   }
 
-  async findPackageVersionManifestJSONBuilder(packageId: string, version: string, includeReadme = false): Promise<JSONBuilder | undefined> {
+  async findPackageVersionManifestJSONBuilder(
+    packageId: string,
+    version: string,
+    includeReadme = false,
+  ): Promise<JSONBuilder | undefined> {
     const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       // include readme
@@ -63,7 +67,10 @@ export class DistRepository {
     }
   }
 
-  async findPackageAbbreviatedManifestJSONBuilder(packageId: string, version: string): Promise<JSONBuilder | undefined> {
+  async findPackageAbbreviatedManifestJSONBuilder(
+    packageId: string,
+    version: string,
+  ): Promise<JSONBuilder | undefined> {
     const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       return await this.readDistBytesToJSONBuilder(packageVersion.abbreviatedDist);
