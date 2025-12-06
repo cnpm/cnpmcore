@@ -23,6 +23,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 interface PackageOptions {
+  _npmUser?: {
+    name: string;
+    email: string;
+  };
   name?: string;
   version?: string;
   versionObject?: object;
@@ -209,13 +213,17 @@ export class TestUtil {
   ): Promise<PackageJSONType & { versions: Record<string, PackageJSONType> }> {
     const pkg = await this.readFixturesJSONFile('exampleFullPackage.json');
     if (options) {
-      const attachs = pkg._attachments || {};
-      const firstFilename = Object.keys(attachs)[0];
-      const attach = attachs[firstFilename];
+      const attachments = pkg._attachments || {};
+      const firstFilename = Object.keys(attachments)[0];
+      const attach = attachments[firstFilename];
       const versions = pkg.versions || {};
       const firstVersion = Object.keys(versions)[0];
       const version = versions[firstVersion];
       let updateAttach = false;
+      if (options._npmUser) {
+        pkg._npmUser = options._npmUser;
+        version._npmUser = options._npmUser;
+      }
       if (options.name) {
         pkg.name = options.name;
         version.name = options.name;
@@ -238,9 +246,8 @@ export class TestUtil {
         Object.assign(version.dist, options.dist);
       }
       if (updateAttach) {
-        attachs[`${version.name}-${version.version}.tgz`] = attach;
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
-        delete attachs[firstFilename];
+        attachments[`${version.name}-${version.version}.tgz`] = attach;
+        delete attachments[firstFilename];
       }
       if (options.readme === null) {
         delete pkg.readme;
@@ -293,16 +300,15 @@ export class TestUtil {
     }
     const password = user.password ?? 'password-is-here';
     const email = cleanUserPrefix(user.email ?? `${user.name}@example.com`);
-    let res = await this.app
-      .httpRequest()
-      .put(`/-/user/org.couchdb.user:${user.name}`)
-      .send({
-        name: user.name,
-        password,
-        type: 'user',
-        email,
-      })
-      .expect(201);
+    let res = await this.app.httpRequest().put(`/-/user/org.couchdb.user:${user.name}`).send({
+      name: user.name,
+      password,
+      type: 'user',
+      email,
+    });
+    if (res.status !== 201) {
+      throw new Error(`Failed to create user: ${JSON.stringify(res.body)}, status: ${res.status}`);
+    }
     let token: string = res.body.token;
     if (user.tokenOptions) {
       res = await this.app

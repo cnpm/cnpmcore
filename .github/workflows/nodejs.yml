@@ -220,10 +220,11 @@ jobs:
         # 0-based index
         shardIndex: [0, 1, 2]
         shardTotal: [3]
+        enableJSONBuilder: [true, false]
 
-    name: test on mysql (node@${{ matrix.node-version }}, shard@${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    name: test on mysql (node@${{ matrix.node-version }}, shard@${{ matrix.shardIndex }}/${{ matrix.shardTotal }}, enableJSONBuilder@${{ matrix.enableJSONBuilder }})
     concurrency:
-      group: test-mysql57-fs-nfs-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.node-version }}-${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      group: test-mysql57-fs-nfs-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.node-version }}-${{ matrix.shardIndex }}/${{ matrix.shardTotal }}-${{ matrix.enableJSONBuilder }}
       cancel-in-progress: true
 
     runs-on: ${{ matrix.os }}
@@ -262,6 +263,7 @@ jobs:
           # https://github.com/jamiebuilds/ci-parallel-vars
           CI_NODE_INDEX: ${{ matrix.shardIndex }}
           CI_NODE_TOTAL: ${{ matrix.shardTotal }}
+          CNPMCORE_CONFIG_ENABLE_JSON_BUILDER: ${{ matrix.enableJSONBuilder }}
 
       - name: Code Coverage
         uses: codecov/codecov-action@v5

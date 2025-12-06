@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 import { crc32 } from '@node-rs/crc32';
 import base from 'base-x';
 import { checkData, create } from 'ssri';
-import UAParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 
 const base62 = base('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 

@@ -4,9 +4,11 @@ import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import { AbstractService } from '../../common/AbstractService.ts';
 import { formatAuthor, getScopeAndName } from '../../common/PackageUtil.ts';
-import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
+import type { AuthorType, PackageRepository } from '../../repository/PackageRepository.ts';
 import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
+import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.ts';
 import type { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository.ts';
 import type { PackageManagerService } from './PackageManagerService.ts';
 
@@ -24,24 +26,24 @@ export class PackageSearchService extends AbstractService {
   protected packageRepository: PackageRepository;
   @Inject()
   protected packageVersionBlockRepository: PackageVersionBlockRepository;
+  @Inject()
+  protected packageVersionRepository: PackageVersionRepository;
+  @Inject()
+  protected distRepository: DistRepository;
 
   async syncPackage(fullname: string, isSync = true) {
     const [scope, name] = getScopeAndName(fullname);
-    const fullManifests = await this.packageManagerService.listPackageFullManifests(scope, name, isSync);
-
-    if (!fullManifests.data) {
-      this.logger.warn('[PackageSearchService.syncPackage] save package:%s not found', fullname);
-      return;
-    }
-
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) {
+    const {
+      blockReason,
+      manifest: latestManifest,
+      pkg,
+    } = await this.packageManagerService.showPackageVersionManifest(scope, name, 'latest', isSync, true);
+    if (!pkg || !latestManifest) {
       this.logger.warn('[PackageSearchService.syncPackage] findPackage:%s not found', fullname);
       return;
     }
 
-    const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
-    if (block) {
+    if (blockReason) {
       this.logger.warn('[PackageSearchService.syncPackage] package:%s is blocked, try to remove es', fullname);
       await this.removePackage(fullname);
       return;
@@ -67,36 +69,36 @@ export class PackageSearchService extends AbstractService {
       }
     }
 
-    const { data: manifest } = fullManifests;
-
-    const latestVersion = manifest['dist-tags'].latest;
-    if (!latestVersion) {
-      this.logger.warn(
-        '[PackageSearchService.syncPackage] package:%s latestVersion not found, dist-tags: %j, skip sync',
-        fullname,
-        manifest['dist-tags'],
-      );
-      return;
+    let time: Record<string, Date> = {};
+    let _rev = '';
+    let keywords: string[] | undefined;
+    let description: string | undefined;
+    const builder = await this.distRepository.readDistBytesToJSONBuilder(pkg.manifestsDist!);
+    if (builder) {
+      time = builder.getIn(['time'])!;
+      _rev = builder.getIn(['_rev'])!;
+      keywords = builder.getIn(['keywords']);
+      description = builder.getIn(['description']);
     }
-    const latestManifest = manifest.versions?.[latestVersion];
-
+    const versions = await this.packageVersionRepository.findAllVersions(scope, name);
+    const distTags = await this.packageManagerService.distTags(pkg);
     const packageDoc: SearchMappingType = {
-      name: manifest.name,
-      version: latestVersion,
-      _rev: manifest._rev,
+      name: latestManifest.name,
+      version: latestManifest.version,
+      _rev,
       scope: scope ? scope.replace('@', '') : 'unscoped',
-      keywords: manifest.keywords || [],
-      versions: Object.keys(manifest.versions),
-      description: manifest.description,
-      license: typeof manifest.license === 'object' ? manifest.license?.type : manifest.license,
-      maintainers: manifest.maintainers,
-      author: formatAuthor(manifest.author),
-      'dist-tags': manifest['dist-tags'],
-      date: manifest.time[latestVersion],
-      created: manifest.time.created,
-      modified: manifest.time.modified,
+      keywords: keywords || latestManifest.keywords || [],
+      versions,
+      description,
+      license: typeof latestManifest.license === 'object' ? latestManifest.license?.type : latestManifest.license,
+      maintainers: latestManifest.maintainers as AuthorType[],
+      author: formatAuthor(latestManifest.author),
+      'dist-tags': distTags,
+      date: time[latestManifest.version]!,
+      created: time.created,
+      modified: time.modified,
       // 归属 registry，keywords 枚举值
-      _source_registry_name: manifest._source_registry_name,
+      _source_registry_name: latestManifest._source_registry_name,
       // 最新版本发布人 _npmUser:
       _npmUser: latestManifest?._npmUser,
       // 最新版本发布信息

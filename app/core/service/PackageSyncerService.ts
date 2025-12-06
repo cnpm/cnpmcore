@@ -15,6 +15,7 @@ import { PresetRegistryName, SyncDeleteMode } from '../../common/constants.ts';
 import { TaskState, TaskType } from '../../common/enum/Task.ts';
 import { downloadToTempfile } from '../../common/FileUtil.ts';
 import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil.ts';
+import { DistRepository } from '../../repository/DistRepository.ts';
 import type {
   AuthorType,
   PackageJSONType,
@@ -82,6 +83,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
   private readonly scopeManagerService: ScopeManagerService;
+  @Inject()
+  private readonly distRepository: DistRepository;
 
   public async createTask(fullname: string, options?: SyncPackageTaskOptions) {
     const [scope, name] = getScopeAndName(fullname);
@@ -584,6 +587,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       return;
     }
 
+    const startTime = Date.now();
     let data: PackageManifestType;
     try {
       // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
@@ -601,6 +605,8 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       return;
     }
+    const useTime = Date.now() - startTime;
+    logs.push(`[${isoNow()}] 📖 Manifest parse use ${useTime}ms`);
     let readme = data.readme || '';
     if (typeof readme !== 'string') {
       readme = JSON.stringify(readme);
@@ -1306,10 +1312,13 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
     }
     const existsVersionsSet = new Set(existsVersions);
 
+    const startTime = Date.now();
     const diff = packument.diff(existsVersions);
+    const useTime = Date.now() - startTime;
     const totalVersionCount = existsVersions.length + diff.addedVersions.length - diff.removedVersions.length;
     logs.push(
-      `[${isoNow()}] 🚧 Syncing versions ${existsVersions.length} => ${totalVersionCount}, ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed`,
+      `[${isoNow()}] 🚧 Syncing versions ${existsVersions.length} => ${totalVersionCount}, \
+${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calculate diff use ${useTime}ms`,
     );
 
     const updateVersions: string[] = [];
@@ -1459,6 +1468,71 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         logs.push(`[${isoNow()}] 🟢 Removed version ${version} success`);
       }
     }
+    // #endregion
+
+    // #region check different meta data
+    // these fields will be changed after publish, so we need to check if they are different
+    const fieldsToCheck = [
+      'deprecated',
+      'funding',
+      // this field won't change, but this is a bug(#910) on cnpmcore, so we need to check if it is different
+      '_npmUser',
+    ];
+    // for performance reason, we won't check all versions by default, only check those versions on dist-tags
+    for (const version of Object.values(distTags)) {
+      // ignore already synced versions
+      if (updateVersions.includes(version) || diff.removedVersions.includes(version)) {
+        continue;
+      }
+      const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+      if (!pkgVersion) {
+        logs.push(`[${isoNow()}] 🚧 version ${version} not exists in database, skip check different meta data`);
+        continue;
+      }
+      const manifestBuilder = await this.distRepository.findPackageVersionManifestJSONBuilder(pkg.packageId, version);
+      if (!manifestBuilder) {
+        logs.push(`[${isoNow()}] 🚧 version ${version} manifest not exists, skip check different meta data`);
+        continue;
+      }
+      const abbreviatedManifestBuilder = await this.distRepository.findPackageAbbreviatedManifestJSONBuilder(
+        pkg.packageId,
+        version,
+      );
+      if (!abbreviatedManifestBuilder) {
+        logs.push(`[${isoNow()}] 🚧 version ${version} abbreviated manifest not exists, may be a bug here`);
+      }
+      let hasDifferent = false;
+      const diffMeta: Record<string, unknown> = {};
+      for (const field of fieldsToCheck) {
+        const remoteValue = packument.getBufferIn(['versions', version, field])?.toString();
+        const localValue = manifestBuilder.getBufferIn([field])?.toString();
+        if (remoteValue !== localValue) {
+          const newValue = remoteValue ? JSON.parse(remoteValue) : undefined;
+          if (newValue === undefined) {
+            // delete
+            manifestBuilder.deleteIn([field]);
+            abbreviatedManifestBuilder?.deleteIn([field]);
+            diffMeta[field] = '$$delete$$';
+          } else {
+            // update
+            manifestBuilder.setIn([field], newValue);
+            abbreviatedManifestBuilder?.setIn([field], newValue);
+            diffMeta[field] = newValue;
+          }
+          hasDifferent = true;
+        }
+      }
+      if (hasDifferent) {
+        await this.packageManagerService.savePackageVersionManifestWithBuilder(
+          pkgVersion,
+          manifestBuilder,
+          abbreviatedManifestBuilder,
+        );
+        updateVersions.push(version);
+        logs.push(`[${isoNow()}] 🟢 Synced version ${version} success, different meta: ${JSON.stringify(diffMeta)}`);
+      }
+    }
+    // #endregion
 
     logs.push(
       `[${isoNow()}] 🟢 Synced updated ${updateVersions.length} versions, removed ${diff.removedVersions.length} versions`,
@@ -1471,7 +1545,6 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       await this.packageManagerService.refreshPackageChangeVersionsToDists(pkg, updateVersions, diff.removedVersions);
       logs.push(`[${isoNow()}] 🟢 Refresh use ${Date.now() - start}ms`);
     }
-    // #endregion
 
     // #region update tags
     // "dist-tags": {
