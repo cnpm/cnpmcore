@@ -82,6 +82,9 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         mock(CacheService.prototype, 'getPackageEtag', async () => {
           throw new Error('mock get etag error');
         });
+        mock(CacheService.prototype, 'getPackageEtagV2', async () => {
+          throw new Error('mock get etag_v2 error');
+        });
         await app.httpRequest().get(`/${name}`).expect(200);
 
         app.expectLog(/ShowPackageController.show:error/);
@@ -91,6 +94,9 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         app.mockLog();
         mock(CacheService.prototype, 'getPackageEtag', async () => {
           return 'mock-etag';
+        });
+        mock(CacheService.prototype, 'getPackageEtagV2', async () => {
+          throw new Error('mock get etag_v2 error');
         });
         mock(CacheService.prototype, 'getPackageManifests', async () => {
           throw new Error('mock get etag error');
@@ -410,9 +416,9 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.ok(!pkg._rev);
       assert.ok(!pkg._id);
       assert.ok(!versionOne._id);
-      assert.ok(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
+      assert.equal(versionOne.dist.tarball, `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
       assert.ok(!res.headers['cache-control']);
-      assert.ok(res.headers.vary === 'Origin');
+      assert.equal(res.headers.vary, 'Origin');
     });
 
     it('should show one scoped package with abbreviated manifests with CDN enable', async () => {
@@ -817,7 +823,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert.ok(res.headers.location === 'https://registry.npmjs.org/egg?t=0123123&foo=bar');
     });
 
-    it('should fix bug version', async () => {
+    it('should fix bug version on full manifests request', async () => {
       const bugVersion = new BugVersion({
         'testmodule-show-package': {
           '2.0.0': {
@@ -838,13 +844,13 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       const shouldFixVersion = res.body.versions['2.0.0'];
-      assert.ok(
-        shouldFixVersion.dist.tarball ===
-          'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz',
+      assert.equal(
+        shouldFixVersion.dist.tarball,
+        'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz',
       );
-      assert.ok(shouldFixVersion.deprecated === '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
+      assert.equal(shouldFixVersion.deprecated, '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
       // don't change version
-      assert.ok(shouldFixVersion.version === '2.0.0');
+      assert.equal(shouldFixVersion.version, '2.0.0');
 
       // sync worker request should not effect
       res = await app
@@ -852,13 +858,59 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
         .get(`/${name}?cache=0`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
-      const orginalVersion = res.body.versions['2.0.0'];
-      assert.ok(
-        orginalVersion.dist.tarball ===
-          'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz',
+      const originalVersion = res.body.versions['2.0.0'];
+      assert.equal(
+        originalVersion.dist.tarball,
+        'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz',
       );
-      assert.ok(!orginalVersion.deprecated);
-      assert.ok(orginalVersion.version === '2.0.0');
+      assert.equal(originalVersion.deprecated, undefined);
+      assert.equal(originalVersion.version, '2.0.0');
+    });
+
+    it('should fix bug version on abbreviated manifests request', async () => {
+      const bugVersion = new BugVersion({
+        'testmodule-show-package': {
+          '2.0.0': {
+            version: '1.0.0',
+            reason: 'mock reason',
+          },
+        },
+      });
+      mock(BugVersionService.prototype, 'getBugVersion', async () => {
+        return bugVersion;
+      });
+      mock(CacheService.prototype, 'getPackageEtag', async () => {
+        return null;
+      });
+      let res = await app
+        .httpRequest()
+        .get(`/${name}`)
+        .set('accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const shouldFixVersion = res.body.versions['2.0.0'];
+      assert.equal(
+        shouldFixVersion.dist.tarball,
+        'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-1.0.0.tgz',
+      );
+      assert.equal(shouldFixVersion.deprecated, '[WARNING] Use 1.0.0 instead of 2.0.0, reason: mock reason');
+      // don't change version
+      assert.equal(shouldFixVersion.version, '2.0.0');
+
+      // sync worker request should not effect
+      res = await app
+        .httpRequest()
+        .get(`/${name}?cache=0`)
+        .set('accept', 'application/vnd.npm.install-v1+json')
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      const originalVersion = res.body.versions['2.0.0'];
+      assert.equal(
+        originalVersion.dist.tarball,
+        'https://registry.example.com/testmodule-show-package/-/testmodule-show-package-2.0.0.tgz',
+      );
+      assert.equal(originalVersion.deprecated, undefined);
+      assert.equal(originalVersion.version, '2.0.0');
     });
 
     it('should show _source_registry_name', async () => {

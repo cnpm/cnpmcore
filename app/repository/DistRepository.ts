@@ -1,3 +1,4 @@
+import { JSONBuilder } from '@cnpmjs/packument';
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 
 import type { NFSAdapter } from '../common/adapter/NFSAdapter.ts';
@@ -28,10 +29,44 @@ export class DistRepository {
     }
   }
 
+  async findPackageVersionManifestJSONBuilder(
+    packageId: string,
+    version: string,
+    includeReadme = false,
+  ): Promise<JSONBuilder | undefined> {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
+    if (packageVersion) {
+      // include readme
+      if (includeReadme) {
+        const [builder, readme] = await Promise.all([
+          this.readDistBytesToJSONBuilder(packageVersion.manifestDist),
+          this.readDistBytesToString(packageVersion.readmeDist),
+        ]);
+        if (builder) {
+          builder.setIn(['readme'], readme);
+        }
+        return builder;
+      }
+
+      // only return manifest builder
+      return await this.readDistBytesToJSONBuilder(packageVersion.manifestDist);
+    }
+  }
+
   async findPackageAbbreviatedManifest(packageId: string, version: string): Promise<PackageJSONType | undefined> {
     const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       return await this.readDistBytesToJSON(packageVersion.abbreviatedDist);
+    }
+  }
+
+  async findPackageAbbreviatedManifestJSONBuilder(
+    packageId: string,
+    version: string,
+  ): Promise<JSONBuilder | undefined> {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
+    if (packageVersion) {
+      return await this.readDistBytesToJSONBuilder(packageVersion.abbreviatedDist);
     }
   }
 
@@ -50,6 +85,18 @@ export class DistRepository {
 
   async readDistBytes(dist: Dist): Promise<Uint8Array | undefined> {
     return await this.nfsAdapter.getBytes(dist.path);
+  }
+
+  async readDistBytesToBuffer(dist: Dist): Promise<Buffer | undefined> {
+    const bytes = await this.readDistBytes(dist);
+    if (!bytes) return undefined;
+    return Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
+  }
+
+  async readDistBytesToJSONBuilder(dist: Dist): Promise<JSONBuilder | undefined> {
+    const bytes = await this.readDistBytesToBuffer(dist);
+    if (!bytes) return undefined;
+    return new JSONBuilder(bytes);
   }
 
   async getDistStream(dist: Dist) {

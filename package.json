@@ -1,6 +1,6 @@
 {
   "name": "cnpmcore",
-  "version": "4.13.0",
+  "version": "4.13.1",
   "description": "Private NPM Registry for Enterprise",
   "files": [
     "dist/**/*"
@@ -84,7 +84,7 @@
     "registry"
   ],
   "dependencies": {
-    "@cnpmjs/packument": "^1.1.1",
+    "@cnpmjs/packument": "^1.5.0",
     "@eggjs/redis": "beta",
     "@eggjs/scripts": "beta",
     "@eggjs/tracer": "beta",
@@ -145,7 +145,7 @@
     "coffee": "^5.5.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "oxfmt": "^0.15.0",
+    "oxfmt": "^0.16.0",
     "oxlint": "^1.30.0",
     "oxlint-tsgolint": "^0.8.3",
     "prettier": "^3.7.3",

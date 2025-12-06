@@ -280,7 +280,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.equal(res.body.error, '[FORBIDDEN] Package scope required, legal scopes: "@cnpm, @cnpmcore, @example"');
     });
 
-    it('should 200 when migrate scoped package', async () => {
+    it('should 200 and set registryId when migrate scoped package', async () => {
       const name = '@cnpm/publish-package-test';
       let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
       let res = await app
@@ -295,11 +295,12 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       const packageRepository = await app.getEggObject(PackageRepository);
       let pkgEntity = await packageRepository.findPackage('@cnpm', 'publish-package-test');
       assert.ok(pkgEntity);
+      // mock registryId to empty
       pkgEntity.registryId = '';
       await packageRepository.savePackage(pkgEntity);
 
       res = await app.httpRequest().get(`/${pkg.name}`);
-      assert.equal(res.body._source_registry_name, 'default');
+      assert.equal(res.body._source_registry_name, 'default', 'should set registryId to default');
 
       pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
       res = await app
@@ -311,10 +312,10 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .expect(201);
 
       pkgEntity = await packageRepository.findPackage('@cnpm', 'publish-package-test');
-      assert.ok(pkgEntity?.registryId);
+      assert.ok(pkgEntity?.registryId, 'should set registryId');
 
       res = await app.httpRequest().get(`/${pkg.name}`);
-      assert.equal(res.body._source_registry_name, 'self');
+      assert.equal(res.body._source_registry_name, 'self', 'should set registryId to self');
     });
 
     it('should publish on user custom scopes', async () => {

@@ -159,5 +159,164 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
 
       assert.ok(checked);
     });
+
+    it('should override _npmUser field if is private package', async () => {
+      const { packageId } = await packageManagerService.publish(
+        {
+          dist: {
+            localFile: TestUtil.getFixtures('registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'),
+          },
+          scope: '',
+          name: 'foo_npm_user',
+          description: 'foo description',
+          packageJson: await TestUtil.getFullPackage({
+            name: 'foo_npm_user',
+            _npmUser: { name: 'test-user-attacker', email: 'attacker@example.com' },
+          }),
+          readme: '',
+          version: '1.0.0',
+          isPrivate: true,
+        },
+        publisher,
+      );
+      const pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
+      assert(pkgVersion);
+      assert.equal(pkgVersion.version, '1.0.0');
+      const { manifest: fullManifest } = await packageManagerService.showPackageVersionManifest(
+        '',
+        'foo_npm_user',
+        '1.0.0',
+        false,
+        true,
+      );
+      assert(fullManifest);
+      assert.deepEqual(fullManifest._npmUser, {
+        name: publisher.displayName,
+        email: publisher.email,
+      });
+
+      const { manifest: abbreviatedManifest } = await packageManagerService.showPackageVersionManifest(
+        '',
+        'foo_npm_user',
+        '1.0.0',
+        false,
+        false,
+      );
+      assert(abbreviatedManifest);
+      assert.deepEqual(abbreviatedManifest._npmUser, {
+        name: publisher.displayName,
+        email: publisher.email,
+      });
+    });
+
+    it('should set _npmUser field if it does not exist', async () => {
+      const { packageId } = await packageManagerService.publish(
+        {
+          dist: {
+            localFile: TestUtil.getFixtures('registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'),
+          },
+          scope: '',
+          name: 'foo_npm_user_not_exists',
+          description: 'foo description',
+          packageJson: await TestUtil.getFullPackage({ name: 'foo_npm_user_not_exists' }),
+          readme: '',
+          version: '1.0.0',
+          isPrivate: true,
+        },
+        publisher,
+      );
+      const pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
+      assert(pkgVersion);
+      assert.equal(pkgVersion.version, '1.0.0');
+      const { manifest: fullManifest } = await packageManagerService.showPackageVersionManifest(
+        '',
+        'foo_npm_user_not_exists',
+        '1.0.0',
+        false,
+        true,
+      );
+      assert(fullManifest);
+      assert.deepEqual(fullManifest._npmUser, {
+        name: publisher.displayName,
+        email: publisher.email,
+      });
+
+      const { manifest: abbreviatedManifest } = await packageManagerService.showPackageVersionManifest(
+        '',
+        'foo_npm_user_not_exists',
+        '1.0.0',
+        false,
+        false,
+      );
+      assert(abbreviatedManifest);
+      assert.deepEqual(abbreviatedManifest._npmUser, {
+        name: publisher.displayName,
+        email: publisher.email,
+      });
+    });
+
+    it('should not override _npmUser field if is public package', async () => {
+      const { packageId } = await packageManagerService.publish(
+        {
+          dist: {
+            localFile: TestUtil.getFixtures('registry.npmjs.org/pedding/-/pedding-1.1.0.tgz'),
+          },
+          scope: '',
+          name: 'foo_public_npm_user',
+          description: 'foo description',
+          packageJson: await TestUtil.getFullPackage({
+            name: 'foo_public_npm_user',
+            _npmUser: {
+              name: 'test-user-public',
+              email: 'public@example.com',
+              trustedPublisher: {
+                id: 'github',
+                oidcConfigId: 'oidc:d0f693c3-ada3-4197-b34c-b7aaeb524f11',
+              },
+            } as any,
+          }),
+          readme: '',
+          version: '1.0.0',
+          isPrivate: false,
+        },
+        publisher,
+      );
+      const pkgVersion = await packageRepository.findPackageVersion(packageId, '1.0.0');
+      assert(pkgVersion);
+      assert.equal(pkgVersion.version, '1.0.0');
+      const { manifest: fullManifest } = await packageManagerService.showPackageVersionManifest(
+        '',
+        'foo_public_npm_user',
+        '1.0.0',
+        false,
+        true,
+      );
+      assert(fullManifest);
+      assert.deepEqual(fullManifest._npmUser, {
+        name: 'test-user-public',
+        email: 'public@example.com',
+        trustedPublisher: {
+          id: 'github',
+          oidcConfigId: 'oidc:d0f693c3-ada3-4197-b34c-b7aaeb524f11',
+        },
+      });
+
+      const { manifest: abbreviatedManifest } = await packageManagerService.showPackageVersionManifest(
+        '',
+        'foo_public_npm_user',
+        '1.0.0',
+        false,
+        false,
+      );
+      assert(abbreviatedManifest);
+      assert.deepEqual(abbreviatedManifest._npmUser, {
+        name: 'test-user-public',
+        email: 'public@example.com',
+        trustedPublisher: {
+          id: 'github',
+          oidcConfigId: 'oidc:d0f693c3-ada3-4197-b34c-b7aaeb524f11',
+        },
+      });
+    });
   });
 });

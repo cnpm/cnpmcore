@@ -21,7 +21,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   syncUpstreamFirst: false,
   sourceRegistrySyncTimeout: 180_000,
   taskQueueHighWaterSize: 100,
-  syncMode: SyncMode.none,
+  syncMode: env('CNPMCORE_CONFIG_SYNC_MODE', 'string', SyncMode.none) as SyncMode,
   syncDeleteMode: SyncDeleteMode.delete,
   syncPackageWorkerMaxConcurrentTasks: 10,
   triggerHookWorkerMaxConcurrentTasks: 10,
@@ -65,7 +65,8 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
     type: database.type,
   },
   experimental: {
-    syncPackageWithPackument: false,
+    syncPackageWithPackument: env('CNPMCORE_CONFIG_SYNC_PACKAGE_WITH_PACKUMENT', 'boolean', false),
+    enableJSONBuilder: env('CNPMCORE_CONFIG_ENABLE_JSON_BUILDER', 'boolean', false),
   },
 };
 
@@ -171,6 +172,7 @@ export default function startConfig(appInfo: EggAppConfig): Config {
   }
 
   config.logger = {
+    consoleLevel: 'WARN',
     enablePerformanceTimer: true,
     enableFastContextLogger: true,
     appLogName: env('CNPMCORE_APP_LOG_NAME', 'string', `${appInfo.name}-web.log`),
