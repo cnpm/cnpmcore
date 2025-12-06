@@ -134,13 +134,9 @@ export class ShowPackageController extends AbstractController {
 
   private async getFullManifestsBytesWithJSONBuilder(fullname: string, isFullManifests: boolean) {
     const [scope, name] = getScopeAndName(fullname);
-    let result: { etag: string; data: Buffer | null; blockReason: string };
-    // sync mode
     if (isFullManifests) {
-      result = await this.packageManagerService.listPackageFullManifestsBuffer(scope, name);
-    } else {
-      result = await this.packageManagerService.listPackageAbbreviatedManifestsBuffer(scope, name);
+      return await this.packageManagerService.listPackageFullManifestsBuffer(scope, name);
     }
-    return result;
+    return await this.packageManagerService.listPackageAbbreviatedManifestsBuffer(scope, name);
   }
 }
