@@ -14,6 +14,7 @@ config/config.prod.ts
 config/**/*.js
 app/**/*.js
 test/**/*.js
+benchmark/**/*.js
 app.js
 
 .cnpmcore
