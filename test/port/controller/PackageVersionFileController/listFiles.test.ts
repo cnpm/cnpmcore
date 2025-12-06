@@ -365,7 +365,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             {
               path: '/id/AccountId.js',
               type: 'file',
-              contentType: 'application/javascript',
+              contentType: 'text/javascript',
               integrity:
                 'sha512-kFa+SXSMGbCh2DiuSGmlCS8OCBSE4VRGlq/A2IyY3QxL794soFq4zO3F+UEx4ANUG33urAa4LG4IY2OiUc2Mng==',
               lastModified: '2024-05-18T16:00:18.307Z',
@@ -383,7 +383,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             {
               path: '/id/Mode.js',
               type: 'file',
-              contentType: 'application/javascript',
+              contentType: 'text/javascript',
               integrity:
                 'sha512-jfMuIff4LW/ZQ8el9iCww8c9gw+12UK7eZn+6TMDAlStfLhlu8u7jcCSWSEG1zBTty9DIHn4Nbp+dMDjRUnVWQ==',
               lastModified: '2024-05-18T16:00:18.307Z',
@@ -401,7 +401,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             {
               path: '/id/UUID.js',
               type: 'file',
-              contentType: 'application/javascript',
+              contentType: 'text/javascript',
               integrity:
                 'sha512-bo/JyxOZeRRjbN0OR8vNRz3cTY2GcJfRmRnp3QTGXE5iuKYjrpjYzj+vEXopZV1QYPdZaXUK671EoysPE59pQQ==',
               lastModified: '2024-05-18T16:00:18.307Z',
@@ -464,7 +464,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           {
             path: '/id/legalPerson/be/CRN.js',
             type: 'file',
-            contentType: 'application/javascript',
+            contentType: 'text/javascript',
             integrity:
               'sha512-K7fRjnkAkNnSYbWZW4A+xcdYbI2J1fk49AxFVut2Kk6LXOZbLH6nU9CFeo0YixDLa1Hl5sjLiUQ7Mur2HQgvNw==',
             lastModified: '2024-05-18T16:00:18.307Z',
