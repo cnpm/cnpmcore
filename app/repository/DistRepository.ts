@@ -90,7 +90,9 @@ export class DistRepository {
   async readDistBytesToBuffer(dist: Dist): Promise<Buffer | undefined> {
     const bytes = await this.readDistBytes(dist);
     if (!bytes) return undefined;
-    return Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
+    // if bytes is Uint8Array, should use zero copy to create a new Buffer
+    // https://nodejs.org/docs/latest-v24.x/api/buffer.html#static-method-bufferfromarraybuffer-byteoffset-length
+    return Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   }
 
   async readDistBytesToJSONBuilder(dist: Dist): Promise<JSONBuilder | undefined> {
