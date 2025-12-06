@@ -96,8 +96,8 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         log,
         /🟢 Synced version 0.0.0 success, different meta: {"_npmUser":{"name":"fengmk2-changed","email":"fengmk2@gmail.com"}}/,
       );
-      assert.ok(res.data);
       res = await packageManagerService.listPackageFullManifests('', name);
+      assert.ok(res.data);
       assert.ok(res.data?.versions);
       assert.deepEqual(res.data.versions[res.data['dist-tags'].latest]?._npmUser, {
         name: 'fengmk2-changed',
