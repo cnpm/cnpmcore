@@ -4,7 +4,7 @@ import { AbstractService } from '../../common/AbstractService.ts';
 import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
 import type { ChangesStreamTaskData } from '../entity/Task.ts';
 
-type PackageCacheAttribute = 'etag' | 'etag_v2' | 'manifests';
+type PackageCacheAttribute = 'etag' | 'manifests';
 
 export type UpstreamRegistryInfo = {
   registry_name: string;
@@ -66,16 +66,6 @@ export class CacheService extends AbstractService {
     ]);
   }
 
-  public async savePackageEtagV2(fullname: string, isFullManifests: boolean, etag: string) {
-    const key = this.cacheKey(fullname, isFullManifests, 'etag_v2');
-    await this.cacheAdapter.set(key, etag);
-  }
-
-  public async getPackageEtagV2(fullname: string, isFullManifests: boolean) {
-    const key = this.cacheKey(fullname, isFullManifests, 'etag_v2');
-    return await this.cacheAdapter.get(key);
-  }
-
   public async getTotalData() {
     const value = await this.cacheAdapter.get(TOTAL_DATA_KEY);
     const totalData: TotalData = value
@@ -110,10 +100,8 @@ export class CacheService extends AbstractService {
   public async removeCache(fullname: string) {
     await Promise.all([
       this.cacheAdapter.delete(this.cacheKey(fullname, true, 'etag')),
-      this.cacheAdapter.delete(this.cacheKey(fullname, true, 'etag_v2')),
       this.cacheAdapter.delete(this.cacheKey(fullname, true, 'manifests')),
       this.cacheAdapter.delete(this.cacheKey(fullname, false, 'etag')),
-      this.cacheAdapter.delete(this.cacheKey(fullname, false, 'etag_v2')),
       this.cacheAdapter.delete(this.cacheKey(fullname, false, 'manifests')),
     ]);
   }

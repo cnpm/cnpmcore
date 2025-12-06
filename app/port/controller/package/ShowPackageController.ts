@@ -128,26 +128,32 @@ export class ShowPackageController extends AbstractController {
 
     // handle cache
     // fallback to db when cache error
-    if (!isSync) {
-      try {
-        const cacheEtag = await this.cacheService.getPackageEtagV2(fullname, isFullManifests);
-        if (cacheEtag) {
-          let requestEtag = ctx.request.get<string>('if-none-match');
-          if (requestEtag.startsWith('W/')) {
-            requestEtag = requestEtag.slice(2);
-          }
-          if (requestEtag === cacheEtag) {
-            // make sure CDN cache header set here
-            this.setCDNHeaders(ctx);
-            // match etag, set status 304
-            ctx.status = 304;
-            return;
-          }
+    try {
+      const cacheEtag = await this.cacheService.getPackageEtag(fullname, isFullManifests);
+      if (!isSync && cacheEtag) {
+        let requestEtag = ctx.request.get<string>('if-none-match');
+        if (requestEtag.startsWith('W/')) {
+          requestEtag = requestEtag.slice(2);
         }
-      } catch (e) {
-        this.logger.error(e);
-        this.logger.error('[ShowPackageController.show:error] get cache error, ignore');
+        if (requestEtag === cacheEtag) {
+          // make sure CDN cache header set here
+          this.setCDNHeaders(ctx);
+          // match etag, set status 304
+          ctx.status = 304;
+          return;
+        }
+        // get cache pkg data
+        const cacheBytes = await this.cacheService.getPackageManifests(fullname, isFullManifests);
+        if (cacheBytes && cacheBytes.length > 0) {
+          ctx.set('etag', `W/${cacheEtag}`);
+          ctx.type = 'json';
+          this.setCDNHeaders(ctx);
+          return cacheBytes;
+        }
       }
+    } catch (e) {
+      this.logger.error(e);
+      this.logger.error('[ShowPackageController.show:error] get cache error, ignore');
     }
 
     // handle cache miss
@@ -158,9 +164,9 @@ export class ShowPackageController extends AbstractController {
     } else {
       result = await this.packageManagerService.listPackageAbbreviatedManifestsBuffer(scope, name);
     }
-    const { etag, data, blockReason } = result;
+    const { etag, data: cacheBytes, blockReason } = result;
     // 404, no data
-    if (!etag || !data) {
+    if (!etag || !cacheBytes) {
       const allowSync = this.getAllowSync(ctx);
       // don't set cdn header, no cdn cache for new package to sync as soon as possible
       throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
@@ -174,7 +180,7 @@ export class ShowPackageController extends AbstractController {
     // sync request response with no bug version fixed
     if (!isSync) {
       ctx.runInBackground(async () => {
-        await this.cacheService.savePackageEtagV2(fullname, isFullManifests, etag);
+        await this.cacheService.savePackageEtagAndManifests(fullname, isFullManifests, etag, cacheBytes);
       });
     }
 
@@ -184,6 +190,6 @@ export class ShowPackageController extends AbstractController {
     ctx.set('etag', `W/${etag}`);
     ctx.type = 'json';
     this.setCDNHeaders(ctx);
-    return data;
+    return cacheBytes;
   }
 }
