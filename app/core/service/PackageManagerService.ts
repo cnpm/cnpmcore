@@ -82,6 +82,9 @@ export interface PublishPackageCmd {
     'content' | 'localFile'
   >;
   tags?: string[];
+  /**
+   * private package or not
+   */
   isPrivate: boolean;
   // only use on sync package
   publishTime?: Date;
@@ -175,12 +178,24 @@ export class PackageManagerService extends AbstractService {
       }
     }
 
-    // set _npmUser field to cmd.packageJson
-    cmd.packageJson._npmUser = {
-      // clean user scope prefix
-      name: publisher.displayName,
-      email: publisher.email,
-    };
+    // override _npmUser field if is private package or _npmUser field not exists
+    // otherwise avoid overriding _npmUser field from sync package, e.g.: oidc publish package
+    // "_npmUser": {
+    //   "name": "GitHub Actions",
+    //   "email": "npm-oidc-no-reply@github.com",
+    //   "trustedPublisher": {
+    //     "id": "github",
+    //     "oidcConfigId": "oidc:d0f693c3-ada3-4197-b34c-b7aaeb524f11"
+    //   }
+    // }
+    if (cmd.isPrivate || !cmd.packageJson._npmUser) {
+      // set _npmUser field to cmd.packageJson
+      cmd.packageJson._npmUser = {
+        // clean user scope prefix
+        name: publisher.displayName,
+        email: publisher.email,
+      };
+    }
 
     // add _registry_name field to cmd.packageJson
     const registry = await this.getSourceRegistry(pkg);
@@ -250,6 +265,7 @@ export class PackageManagerService extends AbstractService {
       // npminstall require publish time to show the recently update versions
       publish_time: cmd.packageJson.publish_time,
       _source_registry_name: cmd.packageJson._source_registry_name,
+      _npmUser: cmd.packageJson._npmUser,
     } as AbbreviatedPackageJSONType);
     const abbreviatedDistBytes = Buffer.from(abbreviated);
     const abbreviatedDistIntegrity = await calculateIntegrity(abbreviatedDistBytes);
@@ -579,6 +595,28 @@ export class PackageManagerService extends AbstractService {
   public async savePackageVersionManifest(pkgVersion: PackageVersion, mergeManifest: object, mergeAbbreviated: object) {
     await this._mergeManifestDist(pkgVersion.manifestDist, mergeManifest);
     await this._mergeManifestDist(pkgVersion.abbreviatedDist, mergeAbbreviated);
+  }
+
+  public async savePackageVersionManifestWithBuilder(
+    pkgVersion: PackageVersion,
+    manifestBuilder: JSONBuilder,
+    abbreviatedBuilder?: JSONBuilder,
+  ) {
+    const manifestBytes = manifestBuilder.build();
+    const manifestIntegrity = await calculateIntegrity(manifestBytes);
+    pkgVersion.manifestDist.size = manifestBytes.length;
+    pkgVersion.manifestDist.shasum = manifestIntegrity.shasum;
+    pkgVersion.manifestDist.integrity = manifestIntegrity.integrity;
+    await this.distRepository.saveDist(pkgVersion.manifestDist, manifestBytes);
+    if (abbreviatedBuilder) {
+      const abbreviatedBytes = abbreviatedBuilder.build();
+      const abbreviatedIntegrity = await calculateIntegrity(abbreviatedBytes);
+      pkgVersion.abbreviatedDist.size = abbreviatedBytes.length;
+      pkgVersion.abbreviatedDist.shasum = abbreviatedIntegrity.shasum;
+      pkgVersion.abbreviatedDist.integrity = abbreviatedIntegrity.integrity;
+      await this.distRepository.saveDist(pkgVersion.abbreviatedDist, abbreviatedBytes);
+    }
+    await this.packageRepository.savePackageVersion(pkgVersion);
   }
 
   /**
@@ -1052,6 +1090,7 @@ export class PackageManagerService extends AbstractService {
     manifestDist.shasum = manifestIntegrity.shasum;
     manifestDist.integrity = manifestIntegrity.integrity;
     await this.distRepository.saveDist(manifestDist, manifestBytes);
+    // FIXME: should store new size, shasum and integrity to database
   }
 
   private async _updatePackageManifestsToDists(

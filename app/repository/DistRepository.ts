@@ -29,10 +29,44 @@ export class DistRepository {
     }
   }
 
+  async findPackageVersionManifestJSONBuilder(
+    packageId: string,
+    version: string,
+    includeReadme = false,
+  ): Promise<JSONBuilder | undefined> {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
+    if (packageVersion) {
+      // include readme
+      if (includeReadme) {
+        const [builder, readme] = await Promise.all([
+          this.readDistBytesToJSONBuilder(packageVersion.manifestDist),
+          this.readDistBytesToString(packageVersion.readmeDist),
+        ]);
+        if (builder) {
+          builder.setIn(['readme'], readme);
+        }
+        return builder;
+      }
+
+      // only return manifest builder
+      return await this.readDistBytesToJSONBuilder(packageVersion.manifestDist);
+    }
+  }
+
   async findPackageAbbreviatedManifest(packageId: string, version: string): Promise<PackageJSONType | undefined> {
     const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       return await this.readDistBytesToJSON(packageVersion.abbreviatedDist);
+    }
+  }
+
+  async findPackageAbbreviatedManifestJSONBuilder(
+    packageId: string,
+    version: string,
+  ): Promise<JSONBuilder | undefined> {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
+    if (packageVersion) {
+      return await this.readDistBytesToJSONBuilder(packageVersion.abbreviatedDist);
     }
   }
 

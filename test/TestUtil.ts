@@ -23,6 +23,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 interface PackageOptions {
+  _npmUser?: {
+    name: string;
+    email: string;
+  };
   name?: string;
   version?: string;
   versionObject?: object;
@@ -216,6 +220,10 @@ export class TestUtil {
       const firstVersion = Object.keys(versions)[0];
       const version = versions[firstVersion];
       let updateAttach = false;
+      if (options._npmUser) {
+        pkg._npmUser = options._npmUser;
+        version._npmUser = options._npmUser;
+      }
       if (options.name) {
         pkg.name = options.name;
         version.name = options.name;
