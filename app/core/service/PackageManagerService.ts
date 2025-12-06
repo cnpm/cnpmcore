@@ -179,7 +179,7 @@ export class PackageManagerService extends AbstractService {
     }
 
     // override _npmUser field if is private package or _npmUser field not exists
-    // other avoid override _npmUser field from sync package, e.g.: oidc publish package
+    // otherwise avoid overriding _npmUser field from sync package, e.g.: oidc publish package
     // "_npmUser": {
     //   "name": "GitHub Actions",
     //   "email": "npm-oidc-no-reply@github.com",
