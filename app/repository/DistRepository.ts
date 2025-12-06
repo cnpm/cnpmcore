@@ -53,13 +53,6 @@ export class DistRepository {
     }
   }
 
-  async savePackageVersionManifestJSONBuilder(packageId: string, version: string, builder: JSONBuilder) {
-    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
-    if (packageVersion) {
-      await this.saveDist(packageVersion.manifestDist, builder.build());
-    }
-  }
-
   async findPackageAbbreviatedManifest(packageId: string, version: string): Promise<PackageJSONType | undefined> {
     const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
@@ -74,13 +67,6 @@ export class DistRepository {
     const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       return await this.readDistBytesToJSONBuilder(packageVersion.abbreviatedDist);
-    }
-  }
-
-  async savePackageAbbreviatedManifestJSONBuilder(packageId: string, version: string, builder: JSONBuilder) {
-    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
-    if (packageVersion) {
-      await this.saveDist(packageVersion.abbreviatedDist, builder.build());
     }
   }
 

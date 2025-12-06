@@ -1484,6 +1484,11 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
       if (updateVersions.includes(version) || diff.removedVersions.includes(version)) {
         continue;
       }
+      const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+      if (!pkgVersion) {
+        logs.push(`[${isoNow()}] 🚧 version ${version} not exists in database, skip check different meta data`);
+        continue;
+      }
       const manifestBuilder = await this.distRepository.findPackageVersionManifestJSONBuilder(pkg.packageId, version);
       if (!manifestBuilder) {
         logs.push(`[${isoNow()}] 🚧 version ${version} manifest not exists, skip check different meta data`);
@@ -1518,14 +1523,7 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
         }
       }
       if (hasDifferent) {
-        await this.distRepository.savePackageVersionManifestJSONBuilder(pkg.packageId, version, manifestBuilder);
-        if (abbreviatedManifestBuilder) {
-          await this.distRepository.savePackageAbbreviatedManifestJSONBuilder(
-            pkg.packageId,
-            version,
-            abbreviatedManifestBuilder,
-          );
-        }
+        await this.packageManagerService.savePackageVersionManifestWithBuilder(pkgVersion, manifestBuilder, abbreviatedManifestBuilder);
         updateVersions.push(version);
         logs.push(`[${isoNow()}] 🟢 Synced version ${version} success, different meta: ${JSON.stringify(diffMeta)}`);
       }

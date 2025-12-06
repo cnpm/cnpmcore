@@ -597,6 +597,24 @@ export class PackageManagerService extends AbstractService {
     await this._mergeManifestDist(pkgVersion.abbreviatedDist, mergeAbbreviated);
   }
 
+  public async savePackageVersionManifestWithBuilder(pkgVersion: PackageVersion, manifestBuilder: JSONBuilder, abbreviatedBuilder?: JSONBuilder) {
+    const manifestBytes = manifestBuilder.build();
+    const manifestIntegrity = await calculateIntegrity(manifestBytes);
+    pkgVersion.manifestDist.size = manifestBytes.length;
+    pkgVersion.manifestDist.shasum = manifestIntegrity.shasum;
+    pkgVersion.manifestDist.integrity = manifestIntegrity.integrity;
+    await this.distRepository.saveDist(pkgVersion.manifestDist, manifestBytes);
+    if (abbreviatedBuilder) {
+      const abbreviatedBytes = abbreviatedBuilder.build();
+      const abbreviatedIntegrity = await calculateIntegrity(abbreviatedBytes);
+      pkgVersion.abbreviatedDist.size = abbreviatedBytes.length;
+      pkgVersion.abbreviatedDist.shasum = abbreviatedIntegrity.shasum;
+      pkgVersion.abbreviatedDist.integrity = abbreviatedIntegrity.integrity;
+      await this.distRepository.saveDist(pkgVersion.abbreviatedDist, abbreviatedBytes);
+    }
+    await this.packageRepository.savePackageVersion(pkgVersion);
+  }
+
   /**
    * save package version readme
    */
