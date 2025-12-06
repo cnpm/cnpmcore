@@ -1295,7 +1295,6 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert.ok(log.includes('🚧 Syncing versions 1 => 1'));
       assert.match(log, /different meta: {"_npmUser"/);
-      assert.ok(res.data);
       res = await packageManagerService.listPackageFullManifests('', name);
       assert.ok(res.data?.versions);
       assert.deepEqual(res.data.versions[res.data['dist-tags'].latest]?._npmUser, {
