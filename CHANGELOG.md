@@ -1,5 +1,15 @@
 # Changelog
 
+## <small>4.13.1 (2025-12-06)</small>
+
+* fix: auto sync _npmUser field (#912) ([cd57073](https://github.com/cnpm/cnpmcore/commit/cd57073)), closes [#912](https://github.com/cnpm/cnpmcore/issues/912) [hi#level](https://github.com/hi/issues/level)
+* refactor: use JSONBuilder to reduce JavaScript GC (#905) ([461c66a](https://github.com/cnpm/cnpmcore/commit/461c66a)), closes [#905](https://github.com/cnpm/cnpmcore/issues/905) [hi#level](https://github.com/hi/issues/level)
+* chore: remove mocha overrides (#895) ([5957276](https://github.com/cnpm/cnpmcore/commit/5957276)), closes [#895](https://github.com/cnpm/cnpmcore/issues/895) [hi#level](https://github.com/hi/issues/level)
+* chore: use oxfmt (#896) ([8d6a718](https://github.com/cnpm/cnpmcore/commit/8d6a718)), closes [#896](https://github.com/cnpm/cnpmcore/issues/896)
+* chore(deps): update dependency oxfmt to ^0.16.0 (#902) ([f3c33ba](https://github.com/cnpm/cnpmcore/commit/f3c33ba)), closes [#902](https://github.com/cnpm/cnpmcore/issues/902)
+* chore(deps): update dependency p-map to v7 (#868) ([e1ea970](https://github.com/cnpm/cnpmcore/commit/e1ea970)), closes [#868](https://github.com/cnpm/cnpmcore/issues/868)
+* chore(deps): upgrade ua-parser-js to v2 (#898) ([44b80a9](https://github.com/cnpm/cnpmcore/commit/44b80a9)), closes [#898](https://github.com/cnpm/cnpmcore/issues/898) [#872](https://github.com/cnpm/cnpmcore/issues/872)
+
 ## 4.13.0 (2025-11-29)
 
 * feat: use packument to parse full manifest json (#894) ([b70a9af](https://github.com/cnpm/cnpmcore/commit/b70a9af)), closes [#894](https://github.com/cnpm/cnpmcore/issues/894) [hi#level](https://github.com/hi/issues/level)
