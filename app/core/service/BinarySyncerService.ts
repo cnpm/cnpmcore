@@ -322,36 +322,13 @@ export class BinarySyncerService extends AbstractService {
       const existsItem = existsMap.get(item.name);
       if (!existsItem) {
         diffItems.push({
-          item: Binary.create({
-            category: binaryName,
-            parent: dir,
-            name: item.name,
-            isDir: item.isDir,
-            size: 0,
-            date: item.date,
-            sourceUrl: item.url,
-            ignoreDownloadStatuses: item.ignoreDownloadStatuses,
-          }),
+          item: this.createBinary(binaryName, dir, item),
           reason: 'new item',
         });
       } else if (existsItem.date !== item.date) {
         // Date changed, create new Binary entity with updated info
-        const bin = Binary.create({
-          id: existsItem.id,
-          binaryId: existsItem.binaryId,
-          category: binaryName,
-          parent: dir,
-          name: item.name,
-          isDir: item.isDir,
-          size: 0,
-          date: item.date,
-          sourceUrl: item.url,
-          ignoreDownloadStatuses: item.ignoreDownloadStatuses,
-        });
-        // keep binaryId not changed
-        bin.binaryId = existsItem.binaryId;
         diffItems.push({
-          item: bin,
+          item: this.createBinary(binaryName, dir, item, existsItem),
           reason: `date diff, local: ${JSON.stringify(existsItem.date)}, remote: ${JSON.stringify(item.date)}`,
         });
       } else if (dir.endsWith(latestVersionParent)) {
@@ -360,22 +337,9 @@ export class BinarySyncerService extends AbstractService {
         }
         const isLatestItem = latestItem?.name === item.name;
         if (isLatestItem && item.isDir) {
-          const bin = Binary.create({
-            id: existsItem.id,
-            category: binaryName,
-            parent: dir,
-            name: item.name,
-            isDir: item.isDir,
-            size: 0,
-            date: item.date,
-            sourceUrl: item.url,
-            ignoreDownloadStatuses: item.ignoreDownloadStatuses,
-          });
-          // keep binaryId not changed
-          bin.binaryId = existsItem.binaryId;
           // Revalidate latest version directory
           diffItems.push({
-            item: bin,
+            item: this.createBinary(binaryName, dir, item, existsItem),
             reason: `revalidate latest version, latest parent dir is ${latestVersionParent}, current dir is ${dir}, current name is ${item.name}`,
           });
           latestVersionParent = `${latestVersionParent}${item.name}`;
@@ -387,6 +351,25 @@ export class BinarySyncerService extends AbstractService {
       newItems: diffItems,
       latestVersionDir: latestVersionParent,
     };
+  }
+
+  private createBinary(binaryName: BinaryName, dir: string, fetchItem: BinaryItem, existsItem?: { id: bigint; binaryId: string; name: string; date: string }) {
+    const bin = Binary.create({
+      category: binaryName,
+      parent: dir,
+      name: fetchItem.name,
+      isDir: fetchItem.isDir,
+      size: 0,
+      date: fetchItem.date,
+      sourceUrl: fetchItem.url,
+      ignoreDownloadStatuses: fetchItem.ignoreDownloadStatuses,
+    });
+    if (existsItem) {
+      bin.id = existsItem.id;
+      // keep binaryId not changed
+      bin.binaryId = existsItem.binaryId;
+    }
+    return bin;
   }
 
   private async saveBinaryItem(binary: Binary, tmpfile?: string) {
