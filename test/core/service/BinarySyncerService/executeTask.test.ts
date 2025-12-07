@@ -93,6 +93,8 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert.match(log, /\[\/latest\/] 🟢 Synced dir success/);
       assert.match(log, /\[\/latest\/docs\/] 🟢 Synced dir success/);
       const items = await binarySyncerService.listRootBinaries('node');
+      // sort by name first, postgres return items in random order
+      items.sort((a, b) => a.name.localeCompare(b.name));
       // console.log(JSON.stringify(items, null, 2));
 
       // sync again
@@ -108,6 +110,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert.match(log, /Syncing diff: 2 => 1/);
       assert.match(log, /\[\/\] 🟢 Synced dir success/);
       const items2 = await binarySyncerService.listRootBinaries('node');
+      items2.sort((a, b) => a.name.localeCompare(b.name));
       // only "latest/" updatedAt changed, other should not change
       assert.equal(items[1].name, 'latest/');
       items[1].updatedAt = items2[1].updatedAt;
@@ -154,6 +157,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert.match(log, /reason: date diff, local: "17-Dec-2021 23:16", remote: "20-Dec-2021 23:16"/);
       assert.match(log, /\[\/\] 🟢 Synced dir success/);
       const items3 = await binarySyncerService.listRootBinaries('node');
+      items3.sort((a, b) => a.name.localeCompare(b.name));
       // only "index.json" `date, updatedAt` changed, other should not change
       assert.equal(items2[0].name, 'index.json');
       items2[0].date = items3[0].date;
