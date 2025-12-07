@@ -6,7 +6,12 @@
 
 import fs from 'node:fs';
 
-const profilePath = process.argv[2] || '~/Downloads/x-cpuprofile-3000679-20251207-0.cpuprofile';
+const profilePath = process.argv[2];
+
+if (!profilePath) {
+  console.error('Usage: node analyze-profile.js <profile.cpuprofile>');
+  process.exit(1);
+}
 
 if (!fs.existsSync(profilePath)) {
   console.error('Profile file not found:', profilePath);
