@@ -19,7 +19,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
   });
 
   describe('executeTask()', () => {
-    it.only('should execute "node" task', async () => {
+    it('should execute "node" task', async () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
