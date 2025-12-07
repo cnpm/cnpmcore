@@ -353,7 +353,12 @@ export class BinarySyncerService extends AbstractService {
     };
   }
 
-  private createBinary(binaryName: BinaryName, dir: string, fetchItem: BinaryItem, existsItem?: { id: bigint; binaryId: string; name: string; date: string }) {
+  private createBinary(
+    binaryName: BinaryName,
+    dir: string,
+    fetchItem: BinaryItem,
+    existsItem?: { id: bigint; binaryId: string; name: string; date: string },
+  ) {
     const bin = Binary.create({
       category: binaryName,
       parent: dir,
