@@ -1,9 +1,9 @@
 # CPU Profile Analysis Report
 
-**Profile**: x-cpuprofile-3000679-20251207-0.cpuprofile
-**Date**: 2025-12-07
-**Duration**: 180.02 seconds (3 minutes)
-**Profile Type**: xprofiler-cpu-profile
+- **Profile**: `x-cpuprofile-3000679-20251207-0.cpuprofile`
+- **Date**: 2025-12-07
+- **Duration**: 180.02 seconds (3 minutes)
+- **Profile Type**: `xprofiler-cpu-profile`
 
 ## Executive Summary
 
