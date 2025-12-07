@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.14.0 (2025-12-07)
+
+* feat: avoids Bone constructor overhead for each row (#919) ([f8eedd8](https://github.com/cnpm/cnpmcore/commit/f8eedd8)), closes [#919](https://github.com/cnpm/cnpmcore/issues/919) [hi#level](https://github.com/hi/issues/level)
+* chore(benchmark): add CPU profiler analysis tools (#917) ([5ef2c67](https://github.com/cnpm/cnpmcore/commit/5ef2c67)), closes [#917](https://github.com/cnpm/cnpmcore/issues/917)
+
 ## <small>4.13.3 (2025-12-06)</small>
 
 * fix: zero copy to create a new Buffer (#916) ([683ee1d](https://github.com/cnpm/cnpmcore/commit/683ee1d)), closes [#916](https://github.com/cnpm/cnpmcore/issues/916) [hi#level](https://github.com/hi/issues/level)
