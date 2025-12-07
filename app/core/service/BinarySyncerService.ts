@@ -204,9 +204,11 @@ export class BinarySyncerService extends AbstractService {
     if (result && result.items.length > 0) {
       hasItems = true;
       let logs: string[] = [];
+      const startTime = Date.now();
       const { newItems, latestVersionDir } = await this.diff(binaryName, dir, result.items, latestVersionParent);
+      const useTime = Date.now() - startTime;
       logs.push(
-        `[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryAdapter.constructor.name}`,
+        `[${isoNow()}][${dir}] 🚧 Syncing diff: ${result.items.length} => ${newItems.length}, Binary class: ${binaryAdapter.constructor.name}, use: ${useTime}ms`,
       );
       // re-check latest version
       for (const [index, { item, reason }] of newItems.entries()) {
@@ -307,8 +309,10 @@ export class BinarySyncerService extends AbstractService {
   // 如果的当前目录命中 latestVersionParent 父目录，那么就再校验一下当前目录
   // 如果 existsItems 为空或者经过修改，那么就不需要 revalidate 了
   private async diff(binaryName: BinaryName, dir: string, fetchItems: BinaryItem[], latestVersionParent = '/') {
-    const existsItems = await this.binaryRepository.listBinaries(binaryName, dir);
-    const existsMap = new Map<string, Binary>();
+    // Use optimized query that only fetches name and date columns
+    // This avoids Bone constructor overhead for each row
+    const existsItems = await this.binaryRepository.listBinaryNameAndDates(binaryName, dir);
+    const existsMap = new Map<string, { id: bigint; binaryId: string; name: string; date: string }>();
     for (const item of existsItems) {
       existsMap.set(item.name, item);
     }
@@ -318,37 +322,27 @@ export class BinarySyncerService extends AbstractService {
       const existsItem = existsMap.get(item.name);
       if (!existsItem) {
         diffItems.push({
-          item: Binary.create({
-            category: binaryName,
-            parent: dir,
-            name: item.name,
-            isDir: item.isDir,
-            size: 0,
-            date: item.date,
-            sourceUrl: item.url,
-            ignoreDownloadStatuses: item.ignoreDownloadStatuses,
-          }),
+          item: this.createBinary(binaryName, dir, item),
           reason: 'new item',
         });
       } else if (existsItem.date !== item.date) {
+        // Date changed, create new Binary entity with updated info
         diffItems.push({
-          item: existsItem,
+          item: this.createBinary(binaryName, dir, item, existsItem),
           reason: `date diff, local: ${JSON.stringify(existsItem.date)}, remote: ${JSON.stringify(item.date)}`,
         });
-        existsItem.sourceUrl = item.url;
-        existsItem.ignoreDownloadStatuses = item.ignoreDownloadStatuses;
-        existsItem.date = item.date;
       } else if (dir.endsWith(latestVersionParent)) {
         if (!latestItem) {
           latestItem = sortBy(fetchItems, ['date']).pop();
         }
         const isLatestItem = latestItem?.name === item.name;
-        if (isLatestItem && existsItem.isDir) {
+        if (isLatestItem && item.isDir) {
+          // Revalidate latest version directory
           diffItems.push({
-            item: existsItem,
-            reason: `revalidate latest version, latest parent dir is ${latestVersionParent}, current dir is ${dir}, current name is ${existsItem.name}`,
+            item: this.createBinary(binaryName, dir, item, existsItem),
+            reason: `revalidate latest version, latest parent dir is ${latestVersionParent}, current dir is ${dir}, current name is ${item.name}`,
           });
-          latestVersionParent = `${latestVersionParent}${existsItem.name}`;
+          latestVersionParent = `${latestVersionParent}${item.name}`;
         }
       }
     }
@@ -357,6 +351,30 @@ export class BinarySyncerService extends AbstractService {
       newItems: diffItems,
       latestVersionDir: latestVersionParent,
     };
+  }
+
+  private createBinary(
+    binaryName: BinaryName,
+    dir: string,
+    fetchItem: BinaryItem,
+    existsItem?: { id: bigint; binaryId: string; name: string; date: string },
+  ) {
+    const bin = Binary.create({
+      category: binaryName,
+      parent: dir,
+      name: fetchItem.name,
+      isDir: fetchItem.isDir,
+      size: 0,
+      date: fetchItem.date,
+      sourceUrl: fetchItem.url,
+      ignoreDownloadStatuses: fetchItem.ignoreDownloadStatuses,
+    });
+    if (existsItem) {
+      bin.id = existsItem.id;
+      // keep binaryId not changed
+      bin.binaryId = existsItem.binaryId;
+    }
+    return bin;
   }
 
   private async saveBinaryItem(binary: Binary, tmpfile?: string) {
