@@ -40,13 +40,13 @@ const profile = JSON.parse(fs.readFileSync(profilePath, 'utf-8'));
 
 // Build node map
 const nodeMap = new Map();
-profile.nodes.forEach(node => nodeMap.set(node.id, node));
+profile.nodes.forEach((node) => nodeMap.set(node.id, node));
 
 // Build parent map
 const parentMap = new Map();
-profile.nodes.forEach(node => {
+profile.nodes.forEach((node) => {
   if (node.children) {
-    node.children.forEach(childId => {
+    node.children.forEach((childId) => {
       parentMap.set(childId, node.id);
     });
   }
@@ -80,7 +80,7 @@ function getCallerChain(nodeId, maxDepth = 5) {
 
       chain.push({
         name,
-        location: location ? `${location}:${cf.lineNumber}` : '(native)'
+        location: location ? `${location}:${cf.lineNumber}` : '(native)',
       });
     }
 
@@ -101,7 +101,7 @@ function calculateTotalTime(nodeId, visited = new Set()) {
 
   let total = node.hitCount;
   if (node.children) {
-    node.children.forEach(childId => {
+    node.children.forEach((childId) => {
       total += calculateTotalTime(childId, visited);
     });
   }
@@ -117,7 +117,7 @@ const totalActive = profile.nodes.reduce((sum, n) => {
 
 // Find hotspots
 let hotspots = profile.nodes
-  .filter(n => {
+  .filter((n) => {
     if (n.hitCount === 0) return false;
     if (excluded.indexOf(n.callFrame.functionName) !== -1) return false;
 
@@ -129,10 +129,10 @@ let hotspots = profile.nodes
     }
     return true;
   })
-  .map(node => ({
+  .map((node) => ({
     node,
     selfTime: node.hitCount,
-    callerChain: getCallerChain(node.id)
+    callerChain: getCallerChain(node.id),
   }))
   .sort((a, b) => b.selfTime - a.selfTime)
   .slice(0, topN);
@@ -145,7 +145,7 @@ console.log(`\nTotal Active CPU Time: ${totalActive} samples\n`);
 hotspots.forEach((item, idx) => {
   const { node, selfTime, callerChain } = item;
   const cf = node.callFrame;
-  const pct = (selfTime / totalActive * 100).toFixed(2);
+  const pct = ((selfTime / totalActive) * 100).toFixed(2);
 
   let location = cf.url || '(native)';
   if (location.includes('node_modules')) {

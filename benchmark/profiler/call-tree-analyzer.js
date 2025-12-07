@@ -30,13 +30,13 @@ const profile = JSON.parse(fs.readFileSync(profilePath, 'utf-8'));
 
 // Build node map
 const nodeMap = new Map();
-profile.nodes.forEach(node => nodeMap.set(node.id, node));
+profile.nodes.forEach((node) => nodeMap.set(node.id, node));
 
 // Build parent map
 const parentMap = new Map();
-profile.nodes.forEach(node => {
+profile.nodes.forEach((node) => {
   if (node.children) {
-    node.children.forEach(childId => {
+    node.children.forEach((childId) => {
       if (!parentMap.has(childId)) {
         parentMap.set(childId, []);
       }
@@ -49,7 +49,7 @@ profile.nodes.forEach(node => {
 const targetRegex = new RegExp(targetPattern, 'i');
 const callerRegex = new RegExp(callerPattern, 'i');
 
-const targetNodes = profile.nodes.filter(n => {
+const targetNodes = profile.nodes.filter((n) => {
   const name = n.callFrame.functionName || '';
   const url = n.callFrame.url || '';
   return n.hitCount > 0 && (targetRegex.test(name) || targetRegex.test(url));
@@ -94,7 +94,7 @@ function getFullPath(nodeId, maxDepth = 30) {
         category,
         shortLocation,
         line: cf.lineNumber,
-        hitCount: node.hitCount
+        hitCount: node.hitCount,
       });
     }
 
@@ -110,7 +110,7 @@ function getFullPath(nodeId, maxDepth = 30) {
 const pathsByAppEntry = new Map();
 const pathsWithoutApp = [];
 
-targetNodes.forEach(node => {
+targetNodes.forEach((node) => {
   const path = getFullPath(node.id);
 
   // Find the deepest application code in the path
@@ -130,7 +130,7 @@ targetNodes.forEach(node => {
       pathsByAppEntry.set(key, {
         entry: appEntry,
         paths: [],
-        totalHits: 0
+        totalHits: 0,
       });
     }
 
@@ -143,8 +143,7 @@ targetNodes.forEach(node => {
 });
 
 // Sort by total hits
-const sortedGroups = Array.from(pathsByAppEntry.entries())
-  .sort((a, b) => b[1].totalHits - a[1].totalHits);
+const sortedGroups = Array.from(pathsByAppEntry.entries()).sort((a, b) => b[1].totalHits - a[1].totalHits);
 
 console.log('='.repeat(120));
 console.log(`Call Relationships: Application Code → ${targetPattern} Hotspots`);
@@ -166,8 +165,8 @@ sortedGroups.forEach(([key, group], idx) => {
   group.paths.forEach(({ path, targetNode }) => {
     // Create a simplified path key
     const pathKey = path
-      .filter(p => p.category !== 'node') // Skip node internals
-      .map(p => `${p.name}[${p.category}]`)
+      .filter((p) => p.category !== 'node') // Skip node internals
+      .map((p) => `${p.name}[${p.category}]`)
       .join(' → ');
 
     if (!pathCounts.has(pathKey)) {
@@ -196,10 +195,17 @@ sortedGroups.forEach(([key, group], idx) => {
 
       let categoryTag = '';
       switch (node.category) {
-        case 'app': categoryTag = '[APP]'; break;
-        case 'npm': categoryTag = '[NPM]'; break;
-        case 'node': categoryTag = '[NODE]'; break;
-        default: categoryTag = '[V8]';
+        case 'app':
+          categoryTag = '[APP]';
+          break;
+        case 'npm':
+          categoryTag = '[NPM]';
+          break;
+        case 'node':
+          categoryTag = '[NODE]';
+          break;
+        default:
+          categoryTag = '[V8]';
       }
 
       const location = node.shortLocation ? `${node.shortLocation}:${node.line}` : '(native)';
@@ -258,20 +264,20 @@ sortedGroups.slice(0, 10).forEach(([key, group]) => {
   });
 });
 
-appNodes.forEach(node => {
+appNodes.forEach((node) => {
   console.log(`        ${node.id}["${node.name}<br/>${node.location}<br/>${node.hits} hits"]`);
 });
 console.log('    end');
 
 console.log('    subgraph NPM["NPM Packages"]');
-npmNodes.forEach(node => {
+npmNodes.forEach((node) => {
   console.log(`        ${node.id}["${node.name}<br/>${node.pkg}"]`);
 });
 console.log('        bone["Bone Constructor<br/>leoric/lib/bone.js:150<br/>1553 hits"]');
 console.log('    end');
 
 console.log('');
-edges.forEach(edge => {
+edges.forEach((edge) => {
   console.log(`    ${edge}`);
 });
 

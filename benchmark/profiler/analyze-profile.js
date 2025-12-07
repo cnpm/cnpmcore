@@ -17,13 +17,13 @@ const profile = JSON.parse(fs.readFileSync(profilePath, 'utf-8'));
 
 // Build node map for quick lookup
 const nodeMap = new Map();
-profile.nodes.forEach(node => nodeMap.set(node.id, node));
+profile.nodes.forEach((node) => nodeMap.set(node.id, node));
 
 // Calculate basic statistics
 const totalHits = profile.nodes.reduce((sum, n) => sum + n.hitCount, 0);
-const idleNode = profile.nodes.find(n => n.callFrame.functionName === '(idle)');
-const programNode = profile.nodes.find(n => n.callFrame.functionName === '(program)');
-const gcNode = profile.nodes.find(n => n.callFrame.functionName === '(garbage collector)');
+const idleNode = profile.nodes.find((n) => n.callFrame.functionName === '(idle)');
+const programNode = profile.nodes.find((n) => n.callFrame.functionName === '(program)');
+const gcNode = profile.nodes.find((n) => n.callFrame.functionName === '(garbage collector)');
 
 const idleHits = idleNode ? idleNode.hitCount : 0;
 const programHits = programNode ? programNode.hitCount : 0;
@@ -42,15 +42,15 @@ console.log(`- Sample Count: ${profile.samples ? profile.samples.length : 'N/A'}
 
 console.log('\n## CPU Time Distribution\n');
 console.log(`- Total Samples: ${totalHits}`);
-console.log(`- Idle Time: ${idleHits} (${(idleHits / totalHits * 100).toFixed(2)}%)`);
-console.log(`- Program Time: ${programHits} (${(programHits / totalHits * 100).toFixed(2)}%)`);
-console.log(`- GC Time: ${gcHits} (${(gcHits / totalHits * 100).toFixed(2)}%)`);
-console.log(`- Active/User Time: ${activeHits} (${(activeHits / totalHits * 100).toFixed(2)}%)`);
+console.log(`- Idle Time: ${idleHits} (${((idleHits / totalHits) * 100).toFixed(2)}%)`);
+console.log(`- Program Time: ${programHits} (${((programHits / totalHits) * 100).toFixed(2)}%)`);
+console.log(`- GC Time: ${gcHits} (${((gcHits / totalHits) * 100).toFixed(2)}%)`);
+console.log(`- Active/User Time: ${activeHits} (${((activeHits / totalHits) * 100).toFixed(2)}%)`);
 
 // Get top functions by self time
 const excluded = ['(idle)', '(root)', '(program)', '(garbage collector)'];
 const topBySelf = profile.nodes
-  .filter(n => n.hitCount > 0 && excluded.indexOf(n.callFrame.functionName) === -1)
+  .filter((n) => n.hitCount > 0 && excluded.indexOf(n.callFrame.functionName) === -1)
   .sort((a, b) => b.hitCount - a.hitCount)
   .slice(0, 30);
 
@@ -59,7 +59,7 @@ console.log('| Rank | Hits | % of Active | Function | Location |');
 console.log('|------|------|-------------|----------|----------|');
 
 topBySelf.forEach((node, idx) => {
-  const pct = (node.hitCount / activeHits * 100).toFixed(2);
+  const pct = ((node.hitCount / activeHits) * 100).toFixed(2);
   const url = node.callFrame.url || '(native)';
   let location;
   if (url.includes('node:')) {
@@ -70,12 +70,14 @@ topBySelf.forEach((node, idx) => {
   } else {
     location = '(native)';
   }
-  console.log(`| ${idx + 1} | ${node.hitCount} | ${pct}% | ${node.callFrame.functionName} | ${location}:${node.callFrame.lineNumber} |`);
+  console.log(
+    `| ${idx + 1} | ${node.hitCount} | ${pct}% | ${node.callFrame.functionName} | ${location}:${node.callFrame.lineNumber} |`,
+  );
 });
 
 // Aggregate by file/module
 const fileStats = new Map();
-profile.nodes.forEach(node => {
+profile.nodes.forEach((node) => {
   if (node.hitCount === 0) return;
   if (excluded.indexOf(node.callFrame.functionName) !== -1) return;
 
@@ -113,7 +115,7 @@ console.log('| Rank | Hits | % of Active | File/Module | Function Count |');
 console.log('|------|------|-------------|-------------|----------------|');
 
 sortedFiles.forEach(([file, stats], idx) => {
-  const pct = (stats.hits / activeHits * 100).toFixed(2);
+  const pct = ((stats.hits / activeHits) * 100).toFixed(2);
   console.log(`| ${idx + 1} | ${stats.hits} | ${pct}% | ${file} | ${stats.functions.size} |`);
 });
 
@@ -122,10 +124,10 @@ const categories = {
   'Node.js Core': 0,
   'NPM Packages': 0,
   'Application Code': 0,
-  'Native/V8': 0
+  'Native/V8': 0,
 };
 
-profile.nodes.forEach(node => {
+profile.nodes.forEach((node) => {
   if (node.hitCount === 0) return;
   if (excluded.indexOf(node.callFrame.functionName) !== -1) return;
 
@@ -149,14 +151,14 @@ console.log('|----------|------|-------------|');
 Object.entries(categories)
   .sort((a, b) => b[1] - a[1])
   .forEach(([cat, hits]) => {
-    const pct = (hits / activeHits * 100).toFixed(2);
+    const pct = ((hits / activeHits) * 100).toFixed(2);
     console.log(`| ${cat} | ${hits} | ${pct}% |`);
   });
 
 // Find application code hotspots
 console.log('\n## Application Code Hotspots\n');
 const appFunctions = profile.nodes
-  .filter(n => {
+  .filter((n) => {
     if (n.hitCount === 0) return false;
     if (excluded.indexOf(n.callFrame.functionName) !== -1) return false;
     const url = n.callFrame.url || '';
@@ -170,10 +172,12 @@ if (appFunctions.length > 0) {
   console.log('|------|------|---|----------|------|------|');
 
   appFunctions.forEach((node, idx) => {
-    const pct = (node.hitCount / activeHits * 100).toFixed(2);
+    const pct = ((node.hitCount / activeHits) * 100).toFixed(2);
     const url = node.callFrame.url || '';
     const file = url.match(/application\/(.+)/)?.[1] || url;
-    console.log(`| ${idx + 1} | ${node.hitCount} | ${pct}% | ${node.callFrame.functionName} | ${file} | ${node.callFrame.lineNumber} |`);
+    console.log(
+      `| ${idx + 1} | ${node.hitCount} | ${pct}% | ${node.callFrame.functionName} | ${file} | ${node.callFrame.lineNumber} |`,
+    );
   });
 } else {
   console.log('No application code hotspots found.');
@@ -182,7 +186,7 @@ if (appFunctions.length > 0) {
 // Find npm package hotspots
 console.log('\n## NPM Package Hotspots\n');
 const npmFunctions = profile.nodes
-  .filter(n => {
+  .filter((n) => {
     if (n.hitCount === 0) return false;
     if (excluded.indexOf(n.callFrame.functionName) !== -1) return false;
     const url = n.callFrame.url || '';
@@ -196,11 +200,13 @@ if (npmFunctions.length > 0) {
   console.log('|------|------|---|----------|---------|------|');
 
   npmFunctions.forEach((node, idx) => {
-    const pct = (node.hitCount / activeHits * 100).toFixed(2);
+    const pct = ((node.hitCount / activeHits) * 100).toFixed(2);
     const url = node.callFrame.url || '';
     const pkgMatch = url.match(/node_modules\/_?([^@][^/]*|@[^/]+\/[^/]+)/);
     const pkg = pkgMatch ? pkgMatch[1] : 'unknown';
-    console.log(`| ${idx + 1} | ${node.hitCount} | ${pct}% | ${node.callFrame.functionName} | ${pkg} | ${node.callFrame.lineNumber} |`);
+    console.log(
+      `| ${idx + 1} | ${node.hitCount} | ${pct}% | ${node.callFrame.functionName} | ${pkg} | ${node.callFrame.lineNumber} |`,
+    );
   });
 } else {
   console.log('No NPM package hotspots found.');
@@ -216,7 +222,7 @@ function calculateTotalTime(nodeId, visited = new Set()) {
 
   let total = node.hitCount;
   if (node.children) {
-    node.children.forEach(childId => {
+    node.children.forEach((childId) => {
       total += calculateTotalTime(childId, visited);
     });
   }
@@ -225,16 +231,16 @@ function calculateTotalTime(nodeId, visited = new Set()) {
 
 // Find root level callers with high total time
 console.log('\n## Top Entry Points by Total Time\n');
-const rootNode = profile.nodes.find(n => n.callFrame.functionName === '(root)');
+const rootNode = profile.nodes.find((n) => n.callFrame.functionName === '(root)');
 if (rootNode && rootNode.children) {
   const entryPoints = rootNode.children
-    .map(childId => {
+    .map((childId) => {
       const node = nodeMap.get(childId);
       if (!node) return null;
       const totalTime = calculateTotalTime(childId);
       return { node, totalTime };
     })
-    .filter(x => x && excluded.indexOf(x.node.callFrame.functionName) === -1)
+    .filter((x) => x && excluded.indexOf(x.node.callFrame.functionName) === -1)
     .sort((a, b) => b.totalTime - a.totalTime)
     .slice(0, 15);
 
@@ -243,10 +249,12 @@ if (rootNode && rootNode.children) {
 
   entryPoints.forEach((entry, idx) => {
     const node = entry.node;
-    const pct = (entry.totalTime / activeHits * 100).toFixed(2);
+    const pct = ((entry.totalTime / activeHits) * 100).toFixed(2);
     const url = node.callFrame.url || '(native)';
     let location = url.includes('node:') ? url : url.split('/').slice(-2).join('/');
-    console.log(`| ${idx + 1} | ${entry.totalTime} | ${pct}% | ${node.hitCount} | ${node.callFrame.functionName} | ${location}:${node.callFrame.lineNumber} |`);
+    console.log(
+      `| ${idx + 1} | ${entry.totalTime} | ${pct}% | ${node.hitCount} | ${node.callFrame.functionName} | ${location}:${node.callFrame.lineNumber} |`,
+    );
   });
 }
 

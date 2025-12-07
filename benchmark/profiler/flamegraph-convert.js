@@ -28,13 +28,13 @@ const profile = JSON.parse(fs.readFileSync(profilePath, 'utf-8'));
 
 // Build node map
 const nodeMap = new Map();
-profile.nodes.forEach(node => nodeMap.set(node.id, node));
+profile.nodes.forEach((node) => nodeMap.set(node.id, node));
 
 // Build parent map for reverse traversal
 const parentMap = new Map();
-profile.nodes.forEach(node => {
+profile.nodes.forEach((node) => {
   if (node.children) {
-    node.children.forEach(childId => {
+    node.children.forEach((childId) => {
       parentMap.set(childId, node.id);
     });
   }
@@ -68,7 +68,7 @@ function getStack(nodeId) {
 // Output folded stacks
 const stackCounts = new Map();
 
-profile.nodes.forEach(node => {
+profile.nodes.forEach((node) => {
   if (node.hitCount > 0) {
     const stack = getStack(node.id);
     const stackStr = stack.join(';');
