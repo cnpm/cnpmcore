@@ -55,6 +55,22 @@ export class BinaryRepository extends AbstractRepository {
     return models.map((model) => ModelConvertor.convertModelToEntity(model, BinaryEntity));
   }
 
+  /**
+   * List binary names and dates without full entity instantiation.
+   * This is optimized for diff operations to avoid Bone constructor overhead.
+   */
+  async listBinaryNameAndDates(
+    category: string,
+    parent: string,
+  ): Promise<{ id: bigint; binaryId: string; name: string; date: string }[]> {
+    return (await this.Binary.select('id', 'binaryId', 'name', 'date').where({ category, parent })) as {
+      id: bigint;
+      binaryId: string;
+      name: string;
+      date: string;
+    }[];
+  }
+
   async findLatestBinaryDir(category: string, parent: string): Promise<BinaryEntity | null> {
     const model = await this.Binary.findOne({ category, parent }).order('date', 'desc');
     if (model) {

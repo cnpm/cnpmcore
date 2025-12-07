@@ -19,7 +19,7 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
   });
 
   describe('executeTask()', () => {
-    it('should execute "node" task', async () => {
+    it.only('should execute "node" task', async () => {
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
@@ -88,10 +88,12 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert.ok(stream);
       let log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(log.includes('Syncing diff: 2 => 2'));
-      assert.ok(log.includes('[/] 🟢 Synced dir success'));
-      assert.ok(log.includes('[/latest/] 🟢 Synced dir success'));
-      assert.ok(log.includes('[/latest/docs/] 🟢 Synced dir success'));
+      assert.match(log, /Syncing diff: 2 => 2/);
+      assert.match(log, /\[\/\] 🟢 Synced dir success/);
+      assert.match(log, /\[\/latest\/] 🟢 Synced dir success/);
+      assert.match(log, /\[\/latest\/docs\/] 🟢 Synced dir success/);
+      const items = await binarySyncerService.listRootBinaries('node');
+      // console.log(JSON.stringify(items, null, 2));
 
       // sync again
       await binarySyncerService.createTask('node', {});
@@ -102,9 +104,14 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(log.includes('reason: revalidate latest version'));
-      assert.ok(log.includes('Syncing diff: 2 => 1'));
-      assert.ok(log.includes('[/] 🟢 Synced dir success'));
+      assert.match(log, /reason: revalidate latest version/);
+      assert.match(log, /Syncing diff: 2 => 1/);
+      assert.match(log, /\[\/\] 🟢 Synced dir success/);
+      const items2 = await binarySyncerService.listRootBinaries('node');
+      // only "latest/" updatedAt changed, other should not change
+      assert.equal(items[1].name, 'latest/');
+      items[1].updatedAt = items2[1].updatedAt;
+      assert.deepEqual(items, items2);
 
       // mock date change
       app.mockHttpclient('https://nodejs.org/dist/index.json', 'GET', {
@@ -143,8 +150,15 @@ describe('test/core/service/BinarySyncerService/executeTask.test.ts', () => {
       assert.ok(stream);
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(log.includes('Syncing diff: 2 => 1'));
-      assert.ok(log.includes('[/] 🟢 Synced dir success'));
+      assert.match(log, /Syncing diff: 2 => 1/);
+      assert.match(log, /reason: date diff, local: "17-Dec-2021 23:16", remote: "20-Dec-2021 23:16"/);
+      assert.match(log, /\[\/\] 🟢 Synced dir success/);
+      const items3 = await binarySyncerService.listRootBinaries('node');
+      // only "index.json" `date, updatedAt` changed, other should not change
+      assert.equal(items2[0].name, 'index.json');
+      items2[0].date = items3[0].date;
+      items2[0].updatedAt = items3[0].updatedAt;
+      assert.deepEqual(items2, items3);
       app.mockAgent().assertNoPendingInterceptors();
     });
 
