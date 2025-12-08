@@ -90,7 +90,6 @@
     "@eggjs/tracer": "beta",
     "@eggjs/typebox-validate": "beta",
     "@elastic/elasticsearch": "^8.19.1",
-    "@fengmk2/tar": "^6.2.0",
     "@node-rs/crc32": "^1.10.6",
     "@simplewebauthn/server": "^7.4.0",
     "base-x": "^5.0.0",
@@ -117,6 +116,7 @@
     "read-env-value": "^2.0.2",
     "semver": "^7.7.3",
     "ssri": "^13.0.0",
+    "tar": "^7.5.2",
     "type-fest": "^5.2.0",
     "ua-parser-js": "^2.0.6",
     "validate-npm-package-name": "^7.0.0"

@@ -2,8 +2,7 @@ import { createReadStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
-// @ts-expect-error no types available
-import tar from '@fengmk2/tar';
+import * as tar from 'tar';
 import { fromData, fromStream, type HashLike } from 'ssri';
 
 import type { AuthorType, PackageJSONType } from '../repository/PackageRepository.ts';
@@ -128,7 +127,7 @@ export async function extractPackageJSON(tarballBytes: Buffer): Promise<PackageJ
     Readable.from(tarballBytes).pipe(
       tar.t({
         filter: (name: string) => name === 'package/package.json',
-        onentry: async (entry: Readable) => {
+        onentry: async (entry: tar.ReadEntry) => {
           const chunks: Buffer[] = [];
           for await (const chunk of entry) {
             chunks.push(chunk);
