@@ -2,8 +2,8 @@ import { createReadStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
-import * as tar from 'tar';
 import { fromData, fromStream, type HashLike } from 'ssri';
+import * as tar from 'tar';
 
 import type { AuthorType, PackageJSONType } from '../repository/PackageRepository.ts';
 

@@ -2,10 +2,10 @@ import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 
-import * as tar from 'tar';
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 import { ConflictError, ForbiddenError } from 'egg/errors';
 import semver from 'semver';
+import * as tar from 'tar';
 
 import { AbstractService } from '../../common/AbstractService.ts';
 import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
