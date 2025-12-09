@@ -1,0 +1,87 @@
+flowchart LR
+    subgraph cnpmcore["cnpmcore Application"]
+        app_plus_PackageVersionDownloadRepository_13["plus"]
+        app_findPackageId_PackageRepository_41["findPackageId"]
+        app_convertModelToEntity_ModelConvertor_74["convertModelToEntity"]
+        app_showPackageDownloads_DownloadController_20["showPackageDownloads"]
+        app_saveEntityToModel_ModelConvertor_50["saveEntityToModel"]
+        app_findBinary_BinaryRepository_27["findBinary"]
+        app_query_ChangeRepository_17["query"]
+        app__PackageRepository_convertPackageModelToEntity_PackageRepository_310["_PackageRepository_convertPackageModelToEntity"]
+        app_findVersionByTag_PackageVersionRepository_33["findVersionByTag"]
+        app_convertEntityToModel_ModelConvertor_8["convertEntityToModel"]
+        app_findTask_TaskRepository_84["findTask"]
+        app_fillPackageVersionEntityData_PackageRepository_259["fillPackageVersionEntityData"]
+        app_saveTask_TaskRepository_18["saveTask"]
+        app_findPackage_PackageRepository_29["findPackage"]
+        app_findPackageVersionBlock_PackageVersionBlockRepository_30["findPackageVersionBlock"]
+        app_findPackageVersion_PackageRepository_172["findPackageVersion"]
+        app_saveTaskToHistory_TaskRepository_57["saveTaskToHistory"]
+        app_listBinaries_BinaryRepository_33["listBinaries"]
+        app_query_PackageVersionDownloadRepository_36["query"]
+        app_findRegistryByRegistryId_RegistryRepository_32["findRegistryByRegistryId"]
+    end
+
+    subgraph leoric["Leoric ORM"]
+        orm_findOne_bone_1377["findOne<br/>(11 hits)"]
+        orm_Spell_dup_spell_963["Spell_dup<br/>(6 hits)"]
+        orm_value_bone_1719["value<br/>(14 hits)"]
+        orm_get_bone_1167["get<br/>(8 hits)"]
+        orm_create_bone_1404["create<br/>(0 hits)"]
+        orm_Spell_dup_spell_963["Spell_dup<br/>(1 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(6 hits)"]
+        orm_get_bone_1167["get<br/>(1 hits)"]
+        orm_get_bone_1167["get<br/>(2 hits)"]
+        orm_get_bone_1167["get<br/>(3 hits)"]
+        orm_save_bone_546["save<br/>(0 hits)"]
+        orm_set_bone_1170["set<br/>(1 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(1 hits)"]
+        orm_find_bone_1331["find<br/>(0 hits)"]
+        orm_Spell_dup_spell_963["Spell_dup<br/>(0 hits)"]
+        orm_toObject_collection_34["toObject<br/>(1 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(0 hits)"]
+        orm_get_bone_1167["get<br/>(1 hits)"]
+        orm_Spell_dup_spell_963["Spell_dup<br/>(1 hits)"]
+        orm_create_bone_1404["create<br/>(0 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(1 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(1 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(1 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(0 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(0 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(0 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(0 hits)"]
+        orm_find_bone_1331["find<br/>(0 hits)"]
+        orm_find_bone_1331["find<br/>(0 hits)"]
+        orm_findOne_bone_1377["findOne<br/>(0 hits)"]
+    end
+
+    app_plus_PackageVersionDownloadRepository_13 -->|"11"| orm_findOne_bone_1377
+    app_plus_PackageVersionDownloadRepository_13 -->|"6"| orm_Spell_dup_spell_963
+    app_plus_PackageVersionDownloadRepository_13 -->|"14"| orm_value_bone_1719
+    app_plus_PackageVersionDownloadRepository_13 -->|"8"| orm_get_bone_1167
+    app_plus_PackageVersionDownloadRepository_13 --> orm_create_bone_1404
+    app_findPackageId_PackageRepository_41 -->|"1"| orm_Spell_dup_spell_963
+    app_findPackageId_PackageRepository_41 -->|"6"| orm_findOne_bone_1377
+    app_findPackageId_PackageRepository_41 -->|"1"| orm_get_bone_1167
+    app_convertModelToEntity_ModelConvertor_74 -->|"2"| orm_get_bone_1167
+    app_showPackageDownloads_DownloadController_20 -->|"3"| orm_get_bone_1167
+    app_saveEntityToModel_ModelConvertor_50 --> orm_save_bone_546
+    app_saveEntityToModel_ModelConvertor_50 -->|"1"| orm_set_bone_1170
+    app_findBinary_BinaryRepository_27 -->|"1"| orm_findOne_bone_1377
+    app_query_ChangeRepository_17 --> orm_find_bone_1331
+    app_query_ChangeRepository_17 --> orm_Spell_dup_spell_963
+    app_query_ChangeRepository_17 -->|"1"| orm_toObject_collection_34
+    app__PackageRepository_convertPackageModelToEntity_PackageRepository_310 --> orm_findOne_bone_1377
+    app__PackageRepository_convertPackageModelToEntity_PackageRepository_310 -->|"1"| orm_get_bone_1167
+    app_findVersionByTag_PackageVersionRepository_33 -->|"1"| orm_Spell_dup_spell_963
+    app_convertEntityToModel_ModelConvertor_8 --> orm_create_bone_1404
+    app_findTask_TaskRepository_84 -->|"1"| orm_findOne_bone_1377
+    app_fillPackageVersionEntityData_PackageRepository_259 -->|"1"| orm_findOne_bone_1377
+    app_saveTask_TaskRepository_18 -->|"1"| orm_findOne_bone_1377
+    app_findPackage_PackageRepository_29 --> orm_findOne_bone_1377
+    app_findPackageVersionBlock_PackageVersionBlockRepository_30 --> orm_findOne_bone_1377
+    app_findPackageVersion_PackageRepository_172 --> orm_findOne_bone_1377
+    app_saveTaskToHistory_TaskRepository_57 --> orm_findOne_bone_1377
+    app_listBinaries_BinaryRepository_33 --> orm_find_bone_1331
+    app_query_PackageVersionDownloadRepository_36 --> orm_find_bone_1331
+    app_findRegistryByRegistryId_RegistryRepository_32 --> orm_findOne_bone_1377

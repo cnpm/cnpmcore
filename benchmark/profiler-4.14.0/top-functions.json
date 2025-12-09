@@ -1,0 +1,402 @@
+[
+  {
+    "functionName": "(idle)",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 126293,
+    "totalNodes": 1,
+    "percentage": "76.09"
+  },
+  {
+    "functionName": "(program)",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 3439,
+    "totalNodes": 1,
+    "percentage": "2.07"
+  },
+  {
+    "functionName": "Bone",
+    "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/bone.js",
+    "lineNumber": 150,
+    "selfTime": 1574,
+    "totalNodes": 3,
+    "percentage": "0.95"
+  },
+  {
+    "functionName": "(garbage collector)",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 1219,
+    "totalNodes": 1,
+    "percentage": "0.73"
+  },
+  {
+    "functionName": "runMicrotasks",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 1206,
+    "totalNodes": 1,
+    "percentage": "0.73"
+  },
+  {
+    "functionName": "nextTick",
+    "url": "node:internal/process/task_queues",
+    "lineNumber": 111,
+    "selfTime": 1022,
+    "totalNodes": 37,
+    "percentage": "0.62"
+  },
+  {
+    "functionName": "writev",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 914,
+    "totalNodes": 5,
+    "percentage": "0.55"
+  },
+  {
+    "functionName": "match",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.34@@eggjs/router/dist/Layer.js",
+    "lineNumber": 72,
+    "selfTime": 695,
+    "totalNodes": 1,
+    "percentage": "0.42"
+  },
+  {
+    "functionName": "",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.34@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+    "lineNumber": 36,
+    "selfTime": 645,
+    "totalNodes": 3,
+    "percentage": "0.39"
+  },
+  {
+    "functionName": "_addHeaderLine",
+    "url": "node:_http_incoming",
+    "lineNumber": 382,
+    "selfTime": 619,
+    "totalNodes": 2,
+    "percentage": "0.37"
+  },
+  {
+    "functionName": "get",
+    "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/packets/column_definition.js",
+    "lineNumber": 263,
+    "selfTime": 619,
+    "totalNodes": 2,
+    "percentage": "0.37"
+  },
+  {
+    "functionName": "writeUtf8String",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 585,
+    "totalNodes": 6,
+    "percentage": "0.35"
+  },
+  {
+    "functionName": "",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.34@@eggjs/router/dist/Router.js",
+    "lineNumber": 138,
+    "selfTime": 513,
+    "totalNodes": 2,
+    "percentage": "0.31"
+  },
+  {
+    "functionName": "writeBuffer",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 469,
+    "totalNodes": 5,
+    "percentage": "0.28"
+  },
+  {
+    "functionName": "structuredClone",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 421,
+    "totalNodes": 3,
+    "percentage": "0.25"
+  },
+  {
+    "functionName": "",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 376,
+    "totalNodes": 27,
+    "percentage": "0.23"
+  },
+  {
+    "functionName": "injectProperty",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.34@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+    "lineNumber": 165,
+    "selfTime": 376,
+    "totalNodes": 1,
+    "percentage": "0.23"
+  },
+  {
+    "functionName": "start",
+    "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/commands/query.js",
+    "lineNumber": 48,
+    "selfTime": 349,
+    "totalNodes": 4,
+    "percentage": "0.21"
+  },
+  {
+    "functionName": "initWithInjectProperty",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.34@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+    "lineNumber": 20,
+    "selfTime": 344,
+    "totalNodes": 3,
+    "percentage": "0.21"
+  },
+  {
+    "functionName": "token",
+    "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/expr.js",
+    "lineNumber": 266,
+    "selfTime": 337,
+    "totalNodes": 48,
+    "percentage": "0.20"
+  },
+  {
+    "functionName": "dispatch",
+    "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+    "lineNumber": 35,
+    "selfTime": 333,
+    "totalNodes": 40,
+    "percentage": "0.20"
+  },
+  {
+    "functionName": "getLifecycleHook",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_lifecycle@4.0.0-beta.34@@eggjs/lifecycle/dist/LifycycleUtil.js",
+    "lineNumber": 72,
+    "selfTime": 330,
+    "totalNodes": 3,
+    "percentage": "0.20"
+  },
+  {
+    "functionName": "init",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.34@@eggjs/tegg-runtime/dist/impl/ContextInitiator.js",
+    "lineNumber": 13,
+    "selfTime": 329,
+    "totalNodes": 2,
+    "percentage": "0.20"
+  },
+  {
+    "functionName": "dispatch",
+    "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/collection.js",
+    "lineNumber": 81,
+    "selfTime": 318,
+    "totalNodes": 1,
+    "percentage": "0.19"
+  },
+  {
+    "functionName": "getOrCreateEggObject",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.34@@eggjs/tegg-runtime/dist/factory/EggContainerFactory.js",
+    "lineNumber": 28,
+    "selfTime": 314,
+    "totalNodes": 8,
+    "percentage": "0.19"
+  },
+  {
+    "functionName": "isLogicalCondition",
+    "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/query_object.js",
+    "lineNumber": 102,
+    "selfTime": 314,
+    "totalNodes": 25,
+    "percentage": "0.19"
+  },
+  {
+    "functionName": "parseChannelMessages",
+    "url": "node:internal/child_process/serialization",
+    "lineNumber": 142,
+    "selfTime": 305,
+    "totalNodes": 1,
+    "percentage": "0.18"
+  },
+  {
+    "functionName": "close",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 300,
+    "totalNodes": 6,
+    "percentage": "0.18"
+  },
+  {
+    "functionName": "processTicksAndRejections",
+    "url": "node:internal/process/task_queues",
+    "lineNumber": 71,
+    "selfTime": 294,
+    "totalNodes": 1,
+    "percentage": "0.18"
+  },
+  {
+    "functionName": "keyFromFields",
+    "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/parsers/parser_cache.js",
+    "lineNumber": 9,
+    "selfTime": 284,
+    "totalNodes": 2,
+    "percentage": "0.17"
+  },
+  {
+    "functionName": "instantiate",
+    "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/bone.js",
+    "lineNumber": 1282,
+    "selfTime": 282,
+    "totalNodes": 2,
+    "percentage": "0.17"
+  },
+  {
+    "functionName": "createCallContext",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_aop-runtime@4.0.0-beta.34@@eggjs/aop-runtime/dist/AspectExecutor.js",
+    "lineNumber": 20,
+    "selfTime": 265,
+    "totalNodes": 5,
+    "percentage": "0.16"
+  },
+  {
+    "functionName": "structuredClone",
+    "url": "node:internal/worker/js_transferable",
+    "lineNumber": 112,
+    "selfTime": 251,
+    "totalNodes": 2,
+    "percentage": "0.15"
+  },
+  {
+    "functionName": "format",
+    "url": "/home/admin/application/node_modules/_egg-logger@3.6.1@egg-logger/lib/utils.js",
+    "lineNumber": 123,
+    "selfTime": 242,
+    "totalNodes": 6,
+    "percentage": "0.15"
+  },
+  {
+    "functionName": "defaultContextPaddingMessage",
+    "url": "/home/admin/application/node_modules/_egg-logger@3.6.1@egg-logger/lib/utils.js",
+    "lineNumber": 34,
+    "selfTime": 236,
+    "totalNodes": 5,
+    "percentage": "0.14"
+  },
+  {
+    "functionName": "update",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 227,
+    "totalNodes": 13,
+    "percentage": "0.14"
+  },
+  {
+    "functionName": "slice",
+    "url": "node:buffer",
+    "lineNumber": 646,
+    "selfTime": 203,
+    "totalNodes": 41,
+    "percentage": "0.12"
+  },
+  {
+    "functionName": "custom_gc",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 202,
+    "totalNodes": 12,
+    "percentage": "0.12"
+  },
+  {
+    "functionName": "Spell",
+    "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/spell.js",
+    "lineNumber": 325,
+    "selfTime": 200,
+    "totalNodes": 35,
+    "percentage": "0.12"
+  },
+  {
+    "functionName": "parse",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 197,
+    "totalNodes": 11,
+    "percentage": "0.12"
+  },
+  {
+    "functionName": "plusPackageVersionCounter",
+    "url": "file:///home/admin/application/app/core/service/PackageManagerService.js",
+    "lineNumber": 414,
+    "selfTime": 189,
+    "totalNodes": 1,
+    "percentage": "0.11"
+  },
+  {
+    "functionName": "query",
+    "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/drivers/mysql/index.js",
+    "lineNumber": 70,
+    "selfTime": 183,
+    "totalNodes": 3,
+    "percentage": "0.11"
+  },
+  {
+    "functionName": "writeLatin1String",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 180,
+    "totalNodes": 5,
+    "percentage": "0.11"
+  },
+  {
+    "functionName": "objectPreCreate",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_lifecycle@4.0.0-beta.34@@eggjs/lifecycle/dist/LifycycleUtil.js",
+    "lineNumber": 32,
+    "selfTime": 177,
+    "totalNodes": 5,
+    "percentage": "0.11"
+  },
+  {
+    "functionName": "getObjectLifecycleList",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_lifecycle@4.0.0-beta.34@@eggjs/lifecycle/dist/LifycycleUtil.js",
+    "lineNumber": 26,
+    "selfTime": 174,
+    "totalNodes": 8,
+    "percentage": "0.10"
+  },
+  {
+    "functionName": "Socket",
+    "url": "node:net",
+    "lineNumber": 362,
+    "selfTime": 173,
+    "totalNodes": 3,
+    "percentage": "0.10"
+  },
+  {
+    "functionName": "utf8Slice",
+    "url": "",
+    "lineNumber": 0,
+    "selfTime": 170,
+    "totalNodes": 15,
+    "percentage": "0.10"
+  },
+  {
+    "functionName": "getProvider",
+    "url": "/home/admin/application/node_modules/_reflect-metadata@0.2.2@reflect-metadata/Reflect.js",
+    "lineNumber": 946,
+    "selfTime": 165,
+    "totalNodes": 29,
+    "percentage": "0.10"
+  },
+  {
+    "functionName": "_setRaw",
+    "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/bone.js",
+    "lineNumber": 300,
+    "selfTime": 162,
+    "totalNodes": 2,
+    "percentage": "0.10"
+  },
+  {
+    "functionName": "objectPreDestroy",
+    "url": "file:///home/admin/application/node_modules/_@eggjs_lifecycle@4.0.0-beta.34@@eggjs/lifecycle/dist/LifycycleUtil.js",
+    "lineNumber": 44,
+    "selfTime": 159,
+    "totalNodes": 3,
+    "percentage": "0.10"
+  }
+]

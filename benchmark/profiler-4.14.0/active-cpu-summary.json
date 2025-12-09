@@ -1,0 +1,71 @@
+{
+  "totalSamples": 165976,
+  "idleSamples": 126293,
+  "activeSamples": 33819,
+  "cpuUtilization": "20.38%",
+  "categories": [
+    {
+      "name": "egg/tegg",
+      "samples": 9231,
+      "percentage": "27.30%"
+    },
+    {
+      "name": "node internals",
+      "samples": 7526,
+      "percentage": "22.25%"
+    },
+    {
+      "name": "leoric (ORM)",
+      "samples": 5139,
+      "percentage": "15.20%"
+    },
+    {
+      "name": "V8/native (other)",
+      "samples": 4788,
+      "percentage": "14.16%"
+    },
+    {
+      "name": "other",
+      "samples": 2379,
+      "percentage": "7.03%"
+    },
+    {
+      "name": "mysql2 (driver)",
+      "samples": 2201,
+      "percentage": "6.51%"
+    },
+    {
+      "name": "cnpmcore (app)",
+      "samples": 1511,
+      "percentage": "4.47%"
+    },
+    {
+      "name": "koa/router",
+      "samples": 557,
+      "percentage": "1.65%"
+    },
+    {
+      "name": "reflect-metadata",
+      "samples": 487,
+      "percentage": "1.44%"
+    }
+  ],
+  "overheadBreakdown": {
+    "orm": {
+      "samples": 5139,
+      "percentage": "15.20%"
+    },
+    "teggDI": {
+      "samples": 4209,
+      "percentage": "12.45%"
+    },
+    "requestHandling": {
+      "samples": 3431,
+      "percentage": "10.15%"
+    },
+    "dbDriver": {
+      "samples": 2550,
+      "percentage": "7.54%"
+    }
+  }
+}

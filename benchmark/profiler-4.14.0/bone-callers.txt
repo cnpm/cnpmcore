@@ -1,0 +1,22 @@
+
+================================================================================
+              BONE CONSTRUCTOR CALL DIAGRAM
+            (1,574 CPU samples - #1 hotspot)
+================================================================================
+
+The Bone constructor is called when ORM instantiates model objects from
+database query results. Here's how cnpmcore code triggers these calls:
+
+
+================================================================================
+                           ANALYSIS
+================================================================================
+
+The Bone constructor overhead comes from:
+1. Every database row returned creates a new Bone instance
+2. The instantiate() function in bone.js:1282 is the direct caller
+3. ContextModelClass in SingletonModelObject.js wraps the Bone constructor
+
+Key cnpmcore operations that trigger heavy Bone instantiation:
+
+================================================================================

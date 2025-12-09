@@ -1,0 +1,42 @@
+
+================================================================================
+                    APPLICATION ↔ FRAMEWORK RELATIONSHIPS
+================================================================================
+
+TEGG FRAMEWORK (27.3% CPU)
+│
+├── Router.dispatch ────────────────────┐
+├── Layer.match ────────────────────────┤
+├── HTTPMethodRegister ─────────────────┤
+├── EggContainerFactory ────────────────┤
+├── EggObjectImpl.injectProperty ───────┤
+└── LifecycleUtil ──────────────────────┤
+                                        │
+                                        ▼
+                            CNPMCORE APPLICATION (4.5% CPU)
+                            │
+                            ├── beforeCall (94 hits)
+                            ├── afterFinally (65 hits)
+                            ├── download (39 hits)
+                            ├── getDownloadUrl (14 hits)
+                            ├── show (14 hits)
+                            ├── appendBytes (2 hits)
+                            ├── subscribe (2 hits)
+                            ├── getBytes (1 hits)
+                            │
+                            ▼
+                        LEORIC ORM (15.2% CPU)
+                        │
+                        ├── value (14 hits)
+                        ├── findOne (11 hits)
+                        ├── get (8 hits)
+                        ├── get (7 hits)
+                        ├── findOne (6 hits)
+                        ├── Spell_dup (6 hits)
+                        ├── get (3 hits)
+                        ├── findOne (1 hits)
+                        │
+                        ▼
+                    MYSQL2 DRIVER (6.5% CPU)
+
+================================================================================

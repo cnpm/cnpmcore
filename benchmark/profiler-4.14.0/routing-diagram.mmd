@@ -1,0 +1,31 @@
+flowchart TB
+    subgraph Request["HTTP Request"]
+        REQ[Incoming Request]
+    end
+
+    subgraph Routing["Request Routing (10.1% CPU)"]
+        match["match<br/>(695 samples)"]
+        _anonymous_["(anonymous)<br/>(483 samples)"]
+        dispatch["dispatch<br/>(318 samples)"]
+        captures["captures<br/>(95 samples)"]
+        params["params<br/>(53 samples)"]
+    end
+
+    subgraph App["cnpmcore Controllers"]
+        app_download["download"]
+        app_show["show"]
+        app_raw["raw"]
+        app_showBinary["showBinary"]
+        app_deprecatedDownload["deprecatedDownload"]
+        app_showSyncTask["showSyncTask"]
+        app_showTotal["showTotal"]
+    end
+
+    REQ --> Routing
+    _anonymous_ -->|"39"| app_download
+    _anonymous_ -->|"14"| app_show
+    _anonymous_ -->|"1"| app_raw
+    _anonymous_ -->|"1"| app_show
+    _anonymous_ -->|"1"| app_showBinary
+    _anonymous_ -->|"1"| app_deprecatedDownload
+    _anonymous_ -->|"1"| app_showSyncTask

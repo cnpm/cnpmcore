@@ -1,0 +1,777 @@
+[
+  {
+    "hitCount": 126293,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "(idle)",
+        "url": "",
+        "line": 0
+      }
+    ]
+  },
+  {
+    "hitCount": 3439,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "(program)",
+        "url": "",
+        "line": 0
+      }
+    ]
+  },
+  {
+    "hitCount": 1568,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "line": 71
+      },
+      {
+        "functionName": "runMicrotasks",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "ignite",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/spell.js",
+        "line": 441
+      },
+      {
+        "functionName": "init",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/collection.js",
+        "line": 13
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/collection.js",
+        "line": 81
+      },
+      {
+        "functionName": "instantiate",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/bone.js",
+        "line": 1282
+      },
+      {
+        "functionName": "ContextModelClass",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_orm-plugin@4.0.0-beta.34@@eggjs/orm-plugin/dist/lib/SingletonModelObject.js",
+        "line": 17
+      },
+      {
+        "functionName": "Bone",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/bone.js",
+        "line": 150
+      }
+    ]
+  },
+  {
+    "hitCount": 1219,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "(garbage collector)",
+        "url": "",
+        "line": 0
+      }
+    ]
+  },
+  {
+    "hitCount": 1206,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "line": 71
+      },
+      {
+        "functionName": "runMicrotasks",
+        "url": "",
+        "line": 0
+      }
+    ]
+  },
+  {
+    "hitCount": 900,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "line": 71
+      },
+      {
+        "functionName": "runMicrotasks",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "handleRequest",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_koa@3.1.0-beta.34@@eggjs/koa/dist/application.js",
+        "line": 168
+      },
+      {
+        "functionName": "_respond",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_koa@3.1.0-beta.34@@eggjs/koa/dist/application.js",
+        "line": 218
+      },
+      {
+        "functionName": "end",
+        "url": "node:_http_outgoing",
+        "line": 1029
+      },
+      {
+        "functionName": "Writable.uncork",
+        "url": "node:internal/streams/writable",
+        "line": 518
+      },
+      {
+        "functionName": "clearBuffer",
+        "url": "node:internal/streams/writable",
+        "line": 742
+      },
+      {
+        "functionName": "doWrite",
+        "url": "node:internal/streams/writable",
+        "line": 585
+      },
+      {
+        "functionName": "Socket._writev",
+        "url": "node:net",
+        "line": 972
+      },
+      {
+        "functionName": "Socket._writeGeneric",
+        "url": "node:net",
+        "line": 935
+      },
+      {
+        "functionName": "writevGeneric",
+        "url": "node:internal/stream_base_commons",
+        "line": 121
+      },
+      {
+        "functionName": "writev",
+        "url": "",
+        "line": 0
+      }
+    ]
+  },
+  {
+    "hitCount": 695,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "line": 71
+      },
+      {
+        "functionName": "runMicrotasks",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "ctxLifecycleMiddleware",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-plugin@4.0.0-beta.34@@eggjs/tegg-plugin/dist/lib/ctx_lifecycle_middleware.js",
+        "line": 3
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "dispatch",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.34@@eggjs/router/dist/Router.js",
+        "line": 122
+      },
+      {
+        "functionName": "match",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.34@@eggjs/router/dist/Router.js",
+        "line": 424
+      },
+      {
+        "functionName": "match",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.34@@eggjs/router/dist/Layer.js",
+        "line": 72
+      }
+    ]
+  },
+  {
+    "hitCount": 618,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "parserOnHeadersComplete",
+        "url": "node:_http_common",
+        "line": 75
+      },
+      {
+        "functionName": "parserOnIncoming",
+        "url": "node:_http_server",
+        "line": 1073
+      },
+      {
+        "functionName": "ServerResponse",
+        "url": "node:_http_server",
+        "line": 197
+      },
+      {
+        "functionName": "get",
+        "url": "node:_http_incoming",
+        "line": 109
+      },
+      {
+        "functionName": "_addHeaderLine",
+        "url": "node:_http_incoming",
+        "line": 382
+      }
+    ]
+  },
+  {
+    "hitCount": 483,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "line": 71
+      },
+      {
+        "functionName": "runMicrotasks",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "ctxLifecycleMiddleware",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-plugin@4.0.0-beta.34@@eggjs/tegg-plugin/dist/lib/ctx_lifecycle_middleware.js",
+        "line": 3
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "dispatch",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.34@@eggjs/router/dist/Router.js",
+        "line": 122
+      },
+      {
+        "functionName": "",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.34@@eggjs/router/dist/Router.js",
+        "line": 137
+      }
+    ]
+  },
+  {
+    "hitCount": 461,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "onStreamRead",
+        "url": "node:internal/stream_base_commons",
+        "line": 166
+      },
+      {
+        "functionName": "Readable.push",
+        "url": "node:internal/streams/readable",
+        "line": 385
+      },
+      {
+        "functionName": "readableAddChunkPushByteMode",
+        "url": "node:internal/streams/readable",
+        "line": 461
+      },
+      {
+        "functionName": "addChunk",
+        "url": "node:internal/streams/readable",
+        "line": 548
+      },
+      {
+        "functionName": "emit",
+        "url": "node:events",
+        "line": 455
+      },
+      {
+        "functionName": "",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 95
+      },
+      {
+        "functionName": "executeStart",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/packet_parser.js",
+        "line": 63
+      },
+      {
+        "functionName": "",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 92
+      },
+      {
+        "functionName": "handlePacket",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 419
+      },
+      {
+        "functionName": "execute",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/commands/command.js",
+        "line": 23
+      },
+      {
+        "functionName": "readField",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/commands/query.js",
+        "line": 191
+      },
+      {
+        "functionName": "getTextParser",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/parsers/text_parser.js",
+        "line": 210
+      },
+      {
+        "functionName": "getParser",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/parsers/parser_cache.js",
+        "line": 42
+      },
+      {
+        "functionName": "keyFromFields",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/parsers/parser_cache.js",
+        "line": 9
+      },
+      {
+        "functionName": "get",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/packets/column_definition.js",
+        "line": 263
+      }
+    ]
+  },
+  {
+    "hitCount": 442,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "line": 71
+      },
+      {
+        "functionName": "runMicrotasks",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "query",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/drivers/mysql/index.js",
+        "line": 70
+      },
+      {
+        "functionName": "",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/drivers/mysql/index.js",
+        "line": 73
+      },
+      {
+        "functionName": "query",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 560
+      },
+      {
+        "functionName": "addCommand",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 492
+      },
+      {
+        "functionName": "handlePacket",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 419
+      },
+      {
+        "functionName": "execute",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/commands/command.js",
+        "line": 23
+      },
+      {
+        "functionName": "start",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/commands/query.js",
+        "line": 48
+      },
+      {
+        "functionName": "writePacket",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 288
+      },
+      {
+        "functionName": "write",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 255
+      },
+      {
+        "functionName": "Writable.write",
+        "url": "node:internal/streams/writable",
+        "line": 502
+      },
+      {
+        "functionName": "_write",
+        "url": "node:internal/streams/writable",
+        "line": 451
+      },
+      {
+        "functionName": "writeOrBuffer",
+        "url": "node:internal/streams/writable",
+        "line": 546
+      },
+      {
+        "functionName": "Socket._write",
+        "url": "node:net",
+        "line": 977
+      },
+      {
+        "functionName": "Socket._writeGeneric",
+        "url": "node:net",
+        "line": 935
+      },
+      {
+        "functionName": "writeGeneric",
+        "url": "node:internal/stream_base_commons",
+        "line": 146
+      },
+      {
+        "functionName": "handleWriteReq",
+        "url": "node:internal/stream_base_commons",
+        "line": 46
+      },
+      {
+        "functionName": "writeBuffer",
+        "url": "",
+        "line": 0
+      }
+    ]
+  },
+  {
+    "hitCount": 409,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "line": 71
+      },
+      {
+        "functionName": "runMicrotasks",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "ignite",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/spell.js",
+        "line": 441
+      },
+      {
+        "functionName": "init",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/collection.js",
+        "line": 13
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/collection.js",
+        "line": 81
+      },
+      {
+        "functionName": "instantiate",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/bone.js",
+        "line": 1282
+      },
+      {
+        "functionName": "cloneValue",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/bone.js",
+        "line": 112
+      },
+      {
+        "functionName": "structuredClone",
+        "url": "node:internal/worker/js_transferable",
+        "line": 112
+      },
+      {
+        "functionName": "structuredClone",
+        "url": "",
+        "line": 0
+      }
+    ]
+  },
+  {
+    "hitCount": 401,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "line": 71
+      },
+      {
+        "functionName": "runMicrotasks",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "bodyParser",
+        "url": "/home/admin/application/node_modules/_koa-bodyparser@4.4.1@koa-bodyparser/index.js",
+        "line": 63
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "overrideMethod",
+        "url": "file:///home/admin/application/node_modules/_koa-override@4.0.0@koa-override/dist/esm/index.js",
+        "line": 7
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "session",
+        "url": "file:///home/admin/application/node_modules/_koa-session@7.0.2@koa-session/dist/esm/index.js",
+        "line": 184
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 31
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "notAllow",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_security@5.0.0-beta.34@@eggjs/security/dist/lib/middlewares/methodnoallow.js",
+        "line": 12
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "noopen",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_security@5.0.0-beta.34@@eggjs/security/dist/lib/middlewares/noopen.js",
+        "line": 4
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "nosniff",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_security@5.0.0-beta.34@@eggjs/security/dist/lib/middlewares/nosniff.js",
+        "line": 14
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "xssProtection",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_security@5.0.0-beta.34@@eggjs/security/dist/lib/middlewares/xssProtection.js",
+        "line": 3
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "xframe",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_security@5.0.0-beta.34@@eggjs/security/dist/lib/middlewares/xframe.js",
+        "line": 3
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "dta",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_security@5.0.0-beta.34@@eggjs/security/dist/lib/middlewares/dta.js",
+        "line": 4
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_koa-compose@4.1.0@koa-compose/index.js",
+        "line": 35
+      },
+      {
+        "functionName": "teggRootProto",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.34@@eggjs/controller-plugin/dist/app/middleware/tegg_root_proto.js",
+        "line": 3
+      },
+      {
+        "functionName": "getRootProto",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.34@@eggjs/controller-plugin/dist/lib/RootProtoManager.js",
+        "line": 10
+      },
+      {
+        "functionName": "",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.34@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "line": 160
+      }
+    ]
+  },
+  {
+    "hitCount": 376,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "line": 71
+      },
+      {
+        "functionName": "runMicrotasks",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.34@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "line": 40
+      },
+      {
+        "functionName": "injectProperty",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.34@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "line": 165
+      }
+    ]
+  },
+  {
+    "hitCount": 347,
+    "path": [
+      {
+        "functionName": "(root)",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "line": 71
+      },
+      {
+        "functionName": "runMicrotasks",
+        "url": "",
+        "line": 0
+      },
+      {
+        "functionName": "query",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/drivers/mysql/index.js",
+        "line": 70
+      },
+      {
+        "functionName": "",
+        "url": "/home/admin/application/node_modules/_leoric@2.13.9@leoric/lib/drivers/mysql/index.js",
+        "line": 73
+      },
+      {
+        "functionName": "query",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 560
+      },
+      {
+        "functionName": "addCommand",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 492
+      },
+      {
+        "functionName": "handlePacket",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/base/connection.js",
+        "line": 419
+      },
+      {
+        "functionName": "execute",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/commands/command.js",
+        "line": 23
+      },
+      {
+        "functionName": "start",
+        "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/commands/query.js",
+        "line": 48
+      }
+    ]
+  }
+]

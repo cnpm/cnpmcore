@@ -1,0 +1,47 @@
+
+================================================================================
+                    REQUEST ROUTING → APPLICATION
+================================================================================
+
+HTTP Request
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         ROUTING LAYER (10.1% CPU)                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│   695 samples - match                                                   │
+│   483 samples - (anonymous)                                             │
+│   401 samples - (anonymous)                                             │
+│   318 samples - dispatch                                                │
+│   220 samples - (anonymous)                                             │
+│   124 samples - match                                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      CNPMCORE CONTROLLERS                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│    39 samples - download                                                │
+│    14 samples - show                                                    │
+│     1 samples - raw                                                     │
+│     1 samples - show                                                    │
+│     1 samples - showBinary                                              │
+│     1 samples - deprecatedDownload                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+                         ROUTING CHAIN EXAMPLES
+================================================================================
+
+(anonymous)                    ──→ download (39 samples)
+dispatch                       ──→ getDownloadUrl (14 samples)
+(anonymous)                    ──→ show (14 samples)
+dispatch                       ──→ ErrorHandler (4 samples)
+dispatch                       ──→ appendBytes (2 samples)
+dispatch                       ──→ getBytes (1 samples)
+(anonymous)                    ──→ raw (1 samples)
+(anonymous)                    ──→ show (1 samples)
+(anonymous)                    ──→ showBinary (1 samples)
+(anonymous)                    ──→ deprecatedDownload (1 samples)
+
+================================================================================
