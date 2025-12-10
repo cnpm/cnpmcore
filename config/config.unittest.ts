@@ -14,6 +14,7 @@ export default function startConfig(appInfo: EggAppInfo): PartialEggConfig {
 
   config.orm = {
     database: database.name ?? 'cnpmcore_unittest',
+    skipCloneValue: true,
   };
 
   config.nfs = {

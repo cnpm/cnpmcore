@@ -90,6 +90,7 @@ export default function startConfig(appInfo: EggAppConfig): Config {
     ...database,
     database: database.name ?? 'cnpmcore',
     charset: 'utf8mb4',
+    skipCloneValue: true,
     logger: {
       // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror
       // ignore query error
