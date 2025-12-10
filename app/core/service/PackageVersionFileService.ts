@@ -2,11 +2,10 @@ import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 
-// @ts-expect-error type error
-import tar from '@fengmk2/tar';
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 import { ConflictError, ForbiddenError } from 'egg/errors';
 import semver from 'semver';
+import * as tar from 'tar';
 
 import { AbstractService } from '../../common/AbstractService.ts';
 import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
@@ -166,7 +165,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
-        onentry: (entry: unknown) => {
+        onentry: (entry: tar.ReadEntry) => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;
           if (this.#matchReadmeFilename(filename)) {
@@ -235,7 +234,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
-        onentry: (entry: unknown) => {
+        onentry: (entry: tar.ReadEntry) => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;
           paths.push(`/${filename}`);
