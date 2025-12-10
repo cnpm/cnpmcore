@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.15.0 (2025-12-10)
+
+* feat: enable skipCloneValue on leoric (#924) ([c04bcbd](https://github.com/cnpm/cnpmcore/commit/c04bcbd)), closes [#924](https://github.com/cnpm/cnpmcore/issues/924) [hi#throughput](https://github.com/hi/issues/throughput)
+* feat(deps): restore official tar package (#922) ([7ea05ce](https://github.com/cnpm/cnpmcore/commit/7ea05ce)), closes [#922](https://github.com/cnpm/cnpmcore/issues/922) [cnpm/cnpmcore#921](https://github.com/cnpm/cnpmcore/issues/921)
+
 ## 4.14.0 (2025-12-07)
 
 * feat: avoids Bone constructor overhead for each row (#919) ([f8eedd8](https://github.com/cnpm/cnpmcore/commit/f8eedd8)), closes [#919](https://github.com/cnpm/cnpmcore/issues/919) [hi#level](https://github.com/hi/issues/level)
