@@ -39,7 +39,7 @@
     "predev": "npm run clean",
     "dev": "egg-bin dev",
     "dev:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin dev",
-    "lint": "oxlint --type-aware",
+    "lint": "oxlint --type-aware --type-check",
     "lint:fix": "npm run lint -- --fix",
     "typecheck": "tsc --noEmit",
     "fmt": "oxfmt",
