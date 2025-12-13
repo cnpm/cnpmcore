@@ -11,6 +11,7 @@ import type { Registry } from '../../../../app/core/entity/Registry.ts';
 import { Task as TaskEntity } from '../../../../app/core/entity/Task.ts';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.ts';
 import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.ts';
+import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService.ts';
 import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
 import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.ts';
 import { TaskService } from '../../../../app/core/service/TaskService.ts';
@@ -22,7 +23,6 @@ import { Task as TaskModel } from '../../../../app/repository/model/Task.ts';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
 import { PackageVersionRepository } from '../../../../app/repository/PackageVersionRepository.ts';
 import { TestUtil } from '../../../../test/TestUtil.ts';
-import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService.ts';
 
 describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.ts', () => {
   let packageSyncerService: PackageSyncerService;
@@ -2184,7 +2184,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.match(log, /❌❌❌❌❌ cnpmcore-test-sync-deprecated ❌❌❌❌❌/);
-      assert.match(log, /Synced version 2.0.0 fail, large package version size: 104857601, allow size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/);
+      assert.match(
+        log,
+        /Synced version 2.0.0 fail, large package version size: 104857601, allow size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
+      );
     });
 
     it('should mock large package version size allow', async () => {

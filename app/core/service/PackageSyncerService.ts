@@ -33,11 +33,11 @@ import type { User } from '../entity/User.ts';
 import type { CacheService } from './CacheService.ts';
 import { EventCorkAdvice } from './EventCorkerAdvice.ts';
 import type { PackageManagerService, PublishPackageCmd } from './PackageManagerService.ts';
+import { PackageVersionFileService, UNPKG_WHITE_LIST_URL } from './PackageVersionFileService.ts';
 import type { RegistryManagerService } from './RegistryManagerService.ts';
 import type { ScopeManagerService } from './ScopeManagerService.ts';
 import type { TaskService } from './TaskService.ts';
 import type { UserService } from './UserService.ts';
-import { PackageVersionFileService, UNPKG_WHITE_LIST_URL } from './PackageVersionFileService.ts';
 
 interface syncDeletePkgOptions {
   task: Task;
@@ -869,7 +869,11 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       }
       const size = dist.size;
       if (size && size > this.config.cnpmcore.largePackageVersionSize) {
-        const isAllowLargePackageVersion = await this.packageVersionFileService.isAllowLargePackageVersion(scope, name, version);
+        const isAllowLargePackageVersion = await this.packageVersionFileService.isAllowLargePackageVersion(
+          scope,
+          name,
+          version,
+        );
         if (!isAllowLargePackageVersion) {
           lastErrorMessage = `large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}`;
           logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
@@ -877,7 +881,9 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
           logs = [];
           continue;
         }
-        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} size: ${size} too large, it is allowed to sync by unpkg white list`);
+        logs.push(
+          `[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} size: ${size} too large, it is allowed to sync by unpkg white list`,
+        );
       }
       const publishTimeISO = timeMap[version];
       const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
@@ -1361,7 +1367,11 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
 
       const size = dist.size;
       if (size && size > this.config.cnpmcore.largePackageVersionSize) {
-        const isAllowLargePackageVersion = await this.packageVersionFileService.isAllowLargePackageVersion(scope, name, version);
+        const isAllowLargePackageVersion = await this.packageVersionFileService.isAllowLargePackageVersion(
+          scope,
+          name,
+          version,
+        );
         if (!isAllowLargePackageVersion) {
           lastErrorMessage = `large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}`;
           logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
@@ -1369,7 +1379,9 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
           logs = [];
           continue;
         }
-        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} size: ${size} too large, it is allowed to sync by unpkg white list`);
+        logs.push(
+          `[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} size: ${size} too large, it is allowed to sync by unpkg white list`,
+        );
       }
 
       const publishTimeISO = timeMap[version];
