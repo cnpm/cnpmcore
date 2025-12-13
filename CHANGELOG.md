@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>4.16.2 (2025-12-13)</small>
+
+* fix: fallback to unpackedSize to limit tgz size (#928) ([30e99ab](https://github.com/cnpm/cnpmcore/commit/30e99ab)), closes [#928](https://github.com/cnpm/cnpmcore/issues/928) [hi#level](https://github.com/hi/issues/level)
+
 ## <small>4.16.1 (2025-12-13)</small>
 
 * fix: support allow large check from scopes level (#927) ([ab98ddc](https://github.com/cnpm/cnpmcore/commit/ab98ddc)), closes [#927](https://github.com/cnpm/cnpmcore/issues/927) [hi#level](https://github.com/hi/issues/level)
