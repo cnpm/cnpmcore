@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.17.0 (2025-12-13)
+
+* feat: support block sync packages (#929) ([4cc30fe](https://github.com/cnpm/cnpmcore/commit/4cc30fe)), closes [#929](https://github.com/cnpm/cnpmcore/issues/929) [hi#level](https://github.com/hi/issues/level)
+
 ## <small>4.16.2 (2025-12-13)</small>
 
 * fix: fallback to unpackedSize to limit tgz size (#928) ([30e99ab](https://github.com/cnpm/cnpmcore/commit/30e99ab)), closes [#928](https://github.com/cnpm/cnpmcore/issues/928) [hi#level](https://github.com/hi/issues/level)
