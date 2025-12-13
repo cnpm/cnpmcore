@@ -58,6 +58,8 @@ export class PackageVersionFileService extends AbstractService {
       version: string;
     }
   > = {};
+  // allow large package scopes, e.g. ['@foo', '@bar']
+  #unpkgWhiteListAllowLargeScopes: string[] = [];
 
   async listPackageVersionFiles(pkgVersion: PackageVersion, directory: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
@@ -116,6 +118,7 @@ export class PackageVersionFileService extends AbstractService {
     this.#unpkgWhiteListAllowPackages = manifest.allowPackages ?? ({} as any);
     this.#unpkgWhiteListAllowScopes = manifest.allowScopes ?? ([] as any);
     this.#unpkgWhiteListAllowLargePackages = manifest.allowLargePackages ?? ({} as any);
+    this.#unpkgWhiteListAllowLargeScopes = manifest.allowLargeScopes ?? ([] as any);
     this.logger.info(
       '[PackageVersionFileService.updateUnpkgWhiteList] version:%s, total %s packages, %s scopes, %s large packages',
       whiteListPackageVersion,
@@ -128,6 +131,9 @@ export class PackageVersionFileService extends AbstractService {
   async isAllowLargePackageVersion(pkgScope: string, pkgName: string, pkgVersion: string) {
     if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return false;
     await this.#updateUnpkgWhiteList();
+
+    // check allow large scopes
+    if (this.#unpkgWhiteListAllowLargeScopes.includes(pkgScope)) return true;
 
     const fullname = getFullname(pkgScope, pkgName);
     const pkgConfig = this.#unpkgWhiteListAllowLargePackages[fullname];
