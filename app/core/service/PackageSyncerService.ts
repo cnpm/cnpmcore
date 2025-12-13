@@ -37,6 +37,7 @@ import type { RegistryManagerService } from './RegistryManagerService.ts';
 import type { ScopeManagerService } from './ScopeManagerService.ts';
 import type { TaskService } from './TaskService.ts';
 import type { UserService } from './UserService.ts';
+import { PackageVersionFileService, UNPKG_WHITE_LIST_URL } from './PackageVersionFileService.ts';
 
 interface syncDeletePkgOptions {
   task: Task;
@@ -81,6 +82,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly httpClient: HttpClient;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
+  @Inject()
+  private readonly packageVersionFileService: PackageVersionFileService;
   @Inject()
   private readonly scopeManagerService: ScopeManagerService;
   @Inject()
@@ -856,7 +859,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       //   "tarball": "https://registry.npmjs.org/foo/-/foo-1.0.0.tgz"
       // },
       const dist = item.dist;
-      const tarball = dist && dist.tarball;
+      const tarball = dist?.tarball;
       if (!tarball) {
         lastErrorMessage = `missing tarball, dist: ${JSON.stringify(dist)}`;
         logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
@@ -864,11 +867,23 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         logs = [];
         continue;
       }
+      const size = dist.size;
+      if (size && size > this.config.cnpmcore.largePackageVersionSize) {
+        const isAllowLargePackageVersion = await this.packageVersionFileService.isAllowLargePackageVersion(scope, name, version);
+        if (!isAllowLargePackageVersion) {
+          lastErrorMessage = `large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}`;
+          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
+          await this.taskService.appendTaskLog(task, logs.join('\n'));
+          logs = [];
+          continue;
+        }
+        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} size: ${size} too large, it is allowed to sync by unpkg white list`);
+      }
       const publishTimeISO = timeMap[version];
       const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
       const delay = Date.now() - publishTime.getTime();
       logs.push(
-        `[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`,
+        `[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}, size: ${size}`,
       );
       let localFile: string;
       try {
@@ -1343,11 +1358,25 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
         logs = [];
         continue;
       }
+
+      const size = dist.size;
+      if (size && size > this.config.cnpmcore.largePackageVersionSize) {
+        const isAllowLargePackageVersion = await this.packageVersionFileService.isAllowLargePackageVersion(scope, name, version);
+        if (!isAllowLargePackageVersion) {
+          lastErrorMessage = `large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}`;
+          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
+          await this.taskService.appendTaskLog(task, logs.join('\n'));
+          logs = [];
+          continue;
+        }
+        logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} size: ${size} too large, it is allowed to sync by unpkg white list`);
+      }
+
       const publishTimeISO = timeMap[version];
       const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
       const delay = Date.now() - publishTime.getTime();
       logs.push(
-        `[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}`,
+        `[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}, size: ${size}`,
       );
       let localFile: string;
       try {
