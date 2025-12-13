@@ -1,0 +1,299 @@
+====================================================================================================
+HOTSPOT CALL RELATIONSHIPS
+====================================================================================================
+
+Legend:
+  [HOT] = Hotspot function (high self time)
+  ← = Called by (parent/caller)
+  → = Calls (child/callee)
+
+----------------------------------------------------------------------------------------------------
+[HOT] update (352 samples, 0.208%)
+
+----------------------------------------------------------------------------------------------------
+[HOT] update (178 samples, 0.105%)
+
+----------------------------------------------------------------------------------------------------
+[HOT] Bone (94 samples, 0.056%)
+      Location: node_modules/leoric@2.14.0@leoric/lib/bone.js:151
+
+----------------------------------------------------------------------------------------------------
+[HOT] writev (87 samples, 0.051%)
+
+      Called by:
+        ← node:writevGeneric (9 samples)
+
+----------------------------------------------------------------------------------------------------
+[HOT] processTicksAndRejections (49 samples, 0.029%)
+      Location: node:internal/process/task_queues:71
+
+      Calls:
+        → runMicrotasks (96 samples)
+        → node:emitReadable_ (5 samples)
+        → node:resume_ (4 samples)
+        → node:endReadableNT (4 samples)
+        → node:processPromiseRejections (3 samples)
+
+----------------------------------------------------------------------------------------------------
+[HOT] writev (49 samples, 0.029%)
+
+      Called by:
+        ← node:writevGeneric (5 samples)
+
+----------------------------------------------------------------------------------------------------
+[HOT] onStreamRead (47 samples, 0.028%)
+      Location: node:internal/stream_base_commons:166
+
+      Calls:
+        → readStop (5 samples)
+        → node:readableAddChunkPushByteMode (3 samples)
+        → node:FastBuffer (3 samples)
+        → node:get (2 samples)
+        → node:Readable.push (1 samples)
+
+----------------------------------------------------------------------------------------------------
+[HOT] dispatch (44 samples, 0.026%)
+      Location: node_modules/leoric@2.14.0@leoric/lib/collection.js:81
+
+      Called by:
+        ← leoric:init (4 samples)
+
+      Calls:
+        → leoric:instantiate (26 samples)
+        → leoric:(anonymous) (2 samples)
+
+----------------------------------------------------------------------------------------------------
+[HOT] writeBuffer (42 samples, 0.025%)
+
+      Called by:
+        ← node:handleWriteReq (2 samples)
+
+----------------------------------------------------------------------------------------------------
+[HOT] writeBuffer (40 samples, 0.024%)
+
+      Called by:
+        ← node:write (4 samples)
+
+----------------------------------------------------------------------------------------------------
+[HOT] _addHeaderLine (40 samples, 0.024%)
+      Location: node:_http_incoming:382
+
+      Calls:
+        → node:matchKnownFields (7 samples)
+
+----------------------------------------------------------------------------------------------------
+[HOT] get (38 samples, 0.022%)
+      Location: node_modules/mysql2@3.15.3@mysql2/lib/packets/column_definition.js:263
+
+      Called by:
+        ← mysql2:keyFromFields (14 samples)
+
+      Calls:
+        → mysql2:exports.decode (1 samples)
+
+----------------------------------------------------------------------------------------------------
+[HOT] objEquiv (38 samples, 0.022%)
+      Location: node_modules/deep-equal@2.2.3@deep-equal/index.js:276
+
+----------------------------------------------------------------------------------------------------
+[HOT] start (38 samples, 0.022%)
+      Location: node_modules/mysql2@3.15.3@mysql2/lib/commands/query.js:48
+
+      Called by:
+        ← mysql2:execute (1 samples)
+
+      Calls:
+        → mysql2:toPacket (5 samples)
+        → mysql2:writePacket (2 samples)
+
+----------------------------------------------------------------------------------------------------
+[HOT] _respond (34 samples, 0.020%)
+      Location: node_modules/@eggjs_koa@3.1.0-beta.35@@eggjs/koa/dist/application.js:218
+
+      Calls:
+        → leoric:toJSON (2 samples)
+        → _:get writable (2 samples)
+        → node:end (1 samples)
+        → _:get method (1 samples)
+
+
+====================================================================================================
+CALL CHAINS BY CATEGORY
+====================================================================================================
+
+----- ORM (leoric) -----
+
+  Bone (94 samples, 0.056%)
+
+  dispatch (44 samples, 0.026%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+          leoric:ignite
+            leoric:init
+            → leoric:dispatch
+
+  instantiate (26 samples, 0.015%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+          leoric:ignite
+            leoric:init
+              leoric:dispatch
+              → leoric:instantiate
+
+  _setRaw (18 samples, 0.011%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+          leoric:ignite
+            leoric:init
+              leoric:dispatch
+                leoric:instantiate
+                → leoric:_setRaw
+
+  isLogicalCondition (18 samples, 0.011%)
+    Call stack:
+      leoric:parseObject
+      → leoric:isLogicalCondition
+
+----- MySQL -----
+
+  get (38 samples, 0.022%)
+    Call stack:
+      mysql2:(anonymous)
+        mysql2:handlePacket
+          mysql2:execute
+            mysql2:readField
+              mysql2:getTextParser
+                mysql2:getParser
+                  mysql2:keyFromFields
+                  → mysql2:get
+
+  start (38 samples, 0.022%)
+    Call stack:
+      mysql2:execute
+      → mysql2:start
+
+  get (15 samples, 0.009%)
+    Call stack:
+      mysql2:keyFromFields
+      → mysql2:get
+
+  keyFromFields (14 samples, 0.008%)
+    Call stack:
+      mysql2:executeStart
+        mysql2:(anonymous)
+          mysql2:handlePacket
+            mysql2:execute
+              mysql2:readField
+                mysql2:getTextParser
+                  mysql2:getParser
+                  → mysql2:keyFromFields
+
+  readField (8 samples, 0.005%)
+    Call stack:
+      node:addChunk
+        node:emit
+          mysql2:(anonymous)
+            mysql2:executeStart
+              mysql2:(anonymous)
+                mysql2:handlePacket
+                  mysql2:execute
+                  → mysql2:readField
+
+----- HTTP Client -----
+
+  execute (28 samples, 0.017%)
+    Call stack:
+      node:processTicksAndRejections
+        node:emitReadable_
+          node:emit
+            node:onHttpSocketReadable
+              node:readMore
+              → node:execute
+
+  parseJSON (15 samples, 0.009%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+          urllib:#requestInternal
+          → urllib:parseJSON
+
+  onHttpSocketReadable (7 samples, 0.004%)
+    Call stack:
+      node:processTicksAndRejections
+        node:emitReadable_
+          node:emit
+          → node:onHttpSocketReadable
+
+  readMore (7 samples, 0.004%)
+    Call stack:
+      node:processTicksAndRejections
+        node:emitReadable_
+          node:emit
+            node:onHttpSocketReadable
+            → node:readMore
+
+  parseHeaders (7 samples, 0.004%)
+    Call stack:
+      node:(anonymous)
+        node:onHeadersComplete
+          node:onHeaders
+            undici:onHeaders
+            → undici:parseHeaders
+
+----- Application Code -----
+
+  convertModelToEntity (21 samples, 0.012%)
+
+  syncDir (12 samples, 0.007%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+        → core:syncDir
+
+  listBinaries (9 samples, 0.005%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+        → repository:listBinaries
+
+  _downloadToTempfile (7 samples, 0.004%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+        → common:_downloadToTempfile
+
+  convertModelToEntity (7 samples, 0.004%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+          repository:findBinary
+          → repository:convertModelToEntity
+
+----- Tegg Runtime -----
+
+  injectProperty (20 samples, 0.012%)
+
+  initWithInjectProperty (15 samples, 0.009%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+        → _:initWithInjectProperty
+
+  init (8 samples, 0.005%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+          _:getOrCreateEggObject
+          → _:init
+
+  (anonymous) (7 samples, 0.004%)
+
+  getOrCreateEggObject (7 samples, 0.004%)
+    Call stack:
+      node:processTicksAndRejections
+        runMicrotasks
+        → _:getOrCreateEggObject
+

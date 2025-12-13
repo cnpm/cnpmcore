@@ -1,0 +1,2241 @@
+{
+  "summary": {
+    "profileTitle": "xprofiler",
+    "totalNodes": 3011,
+    "totalSamples": 169007,
+    "idleSamples": 163092,
+    "idlePercent": "96.50",
+    "activeSamples": 5915,
+    "activePercent": "3.50",
+    "gcSamples": 573,
+    "gcPercent": "0.34",
+    "programSamples": 693,
+    "programPercent": "0.41"
+  },
+  "topFunctionsBySelfTime": [
+    {
+      "id": 2,
+      "functionName": "(idle)",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 163092,
+      "selfTimePercent": "96.50"
+    },
+    {
+      "id": 39,
+      "functionName": "(program)",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 693,
+      "selfTimePercent": "0.41"
+    },
+    {
+      "id": 278,
+      "functionName": "(garbage collector)",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 573,
+      "selfTimePercent": "0.34"
+    },
+    {
+      "id": 704,
+      "functionName": "update",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 352,
+      "selfTimePercent": "0.21"
+    },
+    {
+      "id": 899,
+      "functionName": "update",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 178,
+      "selfTimePercent": "0.11"
+    },
+    {
+      "id": 5,
+      "functionName": "runMicrotasks",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 96,
+      "selfTimePercent": "0.06"
+    },
+    {
+      "id": 285,
+      "functionName": "Bone",
+      "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+      "lineNumber": 151,
+      "selfTime": 94,
+      "selfTimePercent": "0.06"
+    },
+    {
+      "id": 729,
+      "functionName": "writev",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 87,
+      "selfTimePercent": "0.05"
+    },
+    {
+      "id": 4,
+      "functionName": "processTicksAndRejections",
+      "url": "node:internal/process/task_queues",
+      "lineNumber": 71,
+      "selfTime": 49,
+      "selfTimePercent": "0.03"
+    },
+    {
+      "id": 929,
+      "functionName": "writev",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 49,
+      "selfTimePercent": "0.03"
+    },
+    {
+      "id": 3,
+      "functionName": "onStreamRead",
+      "url": "node:internal/stream_base_commons",
+      "lineNumber": 166,
+      "selfTime": 47,
+      "selfTimePercent": "0.03"
+    },
+    {
+      "id": 282,
+      "functionName": "dispatch",
+      "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/collection.js",
+      "lineNumber": 81,
+      "selfTime": 44,
+      "selfTimePercent": "0.03"
+    },
+    {
+      "id": 76,
+      "functionName": "writeBuffer",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 42,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 199,
+      "functionName": "writeBuffer",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 40,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 655,
+      "functionName": "_addHeaderLine",
+      "url": "node:_http_incoming",
+      "lineNumber": 382,
+      "selfTime": 40,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 381,
+      "functionName": "get",
+      "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/packets/column_definition.js",
+      "lineNumber": 263,
+      "selfTime": 38,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 24,
+      "functionName": "objEquiv",
+      "url": "/home/admin/application/node_modules/_deep-equal@2.2.3@deep-equal/index.js",
+      "lineNumber": 276,
+      "selfTime": 38,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 66,
+      "functionName": "start",
+      "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/commands/query.js",
+      "lineNumber": 48,
+      "selfTime": 38,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 990,
+      "functionName": "_respond",
+      "url": "file:///home/admin/application/node_modules/_@eggjs_koa@3.1.0-beta.35@@eggjs/koa/dist/application.js",
+      "lineNumber": 218,
+      "selfTime": 34,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 1157,
+      "functionName": "writev",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 34,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 168,
+      "functionName": "objEquiv",
+      "url": "/home/admin/application/node_modules/_deep-equal@2.2.3@deep-equal/index.js",
+      "lineNumber": 276,
+      "selfTime": 32,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 392,
+      "functionName": "tryStringObject",
+      "url": "/home/admin/application/node_modules/_is-string@1.1.1@is-string/index.js",
+      "lineNumber": 9,
+      "selfTime": 30,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 1465,
+      "functionName": "(anonymous)",
+      "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Router.js",
+      "lineNumber": 137,
+      "selfTime": 30,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 359,
+      "functionName": "parseChannelMessages",
+      "url": "node:internal/child_process/serialization",
+      "lineNumber": 142,
+      "selfTime": 29,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 116,
+      "functionName": "execute",
+      "url": "node:internal/deps/undici/undici",
+      "lineNumber": 6712,
+      "selfTime": 28,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 283,
+      "functionName": "instantiate",
+      "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+      "lineNumber": 1283,
+      "selfTime": 26,
+      "selfTimePercent": "0.02"
+    },
+    {
+      "id": 712,
+      "functionName": "read",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 24,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 711,
+      "functionName": "FastBuffer",
+      "url": "node:internal/buffer",
+      "lineNumber": 963,
+      "selfTime": 24,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 1796,
+      "functionName": "(anonymous)",
+      "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+      "lineNumber": 160,
+      "selfTime": 21,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 1411,
+      "functionName": "match",
+      "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Layer.js",
+      "lineNumber": 72,
+      "selfTime": 21,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 1432,
+      "functionName": "convertModelToEntity",
+      "url": "file:///home/admin/application/app/repository/util/ModelConvertor.js",
+      "lineNumber": 74,
+      "selfTime": 21,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 1575,
+      "functionName": "injectProperty",
+      "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+      "lineNumber": 165,
+      "selfTime": 20,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 891,
+      "functionName": "_setRaw",
+      "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+      "lineNumber": 301,
+      "selfTime": 18,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 1848,
+      "functionName": "isLogicalCondition",
+      "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/query_object.js",
+      "lineNumber": 102,
+      "selfTime": 18,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 2445,
+      "functionName": "writeBuffer",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 17,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 1051,
+      "functionName": "Duplex",
+      "url": "node:internal/streams/duplex",
+      "lineNumber": 64,
+      "selfTime": 17,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 1186,
+      "functionName": "close",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 17,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 357,
+      "functionName": "isWeakSet",
+      "url": "/home/admin/application/node_modules/_is-weakset@2.0.4@is-weakset/index.js",
+      "lineNumber": 16,
+      "selfTime": 16,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 280,
+      "functionName": "ignite",
+      "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/spell.js",
+      "lineNumber": 441,
+      "selfTime": 16,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 2762,
+      "functionName": "get",
+      "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/packets/column_definition.js",
+      "lineNumber": 263,
+      "selfTime": 15,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 58,
+      "functionName": "query",
+      "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/drivers/mysql/index.js",
+      "lineNumber": 70,
+      "selfTime": 15,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 1821,
+      "functionName": "parseJSON",
+      "url": "file:///home/admin/application/node_modules/_urllib@4.8.2@urllib/dist/esm/utils.js",
+      "lineNumber": 25,
+      "selfTime": 15,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 515,
+      "functionName": "initWithInjectProperty",
+      "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+      "lineNumber": 20,
+      "selfTime": 15,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 425,
+      "functionName": "DOMException",
+      "url": "node:internal/per_context/domexception",
+      "lineNumber": 72,
+      "selfTime": 15,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 792,
+      "functionName": "getPeerCertificate",
+      "url": "",
+      "lineNumber": 0,
+      "selfTime": 15,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 380,
+      "functionName": "keyFromFields",
+      "url": "/home/admin/application/node_modules/_mysql2@3.15.3@mysql2/lib/parsers/parser_cache.js",
+      "lineNumber": 9,
+      "selfTime": 14,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 248,
+      "functionName": "isMap",
+      "url": "/home/admin/application/node_modules/_is-map@2.0.3@is-map/index.js",
+      "lineNumber": 30,
+      "selfTime": 14,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 256,
+      "functionName": "tryNumberObject",
+      "url": "/home/admin/application/node_modules/_is-number-object@1.1.1@is-number-object/index.js",
+      "lineNumber": 8,
+      "selfTime": 14,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 348,
+      "functionName": "tryBigIntObject",
+      "url": "/home/admin/application/node_modules/_is-bigint@1.1.0@is-bigint/index.js",
+      "lineNumber": 8,
+      "selfTime": 14,
+      "selfTimePercent": "0.01"
+    },
+    {
+      "id": 30,
+      "functionName": "Readable.read",
+      "url": "node:internal/streams/readable",
+      "lineNumber": 645,
+      "selfTime": 14,
+      "selfTimePercent": "0.01"
+    }
+  ],
+  "moduleStats": [
+    {
+      "moduleName": "node_modules/leoric@2.14.0@leoric",
+      "selfTime": 550,
+      "functions": [
+        {
+          "functionName": "Bone",
+          "lineNumber": 151,
+          "selfTime": 96
+        },
+        {
+          "functionName": "isLogicalCondition",
+          "lineNumber": 102,
+          "selfTime": 45
+        },
+        {
+          "functionName": "dispatch",
+          "lineNumber": 81,
+          "selfTime": 44
+        },
+        {
+          "functionName": "instantiate",
+          "lineNumber": 1283,
+          "selfTime": 28
+        },
+        {
+          "functionName": "token",
+          "lineNumber": 266,
+          "selfTime": 25
+        },
+        {
+          "functionName": "Spell",
+          "lineNumber": 325,
+          "selfTime": 22
+        },
+        {
+          "functionName": "_setRaw",
+          "lineNumber": 301,
+          "selfTime": 18
+        },
+        {
+          "functionName": "query",
+          "lineNumber": 70,
+          "selfTime": 16
+        },
+        {
+          "functionName": "ignite",
+          "lineNumber": 441,
+          "selfTime": 16
+        },
+        {
+          "functionName": "parseExprList",
+          "lineNumber": 137,
+          "selfTime": 13
+        }
+      ],
+      "selfTimePercent": "0.33"
+    },
+    {
+      "moduleName": "node_modules/mysql2@3.15.3@mysql2",
+      "selfTime": 246,
+      "functions": [
+        {
+          "functionName": "get",
+          "lineNumber": 263,
+          "selfTime": 53
+        },
+        {
+          "functionName": "start",
+          "lineNumber": 48,
+          "selfTime": 38
+        },
+        {
+          "functionName": "parseDateTime",
+          "lineNumber": 649,
+          "selfTime": 25
+        },
+        {
+          "functionName": "keyFromFields",
+          "lineNumber": 9,
+          "selfTime": 17
+        },
+        {
+          "functionName": "readField",
+          "lineNumber": 191,
+          "selfTime": 13
+        },
+        {
+          "functionName": "ColumnDefinition",
+          "lineNumber": 22,
+          "selfTime": 9
+        },
+        {
+          "functionName": "ResultSetHeader",
+          "lineNumber": 14,
+          "selfTime": 7
+        },
+        {
+          "functionName": "createQuery",
+          "lineNumber": 911,
+          "selfTime": 7
+        },
+        {
+          "functionName": "executeStart",
+          "lineNumber": 63,
+          "selfTime": 6
+        },
+        {
+          "functionName": "resultsetHeader",
+          "lineNumber": 118,
+          "selfTime": 6
+        }
+      ],
+      "selfTimePercent": "0.15"
+    },
+    {
+      "moduleName": "node:internal/deps/undici/undici",
+      "selfTime": 142,
+      "functions": [
+        {
+          "functionName": "execute",
+          "lineNumber": 6712,
+          "selfTime": 29
+        },
+        {
+          "functionName": "__name",
+          "lineNumber": 4,
+          "selfTime": 8
+        },
+        {
+          "functionName": "_resume",
+          "lineNumber": 8687,
+          "selfTime": 7
+        },
+        {
+          "functionName": "onHttpSocketReadable",
+          "lineNumber": 7137,
+          "selfTime": 7
+        },
+        {
+          "functionName": "readMore",
+          "lineNumber": 6700,
+          "selfTime": 7
+        },
+        {
+          "functionName": "onBody",
+          "lineNumber": 6962,
+          "selfTime": 7
+        },
+        {
+          "functionName": "resumeH1",
+          "lineNumber": 7185,
+          "selfTime": 6
+        },
+        {
+          "functionName": "onHeadersComplete",
+          "lineNumber": 6880,
+          "selfTime": 5
+        },
+        {
+          "functionName": "bufferToLowerCasedHeaderName",
+          "lineNumber": 1405,
+          "selfTime": 4
+        },
+        {
+          "functionName": "onData",
+          "lineNumber": 2713,
+          "selfTime": 4
+        }
+      ],
+      "selfTimePercent": "0.08"
+    },
+    {
+      "moduleName": "node_modules/@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs",
+      "selfTime": 131,
+      "functions": [
+        {
+          "functionName": "initWithInjectProperty",
+          "lineNumber": 20,
+          "selfTime": 20
+        },
+        {
+          "functionName": "injectProperty",
+          "lineNumber": 165,
+          "selfTime": 20
+        },
+        {
+          "functionName": "getOrCreateEggObject",
+          "lineNumber": 28,
+          "selfTime": 14
+        },
+        {
+          "functionName": "getOrCreateEggObject",
+          "lineNumber": 56,
+          "selfTime": 10
+        },
+        {
+          "functionName": "init",
+          "lineNumber": 13,
+          "selfTime": 8
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 54,
+          "selfTime": 7
+        },
+        {
+          "functionName": "destroy",
+          "lineNumber": 22,
+          "selfTime": 7
+        },
+        {
+          "functionName": "get",
+          "lineNumber": 5,
+          "selfTime": 6
+        },
+        {
+          "functionName": "getOrCreateEggObject",
+          "lineNumber": 51,
+          "selfTime": 6
+        },
+        {
+          "functionName": "getLoadUnitInstance",
+          "lineNumber": 32,
+          "selfTime": 5
+        }
+      ],
+      "selfTimePercent": "0.08"
+    },
+    {
+      "moduleName": "node:internal/streams/readable",
+      "selfTime": 105,
+      "functions": [
+        {
+          "functionName": "Readable.read",
+          "lineNumber": 645,
+          "selfTime": 25
+        },
+        {
+          "functionName": "fromList",
+          "lineNumber": 1585,
+          "selfTime": 13
+        },
+        {
+          "functionName": "readableAddChunkPushByteMode",
+          "lineNumber": 461,
+          "selfTime": 9
+        },
+        {
+          "functionName": "addChunk",
+          "lineNumber": 548,
+          "selfTime": 7
+        },
+        {
+          "functionName": "Readable.push",
+          "lineNumber": 385,
+          "selfTime": 7
+        },
+        {
+          "functionName": "ondata",
+          "lineNumber": 1005,
+          "selfTime": 6
+        },
+        {
+          "functionName": "emitReadable",
+          "lineNumber": 817,
+          "selfTime": 5
+        },
+        {
+          "functionName": "Readable.on",
+          "lineNumber": 1130,
+          "selfTime": 5
+        },
+        {
+          "functionName": "emitReadable_",
+          "lineNumber": 828,
+          "selfTime": 5
+        },
+        {
+          "functionName": "resume_",
+          "lineNumber": 1257,
+          "selfTime": 4
+        }
+      ],
+      "selfTimePercent": "0.06"
+    },
+    {
+      "moduleName": "node:internal/stream_base_commons",
+      "selfTime": 93,
+      "functions": [
+        {
+          "functionName": "onStreamRead",
+          "lineNumber": 166,
+          "selfTime": 47
+        },
+        {
+          "functionName": "writevGeneric",
+          "lineNumber": 121,
+          "selfTime": 37
+        },
+        {
+          "functionName": "writeGeneric",
+          "lineNumber": 146,
+          "selfTime": 3
+        },
+        {
+          "functionName": "handleWriteReq",
+          "lineNumber": 46,
+          "selfTime": 2
+        },
+        {
+          "functionName": "onWriteComplete",
+          "lineNumber": 81,
+          "selfTime": 2
+        },
+        {
+          "functionName": "createWriteWrap",
+          "lineNumber": 108,
+          "selfTime": 1
+        },
+        {
+          "functionName": "afterWriteDispatched",
+          "lineNumber": 154,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.06"
+    },
+    {
+      "moduleName": "node:net",
+      "selfTime": 93,
+      "functions": [
+        {
+          "functionName": "Socket",
+          "lineNumber": 362,
+          "selfTime": 14
+        },
+        {
+          "functionName": "Socket._writeGeneric",
+          "lineNumber": 935,
+          "selfTime": 13
+        },
+        {
+          "functionName": "tryReadStart",
+          "lineNumber": 710,
+          "selfTime": 11
+        },
+        {
+          "functionName": "Socket._destroy",
+          "lineNumber": 808,
+          "selfTime": 10
+        },
+        {
+          "functionName": "Socket._read",
+          "lineNumber": 720,
+          "selfTime": 9
+        },
+        {
+          "functionName": "get",
+          "lineNumber": 2446,
+          "selfTime": 8
+        },
+        {
+          "functionName": "onconnection",
+          "lineNumber": 2235,
+          "selfTime": 5
+        },
+        {
+          "functionName": "Socket._write",
+          "lineNumber": 977,
+          "selfTime": 4
+        },
+        {
+          "functionName": "Socket.read",
+          "lineNumber": 780,
+          "selfTime": 4
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 344,
+          "selfTime": 3
+        }
+      ],
+      "selfTimePercent": "0.06"
+    },
+    {
+      "moduleName": "node_modules/urllib@4.8.2@urllib",
+      "selfTime": 77,
+      "functions": [
+        {
+          "functionName": "#requestInternal",
+          "lineNumber": 132,
+          "selfTime": 16
+        },
+        {
+          "functionName": "parseJSON",
+          "lineNumber": 25,
+          "selfTime": 15
+        },
+        {
+          "functionName": "#requestInternal",
+          "lineNumber": 126,
+          "selfTime": 13
+        },
+        {
+          "functionName": "formatSocket",
+          "lineNumber": 31,
+          "selfTime": 7
+        },
+        {
+          "functionName": "updateSocketInfo",
+          "lineNumber": 159,
+          "selfTime": 4
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 179,
+          "selfTime": 4
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 185,
+          "selfTime": 4
+        },
+        {
+          "functionName": "request",
+          "lineNumber": 119,
+          "selfTime": 3
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 88,
+          "selfTime": 2
+        },
+        {
+          "functionName": "updateSocketInfo",
+          "lineNumber": 146,
+          "selfTime": 2
+        }
+      ],
+      "selfTimePercent": "0.05"
+    },
+    {
+      "moduleName": "node_modules/@eggjs_router@4.0.0-beta.35@@eggjs",
+      "selfTime": 75,
+      "functions": [
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 137,
+          "selfTime": 30
+        },
+        {
+          "functionName": "match",
+          "lineNumber": 72,
+          "selfTime": 21
+        },
+        {
+          "functionName": "match",
+          "lineNumber": 424,
+          "selfTime": 9
+        },
+        {
+          "functionName": "captures",
+          "lineNumber": 102,
+          "selfTime": 5
+        },
+        {
+          "functionName": "params",
+          "lineNumber": 84,
+          "selfTime": 5
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 138,
+          "selfTime": 3
+        },
+        {
+          "functionName": "dispatch",
+          "lineNumber": 122,
+          "selfTime": 2
+        }
+      ],
+      "selfTimePercent": "0.04"
+    },
+    {
+      "moduleName": "node_modules/@eggjs_koa@3.1.0-beta.35@@eggjs",
+      "selfTime": 73,
+      "functions": [
+        {
+          "functionName": "_respond",
+          "lineNumber": 218,
+          "selfTime": 35
+        },
+        {
+          "functionName": "set",
+          "lineNumber": 376,
+          "selfTime": 7
+        },
+        {
+          "functionName": "get",
+          "lineNumber": 472,
+          "selfTime": 3
+        },
+        {
+          "functionName": "get path",
+          "lineNumber": 208,
+          "selfTime": 3
+        },
+        {
+          "functionName": "set status",
+          "lineNumber": 57,
+          "selfTime": 3
+        },
+        {
+          "functionName": "accepts",
+          "lineNumber": 378,
+          "selfTime": 2
+        },
+        {
+          "functionName": "remove",
+          "lineNumber": 416,
+          "selfTime": 2
+        },
+        {
+          "functionName": "get writable",
+          "lineNumber": 342,
+          "selfTime": 2
+        },
+        {
+          "functionName": "get method",
+          "lineNumber": 196,
+          "selfTime": 2
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 152,
+          "selfTime": 2
+        }
+      ],
+      "selfTimePercent": "0.04"
+    },
+    {
+      "moduleName": "node_modules/reflect-metadata@0.2.2@reflect-metadata",
+      "selfTime": 72,
+      "functions": [
+        {
+          "functionName": "getProvider",
+          "lineNumber": 946,
+          "selfTime": 21
+        },
+        {
+          "functionName": "OrdinaryGetMetadata",
+          "lineNumber": 591,
+          "selfTime": 19
+        },
+        {
+          "functionName": "OrdinaryGetPrototypeOf",
+          "lineNumber": 844,
+          "selfTime": 14
+        },
+        {
+          "functionName": "OrdinaryHasOwnMetadata",
+          "lineNumber": 1057,
+          "selfTime": 7
+        },
+        {
+          "functionName": "isProviderFor",
+          "lineNumber": 1015,
+          "selfTime": 5
+        },
+        {
+          "functionName": "GetOrCreateMetadataMap",
+          "lineNumber": 1029,
+          "selfTime": 5
+        },
+        {
+          "functionName": "getMetadata",
+          "lineNumber": 365,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.04"
+    },
+    {
+      "moduleName": "node_modules/deep-equal@2.2.3@deep-equal",
+      "selfTime": 71,
+      "functions": [
+        {
+          "functionName": "objEquiv",
+          "lineNumber": 276,
+          "selfTime": 70
+        },
+        {
+          "functionName": "internalDeepEqual",
+          "lineNumber": 120,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.04"
+    },
+    {
+      "moduleName": "node:internal/process/task_queues",
+      "selfTime": 69,
+      "functions": [
+        {
+          "functionName": "processTicksAndRejections",
+          "lineNumber": 71,
+          "selfTime": 49
+        },
+        {
+          "functionName": "nextTick",
+          "lineNumber": 111,
+          "selfTime": 16
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 146,
+          "selfTime": 3
+        },
+        {
+          "functionName": "queueMicrotask",
+          "lineNumber": 158,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.04"
+    },
+    {
+      "moduleName": "node:_http_incoming",
+      "selfTime": 51,
+      "functions": [
+        {
+          "functionName": "_addHeaderLine",
+          "lineNumber": 382,
+          "selfTime": 40
+        },
+        {
+          "functionName": "matchKnownFields",
+          "lineNumber": 276,
+          "selfTime": 8
+        },
+        {
+          "functionName": "onError",
+          "lineNumber": 439,
+          "selfTime": 2
+        },
+        {
+          "functionName": "IncomingMessage",
+          "lineNumber": 50,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.03"
+    },
+    {
+      "moduleName": "node_modules/@eggjs_lifecycle@4.0.0-beta.35@@eggjs",
+      "selfTime": 50,
+      "functions": [
+        {
+          "functionName": "getObjectLifecycleList",
+          "lineNumber": 26,
+          "selfTime": 9
+        },
+        {
+          "functionName": "getLifecycleHook",
+          "lineNumber": 72,
+          "selfTime": 9
+        },
+        {
+          "functionName": "objectPreCreate",
+          "lineNumber": 32,
+          "selfTime": 6
+        },
+        {
+          "functionName": "getLifecycleList",
+          "lineNumber": 11,
+          "selfTime": 5
+        },
+        {
+          "functionName": "objectPostCreate",
+          "lineNumber": 38,
+          "selfTime": 5
+        },
+        {
+          "functionName": "callPostCreate",
+          "lineNumber": 56,
+          "selfTime": 4
+        },
+        {
+          "functionName": "callPreCreate",
+          "lineNumber": 50,
+          "selfTime": 3
+        },
+        {
+          "functionName": "objectPreDestroy",
+          "lineNumber": 44,
+          "selfTime": 3
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 35,
+          "selfTime": 2
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 41,
+          "selfTime": 2
+        }
+      ],
+      "selfTimePercent": "0.03"
+    },
+    {
+      "moduleName": "node_modules/undici@7.16.0@undici",
+      "selfTime": 49,
+      "functions": [
+        {
+          "functionName": "parseHeaders",
+          "lineNumber": 420,
+          "selfTime": 13
+        },
+        {
+          "functionName": "request",
+          "lineNumber": 190,
+          "selfTime": 6
+        },
+        {
+          "functionName": "onHeaders",
+          "lineNumber": 88,
+          "selfTime": 4
+        },
+        {
+          "functionName": "consumeEnd",
+          "lineNumber": 520,
+          "selfTime": 4
+        },
+        {
+          "functionName": "consumeFinish",
+          "lineNumber": 557,
+          "selfTime": 4
+        },
+        {
+          "functionName": "on",
+          "lineNumber": 110,
+          "selfTime": 3
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 193,
+          "selfTime": 3
+        },
+        {
+          "functionName": "search",
+          "lineNumber": 91,
+          "selfTime": 3
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 68,
+          "selfTime": 2
+        },
+        {
+          "functionName": "arrayBuffer",
+          "lineNumber": 214,
+          "selfTime": 2
+        }
+      ],
+      "selfTimePercent": "0.03"
+    },
+    {
+      "moduleName": "node:events",
+      "selfTime": 47,
+      "functions": [
+        {
+          "functionName": "emit",
+          "lineNumber": 455,
+          "selfTime": 26
+        },
+        {
+          "functionName": "_addListener",
+          "lineNumber": 536,
+          "selfTime": 9
+        },
+        {
+          "functionName": "removeListener",
+          "lineNumber": 670,
+          "selfTime": 4
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 331,
+          "selfTime": 3
+        },
+        {
+          "functionName": "addCatch",
+          "lineNumber": 355,
+          "selfTime": 2
+        },
+        {
+          "functionName": "listenerCount",
+          "lineNumber": 840,
+          "selfTime": 1
+        },
+        {
+          "functionName": "once",
+          "lineNumber": 641,
+          "selfTime": 1
+        },
+        {
+          "functionName": "removeAllListeners",
+          "lineNumber": 732,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.03"
+    },
+    {
+      "moduleName": "node:buffer",
+      "selfTime": 46,
+      "functions": [
+        {
+          "functionName": "slice",
+          "lineNumber": 646,
+          "selfTime": 23
+        },
+        {
+          "functionName": "toString",
+          "lineNumber": 845,
+          "selfTime": 11
+        },
+        {
+          "functionName": "from",
+          "lineNumber": 304,
+          "selfTime": 4
+        },
+        {
+          "functionName": "slice",
+          "lineNumber": 682,
+          "selfTime": 3
+        },
+        {
+          "functionName": "_copyActual",
+          "lineNumber": 245,
+          "selfTime": 3
+        },
+        {
+          "functionName": "fromString",
+          "lineNumber": 490,
+          "selfTime": 2
+        }
+      ],
+      "selfTimePercent": "0.03"
+    },
+    {
+      "moduleName": "node_modules/egg-logger@3.6.1@egg-logger",
+      "selfTime": 46,
+      "functions": [
+        {
+          "functionName": "defaultContextPaddingMessage",
+          "lineNumber": 34,
+          "selfTime": 14
+        },
+        {
+          "functionName": "format",
+          "lineNumber": 123,
+          "selfTime": 9
+        },
+        {
+          "functionName": "defaultFormatter",
+          "lineNumber": 58,
+          "selfTime": 6
+        },
+        {
+          "functionName": "Logger.<computed>",
+          "lineNumber": 165,
+          "selfTime": 5
+        },
+        {
+          "functionName": "flush",
+          "lineNumber": 55,
+          "selfTime": 5
+        },
+        {
+          "functionName": "log",
+          "lineNumber": 60,
+          "selfTime": 3
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 98,
+          "selfTime": 3
+        },
+        {
+          "functionName": "log",
+          "lineNumber": 107,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.03"
+    },
+    {
+      "moduleName": "node:internal/streams/writable",
+      "selfTime": 45,
+      "functions": [
+        {
+          "functionName": "Writable.write",
+          "lineNumber": 502,
+          "selfTime": 8
+        },
+        {
+          "functionName": "clearBuffer",
+          "lineNumber": 742,
+          "selfTime": 7
+        },
+        {
+          "functionName": "set",
+          "lineNumber": 260,
+          "selfTime": 5
+        },
+        {
+          "functionName": "writeOrBuffer",
+          "lineNumber": 546,
+          "selfTime": 4
+        },
+        {
+          "functionName": "onwrite",
+          "lineNumber": 613,
+          "selfTime": 4
+        },
+        {
+          "functionName": "callback",
+          "lineNumber": 762,
+          "selfTime": 3
+        },
+        {
+          "functionName": "resetBuffer",
+          "lineNumber": 362,
+          "selfTime": 2
+        },
+        {
+          "functionName": "afterWrite",
+          "lineNumber": 697,
+          "selfTime": 2
+        },
+        {
+          "functionName": "get",
+          "lineNumber": 1027,
+          "selfTime": 1
+        },
+        {
+          "functionName": "Writable.uncork",
+          "lineNumber": 518,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.03"
+    },
+    {
+      "moduleName": "node:_http_server",
+      "selfTime": 44,
+      "functions": [
+        {
+          "functionName": "ServerResponse",
+          "lineNumber": 197,
+          "selfTime": 9
+        },
+        {
+          "functionName": "connectionListenerInternal",
+          "lineNumber": 695,
+          "selfTime": 6
+        },
+        {
+          "functionName": "resOnFinish",
+          "lineNumber": 1007,
+          "selfTime": 6
+        },
+        {
+          "functionName": "parserOnIncoming",
+          "lineNumber": 1073,
+          "selfTime": 5
+        },
+        {
+          "functionName": "socketListenerWrap",
+          "lineNumber": 1236,
+          "selfTime": 4
+        },
+        {
+          "functionName": "socketOnClose",
+          "lineNumber": 829,
+          "selfTime": 4
+        },
+        {
+          "functionName": "writeHead",
+          "lineNumber": 351,
+          "selfTime": 3
+        },
+        {
+          "functionName": "clearIncoming",
+          "lineNumber": 994,
+          "selfTime": 3
+        },
+        {
+          "functionName": "detachSocket",
+          "lineNumber": 300,
+          "selfTime": 2
+        },
+        {
+          "functionName": "_finish",
+          "lineNumber": 239,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.03"
+    },
+    {
+      "moduleName": "node_modules/is-string@1.1.1@is-string",
+      "selfTime": 40,
+      "functions": [
+        {
+          "functionName": "tryStringObject",
+          "lineNumber": 9,
+          "selfTime": 40
+        }
+      ],
+      "selfTimePercent": "0.02"
+    },
+    {
+      "moduleName": "node:internal/child_process/serialization",
+      "selfTime": 40,
+      "functions": [
+        {
+          "functionName": "parseChannelMessages",
+          "lineNumber": 142,
+          "selfTime": 29
+        },
+        {
+          "functionName": "writeChannelMessage",
+          "lineNumber": 163,
+          "selfTime": 11
+        }
+      ],
+      "selfTimePercent": "0.02"
+    },
+    {
+      "moduleName": "node_modules/oss-client@2.5.1@oss-client",
+      "selfTime": 40,
+      "functions": [
+        {
+          "functionName": "getRequestURL",
+          "lineNumber": 66,
+          "selfTime": 11
+        },
+        {
+          "functionName": "authorization",
+          "lineNumber": 50,
+          "selfTime": 5
+        },
+        {
+          "functionName": "append",
+          "lineNumber": 43,
+          "selfTime": 5
+        },
+        {
+          "functionName": "#sendPutRequest",
+          "lineNumber": 800,
+          "selfTime": 4
+        },
+        {
+          "functionName": "createHttpClientRequestParams",
+          "lineNumber": 108,
+          "selfTime": 3
+        },
+        {
+          "functionName": "buildCanonicalString",
+          "lineNumber": 64,
+          "selfTime": 3
+        },
+        {
+          "functionName": "request",
+          "lineNumber": 170,
+          "selfTime": 2
+        },
+        {
+          "functionName": "buildCanonicalizedResource",
+          "lineNumber": 28,
+          "selfTime": 2
+        },
+        {
+          "functionName": "lowercaseKeyHeader",
+          "lineNumber": 55,
+          "selfTime": 2
+        },
+        {
+          "functionName": "#objectName",
+          "lineNumber": 885,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.02"
+    },
+    {
+      "moduleName": "node_modules/@eggjs_controller-plugin@4.0.0-beta.35@@eggjs",
+      "selfTime": 38,
+      "functions": [
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 160,
+          "selfTime": 21
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 36,
+          "selfTime": 10
+        },
+        {
+          "functionName": "teggRootProto",
+          "lineNumber": 3,
+          "selfTime": 5
+        },
+        {
+          "functionName": "getRootProto",
+          "lineNumber": 10,
+          "selfTime": 2
+        }
+      ],
+      "selfTimePercent": "0.02"
+    },
+    {
+      "moduleName": "node_modules/lodash-es@4.17.21@lodash-es",
+      "selfTime": 36,
+      "functions": [
+        {
+          "functionName": "baseSet",
+          "lineNumber": 17,
+          "selfTime": 12
+        },
+        {
+          "functionName": "isKey",
+          "lineNumber": 16,
+          "selfTime": 9
+        },
+        {
+          "functionName": "baseAssignValue",
+          "lineNumber": 12,
+          "selfTime": 8
+        },
+        {
+          "functionName": "set",
+          "lineNumber": 31,
+          "selfTime": 4
+        },
+        {
+          "functionName": "assignValue",
+          "lineNumber": 20,
+          "selfTime": 3
+        }
+      ],
+      "selfTimePercent": "0.02"
+    },
+    {
+      "moduleName": "node:internal/fs/streams",
+      "selfTime": 36,
+      "functions": [
+        {
+          "functionName": "writeAll",
+          "lineNumber": 422,
+          "selfTime": 12
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 423,
+          "selfTime": 10
+        },
+        {
+          "functionName": "ReadStream._read",
+          "lineNumber": 251,
+          "selfTime": 3
+        },
+        {
+          "functionName": "WriteStream._write",
+          "lineNumber": 480,
+          "selfTime": 2
+        },
+        {
+          "functionName": "WriteStream",
+          "lineNumber": 324,
+          "selfTime": 2
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 482,
+          "selfTime": 2
+        },
+        {
+          "functionName": "WriteStream._writev",
+          "lineNumber": 497,
+          "selfTime": 2
+        },
+        {
+          "functionName": "WriteStream._destroy",
+          "lineNumber": 525,
+          "selfTime": 1
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 73,
+          "selfTime": 1
+        },
+        {
+          "functionName": "(anonymous)",
+          "lineNumber": 452,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.02"
+    },
+    {
+      "moduleName": "node:internal/buffer",
+      "selfTime": 35,
+      "functions": [
+        {
+          "functionName": "FastBuffer",
+          "lineNumber": 963,
+          "selfTime": 32
+        },
+        {
+          "functionName": "readUInt32LE",
+          "lineNumber": 224,
+          "selfTime": 1
+        },
+        {
+          "functionName": "createUnsafeBuffer",
+          "lineNumber": 1094,
+          "selfTime": 1
+        },
+        {
+          "functionName": "utf8Write",
+          "lineNumber": 1061,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.02"
+    },
+    {
+      "moduleName": "app/repository/util/ModelConvertor.js",
+      "selfTime": 35,
+      "functions": [
+        {
+          "functionName": "convertModelToEntity",
+          "lineNumber": 74,
+          "selfTime": 32
+        },
+        {
+          "functionName": "saveEntityToModel",
+          "lineNumber": 50,
+          "selfTime": 2
+        },
+        {
+          "functionName": "convertEntityToModel",
+          "lineNumber": 8,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.02"
+    },
+    {
+      "moduleName": "node_modules/egg@4.1.0-beta.35@egg",
+      "selfTime": 31,
+      "functions": [
+        {
+          "functionName": "meta",
+          "lineNumber": 6,
+          "selfTime": 5
+        },
+        {
+          "functionName": "_customQuery",
+          "lineNumber": 160,
+          "selfTime": 5
+        },
+        {
+          "functionName": "siteFile",
+          "lineNumber": 6,
+          "selfTime": 4
+        },
+        {
+          "functionName": "createContext",
+          "lineNumber": 562,
+          "selfTime": 4
+        },
+        {
+          "functionName": "get ip",
+          "lineNumber": 241,
+          "selfTime": 3
+        },
+        {
+          "functionName": "notfound",
+          "lineNumber": 2,
+          "selfTime": 2
+        },
+        {
+          "functionName": "createAnonymousContext",
+          "lineNumber": 507,
+          "selfTime": 2
+        },
+        {
+          "functionName": "get host",
+          "lineNumber": 28,
+          "selfTime": 2
+        },
+        {
+          "functionName": "get ip",
+          "lineNumber": 116,
+          "selfTime": 2
+        },
+        {
+          "functionName": "getFromHeaders",
+          "lineNumber": 254,
+          "selfTime": 1
+        }
+      ],
+      "selfTimePercent": "0.02"
+    }
+  ],
+  "cnpmcoreStats": {
+    "controllers": [
+      {
+        "functionName": "(anonymous)",
+        "url": "node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 160,
+        "selfTime": 21,
+        "selfTimePercent": "0.0124"
+      },
+      {
+        "functionName": "(anonymous)",
+        "url": "node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 36,
+        "selfTime": 8,
+        "selfTimePercent": "0.0047"
+      },
+      {
+        "functionName": "formatItems",
+        "url": "app/port/controller/BinarySyncController.js",
+        "lineNumber": 134,
+        "selfTime": 6,
+        "selfTimePercent": "0.0036"
+      },
+      {
+        "functionName": "teggRootProto",
+        "url": "node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/app/middleware/tegg_root_proto.js",
+        "lineNumber": 3,
+        "selfTime": 5,
+        "selfTimePercent": "0.0030"
+      },
+      {
+        "functionName": "getRootProto",
+        "url": "node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/RootProtoManager.js",
+        "lineNumber": 10,
+        "selfTime": 2,
+        "selfTimePercent": "0.0012"
+      },
+      {
+        "functionName": "showBinary",
+        "url": "app/port/controller/BinarySyncController.js",
+        "lineNumber": 38,
+        "selfTime": 2,
+        "selfTimePercent": "0.0012"
+      },
+      {
+        "functionName": "(anonymous)",
+        "url": "node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 36,
+        "selfTime": 2,
+        "selfTimePercent": "0.0012"
+      },
+      {
+        "functionName": "showBinary",
+        "url": "app/port/controller/BinarySyncController.js",
+        "lineNumber": 38,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "(anonymous)",
+        "url": "app/port/controller/BinarySyncController.js",
+        "lineNumber": 135,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "getAllowSync",
+        "url": "app/port/controller/AbstractController.js",
+        "lineNumber": 59,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "deprecatedShowSyncTask",
+        "url": "app/port/controller/PackageSyncController.js",
+        "lineNumber": 155,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "showSyncTask",
+        "url": "app/port/controller/PackageSyncController.js",
+        "lineNumber": 102,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      }
+    ],
+    "services": [
+      {
+        "functionName": "syncDir",
+        "url": "app/core/service/BinarySyncerService.js",
+        "lineNumber": 137,
+        "selfTime": 12,
+        "selfTimePercent": "0.0071"
+      },
+      {
+        "functionName": "isoNow",
+        "url": "app/core/service/BinarySyncerService.js",
+        "lineNumber": 23,
+        "selfTime": 3,
+        "selfTimePercent": "0.0018"
+      },
+      {
+        "functionName": "diff",
+        "url": "app/core/service/BinarySyncerService.js",
+        "lineNumber": 228,
+        "selfTime": 3,
+        "selfTimePercent": "0.0018"
+      },
+      {
+        "functionName": "appendTaskLog",
+        "url": "app/core/service/TaskService.js",
+        "lineNumber": 140,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "syncPackageWithPackument",
+        "url": "app/core/service/PackageSyncerService.js",
+        "lineNumber": 939,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "maintainers",
+        "url": "app/core/service/PackageManagerService.js",
+        "lineNumber": 1120,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "plusPackageVersionCounter",
+        "url": "app/core/service/PackageManagerService.js",
+        "lineNumber": 399,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "syncPackageWithPackument",
+        "url": "app/core/service/PackageSyncerService.js",
+        "lineNumber": 939,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "listDirBinaries",
+        "url": "app/core/service/BinarySyncerService.js",
+        "lineNumber": 33,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "isoNow",
+        "url": "app/core/service/BinarySyncerService.js",
+        "lineNumber": 23,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "appendLogToNFS",
+        "url": "app/core/service/TaskService.js",
+        "lineNumber": 151,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "syncPackageWithPackument",
+        "url": "app/core/service/PackageSyncerService.js",
+        "lineNumber": 939,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "appendTaskLog",
+        "url": "app/core/service/TaskService.js",
+        "lineNumber": 140,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      }
+    ],
+    "repositories": [
+      {
+        "functionName": "convertModelToEntity",
+        "url": "app/repository/util/ModelConvertor.js",
+        "lineNumber": 74,
+        "selfTime": 21,
+        "selfTimePercent": "0.0124"
+      },
+      {
+        "functionName": "listBinaries",
+        "url": "app/repository/BinaryRepository.js",
+        "lineNumber": 33,
+        "selfTime": 9,
+        "selfTimePercent": "0.0053"
+      },
+      {
+        "functionName": "convertModelToEntity",
+        "url": "app/repository/util/ModelConvertor.js",
+        "lineNumber": 74,
+        "selfTime": 7,
+        "selfTimePercent": "0.0041"
+      },
+      {
+        "functionName": "saveTask",
+        "url": "app/repository/TaskRepository.js",
+        "lineNumber": 18,
+        "selfTime": 4,
+        "selfTimePercent": "0.0024"
+      },
+      {
+        "functionName": "convertModelToEntity",
+        "url": "app/repository/util/ModelConvertor.js",
+        "lineNumber": 74,
+        "selfTime": 3,
+        "selfTimePercent": "0.0018"
+      },
+      {
+        "functionName": "saveEntityToModel",
+        "url": "app/repository/util/ModelConvertor.js",
+        "lineNumber": 50,
+        "selfTime": 2,
+        "selfTimePercent": "0.0012"
+      },
+      {
+        "functionName": "saveTask",
+        "url": "app/repository/TaskRepository.js",
+        "lineNumber": 18,
+        "selfTime": 2,
+        "selfTimePercent": "0.0012"
+      },
+      {
+        "functionName": "findBinary",
+        "url": "app/repository/BinaryRepository.js",
+        "lineNumber": 27,
+        "selfTime": 2,
+        "selfTimePercent": "0.0012"
+      },
+      {
+        "functionName": "readDistBytesToJSON",
+        "url": "app/repository/DistRepository.js",
+        "lineNumber": 56,
+        "selfTime": 2,
+        "selfTimePercent": "0.0012"
+      },
+      {
+        "functionName": "fillPackageVersionEntityData",
+        "url": "app/repository/PackageRepository.js",
+        "lineNumber": 259,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "convertEntityToModel",
+        "url": "app/repository/util/ModelConvertor.js",
+        "lineNumber": 8,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "findRegistryByRegistryId",
+        "url": "app/repository/RegistryRepository.js",
+        "lineNumber": 32,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "findTask",
+        "url": "app/repository/TaskRepository.js",
+        "lineNumber": 84,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "findPackage",
+        "url": "app/repository/PackageRepository.js",
+        "lineNumber": 29,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "convertModelToEntity",
+        "url": "app/repository/util/ModelConvertor.js",
+        "lineNumber": 74,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      }
+    ],
+    "models": [
+      {
+        "functionName": "destroy",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 22,
+        "selfTime": 5,
+        "selfTimePercent": "0.0030"
+      },
+      {
+        "functionName": "init",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 71,
+        "selfTime": 3,
+        "selfTimePercent": "0.0018"
+      },
+      {
+        "functionName": "getOrCreateEggObject",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 51,
+        "selfTime": 3,
+        "selfTimePercent": "0.0018"
+      },
+      {
+        "functionName": "getOrCreateEggObject",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 51,
+        "selfTime": 2,
+        "selfTimePercent": "0.0012"
+      },
+      {
+        "functionName": "destroy",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 22,
+        "selfTime": 2,
+        "selfTimePercent": "0.0012"
+      },
+      {
+        "functionName": "init",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 71,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "get",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 38,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "getOrCreateEggObject",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 51,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "get",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 38,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      },
+      {
+        "functionName": "(anonymous)",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 31,
+        "selfTime": 1,
+        "selfTimePercent": "0.0006"
+      }
+    ],
+    "others": [
+      {
+        "functionName": "Bone",
+        "url": "node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 151,
+        "selfTime": 94,
+        "selfTimePercent": "0.0556"
+      },
+      {
+        "functionName": "dispatch",
+        "url": "node_modules/_leoric@2.14.0@leoric/lib/collection.js",
+        "lineNumber": 81,
+        "selfTime": 44,
+        "selfTimePercent": "0.0260"
+      },
+      {
+        "functionName": "get",
+        "url": "node_modules/_mysql2@3.15.3@mysql2/lib/packets/column_definition.js",
+        "lineNumber": 263,
+        "selfTime": 38,
+        "selfTimePercent": "0.0225"
+      },
+      {
+        "functionName": "objEquiv",
+        "url": "node_modules/_deep-equal@2.2.3@deep-equal/index.js",
+        "lineNumber": 276,
+        "selfTime": 38,
+        "selfTimePercent": "0.0225"
+      },
+      {
+        "functionName": "start",
+        "url": "node_modules/_mysql2@3.15.3@mysql2/lib/commands/query.js",
+        "lineNumber": 48,
+        "selfTime": 38,
+        "selfTimePercent": "0.0225"
+      },
+      {
+        "functionName": "_respond",
+        "url": "node_modules/_@eggjs_koa@3.1.0-beta.35@@eggjs/koa/dist/application.js",
+        "lineNumber": 218,
+        "selfTime": 34,
+        "selfTimePercent": "0.0201"
+      },
+      {
+        "functionName": "objEquiv",
+        "url": "node_modules/_deep-equal@2.2.3@deep-equal/index.js",
+        "lineNumber": 276,
+        "selfTime": 32,
+        "selfTimePercent": "0.0189"
+      },
+      {
+        "functionName": "tryStringObject",
+        "url": "node_modules/_is-string@1.1.1@is-string/index.js",
+        "lineNumber": 9,
+        "selfTime": 30,
+        "selfTimePercent": "0.0178"
+      },
+      {
+        "functionName": "(anonymous)",
+        "url": "node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Router.js",
+        "lineNumber": 137,
+        "selfTime": 30,
+        "selfTimePercent": "0.0178"
+      },
+      {
+        "functionName": "instantiate",
+        "url": "node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 1283,
+        "selfTime": 26,
+        "selfTimePercent": "0.0154"
+      },
+      {
+        "functionName": "match",
+        "url": "node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Layer.js",
+        "lineNumber": 72,
+        "selfTime": 21,
+        "selfTimePercent": "0.0124"
+      },
+      {
+        "functionName": "injectProperty",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "lineNumber": 165,
+        "selfTime": 20,
+        "selfTimePercent": "0.0118"
+      },
+      {
+        "functionName": "_setRaw",
+        "url": "node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 301,
+        "selfTime": 18,
+        "selfTimePercent": "0.0107"
+      },
+      {
+        "functionName": "isLogicalCondition",
+        "url": "node_modules/_leoric@2.14.0@leoric/lib/query_object.js",
+        "lineNumber": 102,
+        "selfTime": 18,
+        "selfTimePercent": "0.0107"
+      },
+      {
+        "functionName": "isWeakSet",
+        "url": "node_modules/_is-weakset@2.0.4@is-weakset/index.js",
+        "lineNumber": 16,
+        "selfTime": 16,
+        "selfTimePercent": "0.0095"
+      },
+      {
+        "functionName": "ignite",
+        "url": "node_modules/_leoric@2.14.0@leoric/lib/spell.js",
+        "lineNumber": 441,
+        "selfTime": 16,
+        "selfTimePercent": "0.0095"
+      },
+      {
+        "functionName": "get",
+        "url": "node_modules/_mysql2@3.15.3@mysql2/lib/packets/column_definition.js",
+        "lineNumber": 263,
+        "selfTime": 15,
+        "selfTimePercent": "0.0089"
+      },
+      {
+        "functionName": "query",
+        "url": "node_modules/_leoric@2.14.0@leoric/lib/drivers/mysql/index.js",
+        "lineNumber": 70,
+        "selfTime": 15,
+        "selfTimePercent": "0.0089"
+      },
+      {
+        "functionName": "parseJSON",
+        "url": "node_modules/_urllib@4.8.2@urllib/dist/esm/utils.js",
+        "lineNumber": 25,
+        "selfTime": 15,
+        "selfTimePercent": "0.0089"
+      },
+      {
+        "functionName": "initWithInjectProperty",
+        "url": "node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "lineNumber": 20,
+        "selfTime": 15,
+        "selfTimePercent": "0.0089"
+      }
+    ]
+  }
+}

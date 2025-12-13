@@ -1,0 +1,229 @@
+flowchart TD
+    %% CPU Profile Call Graph - Hotspot Analysis
+
+    %% Styling
+    classDef hotspot fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    classDef caller fill:#4dabf7,stroke:#1971c2,color:#fff
+    classDef callee fill:#69db7c,stroke:#2f9e44,color:#fff
+    classDef native fill:#868e96,stroke:#495057,color:#fff
+
+    N0["update<br/>352 (0.21%)"]
+    N1["update<br/>178 (0.11%)"]
+    N2["leoric:Bone<br/>94 (0.06%)"]
+    N3["writev<br/>87 (0.05%)"]
+    N4["node:writevGeneric<br/>9 (0.01%)"]
+    N5["node:processTicksAndRejections<br/>49 (0.03%)"]
+    N6["runMicrotasks<br/>96 (0.06%)"]
+    N7["node:emitReadable_<br/>5 (0.00%)"]
+    N8["node:pushAsyncContext<br/>1 (0.00%)"]
+    N9["node:processPromiseRejections<br/>3 (0.00%)"]
+    N10["node:emit<br/>2 (0.00%)"]
+    N11["node:maybeReadMore_<br/>3 (0.00%)"]
+    N12["node:resume_<br/>4 (0.00%)"]
+    N13["node:endReadableNT<br/>4 (0.00%)"]
+    N14["node:finish<br/>1 (0.00%)"]
+    N15["mysql2:(anonymous)<br/>1 (0.00%)"]
+    N16["mysql2:(anonymous)<br/>3 (0.00%)"]
+    N17["mysql2:(anonymous)<br/>1 (0.00%)"]
+    N18["node:onError<br/>2 (0.00%)"]
+    N19["writev<br/>49 (0.03%)"]
+    N20["node:writevGeneric<br/>5 (0.00%)"]
+    N21["node:onStreamRead<br/>47 (0.03%)"]
+    N22["node:readableAddChunkPushByteMode<br/>3 (0.00%)"]
+    N23["node:FastBuffer<br/>3 (0.00%)"]
+    N24["node:get<br/>2 (0.00%)"]
+    N25["readStop<br/>5 (0.00%)"]
+    N26["node:Readable.push<br/>1 (0.00%)"]
+    N27["node:_unrefTimer<br/>1 (0.00%)"]
+    N28["leoric:dispatch<br/>44 (0.03%)"]
+    N29["leoric:init<br/>4 (0.00%)"]
+    N30["leoric:instantiate<br/>26 (0.02%)"]
+    N31["leoric:(anonymous)<br/>2 (0.00%)"]
+    N32["writeBuffer<br/>42 (0.02%)"]
+    N33["node:handleWriteReq<br/>2 (0.00%)"]
+    N34["writeBuffer<br/>40 (0.02%)"]
+    N35["node:write<br/>4 (0.00%)"]
+    N36["node:_addHeaderLine<br/>40 (0.02%)"]
+    N37["node:matchKnownFields<br/>7 (0.00%)"]
+    N38["mysql2:get<br/>38 (0.02%)"]
+    N39["mysql2:keyFromFields<br/>14 (0.01%)"]
+    N40["mysql2:exports.decode<br/>1 (0.00%)"]
+    N41["deep-equal:objEquiv<br/>38 (0.02%)"]
+    N42["mysql2:start<br/>38 (0.02%)"]
+    N43["mysql2:execute<br/>1 (0.00%)"]
+    N44["mysql2:writePacket<br/>2 (0.00%)"]
+    N45["mysql2:toPacket<br/>5 (0.00%)"]
+    N46["_:_respond<br/>34 (0.02%)"]
+    N47["node:end<br/>1 (0.00%)"]
+    N48["leoric:toJSON<br/>2 (0.00%)"]
+    N49["_:get writable<br/>2 (0.00%)"]
+    N50["_:get method<br/>1 (0.00%)"]
+    N51["writev<br/>34 (0.02%)"]
+    N52["node:writevGeneric<br/>9 (0.01%)"]
+    N53["deep-equal:objEquiv<br/>32 (0.02%)"]
+    N54["deep-equal:internalDeepEqual<br/>1 (0.00%)"]
+    N55["which-collection:whichCollection<br/>1 (0.00%)"]
+    N56["is-string:tryStringObject<br/>30 (0.02%)"]
+    N57["_:(anonymous)<br/>30 (0.02%)"]
+    N58["_:dispatch<br/>2 (0.00%)"]
+    N59["node:parseChannelMessages<br/>29 (0.02%)"]
+    N60["node:channel.onread<br/>3 (0.00%)"]
+    N61["node:execute<br/>28 (0.02%)"]
+    N62["node:readMore<br/>7 (0.00%)"]
+    N63["js-to-wasm:iii:i<br/>9 (0.01%)"]
+    N64["get buffer<br/>5 (0.00%)"]
+    N65["wasm-function[43]<br/>1 (0.00%)"]
+    N66["wasm-function[50]<br/>1 (0.00%)"]
+    N67["leoric:_setRaw<br/>18 (0.01%)"]
+    N68["leoric:_setRawSaved<br/>5 (0.00%)"]
+    N69["leoric:cast<br/>3 (0.00%)"]
+    N70["read<br/>24 (0.01%)"]
+    N71["node:read<br/>4 (0.00%)"]
+    N72["node:FastBuffer<br/>24 (0.01%)"]
+    N73["_:(anonymous)<br/>21 (0.01%)"]
+    N74["_:getRootProto<br/>2 (0.00%)"]
+    N75["_:match<br/>21 (0.01%)"]
+    N76["_:match<br/>9 (0.01%)"]
+    N77["repository:convertModelToEntity<br/>21 (0.01%)"]
+    N78["leoric:get<br/>2 (0.00%)"]
+    N79["lodash-es:set<br/>3 (0.00%)"]
+    N80["_:injectProperty<br/>20 (0.01%)"]
+
+    %% Edges
+    N4 --> N3
+    N5 --> N6
+    N5 --> N7
+    N5 --> N8
+    N5 --> N9
+    N5 --> N10
+    N5 --> N11
+    N5 --> N12
+    N5 --> N13
+    N5 --> N14
+    N5 --> N15
+    N5 --> N16
+    N5 --> N17
+    N5 --> N18
+    N20 --> N19
+    N21 --> N22
+    N21 --> N23
+    N21 --> N24
+    N21 --> N25
+    N21 --> N26
+    N21 --> N27
+    N29 --> N28
+    N28 --> N30
+    N28 --> N31
+    N33 --> N32
+    N35 --> N34
+    N36 --> N37
+    N39 --> N38
+    N38 --> N40
+    N43 --> N42
+    N42 --> N44
+    N42 --> N45
+    N46 --> N47
+    N46 --> N48
+    N46 --> N49
+    N46 --> N50
+    N52 --> N51
+    N54 --> N53
+    N53 --> N55
+    N58 --> N57
+    N60 --> N59
+    N62 --> N61
+    N61 --> N63
+    N61 --> N64
+    N61 --> N65
+    N61 --> N66
+    N30 --> N67
+    N30 --> N68
+    N30 --> N69
+    N71 --> N70
+    N74 --> N73
+    N76 --> N75
+    N77 --> N78
+    N77 --> N79
+
+    %% Apply styles
+    class N0 hotspot
+    class N1 hotspot
+    class N2 hotspot
+    class N3 hotspot
+    class N4 caller
+    class N5 hotspot
+    class N6 native
+    class N7 callee
+    class N8 callee
+    class N9 callee
+    class N10 callee
+    class N11 callee
+    class N12 callee
+    class N13 callee
+    class N14 callee
+    class N15 callee
+    class N16 callee
+    class N17 callee
+    class N18 callee
+    class N19 hotspot
+    class N20 caller
+    class N21 hotspot
+    class N22 callee
+    class N23 callee
+    class N24 callee
+    class N25 native
+    class N26 callee
+    class N27 callee
+    class N28 hotspot
+    class N29 caller
+    class N30 hotspot
+    class N31 callee
+    class N32 hotspot
+    class N33 caller
+    class N34 hotspot
+    class N35 caller
+    class N36 hotspot
+    class N37 callee
+    class N38 hotspot
+    class N39 caller
+    class N40 callee
+    class N41 hotspot
+    class N42 hotspot
+    class N43 caller
+    class N44 callee
+    class N45 callee
+    class N46 hotspot
+    class N47 callee
+    class N48 callee
+    class N49 callee
+    class N50 callee
+    class N51 hotspot
+    class N52 caller
+    class N53 hotspot
+    class N54 caller
+    class N55 callee
+    class N56 hotspot
+    class N57 hotspot
+    class N58 caller
+    class N59 hotspot
+    class N60 caller
+    class N61 hotspot
+    class N62 caller
+    class N63 callee
+    class N64 native
+    class N65 callee
+    class N66 callee
+    class N67 callee
+    class N68 callee
+    class N69 callee
+    class N70 hotspot
+    class N71 caller
+    class N72 hotspot
+    class N73 hotspot
+    class N74 caller
+    class N75 hotspot
+    class N76 caller
+    class N77 hotspot
+    class N78 callee
+    class N79 callee
+    class N80 hotspot
