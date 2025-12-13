@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>4.16.1 (2025-12-13)</small>
+
+* fix: support allow large check from scopes level (#927) ([ab98ddc](https://github.com/cnpm/cnpmcore/commit/ab98ddc)), closes [#927](https://github.com/cnpm/cnpmcore/issues/927) [hi#level](https://github.com/hi/issues/level)
+
 ## 4.16.0 (2025-12-13)
 
 * feat: limit tgz file size through configuration (#926) ([a631fad](https://github.com/cnpm/cnpmcore/commit/a631fad)), closes [#926](https://github.com/cnpm/cnpmcore/issues/926) [hi#level](https://github.com/hi/issues/level)
