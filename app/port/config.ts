@@ -155,6 +155,10 @@ export interface CnpmcoreConfig {
    */
   enableSyncUnpkgFilesWhiteList: boolean;
   /**
+   * allow large package version size, default is MAX_SAFE_INTEGER
+   */
+  largePackageVersionSize: number;
+  /**
    * enable this would make sync specific version task not append latest version into this task automatically,it would mark the local latest stable version as latest tag.
    * in most cases, you should set to false to keep the same behavior as source registry.
    */

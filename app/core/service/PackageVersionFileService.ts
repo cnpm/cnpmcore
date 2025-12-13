@@ -21,7 +21,7 @@ import type { PackageVersion } from '../entity/PackageVersion.ts';
 import { PackageVersionFile } from '../entity/PackageVersionFile.ts';
 import type { PackageManagerService } from './PackageManagerService.ts';
 
-const unpkgWhiteListUrl = 'https://github.com/cnpm/unpkg-white-list';
+export const UNPKG_WHITE_LIST_URL = 'https://github.com/cnpm/unpkg-white-list';
 const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60_000;
 
 @SingletonProto({
@@ -50,6 +50,14 @@ export class PackageVersionFileService extends AbstractService {
     }
   > = {};
   #unpkgWhiteListAllowScopes: string[] = [];
+  // allow large packages, e.g. 100MB
+  // e.g.: { '@foo/bar': { version: '*' } }
+  #unpkgWhiteListAllowLargePackages: Record<
+    string,
+    {
+      version: string;
+    }
+  > = {};
 
   async listPackageVersionFiles(pkgVersion: PackageVersion, directory: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
@@ -105,16 +113,28 @@ export class PackageVersionFileService extends AbstractService {
     );
     if (!manifest) return;
     this.#unpkgWhiteListCurrentVersion = manifest.version;
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     this.#unpkgWhiteListAllowPackages = manifest.allowPackages ?? ({} as any);
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
     this.#unpkgWhiteListAllowScopes = manifest.allowScopes ?? ([] as any);
+    this.#unpkgWhiteListAllowLargePackages = manifest.allowLargePackages ?? ({} as any);
     this.logger.info(
-      '[PackageVersionFileService.updateUnpkgWhiteList] version:%s, total %s packages, %s scopes',
+      '[PackageVersionFileService.updateUnpkgWhiteList] version:%s, total %s packages, %s scopes, %s large packages',
       whiteListPackageVersion,
       Object.keys(this.#unpkgWhiteListAllowPackages).length,
       this.#unpkgWhiteListAllowScopes.length,
+      Object.keys(this.#unpkgWhiteListAllowLargePackages).length,
     );
+  }
+
+  async isAllowLargePackageVersion(pkgScope: string, pkgName: string, pkgVersion: string) {
+    if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return false;
+    await this.#updateUnpkgWhiteList();
+
+    const fullname = getFullname(pkgScope, pkgName);
+    const pkgConfig = this.#unpkgWhiteListAllowLargePackages[fullname];
+    if (!pkgConfig?.version) return false;
+    return semver.satisfies(pkgVersion, pkgConfig.version, {
+      includePrerelease: true,
+    });
   }
 
   async checkPackageVersionInUnpkgWhiteList(pkgScope: string, pkgName: string, pkgVersion: string) {
@@ -128,7 +148,7 @@ export class PackageVersionFileService extends AbstractService {
     const fullname = getFullname(pkgScope, pkgName);
     const pkgConfig = this.#unpkgWhiteListAllowPackages[fullname];
     if (!pkgConfig?.version) {
-      throw new ForbiddenError(`"${fullname}" is not allow to unpkg files, see ${unpkgWhiteListUrl}`);
+      throw new ForbiddenError(`"${fullname}" is not allow to unpkg files, see ${UNPKG_WHITE_LIST_URL}`);
     }
 
     // satisfies 默认不会包含 prerelease 版本
@@ -140,7 +160,7 @@ export class PackageVersionFileService extends AbstractService {
       })
     ) {
       throw new ForbiddenError(
-        `"${fullname}@${pkgVersion}" not satisfies "${pkgConfig.version}" to unpkg files, see ${unpkgWhiteListUrl}`,
+        `"${fullname}@${pkgVersion}" not satisfies "${pkgConfig.version}" to unpkg files, see ${UNPKG_WHITE_LIST_URL}`,
       );
     }
   }
