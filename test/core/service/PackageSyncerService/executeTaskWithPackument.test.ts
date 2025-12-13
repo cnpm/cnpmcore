@@ -2190,6 +2190,42 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       );
     });
 
+    it('should mock large package version size block by unpackedSize', async () => {
+      mock.error(NPMRegistry.prototype, 'downloadTarball');
+      mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
+        data: Buffer.from(
+          JSON.stringify({
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],
+            versions: {
+              '2.0.0': {
+                version: '2.0.0',
+                dist: { tarball: 'http://foo.com/a.tgz', unpackedSize: 100 * 1024 * 1024 + 1 },
+              },
+            },
+          }),
+        ),
+        res: {},
+        headers: {},
+      });
+      mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+      mock(app.config.cnpmcore, 'largePackageVersionSize', 100 * 1024 * 1024);
+      const name = 'cnpmcore-test-sync-deprecated';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert.match(log, /❌❌❌❌❌ cnpmcore-test-sync-deprecated ❌❌❌❌❌/);
+      assert.match(
+        log,
+        /Synced version 2.0.0 fail, large package version size: 104857601, allow size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
+      );
+    });
+
     it('should mock large package version size allow', async () => {
       app.mockHttpclient('https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
