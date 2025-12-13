@@ -60,6 +60,10 @@ export class PackageVersionFileService extends AbstractService {
   > = {};
   // allow large package scopes, e.g. ['@foo', '@bar']
   #unpkgWhiteListAllowLargeScopes: string[] = [];
+  // block sync scopes, e.g. ['@foo', '@bar']
+  #unpkgWhiteListBlockSyncScopes: string[] = [];
+  // block sync packages, e.g. ['@foo/foo', '@foo/bar']
+  #unpkgWhiteListBlockSyncPackages: string[] = [];
 
   async listPackageVersionFiles(pkgVersion: PackageVersion, directory: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
@@ -119,16 +123,20 @@ export class PackageVersionFileService extends AbstractService {
     this.#unpkgWhiteListAllowScopes = manifest.allowScopes ?? ([] as any);
     this.#unpkgWhiteListAllowLargePackages = manifest.allowLargePackages ?? ({} as any);
     this.#unpkgWhiteListAllowLargeScopes = manifest.allowLargeScopes ?? ([] as any);
+    this.#unpkgWhiteListBlockSyncScopes = manifest.blockSyncScopes ?? ([] as any);
+    this.#unpkgWhiteListBlockSyncPackages = manifest.blockSyncPackages ?? ([] as any);
     this.logger.info(
-      '[PackageVersionFileService.updateUnpkgWhiteList] version:%s, total %s packages, %s scopes, %s large packages',
+      '[PackageVersionFileService.updateUnpkgWhiteList] version:%s, total %s packages, %s scopes, %s large packages, %s block sync scopes, %s block sync packages',
       whiteListPackageVersion,
       Object.keys(this.#unpkgWhiteListAllowPackages).length,
       this.#unpkgWhiteListAllowScopes.length,
       Object.keys(this.#unpkgWhiteListAllowLargePackages).length,
+      this.#unpkgWhiteListBlockSyncScopes.length,
+      this.#unpkgWhiteListBlockSyncPackages.length,
     );
   }
 
-  async isAllowLargePackageVersion(pkgScope: string, pkgName: string, pkgVersion: string) {
+  async isLargePackageVersionAllowed(pkgScope: string, pkgName: string, pkgVersion: string) {
     if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return false;
     await this.#updateUnpkgWhiteList();
 
@@ -141,6 +149,24 @@ export class PackageVersionFileService extends AbstractService {
     return semver.satisfies(pkgVersion, pkgConfig.version, {
       includePrerelease: true,
     });
+  }
+
+  /**
+   * Check if the package is blocked to sync
+   * @param pkgScope - The scope of the package
+   * @param pkgName - The name of the package
+   * @returns True if the package is blocked to sync, false otherwise
+   */
+  async isPackageBlockedToSync(pkgScope: string, pkgName: string) {
+    if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return false;
+    await this.#updateUnpkgWhiteList();
+
+    // check block scopes
+    if (this.#unpkgWhiteListBlockSyncScopes.includes(pkgScope)) return true;
+
+    // check block packages
+    const fullname = getFullname(pkgScope, pkgName);
+    return this.#unpkgWhiteListBlockSyncPackages.includes(fullname);
   }
 
   async checkPackageVersionInUnpkgWhiteList(pkgScope: string, pkgName: string, pkgVersion: string) {

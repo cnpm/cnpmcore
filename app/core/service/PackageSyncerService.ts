@@ -521,6 +521,20 @@ taskQueue: ${taskQueueLength}/${taskQueueHighWaterSize} 🚧🚧🚧🚧🚧`,
       return;
     }
 
+    if (await this.packageVersionFileService.isPackageBlockedToSync(scope, name)) {
+      task.error = `stop sync by block list, see ${UNPKG_WHITE_LIST_URL}`;
+      logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+      await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+      this.logger.info(
+        '[PackageSyncerService.executeTask:fail-package-blocked-to-sync] taskId: %s, targetName: %s, %s',
+        task.taskId,
+        task.targetName,
+        task.error,
+      );
+      return;
+    }
+
     let registryFetchResult: RegistryResponse<Buffer>;
     try {
       registryFetchResult = await this.npmRegistry.getFullManifestsBuffer(fullname, {
@@ -869,17 +883,23 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       }
       const size = dist.size ?? dist.unpackedSize;
       if (size && size > this.config.cnpmcore.largePackageVersionSize) {
-        const isAllowLargePackageVersion = await this.packageVersionFileService.isAllowLargePackageVersion(
+        const isAllowLargePackageVersion = await this.packageVersionFileService.isLargePackageVersionAllowed(
           scope,
           name,
           version,
         );
         if (!isAllowLargePackageVersion) {
-          lastErrorMessage = `large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}`;
-          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
-          await this.taskService.appendTaskLog(task, logs.join('\n'));
-          logs = [];
-          continue;
+          task.error = `Synced version ${version} fail, large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}`;
+          logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+          logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+          await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+          this.logger.info(
+            '[PackageSyncerService.executeTask:fail-large-package-version-size] taskId: %s, targetName: %s, %s',
+            task.taskId,
+            task.targetName,
+            task.error,
+          );
+          return;
         }
         logs.push(
           `[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} size: ${size} too large, it is allowed to sync by unpkg white list`,
@@ -1367,17 +1387,23 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
 
       const size = dist.size ?? dist.unpackedSize;
       if (size && size > this.config.cnpmcore.largePackageVersionSize) {
-        const isAllowLargePackageVersion = await this.packageVersionFileService.isAllowLargePackageVersion(
+        const isAllowLargePackageVersion = await this.packageVersionFileService.isLargePackageVersionAllowed(
           scope,
           name,
           version,
         );
         if (!isAllowLargePackageVersion) {
-          lastErrorMessage = `large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}`;
-          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} fail, ${lastErrorMessage}`);
-          await this.taskService.appendTaskLog(task, logs.join('\n'));
-          logs = [];
-          continue;
+          task.error = `Synced version ${version} fail, large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}`;
+          logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
+          logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
+          await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
+          this.logger.info(
+            '[PackageSyncerService.executeTask:fail-large-package-version-size] taskId: %s, targetName: %s, %s',
+            task.taskId,
+            task.targetName,
+            task.error,
+          );
+          return;
         }
         logs.push(
           `[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} size: ${size} too large, it is allowed to sync by unpkg white list`,
