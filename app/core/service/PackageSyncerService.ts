@@ -867,7 +867,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         logs = [];
         continue;
       }
-      const size = dist.size;
+      const size = dist.size ?? dist.unpackedSize;
       if (size && size > this.config.cnpmcore.largePackageVersionSize) {
         const isAllowLargePackageVersion = await this.packageVersionFileService.isAllowLargePackageVersion(
           scope,
@@ -1365,7 +1365,7 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
         continue;
       }
 
-      const size = dist.size;
+      const size = dist.size ?? dist.unpackedSize;
       if (size && size > this.config.cnpmcore.largePackageVersionSize) {
         const isAllowLargePackageVersion = await this.packageVersionFileService.isAllowLargePackageVersion(
           scope,
