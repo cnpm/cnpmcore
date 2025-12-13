@@ -2043,6 +2043,23 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.ok(log.includes('❌ stop sync by block list: ["cnpmcore-test-sync-blocklist","foo"]'));
     });
 
+    it('should stop sync by block list, see https://github.com/cnpm/unpkg-white-list', async () => {
+      const name = 'cnpmcore-test-sync-blocklist';
+      mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+      mock(PackageVersionFileService.prototype, 'isPackageBlockedToSync', async () => true);
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert.ok(log.includes(`❌❌❌❌❌ ${name} ❌❌❌❌❌`));
+      assert.ok(log.includes('❌ stop sync by block list, see https://github.com/cnpm/unpkg-white-list'));
+    });
+
     it('should sync upper case "D" success', async () => {
       app.mockHttpclient('https://registry.npmjs.org/D', 'GET', {
         data: '{"_id":"D","_rev":"9-83b2794fe968ab4d4dc5c72475afe1ed","name":"D","dist-tags":{"latest":"1.0.0"},"versions":{"0.0.1":{"name":"D","version":"0.0.1","description":"","main":"index.js","scripts":{"test":"echo \\"Error: no test specified\\" && exit 1"},"author":{"name":"zhengzk"},"license":"MIT","_id":"D@0.0.1","_shasum":"292f54dbd43f36e4853f6a09e77617c23c46228b","_from":".","_npmVersion":"2.15.1","_nodeVersion":"4.4.3","_npmUser":{"name":"zhengzk","email":"studyc@163.com"},"dist":{"shasum":"292f54dbd43f36e4853f6a09e77617c23c46228b","tarball":"https://registry.npmjs.org/D/-/D-0.0.1.tgz","integrity":"sha512-8LsXYQFO1mko5MQ7qh72xjbCtB6PiNFC+q97eEZ85vrGL5HwMb27CuhWJKbcN6LrL8/zEwQYolHSV/jMyZ4zYg==","signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEUCICqSbDSXvMFKDfikUr0uttJJGWnrYFHfbOab67m0qOtZAiEAimvItLP13BkE5ex448H7eRtfAzOfQ1lCqNd1ygihn7A="}]},"maintainers":[{"name":"zhengzk","email":"studyc@163.com"}],"_npmOperationalInternal":{"host":"packages-16-east.internal.npmjs.com","tmp":"tmp/D-0.0.1.tgz_1464672428722_0.6098439614288509"},"deprecated":"Package no longer supported. Contact support@npmjs.com for more info.","directories":{}},"1.0.0":{"name":"D","version":"1.0.0","description":"This package is no longer supported and has been deprecated. To avoid malicious use, npm is hanging on to the package name.","main":"index.js","scripts":{"test":"echo \\"Error: no test specified\\" && exit 1"},"repository":{"type":"git","url":"git+https://github.com/npm/deprecate-holder.git"},"author":"","license":"ISC","bugs":{"url":"https://github.com/npm/deprecate-holder/issues"},"homepage":"https://github.com/npm/deprecate-holder#readme","_id":"D@1.0.0","_npmVersion":"5.3.0","_nodeVersion":"8.2.1","_npmUser":{"name":"lisayu","email":"lisa@npmjs.com"},"dist":{"integrity":"sha512-nQvrCBu7K2pSSEtIM0EEF03FVjcczCXInMt3moLNFbjlWx6bZrX72uT6/1uAXDbnzGUAx9gTyDiQ+vrFi663oA==","shasum":"c348a4e034f72847be51206fc530fc089e9cc2a9","tarball":"https://registry.npmjs.org/D/-/D-1.0.0.tgz","signatures":[{"keyid":"SHA256:jl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA","sig":"MEQCICZ8ljQHo15g72enGrhsxRggI5u1HmTzqaSwDdKK7pWMAiBophHVaH8mkvZjw45S2C65XmgOEqaKxKqv59mniAjosw=="}]},"maintainers":[{"email":"lisa@npmjs.com","name":"lisayu"}],"_npmOperationalInternal":{"host":"s3://npm-registry-packages","tmp":"tmp/D-1.0.0.tgz_1502418423486_0.45665086852386594"},"deprecated":"Package no longer supported. Contact support@npmjs.com for more info.","directories":{}}},"readme":"# Deprecated Package\\n\\nThis package is no longer supported and has been deprecated. To avoid malicious use, npm is hanging on to the package name.\\n\\nPlease contact support@npmjs.com if you have questions about this package. \\n","maintainers":[{"email":"npm@npmjs.com","name":"npm"}],"time":{"modified":"2022-06-13T02:13:35.883Z","created":"2016-05-31T05:27:12.203Z","0.0.1":"2016-05-31T05:27:12.203Z","1.0.0":"2017-08-11T02:27:03.593Z"},"license":"ISC","readmeFilename":"README.md","description":"This package is no longer supported and has been deprecated. To avoid malicious use, npm is hanging on to the package name.","homepage":"https://github.com/npm/deprecate-holder#readme","repository":{"type":"git","url":"git+https://github.com/npm/deprecate-holder.git"},"bugs":{"url":"https://github.com/npm/deprecate-holder/issues"},"users":{"subbarao":true}}',
@@ -2272,7 +2289,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       });
       mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
       mock(app.config.cnpmcore, 'largePackageVersionSize', 100 * 1024 * 1024);
-      mock(PackageVersionFileService.prototype, 'isAllowLargePackageVersion', async () => true);
+      mock(PackageVersionFileService.prototype, 'isLargePackageVersionAllowed', async () => true);
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();

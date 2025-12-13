@@ -2248,7 +2248,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       });
       mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
       mock(app.config.cnpmcore, 'largePackageVersionSize', 100 * 1024 * 1024);
-      mock(PackageVersionFileService.prototype, 'isAllowLargePackageVersion', async () => true);
+      mock(PackageVersionFileService.prototype, 'isLargePackageVersionAllowed', async () => true);
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
