@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.16.0 (2025-12-13)
+
+* feat: limit tgz file size through configuration (#926) ([a631fad](https://github.com/cnpm/cnpmcore/commit/a631fad)), closes [#926](https://github.com/cnpm/cnpmcore/issues/926) [hi#level](https://github.com/hi/issues/level)
+* chore: test on Node.js v20 (#925) ([deb3748](https://github.com/cnpm/cnpmcore/commit/deb3748)), closes [#925](https://github.com/cnpm/cnpmcore/issues/925) [hi#level](https://github.com/hi/issues/level)
+
 ## 4.15.0 (2025-12-10)
 
 * feat: enable skipCloneValue on leoric (#924) ([c04bcbd](https://github.com/cnpm/cnpmcore/commit/c04bcbd)), closes [#924](https://github.com/cnpm/cnpmcore/issues/924) [hi#throughput](https://github.com/hi/issues/throughput)
