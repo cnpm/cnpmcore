@@ -51,6 +51,11 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
 
       await app.httpRequest().get('/foo/^1.0').expect(200);
 
+      // support * (any version)
+      const starRes = await app.httpRequest().get('/foo/*').expect(200);
+      assert.equal(starRes.body.name, 'foo');
+      assert.equal(starRes.body.version, '1.0.0');
+
       // not support alias
       await app.httpRequest().get('/alias-a-pkg/npm:foo@^1.0').expect(422);
 

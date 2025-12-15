@@ -13,7 +13,8 @@ import type { AuthorType, PackageJSONType } from '../repository/PackageRepositor
 // /foo
 // name max length is 214 chars
 // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
-export const FULLNAME_REG_STRING = '@[^/]{1,220}/[^/]{1,220}|@[^%]+%2[fF][^/]{1,220}|[^@/]{1,220}';
+// Exclude '*' to prevent route matching issues with version specs like '/:fullname/*'
+export const FULLNAME_REG_STRING = '@[^/*]{1,220}/[^/*]{1,220}|@[^%*]+%2[fF][^/*]{1,220}|[^@/*]{1,220}';
 
 export function getScopeAndName(fullname: string): string[] {
   if (fullname.startsWith('@')) {
