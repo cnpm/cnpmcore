@@ -883,11 +883,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       }
       const size = dist.size ?? dist.unpackedSize;
       if (size && size > this.config.cnpmcore.largePackageVersionSize) {
-        const allowed = await this.packageVersionFileService.isLargePackageVersionAllowed(
-          scope,
-          name,
-          version,
-        );
+        const allowed = await this.packageVersionFileService.isLargePackageVersionAllowed(scope, name, version);
         const whiteListVersion = this.packageVersionFileService.unpkgWhiteListVersion;
         if (!allowed) {
           task.error = `Synced version ${version} fail, large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}, white list version: ${whiteListVersion}`;
@@ -1388,11 +1384,7 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
 
       const size = dist.size ?? dist.unpackedSize;
       if (size && size > this.config.cnpmcore.largePackageVersionSize) {
-        const allowed = await this.packageVersionFileService.isLargePackageVersionAllowed(
-          scope,
-          name,
-          version,
-        );
+        const allowed = await this.packageVersionFileService.isLargePackageVersionAllowed(scope, name, version);
         const whiteListVersion = this.packageVersionFileService.unpkgWhiteListVersion;
         if (!allowed) {
           task.error = `Synced version ${version} fail, large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}, white list version: ${whiteListVersion}`;

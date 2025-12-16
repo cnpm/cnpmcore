@@ -184,7 +184,9 @@ export class PackageVersionFileService extends AbstractService {
     const fullname = getFullname(pkgScope, pkgName);
     const pkgConfig = this.#unpkgWhiteListAllowPackages[fullname];
     if (!pkgConfig?.version) {
-      throw new ForbiddenError(`"${fullname}" is not allow to unpkg files, see ${UNPKG_WHITE_LIST_URL}, white list version: ${this.#unpkgWhiteListCurrentVersion}`);
+      throw new ForbiddenError(
+        `"${fullname}" is not allow to unpkg files, see ${UNPKG_WHITE_LIST_URL}, white list version: ${this.#unpkgWhiteListCurrentVersion}`,
+      );
     }
 
     // satisfies not include prerelease version by default
