@@ -212,6 +212,26 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
     });
 
+    it('should 404 when `*` version spec not found', async () => {
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/foo-tag-latest-star',
+        version: '0.1.0-alpha.0',
+        versionObject: {
+          description: 'foo latest description',
+        },
+      });
+      let res = await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg);
+      assert.equal(res.status, 201);
+      res = await app.httpRequest().get(`/${pkg.name}/*`);
+      assert.equal(res.status, 404);
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@* not found`);
+    });
+
     it('should latest tag with not scoped package', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const pkg = await TestUtil.getFullPackage({

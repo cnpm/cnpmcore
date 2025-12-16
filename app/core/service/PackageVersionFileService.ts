@@ -65,6 +65,10 @@ export class PackageVersionFileService extends AbstractService {
   // block sync packages, e.g. ['@foo/foo', '@foo/bar']
   #unpkgWhiteListBlockSyncPackages: string[] = [];
 
+  get unpkgWhiteListVersion() {
+    return this.#unpkgWhiteListCurrentVersion;
+  }
+
   async listPackageVersionFiles(pkgVersion: PackageVersion, directory: string) {
     await this.#ensurePackageVersionFilesSync(pkgVersion);
     return await this.packageVersionFileRepository.listPackageVersionFiles(pkgVersion.packageVersionId, directory);
@@ -180,24 +184,26 @@ export class PackageVersionFileService extends AbstractService {
     const fullname = getFullname(pkgScope, pkgName);
     const pkgConfig = this.#unpkgWhiteListAllowPackages[fullname];
     if (!pkgConfig?.version) {
-      throw new ForbiddenError(`"${fullname}" is not allow to unpkg files, see ${UNPKG_WHITE_LIST_URL}`);
+      throw new ForbiddenError(
+        `"${fullname}" is not allow to unpkg files, see ${UNPKG_WHITE_LIST_URL}, white list version: ${this.#unpkgWhiteListCurrentVersion}`,
+      );
     }
 
-    // satisfies 默认不会包含 prerelease 版本
+    // satisfies not include prerelease version by default
     // https://docs.npmjs.com/about-semantic-versioning#using-semantic-versioning-to-specify-update-types-your-package-can-accept
-    // [x, *] 代表任意版本，这里统一通过 semver 来判断
+    // [x, *] means any version, here use `semver` to check
     if (
       !semver.satisfies(pkgVersion, pkgConfig.version, {
         includePrerelease: true,
       })
     ) {
       throw new ForbiddenError(
-        `"${fullname}@${pkgVersion}" not satisfies "${pkgConfig.version}" to unpkg files, see ${UNPKG_WHITE_LIST_URL}`,
+        `"${fullname}@${pkgVersion}" not satisfies "${pkgConfig.version}" to unpkg files, see ${UNPKG_WHITE_LIST_URL}, white list version: ${this.#unpkgWhiteListCurrentVersion}`,
       );
     }
   }
 
-  // 基于 latest version 同步 package readme
+  // sync package readme based on latest version
   async syncPackageReadme(pkg: Package, latestPkgVersion: PackageVersion) {
     const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${latestPkgVersion.version}_latest_readme_${randomUUID()}`;
     const tmpdir = await createTempDir(this.config.dataDir, dirname);
