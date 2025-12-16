@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>4.17.1 (2025-12-16)</small>
+
+* fix: show unpkg-white-list version on sync log (#934) ([0f4aeff](https://github.com/cnpm/cnpmcore/commit/0f4aeff)), closes [#934](https://github.com/cnpm/cnpmcore/issues/934) [hi#level](https://github.com/hi/issues/level)
+* chore(deps): update dependency oxlint-tsgolint to ^0.9.0 (#930) ([ba37c25](https://github.com/cnpm/cnpmcore/commit/ba37c25)), closes [#930](https://github.com/cnpm/cnpmcore/issues/930)
+
 ## 4.17.0 (2025-12-13)
 
 * feat: support block sync packages (#929) ([4cc30fe](https://github.com/cnpm/cnpmcore/commit/4cc30fe)), closes [#929](https://github.com/cnpm/cnpmcore/issues/929) [hi#level](https://github.com/hi/issues/level)
