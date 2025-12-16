@@ -135,9 +135,9 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
         .get('/foo-block-again/1.0.0/files/package.json')
         .expect(403)
         .expect('content-type', 'application/json; charset=utf-8');
-      assert.equal(
+      assert.match(
         res.body.error,
-        '[FORBIDDEN] "foo-block-again" is not allow to unpkg files, see https://github.com/cnpm/unpkg-white-list',
+        /\[FORBIDDEN\] "foo-block-again" is not allow to unpkg files, see https:\/\/github\.com\/cnpm\/unpkg-white-list, white list version:/,
       );
 
       // add white list

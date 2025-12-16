@@ -782,9 +782,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/foo/1.0.0/files/index.js')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 403);
-        assert.equal(
+        assert.match(
           res.body.error,
-          '[FORBIDDEN] "foo" is not allow to unpkg files, see https://github.com/cnpm/unpkg-white-list',
+          /\[FORBIDDEN\] "foo" is not allow to unpkg files, see https:\/\/github\.com\/cnpm\/unpkg-white-list, white list version:/,
         );
       });
 
@@ -831,9 +831,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/foo/1.0.0/files/index.js')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 403);
-        assert.equal(
+        assert.match(
           res.body.error,
-          '[FORBIDDEN] "foo@1.0.0" not satisfies "0.0.0" to unpkg files, see https://github.com/cnpm/unpkg-white-list',
+          /\[FORBIDDEN\] "foo@1.0.0" not satisfies "0.0.0" to unpkg files, see https:\/\/github\.com\/cnpm\/unpkg-white-list, white list version:/,
         );
       });
 
@@ -988,9 +988,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/foo/1.0.2/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 403);
-        assert.equal(
+        assert.match(
           res.body.error,
-          '[FORBIDDEN] "foo@1.0.2" not satisfies "3" to unpkg files, see https://github.com/cnpm/unpkg-white-list',
+          /\[FORBIDDEN\] "foo@1.0.2" not satisfies "3" to unpkg files, see https:\/\/github\.com\/cnpm\/unpkg-white-list, white list version:/,
         );
       });
 
@@ -1109,9 +1109,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/bar/0.3.0-rc15/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 403);
-        assert.equal(
+        assert.match(
           res.body.error,
-          '[FORBIDDEN] "bar@0.3.0-rc15" not satisfies "1.0.0" to unpkg files, see https://github.com/cnpm/unpkg-white-list',
+          /\[FORBIDDEN\] "bar@0.3.0-rc15" not satisfies "1.0.0" to unpkg files, see https:\/\/github\.com\/cnpm\/unpkg-white-list, white list version:/,
         );
       });
     });
