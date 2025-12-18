@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.18.0 (2025-12-18)
+
+* feat: show upstream sync error (#936) ([33443ee](https://github.com/cnpm/cnpmcore/commit/33443ee)), closes [#936](https://github.com/cnpm/cnpmcore/issues/936) [hi#level](https://github.com/hi/issues/level)
+
 ## <small>4.17.1 (2025-12-16)</small>
 
 * fix: show unpkg-white-list version on sync log (#934) ([0f4aeff](https://github.com/cnpm/cnpmcore/commit/0f4aeff)), closes [#934](https://github.com/cnpm/cnpmcore/issues/934) [hi#level](https://github.com/hi/issues/level)
