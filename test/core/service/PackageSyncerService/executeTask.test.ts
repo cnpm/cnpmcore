@@ -1910,6 +1910,57 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
     });
 
+    it('should sync sourceRegistryIsCNpm = true and mock sync upstream error', async () => {
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/sync', 'PUT', {
+        data: {
+          ok: true,
+          logId: '633eea1359147b6066fae99f',
+        },
+        persist: false,
+      });
+      app.mockHttpclient(
+        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/sync/log/633eea1359147b6066fae99f',
+        'GET',
+        {
+          data: {
+            ok: false,
+            syncDone: true,
+            log: '',
+            error: 'mock error',
+          },
+          persist: true,
+        },
+      );
+      app.mockHttpclient('https://r.cnpmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
+        data: await TestUtil.readFixturesFile('r.cnpmjs.org/cnpmcore-test-sync-deprecated.json'),
+        persist: false,
+      });
+      app.mockHttpclient(
+        'https://r.cnpmjs.org/cnpmcore-test-sync-deprecated/-/cnpmcore-test-sync-deprecated-0.0.0.tgz',
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        },
+      );
+      mock(app.config.cnpmcore, 'sourceRegistry', 'https://r.cnpmjs.org');
+      mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
+      mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
+      const name = 'cnpmcore-test-sync-deprecated';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert.match(log, /\]\[UP\] ❌ Sync cnpmcore-test-sync-deprecated fail \[.*ms\], log/);
+      assert.match(log, /\]\[UP\] ❌ upstream error: mock error/);
+      app.mockAgent().assertNoPendingInterceptors();
+    });
+
     it('should mock getFullManifestsBuffer error', async () => {
       mock.error(NPMRegistry.prototype, 'getFullManifestsBuffer');
       const name = 'cnpmcore-test-sync-dependencies';

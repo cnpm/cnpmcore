@@ -209,6 +209,7 @@ export class PackageSyncerService extends AbstractService {
     const startTime = Date.now();
     const maxTimeout = this.config.cnpmcore.sourceRegistrySyncTimeout;
     let logUrl = '';
+    let syncError = '';
     let offset = 0;
     let useTime = Date.now() - startTime;
     while (useTime < maxTimeout) {
@@ -218,14 +219,22 @@ export class PackageSyncerService extends AbstractService {
       try {
         const { data, status, url } = await this.npmRegistry.getSyncTask(fullname, logId, offset, { remoteAuthToken });
         useTime = Date.now() - startTime;
-        if (!logUrl) {
-          logUrl = url;
-        }
-        const log = (data && data.log) || '';
+        logUrl = data?.logUrl ?? url;
+        syncError = data?.error ?? '';
+        const log = data?.log ?? '';
         offset += log.length;
-        if (data && data.syncDone) {
-          logs.push(`[${isoNow()}][UP] 🎉 Sync ${fullname} success [${useTime}ms], log: ${logUrl}, offset: ${offset}`);
-          logs.push(`[${isoNow()}][UP] 🔗 ${registry}/${fullname}`);
+        if (data?.syncDone) {
+          // error
+          if (syncError) {
+            logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail [${useTime}ms], log: ${logUrl}, offset: ${offset}`);
+            logs.push(`[${isoNow()}][UP] ❌ upstream error: ${syncError}`);
+            logs.push(`[${isoNow()}][UP] ${failEnd}`);
+          } else {
+            logs.push(
+              `[${isoNow()}][UP] 🎉 Sync ${fullname} success [${useTime}ms], log: ${logUrl}, offset: ${offset}`,
+            );
+            logs.push(`[${isoNow()}][UP] 🔗 ${registry}/${fullname}`);
+          }
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           return;
         }
@@ -239,7 +248,10 @@ export class PackageSyncerService extends AbstractService {
       }
     }
     // timeout
-    logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, timeout, log: ${logUrl}, offset: ${offset}`);
+    logs.push(`[${isoNow()}][UP] ❌ Sync ${fullname} fail, timeout [${useTime}ms], log: ${logUrl}, offset: ${offset}`);
+    if (syncError) {
+      logs.push(`[${isoNow()}][UP] ❌ upstream error: ${syncError}`);
+    }
     logs.push(`[${isoNow()}][UP] ${failEnd}`);
     await this.taskService.appendTaskLog(task, logs.join('\n'));
   }
