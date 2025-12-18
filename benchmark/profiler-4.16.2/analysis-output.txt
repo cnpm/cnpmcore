@@ -1,0 +1,172 @@
+====================================================================================================
+CPU Profile Analysis Report
+====================================================================================================
+
+## Profile Information
+
+- Profile Type: xprofiler-cpu-profile
+- Title: xprofiler
+- Total Nodes: 5966
+- Duration: 180.05 seconds
+- Sample Count: 149150
+
+## CPU Time Distribution
+
+- Total Samples: 149734
+- Idle Time: 84945 (56.73%)
+- Program Time: 1884 (1.26%)
+- GC Time: 3625 (2.42%)
+- Active/User Time: 59280 (39.59%)
+
+## Top 30 Functions by Self Time
+
+| Rank | Hits | % of Active | Function | Location |
+|------|------|-------------|----------|----------|
+| 1 | 31975 | 53.94% | crc32 | (native):0 |
+| 2 | 3549 | 5.99% | Bone | _leoric@2.14.0@leoric/lib/bone.js:151 |
+| 3 | 701 | 1.18% | update | (native):0 |
+| 4 | 651 | 1.10% | writeSync | (native):0 |
+| 5 | 561 | 0.95% | crc32 | (native):0 |
+| 6 | 548 | 0.92% | _copyActual | node:buffer:245 |
+| 7 | 506 | 0.85% | crc32 | (native):0 |
+| 8 | 497 | 0.84% | Bone | _leoric@2.14.0@leoric/lib/bone.js:151 |
+| 9 | 497 | 0.84% | crc32 | (native):0 |
+| 10 | 456 | 0.77% | instantiate | _leoric@2.14.0@leoric/lib/bone.js:1283 |
+| 11 | 439 | 0.74% | get | lib/packets/column_definition.js:263 |
+| 12 | 437 | 0.74% | dispatch | _leoric@2.14.0@leoric/lib/collection.js:81 |
+| 13 | 403 | 0.68% | crc32 | (native):0 |
+| 14 | 383 | 0.65% | runMicrotasks | (native):0 |
+| 15 | 369 | 0.62% | crc32 | (native):0 |
+| 16 | 364 | 0.61% | chunksConcat | lib/api/readable.js:495 |
+| 17 | 318 | 0.54% | writeBuffer | (native):0 |
+| 18 | 288 | 0.49% | start | lib/commands/query.js:48 |
+| 19 | 281 | 0.47% | _copyActual | node:buffer:245 |
+| 20 | 279 | 0.47% | crc32 | (native):0 |
+| 21 | 276 | 0.47% | writev | (native):0 |
+| 22 | 264 | 0.45% | crc32 | (native):0 |
+| 23 | 257 | 0.43% | parseJSON | dist/esm/utils.js:25 |
+| 24 | 255 | 0.43% | update | (native):0 |
+| 25 | 237 | 0.40% | instantiate | _leoric@2.14.0@leoric/lib/bone.js:1283 |
+| 26 | 229 | 0.39% | update | (native):0 |
+| 27 | 209 | 0.35% | update | (native):0 |
+| 28 | 209 | 0.35% | keyFromFields | lib/parsers/parser_cache.js:9 |
+| 29 | 206 | 0.35% | _copyActual | node:buffer:245 |
+| 30 | 199 | 0.34% | update | (native):0 |
+
+## Top 30 Files/Modules by CPU Time
+
+| Rank | Hits | % of Active | File/Module | Function Count |
+|------|------|-------------|-------------|----------------|
+| 1 | 40274 | 67.94% | (native) | 62 |
+| 2 | 7809 | 13.17% | node_modules/leoric@2.14.0@leoric | 83 |
+| 3 | 1751 | 2.95% | node_modules/mysql2@3.15.3@mysql2 | 36 |
+| 4 | 1745 | 2.94% | node:buffer | 16 |
+| 5 | 571 | 0.96% | node_modules/undici@7.16.0@undici | 15 |
+| 6 | 562 | 0.95% | node:internal/process/task_queues | 5 |
+| 7 | 471 | 0.79% | node:internal/deps/undici/undici | 46 |
+| 8 | 443 | 0.75% | node_modules/urllib@4.9.0@urllib | 8 |
+| 9 | 360 | 0.61% | node:internal/buffer | 2 |
+| 10 | 265 | 0.45% | node_modules/reflect-metadata@0.2.2@reflect-metadata | 9 |
+| 11 | 235 | 0.40% | node:net | 28 |
+| 12 | 228 | 0.38% | app/core/service/PackageSyncerService.js | 3 |
+| 13 | 206 | 0.35% | node_modules/tslib@2.8.1@tslib | 1 |
+| 14 | 192 | 0.32% | node:internal/streams/readable | 20 |
+| 15 | 191 | 0.32% | node_modules/lodash-es@4.17.21@lodash-es | 11 |
+| 16 | 175 | 0.30% | node_modules/@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime | 17 |
+| 17 | 171 | 0.29% | node:internal/stream_base_commons | 7 |
+| 18 | 170 | 0.29% | app/repository/util/ModelConvertor.js | 4 |
+| 19 | 157 | 0.26% | node_modules/oss-client@2.5.1@oss-client | 13 |
+| 20 | 144 | 0.24% | node_modules/@eggjs_aop-runtime@4.0.0-beta.35@@eggjs/aop-runtime | 11 |
+| 21 | 126 | 0.21% | node_modules/egg-logger@3.6.1@egg-logger | 9 |
+| 22 | 125 | 0.21% | node_modules/is-string@1.1.1@is-string | 1 |
+| 23 | 117 | 0.20% | app/core/service/PackageSearchService.js | 1 |
+| 24 | 113 | 0.19% | node_modules/sqlstring@2.3.3@sqlstring | 6 |
+| 25 | 106 | 0.18% | node_modules/@eggjs_koa@3.1.0-beta.35@@eggjs/koa | 16 |
+| 26 | 103 | 0.17% | node:events | 9 |
+| 27 | 100 | 0.17% | node:internal/streams/writable | 14 |
+| 28 | 98 | 0.17% | node_modules/is-boolean-object@1.2.2@is-boolean-object | 2 |
+| 29 | 94 | 0.16% | node_modules/is-number-object@1.1.1@is-number-object | 1 |
+| 30 | 93 | 0.16% | app/repository/PackageVersionRepository.js | 2 |
+
+## CPU Time by Category
+
+| Category | Hits | % of Active |
+|----------|------|-------------|
+| Native/V8 | 40274 | 67.94% |
+| NPM Packages | 13430 | 22.66% |
+| Node.js Core | 4595 | 7.75% |
+| Application Code | 981 | 1.65% |
+
+## Application Code Hotspots
+
+| Rank | Hits | % | Function | File | Line |
+|------|------|---|----------|------|------|
+| 1 | 141 | 0.24% | syncPackageWithPackument | app/core/service/PackageSyncerService.js | 948 |
+| 2 | 117 | 0.20% | syncPackage | app/core/service/PackageSearchService.js | 16 |
+| 3 | 83 | 0.14% | convertModelToEntity | app/repository/util/ModelConvertor.js | 74 |
+| 4 | 79 | 0.13% | syncPackageWithPackument | app/core/service/PackageSyncerService.js | 948 |
+| 5 | 67 | 0.11% | findAllVersions | app/repository/PackageVersionRepository.js | 50 |
+| 6 | 27 | 0.05% | fillPackageVersionEntityData | app/repository/PackageRepository.js | 259 |
+| 7 | 26 | 0.04% |  | app/repository/PackageVersionRepository.js | 57 |
+| 8 | 20 | 0.03% | convertModelToEntity | app/repository/util/ModelConvertor.js | 74 |
+| 9 | 19 | 0.03% | fillPackageVersionEntityData | app/repository/PackageRepository.js | 259 |
+| 10 | 19 | 0.03% | convertModelToEntity | app/repository/util/ModelConvertor.js | 74 |
+| 11 | 11 | 0.02% | afterFinally | app/common/aop/AsyncTimer.js | 24 |
+| 12 | 11 | 0.02% | readDistBytesToJSON | app/repository/DistRepository.js | 56 |
+| 13 | 8 | 0.01% | findPackageVersion | app/repository/PackageRepository.js | 172 |
+| 14 | 8 | 0.01% | executeSync | app/core/service/ChangesStreamService.js | 144 |
+| 15 | 8 | 0.01% | listBinaries | app/repository/BinaryRepository.js | 33 |
+| 16 | 7 | 0.01% | findPackageVersion | app/repository/PackageRepository.js | 172 |
+| 17 | 7 | 0.01% | findRegistryByRegistryId | app/repository/RegistryRepository.js | 32 |
+| 18 | 7 | 0.01% | convertModelToEntity | app/repository/util/ModelConvertor.js | 74 |
+| 19 | 7 | 0.01% | createSyncPackage | app/core/entity/Task.js | 39 |
+| 20 | 7 | 0.01% | listRootBinaries | app/core/service/BinarySyncerService.js | 36 |
+
+## NPM Package Hotspots
+
+| Rank | Hits | % | Function | Package | Line |
+|------|------|---|----------|---------|------|
+| 1 | 3549 | 5.99% | Bone | leoric@2.14.0@leoric | 151 |
+| 2 | 497 | 0.84% | Bone | leoric@2.14.0@leoric | 151 |
+| 3 | 456 | 0.77% | instantiate | leoric@2.14.0@leoric | 1283 |
+| 4 | 439 | 0.74% | get | mysql2@3.15.3@mysql2 | 263 |
+| 5 | 437 | 0.74% | dispatch | leoric@2.14.0@leoric | 81 |
+| 6 | 364 | 0.61% | chunksConcat | undici@7.16.0@undici | 495 |
+| 7 | 288 | 0.49% | start | mysql2@3.15.3@mysql2 | 48 |
+| 8 | 257 | 0.43% | parseJSON | urllib@4.9.0@urllib | 25 |
+| 9 | 237 | 0.40% | instantiate | leoric@2.14.0@leoric | 1283 |
+| 10 | 209 | 0.35% | keyFromFields | mysql2@3.15.3@mysql2 | 9 |
+| 11 | 130 | 0.22% | isLogicalCondition | leoric@2.14.0@leoric | 102 |
+| 12 | 116 | 0.20% | _setRaw | leoric@2.14.0@leoric | 301 |
+| 13 | 111 | 0.19% | query | leoric@2.14.0@leoric | 70 |
+| 14 | 97 | 0.16% | _setRawSaved | leoric@2.14.0@leoric | 315 |
+| 15 | 89 | 0.15% | dispatchJoins | leoric@2.14.0@leoric | 127 |
+| 16 | 82 | 0.14% | ignite | leoric@2.14.0@leoric | 441 |
+| 17 | 72 | 0.12% |  | leoric@2.14.0@leoric | 98 |
+| 18 | 65 | 0.11% | ColumnDefinition | mysql2@3.15.3@mysql2 | 22 |
+| 19 | 59 | 0.10% | formatSelectWithoutJoin | leoric@2.14.0@leoric | 184 |
+| 20 | 58 | 0.10% | Bone | leoric@2.14.0@leoric | 151 |
+
+## Top Entry Points by Total Time
+
+| Rank | Total | % | Self | Function | Location |
+|------|-------|---|------|----------|----------|
+| 1 | 55706 | 93.97% | 115 | processTicksAndRejections | node:internal/process/task_queues:71 |
+| 2 | 2238 | 3.78% | 104 | onStreamRead | node:internal/stream_base_commons:166 |
+| 3 | 343 | 0.58% | 1 | wrapper | node:fs:668 |
+| 4 | 154 | 0.26% | 3 | parserOnHeadersComplete | node:_http_common:75 |
+| 5 | 154 | 0.26% | 14 | processImmediate | node:internal/timers:456 |
+| 6 | 98 | 0.17% | 1 | wrapper | node:fs:811 |
+| 7 | 97 | 0.16% | 0 | ssl.onhandshakedone | node:_tls_wrap:861 |
+| 8 | 92 | 0.16% | 12 | processTimers | node:internal/timers:526 |
+| 9 | 90 | 0.15% | 0 |  | node:fs:194 |
+| 10 | 58 | 0.10% | 3 |  | node:fs:185 |
+| 11 | 45 | 0.08% | 2 | afterConnectMultiple | node:net:1691 |
+| 12 | 41 | 0.07% | 9 | channel.onread | node:internal/child_process:613 |
+| 13 | 33 | 0.06% | 0 | handleRequest | dist/application.js:168 |
+| 14 | 19 | 0.03% | 2 | onlookupall | node:dns:120 |
+| 15 | 17 | 0.03% | 6 | serverStatus | middleware/status.js:23 |
+
+====================================================================================================
+End of Report
+====================================================================================================
