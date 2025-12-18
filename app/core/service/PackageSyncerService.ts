@@ -230,7 +230,9 @@ export class PackageSyncerService extends AbstractService {
             logs.push(`[${isoNow()}][UP] ❌ upstream error: ${syncError}`);
             logs.push(`[${isoNow()}][UP] ${failEnd}`);
           } else {
-            logs.push(`[${isoNow()}][UP] 🎉 Sync ${fullname} success [${useTime}ms], log: ${logUrl}, offset: ${offset}`);
+            logs.push(
+              `[${isoNow()}][UP] 🎉 Sync ${fullname} success [${useTime}ms], log: ${logUrl}, offset: ${offset}`,
+            );
             logs.push(`[${isoNow()}][UP] 🔗 ${registry}/${fullname}`);
           }
           await this.taskService.appendTaskLog(task, logs.join('\n'));

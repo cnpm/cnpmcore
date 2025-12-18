@@ -106,7 +106,7 @@ export class NPMRegistry {
     id: string,
     offset: number,
     optionalConfig?: { remoteAuthToken?: string },
-  ): Promise<RegistryResponse<{ ok: true, syncDone: boolean, log?: string, logUrl?: string, error?: string }>> {
+  ): Promise<RegistryResponse<{ ok: true; syncDone: boolean; log?: string; logUrl?: string; error?: string }>> {
     const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync/log/${id}?offset=${offset}`;
     // { ok: true, syncDone: boolean, log: string, logUrl: string, error?: string }
