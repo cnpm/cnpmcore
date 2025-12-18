@@ -90,7 +90,6 @@
     "@eggjs/tracer": "beta",
     "@eggjs/typebox-validate": "beta",
     "@elastic/elasticsearch": "^8.19.1",
-    "@node-rs/crc32": "^1.10.6",
     "@simplewebauthn/server": "^7.4.0",
     "base-x": "^5.0.1",
     "base64url": "^3.0.1",

@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
+import { crc32 } from 'node:zlib';
 
-import { crc32 } from '@node-rs/crc32';
 import base from 'base-x';
 import { checkData, create } from 'ssri';
 import { UAParser } from 'ua-parser-js';
