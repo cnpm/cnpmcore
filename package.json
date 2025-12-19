@@ -147,7 +147,7 @@
     "lint-staged": "^16.2.7",
     "oxfmt": "^0.16.0",
     "oxlint": "^1.32.0",
-    "oxlint-tsgolint": "^0.9.0",
+    "oxlint-tsgolint": "^0.10.0",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3"
   },
