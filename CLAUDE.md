@@ -2,6 +2,28 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Claude Code Usage
+
+### Thinking Modes
+
+When working on complex tasks, use extended thinking for deeper analysis:
+
+- **ultrathink** / **think harder** - Maximum depth reasoning for architectural decisions, complex debugging, and thorough code review
+- **think** - Standard extended thinking for moderate complexity tasks
+
+Example prompts:
+
+- "ultrathink about the best way to implement this feature"
+- "think harder about potential edge cases in this code"
+
+Use ultrathink for:
+
+- Architectural design decisions
+- Complex refactoring across multiple files
+- Debugging intricate issues
+- Security vulnerability analysis
+- Performance optimization strategies
+
 ## Project Overview
 
 cnpmcore is a TypeScript-based private NPM registry implementation for enterprise use. It's built on the Egg.js framework using Domain-Driven Design (DDD) architecture principles and supports both MySQL and PostgreSQL databases.
@@ -93,14 +115,24 @@ Common (app/common/)                  ← Utilities and adapters (all layers)
 - Validate inputs using `@eggjs/typebox-validate`
 - Authenticate users and verify authorization
 - Delegate business logic to Services
-- All controllers extend `AbstractController`
+- All controllers extend `AbstractController` → `MiddlewareController`
+- Auto-applied middlewares: `AlwaysAuth`, `Tracing`, `ErrorHandler`
+
+Key `AbstractController` methods:
+
+- `ensurePublishAccess(ctx, fullname)` - Authorization check for package publish
+- `getPackageEntity(scope, name)` - Fetch package with error handling
+- `setCDNHeaders(ctx)` - Set cache control headers
+- `getAllowSync(ctx)` - Check if sync should be triggered
 
 **Service Layer** (`app/core/service/`):
 
 - Implement core business logic
 - Orchestrate multiple repositories
-- Publish domain events
+- Publish domain events via `EventBus`
 - Manage transactions
+- Use `@SingletonProto({ accessLevel: AccessLevel.PUBLIC })` scope
+- Define command interfaces (e.g., `PublishPackageCmd`) for complex operations
 
 **Repository Layer** (`app/repository/`):
 
@@ -113,13 +145,23 @@ Common (app/common/)                  ← Utilities and adapters (all layers)
 
 - Pure domain models with business behavior
 - No infrastructure dependencies
-- Immutable data structures preferred
+- Factory pattern: `static create(data)` method on each entity
+- Use `EntityUtil.defaultData(data, 'idField')` for ID/timestamp defaults
+- Type guards for union types (e.g., `isGranularToken()`)
+- `EasyData<T, Id>` type helper for optional create-time fields
 
 **Model Layer** (`app/repository/model/`):
 
 - ORM definitions using Leoric
 - Database schema mapping
 - No business logic
+
+**Model-Entity Bridge** (`app/repository/util/`):
+
+- `ModelConvertor.convertEntityToModel(entity, ModelClass)` - Persist entity
+- `ModelConvertor.convertModelToEntity(model, EntityClass)` - Load entity
+- Uses `@EntityProperty()` decorator for complex nested property mapping
+- `ModelMetadataUtil` for reflection-based property discovery
 
 ### Infrastructure Adapters (`app/infra/`)
 
@@ -129,6 +171,34 @@ Enterprise customization layer for PaaS integration:
 - **QueueAdapter**: Message queue integration
 - **AuthAdapter**: Authentication system
 - **BinaryAdapter**: Binary package storage
+- **SearchAdapter**: Elasticsearch integration
+- **CacheAdapter**: Redis caching with distributed locking
+
+### Key Decorators & Annotations
+
+**HTTP Layer** (from `@eggjs/tegg`):
+
+- `@HTTPController()` - Marks class as HTTP controller
+- `@HTTPMethod({ path, method })` - Route definition
+- `@HTTPBody()` / `@HTTPQuery()` / `@HTTPParam()` - Request data injection with typebox validation
+- `@HTTPContext() ctx: Context` - Inject Egg.js context
+- `@Middleware(MiddlewareClass)` - Apply middleware to controller
+
+**Dependency Injection**:
+
+- `@Inject()` - Field-level dependency injection
+- `@SingletonProto({ accessLevel: AccessLevel.PUBLIC })` - Singleton service scope
+- `@ContextProto()` - Request-scoped service (e.g., `UserRoleManager`)
+
+**ORM Layer** (from `leoric`):
+
+- `@Model()` - Marks class as ORM model
+- `@Attribute(DataTypes.TYPE, options)` - Column definition
+- `@EntityProperty('nested.path')` - Maps model field to entity property
+
+**Lifecycle**:
+
+- `@LifecycleInit()` - Post-construction initialization hook
 
 ## Key Development Patterns
 
@@ -170,11 +240,11 @@ When changing a Model, update all 3 locations:
 
 ## Code Style
 
-### Linting
+### Linting & Formatting
 
-- **Linter**: Oxlint (Rust-based, very fast)
-- **Formatter**: Oxfmt
-- **Pre-commit**: Husky + lint-staged (auto-format on commit)
+- **Linter**: Oxlint (Rust-based, very fast) with type-aware checking
+- **Formatter**: Oxfmt (sole formatter, no Prettier)
+- **Pre-commit**: Husky + lint-staged runs both `oxfmt` and `oxlint --fix`
 
 Style rules:
 
@@ -184,6 +254,7 @@ Style rules:
 - ES5 trailing commas
 - Max 6 function parameters
 - No console statements (use logger)
+- Automatic import sorting (type imports first, then builtin, external, relative)
 
 ### TypeScript
 
@@ -200,16 +271,65 @@ Style rules:
 - Use `assert` from `node:assert/strict`
 - Test both success and error cases
 
-Pattern:
+**Test Infrastructure**:
+
+- `test/.setup.ts` - Global beforeEach/afterEach hooks
+- `test/TestUtil.ts` - Comprehensive test utilities
+- `test/fixtures/` - Mock data and responses
+
+**Key TestUtil Methods**:
+
+- `TestUtil.createUser(options)` - Create test user with auth tokens
+- `TestUtil.createPackage(options)` - Create full package in system
+- `TestUtil.getFullPackage(options)` - Get mock package JSON
+- `TestUtil.truncateDatabase()` - Clear all tables between tests
+- `TestUtil.query(sql)` - Execute raw SQL (MySQL/PostgreSQL)
+
+**Mocking Patterns**:
+
+```typescript
+// Config mocking
+mock(app.config.cnpmcore, 'propertyName', newValue);
+
+// HTTP mocking
+app.mockHttpclient('https://example.com/path', 'GET', {
+  data: await TestUtil.readFixturesFile('fixture.json'),
+  persist: false,
+});
+
+// Log assertions
+app.mockLog();
+await someOperation();
+app.expectLog(/pattern/);
+```
+
+**Getting DI Objects in Tests**:
+
+```typescript
+const service = await app.getEggObject(PackageManagerService);
+```
+
+**Test Pattern**:
 
 ```typescript
 describe('test/path/to/SourceFile.test.ts', () => {
   describe('[HTTP_METHOD /api/path] functionName()', () => {
     it('should handle expected behavior', async () => {
-      // Test implementation
+      const res = await app.httpRequest()
+        .put('/path')
+        .set('authorization', user.authorization)
+        .send(payload)
+        .expect(201);
+      assert.equal(res.body.success, true);
     });
   });
 });
+```
+
+**Scheduled Task Testing**:
+
+```typescript
+await app.runSchedule(SyncPackageWorkerPath);
 ```
 
 ## Project Structure
@@ -278,8 +398,8 @@ Typical command execution times:
 
 ## Prerequisites
 
-- Node.js: 20.18.0+ or 22.18.0+
-- Database: MySQL 5.7+ or PostgreSQL 17+
+- Node.js: ^20.18.0 or ^22.18.0 or ^24.11.0
+- Database: MySQL 5.7+ or PostgreSQL 17+ (SQLite support in progress)
 - Cache: Redis 6+
 - Optional: Elasticsearch 8.x
 

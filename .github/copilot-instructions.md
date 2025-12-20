@@ -8,9 +8,9 @@ cnpmcore is a TypeScript-based private NPM registry implementation built with Eg
 
 ### Linting and Formatting
 
-- **Linter**: Oxlint (fast Rust-based linter)
-- **Formatter**: Oxfmt with specific configuration
-- **Pre-commit hooks**: Husky + lint-staged automatically format and lint on commit
+- **Linter**: Oxlint (fast Rust-based linter) with type-aware checking
+- **Formatter**: Oxfmt (sole formatter, no Prettier)
+- **Pre-commit hooks**: Husky + lint-staged runs both `oxfmt` and `oxlint --fix`
 
 **Code Style Rules:**
 
@@ -55,6 +55,50 @@ npm run typecheck    # TypeScript type checking without build
 - Use `assert` from `node:assert/strict` for assertions
 - Mock external dependencies using `mock()` from `@eggjs/mock`
 
+**Test Infrastructure**:
+
+- `test/.setup.ts` - Global beforeEach/afterEach hooks
+- `test/TestUtil.ts` - Comprehensive test utilities
+- `test/fixtures/` - Mock data and responses
+
+**Key TestUtil Methods**:
+
+- `TestUtil.createUser(options)` - Create test user with auth tokens
+- `TestUtil.createPackage(options)` - Create full package in system
+- `TestUtil.getFullPackage(options)` - Get mock package JSON
+- `TestUtil.truncateDatabase()` - Clear all tables between tests
+- `TestUtil.query(sql)` - Execute raw SQL (MySQL/PostgreSQL)
+
+**Mocking Patterns**:
+
+```typescript
+// Config mocking
+mock(app.config.cnpmcore, 'propertyName', newValue);
+
+// HTTP mocking
+app.mockHttpclient('https://example.com/path', 'GET', {
+  data: await TestUtil.readFixturesFile('fixture.json'),
+  persist: false,
+});
+
+// Log assertions
+app.mockLog();
+await someOperation();
+app.expectLog(/pattern/);
+```
+
+**Getting DI Objects in Tests**:
+
+```typescript
+const service = await app.getEggObject(PackageManagerService);
+```
+
+**Scheduled Task Testing**:
+
+```typescript
+await app.runSchedule(SyncPackageWorkerPath);
+```
+
 **Test Naming Pattern:**
 
 ```typescript
@@ -95,13 +139,23 @@ Common (Utilities and Adapters - available to all layers)
 - User authentication and authorization
 - **NO business logic** - delegate to Services
 - Inheritance: `YourController extends AbstractController extends MiddlewareController`
+- Auto-applied middlewares: `AlwaysAuth`, `Tracing`, `ErrorHandler`
+
+Key `AbstractController` methods:
+
+- `ensurePublishAccess(ctx, fullname)` - Authorization check for package publish
+- `getPackageEntity(scope, name)` - Fetch package with error handling
+- `setCDNHeaders(ctx)` - Set cache control headers
+- `getAllowSync(ctx)` - Check if sync should be triggered
 
 **Service Layer** (`app/core/service/`):
 
 - Core business logic implementation
 - Orchestration of multiple repositories and entities
 - Transaction management
-- Event publishing
+- Publish domain events via `EventBus`
+- Use `@SingletonProto({ accessLevel: AccessLevel.PUBLIC })` scope
+- Define command interfaces (e.g., `PublishPackageCmd`) for complex operations
 - NO HTTP concerns, NO direct database access
 
 **Repository Layer** (`app/repository/`):
@@ -115,8 +169,10 @@ Common (Utilities and Adapters - available to all layers)
 
 - Domain models with business behavior
 - Pure business logic (no infrastructure dependencies)
-- Immutable data structures where possible
-- Rich domain objects (not anemic models)
+- Factory pattern: `static create(data)` method on each entity
+- Use `EntityUtil.defaultData(data, 'idField')` for ID/timestamp defaults
+- Type guards for union types (e.g., `isGranularToken()`)
+- `EasyData<T, Id>` type helper for optional create-time fields
 
 **Model Layer** (`app/repository/model/`):
 
@@ -124,6 +180,39 @@ Common (Utilities and Adapters - available to all layers)
 - Database schema mapping
 - Table and column definitions
 - NO business logic
+
+**Model-Entity Bridge** (`app/repository/util/`):
+
+- `ModelConvertor.convertEntityToModel(entity, ModelClass)` - Persist entity
+- `ModelConvertor.convertModelToEntity(model, EntityClass)` - Load entity
+- Uses `@EntityProperty()` decorator for complex nested property mapping
+- `ModelMetadataUtil` for reflection-based property discovery
+
+### Key Decorators & Annotations
+
+**HTTP Layer** (from `@eggjs/tegg`):
+
+- `@HTTPController()` - Marks class as HTTP controller
+- `@HTTPMethod({ path, method })` - Route definition
+- `@HTTPBody()` / `@HTTPQuery()` / `@HTTPParam()` - Request data injection with typebox validation
+- `@HTTPContext() ctx: Context` - Inject Egg.js context
+- `@Middleware(MiddlewareClass)` - Apply middleware to controller
+
+**Dependency Injection**:
+
+- `@Inject()` - Field-level dependency injection
+- `@SingletonProto({ accessLevel: AccessLevel.PUBLIC })` - Singleton service scope
+- `@ContextProto()` - Request-scoped service (e.g., `UserRoleManager`)
+
+**ORM Layer** (from `leoric`):
+
+- `@Model()` - Marks class as ORM model
+- `@Attribute(DataTypes.TYPE, options)` - Column definition
+- `@EntityProperty('nested.path')` - Maps model field to entity property
+
+**Lifecycle**:
+
+- `@LifecycleInit()` - Post-construction initialization hook
 
 ### Repository Method Naming Convention
 
@@ -172,8 +261,8 @@ When changing a Model, update **all 3 locations**:
 
 ## Prerequisites and Environment Setup
 
-- **Node.js**: Version 20.18.0 or higher (required by engines field in package.json)
-- **Database**: MySQL 5.7+ or PostgreSQL 17+
+- **Node.js**: ^20.18.0 or ^22.18.0 or ^24.11.0
+- **Database**: MySQL 5.7+ or PostgreSQL 17+ (SQLite support in progress)
 - **Cache**: Redis 6+
 - **Optional**: Elasticsearch 8.x for enhanced search capabilities
 
@@ -398,8 +487,12 @@ Enterprise customization layer for PaaS integration. cnpmcore provides default i
 - **QueueAdapter**: Message queue integration
 - **AuthAdapter**: Authentication system integration
 - **BinaryAdapter**: Binary package storage adapter
+- **SearchAdapter**: Elasticsearch integration
+- **CacheAdapter**: Redis caching with distributed locking
 
 These adapters allow cnpmcore to integrate with different cloud providers and enterprise systems without modifying core business logic.
+
+Use `@LifecycleInit()` decorator for adapter initialization hooks.
 
 ### Configuration Files
 
