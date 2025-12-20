@@ -16,21 +16,6 @@ export function randomToken(prefix: string): string {
   return `${prefix}_${base62.encode(bytes)}_${base62.encode(crc32Buffer)}`;
 }
 
-export function checkToken(token: string, prefix: string): boolean {
-  const splits = token.split('_');
-  if (splits.length !== 3) return false;
-  if (splits[0] !== prefix) return false;
-  try {
-    const bytes = base62.decode(splits[1]);
-    const crcBytes = base62.decode(splits[2]);
-    // base-x v5 returns Uint8Array instead of Buffer, use DataView to read UInt32BE
-    const dataView = new DataView(crcBytes.buffer, crcBytes.byteOffset, crcBytes.byteLength);
-    return dataView.getUint32(0, false) === crc32(bytes);
-  } catch {
-    return false;
-  }
-}
-
 export function integrity(plain: string): string {
   return create().update(plain).digest().toString();
 }
