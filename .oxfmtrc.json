@@ -2,9 +2,7 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "printWidth": 120,
   "singleQuote": true,
-  "ignorePatterns": [
-    "__snapshots__"
-  ],
+  "ignorePatterns": ["__snapshots__", "test/fixtures", "CHANGELOG.md"],
   "experimentalSortImports": {
     "groups": [
       ["type-import"],

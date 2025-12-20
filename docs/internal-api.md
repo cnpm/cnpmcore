@@ -19,11 +19,13 @@ This document provides comprehensive documentation for cnpmcore's internal APIs 
 Most internal APIs require authentication using one of these methods:
 
 ### Bearer Token Authentication
+
 ```bash
 curl -H "Authorization: Bearer ${TOKEN}" https://your-registry.com/api/endpoint
 ```
 
 ### Admin Access
+
 Some APIs require admin privileges. Admin users are configured in the registry settings.
 
 ## Package Sync API
@@ -39,6 +41,7 @@ PUT /-/package/:fullname/syncs
 ```
 
 #### Authentication
+
 Required. Must be authenticated user.
 
 #### Parameters
@@ -61,15 +64,15 @@ Required. Must be authenticated user.
 
 #### Request Body Schema
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `skipDependencies` | boolean | No | Skip syncing package dependencies |
-| `syncDownloadData` | boolean | No | Sync download statistics data |
-| `force` | boolean | No | Force immediate execution (admin only) |
-| `forceSyncHistory` | boolean | No | Sync all historical versions (admin only) |
-| `tips` | string | No | Custom reason/description for sync |
-| `registryName` | string | No | Source registry name |
-| `specificVersions` | string | No | JSON array of specific versions to sync |
+| Field              | Type    | Required | Description                               |
+| ------------------ | ------- | -------- | ----------------------------------------- |
+| `skipDependencies` | boolean | No       | Skip syncing package dependencies         |
+| `syncDownloadData` | boolean | No       | Sync download statistics data             |
+| `force`            | boolean | No       | Force immediate execution (admin only)    |
+| `forceSyncHistory` | boolean | No       | Sync all historical versions (admin only) |
+| `tips`             | string  | No       | Custom reason/description for sync        |
+| `registryName`     | string  | No       | Source registry name                      |
+| `specificVersions` | string  | No       | JSON array of specific versions to sync   |
 
 #### Example Request
 
@@ -284,6 +287,7 @@ POST /-/npm/v1/tokens
 ```
 
 #### Authentication
+
 Required. Must provide current password.
 
 #### Request Body
@@ -299,12 +303,12 @@ Required. Must provide current password.
 
 #### Request Body Schema
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `password` | string | Yes | Current user password (8-100 chars) |
-| `readonly` | boolean | No | Create read-only token |
-| `automation` | boolean | No | Mark token for automation use |
-| `cidr_whitelist` | array | No | IP address restrictions (max 10) |
+| Field            | Type    | Required | Description                         |
+| ---------------- | ------- | -------- | ----------------------------------- |
+| `password`       | string  | Yes      | Current user password (8-100 chars) |
+| `readonly`       | boolean | No       | Create read-only token              |
+| `automation`     | boolean | No       | Mark token for automation use       |
+| `cidr_whitelist` | array   | No       | IP address restrictions (max 10)    |
 
 #### Example Request
 
@@ -343,6 +347,7 @@ GET /-/npm/v1/tokens
 ```
 
 #### Authentication
+
 Required.
 
 #### Example Request
@@ -382,6 +387,7 @@ DELETE /-/npm/v1/tokens/token/:tokenKey
 ```
 
 #### Authentication
+
 Required.
 
 #### Parameters
@@ -417,6 +423,7 @@ PUT /-/package/:fullname/blocks
 ```
 
 #### Authentication
+
 Required. Admin access only.
 
 #### Parameters
@@ -462,6 +469,7 @@ DELETE /-/package/:fullname/blocks
 ```
 
 #### Authentication
+
 Required. Admin access only.
 
 #### Parameters
@@ -581,6 +589,7 @@ POST /-/registry
 ```
 
 #### Authentication
+
 Required. Admin access only.
 
 #### Request Body
@@ -623,6 +632,7 @@ POST /-/npm/v1/hooks/hook
 ```
 
 #### Authentication
+
 Required.
 
 #### Request Body
@@ -638,12 +648,12 @@ Required.
 
 #### Request Body Schema
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `type` | string | Yes | Hook type (e.g., "package") |
-| `name` | string | Yes | Hook name (1-428 chars) |
-| `endpoint` | string | Yes | Webhook URL (1-2048 chars) |
-| `secret` | string | Yes | Secret key for webhook verification (1-200 chars) |
+| Field      | Type   | Required | Description                                       |
+| ---------- | ------ | -------- | ------------------------------------------------- |
+| `type`     | string | Yes      | Hook type (e.g., "package")                       |
+| `name`     | string | Yes      | Hook name (1-428 chars)                           |
+| `endpoint` | string | Yes      | Webhook URL (1-2048 chars)                        |
+| `secret`   | string | Yes      | Secret key for webhook verification (1-200 chars) |
 
 #### Example Request
 
@@ -684,6 +694,7 @@ PUT /-/npm/v1/hooks/hook/:id
 ```
 
 #### Authentication
+
 Required. Must be hook owner.
 
 #### Parameters
@@ -721,6 +732,7 @@ DELETE /-/npm/v1/hooks/hook/:id
 ```
 
 #### Authentication
+
 Required. Must be hook owner.
 
 #### Parameters
@@ -758,6 +770,7 @@ GET /-/npm/v1/hooks
 ```
 
 #### Authentication
+
 Required.
 
 #### Example Request
@@ -795,6 +808,7 @@ GET /-/npm/v1/hooks/hook/:id
 ```
 
 #### Authentication
+
 Required. Must be hook owner.
 
 #### Parameters
@@ -840,15 +854,15 @@ PUT /-/user/org.couchdb.user::username
 
 #### Request Body Schema
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `_id` | string | Yes | Must be "org.couchdb.user:" + username |
-| `name` | string | Yes | Username (1-100 chars) |
-| `password` | string | Yes | Password (8-100 chars) |
-| `email` | string | No | Email address (valid email format) |
-| `type` | string | Yes | Must be "user" |
-| `roles` | array | No | User roles (usually empty) |
-| `date` | string | No | Registration date |
+| Field      | Type   | Required | Description                            |
+| ---------- | ------ | -------- | -------------------------------------- |
+| `_id`      | string | Yes      | Must be "org.couchdb.user:" + username |
+| `name`     | string | Yes      | Username (1-100 chars)                 |
+| `password` | string | Yes      | Password (8-100 chars)                 |
+| `email`    | string | No       | Email address (valid email format)     |
+| `type`     | string | Yes      | Must be "user"                         |
+| `roles`    | array  | No       | User roles (usually empty)             |
+| `date`     | string | No       | Registration date                      |
 
 #### Example Request
 
@@ -922,6 +936,7 @@ All APIs return errors in a consistent format:
 ### Package Naming
 
 Package names follow npm naming conventions:
+
 - Unscoped: `package-name`
 - Scoped: `@scope/package-name`
 - Must match regex: `^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$`
@@ -931,6 +946,7 @@ Package names follow npm naming conventions:
 ### Complete Sync Workflow
 
 1. **Trigger sync for a package:**
+
 ```bash
 curl -X PUT \
   -H "Authorization: Bearer your-token" \
@@ -940,12 +956,14 @@ curl -X PUT \
 ```
 
 2. **Check sync status:**
+
 ```bash
 curl -H "Authorization: Bearer your-token" \
   https://your-registry.com/-/package/lodash/syncs/task-id
 ```
 
 3. **View sync logs:**
+
 ```bash
 curl -H "Authorization: Bearer your-token" \
   https://your-registry.com/-/package/lodash/syncs/task-id/log
@@ -974,6 +992,7 @@ fi
 ## Rate Limiting
 
 Be mindful of rate limits when making multiple API requests. Consider implementing:
+
 - Delays between requests
 - Exponential backoff for retries
 - Concurrent request limits

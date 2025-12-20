@@ -86,7 +86,7 @@ jobs:
           CNPMCORE_FORCE_LOCAL_FS=true npm run start:foreground &
           sleep 5
           echo "Checking cnpmcore is ready..."
-          
+
           set -Eeuo pipefail
           URL="http://127.0.0.1:7001"
           PATTERN="instance_start_time"
@@ -114,7 +114,7 @@ jobs:
           cat "$TMP" || true
           rm -f "$TMP"
           exit 1
-  
+
   test-postgresql-fs-nfs:
     strategy:
       fail-fast: false
