@@ -2,14 +2,14 @@
 
 ## Overview
 
-* [Schema](/docs/registry-api.md#schema)
-* [Client Errors](/docs/registry-api.md#client-errors)
-* [Authentication](/docs/registry-api.md#authentication)
-* [Package](/docs/registry-api.md#package)
-* [User](/docs/registry-api.md#user)
-* [Search](/docs/registry-api.md#search)
-* [Token](/docs/registry-api.md#token)
-* [Trend](/docs/registry-api.md#trend)
+- [Schema](/docs/registry-api.md#schema)
+- [Client Errors](/docs/registry-api.md#client-errors)
+- [Authentication](/docs/registry-api.md#authentication)
+- [Package](/docs/registry-api.md#package)
+- [User](/docs/registry-api.md#user)
+- [Search](/docs/registry-api.md#search)
+- [Token](/docs/registry-api.md#token)
+- [Trend](/docs/registry-api.md#trend)
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/f6c8cb46358039bcd689#?env%5BRegistry%5D=W3sia2V5IjoicmVnaXN0cnkiLCJ0eXBlIjoidGV4dCIsInZhbHVlIjoiaHR0cHM6Ly9yZWdpc3RyeS5ucG0udGFvYmFvLm9yZyIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoicGFja2FnZSIsInZhbHVlIjoiY25wbSIsInR5cGUiOiJ0ZXh0IiwiZW5hYmxlZCI6dHJ1ZX1d)
 
@@ -79,17 +79,17 @@ HTTP/1.1 401 Unauthorized
 
 ## Package
 
-* Read
-  * [Get a single package](/docs/registry-api.md#get-a-single-package)
-  * [Get a special version or tag package](/docs/registry-api.md#get-a-special-version-or-tag-package)
-  * [List packages since from a update time](/docs/registry-api.md#list-packages-since-from-a-update-time)
-  * [List package names by users](/docs/registry-api.md#list-package-names-by-users)
-* Write
-  * [Publish a new package](/docs/registry-api.md#publish-a-new-package)
-  * [Update a package's tag](/docs/registry-api.md#update-a-packages-tag)
-  * [Update a package's maintainers](/docs/registry-api.md#update-a-packages-maintainers)
-  * [Remove one version from package](/docs/registry-api.md#remove-one-version-from-package)
-  * [Remove a tgz file from package](/docs/registry-api.md#remove-a-tgz-file-from-package)
+- Read
+  - [Get a single package](/docs/registry-api.md#get-a-single-package)
+  - [Get a special version or tag package](/docs/registry-api.md#get-a-special-version-or-tag-package)
+  - [List packages since from a update time](/docs/registry-api.md#list-packages-since-from-a-update-time)
+  - [List package names by users](/docs/registry-api.md#list-package-names-by-users)
+- Write
+  - [Publish a new package](/docs/registry-api.md#publish-a-new-package)
+  - [Update a package's tag](/docs/registry-api.md#update-a-packages-tag)
+  - [Update a package's maintainers](/docs/registry-api.md#update-a-packages-maintainers)
+  - [Remove one version from package](/docs/registry-api.md#remove-one-version-from-package)
+  - [Remove a tgz file from package](/docs/registry-api.md#remove-a-tgz-file-from-package)
 
 ### Get a single package
 
@@ -252,7 +252,7 @@ HTTP/1.1 404 Object Not Found
 
 ### ~~Get a special version or tag package~~
 
-__deprecated__
+**deprecated**
 
 ```
 GET /:package/:tag_or_version
@@ -340,7 +340,7 @@ Content-Length: 1183
 
 ### Publish a new package
 
-* Authentication required.
+- Authentication required.
 
 ```
 PUT /:package
@@ -452,7 +452,7 @@ Status: 201 Created
 
 ### Update a package's tag
 
-* Authentication required.
+- Authentication required.
 
 ```
 PUT /:package/:tag
@@ -478,7 +478,7 @@ Status: 201 Created
 
 ### Update a package's maintainers
 
-* Authentication required.
+- Authentication required.
 
 ```
 PUT /:package/-rev/:rev
@@ -511,8 +511,8 @@ Status: 201 Created
 
 ### Remove one version from package
 
-* Authentication required.
-* In any delete, note that __the version number still cannot be reused__.
+- Authentication required.
+- In any delete, note that **the version number still cannot be reused**.
 
 ```
 PUT /:package/-rev/:rev
@@ -563,8 +563,8 @@ Status: 201 Created
 
 ### Remove all versions of a package
 
-* Authentication required.
-* In any delete, note that __the version number still cannot be reused__.
+- Authentication required.
+- In any delete, note that **the version number still cannot be reused**.
 
 ```
 DELETE /:package/-rev/:rev
@@ -582,7 +582,7 @@ Status: 201 Created
 
 ### Remove a tgz file from package
 
-* Authentication required.
+- Authentication required.
 
 ```
 DELETE /:tgzfilepath/-rev/:rev
@@ -610,7 +610,7 @@ Status: 200 OK
 GET /-/all/since?stale=update_after&startkey=:startkey
 ```
 
-* `startkey` is a ms timestamp
+- `startkey` is a ms timestamp
 
 #### Response
 
@@ -716,8 +716,8 @@ HTTP/1.1 200 OK
 GET /-/by-user/$username[|$another1[|$another2...]]
 ```
 
-* `username` user name like `fengmk2`
-* also support multi users by `name1|name2|name3`
+- `username` user name like `fengmk2`
+- also support multi users by `name1|name2|name3`
 
 #### Response
 
@@ -756,7 +756,7 @@ HTTP/1.1 200 OK
 
 ### Auth user
 
-* Authentication required.
+- Authentication required.
 
 ```
 GET /-/user/org.couchdb.user::username?write=true
@@ -931,7 +931,7 @@ HTTP/1.1 409 Conflict
 
 ### Update a exists user
 
-* Authentication required.
+- Authentication required.
 
 ```
 PUT /-/user/org.couchdb.user::username/-rev/:rev
@@ -974,13 +974,14 @@ Status: 201 Created
 
 ### Create token
 
-* Authentication required.
+- Authentication required.
 
 ```
 POST /-/npm/v1/tokens
 ```
 
 #### Input
+
 ```json
 {
   "password": "123",
@@ -992,6 +993,7 @@ POST /-/npm/v1/tokens
 ```
 
 #### Response 200
+
 ```json
 HTTP/1.1 200 OK
 
@@ -1006,16 +1008,19 @@ HTTP/1.1 200 OK
 ```
 
 ### List token
-* Authentication required.
+
+- Authentication required.
 
 ```
 GET /-/npm/v1/tokens
 ```
 
 ### Input
+
 perPage=10&page=0
 
 #### Response 200
+
 ```json
 {
   "objects": [{
@@ -1031,7 +1036,7 @@ perPage=10&page=0
 
 ### Delete token
 
-* Authentication required.
+- Authentication required.
 
 ```
 GET /-/npm/v1/tokens/token/:UUID

@@ -1,7 +1,7 @@
 {
   "name": "cnpmcore-repository",
+  "type": "module",
   "eggModule": {
     "name": "cnpmcoreRepository"
-  },
-  "type": "module"
+  }
 }

@@ -4,14 +4,14 @@
 
 The Leoric `Bone` constructor (15.38% of CPU) is called through these application layer entry points:
 
-| Rank | Application Entry Point | Hits | File |
-|------|------------------------|------|------|
-| 1 | `convertEntityToModel` | 141 | ModelConvertor.js:8 |
-| 2 | `saveEntityToModel` | 24 | ModelConvertor.js:50 |
-| 3 | `syncPackage` | 9 | PackageSearchService.js:16 |
-| 4 | `(anonymous)` in findAllVersions | 8 | PackageVersionRepository.js:57 |
-| 5 | `convertModelToEntity` | 7 | ModelConvertor.js:74 |
-| 6 | `findBinary` | 4 | BinaryRepository.js:27 |
+| Rank | Application Entry Point          | Hits | File                           |
+| ---- | -------------------------------- | ---- | ------------------------------ |
+| 1    | `convertEntityToModel`           | 141  | ModelConvertor.js:8            |
+| 2    | `saveEntityToModel`              | 24   | ModelConvertor.js:50           |
+| 3    | `syncPackage`                    | 9    | PackageSearchService.js:16     |
+| 4    | `(anonymous)` in findAllVersions | 8    | PackageVersionRepository.js:57 |
+| 5    | `convertModelToEntity`           | 7    | ModelConvertor.js:74           |
+| 6    | `findBinary`                     | 4    | BinaryRepository.js:27         |
 
 **Note**: 1,743 hits (most of the Bone calls) come from paths without direct application code - triggered by async operations and internal leoric queries.
 
@@ -123,7 +123,9 @@ The `Bone` constructor is expensive because it:
 ## Optimization Recommendations
 
 ### 1. Batch Operations
+
 When inserting many records, use bulk insert instead of individual creates:
+
 ```typescript
 // Instead of:
 for (const entity of entities) {
@@ -135,7 +137,9 @@ await Model.bulkCreate(entities);  // Single operation
 ```
 
 ### 2. Raw Queries for Read-Heavy Operations
+
 For read operations that don't need full ORM features:
+
 ```typescript
 // Instead of:
 const records = await Model.find({ where: {...} });  // Creates Bone instances
@@ -145,6 +149,7 @@ const records = await Model.query('SELECT * FROM ...', { raw: true });  // Plain
 ```
 
 ### 3. Select Only Needed Columns
+
 ```typescript
 // Instead of:
 await Model.findOne({ where: {...} });  // Loads all columns
@@ -154,7 +159,9 @@ await Model.findOne({ where: {...}, select: ['id', 'name'] });  // Fewer attribu
 ```
 
 ### 4. Consider Leoric Configuration
+
 Check if leoric has options to:
+
 - Disable change tracking for read-only queries
 - Use lazy attribute initialization
 - Skip validation on trusted data

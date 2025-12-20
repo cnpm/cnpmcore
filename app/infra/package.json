@@ -1,7 +1,7 @@
 {
   "name": "cnpmcore-infra",
+  "type": "module",
   "eggModule": {
     "name": "cnpmcoreInfra"
-  },
-  "type": "module"
+  }
 }

@@ -7,13 +7,15 @@ cnpmcore is a TypeScript-based private NPM registry implementation built with Eg
 ## Code Style and Conventions
 
 ### Linting and Formatting
+
 - **Linter**: Oxlint (fast Rust-based linter)
-- **Formatter**: Prettier with specific configuration
+- **Formatter**: Oxfmt with specific configuration
 - **Pre-commit hooks**: Husky + lint-staged automatically format and lint on commit
 
 **Code Style Rules:**
+
 ```javascript
-// From .prettierrc
+// From .oxfmt.json
 {
   "singleQuote": true,        // Use single quotes
   "trailingComma": "es5",     // ES5 trailing commas
@@ -31,6 +33,7 @@ cnpmcore is a TypeScript-based private NPM registry implementation built with Eg
 ```
 
 **Linting Commands:**
+
 ```bash
 npm run lint         # Check for linting errors
 npm run lint:fix     # Auto-fix linting issues
@@ -38,12 +41,14 @@ npm run typecheck    # TypeScript type checking without build
 ```
 
 ### TypeScript Conventions
+
 - Use strict TypeScript with comprehensive type definitions
 - Avoid `any` types - use proper typing or `unknown`
 - Export types and interfaces for reusability
 - Use ES modules (`import/export`) syntax throughout
 
 ### Testing Conventions
+
 - Test files use `.test.ts` suffix
 - Use `@eggjs/mock` for mocking and testing
 - Tests organized to mirror source structure in `test/` directory
@@ -51,6 +56,7 @@ npm run typecheck    # TypeScript type checking without build
 - Mock external dependencies using `mock()` from `@eggjs/mock`
 
 **Test Naming Pattern:**
+
 ```typescript
 describe('test/path/to/SourceFile.test.ts', () => {
   describe('[HTTP_METHOD /api/path] functionName()', () => {
@@ -83,6 +89,7 @@ Common (Utilities and Adapters - available to all layers)
 ### Layer Responsibilities
 
 **Controller Layer** (`app/port/controller/`):
+
 - HTTP request/response handling
 - Request validation using `@eggjs/typebox-validate`
 - User authentication and authorization
@@ -90,6 +97,7 @@ Common (Utilities and Adapters - available to all layers)
 - Inheritance: `YourController extends AbstractController extends MiddlewareController`
 
 **Service Layer** (`app/core/service/`):
+
 - Core business logic implementation
 - Orchestration of multiple repositories and entities
 - Transaction management
@@ -97,18 +105,21 @@ Common (Utilities and Adapters - available to all layers)
 - NO HTTP concerns, NO direct database access
 
 **Repository Layer** (`app/repository/`):
+
 - Data access and persistence
 - CRUD operations on Models
 - Query building and optimization
 - NO business logic
 
 **Entity Layer** (`app/core/entity/`):
+
 - Domain models with business behavior
 - Pure business logic (no infrastructure dependencies)
 - Immutable data structures where possible
 - Rich domain objects (not anemic models)
 
 **Model Layer** (`app/repository/model/`):
+
 - ORM definitions using Leoric
 - Database schema mapping
 - Table and column definitions
@@ -117,6 +128,7 @@ Common (Utilities and Adapters - available to all layers)
 ### Repository Method Naming Convention
 
 **ALWAYS follow these naming patterns:**
+
 - `findSomething` - Query a single model/entity
 - `saveSomething` - Save (create or update) a model
 - `removeSomething` - Delete a model
@@ -127,12 +139,14 @@ Common (Utilities and Adapters - available to all layers)
 **ALWAYS validate requests in this exact order:**
 
 1. **Request Parameter Validation** - First line of defense
+
    ```typescript
    // Use @eggjs/typebox-validate for type-safe validation
    // See app/port/typebox.ts for examples
    ```
 
 2. **User Authentication & Token Permissions**
+
    ```typescript
    // Token roles: 'read' | 'publish' | 'setting'
    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'publish');
@@ -149,6 +163,7 @@ Common (Utilities and Adapters - available to all layers)
 ### Modifying Database Models
 
 When changing a Model, update **all 3 locations**:
+
 1. SQL migration files: `sql/mysql/*.sql` AND `sql/postgresql/*.sql`
 2. ORM Model: `app/repository/model/*.ts`
 3. Domain Entity: `app/core/entity/*.ts`
@@ -165,6 +180,7 @@ When changing a Model, update **all 3 locations**:
 ## Working Effectively
 
 ### Bootstrap and Build
+
 ```bash
 # Install dependencies (takes ~2 minutes)
 npm install
@@ -186,6 +202,7 @@ npm run tsc:prod
 ```
 
 ### Database Setup - MySQL (Recommended for Development)
+
 ```bash
 # Start MySQL + Redis services via Docker (takes ~1 minute to pull images initially)
 docker compose -f docker-compose.yml up -d
@@ -201,6 +218,7 @@ mysql -h 127.0.0.1 -P 3306 -u root -e "CREATE DATABASE cnpmcore_unittest;"
 ```
 
 ### Database Setup - PostgreSQL (Alternative)
+
 ```bash
 # Start PostgreSQL + Redis services via Docker
 docker compose -f docker-compose-postgres.yml up -d
@@ -210,6 +228,7 @@ CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-postgresql.sh
 ```
 
 ### Development Server
+
 ```bash
 # MySQL development server (starts in ~20 seconds)
 npm run dev
@@ -221,6 +240,7 @@ npm run dev:postgresql
 ```
 
 ### Testing
+
 ```bash
 # Run full test suite with MySQL - NEVER CANCEL: Takes 4+ minutes. Set timeout to 10+ minutes.
 npm run test
@@ -239,12 +259,14 @@ npm run cov:postgresql
 ```
 
 **CRITICAL TESTING NOTES:**
+
 - **NEVER CANCEL** build or test commands - they may take 4-15 minutes to complete
 - Individual test files run much faster (~12 seconds) for development iteration
 - Full test suite processes 100+ test files and requires database initialization
 - Test failures may occur in CI environment; use individual test files for validation
 
 **Testing Philosophy:**
+
 - **Write tests for all new features** - No feature is complete without tests
 - **Test at the right layer** - Controller tests for HTTP, Service tests for business logic
 - **Mock external dependencies** - Use `mock()` from `@eggjs/mock`
@@ -253,6 +275,7 @@ npm run cov:postgresql
 - **Test both success and failure cases** - Error paths are equally important
 
 **Common Test Patterns:**
+
 ```typescript
 import { app, mock } from '@eggjs/mock/bootstrap';
 import { TestUtil } from '../../../test/TestUtil';
@@ -262,24 +285,24 @@ describe('test/path/to/YourController.test.ts', () => {
     it('should return expected result', async () => {
       // Setup
       const { authorization } = await TestUtil.createUser();
-      
+
       // Execute
       const res = await app
         .httpRequest()
         .get('/api/endpoint')
         .set('authorization', authorization)
         .expect(200);
-      
+
       // Assert
       assert.equal(res.body.someField, expectedValue);
     });
-    
+
     it('should handle unauthorized access', async () => {
       const res = await app
         .httpRequest()
         .get('/api/endpoint')
         .expect(401);
-      
+
       assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
     });
   });
@@ -287,6 +310,7 @@ describe('test/path/to/YourController.test.ts', () => {
 ```
 
 ### Production Commands
+
 ```bash
 # CI pipeline commands - NEVER CANCEL: Takes 5+ minutes. Set timeout to 15+ minutes.
 npm run ci          # MySQL CI (includes lint, test, coverage, build)
@@ -303,6 +327,7 @@ npm run start:foreground  # Start in foreground for debugging
 **ALWAYS manually validate changes** by running through these scenarios:
 
 ### Basic API Validation
+
 ```bash
 # Start development server
 npm run dev
@@ -320,6 +345,7 @@ curl http://127.0.0.1:7001/-/all
 ```
 
 ### Admin User Setup and Package Publishing
+
 ```bash
 # Register admin user (cnpmcore_admin) - requires allowPublicRegistration=true in config
 npm login --registry=http://127.0.0.1:7001
@@ -334,6 +360,7 @@ npm publish --registry=http://127.0.0.1:7001
 ## Architecture and Navigation
 
 ### Project Structure
+
 ```
 app/
 ├── common/          # Global utilities and adapters
@@ -356,6 +383,7 @@ app/
 ```
 
 ### Key Services and Controllers
+
 - **PackageController**: Main package CRUD operations
 - **PackageManagerService**: Core package management business logic
 - **BinarySyncerService**: Binary package synchronization
@@ -363,6 +391,7 @@ app/
 - **UserController**: User authentication and profile management
 
 ### Infrastructure Adapters (`app/infra/`)
+
 Enterprise customization layer for PaaS integration. cnpmcore provides default implementations, but enterprises should implement their own based on their infrastructure:
 
 - **NFSClientAdapter**: File storage abstraction (local/S3/OSS)
@@ -373,6 +402,7 @@ Enterprise customization layer for PaaS integration. cnpmcore provides default i
 These adapters allow cnpmcore to integrate with different cloud providers and enterprise systems without modifying core business logic.
 
 ### Configuration Files
+
 - `config/config.default.ts`: Main application configuration
 - `config/database.ts`: Database connection settings
 - `config/binaries.ts`: Binary package mirror configurations
@@ -391,30 +421,30 @@ These adapters allow cnpmcore to integrate with different cloud providers and en
 3. **Bottom-up implementation** - Build from data layer up to controller:
 
    a. **Model Layer** (if new data structure needed):
-      - Add SQL migrations: `sql/mysql/*.sql` AND `sql/postgresql/*.sql`
-      - Create Model: `app/repository/model/YourModel.ts`
-      - Run database migration scripts
+   - Add SQL migrations: `sql/mysql/*.sql` AND `sql/postgresql/*.sql`
+   - Create Model: `app/repository/model/YourModel.ts`
+   - Run database migration scripts
 
    b. **Entity Layer** (domain models):
-      - Create Entity: `app/core/entity/YourEntity.ts`
-      - Implement business logic and behavior
-      - Keep entities pure (no infrastructure dependencies)
+   - Create Entity: `app/core/entity/YourEntity.ts`
+   - Implement business logic and behavior
+   - Keep entities pure (no infrastructure dependencies)
 
    c. **Repository Layer** (data access):
-      - Create Repository: `app/repository/YourRepository.ts`
-      - Follow naming: `findX`, `saveX`, `removeX`, `listXs`
-      - Inject dependencies using `@Inject()`
+   - Create Repository: `app/repository/YourRepository.ts`
+   - Follow naming: `findX`, `saveX`, `removeX`, `listXs`
+   - Inject dependencies using `@Inject()`
 
    d. **Service Layer** (business logic):
-      - Create Service: `app/core/service/YourService.ts`
-      - Orchestrate repositories and entities
-      - Use `@SingletonProto()` for service lifecycle
+   - Create Service: `app/core/service/YourService.ts`
+   - Orchestrate repositories and entities
+   - Use `@SingletonProto()` for service lifecycle
 
    e. **Controller Layer** (HTTP endpoints):
-      - Create Controller: `app/port/controller/YourController.ts`
-      - Extend `AbstractController`
-      - Add HTTP method decorators: `@HTTPMethod()`, `@HTTPBody()`, etc.
-      - Implement 3-step validation (params → auth → authorization)
+   - Create Controller: `app/port/controller/YourController.ts`
+   - Extend `AbstractController`
+   - Add HTTP method decorators: `@HTTPMethod()`, `@HTTPBody()`, etc.
+   - Implement 3-step validation (params → auth → authorization)
 
 4. **Add tests** - Create test file: `test/path/matching/source/YourFile.test.ts`
 5. **Lint and test** - `npm run lint:fix && npm run test:local test/your/test.test.ts`
@@ -422,6 +452,7 @@ These adapters allow cnpmcore to integrate with different cloud providers and en
 7. **Commit** - Use semantic commit messages (feat/fix/chore/docs/test)
 
 **Example Controller Implementation:**
+
 ```typescript
 import { AbstractController } from './AbstractController';
 import { HTTPController, HTTPMethod, HTTPQuery, Inject } from 'egg';
@@ -444,11 +475,13 @@ export class YourController extends AbstractController {
 ```
 
 ### Database Migrations
+
 - SQL files are in `sql/mysql/` and `sql/postgresql/`
 - Migration scripts automatically run during database preparation
 - **NEVER** modify existing migration files - only add new ones
 
 ### Background Jobs
+
 - Schedulers are in `app/port/schedule/`
 - Include sync workers, cleanup tasks, and stream processors
 - Jobs run automatically when development server starts
@@ -456,6 +489,7 @@ export class YourController extends AbstractController {
 ## Troubleshooting
 
 ### Database Connection Issues
+
 ```bash
 # Check if services are running
 docker compose ps
@@ -472,6 +506,7 @@ CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-postgresql.sh
 ```
 
 ### Build Issues
+
 ```bash
 # Clean and rebuild
 npm run clean
@@ -482,6 +517,7 @@ npx tsc --noEmit
 ```
 
 ### Test Issues
+
 ```bash
 # Create missing test database
 mysql -h 127.0.0.1 -P 3306 -u root -e "CREATE DATABASE cnpmcore_unittest;"
@@ -493,12 +529,15 @@ npm run test:local test/common/CryptoUtil.test.ts
 ## CI/CD Integration
 
 The project uses GitHub Actions with workflows in `.github/workflows/`:
+
 - `nodejs.yml`: Main CI pipeline with MySQL, PostgreSQL, and Elasticsearch testing
 - Multiple Node.js versions tested: 20, 22, 24
 - **CRITICAL**: CI jobs include long-running tests that can take 15+ minutes per database type
 
 ### Pre-commit Validation
+
 **ALWAYS run before committing:**
+
 ```bash
 npm run lint:fix    # Fix linting issues
 npm run tsc        # Verify TypeScript compilation
@@ -508,23 +547,25 @@ npm run test:local test/path/to/relevant.test.ts  # Run relevant tests
 ## Docker Support
 
 ### Development Environments
+
 - `docker-compose.yml`: MySQL + Redis + phpMyAdmin
-- `docker-compose-postgres.yml`: PostgreSQL + Redis + pgAdmin  
+- `docker-compose-postgres.yml`: PostgreSQL + Redis + pgAdmin
 - `docker-compose-es.yml`: Elasticsearch integration
 
 ### Production Images
+
 ```bash
 # Build Alpine image
 npm run images:alpine
 
-# Build Debian image  
+# Build Debian image
 npm run images:debian
 ```
 
 ## External Dependencies
 
 - **Database**: MySQL 9.x or PostgreSQL 17+
-- **Cache**: Redis 6+ 
+- **Cache**: Redis 6+
 - **Search**: Elasticsearch 8.x (optional)
 - **Storage**: Local filesystem or S3-compatible storage
 - **Framework**: Egg.js with extensive TypeScript integration
@@ -534,7 +575,7 @@ npm run images:debian
 Command execution times (for timeout planning):
 
 - **Startup Time**: ~20 seconds for development server
-- **Build Time**: ~6 seconds for TypeScript compilation  
+- **Build Time**: ~6 seconds for TypeScript compilation
 - **Test Time**: 4-15 minutes for full suite (database dependent)
 - **Individual Test**: ~12 seconds for single test file
 - **Package Installation**: ~2 minutes for npm install
@@ -548,7 +589,7 @@ Always account for these timings when setting timeouts for automated processes.
 Use conventional commit format for all commits:
 
 - `feat:` - New features
-- `fix:` - Bug fixes  
+- `fix:` - Bug fixes
 - `docs:` - Documentation changes
 - `chore:` - Maintenance tasks
 - `test:` - Test additions or modifications
@@ -556,9 +597,10 @@ Use conventional commit format for all commits:
 - `perf:` - Performance improvements
 
 Examples:
+
 ```bash
 feat: add support for GitHub binary mirroring
-fix: resolve authentication token expiration issue  
+fix: resolve authentication token expiration issue
 docs: update API documentation for sync endpoints
 test: add tests for package publication workflow
 ```

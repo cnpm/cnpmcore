@@ -18,21 +18,21 @@ This CPU profile was captured from a cnpmcore production instance. The profile s
 
 ## CPU Time Distribution
 
-| Category | Samples | % of Total |
-|----------|---------|------------|
-| Idle | 151,070 | 90.09% |
-| GC (Garbage Collection) | 4,888 | 2.91% |
-| Active/User Code | 10,098 | 6.02% |
-| Program | 1,641 | 0.98% |
+| Category                | Samples | % of Total |
+| ----------------------- | ------- | ---------- |
+| Idle                    | 151,070 | 90.09%     |
+| GC (Garbage Collection) | 4,888   | 2.91%      |
+| Active/User Code        | 10,098  | 6.02%      |
+| Program                 | 1,641   | 0.98%      |
 
 ## Active CPU Time Breakdown
 
-| Category | Samples | % of Active |
-|----------|---------|-------------|
-| NPM Packages | 4,085 | 40.45% |
-| Native/V8 | 2,975 | 29.46% |
-| Node.js Core | 2,818 | 27.91% |
-| Application Code | 220 | 2.18% |
+| Category         | Samples | % of Active |
+| ---------------- | ------- | ----------- |
+| NPM Packages     | 4,085   | 40.45%      |
+| Native/V8        | 2,975   | 29.46%      |
+| Node.js Core     | 2,818   | 27.91%      |
+| Application Code | 220     | 2.18%       |
 
 ## Top Performance Bottlenecks
 
@@ -43,10 +43,12 @@ The single biggest CPU consumer is the `Bone` constructor in leoric ORM.
 **Location**: `node_modules/leoric@2.13.9@leoric/lib/bone.js:150`
 
 **Call paths**:
+
 - Database query results → `instantiate()` → `dispatch()` → `Bone()`
 - Entity creation → `create()` → `Bone()`
 
 **Recommendation**:
+
 - Consider lazy instantiation for bulk queries
 - Review if all Bone properties need to be initialized upfront
 - Consider upgrading leoric if newer versions have optimizations
@@ -55,15 +57,16 @@ The single biggest CPU consumer is the `Bone` constructor in leoric ORM.
 
 The `changes()` function in leoric uses `deep-equal` which triggers expensive type checking:
 
-| Function | Samples | % |
-|----------|---------|---|
-| tryStringObject (is-string) | 68 | 0.67% |
-| isArrayBuffer | 51 | 0.50% |
-| tryNumberObject | 45 | 0.45% |
-| booleanBrandCheck | 51 | 0.50% |
-| isSharedArrayBuffer | 37 | 0.37% |
+| Function                    | Samples | %     |
+| --------------------------- | ------- | ----- |
+| tryStringObject (is-string) | 68      | 0.67% |
+| isArrayBuffer               | 51      | 0.50% |
+| tryNumberObject             | 45      | 0.45% |
+| booleanBrandCheck           | 51      | 0.50% |
+| isSharedArrayBuffer         | 37      | 0.37% |
 
 **Recommendation**:
+
 - Check if leoric has an option to skip change detection
 - For bulk inserts, consider using raw SQL queries
 - Review if `deep-equal` can be replaced with faster comparison
@@ -72,13 +75,14 @@ The `changes()` function in leoric uses `deep-equal` which triggers expensive ty
 
 MySQL2 operations including result parsing:
 
-| Function | Samples | % |
-|----------|---------|---|
-| column_definition.get | 56 | 0.55% |
-| query.start | 49 | 0.49% |
-| keyFromFields | 30 | 0.30% |
+| Function              | Samples | %     |
+| --------------------- | ------- | ----- |
+| column_definition.get | 56      | 0.55% |
+| query.start           | 49      | 0.49% |
+| keyFromFields         | 30      | 0.30% |
 
 **Recommendation**:
+
 - These are normal database operations - no immediate action needed
 - Consider connection pooling optimization if not already configured
 
@@ -86,12 +90,13 @@ MySQL2 operations including result parsing:
 
 Significant time spent in network I/O operations:
 
-| Function | Samples | % |
-|----------|---------|---|
-| writev (native) | 1,037 | 10.27% |
-| writeBuffer (native) | 437 | 4.33% |
+| Function             | Samples | %      |
+| -------------------- | ------- | ------ |
+| writev (native)      | 1,037   | 10.27% |
+| writeBuffer (native) | 437     | 4.33%  |
 
 **Recommendation**:
+
 - This is expected for a registry that serves packages
 - Consider response compression if not enabled
 - Review if large payloads can be streamed
@@ -101,6 +106,7 @@ Significant time spent in network I/O operations:
 **Location**: `node_modules/urllib@4.8.2@urllib/dist/esm/utils.js:25`
 
 **Recommendation**:
+
 - Normal operation for HTTP client responses
 - Consider if some responses don't need JSON parsing
 
@@ -108,12 +114,12 @@ Significant time spent in network I/O operations:
 
 The application code is highly efficient. Top application hotspots:
 
-| Function | File | Samples | % |
-|----------|------|---------|---|
-| syncPackage | PackageSearchService.js:16 | 22 | 0.22% |
-| convertModelToEntity | ModelConvertor.js:74 | 38 | 0.38% |
-| syncPackageWithPackument | PackageSyncerService.js:926 | 14 | 0.14% |
-| findBinary | BinaryRepository.js:27 | 7 | 0.07% |
+| Function                 | File                        | Samples | %     |
+| ------------------------ | --------------------------- | ------- | ----- |
+| syncPackage              | PackageSearchService.js:16  | 22      | 0.22% |
+| convertModelToEntity     | ModelConvertor.js:74        | 38      | 0.38% |
+| syncPackageWithPackument | PackageSyncerService.js:926 | 14      | 0.14% |
+| findBinary               | BinaryRepository.js:27      | 7       | 0.07% |
 
 **Observation**: The application code is well-optimized. Most CPU time is in third-party dependencies.
 
@@ -155,11 +161,13 @@ The application code is highly efficient. Top application hotspots:
 The following analysis scripts have been created in `benchmark/profiler/`:
 
 1. **analyze-profile.js** - Comprehensive CPU profile analyzer
+
    ```bash
    node benchmark/profiler/analyze-profile.js path/to/profile.cpuprofile
    ```
 
 2. **hotspot-finder.js** - Find specific hotspots with filtering
+
    ```bash
    node benchmark/profiler/hotspot-finder.js profile.cpuprofile --filter=leoric --top=20
    ```

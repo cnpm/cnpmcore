@@ -9,6 +9,7 @@ cnpmcore is a TypeScript-based private NPM registry implementation for enterpris
 ## Essential Commands
 
 ### Development
+
 ```bash
 # Start development server (MySQL)
 npm run dev
@@ -27,6 +28,7 @@ npm run typecheck
 ```
 
 ### Testing
+
 ```bash
 # Run all tests with MySQL (takes 4+ minutes)
 npm run test
@@ -42,6 +44,7 @@ npm run cov
 ```
 
 ### Database Setup
+
 ```bash
 # MySQL setup
 docker compose -f docker-compose.yml up -d
@@ -53,6 +56,7 @@ CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-postgresql.sh
 ```
 
 ### Build
+
 ```bash
 # Clean build artifacts
 npm run clean
@@ -84,6 +88,7 @@ Common (app/common/)                  ← Utilities and adapters (all layers)
 ### Layer Responsibilities
 
 **Controller Layer** (`app/port/controller/`):
+
 - Handle HTTP requests/responses
 - Validate inputs using `@eggjs/typebox-validate`
 - Authenticate users and verify authorization
@@ -91,29 +96,35 @@ Common (app/common/)                  ← Utilities and adapters (all layers)
 - All controllers extend `AbstractController`
 
 **Service Layer** (`app/core/service/`):
+
 - Implement core business logic
 - Orchestrate multiple repositories
 - Publish domain events
 - Manage transactions
 
 **Repository Layer** (`app/repository/`):
+
 - CRUD operations on Models
 - Data access and persistence
 - Query building and optimization
 - Methods named: `findX`, `saveX`, `removeX`, `listXs`
 
 **Entity Layer** (`app/core/entity/`):
+
 - Pure domain models with business behavior
 - No infrastructure dependencies
 - Immutable data structures preferred
 
 **Model Layer** (`app/repository/model/`):
+
 - ORM definitions using Leoric
 - Database schema mapping
 - No business logic
 
 ### Infrastructure Adapters (`app/infra/`)
+
 Enterprise customization layer for PaaS integration:
+
 - **NFSClientAdapter**: File storage (local/S3/OSS)
 - **QueueAdapter**: Message queue integration
 - **AuthAdapter**: Authentication system
@@ -122,7 +133,9 @@ Enterprise customization layer for PaaS integration:
 ## Key Development Patterns
 
 ### Request Validation Trilogy
+
 Always validate requests in this exact order:
+
 1. **Parameter Validation** - Use `@eggjs/typebox-validate` for type-safe validation
 2. **Authentication** - Get authorized user with token role verification
 3. **Authorization** - Check resource-level permissions to prevent privilege escalation
@@ -141,13 +154,16 @@ async someMethod(@HTTPQuery() params: QueryType) {
 ```
 
 ### Repository Method Naming
+
 - `findSomething` - Query single entity
 - `saveSomething` - Create or update entity
 - `removeSomething` - Delete entity
 - `listSomethings` - Query multiple entities (plural)
 
 ### Modifying Database Models
+
 When changing a Model, update all 3 locations:
+
 1. SQL migrations: `sql/mysql/*.sql` AND `sql/postgresql/*.sql`
 2. ORM Model: `app/repository/model/*.ts`
 3. Domain Entity: `app/core/entity/*.ts`
@@ -155,11 +171,13 @@ When changing a Model, update all 3 locations:
 ## Code Style
 
 ### Linting
+
 - **Linter**: Oxlint (Rust-based, very fast)
-- **Formatter**: Prettier
+- **Formatter**: Oxfmt
 - **Pre-commit**: Husky + lint-staged (auto-format on commit)
 
 Style rules:
+
 - Single quotes (`'`)
 - 2-space indentation
 - 120 character line width
@@ -168,12 +186,14 @@ Style rules:
 - No console statements (use logger)
 
 ### TypeScript
+
 - Strict TypeScript enabled
 - Avoid `any` types - use proper typing or `unknown`
 - ES modules (`import/export`) throughout
 - Comprehensive type definitions in all files
 
 ### Testing
+
 - Test files use `.test.ts` suffix
 - Tests mirror source structure in `test/` directory
 - Use `@eggjs/mock` for mocking
@@ -181,6 +201,7 @@ Style rules:
 - Test both success and error cases
 
 Pattern:
+
 ```typescript
 describe('test/path/to/SourceFile.test.ts', () => {
   describe('[HTTP_METHOD /api/path] functionName()', () => {
@@ -237,6 +258,7 @@ test/                # Test files (mirrors app/ structure)
 ## Integration as NPM Package
 
 cnpmcore can be integrated into Egg.js/Tegg applications as an NPM package, allowing enterprises to:
+
 - Customize infrastructure adapters (storage, auth, queue)
 - Override default behavior while receiving updates
 - Integrate with existing enterprise systems
@@ -246,6 +268,7 @@ See INTEGRATE.md for detailed integration guide.
 ## Performance Notes
 
 Typical command execution times:
+
 - Development server startup: ~20 seconds
 - TypeScript build: ~6 seconds
 - Full test suite: 4-15 minutes
@@ -263,6 +286,7 @@ Typical command execution times:
 ## Key Services & Controllers
 
 Core components to understand:
+
 - **PackageController**: Package CRUD operations
 - **PackageManagerService**: Core package management logic
 - **BinarySyncerService**: Binary package synchronization
