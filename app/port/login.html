@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Sign in to CNPM</title>
@@ -161,15 +161,45 @@
           <input type="hidden" id="sessionId" value="{{sessionId}}" />
           <input type="hidden" id="publicKey" value="{{publicKey}}" />
           <input type="hidden" id="enableWebauthn" value="{{enableWebauthn}}" />
-          <input type="text" id="username" minlength="1" maxlength="100" placeholder="Username" autocomplete="username webauthn" />
+          <input
+            type="text"
+            id="username"
+            minlength="1"
+            maxlength="100"
+            placeholder="Username"
+            autocomplete="username webauthn"
+          />
           {% if enableWebauthn === true %}
-          <input style="display: none" type="password" id="password" minlength="8" maxlength="100" placeholder="Password" autocomplete="current-password" oncontextmenu="return false" onpaste="return false" oncopy="return false" oncut="return false" />
+          <input
+            style="display: none"
+            type="password"
+            id="password"
+            minlength="8"
+            maxlength="100"
+            placeholder="Password"
+            autocomplete="current-password"
+            oncontextmenu="return false"
+            onpaste="return false"
+            oncopy="return false"
+            oncut="return false"
+          />
           <div id="unbindWan">
             <input type="checkbox" id="unbindWanCheckbox" />
             <label for="unbindWanCheckbox">Unbind Touch ID/Face ID</label>
           </div>
           {% else %}
-          <input type="password" id="password" minlength="8" maxlength="100" placeholder="Password" autocomplete="current-password" oncontextmenu="return false" onpaste="return false" oncopy="return false" oncut="return false" />
+          <input
+            type="password"
+            id="password"
+            minlength="8"
+            maxlength="100"
+            placeholder="Password"
+            autocomplete="current-password"
+            oncontextmenu="return false"
+            onpaste="return false"
+            oncopy="return false"
+            oncut="return false"
+          />
           {% endif %}
         </form>
         <button id="submit" disabled="true">Sign in</button>

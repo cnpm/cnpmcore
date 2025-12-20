@@ -2,6 +2,21 @@
   "name": "cnpmcore",
   "version": "4.18.0",
   "description": "Private NPM Registry for Enterprise",
+  "keywords": [
+    "npm",
+    "npm registry",
+    "registry"
+  ],
+  "homepage": "https://github.com/cnpm/cnpmcore#readme",
+  "bugs": {
+    "url": "https://github.com/cnpm/cnpmcore/issues"
+  },
+  "license": "MIT",
+  "author": "killagu",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:cnpm/cnpmcore.git"
+  },
   "files": [
     "dist/**/*"
   ],
@@ -69,20 +84,9 @@
     "images:debian": "docker build -t cnpmcore:latest -f .docker/debian/Dockerfile .",
     "start": "eggctl start --daemon && touch egg.status",
     "start:foreground": "eggctl start",
-    "stop": "rm -f egg.status && sleep 15 && eggctl stop"
+    "stop": "rm -f egg.status && sleep 15 && eggctl stop",
+    "init-git-hooks": "husky"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:cnpm/cnpmcore.git"
-  },
-  "egg": {
-    "typescript": true
-  },
-  "keywords": [
-    "npm",
-    "npm registry",
-    "registry"
-  ],
   "dependencies": {
     "@cnpmjs/packument": "^1.6.0",
     "@eggjs/redis": "beta",
@@ -120,9 +124,6 @@
     "ua-parser-js": "^2.0.7",
     "validate-npm-package-name": "^7.0.0"
   },
-  "optionalDependencies": {
-    "s3-cnpmcore": "^1.1.2"
-  },
   "devDependencies": {
     "@eggjs/bin": "beta",
     "@eggjs/mock": "beta",
@@ -144,28 +145,24 @@
     "coffee": "^5.5.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "oxfmt": "^0.16.0",
+    "oxfmt": "^0.19.0",
     "oxlint": "^1.32.0",
-    "oxlint-tsgolint": "^0.9.0",
-    "prettier": "^3.7.4",
+    "oxlint-tsgolint": "^0.10.0",
     "typescript": "^5.9.3"
   },
-  "author": "killagu",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/cnpm/cnpmcore/issues"
-  },
-  "homepage": "https://github.com/cnpm/cnpmcore#readme",
-  "engines": {
-    "node": "^20.18.0 || ^22.18.0 || ^24.11.0"
+  "optionalDependencies": {
+    "s3-cnpmcore": "^1.1.2"
   },
   "lint-staged": {
-    "!(*.{ts,mts,cts,js,mjs,cjs,jsx,tsx})": [
-      "prettier --ignore-unknown --write"
-    ],
-    "*.{ts,mts,cts,js,mjs,cjs,jsx,tsx}": [
+    "*": [
       "oxfmt",
       "oxlint --type-aware --type-check --fix"
     ]
+  },
+  "engines": {
+    "node": "^20.18.0 || ^22.18.0 || ^24.11.0"
+  },
+  "egg": {
+    "typescript": true
   }
 }

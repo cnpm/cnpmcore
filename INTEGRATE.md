@@ -96,7 +96,7 @@ export default () => {
 │   └── package.json
 ```
 
-* 添加 `package.json` ，声明 infra 作为一个 eggModule 单元
+- 添加 `package.json` ，声明 infra 作为一个 eggModule 单元
 
 ```JSON
 {
@@ -107,7 +107,7 @@ export default () => {
 }
 ```
 
-* 添加 `XXXAdapter.ts` 在对应的 Adapter 中继承 cnpmcore 默认的 Adapter，以 AuthAdapter 为例
+- 添加 `XXXAdapter.ts` 在对应的 Adapter 中继承 cnpmcore 默认的 Adapter，以 AuthAdapter 为例
 
 ```typescript
   import { AccessLevel, SingletonProto } from 'egg';
@@ -152,10 +152,10 @@ export default () => {
 
 我们需要实现了 getAuthUrl 和 ensureCurrentUser 这两个方法:
 
-  1. getAuthUrl 引导用户访问企业内实际的登录中心。
-  2. ensureCurrentUser 当用户完成访问后，需要回调到应用进行鉴权流程。
-我们约定通过 `POST /-/v1/login/sso/:sessionId` 这个路由来进行登录验证。
-当然，你也可以任意修改地址和登录回调，只需保证更新 redis 中的 token 状态即可。
+1. getAuthUrl 引导用户访问企业内实际的登录中心。
+2. ensureCurrentUser 当用户完成访问后，需要回调到应用进行鉴权流程。
+   我们约定通过 `POST /-/v1/login/sso/:sessionId` 这个路由来进行登录验证。
+   当然，你也可以任意修改地址和登录回调，只需保证更新 redis 中的 token 状态即可。
 
 修改 AuthAdapter.ts 文件
 
