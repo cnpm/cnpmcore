@@ -390,6 +390,24 @@ export class PackageRepository extends AbstractRepository {
     });
   }
 
+  async createPackageVersions(pkgVersionEntities: PackageVersionEntity[]) {
+    if (pkgVersionEntities.length === 0) return;
+
+    // Use transaction with connection parameter as per existing pattern
+    await this.PackageVersion.transaction(async (transaction) => {
+      for (const pkgVersionEntity of pkgVersionEntities) {
+        await Promise.all([
+          // Use the existing convertEntityToModel for each entity to maintain compatibility
+          ModelConvertor.convertEntityToModel(pkgVersionEntity, this.PackageVersion, transaction),
+          ModelConvertor.convertEntityToModel(pkgVersionEntity.manifestDist, this.Dist, transaction),
+          ModelConvertor.convertEntityToModel(pkgVersionEntity.tarDist, this.Dist, transaction),
+          ModelConvertor.convertEntityToModel(pkgVersionEntity.readmeDist, this.Dist, transaction),
+          ModelConvertor.convertEntityToModel(pkgVersionEntity.abbreviatedDist, this.Dist, transaction),
+        ]);
+      }
+    });
+  }
+
   async savePackageVersion(pkgVersionEntity: PackageVersionEntity) {
     // only abbreviatedDist and manifestDist allow to change, like `deprecated` message
     let model = await this.Dist.findOne({
@@ -424,13 +442,33 @@ export class PackageRepository extends AbstractRepository {
   }
 
   async listPackageVersions(packageId: string): Promise<PackageVersionEntity[]> {
-    // FIXME: read all versions will hit the memory limit
+    // For backward compatibility, keep the original behavior but add a warning
+    // FIXME: read all versions will hit the memory limit - use listPackageVersionsWithLimit for large packages
     const models = await this.PackageVersion.find({ packageId }).order('id desc');
     const entities: PackageVersionEntity[] = [];
     for (const model of models) {
       entities.push(await this.fillPackageVersionEntityData(model));
     }
     return entities;
+  }
+
+  async listPackageVersionsWithLimit(
+    packageId: string,
+    offset: number = 0,
+    limit: number = 100,
+  ): Promise<PackageVersionEntity[]> {
+    // Use pagination to avoid memory issues with packages that have many versions
+    const models = await this.PackageVersion.find({ packageId }).order('id desc').offset(offset).limit(limit);
+    const entities: PackageVersionEntity[] = [];
+    for (const model of models) {
+      entities.push(await this.fillPackageVersionEntityData(model));
+    }
+    return entities;
+  }
+
+  async countPackageVersions(packageId: string): Promise<number> {
+    const result = await this.PackageVersion.find({ packageId }).count();
+    return Number(result);
   }
 
   async listPackageVersionNames(packageId: string): Promise<string[]> {
@@ -520,17 +558,26 @@ export class PackageRepository extends AbstractRepository {
   }
 
   private async fillPackageVersionEntityData(model: PackageVersionModel): Promise<PackageVersionEntity> {
-    const [tarDistModel, readmeDistModel, manifestDistModel, abbreviatedDistModel] = await Promise.all([
-      this.Dist.findOne({ distId: model.tarDistId }),
-      this.Dist.findOne({ distId: model.readmeDistId }),
-      this.Dist.findOne({ distId: model.manifestDistId }),
-      this.Dist.findOne({ distId: model.abbreviatedDistId }),
-    ]);
+    // Fetch all related Dist records in a single query instead of 4 separate queries
+    const distModels = await this.Dist.find({
+      distId: [model.tarDistId, model.readmeDistId, model.manifestDistId, model.abbreviatedDistId],
+    });
+
+    // Map the results to the expected format
+    const distMap = new Map(distModels.map((dist) => [dist.distId, dist]));
+
     const data = {
-      tarDist: tarDistModel && ModelConvertor.convertModelToEntity(tarDistModel, DistEntity),
-      readmeDist: readmeDistModel && ModelConvertor.convertModelToEntity(readmeDistModel, DistEntity),
-      manifestDist: manifestDistModel && ModelConvertor.convertModelToEntity(manifestDistModel, DistEntity),
-      abbreviatedDist: abbreviatedDistModel && ModelConvertor.convertModelToEntity(abbreviatedDistModel, DistEntity),
+      tarDist:
+        distMap.get(model.tarDistId) && ModelConvertor.convertModelToEntity(distMap.get(model.tarDistId)!, DistEntity),
+      readmeDist:
+        distMap.get(model.readmeDistId) &&
+        ModelConvertor.convertModelToEntity(distMap.get(model.readmeDistId)!, DistEntity),
+      manifestDist:
+        distMap.get(model.manifestDistId) &&
+        ModelConvertor.convertModelToEntity(distMap.get(model.manifestDistId)!, DistEntity),
+      abbreviatedDist:
+        distMap.get(model.abbreviatedDistId) &&
+        ModelConvertor.convertModelToEntity(distMap.get(model.abbreviatedDistId)!, DistEntity),
     };
     return ModelConvertor.convertModelToEntity(model, PackageVersionEntity, data);
   }

@@ -1,4 +1,4 @@
-import { rm } from 'node:fs/promises';
+import { rm, readFile } from 'node:fs/promises';
 import os from 'node:os';
 import { setTimeout } from 'node:timers/promises';
 
@@ -14,7 +14,7 @@ import type { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegi
 import { PresetRegistryName, SyncDeleteMode } from '../../common/constants.ts';
 import { TaskState, TaskType } from '../../common/enum/Task.ts';
 import { downloadToTempfile } from '../../common/FileUtil.ts';
-import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil.ts';
+import { calculateIntegrity, detectInstallScript, formatTarball, getScopeAndName } from '../../common/PackageUtil.ts';
 import { DistRepository } from '../../repository/DistRepository.ts';
 import type {
   AuthorType,
@@ -32,7 +32,7 @@ import { type CreateSyncPackageTask, type SyncPackageTaskOptions, Task } from '.
 import type { User } from '../entity/User.ts';
 import type { CacheService } from './CacheService.ts';
 import { EventCorkAdvice } from './EventCorkerAdvice.ts';
-import type { PackageManagerService, PublishPackageCmd } from './PackageManagerService.ts';
+import type { PackageManagerService } from './PackageManagerService.ts';
 import { PackageVersionFileService, UNPKG_WHITE_LIST_URL } from './PackageVersionFileService.ts';
 import type { RegistryManagerService } from './RegistryManagerService.ts';
 import type { ScopeManagerService } from './ScopeManagerService.ts';
@@ -1373,13 +1373,22 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
 
     const updateVersions: string[] = [];
     let syncIndex = 0;
-    // #region sync added versions
+
+    // #region sync added versions - batch processing for performance
+    // Collect version data for batch processing
+    const batchVersionsData: Array<{
+      version: string;
+      item: PackageJSONType;
+      publishTime: Date;
+      localFile: string;
+      syncIndex: number;
+    }> = [];
+
     for (const [version, [offsetStart, offsetEnd]] of diff.addedVersions) {
       // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
       const item: PackageJSONType = JSON.parse(remoteData.subarray(offsetStart, offsetEnd));
       // New version found, start syncing
       syncIndex++;
-      const description = item.description;
       // "dist": {
       //   "shasum": "943e0ec03df00ebeb6273a5b94b916ba54b47581",
       //   "tarball": "https://registry.npmjs.org/foo/-/foo-1.0.0.tgz"
@@ -1448,60 +1457,16 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
         pkg = await this.packageRepository.findPackage(scope, name);
       }
 
-      const publishCmd: PublishPackageCmd = {
-        scope,
-        name,
+      // Add to batch for later processing
+      batchVersionsData.push({
         version,
-        description,
-        packageJson: item,
-        readme,
-        registryId: registry.registryId,
-        dist: {
-          localFile,
-        },
-        isPrivate: false,
+        item,
         publishTime,
-        skipRefreshPackageManifests: true,
-      };
-      try {
-        // if version record already exists, need to check if pkg.manifests exists
-        const npmUserName = item._npmUser?.name;
-        const publisher = (npmUserName && users.find((user) => user.displayName === npmUserName)) || firstUser;
-        const pkgVersion = await this.packageManagerService.publish(publishCmd, publisher);
-        updateVersions.push(pkgVersion.version);
-        logs.push(
-          `[${isoNow()}] 🎉 [${syncIndex}] Synced version ${version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`,
-        );
-      } catch (err) {
-        if (err.name === 'ForbiddenError') {
-          logs.push(
-            `[${isoNow()}] 🐛 [${syncIndex}] Synced version ${version} already exists, skip publish, try to set in local manifest`,
-          );
-          // if pkg.maintainers not exists, need to supplement it
-          updateVersions.push(version);
-        } else {
-          err.taskId = task.taskId;
-          this.logger.error(err);
-          lastErrorMessage = `publish error: ${err}`;
-          logs.push(`[${isoNow()}] ❌ [${syncIndex}] Synced version ${version} error, ${lastErrorMessage}`);
-          if (err.name === 'BadRequestError') {
-            // if current version's dependencies not satisfied, try to retry
-            // will retry at the end of the current queue
-            this.logger.info(
-              '[PackageSyncerService.executeTask:fail-validate-deps] taskId: %s, targetName: %s, %s',
-              task.taskId,
-              task.targetName,
-              task.error,
-            );
-            await this.taskService.retryTask(task, logs.join('\n'));
-            return;
-          }
-        }
-      }
+        localFile,
+        syncIndex,
+      });
 
-      await this.taskService.appendTaskLog(task, logs.join('\n'));
-      logs = [];
-      await rm(localFile, { force: true });
+      // Use skipDependencies to conditionally process dependencies
       if (!skipDependencies) {
         const dependencies: Record<string, string> = item.dependencies || {};
         for (const dependencyName in dependencies) {
@@ -1511,6 +1476,158 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
         for (const dependencyName in optionalDependencies) {
           dependenciesSet.add(dependencyName);
         }
+      }
+    }
+
+    // Process versions in batch using bulk sync
+    if (batchVersionsData.length > 0 && pkg) {
+      // Add null check for pkg
+      const batchSize = 50; // Process in batches to avoid memory issues
+
+      for (let i = 0; i < batchVersionsData.length; i += batchSize) {
+        const batch = batchVersionsData.slice(i, i + batchSize);
+        const versionsData = [];
+
+        // Process each version in the batch to prepare data
+        for (const batchData of batch) {
+          const { version, item, publishTime, localFile, syncIndex } = batchData;
+          const description = item.description;
+
+          // Read the local file content
+          const distBytes = await readFile(localFile);
+
+          // make sure cmd.packageJson.readme is deleted
+          if ('readme' in item) {
+            delete item.readme;
+          }
+
+          // add _cnpmcore_publish_time field to cmd.packageJson
+          if (!item._cnpmcore_publish_time) {
+            item._cnpmcore_publish_time = publishTime;
+          }
+          if (!item.publish_time) {
+            item.publish_time = publishTime.getTime();
+          }
+
+          // override _npmUser field
+          const publisher = users.find((user) => user.displayName === item._npmUser?.name) || firstUser;
+          item._npmUser = {
+            // clean user scope prefix
+            name: publisher.displayName,
+            email: publisher.email,
+          };
+
+          // add _registry_name field to cmd.packageJson
+          if (pkg?.registryId) {
+            const registryInfo = await this.registryManagerService.findByRegistryId(pkg.registryId);
+            if (registryInfo) {
+              item._source_registry_name = registryInfo.name;
+            }
+          }
+
+          // https://github.com/npm/registry/blob/main/docs/responses/package-metadata.md#abbreviated-version-object
+          // Prepare abbreviated manifest
+          const hasInstallScript = detectInstallScript(item) ? true : undefined;
+          const abbreviated = JSON.stringify({
+            name: item.name,
+            version: item.version,
+            deprecated: item.deprecated,
+            dependencies: item.dependencies,
+            acceptDependencies: item.acceptDependencies,
+            optionalDependencies: item.optionalDependencies,
+            devDependencies: item.devDependencies,
+            bundleDependencies: item.bundleDependencies,
+            peerDependencies: item.peerDependencies,
+            peerDependenciesMeta: item.peerDependenciesMeta,
+            bin: item.bin,
+            directories: item.directories,
+            os: item.os,
+            cpu: item.cpu,
+            libc: item.libc,
+            workspaces: item.workspaces,
+            dist: {
+              ...item.dist,
+              tarball: formatTarball(this.config.cnpmcore.registry, pkg.scope, pkg.name, version),
+              size: distBytes.length,
+              shasum: (await calculateIntegrity(distBytes)).shasum,
+              integrity: (await calculateIntegrity(distBytes)).integrity,
+            },
+            engines: item.engines,
+            _hasShrinkwrap: item._hasShrinkwrap,
+            hasInstallScript,
+            funding: item.funding,
+            // npminstall require publish time to show the recently update versions
+            publish_time: item.publish_time,
+            _source_registry_name: item._source_registry_name,
+            _npmUser: item._npmUser,
+          });
+
+          const abbreviatedDistBytes = Buffer.from(abbreviated);
+          const readmeDistBytes = Buffer.from(readme);
+          const manifestDistBytes = Buffer.from(JSON.stringify(item));
+
+          versionsData.push({
+            cmd: {
+              scope,
+              name,
+              version,
+              description,
+              packageJson: item,
+              readme,
+              registryId: registry.registryId,
+              dist: {
+                content: distBytes,
+              },
+              isPrivate: false,
+              publishTime,
+              skipRefreshPackageManifests: true,
+            },
+            _publisher: publisher,
+            distBytes,
+            abbreviated,
+            abbreviatedDistBytes,
+            readmeDistBytes,
+            manifestDistBytes,
+            _tarDist: null, // Will be created in the service
+          });
+
+          logs.push(
+            `[${isoNow()}] 🚧 [${syncIndex}] Prepared version ${version} for bulk sync, size: ${distBytes.length}`,
+          );
+        }
+
+        // Bulk sync the prepared versions
+        try {
+          const pkgVersions = await this.packageManagerService.bulkSyncPackageVersions(pkg, versionsData);
+          for (const pkgVersion of pkgVersions) {
+            updateVersions.push(pkgVersion.version);
+            const batchData = batch.find((b) => b.version === pkgVersion.version);
+            if (batchData) {
+              logs.push(
+                `[${isoNow()}] 🎉 [${batchData.syncIndex}] Synced version ${pkgVersion.version} success, packageVersionId: ${pkgVersion.packageVersionId}, db id: ${pkgVersion.id}`,
+              );
+            }
+          }
+        } catch (err) {
+          this.logger.error(err);
+          lastErrorMessage = `bulk sync error: ${err}`;
+          for (const batchData of batch) {
+            logs.push(
+              `[${isoNow()}] ❌ [${batchData.syncIndex}] Bulk sync version ${batchData.version} error, ${lastErrorMessage}`,
+            );
+          }
+          await this.taskService.appendTaskLog(task, logs.join('\n'));
+          logs = [];
+          continue;
+        }
+
+        // Clean up files after batch processing
+        for (const batchData of batch) {
+          await rm(batchData.localFile, { force: true });
+        }
+
+        await this.taskService.appendTaskLog(task, logs.join('\n'));
+        logs = [];
       }
     }
     // #endregion

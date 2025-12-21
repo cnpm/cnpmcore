@@ -1488,4 +1488,99 @@ export class PackageManagerService extends AbstractService {
       },
     );
   }
+
+  // Bulk create package versions for sync operations to avoid ORM overhead
+  async bulkSyncPackageVersions(
+    pkg: Package,
+    versionsData: Array<{
+      cmd: PublishPackageCmd;
+      _publisher: User;
+      distBytes: Uint8Array;
+      abbreviated: string;
+      abbreviatedDistBytes: Uint8Array;
+      readmeDistBytes: Uint8Array;
+      manifestDistBytes: Uint8Array;
+      _tarDist: any; // Dist info
+    }>,
+  ) {
+    if (versionsData.length === 0) return [];
+
+    // Prepare all dist files first
+    const packageVersionEntities = [];
+
+    for (const versionData of versionsData) {
+      const { cmd, distBytes, abbreviatedDistBytes, readmeDistBytes, manifestDistBytes } = versionData;
+
+      // Create dist objects
+      const tarDistIntegrity = await calculateIntegrity(distBytes);
+      const tarDistSize = distBytes.length;
+
+      const tarDistEntity = pkg.createTar(cmd.version, {
+        size: tarDistSize,
+        shasum: tarDistIntegrity.shasum,
+        integrity: tarDistIntegrity.integrity,
+      });
+
+      // Save dist files
+      await this.distRepository.saveDist(tarDistEntity, distBytes);
+
+      cmd.packageJson.dist = {
+        ...cmd.packageJson.dist,
+        tarball: formatTarball(this.config.cnpmcore.registry, pkg.scope, pkg.name, cmd.version),
+        size: tarDistSize,
+        shasum: tarDistIntegrity.shasum,
+        integrity: tarDistIntegrity.integrity,
+      };
+
+      // Create dist entities for this version
+      const abbreviatedDistEntity = pkg.createAbbreviated(cmd.version, {
+        size: abbreviatedDistBytes.length,
+        shasum: (await calculateIntegrity(abbreviatedDistBytes)).shasum,
+        integrity: (await calculateIntegrity(abbreviatedDistBytes)).integrity,
+      });
+
+      const readmeDistEntity = pkg.createReadme(cmd.version, {
+        size: readmeDistBytes.length,
+        shasum: (await calculateIntegrity(readmeDistBytes)).shasum,
+        integrity: (await calculateIntegrity(readmeDistBytes)).integrity,
+      });
+
+      const manifestDistEntity = pkg.createManifest(cmd.version, {
+        size: manifestDistBytes.length,
+        shasum: (await calculateIntegrity(manifestDistBytes)).shasum,
+        integrity: (await calculateIntegrity(manifestDistBytes)).integrity,
+      });
+
+      // Save dist files
+      await Promise.all([
+        this.distRepository.saveDist(abbreviatedDistEntity, abbreviatedDistBytes),
+        this.distRepository.saveDist(readmeDistEntity, readmeDistBytes),
+        this.distRepository.saveDist(manifestDistEntity, manifestDistBytes),
+      ]);
+
+      // Create package version entity
+      const pkgVersion = PackageVersion.create({
+        packageId: pkg.packageId,
+        version: cmd.version,
+        publishTime: cmd.publishTime || new Date(),
+        manifestDist: manifestDistEntity,
+        readmeDist: readmeDistEntity,
+        abbreviatedDist: abbreviatedDistEntity,
+        tarDist: tarDistEntity,
+      });
+
+      packageVersionEntities.push(pkgVersion);
+    }
+
+    // Use bulk creation method to avoid ORM overhead
+    await this.packageRepository.createPackageVersions(packageVersionEntities);
+
+    // Refresh manifests if needed
+    if (versionsData[0].cmd.skipRefreshPackageManifests !== true) {
+      const versions = versionsData.map((v) => v.cmd.version);
+      await this.refreshPackageChangeVersionsToDists(pkg, versions);
+    }
+
+    return packageVersionEntities;
+  }
 }
