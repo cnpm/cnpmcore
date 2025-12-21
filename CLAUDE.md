@@ -26,13 +26,16 @@ Use ultrathink for:
 
 ## Project Overview
 
-cnpmcore is a TypeScript-based private NPM registry implementation for enterprise use. It's built on the Egg.js framework using Domain-Driven Design (DDD) architecture principles and supports both MySQL and PostgreSQL databases.
+cnpmcore is a TypeScript-based private NPM registry implementation for enterprise use. It's built on the Egg.js framework using Domain-Driven Design (DDD) architecture principles and supports MySQL, PostgreSQL, and SQLite databases.
 
 ## Essential Commands
 
 ### Development
 
 ```bash
+# Start development server (SQLite - recommended for local dev, no Docker required)
+npm run dev:sqlite
+
 # Start development server (MySQL)
 npm run dev
 
@@ -52,6 +55,9 @@ npm run typecheck
 ### Testing
 
 ```bash
+# Run all tests with SQLite (fastest, no Docker required)
+npm run test:sqlite
+
 # Run all tests with MySQL (takes 4+ minutes)
 npm run test
 
@@ -68,6 +74,9 @@ npm run cov
 ### Database Setup
 
 ```bash
+# SQLite setup (no Docker required - recommended for local development)
+bash ./prepare-database-sqlite.sh
+
 # MySQL setup
 docker compose -f docker-compose.yml up -d
 CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
@@ -232,9 +241,9 @@ async someMethod(@HTTPQuery() params: QueryType) {
 
 ### Modifying Database Models
 
-When changing a Model, update all 3 locations:
+When changing a Model, update all locations:
 
-1. SQL migrations: `sql/mysql/*.sql` AND `sql/postgresql/*.sql`
+1. SQL migrations: `sql/mysql/*.sql`, `sql/postgresql/*.sql`, AND `sql/ddl_sqlite.sql`
 2. ORM Model: `app/repository/model/*.ts`
 3. Domain Entity: `app/core/entity/*.ts`
 
@@ -283,7 +292,7 @@ Style rules:
 - `TestUtil.createPackage(options)` - Create full package in system
 - `TestUtil.getFullPackage(options)` - Get mock package JSON
 - `TestUtil.truncateDatabase()` - Clear all tables between tests
-- `TestUtil.query(sql)` - Execute raw SQL (MySQL/PostgreSQL)
+- `TestUtil.query(sql)` - Execute raw SQL (MySQL/PostgreSQL/SQLite)
 
 **Mocking Patterns**:
 
@@ -355,7 +364,8 @@ app/
 config/              # Configuration files
 sql/                 # Database migrations
   ├── mysql/         # MySQL migrations
-  └── postgresql/    # PostgreSQL migrations
+  ├── postgresql/    # PostgreSQL migrations
+  └── ddl_sqlite.sql # SQLite schema
 test/                # Test files (mirrors app/ structure)
 ```
 
@@ -399,7 +409,7 @@ Typical command execution times:
 ## Prerequisites
 
 - Node.js: ^20.18.0 or ^22.18.0 or ^24.11.0
-- Database: MySQL 5.7+ or PostgreSQL 17+ (SQLite support in progress)
+- Database: SQLite 3+ (recommended for local dev), MySQL 5.7+, or PostgreSQL 17+
 - Cache: Redis 6+
 - Optional: Elasticsearch 8.x
 

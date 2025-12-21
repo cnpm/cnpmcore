@@ -19,6 +19,45 @@ import { Package as PackageModel } from '../app/repository/model/Package.ts';
 import type { PackageJSONType } from '../app/repository/PackageRepository.ts';
 import { DATABASE_TYPE, database } from '../config/database.ts';
 
+// SQLite3 types (optional dependency)
+interface SQLiteDatabase {
+  all(sql: string, callback: (err: Error | null, rows: any[]) => void): void;
+  run(sql: string, callback: (err: Error | null) => void): void;
+  close(callback?: (err: Error | null) => void): void;
+}
+
+interface SQLite3Module {
+  Database: new (path: string, callback?: (err: Error | null) => void) => SQLiteDatabase;
+}
+
+// Lazy load sqlite3 only when needed
+let sqlite3Module: SQLite3Module | null = null;
+async function getSqlite3(): Promise<SQLite3Module> {
+  if (!sqlite3Module) {
+    sqlite3Module = (await import('sqlite3')).default as unknown as SQLite3Module;
+  }
+  return sqlite3Module;
+}
+
+// Promisify sqlite3 methods
+function sqliteAll(db: SQLiteDatabase, sql: string): Promise<any[]> {
+  return new Promise((resolve, reject) => {
+    db.all(sql, (err: Error | null, rows: any[]) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+}
+
+function sqliteRun(db: SQLiteDatabase, sql: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    db.run(sql, (err: Error | null) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -70,9 +109,15 @@ export class TestUtil {
   private static ua = 'npm/7.0.0 cnpmcore-unittest/1.0.0';
 
   static getDatabaseConfig() {
+    const dbName = database.name ?? 'cnpmcore_unittest';
+    // For SQLite, database is a file path; for others, it's a database name
+    const dbPath =
+      database.type === DATABASE_TYPE.SQLite
+        ? (database.storage ?? path.join(process.cwd(), '.cnpmcore_unittest', `${dbName}.sqlite`))
+        : dbName;
     return {
       ...database,
-      database: database.name ?? 'cnpmcore_unittest',
+      database: dbPath,
       multipleStatements: true,
     };
   }
@@ -86,7 +131,17 @@ export class TestUtil {
 
   static async query(sql: string): Promise<any[]> {
     const conn = await this.getConnection();
+    const config = this.getDatabaseConfig();
     try {
+      if (config.type === DATABASE_TYPE.SQLite) {
+        // SQLite: use different methods for SELECT vs other statements
+        const trimmedSql = sql.trim().toUpperCase();
+        if (trimmedSql.startsWith('SELECT')) {
+          return await sqliteAll(conn, sql);
+        }
+        await sqliteRun(conn, sql);
+        return [];
+      }
       const result = await conn.query(sql);
       if (result.rows) {
         // pg: { rows }
@@ -110,17 +165,33 @@ export class TestUtil {
       }
       if (config.type === DATABASE_TYPE.MySQL) {
         this.connection = await mysql.createConnection(config as any);
+        await this.connection.connect();
       } else if (config.type === DATABASE_TYPE.PostgreSQL) {
         this.connection = new Client(config as any);
+        await this.connection.connect();
+      } else if (config.type === DATABASE_TYPE.SQLite) {
+        // SQLite connection - file-based
+        const dbPath = config.database as string;
+        const sqlite3 = await getSqlite3();
+        this.connection = await new Promise<SQLiteDatabase>((resolve, reject) => {
+          const db = new sqlite3.Database(dbPath, (err: Error | null) => {
+            if (err) reject(err);
+            else resolve(db);
+          });
+        });
       }
-      await this.connection.connect();
     }
     return this.connection;
   }
 
   static destroyConnection() {
     if (this.connection) {
-      this.connection.destroy();
+      const config = this.getDatabaseConfig();
+      if (config.type === DATABASE_TYPE.SQLite) {
+        this.connection.close();
+      } else {
+        this.connection.destroy();
+      }
       this.connection = null;
     }
   }
@@ -150,6 +221,10 @@ export class TestUtil {
         const sql = "SELECT * FROM pg_catalog.pg_tables where schemaname = 'public';";
         const rows: { tablename: string }[] = await this.query(sql);
         this.tables = rows.map((row) => row.tablename);
+      } else if (config.type === DATABASE_TYPE.SQLite) {
+        const sql = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';";
+        const rows: { name: string }[] = await this.query(sql);
+        this.tables = rows.map((row) => row.name);
       }
     }
     return this.tables;
@@ -157,11 +232,26 @@ export class TestUtil {
 
   static async truncateDatabase() {
     const tables = await this.getTableNames();
-    await Promise.all(
-      tables.map(async (table: string) => {
-        await this.query(`TRUNCATE TABLE ${table};`);
-      }),
-    );
+    const config = this.getDatabaseConfig();
+
+    if (config.type === DATABASE_TYPE.SQLite) {
+      // SQLite: use DELETE instead of TRUNCATE, and reset autoincrement
+      for (const table of tables) {
+        await this.query(`DELETE FROM ${table};`);
+      }
+      // Reset autoincrement counters (silently ignore if table doesn't exist)
+      try {
+        await this.query('DELETE FROM sqlite_sequence;');
+      } catch {
+        // sqlite_sequence may not exist if no AUTOINCREMENT columns have been used yet
+      }
+    } else {
+      await Promise.all(
+        tables.map(async (table: string) => {
+          await this.query(`TRUNCATE TABLE ${table};`);
+        }),
+      );
+    }
   }
 
   static get app() {

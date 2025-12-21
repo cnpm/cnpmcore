@@ -14,6 +14,9 @@ let dbUser = env('CNPMCORE_DATABASE_USER', 'string');
 let dbPassword = env('CNPMCORE_DATABASE_PASSWORD', 'string');
 let dialect = 'mysql';
 let dbClient = 'mysql2';
+// SQLite storage path (file path or :memory:)
+let storage: string | undefined;
+
 if (dbType === DATABASE_TYPE.MySQL) {
   // Compatible mysql configurations
   dbName = dbName ?? env('CNPMCORE_MYSQL_DATABASE', 'string') ?? env('MYSQL_DATABASE', 'string');
@@ -30,9 +33,10 @@ if (dbType === DATABASE_TYPE.MySQL) {
   dbPassword =
     dbPassword ?? env('CNPMCORE_POSTGRES_PASSWORD', 'string') ?? env('POSTGRES_PASSWORD', 'string') ?? 'postgres';
 } else if (dbType === DATABASE_TYPE.SQLite) {
-  // TODO: Implement SQLite
-  dbClient = 'sqlite';
+  dbClient = 'sqlite3';
   dialect = 'sqlite';
+  // SQLite storage path, defaults to undefined (will be set in config.default.ts using dataDir)
+  storage = env('CNPMCORE_SQLITE_PATH', 'string');
 }
 
 export const database = {
@@ -44,4 +48,5 @@ export const database = {
   port: dbPort,
   user: dbUser,
   password: dbPassword,
+  storage,
 };
