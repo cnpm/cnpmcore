@@ -1,5 +1,13 @@
 # Changelog
 
+## <small>4.18.1 (2025-12-22)</small>
+
+* chore: replace @node-rs/crc32 with Node.js stdlib zlib.crc32 (#938) ([8a1b79f](https://github.com/cnpm/cnpmcore/commit/8a1b79f)), closes [#938](https://github.com/cnpm/cnpmcore/issues/938) [cnpm/cnpmcore#937](https://github.com/cnpm/cnpmcore/issues/937)
+* chore(deps): update dependency oxfmt to ^0.20.0 (#944) ([e6f9208](https://github.com/cnpm/cnpmcore/commit/e6f9208)), closes [#944](https://github.com/cnpm/cnpmcore/issues/944)
+* chore(deps): update dependency oxlint-tsgolint to ^0.10.0 (#939) ([6f07c76](https://github.com/cnpm/cnpmcore/commit/6f07c76)), closes [#939](https://github.com/cnpm/cnpmcore/issues/939)
+* chore(deps): update oxfmt and remove prettier (#923) ([9ab9d2a](https://github.com/cnpm/cnpmcore/commit/9ab9d2a)), closes [#923](https://github.com/cnpm/cnpmcore/issues/923)
+* fix: should refresh package manifests to dists to avoid missing versions (#946) ([7d345b8](https://github.com/cnpm/cnpmcore/commit/7d345b8)), closes [#946](https://github.com/cnpm/cnpmcore/issues/946) [hi#level](https://github.com/hi/issues/level)
+
 ## 4.18.0 (2025-12-18)
 
 * feat: show upstream sync error (#936) ([33443ee](https://github.com/cnpm/cnpmcore/commit/33443ee)), closes [#936](https://github.com/cnpm/cnpmcore/issues/936) [hi#level](https://github.com/hi/issues/level)
