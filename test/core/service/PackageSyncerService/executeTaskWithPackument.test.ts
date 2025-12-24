@@ -2264,6 +2264,186 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       app.mockAgent().assertNoPendingInterceptors();
     });
 
+    it('issue-943: should block first then allow', async () => {
+      app.mockHttpclient('https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      // save 0.0.0 first
+      mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
+        data: Buffer.from(
+          JSON.stringify({
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],
+            'dist-tags': {
+              latest: '0.0.0',
+            },
+            versions: {
+              '0.0.0': {
+                version: '0.0.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+            },
+          }),
+        ),
+        res: {},
+        headers: {},
+      });
+      mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+      mock(app.config.cnpmcore, 'largePackageVersionSize', 100 * 1024 * 1024);
+      const name = 'cnpmcore-test-sync-deprecated';
+      await packageSyncerService.createTask(name);
+      let task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      let stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      let log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert.match(log, /Synced version 0.0.0 success/);
+      let data = await packageManagerService.listPackageFullManifests('', name);
+      // console.log(data.data);
+      assert(data.data?.versions['0.0.0']);
+
+      mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
+        data: Buffer.from(
+          JSON.stringify({
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],
+            'dist-tags': {
+              latest: '1.0.0',
+            },
+            versions: {
+              '0.0.0': {
+                version: '0.0.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+              '1.0.0': {
+                version: '1.0.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+              '1.0.1': {
+                version: '1.0.1',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+              '99.0.0-beta.0': {
+                version: '99.0.0-beta.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', size: 100 * 1024 * 1024 + 1 },
+              },
+              '1.1.0': {
+                version: '1.1.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+              '1.2.0': {
+                version: '1.2.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+            },
+          }),
+        ),
+        res: {},
+        headers: {},
+      });
+      mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+      mock(app.config.cnpmcore, 'largePackageVersionSize', 100 * 1024 * 1024);
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert.match(log, /❌❌❌❌❌ cnpmcore-test-sync-deprecated ❌❌❌❌❌/);
+      assert.match(
+        log,
+        /Synced version 99.0.0-beta.0 fail, large package version size: 104857601, allow size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
+      );
+      // should at least one version success
+      // assert.match(log, /Synced version .+? success/);
+      data = await packageManagerService.listPackageFullManifests('', name);
+      assert(data.data?.versions['0.0.0']);
+
+      // again should allow
+      mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
+        data: Buffer.from(
+          JSON.stringify({
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],
+            'dist-tags': {
+              latest: '1.0.0',
+            },
+            versions: {
+              '0.0.0': {
+                version: '0.0.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+              '1.0.0': {
+                version: '1.0.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+              '1.0.1': {
+                version: '1.0.1',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+              '99.0.0-beta.0': {
+                version: '99.0.0-beta.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', size: 100 * 1024 * 1024 + 1 },
+              },
+              '1.1.0': {
+                version: '1.1.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+              '1.2.0': {
+                version: '1.2.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz' },
+              },
+            },
+          }),
+        ),
+        res: {},
+        headers: {},
+      });
+      mock(PackageVersionFileService.prototype, 'isLargePackageVersionAllowed', async () => true);
+      await packageSyncerService.createTask(name);
+      task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert.match(log, /Synced version 99.0.0-beta.0 success/);
+      app.mockAgent().assertNoPendingInterceptors();
+      data = await packageManagerService.listPackageFullManifests('', name);
+      // console.log(data.data);
+      // should includes all versions
+      assert(
+        data.data?.versions['0.0.0'],
+        `0.0.0 not found in versions: ${Object.keys(data.data?.versions || {}).join(', ')}`,
+      );
+      assert(
+        data.data?.versions['1.0.0'],
+        `1.0.0 not found in versions: ${Object.keys(data.data?.versions || {}).join(', ')}`,
+      );
+      assert(
+        data.data?.versions['1.0.1'],
+        `1.0.1 not found in versions: ${Object.keys(data.data?.versions || {}).join(', ')}`,
+      );
+      assert(
+        data.data?.versions['99.0.0-beta.0'],
+        `99.0.0-beta.0 not found in versions: ${Object.keys(data.data?.versions || {}).join(', ')}`,
+      );
+      assert(
+        data.data?.versions['1.1.0'],
+        `1.1.0 not found in versions: ${Object.keys(data.data?.versions || {}).join(', ')}`,
+      );
+      assert(
+        data.data?.versions['1.2.0'],
+        `1.2.0 not found in versions: ${Object.keys(data.data?.versions || {}).join(', ')}`,
+      );
+    });
+
     it('should mock getFullManifestsBuffer json parse error', async () => {
       mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
         data: Buffer.from('{"foo":"bar", invalid json'),

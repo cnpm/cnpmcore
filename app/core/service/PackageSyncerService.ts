@@ -1461,7 +1461,8 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
         },
         isPrivate: false,
         publishTime,
-        skipRefreshPackageManifests: true,
+        // should refresh package manifests to dists to avoid missing versions
+        skipRefreshPackageManifests: false,
       };
       try {
         // if version record already exists, need to check if pkg.manifests exists
