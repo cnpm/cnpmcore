@@ -3,7 +3,7 @@
 # 生成一个50MB的txt文件，内容都是1
 # 文件名为: 50mb_ones.txt
 
-OUTPUT_FILE="50mb_ones.txt"
+OUTPUT_FILE="nginx/50mb_ones.txt"
 TARGET_SIZE_MB=50
 TARGET_SIZE_BYTES=$((TARGET_SIZE_MB * 1024 * 1024))
 

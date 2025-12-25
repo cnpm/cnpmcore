@@ -33,7 +33,9 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 RUN mkdir -p /root/workspace
 
+COPY gc.js /root/workspace/gc.js
 COPY benchmark.js /root/workspace/benchmark.js
+COPY benchmark_undici.js /root/workspace/benchmark_undici.js
 
 RUN cd /root/workspace && npm i urllib --registry https://registry.npmmirror.com
 
