@@ -51,12 +51,14 @@ docker rm "$CONTAINER_NAME" > /dev/null 2>&1 || true
 echo "构建 Docker 镜像..."
 docker build -t "$IMAGE_NAME" .
 
-# 启动容器
+# 启动容器 (添加 ulimit 和 privileged 模式用于 coredump)
 echo "启动容器..."
 docker run -d \
     --name "$CONTAINER_NAME" \
     -p "$HOST_PORT:$CONTAINER_PORT" \
     -v "$MOUNT_DIR:$CONTAINER_MOUNT_DIR:ro" \
+    --ulimit core=-1 \
+    --privileged \
     --restart unless-stopped \
     "$IMAGE_NAME"
 

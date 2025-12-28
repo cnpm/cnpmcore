@@ -5,8 +5,15 @@ RUN apt-get update && apt-get install -y \
     nginx \
     curl \
     vim \
+    gdb \
+    procps \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
+
+# 配置 coredump
+RUN echo "ulimit -c unlimited" >> /etc/bash.bashrc \
+    && mkdir -p /tmp/cores \
+    && chmod 777 /tmp/cores
 
 # 创建 nginx 配置目录
 RUN mkdir -p /etc/nginx/conf.d
