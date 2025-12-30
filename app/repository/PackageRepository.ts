@@ -489,6 +489,16 @@ export class PackageRepository extends AbstractRepository {
     return ModelConvertor.convertModelToEntity(model, this.PackageVersionManifest);
   }
 
+  async removePackageVersionManifest(packageVersionId: string): Promise<number> {
+    const removeCount = await this.PackageVersionManifest.remove({ packageVersionId });
+    this.logger.info(
+      '[PackageRepository:removePackageVersionManifest:remove] %d rows, packageVersionId: %s',
+      removeCount,
+      packageVersionId,
+    );
+    return removeCount;
+  }
+
   public async queryTotal() {
     const { packageCount, packageVersionCount } = await this.totalRepository.getAll();
 
@@ -573,6 +583,15 @@ export class PackageRepository extends AbstractRepository {
 
   async listPackageTags(packageId: string): Promise<PackageTagEntity[]> {
     const models = await this.PackageTag.find({ packageId });
+    const entities: PackageTagEntity[] = [];
+    for (const model of models) {
+      entities.push(ModelConvertor.convertModelToEntity(model, PackageTagEntity));
+    }
+    return entities;
+  }
+
+  async findPackageTagsByVersion(packageId: string, version: string): Promise<PackageTagEntity[]> {
+    const models = await this.PackageTag.find({ packageId, version });
     const entities: PackageTagEntity[] = [];
     for (const model of models) {
       entities.push(ModelConvertor.convertModelToEntity(model, PackageTagEntity));

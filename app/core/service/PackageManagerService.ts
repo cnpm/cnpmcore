@@ -10,6 +10,7 @@ import semver from 'semver';
 import type { RequireAtLeastOne } from 'type-fest';
 
 import { AbstractService } from '../../common/AbstractService.ts';
+import type { NFSAdapter } from '../../common/adapter/NFSAdapter.ts';
 import {
   calculateIntegrity,
   type Integrity,
@@ -30,6 +31,7 @@ import type {
 } from '../../repository/PackageRepository.ts';
 import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
+import type { PackageVersionFileRepository } from '../../repository/PackageVersionFileRepository.ts';
 import { isDuplicateKeyError } from '../../repository/util/ErrorUtil.ts';
 import type { BugVersion } from '../entity/BugVersion.ts';
 import type { Dist } from '../entity/Dist.ts';
@@ -112,6 +114,10 @@ export class PackageManagerService extends AbstractService {
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
   private readonly packageVersionService: PackageVersionService;
+  @Inject()
+  private readonly packageVersionFileRepository: PackageVersionFileRepository;
+  @Inject()
+  private readonly nfsAdapter: NFSAdapter;
 
   private static downloadCounters = {};
 
@@ -659,18 +665,52 @@ export class PackageManagerService extends AbstractService {
   }
 
   private async _removePackageVersionAndDist(pkgVersion: PackageVersion) {
-    // remove nfs dists
-    await Promise.all([
+    const packageVersionId = pkgVersion.packageVersionId;
+
+    // 1. Remove PackageVersionFiles and their NFS files
+    const { distPaths, removeCount } =
+      await this.packageVersionFileRepository.removePackageVersionFiles(packageVersionId);
+    if (distPaths.length > 0) {
+      const results = await Promise.allSettled(distPaths.map((path) => this.nfsAdapter.remove(path)));
+      for (const [index, result] of results.entries()) {
+        if (result.status === 'rejected') {
+          this.logger.warn(
+            '[PackageManagerService._removePackageVersionAndDist:nfsRemoveFailed] path: %s, error: %s',
+            distPaths[index],
+            result.reason,
+          );
+        }
+      }
+    }
+
+    // 2. Remove PackageVersionManifest
+    await this.packageRepository.removePackageVersionManifest(packageVersionId);
+
+    // 3. Remove core NFS dists
+    const distNames = ['abbreviatedDist', 'manifestDist', 'readmeDist', 'tarDist'] as const;
+    const distResults = await Promise.allSettled([
       this.distRepository.destroyDist(pkgVersion.abbreviatedDist),
       this.distRepository.destroyDist(pkgVersion.manifestDist),
       this.distRepository.destroyDist(pkgVersion.readmeDist),
       this.distRepository.destroyDist(pkgVersion.tarDist),
     ]);
-    // remove from repository
+    for (const [index, result] of distResults.entries()) {
+      if (result.status === 'rejected') {
+        this.logger.warn(
+          '[PackageManagerService._removePackageVersionAndDist:destroyDistFailed] dist: %s, error: %s',
+          distNames[index],
+          result.reason,
+        );
+      }
+    }
+
+    // 4. Remove from repository (PackageVersion and Dist records)
     await this.packageRepository.removePackageVersion(pkgVersion);
+
     this.logger.info(
-      '[packageManagerService.removePackageVersionAndDist:success] packageVersionId: %s',
-      pkgVersion.packageVersionId,
+      '[packageManagerService.removePackageVersionAndDist:success] packageVersionId: %s, removedFiles: %d',
+      packageVersionId,
+      removeCount,
     );
   }
 
@@ -724,6 +764,20 @@ export class PackageManagerService extends AbstractService {
       await this.unpublishPackage(pkg);
       return;
     }
+
+    // Remove all tags pointing to this version (except 'latest' which we'll update below)
+    const tagsForVersion = await this.packageRepository.findPackageTagsByVersion(pkg.packageId, pkgVersion.version);
+    for (const tag of tagsForVersion) {
+      if (tag.tag !== 'latest') {
+        await this.packageRepository.removePackageTag(tag);
+        this.logger.info(
+          '[packageManagerService.removePackageVersion:removeTag] tag: %s, version: %s',
+          tag.tag,
+          pkgVersion.version,
+        );
+      }
+    }
+
     // remove version & update tags
     await this._removePackageVersionAndDist(pkgVersion);
     const versions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
