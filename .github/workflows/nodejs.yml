@@ -211,6 +211,56 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  test-sqlite-fs-nfs:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22, 24]
+        os: [ubuntu-latest]
+        # 0-based index
+        shardIndex: [0, 1, 2]
+        shardTotal: [3]
+
+    name: test on sqlite (node@${{ matrix.node-version }}, shard@${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    concurrency:
+      group: test-sqlite-fs-nfs-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.node-version }}-${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      cancel-in-progress: true
+
+    runs-on: ${{ matrix.os }}
+
+    services:
+      # SQLite doesn't need a database service, only Redis for caching
+      redis:
+        # https://docs.github.com/en/actions/using-containerized-services/about-service-containers#example-mapping-redis-ports
+        image: redis
+        ports:
+          # Opens tcp port 6379 on the host and service container
+          - 6379:6379
+
+    steps:
+      - name: Checkout Git Source
+        uses: actions/checkout@v6
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Continuous Integration
+        run: npm run ci:sqlite
+        env:
+          # https://github.com/jamiebuilds/ci-parallel-vars
+          CI_NODE_INDEX: ${{ matrix.shardIndex }}
+          CI_NODE_TOTAL: ${{ matrix.shardTotal }}
+
+      - name: Code Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   test-mysql57-fs-nfs:
     strategy:
       fail-fast: false
@@ -332,6 +382,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test-postgresql-fs-nfs
+      - test-sqlite-fs-nfs
       - test-mysql57-fs-nfs
       - typecheck
     steps:
