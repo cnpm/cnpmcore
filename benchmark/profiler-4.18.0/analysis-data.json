@@ -1,0 +1,3546 @@
+[
+  {
+    "info": {
+      "fileName": "registry.npmmirror.com-05-x-cpuprofile-297946-20251230-0",
+      "nodeCount": 5705,
+      "sampleCount": 149382,
+      "durationMs": 180046.382,
+      "durationSec": "180.05"
+    },
+    "hotspots": [
+      {
+        "id": 79,
+        "functionName": "(idle)",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 53224,
+        "selfPercent": "35.63",
+        "totalHits": 53224,
+        "totalPercent": "35.63",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 653,
+        "functionName": "Bone",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 151,
+        "columnNumber": 16,
+        "selfHits": 5594,
+        "selfPercent": "3.74",
+        "totalHits": 5594,
+        "totalPercent": "3.74",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 25,
+        "functionName": "(program)",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 3588,
+        "selfPercent": "2.40",
+        "totalHits": 3588,
+        "totalPercent": "2.40",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 30,
+        "functionName": "runMicrotasks",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 3238,
+        "selfPercent": "2.17",
+        "totalHits": 64899,
+        "totalPercent": "43.44",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 170,
+        "functionName": "writev",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 2502,
+        "selfPercent": "1.67",
+        "totalHits": 2502,
+        "totalPercent": "1.67",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 47,
+        "functionName": "(garbage collector)",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 2227,
+        "selfPercent": "1.49",
+        "totalHits": 2227,
+        "totalPercent": "1.49",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 346,
+        "functionName": "_addHeaderLine",
+        "url": "node:_http_incoming",
+        "lineNumber": 382,
+        "columnNumber": 24,
+        "selfHits": 1907,
+        "selfPercent": "1.28",
+        "totalHits": 2215,
+        "totalPercent": "1.48",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 101,
+        "functionName": "match",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Layer.js",
+        "lineNumber": 72,
+        "columnNumber": 10,
+        "selfHits": 1607,
+        "selfPercent": "1.08",
+        "totalHits": 1607,
+        "totalPercent": "1.08",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 67,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Router.js",
+        "lineNumber": 137,
+        "columnNumber": 53,
+        "selfHits": 1282,
+        "selfPercent": "0.86",
+        "totalHits": 1282,
+        "totalPercent": "0.86",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 294,
+        "functionName": "writeUtf8String",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 1182,
+        "selfPercent": "0.79",
+        "totalHits": 1182,
+        "totalPercent": "0.79",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 317,
+        "functionName": "parseChannelMessages",
+        "url": "node:internal/child_process/serialization",
+        "lineNumber": 142,
+        "columnNumber": 24,
+        "selfHits": 983,
+        "selfPercent": "0.66",
+        "totalHits": 1113,
+        "totalPercent": "0.75",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 290,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 160,
+        "columnNumber": 72,
+        "selfHits": 978,
+        "selfPercent": "0.65",
+        "totalHits": 1050,
+        "totalPercent": "0.70",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 63,
+        "functionName": "injectProperty",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "lineNumber": 165,
+        "columnNumber": 19,
+        "selfHits": 945,
+        "selfPercent": "0.63",
+        "totalHits": 945,
+        "totalPercent": "0.63",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 128,
+        "functionName": "get",
+        "url": "/home/admin/application/node_modules/_mysql2@3.16.0@mysql2/lib/packets/column_definition.js",
+        "lineNumber": 263,
+        "columnNumber": 19,
+        "selfHits": 900,
+        "selfPercent": "0.60",
+        "totalHits": 1215,
+        "totalPercent": "0.81",
+        "isCnpmcore": true,
+        "category": "npm:mysql2"
+      },
+      {
+        "id": 61,
+        "functionName": "init",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/ContextInitiator.js",
+        "lineNumber": 13,
+        "columnNumber": 15,
+        "selfHits": 776,
+        "selfPercent": "0.52",
+        "totalHits": 2068,
+        "totalPercent": "1.38",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 118,
+        "functionName": "initWithInjectProperty",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "lineNumber": 20,
+        "columnNumber": 33,
+        "selfHits": 768,
+        "selfPercent": "0.51",
+        "totalHits": 4205,
+        "totalPercent": "2.81",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 358,
+        "functionName": "getLifecycleHook",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_lifecycle@4.0.0-beta.35@@eggjs/lifecycle/dist/LifycycleUtil.js",
+        "lineNumber": 72,
+        "columnNumber": 21,
+        "selfHits": 733,
+        "selfPercent": "0.49",
+        "totalHits": 1469,
+        "totalPercent": "0.98",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_lifecycle@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 2,
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 71,
+        "columnNumber": 35,
+        "selfHits": 710,
+        "selfPercent": "0.48",
+        "totalHits": 76629,
+        "totalPercent": "51.30",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 117,
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/collection.js",
+        "lineNumber": 81,
+        "columnNumber": 18,
+        "selfHits": 710,
+        "selfPercent": "0.48",
+        "totalHits": 8016,
+        "totalPercent": "5.37",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 467,
+        "functionName": "close",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 687,
+        "selfPercent": "0.46",
+        "totalHits": 687,
+        "totalPercent": "0.46",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 1018,
+        "functionName": "writeBuffer",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 682,
+        "selfPercent": "0.46",
+        "totalHits": 682,
+        "totalPercent": "0.46",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 129,
+        "functionName": "instantiate",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 1283,
+        "columnNumber": 23,
+        "selfHits": 660,
+        "selfPercent": "0.44",
+        "totalHits": 7098,
+        "totalPercent": "4.75",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 640,
+        "functionName": "createCallContext",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_aop-runtime@4.0.0-beta.35@@eggjs/aop-runtime/dist/AspectExecutor.js",
+        "lineNumber": 20,
+        "columnNumber": 22,
+        "selfHits": 660,
+        "selfPercent": "0.44",
+        "totalHits": 660,
+        "totalPercent": "0.44",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_aop-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 54,
+        "functionName": "start",
+        "url": "/home/admin/application/node_modules/_mysql2@3.16.0@mysql2/lib/commands/query.js",
+        "lineNumber": 48,
+        "columnNumber": 8,
+        "selfHits": 618,
+        "selfPercent": "0.41",
+        "totalHits": 2049,
+        "totalPercent": "1.37",
+        "isCnpmcore": true,
+        "category": "npm:mysql2"
+      },
+      {
+        "id": 100,
+        "functionName": "match",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Router.js",
+        "lineNumber": 424,
+        "columnNumber": 10,
+        "selfHits": 589,
+        "selfPercent": "0.39",
+        "totalHits": 2197,
+        "totalPercent": "1.47",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 234,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 36,
+        "columnNumber": 31,
+        "selfHits": 550,
+        "selfPercent": "0.37",
+        "totalHits": 3234,
+        "totalPercent": "2.16",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 610,
+        "functionName": "writeUtf8String",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 528,
+        "selfPercent": "0.35",
+        "totalHits": 528,
+        "totalPercent": "0.35",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 272,
+        "functionName": "teggRootProto",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/app/middleware/tegg_root_proto.js",
+        "lineNumber": 3,
+        "columnNumber": 40,
+        "selfHits": 497,
+        "selfPercent": "0.33",
+        "totalHits": 4162,
+        "totalPercent": "2.79",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 446,
+        "functionName": "Socket",
+        "url": "node:net",
+        "lineNumber": 362,
+        "columnNumber": 16,
+        "selfHits": 493,
+        "selfPercent": "0.33",
+        "totalHits": 1308,
+        "totalPercent": "0.88",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 60,
+        "functionName": "getOrCreateEggObject",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/factory/EggContainerFactory.js",
+        "lineNumber": 28,
+        "columnNumber": 38,
+        "selfHits": 483,
+        "selfPercent": "0.32",
+        "totalHits": 2749,
+        "totalPercent": "1.84",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 95,
+        "functionName": "keyFromFields",
+        "url": "/home/admin/application/node_modules/_mysql2@3.16.0@mysql2/lib/parsers/parser_cache.js",
+        "lineNumber": 9,
+        "columnNumber": 23,
+        "selfHits": 423,
+        "selfPercent": "0.28",
+        "totalHits": 1638,
+        "totalPercent": "1.10",
+        "isCnpmcore": true,
+        "category": "npm:mysql2"
+      },
+      {
+        "id": 1135,
+        "functionName": "_setRaw",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 301,
+        "columnNumber": 12,
+        "selfHits": 386,
+        "selfPercent": "0.26",
+        "totalHits": 441,
+        "totalPercent": "0.30",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 277,
+        "functionName": "connectionListenerInternal",
+        "url": "node:_http_server",
+        "lineNumber": 702,
+        "columnNumber": 36,
+        "selfHits": 369,
+        "selfPercent": "0.25",
+        "totalHits": 1044,
+        "totalPercent": "0.70",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 609,
+        "functionName": "plusPackageVersionCounter",
+        "url": "file:///home/admin/application/app/core/service/PackageManagerService.js",
+        "lineNumber": 414,
+        "columnNumber": 30,
+        "selfHits": 334,
+        "selfPercent": "0.22",
+        "totalHits": 352,
+        "totalPercent": "0.24",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 366,
+        "functionName": "redirect",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_koa@3.1.0-beta.35@@eggjs/koa/dist/response.js",
+        "lineNumber": 219,
+        "columnNumber": 13,
+        "selfHits": 331,
+        "selfPercent": "0.22",
+        "totalHits": 2272,
+        "totalPercent": "1.52",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_koa@3.1.0-beta.35@@eggjs"
+      },
+      {
+        "id": 1721,
+        "functionName": "showPackageDownloads",
+        "url": "file:///home/admin/application/app/port/controller/DownloadController.js",
+        "lineNumber": 20,
+        "columnNumber": 31,
+        "selfHits": 322,
+        "selfPercent": "0.22",
+        "totalHits": 510,
+        "totalPercent": "0.34",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 454,
+        "functionName": "AsyncContextFrame",
+        "url": "node:internal/async_context_frame",
+        "lineNumber": 67,
+        "columnNumber": 14,
+        "selfHits": 302,
+        "selfPercent": "0.20",
+        "totalHits": 376,
+        "totalPercent": "0.25",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 307,
+        "functionName": "writeLatin1String",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 301,
+        "selfPercent": "0.20",
+        "totalHits": 301,
+        "totalPercent": "0.20",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 351,
+        "functionName": "defaultContextPaddingMessage",
+        "url": "/home/admin/application/node_modules/_egg-logger@3.6.1@egg-logger/lib/utils.js",
+        "lineNumber": 34,
+        "columnNumber": 31,
+        "selfHits": 301,
+        "selfPercent": "0.20",
+        "totalHits": 892,
+        "totalPercent": "0.60",
+        "isCnpmcore": true,
+        "category": "npm:egg-logger"
+      },
+      {
+        "id": 362,
+        "functionName": "download",
+        "url": "file:///home/admin/application/app/port/controller/package/DownloadPackageVersionTar.js",
+        "lineNumber": 26,
+        "columnNumber": 19,
+        "selfHits": 301,
+        "selfPercent": "0.20",
+        "totalHits": 3141,
+        "totalPercent": "2.10",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 259,
+        "functionName": "format",
+        "url": "/home/admin/application/node_modules/_egg-logger@3.6.1@egg-logger/lib/utils.js",
+        "lineNumber": 123,
+        "columnNumber": 9,
+        "selfHits": 290,
+        "selfPercent": "0.19",
+        "totalHits": 1748,
+        "totalPercent": "1.17",
+        "isCnpmcore": true,
+        "category": "npm:egg-logger"
+      },
+      {
+        "id": 404,
+        "functionName": "destroy",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 22,
+        "columnNumber": 18,
+        "selfHits": 284,
+        "selfPercent": "0.19",
+        "totalHits": 670,
+        "totalPercent": "0.45",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 3105,
+        "functionName": "encodeUrl",
+        "url": "/home/admin/application/node_modules/_encodeurl@2.0.0@encodeurl/index.js",
+        "lineNumber": 56,
+        "columnNumber": 20,
+        "selfHits": 282,
+        "selfPercent": "0.19",
+        "totalHits": 282,
+        "totalPercent": "0.19",
+        "isCnpmcore": true,
+        "category": "npm:encodeurl"
+      },
+      {
+        "id": 554,
+        "functionName": "matchKnownFields",
+        "url": "node:_http_incoming",
+        "lineNumber": 276,
+        "columnNumber": 26,
+        "selfHits": 279,
+        "selfPercent": "0.19",
+        "totalHits": 308,
+        "totalPercent": "0.21",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 1056,
+        "functionName": "captures",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Layer.js",
+        "lineNumber": 102,
+        "columnNumber": 13,
+        "selfHits": 266,
+        "selfPercent": "0.18",
+        "totalHits": 266,
+        "totalPercent": "0.18",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 465,
+        "functionName": "Socket._destroy",
+        "url": "node:net",
+        "lineNumber": 808,
+        "columnNumber": 37,
+        "selfHits": 265,
+        "selfPercent": "0.18",
+        "totalHits": 1361,
+        "totalPercent": "0.91",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 48,
+        "functionName": "query",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/drivers/mysql/index.js",
+        "lineNumber": 70,
+        "columnNumber": 16,
+        "selfHits": 263,
+        "selfPercent": "0.18",
+        "totalHits": 4164,
+        "totalPercent": "2.79",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 246,
+        "functionName": "beforeCall",
+        "url": "file:///home/admin/application/app/common/aop/AsyncTimer.js",
+        "lineNumber": 17,
+        "columnNumber": 21,
+        "selfHits": 262,
+        "selfPercent": "0.18",
+        "totalHits": 333,
+        "totalPercent": "0.22",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 240,
+        "functionName": "parserOnIncoming",
+        "url": "node:_http_server",
+        "lineNumber": 1084,
+        "columnNumber": 26,
+        "selfHits": 262,
+        "selfPercent": "0.18",
+        "totalHits": 5447,
+        "totalPercent": "3.65",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 169,
+        "functionName": "writevGeneric",
+        "url": "node:internal/stream_base_commons",
+        "lineNumber": 121,
+        "columnNumber": 23,
+        "selfHits": 259,
+        "selfPercent": "0.17",
+        "totalHits": 3126,
+        "totalPercent": "2.09",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      }
+    ],
+    "cnpmcoreHotspots": [
+      {
+        "id": 653,
+        "functionName": "Bone",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 151,
+        "columnNumber": 16,
+        "selfHits": 5594,
+        "selfPercent": "3.74",
+        "totalHits": 5594,
+        "totalPercent": "3.74",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 101,
+        "functionName": "match",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Layer.js",
+        "lineNumber": 72,
+        "columnNumber": 10,
+        "selfHits": 1607,
+        "selfPercent": "1.08",
+        "totalHits": 1607,
+        "totalPercent": "1.08",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 67,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Router.js",
+        "lineNumber": 137,
+        "columnNumber": 53,
+        "selfHits": 1282,
+        "selfPercent": "0.86",
+        "totalHits": 1282,
+        "totalPercent": "0.86",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 290,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 160,
+        "columnNumber": 72,
+        "selfHits": 978,
+        "selfPercent": "0.65",
+        "totalHits": 1050,
+        "totalPercent": "0.70",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 63,
+        "functionName": "injectProperty",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "lineNumber": 165,
+        "columnNumber": 19,
+        "selfHits": 945,
+        "selfPercent": "0.63",
+        "totalHits": 945,
+        "totalPercent": "0.63",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 128,
+        "functionName": "get",
+        "url": "/home/admin/application/node_modules/_mysql2@3.16.0@mysql2/lib/packets/column_definition.js",
+        "lineNumber": 263,
+        "columnNumber": 19,
+        "selfHits": 900,
+        "selfPercent": "0.60",
+        "totalHits": 1215,
+        "totalPercent": "0.81",
+        "isCnpmcore": true,
+        "category": "npm:mysql2"
+      },
+      {
+        "id": 61,
+        "functionName": "init",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/ContextInitiator.js",
+        "lineNumber": 13,
+        "columnNumber": 15,
+        "selfHits": 776,
+        "selfPercent": "0.52",
+        "totalHits": 2068,
+        "totalPercent": "1.38",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 118,
+        "functionName": "initWithInjectProperty",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "lineNumber": 20,
+        "columnNumber": 33,
+        "selfHits": 768,
+        "selfPercent": "0.51",
+        "totalHits": 4205,
+        "totalPercent": "2.81",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 358,
+        "functionName": "getLifecycleHook",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_lifecycle@4.0.0-beta.35@@eggjs/lifecycle/dist/LifycycleUtil.js",
+        "lineNumber": 72,
+        "columnNumber": 21,
+        "selfHits": 733,
+        "selfPercent": "0.49",
+        "totalHits": 1469,
+        "totalPercent": "0.98",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_lifecycle@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 117,
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/collection.js",
+        "lineNumber": 81,
+        "columnNumber": 18,
+        "selfHits": 710,
+        "selfPercent": "0.48",
+        "totalHits": 8016,
+        "totalPercent": "5.37",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 129,
+        "functionName": "instantiate",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 1283,
+        "columnNumber": 23,
+        "selfHits": 660,
+        "selfPercent": "0.44",
+        "totalHits": 7098,
+        "totalPercent": "4.75",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 640,
+        "functionName": "createCallContext",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_aop-runtime@4.0.0-beta.35@@eggjs/aop-runtime/dist/AspectExecutor.js",
+        "lineNumber": 20,
+        "columnNumber": 22,
+        "selfHits": 660,
+        "selfPercent": "0.44",
+        "totalHits": 660,
+        "totalPercent": "0.44",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_aop-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 54,
+        "functionName": "start",
+        "url": "/home/admin/application/node_modules/_mysql2@3.16.0@mysql2/lib/commands/query.js",
+        "lineNumber": 48,
+        "columnNumber": 8,
+        "selfHits": 618,
+        "selfPercent": "0.41",
+        "totalHits": 2049,
+        "totalPercent": "1.37",
+        "isCnpmcore": true,
+        "category": "npm:mysql2"
+      },
+      {
+        "id": 100,
+        "functionName": "match",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Router.js",
+        "lineNumber": 424,
+        "columnNumber": 10,
+        "selfHits": 589,
+        "selfPercent": "0.39",
+        "totalHits": 2197,
+        "totalPercent": "1.47",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 234,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 36,
+        "columnNumber": 31,
+        "selfHits": 550,
+        "selfPercent": "0.37",
+        "totalHits": 3234,
+        "totalPercent": "2.16",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 272,
+        "functionName": "teggRootProto",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/app/middleware/tegg_root_proto.js",
+        "lineNumber": 3,
+        "columnNumber": 40,
+        "selfHits": 497,
+        "selfPercent": "0.33",
+        "totalHits": 4162,
+        "totalPercent": "2.79",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 60,
+        "functionName": "getOrCreateEggObject",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/factory/EggContainerFactory.js",
+        "lineNumber": 28,
+        "columnNumber": 38,
+        "selfHits": 483,
+        "selfPercent": "0.32",
+        "totalHits": 2749,
+        "totalPercent": "1.84",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 95,
+        "functionName": "keyFromFields",
+        "url": "/home/admin/application/node_modules/_mysql2@3.16.0@mysql2/lib/parsers/parser_cache.js",
+        "lineNumber": 9,
+        "columnNumber": 23,
+        "selfHits": 423,
+        "selfPercent": "0.28",
+        "totalHits": 1638,
+        "totalPercent": "1.10",
+        "isCnpmcore": true,
+        "category": "npm:mysql2"
+      },
+      {
+        "id": 1135,
+        "functionName": "_setRaw",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 301,
+        "columnNumber": 12,
+        "selfHits": 386,
+        "selfPercent": "0.26",
+        "totalHits": 441,
+        "totalPercent": "0.30",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 609,
+        "functionName": "plusPackageVersionCounter",
+        "url": "file:///home/admin/application/app/core/service/PackageManagerService.js",
+        "lineNumber": 414,
+        "columnNumber": 30,
+        "selfHits": 334,
+        "selfPercent": "0.22",
+        "totalHits": 352,
+        "totalPercent": "0.24",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 366,
+        "functionName": "redirect",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_koa@3.1.0-beta.35@@eggjs/koa/dist/response.js",
+        "lineNumber": 219,
+        "columnNumber": 13,
+        "selfHits": 331,
+        "selfPercent": "0.22",
+        "totalHits": 2272,
+        "totalPercent": "1.52",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_koa@3.1.0-beta.35@@eggjs"
+      },
+      {
+        "id": 1721,
+        "functionName": "showPackageDownloads",
+        "url": "file:///home/admin/application/app/port/controller/DownloadController.js",
+        "lineNumber": 20,
+        "columnNumber": 31,
+        "selfHits": 322,
+        "selfPercent": "0.22",
+        "totalHits": 510,
+        "totalPercent": "0.34",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 351,
+        "functionName": "defaultContextPaddingMessage",
+        "url": "/home/admin/application/node_modules/_egg-logger@3.6.1@egg-logger/lib/utils.js",
+        "lineNumber": 34,
+        "columnNumber": 31,
+        "selfHits": 301,
+        "selfPercent": "0.20",
+        "totalHits": 892,
+        "totalPercent": "0.60",
+        "isCnpmcore": true,
+        "category": "npm:egg-logger"
+      },
+      {
+        "id": 362,
+        "functionName": "download",
+        "url": "file:///home/admin/application/app/port/controller/package/DownloadPackageVersionTar.js",
+        "lineNumber": 26,
+        "columnNumber": 19,
+        "selfHits": 301,
+        "selfPercent": "0.20",
+        "totalHits": 3141,
+        "totalPercent": "2.10",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 259,
+        "functionName": "format",
+        "url": "/home/admin/application/node_modules/_egg-logger@3.6.1@egg-logger/lib/utils.js",
+        "lineNumber": 123,
+        "columnNumber": 9,
+        "selfHits": 290,
+        "selfPercent": "0.19",
+        "totalHits": 1748,
+        "totalPercent": "1.17",
+        "isCnpmcore": true,
+        "category": "npm:egg-logger"
+      },
+      {
+        "id": 404,
+        "functionName": "destroy",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 22,
+        "columnNumber": 18,
+        "selfHits": 284,
+        "selfPercent": "0.19",
+        "totalHits": 670,
+        "totalPercent": "0.45",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 3105,
+        "functionName": "encodeUrl",
+        "url": "/home/admin/application/node_modules/_encodeurl@2.0.0@encodeurl/index.js",
+        "lineNumber": 56,
+        "columnNumber": 20,
+        "selfHits": 282,
+        "selfPercent": "0.19",
+        "totalHits": 282,
+        "totalPercent": "0.19",
+        "isCnpmcore": true,
+        "category": "npm:encodeurl"
+      },
+      {
+        "id": 1056,
+        "functionName": "captures",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Layer.js",
+        "lineNumber": 102,
+        "columnNumber": 13,
+        "selfHits": 266,
+        "selfPercent": "0.18",
+        "totalHits": 266,
+        "totalPercent": "0.18",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 48,
+        "functionName": "query",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/drivers/mysql/index.js",
+        "lineNumber": 70,
+        "columnNumber": 16,
+        "selfHits": 263,
+        "selfPercent": "0.18",
+        "totalHits": 4164,
+        "totalPercent": "2.79",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 246,
+        "functionName": "beforeCall",
+        "url": "file:///home/admin/application/app/common/aop/AsyncTimer.js",
+        "lineNumber": 17,
+        "columnNumber": 21,
+        "selfHits": 262,
+        "selfPercent": "0.18",
+        "totalHits": 333,
+        "totalPercent": "0.22",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      }
+    ],
+    "categoryStats": [
+      {
+        "category": "unknown",
+        "selfHits": 72732,
+        "selfPercent": "48.69",
+        "nodeCount": 314
+      },
+      {
+        "category": "node-internal",
+        "selfHits": 19872,
+        "selfPercent": "13.30",
+        "nodeCount": 1711
+      },
+      {
+        "category": "npm:leoric",
+        "selfHits": 12602,
+        "selfPercent": "8.44",
+        "nodeCount": 1013
+      },
+      {
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs",
+        "selfHits": 7168,
+        "selfPercent": "4.80",
+        "nodeCount": 139
+      },
+      {
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs",
+        "selfHits": 4187,
+        "selfPercent": "2.80",
+        "nodeCount": 8
+      },
+      {
+        "category": "npm:mysql2",
+        "selfHits": 3921,
+        "selfPercent": "2.62",
+        "nodeCount": 215
+      },
+      {
+        "category": "npm:_@eggjs_lifecycle@4.0.0-beta.35@@eggjs",
+        "selfHits": 3225,
+        "selfPercent": "2.16",
+        "nodeCount": 58
+      },
+      {
+        "category": "cnpmcore",
+        "selfHits": 3045,
+        "selfPercent": "2.04",
+        "nodeCount": 442
+      },
+      {
+        "category": "npm:egg-logger",
+        "selfHits": 2494,
+        "selfPercent": "1.67",
+        "nodeCount": 82
+      },
+      {
+        "category": "npm:_@eggjs_koa@3.1.0-beta.35@@eggjs",
+        "selfHits": 2422,
+        "selfPercent": "1.62",
+        "nodeCount": 169
+      },
+      {
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 2188,
+        "selfPercent": "1.46",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:_@eggjs_aop-runtime@4.0.0-beta.35@@eggjs",
+        "selfHits": 1860,
+        "selfPercent": "1.25",
+        "nodeCount": 37
+      },
+      {
+        "category": "npm:reflect-metadata",
+        "selfHits": 1594,
+        "selfPercent": "1.07",
+        "nodeCount": 232
+      },
+      {
+        "category": "npm:egg",
+        "selfHits": 1127,
+        "selfPercent": "0.75",
+        "nodeCount": 62
+      },
+      {
+        "category": "npm:_@eggjs_tegg-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 1087,
+        "selfPercent": "0.73",
+        "nodeCount": 43
+      },
+      {
+        "category": "npm:koa-compose",
+        "selfHits": 1046,
+        "selfPercent": "0.70",
+        "nodeCount": 42
+      },
+      {
+        "category": "npm:_@eggjs_security@5.0.0-beta.35@@eggjs",
+        "selfHits": 831,
+        "selfPercent": "0.56",
+        "nodeCount": 21
+      },
+      {
+        "category": "npm:utility",
+        "selfHits": 738,
+        "selfPercent": "0.49",
+        "nodeCount": 17
+      },
+      {
+        "category": "npm:negotiator",
+        "selfHits": 672,
+        "selfPercent": "0.45",
+        "nodeCount": 37
+      },
+      {
+        "category": "npm:_@eggjs_metadata@4.0.0-beta.35@@eggjs",
+        "selfHits": 501,
+        "selfPercent": "0.34",
+        "nodeCount": 16
+      },
+      {
+        "category": "npm:sqlstring",
+        "selfHits": 423,
+        "selfPercent": "0.28",
+        "nodeCount": 17
+      },
+      {
+        "category": "npm:semver",
+        "selfHits": 346,
+        "selfPercent": "0.23",
+        "nodeCount": 39
+      },
+      {
+        "category": "npm:xprofiler",
+        "selfHits": 332,
+        "selfPercent": "0.22",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:on-finished",
+        "selfHits": 321,
+        "selfPercent": "0.21",
+        "nodeCount": 9
+      },
+      {
+        "category": "npm:_@eggjs_tegg-common-util@4.0.0-beta.35@@eggjs",
+        "selfHits": 295,
+        "selfPercent": "0.20",
+        "nodeCount": 8
+      },
+      {
+        "category": "npm:tslib",
+        "selfHits": 286,
+        "selfPercent": "0.19",
+        "nodeCount": 17
+      },
+      {
+        "category": "npm:encodeurl",
+        "selfHits": 282,
+        "selfPercent": "0.19",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:oss-client",
+        "selfHits": 264,
+        "selfPercent": "0.18",
+        "nodeCount": 57
+      },
+      {
+        "category": "npm:vary",
+        "selfHits": 255,
+        "selfPercent": "0.17",
+        "nodeCount": 10
+      },
+      {
+        "category": "npm:_@eggjs_tracer@4.0.0-beta.35@@eggjs",
+        "selfHits": 239,
+        "selfPercent": "0.16",
+        "nodeCount": 11
+      },
+      {
+        "category": "npm:_@koa_cors@5.0.0@@koa",
+        "selfHits": 232,
+        "selfPercent": "0.16",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:oss-cnpm",
+        "selfHits": 223,
+        "selfPercent": "0.15",
+        "nodeCount": 12
+      },
+      {
+        "category": "npm:ioredis",
+        "selfHits": 212,
+        "selfPercent": "0.14",
+        "nodeCount": 39
+      },
+      {
+        "category": "npm:koa-bodyparser",
+        "selfHits": 189,
+        "selfPercent": "0.13",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:accepts",
+        "selfHits": 184,
+        "selfPercent": "0.12",
+        "nodeCount": 20
+      },
+      {
+        "category": "npm:ee-first",
+        "selfHits": 133,
+        "selfPercent": "0.09",
+        "nodeCount": 10
+      },
+      {
+        "category": "npm:urllib",
+        "selfHits": 117,
+        "selfPercent": "0.08",
+        "nodeCount": 52
+      },
+      {
+        "category": "npm:_@eggjs_koa-static-cache@7.0.0-beta.35@@eggjs",
+        "selfHits": 109,
+        "selfPercent": "0.07",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:lru.min",
+        "selfHits": 108,
+        "selfPercent": "0.07",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:undici",
+        "selfHits": 104,
+        "selfPercent": "0.07",
+        "nodeCount": 87
+      },
+      {
+        "category": "npm:koa-session",
+        "selfHits": 102,
+        "selfPercent": "0.07",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:_@eggjs_static@4.0.0-beta.35@@eggjs",
+        "selfHits": 100,
+        "selfPercent": "0.07",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@eggjs_background-task@4.0.0-beta.35@@eggjs",
+        "selfHits": 89,
+        "selfPercent": "0.06",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:_@eggjs_path-matching@3.0.0-beta.35@@eggjs",
+        "selfHits": 87,
+        "selfPercent": "0.06",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:lodash-es",
+        "selfHits": 82,
+        "selfPercent": "0.05",
+        "nodeCount": 52
+      },
+      {
+        "category": "npm:egg-status",
+        "selfHits": 80,
+        "selfPercent": "0.05",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:_@eggjs_core@7.0.0-beta.35@@eggjs",
+        "selfHits": 75,
+        "selfPercent": "0.05",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:mime-types",
+        "selfHits": 64,
+        "selfPercent": "0.04",
+        "nodeCount": 6
+      },
+      {
+        "category": "npm:type-is",
+        "selfHits": 58,
+        "selfPercent": "0.04",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:escape-html",
+        "selfHits": 56,
+        "selfPercent": "0.04",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@eggjs_errors@3.0.0-beta.35@@eggjs",
+        "selfHits": 48,
+        "selfPercent": "0.03",
+        "nodeCount": 26
+      },
+      {
+        "category": "npm:parseurl",
+        "selfHits": 43,
+        "selfPercent": "0.03",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:ylru",
+        "selfHits": 40,
+        "selfPercent": "0.03",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:koa-override",
+        "selfHits": 35,
+        "selfPercent": "0.02",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:ajv",
+        "selfHits": 30,
+        "selfPercent": "0.02",
+        "nodeCount": 13
+      },
+      {
+        "category": "npm:is-string",
+        "selfHits": 30,
+        "selfPercent": "0.02",
+        "nodeCount": 22
+      },
+      {
+        "category": "npm:is-number-object",
+        "selfHits": 26,
+        "selfPercent": "0.02",
+        "nodeCount": 12
+      },
+      {
+        "category": "npm:is-boolean-object",
+        "selfHits": 22,
+        "selfPercent": "0.01",
+        "nodeCount": 14
+      },
+      {
+        "category": "npm:redis-parser",
+        "selfHits": 19,
+        "selfPercent": "0.01",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:hosted-git-info",
+        "selfHits": 18,
+        "selfPercent": "0.01",
+        "nodeCount": 16
+      },
+      {
+        "category": "npm:is-weakset",
+        "selfHits": 18,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:is-array-buffer",
+        "selfHits": 18,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:is-bigint",
+        "selfHits": 17,
+        "selfPercent": "0.01",
+        "nodeCount": 6
+      },
+      {
+        "category": "npm:_@eggjs_orm-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 15,
+        "selfPercent": "0.01",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:denque",
+        "selfHits": 15,
+        "selfPercent": "0.01",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:dayjs",
+        "selfHits": 14,
+        "selfPercent": "0.01",
+        "nodeCount": 25
+      },
+      {
+        "category": "npm:tar",
+        "selfHits": 14,
+        "selfPercent": "0.01",
+        "nodeCount": 57
+      },
+      {
+        "category": "npm:iconv-lite",
+        "selfHits": 14,
+        "selfPercent": "0.01",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:is-date-object",
+        "selfHits": 13,
+        "selfPercent": "0.01",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:validate-npm-package-name",
+        "selfHits": 12,
+        "selfPercent": "0.01",
+        "nodeCount": 7
+      },
+      {
+        "category": "npm:is-set",
+        "selfHits": 12,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:sendmessage",
+        "selfHits": 12,
+        "selfPercent": "0.01",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:is-map",
+        "selfHits": 11,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:is-shared-array-buffer",
+        "selfHits": 11,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:ajv-keywords",
+        "selfHits": 10,
+        "selfPercent": "0.01",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:is-weakmap",
+        "selfHits": 10,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "other",
+        "selfHits": 10,
+        "selfPercent": "0.01",
+        "nodeCount": 15
+      },
+      {
+        "category": "npm:secure-json-parse",
+        "selfHits": 8,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@eggjs_schedule@6.0.0-beta.35@@eggjs",
+        "selfHits": 7,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@eggjs_aop-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 5,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:npm-package-arg",
+        "selfHits": 5,
+        "selfPercent": "0.00",
+        "nodeCount": 23
+      },
+      {
+        "category": "npm:deep-equal",
+        "selfHits": 5,
+        "selfPercent": "0.00",
+        "nodeCount": 30
+      },
+      {
+        "category": "npm:ssri",
+        "selfHits": 5,
+        "selfPercent": "0.00",
+        "nodeCount": 20
+      },
+      {
+        "category": "npm:source-map-support",
+        "selfHits": 5,
+        "selfPercent": "0.00",
+        "nodeCount": 7
+      },
+      {
+        "category": "npm:_@eggjs_core-decorator@4.0.0-beta.35@@eggjs",
+        "selfHits": 4,
+        "selfPercent": "0.00",
+        "nodeCount": 21
+      },
+      {
+        "category": "npm:debug",
+        "selfHits": 4,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@elastic_transport@8.10.1@@elastic",
+        "selfHits": 4,
+        "selfPercent": "0.00",
+        "nodeCount": 11
+      },
+      {
+        "category": "npm:lru-cache",
+        "selfHits": 3,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:http-errors",
+        "selfHits": 3,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@cnpmjs_packument@1.6.0@@cnpmjs",
+        "selfHits": 3,
+        "selfPercent": "0.00",
+        "nodeCount": 27
+      },
+      {
+        "category": "npm:httpx",
+        "selfHits": 3,
+        "selfPercent": "0.00",
+        "nodeCount": 8
+      },
+      {
+        "category": "npm:which-boxed-primitive",
+        "selfHits": 2,
+        "selfPercent": "0.00",
+        "nodeCount": 14
+      },
+      {
+        "category": "npm:side-channel",
+        "selfHits": 2,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:side-channel-weakmap",
+        "selfHits": 2,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@aliyunmq_mq-http-sdk@1.0.4@@aliyunmq",
+        "selfHits": 2,
+        "selfPercent": "0.00",
+        "nodeCount": 7
+      },
+      {
+        "category": "npm:sax",
+        "selfHits": 2,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:minipass",
+        "selfHits": 2,
+        "selfPercent": "0.00",
+        "nodeCount": 27
+      },
+      {
+        "category": "npm:_@eggjs_schedule-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:mime",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@eggjs_typebox-validate@4.0.0-beta.35@@eggjs",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 7
+      },
+      {
+        "category": "npm:which-collection",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:xml2js",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:_@alicloud_openapi-util@0.3.2@@alicloud",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@alicloud_tea-typescript@1.8.0@@alicloud",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 7
+      },
+      {
+        "category": "npm:cluster-client",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@isaacs_fs-minipass@4.0.1@@isaacs",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 15
+      },
+      {
+        "category": "npm:minizlib",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 6
+      },
+      {
+        "category": "npm:_@eggjs_rds@1.5.0@@eggjs",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@eggjs_eventbus-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@elastic_elasticsearch@8.19.1@@elastic",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@opentelemetry_api@1.9.0@@opentelemetry",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 8
+      },
+      {
+        "category": "npm:cache-content-type",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@eggjs_orm-decorator@4.0.0-beta.35@@eggjs",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:_@eggjs_view@4.0.0-beta.35@@eggjs",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:egg-view-nunjucks",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:nunjucks",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 6
+      },
+      {
+        "category": "npm:asap",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:_@eggjs_eventbus-runtime@4.0.0-beta.35@@eggjs",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:_@alicloud_openapi-client@0.4.15@@alicloud",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:tcp-base",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:graceful-fs",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      }
+    ]
+  },
+  {
+    "info": {
+      "fileName": "registry.npmmirror.com-08-x-cpuprofile-2969849-20251230-0",
+      "nodeCount": 4476,
+      "sampleCount": 156772,
+      "durationMs": 180017.956,
+      "durationSec": "180.02"
+    },
+    "hotspots": [
+      {
+        "id": 59,
+        "functionName": "(idle)",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 98671,
+        "selfPercent": "62.94",
+        "totalHits": 98671,
+        "totalPercent": "62.94",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 62,
+        "functionName": "(program)",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 2587,
+        "selfPercent": "1.65",
+        "totalHits": 2587,
+        "totalPercent": "1.65",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 8,
+        "functionName": "runMicrotasks",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 2305,
+        "selfPercent": "1.47",
+        "totalHits": 38998,
+        "totalPercent": "24.88",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 315,
+        "functionName": "Bone",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 151,
+        "columnNumber": 16,
+        "selfHits": 2026,
+        "selfPercent": "1.29",
+        "totalHits": 2026,
+        "totalPercent": "1.29",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 51,
+        "functionName": "writev",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 2017,
+        "selfPercent": "1.29",
+        "totalHits": 2017,
+        "totalPercent": "1.29",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 130,
+        "functionName": "match",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Layer.js",
+        "lineNumber": 72,
+        "columnNumber": 10,
+        "selfHits": 1447,
+        "selfPercent": "0.92",
+        "totalHits": 1447,
+        "totalPercent": "0.92",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 21,
+        "functionName": "_addHeaderLine",
+        "url": "node:_http_incoming",
+        "lineNumber": 382,
+        "columnNumber": 24,
+        "selfHits": 1287,
+        "selfPercent": "0.82",
+        "totalHits": 1527,
+        "totalPercent": "0.97",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 310,
+        "functionName": "(garbage collector)",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 1160,
+        "selfPercent": "0.74",
+        "totalHits": 1160,
+        "totalPercent": "0.74",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 156,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Router.js",
+        "lineNumber": 137,
+        "columnNumber": 53,
+        "selfHits": 971,
+        "selfPercent": "0.62",
+        "totalHits": 971,
+        "totalPercent": "0.62",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 87,
+        "functionName": "writeUtf8String",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 865,
+        "selfPercent": "0.55",
+        "totalHits": 865,
+        "totalPercent": "0.55",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 278,
+        "functionName": "injectProperty",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "lineNumber": 165,
+        "columnNumber": 19,
+        "selfHits": 865,
+        "selfPercent": "0.55",
+        "totalHits": 865,
+        "totalPercent": "0.55",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 217,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 160,
+        "columnNumber": 72,
+        "selfHits": 703,
+        "selfPercent": "0.45",
+        "totalHits": 792,
+        "totalPercent": "0.51",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 211,
+        "functionName": "init",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/ContextInitiator.js",
+        "lineNumber": 13,
+        "columnNumber": 15,
+        "selfHits": 680,
+        "selfPercent": "0.43",
+        "totalHits": 1764,
+        "totalPercent": "1.13",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 141,
+        "functionName": "parseChannelMessages",
+        "url": "node:internal/child_process/serialization",
+        "lineNumber": 142,
+        "columnNumber": 24,
+        "selfHits": 631,
+        "selfPercent": "0.40",
+        "totalHits": 741,
+        "totalPercent": "0.47",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 32,
+        "functionName": "close",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 595,
+        "selfPercent": "0.38",
+        "totalHits": 595,
+        "totalPercent": "0.38",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 282,
+        "functionName": "getLifecycleHook",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_lifecycle@4.0.0-beta.35@@eggjs/lifecycle/dist/LifycycleUtil.js",
+        "lineNumber": 72,
+        "columnNumber": 21,
+        "selfHits": 594,
+        "selfPercent": "0.38",
+        "totalHits": 1139,
+        "totalPercent": "0.73",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_lifecycle@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 60,
+        "functionName": "initWithInjectProperty",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "lineNumber": 20,
+        "columnNumber": 33,
+        "selfHits": 584,
+        "selfPercent": "0.37",
+        "totalHits": 3110,
+        "totalPercent": "1.98",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 641,
+        "functionName": "createCallContext",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_aop-runtime@4.0.0-beta.35@@eggjs/aop-runtime/dist/AspectExecutor.js",
+        "lineNumber": 20,
+        "columnNumber": 22,
+        "selfHits": 492,
+        "selfPercent": "0.31",
+        "totalHits": 492,
+        "totalPercent": "0.31",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_aop-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 1068,
+        "functionName": "showPackageDownloads",
+        "url": "file:///home/admin/application/app/port/controller/DownloadController.js",
+        "lineNumber": 20,
+        "columnNumber": 31,
+        "selfHits": 473,
+        "selfPercent": "0.30",
+        "totalHits": 714,
+        "totalPercent": "0.46",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 629,
+        "functionName": "writeUtf8String",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 411,
+        "selfPercent": "0.26",
+        "totalHits": 411,
+        "totalPercent": "0.26",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 249,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 36,
+        "columnNumber": 31,
+        "selfHits": 408,
+        "selfPercent": "0.26",
+        "totalHits": 2243,
+        "totalPercent": "1.43",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 182,
+        "functionName": "getOrCreateEggObject",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/factory/EggContainerFactory.js",
+        "lineNumber": 28,
+        "columnNumber": 38,
+        "selfHits": 392,
+        "selfPercent": "0.25",
+        "totalHits": 2330,
+        "totalPercent": "1.49",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 3,
+        "functionName": "processTicksAndRejections",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 71,
+        "columnNumber": 35,
+        "selfHits": 390,
+        "selfPercent": "0.25",
+        "totalHits": 47318,
+        "totalPercent": "30.18",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 138,
+        "functionName": "Socket",
+        "url": "node:net",
+        "lineNumber": 362,
+        "columnNumber": 16,
+        "selfHits": 325,
+        "selfPercent": "0.21",
+        "totalHits": 844,
+        "totalPercent": "0.54",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 259,
+        "functionName": "instantiate",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 1283,
+        "columnNumber": 23,
+        "selfHits": 304,
+        "selfPercent": "0.19",
+        "totalHits": 2799,
+        "totalPercent": "1.79",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 129,
+        "functionName": "match",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Router.js",
+        "lineNumber": 424,
+        "columnNumber": 10,
+        "selfHits": 299,
+        "selfPercent": "0.19",
+        "totalHits": 1747,
+        "totalPercent": "1.11",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 152,
+        "functionName": "writeLatin1String",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 278,
+        "selfPercent": "0.18",
+        "totalHits": 278,
+        "totalPercent": "0.18",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 154,
+        "functionName": "connectionListenerInternal",
+        "url": "node:_http_server",
+        "lineNumber": 702,
+        "columnNumber": 36,
+        "selfHits": 256,
+        "selfPercent": "0.16",
+        "totalHits": 789,
+        "totalPercent": "0.50",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 387,
+        "functionName": "plusPackageVersionCounter",
+        "url": "file:///home/admin/application/app/core/service/PackageManagerService.js",
+        "lineNumber": 414,
+        "columnNumber": 30,
+        "selfHits": 255,
+        "selfPercent": "0.16",
+        "totalHits": 264,
+        "totalPercent": "0.17",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 285,
+        "functionName": "format",
+        "url": "/home/admin/application/node_modules/_egg-logger@3.6.1@egg-logger/lib/utils.js",
+        "lineNumber": 123,
+        "columnNumber": 9,
+        "selfHits": 250,
+        "selfPercent": "0.16",
+        "totalHits": 1113,
+        "totalPercent": "0.71",
+        "isCnpmcore": true,
+        "category": "npm:egg-logger"
+      },
+      {
+        "id": 385,
+        "functionName": "_storeHeader",
+        "url": "node:_http_outgoing",
+        "lineNumber": 397,
+        "columnNumber": 22,
+        "selfHits": 243,
+        "selfPercent": "0.16",
+        "totalHits": 253,
+        "totalPercent": "0.16",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 258,
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/collection.js",
+        "lineNumber": 81,
+        "columnNumber": 18,
+        "selfHits": 229,
+        "selfPercent": "0.15",
+        "totalHits": 3079,
+        "totalPercent": "1.96",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 204,
+        "functionName": "teggRootProto",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/app/middleware/tegg_root_proto.js",
+        "lineNumber": 3,
+        "columnNumber": 40,
+        "selfHits": 226,
+        "selfPercent": "0.14",
+        "totalHits": 2580,
+        "totalPercent": "1.65",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 726,
+        "functionName": "beforeCall",
+        "url": "file:///home/admin/application/app/common/aop/AsyncTimer.js",
+        "lineNumber": 17,
+        "columnNumber": 21,
+        "selfHits": 226,
+        "selfPercent": "0.14",
+        "totalHits": 283,
+        "totalPercent": "0.18",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 58,
+        "functionName": "destroy",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 22,
+        "columnNumber": 18,
+        "selfHits": 217,
+        "selfPercent": "0.14",
+        "totalHits": 495,
+        "totalPercent": "0.32",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 210,
+        "functionName": "matchKnownFields",
+        "url": "node:_http_incoming",
+        "lineNumber": 276,
+        "columnNumber": 26,
+        "selfHits": 212,
+        "selfPercent": "0.14",
+        "totalHits": 240,
+        "totalPercent": "0.15",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 43,
+        "functionName": "_respond",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_koa@3.1.0-beta.35@@eggjs/koa/dist/application.js",
+        "lineNumber": 218,
+        "columnNumber": 13,
+        "selfHits": 206,
+        "selfPercent": "0.13",
+        "totalHits": 4007,
+        "totalPercent": "2.56",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_koa@3.1.0-beta.35@@eggjs"
+      },
+      {
+        "id": 155,
+        "functionName": "initialize",
+        "url": "",
+        "lineNumber": 0,
+        "columnNumber": 0,
+        "selfHits": 198,
+        "selfPercent": "0.13",
+        "totalHits": 198,
+        "totalPercent": "0.13",
+        "isCnpmcore": false,
+        "category": "unknown"
+      },
+      {
+        "id": 50,
+        "functionName": "writevGeneric",
+        "url": "node:internal/stream_base_commons",
+        "lineNumber": 121,
+        "columnNumber": 23,
+        "selfHits": 198,
+        "selfPercent": "0.13",
+        "totalHits": 2476,
+        "totalPercent": "1.58",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 1067,
+        "functionName": "_setRaw",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 301,
+        "columnNumber": 12,
+        "selfHits": 191,
+        "selfPercent": "0.12",
+        "totalHits": 217,
+        "totalPercent": "0.14",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 171,
+        "functionName": "siteFile",
+        "url": "file:///home/admin/application/node_modules/_egg@4.1.0-beta.35@egg/dist/app/middleware/site_file.js",
+        "lineNumber": 6,
+        "columnNumber": 35,
+        "selfHits": 181,
+        "selfPercent": "0.12",
+        "totalHits": 617,
+        "totalPercent": "0.39",
+        "isCnpmcore": true,
+        "category": "npm:egg"
+      },
+      {
+        "id": 30,
+        "functionName": "Socket._destroy",
+        "url": "node:net",
+        "lineNumber": 808,
+        "columnNumber": 37,
+        "selfHits": 181,
+        "selfPercent": "0.12",
+        "totalHits": 1072,
+        "totalPercent": "0.68",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 18,
+        "functionName": "parserOnIncoming",
+        "url": "node:_http_server",
+        "lineNumber": 1084,
+        "columnNumber": 26,
+        "selfHits": 171,
+        "selfPercent": "0.11",
+        "totalHits": 3575,
+        "totalPercent": "2.28",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 2132,
+        "functionName": "nextTick",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 111,
+        "columnNumber": 18,
+        "selfHits": 170,
+        "selfPercent": "0.11",
+        "totalHits": 171,
+        "totalPercent": "0.11",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 307,
+        "functionName": "get",
+        "url": "/home/admin/application/node_modules/_mysql2@3.16.0@mysql2/lib/packets/column_definition.js",
+        "lineNumber": 263,
+        "columnNumber": 19,
+        "selfHits": 170,
+        "selfPercent": "0.11",
+        "totalHits": 217,
+        "totalPercent": "0.14",
+        "isCnpmcore": true,
+        "category": "npm:mysql2"
+      },
+      {
+        "id": 938,
+        "functionName": "captures",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Layer.js",
+        "lineNumber": 102,
+        "columnNumber": 13,
+        "selfHits": 168,
+        "selfPercent": "0.11",
+        "totalHits": 168,
+        "totalPercent": "0.11",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 1124,
+        "functionName": "nextTick",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 111,
+        "columnNumber": 18,
+        "selfHits": 168,
+        "selfPercent": "0.11",
+        "totalHits": 168,
+        "totalPercent": "0.11",
+        "isCnpmcore": false,
+        "category": "node-internal"
+      },
+      {
+        "id": 948,
+        "functionName": "getOrCreateEggObject",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-plugin@4.0.0-beta.35@@eggjs/tegg-plugin/dist/lib/AppLoadUnitInstance.js",
+        "lineNumber": 51,
+        "columnNumber": 31,
+        "selfHits": 167,
+        "selfPercent": "0.11",
+        "totalHits": 230,
+        "totalPercent": "0.15",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 56,
+        "functionName": "redirect",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_koa@3.1.0-beta.35@@eggjs/koa/dist/response.js",
+        "lineNumber": 219,
+        "columnNumber": 13,
+        "selfHits": 165,
+        "selfPercent": "0.11",
+        "totalHits": 1465,
+        "totalPercent": "0.93",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_koa@3.1.0-beta.35@@eggjs"
+      },
+      {
+        "id": 1065,
+        "functionName": "_setRawSaved",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 315,
+        "columnNumber": 17,
+        "selfHits": 165,
+        "selfPercent": "0.11",
+        "totalHits": 197,
+        "totalPercent": "0.13",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      }
+    ],
+    "cnpmcoreHotspots": [
+      {
+        "id": 315,
+        "functionName": "Bone",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 151,
+        "columnNumber": 16,
+        "selfHits": 2026,
+        "selfPercent": "1.29",
+        "totalHits": 2026,
+        "totalPercent": "1.29",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 130,
+        "functionName": "match",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Layer.js",
+        "lineNumber": 72,
+        "columnNumber": 10,
+        "selfHits": 1447,
+        "selfPercent": "0.92",
+        "totalHits": 1447,
+        "totalPercent": "0.92",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 156,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Router.js",
+        "lineNumber": 137,
+        "columnNumber": 53,
+        "selfHits": 971,
+        "selfPercent": "0.62",
+        "totalHits": 971,
+        "totalPercent": "0.62",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 278,
+        "functionName": "injectProperty",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "lineNumber": 165,
+        "columnNumber": 19,
+        "selfHits": 865,
+        "selfPercent": "0.55",
+        "totalHits": 865,
+        "totalPercent": "0.55",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 217,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 160,
+        "columnNumber": 72,
+        "selfHits": 703,
+        "selfPercent": "0.45",
+        "totalHits": 792,
+        "totalPercent": "0.51",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 211,
+        "functionName": "init",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/ContextInitiator.js",
+        "lineNumber": 13,
+        "columnNumber": 15,
+        "selfHits": 680,
+        "selfPercent": "0.43",
+        "totalHits": 1764,
+        "totalPercent": "1.13",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 282,
+        "functionName": "getLifecycleHook",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_lifecycle@4.0.0-beta.35@@eggjs/lifecycle/dist/LifycycleUtil.js",
+        "lineNumber": 72,
+        "columnNumber": 21,
+        "selfHits": 594,
+        "selfPercent": "0.38",
+        "totalHits": 1139,
+        "totalPercent": "0.73",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_lifecycle@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 60,
+        "functionName": "initWithInjectProperty",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/impl/EggObjectImpl.js",
+        "lineNumber": 20,
+        "columnNumber": 33,
+        "selfHits": 584,
+        "selfPercent": "0.37",
+        "totalHits": 3110,
+        "totalPercent": "1.98",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 641,
+        "functionName": "createCallContext",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_aop-runtime@4.0.0-beta.35@@eggjs/aop-runtime/dist/AspectExecutor.js",
+        "lineNumber": 20,
+        "columnNumber": 22,
+        "selfHits": 492,
+        "selfPercent": "0.31",
+        "totalHits": 492,
+        "totalPercent": "0.31",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_aop-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 1068,
+        "functionName": "showPackageDownloads",
+        "url": "file:///home/admin/application/app/port/controller/DownloadController.js",
+        "lineNumber": 20,
+        "columnNumber": 31,
+        "selfHits": 473,
+        "selfPercent": "0.30",
+        "totalHits": 714,
+        "totalPercent": "0.46",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 249,
+        "functionName": "(anonymous)",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/lib/impl/http/HTTPMethodRegister.js",
+        "lineNumber": 36,
+        "columnNumber": 31,
+        "selfHits": 408,
+        "selfPercent": "0.26",
+        "totalHits": 2243,
+        "totalPercent": "1.43",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 182,
+        "functionName": "getOrCreateEggObject",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/factory/EggContainerFactory.js",
+        "lineNumber": 28,
+        "columnNumber": 38,
+        "selfHits": 392,
+        "selfPercent": "0.25",
+        "totalHits": 2330,
+        "totalPercent": "1.49",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 259,
+        "functionName": "instantiate",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 1283,
+        "columnNumber": 23,
+        "selfHits": 304,
+        "selfPercent": "0.19",
+        "totalHits": 2799,
+        "totalPercent": "1.79",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 129,
+        "functionName": "match",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Router.js",
+        "lineNumber": 424,
+        "columnNumber": 10,
+        "selfHits": 299,
+        "selfPercent": "0.19",
+        "totalHits": 1747,
+        "totalPercent": "1.11",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 387,
+        "functionName": "plusPackageVersionCounter",
+        "url": "file:///home/admin/application/app/core/service/PackageManagerService.js",
+        "lineNumber": 414,
+        "columnNumber": 30,
+        "selfHits": 255,
+        "selfPercent": "0.16",
+        "totalHits": 264,
+        "totalPercent": "0.17",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 285,
+        "functionName": "format",
+        "url": "/home/admin/application/node_modules/_egg-logger@3.6.1@egg-logger/lib/utils.js",
+        "lineNumber": 123,
+        "columnNumber": 9,
+        "selfHits": 250,
+        "selfPercent": "0.16",
+        "totalHits": 1113,
+        "totalPercent": "0.71",
+        "isCnpmcore": true,
+        "category": "npm:egg-logger"
+      },
+      {
+        "id": 258,
+        "functionName": "dispatch",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/collection.js",
+        "lineNumber": 81,
+        "columnNumber": 18,
+        "selfHits": 229,
+        "selfPercent": "0.15",
+        "totalHits": 3079,
+        "totalPercent": "1.96",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 204,
+        "functionName": "teggRootProto",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs/controller-plugin/dist/app/middleware/tegg_root_proto.js",
+        "lineNumber": 3,
+        "columnNumber": 40,
+        "selfHits": 226,
+        "selfPercent": "0.14",
+        "totalHits": 2580,
+        "totalPercent": "1.65",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 726,
+        "functionName": "beforeCall",
+        "url": "file:///home/admin/application/app/common/aop/AsyncTimer.js",
+        "lineNumber": 17,
+        "columnNumber": 21,
+        "selfHits": 226,
+        "selfPercent": "0.14",
+        "totalHits": 283,
+        "totalPercent": "0.18",
+        "isCnpmcore": true,
+        "category": "cnpmcore"
+      },
+      {
+        "id": 58,
+        "functionName": "destroy",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs/tegg-runtime/dist/model/AbstractEggContext.js",
+        "lineNumber": 22,
+        "columnNumber": 18,
+        "selfHits": 217,
+        "selfPercent": "0.14",
+        "totalHits": 495,
+        "totalPercent": "0.32",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 43,
+        "functionName": "_respond",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_koa@3.1.0-beta.35@@eggjs/koa/dist/application.js",
+        "lineNumber": 218,
+        "columnNumber": 13,
+        "selfHits": 206,
+        "selfPercent": "0.13",
+        "totalHits": 4007,
+        "totalPercent": "2.56",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_koa@3.1.0-beta.35@@eggjs"
+      },
+      {
+        "id": 1067,
+        "functionName": "_setRaw",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 301,
+        "columnNumber": 12,
+        "selfHits": 191,
+        "selfPercent": "0.12",
+        "totalHits": 217,
+        "totalPercent": "0.14",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 171,
+        "functionName": "siteFile",
+        "url": "file:///home/admin/application/node_modules/_egg@4.1.0-beta.35@egg/dist/app/middleware/site_file.js",
+        "lineNumber": 6,
+        "columnNumber": 35,
+        "selfHits": 181,
+        "selfPercent": "0.12",
+        "totalHits": 617,
+        "totalPercent": "0.39",
+        "isCnpmcore": true,
+        "category": "npm:egg"
+      },
+      {
+        "id": 307,
+        "functionName": "get",
+        "url": "/home/admin/application/node_modules/_mysql2@3.16.0@mysql2/lib/packets/column_definition.js",
+        "lineNumber": 263,
+        "columnNumber": 19,
+        "selfHits": 170,
+        "selfPercent": "0.11",
+        "totalHits": 217,
+        "totalPercent": "0.14",
+        "isCnpmcore": true,
+        "category": "npm:mysql2"
+      },
+      {
+        "id": 938,
+        "functionName": "captures",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_router@4.0.0-beta.35@@eggjs/router/dist/Layer.js",
+        "lineNumber": 102,
+        "columnNumber": 13,
+        "selfHits": 168,
+        "selfPercent": "0.11",
+        "totalHits": 168,
+        "totalPercent": "0.11",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 948,
+        "functionName": "getOrCreateEggObject",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_tegg-plugin@4.0.0-beta.35@@eggjs/tegg-plugin/dist/lib/AppLoadUnitInstance.js",
+        "lineNumber": 51,
+        "columnNumber": 31,
+        "selfHits": 167,
+        "selfPercent": "0.11",
+        "totalHits": 230,
+        "totalPercent": "0.15",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_tegg-plugin@4.0.0-beta.35@@eggjs"
+      },
+      {
+        "id": 56,
+        "functionName": "redirect",
+        "url": "file:///home/admin/application/node_modules/_@eggjs_koa@3.1.0-beta.35@@eggjs/koa/dist/response.js",
+        "lineNumber": 219,
+        "columnNumber": 13,
+        "selfHits": 165,
+        "selfPercent": "0.11",
+        "totalHits": 1465,
+        "totalPercent": "0.93",
+        "isCnpmcore": true,
+        "category": "npm:_@eggjs_koa@3.1.0-beta.35@@eggjs"
+      },
+      {
+        "id": 1065,
+        "functionName": "_setRawSaved",
+        "url": "/home/admin/application/node_modules/_leoric@2.14.0@leoric/lib/bone.js",
+        "lineNumber": 315,
+        "columnNumber": 17,
+        "selfHits": 165,
+        "selfPercent": "0.11",
+        "totalHits": 197,
+        "totalPercent": "0.13",
+        "isCnpmcore": true,
+        "category": "npm:leoric"
+      },
+      {
+        "id": 327,
+        "functionName": "defaultContextPaddingMessage",
+        "url": "/home/admin/application/node_modules/_egg-logger@3.6.1@egg-logger/lib/utils.js",
+        "lineNumber": 34,
+        "columnNumber": 31,
+        "selfHits": 164,
+        "selfPercent": "0.10",
+        "totalHits": 479,
+        "totalPercent": "0.31",
+        "isCnpmcore": true,
+        "category": "npm:egg-logger"
+      },
+      {
+        "id": 2555,
+        "functionName": "encodeUrl",
+        "url": "/home/admin/application/node_modules/_encodeurl@2.0.0@encodeurl/index.js",
+        "lineNumber": 56,
+        "columnNumber": 20,
+        "selfHits": 162,
+        "selfPercent": "0.10",
+        "totalHits": 162,
+        "totalPercent": "0.10",
+        "isCnpmcore": true,
+        "category": "npm:encodeurl"
+      }
+    ],
+    "categoryStats": [
+      {
+        "category": "unknown",
+        "selfHits": 111558,
+        "selfPercent": "71.16",
+        "nodeCount": 218
+      },
+      {
+        "category": "node-internal",
+        "selfHits": 12918,
+        "selfPercent": "8.24",
+        "nodeCount": 1367
+      },
+      {
+        "category": "npm:_@eggjs_tegg-runtime@4.0.0-beta.35@@eggjs",
+        "selfHits": 5560,
+        "selfPercent": "3.55",
+        "nodeCount": 116
+      },
+      {
+        "category": "npm:leoric",
+        "selfHits": 3936,
+        "selfPercent": "2.51",
+        "nodeCount": 747
+      },
+      {
+        "category": "npm:_@eggjs_router@4.0.0-beta.35@@eggjs",
+        "selfHits": 3142,
+        "selfPercent": "2.00",
+        "nodeCount": 8
+      },
+      {
+        "category": "npm:_@eggjs_lifecycle@4.0.0-beta.35@@eggjs",
+        "selfHits": 2529,
+        "selfPercent": "1.61",
+        "nodeCount": 60
+      },
+      {
+        "category": "cnpmcore",
+        "selfHits": 1894,
+        "selfPercent": "1.21",
+        "nodeCount": 322
+      },
+      {
+        "category": "npm:_@eggjs_koa@3.1.0-beta.35@@eggjs",
+        "selfHits": 1621,
+        "selfPercent": "1.03",
+        "nodeCount": 157
+      },
+      {
+        "category": "npm:_@eggjs_controller-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 1441,
+        "selfPercent": "0.92",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:egg-logger",
+        "selfHits": 1362,
+        "selfPercent": "0.87",
+        "nodeCount": 56
+      },
+      {
+        "category": "npm:_@eggjs_aop-runtime@4.0.0-beta.35@@eggjs",
+        "selfHits": 1329,
+        "selfPercent": "0.85",
+        "nodeCount": 31
+      },
+      {
+        "category": "npm:reflect-metadata",
+        "selfHits": 1099,
+        "selfPercent": "0.70",
+        "nodeCount": 201
+      },
+      {
+        "category": "npm:mysql2",
+        "selfHits": 789,
+        "selfPercent": "0.50",
+        "nodeCount": 169
+      },
+      {
+        "category": "npm:_@eggjs_tegg-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 750,
+        "selfPercent": "0.48",
+        "nodeCount": 47
+      },
+      {
+        "category": "npm:egg",
+        "selfHits": 696,
+        "selfPercent": "0.44",
+        "nodeCount": 62
+      },
+      {
+        "category": "npm:koa-compose",
+        "selfHits": 673,
+        "selfPercent": "0.43",
+        "nodeCount": 40
+      },
+      {
+        "category": "npm:_@eggjs_security@5.0.0-beta.35@@eggjs",
+        "selfHits": 580,
+        "selfPercent": "0.37",
+        "nodeCount": 21
+      },
+      {
+        "category": "npm:negotiator",
+        "selfHits": 512,
+        "selfPercent": "0.33",
+        "nodeCount": 36
+      },
+      {
+        "category": "npm:utility",
+        "selfHits": 482,
+        "selfPercent": "0.31",
+        "nodeCount": 10
+      },
+      {
+        "category": "npm:_@eggjs_metadata@4.0.0-beta.35@@eggjs",
+        "selfHits": 285,
+        "selfPercent": "0.18",
+        "nodeCount": 17
+      },
+      {
+        "category": "npm:on-finished",
+        "selfHits": 243,
+        "selfPercent": "0.16",
+        "nodeCount": 12
+      },
+      {
+        "category": "npm:xprofiler",
+        "selfHits": 206,
+        "selfPercent": "0.13",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:oss-client",
+        "selfHits": 187,
+        "selfPercent": "0.12",
+        "nodeCount": 31
+      },
+      {
+        "category": "npm:semver",
+        "selfHits": 185,
+        "selfPercent": "0.12",
+        "nodeCount": 39
+      },
+      {
+        "category": "npm:vary",
+        "selfHits": 173,
+        "selfPercent": "0.11",
+        "nodeCount": 7
+      },
+      {
+        "category": "npm:_@eggjs_tegg-common-util@4.0.0-beta.35@@eggjs",
+        "selfHits": 167,
+        "selfPercent": "0.11",
+        "nodeCount": 6
+      },
+      {
+        "category": "npm:encodeurl",
+        "selfHits": 162,
+        "selfPercent": "0.10",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:tslib",
+        "selfHits": 160,
+        "selfPercent": "0.10",
+        "nodeCount": 14
+      },
+      {
+        "category": "npm:_@eggjs_tracer@4.0.0-beta.35@@eggjs",
+        "selfHits": 142,
+        "selfPercent": "0.09",
+        "nodeCount": 9
+      },
+      {
+        "category": "npm:ioredis",
+        "selfHits": 142,
+        "selfPercent": "0.09",
+        "nodeCount": 38
+      },
+      {
+        "category": "npm:ee-first",
+        "selfHits": 129,
+        "selfPercent": "0.08",
+        "nodeCount": 12
+      },
+      {
+        "category": "npm:_@koa_cors@5.0.0@@koa",
+        "selfHits": 125,
+        "selfPercent": "0.08",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:koa-bodyparser",
+        "selfHits": 124,
+        "selfPercent": "0.08",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:oss-cnpm",
+        "selfHits": 123,
+        "selfPercent": "0.08",
+        "nodeCount": 11
+      },
+      {
+        "category": "npm:accepts",
+        "selfHits": 113,
+        "selfPercent": "0.07",
+        "nodeCount": 14
+      },
+      {
+        "category": "npm:_@eggjs_background-task@4.0.0-beta.35@@eggjs",
+        "selfHits": 94,
+        "selfPercent": "0.06",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:urllib",
+        "selfHits": 90,
+        "selfPercent": "0.06",
+        "nodeCount": 54
+      },
+      {
+        "category": "npm:undici",
+        "selfHits": 67,
+        "selfPercent": "0.04",
+        "nodeCount": 94
+      },
+      {
+        "category": "npm:secure-json-parse",
+        "selfHits": 62,
+        "selfPercent": "0.04",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:egg-status",
+        "selfHits": 51,
+        "selfPercent": "0.03",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:_@eggjs_koa-static-cache@7.0.0-beta.35@@eggjs",
+        "selfHits": 51,
+        "selfPercent": "0.03",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:koa-session",
+        "selfHits": 51,
+        "selfPercent": "0.03",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:lodash-es",
+        "selfHits": 51,
+        "selfPercent": "0.03",
+        "nodeCount": 44
+      },
+      {
+        "category": "npm:sqlstring",
+        "selfHits": 45,
+        "selfPercent": "0.03",
+        "nodeCount": 14
+      },
+      {
+        "category": "npm:_@eggjs_errors@3.0.0-beta.35@@eggjs",
+        "selfHits": 42,
+        "selfPercent": "0.03",
+        "nodeCount": 24
+      },
+      {
+        "category": "npm:is-string",
+        "selfHits": 41,
+        "selfPercent": "0.03",
+        "nodeCount": 8
+      },
+      {
+        "category": "npm:_@eggjs_path-matching@3.0.0-beta.35@@eggjs",
+        "selfHits": 39,
+        "selfPercent": "0.02",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:is-number-object",
+        "selfHits": 35,
+        "selfPercent": "0.02",
+        "nodeCount": 10
+      },
+      {
+        "category": "npm:_@eggjs_core@7.0.0-beta.35@@eggjs",
+        "selfHits": 33,
+        "selfPercent": "0.02",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:parseurl",
+        "selfHits": 33,
+        "selfPercent": "0.02",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:mime-types",
+        "selfHits": 32,
+        "selfPercent": "0.02",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:_@eggjs_static@4.0.0-beta.35@@eggjs",
+        "selfHits": 30,
+        "selfPercent": "0.02",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:is-bigint",
+        "selfHits": 28,
+        "selfPercent": "0.02",
+        "nodeCount": 10
+      },
+      {
+        "category": "npm:is-array-buffer",
+        "selfHits": 23,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:type-is",
+        "selfHits": 22,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:is-weakmap",
+        "selfHits": 22,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:is-map",
+        "selfHits": 21,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:is-set",
+        "selfHits": 21,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:is-weakset",
+        "selfHits": 18,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:escape-html",
+        "selfHits": 16,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:is-shared-array-buffer",
+        "selfHits": 16,
+        "selfPercent": "0.01",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:is-date-object",
+        "selfHits": 16,
+        "selfPercent": "0.01",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:validate-npm-package-name",
+        "selfHits": 15,
+        "selfPercent": "0.01",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:is-boolean-object",
+        "selfHits": 15,
+        "selfPercent": "0.01",
+        "nodeCount": 4
+      },
+      {
+        "category": "other",
+        "selfHits": 14,
+        "selfPercent": "0.01",
+        "nodeCount": 15
+      },
+      {
+        "category": "npm:redis-parser",
+        "selfHits": 14,
+        "selfPercent": "0.01",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:ylru",
+        "selfHits": 12,
+        "selfPercent": "0.01",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:ajv",
+        "selfHits": 10,
+        "selfPercent": "0.01",
+        "nodeCount": 12
+      },
+      {
+        "category": "npm:dayjs",
+        "selfHits": 10,
+        "selfPercent": "0.01",
+        "nodeCount": 24
+      },
+      {
+        "category": "npm:lru.min",
+        "selfHits": 10,
+        "selfPercent": "0.01",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:is-callable",
+        "selfHits": 8,
+        "selfPercent": "0.01",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:koa-override",
+        "selfHits": 7,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:npm-package-arg",
+        "selfHits": 6,
+        "selfPercent": "0.00",
+        "nodeCount": 23
+      },
+      {
+        "category": "npm:_@eggjs_orm-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 6,
+        "selfPercent": "0.00",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:_@eggjs_schedule@6.0.0-beta.35@@eggjs",
+        "selfHits": 4,
+        "selfPercent": "0.00",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:_@eggjs_aop-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 4,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:hosted-git-info",
+        "selfHits": 4,
+        "selfPercent": "0.00",
+        "nodeCount": 11
+      },
+      {
+        "category": "npm:deep-equal",
+        "selfHits": 4,
+        "selfPercent": "0.00",
+        "nodeCount": 14
+      },
+      {
+        "category": "npm:is-symbol",
+        "selfHits": 4,
+        "selfPercent": "0.00",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:sendmessage",
+        "selfHits": 4,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@eggjs_core-decorator@4.0.0-beta.35@@eggjs",
+        "selfHits": 3,
+        "selfPercent": "0.00",
+        "nodeCount": 22
+      },
+      {
+        "category": "npm:ajv-keywords",
+        "selfHits": 3,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:http-errors",
+        "selfHits": 3,
+        "selfPercent": "0.00",
+        "nodeCount": 6
+      },
+      {
+        "category": "npm:_@eggjs_schedule-plugin@4.0.0-beta.35@@eggjs",
+        "selfHits": 3,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:xml2js",
+        "selfHits": 3,
+        "selfPercent": "0.00",
+        "nodeCount": 5
+      },
+      {
+        "category": "npm:_@eggjs_typebox-validate@4.0.0-beta.35@@eggjs",
+        "selfHits": 2,
+        "selfPercent": "0.00",
+        "nodeCount": 7
+      },
+      {
+        "category": "npm:ssri",
+        "selfHits": 2,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:denque",
+        "selfHits": 2,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:get-ready",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:mime",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:which-collection",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:side-channel",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@cnpmjs_packument@1.6.0@@cnpmjs",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 6
+      },
+      {
+        "category": "npm:httpx",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 7
+      },
+      {
+        "category": "npm:sax",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:debug",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@alicloud_openapi-client@0.4.15@@alicloud",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 3
+      },
+      {
+        "category": "npm:iconv-lite",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:destroy",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:tar",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:minipass",
+        "selfHits": 1,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:source-map-support",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@eggjs_rds@1.5.0@@eggjs",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:koa-onerror",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:cache-content-type",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:co-body",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:raw-body",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:_@elastic_elasticsearch@8.19.1@@elastic",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@elastic_transport@8.10.1@@elastic",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 7
+      },
+      {
+        "category": "npm:_@opentelemetry_api@1.9.0@@opentelemetry",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:which-boxed-primitive",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 6
+      },
+      {
+        "category": "npm:which-typed-array",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:for-each",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 2
+      },
+      {
+        "category": "npm:_@eggjs_orm-decorator@4.0.0-beta.35@@eggjs",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 4
+      },
+      {
+        "category": "npm:performance-ms",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@aliyunmq_mq-http-sdk@1.0.4@@aliyunmq",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 8
+      },
+      {
+        "category": "npm:_@eggjs_eventbus-runtime@4.0.0-beta.35@@eggjs",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 1
+      },
+      {
+        "category": "npm:_@alicloud_tea-typescript@1.8.0@@alicloud",
+        "selfHits": 0,
+        "selfPercent": "0.00",
+        "nodeCount": 6
+      }
+    ]
+  }
+]
