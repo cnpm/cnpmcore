@@ -1,0 +1,16 @@
+这是一个测试文件，用于 nginx 下载测试。
+
+文件内容：
+- 测试文件大小：约 1KB
+- 用途：验证 /download/ 路径的文件下载功能
+- 创建时间：2025-12-24
+
+可以通过以下方式测试：
+1. GET http://localhost:8080/download/test-file.txt
+2. 使用 curl: curl -O http://localhost:8080/download/test-file.txt
+3. 使用 wget: wget http://localhost:8080/download/test-file.txt
+
+测试上传功能：
+1. POST http://localhost:8080/upload/
+2. 使用 curl: curl -X POST -d "test data" http://localhost:8080/upload/
+3. 使用 curl 上传文件: curl -X POST --data-binary @test-file.txt http://localhost:8080/upload/
