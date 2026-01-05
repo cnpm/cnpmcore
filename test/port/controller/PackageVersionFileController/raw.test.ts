@@ -43,6 +43,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       // console.log(res.body);
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.deepEqual(res.body, {
         name: 'mk2testmodule',
         version: '0.0.1',
@@ -62,6 +63,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       // console.log(res.body);
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.ok(!res.headers['content-disposition']);
       assert.deepEqual(res.body, {
         name: 'mk2testmodule',

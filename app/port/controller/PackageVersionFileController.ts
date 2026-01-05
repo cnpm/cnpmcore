@@ -106,6 +106,7 @@ export class PackageVersionFileController extends AbstractController {
     this.#requireUnpkgEnable();
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     ctx.vary(this.config.cnpmcore.cdnVaryHeader);
+    ctx.set('cross-origin-resource-policy', 'cross-origin');
     const [scope, name] = getScopeAndName(fullname);
     const packageVersion = await this.#getPackageVersion(ctx, fullname, scope, name, versionSpec);
     ctx.set('cache-control', META_CACHE_CONTROL);
@@ -147,6 +148,7 @@ export class PackageVersionFileController extends AbstractController {
     this.#requireUnpkgEnable();
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     ctx.vary(this.config.cnpmcore.cdnVaryHeader);
+    ctx.set('cross-origin-resource-policy', 'cross-origin');
     const [scope, name] = getScopeAndName(fullname);
     // oxlint-disable-next-line no-param-reassign
     path = `/${path}`;

@@ -114,6 +114,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       // console.log(res.body);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.deepEqual(res.body, {
         path: '/',
         type: 'directory',
@@ -142,6 +143,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       // console.log(res.body);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.deepEqual(res.body, {
         path: '/',
         type: 'directory',
@@ -539,6 +541,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(res.status, 200);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.deepEqual(res.body, {
         path: '/',
         type: 'directory',
@@ -557,6 +560,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/`);
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.deepEqual(res.body, {
         path: '/',
         type: 'directory',
