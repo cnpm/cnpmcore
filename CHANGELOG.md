@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.19.0 (2026-01-05)
+
+* feat: Add Cross-Origin-Resource-Policy header to unpkg endpoints (#951) ([c2f6f31](https://github.com/cnpm/cnpmcore/commit/c2f6f31)), closes [#951](https://github.com/cnpm/cnpmcore/issues/951) [cnpm/cnpmcore#950](https://github.com/cnpm/cnpmcore/issues/950)
+* chore(deps): update dependency oxfmt to ^0.21.0 (#948) ([6868960](https://github.com/cnpm/cnpmcore/commit/6868960)), closes [#948](https://github.com/cnpm/cnpmcore/issues/948)
+
 ## <small>4.18.1 (2025-12-22)</small>
 
 * chore: replace @node-rs/crc32 with Node.js stdlib zlib.crc32 (#938) ([8a1b79f](https://github.com/cnpm/cnpmcore/commit/8a1b79f)), closes [#938](https://github.com/cnpm/cnpmcore/issues/938) [cnpm/cnpmcore#937](https://github.com/cnpm/cnpmcore/issues/937)
