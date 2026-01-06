@@ -27,20 +27,23 @@ jobs:
         with:
           node-version: 22
 
+      - name: setup utoo
+        uses: utooland/setup-utoo@v1
+
       - name: Install Dependencies
-        run: npm i
+        run: ut
 
       - name: Lint
-        run: npm run lint
+        run: ut lint
 
       - name: Format
-        run: npm run fmtcheck
+        run: ut fmtcheck
 
       - name: Typecheck
-        run: npm run typecheck
+        run: ut typecheck
 
       - name: Build
-        run: npm run tsc && npm run tsc:prod
+        run: ut tsc && ut tsc:prod
 
   test-deployment:
     runs-on: ubuntu-latest
@@ -74,16 +77,19 @@ jobs:
         with:
           node-version: 22
 
+      - name: setup utoo
+        uses: utooland/setup-utoo@v1
+
       - name: Install Dependencies
-        run: npm i
+        run: ut
 
       - name: Test Deployment
         run: |
-          npm run build
+          ut build
           echo "Preparing database..."
           CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
           echo "Starting cnpmcore..."
-          CNPMCORE_FORCE_LOCAL_FS=true npm run start:foreground &
+          CNPMCORE_FORCE_LOCAL_FS=true ut start:foreground &
           sleep 5
           echo "Checking cnpmcore is ready..."
 
@@ -166,8 +172,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: setup utoo
+        uses: utooland/setup-utoo@v1
+
       - name: Install Dependencies
-        run: npm i
+        run: ut
 
       # https://github.com/elastic/elastic-github-actions/blob/master/elasticsearch/README.md
       - name: Configure sysctl limits
@@ -192,7 +201,7 @@ jobs:
           done
 
       - name: Continuous Integration
-        run: npm run ci:postgresql
+        run: ut ci:postgresql
         env:
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: localhost
@@ -254,11 +263,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: setup utoo
+        uses: utooland/setup-utoo@v1
+
       - name: Install Dependencies
-        run: npm i
+        run: ut
 
       - name: Continuous Integration
-        run: npm run ci
+        run: ut ci
         env:
           # https://github.com/jamiebuilds/ci-parallel-vars
           CI_NODE_INDEX: ${{ matrix.shardIndex }}
@@ -308,11 +320,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: setup utoo
+        uses: utooland/setup-utoo@v1
+
       - name: Install Dependencies
-        run: npm i
+        run: ut
 
       - name: Continuous Integration
-        run: npm run ci "test/cli/npm/install.test.ts"
+        run: ut ci "test/cli/npm/install.test.ts"
         env:
           CNPMCORE_NFS_TYPE: s3
           CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD: true
