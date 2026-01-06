@@ -62,7 +62,7 @@ export default {
   ...redisPlugin(),
   ...tracerPlugin(),
   ...typeboxValidatePlugin(),
-}
+};
 ```
 
 3. 修改 `config.default.ts` 文件，可以直接覆盖默认配置
@@ -81,7 +81,7 @@ export default () => {
     // 放开注册配置
   };
   return config;
-}
+};
 ```
 
 ### 🧑‍🤝‍🧑 集成 cnpmcore
@@ -110,15 +110,14 @@ export default () => {
 - 添加 `XXXAdapter.ts` 在对应的 Adapter 中继承 cnpmcore 默认的 Adapter，以 AuthAdapter 为例
 
 ```typescript
-  import { AccessLevel, SingletonProto } from 'egg';
-  import { AuthAdapter } from 'cnpmcore/infra/AuthAdapter';
+import { AccessLevel, SingletonProto } from 'egg';
+import { AuthAdapter } from 'cnpmcore/infra/AuthAdapter';
 
-  @SingletonProto({
-    name: 'authAdapter',
-    accessLevel: AccessLevel.PUBLIC,
-  })
-  export class MyAuthAdapter extends AuthAdapter {
-  }
+@SingletonProto({
+  name: 'authAdapter',
+  accessLevel: AccessLevel.PUBLIC,
+})
+export class MyAuthAdapter extends AuthAdapter {}
 ```
 
 2. 添加 `config/module.json`，将 cnpmcore 作为一个 module 集成进我们新增的 tegg 应用中
@@ -189,7 +188,6 @@ export class MyAuthAdapter extends AuthAdapter {
     };
   }
 }
-
 ```
 
 修改 HelloController 的实现，实际也可以通过登录中心回调、页面确认等方式实现

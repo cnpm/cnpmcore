@@ -376,21 +376,14 @@ describe('test/path/to/YourController.test.ts', () => {
       const { authorization } = await TestUtil.createUser();
 
       // Execute
-      const res = await app
-        .httpRequest()
-        .get('/api/endpoint')
-        .set('authorization', authorization)
-        .expect(200);
+      const res = await app.httpRequest().get('/api/endpoint').set('authorization', authorization).expect(200);
 
       // Assert
       assert.equal(res.body.someField, expectedValue);
     });
 
     it('should handle unauthorized access', async () => {
-      const res = await app
-        .httpRequest()
-        .get('/api/endpoint')
-        .expect(401);
+      const res = await app.httpRequest().get('/api/endpoint').expect(401);
 
       assert.equal(res.body.error, '[UNAUTHORIZED] Login first');
     });
