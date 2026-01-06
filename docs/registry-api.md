@@ -369,7 +369,7 @@ PUT /:package
         "type": "git",
         "url": "git://github.com/fengmk2/pedding.git"
       },
-      "keywords": [ "pedding","callback" ],
+      "keywords": ["pedding", "callback"],
       "devDependencies": {
         "contributors": "*",
         "mocha": "*",
@@ -430,7 +430,7 @@ PUT /:package
     }
   ],
   "_attachments": {
-    "pedding-1.0.0.tgz":{
+    "pedding-1.0.0.tgz": {
       "content_type": "application/octet-stream",
       "data": "H4sIAAAAAAAAA+0aa3PbNjKf8Su...",
       "length": 2107
@@ -490,7 +490,7 @@ PUT /:package/-rev/:rev
 {
   "_id": "pedding",
   "_rev": "11-e6d1e6e96eaf72433fef6aaabe843af8",
-  "maintainers":[
+  "maintainers": [
     { "name": "fengmk2", "email": "fengmk2@gmail.com" },
     { "name": "dead-horse", "email": "dead_horse@qq.com" }
   ]
@@ -986,9 +986,7 @@ POST /-/npm/v1/tokens
 {
   "password": "123",
   "readonly": false,
-  "cidr_whitelist": [
-    "127.0.0.1"
-  ]
+  "cidr_whitelist": ["127.0.0.1"]
 }
 ```
 
@@ -1023,14 +1021,16 @@ perPage=10&page=0
 
 ```json
 {
-  "objects": [{
-    "token": "85d32f...7313a2",
-    "key": "d06309a210570ef71cd9c7bd4849e7e96eeaa841976e63326436f6fd320dc4bbd452710e4e0fedc2efc2ea4a793b7159e95e9596e85e00dee26adc3f8afbb97f",
-    "cidr_whitelist": [ "127.0.0.1" ],
-    "created": "2015-01-04T08:28:51.378Z",
-    "updated": "2015-01-04T08:28:51.378Z",
-    "readonly": false
-  }]
+  "objects": [
+    {
+      "token": "85d32f...7313a2",
+      "key": "d06309a210570ef71cd9c7bd4849e7e96eeaa841976e63326436f6fd320dc4bbd452710e4e0fedc2efc2ea4a793b7159e95e9596e85e00dee26adc3f8afbb97f",
+      "cidr_whitelist": ["127.0.0.1"],
+      "created": "2015-01-04T08:28:51.378Z",
+      "updated": "2015-01-04T08:28:51.378Z",
+      "readonly": false
+    }
+  ]
 }
 ```
 

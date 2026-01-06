@@ -315,7 +315,8 @@ const service = await app.getEggObject(PackageManagerService);
 describe('test/path/to/SourceFile.test.ts', () => {
   describe('[HTTP_METHOD /api/path] functionName()', () => {
     it('should handle expected behavior', async () => {
-      const res = await app.httpRequest()
+      const res = await app
+        .httpRequest()
         .put('/path')
         .set('authorization', user.authorization)
         .send(payload)

@@ -3,7 +3,13 @@
   <head>
     <title>Sign in to CNPM</title>
     <style>
-      body, div, p, form, h1, h2, input {
+      body,
+      div,
+      p,
+      form,
+      h1,
+      h2,
+      input {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -40,7 +46,8 @@
       #login {
         margin-top: 16px;
       }
-      #username, #password {
+      #username,
+      #password {
         display: block;
         padding: 6.5px 11px;
         margin-bottom: 24px;
@@ -51,7 +58,8 @@
         border-radius: 4px;
         background: #f5f6f7;
       }
-      #username:focus, #password:focus {
+      #username:focus,
+      #password:focus {
         border-color: #618eff;
       }
       #unbindWan {
@@ -81,10 +89,11 @@
         border-color: #215ae5;
         color: #fff;
         font-size: 16px;
-        transition: all .3s cubic-bezier(.645, .045, .355, 1);
+        transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
         cursor: pointer;
       }
-      #submit:hover, #submit:focus {
+      #submit:hover,
+      #submit:focus {
         background: #497ef2;
         border-color: #497ef2;
       }
@@ -93,9 +102,9 @@
         border-color: #113dbf;
       }
       #submit:disabled {
-        color: rgba(0, 0, 0, .25);
+        color: rgba(0, 0, 0, 0.25);
         background-image: none;
-        background-color: rgba(0, 0, 0, .075);
+        background-color: rgba(0, 0, 0, 0.075);
         border-color: rgb(232, 232, 232);
         cursor: default;
       }
@@ -178,10 +187,10 @@
             maxlength="100"
             placeholder="Password"
             autocomplete="current-password"
-            oncontextmenu="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
+            oncontextmenu="return false;"
+            onpaste="return false;"
+            oncopy="return false;"
+            oncut="return false;"
           />
           <div id="unbindWan">
             <input type="checkbox" id="unbindWanCheckbox" />
@@ -195,10 +204,10 @@
             maxlength="100"
             placeholder="Password"
             autocomplete="current-password"
-            oncontextmenu="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
+            oncontextmenu="return false;"
+            onpaste="return false;"
+            oncopy="return false;"
+            oncut="return false;"
           />
           {% endif %}
         </form>
@@ -208,7 +217,7 @@
     <script src="https://registry.npmmirror.com/jsencrypt/3.3.2/files/bin/jsencrypt.min.js"></script>
     <script src="https://registry.npmmirror.com/jquery/3.6.3/files/dist/jquery.min.js"></script>
     <script>
-      $(function() {
+      $(function () {
         const $submitBtn = $('#submit');
         const $username = $('#username');
         const $password = $('#password');
@@ -266,7 +275,7 @@
 
         function handlePrepare(name) {
           $.get('/-/v1/login/request/prepare/{{sessionId}}?name=' + name)
-            .done(res => {
+            .done((res) => {
               preapreData = res;
               setSignTextByStatus(res.wanStatus);
               // webauthn unbound or user not found
@@ -297,14 +306,14 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
           })
-            .done(res => {
+            .done((res) => {
               if (res.ok) {
                 window.location.replace('/-/v1/login/request/success');
               } else {
                 $errorMessage.html(res.message);
               }
             })
-            .fail(err => {
+            .fail((err) => {
               $errorMessage.html(err.message);
             });
         }
@@ -312,50 +321,58 @@
           data.challenge = base64url.decode(data.challenge);
           data.user.id = base64url.decode(data.user.id);
           try {
-            navigator.credentials.create({
-              publicKey: data,
-            }).then(credential => {
-              const result = {
-                id: credential.id,
-                rawId: base64url.encode(credential.rawId),
-                response: {
-                  clientDataJSON: base64url.encode(credential.response.clientDataJSON),
-                  attestationObject: base64url.encode(credential.response.attestationObject),
-                },
-                type: credential.type,
-              };
-              success && success(result);
-            }).catch(err => {
-              fail && fail(err);
-            });
+            navigator.credentials
+              .create({
+                publicKey: data,
+              })
+              .then((credential) => {
+                const result = {
+                  id: credential.id,
+                  rawId: base64url.encode(credential.rawId),
+                  response: {
+                    clientDataJSON: base64url.encode(credential.response.clientDataJSON),
+                    attestationObject: base64url.encode(credential.response.attestationObject),
+                  },
+                  type: credential.type,
+                };
+                success && success(result);
+              })
+              .catch((err) => {
+                fail && fail(err);
+              });
           } catch (err) {
             fail && fail(err);
           }
         }
         function handleAuthentication(data, { success, fail }) {
           data.challenge = base64url.decode(data.challenge);
-          data.allowCredentials.forEach(c => {
+          data.allowCredentials.forEach((c) => {
             c.id = base64url.decode(c.id);
           });
           try {
-            navigator.credentials.get({
-              publicKey: data,
-            }).then(credential => {
-              const result = {
-                id: credential.id,
-                rawId: base64url.encode(credential.rawId),
-                response: {
-                  authenticatorData: base64url.encode(credential.response.authenticatorData),
-                  clientDataJSON: base64url.encode(credential.response.clientDataJSON),
-                  signature: base64url.encode(credential.response.signature),
-                  userHandle: credential.response.userHandle ? base64url.encode(credential.response.userHandle) : undefined,
-                },
-                type: credential.type,
-              };
-              success && success(result);
-            }).catch(err => {
-              fail && fail(err);
-            });
+            navigator.credentials
+              .get({
+                publicKey: data,
+              })
+              .then((credential) => {
+                const result = {
+                  id: credential.id,
+                  rawId: base64url.encode(credential.rawId),
+                  response: {
+                    authenticatorData: base64url.encode(credential.response.authenticatorData),
+                    clientDataJSON: base64url.encode(credential.response.clientDataJSON),
+                    signature: base64url.encode(credential.response.signature),
+                    userHandle: credential.response.userHandle
+                      ? base64url.encode(credential.response.userHandle)
+                      : undefined,
+                  },
+                  type: credential.type,
+                };
+                success && success(result);
+              })
+              .catch((err) => {
+                fail && fail(err);
+              });
           } catch (err) {
             fail && fail(err);
           }

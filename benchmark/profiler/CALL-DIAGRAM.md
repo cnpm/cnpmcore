@@ -129,11 +129,11 @@ When inserting many records, use bulk insert instead of individual creates:
 ```typescript
 // Instead of:
 for (const entity of entities) {
-  await Model.create(entity);  // Each calls Bone constructor
+  await Model.create(entity); // Each calls Bone constructor
 }
 
 // Use:
-await Model.bulkCreate(entities);  // Single operation
+await Model.bulkCreate(entities); // Single operation
 ```
 
 ### 2. Raw Queries for Read-Heavy Operations
