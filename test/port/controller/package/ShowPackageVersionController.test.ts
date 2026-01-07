@@ -280,7 +280,7 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       // Scenario: latest=4.1.0, newest=4.2.0, request ^4 should return 4.1.0
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
 
-      // Publish 4.1.0
+      // Publish 4.1.0 as latest
       const pkg410 = await TestUtil.getFullPackage({
         name: 'foo-prefer-latest',
         version: '4.1.0',
@@ -296,16 +296,17 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
         .send(pkg410)
         .expect(201);
 
-      // Publish 4.2.0 without updating latest tag
+      // Publish 4.2.0 with 'next' tag (not updating latest)
       const pkg420 = await TestUtil.getFullPackage({
         name: 'foo-prefer-latest',
         version: '4.2.0',
         versionObject: {
           description: 'version 4.2.0',
         },
+        distTags: {
+          next: '4.2.0',
+        },
       });
-      // Without dist-tags, latest tag won't be updated
-      delete pkg420['dist-tags'];
       await app
         .httpRequest()
         .put(`/${pkg420.name}`)
