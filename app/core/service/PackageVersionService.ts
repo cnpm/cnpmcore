@@ -114,16 +114,23 @@ export class PackageVersionService {
         version = versionMatchTag;
       } else {
         const range = new Range(fetchSpec);
-        const paddingSemVer = new SqlRange(range);
-        if (paddingSemVer.containPreRelease) {
-          const versions = await this.packageVersionRepository.findSatisfyVersionsWithPrerelease(
-            scope,
-            name,
-            paddingSemVer,
-          );
-          version = semver.maxSatisfying(versions, range);
+        // Prefer latest tag version if it satisfies the range
+        // e.g., latest=4.1.0, newest=4.2.0, range=^4 should return 4.1.0
+        const latestVersion = await this.packageVersionRepository.findVersionByTag(scope, name, 'latest');
+        if (latestVersion && semver.satisfies(latestVersion, range)) {
+          version = latestVersion;
         } else {
-          version = await this.packageVersionRepository.findMaxSatisfyVersion(scope, name, paddingSemVer);
+          const paddingSemVer = new SqlRange(range);
+          if (paddingSemVer.containPreRelease) {
+            const versions = await this.packageVersionRepository.findSatisfyVersionsWithPrerelease(
+              scope,
+              name,
+              paddingSemVer,
+            );
+            version = semver.maxSatisfying(versions, range);
+          } else {
+            version = await this.packageVersionRepository.findMaxSatisfyVersion(scope, name, paddingSemVer);
+          }
         }
       }
     }
