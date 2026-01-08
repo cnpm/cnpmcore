@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.20.0 (2026-01-08)
+
+* feat: Include headers file in Electron binary version directory (#955) ([1a4da92](https://github.com/cnpm/cnpmcore/commit/1a4da92)), closes [#955](https://github.com/cnpm/cnpmcore/issues/955) [hi#level](https://github.com/hi/issues/level)
+* chore(ci): utoo (#953) ([e5ec277](https://github.com/cnpm/cnpmcore/commit/e5ec277)), closes [#953](https://github.com/cnpm/cnpmcore/issues/953)
+* chore(deps): update dependency oxfmt to ^0.23.0 (#952) ([524512b](https://github.com/cnpm/cnpmcore/commit/524512b)), closes [#952](https://github.com/cnpm/cnpmcore/issues/952)
+
 ## 4.19.0 (2026-01-05)
 
 * feat: Add Cross-Origin-Resource-Policy header to unpkg endpoints (#951) ([c2f6f31](https://github.com/cnpm/cnpmcore/commit/c2f6f31)), closes [#951](https://github.com/cnpm/cnpmcore/issues/951) [cnpm/cnpmcore#950](https://github.com/cnpm/cnpmcore/issues/950)
