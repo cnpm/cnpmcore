@@ -37,6 +37,15 @@ export class ElectronBinary extends GithubBinary {
       for (const item of releases) {
         if (dir === `/${item.tag_name}/` || dir === `/${item.tag_name.slice(1)}/`) {
           items = this.formatItems(item, binaries.electron);
+          // add headers file, e.g. https://www.electronjs.org/headers/v37.7.0/node-v37.7.0-headers.tar.gz
+          const versionWithV = item.tag_name.startsWith('v') ? item.tag_name : `v${item.tag_name}`;
+          items.push({
+            name: `node-${versionWithV}-headers.tar.gz`,
+            isDir: false,
+            url: `https://www.electronjs.org/headers/${versionWithV}/node-${versionWithV}-headers.tar.gz`,
+            size: '-',
+            date: item.published_at,
+          });
           break;
         }
       }
