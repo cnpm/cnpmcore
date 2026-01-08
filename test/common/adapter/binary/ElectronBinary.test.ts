@@ -60,7 +60,7 @@ describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
       // test with v prefix
       let result = await binary.fetch('/v16.0.5/');
       assert.ok(result);
-      const headersItem = result.items.find(item => item.name === 'node-v16.0.5-headers.tar.gz');
+      const headersItem = result.items.find((item) => item.name === 'node-v16.0.5-headers.tar.gz');
       assert.ok(headersItem, 'headers file should exist');
       assert.equal(headersItem.isDir, false);
       assert.equal(headersItem.url, 'https://www.electronjs.org/headers/v16.0.5/node-v16.0.5-headers.tar.gz');
@@ -69,7 +69,7 @@ describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
       // test without v prefix - should have the same headers item
       result = await binary.fetch('/16.0.5/');
       assert.ok(result);
-      const headersItem2 = result.items.find(item => item.name === 'node-v16.0.5-headers.tar.gz');
+      const headersItem2 = result.items.find((item) => item.name === 'node-v16.0.5-headers.tar.gz');
       assert.ok(headersItem2, 'headers file should exist for non-v-prefixed directory');
       assert.equal(headersItem2.url, 'https://www.electronjs.org/headers/v16.0.5/node-v16.0.5-headers.tar.gz');
     });
