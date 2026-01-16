@@ -57,8 +57,8 @@ export class ElectronBinary extends GithubBinary {
       for (const item of releases) {
         if (dir === `/${item.tag_name}/` || dir === `/${item.tag_name.slice(1)}/`) {
           items = this.formatItems(item, binaries.electron);
-          // add headers file, e.g. https://www.electronjs.org/headers/v37.7.0/node-v37.7.0-headers.tar.gz
           const versionWithV = item.tag_name.startsWith('v') ? item.tag_name : `v${item.tag_name}`;
+          // add headers file, e.g. https://www.electronjs.org/headers/v37.7.0/node-v37.7.0-headers.tar.gz
           items.push({
             name: `node-${versionWithV}-headers.tar.gz`,
             isDir: false,
@@ -67,6 +67,7 @@ export class ElectronBinary extends GithubBinary {
             date: item.published_at,
           });
           // add SHASUMS256.txt
+          items = items.filter((i) => i.name !== 'SHASUMS256.txt');
           items.push({
             name: 'SHASUMS256.txt',
             isDir: false,
@@ -74,6 +75,8 @@ export class ElectronBinary extends GithubBinary {
             size: '-',
             date: item.published_at,
           });
+          const afterFilter = items.filter((i) => i.name === 'SHASUMS256.txt');
+          console.log('[ElectronBinary] After filter SHASUMS256.txt count:', afterFilter.length, afterFilter.map((i) => i.url));
           // add Windows platform directories
           for (const platform of winPlatforms) {
             items.push({
