@@ -75,8 +75,6 @@ export class ElectronBinary extends GithubBinary {
             size: '-',
             date: item.published_at,
           });
-          const afterFilter = items.filter((i) => i.name === 'SHASUMS256.txt');
-          console.log('[ElectronBinary] After filter SHASUMS256.txt count:', afterFilter.length, afterFilter.map((i) => i.url));
           // add Windows platform directories
           for (const platform of winPlatforms) {
             items.push({
