@@ -34,11 +34,31 @@ export class ElectronBinary extends GithubBinary {
         }
       }
     } else {
+      // Check if it's a win-* subdirectory (e.g., /v22.20.0/win-x64/)
+      const winPlatforms = ['win-x86', 'win-x64', 'win-arm64'];
+      for (const item of releases) {
+        const versionWithV = item.tag_name.startsWith('v') ? item.tag_name : `v${item.tag_name}`;
+        const versionWithoutV = item.tag_name.startsWith('v') ? item.tag_name.slice(1) : item.tag_name;
+        for (const platform of winPlatforms) {
+          if (dir === `/${versionWithV}/${platform}/` || dir === `/${versionWithoutV}/${platform}/`) {
+            items.push({
+              name: 'node.lib',
+              isDir: false,
+              url: `https://www.electronjs.org/headers/${versionWithV}/${platform}/node.lib`,
+              size: '-',
+              date: item.published_at,
+            });
+            return { items };
+          }
+        }
+      }
+
+      // Handle version directory (e.g., /v22.20.0/ or /22.20.0/)
       for (const item of releases) {
         if (dir === `/${item.tag_name}/` || dir === `/${item.tag_name.slice(1)}/`) {
           items = this.formatItems(item, binaries.electron);
-          // add headers file, e.g. https://www.electronjs.org/headers/v37.7.0/node-v37.7.0-headers.tar.gz
           const versionWithV = item.tag_name.startsWith('v') ? item.tag_name : `v${item.tag_name}`;
+          // add headers file, e.g. https://www.electronjs.org/headers/v37.7.0/node-v37.7.0-headers.tar.gz
           items.push({
             name: `node-${versionWithV}-headers.tar.gz`,
             isDir: false,
@@ -46,6 +66,25 @@ export class ElectronBinary extends GithubBinary {
             size: '-',
             date: item.published_at,
           });
+          // add SHASUMS256.txt
+          items = items.filter((i) => i.name !== 'SHASUMS256.txt');
+          items.push({
+            name: 'SHASUMS256.txt',
+            isDir: false,
+            url: `https://www.electronjs.org/headers/${versionWithV}/SHASUMS256.txt`,
+            size: '-',
+            date: item.published_at,
+          });
+          // add Windows platform directories
+          for (const platform of winPlatforms) {
+            items.push({
+              name: `${platform}/`,
+              isDir: true,
+              url: '',
+              size: '-',
+              date: item.published_at,
+            });
+          }
           break;
         }
       }
