@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.21.0 (2026-01-16)
+
+* feat: Enhance ElectronBinary to support Windows platform directories (#961) ([fbbda8a](https://github.com/cnpm/cnpmcore/commit/fbbda8a)), closes [#961](https://github.com/cnpm/cnpmcore/issues/961) [hi#level](https://github.com/hi/issues/level)
+* chore(deps): update dependency oxfmt to ^0.24.0 (#958) ([854b4c4](https://github.com/cnpm/cnpmcore/commit/854b4c4)), closes [#958](https://github.com/cnpm/cnpmcore/issues/958)
+* chore(deps): update dependency oxlint-tsgolint to ^0.11.0 (#957) ([efdac42](https://github.com/cnpm/cnpmcore/commit/efdac42)), closes [#957](https://github.com/cnpm/cnpmcore/issues/957)
+
 ## 4.20.0 (2026-01-08)
 
 * feat: Include headers file in Electron binary version directory (#955) ([1a4da92](https://github.com/cnpm/cnpmcore/commit/1a4da92)), closes [#955](https://github.com/cnpm/cnpmcore/issues/955) [hi#level](https://github.com/hi/issues/level)
