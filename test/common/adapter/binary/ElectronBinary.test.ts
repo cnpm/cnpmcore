@@ -33,18 +33,9 @@ describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
       result = await binary.fetch(`/${firstDir}`);
       assert.ok(result);
       assert.ok(result.items.length > 0);
-      // Version directory now contains both files and win-* subdirectories
-      const files = result.items.filter((item) => !item.isDir);
-      const dirs = result.items.filter((item) => item.isDir);
-      assert.ok(files.length > 0, 'should have files');
-      assert.ok(dirs.length === 3, 'should have 3 win-* directories');
-      for (const item of files) {
+      for (const item of result.items) {
         assert.ok(!item.name.endsWith('/'));
         assert.ok(!item.isDir);
-      }
-      for (const item of dirs) {
-        assert.ok(item.name.endsWith('/'));
-        assert.ok(item.isDir);
       }
       const firstItemsLength = result.items.length;
       // console.log(result.items);
@@ -52,6 +43,10 @@ describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
       result = await binary.fetch(`/${secondDir}`);
       assert.ok(result);
       assert.ok(result.items.length === firstItemsLength);
+      for (const item of result.items) {
+        assert.ok(!item.name.endsWith('/'));
+        assert.ok(!item.isDir);
+      }
       // console.log(result.items);
     });
 
