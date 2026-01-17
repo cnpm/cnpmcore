@@ -2,7 +2,7 @@
 
 ## 环境初始化
 
-本项目的外部服务依赖有：MySQL 数据库或 PostgreSQL 数据库、Redis 缓存服务。
+本项目的外部服务依赖有：MySQL 数据库、PostgreSQL 数据库或 SQLite 数据库，以及 Redis 缓存服务。
 
 生成本地开发环境配置文件：
 
@@ -10,9 +10,21 @@
 cp .env.example .env
 ```
 
-可以通过 Docker 来快速启动本地开发环境：
+### SQLite 开发环境（推荐，无需 Docker）
 
-MySQL 开发环境：
+SQLite 是本地开发的推荐选择，无需安装任何数据库服务：
+
+```bash
+# 只需启动 Redis 服务
+docker run -d --name redis -p 6379:6379 redis
+
+# 或者使用本地 Redis
+brew install redis && brew services start redis
+```
+
+### MySQL 开发环境
+
+可以通过 Docker 来快速启动本地开发环境：
 
 ```bash
 # 启动本地依赖服务 - MySQL + Redis
@@ -22,7 +34,7 @@ docker-compose -f docker-compose.yml up -d
 docker-compose -f docker-compose.yml down
 ```
 
-PostgreSQL 开发环境：
+### PostgreSQL 开发环境
 
 ```bash
 # 启动本地依赖服务 - PostgreSQL + Redis
@@ -40,6 +52,16 @@ docker-compose -f docker-compose-postgres.yml down
 
 ```bash
 npm install
+```
+
+### 开发运行 - SQLite（推荐）
+
+```bash
+# 启动 Web 服务（自动初始化数据库）
+npm run dev:sqlite
+
+# 访问
+curl -v http://127.0.0.1:7001
 ```
 
 ### 开发运行 - MySQL
@@ -88,6 +110,12 @@ npm publish --registry=http://127.0.0.1:7001
 ```
 
 ### 单元测试
+
+SQLite（推荐，最快）
+
+```bash
+npm run test:sqlite
+```
 
 MySQL
 
@@ -324,9 +352,9 @@ Repository 依赖 Model，然后被 Service 和 Controller 依赖
 
 ### 修改一个 Model
 
-可能需要涉及3个地方的修改：
+可能需要涉及以下地方的修改：
 
-1. `sql/mysql/*.sql`, `sql/postgresql/*.sql`
+1. `sql/mysql/*.sql`, `sql/postgresql/*.sql`, `sql/ddl_sqlite.sql`
 2. `repository/model/*.ts`
 3. `core/entity/*.ts`
 

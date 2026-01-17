@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import Mock from '@elastic/elasticsearch-mock';
 import type { PartialEggConfig, EggAppInfo } from 'egg';
 
-import { database } from './database.ts';
+import { database, DATABASE_TYPE } from './database.ts';
 
 // @ts-expect-error has no construct signatures
 export const mockES = new Mock();
@@ -12,8 +12,11 @@ export default function startConfig(appInfo: EggAppInfo): PartialEggConfig {
   const config = {} as PartialEggConfig;
   config.dataDir = join(appInfo.root, '.cnpmcore_unittest');
 
+  const dbName = database.name ?? 'cnpmcore_unittest';
   config.orm = {
-    database: database.name ?? 'cnpmcore_unittest',
+    // For SQLite, database is a file path; for others, it's a database name
+    database:
+      database.type === DATABASE_TYPE.SQLite ? (database.storage ?? join(config.dataDir, `${dbName}.sqlite`)) : dbName,
   };
 
   config.nfs = {

@@ -10,7 +10,7 @@ import S3Client from 's3-cnpmcore';
 import { ChangesStreamMode, NOT_IMPLEMENTED_PATH, SyncDeleteMode, SyncMode } from '../app/common/constants.ts';
 import type { CnpmcoreConfig } from '../app/port/config.ts';
 import { patchAjv } from '../app/port/typebox.ts';
-import { database } from './database.ts';
+import { database, DATABASE_TYPE } from './database.ts';
 
 export const cnpmcoreConfig: CnpmcoreConfig = {
   name: 'cnpm',
@@ -87,13 +87,25 @@ export default function startConfig(appInfo: EggAppConfig): Config {
 
   // override config from framework / plugin
   config.dataDir = env('CNPMCORE_DATA_DIR', 'string', join(appInfo.root, '.cnpmcore'));
+  // Configure ORM based on database type
+  const isSQLite = database.type === DATABASE_TYPE.SQLite;
   config.orm = {
     ...database,
-    database: database.name ?? 'cnpmcore',
+    // For SQLite, use storage path; for others, use database name
+    database: isSQLite
+      ? (database.storage ?? join(config.dataDir, `${database.name ?? 'cnpmcore'}.sqlite`))
+      : (database.name ?? 'cnpmcore'),
     charset: 'utf8mb4',
     // https://github.com/cyjake/leoric/pull/446
     // Skip cloning database values for performance optimization
     skipCloneValue: true,
+    // SQLite-specific options
+    ...(isSQLite && {
+      // SQLite uses file-level locking, limit concurrent connections
+      connectionLimit: 1,
+      // Wait up to 30 seconds for locks to be released
+      busyTimeout: 30000,
+    }),
     logger: {
       // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror
       // ignore query error
