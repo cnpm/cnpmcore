@@ -77,8 +77,6 @@ describe('test/common/adapter/binary/ElectronBinary.test.ts', () => {
       assert.equal(headersItem2.url, 'https://www.electronjs.org/headers/v16.0.5/node-v16.0.5-headers.tar.gz');
     });
 
-
-
     it('should include win-x86, win-x64, win-arm64 directories in version directory', async () => {
       const response = await TestUtil.readJSONFile(TestUtil.getFixtures('electron-releases.json'));
       app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/, 'GET', {
