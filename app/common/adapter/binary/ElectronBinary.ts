@@ -66,15 +66,7 @@ export class ElectronBinary extends GithubBinary {
             size: '-',
             date: item.published_at,
           });
-          // add SHASUMS256.txt
-          items = items.filter((i) => i.name !== 'SHASUMS256.txt');
-          items.push({
-            name: 'SHASUMS256.txt',
-            isDir: false,
-            url: `https://www.electronjs.org/headers/${versionWithV}/SHASUMS256.txt`,
-            size: '-',
-            date: item.published_at,
-          });
+
           // add Windows platform directories
           for (const platform of winPlatforms) {
             items.push({
