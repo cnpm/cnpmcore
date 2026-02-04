@@ -2034,6 +2034,74 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
     });
 
+    it('should use _npmUser as maintainer for OIDC-published packages with empty maintainers', async () => {
+      // Simulates packages published via GitHub Actions OIDC which have empty maintainers but include _npmUser
+      // https://github.com/cnpm/cnpm/pull/489
+      const name = 'cnpmcore-test-oidc-package';
+      app.mockHttpclient(`https://registry.npmjs.org/${name}`, 'GET', {
+        data: JSON.stringify({
+          _id: name,
+          _rev: '1-abc123',
+          name,
+          'dist-tags': { latest: '1.0.0' },
+          versions: {
+            '1.0.0': {
+              name,
+              version: '1.0.0',
+              description: 'Test OIDC package',
+              main: 'index.js',
+              scripts: {},
+              author: '',
+              license: 'MIT',
+              dependencies: {},
+              _id: `${name}@1.0.0`,
+              _nodeVersion: '20.0.0',
+              _npmVersion: '10.0.0',
+              dist: {
+                integrity: 'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
+                shasum: 'c73398ff6db39d138a56c04c7a90f35b70d7b78f',
+                tarball: `https://registry.npmjs.org/${name}/-/${name}-1.0.0.tgz`,
+                fileCount: 1,
+                unpackedSize: 250,
+              },
+              // OIDC packages have _npmUser but empty maintainers
+              _npmUser: { name: 'GitHub Actions', email: 'npm-oidc-no-reply@github.com' },
+              maintainers: [],
+            },
+          },
+          time: {
+            created: '2024-01-01T00:00:00.000Z',
+            '1.0.0': '2024-01-01T00:00:00.000Z',
+            modified: '2024-01-01T00:00:00.000Z',
+          },
+          maintainers: [],
+          license: 'MIT',
+          readme: 'Test readme',
+          readmeFilename: 'README.md',
+        }),
+        persist: false,
+      });
+      app.mockHttpclient(`https://registry.npmjs.org/${name}/-/${name}-1.0.0.tgz`, 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // Verify the _npmUser fallback was used
+      assert.ok(log.includes('📖 Use _npmUser from version 1.0.0 as maintainer (GitHub Actions)'));
+      assert.ok(log.includes('🚧 Syncing maintainers: [{"name":"GitHub Actions","email":"npm-oidc-no-reply@github.com"}]'));
+      assert.ok(log.includes('] 🔗'));
+      app.mockAgent().assertNoPendingInterceptors();
+    });
+
     it('should stop sync when upstream blocked', async () => {
       // sync first
       const name = 'cnpmcore-test-block-from-upstream';

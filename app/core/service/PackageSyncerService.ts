@@ -682,10 +682,16 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         maintainers = data.maintainers;
       } else {
         // try to use latest tag version's maintainers instead
-        const latestPackageVersion = distTags.latest && versionMap[distTags.latest];
-        if (latestPackageVersion && Array.isArray(latestPackageVersion.maintainers)) {
+        const latestPackageVersion = distTags.latest ? versionMap[distTags.latest] : undefined;
+        if (latestPackageVersion && Array.isArray(latestPackageVersion.maintainers) && latestPackageVersion.maintainers.length > 0) {
           maintainers = latestPackageVersion.maintainers as AuthorType[];
           logs.push(`[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`);
+        } else if (latestPackageVersion?._npmUser?.name && latestPackageVersion._npmUser.email) {
+          // Fallback to _npmUser for OIDC-published packages (e.g., via GitHub Actions)
+          // These packages have empty maintainers but include _npmUser with publisher info
+          // https://github.com/cnpm/cnpmcore/issues/xxx
+          maintainers = [{ name: latestPackageVersion._npmUser.name, email: latestPackageVersion._npmUser.email }];
+          logs.push(`[${isoNow()}] 📖 Use _npmUser from version ${latestPackageVersion.version} as maintainer (${latestPackageVersion._npmUser.name})`);
         }
       }
     }
@@ -1284,9 +1290,23 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       } else {
         // try to use latest tag version's maintainers instead
         const latestPackageVersion = packument.getLatestVersion();
-        if (latestPackageVersion && Array.isArray(latestPackageVersion.maintainers)) {
+        if (latestPackageVersion && Array.isArray(latestPackageVersion.maintainers) && latestPackageVersion.maintainers.length > 0) {
           maintainers = latestPackageVersion.maintainers as AuthorType[];
           logs.push(`[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`);
+        } else if (distTags.latest) {
+          // Fallback to _npmUser for OIDC-published packages (e.g., via GitHub Actions)
+          // These packages have empty maintainers but include _npmUser with publisher info
+          // https://github.com/cnpm/cnpmcore/issues/xxx
+          // Need to get raw version data from buffer since packument.getLatestVersion() doesn't include _npmUser
+          const latestVersionPosition = packument.getInPosition(['versions', distTags.latest]);
+          if (latestVersionPosition) {
+            // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
+            const latestVersionData: PackageJSONType = JSON.parse(remoteData.subarray(latestVersionPosition[0], latestVersionPosition[1]));
+            if (latestVersionData._npmUser?.name && latestVersionData._npmUser.email) {
+              maintainers = [{ name: latestVersionData._npmUser.name, email: latestVersionData._npmUser.email }];
+              logs.push(`[${isoNow()}] 📖 Use _npmUser from version ${distTags.latest} as maintainer (${latestVersionData._npmUser.name})`);
+            }
+          }
         }
       }
     }
