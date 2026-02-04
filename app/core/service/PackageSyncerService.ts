@@ -689,7 +689,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         } else if (latestPackageVersion?._npmUser?.name && latestPackageVersion._npmUser.email) {
           // Fallback to _npmUser for OIDC-published packages (e.g., via GitHub Actions)
           // These packages have empty maintainers but include _npmUser with publisher info
-          // https://github.com/cnpm/cnpmcore/issues/xxx
+          // https://github.com/cnpm/cnpm/pull/489
           maintainers = [{ name: latestPackageVersion._npmUser.name, email: latestPackageVersion._npmUser.email }];
           logs.push(`[${isoNow()}] 📖 Use _npmUser from version ${latestPackageVersion.version} as maintainer (${latestPackageVersion._npmUser.name})`);
         }
@@ -1296,7 +1296,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         } else if (distTags.latest) {
           // Fallback to _npmUser for OIDC-published packages (e.g., via GitHub Actions)
           // These packages have empty maintainers but include _npmUser with publisher info
-          // https://github.com/cnpm/cnpmcore/issues/xxx
+          // https://github.com/cnpm/cnpm/pull/489
           // Need to get raw version data from buffer since packument.getLatestVersion() doesn't include _npmUser
           const latestVersionPosition = packument.getInPosition(['versions', distTags.latest]);
           if (latestVersionPosition) {
