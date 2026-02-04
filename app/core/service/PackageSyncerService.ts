@@ -1310,10 +1310,8 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
           // Need to get raw version data from buffer since packument.getLatestVersion() doesn't include _npmUser
           const latestVersionPosition = packument.getInPosition(['versions', latestPackageVersion.version!]);
           if (latestVersionPosition) {
-            // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
-            const latestVersionData: PackageJSONType = JSON.parse(
-              remoteData.subarray(latestVersionPosition[0], latestVersionPosition[1]),
-            );
+            const versionBuffer = remoteData.subarray(latestVersionPosition[0], latestVersionPosition[1]);
+            const latestVersionData: PackageJSONType = JSON.parse(versionBuffer.toString());
             if (latestVersionData._npmUser?.name && latestVersionData._npmUser.email) {
               maintainers = [{ name: latestVersionData._npmUser.name, email: latestVersionData._npmUser.email }];
               logs.push(
