@@ -2058,7 +2058,8 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
               _nodeVersion: '20.0.0',
               _npmVersion: '10.0.0',
               dist: {
-                integrity: 'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
+                integrity:
+                  'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
                 shasum: 'c73398ff6db39d138a56c04c7a90f35b70d7b78f',
                 tarball: `https://registry.npmjs.org/${name}/-/${name}-1.0.0.tgz`,
                 fileCount: 1,
@@ -2104,7 +2105,9 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // Verify the _npmUser fallback was used
       assert.ok(log.includes('📖 Use _npmUser from version 1.0.0 as maintainer (GitHub Actions)'));
-      assert.ok(log.includes('🚧 Syncing maintainers: [{"name":"GitHub Actions","email":"npm-oidc-no-reply@github.com"}]'));
+      assert.ok(
+        log.includes('🚧 Syncing maintainers: [{"name":"GitHub Actions","email":"npm-oidc-no-reply@github.com"}]'),
+      );
       assert.ok(log.includes('] 🔗'));
       app.mockAgent().assertNoPendingInterceptors();
     });
