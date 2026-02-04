@@ -1989,7 +1989,14 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
                 unpackedSize: 250,
               },
               // OIDC packages have _npmUser but empty maintainers
-              _npmUser: { name: 'GitHub Actions', email: 'npm-oidc-no-reply@github.com' },
+              _npmUser: {
+                name: 'GitHub Actions',
+                email: 'npm-oidc-no-reply@github.com',
+                trustedPublisher: {
+                  id: 'github',
+                  oidcConfigId: 'oidc:6bbec7b0-c7d4-4ecb-a63b-d9bddccd5a24',
+                },
+              },
               maintainers: [],
             },
           },
