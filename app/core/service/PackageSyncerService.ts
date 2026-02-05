@@ -1303,22 +1303,14 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         ) {
           maintainers = latestPackageVersion.maintainers as AuthorType[];
           logs.push(`[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`);
-        } else if (latestPackageVersion) {
-          // Fallback to _npmUser for OIDC-published packages (e.g., via GitHub Actions)
-          // These packages have empty maintainers but include _npmUser with publisher info
+        } else if (latestPackageVersion?.npmUser?.name && latestPackageVersion.npmUser.email) {
+          // Fallback to npmUser for OIDC-published packages (e.g., via GitHub Actions)
+          // These packages have empty maintainers but include npmUser with publisher info
           // https://github.com/cnpm/cnpm/pull/489
-          // Need to get raw version data from buffer since packument.getLatestVersion() doesn't include _npmUser
-          const latestVersionPosition = packument.getInPosition(['versions', latestPackageVersion.version!]);
-          if (latestVersionPosition) {
-            const versionBuffer = remoteData.subarray(latestVersionPosition[0], latestVersionPosition[1]);
-            const latestVersionData: PackageJSONType = JSON.parse(versionBuffer.toString());
-            if (latestVersionData._npmUser?.name && latestVersionData._npmUser.email) {
-              maintainers = [{ name: latestVersionData._npmUser.name, email: latestVersionData._npmUser.email }];
-              logs.push(
-                `[${isoNow()}] 📖 Use _npmUser from version ${latestPackageVersion.version} as maintainer (${latestVersionData._npmUser.name})`,
-              );
-            }
-          }
+          maintainers = [{ name: latestPackageVersion.npmUser.name, email: latestPackageVersion.npmUser.email }];
+          logs.push(
+            `[${isoNow()}] 📖 Use _npmUser from version ${latestPackageVersion.version} as maintainer (${latestPackageVersion.npmUser.name})`,
+          );
         }
       }
     }
