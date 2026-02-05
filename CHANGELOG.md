@@ -1,5 +1,11 @@
 # Changelog
 
+## <small>4.21.1 (2026-02-05)</small>
+
+* fix: handle OIDC-published packages with empty maintainers by falling back to _npmUser (#967) ([00c0bdf](https://github.com/cnpm/cnpmcore/commit/00c0bdf)), closes [#967](https://github.com/cnpm/cnpmcore/issues/967)
+* chore(deps): update dependency oxfmt to ^0.27.0 (#963) ([1e78081](https://github.com/cnpm/cnpmcore/commit/1e78081)), closes [#963](https://github.com/cnpm/cnpmcore/issues/963)
+* Fix: Revert SHASUMS256.txt to use GitHub URL (#962) ([79c8e40](https://github.com/cnpm/cnpmcore/commit/79c8e40)), closes [#962](https://github.com/cnpm/cnpmcore/issues/962) [hi#level](https://github.com/hi/issues/level)
+
 ## 4.21.0 (2026-01-16)
 
 * feat: Enhance ElectronBinary to support Windows platform directories (#961) ([fbbda8a](https://github.com/cnpm/cnpmcore/commit/fbbda8a)), closes [#961](https://github.com/cnpm/cnpmcore/issues/961) [hi#level](https://github.com/hi/issues/level)
