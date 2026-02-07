@@ -1,12 +1,46 @@
-FROM node:22-alpine
+# Build stage
+FROM node:22-alpine AS builder
 
-# Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
+# Copy package files for better layer caching
+COPY package*.json ./
+
+# Install all dependencies (including devDependencies for building)
+RUN npm ci --registry=https://registry.npmmirror.com
+
+# Copy source files
 COPY . .
 
-RUN .docker/build.sh
+# Build TypeScript
+RUN npm run tsc
+
+# Production stage
+FROM node:22-alpine
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+WORKDIR /usr/src/app
+
+# Copy package files
+COPY package*.json ./
+
+# Install only production dependencies
+RUN npm ci --only=production --registry=https://registry.npmmirror.com \
+  && npm cache clean --force \
+  && rm -rf /root/.npm /tmp/*
+
+# Copy built application from builder stage
+COPY --from=builder /usr/src/app/dist ./dist
+
+# Copy necessary runtime files
+COPY app.ts index.d.ts module.d.ts ./
+COPY config ./config
+COPY sql ./sql
+
+# Copy HTML templates from source
+COPY app/port/*.html ./app/port/
 
 ENV NODE_ENV=production \
   EGG_SERVER_ENV=prod \
@@ -33,4 +67,7 @@ ENV NODE_ENV=production \
   TZ=Asia/Shanghai
 
 EXPOSE 7001
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
 CMD ["npm", "run", "start:foreground"]
