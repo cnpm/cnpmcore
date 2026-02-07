@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  nginx-benchmark:
+    image: nginx:alpine
+    container_name: nginx-benchmark-server
+    ports:
+      - '8080:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx:/usr/share/nginx/html:ro
+    restart: unless-stopped
+
+  # 可选：使用 openresty 支持 Lua 模块
+  # openresty-benchmark:
+  #   image: openresty/openresty:alpine
+  #   container_name: openresty-benchmark-server
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+  #     - ./nginx:/usr/share/nginx/html:ro
+  #   restart: unless-stopped
