@@ -628,5 +628,30 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.ok(!res.headers['cache-control']);
       assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
     });
+
+    it('should include X-Integrity header when serving raw files', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+      const pkg = await TestUtil.getFullPackage({
+        name: 'integrity-test-package',
+        version: '1.0.0',
+      });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+
+      // Test raw file access includes X-Integrity header
+      const res = await app
+        .httpRequest()
+        .get(`/${pkg.name}/1.0.0/files/package.json`)
+        .expect(200);
+
+      // Should include X-Integrity header with SHA-512
+      assert.ok(res.headers['x-integrity'], 'Missing X-Integrity header');
+      assert.ok(res.headers['x-integrity'].startsWith('sha512-'), 'X-Integrity header should be SHA-512');
+    });
   });
 });
