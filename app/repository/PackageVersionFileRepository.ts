@@ -81,4 +81,34 @@ export class PackageVersionFileRepository extends AbstractRepository {
     const model = await this.PackageVersionFile.findOne({ packageVersionId });
     return !!model;
   }
+
+  async removePackageVersionFiles(packageVersionId: string): Promise<{ distPaths: string[]; removeCount: number }> {
+    // 1. Find all PackageVersionFile records for this version
+    const models = await this.PackageVersionFile.find({ packageVersionId });
+    if (models.length === 0) {
+      return { distPaths: [], removeCount: 0 };
+    }
+
+    // 2. Collect distIds and get dist paths for NFS cleanup
+    const distIds = models.map((m) => m.distId);
+    const distModels = await this.Dist.find({ distId: distIds });
+    const distPaths = distModels.map((d) => d.path);
+
+    // 3. Delete in transaction
+    await this.PackageVersionFile.transaction(async ({ connection }) => {
+      await this.PackageVersionFile.remove({ packageVersionId }, true, { connection });
+      if (distIds.length > 0) {
+        await this.Dist.remove({ distId: distIds }, true, { connection });
+      }
+    });
+
+    this.logger.info(
+      '[PackageVersionFileRepository:removePackageVersionFiles:remove] %d files, %d dists, packageVersionId: %s',
+      models.length,
+      distIds.length,
+      packageVersionId,
+    );
+
+    return { distPaths, removeCount: models.length };
+  }
 }
