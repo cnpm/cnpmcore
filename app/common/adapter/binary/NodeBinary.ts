@@ -1,14 +1,11 @@
 import { basename } from 'node:path';
-import { SingletonProto } from '@eggjs/tegg';
-import binaries, { type BinaryName } from '../../../../config/binaries.js';
+
 import dayjs from 'dayjs';
-import { BinaryType } from '../../enum/Binary.js';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.js';
+import { SingletonProto } from 'egg';
+
+import binaries, { type BinaryName } from '../../../../config/binaries.ts';
+import { BinaryType } from '../../enum/Binary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Node)
@@ -18,10 +15,7 @@ export class NodeBinary extends AbstractBinary {
     return;
   }
 
-  async fetch(
-    dir: string,
-    binaryName: BinaryName
-  ): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const url = `${binaryConfig.distUrl}${dir}`;
     const html = await this.requestXml(url);

@@ -1,19 +1,13 @@
-import {
-  type EggContext,
-  AccessLevel,
-  ContextProto,
-  Inject,
-} from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
-import { ForbiddenError, UnauthorizedError } from 'egg-errors';
+import { Context, AccessLevel, ContextProto, Inject, Config, Logger } from 'egg';
+import { ForbiddenError, UnauthorizedError } from 'egg/errors';
 
-import type { PackageRepository } from '../repository/PackageRepository.js';
-import type { Package as PackageEntity } from '../core/entity/Package.js';
-import type { User as UserEntity } from '../core/entity/User.js';
-import type { Token as TokenEntity } from '../core/entity/Token.js';
-import { getScopeAndName } from '../common/PackageUtil.js';
-import type { RegistryManagerService } from '../core/service/RegistryManagerService.js';
-import type { TokenService } from '../core/service/TokenService.js';
+import { getScopeAndName } from '../common/PackageUtil.ts';
+import type { Package as PackageEntity } from '../core/entity/Package.ts';
+import type { Token as TokenEntity } from '../core/entity/Token.ts';
+import type { User as UserEntity } from '../core/entity/User.ts';
+import type { RegistryManagerService } from '../core/service/RegistryManagerService.ts';
+import type { TokenService } from '../core/service/TokenService.ts';
+import type { PackageRepository } from '../repository/PackageRepository.ts';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
@@ -26,9 +20,9 @@ export class UserRoleManager {
   @Inject()
   private readonly packageRepository: PackageRepository;
   @Inject()
-  private readonly config: EggAppConfig;
+  private readonly config: Config;
   @Inject()
-  protected logger: EggLogger;
+  protected logger: Logger;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
@@ -43,7 +37,7 @@ export class UserRoleManager {
   // 2. has published in current registry
   // 3. pkg scope is allowed to publish
   // use AbstractController#ensurePublishAccess ensure pkg exists;
-  public async checkPublishAccess(ctx: EggContext, fullname: string) {
+  public async checkPublishAccess(ctx: Context, fullname: string) {
     const user = await this.requiredAuthorizedUser(ctx, 'publish');
 
     // 1. admin has all access
@@ -97,7 +91,7 @@ export class UserRoleManager {
   //   host: 'localhost:7001',
   //   connection: 'keep-alive'
   // }
-  public async getAuthorizedUserAndToken(ctx: EggContext) {
+  public async getAuthorizedUserAndToken(ctx: Context) {
     if (this.handleAuthorized) {
       if (!this.currentAuthorizedUser) return null;
       return {
@@ -108,8 +102,7 @@ export class UserRoleManager {
     this.handleAuthorized = true;
     const authorization = ctx.get<string>('authorization');
     if (!authorization) return null;
-    const authorizedUserAndToken =
-      await this.tokenService.getUserAndToken(authorization);
+    const authorizedUserAndToken = await this.tokenService.getUserAndToken(authorization);
     if (!authorizedUserAndToken) {
       return null;
     }
@@ -122,7 +115,7 @@ export class UserRoleManager {
     return authorizedUserAndToken;
   }
 
-  public async requiredAuthorizedUser(ctx: EggContext, role: TokenRole) {
+  public async requiredAuthorizedUser(ctx: Context, role: TokenRole) {
     const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) {
       const authorization = ctx.get('authorization');
@@ -131,14 +124,9 @@ export class UserRoleManager {
     }
     const { user, token } = authorizedUserAndToken;
     // only enable npm client and version check setting will go into this condition
-    if (
-      this.config.cnpmcore.enableNpmClientAndVersionCheck &&
-      role === 'publish'
-    ) {
+    if (this.config.cnpmcore.enableNpmClientAndVersionCheck && role === 'publish') {
       if (token.isReadonly) {
-        throw new ForbiddenError(
-          `Read-only Token "${token.tokenMark}" can't publish`
-        );
+        throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't publish`);
       }
       const userAgent: string = ctx.get('user-agent');
       // only support npm >= 7.0.0 allow publish action
@@ -157,28 +145,22 @@ export class UserRoleManager {
     }
     if (role === 'setting') {
       if (token.isReadonly) {
-        throw new ForbiddenError(
-          `Read-only Token "${token.tokenMark}" can't setting`
-        );
+        throw new ForbiddenError(`Read-only Token "${token.tokenMark}" can't setting`);
       }
       if (token.isAutomation) {
-        throw new ForbiddenError(
-          `Automation Token "${token.tokenMark}" can't setting`
-        );
+        throw new ForbiddenError(`Automation Token "${token.tokenMark}" can't setting`);
       }
     }
     return user;
   }
 
   public async requiredPackageMaintainer(pkg: PackageEntity, user: UserEntity) {
-    const maintainers = await this.packageRepository.listPackageMaintainers(
-      pkg.packageId
-    );
-    const maintainer = maintainers.find(m => m.userId === user.userId);
+    const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
+    const maintainer = maintainers.find((m) => m.userId === user.userId);
     if (!maintainer) {
-      const names = maintainers.map(m => m.name).join(', ');
+      const names = maintainers.map((m) => m.name).join(', ');
       throw new ForbiddenError(
-        `"${user.name}" not authorized to modify ${pkg.fullname}, please contact maintainers: "${names}"`
+        `"${user.name}" not authorized to modify ${pkg.fullname}, please contact maintainers: "${names}"`,
       );
     }
   }
@@ -190,18 +172,14 @@ export class UserRoleManager {
     }
     const allowScopes = user.scopes ?? cnpmcoreConfig.allowScopes;
     if (!scope) {
-      throw new ForbiddenError(
-        `Package scope required, legal scopes: "${allowScopes.join(', ')}"`
-      );
+      throw new ForbiddenError(`Package scope required, legal scopes: "${allowScopes.join(', ')}"`);
     }
     if (!allowScopes.includes(scope)) {
-      throw new ForbiddenError(
-        `Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`
-      );
+      throw new ForbiddenError(`Scope "${scope}" not match legal scopes: "${allowScopes.join(', ')}"`);
     }
   }
 
-  public async isAdmin(ctx: EggContext) {
+  public async isAdmin(ctx: Context) {
     const authorizedUserAndToken = await this.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) return false;
     const { user, token } = authorizedUserAndToken;

@@ -1,19 +1,10 @@
-import {
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPParam,
-  Inject,
-} from '@eggjs/tegg';
-import { NotFoundError, UnprocessableEntityError } from 'egg-errors';
+import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
+import { NotFoundError, UnprocessableEntityError } from 'egg/errors';
 
-import { AbstractController } from './AbstractController.js';
-import {
-  FULLNAME_REG_STRING,
-  getScopeAndName,
-} from '../../common/PackageUtil.js';
-import dayjs from '../../common/dayjs.js';
-import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
+import dayjs from '../../common/dayjs.ts';
+import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.ts';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
+import { AbstractController } from './AbstractController.ts';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -26,10 +17,7 @@ export class DownloadController extends AbstractController {
     path: `/downloads/range/:range/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.GET,
   })
-  async showPackageDownloads(
-    @HTTPParam() fullname: string,
-    @HTTPParam() range: string
-  ) {
+  async showPackageDownloads(@HTTPParam() fullname: string, @HTTPParam() range: string) {
     const [startDate, endDate] = this.checkAndGetRange(range);
     const [scope, name] = getScopeAndName(fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
@@ -37,7 +25,7 @@ export class DownloadController extends AbstractController {
     const entities = await this.packageVersionDownloadRepository.query(
       pkg.packageId,
       startDate.toDate(),
-      endDate.toDate()
+      endDate.toDate(),
     );
     const days: Record<string, number> = {};
     const versions: Record<string, { day: string; downloads: number }[]> = {};
@@ -74,16 +62,9 @@ export class DownloadController extends AbstractController {
     path: '/downloads/:scope/:range',
     method: HTTPMethodEnum.GET,
   })
-  async showTotalDownloads(
-    @HTTPParam() scope: string,
-    @HTTPParam() range: string
-  ) {
+  async showTotalDownloads(@HTTPParam() scope: string, @HTTPParam() range: string) {
     const [startDate, endDate] = this.checkAndGetRange(range);
-    const entities = await this.packageVersionDownloadRepository.query(
-      scope,
-      startDate.toDate(),
-      endDate.toDate()
-    );
+    const entities = await this.packageVersionDownloadRepository.query(scope, startDate.toDate(), endDate.toDate());
     const days: Record<string, number> = {};
     for (const entity of entities) {
       const yearMonth = String(entity.yearMonth);
@@ -111,7 +92,7 @@ export class DownloadController extends AbstractController {
     const matchs = /^(\d{4}-\d{2}-\d{2}):(\d{4}-\d{2}-\d{2})$/.exec(range);
     if (!matchs) {
       throw new UnprocessableEntityError(
-        `range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`
+        `range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`,
       );
     }
     const start = matchs[1];
@@ -120,7 +101,7 @@ export class DownloadController extends AbstractController {
     let endDate = dayjs(end, DATE_FORMAT, true);
     if (!startDate.isValid() || !endDate.isValid()) {
       throw new UnprocessableEntityError(
-        `range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`
+        `range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`,
       );
     }
     if (endDate.isBefore(startDate)) {
@@ -132,7 +113,7 @@ export class DownloadController extends AbstractController {
     const maxDate = startDate.add(1, 'year');
     if (endDate.isAfter(maxDate)) {
       throw new UnprocessableEntityError(
-        `range(${range}) beyond the processable range, max up to "${maxDate.format(DATE_FORMAT)}"`
+        `range(${range}) beyond the processable range, max up to "${maxDate.format(DATE_FORMAT)}"`,
       );
     }
     return [startDate, endDate];

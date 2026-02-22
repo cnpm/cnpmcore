@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/core/service/PackageManagerService/block.test.ts', () => {
   let packageManagerService: PackageManagerService;
@@ -20,15 +21,10 @@ describe('test/core/service/PackageManagerService/block.test.ts', () => {
     it('should work with name', async () => {
       app.mockLog();
       const { pkg } = await TestUtil.createPackage({ isPrivate: false });
-      const blockRes = await packageManagerService.blockPackageByFullname(
-        pkg.name,
-        'xxx'
-      );
+      const blockRes = await packageManagerService.blockPackageByFullname(pkg.name, 'xxx');
       assert.ok(blockRes.packageVersionBlockId);
 
-      assert.doesNotReject(
-        packageManagerService.unblockPackageByFullname(pkg.name || '')
-      );
+      assert.doesNotReject(packageManagerService.unblockPackageByFullname(pkg.name || ''));
     });
   });
 });

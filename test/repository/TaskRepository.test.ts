@@ -1,17 +1,14 @@
 import assert from 'node:assert/strict';
-import { setTimeout } from 'node:timers/promises';
 import os from 'node:os';
+import { setTimeout } from 'node:timers/promises';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TaskRepository } from '../../app/repository/TaskRepository.js';
-import { Task as TaskModel } from '../../app/repository/model/Task.js';
-import {
-  Task,
-  type TaskData,
-  type ChangesStreamTaskData,
-} from '../../app/core/entity/Task.js';
-import { EntityUtil, type EasyData } from '../../app/core/util/EntityUtil.js';
-import { TaskState, TaskType } from '../../app/common/enum/Task.js';
+import { TaskState, TaskType } from '../../app/common/enum/Task.ts';
+import { Task, type TaskData, type ChangesStreamTaskData } from '../../app/core/entity/Task.ts';
+import { EntityUtil, type EasyData } from '../../app/core/util/EntityUtil.ts';
+import { Task as TaskModel } from '../../app/repository/model/Task.ts';
+import { TaskRepository } from '../../app/repository/TaskRepository.ts';
 
 describe('test/repository/TaskRepository.test.ts', () => {
   let taskRepository: TaskRepository;
@@ -43,10 +40,7 @@ describe('test/repository/TaskRepository.test.ts', () => {
       const newData = EntityUtil.defaultData(data, 'taskId');
       const task1 = new Task(newData);
       const task2 = new Task(newData);
-      await Promise.all([
-        taskRepository.saveTask(task1),
-        taskRepository.saveTask(task2),
-      ]);
+      await Promise.all([taskRepository.saveTask(task1), taskRepository.saveTask(task2)]);
       assert.ok(task1.id);
       assert.ok(task2.id);
       assert.ok(task1.id === task2.id);
@@ -88,9 +82,7 @@ describe('test/repository/TaskRepository.test.ts', () => {
       // 由于已经被 task1 更新，所以会导致 asyncTask.updatedAd 会覆盖 model
       await taskRepository.saveTask(asyncTask);
 
-      assert.ok(
-        asyncTask.updatedAt.getTime() !== asyncTask.createdAt.getTime()
-      );
+      assert.ok(asyncTask.updatedAt.getTime() !== asyncTask.createdAt.getTime());
     });
 
     it('cant modify updatedAt', async () => {

@@ -1,16 +1,19 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { EggLogger } from 'egg';
+import { AccessLevel, Inject, SingletonProto, Logger } from 'egg';
 import pMap from 'p-map';
-import { BugVersion } from '../entity/BugVersion.js';
+
+import type { BugVersionStore } from '../../common/adapter/BugVersionStore.ts';
+import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
 import type {
+  AbbreviatedPackageJSONType,
   PackageJSONType,
   PackageRepository,
-} from '../../repository/PackageRepository.js';
-import type { DistRepository } from '../../repository/DistRepository.js';
-import { getScopeAndName } from '../../common/PackageUtil.js';
-import type { CacheService } from './CacheService.js';
-import { BUG_VERSIONS, LATEST_TAG } from '../../common/constants.js';
-import type { BugVersionStore } from '../../common/adapter/BugVersionStore.js';
+} from '../../repository/PackageRepository.ts';
+import { BugVersion } from '../entity/BugVersion.ts';
+import type { CacheService } from './CacheService.ts';
+
+export type MixedManifests = { versions: Record<string, PackageJSONType | AbbreviatedPackageJSONType | undefined> };
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -23,7 +26,7 @@ export class BugVersionService {
   private readonly distRepository: DistRepository;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   @Inject()
   private readonly cacheService: CacheService;
@@ -31,69 +34,87 @@ export class BugVersionService {
   @Inject()
   private readonly bugVersionStore: BugVersionStore;
 
+  /**
+   * Get the "config.bug-versions" field in "bug-versions"'s package.json
+   * @see https://github.com/cnpm/bug-versions/blob/master/package.json#L136
+   * @returns The bug version
+   */
   async getBugVersion(): Promise<BugVersion | undefined> {
-    // TODO performance problem, cache bugVersion and update with schedule
+    // TODO: performance problem, cache bugVersion and update with schedule
     const pkg = await this.packageRepository.findPackage('', BUG_VERSIONS);
     if (!pkg) return;
-    /* c8 ignore next 10 */
-    const tag = await this.packageRepository.findPackageTag(
-      pkg.packageId,
-      LATEST_TAG
-    );
+    const tag = await this.packageRepository.findPackageTag(pkg.packageId, LATEST_TAG);
     if (!tag) return;
     let bugVersion = this.bugVersionStore.getBugVersion(tag.version);
     if (!bugVersion) {
-      const packageVersionJson =
-        (await this.distRepository.findPackageVersionManifest(
-          pkg.packageId,
-          tag.version
-        )) as PackageJSONType;
+      const packageVersionJson = (await this.distRepository.findPackageVersionManifest(
+        pkg.packageId,
+        tag.version,
+      )) as PackageJSONType;
       if (!packageVersionJson) return;
-      const data = packageVersionJson.config?.['bug-versions'];
-      bugVersion = new BugVersion(data || {});
+      const data = packageVersionJson.config?.['bug-versions'] ?? {};
+      bugVersion = new BugVersion(data);
       this.bugVersionStore.setBugVersion(bugVersion, tag.version);
     }
     return bugVersion;
   }
 
+  /**
+   * Check if the package has bug versions
+   * @param fullname - The fullname of the package
+   * @returns True if the package has bug versions, false otherwise
+   */
+  async hasBugVersions(fullname: string): Promise<boolean> {
+    const bugVersion = await this.getBugVersion();
+    if (!bugVersion) return false;
+    return bugVersion.hasBugVersions(fullname);
+  }
+
   async cleanBugVersionPackageCaches(bugVersion: BugVersion) {
     const fullnames = bugVersion.listAllPackagesHasBugs();
+    this.logger.info('[BugVersionService] cleaning %s packages cache', fullnames.length);
     await pMap(
       fullnames,
-      async fullname => {
+      async (fullname) => {
         await this.cacheService.removeCache(fullname);
       },
       {
         concurrency: 50,
         stopOnError: false,
-      }
+      },
     );
+    this.logger.info('[BugVersionService] cleaned %s packages cache', fullnames.length);
   }
 
-  async fixPackageBugVersions(
-    bugVersion: BugVersion,
-    fullname: string,
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
-    manifests: Record<string, any>
-  ) {
+  /**
+   * Fix package bug version with all versions
+   * @param bugVersion - The bug version
+   * @param fullname - The fullname of the package
+   * @param manifests - The manifests of the package
+   * @returns The versions of the fixed manifests
+   */
+  async fixPackageBugVersions(bugVersion: BugVersion, fullname: string, manifests: MixedManifests): Promise<string[]> {
+    const fixedVersions: string[] = [];
     // If package all version unpublished(like pinyin-tool), versions is undefined
-    if (!manifests) return;
-    for (const manifest of Object.values(manifests)) {
-      this.fixPackageBugVersionWithAllVersions(
+    if (!manifests) {
+      return fixedVersions;
+    }
+    for (const manifest of Object.values(manifests.versions)) {
+      const fixedVersion = this.fixPackageBugVersionWithAllVersions(
         fullname,
         bugVersion,
-        manifest,
-        manifests
+        manifest as PackageJSONType,
+        manifests,
       );
+      if (fixedVersion) {
+        fixedVersions.push(fixedVersion);
+        this.logger.info('[BugVersionService] fixed %s@%s to %s', fullname, manifest?.version, fixedVersion);
+      }
     }
+    return fixedVersions;
   }
 
-  async fixPackageBugVersion(
-    bugVersion: BugVersion,
-    fullname: string,
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
-    manifest: any
-  ) {
+  async fixPackageBugVersion(bugVersion: BugVersion, fullname: string, manifest: PackageJSONType) {
     const advice = bugVersion.fixVersion(fullname, manifest.version);
     if (!advice) {
       return manifest;
@@ -103,16 +124,13 @@ export class BugVersionService {
     if (!pkg) {
       return manifest;
     }
-    const packageVersion = await this.packageRepository.findPackageVersion(
-      pkg.packageId,
-      advice.version
-    );
+    const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, advice.version);
     if (!packageVersion) {
       return manifest;
     }
     const fixedManifest = await this.distRepository.findPackageVersionManifest(
       packageVersion.packageId,
-      advice.version
+      advice.version,
     );
     if (!fixedManifest) {
       return manifest;
@@ -120,28 +138,36 @@ export class BugVersionService {
     return bugVersion.fixManifest(manifest, fixedManifest);
   }
 
+  /**
+   * Fix package bug version with all versions
+   * @param fullname - The fullname of the package
+   * @param bugVersion - The bug version
+   * @param manifest - The manifest of the package
+   * @param manifests - The manifests of the package
+   * @returns The version of the fixed manifest
+   */
   private fixPackageBugVersionWithAllVersions(
     fullname: string,
     bugVersion: BugVersion,
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
-    manifest: any,
-    // oxlint-disable-next-line typescript-eslint/no-explicit-any
-    manifests: Record<string, any>
-  ) {
+    manifest: PackageJSONType,
+    manifests: MixedManifests,
+  ): string | undefined {
     const advice = bugVersion.fixVersion(fullname, manifest.version);
     if (!advice) {
       return;
     }
-    const fixedManifest = manifests[advice.version];
+    const fixedManifest = manifests.versions[advice.version];
     if (!fixedManifest) {
-      this.logger.warn(
-        '[BugVersionService] not found pkg for %s@%s manifest',
-        fullname,
-        advice.version
-      );
+      this.logger.warn('[BugVersionService] not found pkg for %s@%s manifest', fullname, advice.version);
       return;
     }
     const newManifest = bugVersion.fixManifest(manifest, fixedManifest);
-    manifests[manifest.version] = newManifest;
+    if (!newManifest) {
+      return;
+    }
+
+    // update manifests with fixed manifest
+    manifests.versions[manifest.version] = newManifest;
+    return manifest.version;
   }
 }

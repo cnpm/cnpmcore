@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { RedisQueueAdapter } from '../../app/infra/QueueAdapter.js';
+import { RedisQueueAdapter } from '../../app/infra/QueueAdapter.ts';
 
 describe('test/infra/QueueAdapter.test.ts', () => {
   let queueAdapter: RedisQueueAdapter;

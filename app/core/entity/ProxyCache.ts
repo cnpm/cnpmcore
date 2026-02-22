@@ -1,17 +1,14 @@
-import { Entity, type EntityData } from './Entity.js';
-import { isPkgManifest, type DIST_NAMES } from './Package.js';
-import type { EasyData } from '../util/EntityUtil.js';
-import { PROXY_CACHE_DIR_NAME } from '../../common/constants.js';
+import { PROXY_CACHE_DIR_NAME } from '../../common/constants.ts';
+import type { EasyData } from '../util/EntityUtil.ts';
+import { Entity, type EntityData } from './Entity.ts';
+import { isPkgManifest, type DIST_NAMES } from './Package.ts';
 interface ProxyCacheData extends EntityData {
   fullname: string;
   fileType: DIST_NAMES;
   version?: string;
 }
 
-export type CreateProxyCacheData = Omit<
-  EasyData<ProxyCacheData, 'id'>,
-  'id' | 'filePath'
->;
+export type CreateProxyCacheData = Omit<EasyData<ProxyCacheData, 'id'>, 'id' | 'filePath'>;
 
 export class ProxyCache extends Entity {
   readonly fullname: string;

@@ -1,7 +1,7 @@
 // TODO sync event
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import type { EggAppConfig } from 'egg';
-import { Event, Inject } from '@eggjs/tegg';
+import { Config, Event, Inject } from 'egg';
+
+import type { PackageSearchService } from '../service/PackageSearchService.ts';
 import {
   PACKAGE_BLOCKED,
   PACKAGE_MAINTAINER_CHANGED,
@@ -14,15 +14,14 @@ import {
   PACKAGE_UNPUBLISHED,
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
-} from './index.js';
-import type { PackageSearchService } from '../service/PackageSearchService.js';
+} from './index.ts';
 
 class SyncESPackage {
   @Inject()
   protected readonly packageSearchService: PackageSearchService;
 
   @Inject()
-  protected readonly config: EggAppConfig;
+  protected readonly config: Config;
 
   protected async syncPackage(fullname: string) {
     if (!this.config.cnpmcore.enableElasticsearch) return;

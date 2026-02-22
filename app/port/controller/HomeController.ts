@@ -1,21 +1,11 @@
 import { performance } from 'node:perf_hooks';
-import {
-  type EggContext,
-  Context,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  Inject,
-} from '@eggjs/tegg';
+
+import { type Context, HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum, Inject } from 'egg';
 import pkg from 'egg/package.json' with { type: 'json' };
 
-import { AbstractController } from './AbstractController.js';
-import type {
-  CacheService,
-  DownloadInfo,
-  UpstreamRegistryInfo,
-} from '../../core/service/CacheService.js';
-import type { HomeService } from '../../core/service/HomeService.js';
+import type { CacheService, DownloadInfo, UpstreamRegistryInfo } from '../../core/service/CacheService.ts';
+import type { HomeService } from '../../core/service/HomeService.ts';
+import { AbstractController } from './AbstractController.ts';
 
 const EggVersion = pkg.version;
 const startTime = new Date();
@@ -103,7 +93,7 @@ export class HomeController extends AbstractController {
     path: '/-/ping',
     method: HTTPMethodEnum.GET,
   })
-  async ping(@Context() ctx: EggContext) {
+  async ping(@HTTPContext() ctx: Context) {
     return {
       pong: true,
       use: performance.now() - ctx.performanceStarttime,
@@ -115,7 +105,7 @@ export class HomeController extends AbstractController {
     method: HTTPMethodEnum.POST,
     priority: Number.NEGATIVE_INFINITY,
   })
-  async miscPost(@Context() ctx: EggContext) {
+  async miscPost(@HTTPContext() ctx: Context) {
     await this.homeService.misc(ctx.path);
   }
 
@@ -124,7 +114,7 @@ export class HomeController extends AbstractController {
     method: HTTPMethodEnum.GET,
     priority: Number.NEGATIVE_INFINITY,
   })
-  async miscGet(@Context() ctx: EggContext) {
+  async miscGet(@HTTPContext() ctx: Context) {
     await this.homeService.misc(ctx.path);
   }
 }

@@ -1,7 +1,8 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { CacheAdapter } from '../../common/adapter/CacheAdapter.js';
-import { AbstractService } from '../../common/AbstractService.js';
-import type { ChangesStreamTaskData } from '../entity/Task.js';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
+
+import { AbstractService } from '../../common/AbstractService.ts';
+import type { CacheAdapter } from '../../common/adapter/CacheAdapter.ts';
+import type { ChangesStreamTaskData } from '../entity/Task.ts';
 
 type PackageCacheAttribute = 'etag' | 'manifests';
 
@@ -57,17 +58,11 @@ export class CacheService extends AbstractService {
     fullname: string,
     isFullManifests: boolean,
     etag: string,
-    manifests: Buffer
+    manifests: Buffer,
   ) {
     await Promise.all([
-      this.cacheAdapter.set(
-        this.cacheKey(fullname, isFullManifests, 'etag'),
-        etag
-      ),
-      this.cacheAdapter.setBytes(
-        this.cacheKey(fullname, isFullManifests, 'manifests'),
-        manifests
-      ),
+      this.cacheAdapter.set(this.cacheKey(fullname, isFullManifests, 'etag'), etag),
+      this.cacheAdapter.setBytes(this.cacheKey(fullname, isFullManifests, 'manifests'), manifests),
     ]);
   }
 
@@ -99,10 +94,7 @@ export class CacheService extends AbstractService {
   }
 
   public async saveTotalData(totalData: TotalData) {
-    return await this.cacheAdapter.set(
-      TOTAL_DATA_KEY,
-      JSON.stringify(totalData)
-    );
+    return await this.cacheAdapter.set(TOTAL_DATA_KEY, JSON.stringify(totalData));
   }
 
   public async removeCache(fullname: string) {
@@ -114,11 +106,7 @@ export class CacheService extends AbstractService {
     ]);
   }
 
-  private cacheKey(
-    fullname: string,
-    isFullManifests: boolean,
-    attribute: PackageCacheAttribute
-  ) {
+  private cacheKey(fullname: string, isFullManifests: boolean, attribute: PackageCacheAttribute) {
     return `${fullname}|${isFullManifests ? 'full' : 'abbr'}:${attribute}`;
   }
 }

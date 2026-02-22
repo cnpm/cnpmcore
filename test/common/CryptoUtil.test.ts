@@ -1,10 +1,6 @@
 import assert from 'node:assert/strict';
 
-import {
-  decryptRSA,
-  encryptRSA,
-  genRSAKeys,
-} from '../../app/common/CryptoUtil.js';
+import { decryptRSA, encryptRSA, genRSAKeys } from '../../app/common/CryptoUtil.ts';
 
 describe('test/common/CryptoUtil.test.ts', () => {
   describe('genRSAKeys()', () => {

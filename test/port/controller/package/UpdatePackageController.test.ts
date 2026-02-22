@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
   let publisher: TestUser;
@@ -59,10 +60,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           maintainers: [],
         })
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] maintainers: must NOT have fewer than 1 items'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] maintainers: must NOT have fewer than 1 items');
     });
 
     it('should 422 when some maintainters not exists', async () => {
@@ -83,10 +81,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           ],
         })
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] Maintainer "foo" not exists'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] Maintainer "foo" not exists');
     });
 
     it('should 403 request user is not maintainer', async () => {
@@ -105,7 +100,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         .expect(403);
       assert.equal(
         res.body.error,
-        `[FORBIDDEN] "${user.name}" not authorized to modify ${scopedName}, please contact maintainers: "${publisher.name}"`
+        `[FORBIDDEN] "${user.name}" not authorized to modify ${scopedName}, please contact maintainers: "${publisher.name}"`,
       );
     });
 
@@ -134,9 +129,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         name: 'dnpm:banana',
       });
 
-      const registryManagerService = await app.getEggObject(
-        RegistryManagerService
-      );
+      const registryManagerService = await app.getEggObject(RegistryManagerService);
       const registry = await registryManagerService.createRegistry({
         name: 'dnpmcore',
         changeStream: 'https://d.cnpmjs.org/_changes',
@@ -181,10 +174,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           maintainers: [{ name: user.name, email: user.email }],
         })
         .expect(400);
-      assert.equal(
-        res.body.error,
-        '[BAD_REQUEST] header: npm-command expected "owner", but got ""'
-      );
+      assert.equal(res.body.error, '[BAD_REQUEST] header: npm-command expected "owner", but got ""');
       res = await app
         .httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
@@ -197,10 +187,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           maintainers: [{ name: user.name, email: user.email }],
         })
         .expect(400);
-      assert.equal(
-        res.body.error,
-        '[BAD_REQUEST] header: npm-command expected "owner", but got "adduser"'
-      );
+      assert.equal(res.body.error, '[BAD_REQUEST] header: npm-command expected "owner", but got "adduser"');
 
       // npm@6: referer: 'xxx [REDACTED]'
       // npm@>=7: 'npm-command': 'xxx'
@@ -217,10 +204,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           maintainers: [{ name: user.name, email: user.email }],
         })
         .expect(400);
-      assert.equal(
-        res.body.error,
-        '[BAD_REQUEST] header: npm-command expected "owner", but got "addUser"'
-      );
+      assert.equal(res.body.error, '[BAD_REQUEST] header: npm-command expected "owner", but got "addUser"');
     });
 
     it('should 200 when npm command is npm owner add', async () => {
@@ -295,10 +279,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           maintainers: [{ name: user.name, email: user.email }],
         })
         .expect(403);
-      assert.equal(
-        res.body.error,
-        '[FORBIDDEN] Only allow npm client to access'
-      );
+      assert.equal(res.body.error, '[FORBIDDEN] Only allow npm client to access');
 
       res = await app
         .httpRequest()
@@ -312,10 +293,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           maintainers: [{ name: user.name, email: user.email }],
         })
         .expect(403);
-      assert.equal(
-        res.body.error,
-        '[FORBIDDEN] Only allow npm@>=7.0.0 client to access'
-      );
+      assert.equal(res.body.error, '[FORBIDDEN] Only allow npm@>=7.0.0 client to access');
     });
 
     it('should 200 when enableNpmClientAndVersionCheck is false', async () => {
@@ -369,10 +347,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         })
         .expect(403);
       assert.equal(res.statusCode, 403);
-      assert.equal(
-        res.body.error,
-        '[FORBIDDEN] Only allow npm client to access'
-      );
+      assert.equal(res.body.error, '[FORBIDDEN] Only allow npm client to access');
       res = await app
         .httpRequest()
         .put(`/${scopedName}/-rev/${rev}`)
@@ -386,10 +361,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         })
         .expect(403);
       assert.equal(res.statusCode, 403);
-      assert.equal(
-        res.body.error,
-        '[FORBIDDEN] Only allow npm@>=7.0.0 client to access'
-      );
+      assert.equal(res.body.error, '[FORBIDDEN] Only allow npm@>=7.0.0 client to access');
     });
 
     it('should 200 and get latest maintainers', async () => {
@@ -452,7 +424,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
         .expect(403);
       assert.equal(
         res.body.error,
-        `[FORBIDDEN] "${publisher.name}" not authorized to modify ${scopedName}, please contact maintainers: "${user.name}, ${user2.name}"`
+        `[FORBIDDEN] "${publisher.name}" not authorized to modify ${scopedName}, please contact maintainers: "${user.name}, ${user2.name}"`,
       );
     });
 
@@ -470,10 +442,7 @@ describe('test/port/controller/package/UpdatePackageController.test.ts', () => {
           maintainers: [{ name: user.name, email: user.email }],
         })
         .expect(403);
-      assert.equal(
-        res.body.error,
-        '[FORBIDDEN] Only allow npm@>=7.0.0 client to access'
-      );
+      assert.equal(res.body.error, '[FORBIDDEN] Only allow npm@>=7.0.0 client to access');
 
       // should valid with pnpm6 and npm>10
       res = await app

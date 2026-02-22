@@ -2,11 +2,11 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import type { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.js';
-import { CnpmcoreChangesStream } from '../../../../app/common/adapter/changesStream/CnpmcoreChangesStream.js';
-import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import type { Registry } from '../../../../app/core/entity/Registry.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
+import type { ChangesStreamChange } from '../../../../app/common/adapter/changesStream/AbstractChangesStream.ts';
+import { CnpmcoreChangesStream } from '../../../../app/common/adapter/changesStream/CnpmcoreChangesStream.ts';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
+import type { Registry } from '../../../../app/core/entity/Registry.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
 
 describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () => {
   let cnpmcoreChangesStream: CnpmcoreChangesStream;
@@ -40,20 +40,14 @@ describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () =
       app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, () => {
         throw new Error('mock request replicate _changes error');
       });
-      await assert.rejects(
-        cnpmcoreChangesStream.getInitialSince(registry),
-        /mock request/
-      );
+      await assert.rejects(cnpmcoreChangesStream.getInitialSince(registry), /mock request/);
     });
 
     it('should throw error invalid seq', async () => {
       app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, {
         data: { update_seqs: 'invalid' },
       });
-      await assert.rejects(
-        cnpmcoreChangesStream.getInitialSince(registry),
-        /get getInitialSince failed/
-      );
+      await assert.rejects(cnpmcoreChangesStream.getInitialSince(registry), /get getInitialSince failed/);
     });
   });
 

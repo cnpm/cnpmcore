@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import { type TestUser, TestUtil } from '../../../TestUtil.js';
-import type { Scope } from '../../../../app/core/entity/Scope.js';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
+import type { Scope } from '../../../../app/core/entity/Scope.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import { type TestUser, TestUtil } from '../../../TestUtil.ts';
 
 describe('test/port/controller/ScopeController/index.test.ts', () => {
   let adminUser: TestUser;
@@ -74,17 +75,11 @@ describe('test/port/controller/ScopeController/index.test.ts', () => {
     beforeEach(async () => {
       const queryRes = await registryManagerService.listRegistries({});
       const registry = queryRes.data[0];
-      let res = await app
-        .httpRequest()
-        .post('/-/scope')
-        .set('authorization', adminUser.authorization)
-        .send({
-          name: '@cnpmjsa',
-          registryId: registry.registryId,
-        });
-      res = await app
-        .httpRequest()
-        .get(`/-/registry/${registry.registryId}/scopes`);
+      let res = await app.httpRequest().post('/-/scope').set('authorization', adminUser.authorization).send({
+        name: '@cnpmjsa',
+        registryId: registry.registryId,
+      });
+      res = await app.httpRequest().get(`/-/registry/${registry.registryId}/scopes`);
 
       scope = res.body.data[0];
     });

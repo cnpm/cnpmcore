@@ -1,12 +1,8 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import type { estypes } from '@elastic/elasticsearch';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import type { SearchAdapter } from '../common/typing.js';
-import type {
-  AuthorType,
-  CnpmcorePatchInfo,
-  PackageManifestType,
-} from './PackageRepository.js';
+import type { SearchAdapter } from '../common/typing.ts';
+import type { AuthorType, CnpmcorePatchInfo, PackageManifestType } from './PackageRepository.ts';
 
 export type SearchJSONPickKey =
   | '_rev'
@@ -53,7 +49,7 @@ export class SearchRepository {
 
   async searchPackage(
     // oxlint-disable-next-line typescript-eslint/no-explicit-any
-    query: any
+    query: any,
   ): Promise<estypes.SearchHitsMetadata<SearchManifestType>> {
     return await this.searchAdapter.search<SearchManifestType>(query);
   }

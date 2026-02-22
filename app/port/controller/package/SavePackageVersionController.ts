@@ -1,41 +1,19 @@
-import type { PackageJson, Simplify } from 'type-fest';
-import { isEqual } from 'lodash-es';
-import {
-  ConflictError,
-  ForbiddenError,
-  UnprocessableEntityError,
-} from 'egg-errors';
-import {
-  type EggContext,
-  Context,
-  HTTPBody,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPParam,
-  Inject,
-} from '@eggjs/tegg';
-import { checkData, fromData } from 'ssri';
-import validateNpmPackageName from 'validate-npm-package-name';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
+import { HTTPContext, Context, HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
+import { ConflictError, ForbiddenError, UnprocessableEntityError } from 'egg/errors';
+import { isEqual } from 'lodash-es';
+import { checkData, fromData } from 'ssri';
+import type { PackageJson, Simplify } from 'type-fest';
+import validateNpmPackageName from 'validate-npm-package-name';
 
-import { AbstractController } from '../AbstractController.js';
-import {
-  FULLNAME_REG_STRING,
-  extractPackageJSON,
-  getScopeAndName,
-} from '../../../common/PackageUtil.js';
-import type { PackageManagerService } from '../../../core/service/PackageManagerService.js';
-import type { PackageVersion as PackageVersionEntity } from '../../../core/entity/PackageVersion.js';
-import {
-  Description as DescriptionType,
-  Name as NameType,
-  TagWithVersionRule,
-  VersionRule,
-} from '../../typebox.js';
-import type { RegistryManagerService } from '../../../core/service/RegistryManagerService.js';
-import type { PackageJSONType } from '../../../repository/PackageRepository.js';
-import type { CacheAdapter } from '../../../common/adapter/CacheAdapter.js';
+import type { CacheAdapter } from '../../../common/adapter/CacheAdapter.ts';
+import { FULLNAME_REG_STRING, extractPackageJSON, getScopeAndName } from '../../../common/PackageUtil.ts';
+import type { PackageVersion as PackageVersionEntity } from '../../../core/entity/PackageVersion.ts';
+import type { PackageManagerService } from '../../../core/service/PackageManagerService.ts';
+import type { RegistryManagerService } from '../../../core/service/RegistryManagerService.ts';
+import type { PackageJSONType } from '../../../repository/PackageRepository.ts';
+import { Description as DescriptionType, Name as NameType, TagWithVersionRule, VersionRule } from '../../typebox.ts';
+import { AbstractController } from '../AbstractController.ts';
 
 const STRICT_CHECK_TARBALL_FIELDS: (keyof PackageJson)[] = [
   'name',
@@ -74,10 +52,9 @@ const FullPackageRule = Type.Object({
   readme: Type.Optional(Type.String({ transform: ['trim'] })),
 });
 // overwrite versions & _attachments
-type FullPackage = Omit<
-  Static<typeof FullPackageRule>,
-  'versions' | '_attachments'
-> & { versions: { [key: string]: PackageVersion } } & {
+type FullPackage = Omit<Static<typeof FullPackageRule>, 'versions' | '_attachments'> & {
+  versions: { [key: string]: PackageVersion };
+} & {
   _attachments: {
     [key: string]: {
       content_type: string;
@@ -109,20 +86,14 @@ export class SavePackageVersionController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.PUT,
   })
-  async save(
-    @Context() ctx: EggContext,
-    @HTTPParam() fullname: string,
-    @HTTPBody() pkg: FullPackage
-  ) {
+  async save(@HTTPContext() ctx: Context, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     this.validateNpmCommand(ctx);
     ctx.tValidate(FullPackageRule, pkg);
     const { user } = await this.ensurePublishAccess(ctx, fullname, false);
     // oxlint-disable-next-line no-param-reassign
     fullname = fullname.trim();
     if (fullname !== pkg.name) {
-      throw new UnprocessableEntityError(
-        `fullname(${fullname}) not match package.name(${pkg.name})`
-      );
+      throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
     }
 
     // Using https://github.com/npm/validate-npm-package-name to validate package name
@@ -132,14 +103,8 @@ export class SavePackageVersionController extends AbstractController {
       const [scope, name] = getScopeAndName(fullname);
       const pkg = await this.packageRepository.findPackage(scope, name);
       if (!pkg) {
-        const errors = (
-          validateResult.errors ||
-          validateResult.warnings ||
-          []
-        ).join(', ');
-        throw new UnprocessableEntityError(
-          `package.name invalid, errors: ${errors}`
-        );
+        const errors = (validateResult.errors || validateResult.warnings || []).join(', ');
+        throw new UnprocessableEntityError(`package.name invalid, errors: ${errors}`);
       }
     }
     const versions = Object.values(pkg.versions);
@@ -153,9 +118,7 @@ export class SavePackageVersionController extends AbstractController {
 
     if (!attachmentFilename) {
       // `deprecated: ''` meaning remove deprecated message
-      const isDeprecatedRequest = versions.some(
-        version => 'deprecated' in version
-      );
+      const isDeprecatedRequest = versions.some((version) => 'deprecated' in version);
       // handle deprecated request
       // PUT /:fullname?write=true
       // https://github.com/npm/cli/blob/latest/lib/commands/deprecate.js#L48
@@ -185,11 +148,7 @@ export class SavePackageVersionController extends AbstractController {
     if (!distTags.latest) {
       const existsPkg = await this.packageRepository.findPackage(scope, name);
       const existsLatestTag =
-        existsPkg &&
-        (await this.packageRepository.findPackageTag(
-          existsPkg?.packageId,
-          'latest'
-        ));
+        existsPkg && (await this.packageRepository.findPackageTag(existsPkg?.packageId, 'latest'));
       if (!existsPkg || !existsLatestTag) {
         this.logger.warn('[package:version:add] add default latest tag');
         distTags.latest = distTags[tagNames[0]];
@@ -201,7 +160,7 @@ export class SavePackageVersionController extends AbstractController {
     ctx.tValidate(TagWithVersionRule, tagWithVersion);
     if (tagWithVersion.version !== packageVersion.version) {
       throw new UnprocessableEntityError(
-        `dist-tags version "${tagWithVersion.version}" not match package version "${packageVersion.version}"`
+        `dist-tags version "${tagWithVersion.version}" not match package version "${packageVersion.version}"`,
       );
     }
 
@@ -210,14 +169,12 @@ export class SavePackageVersionController extends AbstractController {
       throw new UnprocessableEntityError('attachment.data format invalid');
     }
     if (!PACKAGE_ATTACH_DATA_RE.test(attachment.data)) {
-      throw new UnprocessableEntityError(
-        'attachment.data string format invalid'
-      );
+      throw new UnprocessableEntityError('attachment.data string format invalid');
     }
     const tarballBytes = Buffer.from(attachment.data, 'base64');
     if (tarballBytes.length !== attachment.length) {
       throw new UnprocessableEntityError(
-        `attachment size ${attachment.length} not match download size ${tarballBytes.length}`
+        `attachment size ${attachment.length} not match download size ${tarballBytes.length}`,
       );
     }
 
@@ -235,10 +192,7 @@ export class SavePackageVersionController extends AbstractController {
         algorithms: ['sha1'],
       });
       const shasum = integrityObj.sha1[0].hexDigest();
-      if (
-        packageVersion.dist?.shasum &&
-        packageVersion.dist.shasum !== shasum
-      ) {
+      if (packageVersion.dist?.shasum && packageVersion.dist.shasum !== shasum) {
         // if integrity not exists, check shasum
         throw new UnprocessableEntityError('dist.shasum invalid');
       }
@@ -249,20 +203,17 @@ export class SavePackageVersionController extends AbstractController {
     if (this.config.cnpmcore.strictValidateTarballPkg) {
       const tarballPkg = await extractPackageJSON(tarballBytes);
       const versionManifest = pkg.versions[tarballPkg.version];
-      const diffKeys = STRICT_CHECK_TARBALL_FIELDS.filter(key => {
+      const diffKeys = STRICT_CHECK_TARBALL_FIELDS.filter((key) => {
         const targetKey = key as unknown as keyof typeof versionManifest;
         return !isEqual(tarballPkg[key], versionManifest[targetKey]);
       });
       if (diffKeys.length > 0) {
-        throw new UnprocessableEntityError(
-          `${diffKeys} mismatch between tarball and manifest`
-        );
+        throw new UnprocessableEntityError(`${diffKeys} mismatch between tarball and manifest`);
       }
     }
 
     // make sure readme is string
-    const readme =
-      typeof packageVersion.readme === 'string' ? packageVersion.readme : '';
+    const readme = typeof packageVersion.readme === 'string' ? packageVersion.readme : '';
     // remove readme
     packageVersion.readme = undefined;
     // make sure description is string
@@ -274,36 +225,30 @@ export class SavePackageVersionController extends AbstractController {
 
     let packageVersionEntity: PackageVersionEntity | undefined;
     const lockName = `${pkg.name}:publish`;
-    const lockRes = await this.cacheAdapter.usingLock(
-      `${pkg.name}:publish`,
-      60,
-      async () => {
-        packageVersionEntity = await this.packageManagerService.publish(
-          {
-            scope,
-            name,
-            version: packageVersion.version,
-            description: packageVersion.description as string,
-            packageJson: packageVersion as PackageJSONType,
-            readme,
-            dist: {
-              content: tarballBytes,
-            },
-            tags: tagNames,
-            registryId: registry.registryId,
-            isPrivate: true,
+    const lockRes = await this.cacheAdapter.usingLock(`${pkg.name}:publish`, 60, async () => {
+      packageVersionEntity = await this.packageManagerService.publish(
+        {
+          scope,
+          name,
+          version: packageVersion.version,
+          description: packageVersion.description as string,
+          packageJson: packageVersion as PackageJSONType,
+          readme,
+          dist: {
+            content: tarballBytes,
           },
-          user
-        );
-      }
-    );
+          tags: tagNames,
+          registryId: registry.registryId,
+          isPrivate: true,
+        },
+        user,
+      );
+    });
 
     // lock fail
     if (!lockRes) {
       this.logger.warn('[package:version:add] check lock:%s fail', lockName);
-      throw new ConflictError(
-        'Unable to create the publication lock, please try again later.'
-      );
+      throw new ConflictError('Unable to create the publication lock, please try again later.');
     }
 
     this.logger.info(
@@ -312,7 +257,7 @@ export class SavePackageVersionController extends AbstractController {
       packageVersion.version,
       packageVersionEntity?.packageVersionId,
       tagWithVersion.tag,
-      user?.userId
+      user?.userId,
     );
     ctx.status = 201;
     return {
@@ -322,19 +267,16 @@ export class SavePackageVersionController extends AbstractController {
   }
 
   // https://github.com/cnpm/cnpmjs.org/issues/415
-  private async saveDeprecatedVersions(
-    fullname: string,
-    versions: PackageVersion[]
-  ) {
+  private async saveDeprecatedVersions(fullname: string, versions: PackageVersion[]) {
     const pkg = await this.getPackageEntityByFullname(fullname);
     await this.packageManagerService.saveDeprecatedVersions(
       pkg,
-      versions.map(v => ({ version: v.version, deprecated: v.deprecated }))
+      versions.map((v) => ({ version: v.version, deprecated: v.deprecated })),
     );
     return { ok: true };
   }
 
-  private validateNpmCommand(ctx: EggContext) {
+  private validateNpmCommand(ctx: Context) {
     // forbidden star/unstar request
     // npm@6: referer: 'star [REDACTED]'
     // npm@>=7: 'npm-command': 'star'

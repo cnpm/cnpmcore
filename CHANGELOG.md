@@ -1,5 +1,138 @@
 # Changelog
 
+## <small>4.21.1 (2026-02-05)</small>
+
+* fix: handle OIDC-published packages with empty maintainers by falling back to _npmUser (#967) ([00c0bdf](https://github.com/cnpm/cnpmcore/commit/00c0bdf)), closes [#967](https://github.com/cnpm/cnpmcore/issues/967)
+* chore(deps): update dependency oxfmt to ^0.27.0 (#963) ([1e78081](https://github.com/cnpm/cnpmcore/commit/1e78081)), closes [#963](https://github.com/cnpm/cnpmcore/issues/963)
+* Fix: Revert SHASUMS256.txt to use GitHub URL (#962) ([79c8e40](https://github.com/cnpm/cnpmcore/commit/79c8e40)), closes [#962](https://github.com/cnpm/cnpmcore/issues/962) [hi#level](https://github.com/hi/issues/level)
+
+## 4.21.0 (2026-01-16)
+
+* feat: Enhance ElectronBinary to support Windows platform directories (#961) ([fbbda8a](https://github.com/cnpm/cnpmcore/commit/fbbda8a)), closes [#961](https://github.com/cnpm/cnpmcore/issues/961) [hi#level](https://github.com/hi/issues/level)
+* chore(deps): update dependency oxfmt to ^0.24.0 (#958) ([854b4c4](https://github.com/cnpm/cnpmcore/commit/854b4c4)), closes [#958](https://github.com/cnpm/cnpmcore/issues/958)
+* chore(deps): update dependency oxlint-tsgolint to ^0.11.0 (#957) ([efdac42](https://github.com/cnpm/cnpmcore/commit/efdac42)), closes [#957](https://github.com/cnpm/cnpmcore/issues/957)
+
+## 4.20.0 (2026-01-08)
+
+* feat: Include headers file in Electron binary version directory (#955) ([1a4da92](https://github.com/cnpm/cnpmcore/commit/1a4da92)), closes [#955](https://github.com/cnpm/cnpmcore/issues/955) [hi#level](https://github.com/hi/issues/level)
+* chore(ci): utoo (#953) ([e5ec277](https://github.com/cnpm/cnpmcore/commit/e5ec277)), closes [#953](https://github.com/cnpm/cnpmcore/issues/953)
+* chore(deps): update dependency oxfmt to ^0.23.0 (#952) ([524512b](https://github.com/cnpm/cnpmcore/commit/524512b)), closes [#952](https://github.com/cnpm/cnpmcore/issues/952)
+
+## 4.19.0 (2026-01-05)
+
+* feat: Add Cross-Origin-Resource-Policy header to unpkg endpoints (#951) ([c2f6f31](https://github.com/cnpm/cnpmcore/commit/c2f6f31)), closes [#951](https://github.com/cnpm/cnpmcore/issues/951) [cnpm/cnpmcore#950](https://github.com/cnpm/cnpmcore/issues/950)
+* chore(deps): update dependency oxfmt to ^0.21.0 (#948) ([6868960](https://github.com/cnpm/cnpmcore/commit/6868960)), closes [#948](https://github.com/cnpm/cnpmcore/issues/948)
+
+## <small>4.18.1 (2025-12-22)</small>
+
+* chore: replace @node-rs/crc32 with Node.js stdlib zlib.crc32 (#938) ([8a1b79f](https://github.com/cnpm/cnpmcore/commit/8a1b79f)), closes [#938](https://github.com/cnpm/cnpmcore/issues/938) [cnpm/cnpmcore#937](https://github.com/cnpm/cnpmcore/issues/937)
+* chore(deps): update dependency oxfmt to ^0.20.0 (#944) ([e6f9208](https://github.com/cnpm/cnpmcore/commit/e6f9208)), closes [#944](https://github.com/cnpm/cnpmcore/issues/944)
+* chore(deps): update dependency oxlint-tsgolint to ^0.10.0 (#939) ([6f07c76](https://github.com/cnpm/cnpmcore/commit/6f07c76)), closes [#939](https://github.com/cnpm/cnpmcore/issues/939)
+* chore(deps): update oxfmt and remove prettier (#923) ([9ab9d2a](https://github.com/cnpm/cnpmcore/commit/9ab9d2a)), closes [#923](https://github.com/cnpm/cnpmcore/issues/923)
+* fix: should refresh package manifests to dists to avoid missing versions (#946) ([7d345b8](https://github.com/cnpm/cnpmcore/commit/7d345b8)), closes [#946](https://github.com/cnpm/cnpmcore/issues/946) [hi#level](https://github.com/hi/issues/level)
+
+## 4.18.0 (2025-12-18)
+
+* feat: show upstream sync error (#936) ([33443ee](https://github.com/cnpm/cnpmcore/commit/33443ee)), closes [#936](https://github.com/cnpm/cnpmcore/issues/936) [hi#level](https://github.com/hi/issues/level)
+
+## <small>4.17.1 (2025-12-16)</small>
+
+* fix: show unpkg-white-list version on sync log (#934) ([0f4aeff](https://github.com/cnpm/cnpmcore/commit/0f4aeff)), closes [#934](https://github.com/cnpm/cnpmcore/issues/934) [hi#level](https://github.com/hi/issues/level)
+* chore(deps): update dependency oxlint-tsgolint to ^0.9.0 (#930) ([ba37c25](https://github.com/cnpm/cnpmcore/commit/ba37c25)), closes [#930](https://github.com/cnpm/cnpmcore/issues/930)
+
+## 4.17.0 (2025-12-13)
+
+* feat: support block sync packages (#929) ([4cc30fe](https://github.com/cnpm/cnpmcore/commit/4cc30fe)), closes [#929](https://github.com/cnpm/cnpmcore/issues/929) [hi#level](https://github.com/hi/issues/level)
+
+## <small>4.16.2 (2025-12-13)</small>
+
+* fix: fallback to unpackedSize to limit tgz size (#928) ([30e99ab](https://github.com/cnpm/cnpmcore/commit/30e99ab)), closes [#928](https://github.com/cnpm/cnpmcore/issues/928) [hi#level](https://github.com/hi/issues/level)
+
+## <small>4.16.1 (2025-12-13)</small>
+
+* fix: support allow large check from scopes level (#927) ([ab98ddc](https://github.com/cnpm/cnpmcore/commit/ab98ddc)), closes [#927](https://github.com/cnpm/cnpmcore/issues/927) [hi#level](https://github.com/hi/issues/level)
+
+## 4.16.0 (2025-12-13)
+
+* feat: limit tgz file size through configuration (#926) ([a631fad](https://github.com/cnpm/cnpmcore/commit/a631fad)), closes [#926](https://github.com/cnpm/cnpmcore/issues/926) [hi#level](https://github.com/hi/issues/level)
+* chore: test on Node.js v20 (#925) ([deb3748](https://github.com/cnpm/cnpmcore/commit/deb3748)), closes [#925](https://github.com/cnpm/cnpmcore/issues/925) [hi#level](https://github.com/hi/issues/level)
+
+## 4.15.0 (2025-12-10)
+
+* feat: enable skipCloneValue on leoric (#924) ([c04bcbd](https://github.com/cnpm/cnpmcore/commit/c04bcbd)), closes [#924](https://github.com/cnpm/cnpmcore/issues/924) [hi#throughput](https://github.com/hi/issues/throughput)
+* feat(deps): restore official tar package (#922) ([7ea05ce](https://github.com/cnpm/cnpmcore/commit/7ea05ce)), closes [#922](https://github.com/cnpm/cnpmcore/issues/922) [cnpm/cnpmcore#921](https://github.com/cnpm/cnpmcore/issues/921)
+
+## 4.14.0 (2025-12-07)
+
+* feat: avoids Bone constructor overhead for each row (#919) ([f8eedd8](https://github.com/cnpm/cnpmcore/commit/f8eedd8)), closes [#919](https://github.com/cnpm/cnpmcore/issues/919) [hi#level](https://github.com/hi/issues/level)
+* chore(benchmark): add CPU profiler analysis tools (#917) ([5ef2c67](https://github.com/cnpm/cnpmcore/commit/5ef2c67)), closes [#917](https://github.com/cnpm/cnpmcore/issues/917)
+
+## <small>4.13.3 (2025-12-06)</small>
+
+* fix: zero copy to create a new Buffer (#916) ([683ee1d](https://github.com/cnpm/cnpmcore/commit/683ee1d)), closes [#916](https://github.com/cnpm/cnpmcore/issues/916) [hi#level](https://github.com/hi/issues/level)
+* chore(deps): update mime-types to v3 (#899) ([0a5c90c](https://github.com/cnpm/cnpmcore/commit/0a5c90c)), closes [#899](https://github.com/cnpm/cnpmcore/issues/899) [#865](https://github.com/cnpm/cnpmcore/issues/865)
+* chore(deps): upgrade base-x to v5 (#897) ([d3e4fae](https://github.com/cnpm/cnpmcore/commit/d3e4fae)), closes [#897](https://github.com/cnpm/cnpmcore/issues/897) [#864](https://github.com/cnpm/cnpmcore/issues/864)
+
+## <small>4.13.2 (2025-12-06)</small>
+
+* fix: enable show package cache (#915) ([dc20401](https://github.com/cnpm/cnpmcore/commit/dc20401)), closes [#915](https://github.com/cnpm/cnpmcore/issues/915) [hi#level](https://github.com/hi/issues/level)
+
+## <small>4.13.1 (2025-12-06)</small>
+
+* fix: auto sync _npmUser field (#912) ([cd57073](https://github.com/cnpm/cnpmcore/commit/cd57073)), closes [#912](https://github.com/cnpm/cnpmcore/issues/912) [hi#level](https://github.com/hi/issues/level)
+* refactor: use JSONBuilder to reduce JavaScript GC (#905) ([461c66a](https://github.com/cnpm/cnpmcore/commit/461c66a)), closes [#905](https://github.com/cnpm/cnpmcore/issues/905) [hi#level](https://github.com/hi/issues/level)
+* chore: remove mocha overrides (#895) ([5957276](https://github.com/cnpm/cnpmcore/commit/5957276)), closes [#895](https://github.com/cnpm/cnpmcore/issues/895) [hi#level](https://github.com/hi/issues/level)
+* chore: use oxfmt (#896) ([8d6a718](https://github.com/cnpm/cnpmcore/commit/8d6a718)), closes [#896](https://github.com/cnpm/cnpmcore/issues/896)
+* chore(deps): update dependency oxfmt to ^0.16.0 (#902) ([f3c33ba](https://github.com/cnpm/cnpmcore/commit/f3c33ba)), closes [#902](https://github.com/cnpm/cnpmcore/issues/902)
+* chore(deps): update dependency p-map to v7 (#868) ([e1ea970](https://github.com/cnpm/cnpmcore/commit/e1ea970)), closes [#868](https://github.com/cnpm/cnpmcore/issues/868)
+* chore(deps): upgrade ua-parser-js to v2 (#898) ([44b80a9](https://github.com/cnpm/cnpmcore/commit/44b80a9)), closes [#898](https://github.com/cnpm/cnpmcore/issues/898) [#872](https://github.com/cnpm/cnpmcore/issues/872)
+
+## 4.13.0 (2025-11-29)
+
+* feat: use packument to parse full manifest json (#894) ([b70a9af](https://github.com/cnpm/cnpmcore/commit/b70a9af)), closes [#894](https://github.com/cnpm/cnpmcore/issues/894) [hi#level](https://github.com/hi/issues/level)
+* chore(deps): update actions/checkout action to v6 (#890) ([c5caee6](https://github.com/cnpm/cnpmcore/commit/c5caee6)), closes [#890](https://github.com/cnpm/cnpmcore/issues/890)
+* chore(deps): update dependency oxlint-tsgolint to ^0.8.0 (#889) ([fd63422](https://github.com/cnpm/cnpmcore/commit/fd63422)), closes [#889](https://github.com/cnpm/cnpmcore/issues/889)
+
+## 4.12.0 (2025-11-18)
+
+* feat: add builds/driver for playwright (#884) ([93034bf](https://github.com/cnpm/cnpmcore/commit/93034bf)), closes [#884](https://github.com/cnpm/cnpmcore/issues/884) [#883](https://github.com/cnpm/cnpmcore/issues/883)
+* feat: add ffmpeg-builds binary mirror (#879) ([d7de1cd](https://github.com/cnpm/cnpmcore/commit/d7de1cd)), closes [#879](https://github.com/cnpm/cnpmcore/issues/879)
+* feat: try to avoid recalculating integrity (#880) ([4859ce8](https://github.com/cnpm/cnpmcore/commit/4859ce8)), closes [#880](https://github.com/cnpm/cnpmcore/issues/880)
+* chore: add deployment test (#874) ([0d32146](https://github.com/cnpm/cnpmcore/commit/0d32146)), closes [#874](https://github.com/cnpm/cnpmcore/issues/874)
+* chore: Configure Renovate (#845) ([f3f3584](https://github.com/cnpm/cnpmcore/commit/f3f3584)), closes [#845](https://github.com/cnpm/cnpmcore/issues/845)
+* chore(deps): update actions/attest-build-provenance action to v3 (#847) ([957f43d](https://github.com/cnpm/cnpmcore/commit/957f43d)), closes [#847](https://github.com/cnpm/cnpmcore/issues/847)
+* chore(deps): update actions/checkout action to v5 (#849) ([e8a3ee5](https://github.com/cnpm/cnpmcore/commit/e8a3ee5)), closes [#849](https://github.com/cnpm/cnpmcore/issues/849)
+* chore(deps): update actions/first-interaction action to v3 (#850) ([35a7be3](https://github.com/cnpm/cnpmcore/commit/35a7be3)), closes [#850](https://github.com/cnpm/cnpmcore/issues/850)
+* chore(deps): update actions/setup-node action to v6 (#851) ([3671c52](https://github.com/cnpm/cnpmcore/commit/3671c52)), closes [#851](https://github.com/cnpm/cnpmcore/issues/851)
+* chore(deps): update dependency lint-staged to v16 (#853) ([e1848c7](https://github.com/cnpm/cnpmcore/commit/e1848c7)), closes [#853](https://github.com/cnpm/cnpmcore/issues/853)
+* chore(deps): update dependency mocha to v11.7.4 (#846) ([4213bd8](https://github.com/cnpm/cnpmcore/commit/4213bd8)), closes [#846](https://github.com/cnpm/cnpmcore/issues/846)
+* chore(deps): update dependency oxlint-tsgolint to ^0.3.0 (#863) ([0c987a7](https://github.com/cnpm/cnpmcore/commit/0c987a7)), closes [#863](https://github.com/cnpm/cnpmcore/issues/863)
+* chore(deps): update dependency oxlint-tsgolint to ^0.5.0 (#875) ([95543b1](https://github.com/cnpm/cnpmcore/commit/95543b1)), closes [#875](https://github.com/cnpm/cnpmcore/issues/875)
+* chore(deps): update dependency oxlint-tsgolint to ^0.7.0 (#885) ([06a3ae1](https://github.com/cnpm/cnpmcore/commit/06a3ae1)), closes [#885](https://github.com/cnpm/cnpmcore/issues/885)
+* chore(deps): update dependency type-fest to v5 [skip ci] (#871) ([01385f4](https://github.com/cnpm/cnpmcore/commit/01385f4)), closes [#871](https://github.com/cnpm/cnpmcore/issues/871)
+* fix(deps): update dependency npm-package-arg to v13 (#866) ([c3059c7](https://github.com/cnpm/cnpmcore/commit/c3059c7)), closes [#866](https://github.com/cnpm/cnpmcore/issues/866)
+* fix(deps): update dependency read-env-value to v2 (#869) ([098c75a](https://github.com/cnpm/cnpmcore/commit/098c75a)), closes [#869](https://github.com/cnpm/cnpmcore/issues/869)
+* fix(deps): update dependency ssri to v13 (#870) ([0f11e77](https://github.com/cnpm/cnpmcore/commit/0f11e77)), closes [#870](https://github.com/cnpm/cnpmcore/issues/870)
+* fix(deps): update dependency validate-npm-package-name to v7 [skip ci] (#873) ([6c29f08](https://github.com/cnpm/cnpmcore/commit/6c29f08)), closes [#873](https://github.com/cnpm/cnpmcore/issues/873)
+* refactor: use all in one egg v4 (#855) ([89f1250](https://github.com/cnpm/cnpmcore/commit/89f1250)), closes [#855](https://github.com/cnpm/cnpmcore/issues/855)
+
+## <small>4.11.1 (2025-10-22)</small>
+
+* fix: improve TypeScript type definitions across codebase (#844) ([e5162f2](https://github.com/cnpm/cnpmcore/commit/e5162f2)), closes [#844](https://github.com/cnpm/cnpmcore/issues/844)
+
+## 4.11.0 (2025-10-15)
+
+* feat: perpage config (#843) ([3e1dbd8](https://github.com/cnpm/cnpmcore/commit/3e1dbd8)), closes [#843](https://github.com/cnpm/cnpmcore/issues/843)
+
+## 4.10.0 (2025-10-15)
+
+* feat: Add time field to abbreviated metadata for pnpm time-based resolution (#834) ([2e51399](https://github.com/cnpm/cnpmcore/commit/2e51399)), closes [#834](https://github.com/cnpm/cnpmcore/issues/834)
+* feat: mirror microsoft/ripgrep-prebuilt binary (#842) ([606c983](https://github.com/cnpm/cnpmcore/commit/606c983)), closes [#842](https://github.com/cnpm/cnpmcore/issues/842) [cnpm/cnpmcore#841](https://github.com/cnpm/cnpmcore/issues/841)
+* docs: Add comprehensive internal API documentation for direct HTTP requests (#832) ([5b1da74](https://github.com/cnpm/cnpmcore/commit/5b1da74)), closes [#832](https://github.com/cnpm/cnpmcore/issues/832) [#709](https://github.com/cnpm/cnpmcore/issues/709)
+* docs: Enhance Copilot instructions with DDD architecture [skip ci] (#838) ([cb93141](https://github.com/cnpm/cnpmcore/commit/cb93141)), closes [#838](https://github.com/cnpm/cnpmcore/issues/838) [cnpm/cnpmcore#837](https://github.com/cnpm/cnpmcore/issues/837)
+* test: enable test shard (#839) ([324511d](https://github.com/cnpm/cnpmcore/commit/324511d)), closes [#839](https://github.com/cnpm/cnpmcore/issues/839)
+* refactor: use tegg and egg v4 beta (#836) ([c7df471](https://github.com/cnpm/cnpmcore/commit/c7df471)), closes [#836](https://github.com/cnpm/cnpmcore/issues/836)
+
 ## 4.9.0 (2025-09-12)
 
 * feat: add Firefox binary mirroring support for Puppeteer with version filtering and comprehensive te ([17b1b81](https://github.com/cnpm/cnpmcore/commit/17b1b81)), closes [#828](https://github.com/cnpm/cnpmcore/issues/828) [#826](https://github.com/cnpm/cnpmcore/issues/826)

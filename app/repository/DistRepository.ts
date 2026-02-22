@@ -1,11 +1,9 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { JSONBuilder } from '@cnpmjs/packument';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import type { NFSAdapter } from '../common/adapter/NFSAdapter.js';
-import type {
-  PackageJSONType,
-  PackageRepository,
-} from './PackageRepository.js';
-import type { Dist } from '../core/entity/Dist.js';
+import type { NFSAdapter } from '../common/adapter/NFSAdapter.ts';
+import type { Dist } from '../core/entity/Dist.ts';
+import type { PackageJSONType, PackageRepository } from './PackageRepository.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -17,14 +15,8 @@ export class DistRepository {
   @Inject()
   private readonly nfsAdapter: NFSAdapter;
 
-  async findPackageVersionManifest(
-    packageId: string,
-    version: string
-  ): Promise<PackageJSONType | undefined> {
-    const packageVersion = await this.packageRepository.findPackageVersion(
-      packageId,
-      version
-    );
+  async findPackageVersionManifest(packageId: string, version: string): Promise<PackageJSONType | undefined> {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       const [packageVersionJson, readme] = await Promise.all([
         this.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist),
@@ -37,16 +29,44 @@ export class DistRepository {
     }
   }
 
-  async findPackageAbbreviatedManifest(
+  async findPackageVersionManifestJSONBuilder(
     packageId: string,
-    version: string
-  ): Promise<PackageJSONType | undefined> {
-    const packageVersion = await this.packageRepository.findPackageVersion(
-      packageId,
-      version
-    );
+    version: string,
+    includeReadme = false,
+  ): Promise<JSONBuilder | undefined> {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
+    if (packageVersion) {
+      // include readme
+      if (includeReadme) {
+        const [builder, readme] = await Promise.all([
+          this.readDistBytesToJSONBuilder(packageVersion.manifestDist),
+          this.readDistBytesToString(packageVersion.readmeDist),
+        ]);
+        if (builder) {
+          builder.setIn(['readme'], readme);
+        }
+        return builder;
+      }
+
+      // only return manifest builder
+      return await this.readDistBytesToJSONBuilder(packageVersion.manifestDist);
+    }
+  }
+
+  async findPackageAbbreviatedManifest(packageId: string, version: string): Promise<PackageJSONType | undefined> {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (packageVersion) {
       return await this.readDistBytesToJSON(packageVersion.abbreviatedDist);
+    }
+  }
+
+  async findPackageAbbreviatedManifestJSONBuilder(
+    packageId: string,
+    version: string,
+  ): Promise<JSONBuilder | undefined> {
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
+    if (packageVersion) {
+      return await this.readDistBytesToJSONBuilder(packageVersion.abbreviatedDist);
     }
   }
 
@@ -65,6 +85,20 @@ export class DistRepository {
 
   async readDistBytes(dist: Dist): Promise<Uint8Array | undefined> {
     return await this.nfsAdapter.getBytes(dist.path);
+  }
+
+  async readDistBytesToBuffer(dist: Dist): Promise<Buffer | undefined> {
+    const bytes = await this.readDistBytes(dist);
+    if (!bytes) return undefined;
+    // if bytes is Uint8Array, should use zero copy to create a new Buffer
+    // https://nodejs.org/docs/latest-v24.x/api/buffer.html#static-method-bufferfromarraybuffer-byteoffset-length
+    return Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  }
+
+  async readDistBytesToJSONBuilder(dist: Dist): Promise<JSONBuilder | undefined> {
+    const bytes = await this.readDistBytesToBuffer(dist);
+    if (!bytes) return undefined;
+    return new JSONBuilder(bytes);
   }
 
   async getDistStream(dist: Dist) {

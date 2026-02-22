@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
+
 import { app, mm } from '@eggjs/mock/bootstrap';
 
-import { TaskService } from '../../../../app/core/service/TaskService.js';
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
-import { TaskState, TaskType } from '../../../../app/common/enum/Task.js';
-import { RedisQueueAdapter } from '../../../../app/infra/QueueAdapter.js';
+import { TaskState, TaskType } from '../../../../app/common/enum/Task.ts';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.ts';
+import { TaskService } from '../../../../app/core/service/TaskService.ts';
+import { RedisQueueAdapter } from '../../../../app/infra/QueueAdapter.ts';
 
 describe('test/core/service/TaskService/findExecuteTask.test.ts', () => {
   let taskService: TaskService;

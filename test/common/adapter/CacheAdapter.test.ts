@@ -3,7 +3,7 @@ import { setTimeout } from 'node:timers/promises';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter.js';
+import { CacheAdapter } from '../../../app/common/adapter/CacheAdapter.ts';
 
 describe('test/common/adapter/CacheAdapter.test.ts', () => {
   let cache: CacheAdapter;
@@ -55,7 +55,7 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
         cache.lock('unittest-concurrency', 1),
         cache.lock('unittest-concurrency', 1),
       ]);
-      assert.ok(locks.filter(lockId => !!lockId).length === 1);
+      assert.ok(locks.filter((lockId) => !!lockId).length === 1);
     });
 
     it('should mock lock timeout', async () => {

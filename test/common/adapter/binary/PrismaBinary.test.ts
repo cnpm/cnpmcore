@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { PrismaBinary } from '../../../../app/common/adapter/binary/PrismaBinary.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { PrismaBinary } from '../../../../app/common/adapter/binary/PrismaBinary.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
   let binary: PrismaBinary;
@@ -13,9 +13,7 @@ describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/@prisma/engines', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.com/prisma-engines.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/prisma-engines.json'),
         persist: false,
       });
       await binary.initFetch();
@@ -52,20 +50,13 @@ describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
     });
 
     it('should fetch subdir: /61023c35d2c8762f66f09bc4183d2f630b541d08/ work', async () => {
-      app.mockHttpclient(
-        'https://list-binaries.prisma-orm.workers.dev/',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'list-binaries.prisma-orm.workers.dev/61023c35d2c8762f66f09bc4183d2f630b541d08.json'
-          ),
-          persist: false,
-        }
-      );
-      let result = await binary.fetch(
-        '/61023c35d2c8762f66f09bc4183d2f630b541d08/',
-        'prisma'
-      );
+      app.mockHttpclient('https://list-binaries.prisma-orm.workers.dev/', 'GET', {
+        data: await TestUtil.readFixturesFile(
+          'list-binaries.prisma-orm.workers.dev/61023c35d2c8762f66f09bc4183d2f630b541d08.json',
+        ),
+        persist: false,
+      });
+      let result = await binary.fetch('/61023c35d2c8762f66f09bc4183d2f630b541d08/', 'prisma');
       assert.ok(result);
       assert.equal(result.items.length, 16);
       assert.equal(result.items[0].name, 'darwin-arm64/');
@@ -74,29 +65,19 @@ describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
       assert.equal(result.items[3].name, 'debian-openssl-1.1.x/');
       assert.equal(result.items[0].isDir, true);
 
-      app.mockHttpclient(
-        'https://list-binaries.prisma-orm.workers.dev/',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'list-binaries.prisma-orm.workers.dev/61023c35d2c8762f66f09bc4183d2f630b541d08-darwin-arm64.json'
-          ),
-          persist: false,
-        }
-      );
-      result = await binary.fetch(
-        '/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/',
-        'prisma'
-      );
+      app.mockHttpclient('https://list-binaries.prisma-orm.workers.dev/', 'GET', {
+        data: await TestUtil.readFixturesFile(
+          'list-binaries.prisma-orm.workers.dev/61023c35d2c8762f66f09bc4183d2f630b541d08-darwin-arm64.json',
+        ),
+        persist: false,
+      });
+      result = await binary.fetch('/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/', 'prisma');
       assert.ok(result);
       assert.equal(result.items.length, 20);
-      assert.equal(
-        result.items[0].name,
-        'libquery_engine.dylib.node.gz.sha256'
-      );
+      assert.equal(result.items[0].name, 'libquery_engine.dylib.node.gz.sha256');
       assert.equal(
         result.items[0].url,
-        'https://binaries.prisma.sh/all_commits/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/libquery_engine.dylib.node.gz.sha256'
+        'https://binaries.prisma.sh/all_commits/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/libquery_engine.dylib.node.gz.sha256',
       );
       assert.equal(result.items[0].isDir, false);
       assert.equal(result.items[0].size, 96);
@@ -104,7 +85,7 @@ describe('test/common/adapter/binary/PrismaBinary.test.ts', () => {
       assert.equal(result.items[1].name, 'libquery_engine.dylib.node.gz.sig');
       assert.equal(
         result.items[1].url,
-        'https://binaries.prisma.sh/all_commits/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/libquery_engine.dylib.node.gz.sig'
+        'https://binaries.prisma.sh/all_commits/61023c35d2c8762f66f09bc4183d2f630b541d08/darwin-arm64/libquery_engine.dylib.node.gz.sig',
       );
       assert.equal(result.items[1].isDir, false);
       assert.equal(result.items[1].size, 566);

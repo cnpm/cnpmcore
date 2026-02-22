@@ -1,11 +1,7 @@
-import type {
-  ChangesStreamMode,
-  SyncDeleteMode,
-  SyncMode,
-} from '../common/constants.js';
-import type { DATABASE_TYPE } from '../../config/database.js';
+import type { DATABASE_TYPE } from '../../config/database.ts';
+import type { ChangesStreamMode, SyncDeleteMode, SyncMode } from '../common/constants.ts';
 
-export { cnpmcoreConfig } from '../../config/config.default.js';
+export { cnpmcoreConfig } from '../../config/config.default.ts';
 
 export interface CnpmcoreConfig {
   name: string;
@@ -159,6 +155,10 @@ export interface CnpmcoreConfig {
    */
   enableSyncUnpkgFilesWhiteList: boolean;
   /**
+   * allow large package version size, default is MAX_SAFE_INTEGER
+   */
+  largePackageVersionSize: number;
+  /**
    * enable this would make sync specific version task not append latest version into this task automatically,it would mark the local latest stable version as latest tag.
    * in most cases, you should set to false to keep the same behavior as source registry.
    */
@@ -186,5 +186,20 @@ export interface CnpmcoreConfig {
    */
   database: {
     type: DATABASE_TYPE | string;
+  };
+
+  /**
+   * experimental features
+   */
+  experimental: {
+    /**
+     * enable sync package with packument
+     */
+    syncPackageWithPackument: boolean;
+    /**
+     * enable use JSONBuilder to update package manifests
+     * it would improve the performance of update package manifests and reduce the memory usage
+     */
+    enableJSONBuilder: boolean;
   };
 }

@@ -1,17 +1,17 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { EggContextHttpClient } from 'egg';
-import type { TriggerHookTask } from '../entity/Task.js';
-import type { HookEvent } from '../entity/HookEvent.js';
-import type { HookRepository } from '../../repository/HookRepository.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import type { DistRepository } from '../../repository/DistRepository.js';
-import type { UserRepository } from '../../repository/UserRepository.js';
-import type { Hook } from '../entity/Hook.js';
-import { isoNow } from '../../common/LogUtil.js';
-import { TaskState } from '../../common/enum/Task.js';
-import type { TaskService } from './TaskService.js';
-import { getScopeAndName } from '../../common/PackageUtil.js';
-import type { Dist } from '../entity/Dist.js';
+import { AccessLevel, Inject, SingletonProto, HttpClient } from 'egg';
+
+import { TaskState } from '../../common/enum/Task.ts';
+import { isoNow } from '../../common/LogUtil.ts';
+import { getScopeAndName } from '../../common/PackageUtil.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
+import type { HookRepository } from '../../repository/HookRepository.ts';
+import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import type { UserRepository } from '../../repository/UserRepository.ts';
+import type { Dist } from '../entity/Dist.ts';
+import type { Hook } from '../entity/Hook.ts';
+import type { HookEvent } from '../entity/HookEvent.ts';
+import type { TriggerHookTask } from '../entity/Task.ts';
+import type { TaskService } from './TaskService.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -30,7 +30,7 @@ export class HookTriggerService {
   private readonly userRepository: UserRepository;
 
   @Inject()
-  private readonly httpclient: EggContextHttpClient;
+  private readonly httpClient: HttpClient;
 
   @Inject()
   private readonly taskService: TaskService;
@@ -42,7 +42,7 @@ export class HookTriggerService {
       await this.taskService.finishTask(
         task,
         TaskState.Success,
-        `[${isoNow()}][TriggerHooks] hook ${hookId} not exits`
+        `[${isoNow()}][TriggerHooks] hook ${hookId} not exits`,
       );
       return;
     }
@@ -52,7 +52,7 @@ export class HookTriggerService {
         await this.taskService.finishTask(
           task,
           TaskState.Success,
-          `[${isoNow()}][TriggerHooks] generate payload failed \n`
+          `[${isoNow()}][TriggerHooks] generate payload failed \n`,
         );
         return;
       }
@@ -63,16 +63,12 @@ export class HookTriggerService {
       await this.taskService.finishTask(
         task,
         TaskState.Success,
-        `[${isoNow()}][TriggerHooks] trigger hook succeed ${status} \n`
+        `[${isoNow()}][TriggerHooks] trigger hook succeed ${status} \n`,
       );
     } catch (e) {
       e.message = `trigger hook failed: ${e.message}`;
       task.error = e.message;
-      await this.taskService.finishTask(
-        task,
-        TaskState.Fail,
-        `[${isoNow()}][TriggerHooks] ${e.stack} \n`
-      );
+      await this.taskService.finishTask(task, TaskState.Fail, `[${isoNow()}][TriggerHooks] ${e.stack} \n`);
       return;
     }
   }
@@ -80,7 +76,7 @@ export class HookTriggerService {
   async doExecuteTrigger(hook: Hook, payload: object): Promise<number> {
     const { digest, payloadStr } = hook.signPayload(payload);
     const url = new URL(hook.endpoint);
-    const res = await this.httpclient.request(hook.endpoint, {
+    const res = await this.httpClient.request(hook.endpoint, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -99,18 +95,14 @@ export class HookTriggerService {
     throw new Error(`hook response with ${res.status}`);
   }
 
-  async createTriggerPayload(
-    task: TriggerHookTask,
-    hookEvent: HookEvent,
-    hook: Hook
-  ): Promise<object | undefined> {
+  async createTriggerPayload(task: TriggerHookTask, hookEvent: HookEvent, hook: Hook): Promise<object | undefined> {
     const [scope, name] = getScopeAndName(hookEvent.fullname);
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) {
       await this.taskService.finishTask(
         task,
         TaskState.Success,
-        `[${isoNow()}][TriggerHooks] can not found pkg for ${hookEvent.fullname} \n`
+        `[${isoNow()}][TriggerHooks] can not found pkg for ${hookEvent.fullname} \n`,
       );
       return;
     }
@@ -119,13 +111,11 @@ export class HookTriggerService {
       await this.taskService.finishTask(
         task,
         TaskState.Success,
-        `[${isoNow()}][TriggerHooks] can not found user for ${hook.ownerId} \n`
+        `[${isoNow()}][TriggerHooks] can not found user for ${hook.ownerId} \n`,
       );
       return;
     }
-    const manifest = await this.distRepository.readDistBytesToJSON(
-      pkg.manifestsDist as Dist
-    );
+    const manifest = await this.distRepository.readDistBytesToJSON(pkg.manifestsDist as Dist);
     return {
       event: hookEvent.event,
       name: pkg.fullname,

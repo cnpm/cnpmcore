@@ -2,19 +2,19 @@ import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { ForbiddenError } from 'egg-errors';
 import dayjs from 'dayjs';
+import { ForbiddenError } from 'egg/errors';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
-import { UserRepository } from '../../../../app/repository/UserRepository.js';
-import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
-import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import { UserService } from '../../../../app/core/service/UserService.js';
-import { TokenType, type Token } from '../../../../app/core/entity/Token.js';
-import { Token as TokenModel } from '../../../../app/repository/model/Token.js';
-import type { User } from '../../../../app/core/entity/User.js';
-import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.js';
+import { calculateIntegrity } from '../../../../app/common/PackageUtil.ts';
+import { TokenType, type Token } from '../../../../app/core/entity/Token.ts';
+import type { User } from '../../../../app/core/entity/User.ts';
+import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
+import { UserService } from '../../../../app/core/service/UserService.ts';
+import { Token as TokenModel } from '../../../../app/repository/model/Token.ts';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
+import { UserRepository } from '../../../../app/repository/UserRepository.ts';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/package/SavePackageVersionController.test.ts', () => {
   let userRepository: UserRepository;
@@ -97,9 +97,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       const packageRepository = await app.getEggObject(PackageRepository);
       const pkgEntity = await packageRepository.findPackage('', pkg.name);
 
-      const registryManagerService = await app.getEggObject(
-        RegistryManagerService
-      );
+      const registryManagerService = await app.getEggObject(RegistryManagerService);
       const selfRegistry = await registryManagerService.ensureSelfRegistry();
 
       assert.ok(pkgEntity);
@@ -112,9 +110,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         version: '1.0.0',
       });
 
-      const packageManagerService = await app.getEggObject(
-        PackageManagerService
-      );
+      const packageManagerService = await app.getEggObject(PackageManagerService);
 
       mock(packageManagerService, 'publish', async () => {
         await setTimeout(50);
@@ -140,10 +136,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       ]);
       assert.ok(errorRes.error, '[FORBIDDEN] mock error');
       assert.equal(conflictRes.status, 409);
-      assert.ok(
-        conflictRes.error,
-        '[CONFLICT] Unable to create the publication lock, please try again later.'
-      );
+      assert.ok(conflictRes.error, '[CONFLICT] Unable to create the publication lock, please try again later.');
 
       // release lock
       await setTimeout(50);
@@ -177,10 +170,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg2)
         .expect(422);
 
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] name mismatch between tarball and manifest'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] name mismatch between tarball and manifest');
     });
     it('should verify tgz and manifest with multiple fields', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
@@ -204,10 +194,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg2)
         .expect(422);
 
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] name,dependencies mismatch between tarball and manifest'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] name,dependencies mismatch between tarball and manifest');
     });
 
     it('should add new version success on scoped package', async () => {
@@ -280,7 +267,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .expect(403);
       assert.equal(
         res.body.error,
-        '[FORBIDDEN] Scope "@somescope" not match legal scopes: "@cnpm, @cnpmcore, @example"'
+        '[FORBIDDEN] Scope "@somescope" not match legal scopes: "@cnpm, @cnpmcore, @example"',
       );
       pkg = await TestUtil.getFullPackage({ name: 'foo' });
       res = await app
@@ -290,13 +277,10 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(403);
-      assert.equal(
-        res.body.error,
-        '[FORBIDDEN] Package scope required, legal scopes: "@cnpm, @cnpmcore, @example"'
-      );
+      assert.equal(res.body.error, '[FORBIDDEN] Package scope required, legal scopes: "@cnpm, @cnpmcore, @example"');
     });
 
-    it('should 200 when migrate scoped package', async () => {
+    it('should 200 and set registryId when migrate scoped package', async () => {
       const name = '@cnpm/publish-package-test';
       let pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
       let res = await app
@@ -309,16 +293,14 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
       assert.ok(res);
       const packageRepository = await app.getEggObject(PackageRepository);
-      let pkgEntity = await packageRepository.findPackage(
-        '@cnpm',
-        'publish-package-test'
-      );
+      let pkgEntity = await packageRepository.findPackage('@cnpm', 'publish-package-test');
       assert.ok(pkgEntity);
+      // mock registryId to empty
       pkgEntity.registryId = '';
       await packageRepository.savePackage(pkgEntity);
 
       res = await app.httpRequest().get(`/${pkg.name}`);
-      assert.equal(res.body._source_registry_name, 'default');
+      assert.equal(res.body._source_registry_name, 'default', 'should set registryId to default');
 
       pkg = await TestUtil.getFullPackage({ name, version: '2.0.0' });
       res = await app
@@ -329,14 +311,11 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg)
         .expect(201);
 
-      pkgEntity = await packageRepository.findPackage(
-        '@cnpm',
-        'publish-package-test'
-      );
-      assert.ok(pkgEntity?.registryId);
+      pkgEntity = await packageRepository.findPackage('@cnpm', 'publish-package-test');
+      assert.ok(pkgEntity?.registryId, 'should set registryId');
 
       res = await app.httpRequest().get(`/${pkg.name}`);
-      assert.equal(res.body._source_registry_name, 'self');
+      assert.equal(res.body._source_registry_name, 'self', 'should set registryId to self');
     });
 
     it('should publish on user custom scopes', async () => {
@@ -365,8 +344,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       user.scopes = ['@inrupt'];
       await userRepository.saveUser(user);
       const name = '@inrupt/solid-client';
-      const version =
-        '0.0.2-dependabotnpmandyarnwebsitedocusauruspreset-classic-200-alpha61-192892303-618.0';
+      const version = '0.0.2-dependabotnpmandyarnwebsitedocusauruspreset-classic-200-alpha61-192892303-618.0';
       const pkg = await TestUtil.getFullPackage({ name, version });
       let res = await app
         .httpRequest()
@@ -493,7 +471,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .expect(422);
       assert.equal(
         res.body.error,
-        '[UNPROCESSABLE_ENTITY] dist-tags version "0.1.0" not match package version "0.0.0"'
+        '[UNPROCESSABLE_ENTITY] dist-tags version "0.1.0" not match package version "0.0.0"',
       );
     });
 
@@ -537,10 +515,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] tag: must match format "semver-tag"'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] tag: must match format "semver-tag"');
     });
 
     it('should 404 save deprecated message when package not exists', async () => {
@@ -566,16 +541,12 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
             '0.0.0': {
               version: '0.0.0',
               name: notExistsName,
-              deprecated:
-                'is deprecated, 模块被抛弃, work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+              deprecated: 'is deprecated, 模块被抛弃, work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
             },
           },
         })
         .expect(404);
-      assert.equal(
-        res.body.error,
-        '[NOT_FOUND] @cnpm/testmodule-not-exists not found'
-      );
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/testmodule-not-exists not found');
     });
 
     it('should 403 save deprecated message when other user request', async () => {
@@ -601,16 +572,12 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
             '0.0.0': {
               version: '0.0.0',
               name: pkg.name,
-              deprecated:
-                'is deprecated, 模块被抛弃, work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+              deprecated: 'is deprecated, 模块被抛弃, work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
             },
           },
         })
         .expect(403);
-      assert.match(
-        res.body.error,
-        /not authorized to modify @cnpm\/testmodule, please contact maintainers/
-      );
+      assert.match(res.body.error, /not authorized to modify @cnpm\/testmodule, please contact maintainers/);
     });
 
     it('should save package version deprecated message', async () => {
@@ -624,8 +591,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .expect(201);
       assert.equal(res.body.ok, true);
 
-      const deprecated =
-        'is deprecated, 模块被抛弃, work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻';
+      const deprecated = 'is deprecated, 模块被抛弃, work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻';
       res = await app
         .httpRequest()
         .put(`/${pkg.name}`)
@@ -819,10 +785,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg2)
         .expect(403);
-      assert.equal(
-        res.body.error,
-        `[FORBIDDEN] Can't modify pre-existing version: ${pkg2.name}@99.0.0`
-      );
+      assert.equal(res.body.error, `[FORBIDDEN] Can't modify pre-existing version: ${pkg2.name}@99.0.0`);
     });
 
     it('should 422 when version format error', async () => {
@@ -836,10 +799,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] version: must match format "semver-version"'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] version: must match format "semver-version"');
     });
 
     it('should 422 when version empty error', async () => {
@@ -853,10 +813,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] version: must NOT have fewer than 5 characters'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] version: must NOT have fewer than 5 characters');
 
       // auto fix trim empty string
       pkg = await TestUtil.getFullPackage({
@@ -886,7 +843,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.ok(res.status === 422);
       assert.ok(
         res.body.error ===
-          '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain special characters ("~\'!()*")'
+          '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain special characters ("~\'!()*")',
       );
 
       pkg = await TestUtil.getFullPackage({
@@ -901,7 +858,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.ok(res.status === 422);
       assert.ok(
         res.body.error ===
-          '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can only contain URL-friendly characters'
+          '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can only contain URL-friendly characters',
       );
 
       pkg = await TestUtil.getFullPackage({
@@ -916,15 +873,13 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.ok(res.status === 422);
       assert.ok(
         res.body.error ===
-          '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters, name can no longer contain capital letters'
+          '[UNPROCESSABLE_ENTITY] package.name invalid, errors: name can no longer contain more than 214 characters, name can no longer contain capital letters',
       );
     });
 
     it('should allow to publish exists pkg', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
-      const packageManagerService = await app.getEggObject(
-        PackageManagerService
-      );
+      const packageManagerService = await app.getEggObject(PackageManagerService);
       const pkg = await TestUtil.getFullPackage({
         name: '@cnpm/LegacyName',
       });
@@ -944,7 +899,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           tags: ['latest'],
           isPrivate: true,
         },
-        user
+        user,
       );
 
       const res = await app
@@ -969,10 +924,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] attachment.data format invalid'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
 
       pkg = await TestUtil.getFullPackage({
         attachment: {
@@ -986,10 +938,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] attachment.data string format invalid'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data string format invalid');
 
       pkg = await TestUtil.getFullPackage({
         attachment: {
@@ -1003,10 +952,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] attachment.data format invalid'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment.data format invalid');
     });
 
     it('should 422 when attachment size not match', async () => {
@@ -1022,10 +968,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] attachment size 3 not match download size 251'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment size 3 not match download size 251');
 
       pkg = await TestUtil.getFullPackage({
         attachment: {
@@ -1039,17 +982,13 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] attachment size 251 not match download size 63'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] attachment size 251 not match download size 63');
     });
 
     it('should 422 dist.integrity invalid', async () => {
       const pkg = await TestUtil.getFullPackage({
         dist: {
-          integrity:
-            'sha512-n+4CQg0Rp1Qo0p9a0R5E5io67T9iD3Lcgg6exmpmt0s8kd4XcOoHu2kiu6U7xd69c',
+          integrity: 'sha512-n+4CQg0Rp1Qo0p9a0R5E5io67T9iD3Lcgg6exmpmt0s8kd4XcOoHu2kiu6U7xd69c',
         },
       });
       const res = await app
@@ -1059,10 +998,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] dist.integrity invalid'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist.integrity invalid');
     });
 
     it('should 422 dist.shasum invalid', async () => {
@@ -1080,10 +1016,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .send(pkg);
 
       assert.equal(res.status, 422);
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] dist.shasum invalid'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] dist.shasum invalid');
     });
 
     it('should 422 when name not match pkg.name', async () => {
@@ -1096,10 +1029,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[UNPROCESSABLE_ENTITY] fullname(foo) not match package.name(@cnpm/testmodule)'
-      );
+      assert.equal(res.body.error, '[UNPROCESSABLE_ENTITY] fullname(foo) not match package.name(@cnpm/testmodule)');
     });
 
     it('should 422 _attachments is empty', async () => {
@@ -1120,9 +1050,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           _attachments: {},
         })
         .expect(422);
-      assert.ok(
-        res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty'
-      );
+      assert.ok(res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty');
 
       res = await app
         .httpRequest()
@@ -1139,9 +1067,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           },
         })
         .expect(422);
-      assert.ok(
-        res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty'
-      );
+      assert.ok(res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty');
 
       res = await app
         .httpRequest()
@@ -1159,9 +1085,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           _attachments: null,
         })
         .expect(422);
-      assert.ok(
-        res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty'
-      );
+      assert.ok(res.body.error === '[UNPROCESSABLE_ENTITY] _attachments is empty');
     });
 
     it('should 422 versions is empty', async () => {
@@ -1309,7 +1233,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           },
           {
             expiredAt: dayjs(token.createdAt).add(1, 'millisecond').toDate(),
-          }
+          },
         );
 
         const name = '@cnpm/new_pkg';
@@ -1336,10 +1260,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           .send(pkg);
 
         assert.equal(res.status, 403);
-        assert.equal(
-          res.body.error,
-          `[FORBIDDEN] can't access package "${name}"`
-        );
+        assert.equal(res.body.error, `[FORBIDDEN] can't access package "${name}"`);
       });
 
       it('should 200 when token has no limit', async () => {
@@ -1385,10 +1306,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
 
       it('should 200 when allowedPackages', async () => {
         assert.ok(user);
-        await TestUtil.createPackage(
-          { name: '@cnpm/other_new_pkg' },
-          { name: user.name }
-        );
+        await TestUtil.createPackage({ name: '@cnpm/other_new_pkg' }, { name: user.name });
         token = await userService.createToken(user.userId, {
           name: 'new-token',
           type: TokenType.granular,

@@ -1,11 +1,7 @@
-import { SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary.js';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.js';
+import { SingletonProto } from 'egg';
+
+import { BinaryType } from '../../enum/Binary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Cypress)
@@ -57,13 +53,7 @@ export class CypressBinary extends AbstractBinary {
         //   { platform: 'darwin', arch: 'arm64' },
         //   { platform: 'win32', arch: 'x64' },
         // ]
-        const platforms = [
-          'darwin-x64',
-          'darwin-arm64',
-          'linux-x64',
-          'linux-arm64',
-          'win32-x64',
-        ];
+        const platforms = ['darwin-x64', 'darwin-arm64', 'linux-x64', 'linux-arm64', 'win32-x64'];
         for (const platform of platforms) {
           this.dirItems[subDir].push({
             name: `${platform}/`,

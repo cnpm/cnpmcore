@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { GithubBinary } from '../../../../app/common/adapter/binary/GithubBinary.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { GithubBinary } from '../../../../app/common/adapter/binary/GithubBinary.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
   let binary: GithubBinary;
@@ -13,17 +13,11 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should fetch root and subdir work', async () => {
-      const response = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('electron-releases.json')
-      );
-      app.mockHttpclient(
-        /https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/,
-        'GET',
-        {
-          data: response,
-          status: 200,
-        }
-      );
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('electron-releases.json'));
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/, 'GET', {
+        data: response,
+        status: 200,
+      });
       let result = await binary.fetch('/', 'electron');
       assert.ok(result);
       assert.ok(result.items.length > 0);
@@ -45,17 +39,11 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
     });
 
     it('should fetch skia-canvas', async () => {
-      const response = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('skia-canvas-releases.json')
-      );
-      app.mockHttpclient(
-        /https:\/\/api\.github\.com\/repos\/samizdatco\/skia-canvas\/releases/,
-        'GET',
-        {
-          data: response,
-          status: 200,
-        }
-      );
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('skia-canvas-releases.json'));
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/samizdatco\/skia-canvas\/releases/, 'GET', {
+        data: response,
+        status: 200,
+      });
       let result = await binary.fetch('/', 'skia-canvas');
       assert.ok(result);
       assert.ok(result.items.length > 0);
@@ -70,7 +58,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
       assert.ok(matchDir);
 
       result = await binary.fetch('/v0.9.24/', 'skia-canvas');
-      assert.ok(result?.items.every(item => !/{.*}/.test(item.url)));
+      assert.ok(result?.items.every((item) => !/{.*}/.test(item.url)));
 
       result = await binary.fetch('/v0.9.30/', 'skia-canvas');
       assert.ok(result);
@@ -86,7 +74,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.ok(item.size === 7_547_563);
           assert.equal(
             item.url,
-            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-darwin-arm64.tar.gz'
+            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-darwin-arm64.tar.gz',
           );
           matchFile1 = true;
         }
@@ -95,7 +83,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.ok(item.size === 8_836_353);
           assert.equal(
             item.url,
-            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-linux-arm-glibc.tar.gz'
+            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-linux-arm-glibc.tar.gz',
           );
           matchFile2 = true;
         }
@@ -104,7 +92,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.ok(item.size === 7_497_076);
           assert.equal(
             item.url,
-            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-win32-x64.tar.gz'
+            'https://github.com/samizdatco/skia-canvas/releases/download/v0.9.30/skia-canvas-v0.9.30-win32-x64.tar.gz',
           );
           matchFile3 = true;
         }
@@ -115,17 +103,11 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
     });
 
     it('should fetch protobuf', async () => {
-      const response = await TestUtil.readJSONFile(
-        TestUtil.getFixtures('protobuf-releases.json')
-      );
-      app.mockHttpclient(
-        /https:\/\/api\.github\.com\/repos\/protocolbuffers\/protobuf\/releases/,
-        'GET',
-        {
-          data: response,
-          status: 200,
-        }
-      );
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('protobuf-releases.json'));
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/protocolbuffers\/protobuf\/releases/, 'GET', {
+        data: response,
+        status: 200,
+      });
       let result = await binary.fetch('/', 'protobuf');
       assert.ok(result);
       assert.ok(result.items.length > 0);
@@ -139,7 +121,7 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
       assert.ok(matchDir);
 
       result = await binary.fetch('/v28.2/', 'protobuf');
-      assert.ok(result?.items.every(item => !/{.*}/.test(item.url)));
+      assert.ok(result?.items.every((item) => !/{.*}/.test(item.url)));
 
       result = await binary.fetch('/v28.2/', 'protobuf');
       assert.ok(result);
@@ -153,12 +135,110 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
           assert.ok(item.size === 3_218_760);
           assert.equal(
             item.url,
-            'https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-aarch_64.zip'
+            'https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-aarch_64.zip',
           );
           matchFile1 = true;
         }
       }
       assert.ok(matchFile1);
+    });
+
+    it('should fetch ripgrep-prebuilt', async () => {
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('ripgrep-prebuilt-releases.json'));
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/microsoft\/ripgrep-prebuilt\/releases/, 'GET', {
+        data: response,
+        status: 200,
+      });
+      let result = await binary.fetch('/', 'ripgrep-prebuilt');
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
+      let matchDir = false;
+      for (const item of result.items) {
+        assert.ok(item.isDir === true);
+        if (item.name === 'v14.1.1-1/') {
+          matchDir = true;
+        }
+      }
+      assert.ok(matchDir);
+
+      result = await binary.fetch('/v14.1.1-1/', 'ripgrep-prebuilt');
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
+      let matchFile1 = false;
+      let matchFile2 = false;
+      let matchFile3 = false;
+      for (const item of result.items) {
+        assert.ok(item.isDir === false);
+        if (item.name === 'ripgrep-v14.1.1-1-x86_64-pc-windows-msvc.zip') {
+          assert.equal(item.date, '2024-10-01T11:30:01Z');
+          assert.equal(item.size, 1_234_567);
+          assert.equal(
+            item.url,
+            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-pc-windows-msvc.zip',
+          );
+          matchFile1 = true;
+        }
+        if (item.name === 'ripgrep-v14.1.1-1-x86_64-apple-darwin.tar.gz') {
+          assert.equal(item.date, '2024-10-01T11:30:06Z');
+          assert.equal(item.size, 2_345_678);
+          assert.equal(
+            item.url,
+            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-apple-darwin.tar.gz',
+          );
+          matchFile2 = true;
+        }
+        if (item.name === 'ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar.gz') {
+          assert.equal(item.date, '2024-10-01T11:30:11Z');
+          assert.equal(item.size, 3_456_789);
+          assert.equal(
+            item.url,
+            'https://github.com/microsoft/ripgrep-prebuilt/releases/download/v14.1.1-1/ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar.gz',
+          );
+          matchFile3 = true;
+        }
+      }
+      assert.ok(matchFile1);
+      assert.ok(matchFile2);
+      assert.ok(matchFile3);
+    });
+
+    it('should use custom perPage config for python-build-standalone', async () => {
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('python-build-standalone-releases.json'));
+      let requestUrl = '';
+      app.mockHttpclient(
+        /https:\/\/api\.github\.com\/repos\/astral-sh\/python-build-standalone\/releases/,
+        'GET',
+        (_url: string) => {
+          requestUrl = _url;
+          return {
+            data: response,
+            status: 200,
+          };
+        },
+      );
+      await binary.initFetch('python-build-standalone');
+      const result = await binary.fetch('/', 'python-build-standalone');
+      assert.ok(result);
+      // Verify that perPage=10 is used instead of default 100
+      assert.ok(requestUrl.includes('per_page=10'), `Expected per_page=10 in URL: ${requestUrl}`);
+      assert.ok(requestUrl.includes('page=1'));
+    });
+
+    it('should use default perPage=100 when not configured', async () => {
+      const response = await TestUtil.readJSONFile(TestUtil.getFixtures('electron-releases.json'));
+      let requestUrl = '';
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/electron\/electron\/releases/, 'GET', (_url: string) => {
+        requestUrl = _url;
+        return {
+          data: response,
+          status: 200,
+        };
+      });
+      await binary.initFetch('electron');
+      const result = await binary.fetch('/', 'electron');
+      assert.ok(result);
+      // Verify that default per_page=100 is used
+      assert.ok(requestUrl.includes('per_page=100'), `Expected per_page=100 in URL: ${requestUrl}`);
     });
   });
 });

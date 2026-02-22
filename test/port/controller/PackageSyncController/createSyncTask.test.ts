@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { type TestUser, TestUtil } from '../../../../test/TestUtil.js';
-import { Task as TaskModel } from '../../../../app/repository/model/Task.js';
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.ts';
+import { Task as TaskModel } from '../../../../app/repository/model/Task.ts';
+import { type TestUser, TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', () => {
   let publisher: TestUser;
@@ -16,40 +17,25 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
   describe('[PUT /-/package/:fullname/syncs] createSyncTask()', () => {
     it('should 403 when syncMode = none', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'none');
-      const res = await app
-        .httpRequest()
-        .put('/-/package/koa/syncs')
-        .expect(403);
+      const res = await app.httpRequest().put('/-/package/koa/syncs').expect(403);
       assert.ok(res.body.error === '[FORBIDDEN] Not allow to sync package');
     });
 
     it('should 403 when syncMode = admin', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'admin');
-      const res = await app
-        .httpRequest()
-        .put('/-/package/koa/syncs')
-        .expect(403);
-      assert.ok(
-        res.body.error === '[FORBIDDEN] Only admin allow to sync package'
-      );
+      const res = await app.httpRequest().put('/-/package/koa/syncs').expect(403);
+      assert.ok(res.body.error === '[FORBIDDEN] Only admin allow to sync package');
     });
 
     it('should 201 when syncMode = admin & login as admin', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'admin');
       const adminUser = await TestUtil.createAdmin();
-      await app
-        .httpRequest()
-        .put('/-/package/koa/syncs')
-        .set('authorization', adminUser.authorization)
-        .expect(201);
+      await app.httpRequest().put('/-/package/koa/syncs').set('authorization', adminUser.authorization).expect(201);
     });
 
     it('should 401 if user not login when alwaysAuth = true', async () => {
       mock(app.config.cnpmcore, 'alwaysAuth', true);
-      const res = await app
-        .httpRequest()
-        .put('/-/package/koa/syncs')
-        .expect(401);
+      const res = await app.httpRequest().put('/-/package/koa/syncs').expect(401);
       assert.ok(res.body.error === '[UNAUTHORIZED] Login first');
     });
 
@@ -65,27 +51,14 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
-      const res = await app
-        .httpRequest()
-        .put(`/-/package/${pkg.name}/syncs`)
-        .expect(403);
-      assert.ok(
-        res.body.error === '[FORBIDDEN] Can\'t sync private package "@cnpm/koa"'
-      );
+      const res = await app.httpRequest().put(`/-/package/${pkg.name}/syncs`).expect(403);
+      assert.ok(res.body.error === '[FORBIDDEN] Can\'t sync private package "@cnpm/koa"');
     });
 
     it('should 422 if specificVersions cannot parse or not valideted', async () => {
-      await app
-        .httpRequest()
-        .put('/-/package/koa/syncs')
-        .send({ specificVersions: '1.0.0' })
-        .expect(422);
+      await app.httpRequest().put('/-/package/koa/syncs').send({ specificVersions: '1.0.0' }).expect(422);
 
-      await app
-        .httpRequest()
-        .put('/-/package/koa/syncs')
-        .send({ specificVersions: '["1.0.0", "1.0.0"]' })
-        .expect(422);
+      await app.httpRequest().put('/-/package/koa/syncs').send({ specificVersions: '["1.0.0", "1.0.0"]' }).expect(422);
     });
 
     it('should 201 if user login when alwaysAuth = true', async () => {
@@ -111,9 +84,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert.ok(res.body.ok === true);
       assert.ok(res.body.state === 'waiting');
       assert.ok(res.body.id);
-      app.notExpectLog(
-        '[PackageSyncController.createSyncTask:execute-immediately]'
-      );
+      app.notExpectLog('[PackageSyncController.createSyncTask:execute-immediately]');
     });
 
     it('should not sync immediately when normal user request', async () => {
@@ -127,9 +98,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert.ok(res.body.ok === true);
       assert.ok(res.body.state === 'waiting');
       assert.ok(res.body.id);
-      app.notExpectLog(
-        '[PackageSyncController.createSyncTask:execute-immediately]'
-      );
+      app.notExpectLog('[PackageSyncController.createSyncTask:execute-immediately]');
     });
 
     it('should sync immediately when admin user request', async () => {
@@ -150,9 +119,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert.ok(res.body.state === 'waiting');
       assert.ok(res.body.id);
       await setTimeout(100); // await for sync task started
-      app.expectLog(
-        '[PackageSyncController.createSyncTask:execute-immediately]'
-      );
+      app.expectLog('[PackageSyncController.createSyncTask:execute-immediately]');
       app.expectLog('[PackageSyncController:executeTask:start]');
       app.expectLog(', targetName: koa-not-exists,');
       app.mockAgent().assertNoPendingInterceptors();
@@ -180,16 +147,12 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       });
       const admin = await TestUtil.createAdmin();
       // create registry
-      await app
-        .httpRequest()
-        .post('/-/registry')
-        .set('authorization', admin.authorization)
-        .send({
-          name: 'cnpm',
-          host: 'https://r.cnpmjs.org/',
-          changeStream: 'https://r.cnpmjs.org/_changes',
-          type: 'cnpmcore',
-        });
+      await app.httpRequest().post('/-/registry').set('authorization', admin.authorization).send({
+        name: 'cnpm',
+        host: 'https://r.cnpmjs.org/',
+        changeStream: 'https://r.cnpmjs.org/_changes',
+        type: 'cnpmcore',
+      });
 
       const res = await app
         .httpRequest()
@@ -210,16 +173,12 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       });
       const admin = await TestUtil.createAdmin();
       // create registry
-      await app
-        .httpRequest()
-        .post('/-/registry')
-        .set('authorization', admin.authorization)
-        .send({
-          name: 'cnpm',
-          host: 'https://r.cnpmjs.org/',
-          changeStream: 'https://r.cnpmjs.org/_changes',
-          type: 'cnpmcore',
-        });
+      await app.httpRequest().post('/-/registry').set('authorization', admin.authorization).send({
+        name: 'cnpm',
+        host: 'https://r.cnpmjs.org/',
+        changeStream: 'https://r.cnpmjs.org/_changes',
+        type: 'cnpmcore',
+      });
 
       const res = await app
         .httpRequest()
@@ -245,9 +204,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert.ok(res.body.ok === true);
       assert.ok(res.body.state === 'waiting');
       assert.ok(res.body.id);
-      app.expectLog(
-        '[PackageSyncController.createSyncTask:execute-immediately]'
-      );
+      app.expectLog('[PackageSyncController.createSyncTask:execute-immediately]');
       app.expectLog('[PackageSyncController:executeTask:start]');
       app.expectLog(', targetName: koa-not-exists-error,');
       await setTimeout(100);
@@ -280,56 +237,30 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
     });
 
     it('should 422 when enableSyncDownloadData = false', async () => {
-      let res = await app
-        .httpRequest()
-        .put('/-/package/ob/syncs')
-        .send({ syncDownloadData: true });
+      let res = await app.httpRequest().put('/-/package/ob/syncs').send({ syncDownloadData: true });
       assert.ok(res.status === 403);
-      assert.ok(
-        res.body.error === '[FORBIDDEN] Not allow to sync package download data'
-      );
+      assert.ok(res.body.error === '[FORBIDDEN] Not allow to sync package download data');
 
-      mock(
-        app.config.cnpmcore,
-        'syncDownloadDataSourceRegistry',
-        'https://rold.cnpmjs.org'
-      );
+      mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
       mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
       mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '');
-      res = await app
-        .httpRequest()
-        .put('/-/package/ob/syncs')
-        .send({ syncDownloadData: true });
+      res = await app.httpRequest().put('/-/package/ob/syncs').send({ syncDownloadData: true });
       assert.ok(res.status === 403);
-      assert.ok(
-        res.body.error === '[FORBIDDEN] Not allow to sync package download data'
-      );
+      assert.ok(res.body.error === '[FORBIDDEN] Not allow to sync package download data');
 
       mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', '');
       mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
       mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
-      res = await app
-        .httpRequest()
-        .put('/-/package/ob/syncs')
-        .send({ syncDownloadData: true });
+      res = await app.httpRequest().put('/-/package/ob/syncs').send({ syncDownloadData: true });
       assert.ok(res.status === 403);
-      assert.ok(
-        res.body.error === '[FORBIDDEN] Not allow to sync package download data'
-      );
+      assert.ok(res.body.error === '[FORBIDDEN] Not allow to sync package download data');
     });
 
     it('should 201 when enableSyncDownloadData = true', async () => {
-      mock(
-        app.config.cnpmcore,
-        'syncDownloadDataSourceRegistry',
-        'https://rold.cnpmjs.org'
-      );
+      mock(app.config.cnpmcore, 'syncDownloadDataSourceRegistry', 'https://rold.cnpmjs.org');
       mock(app.config.cnpmcore, 'enableSyncDownloadData', true);
       mock(app.config.cnpmcore, 'syncDownloadDataMaxDate', '2021-12-28');
-      const res = await app
-        .httpRequest()
-        .put('/-/package/ob/syncs')
-        .send({ syncDownloadData: true });
+      const res = await app.httpRequest().put('/-/package/ob/syncs').send({ syncDownloadData: true });
       assert.ok(res.status === 201);
       assert.ok(res.body.ok === true);
       assert.ok(res.body.state === 'waiting');
@@ -366,10 +297,7 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
       assert.ok(res.body.id === firstTaskId);
 
       // update bigger than 1 min, same task return
-      await TaskModel.update(
-        { taskId: firstTaskId },
-        { updatedAt: new Date(Date.now() - 60_001) }
-      );
+      await TaskModel.update({ taskId: firstTaskId }, { updatedAt: new Date(Date.now() - 60_001) });
       res = await app.httpRequest().put('/-/package/koa/syncs').expect(201);
       assert.ok(res.body.ok === true);
       assert.ok(res.body.state === 'waiting');
@@ -387,19 +315,13 @@ describe('test/port/controller/PackageSyncController/createSyncTask.test.ts', ()
     it('should 403 when syncMode = admin', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'admin');
       const res = await app.httpRequest().put('/koa/sync').expect(403);
-      assert.ok(
-        res.body.error === '[FORBIDDEN] Only admin allow to sync package'
-      );
+      assert.ok(res.body.error === '[FORBIDDEN] Only admin allow to sync package');
     });
 
     it('should 201 when syncMode = admin & login as admin', async () => {
       mock(app.config.cnpmcore, 'syncMode', 'admin');
       const adminUser = await TestUtil.createAdmin();
-      await app
-        .httpRequest()
-        .put('/koa/sync')
-        .set('authorization', adminUser.authorization)
-        .expect(201);
+      await app.httpRequest().put('/koa/sync').set('authorization', adminUser.authorization).expect(201);
     });
 
     it('should 201', async () => {

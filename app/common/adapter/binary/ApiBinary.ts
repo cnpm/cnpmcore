@@ -1,12 +1,7 @@
-import { Inject, SingletonProto } from '@eggjs/tegg';
-import type { EggAppConfig } from 'egg';
-import { BinaryType } from '../../enum/Binary.js';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.js';
+import { Inject, SingletonProto, EggAppConfig } from 'egg';
+
+import { BinaryType } from '../../enum/Binary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Api)
@@ -19,14 +14,8 @@ export class ApiBinary extends AbstractBinary {
     return;
   }
 
-  async fetch(
-    dir: string,
-    binaryName: string,
-    lastData?: Record<string, unknown>
-  ): Promise<FetchResult | undefined> {
-    const apiUrl =
-      this.config.cnpmcore.syncBinaryFromAPISource ||
-      `${this.config.cnpmcore.sourceRegistry}/-/binary`;
+  async fetch(dir: string, binaryName: string, lastData?: Record<string, unknown>): Promise<FetchResult | undefined> {
+    const apiUrl = this.config.cnpmcore.syncBinaryFromAPISource || `${this.config.cnpmcore.sourceRegistry}/-/binary`;
     let url = `${apiUrl}/${binaryName}${dir}`;
     if (lastData && lastData.lastSyncTime) {
       url += `?since=${lastData.lastSyncTime}&limit=100`;
@@ -34,10 +23,7 @@ export class ApiBinary extends AbstractBinary {
 
     const data = await this.requestJSON(url);
     if (!Array.isArray(data)) {
-      this.logger.warn(
-        '[ApiBinary.fetch:response-data-not-array] data: %j',
-        data
-      );
+      this.logger.warn('[ApiBinary.fetch:response-data-not-array] data: %j', data);
       return;
     }
     const items: BinaryItem[] = [];

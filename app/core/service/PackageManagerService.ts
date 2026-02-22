@@ -1,18 +1,15 @@
-import { readFile, stat } from 'node:fs/promises';
 import assert from 'node:assert/strict';
+import { readFile, stat } from 'node:fs/promises';
 
-import {
-  AccessLevel,
-  Inject,
-  SingletonProto,
-  type EventBus,
-} from '@eggjs/tegg';
-import { BadRequestError, ForbiddenError, NotFoundError } from 'egg-errors';
-import type { RequireAtLeastOne } from 'type-fest';
+import { JSONBuilder } from '@cnpmjs/packument';
+import { AccessLevel, Inject, SingletonProto, type EventBus } from 'egg';
+import { BadRequestError, ForbiddenError, NotFoundError } from 'egg/errors';
 import npa from 'npm-package-arg';
-import semver from 'semver';
 import pMap from 'p-map';
+import semver from 'semver';
+import type { RequireAtLeastOne } from 'type-fest';
 
+import { AbstractService } from '../../common/AbstractService.ts';
 import {
   calculateIntegrity,
   type Integrity,
@@ -21,25 +18,27 @@ import {
   getFullname,
   getScopeAndName,
   hasShrinkWrapInTgz,
-} from '../../common/PackageUtil.js';
-import { AbstractService } from '../../common/AbstractService.js';
+} from '../../common/PackageUtil.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
 import type {
   AbbreviatedPackageJSONType,
   AbbreviatedPackageManifestType,
+  AuthorType,
   PackageJSONType,
   PackageManifestType,
   PackageRepository,
-} from '../../repository/PackageRepository.js';
-import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
-import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
-import type { DistRepository } from '../../repository/DistRepository.js';
-import { isDuplicateKeyError } from '../../repository/util/ErrorUtil.js';
-import { Package } from '../entity/Package.js';
-import { PackageVersion } from '../entity/PackageVersion.js';
-import { PackageVersionBlock } from '../entity/PackageVersionBlock.js';
-import { PackageTag } from '../entity/PackageTag.js';
-import type { User } from '../entity/User.js';
-import type { Dist } from '../entity/Dist.js';
+} from '../../repository/PackageRepository.ts';
+import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
+import { isDuplicateKeyError } from '../../repository/util/ErrorUtil.ts';
+import type { BugVersion } from '../entity/BugVersion.ts';
+import type { Dist } from '../entity/Dist.ts';
+import { Package } from '../entity/Package.ts';
+import { PackageTag } from '../entity/PackageTag.ts';
+import { PackageVersion } from '../entity/PackageVersion.ts';
+import { PackageVersionBlock } from '../entity/PackageVersionBlock.ts';
+import type { Registry } from '../entity/Registry.ts';
+import type { User } from '../entity/User.ts';
 import {
   PACKAGE_ADDED,
   PACKAGE_BLOCKED,
@@ -53,12 +52,10 @@ import {
   PACKAGE_UNPUBLISHED,
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
-} from '../event/index.js';
-import type { BugVersionService } from './BugVersionService.js';
-import type { BugVersion } from '../entity/BugVersion.js';
-import type { RegistryManagerService } from './RegistryManagerService.js';
-import type { Registry } from '../entity/Registry.js';
-import type { PackageVersionService } from './PackageVersionService.js';
+} from '../event/index.ts';
+import type { BugVersionService } from './BugVersionService.ts';
+import type { PackageVersionService } from './PackageVersionService.ts';
+import type { RegistryManagerService } from './RegistryManagerService.ts';
 
 const TOTAL = '@@TOTAL@@';
 const SCOPE_TOTAL_PREFIX = '@@SCOPE@@:';
@@ -85,6 +82,9 @@ export interface PublishPackageCmd {
     'content' | 'localFile'
   >;
   tags?: string[];
+  /**
+   * private package or not
+   */
   isPrivate: boolean;
   // only use on sync package
   publishTime?: Date;
@@ -150,19 +150,11 @@ export class PackageManagerService extends AbstractService {
     }
     await this.packageRepository.savePackage(pkg);
     // create maintainer
-    await this.packageRepository.savePackageMaintainer(
-      pkg.packageId,
-      publisher.userId
-    );
+    await this.packageRepository.savePackageMaintainer(pkg.packageId, publisher.userId);
 
-    let pkgVersion = await this.packageRepository.findPackageVersion(
-      pkg.packageId,
-      cmd.version
-    );
+    let pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, cmd.version);
     if (pkgVersion) {
-      throw new ForbiddenError(
-        `Can't modify pre-existing version: ${pkg.fullname}@${pkgVersion.version}`
-      );
+      throw new ForbiddenError(`Can't modify pre-existing version: ${pkg.fullname}@${pkgVersion.version}`);
     }
 
     // make sure cmd.packageJson.readme is deleted
@@ -182,17 +174,28 @@ export class PackageManagerService extends AbstractService {
     if (cmd.packageJson._hasShrinkwrap === undefined) {
       const contentOrFile = cmd.dist.content || cmd.dist.localFile;
       if (contentOrFile) {
-        cmd.packageJson._hasShrinkwrap =
-          await hasShrinkWrapInTgz(contentOrFile);
+        cmd.packageJson._hasShrinkwrap = await hasShrinkWrapInTgz(contentOrFile);
       }
     }
 
-    // set _npmUser field to cmd.packageJson
-    cmd.packageJson._npmUser = {
-      // clean user scope prefix
-      name: publisher.displayName,
-      email: publisher.email,
-    };
+    // override _npmUser field if is private package or _npmUser field not exists
+    // otherwise avoid overriding _npmUser field from sync package, e.g.: oidc publish package
+    // "_npmUser": {
+    //   "name": "GitHub Actions",
+    //   "email": "npm-oidc-no-reply@github.com",
+    //   "trustedPublisher": {
+    //     "id": "github",
+    //     "oidcConfigId": "oidc:d0f693c3-ada3-4197-b34c-b7aaeb524f11"
+    //   }
+    // }
+    if (cmd.isPrivate || !cmd.packageJson._npmUser) {
+      // set _npmUser field to cmd.packageJson
+      cmd.packageJson._npmUser = {
+        // clean user scope prefix
+        name: publisher.displayName,
+        email: publisher.email,
+      };
+    }
 
     // add _registry_name field to cmd.packageJson
     const registry = await this.getSourceRegistry(pkg);
@@ -201,9 +204,7 @@ export class PackageManagerService extends AbstractService {
     }
 
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#abbreviated-version-object
-    const hasInstallScript = detectInstallScript(cmd.packageJson)
-      ? true
-      : undefined;
+    const hasInstallScript = detectInstallScript(cmd.packageJson) ? true : undefined;
     let tarDistIntegrity: Integrity;
     let tarDistSize = 0;
     if (cmd.dist.content) {
@@ -230,12 +231,7 @@ export class PackageManagerService extends AbstractService {
 
     cmd.packageJson.dist = {
       ...cmd.packageJson.dist,
-      tarball: formatTarball(
-        this.config.cnpmcore.registry,
-        pkg.scope,
-        pkg.name,
-        cmd.version
-      ),
+      tarball: formatTarball(this.config.cnpmcore.registry, pkg.scope, pkg.name, cmd.version),
       size: tarDistSize,
       shasum: tarDistIntegrity.shasum,
       integrity: tarDistIntegrity.integrity,
@@ -269,10 +265,10 @@ export class PackageManagerService extends AbstractService {
       // npminstall require publish time to show the recently update versions
       publish_time: cmd.packageJson.publish_time,
       _source_registry_name: cmd.packageJson._source_registry_name,
+      _npmUser: cmd.packageJson._npmUser,
     } as AbbreviatedPackageJSONType);
     const abbreviatedDistBytes = Buffer.from(abbreviated);
-    const abbreviatedDistIntegrity =
-      await calculateIntegrity(abbreviatedDistBytes);
+    const abbreviatedDistIntegrity = await calculateIntegrity(abbreviatedDistBytes);
     const readmeDistBytes = Buffer.from(cmd.readme);
     const readmeDistIntegrity = await calculateIntegrity(readmeDistBytes);
     const manifestDistBytes = Buffer.from(JSON.stringify(cmd.packageJson));
@@ -300,10 +296,7 @@ export class PackageManagerService extends AbstractService {
       tarDist,
     });
     await Promise.all([
-      this.distRepository.saveDist(
-        pkgVersion.abbreviatedDist,
-        abbreviatedDistBytes
-      ),
+      this.distRepository.saveDist(pkgVersion.abbreviatedDist, abbreviatedDistBytes),
       this.distRepository.saveDist(pkgVersion.manifestDist, manifestDistBytes),
       this.distRepository.saveDist(pkgVersion.readmeDist, readmeDistBytes),
     ]);
@@ -311,9 +304,7 @@ export class PackageManagerService extends AbstractService {
       await this.packageRepository.createPackageVersion(pkgVersion);
     } catch (e) {
       if (isDuplicateKeyError(e)) {
-        throw new ForbiddenError(
-          `Can't modify pre-existing version: ${pkg.fullname}@${cmd.version}`
-        );
+        throw new ForbiddenError(`Can't modify pre-existing version: ${pkg.fullname}@${cmd.version}`);
       }
       throw e;
     }
@@ -323,20 +314,10 @@ export class PackageManagerService extends AbstractService {
     if (cmd.tags) {
       for (const tag of cmd.tags) {
         await this.savePackageTag(pkg, tag, cmd.version, true);
-        this.eventBus.emit(
-          PACKAGE_VERSION_ADDED,
-          pkg.fullname,
-          pkgVersion.version,
-          tag
-        );
+        this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, tag);
       }
     } else {
-      this.eventBus.emit(
-        PACKAGE_VERSION_ADDED,
-        pkg.fullname,
-        pkgVersion.version,
-        undefined
-      );
+      this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, undefined);
     }
 
     if (isNewPackage) {
@@ -356,9 +337,7 @@ export class PackageManagerService extends AbstractService {
   }
 
   async blockPackage(pkg: Package, reason: string) {
-    let block = await this.packageVersionBlockRepository.findPackageBlock(
-      pkg.packageId
-    );
+    let block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
       block.reason = reason;
     } else {
@@ -370,31 +349,31 @@ export class PackageManagerService extends AbstractService {
     }
     await this.packageVersionBlockRepository.savePackageVersionBlock(block);
     if (pkg.manifestsDist && pkg.abbreviatedsDist) {
-      const fullManifests =
-        await this.distRepository.readDistBytesToJSON<PackageManifestType>(
-          pkg.manifestsDist
+      if (this.config.cnpmcore.experimental.enableJSONBuilder) {
+        const fullManifestsBuilder = await this.distRepository.readDistBytesToJSONBuilder(pkg.manifestsDist);
+        if (fullManifestsBuilder) {
+          fullManifestsBuilder.setIn(['block'], reason);
+        }
+        const abbreviatedManifestsBuilder = await this.distRepository.readDistBytesToJSONBuilder(pkg.abbreviatedsDist);
+        if (abbreviatedManifestsBuilder) {
+          abbreviatedManifestsBuilder.setIn(['block'], reason);
+        }
+        await this._updatePackageManifestsToDistsWithBuilder(pkg, fullManifestsBuilder, abbreviatedManifestsBuilder);
+      } else {
+        const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
+        if (fullManifests) {
+          fullManifests.block = reason;
+        }
+        const abbreviatedManifests = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(
+          pkg.abbreviatedsDist,
         );
-      if (fullManifests) {
-        fullManifests.block = reason;
+        if (abbreviatedManifests) {
+          abbreviatedManifests.block = reason;
+        }
+        await this._updatePackageManifestsToDists(pkg, fullManifests || null, abbreviatedManifests || null);
       }
-      const abbreviatedManifests =
-        await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(
-          pkg.abbreviatedsDist
-        );
-      if (abbreviatedManifests) {
-        abbreviatedManifests.block = reason;
-      }
-      await this._updatePackageManifestsToDists(
-        pkg,
-        fullManifests || null,
-        abbreviatedManifests || null
-      );
       this.eventBus.emit(PACKAGE_BLOCKED, pkg.fullname);
-      this.logger.info(
-        '[packageManagerService.blockPackage:success] packageId: %s, reason: %j',
-        pkg.packageId,
-        reason
-      );
+      this.logger.info('[packageManagerService.blockPackage:success] packageId: %s, reason: %j', pkg.packageId, reason);
     }
     return block;
   }
@@ -409,60 +388,56 @@ export class PackageManagerService extends AbstractService {
   }
 
   async unblockPackage(pkg: Package) {
-    const block =
-      await this.packageVersionBlockRepository.findPackageVersionBlock(
-        pkg.packageId,
-        '*'
-      );
+    const block = await this.packageVersionBlockRepository.findPackageVersionBlock(pkg.packageId, '*');
     if (block) {
-      await this.packageVersionBlockRepository.removePackageVersionBlock(
-        block.packageVersionBlockId
-      );
+      await this.packageVersionBlockRepository.removePackageVersionBlock(block.packageVersionBlockId);
     }
     if (pkg.manifestsDist && pkg.abbreviatedsDist) {
-      const fullManifests =
-        await this.distRepository.readDistBytesToJSON<PackageManifestType>(
-          pkg.manifestsDist
+      if (this.config.cnpmcore.experimental.enableJSONBuilder) {
+        const fullManifestsBuffer = await this.distRepository.readDistBytesToBuffer(pkg.manifestsDist);
+        let fullManifestsBuilder: JSONBuilder | undefined;
+        if (fullManifestsBuffer) {
+          fullManifestsBuilder = new JSONBuilder(fullManifestsBuffer);
+          fullManifestsBuilder.deleteIn(['block']);
+        }
+        const abbreviatedManifestsBuffer = await this.distRepository.readDistBytesToBuffer(pkg.abbreviatedsDist);
+        let abbreviatedManifestsBuilder: JSONBuilder | undefined;
+        if (abbreviatedManifestsBuffer) {
+          abbreviatedManifestsBuilder = new JSONBuilder(abbreviatedManifestsBuffer);
+          abbreviatedManifestsBuilder.deleteIn(['block']);
+        }
+        await this._updatePackageManifestsToDistsWithBuilder(pkg, fullManifestsBuilder, abbreviatedManifestsBuilder);
+      } else {
+        const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
+        if (fullManifests) {
+          fullManifests.block = undefined;
+        }
+        const abbreviatedManifests = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(
+          pkg.abbreviatedsDist,
         );
-      if (fullManifests) {
-        fullManifests.block = undefined;
+        if (abbreviatedManifests) {
+          abbreviatedManifests.block = undefined;
+        }
+        await this._updatePackageManifestsToDists(pkg, fullManifests || null, abbreviatedManifests || null);
       }
-      const abbreviatedManifests =
-        await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(
-          pkg.abbreviatedsDist
-        );
-      if (abbreviatedManifests) {
-        abbreviatedManifests.block = undefined;
-      }
-      await this._updatePackageManifestsToDists(
-        pkg,
-        fullManifests || null,
-        abbreviatedManifests || null
-      );
       this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
-      this.logger.info(
-        '[packageManagerService.unblockPackage:success] packageId: %s',
-        pkg.packageId
-      );
+      this.logger.info('[packageManagerService.unblockPackage:success] packageId: %s', pkg.packageId);
     }
   }
 
   async replacePackageMaintainersAndDist(pkg: Package, maintainers: User[]) {
     await this.packageRepository.replacePackageMaintainers(
       pkg.packageId,
-      maintainers.map(m => m.userId)
+      maintainers.map((m) => m.userId),
     );
     await this.refreshPackageMaintainersToDists(pkg);
     this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname, maintainers);
   }
 
-  async savePackageMaintainers(pkg: Package, maintainers: User[]) {
+  async savePackageMaintainers(pkg: Package, maintainers: User[]): Promise<boolean> {
     let hasNewRecord = false;
     for (const maintainer of maintainers) {
-      const newRecord = await this.packageRepository.savePackageMaintainer(
-        pkg.packageId,
-        maintainer.userId
-      );
+      const newRecord = await this.packageRepository.savePackageMaintainer(pkg.packageId, maintainer.userId);
       if (newRecord) {
         hasNewRecord = true;
       }
@@ -470,60 +445,42 @@ export class PackageManagerService extends AbstractService {
     if (hasNewRecord) {
       this.eventBus.emit(PACKAGE_MAINTAINER_CHANGED, pkg.fullname, maintainers);
     }
+    return hasNewRecord;
   }
 
   async removePackageMaintainer(pkg: Package, maintainer: User) {
-    await this.packageRepository.removePackageMaintainer(
-      pkg.packageId,
-      maintainer.userId
-    );
-    this.eventBus.emit(
-      PACKAGE_MAINTAINER_REMOVED,
-      pkg.fullname,
-      maintainer.name
-    );
+    await this.packageRepository.removePackageMaintainer(pkg.packageId, maintainer.userId);
+    this.eventBus.emit(PACKAGE_MAINTAINER_REMOVED, pkg.fullname, maintainer.name);
   }
 
   async refreshPackageMaintainersToDists(pkg: Package) {
-    await this._refreshPackageManifestRootAttributeOnlyToDists(
-      pkg,
-      'maintainers'
-    );
+    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'maintainers');
   }
 
   async refreshPackageDistTagsToDists(pkg: Package) {
-    await this._refreshPackageManifestRootAttributeOnlyToDists(
-      pkg,
-      'dist-tags'
-    );
+    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
   }
 
   async listPackageFullManifests(scope: string, name: string, isSync = false) {
-    return await this._listPackageFullOrAbbreviatedManifests<PackageManifestType>(
-      scope,
-      name,
-      true,
-      isSync
-    );
+    return await this._listPackageFullOrAbbreviatedManifests<PackageManifestType>(scope, name, true, isSync);
   }
 
-  async listPackageAbbreviatedManifests(
-    scope: string,
-    name: string,
-    isSync = false
-  ) {
-    return await this._listPackageFullOrAbbreviatedManifests(
-      scope,
-      name,
-      false,
-      isSync
-    );
+  async listPackageFullManifestsBuffer(scope: string, name: string) {
+    return await this._listPackageFullOrAbbreviatedManifestsBuffer(scope, name, true);
+  }
+
+  async listPackageAbbreviatedManifests(scope: string, name: string, isSync = false) {
+    return await this._listPackageFullOrAbbreviatedManifests(scope, name, false, isSync);
+  }
+
+  async listPackageAbbreviatedManifestsBuffer(scope: string, name: string) {
+    return await this._listPackageFullOrAbbreviatedManifestsBuffer(scope, name, false);
   }
 
   async showPackageVersionByVersionOrTag(
     scope: string,
     name: string,
-    spec: string
+    spec: string,
   ): Promise<{
     blockReason?: string;
     pkg?: Package;
@@ -531,9 +488,7 @@ export class PackageManagerService extends AbstractService {
   }> {
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return {};
-    const block = await this.packageVersionBlockRepository.findPackageBlock(
-      pkg.packageId
-    );
+    const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
       return { blockReason: block.reason, pkg };
     }
@@ -543,36 +498,20 @@ export class PackageManagerService extends AbstractService {
     if (!version) {
       return {};
     }
-    const packageVersion = await this.packageRepository.findPackageVersion(
-      pkg.packageId,
-      version
-    );
+    const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
     return { packageVersion, pkg };
   }
 
-  async showPackageVersionManifest(
-    scope: string,
-    name: string,
-    spec: string,
-    isSync = false,
-    isFullManifests = false
-  ) {
+  async showPackageVersionManifest(scope: string, name: string, spec: string, isSync = false, isFullManifests = false) {
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return {};
-    const block = await this.packageVersionBlockRepository.findPackageBlock(
-      pkg.packageId
-    );
+    const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
       return { blockReason: block.reason, pkg };
     }
     const fullname = getFullname(scope, name);
     const result = npa(`${fullname}@${spec}`);
-    const manifest = await this.packageVersionService.readManifest(
-      pkg.packageId,
-      result,
-      isFullManifests,
-      !isSync
-    );
+    const manifest = await this.packageVersionService.readManifest(pkg.packageId, result, isFullManifests, !isSync);
     return { manifest, blockReason: null, pkg };
   }
 
@@ -582,10 +521,7 @@ export class PackageManagerService extends AbstractService {
 
   public plusPackageVersionCounter(fullname: string, version: string) {
     // set counter + 1, schedule will store them into database
-    const counters: Record<
-      string,
-      Record<string, number>
-    > = PackageManagerService.downloadCounters;
+    const counters: Record<string, Record<string, number>> = PackageManagerService.downloadCounters;
     if (!counters[fullname]) counters[fullname] = {};
     counters[fullname][version] = (counters[fullname][version] || 0) + 1;
     // Total
@@ -604,18 +540,12 @@ export class PackageManagerService extends AbstractService {
   // will be call by schedule/SavePackageVersionDownloadCounter.ts
   async savePackageVersionCounters() {
     // { [fullname]: { [version]: number } }
-    const counters: Record<
-      string,
-      Record<string, number>
-    > = PackageManagerService.downloadCounters;
+    const counters: Record<string, Record<string, number>> = PackageManagerService.downloadCounters;
     const fullnames = Object.keys(counters);
     if (fullnames.length === 0) return;
 
     PackageManagerService.downloadCounters = {};
-    this.logger.info(
-      '[packageManagerService.savePackageVersionCounters:saving] %d fullnames',
-      fullnames.length
-    );
+    this.logger.info('[packageManagerService.savePackageVersionCounters:saving] %d fullnames', fullnames.length);
 
     let total = 0;
     for (const fullname in counters) {
@@ -634,30 +564,17 @@ export class PackageManagerService extends AbstractService {
 
       for (const version in versions) {
         const counter = versions[version];
-        await this.packageVersionDownloadRepository.plus(
-          packageId,
-          version,
-          counter
-        );
+        await this.packageVersionDownloadRepository.plus(packageId, version, counter);
         total += counter;
       }
     }
-    this.logger.info(
-      '[packageManagerService.savePackageVersionCounters:saved] %d total',
-      total
-    );
+    this.logger.info('[packageManagerService.savePackageVersionCounters:saved] %d total', total);
   }
 
-  public async saveDeprecatedVersions(
-    pkg: Package,
-    deprecatedList: { version: string; deprecated?: string }[]
-  ) {
+  public async saveDeprecatedVersions(pkg: Package, deprecatedList: { version: string; deprecated?: string }[]) {
     const updateVersions: string[] = [];
     for (const { version, deprecated } of deprecatedList) {
-      const pkgVersion = await this.packageRepository.findPackageVersion(
-        pkg.packageId,
-        version
-      );
+      const pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
       if (!pkgVersion) continue;
       const message = deprecated === '' ? undefined : deprecated;
       await this._mergeManifestDist(pkgVersion.manifestDist, {
@@ -675,44 +592,69 @@ export class PackageManagerService extends AbstractService {
     });
   }
 
-  public async savePackageVersionManifest(
-    pkgVersion: PackageVersion,
-    mergeManifest: object,
-    mergeAbbreviated: object
-  ) {
+  public async savePackageVersionManifest(pkgVersion: PackageVersion, mergeManifest: object, mergeAbbreviated: object) {
     await this._mergeManifestDist(pkgVersion.manifestDist, mergeManifest);
     await this._mergeManifestDist(pkgVersion.abbreviatedDist, mergeAbbreviated);
+  }
+
+  public async savePackageVersionManifestWithBuilder(
+    pkgVersion: PackageVersion,
+    manifestBuilder: JSONBuilder,
+    abbreviatedBuilder?: JSONBuilder,
+  ) {
+    const manifestBytes = manifestBuilder.build();
+    const manifestIntegrity = await calculateIntegrity(manifestBytes);
+    pkgVersion.manifestDist.size = manifestBytes.length;
+    pkgVersion.manifestDist.shasum = manifestIntegrity.shasum;
+    pkgVersion.manifestDist.integrity = manifestIntegrity.integrity;
+    await this.distRepository.saveDist(pkgVersion.manifestDist, manifestBytes);
+    if (abbreviatedBuilder) {
+      const abbreviatedBytes = abbreviatedBuilder.build();
+      const abbreviatedIntegrity = await calculateIntegrity(abbreviatedBytes);
+      pkgVersion.abbreviatedDist.size = abbreviatedBytes.length;
+      pkgVersion.abbreviatedDist.shasum = abbreviatedIntegrity.shasum;
+      pkgVersion.abbreviatedDist.integrity = abbreviatedIntegrity.integrity;
+      await this.distRepository.saveDist(pkgVersion.abbreviatedDist, abbreviatedBytes);
+    }
+    await this.packageRepository.savePackageVersion(pkgVersion);
   }
 
   /**
    * save package version readme
    */
-  public async savePackageVersionReadme(
-    pkgVersion: PackageVersion,
-    readmeFile: string
-  ) {
+  public async savePackageVersionReadme(pkgVersion: PackageVersion, readmeFile: string) {
     await this.distRepository.saveDist(pkgVersion.readmeDist, readmeFile);
     this.logger.info(
       '[PackageManagerService.savePackageVersionReadme] save packageVersionId:%s readme:%s to dist:%s',
       pkgVersion.packageVersionId,
       readmeFile,
-      pkgVersion.readmeDist.distId
+      pkgVersion.readmeDist.distId,
     );
   }
 
   public async savePackageReadme(pkg: Package, readmeFile: string) {
     if (!pkg.manifestsDist) return;
-    const fullManifests =
-      await this.distRepository.readDistBytesToJSON<PackageManifestType>(
-        pkg.manifestsDist
-      );
-    if (!fullManifests) return;
-    fullManifests.readme = await readFile(readmeFile, 'utf8');
-    await this._updatePackageManifestsToDists(pkg, fullManifests, null);
+
+    const readme = await readFile(readmeFile, 'utf8');
+
+    if (this.config.cnpmcore.experimental.enableJSONBuilder) {
+      const fullManifestsBuilder = await this.distRepository.readDistBytesToJSONBuilder(pkg.manifestsDist);
+      if (!fullManifestsBuilder) return;
+
+      fullManifestsBuilder.setIn(['readme'], readme);
+      await this._updatePackageManifestsToDistsWithBuilder(pkg, fullManifestsBuilder, undefined);
+    } else {
+      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
+      if (!fullManifests) return;
+
+      fullManifests.readme = readme;
+      await this._updatePackageManifestsToDists(pkg, fullManifests, null);
+    }
+
     this.logger.info(
       '[PackageManagerService.savePackageReadme] save packageId:%s readme, size: %s',
       pkg.packageId,
-      fullManifests.readme.length
+      readme.length,
     );
   }
 
@@ -726,17 +668,17 @@ export class PackageManagerService extends AbstractService {
     ]);
     // remove from repository
     await this.packageRepository.removePackageVersion(pkgVersion);
+    this.logger.info(
+      '[packageManagerService.removePackageVersionAndDist:success] packageVersionId: %s',
+      pkgVersion.packageVersionId,
+    );
   }
 
   public async unpublishPackage(pkg: Package) {
-    const pkgVersions = await this.packageRepository.listPackageVersions(
-      pkg.packageId
-    );
+    const pkgVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     // already unpublished
     if (pkgVersions.length === 0) {
-      this.logger.info(
-        `[packageManagerService.unpublishPackage:skip] ${pkg.packageId} already unpublished`
-      );
+      this.logger.info(`[packageManagerService.unpublishPackage:skip] ${pkg.packageId} already unpublished`);
       return;
     }
     for (const pkgVersion of pkgVersions) {
@@ -759,44 +701,36 @@ export class PackageManagerService extends AbstractService {
       // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       pkg.manifestsDist!,
       undefined,
-      unpublishedInfo
+      unpublishedInfo,
     );
     await this._mergeManifestDist(
       // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       pkg.abbreviatedsDist!,
       undefined,
-      unpublishedInfo
+      unpublishedInfo,
     );
     this.eventBus.emit(PACKAGE_UNPUBLISHED, pkg.fullname);
+    this.logger.info(
+      '[packageManagerService.unpublishPackage:success] packageId: %s, fullname: %s',
+      pkg.packageId,
+      pkg.fullname,
+    );
   }
 
-  public async removePackageVersion(
-    pkg: Package,
-    pkgVersion: PackageVersion,
-    skipRefreshPackageManifests = false
-  ) {
-    const currentVersions =
-      await this.packageRepository.listPackageVersionNames(pkg.packageId);
+  public async removePackageVersion(pkg: Package, pkgVersion: PackageVersion, skipRefreshPackageManifests = false) {
+    const currentVersions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
     // only one version, unpublish the package
-    if (
-      currentVersions.length === 1 &&
-      currentVersions[0] === pkgVersion.version
-    ) {
+    if (currentVersions.length === 1 && currentVersions[0] === pkgVersion.version) {
       await this.unpublishPackage(pkg);
       return;
     }
     // remove version & update tags
     await this._removePackageVersionAndDist(pkgVersion);
-    const versions = await this.packageRepository.listPackageVersionNames(
-      pkg.packageId
-    );
+    const versions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
     if (versions.length > 0) {
       let updateTag: string | undefined;
       // make sure latest tag exists
-      const latestTag = await this.packageRepository.findPackageTag(
-        pkg.packageId,
-        'latest'
-      );
+      const latestTag = await this.packageRepository.findPackageTag(pkg.packageId, 'latest');
       if (latestTag?.version === pkgVersion.version) {
         // change latest version
         // https://github.com/npm/libnpmpublish/blob/main/unpublish.js#L62
@@ -807,30 +741,15 @@ export class PackageManagerService extends AbstractService {
         }
       }
       if (skipRefreshPackageManifests !== true) {
-        await this.refreshPackageChangeVersionsToDists(pkg, undefined, [
-          pkgVersion.version,
-        ]);
-        this.eventBus.emit(
-          PACKAGE_VERSION_REMOVED,
-          pkg.fullname,
-          pkgVersion.version,
-          updateTag
-        );
+        await this.refreshPackageChangeVersionsToDists(pkg, undefined, [pkgVersion.version]);
+        this.eventBus.emit(PACKAGE_VERSION_REMOVED, pkg.fullname, pkgVersion.version, updateTag);
       }
       return;
     }
   }
 
-  public async savePackageTag(
-    pkg: Package,
-    tag: string,
-    version: string,
-    skipEvent = false
-  ) {
-    let tagEntity = await this.packageRepository.findPackageTag(
-      pkg.packageId,
-      tag
-    );
+  public async savePackageTag(pkg: Package, tag: string, version: string, skipEvent = false) {
+    let tagEntity = await this.packageRepository.findPackageTag(pkg.packageId, tag);
     if (!tagEntity) {
       tagEntity = PackageTag.create({
         packageId: pkg.packageId,
@@ -838,10 +757,7 @@ export class PackageManagerService extends AbstractService {
         version,
       });
       await this.packageRepository.savePackageTag(tagEntity);
-      await this._refreshPackageManifestRootAttributeOnlyToDists(
-        pkg,
-        'dist-tags'
-      );
+      await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
       if (!skipEvent) {
         this.eventBus.emit(PACKAGE_TAG_ADDED, pkg.fullname, tagEntity.tag);
       }
@@ -853,10 +769,7 @@ export class PackageManagerService extends AbstractService {
     }
     tagEntity.version = version;
     await this.packageRepository.savePackageTag(tagEntity);
-    await this._refreshPackageManifestRootAttributeOnlyToDists(
-      pkg,
-      'dist-tags'
-    );
+    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
     if (!skipEvent) {
       this.eventBus.emit(PACKAGE_TAG_CHANGED, pkg.fullname, tagEntity.tag);
     }
@@ -864,36 +777,26 @@ export class PackageManagerService extends AbstractService {
   }
 
   public async removePackageTag(pkg: Package, tag: string) {
-    const tagEntity = await this.packageRepository.findPackageTag(
-      pkg.packageId,
-      tag
-    );
+    const tagEntity = await this.packageRepository.findPackageTag(pkg.packageId, tag);
     if (!tagEntity) return false;
     await this.packageRepository.removePackageTag(tagEntity);
-    await this._refreshPackageManifestRootAttributeOnlyToDists(
-      pkg,
-      'dist-tags'
-    );
+    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
     this.eventBus.emit(PACKAGE_TAG_REMOVED, pkg.fullname, tagEntity.tag);
     return true;
   }
 
-  public async refreshPackageChangeVersionsToDists(
-    pkg: Package,
-    updateVersions?: string[],
-    removeVersions?: string[]
-  ) {
+  public async refreshPackageChangeVersionsToDists(pkg: Package, updateVersions?: string[], removeVersions?: string[]) {
+    if (this.config.cnpmcore.experimental.enableJSONBuilder) {
+      return await this._refreshPackageChangeVersionsToDistsWithBuilder(pkg, updateVersions, removeVersions);
+    }
     if (!pkg.manifestsDist?.distId || !pkg.abbreviatedsDist?.distId) {
+      // no dists, refresh all again, the first time sync package will not have dists
       return await this._refreshPackageManifestsToDists(pkg);
     }
-    const fullManifests =
-      await this.distRepository.readDistBytesToJSON<PackageManifestType>(
-        pkg.manifestsDist
-      );
-    const abbreviatedManifests =
-      await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(
-        pkg.abbreviatedsDist
-      );
+    const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist);
+    const abbreviatedManifests = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(
+      pkg.abbreviatedsDist,
+    );
     if (!fullManifests?.versions || !abbreviatedManifests?.versions) {
       // is unpublished, refresh all again
       return await this._refreshPackageManifestsToDists(pkg);
@@ -901,34 +804,24 @@ export class PackageManagerService extends AbstractService {
 
     if (updateVersions) {
       for (const version of updateVersions) {
-        const packageVersion = await this.packageRepository.findPackageVersion(
-          pkg.packageId,
-          version
-        );
+        const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
         if (packageVersion) {
-          const manifest =
-            await this.distRepository.readDistBytesToJSON<PackageJSONType>(
-              packageVersion.manifestDist
-            );
+          const manifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist);
           if (!manifest) continue;
           if ('readme' in manifest) {
             delete manifest.readme;
           }
           fullManifests.versions[packageVersion.version] = manifest;
-          fullManifests.time[packageVersion.version] =
-            packageVersion.publishTime;
+          fullManifests.time[packageVersion.version] = packageVersion.publishTime;
 
-          const abbreviatedManifest =
-            await this.distRepository.readDistBytesToJSON<AbbreviatedPackageJSONType>(
-              packageVersion.abbreviatedDist
-            );
+          const abbreviatedManifest = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageJSONType>(
+            packageVersion.abbreviatedDist,
+          );
           if (abbreviatedManifest) {
-            abbreviatedManifests.versions[packageVersion.version] =
-              abbreviatedManifest;
+            abbreviatedManifests.versions[packageVersion.version] = abbreviatedManifest;
             // abbreviatedManifests.time is guaranteed to exist since it's initialized in _listPackageAbbreviatedManifests
             if (abbreviatedManifests.time) {
-              abbreviatedManifests.time[packageVersion.version] =
-                packageVersion.publishTime;
+              abbreviatedManifests.time[packageVersion.version] = packageVersion.publishTime;
             }
           }
         }
@@ -936,48 +829,94 @@ export class PackageManagerService extends AbstractService {
     }
     if (removeVersions) {
       for (const version of removeVersions) {
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete fullManifests.versions[version];
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete fullManifests.time[version];
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete abbreviatedManifests.versions[version];
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
         delete abbreviatedManifests.time?.[version];
       }
     }
 
     // update dist-tags
-    await this._setPackageDistTagsAndLatestInfos(
-      pkg,
-      fullManifests,
-      abbreviatedManifests
-    );
+    await this._setPackageDistTagsAndLatestInfos(pkg, fullManifests, abbreviatedManifests);
     // store to nfs dist
-    await this._updatePackageManifestsToDists(
-      pkg,
-      fullManifests,
-      abbreviatedManifests
-    );
+    await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+  }
+
+  private async _refreshPackageChangeVersionsToDistsWithBuilder(
+    pkg: Package,
+    updateVersions?: string[],
+    removeVersions?: string[],
+  ) {
+    if (!pkg.manifestsDist?.distId || !pkg.abbreviatedsDist?.distId) {
+      // no dists, refresh all again, the first time sync package will not have dists
+      return await this._refreshPackageManifestsToDists(pkg);
+    }
+    const fullManifestsBuffer = await this.distRepository.readDistBytesToBuffer(pkg.manifestsDist);
+    const abbreviatedManifestsBuffer = await this.distRepository.readDistBytesToBuffer(pkg.abbreviatedsDist);
+    if (!fullManifestsBuffer || !abbreviatedManifestsBuffer) {
+      // is unpublished, refresh all again
+      return await this._refreshPackageManifestsToDists(pkg);
+    }
+    const fullManifestsBuilder = new JSONBuilder(fullManifestsBuffer);
+    const abbreviatedManifestsBuilder = new JSONBuilder(abbreviatedManifestsBuffer);
+    if (!fullManifestsBuilder.hasIn(['versions']) || !abbreviatedManifestsBuilder.hasIn(['versions'])) {
+      // is unpublished, refresh all again
+      return await this._refreshPackageManifestsToDists(pkg);
+    }
+
+    if (updateVersions) {
+      for (const version of updateVersions) {
+        const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+        if (packageVersion) {
+          const manifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist);
+          if (!manifest) continue;
+          if ('readme' in manifest) {
+            delete manifest.readme;
+          }
+          fullManifestsBuilder.setIn(['versions', packageVersion.version], manifest);
+          fullManifestsBuilder.setIn(['time', packageVersion.version], packageVersion.publishTime);
+
+          const abbreviatedManifest = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageJSONType>(
+            packageVersion.abbreviatedDist,
+          );
+          if (abbreviatedManifest) {
+            abbreviatedManifestsBuilder.setIn(['versions', packageVersion.version], abbreviatedManifest);
+            // abbreviatedManifests.time is guaranteed to exist since it's initialized in _listPackageAbbreviatedManifests
+            abbreviatedManifestsBuilder.setIn(['time', packageVersion.version], packageVersion.publishTime);
+          }
+        }
+      }
+    }
+    if (removeVersions) {
+      for (const version of removeVersions) {
+        fullManifestsBuilder.deleteIn(['versions', version]);
+        fullManifestsBuilder.deleteIn(['time', version]);
+        abbreviatedManifestsBuilder.deleteIn(['versions', version]);
+        abbreviatedManifestsBuilder.deleteIn(['time', version]);
+      }
+    }
+
+    // update dist-tags
+    await this._setPackageDistTagsAndLatestInfosWithBuilder(pkg, fullManifestsBuilder, abbreviatedManifestsBuilder);
+    // store to nfs dist
+    await this._updatePackageManifestsToDistsWithBuilder(pkg, fullManifestsBuilder, abbreviatedManifestsBuilder);
   }
 
   async getSourceRegistry(pkg: Package): Promise<Registry | null> {
     let registry: Registry | null;
     if (pkg.registryId) {
-      registry = await this.registryManagerService.findByRegistryId(
-        pkg.registryId
-      );
+      registry = await this.registryManagerService.findByRegistryId(pkg.registryId);
     } else {
       registry = await this.registryManagerService.ensureDefaultRegistry();
     }
     return registry;
   }
 
-  private async _listPackageDistTags(pkg: Package) {
-    const tags = await this.packageRepository.listPackageTags(pkg.packageId);
-    const distTags: { [key: string]: string } = {};
-    for (const tag of tags) {
-      distTags[tag.tag] = tag.version;
+  async distTags(pkg: Package): Promise<PackageManifestType['dist-tags']> {
+    const entities = await this.packageRepository.listPackageTags(pkg.packageId);
+    const distTags: PackageManifestType['dist-tags'] = {};
+    for (const entity of entities) {
+      distTags[entity.tag] = entity.version;
     }
     return distTags;
   }
@@ -988,61 +927,67 @@ export class PackageManagerService extends AbstractService {
       this._listPackageFullManifests(pkg),
       this._listPackageAbbreviatedManifests(pkg),
     ]);
-    await this._updatePackageManifestsToDists(
-      pkg,
-      fullManifests,
-      abbreviatedManifests
-    );
+    await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
   }
 
   // only refresh root attributes only, e.g.: dist-tags, maintainers
   private async _refreshPackageManifestRootAttributeOnlyToDists(
     pkg: Package,
-    refreshAttr: 'dist-tags' | 'maintainers'
+    refreshAttr: 'dist-tags' | 'maintainers',
   ) {
+    if (this.config.cnpmcore.experimental.enableJSONBuilder) {
+      return await this._refreshPackageManifestRootAttributeOnlyToDistsWithBuilder(pkg, refreshAttr);
+    }
+
     if (refreshAttr === 'maintainers') {
-      const fullManifests =
-        await this.distRepository.readDistBytesToJSON<PackageManifestType>(
-          // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
-          pkg.manifestsDist!
-        );
-      const maintainers = await this._listPackageMaintainers(pkg);
+      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist!);
       if (fullManifests) {
+        const maintainers = await this.maintainers(pkg);
         fullManifests.maintainers = maintainers;
         await this._updatePackageManifestsToDists(pkg, fullManifests, null);
       }
     } else if (refreshAttr === 'dist-tags') {
-      const fullManifests =
-        await this.distRepository.readDistBytesToJSON<PackageManifestType>(
-          // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
-          pkg.manifestsDist!
-        );
+      const fullManifests = await this.distRepository.readDistBytesToJSON<PackageManifestType>(pkg.manifestsDist!);
       if (fullManifests) {
-        const abbreviatedManifests =
-          await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(
-            // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
-            pkg.abbreviatedsDist!
-          );
-        if (abbreviatedManifests) {
-          await this._setPackageDistTagsAndLatestInfos(
-            pkg,
-            fullManifests,
-            abbreviatedManifests
-          );
-        }
-        await this._updatePackageManifestsToDists(
-          pkg,
-          fullManifests,
-          abbreviatedManifests || null
+        const abbreviatedManifests = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageManifestType>(
+          pkg.abbreviatedsDist!,
         );
+        if (abbreviatedManifests) {
+          await this._setPackageDistTagsAndLatestInfos(pkg, fullManifests, abbreviatedManifests);
+        }
+        await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
       }
     }
   }
 
-  private _mergeLatestManifestFields(
-    fullManifests: PackageManifestType,
-    latestManifest: PackageJSONType | null
+  private async _refreshPackageManifestRootAttributeOnlyToDistsWithBuilder(
+    pkg: Package,
+    refreshAttr: 'dist-tags' | 'maintainers',
   ) {
+    if (refreshAttr === 'maintainers') {
+      const fullManifestsBuilder = await this.distRepository.readDistBytesToJSONBuilder(pkg.manifestsDist!);
+      if (fullManifestsBuilder) {
+        const maintainers = await this.maintainers(pkg);
+        fullManifestsBuilder.setIn(['maintainers'], maintainers);
+        await this._updatePackageManifestsToDistsWithBuilder(pkg, fullManifestsBuilder, undefined);
+      }
+    } else if (refreshAttr === 'dist-tags') {
+      const fullManifestsBuilder = await this.distRepository.readDistBytesToJSONBuilder(pkg.manifestsDist!);
+      if (fullManifestsBuilder) {
+        const abbreviatedManifestsBuilder = await this.distRepository.readDistBytesToJSONBuilder(pkg.abbreviatedsDist!);
+        if (abbreviatedManifestsBuilder) {
+          await this._setPackageDistTagsAndLatestInfosWithBuilder(
+            pkg,
+            fullManifestsBuilder,
+            abbreviatedManifestsBuilder,
+          );
+        }
+        await this._updatePackageManifestsToDistsWithBuilder(pkg, fullManifestsBuilder, abbreviatedManifestsBuilder);
+      }
+    }
+  }
+
+  private _mergeLatestManifestFields(fullManifests: PackageManifestType, latestManifest: PackageJSONType | undefined) {
     if (!latestManifest) return;
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const fieldsFromLatestManifest = [
@@ -1064,41 +1009,75 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
+  private _mergeLatestManifestFieldsWithBuilder(
+    fullManifestsBuilder: JSONBuilder,
+    latestManifest: PackageJSONType | undefined,
+  ) {
+    if (!latestManifest) return;
+    // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
+    const fieldsFromLatestManifest = [
+      'author',
+      'bugs',
+      'contributors',
+      'description',
+      'homepage',
+      'keywords',
+      'license',
+      'readmeFilename',
+      'repository',
+    ] as const;
+    // the latest version metas
+    for (const field of fieldsFromLatestManifest) {
+      if (latestManifest[field]) {
+        fullManifestsBuilder.setIn([field], latestManifest[field]);
+      }
+    }
+  }
+
   private async _setPackageDistTagsAndLatestInfos(
     pkg: Package,
     fullManifests: PackageManifestType,
-    abbreviatedManifests: AbbreviatedPackageManifestType
+    abbreviatedManifests: AbbreviatedPackageManifestType,
   ) {
-    const distTags = await this._listPackageDistTags(pkg);
+    const distTags = await this.distTags(pkg);
     if (distTags.latest) {
-      const packageVersion = await this.packageRepository.findPackageVersion(
-        pkg.packageId,
-        distTags.latest
-      );
+      const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, distTags.latest);
       if (packageVersion) {
-        fullManifests.readme = await this.distRepository.readDistBytesToString(
-          packageVersion.readmeDist
+        fullManifests.readme = await this.distRepository.readDistBytesToString(packageVersion.readmeDist);
+        const latestManifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(
+          packageVersion.manifestDist,
         );
-        const latestManifest =
-          await this.distRepository.readDistBytesToJSON<PackageJSONType>(
-            packageVersion.manifestDist
-          );
-        this._mergeLatestManifestFields(fullManifests, latestManifest || null);
+        this._mergeLatestManifestFields(fullManifests, latestManifest);
       }
     }
     fullManifests['dist-tags'] = distTags;
     abbreviatedManifests['dist-tags'] = distTags;
   }
 
-  private async _mergeManifestDist(
-    manifestDist: Dist,
-    mergeData?: unknown,
-    replaceData?: unknown
+  private async _setPackageDistTagsAndLatestInfosWithBuilder(
+    pkg: Package,
+    fullManifestsBuilder: JSONBuilder,
+    abbreviatedManifestsBuilder: JSONBuilder,
   ) {
-    let manifest =
-      await this.distRepository.readDistBytesToJSON<PackageManifestType>(
-        manifestDist
-      );
+    const distTags = await this.distTags(pkg);
+    if (distTags.latest) {
+      const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, distTags.latest);
+      if (packageVersion) {
+        const readme = await this.distRepository.readDistBytesToString(packageVersion.readmeDist);
+        fullManifestsBuilder.setIn(['readme'], readme);
+        const latestManifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(
+          packageVersion.manifestDist,
+        );
+        this._mergeLatestManifestFieldsWithBuilder(fullManifestsBuilder, latestManifest);
+      }
+    }
+
+    fullManifestsBuilder.setIn(['dist-tags'], distTags);
+    abbreviatedManifestsBuilder.setIn(['dist-tags'], distTags);
+  }
+
+  private async _mergeManifestDist(manifestDist: Dist, mergeData?: unknown, replaceData?: unknown) {
+    let manifest = await this.distRepository.readDistBytesToJSON<PackageManifestType>(manifestDist);
     if (mergeData && manifest) {
       Object.assign(manifest, mergeData);
     }
@@ -1111,21 +1090,20 @@ export class PackageManagerService extends AbstractService {
     manifestDist.shasum = manifestIntegrity.shasum;
     manifestDist.integrity = manifestIntegrity.integrity;
     await this.distRepository.saveDist(manifestDist, manifestBytes);
+    // FIXME: should store new size, shasum and integrity to database
   }
 
   private async _updatePackageManifestsToDists(
     pkg: Package,
-    fullManifests: PackageManifestType | null,
-    abbreviatedManifests: AbbreviatedPackageManifestType | null
+    fullManifests: PackageManifestType | undefined | null,
+    abbreviatedManifests: AbbreviatedPackageManifestType | undefined | null,
   ): Promise<void> {
     const modified = new Date();
     if (fullManifests) {
       fullManifests.time.modified = modified;
       // same to dist
       const fullManifestsDistBytes = Buffer.from(JSON.stringify(fullManifests));
-      const fullManifestsDistIntegrity = await calculateIntegrity(
-        fullManifestsDistBytes
-      );
+      const fullManifestsDistIntegrity = await calculateIntegrity(fullManifestsDistBytes);
       if (pkg.manifestsDist?.distId) {
         pkg.manifestsDist.size = fullManifestsDistBytes.length;
         pkg.manifestsDist.shasum = fullManifestsDistIntegrity.shasum;
@@ -1137,25 +1115,17 @@ export class PackageManagerService extends AbstractService {
           integrity: fullManifestsDistIntegrity.integrity,
         });
       }
-      await this.distRepository.saveDist(
-        pkg.manifestsDist,
-        fullManifestsDistBytes
-      );
+      await this.distRepository.saveDist(pkg.manifestsDist, fullManifestsDistBytes);
       await this.packageRepository.savePackageDist(pkg, true);
     }
     if (abbreviatedManifests) {
       abbreviatedManifests.modified = modified;
-      const abbreviatedManifestsDistBytes = Buffer.from(
-        JSON.stringify(abbreviatedManifests)
-      );
-      const abbreviatedManifestsDistIntegrity = await calculateIntegrity(
-        abbreviatedManifestsDistBytes
-      );
+      const abbreviatedManifestsDistBytes = Buffer.from(JSON.stringify(abbreviatedManifests));
+      const abbreviatedManifestsDistIntegrity = await calculateIntegrity(abbreviatedManifestsDistBytes);
       if (pkg.abbreviatedsDist?.distId) {
         pkg.abbreviatedsDist.size = abbreviatedManifestsDistBytes.length;
         pkg.abbreviatedsDist.shasum = abbreviatedManifestsDistIntegrity.shasum;
-        pkg.abbreviatedsDist.integrity =
-          abbreviatedManifestsDistIntegrity.integrity;
+        pkg.abbreviatedsDist.integrity = abbreviatedManifestsDistIntegrity.integrity;
       } else {
         pkg.abbreviatedsDist = pkg.createAbbreviatedManifests({
           size: abbreviatedManifestsDistBytes.length,
@@ -1163,26 +1133,72 @@ export class PackageManagerService extends AbstractService {
           integrity: abbreviatedManifestsDistIntegrity.integrity,
         });
       }
-      await this.distRepository.saveDist(
-        pkg.abbreviatedsDist,
-        abbreviatedManifestsDistBytes
-      );
+      await this.distRepository.saveDist(pkg.abbreviatedsDist, abbreviatedManifestsDistBytes);
       await this.packageRepository.savePackageDist(pkg, false);
     }
   }
 
-  private async _listPackageFullOrAbbreviatedManifests<
-    T extends PackageManifestType | AbbreviatedPackageManifestType,
-  >(scope: string, name: string, isFullManifests: boolean, isSync: boolean) {
+  private async _updatePackageManifestsToDistsWithBuilder(
+    pkg: Package,
+    fullManifestsBuilder: JSONBuilder | undefined,
+    abbreviatedManifestsBuilder: JSONBuilder | undefined,
+  ): Promise<void> {
+    const modified = new Date();
+    if (fullManifestsBuilder) {
+      fullManifestsBuilder.setIn(['time', 'modified'], modified);
+      // same to dist
+      const fullManifestsDistBytes = fullManifestsBuilder.build();
+      const fullManifestsDistIntegrity = await calculateIntegrity(fullManifestsDistBytes);
+      if (pkg.manifestsDist?.distId) {
+        pkg.manifestsDist.size = fullManifestsDistBytes.length;
+        pkg.manifestsDist.shasum = fullManifestsDistIntegrity.shasum;
+        pkg.manifestsDist.integrity = fullManifestsDistIntegrity.integrity;
+      } else {
+        pkg.manifestsDist = pkg.createFullManifests({
+          size: fullManifestsDistBytes.length,
+          shasum: fullManifestsDistIntegrity.shasum,
+          integrity: fullManifestsDistIntegrity.integrity,
+        });
+      }
+      await this.distRepository.saveDist(pkg.manifestsDist, fullManifestsDistBytes);
+      await this.packageRepository.savePackageDist(pkg, true);
+    }
+    if (abbreviatedManifestsBuilder) {
+      abbreviatedManifestsBuilder.setIn(['modified'], modified);
+      const abbreviatedManifestsDistBytes = abbreviatedManifestsBuilder.build();
+      const abbreviatedManifestsDistIntegrity = await calculateIntegrity(abbreviatedManifestsDistBytes);
+      if (pkg.abbreviatedsDist?.distId) {
+        pkg.abbreviatedsDist.size = abbreviatedManifestsDistBytes.length;
+        pkg.abbreviatedsDist.shasum = abbreviatedManifestsDistIntegrity.shasum;
+        pkg.abbreviatedsDist.integrity = abbreviatedManifestsDistIntegrity.integrity;
+      } else {
+        pkg.abbreviatedsDist = pkg.createAbbreviatedManifests({
+          size: abbreviatedManifestsDistBytes.length,
+          shasum: abbreviatedManifestsDistIntegrity.shasum,
+          integrity: abbreviatedManifestsDistIntegrity.integrity,
+        });
+      }
+      await this.distRepository.saveDist(pkg.abbreviatedsDist, abbreviatedManifestsDistBytes);
+      await this.packageRepository.savePackageDist(pkg, false);
+    }
+  }
+
+  private async _listPackageFullOrAbbreviatedManifests<T extends PackageManifestType | AbbreviatedPackageManifestType>(
+    scope: string,
+    name: string,
+    isFullManifests: boolean,
+    isSync: boolean,
+  ) {
     let etag = '';
     let blockReason = '';
     const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return { etag, data: null, blockReason };
+    if (!pkg) {
+      return { etag, data: null, blockReason };
+    }
+
     const registry = await this.getSourceRegistry(pkg);
 
-    const block = await this.packageVersionBlockRepository.findPackageBlock(
-      pkg.packageId
-    );
+    const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
     if (block) {
       blockReason = block.reason;
     }
@@ -1199,80 +1215,153 @@ export class PackageManagerService extends AbstractService {
     if (dist?.distId) {
       etag = `"${dist.shasum}"`;
       const data = (await this.distRepository.readDistBytesToJSON(dist)) as T;
+      let needCalculateIntegrity = false;
       if (bugVersion) {
-        await this.bugVersionService.fixPackageBugVersions(
-          bugVersion,
-          fullname,
-          data.versions
-        );
+        const fixedVersions = await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data);
+        if (fixedVersions.length > 0) {
+          // calculate integrity after fix bug version
+          needCalculateIntegrity = true;
+        }
       }
       // set _source_registry_name in full manifestDist
-      if (registry) {
-        data._source_registry_name = registry?.name;
+      if (registry?.name && data._source_registry_name !== registry.name) {
+        data._source_registry_name = registry.name;
+        // calculate integrity after set _source_registry_name
+        needCalculateIntegrity = true;
       }
 
-      const distBytes = Buffer.from(JSON.stringify(data));
-      const distIntegrity = await calculateIntegrity(distBytes);
-      etag = `"${distIntegrity.shasum}"`;
+      if (needCalculateIntegrity) {
+        const distBytes = Buffer.from(JSON.stringify(data));
+        const distIntegrity = await calculateIntegrity(distBytes);
+        etag = `"${distIntegrity.shasum}"`;
+      }
       return { etag, data, blockReason };
     }
 
-    // read from database
-    const fullManifests = isFullManifests
-      ? await this._listPackageFullManifests(pkg)
-      : null;
-    const abbreviatedManifests = isFullManifests
-      ? null
-      : await this._listPackageAbbreviatedManifests(pkg);
+    // read from database then update to dist, the next time will read from dist
+    const fullManifests = isFullManifests ? await this._listPackageFullManifests(pkg) : null;
+    const abbreviatedManifests = isFullManifests ? null : await this._listPackageAbbreviatedManifests(pkg);
     if (!fullManifests && !abbreviatedManifests) {
       // not exists
       return { etag, data: null, blockReason };
     }
-    await this._updatePackageManifestsToDists(
-      pkg,
-      fullManifests,
-      abbreviatedManifests
-    );
+
+    // update to dist, the next time will read from dist
+    await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
     const manifests = (fullManifests || abbreviatedManifests) as T;
-    /* c8 ignore next 5 */
     if (bugVersion) {
-      await this.bugVersionService.fixPackageBugVersions(
-        bugVersion,
-        fullname,
-        manifests.versions
-      );
-      const distBytes = Buffer.from(JSON.stringify(manifests));
-      const distIntegrity = await calculateIntegrity(distBytes);
-      etag = `"${distIntegrity.shasum}"`;
+      const fixedVersions = await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, manifests);
+      if (fixedVersions.length > 0) {
+        // calculate integrity after fix bug version
+        const distBytes = Buffer.from(JSON.stringify(manifests));
+        const distIntegrity = await calculateIntegrity(distBytes);
+        etag = `"${distIntegrity.shasum}"`;
+      }
     } else {
       dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
-      // oxlint-disable-next-line typescript-eslint/no-non-null-assertion
       etag = `"${dist!.shasum}"`;
     }
     return { etag, data: manifests, blockReason };
   }
 
-  private async _listPackageMaintainers(pkg: Package) {
-    const users = await this.packageRepository.listPackageMaintainers(
-      pkg.packageId
-    );
+  private async _listPackageFullOrAbbreviatedManifestsBuffer(scope: string, name: string, isFullManifests: boolean) {
+    let etag = '';
+    let blockReason = '';
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) {
+      return { etag, data: null, blockReason };
+    }
+
+    const block = await this.packageVersionBlockRepository.findPackageBlock(pkg.packageId);
+    if (block) {
+      blockReason = block.reason;
+    }
+
+    // let bugVersion: BugVersion | undefined;
+    // // sync mode response no bug version fixed
+    // if (!isSync) {
+    //   bugVersion = await this.bugVersionService.getBugVersion();
+    // }
+    // const fullname = getFullname(scope, name);
+
+    let dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
+    // read from dist
+    if (dist?.distId) {
+      etag = `"${dist.shasum}"`;
+      const builder = await this.distRepository.readDistBytesToJSONBuilder(dist);
+      if (!builder) {
+        this.logger.warn('[PackageManagerService] dist: %s not found', dist.distId);
+        return { etag, data: null, blockReason };
+      }
+      let needCalculateIntegrity = false;
+      // set _source_registry_name in full manifestDist
+      const registry = await this.getSourceRegistry(pkg);
+      if (registry?.name && builder.getIn<string>(['_source_registry_name']) !== registry.name) {
+        builder.setIn(['_source_registry_name'], registry.name);
+        // calculate integrity after set _source_registry_name
+        needCalculateIntegrity = true;
+      }
+      // TODO: support bug version with builder
+      // if (bugVersion) {
+      //   const fixedVersions = await this.bugVersionService.fixPackageBugVersions(bugVersion, fullname, data.versions);
+      //   if (fixedVersions.length > 0) {
+      //     // calculate integrity after fix bug version
+      //     needCalculateIntegrity = true;
+      //   }
+      // }
+      const data = builder.build();
+      if (needCalculateIntegrity) {
+        const distIntegrity = await calculateIntegrity(data);
+        etag = `"${distIntegrity.shasum}"`;
+      }
+      return { etag, data, blockReason };
+    }
+
+    // read from database then update to dist, the next time will read from dist
+    const fullManifests = isFullManifests ? await this._listPackageFullManifests(pkg) : null;
+    const abbreviatedManifests = isFullManifests ? null : await this._listPackageAbbreviatedManifests(pkg);
+    if (!fullManifests && !abbreviatedManifests) {
+      // not exists
+      return { etag, data: null, blockReason };
+    }
+
+    // update to dist, the next time will read from dist
+    await this._updatePackageManifestsToDists(pkg, fullManifests, abbreviatedManifests);
+    const manifests = fullManifests || abbreviatedManifests;
+    dist = isFullManifests ? pkg.manifestsDist : pkg.abbreviatedsDist;
+    etag = `"${dist!.shasum}"`;
+    // TODO: support bug version with builder
+    // if (bugVersion) {
+    //   const fixedVersions = await this.bugVersionService.fixPackageBugVersions(
+    //     bugVersion,
+    //     fullname,
+    //     manifests as any,
+    //   );
+    //   if (fixedVersions.length > 0) {
+    //     // calculate integrity after fix bug version
+    //     const distBytes = Buffer.from(JSON.stringify(manifests));
+    //     const distIntegrity = await calculateIntegrity(distBytes);
+    //     etag = `"${distIntegrity.shasum}"`;
+    //   }
+    // }
+    return { etag, data: Buffer.from(JSON.stringify(manifests)), blockReason };
+  }
+
+  async maintainers(pkg: Package): Promise<AuthorType[]> {
+    const users = await this.packageRepository.listPackageMaintainers(pkg.packageId);
     return users.map(({ displayName, email }) => ({
       name: displayName,
       email,
     }));
   }
 
-  private async _listPackageFullManifests(
-    pkg: Package
-  ): Promise<PackageManifestType | null> {
-    // read all verions from db
-    const packageVersions = await this.packageRepository.listPackageVersions(
-      pkg.packageId
-    );
+  private async _listPackageFullManifests(pkg: Package): Promise<PackageManifestType | null> {
+    // read all versions from db
+    const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     if (packageVersions.length === 0) return null;
 
-    const distTags = await this._listPackageDistTags(pkg);
-    const maintainers = await this._listPackageMaintainers(pkg);
+    const distTags = await this.distTags(pkg);
+    const maintainers = await this.maintainers(pkg);
     const registry = await this.getSourceRegistry(pkg);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     const data: PackageManifestType = {
@@ -1320,12 +1409,8 @@ export class PackageManagerService extends AbstractService {
     let latestPackageVersion = packageVersions[0];
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
-      const manifest =
-        await this.distRepository.readDistBytesToJSON<PackageJSONType>(
-          packageVersion.manifestDist
-        );
+      const manifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist);
       if (!manifest) continue;
-      /* c8 ignore next 3 */
       if ('readme' in manifest) {
         delete manifest.readme;
       }
@@ -1337,9 +1422,7 @@ export class PackageManagerService extends AbstractService {
       data.time[packageVersion.version] = packageVersion.publishTime;
     }
     // the latest version readme
-    data.readme = await this.distRepository.readDistBytesToString(
-      latestPackageVersion.readmeDist
-    );
+    data.readme = await this.distRepository.readDistBytesToString(latestPackageVersion.readmeDist);
     if (!latestManifest) {
       latestManifest = data.versions[latestPackageVersion.version];
     }
@@ -1347,16 +1430,12 @@ export class PackageManagerService extends AbstractService {
     return data;
   }
 
-  private async _listPackageAbbreviatedManifests(
-    pkg: Package
-  ): Promise<AbbreviatedPackageManifestType | null> {
+  private async _listPackageAbbreviatedManifests(pkg: Package): Promise<AbbreviatedPackageManifestType | null> {
     // read all versions from db
-    const packageVersions = await this.packageRepository.listPackageVersions(
-      pkg.packageId
-    );
+    const packageVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
     if (packageVersions.length === 0) return null;
 
-    const distTags = await this._listPackageDistTags(pkg);
+    const distTags = await this.distTags(pkg);
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     // tiny-tarball is a small package with only one version and no dependencies.
     const data: AbbreviatedPackageManifestType = {
@@ -1371,10 +1450,9 @@ export class PackageManagerService extends AbstractService {
     };
 
     for (const packageVersion of packageVersions) {
-      const manifest =
-        await this.distRepository.readDistBytesToJSON<AbbreviatedPackageJSONType>(
-          packageVersion.abbreviatedDist
-        );
+      const manifest = await this.distRepository.readDistBytesToJSON<AbbreviatedPackageJSONType>(
+        packageVersion.abbreviatedDist,
+      );
       if (manifest) {
         data.versions[packageVersion.version] = manifest;
         // data.time is guaranteed to exist since we initialize it above
@@ -1399,9 +1477,7 @@ export class PackageManagerService extends AbstractService {
           if (!['range', 'tag', 'version'].includes(specResult.type)) {
             return;
           }
-          const pkgVersion = await this.packageVersionService.getVersion(
-            npa(`${fullname}@${spec}`)
-          );
+          const pkgVersion = await this.packageVersionService.getVersion(npa(`${fullname}@${spec}`));
           assert.ok(pkgVersion);
         } catch {
           throw new BadRequestError(`deps ${fullname}@${spec} not found`);
@@ -1409,7 +1485,7 @@ export class PackageManagerService extends AbstractService {
       },
       {
         concurrency: 12,
-      }
+      },
     );
   }
 }

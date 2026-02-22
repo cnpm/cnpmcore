@@ -71,7 +71,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
-    user: "0"
+    user: '0'
     command: >
       bash -c '
         if [ x${ELASTIC_PASSWORD} == x ]; then
@@ -117,7 +117,7 @@ services:
         echo "All done!";
       '
     healthcheck:
-      test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
+      test: ['CMD-SHELL', '[ -f config/certs/es01/es01.crt ]']
       interval: 1s
       timeout: 5s
       retries: 120
@@ -160,7 +160,7 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
+          'CMD-SHELL',
           "curl -s --cacert config/certs/ca/ca.crt http://localhost:9200 | grep -q 'missing authentication credentials'",
         ]
       interval: 10s
@@ -190,11 +190,7 @@ services:
       - XPACK_REPORTING_ENCRYPTIONKEY=${ENCRYPTION_KEY}
     mem_limit: ${KB_MEM_LIMIT}
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
-        ]
+      test: ['CMD-SHELL', "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'"]
       interval: 10s
       timeout: 10s
       retries: 120
@@ -273,31 +269,15 @@ PUT cnpmcore_packages
     "analysis": {
       "analyzer": {
         "package": {
-          "filter": [
-            "asciifolding",
-            "split_word",
-            "lowercase",
-            "unique_on_same_position"
-          ],
+          "filter": ["asciifolding", "split_word", "lowercase", "unique_on_same_position"],
           "tokenizer": "standard"
         },
         "package_autocomplete": {
-          "filter": [
-            "asciifolding",
-            "split_word",
-            "lowercase",
-            "autocomplete",
-            "unique_on_same_position"
-          ],
+          "filter": ["asciifolding", "split_word", "lowercase", "autocomplete", "unique_on_same_position"],
           "tokenizer": "standard"
         },
         "package_autocomplete_highlight": {
-          "filter": [
-            "asciifolding",
-            "non_alfanum_to_space",
-            "lowercase",
-            "trim"
-          ],
+          "filter": ["asciifolding", "non_alfanum_to_space", "lowercase", "trim"],
           "tokenizer": "autocomplete"
         },
         "package_autocomplete_keyword": {
@@ -312,50 +292,23 @@ PUT cnpmcore_packages
           "tokenizer": "keyword"
         },
         "package_autocomplete_keyword_search": {
-          "filter": [
-            "asciifolding",
-            "non_alfanum_to_space",
-            "lowercase",
-            "trim"
-          ],
+          "filter": ["asciifolding", "non_alfanum_to_space", "lowercase", "trim"],
           "tokenizer": "keyword"
         },
         "package_edge_ngram": {
-          "filter": [
-            "asciifolding",
-            "split_word",
-            "lowercase",
-            "edge_ngram",
-            "unique_on_same_position"
-          ],
+          "filter": ["asciifolding", "split_word", "lowercase", "edge_ngram", "unique_on_same_position"],
           "tokenizer": "standard"
         },
         "package_english": {
-          "filter": [
-            "asciifolding",
-            "split_word",
-            "lowercase",
-            "kstem",
-            "unique_on_same_position"
-          ],
+          "filter": ["asciifolding", "split_word", "lowercase", "kstem", "unique_on_same_position"],
           "tokenizer": "standard"
         },
         "package_english_aggressive": {
-          "filter": [
-            "asciifolding",
-            "split_word",
-            "lowercase",
-            "porter_stem",
-            "unique_on_same_position"
-          ],
+          "filter": ["asciifolding", "split_word", "lowercase", "porter_stem", "unique_on_same_position"],
           "tokenizer": "standard"
         },
         "raw": {
-          "filter": [
-            "asciifolding",
-            "lowercase",
-            "trim"
-          ],
+          "filter": ["asciifolding", "lowercase", "trim"],
           "tokenizer": "keyword"
         }
       },
@@ -394,11 +347,7 @@ PUT cnpmcore_packages
       },
       "normalizer": {
         "raw": {
-          "filter": [
-            "asciifolding",
-            "lowercase",
-            "trim"
-          ],
+          "filter": ["asciifolding", "lowercase", "trim"],
           "type": "custom"
         }
       },
@@ -406,10 +355,7 @@ PUT cnpmcore_packages
         "autocomplete": {
           "max_gram": "15",
           "min_gram": "1",
-          "token_chars": [
-            "letter",
-            "digit"
-          ],
+          "token_chars": ["letter", "digit"],
           "type": "edge_ngram"
         }
       }

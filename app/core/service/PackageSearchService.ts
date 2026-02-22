@@ -1,18 +1,16 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { errors, type estypes } from '@elastic/elasticsearch';
 import dayjs from 'dayjs';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { AbstractService } from '../../common/AbstractService.js';
-import { formatAuthor, getScopeAndName } from '../../common/PackageUtil.js';
-import type { PackageManagerService } from './PackageManagerService.js';
-import type {
-  SearchManifestType,
-  SearchMappingType,
-  SearchRepository,
-} from '../../repository/SearchRepository.js';
-import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
+import { AbstractService } from '../../common/AbstractService.ts';
+import { formatAuthor, getScopeAndName } from '../../common/PackageUtil.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
+import type { AuthorType, PackageRepository } from '../../repository/PackageRepository.ts';
+import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
+import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
+import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.ts';
+import type { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository.ts';
+import type { PackageManagerService } from './PackageManagerService.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -28,41 +26,25 @@ export class PackageSearchService extends AbstractService {
   protected packageRepository: PackageRepository;
   @Inject()
   protected packageVersionBlockRepository: PackageVersionBlockRepository;
+  @Inject()
+  protected packageVersionRepository: PackageVersionRepository;
+  @Inject()
+  protected distRepository: DistRepository;
 
   async syncPackage(fullname: string, isSync = true) {
     const [scope, name] = getScopeAndName(fullname);
-    const fullManifests =
-      await this.packageManagerService.listPackageFullManifests(
-        scope,
-        name,
-        isSync
-      );
-
-    if (!fullManifests.data) {
-      this.logger.warn(
-        '[PackageSearchService.syncPackage] save package:%s not found',
-        fullname
-      );
+    const {
+      blockReason,
+      manifest: latestManifest,
+      pkg,
+    } = await this.packageManagerService.showPackageVersionManifest(scope, name, 'latest', isSync, true);
+    if (!pkg || !latestManifest) {
+      this.logger.warn('[PackageSearchService.syncPackage] findPackage:%s not found', fullname);
       return;
     }
 
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) {
-      this.logger.warn(
-        '[PackageSearchService.syncPackage] findPackage:%s not found',
-        fullname
-      );
-      return;
-    }
-
-    const block = await this.packageVersionBlockRepository.findPackageBlock(
-      pkg.packageId
-    );
-    if (block) {
-      this.logger.warn(
-        '[PackageSearchService.syncPackage] package:%s is blocked, try to remove es',
-        fullname
-      );
+    if (blockReason) {
+      this.logger.warn('[PackageSearchService.syncPackage] package:%s is blocked, try to remove es', fullname);
       await this.removePackage(fullname);
       return;
     }
@@ -74,7 +56,7 @@ export class PackageSearchService extends AbstractService {
     const entities = await this.packageVersionDownloadRepository.query(
       pkg.packageId,
       startDate.toDate(),
-      endDate.toDate()
+      endDate.toDate(),
     );
     let downloadsAll = 0;
     for (const entity of entities) {
@@ -87,39 +69,36 @@ export class PackageSearchService extends AbstractService {
       }
     }
 
-    const { data: manifest } = fullManifests;
-
-    const latestVersion = manifest['dist-tags'].latest;
-    if (!latestVersion) {
-      this.logger.warn(
-        '[PackageSearchService.syncPackage] package:%s latestVersion not found, dist-tags: %j, skip sync',
-        fullname,
-        manifest['dist-tags']
-      );
-      return;
+    let time: Record<string, Date> = {};
+    let _rev = '';
+    let keywords: string[] | undefined;
+    let description: string | undefined;
+    const builder = await this.distRepository.readDistBytesToJSONBuilder(pkg.manifestsDist!);
+    if (builder) {
+      time = builder.getIn(['time'])!;
+      _rev = builder.getIn(['_rev'])!;
+      keywords = builder.getIn(['keywords']);
+      description = builder.getIn(['description']);
     }
-    const latestManifest = manifest.versions?.[latestVersion];
-
+    const versions = await this.packageVersionRepository.findAllVersions(scope, name);
+    const distTags = await this.packageManagerService.distTags(pkg);
     const packageDoc: SearchMappingType = {
-      name: manifest.name,
-      version: latestVersion,
-      _rev: manifest._rev,
+      name: latestManifest.name,
+      version: latestManifest.version,
+      _rev,
       scope: scope ? scope.replace('@', '') : 'unscoped',
-      keywords: manifest.keywords || [],
-      versions: Object.keys(manifest.versions),
-      description: manifest.description,
-      license:
-        typeof manifest.license === 'object'
-          ? manifest.license?.type
-          : manifest.license,
-      maintainers: manifest.maintainers,
-      author: formatAuthor(manifest.author),
-      'dist-tags': manifest['dist-tags'],
-      date: manifest.time[latestVersion],
-      created: manifest.time.created,
-      modified: manifest.time.modified,
+      keywords: keywords || latestManifest.keywords || [],
+      versions,
+      description,
+      license: typeof latestManifest.license === 'object' ? latestManifest.license?.type : latestManifest.license,
+      maintainers: latestManifest.maintainers as AuthorType[],
+      author: formatAuthor(latestManifest.author),
+      'dist-tags': distTags,
+      date: time[latestManifest.version]!,
+      created: time.created,
+      modified: time.modified,
       // 归属 registry，keywords 枚举值
-      _source_registry_name: manifest._source_registry_name,
+      _source_registry_name: latestManifest._source_registry_name,
       // 最新版本发布人 _npmUser:
       _npmUser: latestManifest?._npmUser,
       // 最新版本发布信息
@@ -129,7 +108,7 @@ export class PackageSearchService extends AbstractService {
     // http://npmmirror.com/package/npm/files/lib/utils/format-search-stream.js#L147-L148
     // npm cli 使用 username 字段
     if (packageDoc.maintainers) {
-      packageDoc.maintainers = packageDoc.maintainers.map(maintainer => {
+      packageDoc.maintainers = packageDoc.maintainers.map((maintainer) => {
         return {
           username: maintainer.name,
           ...maintainer,
@@ -150,7 +129,7 @@ export class PackageSearchService extends AbstractService {
   async searchPackage(
     text: string,
     from: number,
-    size: number
+    size: number,
   ): Promise<{ objects: (SearchManifestType | undefined)[]; total: number }> {
     const matchQueries = this._buildMatchQueries(text);
     const scriptScore = this._buildScriptScore({
@@ -178,14 +157,11 @@ export class PackageSearchService extends AbstractService {
     });
     const { hits, total } = res;
     return {
-      objects: hits?.map(item => {
+      objects: hits?.map((item) => {
         // 从 https://github.com/npm/cli/pull/7407 (npm cli v10.6.0) 开始，npm cli 使用 publisher 字段(以前使用 maintainers 字段)
         // 从现有数据来看，_npmUser 字段和 publisher 字段是等价的
         // 为了兼容老版本，不删除 _npmUser 字段
-        if (
-          !item._source?.package.publisher &&
-          item._source?.package._npmUser
-        ) {
+        if (!item._source?.package.publisher && item._source?.package._npmUser) {
           item._source.package.publisher = {
             username: item._source.package._npmUser.name,
             email: item._source.package._npmUser.email,
@@ -204,10 +180,7 @@ export class PackageSearchService extends AbstractService {
     } catch (error) {
       // if the package does not exist, returns success
       if (error instanceof errors.ResponseError && error?.statusCode === 404) {
-        this.logger.warn(
-          '[PackageSearchService.removePackage] remove package:%s not found',
-          fullname
-        );
+        this.logger.warn('[PackageSearchService.removePackage] remove package:%s not found', fullname);
         return fullname;
       }
       throw error;
@@ -225,11 +198,7 @@ export class PackageSearchService extends AbstractService {
         multi_match: {
           query: text,
           operator: 'and',
-          fields: [
-            'package.name.standard^4',
-            'package.description.standard',
-            'package.keywords.standard^2',
-          ],
+          fields: ['package.name.standard^4', 'package.description.standard', 'package.keywords.standard^2'],
           type: 'cross_fields',
           boost: 6,
           tie_breaker: 0.5,
@@ -241,11 +210,7 @@ export class PackageSearchService extends AbstractService {
         multi_match: {
           query: text,
           operator: 'and',
-          fields: [
-            'package.name.edge_ngram^4',
-            'package.description.edge_ngram',
-            'package.keywords.edge_ngram^2',
-          ],
+          fields: ['package.name.edge_ngram^4', 'package.description.edge_ngram', 'package.keywords.edge_ngram^2'],
           type: 'phrase',
           slop: 3,
           boost: 3,
@@ -286,10 +251,7 @@ export class PackageSearchService extends AbstractService {
     ];
   }
 
-  private _buildScriptScore(params: {
-    text: string | undefined;
-    scoreEffect: number;
-  }) {
+  private _buildScriptScore(params: { text: string | undefined; scoreEffect: number }) {
     // keep search simple, only download(popularity)
     const downloads = 'doc["downloads.all"].value';
     const source = `doc["package.name.raw"].value.equals(params.text) ? 100000 + ${downloads} : _score * Math.pow(${downloads}, params.scoreEffect)`;

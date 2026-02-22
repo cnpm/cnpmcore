@@ -1,5 +1,5 @@
-import { Entity, type EntityData } from './Entity.js';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import { Entity, type EntityData } from './Entity.ts';
 
 interface WebauthnCredentialData extends EntityData {
   wancId: string;
@@ -25,9 +25,7 @@ export class WebauthnCredential extends Entity {
     this.browserType = data.browserType;
   }
 
-  static create(
-    data: EasyData<WebauthnCredentialData, 'wancId'>
-  ): WebauthnCredential {
+  static create(data: EasyData<WebauthnCredentialData, 'wancId'>): WebauthnCredential {
     const newData = EntityUtil.defaultData(data, 'wancId');
     return new WebauthnCredential(newData);
   }

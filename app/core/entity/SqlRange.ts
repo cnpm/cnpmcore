@@ -1,5 +1,6 @@
 import { Comparator, Range } from 'semver';
-import { PaddingSemVer } from './PaddingSemVer.js';
+
+import { PaddingSemVer } from './PaddingSemVer.ts';
 
 const OPERATOR_MAP = {
   '<': '$lt',
@@ -39,13 +40,11 @@ export class SqlRange {
       };
     }
     const paddingSemver = new PaddingSemVer(comparator.semver);
-    const operator =
-      OPERATOR_MAP[comparator.operator as keyof typeof OPERATOR_MAP];
+    const operator = OPERATOR_MAP[comparator.operator as keyof typeof OPERATOR_MAP];
     if (!operator) {
       throw new Error(`unknown operator ${comparator.operator}`);
     }
-    this._containPreRelease =
-      this._containPreRelease || paddingSemver.isPreRelease;
+    this._containPreRelease = this._containPreRelease || paddingSemver.isPreRelease;
     return {
       $and: [
         {

@@ -1,0 +1,102 @@
+[
+  {
+    "url": "https://api.github.com/repos/astral-sh/python-build-standalone/releases/123456789",
+    "assets_url": "https://api.github.com/repos/astral-sh/python-build-standalone/releases/123456789/assets",
+    "upload_url": "https://uploads.github.com/repos/astral-sh/python-build-standalone/releases/123456789/assets{?name,label}",
+    "html_url": "https://github.com/astral-sh/python-build-standalone/releases/tag/20241008",
+    "id": 123456789,
+    "author": {
+      "login": "github-actions[bot]",
+      "id": 41898282,
+      "node_id": "MDM6Qm90NDE4OTgyODI=",
+      "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+      "html_url": "https://github.com/apps/github-actions",
+      "type": "Bot",
+      "site_admin": false
+    },
+    "node_id": "RE_kwDOEP53Es4KNywR",
+    "tag_name": "20241008",
+    "target_commitish": "main",
+    "name": "20241008",
+    "draft": false,
+    "prerelease": false,
+    "created_at": "2024-10-08T10:00:00Z",
+    "published_at": "2024-10-08T12:00:00Z",
+    "assets": [
+      {
+        "url": "https://api.github.com/repos/astral-sh/python-build-standalone/releases/assets/187552803",
+        "id": 187552803,
+        "node_id": "RA_kwDOEP53Es4LLdQj",
+        "name": "cpython-3.12.6+20241008-x86_64-unknown-linux-gnu-install_only.tar.gz",
+        "label": "",
+        "uploader": {
+          "login": "github-actions[bot]",
+          "id": 41898282,
+          "node_id": "MDM6Qm90NDE4OTgyODI=",
+          "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+          "type": "Bot"
+        },
+        "content_type": "application/gzip",
+        "state": "uploaded",
+        "size": 45678901,
+        "download_count": 1234,
+        "created_at": "2024-10-08T12:01:00Z",
+        "updated_at": "2024-10-08T12:02:00Z",
+        "browser_download_url": "https://github.com/astral-sh/python-build-standalone/releases/download/20241008/cpython-3.12.6+20241008-x86_64-unknown-linux-gnu-install_only.tar.gz"
+      }
+    ],
+    "tarball_url": "https://api.github.com/repos/astral-sh/python-build-standalone/tarball/20241008",
+    "zipball_url": "https://api.github.com/repos/astral-sh/python-build-standalone/zipball/20241008",
+    "body": "Python 3.12.6 build"
+  },
+  {
+    "url": "https://api.github.com/repos/astral-sh/python-build-standalone/releases/123456788",
+    "assets_url": "https://api.github.com/repos/astral-sh/python-build-standalone/releases/123456788/assets",
+    "upload_url": "https://uploads.github.com/repos/astral-sh/python-build-standalone/releases/123456788/assets{?name,label}",
+    "html_url": "https://github.com/astral-sh/python-build-standalone/releases/tag/20241001",
+    "id": 123456788,
+    "author": {
+      "login": "github-actions[bot]",
+      "id": 41898282,
+      "node_id": "MDM6Qm90NDE4OTgyODI=",
+      "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+      "type": "Bot"
+    },
+    "node_id": "RE_kwDOEP53Es4KNywQ",
+    "tag_name": "20241001",
+    "target_commitish": "main",
+    "name": "20241001",
+    "draft": false,
+    "prerelease": false,
+    "created_at": "2024-10-01T10:00:00Z",
+    "published_at": "2024-10-01T12:00:00Z",
+    "assets": [
+      {
+        "url": "https://api.github.com/repos/astral-sh/python-build-standalone/releases/assets/187552802",
+        "id": 187552802,
+        "node_id": "RA_kwDOEP53Es4LLdQi",
+        "name": "cpython-3.12.5+20241001-x86_64-unknown-linux-gnu-install_only.tar.gz",
+        "label": "",
+        "uploader": {
+          "login": "github-actions[bot]",
+          "id": 41898282,
+          "node_id": "MDM6Qm90NDE4OTgyODI=",
+          "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+          "type": "Bot"
+        },
+        "content_type": "application/gzip",
+        "state": "uploaded",
+        "size": 45678900,
+        "download_count": 1233,
+        "created_at": "2024-10-01T12:01:00Z",
+        "updated_at": "2024-10-01T12:02:00Z",
+        "browser_download_url": "https://github.com/astral-sh/python-build-standalone/releases/download/20241001/cpython-3.12.5+20241001-x86_64-unknown-linux-gnu-install_only.tar.gz"
+      }
+    ],
+    "tarball_url": "https://api.github.com/repos/astral-sh/python-build-standalone/tarball/20241001",
+    "zipball_url": "https://api.github.com/repos/astral-sh/python-build-standalone/zipball/20241001",
+    "body": "Python 3.12.5 build"
+  }
+]

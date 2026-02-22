@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
-import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.js';
-import type { Registry } from '../../../../app/core/entity/Registry.js';
-import { RegistryType } from '../../../../app/common/enum/Registry.js';
-import type { Task } from '../../../../app/core/entity/Task.js';
+import { RegistryType } from '../../../../app/common/enum/Registry.ts';
+import type { Registry } from '../../../../app/core/entity/Registry.ts';
+import type { Task } from '../../../../app/core/entity/Task.ts';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
 
 describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () => {
   let packageSyncerService: PackageSyncerService;
@@ -35,11 +36,7 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
 
   describe('getTaskRegistry()', () => {
     it('should work', async () => {
-      const taskRegistry = await packageSyncerService.initSpecRegistry(
-        task,
-        null,
-        '@cnpm'
-      );
+      const taskRegistry = await packageSyncerService.initSpecRegistry(task, null, '@cnpm');
       assert.equal(taskRegistry.registryId, registry.registryId);
     });
     it('should support legacy task', async () => {
@@ -50,11 +47,7 @@ describe('test/core/service/PackageSyncerService/getTaskRegistry.test.ts', () =>
         tips: `Sync cause by changes_stream(${registry.changeStream}) update seq: 1`,
       });
 
-      const taskRegistry = await packageSyncerService.initSpecRegistry(
-        task,
-        null,
-        '@cnpm'
-      );
+      const taskRegistry = await packageSyncerService.initSpecRegistry(task, null, '@cnpm');
       assert.equal(taskRegistry.name, 'default');
     });
   });

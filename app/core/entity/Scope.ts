@@ -1,5 +1,5 @@
-import { Entity, type EntityData } from './Entity.js';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import { Entity, type EntityData } from './Entity.ts';
 
 interface ScopeData extends EntityData {
   name: string;

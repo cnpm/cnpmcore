@@ -1,7 +1,7 @@
-import type { Dist } from './Dist.js';
-import { Entity, type EntityData } from './Entity.js';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
-import { PaddingSemVer } from './PaddingSemVer.js';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import type { Dist } from './Dist.ts';
+import { Entity, type EntityData } from './Entity.ts';
+import { PaddingSemVer } from './PaddingSemVer.ts';
 
 interface PackageVersionData extends EntityData {
   packageId: string;
@@ -48,9 +48,7 @@ export class PackageVersion extends Entity {
     }
   }
 
-  static create(
-    data: EasyData<PackageVersionData, 'packageVersionId'>
-  ): PackageVersion {
+  static create(data: EasyData<PackageVersionData, 'packageVersionId'>): PackageVersion {
     const newData = EntityUtil.defaultData(data, 'packageVersionId');
     return new PackageVersion(newData);
   }

@@ -1,20 +1,15 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 describe('test/port/controller/HomeController/cors.test.ts', () => {
   describe('CORS', () => {
     it('should GET work', async () => {
-      const res = await app
-        .httpRequest()
-        .get('/-/ping')
-        .set('origin', 'https://www.test-cors.org');
+      const res = await app.httpRequest().get('/-/ping').set('origin', 'https://www.test-cors.org');
       assert.equal(res.status, 200);
       assert.equal(res.body.pong, true);
       assert.equal(res.headers.vary, 'Origin');
-      assert.equal(
-        res.headers['access-control-allow-origin'],
-        'https://www.test-cors.org'
-      );
+      assert.equal(res.headers['access-control-allow-origin'], 'https://www.test-cors.org');
       assert.equal(res.headers['access-control-allow-credentials'], 'true');
       assert.ok(!res.headers['access-control-allow-methods']);
     });
@@ -28,19 +23,10 @@ describe('test/port/controller/HomeController/cors.test.ts', () => {
         .set('Access-Control-Request-Headers', 'authorization');
       assert.equal(res.status, 204);
       assert.equal(res.headers.vary, 'Origin');
-      assert.equal(
-        res.headers['access-control-allow-origin'],
-        'https://www.test-cors.org/foo'
-      );
+      assert.equal(res.headers['access-control-allow-origin'], 'https://www.test-cors.org/foo');
       assert.equal(res.headers['access-control-allow-credentials'], 'true');
-      assert.equal(
-        res.headers['access-control-allow-headers'],
-        'authorization'
-      );
-      assert.equal(
-        res.headers['access-control-allow-methods'],
-        'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS'
-      );
+      assert.equal(res.headers['access-control-allow-headers'], 'authorization');
+      assert.equal(res.headers['access-control-allow-methods'], 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS');
     });
   });
 });

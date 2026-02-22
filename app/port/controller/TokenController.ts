@@ -1,19 +1,10 @@
-import { ForbiddenError, UnauthorizedError } from 'egg-errors';
-import {
-  type EggContext,
-  Context,
-  HTTPBody,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPParam,
-  Inject,
-} from '@eggjs/tegg';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
+import { HTTPContext, Context, HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
+import { ForbiddenError, UnauthorizedError } from 'egg/errors';
 
-import type { AuthAdapter } from '../../infra/AuthAdapter.js';
-import { AbstractController } from './AbstractController.js';
-import { TokenType, isGranularToken } from '../../core/entity/Token.js';
+import { TokenType, isGranularToken } from '../../core/entity/Token.ts';
+import type { AuthAdapter } from '../../infra/AuthAdapter.ts';
+import { AbstractController } from './AbstractController.ts';
 
 // Creating and viewing access tokens
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#viewing-access-tokens
@@ -23,26 +14,18 @@ const TokenOptionsRule = Type.Object({
   readonly: Type.Optional(Type.Boolean()),
   automation: Type.Optional(Type.Boolean()),
   // only allow 10 ip for now
-  cidr_whitelist: Type.Optional(
-    Type.Array(Type.String({ maxLength: 100 }), { maxItems: 10 })
-  ),
+  cidr_whitelist: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 10 })),
 });
 type TokenOptions = Static<typeof TokenOptionsRule>;
 
 const GranularTokenOptionsRule = Type.Object({
   automation: Type.Optional(Type.Boolean()),
   readonly: Type.Optional(Type.Boolean()),
-  cidr_whitelist: Type.Optional(
-    Type.Array(Type.String({ maxLength: 100 }), { maxItems: 10 })
-  ),
+  cidr_whitelist: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 10 })),
   name: Type.String({ maxLength: 255 }),
   description: Type.Optional(Type.String({ maxLength: 255 })),
-  allowedScopes: Type.Optional(
-    Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })
-  ),
-  allowedPackages: Type.Optional(
-    Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })
-  ),
+  allowedScopes: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })),
+  allowedPackages: Type.Optional(Type.Array(Type.String({ maxLength: 100 }), { maxItems: 50 })),
   expires: Type.Number({ minimum: 1, maximum: 365 }),
 });
 type GranularTokenOptions = Static<typeof GranularTokenOptionsRule>;
@@ -56,19 +39,11 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens',
     method: HTTPMethodEnum.POST,
   })
-  async createToken(
-    @Context() ctx: EggContext,
-    @HTTPBody() tokenOptions: TokenOptions
-  ) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
-      ctx,
-      'setting'
-    );
+  async createToken(@HTTPContext() ctx: Context, @HTTPBody() tokenOptions: TokenOptions) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     ctx.tValidate(TokenOptionsRule, tokenOptions);
 
-    if (
-      !this.userService.checkPassword(authorizedUser, tokenOptions.password)
-    ) {
+    if (!this.userService.checkPassword(authorizedUser, tokenOptions.password)) {
       throw new UnauthorizedError('Invalid password');
     }
 
@@ -93,11 +68,8 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens/token/:tokenKey',
     method: HTTPMethodEnum.DELETE,
   })
-  async removeToken(@Context() ctx: EggContext, @HTTPParam() tokenKey: string) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
-      ctx,
-      'setting'
-    );
+  async removeToken(@HTTPContext() ctx: Context, @HTTPParam() tokenKey: string) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     await this.userService.removeToken(authorizedUser.userId, tokenKey);
     return { ok: true };
   }
@@ -107,7 +79,7 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens',
     method: HTTPMethodEnum.GET,
   })
-  async listTokens(@Context() ctx: EggContext) {
+  async listTokens(@HTTPContext() ctx: Context) {
     // {
     //   'user-agent': 'npm/8.1.2 node/v16.13.1 darwin arm64 workspaces/false',
     //   'npm-command': 'token',
@@ -117,10 +89,7 @@ export class TokenController extends AbstractController {
     //   host: 'localhost:7001',
     //   connection: 'keep-alive'
     // }
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
-      ctx,
-      'setting'
-    );
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     const tokens = await this.userRepository.listTokens(authorizedUser.userId);
     // {
     //   "objects": [
@@ -138,8 +107,8 @@ export class TokenController extends AbstractController {
     //   "urls": {}
     // }
     const objects = tokens
-      .filter(token => !isGranularToken(token))
-      .map(token => ({
+      .filter((token) => !isGranularToken(token))
+      .map((token) => ({
         token: token.tokenMark,
         key: token.tokenKey,
         cidr_whitelist: token.cidrWhitelist,
@@ -176,24 +145,13 @@ export class TokenController extends AbstractController {
   // 1. Need to submit token name and expires
   // 2. Optional to submit description, allowScopes, allowPackages information
   // 3. Need to implement ensureCurrentUser method in AuthAdapter, or pass in this.user
-  async createGranularToken(
-    @Context() ctx: EggContext,
-    @HTTPBody() tokenOptions: GranularTokenOptions
-  ) {
+  async createGranularToken(@HTTPContext() ctx: Context, @HTTPBody() tokenOptions: GranularTokenOptions) {
     ctx.tValidate(GranularTokenOptionsRule, tokenOptions);
     const user = await this.ensureWebUser(ctx.ip);
 
     // 生成 Token
-    const {
-      name,
-      description,
-      allowedPackages,
-      allowedScopes,
-      cidr_whitelist,
-      automation,
-      readonly,
-      expires,
-    } = tokenOptions;
+    const { name, description, allowedPackages, allowedScopes, cidr_whitelist, automation, readonly, expires } =
+      tokenOptions;
     const token = await this.userService.createToken(user.userId, {
       name,
       type: TokenType.granular,
@@ -227,18 +185,10 @@ export class TokenController extends AbstractController {
   async listGranularTokens() {
     const user = await this.ensureWebUser();
     const tokens = await this.userRepository.listTokens(user.userId);
-    const granularTokens = tokens.filter(token => isGranularToken(token));
+    const granularTokens = tokens.filter((token) => isGranularToken(token));
 
-    const objects = granularTokens.map(token => {
-      const {
-        name,
-        description,
-        expiredAt,
-        allowedPackages,
-        allowedScopes,
-        lastUsedAt,
-        type,
-      } = token;
+    const objects = granularTokens.map((token) => {
+      const { name, description, expiredAt, allowedPackages, allowedScopes, lastUsedAt, type } = token;
       return {
         name,
         description,

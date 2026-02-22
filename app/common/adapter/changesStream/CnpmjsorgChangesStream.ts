@@ -1,11 +1,9 @@
-import { SingletonProto } from '@eggjs/tegg';
-import { E500 } from 'egg-errors';
-import { RegistryType } from '../../../common/enum/Registry.js';
-import type { Registry } from '../../../core/entity/Registry.js';
-import {
-  AbstractChangeStream,
-  RegistryChangesStream,
-} from './AbstractChangesStream.js';
+import { SingletonProto } from 'egg';
+import { E500 } from 'egg/errors';
+
+import { RegistryType } from '../../../common/enum/Registry.ts';
+import type { Registry } from '../../../core/entity/Registry.ts';
+import { AbstractChangeStream, RegistryChangesStream } from './AbstractChangesStream.ts';
 
 const MAX_LIMIT = 10_000;
 
@@ -26,25 +24,17 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
   // 默认返回当前时间戳字符串
   async getInitialSince(registry: Registry): Promise<string> {
     const since = String(Date.now());
-    this.logger.warn(
-      `[CnpmjsorgChangesStream.getInitialSince] since: ${since}, skip query ${registry.changeStream}`
-    );
+    this.logger.warn(`[CnpmjsorgChangesStream.getInitialSince] since: ${since}, skip query ${registry.changeStream}`);
     return since;
   }
 
-  private async tryFetch(
-    registry: Registry,
-    since: string,
-    limit = 1000
-  ): Promise<{ data: FetchResults }> {
+  private async tryFetch(registry: Registry, since: string, limit = 1000): Promise<{ data: FetchResults }> {
     if (limit > MAX_LIMIT) {
-      throw new E500(
-        `limit too large, current since: ${since}, limit: ${limit}`
-      );
+      throw new E500(`limit too large, current since: ${since}, limit: ${limit}`);
     }
     const db = this.getChangesStreamUrl(registry, since, limit);
     // json mode
-    const res = await this.httpclient.request<FetchResults>(db, {
+    const res = await this.httpClient.request<FetchResults>(db, {
       followRedirect: true,
       timeout: 30_000,
       dataType: 'json',

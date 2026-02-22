@@ -1,13 +1,8 @@
-import {
-  Schedule,
-  ScheduleType,
-  type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
-import type { EggAppConfig, EggLogger } from 'egg';
+import { Inject, Logger, EggAppConfig } from 'egg';
+import { Schedule, ScheduleType, type IntervalParams } from 'egg/schedule';
 
-import type { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
-import { isTimeoutError } from '../../common/ErrorUtil.js';
+import { isTimeoutError } from '../../common/ErrorUtil.ts';
+import type { BinarySyncerService } from '../../core/service/BinarySyncerService.ts';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.ALL,
@@ -23,7 +18,7 @@ export class SyncBinaryWorker {
   private readonly config: EggAppConfig;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async subscribe() {
     if (!this.config.cnpmcore.enableSyncBinary) return;
@@ -39,7 +34,7 @@ export class SyncBinaryWorker {
       task.attempts,
       task.data,
       task.updatedAt,
-      startTime - task.updatedAt.getTime()
+      startTime - task.updatedAt.getTime(),
     );
     try {
       await this.binarySyncerService.executeTask(task);
@@ -50,7 +45,7 @@ export class SyncBinaryWorker {
         task.taskId,
         task.targetName,
         use,
-        err.message
+        err.message,
       );
       if (isTimeoutError(err)) {
         this.logger.warn(err);
@@ -64,7 +59,7 @@ export class SyncBinaryWorker {
       '[SyncBinaryWorker:executeTask:success] taskId: %s, targetName: %s, use %sms',
       task.taskId,
       task.targetName,
-      use
+      use,
     );
   }
 }

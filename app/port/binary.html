@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>CNPM Binaries Mirror</title>
@@ -12,10 +12,10 @@
         var results = new Array();
         results[0] = 'None';
         for (var i = 0; i < s.length; i++) {
-          var substr = s.substr(0, i+1)
+          var substr = s.substr(0, i + 1);
           if (isNaN(substr)) {
             // Not a number anymore.
-            results[1] = s.substr(i)
+            results[1] = s.substr(i);
             break;
           } else {
             // This is a number. update the results.
@@ -45,16 +45,16 @@
           if (numA < numB) return -1;
           if (numA > numB) return 1;
           // Identical. Fallback to string.
-          return (strA < strB) ? -1 : (strA > strB ? 1 : 0)
+          return strA < strB ? -1 : strA > strB ? 1 : 0;
         }
 
         // If only one starts with a number, we start with that one as
         // the lowest.
-        if (isNaN(numA) == false) return -1
-        if (isNaN(numB) == false) return 1
+        if (isNaN(numA) == false) return -1;
+        if (isNaN(numB) == false) return 1;
 
         // They are both strings.
-        return (a < b) ? -1 : (a > b ? 1 : 0)
+        return a < b ? -1 : a > b ? 1 : 0;
       }
 
       // Helper function to retrieve the value of a GET query parameter.
@@ -80,7 +80,7 @@
         begin += parameterName.length;
 
         // Multiple parameters are separated by the '&' sign.
-        end = queryString.indexOf ('&', begin);
+        end = queryString.indexOf('&', begin);
 
         if (end == -1) {
           end = queryString.length;
@@ -105,7 +105,9 @@
         }
 
         // Display the table header.
-        document.write('<tr><th><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*v6fRRLopV_0AAAAAAAAAAAAAARQnAQ" alt="[ICO]"></th>');
+        document.write(
+          '<tr><th><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*v6fRRLopV_0AAAAAAAAAAAAAARQnAQ" alt="[ICO]"></th>',
+        );
         document.write('<th><a href="' + sortLink + '">Name</a></th>');
         document.write('<th>Last modified</th>');
         document.write('<th>Size</th>');
@@ -122,11 +124,13 @@
             delimiter = path.substr(0, delimiter).lastIndexOf('/');
             if (delimiter >= 0) {
               backpath += '?path=';
-              backpath += path.substr(0, delimiter+1);
+              backpath += path.substr(0, delimiter + 1);
             }
           }
 
-          document.write('<tr><td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*3QmJSqp2zpUAAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>');
+          document.write(
+            '<tr><td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*3QmJSqp2zpUAAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>',
+          );
           document.write('<td><a href="');
           document.write(backpath);
           document.write('">Parent Directory</a></td>');
@@ -166,11 +170,11 @@
             lnk += '?path=' + path + item.name;
           }
 
-
           document.write('<tr>');
-          document.write('<td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*ct35SJLile8AAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>');
-          document.write('<td><a href="' + lnk + '">' +
-            item.name + '</a></td>');
+          document.write(
+            '<td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*ct35SJLile8AAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>',
+          );
+          document.write('<td><a href="' + lnk + '">' + item.name + '</a></td>');
           document.write('<td align="right">' + (item.date || '-') + '</td>');
           document.write('<td align="right">-</td>');
           document.write('</tr>');
@@ -206,9 +210,10 @@
 
           // Display the row.
           document.write('<tr>');
-          document.write('<td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*FKvWRo-vns4AAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>');
-          document.write('<td><a href="' + link + '">' + filename +
-                         '</a></td>');
+          document.write(
+            '<td valign="top"><img src="https://gw.alipayobjects.com/mdn/rms_fa382b/afts/img/A*FKvWRo-vns4AAAAAAAAAAAAAARQnAQ" alt="[DIR]"></td>',
+          );
+          document.write('<td><a href="' + link + '">' + filename + '</a></td>');
           document.write('<td align="right">' + lastModified + '</td>');
           document.write('<td align="right">' + size + '</td>');
           document.write('</tr>');
@@ -222,7 +227,7 @@
 
       function fetchAndDisplay() {
         var path = getParameter('path');
-        var lastSlash = location.pathname.lastIndexOf("/");
+        var lastSlash = location.pathname.lastIndexOf('/');
         var filename = location.pathname.substring(lastSlash + 1);
         var root = '{{registry}}/-/binary/';
 

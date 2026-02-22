@@ -1,5 +1,5 @@
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPBody,
   HTTPController,
@@ -8,15 +8,15 @@ import {
   HTTPParam,
   Inject,
   Middleware,
-} from '@eggjs/tegg';
-import { ForbiddenError } from 'egg-errors';
+} from 'egg';
+import { ForbiddenError } from 'egg/errors';
 
-import { AbstractController } from './AbstractController.js';
-import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
-import type { PackageManagerService } from '../../core/service/PackageManagerService.js';
-import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.js';
-import { BlockPackageRule, type BlockPackageType } from '../typebox.js';
-import { AdminAccess } from '../middleware/AdminAccess.js';
+import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
+import type { PackageManagerService } from '../../core/service/PackageManagerService.ts';
+import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
+import { BlockPackageRule, type BlockPackageType } from '../typebox.ts';
+import { AbstractController } from './AbstractController.ts';
 
 @HTTPController()
 export class PackageBlockController extends AbstractController {
@@ -31,33 +31,24 @@ export class PackageBlockController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   @Middleware(AdminAccess)
-  async blockPackage(
-    @Context() ctx: EggContext,
-    @HTTPParam() fullname: string,
-    @HTTPBody() data: BlockPackageType
-  ) {
+  async blockPackage(@HTTPContext() ctx: Context, @HTTPParam() fullname: string, @HTTPBody() data: BlockPackageType) {
     const params = { fullname, reason: data.reason };
     ctx.tValidate(BlockPackageRule, params);
-    const packageEntity = await this.getPackageEntityByFullname(
-      params.fullname
-    );
+    const packageEntity = await this.getPackageEntityByFullname(params.fullname);
     if (packageEntity.isPrivate) {
-      throw new ForbiddenError(
-        `Can't block private package "${params.fullname}"`
-      );
+      throw new ForbiddenError(`Can't block private package "${params.fullname}"`);
     }
 
-    const authorized =
-      await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     const block = await this.packageManagerService.blockPackage(
       packageEntity,
-      `${params.reason} (operator: ${authorized?.user.name}/${authorized?.user.userId})`
+      `${params.reason} (operator: ${authorized?.user.name}/${authorized?.user.userId})`,
     );
     ctx.logger.info(
       '[PackageBlockController.blockPackage:success] fullname: %s, packageId: %s, packageVersionBlockId: %s',
       fullname,
       packageEntity.packageId,
-      block.packageVersionBlockId
+      block.packageVersionBlockId,
     );
     ctx.status = 201;
     return {
@@ -73,10 +64,7 @@ export class PackageBlockController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   @Middleware(AdminAccess)
-  async unblockPackage(
-    @Context() ctx: EggContext,
-    @HTTPParam() fullname: string
-  ) {
+  async unblockPackage(@HTTPContext() ctx: Context, @HTTPParam() fullname: string) {
     const packageEntity = await this.getPackageEntityByFullname(fullname);
     if (packageEntity.isPrivate) {
       throw new ForbiddenError(`Can't unblock private package "${fullname}"`);
@@ -86,7 +74,7 @@ export class PackageBlockController extends AbstractController {
     ctx.logger.info(
       '[PackageBlockController.unblockPackage:success] fullname: %s, packageId: %s',
       fullname,
-      packageEntity.packageId
+      packageEntity.packageId,
     );
     return {
       ok: true,
@@ -100,12 +88,9 @@ export class PackageBlockController extends AbstractController {
   })
   async listPackageBlocks(@HTTPParam() fullname: string) {
     const packageEntity = await this.getPackageEntityByFullname(fullname);
-    const blocks =
-      await this.packageVersionBlockRepository.listPackageVersionBlocks(
-        packageEntity.packageId
-      );
+    const blocks = await this.packageVersionBlockRepository.listPackageVersionBlocks(packageEntity.packageId);
     return {
-      data: blocks.map(block => {
+      data: blocks.map((block) => {
         return {
           id: block.packageVersionBlockId,
           version: block.version,

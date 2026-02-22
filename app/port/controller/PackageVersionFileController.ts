@@ -1,6 +1,7 @@
 import { join } from 'node:path';
+
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
@@ -9,22 +10,19 @@ import {
   HTTPQuery,
   Inject,
   Middleware,
-} from '@eggjs/tegg';
-import { NotFoundError } from 'egg-errors';
+} from 'egg';
+import { NotFoundError } from 'egg/errors';
 
-import { AbstractController } from './AbstractController.js';
-import { AdminAccess } from '../middleware/AdminAccess.js';
-import {
-  FULLNAME_REG_STRING,
-  getScopeAndName,
-} from '../../common/PackageUtil.js';
-import type { PackageVersionFileService } from '../../core/service/PackageVersionFileService.js';
-import type { PackageManagerService } from '../../core/service/PackageManagerService.js';
-import type { PackageVersionFile } from '../../core/entity/PackageVersionFile.js';
-import type { PackageVersion } from '../../core/entity/PackageVersion.js';
-import type { DistRepository } from '../../repository/DistRepository.js';
-import { Spec } from '../typebox.js';
-import { ensureContentType } from '../../common/FileUtil.js';
+import { ensureContentType } from '../../common/FileUtil.ts';
+import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.ts';
+import type { PackageVersion } from '../../core/entity/PackageVersion.ts';
+import type { PackageVersionFile } from '../../core/entity/PackageVersionFile.ts';
+import type { PackageManagerService } from '../../core/service/PackageManagerService.ts';
+import type { PackageVersionFileService } from '../../core/service/PackageVersionFileService.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
+import { Spec } from '../typebox.ts';
+import { AbstractController } from './AbstractController.ts';
 
 interface FileItem {
   path: string;
@@ -76,28 +74,20 @@ export class PackageVersionFileController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   @Middleware(AdminAccess)
-  async sync(
-    @Context() ctx: EggContext,
-    @HTTPParam() fullname: string,
-    @HTTPParam() versionSpec: string
-  ) {
+  async sync(@HTTPContext() ctx: Context, @HTTPParam() fullname: string, @HTTPParam() versionSpec: string) {
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     this.#requireUnpkgEnable();
     const [scope, name] = getScopeAndName(fullname);
-    const { packageVersion } =
-      await this.packageManagerService.showPackageVersionByVersionOrTag(
-        scope,
-        name,
-        versionSpec
-      );
+    const { packageVersion } = await this.packageManagerService.showPackageVersionByVersionOrTag(
+      scope,
+      name,
+      versionSpec,
+    );
     if (!packageVersion) {
       throw new NotFoundError(`${fullname}@${versionSpec} not found`);
     }
-    const files =
-      await this.packageVersionFileService.syncPackageVersionFiles(
-        packageVersion
-      );
-    return files.map(file => formatFileItem(file));
+    const files = await this.packageVersionFileService.syncPackageVersionFiles(packageVersion);
+    return files.map((file) => formatFileItem(file));
   }
 
   @HTTPMethod({
@@ -108,22 +98,17 @@ export class PackageVersionFileController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async listFiles(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() versionSpec: string,
-    @HTTPQuery() meta: string
+    @HTTPQuery() meta: string,
   ) {
     this.#requireUnpkgEnable();
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     ctx.vary(this.config.cnpmcore.cdnVaryHeader);
+    ctx.set('cross-origin-resource-policy', 'cross-origin');
     const [scope, name] = getScopeAndName(fullname);
-    const packageVersion = await this.#getPackageVersion(
-      ctx,
-      fullname,
-      scope,
-      name,
-      versionSpec
-    );
+    const packageVersion = await this.#getPackageVersion(ctx, fullname, scope, name, versionSpec);
     ctx.set('cache-control', META_CACHE_CONTROL);
     const hasMeta = typeof meta === 'string' || ctx.path.endsWith('/files/');
     // meta request
@@ -134,14 +119,13 @@ export class PackageVersionFileController extends AbstractController {
       }
       return files;
     }
-    const { manifest } =
-      await this.packageManagerService.showPackageVersionManifest(
-        scope,
-        name,
-        versionSpec,
-        false,
-        true
-      );
+    const { manifest } = await this.packageManagerService.showPackageVersionManifest(
+      scope,
+      name,
+      versionSpec,
+      false,
+      true,
+    );
     // GET /foo/1.0.0/files => /foo/1.0.0/files/{main}
     // ignore empty entry exp: @types/node@20.2.5/
     const indexFile = manifest?.main || 'index.js';
@@ -155,62 +139,43 @@ export class PackageVersionFileController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async raw(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() fullname: string,
     @HTTPParam() versionSpec: string,
     @HTTPParam() path: string,
-    @HTTPQuery() meta: string
+    @HTTPQuery() meta: string,
   ) {
     this.#requireUnpkgEnable();
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     ctx.vary(this.config.cnpmcore.cdnVaryHeader);
+    ctx.set('cross-origin-resource-policy', 'cross-origin');
     const [scope, name] = getScopeAndName(fullname);
     // oxlint-disable-next-line no-param-reassign
     path = `/${path}`;
-    const packageVersion = await this.#getPackageVersion(
-      ctx,
-      fullname,
-      scope,
-      name,
-      versionSpec
-    );
+    const packageVersion = await this.#getPackageVersion(ctx, fullname, scope, name, versionSpec);
     if (path.endsWith('/')) {
       const directory = path.slice(0, -1);
       const files = await this.#listFilesByDirectory(packageVersion, directory);
       if (!files) {
-        throw new NotFoundError(
-          `${fullname}@${versionSpec}/files${directory} not found`
-        );
+        throw new NotFoundError(`${fullname}@${versionSpec}/files${directory} not found`);
       }
       ctx.set('cache-control', META_CACHE_CONTROL);
       return files;
     }
 
-    await this.packageVersionFileService.checkPackageVersionInUnpkgWhiteList(
-      scope,
-      name,
-      packageVersion.version
-    );
-    const file = await this.packageVersionFileService.showPackageVersionFile(
-      packageVersion,
-      path
-    );
+    await this.packageVersionFileService.checkPackageVersionInUnpkgWhiteList(scope, name, packageVersion.version);
+    const file = await this.packageVersionFileService.showPackageVersionFile(packageVersion, path);
     const hasMeta = typeof meta === 'string';
 
     if (!file) {
-      const possibleFile = await this.#searchPossibleEntries(
-        packageVersion,
-        path
-      );
+      const possibleFile = await this.#searchPossibleEntries(packageVersion, path);
       if (possibleFile) {
         const route = `/${fullname}/${versionSpec}/files${possibleFile.path}${hasMeta ? '?meta' : ''}`;
         ctx.redirect(route);
         return;
       }
 
-      throw new NotFoundError(
-        `File ${fullname}@${versionSpec}${path} not found`
-      );
+      throw new NotFoundError(`File ${fullname}@${versionSpec}${path} not found`);
     }
 
     if (hasMeta) {
@@ -238,18 +203,10 @@ export class PackageVersionFileController extends AbstractController {
    * @returns {Promise<PackageVersionFile | undefined>} return packageVersionFile or null
    */
   async #searchPossibleEntries(packageVersion: PackageVersion, path: string) {
-    const possiblePath = [
-      `${path}.js`,
-      `${path}.json`,
-      `${path}/index.js`,
-      `${path}/index.json`,
-    ];
+    const possiblePath = [`${path}.js`, `${path}.json`, `${path}/index.js`, `${path}/index.json`];
 
     for (const pathItem of possiblePath) {
-      const file = await this.packageVersionFileService.showPackageVersionFile(
-        packageVersion,
-        pathItem
-      );
+      const file = await this.packageVersionFileService.showPackageVersionFile(packageVersion, pathItem);
 
       if (file) {
         return file;
@@ -257,19 +214,12 @@ export class PackageVersionFileController extends AbstractController {
     }
   }
 
-  async #getPackageVersion(
-    ctx: EggContext,
-    fullname: string,
-    scope: string,
-    name: string,
-    versionSpec: string
-  ) {
-    const { blockReason, packageVersion } =
-      await this.packageManagerService.showPackageVersionByVersionOrTag(
-        scope,
-        name,
-        versionSpec
-      );
+  async #getPackageVersion(ctx: Context, fullname: string, scope: string, name: string, versionSpec: string) {
+    const { blockReason, packageVersion } = await this.packageManagerService.showPackageVersionByVersionOrTag(
+      scope,
+      name,
+      versionSpec,
+    );
     if (blockReason) {
       this.setCDNHeaders(ctx);
       throw this.createPackageBlockError(blockReason, fullname, versionSpec);
@@ -281,26 +231,22 @@ export class PackageVersionFileController extends AbstractController {
       ctx.set('cache-control', META_CACHE_CONTROL);
       let location = ctx.url.replace(
         `/${fullname}/${versionSpec}/files`,
-        `/${fullname}/${packageVersion.version}/files`
+        `/${fullname}/${packageVersion.version}/files`,
       );
       location = location.replace(
         `/${fullname}/${encodeURIComponent(versionSpec)}/files`,
-        `/${fullname}/${packageVersion.version}/files`
+        `/${fullname}/${packageVersion.version}/files`,
       );
       throw this.createControllerRedirectError(location);
     }
     return packageVersion;
   }
 
-  async #listFilesByDirectory(
-    packageVersion: PackageVersion,
-    directory: string
-  ) {
-    const { files, directories } =
-      await this.packageVersionFileService.listPackageVersionFiles(
-        packageVersion,
-        directory
-      );
+  async #listFilesByDirectory(packageVersion: PackageVersion, directory: string) {
+    const { files, directories } = await this.packageVersionFileService.listPackageVersionFiles(
+      packageVersion,
+      directory,
+    );
     if (files.length === 0 && directories.length === 0) return null;
 
     const info: DirectoryItem = {

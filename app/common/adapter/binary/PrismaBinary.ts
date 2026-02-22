@@ -1,13 +1,10 @@
 import path from 'node:path';
-import { SingletonProto } from '@eggjs/tegg';
-import binaries, { type BinaryName } from '../../../../config/binaries.js';
-import { BinaryType } from '../../enum/Binary.js';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.js';
+
+import { SingletonProto } from 'egg';
+
+import binaries, { type BinaryName } from '../../../../config/binaries.ts';
+import { BinaryType } from '../../enum/Binary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Prisma)
@@ -43,9 +40,7 @@ export class PrismaBinary extends AbstractBinary {
       // https://registry.npmjs.com/@prisma/engines/4.14.1
       // https://registry.npmjs.com/@prisma/engines/5.7.0 should read from dependencies
       const enginesVersion =
-        pkg.devDependencies?.['@prisma/engines-version'] ||
-        pkg.dependencies?.['@prisma/engines-version'] ||
-        '';
+        pkg.devDependencies?.['@prisma/engines-version'] || pkg.dependencies?.['@prisma/engines-version'] || '';
       // "@prisma/engines-version": "4.14.0-67.d9a4c5988f480fa576d43970d5a23641aa77bc9c"
       // "@prisma/engines-version": "5.7.0-41.79fb5193cf0a8fdbef536e4b4a159cad677ab1b9"
       const matched = /\.(\w{30,})$/.exec(enginesVersion);
@@ -63,10 +58,7 @@ export class PrismaBinary extends AbstractBinary {
     }
   }
 
-  async fetch(
-    dir: string,
-    binaryName: BinaryName
-  ): Promise<FetchResult | undefined> {
+  async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const existsItems = this.dirItems[dir];
     if (existsItems) {
       return { items: existsItems, nextParams: null };

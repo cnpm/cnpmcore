@@ -1,7 +1,7 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { AbstractRepository } from './AbstractRepository.js';
-import type { PackageVersionDownload as PackageVersionDownloadModel } from './model/PackageVersionDownload.js';
+import { AbstractRepository } from './AbstractRepository.ts';
+import type { PackageVersionDownload as PackageVersionDownloadModel } from './model/PackageVersionDownload.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -10,11 +10,7 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
   @Inject()
   private readonly PackageVersionDownload: typeof PackageVersionDownloadModel;
 
-  async plus(
-    packageId: string,
-    version: string,
-    counter: number
-  ): Promise<void> {
+  async plus(packageId: string, version: string, counter: number): Promise<void> {
     const now = new Date();
     const yearMonth = now.getFullYear() * 100 + now.getMonth() + 1;
     const date = new Date().getDate();
@@ -37,13 +33,10 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
         model.id,
         model.packageId,
         model.version,
-        model.yearMonth
+        model.yearMonth,
       );
     }
-    await this.PackageVersionDownload.where({ id: model.id }).increment(
-      field,
-      counter
-    );
+    await this.PackageVersionDownload.where({ id: model.id }).increment(field, counter);
     this.logger.info(
       '[PackageVersionDownloadRepository:plus:increment] id: %s, packageId: %s, version: %s, field: %s%s, plus: %d',
       model.id,
@@ -51,7 +44,7 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
       model.version,
       model.yearMonth,
       field,
-      counter
+      counter,
     );
   }
 
@@ -65,11 +58,7 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
     return models;
   }
 
-  async saveSyncDataByMonth(
-    packageId: string,
-    yearMonth: number,
-    counters: [string, number][]
-  ): Promise<void> {
+  async saveSyncDataByMonth(packageId: string, yearMonth: number, counters: [string, number][]): Promise<void> {
     const version = '*';
     let model = await this.PackageVersionDownload.findOne({
       packageId,

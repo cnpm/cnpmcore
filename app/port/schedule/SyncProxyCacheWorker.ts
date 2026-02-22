@@ -1,13 +1,8 @@
-import type { EggAppConfig, EggLogger } from 'egg';
-import {
-  Schedule,
-  ScheduleType,
-  type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
+import { Inject, Logger, EggAppConfig } from 'egg';
+import { Schedule, ScheduleType, type IntervalParams } from 'egg/schedule';
 
-import type { ProxyCacheService } from '../../core/service/ProxyCacheService.js';
-import { SyncMode } from '../../common/constants.js';
+import { SyncMode } from '../../common/constants.ts';
+import type { ProxyCacheService } from '../../core/service/ProxyCacheService.ts';
 
 let executingCount = 0;
 
@@ -25,14 +20,11 @@ export class SyncProxyCacheWorker {
   private readonly config: EggAppConfig;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async subscribe() {
     if (this.config.cnpmcore.syncMode !== SyncMode.proxy) return;
-    if (
-      executingCount >= this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks
-    )
-      return;
+    if (executingCount >= this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks) return;
 
     executingCount++;
     try {
@@ -47,7 +39,7 @@ export class SyncProxyCacheWorker {
           task.attempts,
           task.data,
           task.updatedAt,
-          startTime - task.updatedAt.getTime()
+          startTime - task.updatedAt.getTime(),
         );
         await this.proxyCacheService.executeTask(task);
         const use = Date.now() - startTime;
@@ -56,16 +48,13 @@ export class SyncProxyCacheWorker {
           executingCount,
           task.taskId,
           task.targetName,
-          use
+          use,
         );
-        if (
-          executingCount >=
-          this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks
-        ) {
+        if (executingCount >= this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks) {
           this.logger.info(
             '[SyncProxyCacheWorker:subscribe:executeTask] current sync task count %s, exceed max concurrent tasks %s',
             executingCount,
-            this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks
+            this.config.cnpmcore.syncPackageWorkerMaxConcurrentTasks,
           );
           break;
         }
@@ -73,11 +62,7 @@ export class SyncProxyCacheWorker {
         task = await this.proxyCacheService.findExecuteTask();
       }
     } catch (err) {
-      this.logger.error(
-        '[SyncProxyCacheWorker:subscribe:executeTask:error][%s] %s',
-        executingCount,
-        err
-      );
+      this.logger.error('[SyncProxyCacheWorker:subscribe:executeTask:error][%s] %s', executingCount, err);
     } finally {
       executingCount--;
     }

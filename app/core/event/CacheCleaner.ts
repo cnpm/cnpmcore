@@ -1,4 +1,6 @@
-import { Event, Inject } from '@eggjs/tegg';
+import { Event, Inject } from 'egg';
+
+import type { CacheService } from '../../core/service/CacheService.ts';
 import {
   PACKAGE_BLOCKED,
   PACKAGE_MAINTAINER_CHANGED,
@@ -11,8 +13,7 @@ import {
   PACKAGE_UNPUBLISHED,
   PACKAGE_VERSION_ADDED,
   PACKAGE_VERSION_REMOVED,
-} from './index.js';
-import type { CacheService } from '../../core/service/CacheService.js';
+} from './index.ts';
 
 class CacheCleanerEvent {
   @Inject()

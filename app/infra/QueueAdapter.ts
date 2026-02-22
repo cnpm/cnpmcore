@@ -1,7 +1,7 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 import type { Redis } from 'ioredis';
 
-import type { QueueAdapter } from '../common/typing.js';
+import type { QueueAdapter } from '../common/typing.ts';
 
 /**
  * Use sort set to keep queue in order and keep same value only insert once
@@ -28,11 +28,7 @@ export class RedisQueueAdapter implements QueueAdapter {
    */
   async push<T>(key: string, item: T): Promise<boolean> {
     const score = await this.redis.incr(this.getQueueScoreName(key));
-    const res = await this.redis.zadd(
-      this.getQueueName(key),
-      score,
-      JSON.stringify(item)
-    );
+    const res = await this.redis.zadd(this.getQueueName(key), score, JSON.stringify(item));
     return res !== 0;
   }
 

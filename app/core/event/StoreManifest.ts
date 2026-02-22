@@ -1,38 +1,28 @@
-import { Event, Inject } from '@eggjs/tegg';
-import type { EggAppConfig } from 'egg';
-import { PACKAGE_VERSION_ADDED } from './index.js';
-import { getScopeAndName } from '../../common/PackageUtil.js';
-import { PackageVersionManifest as PackageVersionManifestEntity } from '../entity/PackageVersionManifest.js';
-import type { PackageRepository } from '../../repository/PackageRepository.js';
-import type { DistRepository } from '../../repository/DistRepository.js';
+import { Config, Event, Inject } from 'egg';
+
+import { getScopeAndName } from '../../common/PackageUtil.ts';
+import type { DistRepository } from '../../repository/DistRepository.ts';
+import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import { PackageVersionManifest as PackageVersionManifestEntity } from '../entity/PackageVersionManifest.ts';
+import { PACKAGE_VERSION_ADDED } from './index.ts';
 
 class StoreManifestEvent {
   @Inject()
-  protected readonly config: EggAppConfig;
+  protected readonly config: Config;
   @Inject()
   private readonly packageRepository: PackageRepository;
   @Inject()
   private readonly distRepository: DistRepository;
 
-  protected async savePackageVersionManifest(
-    fullname: string,
-    version: string
-  ) {
-    if (!this.config.cnpmcore.enableStoreFullPackageVersionManifestsToDatabase)
-      return;
+  protected async savePackageVersionManifest(fullname: string, version: string) {
+    if (!this.config.cnpmcore.enableStoreFullPackageVersionManifestsToDatabase) return;
 
     const [scope, name] = getScopeAndName(fullname);
     const packageId = await this.packageRepository.findPackageId(scope, name);
     if (!packageId) return;
-    const packageVersion = await this.packageRepository.findPackageVersion(
-      packageId,
-      version
-    );
+    const packageVersion = await this.packageRepository.findPackageVersion(packageId, version);
     if (!packageVersion) return;
-    const manifest = await this.distRepository.findPackageVersionManifest(
-      packageId,
-      version
-    );
+    const manifest = await this.distRepository.findPackageVersionManifest(packageId, version);
     if (!manifest) return;
     const entity = PackageVersionManifestEntity.create({
       packageId,

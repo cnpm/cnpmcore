@@ -111,33 +111,13 @@ async function main() {
         const data = result.data;
         if (data && data.id) {
           const logUrl = `${url}/${data.id}/log`;
-          console.log(
-            '[%s/%s] %s, status: %s, log: %s',
-            index,
-            total,
-            fullname,
-            result.status,
-            logUrl
-          );
+          console.log('[%s/%s] %s, status: %s, log: %s', index, total, fullname, result.status, logUrl);
         } else {
-          console.log(
-            '[%s/%s] %s, status: %s, data: %j',
-            index,
-            total,
-            fullname,
-            result.status,
-            data
-          );
+          console.log('[%s/%s] %s, status: %s, data: %j', index, total, fullname, result.status, data);
         }
         success = true;
       } catch (err: any) {
-        console.error(
-          '[%s/%s] %s, error: %s',
-          index,
-          total,
-          fullname,
-          err.message
-        );
+        console.error('[%s/%s] %s, error: %s', index, total, fullname, err.message);
         await setTimeout(1000);
       }
     }

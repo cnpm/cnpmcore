@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { NwjsBinary } from '../../../../app/common/adapter/binary/NwjsBinary.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { NwjsBinary } from '../../../../app/common/adapter/binary/NwjsBinary.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
   let binary: NwjsBinary;
@@ -34,9 +34,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
 
     it('should fetch subdir: /v0.59.0/, /v0.59.1/x64/ work', async () => {
       app.mockHttpclient('https://nwjs2.s3.amazonaws.com/', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'nwjs2.s3.amazonaws.com/v0.59.0.xml'
-        ),
+        data: await TestUtil.readFixturesFile('nwjs2.s3.amazonaws.com/v0.59.0.xml'),
         persist: false,
       });
       let result = await binary.fetch('/v0.59.0/');
@@ -56,9 +54,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
           assert.ok(item.date === '2021-12-02T23:35:59.000Z');
           assert.ok(item.isDir === false);
           assert.ok(item.size === 110_828_221);
-          assert.ok(
-            item.url === 'https://dl.nwjs.io/v0.59.0/nwjs-v0.59.0-win-x64.zip'
-          );
+          assert.ok(item.url === 'https://dl.nwjs.io/v0.59.0/nwjs-v0.59.0-win-x64.zip');
           matchFile = true;
         }
         if (!item.isDir) {
@@ -71,9 +67,7 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
 
       // https://nwjs2.s3.amazonaws.com/?delimiter=/&prefix=v0.59.1%2Fx64%2F
       app.mockHttpclient('https://nwjs2.s3.amazonaws.com/', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'nwjs2.s3.amazonaws.com/v0.59.1.xml'
-        ),
+        data: await TestUtil.readFixturesFile('nwjs2.s3.amazonaws.com/v0.59.1.xml'),
         persist: false,
       });
       result = await binary.fetch('/v0.59.1/x64/');

@@ -1,28 +1,20 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/AccessController/listCollaborators.test.ts', () => {
   describe('[GET /-/package/:fullname/collaborators] listCollaborators()', () => {
     it('should work', async () => {
-      const { pkg } = await TestUtil.createPackage(
-        { version: '1.0.0' },
-        { name: 'banana-owner' }
-      );
-      const res = await app
-        .httpRequest()
-        .get(`/-/package/${pkg.name}/collaborators`)
-        .expect(200);
+      const { pkg } = await TestUtil.createPackage({ version: '1.0.0' }, { name: 'banana-owner' });
+      const res = await app.httpRequest().get(`/-/package/${pkg.name}/collaborators`).expect(200);
 
       assert.ok(res.body['banana-owner'] === 'write');
     });
 
     it('should 403 when pkg not exists', async () => {
-      const res = await app
-        .httpRequest()
-        .get('/-/package/banana/collaborators')
-        .expect(403);
+      const res = await app.httpRequest().get('/-/package/banana/collaborators').expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] Forbidden');
     });
 
@@ -61,10 +53,7 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
         })
         .expect(200);
 
-      const res = await app
-        .httpRequest()
-        .get(`/-/package/${pkg.name}/collaborators`)
-        .expect(200);
+      const res = await app.httpRequest().get(`/-/package/${pkg.name}/collaborators`).expect(200);
 
       assert.ok(res.body['banana-owner'] === 'write');
       assert.ok(res.body['banana-maintainer'] === 'write');

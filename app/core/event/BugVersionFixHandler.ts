@@ -1,8 +1,8 @@
-import { Event, Inject } from '@eggjs/tegg';
-import type { EggLogger } from 'egg';
-import { PACKAGE_VERSION_ADDED } from './index.js';
-import { BUG_VERSIONS } from '../../common/constants.js';
-import type { BugVersionService } from '../service/BugVersionService.js';
+import { Event, Inject, Logger } from 'egg';
+
+import { BUG_VERSIONS } from '../../common/constants.ts';
+import type { BugVersionService } from '../service/BugVersionService.ts';
+import { PACKAGE_VERSION_ADDED } from './index.ts';
 
 @Event(PACKAGE_VERSION_ADDED)
 export class BugVersionFixHandler {
@@ -10,7 +10,7 @@ export class BugVersionFixHandler {
   private readonly bugVersionService: BugVersionService;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async handle(fullname: string) {
     if (fullname !== BUG_VERSIONS) return;

@@ -1,24 +1,11 @@
-import {
-  type EggContext,
-  Context,
-  HTTPBody,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPParam,
-} from '@eggjs/tegg';
-import {
-  ForbiddenError,
-  NotFoundError,
-  UnauthorizedError,
-  UnprocessableEntityError,
-} from 'egg-errors';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
+import { HTTPContext, Context, HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam } from 'egg';
+import { ForbiddenError, NotFoundError, UnauthorizedError, UnprocessableEntityError } from 'egg/errors';
 
-import { AbstractController } from './AbstractController.js';
-import { LoginResultCode } from '../../common/enum/User.js';
-import { sha512 } from '../../common/UserUtil.js';
-import { isGranularToken } from '../../core/entity/Token.js';
+import { LoginResultCode } from '../../common/enum/User.ts';
+import { sha512 } from '../../common/UserUtil.ts';
+import { isGranularToken } from '../../core/entity/Token.ts';
+import { AbstractController } from './AbstractController.ts';
 
 // body: {
 //   _id: 'org.couchdb.user:dddd',
@@ -57,11 +44,7 @@ export class UserController extends AbstractController {
     path: '/-/user/org.couchdb.user::username',
     method: HTTPMethodEnum.PUT,
   })
-  async loginOrCreateUser(
-    @Context() ctx: EggContext,
-    @HTTPParam() username: string,
-    @HTTPBody() user: User
-  ) {
+  async loginOrCreateUser(@HTTPContext() ctx: Context, @HTTPParam() username: string, @HTTPBody() user: User) {
     // headers: {
     //   'user-agent': 'npm/8.1.2 node/v16.13.1 darwin arm64 workspaces/false',
     //   'npm-command': 'adduser',
@@ -75,14 +58,9 @@ export class UserController extends AbstractController {
     // console.log(username, user, ctx.headers, ctx.href);
     ctx.tValidate(UserRule, user);
     if (username !== user.name) {
-      throw new UnprocessableEntityError(
-        `username(${username}) not match user.name(${user.name})`
-      );
+      throw new UnprocessableEntityError(`username(${username}) not match user.name(${user.name})`);
     }
-    if (
-      this.config.cnpmcore.allowPublicRegistration === false &&
-      !this.config.cnpmcore.admins[user.name]
-    ) {
+    if (this.config.cnpmcore.allowPublicRegistration === false && !this.config.cnpmcore.admins[user.name]) {
       throw new ForbiddenError('Public registration is not allowed');
     }
 
@@ -132,17 +110,13 @@ export class UserController extends AbstractController {
     path: '/-/user/token/:token',
     method: HTTPMethodEnum.DELETE,
   })
-  async logout(@Context() ctx: EggContext, @HTTPParam() token: string) {
-    const authorizedUserAndToken =
-      await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+  async logout(@HTTPContext() ctx: Context, @HTTPParam() token: string) {
+    const authorizedUserAndToken = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) return { ok: false };
     if (authorizedUserAndToken.token.tokenKey !== sha512(token)) {
       throw new UnprocessableEntityError('invalid token');
     }
-    await this.userService.removeToken(
-      authorizedUserAndToken.user.userId,
-      token
-    );
+    await this.userService.removeToken(authorizedUserAndToken.user.userId, token);
     return { ok: true };
   }
 
@@ -151,13 +125,12 @@ export class UserController extends AbstractController {
     path: '/-/user/org.couchdb.user::username',
     method: HTTPMethodEnum.GET,
   })
-  async showUser(@Context() ctx: EggContext, @HTTPParam() username: string) {
+  async showUser(@HTTPContext() ctx: Context, @HTTPParam() username: string) {
     const user = await this.userService.findUserByNameOrDisplayName(username);
     if (!user) {
       throw new NotFoundError(`User "${username}" not found`);
     }
-    const authorized =
-      await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     return {
       _id: `org.couchdb.user:${user.displayName}`,
       name: user.displayName,
@@ -170,23 +143,14 @@ export class UserController extends AbstractController {
     path: '/-/whoami',
     method: HTTPMethodEnum.GET,
   })
-  async whoami(@Context() ctx: EggContext) {
+  async whoami(@HTTPContext() ctx: Context) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
-    const authorizedRes =
-      await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    const authorizedRes = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     // oxlint-disable-next-line typescript/no-non-null-assertion
     const { token, user } = authorizedRes!;
 
     if (isGranularToken(token)) {
-      const {
-        name,
-        description,
-        expiredAt,
-        allowedPackages,
-        allowedScopes,
-        lastUsedAt,
-        type,
-      } = token;
+      const { name, description, expiredAt, allowedPackages, allowedScopes, lastUsedAt, type } = token;
       return {
         username: user.displayName,
         name,
@@ -224,11 +188,8 @@ export class UserController extends AbstractController {
     path: '/-/npm/v1/user',
     method: HTTPMethodEnum.GET,
   })
-  async showProfile(@Context() ctx: EggContext) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
-      ctx,
-      'read'
-    );
+  async showProfile(@HTTPContext() ctx: Context) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     return {
       // "tfa": {
       //   "pending": false,

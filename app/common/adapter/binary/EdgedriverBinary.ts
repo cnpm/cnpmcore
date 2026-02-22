@@ -1,12 +1,9 @@
 import path from 'node:path';
-import { SingletonProto } from '@eggjs/tegg';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.js';
-import { BinaryType } from '../../enum/Binary.js';
+
+import { SingletonProto } from 'egg';
+
+import { BinaryType } from '../../enum/Binary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Edgedriver)
@@ -23,22 +20,19 @@ export class EdgedriverBinary extends AbstractBinary {
     this.dirItems = {};
     this.dirItems['/'] = [];
     const jsonApiEndpoint = 'https://edgeupdates.microsoft.com/api/products';
-    const { data, status, headers } = await this.httpclient.request(
-      jsonApiEndpoint,
-      {
-        dataType: 'json',
-        timeout: 30_000,
-        followRedirect: true,
-        gzip: true,
-      }
-    );
+    const { data, status, headers } = await this.httpclient.request(jsonApiEndpoint, {
+      dataType: 'json',
+      timeout: 30_000,
+      followRedirect: true,
+      gzip: true,
+    });
     if (status !== 200) {
       this.logger.warn(
         '[EdgedriverBinary.request:non-200-status] url: %s, status: %s, headers: %j, data: %j',
         jsonApiEndpoint,
         status,
         headers,
-        data
+        data,
       );
       return;
     }

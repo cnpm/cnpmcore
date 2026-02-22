@@ -4,37 +4,24 @@ import { join } from 'node:path';
 
 import type { Context, EggAppConfig, PartialEggConfig } from 'egg';
 import OSSClient from 'oss-cnpm';
-import S3Client from 's3-cnpmcore';
 import { env } from 'read-env-value';
+import S3Client from 's3-cnpmcore';
 
-import { patchAjv } from '../app/port/typebox.js';
-import {
-  ChangesStreamMode,
-  NOT_IMPLEMENTED_PATH,
-  SyncDeleteMode,
-  SyncMode,
-} from '../app/common/constants.js';
-import type { CnpmcoreConfig } from '../app/port/config.js';
-import { database } from './database.js';
+import { ChangesStreamMode, NOT_IMPLEMENTED_PATH, SyncDeleteMode, SyncMode } from '../app/common/constants.ts';
+import type { CnpmcoreConfig } from '../app/port/config.ts';
+import { patchAjv } from '../app/port/typebox.ts';
+import { database } from './database.ts';
 
 export const cnpmcoreConfig: CnpmcoreConfig = {
   name: 'cnpm',
   hookEnable: false,
   hooksLimit: 20,
-  sourceRegistry: env(
-    'CNPMCORE_CONFIG_SOURCE_REGISTRY',
-    'string',
-    'https://registry.npmjs.org'
-  ),
-  sourceRegistryIsCNpm: env(
-    'CNPMCORE_CONFIG_SOURCE_REGISTRY_IS_CNPM',
-    'boolean',
-    false
-  ),
+  sourceRegistry: env('CNPMCORE_CONFIG_SOURCE_REGISTRY', 'string', 'https://registry.npmjs.org'),
+  sourceRegistryIsCNpm: env('CNPMCORE_CONFIG_SOURCE_REGISTRY_IS_CNPM', 'boolean', false),
   syncUpstreamFirst: false,
   sourceRegistrySyncTimeout: 180_000,
   taskQueueHighWaterSize: 100,
-  syncMode: SyncMode.none,
+  syncMode: env('CNPMCORE_CONFIG_SYNC_MODE', 'string', SyncMode.none) as SyncMode,
   syncDeleteMode: SyncDeleteMode.delete,
   syncPackageWorkerMaxConcurrentTasks: 10,
   triggerHookWorkerMaxConcurrentTasks: 10,
@@ -69,6 +56,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   enableUnpkg: true,
   enableSyncUnpkgFiles: true,
   enableSyncUnpkgFilesWhiteList: false,
+  largePackageVersionSize: Number.MAX_SAFE_INTEGER,
   strictSyncSpecivicVersion: false,
   enableElasticsearch: env('CNPMCORE_CONFIG_ENABLE_ES', 'boolean', false),
   elasticsearchIndex: 'cnpmcore_packages',
@@ -76,6 +64,10 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   strictValidatePackageDeps: false,
   database: {
     type: database.type,
+  },
+  experimental: {
+    syncPackageWithPackument: env('CNPMCORE_CONFIG_SYNC_PACKAGE_WITH_PACKUMENT', 'boolean', false),
+    enableJSONBuilder: env('CNPMCORE_CONFIG_ENABLE_JSON_BUILDER', 'boolean', false),
   },
 };
 
@@ -94,15 +86,14 @@ export default function startConfig(appInfo: EggAppConfig): Config {
   config.cnpmcore = cnpmcoreConfig;
 
   // override config from framework / plugin
-  config.dataDir = env(
-    'CNPMCORE_DATA_DIR',
-    'string',
-    join(appInfo.root, '.cnpmcore')
-  );
+  config.dataDir = env('CNPMCORE_DATA_DIR', 'string', join(appInfo.root, '.cnpmcore'));
   config.orm = {
     ...database,
     database: database.name ?? 'cnpmcore',
     charset: 'utf8mb4',
+    // https://github.com/cyjake/leoric/pull/446
+    // Skip cloning database values for performance optimization
+    skipCloneValue: true,
     logger: {
       // https://github.com/cyjake/leoric/blob/master/docs/zh/logging.md#logqueryerror
       // ignore query error
@@ -143,11 +134,7 @@ export default function startConfig(appInfo: EggAppConfig): Config {
   config.nfs = {
     client: null,
     dir: env('CNPMCORE_NFS_DIR', 'string', join(config.dataDir, 'nfs')),
-    removeBeforeUpload: env(
-      'CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD',
-      'boolean',
-      false
-    ),
+    removeBeforeUpload: env('CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD', 'boolean', false),
   };
   /* c8 ignore next 17 */
   // enable oss nfs store by env values
@@ -177,35 +164,22 @@ export default function startConfig(appInfo: EggAppConfig): Config {
         secretAccessKey: env('CNPMCORE_NFS_S3_CLIENT_SECRET', 'string', ''),
       },
       bucket: env('CNPMCORE_NFS_S3_CLIENT_BUCKET', 'string', ''),
-      forcePathStyle: env(
-        'CNPMCORE_NFS_S3_CLIENT_FORCE_PATH_STYLE',
-        'boolean',
-        false
-      ),
+      forcePathStyle: env('CNPMCORE_NFS_S3_CLIENT_FORCE_PATH_STYLE', 'boolean', false),
       disableURL: env('CNPMCORE_NFS_S3_CLIENT_DISABLE_URL', 'boolean', false),
     };
     assert.ok(s3Config.endpoint, 'require env CNPMCORE_NFS_S3_CLIENT_ENDPOINT');
-    assert.ok(
-      s3Config.credentials.accessKeyId,
-      'require env CNPMCORE_NFS_S3_CLIENT_ID'
-    );
-    assert.ok(
-      s3Config.credentials.secretAccessKey,
-      'require env CNPMCORE_NFS_S3_CLIENT_SECRET'
-    );
+    assert.ok(s3Config.credentials.accessKeyId, 'require env CNPMCORE_NFS_S3_CLIENT_ID');
+    assert.ok(s3Config.credentials.secretAccessKey, 'require env CNPMCORE_NFS_S3_CLIENT_SECRET');
     assert.ok(s3Config.bucket, 'require env CNPMCORE_NFS_S3_CLIENT_BUCKET');
     // @ts-expect-error has no construct signatures
     config.nfs.client = new S3Client(s3Config);
   }
 
   config.logger = {
+    consoleLevel: 'WARN',
     enablePerformanceTimer: true,
     enableFastContextLogger: true,
-    appLogName: env(
-      'CNPMCORE_APP_LOG_NAME',
-      'string',
-      `${appInfo.name}-web.log`
-    ),
+    appLogName: env('CNPMCORE_APP_LOG_NAME', 'string', `${appInfo.name}-web.log`),
     coreLogName: env('CNPMCORE_CORE_LOG_NAME', 'string', 'egg-web.log'),
     agentLogName: env('CNPMCORE_AGENT_LOG_NAME', 'string', 'egg-agent.log'),
     errorLogName: env('CNPMCORE_ERROR_LOG_NAME', 'string', 'common-error.log'),
@@ -255,16 +229,8 @@ export default function startConfig(appInfo: EggAppConfig): Config {
       client: {
         node: env('CNPMCORE_CONFIG_ES_CLIENT_NODE', 'string', ''),
         auth: {
-          username: env(
-            'CNPMCORE_CONFIG_ES_CLIENT_AUTH_USERNAME',
-            'string',
-            ''
-          ),
-          password: env(
-            'CNPMCORE_CONFIG_ES_CLIENT_AUTH_PASSWORD',
-            'string',
-            ''
-          ),
+          username: env('CNPMCORE_CONFIG_ES_CLIENT_AUTH_USERNAME', 'string', ''),
+          password: env('CNPMCORE_CONFIG_ES_CLIENT_AUTH_PASSWORD', 'string', ''),
         },
       },
     };

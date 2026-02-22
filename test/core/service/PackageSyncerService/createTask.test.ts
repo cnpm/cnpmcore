@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
-import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.js';
-import type { Task } from '../../../../app/core/entity/Task.js';
-import { TaskState } from '../../../../app/common/enum/Task.js';
-import { TaskRepository } from '../../../../app/repository/TaskRepository.js';
-import { TaskService } from '../../../../app/core/service/TaskService.js';
+import { TaskState } from '../../../../app/common/enum/Task.ts';
+import type { Task } from '../../../../app/core/entity/Task.ts';
+import { PackageSyncerService } from '../../../../app/core/service/PackageSyncerService.ts';
+import { TaskService } from '../../../../app/core/service/TaskService.ts';
+import { TaskRepository } from '../../../../app/repository/TaskRepository.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
   const pkgName = '@cnpmcore/foo';
@@ -29,7 +30,7 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
       },
       {
         name: username,
-      }
+      },
     );
   });
 
@@ -50,7 +51,7 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
       },
       {
         name: username,
-      }
+      },
     );
 
     const task = await packageSyncerService.createTask('binary-mirror-config', {
@@ -60,12 +61,9 @@ describe('test/core/service/PackageSyncerService/createTask.test.ts', () => {
   });
 
   it('should work when pkg not exists', async () => {
-    const task = await packageSyncerService.createTask(
-      'binary-mirror-config-not-exists',
-      {
-        registryId: 'sync_registry_id',
-      }
-    );
+    const task = await packageSyncerService.createTask('binary-mirror-config-not-exists', {
+      registryId: 'sync_registry_id',
+    });
     assert.ok(task);
   });
 

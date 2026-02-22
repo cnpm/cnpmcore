@@ -1,5 +1,7 @@
+import path from 'node:path';
+
 import {
-  type EggContext,
+  HTTPContext,
   Context,
   HTTPController,
   HTTPMethod,
@@ -9,16 +11,15 @@ import {
   Inject,
   Middleware,
   HTTPBody,
-} from '@eggjs/tegg';
-import path from 'node:path';
-import { NotFoundError } from 'egg-errors';
+} from 'egg';
+import { NotFoundError } from 'egg/errors';
 
-import { AbstractController } from './AbstractController.js';
-import type { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
-import type { Binary } from '../../core/entity/Binary.js';
-import binaries, { type BinaryName } from '../../../config/binaries.js';
-import { BinaryNameRule, BinarySubpathRule } from '../typebox.js';
-import { AdminAccess } from '../middleware/AdminAccess.js';
+import binaries, { type BinaryName } from '../../../config/binaries.ts';
+import type { Binary } from '../../core/entity/Binary.ts';
+import type { BinarySyncerService } from '../../core/service/BinarySyncerService.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
+import { BinaryNameRule, BinarySubpathRule } from '../typebox.ts';
+import { AbstractController } from './AbstractController.ts';
 
 @HTTPController()
 export class BinarySyncController extends AbstractController {
@@ -29,7 +30,7 @@ export class BinarySyncController extends AbstractController {
     path: '/binary.html',
     method: HTTPMethodEnum.GET,
   })
-  async showBinaryHTML(@Context() ctx: EggContext) {
+  async showBinaryHTML(@HTTPContext() ctx: Context) {
     ctx.type = 'html';
     return ctx.app.binaryHTML;
   }
@@ -45,9 +46,7 @@ export class BinarySyncController extends AbstractController {
         category: `${binaryConfig.category}/`,
         description: binaryConfig.description,
         distUrl: binaryConfig.distUrl,
-        repoUrl: /^https?:\/\//.test(binaryConfig.repo)
-          ? binaryConfig.repo
-          : `https://github.com/${binaryConfig.repo}`,
+        repoUrl: /^https?:\/\//.test(binaryConfig.repo) ? binaryConfig.repo : `https://github.com/${binaryConfig.repo}`,
         type: 'dir',
         url: `${this.config.cnpmcore.registry}/-/binary/${binaryConfig.category}/`,
       };
@@ -59,11 +58,11 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showBinary(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() binaryName: BinaryName,
     @HTTPParam() subpath: string,
     @HTTPQuery() since: string,
-    @HTTPQuery() limit: string
+    @HTTPQuery() limit: string,
   ) {
     // check binaryName valid
     try {
@@ -78,9 +77,7 @@ export class BinarySyncController extends AbstractController {
         throw new NotFoundError(`invalidate limit "${limit}"`);
       }
       if (limitCount > 1000) {
-        throw new NotFoundError(
-          `limit should less than 1000, query is "${limit}"`
-        );
+        throw new NotFoundError(`limit should less than 1000, query is "${limit}"`);
       }
     }
     subpath = subpath || '/';
@@ -98,11 +95,7 @@ export class BinarySyncController extends AbstractController {
     const parent = parsed.dir === '/' ? '/' : `${parsed.dir}/`;
     const name = subpath.endsWith('/') ? `${parsed.base}/` : parsed.base;
     // 首先查询 binary === category 的情况
-    let binary = await this.binarySyncerService.findBinary(
-      binaryName,
-      parent,
-      name
-    );
+    let binary = await this.binarySyncerService.findBinary(binaryName, parent, name);
     if (!binary) {
       // 查询不到再去查询 mergeCategory 的情况
       const category = binaries?.[binaryName]?.category;
@@ -112,7 +105,7 @@ export class BinarySyncController extends AbstractController {
         binary = await this.binarySyncerService.findBinary(
           category,
           parent,
-          name.replace(new RegExp(`^${binaryName}-`), `${category}-`)
+          name.replace(new RegExp(`^${binaryName}-`), `${category}-`),
         );
       }
     }
@@ -128,10 +121,7 @@ export class BinarySyncController extends AbstractController {
           since,
         };
       }
-      const items = await this.binarySyncerService.listDirBinaries(
-        binary,
-        options
-      );
+      const items = await this.binarySyncerService.listDirBinaries(binary, options);
       return this.formatItems(items);
     }
 
@@ -154,9 +144,9 @@ export class BinarySyncController extends AbstractController {
   })
   @Middleware(AdminAccess)
   async syncBinary(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() binaryName: BinaryName,
-    @HTTPBody() lastData?: Record<string, string>
+    @HTTPBody() lastData?: Record<string, string>,
   ) {
     // check binaryName valid
     try {
@@ -165,10 +155,7 @@ export class BinarySyncController extends AbstractController {
       throw new NotFoundError(`Binary "${binaryName}" not found`);
     }
     this.logger.info('SyncBinary: %s, lastData: %j', binaryName, lastData);
-    const task = await this.binarySyncerService.createTask(
-      binaryName,
-      lastData
-    );
+    const task = await this.binarySyncerService.createTask(binaryName, lastData);
     return {
       ok: true,
       taskId: task?.taskId,
@@ -181,10 +168,10 @@ export class BinarySyncController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async showBinaryIndex(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: Context,
     @HTTPParam() binaryName: BinaryName,
     @HTTPQuery() since: string,
-    @HTTPQuery() limit: string
+    @HTTPQuery() limit: string,
   ) {
     // check binaryName valid
     try {
@@ -196,7 +183,7 @@ export class BinarySyncController extends AbstractController {
   }
 
   private formatItems(items: Binary[]) {
-    return items.map(item => {
+    return items.map((item) => {
       return {
         id: item.binaryId,
         category: item.category,

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/PackageVersionFileController/sync.test.ts', () => {
   let publisher: TestUser;
@@ -68,8 +68,7 @@ describe('test/port/controller/PackageVersionFileController/sync.test.ts', () =>
           path: '/package.json',
           type: 'file',
           contentType: 'application/json',
-          integrity:
-            'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
+          integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
           lastModified: publishTime,
           size: 209,
         },
@@ -86,8 +85,7 @@ describe('test/port/controller/PackageVersionFileController/sync.test.ts', () =>
           path: '/package.json',
           type: 'file',
           contentType: 'application/json',
-          integrity:
-            'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
+          integrity: 'sha512-yTg/L7tUtFK54aNH3iwgIp7sF3PiAcUrIEUo06bSNq3haIKRnagy6qOwxiEmtfAtNarbjmEpl31ZymySsECi3Q==',
           lastModified: publishTime,
           size: 209,
         },
@@ -100,17 +98,11 @@ describe('test/port/controller/PackageVersionFileController/sync.test.ts', () =>
         .put('/@cnpm/foonot-exists/1.0.40000404/files')
         .set('authorization', adminUser.authorization)
         .expect(404);
-      assert.equal(
-        res.body.error,
-        '[NOT_FOUND] @cnpm/foonot-exists@1.0.40000404 not found'
-      );
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists@1.0.40000404 not found');
     });
 
     it('should 403 when non-admin request', async () => {
-      const res = await app
-        .httpRequest()
-        .put('/@cnpm/foonot-exists/1.0.40000404/files')
-        .expect(403);
+      const res = await app.httpRequest().put('/@cnpm/foonot-exists/1.0.40000404/files').expect(403);
       assert.equal(res.body.error, '[FORBIDDEN] Not allow to access');
     });
   });

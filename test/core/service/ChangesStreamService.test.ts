@@ -3,15 +3,15 @@ import { Readable } from 'node:stream';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../test/TestUtil.js';
-import { ChangesStreamService } from '../../../app/core/service/ChangesStreamService.js';
-import { TaskService } from '../../../app/core/service/TaskService.js';
-import { Task, type ChangesStreamTask } from '../../../app/core/entity/Task.js';
-import { RegistryManagerService } from '../../../app/core/service/RegistryManagerService.js';
-import { RegistryType } from '../../../app/common/enum/Registry.js';
-import { ScopeManagerService } from '../../../app/core/service/ScopeManagerService.js';
-import type { Registry } from '../../../app/core/entity/Registry.js';
-import { RedisQueueAdapter } from '../../../app/infra/QueueAdapter.js';
+import { RegistryType } from '../../../app/common/enum/Registry.ts';
+import type { Registry } from '../../../app/core/entity/Registry.ts';
+import { Task, type ChangesStreamTask } from '../../../app/core/entity/Task.ts';
+import { ChangesStreamService } from '../../../app/core/service/ChangesStreamService.ts';
+import { RegistryManagerService } from '../../../app/core/service/RegistryManagerService.ts';
+import { ScopeManagerService } from '../../../app/core/service/ScopeManagerService.ts';
+import { TaskService } from '../../../app/core/service/TaskService.ts';
+import { RedisQueueAdapter } from '../../../app/infra/QueueAdapter.ts';
+import { TestUtil } from '../../../test/TestUtil.ts';
 
 describe('test/core/service/ChangesStreamService.test.ts', () => {
   let changesStreamService: ChangesStreamService;
@@ -86,10 +86,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       assert.ok(registryId);
       await registryManagerService.remove({ registryId });
 
-      await assert.rejects(
-        changesStreamService.prepareRegistry(task),
-        /invalid change stream registry/
-      );
+      await assert.rejects(changesStreamService.prepareRegistry(task), /invalid change stream registry/);
     });
   });
 
@@ -100,10 +97,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
         isPrivate: false,
         registryId: npmRegistry.registryId,
       });
-      const res = await changesStreamService.needSync(
-        npmRegistry,
-        '@cnpm/test'
-      );
+      const res = await changesStreamService.needSync(npmRegistry, '@cnpm/test');
       assert.ok(res);
     });
 
@@ -113,18 +107,12 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     });
 
     it('scoped package should sync default registry', async () => {
-      const res = await changesStreamService.needSync(
-        npmRegistry,
-        '@gogogo/banana'
-      );
+      const res = await changesStreamService.needSync(npmRegistry, '@gogogo/banana');
       assert.ok(res);
     });
 
     it('scoped package should sync custom registry', async () => {
-      let res = await changesStreamService.needSync(
-        cnpmRegistry,
-        '@cnpm/banana'
-      );
+      let res = await changesStreamService.needSync(cnpmRegistry, '@cnpm/banana');
       assert.ok(res);
       res = await changesStreamService.needSync(cnpmRegistry, '@dnpmjs/banana');
       assert.ok(!res);
@@ -231,17 +219,13 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     beforeEach(async () => {
       app.mockLog();
       mock(app.config.cnpmcore, 'enableChangesStream', true);
-      app.mockHttpclient(
-        'https://replicate.npmjs.com/registry/_changes?since=9527',
-        'GET',
-        () => {
-          return {
-            data: {
-              res: Readable.from(''),
-            },
-          };
-        }
-      );
+      app.mockHttpclient('https://replicate.npmjs.com/registry/_changes?since=9527', 'GET', () => {
+        return {
+          data: {
+            res: Readable.from(''),
+          },
+        };
+      });
     });
     it('should work', async () => {
       const task = await changesStreamService.findExecuteTask();

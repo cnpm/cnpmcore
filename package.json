@@ -1,7 +1,22 @@
 {
   "name": "cnpmcore",
-  "version": "4.9.0",
+  "version": "4.21.1",
   "description": "Private NPM Registry for Enterprise",
+  "keywords": [
+    "npm",
+    "npm registry",
+    "registry"
+  ],
+  "homepage": "https://github.com/cnpm/cnpmcore#readme",
+  "bugs": {
+    "url": "https://github.com/cnpm/cnpmcore/issues"
+  },
+  "license": "MIT",
+  "author": "killagu",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:cnpm/cnpmcore.git"
+  },
   "files": [
     "dist/**/*"
   ],
@@ -39,9 +54,11 @@
     "predev": "npm run clean",
     "dev": "egg-bin dev",
     "dev:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin dev",
-    "lint": "oxlint",
+    "lint": "oxlint --type-aware --type-check",
     "lint:fix": "npm run lint -- --fix",
     "typecheck": "tsc --noEmit",
+    "fmt": "oxfmt",
+    "fmtcheck": "oxfmt --check",
     "test:postgresql": "npm run test:local:postgresql",
     "pretest:local:postgresql": "bash prepare-database-postgresql.sh",
     "test:local:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin test",
@@ -58,6 +75,7 @@
     "ci": "npm run cov",
     "ci:postgresql": "npm run cov:postgresql",
     "clean": "tsc -b --clean && rm -rf dist *.tsbuildinfo",
+    "build": "npm run tsc",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:prod": "npm run clean && tsc -p ./tsconfig.prod.json",
     "prepublishOnly": "npm run tsc:prod",
@@ -66,116 +84,85 @@
     "images:debian": "docker build -t cnpmcore:latest -f .docker/debian/Dockerfile .",
     "start": "eggctl start --daemon && touch egg.status",
     "start:foreground": "eggctl start",
-    "stop": "rm -f egg.status && sleep 15 && eggctl stop"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:cnpm/cnpmcore.git"
-  },
-  "egg": {
-    "typescript": true
-  },
-  "keywords": [
-    "npm",
-    "npm registry",
-    "registry"
-  ],
-  "overrides": {
-    "mocha": "11.6.0"
-  },
-  "resolutions": {
-    "mocha": "11.6.0"
+    "stop": "rm -f egg.status && sleep 15 && eggctl stop",
+    "init-git-hooks": "husky"
   },
   "dependencies": {
+    "@cnpmjs/packument": "^1.7.0",
     "@eggjs/redis": "beta",
     "@eggjs/scripts": "beta",
-    "@eggjs/tegg": "beta",
-    "@eggjs/tegg-aop-plugin": "beta",
-    "@eggjs/tegg-background-task": "beta",
-    "@eggjs/tegg-config": "beta",
-    "@eggjs/tegg-controller-plugin": "beta",
-    "@eggjs/tegg-eventbus-plugin": "beta",
-    "@eggjs/tegg-orm-plugin": "beta",
-    "@eggjs/tegg-plugin": "beta",
-    "@eggjs/tegg-schedule-plugin": "beta",
     "@eggjs/tracer": "beta",
     "@eggjs/typebox-validate": "beta",
-    "@elastic/elasticsearch": "^8.8.1",
-    "@fengmk2/tar": "^6.2.0",
-    "@node-rs/crc32": "^1.2.2",
-    "@simplewebauthn/server": "^7.0.1",
-    "base-x": "^3.0.9",
+    "@elastic/elasticsearch": "^8.19.1",
+    "@simplewebauthn/server": "^7.4.0",
+    "base-x": "^5.0.1",
     "base64url": "^3.0.1",
     "bson-objectid": "^2.0.4",
-    "dayjs": "^1.10.7",
+    "dayjs": "^1.11.19",
     "egg": "beta",
-    "egg-cors": "^3.0.0",
-    "egg-errors": "^2.3.0",
+    "egg-cors": "^3.0.1",
     "egg-status": "^1.0.0",
     "egg-view-nunjucks": "^2.3.0",
     "eggjs-elasticsearch": "^0.0.6",
-    "fast-xml-parser": "^5.0.9",
-    "fs-cnpm": "^2.4.0",
-    "ioredis": "^5.3.1",
-    "leoric": "^2.12.3",
+    "fast-xml-parser": "^5.3.2",
+    "fs-cnpm": "^2.4.1",
+    "ioredis": "^5.8.2",
+    "leoric": "^2.14.0",
     "lodash-es": "^4.17.21",
-    "mime-types": "^2.1.35",
-    "mysql2": "^3.9.4",
+    "mime-types": "^3.0.2",
+    "mysql2": "^3.15.3",
     "node-rsa": "^1.1.1",
-    "npm-package-arg": "^10.1.0",
+    "npm-package-arg": "^13.0.2",
     "oss-cnpm": "^5.0.1",
-    "p-map": "^4.0.0",
-    "pg": "^8.13.1",
-    "read-env-value": "^1.0.0",
-    "semver": "^7.3.5",
-    "ssri": "^8.0.1",
-    "type-fest": "^2.5.3",
-    "ua-parser-js": "^1.0.34",
-    "validate-npm-package-name": "^6.0.0"
-  },
-  "optionalDependencies": {
-    "s3-cnpmcore": "^1.1.2"
+    "p-map": "^7.0.4",
+    "pg": "^8.16.3",
+    "read-env-value": "^2.0.2",
+    "semver": "^7.7.3",
+    "ssri": "^13.0.0",
+    "tar": "^7.5.2",
+    "type-fest": "^5.3.1",
+    "ua-parser-js": "^2.0.7",
+    "validate-npm-package-name": "^7.0.0"
   },
   "devDependencies": {
     "@eggjs/bin": "beta",
     "@eggjs/mock": "beta",
     "@eggjs/oxlint-config": "^1.0.0",
     "@eggjs/tsconfig": "beta",
-    "@elastic/elasticsearch-mock": "^2.0.0",
-    "@simplewebauthn/typescript-types": "^7.0.0",
+    "@elastic/elasticsearch-mock": "^2.1.0",
+    "@simplewebauthn/typescript-types": "^7.4.0",
     "@types/lodash-es": "^4.17.12",
-    "@types/mime-types": "^2.1.1",
-    "@types/mocha": "^10.0.1",
-    "@types/mysql": "^2.15.21",
+    "@types/mime-types": "^3.0.1",
+    "@types/mocha": "^10.0.10",
+    "@types/mysql": "^2.15.27",
+    "@types/node": "^22.19.2",
     "@types/node-rsa": "^1.1.4",
-    "@types/npm-package-arg": "^6.1.1",
-    "@types/pg": "^8.11.10",
-    "@types/semver": "^7.3.12",
-    "@types/tar": "^6.1.4",
-    "@types/ua-parser-js": "^0.7.36",
+    "@types/npm-package-arg": "^6.1.4",
+    "@types/pg": "^8.16.0",
+    "@types/semver": "^7.7.1",
+    "@types/tar": "^6.1.13",
     "@types/validate-npm-package-name": "^4.0.2",
-    "coffee": "^5.4.0",
+    "coffee": "^5.5.1",
     "husky": "^9.1.7",
-    "lint-staged": "^15.5.0",
-    "oxlint": "^1.11.0",
-    "oxlint-tsgolint": "^0.2.0",
-    "prettier": "^3.5.3",
-    "typescript": "5"
+    "lint-staged": "^16.2.7",
+    "oxfmt": "^0.28.0",
+    "oxlint": "^1.32.0",
+    "oxlint-tsgolint": "^0.11.0",
+    "typescript": "^5.9.3"
   },
-  "author": "killagu",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/cnpm/cnpmcore/issues"
-  },
-  "homepage": "https://github.com/cnpm/cnpmcore#readme",
-  "engines": {
-    "node": "^20.18.0 || >=22.18.0"
+  "optionalDependencies": {
+    "s3-cnpmcore": "^1.1.2"
   },
   "lint-staged": {
-    "*": "prettier --write --ignore-unknown --cache",
-    "*.{ts,js}": [
-      "prettier --ignore-unknown --write",
-      "oxlint --fix"
+    "*": [
+      "oxfmt",
+      "oxlint --type-aware --type-check --fix"
     ]
+  },
+  "engines": {
+    "node": "^20.18.0 || ^22.18.0 || ^24.11.0"
+  },
+  "egg": {
+    "typescript": true
   }
 }

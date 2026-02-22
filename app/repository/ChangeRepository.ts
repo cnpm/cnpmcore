@@ -1,9 +1,9 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { ModelConvertor } from './util/ModelConvertor.js';
-import type { Change as ChangeModel } from './model/Change.js';
-import type { Change as ChangeEntity } from '../core/entity/Change.js';
-import { AbstractRepository } from './AbstractRepository.js';
+import type { Change as ChangeEntity } from '../core/entity/Change.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
+import type { Change as ChangeModel } from './model/Change.ts';
+import { ModelConvertor } from './util/ModelConvertor.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

@@ -1,9 +1,9 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { ModelConvertor } from './util/ModelConvertor.js';
-import type { Binary as BinaryModel } from './model/Binary.js';
-import { Binary as BinaryEntity } from '../core/entity/Binary.js';
-import { AbstractRepository } from './AbstractRepository.js';
+import { Binary as BinaryEntity } from '../core/entity/Binary.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
+import type { Binary as BinaryModel } from './model/Binary.ts';
+import { ModelConvertor } from './util/ModelConvertor.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -16,20 +16,13 @@ export class BinaryRepository extends AbstractRepository {
     if (binary.id) {
       const model = await this.Binary.findOne({ id: binary.id });
       if (!model) return;
-      await ModelConvertor.saveEntityToModel<BinaryModel>(
-        binary as unknown as Record<string, unknown>,
-        model
-      );
+      await ModelConvertor.saveEntityToModel<BinaryModel>(binary as unknown as Record<string, unknown>, model);
     } else {
       const model = await ModelConvertor.convertEntityToModel(
         binary as unknown as Record<string, unknown>,
-        this.Binary
+        this.Binary,
       );
-      this.logger.info(
-        '[BinaryRepository:saveBinary:new] id: %s, binaryId: %s',
-        model.id,
-        model.binaryId
-      );
+      this.logger.info('[BinaryRepository:saveBinary:new] id: %s, binaryId: %s', model.id, model.binaryId);
     }
   }
 
@@ -45,7 +38,7 @@ export class BinaryRepository extends AbstractRepository {
     options?: {
       limit: number;
       since: string;
-    }
+    },
   ): Promise<BinaryEntity[]> {
     let models;
     if (options) {
@@ -59,19 +52,27 @@ export class BinaryRepository extends AbstractRepository {
     } else {
       models = await this.Binary.find({ category, parent });
     }
-    return models.map(model =>
-      ModelConvertor.convertModelToEntity(model, BinaryEntity)
-    );
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, BinaryEntity));
   }
 
-  async findLatestBinaryDir(
+  /**
+   * List binary names and dates without full entity instantiation.
+   * This is optimized for diff operations to avoid Bone constructor overhead.
+   */
+  async listBinaryNameAndDates(
     category: string,
-    parent: string
-  ): Promise<BinaryEntity | null> {
-    const model = await this.Binary.findOne({ category, parent }).order(
-      'date',
-      'desc'
-    );
+    parent: string,
+  ): Promise<{ id: bigint; binaryId: string; name: string; date: string }[]> {
+    return (await this.Binary.select('id', 'binaryId', 'name', 'date').where({ category, parent })) as {
+      id: bigint;
+      binaryId: string;
+      name: string;
+      date: string;
+    }[];
+  }
+
+  async findLatestBinaryDir(category: string, parent: string): Promise<BinaryEntity | null> {
+    const model = await this.Binary.findOne({ category, parent }).order('date', 'desc');
     if (model) {
       return ModelConvertor.convertModelToEntity(model, BinaryEntity);
     }

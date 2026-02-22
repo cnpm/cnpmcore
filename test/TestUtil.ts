@@ -1,27 +1,32 @@
+import crypto from 'node:crypto';
+import { mkdtempSync, readFileSync } from 'node:fs';
 // oxlint-disable typescript-eslint/no-explicit-any
 import fs from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import type { Readable } from 'node:stream';
+import { fileURLToPath } from 'node:url';
+
+import { app as globalApp } from '@eggjs/mock/bootstrap';
 // 统一通过 coffee 执行 child_process，获取运行时的一些环境信息
 import coffee from 'coffee';
-import { tmpdir } from 'node:os';
-import { mkdtempSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import type { Readable } from 'node:stream';
 import mysql from 'mysql2/promise';
 import { Client } from 'pg';
-import path from 'node:path';
-import crypto from 'node:crypto';
 import semver from 'semver';
-import { app as globalApp } from '@eggjs/mock/bootstrap';
 
-import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.js';
-import type { PackageJSONType } from '../app/repository/PackageRepository.js';
-import { DATABASE_TYPE, database } from '../config/database.js';
-import { Package as PackageModel } from '../app/repository/model/Package.js';
+import { cleanUserPrefix, getScopeAndName } from '../app/common/PackageUtil.ts';
+import { Package as PackageModel } from '../app/repository/model/Package.ts';
+import type { PackageJSONType } from '../app/repository/PackageRepository.ts';
+import { DATABASE_TYPE, database } from '../config/database.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 interface PackageOptions {
+  _npmUser?: {
+    name: string;
+    email: string;
+  };
   name?: string;
   version?: string;
   versionObject?: object;
@@ -140,12 +145,11 @@ export class TestUtil {
         //     { TABLE_NAME: 'webauthn_credentials' }
         // ]
         const rows: { TABLE_NAME: string }[] = await this.query(sql);
-        this.tables = rows.map(row => row.TABLE_NAME);
+        this.tables = rows.map((row) => row.TABLE_NAME);
       } else if (config.type === DATABASE_TYPE.PostgreSQL) {
-        const sql =
-          "SELECT * FROM pg_catalog.pg_tables where schemaname = 'public';";
+        const sql = "SELECT * FROM pg_catalog.pg_tables where schemaname = 'public';";
         const rows: { tablename: string }[] = await this.query(sql);
-        this.tables = rows.map(row => row.tablename);
+        this.tables = rows.map((row) => row.tablename);
       }
     }
     return this.tables;
@@ -156,7 +160,7 @@ export class TestUtil {
     await Promise.all(
       tables.map(async (table: string) => {
         await this.query(`TRUNCATE TABLE ${table};`);
-      })
+      }),
     );
   }
 
@@ -205,17 +209,21 @@ export class TestUtil {
   }
 
   static async getFullPackage(
-    options?: PackageOptions
+    options?: PackageOptions,
   ): Promise<PackageJSONType & { versions: Record<string, PackageJSONType> }> {
     const pkg = await this.readFixturesJSONFile('exampleFullPackage.json');
     if (options) {
-      const attachs = pkg._attachments || {};
-      const firstFilename = Object.keys(attachs)[0];
-      const attach = attachs[firstFilename];
+      const attachments = pkg._attachments || {};
+      const firstFilename = Object.keys(attachments)[0];
+      const attach = attachments[firstFilename];
       const versions = pkg.versions || {};
       const firstVersion = Object.keys(versions)[0];
       const version = versions[firstVersion];
       let updateAttach = false;
+      if (options._npmUser) {
+        pkg._npmUser = options._npmUser;
+        version._npmUser = options._npmUser;
+      }
       if (options.name) {
         pkg.name = options.name;
         version.name = options.name;
@@ -238,9 +246,8 @@ export class TestUtil {
         Object.assign(version.dist, options.dist);
       }
       if (updateAttach) {
-        attachs[`${version.name}-${version.version}.tgz`] = attach;
-        // eslint-disable-next-line typescript-eslint/no-dynamic-delete
-        delete attachs[firstFilename];
+        attachments[`${version.name}-${version.version}.tgz`] = attach;
+        delete attachments[firstFilename];
       }
       if (options.readme === null) {
         delete pkg.readme;
@@ -264,26 +271,22 @@ export class TestUtil {
     return pkg;
   }
 
-  static async createPackage(
-    options?: PackageOptions,
-    userOptions?: UserOptions
-  ) {
+  static async createPackage(options?: PackageOptions, userOptions?: UserOptions) {
     const pkg = await this.getFullPackage(options);
     const user = await this.createUser(userOptions);
-    await this.app
+    const res = await this.app
       .httpRequest()
       .put(`/${pkg.name}`)
       .set('authorization', user.authorization)
       .set('user-agent', user.ua)
-      .send(pkg)
-      .expect(201);
+      .send(pkg);
+    if (res.status !== 201) {
+      throw new Error(`Failed to create package: ${JSON.stringify(res.body)}`);
+    }
 
     if (options?.isPrivate === false) {
       const [scope, name] = getScopeAndName(pkg.name);
-      await PackageModel.update(
-        { scope, name },
-        { isPrivate: false, registryId: options?.registryId }
-      );
+      await PackageModel.update({ scope, name }, { isPrivate: false, registryId: options?.registryId });
     }
     return { user, pkg };
   }
@@ -297,16 +300,15 @@ export class TestUtil {
     }
     const password = user.password ?? 'password-is-here';
     const email = cleanUserPrefix(user.email ?? `${user.name}@example.com`);
-    let res = await this.app
-      .httpRequest()
-      .put(`/-/user/org.couchdb.user:${user.name}`)
-      .send({
-        name: user.name,
-        password,
-        type: 'user',
-        email,
-      })
-      .expect(201);
+    let res = await this.app.httpRequest().put(`/-/user/org.couchdb.user:${user.name}`).send({
+      name: user.name,
+      password,
+      type: 'user',
+      email,
+    });
+    if (res.status !== 201) {
+      throw new Error(`Failed to create user: ${JSON.stringify(res.body)}, status: ${res.status}`);
+    }
     let token: string = res.body.token;
     if (user.tokenOptions) {
       res = await this.app
@@ -362,16 +364,12 @@ export class TestUtil {
   static async createRegistryAndScope() {
     // create success
     const adminUser = await this.createAdmin();
-    await this.app
-      .httpRequest()
-      .post('/-/registry')
-      .set('authorization', adminUser.authorization)
-      .send({
-        name: 'custom6',
-        host: 'https://r.cnpmjs.org/',
-        changeStream: 'https://r.cnpmjs.org/_changes',
-        type: 'cnpmcore',
-      });
+    await this.app.httpRequest().post('/-/registry').set('authorization', adminUser.authorization).send({
+      name: 'custom6',
+      host: 'https://r.cnpmjs.org/',
+      changeStream: 'https://r.cnpmjs.org/_changes',
+      type: 'cnpmcore',
+    });
   }
 
   static async readStreamToLog(urlOrStream: any) {

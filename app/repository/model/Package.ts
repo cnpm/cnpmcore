@@ -1,7 +1,7 @@
-import { Attribute, Model } from '@eggjs/tegg/orm';
+import { Attribute, Model } from 'egg/orm';
 
-import { Bone, DataTypes } from '../util/leoric.js';
-import { EntityProperty } from '../util/EntityProperty.js';
+import { EntityProperty } from '../util/EntityProperty.ts';
+import { Bone, DataTypes } from '../util/leoric.ts';
 
 @Model()
 export class Package extends Bone {

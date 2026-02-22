@@ -3,10 +3,10 @@ import { setTimeout } from 'node:timers/promises';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
-import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService.js';
-import { calculateIntegrity } from '../../../../app/common/PackageUtil.js';
-import { DATABASE_TYPE, database } from '../../../../config/database.js';
+import { calculateIntegrity } from '../../../../app/common/PackageUtil.ts';
+import { PackageVersionFileService } from '../../../../app/core/service/PackageVersionFileService.ts';
+import { DATABASE_TYPE, database } from '../../../../config/database.ts';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let publisher: TestUser;
@@ -77,23 +77,14 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .get('/foo/1.0.0/files/index.js')
         .expect(404)
         .expect('content-type', 'application/json; charset=utf-8');
-      assert.equal(
-        res.body.error,
-        '[NOT_FOUND] File foo@1.0.0/index.js not found'
-      );
+      assert.equal(res.body.error, '[NOT_FOUND] File foo@1.0.0/index.js not found');
     });
 
     it('should 422 when invalid spec', async () => {
       mock(app.config.cnpmcore, 'enableUnpkg', true);
-      const res = await app
-        .httpRequest()
-        .get('/foo/@invalid-spec/files')
-        .expect(422);
+      const res = await app.httpRequest().get('/foo/@invalid-spec/files').expect(422);
 
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] must match format "semver-spec"'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] must match format "semver-spec"');
     });
 
     it('should list one package version files', async () => {
@@ -121,11 +112,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       // console.log(res.body);
-      assert.equal(
-        res.headers['cache-control'],
-        'public, s-maxage=600, max-age=60'
-      );
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.deepEqual(res.body, {
         path: '/',
         type: 'directory',
@@ -152,11 +141,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
       // console.log(res.body);
-      assert.equal(
-        res.headers['cache-control'],
-        'public, s-maxage=600, max-age=60'
-      );
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.deepEqual(res.body, {
         path: '/',
         type: 'directory',
@@ -176,9 +163,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
 
     it('should return the current directory files and directories instead all sub items', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
-      const tarball = await TestUtil.readFixturesFile(
-        'unpkg.com/openapi-7.3.3.tgz'
-      );
+      const tarball = await TestUtil.readFixturesFile('unpkg.com/openapi-7.3.3.tgz');
       const { integrity } = await calculateIntegrity(tarball);
       const pkg = await TestUtil.getFullPackage({
         name: 'openapi',
@@ -382,7 +367,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             {
               path: '/id/AccountId.js',
               type: 'file',
-              contentType: 'application/javascript',
+              contentType: 'text/javascript',
               integrity:
                 'sha512-kFa+SXSMGbCh2DiuSGmlCS8OCBSE4VRGlq/A2IyY3QxL794soFq4zO3F+UEx4ANUG33urAa4LG4IY2OiUc2Mng==',
               lastModified: '2024-05-18T16:00:18.307Z',
@@ -400,7 +385,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             {
               path: '/id/Mode.js',
               type: 'file',
-              contentType: 'application/javascript',
+              contentType: 'text/javascript',
               integrity:
                 'sha512-jfMuIff4LW/ZQ8el9iCww8c9gw+12UK7eZn+6TMDAlStfLhlu8u7jcCSWSEG1zBTty9DIHn4Nbp+dMDjRUnVWQ==',
               lastModified: '2024-05-18T16:00:18.307Z',
@@ -418,7 +403,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
             {
               path: '/id/UUID.js',
               type: 'file',
-              contentType: 'application/javascript',
+              contentType: 'text/javascript',
               integrity:
                 'sha512-bo/JyxOZeRRjbN0OR8vNRz3cTY2GcJfRmRnp3QTGXE5iuKYjrpjYzj+vEXopZV1QYPdZaXUK671EoysPE59pQQ==',
               lastModified: '2024-05-18T16:00:18.307Z',
@@ -452,9 +437,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         });
       }
 
-      res = await app
-        .httpRequest()
-        .get(`/${pkg.name}/1.0.0/files/id/legalPerson/?meta`);
+      res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/id/legalPerson/?meta`);
       assert.equal(res.status, 200);
       // console.log(JSON.stringify(res.body, null, 2));
       assert.deepEqual(res.body, {
@@ -469,9 +452,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         ],
       });
 
-      res = await app
-        .httpRequest()
-        .get(`/${pkg.name}/1.0.0/files/id/legalPerson/be/?meta`);
+      res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/id/legalPerson/be/?meta`);
       assert.equal(res.status, 200);
       for (const file of res.body.files) {
         if (!file.lastModified) continue;
@@ -485,7 +466,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           {
             path: '/id/legalPerson/be/CRN.js',
             type: 'file',
-            contentType: 'application/javascript',
+            contentType: 'text/javascript',
             integrity:
               'sha512-K7fRjnkAkNnSYbWZW4A+xcdYbI2J1fk49AxFVut2Kk6LXOZbLH6nU9CFeo0YixDLa1Hl5sjLiUQ7Mur2HQgvNw==',
             lastModified: '2024-05-18T16:00:18.307Z',
@@ -533,56 +514,34 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       res = await app.httpRequest().get(`/${pkg.name}/latest/files`);
       assert.equal(res.status, 302);
       assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files`);
-      assert.equal(
-        res.headers['cache-control'],
-        'public, s-maxage=600, max-age=60'
-      );
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       res = await app.httpRequest().get(`/${pkg.name}/^1.0.0/files`);
       assert.equal(res.status, 302);
       assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files`);
-      assert.equal(
-        res.headers['cache-control'],
-        'public, s-maxage=600, max-age=60'
-      );
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       res = await app.httpRequest().get(`/${pkg.name}/%5E1.0.0/files`);
       assert.equal(res.status, 302);
       assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files`);
-      assert.equal(
-        res.headers['cache-control'],
-        'public, s-maxage=600, max-age=60'
-      );
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
 
-      res = await app
-        .httpRequest()
-        .get(`/${pkg.name}/latest/files?meta&foo=bar`);
+      res = await app.httpRequest().get(`/${pkg.name}/latest/files?meta&foo=bar`);
       assert.equal(res.status, 302);
-      assert.equal(
-        res.headers.location,
-        `/${pkg.name}/1.0.0/files?meta&foo=bar`
-      );
-      assert.equal(
-        res.headers['cache-control'],
-        'public, s-maxage=600, max-age=60'
-      );
+      assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files?meta&foo=bar`);
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       res = await app.httpRequest().get(`/${pkg.name}/latest/files/`);
       assert.equal(res.status, 302);
       assert.equal(res.headers.location, `/${pkg.name}/1.0.0/files/`);
-      assert.equal(
-        res.headers['cache-control'],
-        'public, s-maxage=600, max-age=60'
-      );
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files?meta=1`);
       assert.equal(res.status, 200);
-      assert.equal(
-        res.headers['cache-control'],
-        'public, s-maxage=600, max-age=60'
-      );
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.deepEqual(res.body, {
         path: '/',
         type: 'directory',
@@ -599,11 +558,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         ],
       });
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/`);
-      assert.equal(
-        res.headers['cache-control'],
-        'public, s-maxage=600, max-age=60'
-      );
+      assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
+      assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.deepEqual(res.body, {
         path: '/',
         type: 'directory',
@@ -684,7 +641,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .expect('content-type', 'application/json; charset=utf-8');
       assert.match(
         res.body.error,
-        /\[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm\/testmodule@1.0.0 was blocked, reason: only for tests again/
+        /\[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm\/testmodule@1.0.0 was blocked, reason: only for tests again/,
       );
 
       res = await app
@@ -694,7 +651,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .expect('content-type', 'application/json; charset=utf-8');
       assert.match(
         res.body.error,
-        /\[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm\/testmodule@1.0.0 was blocked, reason: only for tests again/
+        /\[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm\/testmodule@1.0.0 was blocked, reason: only for tests again/,
       );
     });
 
@@ -714,29 +671,17 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         .send(pkg)
         .expect(201);
 
-      const res = await app
-        .httpRequest()
-        .get(`/${pkg.name}/1.0.40000404/files`)
-        .expect(404);
+      const res = await app.httpRequest().get(`/${pkg.name}/1.0.40000404/files`).expect(404);
       assert.ok(!res.headers.etag);
       assert.ok(!res.headers['cache-control']);
-      assert.equal(
-        res.body.error,
-        `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`
-      );
+      assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@1.0.40000404 not found`);
     });
 
     it('should 404 when package not exists', async () => {
-      const res = await app
-        .httpRequest()
-        .get('/@cnpm/foonot-exists/1.0.40000404/files')
-        .expect(404);
+      const res = await app.httpRequest().get('/@cnpm/foonot-exists/1.0.40000404/files').expect(404);
       assert.ok(!res.headers.etag);
       assert.ok(!res.headers['cache-control']);
-      assert.equal(
-        res.body.error,
-        '[NOT_FOUND] @cnpm/foonot-exists@1.0.40000404 not found'
-      );
+      assert.equal(res.body.error, '[NOT_FOUND] @cnpm/foonot-exists@1.0.40000404 not found');
     });
 
     it('should conflict when syncing', async () => {
@@ -749,33 +694,24 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         },
       });
       let called = 0;
-      mock(
-        PackageVersionFileService.prototype,
-        'syncPackageVersionFiles',
-        async () => {
-          called++;
-          await setTimeout(50);
-        }
-      );
-      const resList = await Promise.all(
-        [0, 1].map(() => app.httpRequest().get(`/${pkg.name}/1.0.0/files/`))
-      );
+      mock(PackageVersionFileService.prototype, 'syncPackageVersionFiles', async () => {
+        called++;
+        await setTimeout(50);
+      });
+      const resList = await Promise.all([0, 1].map(() => app.httpRequest().get(`/${pkg.name}/1.0.0/files/`)));
       assert.equal(called, 1);
       assert.equal(
         resList.filter(
-          res =>
+          (res) =>
             res.status === 409 &&
-            res.body.error ===
-              '[CONFLICT] Package version file sync is currently in progress. Please try again later.'
+            res.body.error === '[CONFLICT] Package version file sync is currently in progress. Please try again later.',
         ).length,
-        1
+        1,
       );
     });
 
     it('should redirect to possible entry', async () => {
-      const tarball = await TestUtil.readFixturesFile(
-        '@cnpm/cnpm-test-find-entry-1.0.0.tgz'
-      );
+      const tarball = await TestUtil.readFixturesFile('@cnpm/cnpm-test-find-entry-1.0.0.tgz');
       const { integrity } = await calculateIntegrity(tarball);
       const pkg = await TestUtil.getFullPackage({
         name: '@cnpm/test-find-entry',
@@ -835,8 +771,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'foo',
           version: '1.0.0',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           },
         });
         await app
@@ -851,9 +786,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/foo/1.0.0/files/index.js')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 403);
-        assert.equal(
+        assert.match(
           res.body.error,
-          '[FORBIDDEN] "foo" is not allow to unpkg files, see https://github.com/cnpm/unpkg-white-list'
+          /\[FORBIDDEN\] "foo" is not allow to unpkg files, see https:\/\/github\.com\/cnpm\/unpkg-white-list, white list version:/,
         );
       });
 
@@ -866,8 +801,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'unpkg-white-list',
           version: '0.0.0',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
             allowPackages: {
               foo: {
                 version: '0.0.0',
@@ -886,8 +820,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'foo',
           version: '1.0.0',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           },
         });
         await app
@@ -902,9 +835,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/foo/1.0.0/files/index.js')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 403);
-        assert.equal(
+        assert.match(
           res.body.error,
-          '[FORBIDDEN] "foo@1.0.0" not satisfies "0.0.0" to unpkg files, see https://github.com/cnpm/unpkg-white-list'
+          /\[FORBIDDEN\] "foo@1.0.0" not satisfies "0.0.0" to unpkg files, see https:\/\/github\.com\/cnpm\/unpkg-white-list, white list version:/,
         );
       });
 
@@ -917,8 +850,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'unpkg-white-list',
           version: '1.0.0',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
             allowScopes: ['@cnpm'],
           },
         });
@@ -933,8 +865,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: '@cnpm/foo',
           version: '1.0.0',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           },
         });
         await app
@@ -961,8 +892,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'unpkg-white-list',
           version: '2.0.0',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
             allowScopes: ['@cnpm'],
             allowPackages: {
               foo: {
@@ -982,8 +912,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'foo',
           version: '1.0.0',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           },
         });
         await app
@@ -1005,8 +934,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'foo',
           version: '1.0.1',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           },
         });
         await app
@@ -1028,8 +956,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'unpkg-white-list',
           version: '2.0.1',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
             allowScopes: ['@cnpm'],
             allowPackages: {
               foo: {
@@ -1049,8 +976,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'foo',
           version: '1.0.2',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           },
         });
         await app
@@ -1066,9 +992,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/foo/1.0.2/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 403);
-        assert.equal(
+        assert.match(
           res.body.error,
-          '[FORBIDDEN] "foo@1.0.2" not satisfies "3" to unpkg files, see https://github.com/cnpm/unpkg-white-list'
+          /\[FORBIDDEN\] "foo@1.0.2" not satisfies "3" to unpkg files, see https:\/\/github\.com\/cnpm\/unpkg-white-list, white list version:/,
         );
       });
 
@@ -1082,8 +1008,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'unpkg-white-list',
           version: '2.0.0',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
             allowScopes: ['@cnpm'],
             allowPackages: {
               foo: {
@@ -1109,8 +1034,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'foo',
           version: '0.0.0',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           },
         });
         await app
@@ -1132,8 +1056,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'foo',
           version: '0.3.0-rc15',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           },
         });
         await app
@@ -1154,8 +1077,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'baz',
           version: '0.3.0-rc15',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           },
         });
         await app
@@ -1176,8 +1098,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           name: 'bar',
           version: '0.3.0-rc15',
           versionObject: {
-            description:
-              'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
+            description: 'work with utf8mb4 💩, 𝌆 utf8_unicode_ci, foo𝌆bar 🍻',
           },
         });
         await app
@@ -1192,9 +1113,9 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
           .get('/bar/0.3.0-rc15/files/package.json')
           .expect('content-type', 'application/json; charset=utf-8');
         assert.equal(res.status, 403);
-        assert.equal(
+        assert.match(
           res.body.error,
-          '[FORBIDDEN] "bar@0.3.0-rc15" not satisfies "1.0.0" to unpkg files, see https://github.com/cnpm/unpkg-white-list'
+          /\[FORBIDDEN\] "bar@0.3.0-rc15" not satisfies "1.0.0" to unpkg files, see https:\/\/github\.com\/cnpm\/unpkg-white-list, white list version:/,
         );
       });
     });

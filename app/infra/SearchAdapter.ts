@@ -1,11 +1,7 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { EggAppConfig } from 'egg';
-import type {
-  Client as ElasticsearchClient,
-  estypes,
-} from '@elastic/elasticsearch';
+import type { Client as ElasticsearchClient, estypes } from '@elastic/elasticsearch';
+import { AccessLevel, Inject, SingletonProto, Config } from 'egg';
 
-import type { SearchAdapter } from '../common/typing.js';
+import type { SearchAdapter } from '../common/typing.ts';
 
 /**
  * Use elasticsearch to search the huge npm packages.
@@ -16,7 +12,7 @@ import type { SearchAdapter } from '../common/typing.js';
 })
 export class ESSearchAdapter implements SearchAdapter {
   @Inject()
-  private config: EggAppConfig;
+  private config: Config;
 
   @Inject()
   private readonly elasticsearch: ElasticsearchClient; // 由 elasticsearch 插件引入

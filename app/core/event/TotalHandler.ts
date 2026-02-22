@@ -1,6 +1,7 @@
-import { Event, Inject } from '@eggjs/tegg';
-import { PACKAGE_ADDED, PACKAGE_VERSION_ADDED } from './index.js';
-import type { TotalRepository } from '../../repository/TotalRepository.js';
+import { Event, Inject } from 'egg';
+
+import type { TotalRepository } from '../../repository/TotalRepository.ts';
+import { PACKAGE_ADDED, PACKAGE_VERSION_ADDED } from './index.ts';
 
 class TotalHandlerEvent {
   @Inject()

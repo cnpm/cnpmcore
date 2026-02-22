@@ -1,8 +1,10 @@
-import type { Readable } from 'node:stream';
 import type { IncomingHttpHeaders } from 'node:http';
-import type { EggContext } from '@eggjs/tegg';
+import type { Readable } from 'node:stream';
+
 import type { estypes } from '@elastic/elasticsearch';
-import type { CnpmcoreConfig } from '../port/config.js';
+import type { Context } from 'egg';
+
+import type { CnpmcoreConfig } from '../port/config.ts';
 
 export interface UploadResult {
   key: string;
@@ -40,11 +42,7 @@ export interface NFSClient {
 
   createDownloadStream(key: string): Promise<Readable | undefined>;
 
-  download(
-    key: string,
-    filepath: string,
-    options: DownloadOptions
-  ): Promise<void>;
+  download(key: string, filepath: string, options: DownloadOptions): Promise<void>;
 
   url?(key: string): string;
 }
@@ -72,7 +70,7 @@ export interface userResult {
   email: string;
 }
 export interface AuthClient {
-  getAuthUrl(ctx: EggContext): Promise<AuthUrlResult>;
+  getAuthUrl(ctx: Context): Promise<AuthUrlResult>;
   ensureCurrentUser(): Promise<userResult | null>;
 }
 

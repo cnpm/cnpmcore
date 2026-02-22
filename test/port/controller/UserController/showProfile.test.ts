@@ -1,16 +1,14 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/UserController/showProfile.test.ts', () => {
   describe('[GET /-/npm/v1/user] showProfile()', () => {
     it('should 401', async () => {
       const { authorization } = await TestUtil.createUser();
-      let res = await app
-        .httpRequest()
-        .get('/-/npm/v1/user')
-        .set('authorization', `${authorization}wrong`);
+      let res = await app.httpRequest().get('/-/npm/v1/user').set('authorization', `${authorization}wrong`);
       assert.ok(res.status === 401);
       assert.ok(res.body.error === '[UNAUTHORIZED] Invalid token');
 
@@ -21,10 +19,7 @@ describe('test/port/controller/UserController/showProfile.test.ts', () => {
 
     it('should 200', async () => {
       const { authorization, name } = await TestUtil.createUser();
-      const res = await app
-        .httpRequest()
-        .get('/-/npm/v1/user')
-        .set('authorization', authorization);
+      const res = await app.httpRequest().get('/-/npm/v1/user').set('authorization', authorization);
       assert.ok(res.status === 200);
       assert.ok(res.body.name === name);
     });

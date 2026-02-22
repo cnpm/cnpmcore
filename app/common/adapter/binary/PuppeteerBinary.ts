@@ -1,13 +1,8 @@
-import { SingletonProto } from '@eggjs/tegg';
+import { SingletonProto } from 'egg';
 import { XMLParser } from 'fast-xml-parser';
 
-import { BinaryType } from '../../enum/Binary.js';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.js';
+import { BinaryType } from '../../enum/Binary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 export const platforms = ['Linux_x64', 'Mac', 'Mac_Arm', 'Win', 'Win_x64'];
 
@@ -24,11 +19,7 @@ export class PuppeteerBinary extends AbstractBinary {
     this.dirItems = undefined;
   }
 
-  async fetch(
-    dir: string,
-    _binaryName: string,
-    lastData?: Record<string, unknown>
-  ): Promise<FetchResult | undefined> {
+  async fetch(dir: string, _binaryName: string, lastData?: Record<string, unknown>): Promise<FetchResult | undefined> {
     if (!this.dirItems) {
       const s3Url = 'https://chromium-browser-snapshots.storage.googleapis.com';
       const chromiumRevisions = new Map<string, string>();
@@ -38,11 +29,7 @@ export class PuppeteerBinary extends AbstractBinary {
         const revision = lastData?.[platform] as string;
         if (!revision) {
           // 丢弃库中历史不带 lastData 的任务，防止遍历任务过多
-          this.logger.info(
-            'drop puppeteer task if has no last data for platform %s, lastPlatform',
-            platform,
-            lastData
-          );
+          this.logger.info('drop puppeteer task if has no last data for platform %s, lastPlatform', platform, lastData);
           return;
         }
         let marker = revision ? `${platform}/${revision}/REVISIONS` : undefined;
@@ -63,10 +50,7 @@ export class PuppeteerBinary extends AbstractBinary {
           const xml = await this.requestXml(requestUrl);
           const parser = new XMLParser();
           const obj = parser.parse(xml);
-          if (
-            obj.ListBucketResult.IsTruncated === true &&
-            obj.ListBucketResult.NextMarker
-          ) {
+          if (obj.ListBucketResult.IsTruncated === true && obj.ListBucketResult.NextMarker) {
             marker = obj.ListBucketResult.NextMarker;
           } else {
             marker = undefined;
@@ -123,9 +107,7 @@ export class PuppeteerBinary extends AbstractBinary {
     if (platform === 'Mac' || platform === 'Mac_Arm') return 'chrome-mac';
     if (platform === 'Win' || platform === 'Win_x64') {
       // Windows archive name changed at r591479.
-      return Number.parseInt(revision, 10) > 591_479
-        ? 'chrome-win'
-        : 'chrome-win32';
+      return Number.parseInt(revision, 10) > 591_479 ? 'chrome-win' : 'chrome-win32';
     }
     return '';
   }

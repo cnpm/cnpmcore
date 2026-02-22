@@ -1,23 +1,21 @@
 import assert from 'node:assert/strict';
-import type { HttpClientRequestOptions } from 'egg';
-import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../test/TestUtil.js';
-import { HookManageService } from '../../../app/core/service/HookManageService.js';
-import { HookType } from '../../../app/common/enum/Hook.js';
-import { UserRepository } from '../../../app/repository/UserRepository.js';
-import {
-  PACKAGE_TAG_ADDED,
-  PACKAGE_VERSION_ADDED,
-} from '../../../app/core/event/index.js';
-import { Change } from '../../../app/core/entity/Change.js';
-import { ChangeRepository } from '../../../app/repository/ChangeRepository.js';
-import { Task, type TriggerHookTask } from '../../../app/core/entity/Task.js';
-import { HookEvent } from '../../../app/core/entity/HookEvent.js';
-import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService.js';
-import { TaskRepository } from '../../../app/repository/TaskRepository.js';
-import type { Hook } from '../../../app/core/entity/Hook.js';
-import { HookTriggerService } from '../../../app/core/service/HookTriggerService.js';
+import { app, mock } from '@eggjs/mock/bootstrap';
+import type { HttpClientRequestOptions } from 'egg';
+
+import { HookType } from '../../../app/common/enum/Hook.ts';
+import { Change } from '../../../app/core/entity/Change.ts';
+import type { Hook } from '../../../app/core/entity/Hook.ts';
+import { HookEvent } from '../../../app/core/entity/HookEvent.ts';
+import { Task, type TriggerHookTask } from '../../../app/core/entity/Task.ts';
+import { PACKAGE_TAG_ADDED, PACKAGE_VERSION_ADDED } from '../../../app/core/event/index.ts';
+import { CreateHookTriggerService } from '../../../app/core/service/CreateHookTriggerService.ts';
+import { HookManageService } from '../../../app/core/service/HookManageService.ts';
+import { HookTriggerService } from '../../../app/core/service/HookTriggerService.ts';
+import { ChangeRepository } from '../../../app/repository/ChangeRepository.ts';
+import { TaskRepository } from '../../../app/repository/TaskRepository.ts';
+import { UserRepository } from '../../../app/repository/UserRepository.ts';
+import { TestUtil } from '../../../test/TestUtil.ts';
 
 describe('test/core/service/HookTriggerService.test.ts', () => {
   let hookManageService: HookManageService;
@@ -42,7 +40,7 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
       },
       {
         name: username,
-      }
+      },
     );
     const user = await userRepository.findUserByName(username);
     assert.ok(user);
@@ -71,10 +69,7 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
           version: '1.0.0',
         },
       });
-      await Promise.all([
-        changeRepository.addChange(versionChange),
-        changeRepository.addChange(tagChange),
-      ]);
+      await Promise.all([changeRepository.addChange(versionChange), changeRepository.addChange(tagChange)]);
 
       hook = await hookManageService.createHook({
         type: HookType.Package,
@@ -84,20 +79,10 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
         secret: 'mock_secret',
       });
       const versionTask = Task.createCreateHookTask(
-        HookEvent.createPublishEvent(
-          pkgName,
-          versionChange.changeId,
-          '1.0.0',
-          'latest'
-        )
+        HookEvent.createPublishEvent(pkgName, versionChange.changeId, '1.0.0', 'latest'),
       );
       const tagTask = Task.createCreateHookTask(
-        HookEvent.createPublishEvent(
-          pkgName,
-          tagChange.changeId,
-          '1.0.0',
-          'latest'
-        )
+        HookEvent.createPublishEvent(pkgName, tagChange.changeId, '1.0.0', 'latest'),
       );
 
       await Promise.all([
@@ -105,22 +90,18 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
         createHookTriggerService.executeTask(tagTask),
       ]);
 
-      mock(
-        app.httpclient,
-        'request',
-        async (url: string, options: HttpClientRequestOptions) => {
-          callEndpoint = url;
-          callOptions = options;
-          return {
-            status: 200,
-          };
-        }
-      );
+      mock(app.httpclient, 'request', async (url: string, options: HttpClientRequestOptions) => {
+        callEndpoint = url;
+        callOptions = options;
+        return {
+          status: 200,
+        };
+      });
     });
 
     it('should execute trigger', async () => {
       const pushTask = (await taskRepository.findTaskByBizId(
-        `TriggerHook:${versionChange.changeId}:${hook.hookId}`
+        `TriggerHook:${versionChange.changeId}:${hook.hookId}`,
       )) as TriggerHookTask;
       await hookTriggerService.executeTask(pushTask);
       assert.ok(callEndpoint === hook.endpoint);
@@ -146,12 +127,8 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
 
     it('should create each event', async () => {
       const tasks = await Promise.all([
-        taskRepository.findTaskByBizId(
-          `TriggerHook:${versionChange.changeId}:${hook.hookId}`
-        ),
-        taskRepository.findTaskByBizId(
-          `TriggerHook:${tagChange.changeId}:${hook.hookId}`
-        ),
+        taskRepository.findTaskByBizId(`TriggerHook:${versionChange.changeId}:${hook.hookId}`),
+        taskRepository.findTaskByBizId(`TriggerHook:${tagChange.changeId}:${hook.hookId}`),
       ]);
       assert.equal(tasks.filter(Boolean).length, 2);
     });

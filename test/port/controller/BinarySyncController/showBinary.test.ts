@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService.js';
-import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary.js';
-import { SqlcipherBinary } from '../../../../app/common/adapter/binary/SqlcipherBinary.js';
-import { BinaryRepository } from '../../../../app/repository/BinaryRepository.js';
-import { Binary } from '../../../../app/core/entity/Binary.js';
-import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { NodeBinary } from '../../../../app/common/adapter/binary/NodeBinary.ts';
+import { SqlcipherBinary } from '../../../../app/common/adapter/binary/SqlcipherBinary.ts';
+import { Binary } from '../../../../app/core/entity/Binary.ts';
+import { BinarySyncerService } from '../../../../app/core/service/BinarySyncerService.ts';
+import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.ts';
+import { BinaryRepository } from '../../../../app/repository/BinaryRepository.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
   let binarySyncerService: BinarySyncerService;
@@ -33,9 +34,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
     it('should show root dirs', async () => {
       const res = await app.httpRequest().get('/-/binary/');
       assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
       const items = res.body;
       assert.ok(items.length > 0);
       for (const item of items) {
@@ -57,13 +56,11 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: true,
           size: 0,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
       const res = await app.httpRequest().get('/-/binary/');
       assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
       const items = res.body;
       assert.ok(items.length > 0);
       for (const item of items) {
@@ -90,39 +87,24 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       ]);
     });
 
-    it('should 404 when binary not exists', async () => {
-      let res = await app
-        .httpRequest()
-        .get('/-/binary/node-canvas-prebuilt-not-exists/');
+    it('should 404 when binary name not exists', async () => {
+      let res = await app.httpRequest().get('/-/binary/node-canvas-prebuilt-not-exists/');
       assert.equal(res.status, 404);
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
       assert.deepEqual(res.body, {
         error: '[NOT_FOUND] Binary "node-canvas-prebuilt-not-exists" not found',
       });
 
-      res = await app
-        .httpRequest()
-        .get('/-/binary/node-canvas-prebuilt-not-exists/v2.6.1/');
+      res = await app.httpRequest().get('/-/binary/node-canvas-prebuilt-not-exists/v2.6.1/');
       assert.equal(res.status, 404);
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
       assert.deepEqual(res.body, {
         error: '[NOT_FOUND] Binary "node-canvas-prebuilt-not-exists" not found',
       });
 
-      res = await app
-        .httpRequest()
-        .get('/-/binary/node-canvas-prebuilt-not-exists/v2.6.1/foo.json');
+      res = await app.httpRequest().get('/-/binary/node-canvas-prebuilt-not-exists/v2.6.1/foo.json');
       assert.equal(res.status, 404);
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
       assert.deepEqual(res.body, {
         error: '[NOT_FOUND] Binary "node-canvas-prebuilt-not-exists" not found',
       });
@@ -137,22 +119,12 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: true,
           size: 0,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
-      const res = await app
-        .httpRequest()
-        .get('/-/binary/node-canvas-prebuilt/');
-      assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
-      const items = TestUtil.pickKeys(res.body, [
-        'category',
-        'name',
-        'date',
-        'type',
-        'url',
-      ]);
+      const res = await app.httpRequest().get('/-/binary/node-canvas-prebuilt/');
+      assert.equal(res.status, 200);
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
+      const items = TestUtil.pickKeys(res.body, ['category', 'name', 'date', 'type', 'url']);
       assert.deepStrictEqual(items, [
         {
           category: 'node-canvas-prebuilt',
@@ -173,7 +145,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: true,
           size: 0,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
       await binaryRepository.saveBinary(
         Binary.create({
@@ -183,24 +155,12 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: false,
           size: 10,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
-      const res = await app
-        .httpRequest()
-        .get('/-/binary/node-canvas-prebuilt/v2.6.1/');
-      assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
-      const items = TestUtil.pickKeys(res.body, [
-        'category',
-        'name',
-        'date',
-        'type',
-        'url',
-      ]);
-      assert.ok(items.length > 0);
-
+      const res = await app.httpRequest().get('/-/binary/node-canvas-prebuilt/v2.6.1/');
+      assert.equal(res.status, 200);
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
+      const items = TestUtil.pickKeys(res.body, ['category', 'name', 'date', 'type', 'url']);
       assert.deepStrictEqual(items, [
         {
           category: 'node-canvas-prebuilt',
@@ -215,17 +175,11 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
     it('should forbidden invalid paths', async () => {
       const res = await app
         .httpRequest()
-        .get(
-          '/-/binary/chromium-browser-snapshots/Linux_x64/970485/%E4%B8%8B%E8%BD%BD%E7%9A%84'
-        );
+        .get('/-/binary/chromium-browser-snapshots/Linux_x64/970485/%E4%B8%8B%E8%BD%BD%E7%9A%84');
       assert.equal(res.status, 404);
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
       assert.deepEqual(res.body, {
-        error:
-          '[NOT_FOUND] Binary "chromium-browser-snapshots/Linux_x64/970485/下载的" not found',
+        error: '[NOT_FOUND] Binary "chromium-browser-snapshots/Linux_x64/970485/下载的" not found',
       });
     });
 
@@ -234,16 +188,10 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('nodejs.org/site/index.json'),
         persist: false,
       });
-      app.mockHttpclient(
-        'https://nodejs.org/dist/latest/docs/apilinks.json',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile(
-            'nodejs.org/site/latest/docs/apilinks.json'
-          ),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://nodejs.org/dist/latest/docs/apilinks.json', 'GET', {
+        data: await TestUtil.readFixturesFile('nodejs.org/site/latest/docs/apilinks.json'),
+        persist: false,
+      });
       await binarySyncerService.createTask('node', {});
       const task = await binarySyncerService.findExecuteTask();
       assert.ok(task);
@@ -300,25 +248,19 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       let res = await app.httpRequest().get('/-/binary/node/');
       assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
       let items = res.body;
       assert.ok(items.length === 2);
 
       res = await app.httpRequest().get('/-/binary/node');
       assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
       items = res.body;
       assert.ok(items.length === 2);
 
       res = await app.httpRequest().get('/-/binary/node/latest/');
       assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
       items = res.body;
       assert.ok(items.length === 1);
       assert.ok(items[0].name === 'docs/');
@@ -332,9 +274,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       res = await app.httpRequest().get('/-/binary/node/latest/docs/');
       assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
       items = res.body;
       assert.ok(items.length === 1);
       assert.ok(items[0].name === 'apilinks.json');
@@ -346,49 +286,31 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       assert.ok(items[0].size > 0);
       assert.ok(items[0].url.startsWith('http://'));
 
-      res = await app
-        .httpRequest()
-        .get('/-/binary/node/latest/docs/apilinks.json');
+      res = await app.httpRequest().get('/-/binary/node/latest/docs/apilinks.json');
       if (res.status === 200) {
-        assert.ok(
-          res.headers['content-type'] === 'application/json; charset=utf-8'
-        );
-        assert.ok(
-          res.headers['content-disposition'] ===
-            'attachment; filename="apilinks.json"'
-        );
+        assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
+        assert.ok(res.headers['content-disposition'] === 'attachment; filename="apilinks.json"');
       } else {
         assert.ok(res.status === 302);
       }
 
       res = await app.httpRequest().get('/-/binary/node/foo/');
       assert.ok(res.status === 404);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
       let data = res.body;
       assert.ok(data.error === '[NOT_FOUND] Binary "node/foo/" not found');
 
       res = await app.httpRequest().get('/-/binary/node/foo.json');
       assert.ok(res.status === 404);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
       data = res.body;
       assert.ok(data.error === '[NOT_FOUND] Binary "node/foo.json" not found');
 
-      res = await app
-        .httpRequest()
-        .get('/-/binary/node/latest/docs/apilinks-404.json');
+      res = await app.httpRequest().get('/-/binary/node/latest/docs/apilinks-404.json');
       assert.ok(res.status === 404);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
       data = res.body;
-      assert.ok(
-        data.error ===
-          '[NOT_FOUND] Binary "node/latest/docs/apilinks-404.json" not found'
-      );
+      assert.ok(data.error === '[NOT_FOUND] Binary "node/latest/docs/apilinks-404.json" not found');
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -397,11 +319,9 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         'https://journeyapps-node-binary.s3.amazonaws.com/@journeyapps/sqlcipher/v5.3.1/napi-v6-win32-ia32.tar.gz',
         'GET',
         {
-          data: await TestUtil.readFixturesFile(
-            'registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'
-          ),
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
           persist: false,
-        }
+        },
       );
       await binarySyncerService.createTask('@journeyapps/sqlcipher', {});
       const task = await binarySyncerService.findExecuteTask();
@@ -438,23 +358,15 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       });
       await binarySyncerService.executeTask(task);
 
-      let res = await app
-        .httpRequest()
-        .get('/-/binary/@journeyapps/sqlcipher/');
+      let res = await app.httpRequest().get('/-/binary/@journeyapps/sqlcipher/');
       assert.equal(res.status, 200);
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
       let items = res.body;
       assert.ok(items.length === 1);
 
       res = await app.httpRequest().get('/-/binary/@journeyapps/sqlcipher');
       assert.equal(res.status, 200);
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
       items = res.body;
       assert.ok(items.length === 1);
       assert.ok(items[0].name === 'v5.3.1/');
@@ -462,14 +374,9 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       assert.ok(items[0].type === 'dir');
       assert.ok(items[0].size === undefined);
 
-      res = await app
-        .httpRequest()
-        .get('/-/binary/@journeyapps/sqlcipher/v5.3.1/');
+      res = await app.httpRequest().get('/-/binary/@journeyapps/sqlcipher/v5.3.1/');
       assert.equal(res.status, 200);
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
       items = res.body;
       assert.ok(items.length === 1);
       assert.ok(items[0].name === 'napi-v6-win32-ia32.tar.gz');
@@ -483,17 +390,10 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       assert.ok(items[0].modified);
       assert.ok(items[0].url.startsWith('http://'));
 
-      res = await app
-        .httpRequest()
-        .get(
-          '/-/binary/@journeyapps/sqlcipher/v5.3.1/napi-v6-win32-ia32.tar.gz'
-        );
+      res = await app.httpRequest().get('/-/binary/@journeyapps/sqlcipher/v5.3.1/napi-v6-win32-ia32.tar.gz');
       if (res.status === 200) {
         assert.equal(res.headers['content-type'], 'application/gzip');
-        assert.equal(
-          res.headers['content-disposition'],
-          'attachment; filename="napi-v6-win32-ia32.tar.gz"'
-        );
+        assert.equal(res.headers['content-disposition'], 'attachment; filename="napi-v6-win32-ia32.tar.gz"');
       } else {
         assert.equal(res.status, 302);
       }
@@ -509,7 +409,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: true,
           size: 0,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
       await binaryRepository.saveBinary(
         Binary.create({
@@ -519,7 +419,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: true,
           size: 0,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
       await binaryRepository.saveBinary(
         Binary.create({
@@ -529,7 +429,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: false,
           size: 10,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
 
       await binaryRepository.saveBinary(
@@ -540,7 +440,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: false,
           size: 10,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
 
       await binaryRepository.saveBinary(
@@ -551,20 +451,14 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: true,
           size: 0,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
 
       let res = await app.httpRequest().get('/-/binary/canvas');
 
       assert.strictEqual(res.status, 200);
       assert.ok(res.body);
-      let stableData = TestUtil.pickKeys(res.body, [
-        'category',
-        'name',
-        'date',
-        'type',
-        'url',
-      ]);
+      let stableData = TestUtil.pickKeys(res.body, ['category', 'name', 'date', 'type', 'url']);
       assert.deepStrictEqual(stableData, [
         {
           category: 'canvas',
@@ -586,13 +480,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert.ok(res.body);
-      stableData = TestUtil.pickKeys(res.body, [
-        'category',
-        'name',
-        'date',
-        'type',
-        'url',
-      ]);
+      stableData = TestUtil.pickKeys(res.body, ['category', 'name', 'date', 'type', 'url']);
       assert.deepStrictEqual(stableData, [
         {
           category: 'node-canvas-prebuilt',
@@ -614,13 +502,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert.ok(res.body);
-      stableData = TestUtil.pickKeys(res.body, [
-        'category',
-        'name',
-        'date',
-        'type',
-        'url',
-      ]);
+      stableData = TestUtil.pickKeys(res.body, ['category', 'name', 'date', 'type', 'url']);
 
       assert.deepStrictEqual(stableData, [
         {
@@ -636,13 +518,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       assert.strictEqual(res.status, 200);
       assert.ok(res.body);
-      stableData = TestUtil.pickKeys(res.body, [
-        'category',
-        'name',
-        'date',
-        'type',
-        'url',
-      ]);
+      stableData = TestUtil.pickKeys(res.body, ['category', 'name', 'date', 'type', 'url']);
 
       assert.deepStrictEqual(stableData, [
         {
@@ -654,19 +530,11 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
         },
       ]);
 
-      res = await app
-        .httpRequest()
-        .get('/-/binary/node-canvas-prebuilt/v2.6.1/');
+      res = await app.httpRequest().get('/-/binary/node-canvas-prebuilt/v2.6.1/');
 
       assert.strictEqual(res.status, 200);
       assert.ok(res.body);
-      stableData = TestUtil.pickKeys(res.body, [
-        'category',
-        'name',
-        'date',
-        'type',
-        'url',
-      ]);
+      stableData = TestUtil.pickKeys(res.body, ['category', 'name', 'date', 'type', 'url']);
 
       assert.deepStrictEqual(stableData, [
         {
@@ -681,9 +549,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
       res = await app.httpRequest().get('/-/binary/canvas/v2.7.1/');
       assert.strictEqual(res.status, 404);
 
-      res = await app
-        .httpRequest()
-        .get('/-/binary/node-canvas-prebuilt/v2.7.1/');
+      res = await app.httpRequest().get('/-/binary/node-canvas-prebuilt/v2.7.1/');
 
       assert.strictEqual(res.status, 404);
     });
@@ -697,7 +563,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: true,
           size: 0,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
       await binaryRepository.saveBinary(
         Binary.create({
@@ -707,7 +573,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: true,
           size: 0,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
       await binaryRepository.saveBinary(
         Binary.create({
@@ -717,7 +583,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: false,
           size: 10,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
 
       await binaryRepository.saveBinary(
@@ -728,7 +594,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: false,
           size: 10,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
 
       await binaryRepository.saveBinary(
@@ -739,22 +605,18 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: true,
           size: 0,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
 
       mock(nfsClientAdapter, 'url', async (storeKey: string) => {
         return `https://cdn.mock.com${storeKey}`;
       });
-      const res = await app
-        .httpRequest()
-        .get(
-          '/-/binary/canvas/v2.6.1/canvas-v2.6.1-node-v57-linux-glibc-x64.tar.gz'
-        );
+      const res = await app.httpRequest().get('/-/binary/canvas/v2.6.1/canvas-v2.6.1-node-v57-linux-glibc-x64.tar.gz');
 
       assert.strictEqual(res.status, 302);
       assert.strictEqual(
         res.headers.location,
-        'https://cdn.mock.com/binaries/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz'
+        'https://cdn.mock.com/binaries/node-canvas-prebuilt/v2.6.1/node-canvas-prebuilt-v2.6.1-node-v57-linux-glibc-x64.tar.gz',
       );
     });
 
@@ -767,7 +629,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: true,
           size: 0,
           date: '2021-12-14T13:12:31.587Z',
-        })
+        }),
       );
       await binaryRepository.saveBinary(
         Binary.create({
@@ -777,7 +639,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: false,
           size: 10,
           date: '2021-12-15T13:12:31.587Z',
-        })
+        }),
       );
       await binaryRepository.saveBinary(
         Binary.create({
@@ -787,7 +649,7 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: false,
           size: 10,
           date: '2021-12-16T13:12:31.587Z',
-        })
+        }),
       );
       await binaryRepository.saveBinary(
         Binary.create({
@@ -797,24 +659,14 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
           isDir: false,
           size: 10,
           date: '2021-12-17T13:12:31.587Z',
-        })
+        }),
       );
       const res = await app
         .httpRequest()
-        .get(
-          `/-/binary/node-canvas-prebuilt/v2.6.1/?since=2021-12-15T13:12:31.587Z&limit=1`
-        );
+        .get(`/-/binary/node-canvas-prebuilt/v2.6.1/?since=2021-12-15T13:12:31.587Z&limit=1`);
       assert.ok(res.status === 200);
-      assert.ok(
-        res.headers['content-type'] === 'application/json; charset=utf-8'
-      );
-      const items = TestUtil.pickKeys(res.body, [
-        'category',
-        'name',
-        'date',
-        'type',
-        'url',
-      ]);
+      assert.ok(res.headers['content-type'] === 'application/json; charset=utf-8');
+      const items = TestUtil.pickKeys(res.body, ['category', 'name', 'date', 'type', 'url']);
       assert.equal(items.length, 1);
 
       assert.deepStrictEqual(items, [
@@ -829,20 +681,10 @@ describe('test/port/controller/BinarySyncController/showBinary.test.ts', () => {
 
       const res2 = await app
         .httpRequest()
-        .get(
-          `/-/binary/node-canvas-prebuilt/v2.6.1/?since=2021-12-16T13:12:31.587Z&limit=1`
-        );
+        .get(`/-/binary/node-canvas-prebuilt/v2.6.1/?since=2021-12-16T13:12:31.587Z&limit=1`);
       assert.ok(res2.status === 200);
-      assert.ok(
-        res2.headers['content-type'] === 'application/json; charset=utf-8'
-      );
-      const items2 = TestUtil.pickKeys(res2.body, [
-        'category',
-        'name',
-        'date',
-        'type',
-        'url',
-      ]);
+      assert.ok(res2.headers['content-type'] === 'application/json; charset=utf-8');
+      const items2 = TestUtil.pickKeys(res2.body, ['category', 'name', 'date', 'type', 'url']);
       assert.equal(items2.length, 1);
 
       assert.deepStrictEqual(items2, [

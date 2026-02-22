@@ -1,4 +1,4 @@
-import { BinaryType } from '../app/common/enum/Binary.js';
+import { BinaryType } from '../app/common/enum/Binary.ts';
 
 const binaries = {
   // NwjsBinary
@@ -13,8 +13,7 @@ const binaries = {
   // NodeBinary
   node: {
     category: 'node',
-    description:
-      "Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.",
+    description: "Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.",
     type: BinaryType.Node,
     repo: 'nodejs/node',
     distUrl: 'https://nodejs.org/dist',
@@ -35,8 +34,7 @@ const binaries = {
   },
   'node-unofficial-builds': {
     category: 'node-unofficial-builds',
-    description:
-      'Node.js unofficial-builds project https://unofficial-builds.nodejs.org/',
+    description: 'Node.js unofficial-builds project https://unofficial-builds.nodejs.org/',
     type: BinaryType.Node,
     repo: 'nodejs/unofficial-builds',
     distUrl: 'https://unofficial-builds.nodejs.org/download/release',
@@ -68,12 +66,14 @@ const binaries = {
     type: BinaryType.GitHub,
     repo: 'astral-sh/python-build-standalone',
     distUrl: 'https://github.com/astral-sh/python-build-standalone/releases',
+    options: {
+      perPage: 10,
+    },
   },
   // CypressBinary
   cypress: {
     category: 'cypress',
-    description:
-      'Fast, easy and reliable testing for anything that runs in a browser.',
+    description: 'Fast, easy and reliable testing for anything that runs in a browser.',
     type: BinaryType.Cypress,
     repo: 'cypress-io/cypress',
     distUrl: 'https://www.cypress.io/',
@@ -92,8 +92,7 @@ const binaries = {
     description: 'chromium-browser-snapshots sync for puppeteer',
     type: BinaryType.Puppeteer,
     repo: 'puppeteer/puppeteer',
-    distUrl:
-      'https://chromium-browser-snapshots.storage.googleapis.com/?delimiter=/&prefix=',
+    distUrl: 'https://chromium-browser-snapshots.storage.googleapis.com/?delimiter=/&prefix=',
   },
   // Firefox binary for puppeteer
   firefox: {
@@ -142,8 +141,7 @@ const binaries = {
   },
   wrtc: {
     category: 'wrtc',
-    description:
-      'node-webrtc is a Node.js Native Addon that provides bindings to WebRTC M87.',
+    description: 'node-webrtc is a Node.js Native Addon that provides bindings to WebRTC M87.',
     type: BinaryType.NodePreGyp,
     repo: 'node-webrtc/node-webrtc',
     distUrl: 'https://node-webrtc.s3.amazonaws.com',
@@ -168,8 +166,7 @@ const binaries = {
   // BucketBinary
   chromedriver: {
     category: 'chromedriver',
-    description:
-      'WebDriver is an open source tool for automated testing of webapps across many browsers',
+    description: 'WebDriver is an open source tool for automated testing of webapps across many browsers',
     type: BinaryType.Bucket,
     repo: 'https://chromedriver.chromium.org/contributing',
     distUrl: 'https://chromedriver.storage.googleapis.com/',
@@ -205,24 +202,21 @@ const binaries = {
   },
   tensorflow: {
     category: 'tensorflow',
-    description:
-      'A WebGL accelerated JavaScript library for training and deploying ML models.',
+    description: 'A WebGL accelerated JavaScript library for training and deploying ML models.',
     type: BinaryType.Bucket,
     repo: 'tensorflow/tfjs',
     distUrl: 'https://tensorflow.storage.googleapis.com/',
   },
   'tf-builds': {
     category: 'tf-builds',
-    description:
-      'A WebGL accelerated JavaScript library for training and deploying ML models.',
+    description: 'A WebGL accelerated JavaScript library for training and deploying ML models.',
     type: BinaryType.Bucket,
     repo: 'tensorflow/tfjs',
     distUrl: 'https://tf-builds.storage.googleapis.com/',
   },
   prisma: {
     category: 'prisma',
-    description:
-      'Next-generation Node.js and TypeScript ORM https://www.prisma.io/',
+    description: 'Next-generation Node.js and TypeScript ORM https://www.prisma.io/',
     type: BinaryType.Prisma,
     repo: 'prisma/prisma',
     distUrl: 'https://list-binaries.prisma-orm.workers.dev/',
@@ -230,8 +224,7 @@ const binaries = {
   // ImageminBinary
   'jpegtran-bin': {
     category: 'jpegtran-bin',
-    description:
-      'jpegtran bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'jpegtran bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/jpegtran-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -256,8 +249,7 @@ const binaries = {
   },
   'pngquant-bin': {
     category: 'pngquant-bin',
-    description:
-      'pngquant bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'pngquant bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/pngquant-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -280,8 +272,7 @@ const binaries = {
   },
   'mozjpeg-bin': {
     category: 'mozjpeg-bin',
-    description:
-      'mozjpeg bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'mozjpeg bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/mozjpeg-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -307,8 +298,7 @@ const binaries = {
   },
   'gifsicle-bin': {
     category: 'gifsicle-bin',
-    description:
-      'gifsicle bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'gifsicle bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/gifsicle-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -334,8 +324,7 @@ const binaries = {
   },
   'optipng-bin': {
     category: 'optipng-bin',
-    description:
-      'optipng bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'optipng bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/optipng-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -361,8 +350,7 @@ const binaries = {
   },
   'zopflipng-bin': {
     category: 'zopflipng-bin',
-    description:
-      'zopflipng bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'zopflipng bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/zopflipng-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -384,8 +372,7 @@ const binaries = {
   },
   'jpegoptim-bin': {
     category: 'jpegoptim-bin',
-    description:
-      'jpegoptim bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'jpegoptim bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/jpegoptim-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -407,8 +394,7 @@ const binaries = {
   },
   'jpeg-recompress-bin': {
     category: 'jpeg-recompress-bin',
-    description:
-      'jpeg-recompress bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'jpeg-recompress bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/jpeg-recompress-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -430,8 +416,7 @@ const binaries = {
   },
   'pngcrush-bin': {
     category: 'pngcrush-bin',
-    description:
-      'pngcrush bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'pngcrush bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/pngcrush-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -453,8 +438,7 @@ const binaries = {
   },
   'pngout-bin': {
     category: 'pngout-bin',
-    description:
-      'pngout bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'pngout bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/pngout-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -478,8 +462,7 @@ const binaries = {
   },
   'gif2webp-bin': {
     category: 'gif2webp-bin',
-    description:
-      'gif2webp bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'gif2webp bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/gif2webp-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -500,8 +483,7 @@ const binaries = {
   },
   'guetzli-bin': {
     category: 'guetzli-bin',
-    description:
-      'guetzli bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'guetzli bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/guetzli-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -524,8 +506,7 @@ const binaries = {
   },
   'advpng-bin': {
     category: 'advpng-bin',
-    description:
-      'advpng bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'advpng bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/advpng-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -546,8 +527,7 @@ const binaries = {
   },
   'cwebp-bin': {
     category: 'cwebp-bin',
-    description:
-      'cwebp bin-wrapper that makes it seamlessly available as a local dependency',
+    description: 'cwebp bin-wrapper that makes it seamlessly available as a local dependency',
     type: BinaryType.Imagemin,
     repo: 'imagemin/cwebp-bin',
     distUrl: 'https://raw.githubusercontent.com',
@@ -594,16 +574,14 @@ const binaries = {
   },
   'sass-embedded': {
     category: 'sass-embedded',
-    description:
-      'This is a wrapper for Dart Sass that implements the compiler side of the Embedded Sass protocol.',
+    description: 'This is a wrapper for Dart Sass that implements the compiler side of the Embedded Sass protocol.',
     type: BinaryType.GitHub,
     repo: 'sass/dart-sass-embedded',
     distUrl: 'https://github.com/sass/dart-sass-embedded/releases',
   },
   electron: {
     category: 'electron',
-    description:
-      'Build cross-platform desktop apps with JavaScript, HTML, and CSS',
+    description: 'Build cross-platform desktop apps with JavaScript, HTML, and CSS',
     type: BinaryType.Electron,
     repo: 'electron/electron',
     distUrl: 'https://github.com/electron/electron/releases',
@@ -614,8 +592,7 @@ const binaries = {
   },
   'electron-nightly': {
     category: 'electron-nightly',
-    description:
-      'Build cross-platform desktop apps with JavaScript, HTML, and CSS',
+    description: 'Build cross-platform desktop apps with JavaScript, HTML, and CSS',
     type: BinaryType.GitHub,
     repo: 'electron/nightlies',
     distUrl: 'https://github.com/electron/nightlies/releases',
@@ -629,8 +606,7 @@ const binaries = {
       'electron-builder downloads required tools files on demand (e.g. to code sign windows application, to make AppX).',
     type: BinaryType.GitHub,
     repo: 'electron-userland/electron-builder-binaries',
-    distUrl:
-      'https://github.com/electron-userland/electron-builder-binaries/releases',
+    distUrl: 'https://github.com/electron-userland/electron-builder-binaries/releases',
   },
   'ffmpeg-static': {
     category: 'ffmpeg-static',
@@ -676,8 +652,7 @@ const binaries = {
   },
   leveldown: {
     category: 'leveldown',
-    description:
-      'Pure C++ Node.js LevelDB binding. An abstract-leveldown compliant store.',
+    description: 'Pure C++ Node.js LevelDB binding. An abstract-leveldown compliant store.',
     type: BinaryType.GitHub,
     repo: 'Level/leveldown',
     distUrl: 'https://github.com/Level/leveldown/releases',
@@ -698,8 +673,7 @@ const binaries = {
   },
   flow: {
     category: 'flow',
-    description:
-      'Adds static typing to JavaScript to improve developer productivity and code quality.',
+    description: 'Adds static typing to JavaScript to improve developer productivity and code quality.',
     type: BinaryType.GitHub,
     repo: 'facebook/flow',
     distUrl: 'https://github.com/facebook/flow/releases',
@@ -734,8 +708,7 @@ const binaries = {
   },
   'sentry-cli': {
     category: 'sentry-cli',
-    description:
-      'A command line utility to work with Sentry. https://docs.sentry.io/cli/',
+    description: 'A command line utility to work with Sentry. https://docs.sentry.io/cli/',
     type: BinaryType.GitHub,
     repo: 'getsentry/sentry-cli',
     distUrl: 'https://github.com/getsentry/sentry-cli/releases',
@@ -766,8 +739,7 @@ const binaries = {
   },
   'node-swc': {
     category: 'node-swc',
-    description:
-      'Experimental repo to avoid spamming watchers, see https://github.com/swc-project/swc',
+    description: 'Experimental repo to avoid spamming watchers, see https://github.com/swc-project/swc',
     type: BinaryType.GitHub,
     repo: 'swc-project/node-swc',
     distUrl: 'https://github.com/swc-project/node-swc/releases',
@@ -824,8 +796,7 @@ const binaries = {
   },
   'node-re2': {
     category: 'node-re2',
-    description:
-      'node.js bindings for RE2: fast, safe alternative to backtracking regular expression engines.',
+    description: 'node.js bindings for RE2: fast, safe alternative to backtracking regular expression engines.',
     type: BinaryType.GitHub,
     repo: 'uhop/node-re2',
     distUrl: 'https://github.com/uhop/node-re2/releases',
@@ -861,8 +832,7 @@ const binaries = {
   },
   nydus: {
     category: 'nydus',
-    description:
-      'the Dragonfly image service, providing fast, secure and easy access to container images.',
+    description: 'the Dragonfly image service, providing fast, secure and easy access to container images.',
     type: BinaryType.GitHub,
     repo: 'dragonflyoss/image-service',
     distUrl: 'https://github.com/dragonflyoss/image-service/releases',
@@ -870,8 +840,7 @@ const binaries = {
   canvas: {
     // canvas@<=2.6.1 二进制需要从 node-canvas-prebuilt 下载
     category: 'node-canvas-prebuilt',
-    description:
-      'Node canvas is a Cairo backed Canvas implementation for NodeJS.',
+    description: 'Node canvas is a Cairo backed Canvas implementation for NodeJS.',
     type: BinaryType.GitHub,
     repo: 'Automattic/node-canvas',
     distUrl: 'https://github.com/Automattic/node-canvas/releases',
@@ -924,8 +893,7 @@ const binaries = {
   },
   'ant-design-charts': {
     category: 'ant-design-charts',
-    description:
-      'A React Chart Library https://ant-design-charts-next.antgroup.com/',
+    description: 'A React Chart Library https://ant-design-charts-next.antgroup.com/',
     type: BinaryType.GitHub,
     repo: 'ant-design/ant-design-charts',
     distUrl: 'https://github.com/ant-design/ant-design-charts/releases',
@@ -940,8 +908,7 @@ const binaries = {
   },
   bun: {
     category: 'bun',
-    description:
-      'Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one',
+    description: 'Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one',
     type: BinaryType.GitHub,
     repo: 'oven-sh/bun',
     distUrl: 'https://github.com/oven-sh/bun/releases',
@@ -958,31 +925,42 @@ const binaries = {
     description: "Microsofts' EdgeDriver",
     type: BinaryType.Edgedriver,
     repo: 'webdriverio-community/node-edgedriver',
-    distUrl:
-      'https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/',
+    distUrl: 'https://developer.microsoft.com/zh-cn/microsoft-edge/tools/webdriver/',
   },
   'homebrew-macos-cross-toolchains': {
     category: 'homebrew-macos-cross-toolchains',
     description: 'macOS cross compiler toolchains',
     type: BinaryType.GitHub,
     repo: 'messense/homebrew-macos-cross-toolchains',
-    distUrl:
-      'https://github.com/messense/homebrew-macos-cross-toolchains/releases',
+    distUrl: 'https://github.com/messense/homebrew-macos-cross-toolchains/releases',
   },
   'node-pty-prebuilt-multiarch': {
     category: 'node-pty-prebuilt-multiarch',
     description: 'Prebuilt binaries for node-pty',
     type: BinaryType.GitHub,
     repo: 'homebridge/node-pty-prebuilt-multiarch',
-    distUrl:
-      'https://github.com/homebridge/node-pty-prebuilt-multiarch/releases',
+    distUrl: 'https://github.com/homebridge/node-pty-prebuilt-multiarch/releases',
   },
-  'onnxruntime': {
+  onnxruntime: {
     category: 'onnxruntime',
     description: 'ONNX Runtime Node.js binding enables Node.js applications to run ONNX model inference.',
     type: BinaryType.GitHub,
     repo: 'microsoft/onnxruntime',
     distUrl: 'https://github.com/microsoft/onnxruntime/releases/',
+  },
+  'ripgrep-prebuilt': {
+    category: 'ripgrep-prebuilt',
+    description: 'Prebuilt ripgrep binaries for Node.js projects',
+    type: BinaryType.GitHub,
+    repo: 'microsoft/ripgrep-prebuilt',
+    distUrl: 'https://github.com/microsoft/ripgrep-prebuilt/releases',
+  },
+  'ffmpeg-builds': {
+    category: 'ffmpeg-builds',
+    description: 'Static Windows (x86_64) and Linux (x86_64) Builds of ffmpeg master and latest release branch.',
+    type: BinaryType.GitHub,
+    repo: 'KarinJS/FFmpeg-Builds',
+    distUrl: 'https://github.com/KarinJS/FFmpeg-Builds/releases',
   },
 } as const;
 
@@ -1001,6 +979,8 @@ export interface BinaryTaskConfig {
     binFiles?: Record<string, readonly string[]>;
     // default is 1
     maxPage?: number;
+    // default is 100
+    perPage?: number;
     // custom npm package name, for ImageminBinary
     npmPackageName?: string;
     // custom for NodePreGypBinary

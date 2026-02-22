@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
 import { once } from 'node:events';
 import type { Server, AddressInfo } from 'node:net';
+import path from 'node:path';
 
 import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
 
-import { TestUtil } from '../../../test/TestUtil.js';
-import { npmLogin } from '../CliUtil.js';
+import { TestUtil } from '../../../test/TestUtil.ts';
+import { npmLogin } from '../CliUtil.ts';
 
 describe('test/cli/npm/install.test.ts', () => {
   let server: Server;
@@ -40,34 +40,16 @@ describe('test/cli/npm/install.test.ts', () => {
   beforeEach(async () => {
     await npmLogin(registry, userconfig);
     await coffee
-      .spawn(
-        'npm',
-        [
-          'publish',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ],
-        {
-          cwd: fooPkgDir,
-        }
-      )
+      .spawn('npm', ['publish', `--registry=${registry}`, `--userconfig=${userconfig}`, `--cache=${cacheDir}`], {
+        cwd: fooPkgDir,
+      })
       .debug()
       // .expect('code', 0)
       .end();
     await coffee
-      .spawn(
-        'npm',
-        [
-          'publish',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ],
-        {
-          cwd: TestUtil.getFixtures('@cnpm/foo-2.0.0'),
-        }
-      )
+      .spawn('npm', ['publish', `--registry=${registry}`, `--userconfig=${userconfig}`, `--cache=${cacheDir}`], {
+        cwd: TestUtil.getFixtures('@cnpm/foo-2.0.0'),
+      })
       .debug()
       // .expect('code', 0)
       .end();
@@ -112,7 +94,7 @@ describe('test/cli/npm/install.test.ts', () => {
           ],
           {
             cwd: demoDir,
-          }
+          },
         )
         .debug()
         .expect('stdout', /\/@cnpm\/foo\/-\/foo-\d+\.0\.0\.tgz/)
@@ -133,7 +115,7 @@ describe('test/cli/npm/install.test.ts', () => {
           ],
           {
             cwd: demoDir,
-          }
+          },
         )
         .debug()
         .expect('stdout', /latest: \d+\.0\.0/)
@@ -154,7 +136,7 @@ describe('test/cli/npm/install.test.ts', () => {
           ],
           {
             cwd: demoDir,
-          }
+          },
         )
         .debug()
         .expect('code', 0)
@@ -174,7 +156,7 @@ describe('test/cli/npm/install.test.ts', () => {
           ],
           {
             cwd: demoDir,
-          }
+          },
         )
         .debug()
         .expect('stdout', /- @cnpm\/foo/)
@@ -194,7 +176,7 @@ describe('test/cli/npm/install.test.ts', () => {
           ],
           {
             cwd: demoDir,
-          }
+          },
         )
         .debug()
         .expect('stdout', /- @cnpm\/foo/)

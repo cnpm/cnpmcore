@@ -1,11 +1,7 @@
-import {
-  Inject,
-  QualifierImplDecoratorUtil,
-  type ImplDecorator,
-} from '@eggjs/tegg';
-import type { RegistryType } from '../../../common/enum/Registry.js';
-import type { Registry } from '../../../core/entity/Registry.js';
-import type { EggHttpClient, EggLogger } from 'egg';
+import { Inject, QualifierImplDecoratorUtil, type ImplDecorator, Logger, HttpClient } from 'egg';
+
+import type { RegistryType } from '../../../common/enum/Registry.ts';
+import type { Registry } from '../../../core/entity/Registry.ts';
 
 export const CHANGE_STREAM_ATTRIBUTE = 'CHANGE_STREAM_ATTRIBUTE';
 export interface ChangesStreamChange {
@@ -15,22 +11,15 @@ export interface ChangesStreamChange {
 
 export abstract class AbstractChangeStream {
   @Inject()
-  protected logger: EggLogger;
+  protected logger: Logger;
 
   @Inject()
-  protected httpclient: EggHttpClient;
+  protected httpClient: HttpClient;
 
   abstract getInitialSince(registry: Registry): Promise<string>;
-  abstract fetchChanges(
-    registry: Registry,
-    since: string
-  ): AsyncGenerator<ChangesStreamChange>;
+  abstract fetchChanges(registry: Registry, since: string): AsyncGenerator<ChangesStreamChange>;
 
-  getChangesStreamUrl(
-    registry: Registry,
-    since: string,
-    limit?: number
-  ): string {
+  getChangesStreamUrl(registry: Registry, since: string, limit?: number): string {
     const url = new URL(registry.changeStream);
     url.searchParams.set('since', since);
     if (limit) {
@@ -40,10 +29,5 @@ export abstract class AbstractChangeStream {
   }
 }
 
-export const RegistryChangesStream: ImplDecorator<
-  AbstractChangeStream,
-  typeof RegistryType
-> = QualifierImplDecoratorUtil.generatorDecorator(
-  AbstractChangeStream,
-  CHANGE_STREAM_ATTRIBUTE
-);
+export const RegistryChangesStream: ImplDecorator<AbstractChangeStream, typeof RegistryType> =
+  QualifierImplDecoratorUtil.generatorDecorator(AbstractChangeStream, CHANGE_STREAM_ATTRIBUTE);

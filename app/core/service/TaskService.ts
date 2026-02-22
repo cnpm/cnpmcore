@@ -1,11 +1,15 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { debuglog } from 'node:util';
 
-import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
-import { TaskState, TaskType } from '../../common/enum/Task.js';
-import { AbstractService } from '../../common/AbstractService.js';
-import type { TaskRepository } from '../../repository/TaskRepository.js';
-import type { Task, CreateSyncPackageTaskData } from '../entity/Task.js';
-import type { QueueAdapter } from '../../common/typing.js';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
+
+import { AbstractService } from '../../common/AbstractService.ts';
+import type { NFSAdapter } from '../../common/adapter/NFSAdapter.ts';
+import { TaskState, TaskType } from '../../common/enum/Task.ts';
+import type { QueueAdapter } from '../../common/typing.ts';
+import type { TaskRepository } from '../../repository/TaskRepository.ts';
+import type { Task, CreateSyncPackageTaskData } from '../entity/Task.ts';
+
+const debug = debuglog('cnpmcore/app/core/service/TaskService');
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -23,10 +27,7 @@ export class TaskService extends AbstractService {
   }
 
   public async createTask(task: Task, addTaskQueueOnExists: boolean) {
-    const existsTask = await this.taskRepository.findTaskByTargetName(
-      task.targetName,
-      task.type
-    );
+    const existsTask = await this.taskRepository.findTaskByTargetName(task.targetName, task.type);
 
     // 只在包同步场景下做任务合并，其余场景通过 bizId 来进行任务幂等
     if (existsTask && task.needMergeWhenWaiting()) {
@@ -35,23 +36,15 @@ export class TaskService extends AbstractService {
       if (existsTask.state === TaskState.Waiting) {
         if (task.type === TaskType.SyncPackage) {
           // 如果是specificVersions的任务则可能可以和存量任务进行合并
-          const specificVersions = (task as Task<CreateSyncPackageTaskData>)
-            .data?.specificVersions;
-          const existsTaskSpecificVersions = (
-            existsTask as Task<CreateSyncPackageTaskData>
-          ).data?.specificVersions;
+          const specificVersions = (task as Task<CreateSyncPackageTaskData>).data?.specificVersions;
+          const existsTaskSpecificVersions = (existsTask as Task<CreateSyncPackageTaskData>).data?.specificVersions;
           if (existsTaskSpecificVersions) {
             if (specificVersions) {
               // 存量的任务和新增任务都是同步指定版本的任务，合并两者版本至存量任务
-              await this.taskRepository.updateSpecificVersionsOfWaitingTask(
-                existsTask,
-                specificVersions
-              );
+              await this.taskRepository.updateSpecificVersionsOfWaitingTask(existsTask, specificVersions);
             } else {
               // 新增任务是全量同步任务，移除存量任务中的指定版本使其成为全量同步任务
-              await this.taskRepository.updateSpecificVersionsOfWaitingTask(
-                existsTask
-              );
+              await this.taskRepository.updateSpecificVersionsOfWaitingTask(existsTask);
             }
           }
           // 存量任务是全量同步任务，直接提高任务优先级
@@ -67,7 +60,7 @@ export class TaskService extends AbstractService {
               task.type,
               task.targetName,
               task.taskId,
-              queueLength
+              queueLength,
             );
           }
         }
@@ -82,7 +75,7 @@ export class TaskService extends AbstractService {
       task.type,
       task.targetName,
       task.taskId,
-      queueLength
+      queueLength,
     );
     return task;
   }
@@ -100,7 +93,7 @@ export class TaskService extends AbstractService {
       task.type,
       task.targetName,
       task.taskId,
-      queueLength
+      queueLength,
     );
   }
 
@@ -131,10 +124,7 @@ export class TaskService extends AbstractService {
       }
 
       const condition = task.start();
-      const saveSucceed = await this.taskRepository.idempotentSaveTask(
-        task,
-        condition
-      );
+      const saveSucceed = await this.taskRepository.idempotentSaveTask(task, condition);
       if (!saveSucceed) {
         taskId = await this.queueAdapter.pop<string>(taskType);
         continue;
@@ -147,10 +137,7 @@ export class TaskService extends AbstractService {
 
   public async retryExecuteTimeoutTasks() {
     // try processing timeout tasks in 10 mins
-    const tasks = await this.taskRepository.findTimeoutTasks(
-      TaskState.Processing,
-      60_000 * 10
-    );
+    const tasks = await this.taskRepository.findTimeoutTasks(TaskState.Processing, 60_000 * 10);
     for (const task of tasks) {
       try {
         // ignore ChangesStream task, it won't timeout
@@ -161,7 +148,7 @@ export class TaskService extends AbstractService {
             task.type,
             task.targetName,
             task.taskId,
-            task.attempts
+            task.attempts,
           );
           continue;
         }
@@ -175,7 +162,7 @@ export class TaskService extends AbstractService {
           task.type,
           task.targetName,
           task.taskId,
-          task.attempts
+          task.attempts,
         );
       } catch (e) {
         this.logger.error(
@@ -183,16 +170,13 @@ export class TaskService extends AbstractService {
           task.type,
           task.targetName,
           task.taskId,
-          task.attempts
+          task.attempts,
         );
         this.logger.error(e);
       }
     }
     // try waiting timeout tasks in 30 mins
-    const waitingTasks = await this.taskRepository.findTimeoutTasks(
-      TaskState.Waiting,
-      60_000 * 30
-    );
+    const waitingTasks = await this.taskRepository.findTimeoutTasks(TaskState.Waiting, 60_000 * 30);
     for (const task of waitingTasks) {
       try {
         await this.retryTask(task);
@@ -200,7 +184,7 @@ export class TaskService extends AbstractService {
           '[TaskService.retryExecuteTimeoutTasks:retryWaiting] taskType: %s, targetName: %s, taskId: %s waiting too long',
           task.type,
           task.targetName,
-          task.taskId
+          task.taskId,
         );
       } catch (e) {
         this.logger.error(
@@ -208,7 +192,7 @@ export class TaskService extends AbstractService {
           task.type,
           task.targetName,
           task.taskId,
-          task.attempts
+          task.attempts,
         );
         this.logger.error(e);
       }
@@ -224,11 +208,7 @@ export class TaskService extends AbstractService {
     await this.taskRepository.saveTask(task);
   }
 
-  public async finishTask(
-    task: Task,
-    taskState: TaskState,
-    appendLog?: string
-  ) {
+  public async finishTask(task: Task, taskState: TaskState, appendLog?: string) {
     if (appendLog) {
       await this.appendLogToNFS(task, appendLog);
     }
@@ -237,6 +217,7 @@ export class TaskService extends AbstractService {
   }
 
   private async appendLogToNFS(task: Task, appendLog: string) {
+    debug('appendLogToNFS: %s\n%s', task.logPath, appendLog);
     try {
       const nextPosition = await this.nfsAdapter.appendBytes(
         task.logPath,
@@ -244,7 +225,7 @@ export class TaskService extends AbstractService {
         task.logStorePosition,
         {
           'Content-Type': 'text/plain; charset=utf-8',
-        }
+        },
       );
       if (nextPosition) {
         task.logStorePosition = nextPosition;
@@ -252,15 +233,9 @@ export class TaskService extends AbstractService {
     } catch (err) {
       // [PositionNotEqualToLengthError]: Position is not equal to file length, status: 409
       // [ObjectNotAppendableError]: The object is not appendable
-      if (
-        err.code === 'PositionNotEqualToLength' ||
-        err.code === 'ObjectNotAppendable'
-      ) {
+      if (err.code === 'PositionNotEqualToLength' || err.code === 'ObjectNotAppendable') {
         // override exists log file
-        await this.nfsAdapter.uploadBytes(
-          task.logPath,
-          Buffer.from(`${appendLog}\n`)
-        );
+        await this.nfsAdapter.uploadBytes(task.logPath, Buffer.from(`${appendLog}\n`));
         return;
       }
       throw err;

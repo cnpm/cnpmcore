@@ -1,15 +1,13 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/UserController/logout.test.ts', () => {
   describe('[DELETE /-/user/token/:token] logout()', () => {
     it('should {ok: false} when not login', async () => {
-      const res = await app
-        .httpRequest()
-        .delete('/-/user/token/some-token')
-        .expect(200);
+      const res = await app.httpRequest().delete('/-/user/token/some-token').expect(200);
       assert.equal(res.body.ok, false);
     });
 

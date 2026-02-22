@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/PackageTagController/removeTag.test.ts', () => {
   let publisher: TestUser;
@@ -58,7 +58,7 @@ describe('test/port/controller/PackageTagController/removeTag.test.ts', () => {
         .expect(403);
       assert.equal(
         res.body.error,
-        `[FORBIDDEN] "${other.name}" not authorized to modify @cnpm/koa, please contact maintainers: "${publisher.name}"`
+        `[FORBIDDEN] "${other.name}" not authorized to modify @cnpm/koa, please contact maintainers: "${publisher.name}"`,
       );
     });
 
@@ -102,10 +102,7 @@ describe('test/port/controller/PackageTagController/removeTag.test.ts', () => {
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .expect(422);
-      assert.equal(
-        res.body.error,
-        '[INVALID_PARAM] tag: must match format "semver-tag"'
-      );
+      assert.equal(res.body.error, '[INVALID_PARAM] tag: must match format "semver-tag"');
     });
 
     it('should 422 when tag is latest', async () => {
@@ -126,10 +123,7 @@ describe('test/port/controller/PackageTagController/removeTag.test.ts', () => {
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .expect(403);
-      assert.equal(
-        res.body.error,
-        '[FORBIDDEN] Can\'t remove the "latest" tag'
-      );
+      assert.equal(res.body.error, '[FORBIDDEN] Can\'t remove the "latest" tag');
     });
 
     it('should 200', async () => {
@@ -172,9 +166,7 @@ describe('test/port/controller/PackageTagController/removeTag.test.ts', () => {
 
       res = await app
         .httpRequest()
-        .put(
-          `/-/package/${pkg.name}/dist-tags/${encodeURIComponent(' beta2 ')}`
-        )
+        .put(`/-/package/${pkg.name}/dist-tags/${encodeURIComponent(' beta2 ')}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .set('content-type', 'application/json')

@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
-import { EdgedriverBinary } from '../../../../app/common/adapter/binary/EdgedriverBinary.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { EdgedriverBinary } from '../../../../app/common/adapter/binary/EdgedriverBinary.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
   let binary: EdgedriverBinary;
@@ -13,14 +13,10 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
 
   describe('fetch()', () => {
     it('should work', async () => {
-      app.mockHttpclient(
-        'https://edgeupdates.microsoft.com/api/products',
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile('edgeupdates.json'),
-          persist: false,
-        }
-      );
+      app.mockHttpclient('https://edgeupdates.microsoft.com/api/products', 'GET', {
+        data: await TestUtil.readFixturesFile('edgeupdates.json'),
+        persist: false,
+      });
       let result = await binary.fetch('/');
       assert.deepEqual(result, {
         items: [

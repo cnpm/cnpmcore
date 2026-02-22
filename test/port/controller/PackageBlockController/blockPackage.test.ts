@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
+
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { type TestUser, TestUtil } from '../../../../test/TestUtil.js';
+import { type TestUser, TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () => {
   let adminUser: TestUser;
@@ -44,11 +45,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
       assert.ok(res.body.data[0].version === '*');
       assert.ok(res.body.data[0].created);
       assert.ok(res.body.data[0].modified);
-      assert.ok(
-        res.body.data[0].reason.includes(
-          'only for tests again (operator: cnpmcore_admin/'
-        )
-      );
+      assert.ok(res.body.data[0].reason.includes('only for tests again (operator: cnpmcore_admin/'));
 
       // request manifests will status 451
       res = await app.httpRequest().get(`/${pkg.name}`);
@@ -56,16 +53,8 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
       assert.ok(!res.headers.etag);
       assert.ok(!res.headers['cache-control']);
       assert.ok(res.body.error);
-      assert.ok(
-        res.body.error.startsWith(
-          '[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule was blocked, reason: '
-        )
-      );
-      assert.ok(
-        res.body.error.includes(
-          'only for tests again (operator: cnpmcore_admin/'
-        )
-      );
+      assert.ok(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule was blocked, reason: '));
+      assert.ok(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
 
       res = await app.httpRequest().get(`/${pkg.name}/latest`);
       assert.equal(res.status, 451);
@@ -73,15 +62,9 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
       assert.ok(!res.headers['cache-control']);
       assert.ok(res.body.error);
       assert.ok(
-        res.body.error.startsWith(
-          '[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@latest was blocked, reason: '
-        )
+        res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@latest was blocked, reason: '),
       );
-      assert.ok(
-        res.body.error.includes(
-          'only for tests again (operator: cnpmcore_admin/'
-        )
-      );
+      assert.ok(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
 
       // check cdn cache
       mock(app.config.cnpmcore, 'enableCDN', true);
@@ -90,16 +73,8 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
       assert.ok(!res.headers.etag);
       assert.equal(res.headers['cache-control'], 'public, max-age=300');
       assert.ok(res.body.error);
-      assert.ok(
-        res.body.error.startsWith(
-          '[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule was blocked, reason: '
-        )
-      );
-      assert.ok(
-        res.body.error.includes(
-          'only for tests again (operator: cnpmcore_admin/'
-        )
-      );
+      assert.ok(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule was blocked, reason: '));
+      assert.ok(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
       assert.equal(res.status, 451);
@@ -107,15 +82,9 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
       assert.equal(res.headers['cache-control'], 'public, max-age=300');
       assert.ok(res.body.error);
       assert.ok(
-        res.body.error.startsWith(
-          '[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@1.0.0 was blocked, reason: '
-        )
+        res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@1.0.0 was blocked, reason: '),
       );
-      assert.ok(
-        res.body.error.includes(
-          'only for tests again (operator: cnpmcore_admin/'
-        )
-      );
+      assert.ok(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
     });
 
     it('should 403 block private package', async () => {
@@ -128,10 +97,7 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
           reason: 'only for tests',
         });
       assert.ok(res.status === 403);
-      assert.ok(
-        res.body.error ===
-          '[FORBIDDEN] Can\'t block private package "@cnpm/testmodule"'
-      );
+      assert.ok(res.body.error === '[FORBIDDEN] Can\'t block private package "@cnpm/testmodule"');
     });
 
     it('should 403 when user is not admin', async () => {

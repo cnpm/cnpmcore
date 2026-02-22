@@ -1,5 +1,5 @@
-import { Entity, type EntityData } from './Entity.js';
-import { EntityUtil, type EasyData } from '../util/EntityUtil.js';
+import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
+import { Entity, type EntityData } from './Entity.ts';
 
 interface PackageVersionManifestData extends EntityData {
   packageId: string;
@@ -24,9 +24,7 @@ export class PackageVersionManifest extends Entity {
     this.manifest = data.manifest;
   }
 
-  static create(
-    data: EasyData<PackageVersionManifestData, 'packageVersionManifestId'>
-  ): PackageVersionManifest {
+  static create(data: EasyData<PackageVersionManifestData, 'packageVersionManifestId'>): PackageVersionManifest {
     const newData = EntityUtil.defaultData(data, 'packageVersionManifestId');
     return new PackageVersionManifest(newData);
   }

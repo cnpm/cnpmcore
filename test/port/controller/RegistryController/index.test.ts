@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { TaskType } from '../../../../app/common/enum/Task.js';
-import type { Registry } from '../../../../app/core/entity/Registry.js';
-import type { ChangesStreamTaskData } from '../../../../app/core/entity/Task.js';
-import { TaskService } from '../../../../app/core/service/TaskService.js';
-import { type TestUser, TestUtil } from '../../../../test/TestUtil.js';
+import { TaskType } from '../../../../app/common/enum/Task.ts';
+import type { Registry } from '../../../../app/core/entity/Registry.ts';
+import type { ChangesStreamTaskData } from '../../../../app/core/entity/Task.ts';
+import { TaskService } from '../../../../app/core/service/TaskService.ts';
+import { type TestUser, TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/RegistryController/index.test.ts', () => {
   let adminUser: TestUser;
@@ -49,16 +50,12 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
   describe('[POST /-/registry] createRegistry()', () => {
     it('should 200', async () => {
       // create success
-      const res = await app
-        .httpRequest()
-        .post('/-/registry')
-        .set('authorization', adminUser.authorization)
-        .send({
-          name: 'custom6',
-          host: 'https://r.cnpmjs.org/',
-          changeStream: 'https://r.cnpmjs.org/_changes',
-          type: 'cnpmcore',
-        });
+      const res = await app.httpRequest().post('/-/registry').set('authorization', adminUser.authorization).send({
+        name: 'custom6',
+        host: 'https://r.cnpmjs.org/',
+        changeStream: 'https://r.cnpmjs.org/_changes',
+        type: 'cnpmcore',
+      });
 
       assert.ok(res.body.ok);
     });
@@ -75,9 +72,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         })
         .expect(422);
 
-      assert.ok(
-        res.body.error === "[INVALID_PARAM] must have required property 'host'"
-      );
+      assert.ok(res.body.error === "[INVALID_PARAM] must have required property 'host'");
     });
 
     it('should 403', async () => {
@@ -123,44 +118,26 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
   describe('[GET /-/registry/:id/scopes] showRegistryScopes()', () => {
     it('should 200', async () => {
       // create scope
-      await app
-        .httpRequest()
-        .post('/-/scope')
-        .set('authorization', adminUser.authorization)
-        .send({
-          registryId: registry.registryId,
-          name: '@banana',
-        });
+      await app.httpRequest().post('/-/scope').set('authorization', adminUser.authorization).send({
+        registryId: registry.registryId,
+        name: '@banana',
+      });
 
-      await app
-        .httpRequest()
-        .post('/-/scope')
-        .set('authorization', adminUser.authorization)
-        .send({
-          registryId: registry.registryId,
-          name: '@apple',
-        });
+      await app.httpRequest().post('/-/scope').set('authorization', adminUser.authorization).send({
+        registryId: registry.registryId,
+        name: '@apple',
+      });
 
-      await app
-        .httpRequest()
-        .post('/-/scope')
-        .set('authorization', adminUser.authorization)
-        .send({
-          registryId: registry.registryId,
-          name: '@orange',
-        });
+      await app.httpRequest().post('/-/scope').set('authorization', adminUser.authorization).send({
+        registryId: registry.registryId,
+        name: '@orange',
+      });
 
-      let scopRes = await app
-        .httpRequest()
-        .get(`/-/registry/${registry.registryId}/scopes`)
-        .expect(200);
+      let scopRes = await app.httpRequest().get(`/-/registry/${registry.registryId}/scopes`).expect(200);
       assert.ok(scopRes.body.count === 4);
       assert.ok(scopRes.body.data.length === 4);
 
-      scopRes = await app
-        .httpRequest()
-        .get(`/-/registry/${registry.registryId}/scopes?pageSize=1`)
-        .expect(200);
+      scopRes = await app.httpRequest().get(`/-/registry/${registry.registryId}/scopes?pageSize=1`).expect(200);
       assert.ok(scopRes.body.count === 4);
       assert.ok(scopRes.body.data.length === 1);
 
@@ -172,18 +149,13 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
       assert.ok(scopRes.body.data.length === 2);
     });
     it('should error', async () => {
-      await app
-        .httpRequest()
-        .get('/-/registry/not_exist_id/scopes')
-        .expect(404);
+      await app.httpRequest().get('/-/registry/not_exist_id/scopes').expect(404);
     });
   });
 
   describe('[GET /-/registry/:id] showRegistry()', () => {
     it('should 200', async () => {
-      const queryRes = await app
-        .httpRequest()
-        .get(`/-/registry/${registry.registryId}`);
+      const queryRes = await app.httpRequest().get(`/-/registry/${registry.registryId}`);
       assert.deepEqual(queryRes.body, registry);
     });
 
@@ -213,10 +185,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
 
   describe('[POST /-/registry/:id/sync] createRegistrySyncTask()', () => {
     it('should 403', async () => {
-      await app
-        .httpRequest()
-        .post(`/-/registry/${registry.registryId}/sync`)
-        .expect(403);
+      await app.httpRequest().post(`/-/registry/${registry.registryId}/sync`).expect(403);
     });
 
     it('should error when invalid registryId', async () => {
@@ -258,10 +227,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
 
   describe('[PATCH /-/registry/:id] updateRegistry()', () => {
     it('should 403', async () => {
-      await app
-        .httpRequest()
-        .patch(`/-/registry/${registry.registryId}`)
-        .expect(403);
+      await app.httpRequest().patch(`/-/registry/${registry.registryId}`).expect(403);
     });
 
     it('should 404 when not found', async () => {

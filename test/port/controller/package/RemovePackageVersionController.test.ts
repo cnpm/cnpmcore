@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
-import { TestUtil, type TestUser } from '../../../../test/TestUtil.js';
-import { PackageRepository } from '../../../../app/repository/PackageRepository.js';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
+import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/package/RemovePackageVersionController.test.ts', () => {
   let packageRepository: PackageRepository;
@@ -52,14 +52,9 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
 
       const pkgEntity = await packageRepository.findPackage('', 'foo');
       assert.ok(pkgEntity);
-      const pkgVersionEntity = await packageRepository.findPackageVersion(
-        pkgEntity.packageId,
-        '1.0.0'
-      );
+      const pkgVersionEntity = await packageRepository.findPackageVersion(pkgEntity.packageId, '1.0.0');
       assert.ok(pkgVersionEntity);
-      pkgVersionEntity.publishTime = new Date(
-        Date.now() - 72 * 3_600_000 - 100
-      );
+      pkgVersionEntity.publishTime = new Date(Date.now() - 72 * 3_600_000 - 100);
       await packageRepository.savePackageVersion(pkgVersionEntity);
 
       const adminUser = await TestUtil.createUser({ name: 'cnpmcore_admin' });
@@ -99,9 +94,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .set('user-agent', normalUser.ua);
       assert.ok(res.status === 403);
       // console.log(res.body);
-      assert.ok(
-        res.body.error === '[FORBIDDEN] Can\'t modify npm public package "foo"'
-      );
+      assert.ok(res.body.error === '[FORBIDDEN] Can\'t modify npm public package "foo"');
 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
       assert.ok(res.status === 200);
@@ -171,9 +164,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
       // remove all versions
       res = await app
         .httpRequest()
-        .delete(
-          `${tarballUrl.replace('2.0.0', '1.0.0')}/-rev/${pkgVersion._rev}`
-        )
+        .delete(`${tarballUrl.replace('2.0.0', '1.0.0')}/-rev/${pkgVersion._rev}`)
         .set('authorization', publisher.authorization)
         .set('npm-command', 'unpublish')
         .set('user-agent', publisher.ua)
@@ -222,10 +213,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .expect(201);
       let res = await app.httpRequest().get(`/${pkg.name}/1.0.0`).expect(200);
       const pkgVersion = res.body;
-      const tarballUrl = new URL(pkgVersion.dist.tarball).pathname.replace(
-        '1.0.0',
-        '2.0.0'
-      );
+      const tarballUrl = new URL(pkgVersion.dist.tarball).pathname.replace('1.0.0', '2.0.0');
 
       res = await app
         .httpRequest()
@@ -255,10 +243,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .expect(400);
-      assert.equal(
-        res.body.error,
-        '[BAD_REQUEST] Only allow "unpublish" npm-command'
-      );
+      assert.equal(res.body.error, '[BAD_REQUEST] Only allow "unpublish" npm-command');
     });
 
     it('should 403 when published over 72 hours', async () => {
@@ -279,14 +264,9 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
 
       const pkgEntity = await packageRepository.findPackage('@cnpm', 'foo');
       assert.ok(pkgEntity);
-      const pkgVersionEntity = await packageRepository.findPackageVersion(
-        pkgEntity.packageId,
-        '1.0.0'
-      );
+      const pkgVersionEntity = await packageRepository.findPackageVersion(pkgEntity.packageId, '1.0.0');
       assert.ok(pkgVersionEntity);
-      pkgVersionEntity.publishTime = new Date(
-        Date.now() - 72 * 3_600_000 - 100
-      );
+      pkgVersionEntity.publishTime = new Date(Date.now() - 72 * 3_600_000 - 100);
       await packageRepository.savePackageVersion(pkgVersionEntity);
 
       res = await app
@@ -296,10 +276,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
         .set('user-agent', publisher.ua)
         .set('npm-command', 'unpublish')
         .expect(403);
-      assert.equal(
-        res.body.error,
-        '[FORBIDDEN] @cnpm/foo@1.0.0 unpublish is not allowed after 72 hours of released'
-      );
+      assert.equal(res.body.error, '[FORBIDDEN] @cnpm/foo@1.0.0 unpublish is not allowed after 72 hours of released');
     });
   });
 });

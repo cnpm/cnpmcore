@@ -1,9 +1,10 @@
-import { app, mock } from '@eggjs/mock/bootstrap';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import { NodeBinary } from '../../app/common/adapter/binary/NodeBinary.js';
-import { TestUtil } from '../../test/TestUtil.js';
+import { app, mock } from '@eggjs/mock/bootstrap';
+
+import { NodeBinary } from '../../app/common/adapter/binary/NodeBinary.ts';
+import { TestUtil } from '../../test/TestUtil.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,21 +37,31 @@ describe('test/schedule/SyncBinaryWorker.test.ts', () => {
         return {
           items: [
             { name: 'latest/', isDir: true, url: '', size: '-', date: '17-Dec-2021 23:17' },
-            { name: 'index.json', isDir: false, url: 'https://nodejs.org/dist/index.json', size: '219862', date: '17-Dec-2021 23:16' },
+            {
+              name: 'index.json',
+              isDir: false,
+              url: 'https://nodejs.org/dist/index.json',
+              size: '219862',
+              date: '17-Dec-2021 23:16',
+            },
           ],
         };
       }
       if (dir === '/latest/') {
         return {
-          items: [
-            { name: 'docs/', isDir: true, url: '', size: '-', date: '17-Dec-2021 21:31' },
-          ],
+          items: [{ name: 'docs/', isDir: true, url: '', size: '-', date: '17-Dec-2021 21:31' }],
         };
       }
       if (dir === '/latest/docs/') {
         return {
           items: [
-            { name: 'apilinks.json', isDir: false, url: 'https://nodejs.org/dist/latest/docs/apilinks.json', size: '61606', date: '17-Dec-2021 21:29' },
+            {
+              name: 'apilinks.json',
+              isDir: false,
+              url: 'https://nodejs.org/dist/latest/docs/apilinks.json',
+              size: '61606',
+              date: '17-Dec-2021 21:29',
+            },
           ],
         };
       }

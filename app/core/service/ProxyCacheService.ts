@@ -1,48 +1,41 @@
-import type {
+import {
   Context,
-  EggHttpClient,
+  HttpClient,
   HttpClientRequestOptions,
   HttpClientResponse,
+  AccessLevel,
+  Inject,
+  SingletonProto,
+  BackgroundTaskHelper,
 } from 'egg';
-import { ForbiddenError } from 'egg-errors';
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import type { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
+import { ForbiddenError } from 'egg/errors';
 import { valid as semverValid } from 'semver';
 
-import { AbstractService } from '../../common/AbstractService.js';
-import type { TaskService } from './TaskService.js';
-import type { CacheService } from './CacheService.js';
-import type { RegistryManagerService } from './RegistryManagerService.js';
-import type { NPMRegistry } from '../../common/adapter/NPMRegistry.js';
-import type { NFSAdapter } from '../../common/adapter/NFSAdapter.js';
-import { ProxyCache } from '../entity/ProxyCache.js';
-import {
-  type CreateUpdateProxyCacheTask,
-  type UpdateProxyCacheTaskOptions,
-  Task,
-} from '../entity/Task.js';
-import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
-import { TaskState, TaskType } from '../../common/enum/Task.js';
-import { calculateIntegrity } from '../../common/PackageUtil.js';
-import {
-  ABBREVIATED_META_TYPE,
-  PROXY_CACHE_DIR_NAME,
-} from '../../common/constants.js';
-import { DIST_NAMES, isPkgManifest } from '../entity/Package.js';
+import { AbstractService } from '../../common/AbstractService.ts';
+import type { NFSAdapter } from '../../common/adapter/NFSAdapter.ts';
+import type { NPMRegistry } from '../../common/adapter/NPMRegistry.ts';
+import { ABBREVIATED_META_TYPE, PROXY_CACHE_DIR_NAME } from '../../common/constants.ts';
+import { TaskState, TaskType } from '../../common/enum/Task.ts';
+import { calculateIntegrity } from '../../common/PackageUtil.ts';
 import type {
   AbbreviatedPackageJSONType,
   AbbreviatedPackageManifestType,
   PackageJSONType,
   PackageManifestType,
-} from '../../repository/PackageRepository.js';
+} from '../../repository/PackageRepository.ts';
+import type { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.ts';
+import { DIST_NAMES, isPkgManifest } from '../entity/Package.ts';
+import { ProxyCache } from '../entity/ProxyCache.ts';
+import { type CreateUpdateProxyCacheTask, type UpdateProxyCacheTaskOptions, Task } from '../entity/Task.ts';
+import type { CacheService } from './CacheService.ts';
+import type { RegistryManagerService } from './RegistryManagerService.ts';
+import type { TaskService } from './TaskService.ts';
 
 function isoNow() {
   return new Date().toISOString();
 }
 
-type GetSourceManifestAndCacheReturnType<T> = T extends
-  | DIST_NAMES.ABBREVIATED
-  | DIST_NAMES.MANIFEST
+type GetSourceManifestAndCacheReturnType<T> = T extends DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST
   ? AbbreviatedPackageJSONType | PackageJSONType
   : T extends DIST_NAMES.FULL_MANIFESTS | DIST_NAMES.ABBREVIATED_MANIFESTS
     ? AbbreviatedPackageManifestType | PackageManifestType
@@ -53,7 +46,7 @@ type GetSourceManifestAndCacheReturnType<T> = T extends
 })
 export class ProxyCacheService extends AbstractService {
   @Inject()
-  private readonly httpclient: EggHttpClient;
+  private readonly httpClient: HttpClient;
   @Inject()
   private readonly npmRegistry: NPMRegistry;
   @Inject()
@@ -69,13 +62,10 @@ export class ProxyCacheService extends AbstractService {
   @Inject()
   private readonly backgroundTaskHelper: BackgroundTaskHelper;
 
-  async getPackageVersionTarResponse(
-    fullname: string,
-    ctx: Context
-  ): Promise<HttpClientResponse> {
+  async getPackageVersionTarResponse(fullname: string, ctx: Context): Promise<HttpClientResponse> {
     if (this.config.cnpmcore.syncPackageBlockList.includes(fullname)) {
       throw new ForbiddenError(
-        `stop proxy by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`
+        `stop proxy by block list: ${JSON.stringify(this.config.cnpmcore.syncPackageBlockList)}`,
       );
     }
     return await this.getProxyResponse(ctx);
@@ -83,34 +73,23 @@ export class ProxyCacheService extends AbstractService {
 
   async getPackageManifest(
     fullname: string,
-    fileType: DIST_NAMES.FULL_MANIFESTS | DIST_NAMES.ABBREVIATED_MANIFESTS
+    fileType: DIST_NAMES.FULL_MANIFESTS | DIST_NAMES.ABBREVIATED_MANIFESTS,
   ): Promise<AbbreviatedPackageManifestType | PackageManifestType> {
     const isFullManifests = fileType === DIST_NAMES.FULL_MANIFESTS;
-    const proxyCache = await this.proxyCacheRepository.findProxyCache(
-      fullname,
-      fileType
-    );
+    const proxyCache = await this.proxyCacheRepository.findProxyCache(fullname, fileType);
     const cachedStoreKey = proxyCache?.filePath;
     if (cachedStoreKey) {
       try {
         const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
-        if (!nfsBytes)
-          throw new Error('not found proxy cache, try again later.');
+        if (!nfsBytes) throw new Error('not found proxy cache, try again later.');
 
         const nfsBuffer = Buffer.from(nfsBytes);
         const { shasum: etag } = await calculateIntegrity(nfsBytes);
-        await this.cacheService.savePackageEtagAndManifests(
-          fullname,
-          isFullManifests,
-          etag,
-          nfsBuffer
-        );
+        await this.cacheService.savePackageEtagAndManifests(fullname, isFullManifests, etag, nfsBuffer);
 
         const nfsString = nfsBuffer.toString();
         const nfsPkgManifest = JSON.parse(nfsString);
-        return nfsPkgManifest as
-          | AbbreviatedPackageManifestType
-          | PackageManifestType;
+        return nfsPkgManifest as AbbreviatedPackageManifestType | PackageManifestType;
       } catch (error) {
         /* c8 ignore next 6 */
         if (
@@ -124,10 +103,7 @@ export class ProxyCacheService extends AbstractService {
       }
     }
 
-    const manifest = await this.getRewrittenManifest<typeof fileType>(
-      fullname,
-      fileType
-    );
+    const manifest = await this.getRewrittenManifest<typeof fileType>(fullname, fileType);
     this.backgroundTaskHelper.run(async () => {
       await this.storeRewrittenManifest(manifest, fullname, fileType);
       const cachedFiles = ProxyCache.create({ fullname, fileType });
@@ -140,34 +116,24 @@ export class ProxyCacheService extends AbstractService {
   async getPackageVersionManifest(
     fullname: string,
     fileType: DIST_NAMES.ABBREVIATED | DIST_NAMES.MANIFEST,
-    versionOrTag: string
+    versionOrTag: string,
   ): Promise<AbbreviatedPackageJSONType | PackageJSONType> {
     let version: string;
     if (semverValid(versionOrTag)) {
       version = versionOrTag;
     } else {
-      const pkgManifest = await this.getPackageManifest(
-        fullname,
-        DIST_NAMES.ABBREVIATED_MANIFESTS
-      );
+      const pkgManifest = await this.getPackageManifest(fullname, DIST_NAMES.ABBREVIATED_MANIFESTS);
       const distTags = pkgManifest['dist-tags'] || {};
       version = distTags[versionOrTag] ?? versionOrTag;
     }
-    const proxyCache = await this.proxyCacheRepository.findProxyCache(
-      fullname,
-      fileType,
-      version
-    );
+    const proxyCache = await this.proxyCacheRepository.findProxyCache(fullname, fileType, version);
     const cachedStoreKey = proxyCache?.filePath;
     if (cachedStoreKey) {
       try {
         const nfsBytes = await this.nfsAdapter.getBytes(cachedStoreKey);
-        if (!nfsBytes)
-          throw new Error('not found proxy cache, try again later.');
+        if (!nfsBytes) throw new Error('not found proxy cache, try again later.');
         const nfsString = Buffer.from(nfsBytes).toString();
-        return JSON.parse(nfsString) as
-          | PackageJSONType
-          | AbbreviatedPackageJSONType;
+        return JSON.parse(nfsString) as PackageJSONType | AbbreviatedPackageJSONType;
       } catch (error) {
         /* c8 ignore next 6 */
         if (
@@ -180,11 +146,7 @@ export class ProxyCacheService extends AbstractService {
         throw error;
       }
     }
-    const manifest = await this.getRewrittenManifest(
-      fullname,
-      fileType,
-      versionOrTag
-    );
+    const manifest = await this.getRewrittenManifest(fullname, fileType, versionOrTag);
     this.backgroundTaskHelper.run(async () => {
       await this.storeRewrittenManifest(manifest, fullname, fileType);
       const cachedFiles = ProxyCache.create({ fullname, fileType, version });
@@ -193,46 +155,28 @@ export class ProxyCacheService extends AbstractService {
     return manifest;
   }
 
-  async removeProxyCache(
-    fullname: string,
-    fileType: DIST_NAMES,
-    version?: string
-  ) {
+  async removeProxyCache(fullname: string, fileType: DIST_NAMES, version?: string) {
     const storeKey = isPkgManifest(fileType)
       ? `/${PROXY_CACHE_DIR_NAME}/${fullname}/${fileType}`
       : `/${PROXY_CACHE_DIR_NAME}/${fullname}/${version}/${fileType}`;
     await this.nfsAdapter.remove(storeKey);
-    await this.proxyCacheRepository.removeProxyCache(
-      fullname,
-      fileType,
-      version
-    );
+    await this.proxyCacheRepository.removeProxyCache(fullname, fileType, version);
   }
 
-  replaceTarballUrl<T extends DIST_NAMES>(
-    manifest: GetSourceManifestAndCacheReturnType<T>,
-    fileType: T
-  ) {
+  replaceTarballUrl<T extends DIST_NAMES>(manifest: GetSourceManifestAndCacheReturnType<T>, fileType: T) {
     const { sourceRegistry, registry } = this.config.cnpmcore;
     if (isPkgManifest(fileType)) {
       // pkg manifest
-      const versionMap = (
-        manifest as AbbreviatedPackageManifestType | PackageManifestType
-      )?.versions;
+      const versionMap = (manifest as AbbreviatedPackageManifestType | PackageManifestType)?.versions;
       for (const key in versionMap) {
         const versionItem = versionMap[key];
         if (versionItem?.dist?.tarball) {
-          versionItem.dist.tarball = versionItem.dist.tarball.replace(
-            sourceRegistry,
-            registry
-          );
+          versionItem.dist.tarball = versionItem.dist.tarball.replace(sourceRegistry, registry);
         }
       }
     } else {
       // pkg version manifest
-      const distItem = (
-        manifest as AbbreviatedPackageJSONType | PackageJSONType
-      ).dist;
+      const distItem = (manifest as AbbreviatedPackageJSONType | PackageJSONType).dist;
       if (distItem?.tarball) {
         distItem.tarball = distItem.tarball.replace(sourceRegistry, registry);
       }
@@ -240,13 +184,10 @@ export class ProxyCacheService extends AbstractService {
     return manifest;
   }
 
-  async createTask(
-    targetName: string,
-    options: UpdateProxyCacheTaskOptions
-  ): Promise<CreateUpdateProxyCacheTask> {
+  async createTask(targetName: string, options: UpdateProxyCacheTaskOptions): Promise<CreateUpdateProxyCacheTask> {
     return (await this.taskService.createTask(
       Task.createUpdateProxyCache(targetName, options),
-      false
+      false,
     )) as CreateUpdateProxyCacheTask;
   }
 
@@ -259,53 +200,34 @@ export class ProxyCacheService extends AbstractService {
     const fullname = (task as CreateUpdateProxyCacheTask).data.fullname;
     const { fileType, version } = (task as CreateUpdateProxyCacheTask).data;
     let cachedManifest;
-    logs.push(
-      `[${isoNow()}] 🚧🚧🚧🚧🚧 Start update "${fullname}-${fileType}" 🚧🚧🚧🚧🚧`
-    );
+    logs.push(`[${isoNow()}] 🚧🚧🚧🚧🚧 Start update "${fullname}-${fileType}" 🚧🚧🚧🚧🚧`);
     try {
-      const cachedFiles = await this.proxyCacheRepository.findProxyCache(
-        fullname,
-        fileType
-      );
-      if (!cachedFiles)
-        throw new Error('task params error, can not found record in repo.');
-      cachedManifest = await this.getRewrittenManifest<typeof fileType>(
-        fullname,
-        fileType
-      );
+      const cachedFiles = await this.proxyCacheRepository.findProxyCache(fullname, fileType);
+      if (!cachedFiles) throw new Error('task params error, can not found record in repo.');
+      cachedManifest = await this.getRewrittenManifest<typeof fileType>(fullname, fileType);
       await this.storeRewrittenManifest(cachedManifest, fullname, fileType);
       ProxyCache.update(cachedFiles);
       await this.proxyCacheRepository.saveProxyCache(cachedFiles);
     } catch (error) {
       task.error = error;
       logs.push(`[${isoNow()}] ❌ ${task.error}`);
-      logs.push(
-        `[${isoNow()}] ❌❌❌❌❌ ${fullname}-${fileType} ${version ?? ''} ❌❌❌❌❌`
-      );
+      logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname}-${fileType} ${version ?? ''} ❌❌❌❌❌`);
       await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
       this.logger.info(
         '[ProxyCacheService.executeTask:fail] taskId: %s, targetName: %s, %s',
         task.taskId,
         task.targetName,
-        task.error
+        task.error,
       );
       return;
     }
     logs.push(`[${isoNow()}] 🟢 Update Success.`);
     const isFullManifests = fileType === DIST_NAMES.FULL_MANIFESTS;
-    const cachedKey = await this.cacheService.getPackageEtag(
-      fullname,
-      isFullManifests
-    );
+    const cachedKey = await this.cacheService.getPackageEtag(fullname, isFullManifests);
     if (cachedKey) {
       const cacheBytes = Buffer.from(JSON.stringify(cachedManifest));
       const { shasum: etag } = await calculateIntegrity(cacheBytes);
-      await this.cacheService.savePackageEtagAndManifests(
-        fullname,
-        isFullManifests,
-        etag,
-        cacheBytes
-      );
+      await this.cacheService.savePackageEtagAndManifests(fullname, isFullManifests, etag, cacheBytes);
       logs.push(`[${isoNow()}] 🟢 Update Cache Success.`);
     }
     await this.taskService.finishTask(task, TaskState.Success, logs.join('\n'));
@@ -315,7 +237,7 @@ export class ProxyCacheService extends AbstractService {
   private async getRewrittenManifest<T extends DIST_NAMES>(
     fullname: string,
     fileType: T,
-    versionOrTag?: string
+    versionOrTag?: string,
   ): Promise<GetSourceManifestAndCacheReturnType<T>> {
     let responseResult;
     const USER_AGENT = 'npm_service.cnpmjs.org/cnpmcore';
@@ -327,7 +249,7 @@ export class ProxyCacheService extends AbstractService {
             url,
             headers: { accept: 'application/json', 'user-agent': USER_AGENT },
           },
-          { dataType: 'json' }
+          { dataType: 'json' },
         );
         break;
       }
@@ -341,7 +263,7 @@ export class ProxyCacheService extends AbstractService {
               'user-agent': USER_AGENT,
             },
           },
-          { dataType: 'json' }
+          { dataType: 'json' },
         );
         break;
       }
@@ -352,7 +274,7 @@ export class ProxyCacheService extends AbstractService {
             url,
             headers: { accept: 'application/json', 'user-agent': USER_AGENT },
           },
-          { dataType: 'json' }
+          { dataType: 'json' },
         );
         break;
       }
@@ -366,7 +288,7 @@ export class ProxyCacheService extends AbstractService {
               'user-agent': USER_AGENT,
             },
           },
-          { dataType: 'json' }
+          { dataType: 'json' },
         );
         break;
       }
@@ -384,7 +306,7 @@ export class ProxyCacheService extends AbstractService {
     // oxlint-disable-next-line typescript-eslint/no-explicit-any
     manifest: any,
     fullname: string,
-    fileType: DIST_NAMES
+    fileType: DIST_NAMES,
   ) {
     let storeKey: string;
     if (isPkgManifest(fileType)) {
@@ -397,19 +319,14 @@ export class ProxyCacheService extends AbstractService {
     await this.nfsAdapter.uploadBytes(storeKey, nfsBytes);
   }
 
-  async getProxyResponse(
-    ctx: Partial<Context>,
-    options?: HttpClientRequestOptions
-  ): Promise<HttpClientResponse> {
+  async getProxyResponse(ctx: Partial<Context>, options?: HttpClientRequestOptions): Promise<HttpClientResponse> {
     const registry = this.npmRegistry.registry;
-    const remoteAuthToken =
-      await this.registryManagerService.getAuthTokenByRegistryHost(registry);
-    const authorization =
-      this.npmRegistry.genAuthorizationHeader(remoteAuthToken);
+    const remoteAuthToken = await this.registryManagerService.getAuthTokenByRegistryHost(registry);
+    const authorization = this.npmRegistry.genAuthorizationHeader(remoteAuthToken);
 
     const url = `${this.npmRegistry.registry}${ctx.url}`;
 
-    const res = (await this.httpclient.request(url, {
+    const res = (await this.httpClient.request(url, {
       timing: true,
       followRedirect: true,
       // once redirection is also count as a retry
@@ -426,11 +343,7 @@ export class ProxyCacheService extends AbstractService {
         via: `1.1, ${this.config.cnpmcore.registry}`,
       },
     })) as HttpClientResponse;
-    this.logger.info(
-      '[ProxyCacheService:getProxyStreamResponse] %s, status: %s',
-      url,
-      res.status
-    );
+    this.logger.info('[ProxyCacheService:getProxyStreamResponse] %s, status: %s', url, res.status);
     return res;
   }
 }

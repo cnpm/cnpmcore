@@ -1,13 +1,8 @@
-import type { EggAppConfig } from 'egg';
-import {
-  Schedule,
-  ScheduleType,
-  type IntervalParams,
-} from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
+import { Inject, Config } from 'egg';
+import { Schedule, ScheduleType, type IntervalParams } from 'egg/schedule';
 
-import type { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
-import binaries, { type BinaryName } from '../../../config/binaries.js';
+import binaries, { type BinaryName } from '../../../config/binaries.ts';
+import type { BinarySyncerService } from '../../core/service/BinarySyncerService.ts';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
@@ -18,7 +13,7 @@ import binaries, { type BinaryName } from '../../../config/binaries.js';
 })
 export class CreateSyncBinaryTask {
   @Inject()
-  private readonly config: EggAppConfig;
+  private readonly config: Config;
 
   @Inject()
   private readonly binarySyncerService: BinarySyncerService;

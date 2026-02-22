@@ -1,20 +1,24 @@
 import { setTimeout } from 'node:timers/promises';
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
-import type {
+
+import {
+  ContextProto,
+  AccessLevel,
+  Inject,
   EggAppConfig,
-  EggContextHttpClient,
-  EggLogger,
+  HttpClient,
+  Logger,
   HttpClientRequestOptions,
   HttpClientResponse,
 } from 'egg';
-import type { PackageManifestType } from '../../repository/PackageRepository.js';
-import { isTimeoutError } from '../ErrorUtil.js';
+
+import type { PackageManifestType } from '../../repository/PackageRepository.ts';
+import { isTimeoutError } from '../ErrorUtil.ts';
 
 type HttpMethod = HttpClientRequestOptions['method'];
 
 const INSTANCE_NAME = 'npmRegistry';
 
-export type RegistryResponse = { method: HttpMethod } & HttpClientResponse;
+export type RegistryResponse<T = any> = { method: HttpMethod } & HttpClientResponse<T>;
 
 @ContextProto({
   name: INSTANCE_NAME,
@@ -22,9 +26,9 @@ export type RegistryResponse = { method: HttpMethod } & HttpClientResponse;
 })
 export class NPMRegistry {
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
   @Inject()
-  private readonly httpclient: EggContextHttpClient;
+  private readonly httpClient: HttpClient;
   @Inject()
   private config: EggAppConfig;
   private timeout = 10_000;
@@ -40,8 +44,18 @@ export class NPMRegistry {
 
   public async getFullManifests(
     fullname: string,
-    optionalConfig?: { retries?: number; remoteAuthToken?: string }
-  ): Promise<{ method: HttpMethod } & HttpClientResponse<PackageManifestType>> {
+    optionalConfig?: { retries?: number; remoteAuthToken?: string },
+  ): Promise<RegistryResponse<PackageManifestType>> {
+    const res = await this.getFullManifestsBuffer(fullname, optionalConfig);
+    // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
+    res.data = JSON.parse(res.data);
+    return res as unknown as RegistryResponse<PackageManifestType>;
+  }
+
+  public async getFullManifestsBuffer(
+    fullname: string,
+    optionalConfig?: { retries?: number; remoteAuthToken?: string },
+  ): Promise<RegistryResponse<Buffer>> {
     let retries = optionalConfig?.retries || 3;
     // set query t=timestamp, make sure CDN cache disable
     // cache=0 is sync worker request flag
@@ -51,10 +65,8 @@ export class NPMRegistry {
       try {
         // large package: https://r.cnpmjs.org/%40procore%2Fcore-icons
         // https://r.cnpmjs.org/intraactive-sdk-ui 44s
-        const authorization = this.genAuthorizationHeader(
-          optionalConfig?.remoteAuthToken
-        );
-        return await this.request('GET', url, undefined, {
+        const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
+        return await this.requestBuffer('GET', url, undefined, {
           timeout: 120_000,
           headers: { authorization },
         });
@@ -67,29 +79,25 @@ export class NPMRegistry {
       retries--;
       if (retries > 0) {
         // sleep 1s ~ 4s in random
-        const delay =
-          process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
+        const delay = process.env.NODE_ENV === 'test' ? 1 : 1000 + Math.random() * 4000;
         await setTimeout(delay);
       }
     }
-    // oxlint-disable-next-line no-throw-literal
     throw lastError;
   }
 
   // app.put('/:name/sync', sync.sync);
   public async createSyncTask(
     fullname: string,
-    optionalConfig?: { remoteAuthToken?: string }
+    optionalConfig?: { remoteAuthToken?: string },
   ): Promise<RegistryResponse> {
-    const authorization = this.genAuthorizationHeader(
-      optionalConfig?.remoteAuthToken
-    );
+    const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync?sync_upstream=true&nodeps=true`;
     // {
     //   ok: true,
     //   logId: logId
     // };
-    return await this.request('PUT', url, undefined, { authorization });
+    return await this.requestJSON('PUT', url, undefined, { authorization });
   }
 
   // app.get('/:name/sync/log/:id', sync.getSyncLog);
@@ -97,14 +105,13 @@ export class NPMRegistry {
     fullname: string,
     id: string,
     offset: number,
-    optionalConfig?: { remoteAuthToken?: string }
-  ): Promise<RegistryResponse> {
-    const authorization = this.genAuthorizationHeader(
-      optionalConfig?.remoteAuthToken
-    );
+    optionalConfig?: { remoteAuthToken?: string },
+  ): Promise<RegistryResponse<{ ok: true; syncDone: boolean; log?: string; logUrl?: string; error?: string }>> {
+    const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync/log/${id}?offset=${offset}`;
-    // { ok: true, syncDone: syncDone, log: log }
-    return await this.request('GET', url, undefined, { authorization });
+    // { ok: true, syncDone: boolean, log: string, logUrl: string, error?: string }
+    // https://registry.npmmirror.com/viewport-cli/sync/log/6943749899c5663aad8a534c
+    return await this.requestJSON('GET', url, undefined, { authorization });
   }
 
   public async getDownloadRanges(
@@ -112,25 +119,41 @@ export class NPMRegistry {
     fullname: string,
     start: string,
     end: string,
-    optionalConfig?: { remoteAuthToken?: string }
+    optionalConfig?: { remoteAuthToken?: string },
   ): Promise<RegistryResponse> {
-    const authorization = this.genAuthorizationHeader(
-      optionalConfig?.remoteAuthToken
-    );
+    const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
     const url = `${registry}/downloads/range/${start}:${end}/${encodeURIComponent(fullname)}`;
-    return await this.request('GET', url, undefined, { authorization });
+    return await this.requestJSON('GET', url, undefined, { authorization });
   }
 
-  private async request(
+  private async requestJSON(
     method: HttpMethod,
     url: string,
     params?: object,
-    options?: object
+    options?: object,
   ): Promise<RegistryResponse> {
-    const res = (await this.httpclient.request(url, {
+    return await this.request(method, url, params, {
+      ...options,
+      dataType: 'json',
+    });
+  }
+
+  private async requestBuffer(
+    method: HttpMethod,
+    url: string,
+    params?: object,
+    options?: object,
+  ): Promise<RegistryResponse<Buffer>> {
+    return await this.request(method, url, params, {
+      ...options,
+      dataType: 'buffer',
+    });
+  }
+
+  private async request(method: HttpMethod, url: string, params?: object, options?: object): Promise<RegistryResponse> {
+    const res = (await this.httpClient.request(url, {
       method,
       data: params,
-      dataType: 'json',
       timing: true,
       retry: 3,
       timeout: this.timeout,
@@ -138,12 +161,7 @@ export class NPMRegistry {
       gzip: true,
       ...options,
     })) as HttpClientResponse;
-    this.logger.info(
-      '[NPMRegistry:request] %s %s, status: %s',
-      method,
-      url,
-      res.status
-    );
+    this.logger.info('[NPMRegistry:request] %s %s, status: %s', method, url, res.status);
     return {
       method,
       ...res,

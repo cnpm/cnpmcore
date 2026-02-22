@@ -1,11 +1,10 @@
 import { access, rm } from 'node:fs/promises';
 import path from 'node:path';
 
-import type { EggAppConfig, EggLogger } from 'egg';
-import { Schedule, ScheduleType, type CronParams } from '@eggjs/tegg/schedule';
-import { Inject } from '@eggjs/tegg';
+import { Inject, Logger, EggAppConfig } from 'egg';
+import { Schedule, ScheduleType, type CronParams } from 'egg/schedule';
 
-import dayjs from '../../common/dayjs.js';
+import dayjs from '../../common/dayjs.ts';
 
 @Schedule<CronParams>({
   type: ScheduleType.WORKER,
@@ -18,7 +17,7 @@ export class CleanTempDir {
   private readonly config: EggAppConfig;
 
   @Inject()
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
   async subscribe() {
     const downloadDir = path.join(this.config.dataDir, 'downloads');
@@ -39,11 +38,7 @@ export class CleanTempDir {
       } catch {
         exists = false;
       }
-      this.logger.info(
-        '[CleanTempDir.subscribe] dir "%s" exists: %s',
-        dir,
-        exists
-      );
+      this.logger.info('[CleanTempDir.subscribe] dir "%s" exists: %s', dir, exists);
       if (exists) {
         await rm(dir, { recursive: true, force: true });
         this.logger.info('[CleanTempDir.subscribe] remove dir "%s"', dir);

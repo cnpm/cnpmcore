@@ -1,17 +1,17 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { ModelConvertor } from './util/ModelConvertor.js';
-import type { User as UserModel } from './model/User.js';
-import type { Package as PackageModel } from './model/Package.js';
-import type { Token as TokenModel } from './model/Token.js';
-import type { WebauthnCredential as WebauthnCredentialModel } from './model/WebauthnCredential.js';
-import { User as UserEntity } from '../core/entity/User.js';
-import { Token as TokenEntity, isGranularToken } from '../core/entity/Token.js';
-import { WebauthnCredential as WebauthnCredentialEntity } from '../core/entity/WebauthnCredential.js';
-import { AbstractRepository } from './AbstractRepository.js';
-import type { TokenPackage as TokenPackageModel } from './model/TokenPackage.js';
-import { getFullname, getScopeAndName } from '../common/PackageUtil.js';
-import type { PackageRepository } from './PackageRepository.js';
+import { getFullname, getScopeAndName } from '../common/PackageUtil.ts';
+import { Token as TokenEntity, isGranularToken } from '../core/entity/Token.ts';
+import { User as UserEntity } from '../core/entity/User.ts';
+import { WebauthnCredential as WebauthnCredentialEntity } from '../core/entity/WebauthnCredential.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
+import type { Package as PackageModel } from './model/Package.ts';
+import type { Token as TokenModel } from './model/Token.ts';
+import type { TokenPackage as TokenPackageModel } from './model/TokenPackage.ts';
+import type { User as UserModel } from './model/User.ts';
+import type { WebauthnCredential as WebauthnCredentialModel } from './model/WebauthnCredential.ts';
+import type { PackageRepository } from './PackageRepository.ts';
+import { ModelConvertor } from './util/ModelConvertor.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -42,11 +42,7 @@ export class UserRepository extends AbstractRepository {
       await ModelConvertor.saveEntityToModel(user, model);
     } else {
       const model = await ModelConvertor.convertEntityToModel(user, this.User);
-      this.logger.info(
-        '[UserRepository:saveUser:new] id: %s, userId: %s',
-        model.id,
-        model.userId
-      );
+      this.logger.info('[UserRepository:saveUser:new] id: %s, userId: %s', model.id, model.userId);
     }
   }
 
@@ -86,10 +82,10 @@ export class UserRepository extends AbstractRepository {
     if (isGranularToken(token)) {
       const models = await this.TokenPackage.find({ tokenId: token.tokenId });
       const packages = await this.Package.find({
-        packageId: models.map(m => m.packageId),
+        packageId: models.map((m) => m.packageId),
       });
       if (Array.isArray(packages)) {
-        token.allowedPackages = packages.map(p => getFullname(p.scope, p.name));
+        token.allowedPackages = packages.map((p) => getFullname(p.scope, p.name));
       }
     }
   }
@@ -105,24 +101,14 @@ export class UserRepository extends AbstractRepository {
       await ModelConvertor.saveEntityToModel(token, model);
     } else {
       if (isGranularToken(token)) {
-        await this.TokenPackage.transaction(async transaction => {
-          model = await ModelConvertor.convertEntityToModel(
-            token,
-            this.Token,
-            transaction
-          );
+        await this.TokenPackage.transaction(async (transaction) => {
+          model = await ModelConvertor.convertEntityToModel(token, this.Token, transaction);
           if (Array.isArray(token.allowedPackages)) {
             for (const packageName of token.allowedPackages) {
               const [scope, name] = getScopeAndName(packageName);
-              const packageId = await this.packageRepository.findPackageId(
-                scope,
-                name
-              );
+              const packageId = await this.packageRepository.findPackageId(scope, name);
               if (packageId) {
-                await this.TokenPackage.create(
-                  { packageId, tokenId: token.tokenId },
-                  transaction
-                );
+                await this.TokenPackage.create({ packageId, tokenId: token.tokenId }, transaction);
               }
             }
           }
@@ -130,35 +116,21 @@ export class UserRepository extends AbstractRepository {
       } else {
         model = await ModelConvertor.convertEntityToModel(token, this.Token);
       }
-      this.logger.info(
-        '[UserRepository:saveToken:new] id: %s, tokenId: %s',
-        model?.id,
-        model?.tokenId
-      );
+      this.logger.info('[UserRepository:saveToken:new] id: %s, tokenId: %s', model?.id, model?.tokenId);
     }
   }
 
   async removeToken(tokenId: string) {
-    await this.Token.transaction(async transaction => {
-      const removeCount = await this.Token.remove(
-        { tokenId },
-        true,
-        transaction
-      );
+    await this.Token.transaction(async (transaction) => {
+      const removeCount = await this.Token.remove({ tokenId }, true, transaction);
       await this.TokenPackage.remove({ tokenId }, true, transaction);
-      this.logger.info(
-        '[UserRepository:removeToken:remove] %d rows, tokenId: %s',
-        removeCount,
-        tokenId
-      );
+      this.logger.info('[UserRepository:removeToken:remove] %d rows, tokenId: %s', removeCount, tokenId);
     });
   }
 
   async listTokens(userId: string): Promise<TokenEntity[]> {
     const models = await this.Token.find({ userId });
-    const tokens = models.map(model =>
-      ModelConvertor.convertModelToEntity(model, TokenEntity)
-    );
+    const tokens = models.map((model) => ModelConvertor.convertModelToEntity(model, TokenEntity));
     for (const token of tokens) {
       await this._injectTokenPackages(token);
     }
@@ -173,22 +145,12 @@ export class UserRepository extends AbstractRepository {
       if (!model) return;
       await ModelConvertor.saveEntityToModel(credential, model);
     } else {
-      const model = await ModelConvertor.convertEntityToModel(
-        credential,
-        this.WebauthnCredential
-      );
-      this.logger.info(
-        '[UserRepository:saveCredential:new] id: %s, wancId: %s',
-        model.id,
-        model.wancId
-      );
+      const model = await ModelConvertor.convertEntityToModel(credential, this.WebauthnCredential);
+      this.logger.info('[UserRepository:saveCredential:new] id: %s, wancId: %s', model.id, model.wancId);
     }
   }
 
-  async findCredentialByUserIdAndBrowserType(
-    userId: string | undefined,
-    browserType: string | null
-  ) {
+  async findCredentialByUserIdAndBrowserType(userId: string | undefined, browserType: string | null) {
     const model = await this.WebauthnCredential.findOne({
       userId,
       browserType,
@@ -199,10 +161,6 @@ export class UserRepository extends AbstractRepository {
 
   async removeCredential(wancId: string) {
     const removeCount = await this.WebauthnCredential.remove({ wancId });
-    this.logger.info(
-      '[UserRepository:removeCredential:remove] %d rows, wancId: %s',
-      removeCount,
-      wancId
-    );
+    this.logger.info('[UserRepository:removeCredential:remove] %d rows, wancId: %s', removeCount, wancId);
   }
 }

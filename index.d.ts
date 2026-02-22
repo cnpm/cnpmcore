@@ -1,8 +1,6 @@
 declare module 'fs-cnpm' {
   export default class FSClient extends NFSClient {
-    constructor(options: {
-      dir: string;
-    });
+    constructor(options: { dir: string });
   }
 }
 
@@ -35,7 +33,7 @@ declare module 'ssri' {
   }
 
   export interface CreateRes {
-    update(v: string): { digest: () => { toString() }; };
+    update(v: string): { digest: () => { toString() } };
   }
 
   export function fromHex(hexDigest: string, algorithm: string, options?: string[]): Integrity;
@@ -46,7 +44,11 @@ declare module 'ssri' {
 
   export function checkData(data: Buffer | string, sri: string | Integrity, options?: IntegrityOptions): boolean;
 
-  export function checkStream(stream: NodeJS.ReadableStream, sri: string | Integrity, options?: IntegrityOptions): Promise<boolean>;
+  export function checkStream(
+    stream: NodeJS.ReadableStream,
+    sri: string | Integrity,
+    options?: IntegrityOptions,
+  ): Promise<boolean>;
 
   export function parse(sri: string): Integrity;
 

@@ -1,18 +1,9 @@
-import {
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPParam,
-} from '@eggjs/tegg';
-import { ForbiddenError, NotFoundError } from 'egg-errors';
+import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam } from 'egg';
+import { ForbiddenError, NotFoundError } from 'egg/errors';
 
-import { AbstractController } from './AbstractController.js';
-import {
-  FULLNAME_REG_STRING,
-  getFullname,
-  getScopeAndName,
-} from '../../common/PackageUtil.js';
-import { PackageAccessLevel } from '../../common/constants.js';
+import { PackageAccessLevel } from '../../common/constants.ts';
+import { FULLNAME_REG_STRING, getFullname, getScopeAndName } from '../../common/PackageUtil.ts';
+import { AbstractController } from './AbstractController.ts';
 
 @HTTPController()
 export class AccessController extends AbstractController {
@@ -28,9 +19,7 @@ export class AccessController extends AbstractController {
       throw new ForbiddenError('Forbidden');
     }
 
-    const maintainers = await this.packageRepository.listPackageMaintainers(
-      pkg.packageId
-    );
+    const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
     const res: Record<string, string> = {};
     for (const maintainer of maintainers) {
       res[maintainer.displayName] = PackageAccessLevel.write;

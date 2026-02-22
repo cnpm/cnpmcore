@@ -1,16 +1,15 @@
-import util from 'node:util';
 import path from 'node:path';
-import { SingletonProto } from '@eggjs/tegg';
-import { BinaryType } from '../../enum/Binary.js';
-import {
-  AbstractBinary,
-  BinaryAdapter,
-  type BinaryItem,
-  type FetchResult,
-} from './AbstractBinary.js';
+import util from 'node:util';
+
+import { SingletonProto } from 'egg';
+
+import { BinaryType } from '../../enum/Binary.ts';
+import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 const PACKAGE_URL = 'https://registry.npmjs.com/playwright-core';
 const DOWNLOAD_HOST = 'https://playwright.azureedge.net/';
+// https://github.com/playwright-community/playwright-go/blob/56e30d60f8b42785982469eaca6ad969bc2e1946/run.go#L341-L374
+const PLAYWRIGHT_DRIVER_ARCHS = ['win32_x64', 'mac-arm64', 'mac', 'linux-arm64', 'linux'];
 
 // https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/registry/index.ts
 /* eslint-disable quote-props */
@@ -51,18 +50,13 @@ const DOWNLOAD_PATHS = {
     'ubuntu22.04-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
     'ubuntu24.04-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
     'ubuntu18.04-arm64': undefined,
-    'ubuntu20.04-arm64':
-      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
-    'ubuntu22.04-arm64':
-      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
-    'ubuntu24.04-arm64':
-      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'ubuntu20.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'ubuntu22.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'ubuntu24.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
     'debian11-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
-    'debian11-arm64':
-      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'debian11-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
     'debian12-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
-    'debian12-arm64':
-      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'debian12-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
     'mac10.13': undefined,
     'mac10.14': undefined,
     'mac10.15': undefined,
@@ -81,96 +75,60 @@ const DOWNLOAD_PATHS = {
   'chromium-tip-of-tree': {
     '<unknown>': undefined,
     'ubuntu18.04-x64': undefined,
-    'ubuntu20.04-x64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
-    'ubuntu22.04-x64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
-    'ubuntu24.04-x64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
+    'ubuntu20.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
+    'ubuntu22.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
+    'ubuntu24.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
     'ubuntu18.04-arm64': undefined,
-    'ubuntu20.04-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
-    'ubuntu22.04-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
-    'ubuntu24.04-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
-    'debian11-x64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
-    'debian11-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
-    'debian12-x64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
-    'debian12-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
+    'ubuntu20.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
+    'ubuntu22.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
+    'ubuntu24.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
+    'debian11-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
+    'debian11-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
+    'debian12-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
+    'debian12-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
     'mac10.13': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
     'mac10.14': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
     'mac10.15': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
     mac11: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac11-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
+    'mac11-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
     mac12: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac12-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
+    'mac12-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
     mac13: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac13-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
+    'mac13-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
     mac14: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac14-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
+    'mac14-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
     mac15: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac15-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
+    'mac15-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
     win64: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-win64.zip',
   },
   'chromium-tip-of-tree-headless-shell': {
     '<unknown>': undefined,
     'ubuntu18.04-x64': undefined,
-    'ubuntu20.04-x64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
-    'ubuntu22.04-x64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
-    'ubuntu24.04-x64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
+    'ubuntu20.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
+    'ubuntu22.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
+    'ubuntu24.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
     'ubuntu18.04-arm64': undefined,
-    'ubuntu20.04-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
-    'ubuntu22.04-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
-    'ubuntu24.04-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
-    'debian11-x64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
-    'debian11-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
-    'debian12-x64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
-    'debian12-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
+    'ubuntu20.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
+    'ubuntu22.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
+    'ubuntu24.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
+    'debian11-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
+    'debian11-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
+    'debian12-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
+    'debian12-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
     'mac10.13': undefined,
     'mac10.14': undefined,
     'mac10.15': undefined,
-    mac11:
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
-    'mac11-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
-    mac12:
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
-    'mac12-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
-    mac13:
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
-    'mac13-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
-    mac14:
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
-    'mac14-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
-    mac15:
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
-    'mac15-arm64':
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
-    win64:
-      'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-win64.zip',
+    mac11: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
+    'mac11-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
+    mac12: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
+    'mac12-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
+    mac13: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
+    'mac13-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
+    mac14: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
+    'mac14-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
+    mac15: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
+    'mac15-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
+    win64: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-win64.zip',
   },
   firefox: {
     '<unknown>': undefined,
@@ -209,10 +167,8 @@ const DOWNLOAD_PATHS = {
     'ubuntu24.04-x64': 'builds/firefox-beta/%s/firefox-beta-ubuntu-24.04.zip',
     'ubuntu18.04-arm64': undefined,
     'ubuntu20.04-arm64': undefined,
-    'ubuntu22.04-arm64':
-      'builds/firefox-beta/%s/firefox-beta-ubuntu-22.04-arm64.zip',
-    'ubuntu24.04-arm64':
-      'builds/firefox-beta/%s/firefox-beta-ubuntu-24.04-arm64.zip',
+    'ubuntu22.04-arm64': 'builds/firefox-beta/%s/firefox-beta-ubuntu-22.04-arm64.zip',
+    'ubuntu24.04-arm64': 'builds/firefox-beta/%s/firefox-beta-ubuntu-24.04-arm64.zip',
     'debian11-x64': 'builds/firefox-beta/%s/firefox-beta-debian-11.zip',
     'debian11-arm64': 'builds/firefox-beta/%s/firefox-beta-debian-11-arm64.zip',
     'debian12-x64': 'builds/firefox-beta/%s/firefox-beta-debian-12.zip',
@@ -247,10 +203,8 @@ const DOWNLOAD_PATHS = {
     'debian12-x64': 'builds/webkit/%s/webkit-debian-12.zip',
     'debian12-arm64': 'builds/webkit/%s/webkit-debian-12-arm64.zip',
     'mac10.13': undefined,
-    'mac10.14':
-      'builds/deprecated-webkit-mac-10.14/%s/deprecated-webkit-mac-10.14.zip',
-    'mac10.15':
-      'builds/deprecated-webkit-mac-10.15/%s/deprecated-webkit-mac-10.15.zip',
+    'mac10.14': 'builds/deprecated-webkit-mac-10.14/%s/deprecated-webkit-mac-10.14.zip',
+    'mac10.15': 'builds/deprecated-webkit-mac-10.15/%s/deprecated-webkit-mac-10.15.zip',
     mac11: 'builds/webkit/%s/webkit-mac-11.zip',
     'mac11-arm64': 'builds/webkit/%s/webkit-mac-11-arm64.zip',
     mac12: 'builds/webkit/%s/webkit-mac-12.zip',
@@ -366,10 +320,7 @@ export class PlaywrightBinary extends AbstractBinary {
       const nowDateISO = new Date().toISOString();
       const buildDirs: BinaryItem[] = [];
       for (const browserName of Object.keys(DOWNLOAD_PATHS)) {
-        if (
-          browserName === 'chromium-headless-shell' ||
-          browserName === 'chromium-tip-of-tree-headless-shell'
-        ) {
+        if (browserName === 'chromium-headless-shell' || browserName === 'chromium-tip-of-tree-headless-shell') {
           continue;
         }
         buildDirs.push({
@@ -380,6 +331,13 @@ export class PlaywrightBinary extends AbstractBinary {
           date: nowDateISO,
         });
       }
+      buildDirs.push({
+        name: 'driver/',
+        isDir: true,
+        url: '',
+        size: '-',
+        date: nowDateISO,
+      });
       this.dirItems = {
         '/': [
           {
@@ -393,10 +351,7 @@ export class PlaywrightBinary extends AbstractBinary {
         '/builds/': buildDirs,
       };
       for (const browserName of Object.keys(DOWNLOAD_PATHS)) {
-        if (
-          browserName === 'chromium-headless-shell' ||
-          browserName === 'chromium-tip-of-tree-headless-shell'
-        ) {
+        if (browserName === 'chromium-headless-shell' || browserName === 'chromium-tip-of-tree-headless-shell') {
           continue;
         }
         this.dirItems[`/builds/${browserName}/`] = [];
@@ -404,9 +359,41 @@ export class PlaywrightBinary extends AbstractBinary {
 
       // Only download beta and release versions of packages to reduce amount of request
       const packageVersions = Object.keys(packageData.versions)
-        .filter(version => version.match(/^(?:\d+\.\d+\.\d+)(?:-beta-\d+)?$/))
+        .filter((version) => version.match(/^(?:\d+\.\d+\.\d+)(?:-beta-\d+)?$/))
         // select recently update 20 items
         .slice(-20);
+      // Add driver to dirItems
+      this.dirItems['/builds/driver/'] = [];
+      const hasBetaVersions = packageVersions.some((version) => version.includes('-beta-'));
+      if (hasBetaVersions) {
+        this.dirItems['/builds/driver/'].push({
+          name: 'next/',
+          isDir: true,
+          url: '',
+          size: '-',
+          date: 'next',
+        });
+        this.dirItems['/builds/driver/next/'] = [];
+      }
+      for (const version of packageVersions) {
+        for (const arch of PLAYWRIGHT_DRIVER_ARCHS) {
+          const isBetaVersion = version.includes('-beta-');
+          const driverFileName = `playwright-${version}-${arch}.zip`;
+          const driverURL = isBetaVersion
+            ? DOWNLOAD_HOST + `builds/driver/next/${driverFileName}`
+            : DOWNLOAD_HOST + `builds/driver/${driverFileName}`;
+          const driverItem = {
+            name: driverFileName,
+            isDir: false,
+            url: driverURL,
+            size: '-',
+            date: version,
+          };
+          const targetDir = isBetaVersion ? '/builds/driver/next/' : '/builds/driver/';
+          this.dirItems[targetDir].push(driverItem);
+        }
+      }
+
       const browsers: {
         name: keyof typeof DOWNLOAD_PATHS;
         revision: string;
@@ -414,11 +401,9 @@ export class PlaywrightBinary extends AbstractBinary {
         revisionOverrides?: Record<string, string>;
       }[] = [];
       await Promise.all(
-        packageVersions.map(version =>
-          this.requestJSON(
-            `https://unpkg.com/playwright-core@${version}/browsers.json`
-          )
-            .then(data => {
+        packageVersions.map((version) =>
+          this.requestJSON(`https://unpkg.com/playwright-core@${version}/browsers.json`)
+            .then((data) => {
               // browsers: [
               //   {
               //     "name": "chromium",
@@ -431,21 +416,19 @@ export class PlaywrightBinary extends AbstractBinary {
               browsers.push(...data.browsers);
               return data;
             })
-            .catch(err => {
+            .catch((err) => {
               /* c8 ignore next 2 */
               this.logger.warn(
                 '[PlaywrightBinary.fetch:error] Playwright version %s browser data request failed: %s',
                 version,
-                err
+                err,
               );
-            })
-        )
+            }),
+        ),
       );
       // if chromium-headless-shell not exists on browsers, copy chromium to chromium-headless-shell
-      if (
-        !browsers.some(browser => browser.name === 'chromium-headless-shell')
-      ) {
-        const chromium = browsers.find(browser => browser.name === 'chromium');
+      if (!browsers.some((browser) => browser.name === 'chromium-headless-shell')) {
+        const chromium = browsers.find((browser) => browser.name === 'chromium');
         // {
         //   "name": "chromium",
         //   "revision": "1155",
@@ -460,14 +443,8 @@ export class PlaywrightBinary extends AbstractBinary {
         }
       }
       // if chromium-tip-of-tree-headless-shell not exists on browsers, copy chromium-tip-of-tree to chromium-tip-of-tree-headless-shell
-      if (
-        !browsers.some(
-          browser => browser.name === 'chromium-tip-of-tree-headless-shell'
-        )
-      ) {
-        const chromiumTipOfTree = browsers.find(
-          browser => browser.name === 'chromium-tip-of-tree'
-        );
+      if (!browsers.some((browser) => browser.name === 'chromium-tip-of-tree-headless-shell')) {
+        const chromiumTipOfTree = browsers.find((browser) => browser.name === 'chromium-tip-of-tree');
         if (chromiumTipOfTree) {
           browsers.push({
             ...chromiumTipOfTree,
@@ -491,8 +468,7 @@ export class PlaywrightBinary extends AbstractBinary {
         }
         for (const [platform, remotePath] of Object.entries(downloadPaths)) {
           if (typeof remotePath !== 'string') continue;
-          const revision =
-            browser.revisionOverrides?.[platform] ?? browser.revision;
+          const revision = browser.revisionOverrides?.[platform] ?? browser.revision;
           const itemDate = browser.browserVersion || revision;
           const url = DOWNLOAD_HOST + util.format(remotePath, revision);
           const name = path.basename(remotePath);
@@ -507,7 +483,7 @@ export class PlaywrightBinary extends AbstractBinary {
             });
             this.dirItems[dir] = [];
           }
-          if (!this.dirItems[dir].some(item => item.name === name)) {
+          if (!this.dirItems[dir].some((item) => item.name === name)) {
             this.dirItems[dir].push({
               name,
               isDir: false,

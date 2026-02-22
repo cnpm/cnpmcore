@@ -1,8 +1,9 @@
 import assert from 'node:assert';
+
 import { app } from '@eggjs/mock/bootstrap';
 
-import { CypressBinary } from '../../../../app/common/adapter/binary/CypressBinary.js';
-import { TestUtil } from '../../../../test/TestUtil.js';
+import { CypressBinary } from '../../../../app/common/adapter/binary/CypressBinary.ts';
+import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
   let binary: CypressBinary;
@@ -13,9 +14,7 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
   describe('fetch()', () => {
     it('should fetch root: / work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/cypress', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.com/cypress.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/cypress.json'),
         persist: false,
       });
       const result = await binary.fetch('/');
@@ -43,9 +42,7 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
 
     it('should fetch subdir: /4.0.0/, /4.0.0/linux-x64/ work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/cypress', 'GET', {
-        data: await TestUtil.readFixturesFile(
-          'registry.npmjs.com/cypress.json'
-        ),
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/cypress.json'),
         persist: false,
       });
       let result = await binary.fetch('/4.0.0/');
@@ -62,50 +59,35 @@ describe('test/common/adapter/binary/CypressBinary.test.ts', () => {
       assert.ok(result);
       assert.ok(result.items.length === 1);
       assert.ok(result.items[0].name === 'cypress.zip');
-      assert.ok(
-        result.items[0].url ===
-          'https://cdn.cypress.io/desktop/4.0.0/darwin-x64/cypress.zip'
-      );
+      assert.ok(result.items[0].url === 'https://cdn.cypress.io/desktop/4.0.0/darwin-x64/cypress.zip');
       assert.ok(!result.items[0].isDir);
 
       result = await binary.fetch('/4.0.0/darwin-arm64/');
       assert.ok(result);
       assert.ok(result.items.length === 1);
       assert.ok(result.items[0].name === 'cypress.zip');
-      assert.ok(
-        result.items[0].url ===
-          'https://cdn.cypress.io/desktop/4.0.0/darwin-arm64/cypress.zip'
-      );
+      assert.ok(result.items[0].url === 'https://cdn.cypress.io/desktop/4.0.0/darwin-arm64/cypress.zip');
       assert.ok(!result.items[0].isDir);
 
       result = await binary.fetch('/4.0.0/linux-x64/');
       assert.ok(result);
       assert.ok(result.items.length === 1);
       assert.ok(result.items[0].name === 'cypress.zip');
-      assert.ok(
-        result.items[0].url ===
-          'https://cdn.cypress.io/desktop/4.0.0/linux-x64/cypress.zip'
-      );
+      assert.ok(result.items[0].url === 'https://cdn.cypress.io/desktop/4.0.0/linux-x64/cypress.zip');
       assert.ok(!result.items[0].isDir);
 
       result = await binary.fetch('/4.0.0/linux-arm64/');
       assert.ok(result);
       assert.ok(result.items.length === 1);
       assert.ok(result.items[0].name === 'cypress.zip');
-      assert.ok(
-        result.items[0].url ===
-          'https://cdn.cypress.io/desktop/4.0.0/linux-arm64/cypress.zip'
-      );
+      assert.ok(result.items[0].url === 'https://cdn.cypress.io/desktop/4.0.0/linux-arm64/cypress.zip');
       assert.ok(!result.items[0].isDir);
 
       result = await binary.fetch('/4.0.0/win32-x64/');
       assert.ok(result);
       assert.ok(result.items.length === 1);
       assert.ok(result.items[0].name === 'cypress.zip');
-      assert.ok(
-        result.items[0].url ===
-          'https://cdn.cypress.io/desktop/4.0.0/win32-x64/cypress.zip'
-      );
+      assert.ok(result.items[0].url === 'https://cdn.cypress.io/desktop/4.0.0/win32-x64/cypress.zip');
       assert.ok(!result.items[0].isDir);
     });
   });

@@ -1,16 +1,8 @@
-import {
-  type EggContext,
-  Context,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPQuery,
-  Inject,
-} from '@eggjs/tegg';
 import { Type } from '@eggjs/typebox-validate/typebox';
+import { HTTPContext, Context, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPQuery, Inject } from 'egg';
 
-import { AbstractController } from './AbstractController.js';
-import type { ChangeRepository } from '../../repository/ChangeRepository.js';
+import type { ChangeRepository } from '../../repository/ChangeRepository.ts';
+import { AbstractController } from './AbstractController.ts';
 
 const ChangeRule = Type.Object({
   since: Type.Integer({ minimum: 0 }),
@@ -27,12 +19,12 @@ export class ChangesStreamController extends AbstractController {
     path: '/_changes',
     method: HTTPMethodEnum.GET,
   })
-  async listChanges(@Context() ctx: EggContext, @HTTPQuery() since: string) {
+  async listChanges(@HTTPContext() ctx: Context, @HTTPQuery() since: string) {
     const params = { since: since ? Number(since) : 0 };
     ctx.tValidate(ChangeRule, params);
     const limit = 1000;
     const changes = await this.changeRepository.query(params.since, limit);
-    const results = changes.map(change => {
+    const results = changes.map((change) => {
       return {
         seq: change.id,
         type: change.type,

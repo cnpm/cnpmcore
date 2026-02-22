@@ -1,6 +1,7 @@
+import type { Static } from '@eggjs/typebox-validate/typebox';
 import {
-  type EggContext,
   Context,
+  HTTPContext,
   HTTPBody,
   HTTPController,
   HTTPMethod,
@@ -8,15 +9,14 @@ import {
   HTTPParam,
   Inject,
   Middleware,
-} from '@eggjs/tegg';
-import { E400 } from 'egg-errors';
-import type { Static } from '@eggjs/typebox-validate/typebox';
+} from 'egg';
+import { E400 } from 'egg/errors';
 
-import { AbstractController } from './AbstractController.js';
-import { AdminAccess } from '../middleware/AdminAccess.js';
-import type { ScopeManagerService } from '../../core/service/ScopeManagerService.js';
-import type { RegistryManagerService } from '../../core/service/RegistryManagerService.js';
-import { ScopeCreateOptions } from '../typebox.js';
+import type { RegistryManagerService } from '../../core/service/RegistryManagerService.ts';
+import type { ScopeManagerService } from '../../core/service/ScopeManagerService.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
+import { ScopeCreateOptions } from '../typebox.ts';
+import { AbstractController } from './AbstractController.ts';
 
 @HTTPController()
 export class ScopeController extends AbstractController {
@@ -31,19 +31,12 @@ export class ScopeController extends AbstractController {
     method: HTTPMethodEnum.POST,
   })
   @Middleware(AdminAccess)
-  async createScope(
-    @Context() ctx: EggContext,
-    @HTTPBody() scopeOptions: Static<typeof ScopeCreateOptions>
-  ) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
-      ctx,
-      'setting'
-    );
+  async createScope(@HTTPContext() ctx: Context, @HTTPBody() scopeOptions: Static<typeof ScopeCreateOptions>) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     ctx.tValidate(ScopeCreateOptions, scopeOptions);
     const { name, registryId } = scopeOptions;
 
-    const registry =
-      await this.registryManagerService.findByRegistryId(registryId);
+    const registry = await this.registryManagerService.findByRegistryId(registryId);
     if (!registry) {
       throw new E400(`registry ${registryId} not found`);
     }
@@ -61,11 +54,8 @@ export class ScopeController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   @Middleware(AdminAccess)
-  async removeScope(@Context() ctx: EggContext, @HTTPParam() id: string) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(
-      ctx,
-      'setting'
-    );
+  async removeScope(@HTTPContext() ctx: Context, @HTTPParam() id: string) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     await this.scopeManagerService.remove({
       scopeId: id,
       operatorId: authorizedUser.userId,
