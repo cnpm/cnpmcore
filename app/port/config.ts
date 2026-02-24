@@ -189,6 +189,12 @@ export interface CnpmcoreConfig {
   };
 
   /**
+   * npm package web url, used for search links.npm
+   * e.g. https://npmx.dev => https://npmx.dev/package/<name>
+   */
+  npmWebUrl: string;
+
+  /**
    * experimental features
    */
   experimental: {

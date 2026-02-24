@@ -9,7 +9,7 @@ import type { AuthorType, PackageRepository } from '../../repository/PackageRepo
 import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
 import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.ts';
-import type { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository.ts';
+import type { SearchManifestType, SearchMappingType, SearchPackageLinks, SearchRepository } from '../../repository/SearchRepository.ts';
 import type { PackageManagerService } from './PackageManagerService.ts';
 
 @SingletonProto({
@@ -103,6 +103,7 @@ export class PackageSearchService extends AbstractService {
       _npmUser: latestManifest?._npmUser,
       // 最新版本发布信息
       publish_time: latestManifest?.publish_time,
+      links: this.#buildPackageLinks(latestManifest.name, latestManifest),
     };
 
     // http://npmmirror.com/package/npm/files/lib/utils/format-search-stream.js#L147-L148
@@ -264,5 +265,29 @@ export class PackageSearchService extends AbstractService {
         },
       },
     };
+  }
+
+  // oxlint-disable-next-line typescript-eslint/no-explicit-any
+  #buildPackageLinks(name: string, manifest: any): SearchPackageLinks {
+    const npmWebUrl = this.config.cnpmcore.npmWebUrl;
+    const links: SearchPackageLinks = {
+      npm: `${npmWebUrl}/package/${name}`,
+    };
+    if (manifest.homepage && typeof manifest.homepage === 'string') {
+      links.homepage = manifest.homepage;
+    }
+    if (manifest.repository) {
+      const repoUrl = typeof manifest.repository === 'string' ? manifest.repository : manifest.repository?.url;
+      if (repoUrl) {
+        links.repository = repoUrl;
+      }
+    }
+    if (manifest.bugs) {
+      const bugsUrl = typeof manifest.bugs === 'string' ? manifest.bugs : manifest.bugs?.url;
+      if (bugsUrl) {
+        links.bugs = bugsUrl;
+      }
+    }
+    return links;
   }
 }

@@ -62,6 +62,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   elasticsearchIndex: 'cnpmcore_packages',
   strictValidateTarballPkg: false,
   strictValidatePackageDeps: false,
+  npmWebUrl: 'https://npmx.dev',
   database: {
     type: database.type,
   },

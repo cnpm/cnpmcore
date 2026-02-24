@@ -14,6 +14,13 @@ export type SearchJSONPickKey =
   | 'dist-tags'
   | '_source_registry_name';
 
+export interface SearchPackageLinks {
+  npm: string;
+  homepage?: string;
+  repository?: string;
+  bugs?: string;
+}
+
 export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> &
   CnpmcorePatchInfo & {
     scope: string;
@@ -23,6 +30,7 @@ export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> &
     created: Date;
     modified: Date;
     author?: AuthorType | undefined;
+    links?: SearchPackageLinks;
     _npmUser?: {
       name: string;
       email: string;
