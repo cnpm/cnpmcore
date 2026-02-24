@@ -5,7 +5,7 @@ import { AccessLevel, Inject, SingletonProto } from 'egg';
 import { AbstractService } from '../../common/AbstractService.ts';
 import { formatAuthor, getScopeAndName } from '../../common/PackageUtil.ts';
 import type { DistRepository } from '../../repository/DistRepository.ts';
-import type { AuthorType, PackageRepository } from '../../repository/PackageRepository.ts';
+import type { AuthorType, PackageJSONType, PackageRepository } from '../../repository/PackageRepository.ts';
 import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
 import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.ts';
@@ -267,8 +267,7 @@ export class PackageSearchService extends AbstractService {
     };
   }
 
-  // oxlint-disable-next-line typescript-eslint/no-explicit-any
-  #buildPackageLinks(name: string, manifest: any): SearchPackageLinks {
+  #buildPackageLinks(name: string, manifest: PackageJSONType): SearchPackageLinks {
     const npmWebUrl = this.config.cnpmcore.npmWebUrl;
     const links: SearchPackageLinks = {
       npm: `${npmWebUrl}/package/${name}`,
@@ -277,16 +276,10 @@ export class PackageSearchService extends AbstractService {
       links.homepage = manifest.homepage;
     }
     if (manifest.repository) {
-      const repoUrl = typeof manifest.repository === 'string' ? manifest.repository : manifest.repository?.url;
-      if (repoUrl) {
-        links.repository = repoUrl;
-      }
+      links.repository = typeof manifest.repository === 'string' ? manifest.repository : manifest.repository.url;
     }
     if (manifest.bugs) {
-      const bugsUrl = typeof manifest.bugs === 'string' ? manifest.bugs : manifest.bugs?.url;
-      if (bugsUrl) {
-        links.bugs = bugsUrl;
-      }
+      links.bugs = typeof manifest.bugs === 'string' ? manifest.bugs : manifest.bugs.url;
     }
     return links;
   }
