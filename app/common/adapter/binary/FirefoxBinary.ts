@@ -45,23 +45,8 @@ export class FirefoxBinary extends AbstractBinary {
   // Use Mozilla's product-details JSON API to list Firefox versions
   async #fetchRootDir(binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
-    let items: BinaryItem[] | undefined;
-
-    try {
-      const data = await this.requestJSON<FirefoxProductDetails>(PRODUCT_DETAILS_URL);
-      if (data?.releases) {
-        items = this.#parseProductDetails(data, binaryConfig.options?.ignoreDownloadStatuses);
-      }
-    } catch (err) {
-      this.logger.warn('[FirefoxBinary.fetchRootDir:json-api-error] %s', err);
-    }
-
-    // Fallback to HTML parsing if JSON API fails
-    if (!items || items.length === 0) {
-      this.logger.info('[FirefoxBinary.fetchRootDir] JSON API returned no items, falling back to HTML parsing');
-      return await this.#fetchSubDir('/', binaryName);
-    }
-
+    const data = await this.requestJSON<FirefoxProductDetails>(PRODUCT_DETAILS_URL);
+    const items = this.#parseProductDetails(data, binaryConfig.options?.ignoreDownloadStatuses);
     return { items, nextParams: null };
   }
 

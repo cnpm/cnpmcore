@@ -87,33 +87,6 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
       }
     });
 
-    it('should fall back to HTML parsing when JSON API fails', async () => {
-      // Mock JSON API failure
-      app.mockHttpclient(/https:\/\/product-details\.mozilla\.org\/1\.0\/firefox\.json/, 'GET', {
-        data: '{}',
-        status: 200,
-      });
-
-      // Mock HTML fallback
-      const htmlResponse = await TestUtil.readFixturesFile('archive.mozilla.org/pub/firefox/releases/index.html');
-      app.mockHttpclient(/https:\/\/archive\.mozilla\.org\/pub\/firefox\/releases\//, 'GET', {
-        data: htmlResponse,
-        status: 200,
-      });
-
-      const result = await binary.fetch('/', 'firefox');
-      assert.ok(result);
-      assert.ok(result.items.length > 0);
-
-      const itemNames = result.items.map(item => item.name);
-      const filteredResults = itemNames.filter(name => name.endsWith('/'));
-
-      // Should still work via HTML fallback
-      assert.ok(filteredResults.includes('100.0/'), `Missing 100.0/ in HTML fallback`);
-      assert.ok(filteredResults.includes('latest/'), `Missing latest/ in HTML fallback`);
-      assert.ok(!filteredResults.includes('99.0/'), `99.0/ should be filtered out in HTML fallback`);
-    });
-
     it('should fetch version directory with files', async () => {
       const response = await TestUtil.readFixturesFile('archive.mozilla.org/pub/firefox/releases/131.0.3.html');
       app.mockHttpclient(/https:\/\/archive\.mozilla\.org\/pub\/firefox\/releases\/131\.0\.3/, 'GET', {
