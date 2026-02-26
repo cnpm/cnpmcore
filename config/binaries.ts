@@ -828,6 +828,9 @@ const binaries = {
     type: BinaryType.GitHub,
     repo: 'laverdet/isolated-vm',
     distUrl: 'https://github.com/laverdet/isolated-vm/releases',
+    options: {
+      maxPage: 2,
+    },
   },
   // PlaywrightBinary
   playwright: {
