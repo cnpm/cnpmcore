@@ -822,6 +822,13 @@ const binaries = {
     repo: 'atom/node-keytar',
     distUrl: 'https://github.com/atom/node-keytar/releases',
   },
+  'isolated-vm': {
+    category: 'isolated-vm',
+    description: 'Secure & isolated JS environments for nodejs',
+    type: BinaryType.GitHub,
+    repo: 'laverdet/isolated-vm',
+    distUrl: 'https://github.com/laverdet/isolated-vm/releases',
+  },
   // PlaywrightBinary
   playwright: {
     category: 'playwright',
