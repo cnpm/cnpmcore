@@ -66,24 +66,22 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      # Build for local testing first (linux/amd64 only, load into Docker)
-      - name: Build Docker image for testing
+      - name: Prepare database
+        run: CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
+
+      # Build and test debian image
+      - name: Build debian image for testing
         uses: docker/build-push-action@v6
         with:
           context: .
           file: .docker/debian/Dockerfile
           platforms: linux/amd64
           load: true
-          tags: cnpmcore:test
+          tags: cnpmcore:test-debian
 
-      # Verify the image works by starting the service and health-checking
-      - name: Verify Docker image
+      - name: Verify debian image
         run: |
-          echo "Preparing database..."
-          CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
-
-          echo "Starting cnpmcore container..."
-          docker run -d --name cnpmcore-test \
+          docker run -d --name cnpmcore-debian \
             --network host \
             -e NODE_ENV=production \
             -e EGG_SERVER_ENV=prod \
@@ -99,35 +97,39 @@ jobs:
             -e CNPMCORE_REDIS_DB=0 \
             -e CNPMCORE_NFS_TYPE= \
             -e CNPMCORE_FORCE_LOCAL_FS=true \
-            cnpmcore:test
+            cnpmcore:test-debian
+          bash .docker/health-check.sh cnpmcore-debian
 
-          URL="http://127.0.0.1:7001"
-          PATTERN="instance_start_time"
-          TIMEOUT=60
-          TMP="$(mktemp)"
-          echo "🔎 Health check $URL, expect 200 & body contains: $PATTERN"
-          deadline=$((SECONDS + TIMEOUT))
+      # Build and test alpine image
+      - name: Build alpine image for testing
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .docker/alpine/Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: cnpmcore:test-alpine
 
-          last_status=""
-          while (( SECONDS < deadline )); do
-            last_status="$(curl -sS -o "$TMP" -w '%{http_code}' "$URL" || true)"
-            if [[ "$last_status" == "200" ]] && grep -q "$PATTERN" "$TMP"; then
-              echo "✅ Docker image health check passed"
-              rm -f "$TMP"
-              docker stop cnpmcore-test
-              exit 0
-            fi
-            sleep 2
-          done
-
-          echo "::error::❌ Docker image health check failed: status=$last_status"
-          echo "---- Response body (last try) ----"
-          cat "$TMP" || true
-          echo "---- Container logs ----"
-          docker logs cnpmcore-test --tail 100
-          rm -f "$TMP"
-          docker stop cnpmcore-test
-          exit 1
+      - name: Verify alpine image
+        run: |
+          docker run -d --name cnpmcore-alpine \
+            --network host \
+            -e NODE_ENV=production \
+            -e EGG_SERVER_ENV=prod \
+            -e CNPMCORE_CONFIG_REGISTRY=http://localhost:7001 \
+            -e CNPMCORE_DATABASE_TYPE=MySQL \
+            -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
+            -e CNPMCORE_DATABASE_PORT=3306 \
+            -e CNPMCORE_DATABASE_NAME=cnpmcore \
+            -e CNPMCORE_DATABASE_USER=root \
+            -e CNPMCORE_DATABASE_PASSWORD= \
+            -e CNPMCORE_REDIS_HOST=127.0.0.1 \
+            -e CNPMCORE_REDIS_PORT=6379 \
+            -e CNPMCORE_REDIS_DB=0 \
+            -e CNPMCORE_NFS_TYPE= \
+            -e CNPMCORE_FORCE_LOCAL_FS=true \
+            cnpmcore:test-alpine
+          bash .docker/health-check.sh cnpmcore-alpine
 
       # Build multi-platform and push (only on non-PR events)
       - name: Build and push Docker image
