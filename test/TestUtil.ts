@@ -157,11 +157,15 @@ export class TestUtil {
 
   static async truncateDatabase() {
     const tables = await this.getTableNames();
-    await Promise.all(
-      tables.map(async (table: string) => {
-        await this.query(`TRUNCATE TABLE ${table};`);
-      }),
-    );
+    const config = this.getDatabaseConfig();
+    if (config.type === DATABASE_TYPE.PostgreSQL) {
+      // PostgreSQL supports multi-table TRUNCATE in a single statement
+      await this.query(`TRUNCATE TABLE ${tables.join(', ')} CASCADE;`);
+    } else {
+      // MySQL: use DELETE instead of TRUNCATE to avoid per-table DDL overhead
+      const statements = tables.map((table: string) => `DELETE FROM ${table}`).join('; ');
+      await this.query(`SET FOREIGN_KEY_CHECKS=0; ${statements}; SET FOREIGN_KEY_CHECKS=1;`);
+    }
   }
 
   static get app() {
