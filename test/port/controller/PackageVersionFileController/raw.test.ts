@@ -47,10 +47,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       // SRI support: X-Integrity header should match the file's integrity from meta
       assert.ok(res.headers['x-integrity'], 'should have x-integrity header');
       assert.match(res.headers['x-integrity'], /^sha512-/);
-      const metaRes = await app
-        .httpRequest()
-        .get('/foo/1.0.0/files/package.json?meta')
-        .expect(200);
+      const metaRes = await app.httpRequest().get('/foo/1.0.0/files/package.json?meta').expect(200);
       assert.equal(res.headers['x-integrity'], metaRes.body.integrity);
       assert.deepEqual(res.body, {
         name: 'mk2testmodule',
