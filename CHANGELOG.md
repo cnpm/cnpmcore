@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.24.0 (2026-02-28)
+
+* feat: reduce docker image size with multi-stage build (#982) ([199aa0e](https://github.com/cnpm/cnpmcore/commit/199aa0e)), closes [#982](https://github.com/cnpm/cnpmcore/issues/982) [#887](https://github.com/cnpm/cnpmcore/issues/887)
+
 ## <small>4.23.1 (2026-02-28)</small>
 
 * perf: optimize test database cleanup for faster CI (#981) ([e77620a](https://github.com/cnpm/cnpmcore/commit/e77620a)), closes [#981](https://github.com/cnpm/cnpmcore/issues/981)
