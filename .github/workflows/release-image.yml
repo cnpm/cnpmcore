@@ -88,7 +88,7 @@ jobs:
             -e NODE_ENV=production \
             -e EGG_SERVER_ENV=prod \
             -e CNPMCORE_CONFIG_REGISTRY=http://localhost:7001 \
-            -e CNPMCORE_DATABASE_TYPE=mysql \
+            -e CNPMCORE_DATABASE_TYPE=MySQL \
             -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
             -e CNPMCORE_DATABASE_PORT=3306 \
             -e CNPMCORE_DATABASE_NAME=cnpmcore \
