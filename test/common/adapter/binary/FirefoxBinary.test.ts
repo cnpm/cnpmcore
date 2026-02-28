@@ -28,8 +28,8 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
       assert.ok(result, `Result should not be null/undefined. Got: ${result}`);
       assert.ok(result.items.length > 0, `Result.items should not be empty. Got: ${JSON.stringify(result)}`);
 
-      const itemNames = result.items.map(item => item.name);
-      const filteredResults = itemNames.filter(name => name.endsWith('/'));
+      const itemNames = result.items.map((item) => item.name);
+      const filteredResults = itemNames.filter((name) => name.endsWith('/'));
 
       // Check if some expected modern version directories are present (>= 100.0.0)
       assert.ok(filteredResults.includes('100.0/'), `Missing 100.0/ in: [${filteredResults.join(', ')}]`);
@@ -45,7 +45,7 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
       assert.ok(!filteredResults.includes('99.0/'), `99.0/ should be filtered out in: [${filteredResults.join(', ')}]`);
 
       // Check that all items are directories and have proper properties
-      const dirItems = result.items.filter(item => item.isDir);
+      const dirItems = result.items.filter((item) => item.isDir);
       assert.ok(dirItems.length > 10, `Should have modern version directory items. Got: ${dirItems.length}`);
 
       for (const item of dirItems) {
@@ -64,8 +64,8 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
       const result = await binary.fetch('/', 'firefox');
       assert.ok(result);
 
-      const versionDirs = result.items.filter(item => item.isDir);
-      const versionNames = new Set(versionDirs.map(item => item.name));
+      const versionDirs = result.items.filter((item) => item.isDir);
+      const versionNames = new Set(versionDirs.map((item) => item.name));
 
       // Should exclude versions < 100.0.0
       assert.ok(!versionNames.has('3.6/'), `3.6/ should be excluded`);
@@ -75,7 +75,7 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
       assert.ok(!versionNames.has('99.0.1/'), `99.0.1/ should be excluded`);
 
       // All numeric version directories should be >= 100.0.0
-      const numericVersions = versionDirs.filter(item => {
+      const numericVersions = versionDirs.filter((item) => {
         const versionName = item.name.slice(0, -1);
         return /^\d+/.test(versionName);
       });
@@ -99,18 +99,18 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
       assert.equal(result.items.length, 19);
 
       // Check directories
-      const linuxDir = result.items.find(item => item.name === 'linux-x86_64/');
+      const linuxDir = result.items.find((item) => item.name === 'linux-x86_64/');
       assert.ok(linuxDir);
       assert.equal(linuxDir.isDir, true);
       assert.equal(linuxDir.date, '-');
 
-      const macDir = result.items.find(item => item.name === 'mac/');
+      const macDir = result.items.find((item) => item.name === 'mac/');
       assert.ok(macDir);
       assert.equal(macDir.isDir, true);
       assert.equal(macDir.date, '-');
 
       // Check files
-      const tarFile = result.items.find(item => item.name === 'SHA256SUMS.asc');
+      const tarFile = result.items.find((item) => item.name === 'SHA256SUMS.asc');
       assert.ok(tarFile);
       assert.equal(tarFile.isDir, false);
       assert.equal(tarFile.size, '833');
