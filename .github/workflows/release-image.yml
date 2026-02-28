@@ -81,7 +81,7 @@ jobs:
 
       - name: Verify debian image
         run: |
-          docker run -d --name cnpmcore-debian \
+          docker run -d --rm --name cnpmcore-debian \
             --network host \
             -e NODE_ENV=production \
             -e EGG_SERVER_ENV=prod \
@@ -112,7 +112,7 @@ jobs:
 
       - name: Verify alpine image
         run: |
-          docker run -d --name cnpmcore-alpine \
+          docker run -d --rm --name cnpmcore-alpine \
             --network host \
             -e NODE_ENV=production \
             -e EGG_SERVER_ENV=prod \
