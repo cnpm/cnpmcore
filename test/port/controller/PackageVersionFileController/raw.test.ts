@@ -44,9 +44,14 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers['cache-control'], 'public, max-age=31536000');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
-      // SRI support: X-Integrity header should be set
+      // SRI support: X-Integrity header should match the file's integrity from meta
       assert.ok(res.headers['x-integrity'], 'should have x-integrity header');
       assert.match(res.headers['x-integrity'], /^sha512-/);
+      const metaRes = await app
+        .httpRequest()
+        .get('/foo/1.0.0/files/package.json?meta')
+        .expect(200);
+      assert.equal(res.headers['x-integrity'], metaRes.body.integrity);
       assert.deepEqual(res.body, {
         name: 'mk2testmodule',
         version: '0.0.1',
@@ -68,7 +73,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.ok(res.headers['x-integrity'], 'should have x-integrity header on repeated request');
-      assert.match(res.headers['x-integrity'], /^sha512-/);
+      assert.equal(res.headers['x-integrity'], metaRes.body.integrity);
       assert.ok(!res.headers['content-disposition']);
       assert.deepEqual(res.body, {
         name: 'mk2testmodule',
