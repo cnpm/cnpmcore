@@ -37,3 +37,18 @@ done
 
 echo "🎉 prepare database $db_name done"
 mysql $param -e "USE $db_name; SHOW TABLES;"
+
+# Create per-worker databases for vitest parallel execution
+# Default to the number of CPU cores
+cpu_cores=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+max_workers=${CNPMCORE_TEST_WORKERS:-$cpu_cores}
+for i in $(seq 0 $max_workers); do
+  worker_db="${db_name}_${i}"
+  echo "😈 Reset worker database $worker_db"
+  mysql $param -e "DROP DATABASE IF EXISTS $worker_db"
+  mysql $param -e "CREATE DATABASE $worker_db CHARACTER SET utf8"
+  for file in $sql_files; do
+    mysql $param $worker_db < "$file"
+  done
+done
+echo "🎉 prepare worker databases done"
