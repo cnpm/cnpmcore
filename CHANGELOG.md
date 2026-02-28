@@ -1,5 +1,11 @@
 # Changelog
 
+## <small>4.22.1 (2026-02-28)</small>
+
+* fix: use Mozilla product-details JSON API for Firefox version listing (#975) ([1427efe](https://github.com/cnpm/cnpmcore/commit/1427efe)), closes [#975](https://github.com/cnpm/cnpmcore/issues/975) [cnpm/cnpmcore#964](https://github.com/cnpm/cnpmcore/issues/964)
+* chore: upgrade oxfmt to ^0.35.0 (#980) ([32ae4b7](https://github.com/cnpm/cnpmcore/commit/32ae4b7)), closes [#980](https://github.com/cnpm/cnpmcore/issues/980)
+* chore(deps): update actions/attest-build-provenance action to v4 (#976) ([6fa5e03](https://github.com/cnpm/cnpmcore/commit/6fa5e03)), closes [#976](https://github.com/cnpm/cnpmcore/issues/976)
+
 ## 4.22.0 (2026-02-28)
 
 * feat: add isolated-vm to binary sync list (#977) ([567c7c0](https://github.com/cnpm/cnpmcore/commit/567c7c0)), closes [#977](https://github.com/cnpm/cnpmcore/issues/977)
