@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.22.0 (2026-02-28)
+
+* feat: add isolated-vm to binary sync list (#977) ([567c7c0](https://github.com/cnpm/cnpmcore/commit/567c7c0)), closes [#977](https://github.com/cnpm/cnpmcore/issues/977)
+* test: migrate to vitest with parallel test execution (#979) ([1126718](https://github.com/cnpm/cnpmcore/commit/1126718)), closes [#979](https://github.com/cnpm/cnpmcore/issues/979)
+* chore(deps): update dependency oxfmt to ^0.28.0 (#966) ([aca7a0d](https://github.com/cnpm/cnpmcore/commit/aca7a0d)), closes [#966](https://github.com/cnpm/cnpmcore/issues/966)
+* chore(deps): update dependency oxlint-tsgolint to ^0.14.2 (#973) ([2f5942f](https://github.com/cnpm/cnpmcore/commit/2f5942f)), closes [#973](https://github.com/cnpm/cnpmcore/issues/973)
+
 ## <small>4.21.1 (2026-02-05)</small>
 
 * fix: handle OIDC-published packages with empty maintainers by falling back to _npmUser (#967) ([00c0bdf](https://github.com/cnpm/cnpmcore/commit/00c0bdf)), closes [#967](https://github.com/cnpm/cnpmcore/issues/967)
