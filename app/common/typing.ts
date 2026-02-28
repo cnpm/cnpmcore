@@ -4,8 +4,6 @@ import type { Readable } from 'node:stream';
 import type { estypes } from '@elastic/elasticsearch';
 import type { Context } from 'egg';
 
-import type { CnpmcoreConfig } from '../port/config.ts';
-
 export interface UploadResult {
   key: string;
 }
@@ -72,10 +70,4 @@ export interface userResult {
 export interface AuthClient {
   getAuthUrl(ctx: Context): Promise<AuthUrlResult>;
   ensureCurrentUser(): Promise<userResult | null>;
-}
-
-declare module 'egg' {
-  interface EggAppConfig {
-    cnpmcore: CnpmcoreConfig;
-  }
 }

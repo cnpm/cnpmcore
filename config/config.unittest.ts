@@ -10,10 +10,14 @@ export const mockES = new Mock();
 
 export default function startConfig(appInfo: EggAppInfo): PartialEggConfig {
   const config = {} as PartialEggConfig;
-  config.dataDir = join(appInfo.root, '.cnpmcore_unittest');
+
+  // database.name already includes per-worker pool ID suffix from database.ts
+  const dbName = database.name ?? 'cnpmcore_unittest';
+
+  config.dataDir = join(appInfo.root, `.${dbName}`);
 
   config.orm = {
-    database: database.name ?? 'cnpmcore_unittest',
+    database: dbName,
   };
 
   config.nfs = {

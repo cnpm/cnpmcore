@@ -35,6 +35,12 @@ if (dbType === DATABASE_TYPE.MySQL) {
   dialect = 'sqlite';
 }
 
+// Per-worker database isolation for vitest parallel execution
+const poolId = env('VITEST_POOL_ID', 'string');
+if (poolId) {
+  dbName = `${dbName ?? 'cnpmcore_unittest'}_${poolId}`;
+}
+
 export const database = {
   type: dbType,
   dialect,

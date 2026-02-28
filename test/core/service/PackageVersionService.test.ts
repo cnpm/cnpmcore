@@ -77,7 +77,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
     await PackageModel.truncate();
     await PackageTagModel.truncate();
     await CnpmPackageVersionModel.truncate();
-    mock.restore();
+    await mock.restore();
   });
 
   describe('getPackageManifest', () => {
@@ -226,6 +226,8 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
         await CnpmPackageVersionModel.truncate();
         await CnpmPackageVersionModel.truncate();
       });
+
+      it.todo('add range resolution tests');
     });
 
     describe('hit tag resolution', () => {
@@ -262,6 +264,8 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
       afterEach(async () => {
         await CnpmPackageVersionModel.truncate();
       });
+
+      it.todo('add tag resolution tests');
     });
 
     describe('semver', () => {
