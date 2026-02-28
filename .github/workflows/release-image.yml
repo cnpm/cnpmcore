@@ -67,7 +67,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Prepare database
-        run: CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
+        run: CNPMCORE_TEST_WORKERS=0 CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
 
       # Build and test debian image
       - name: Build debian image for testing

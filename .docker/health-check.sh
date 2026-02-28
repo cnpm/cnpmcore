@@ -10,16 +10,17 @@ PATTERN="instance_start_time"
 TIMEOUT=60
 TMP="$(mktemp)"
 
+# Ensure cleanup on exit
+trap 'rm -f "$TMP"; docker stop "$CONTAINER" 2>/dev/null || true' EXIT
+
 echo "🔎 Health check $URL for container $CONTAINER, expect 200 & body contains: $PATTERN"
 deadline=$((SECONDS + TIMEOUT))
 
 last_status=""
 while (( SECONDS < deadline )); do
-  last_status="$(curl -sS -o "$TMP" -w '%{http_code}' "$URL" || true)"
+  last_status="$(curl --connect-timeout 3 --max-time 5 -sS -o "$TMP" -w '%{http_code}' "$URL" || true)"
   if [[ "$last_status" == "200" ]] && grep -q "$PATTERN" "$TMP"; then
     echo "✅ $CONTAINER health check passed"
-    rm -f "$TMP"
-    docker stop "$CONTAINER"
     exit 0
   fi
   sleep 2
@@ -30,6 +31,4 @@ echo "---- Response body (last try) ----"
 cat "$TMP" || true
 echo "---- Container logs ----"
 docker logs "$CONTAINER" --tail 100
-rm -f "$TMP"
-docker stop "$CONTAINER"
 exit 1
