@@ -46,7 +46,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       // SRI support: X-Integrity header should be set
       assert.ok(res.headers['x-integrity'], 'should have x-integrity header');
-      assert.match(res.headers['x-integrity'], /^sha\d+-/);
+      assert.match(res.headers['x-integrity'], /^sha512-/);
       assert.deepEqual(res.body, {
         name: 'mk2testmodule',
         version: '0.0.1',
@@ -68,6 +68,7 @@ describe('test/port/controller/PackageVersionFileController/raw.test.ts', () => 
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
       assert.ok(res.headers['x-integrity'], 'should have x-integrity header on repeated request');
+      assert.match(res.headers['x-integrity'], /^sha512-/);
       assert.ok(!res.headers['content-disposition']);
       assert.deepEqual(res.body, {
         name: 'mk2testmodule',
