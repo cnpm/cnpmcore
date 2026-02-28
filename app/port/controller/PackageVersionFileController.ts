@@ -183,6 +183,10 @@ export class PackageVersionFileController extends AbstractController {
       return formatFileItem(file);
     }
     ctx.set('cache-control', FILE_CACHE_CONTROL);
+    // SRI support: https://github.com/cnpm/cnpmcore/issues/634
+    if (file.dist.integrity) {
+      ctx.set('x-integrity', file.dist.integrity);
+    }
     // https://github.com/cnpm/cnpmcore/issues/693#issuecomment-2955268229
     ctx.type = ensureContentType(file.contentType);
     return await this.distRepository.getDistStream(file.dist);
