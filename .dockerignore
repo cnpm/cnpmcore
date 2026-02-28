@@ -33,7 +33,6 @@ __snapshots__
 
 # Documentation
 *.md
-LICENSE
 
 # Docker (prevent recursive copy)
 docker-compose*.yml

@@ -29,6 +29,7 @@ COPY --from=builder --chown=node:node /usr/src/app/app ./app
 COPY --from=builder --chown=node:node /usr/src/app/config ./config
 COPY --from=builder --chown=node:node /usr/src/app/node_modules ./node_modules
 COPY --from=builder --chown=node:node /usr/src/app/package.json ./
+COPY --from=builder --chown=node:node /usr/src/app/LICENSE ./
 
 # Ensure runtime directories are writable by node user
 RUN mkdir -p /usr/src/app/.cnpmcore /usr/src/app/logs /usr/src/app/run \
