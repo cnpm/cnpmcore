@@ -214,8 +214,6 @@ jobs:
           # https://github.com/jamiebuilds/ci-parallel-vars
           CI_NODE_INDEX: ${{ matrix.shardIndex }}
           CI_NODE_TOTAL: ${{ matrix.shardTotal }}
-          # Disable vitest file parallelism in CI (uses sharding instead)
-          EGG_FILE_PARALLELISM: false
 
       - name: Code Coverage
         uses: codecov/codecov-action@v5
@@ -278,8 +276,6 @@ jobs:
           CI_NODE_INDEX: ${{ matrix.shardIndex }}
           CI_NODE_TOTAL: ${{ matrix.shardTotal }}
           CNPMCORE_CONFIG_ENABLE_JSON_BUILDER: ${{ matrix.enableJSONBuilder }}
-          # Disable vitest file parallelism in CI (uses sharding instead)
-          EGG_FILE_PARALLELISM: false
 
       - name: Code Coverage
         uses: codecov/codecov-action@v5
@@ -333,8 +329,6 @@ jobs:
       - name: Continuous Integration
         run: ut ci "test/cli/npm/install.test.ts"
         env:
-          # Disable vitest file parallelism in CI (uses sharding instead)
-          EGG_FILE_PARALLELISM: false
           CNPMCORE_NFS_TYPE: s3
           CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD: true
           CNPMCORE_NFS_S3_CLIENT_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
