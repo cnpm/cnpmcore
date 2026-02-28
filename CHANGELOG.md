@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>4.23.1 (2026-02-28)</small>
+
+* perf: optimize test database cleanup for faster CI (#981) ([e77620a](https://github.com/cnpm/cnpmcore/commit/e77620a)), closes [#981](https://github.com/cnpm/cnpmcore/issues/981)
+
 ## 4.23.0 (2026-02-28)
 
 * feat: add X-Integrity response header for unpkg raw files (#978) ([9c7a11f](https://github.com/cnpm/cnpmcore/commit/9c7a11f)), closes [#978](https://github.com/cnpm/cnpmcore/issues/978) [#634](https://github.com/cnpm/cnpmcore/issues/634)
