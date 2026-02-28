@@ -27,6 +27,20 @@ jobs:
       attestations: write
       id-token: write
 
+    services:
+      mysql:
+        image: mysql:9
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: cnpmcore
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -51,17 +65,80 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
-      # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see [Usage](https://github.com/docker/build-push-action#usage) in the README of the `docker/build-push-action` repository.
-      # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
+
+      # Build for local testing first (linux/amd64 only, load into Docker)
+      - name: Build Docker image for testing
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .docker/debian/Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: cnpmcore:test
+
+      # Verify the image works by starting the service and health-checking
+      - name: Verify Docker image
+        run: |
+          echo "Preparing database..."
+          CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
+
+          echo "Starting cnpmcore container..."
+          docker run -d --name cnpmcore-test \
+            --network host \
+            -e NODE_ENV=production \
+            -e EGG_SERVER_ENV=prod \
+            -e CNPMCORE_CONFIG_REGISTRY=http://localhost:7001 \
+            -e CNPMCORE_DATABASE_TYPE=mysql \
+            -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
+            -e CNPMCORE_DATABASE_PORT=3306 \
+            -e CNPMCORE_DATABASE_NAME=cnpmcore \
+            -e CNPMCORE_DATABASE_USER=root \
+            -e CNPMCORE_DATABASE_PASSWORD= \
+            -e CNPMCORE_REDIS_HOST=127.0.0.1 \
+            -e CNPMCORE_REDIS_PORT=6379 \
+            -e CNPMCORE_REDIS_DB=0 \
+            -e CNPMCORE_NFS_TYPE= \
+            -e CNPMCORE_FORCE_LOCAL_FS=true \
+            cnpmcore:test
+
+          URL="http://127.0.0.1:7001"
+          PATTERN="instance_start_time"
+          TIMEOUT=60
+          TMP="$(mktemp)"
+          echo "🔎 Health check $URL, expect 200 & body contains: $PATTERN"
+          deadline=$((SECONDS + TIMEOUT))
+
+          last_status=""
+          while (( SECONDS < deadline )); do
+            last_status="$(curl -sS -o "$TMP" -w '%{http_code}' "$URL" || true)"
+            if [[ "$last_status" == "200" ]] && grep -q "$PATTERN" "$TMP"; then
+              echo "✅ Docker image health check passed"
+              rm -f "$TMP"
+              docker stop cnpmcore-test
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "::error::❌ Docker image health check failed: status=$last_status"
+          echo "---- Response body (last try) ----"
+          cat "$TMP" || true
+          echo "---- Container logs ----"
+          docker logs cnpmcore-test --tail 100
+          rm -f "$TMP"
+          docker stop cnpmcore-test
+          exit 1
+
+      # Build multi-platform and push (only on non-PR events)
       - name: Build and push Docker image
         id: push
+        if: github.event_name != 'pull_request'
         uses: docker/build-push-action@v6
         with:
           context: .
           file: .docker/debian/Dockerfile
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
