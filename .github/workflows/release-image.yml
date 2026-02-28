@@ -27,6 +27,20 @@ jobs:
       attestations: write
       id-token: write
 
+    services:
+      mysql:
+        image: mysql:9
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: cnpmcore
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -51,17 +65,82 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
-      # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see [Usage](https://github.com/docker/build-push-action#usage) in the README of the `docker/build-push-action` repository.
-      # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
+
+      - name: Prepare database
+        run: CNPMCORE_TEST_WORKERS=0 CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
+
+      # Build and test debian image
+      - name: Build debian image for testing
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .docker/debian/Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: cnpmcore:test-debian
+
+      - name: Verify debian image
+        run: |
+          docker run -d --rm --name cnpmcore-debian \
+            --network host \
+            -e NODE_ENV=production \
+            -e EGG_SERVER_ENV=prod \
+            -e CNPMCORE_CONFIG_REGISTRY=http://localhost:7001 \
+            -e CNPMCORE_DATABASE_TYPE=MySQL \
+            -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
+            -e CNPMCORE_DATABASE_PORT=3306 \
+            -e CNPMCORE_DATABASE_NAME=cnpmcore \
+            -e CNPMCORE_DATABASE_USER=root \
+            -e CNPMCORE_DATABASE_PASSWORD= \
+            -e CNPMCORE_REDIS_HOST=127.0.0.1 \
+            -e CNPMCORE_REDIS_PORT=6379 \
+            -e CNPMCORE_REDIS_DB=0 \
+            -e CNPMCORE_NFS_TYPE= \
+            -e CNPMCORE_FORCE_LOCAL_FS=true \
+            cnpmcore:test-debian
+          bash .docker/health-check.sh cnpmcore-debian
+
+      # Build and test alpine image
+      - name: Build alpine image for testing
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .docker/alpine/Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: cnpmcore:test-alpine
+
+      - name: Verify alpine image
+        run: |
+          docker run -d --rm --name cnpmcore-alpine \
+            --network host \
+            -e NODE_ENV=production \
+            -e EGG_SERVER_ENV=prod \
+            -e CNPMCORE_CONFIG_REGISTRY=http://localhost:7001 \
+            -e CNPMCORE_DATABASE_TYPE=MySQL \
+            -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
+            -e CNPMCORE_DATABASE_PORT=3306 \
+            -e CNPMCORE_DATABASE_NAME=cnpmcore \
+            -e CNPMCORE_DATABASE_USER=root \
+            -e CNPMCORE_DATABASE_PASSWORD= \
+            -e CNPMCORE_REDIS_HOST=127.0.0.1 \
+            -e CNPMCORE_REDIS_PORT=6379 \
+            -e CNPMCORE_REDIS_DB=0 \
+            -e CNPMCORE_NFS_TYPE= \
+            -e CNPMCORE_FORCE_LOCAL_FS=true \
+            cnpmcore:test-alpine
+          bash .docker/health-check.sh cnpmcore-alpine
+
+      # Build multi-platform and push (only on non-PR events)
       - name: Build and push Docker image
         id: push
+        if: github.event_name != 'pull_request'
         uses: docker/build-push-action@v6
         with:
           context: .
           file: .docker/debian/Dockerfile
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
