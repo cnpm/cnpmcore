@@ -113,7 +113,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       const packageManagerService = await app.getEggObject(PackageManagerService);
 
       mock(packageManagerService, 'publish', async () => {
-        await setTimeout(50);
+        await setTimeout(200);
         throw new ForbiddenError('mock error');
       });
 
@@ -125,7 +125,8 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
           .set('user-agent', user.ua)
           .send(pkg),
         (async () => {
-          await setTimeout(10);
+          // Wait long enough for request 1 to pass auth/validation and acquire the publish lock
+          await setTimeout(100);
           return app
             .httpRequest()
             .put(`/${pkg.name}`)
@@ -139,7 +140,7 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
       assert.ok(conflictRes.error, '[CONFLICT] Unable to create the publication lock, please try again later.');
 
       // release lock
-      await setTimeout(50);
+      await setTimeout(200);
       const nextErrorRes = await app
         .httpRequest()
         .put(`/${pkg.name}`)
