@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.25.0 (2026-03-01)
+
+* feat: filter deprecated and newly published packages from search results (#984) ([434ebac](https://github.com/cnpm/cnpmcore/commit/434ebac)), closes [#984](https://github.com/cnpm/cnpmcore/issues/984) [#858](https://github.com/cnpm/cnpmcore/issues/858)
+* test: add unit tests for ErrorUtil, PaddingSemVer, and isDuplicateKeyError (#983) ([a29a686](https://github.com/cnpm/cnpmcore/commit/a29a686)), closes [#983](https://github.com/cnpm/cnpmcore/issues/983)
+
 ## 4.24.0 (2026-02-28)
 
 * feat: reduce docker image size with multi-stage build (#982) ([199aa0e](https://github.com/cnpm/cnpmcore/commit/199aa0e)), closes [#982](https://github.com/cnpm/cnpmcore/issues/982) [#887](https://github.com/cnpm/cnpmcore/issues/887)
