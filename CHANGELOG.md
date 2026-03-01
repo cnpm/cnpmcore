@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>4.25.1 (2026-03-01)</small>
+
+* fix: update NwjsBinary to use Cloudflare R2 S3 API for sub-directory listing (#985) ([04ee636](https://github.com/cnpm/cnpmcore/commit/04ee636)), closes [#985](https://github.com/cnpm/cnpmcore/issues/985) [#891](https://github.com/cnpm/cnpmcore/issues/891) [#891](https://github.com/cnpm/cnpmcore/issues/891)
+
 ## 4.25.0 (2026-03-01)
 
 * feat: filter deprecated and newly published packages from search results (#984) ([434ebac](https://github.com/cnpm/cnpmcore/commit/434ebac)), closes [#984](https://github.com/cnpm/cnpmcore/issues/984) [#858](https://github.com/cnpm/cnpmcore/issues/858)
