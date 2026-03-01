@@ -93,7 +93,21 @@ export class HookController {
   })
   async listHooks(@HTTPContext() ctx: Context) {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
-    const hooks = await this.hookManageService.listHooksByOwnerId(user.userId);
+    let hooks = await this.hookManageService.listHooksByOwnerId(user.userId);
+
+    // Filter by package name (npm spec: ?package=lodash)
+    const packageFilter = ctx.query.package as string | undefined;
+    if (packageFilter) {
+      hooks = hooks.filter(hook => hook.name === packageFilter);
+    }
+
+    // Pagination (npm spec: ?limit=N&offset=N)
+    const offsetNum = ctx.query.offset ? parseInt(ctx.query.offset as string, 10) || 0 : 0;
+    const limitNum = ctx.query.limit ? parseInt(ctx.query.limit as string, 10) : undefined;
+    if (offsetNum > 0 || limitNum !== undefined) {
+      hooks = hooks.slice(offsetNum, limitNum !== undefined ? offsetNum + limitNum : undefined);
+    }
+
     const tasks = await this.taskService.findTasks(hooks.map((t) => t.latestTaskId).filter((t): t is string => !!t));
     const res = hooks.map((hook) => {
       const task = tasks.find((t) => t.taskId === hook.latestTaskId) as TriggerHookTask;

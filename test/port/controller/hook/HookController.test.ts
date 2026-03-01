@@ -123,6 +123,80 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
         .expect(200);
       assert.ok(res.body.objects.length === 1);
     });
+
+    it('should filter by package name', async () => {
+      await hookManageService.createHook({
+        type: HookType.Package,
+        ownerId: userId,
+        name: 'bar_package',
+        endpoint: 'http://bar.com',
+        secret: 'mock_secret',
+      });
+      // Filter for foo_package only
+      let res = await app
+        .httpRequest()
+        .get('/-/npm/v1/hooks?package=foo_package')
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .expect(200);
+      assert.equal(res.body.objects.length, 1);
+      assert.equal(res.body.objects[0].name, 'foo_package');
+
+      // Filter for bar_package
+      res = await app
+        .httpRequest()
+        .get('/-/npm/v1/hooks?package=bar_package')
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .expect(200);
+      assert.equal(res.body.objects.length, 1);
+      assert.equal(res.body.objects[0].name, 'bar_package');
+
+      // Filter for non-existent package
+      res = await app
+        .httpRequest()
+        .get('/-/npm/v1/hooks?package=non_existent')
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .expect(200);
+      assert.equal(res.body.objects.length, 0);
+    });
+
+    it('should support limit and offset', async () => {
+      await hookManageService.createHook({
+        type: HookType.Package,
+        ownerId: userId,
+        name: 'bar_package',
+        endpoint: 'http://bar.com',
+        secret: 'mock_secret',
+      });
+      // Limit to 1
+      let res = await app
+        .httpRequest()
+        .get('/-/npm/v1/hooks?limit=1')
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .expect(200);
+      assert.equal(res.body.objects.length, 1);
+
+      // Offset 1
+      res = await app
+        .httpRequest()
+        .get('/-/npm/v1/hooks?offset=1')
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .expect(200);
+      assert.equal(res.body.objects.length, 1);
+
+      // Offset beyond total
+      res = await app
+        .httpRequest()
+        .get('/-/npm/v1/hooks?offset=10')
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .expect(200);
+      assert.equal(res.body.objects.length, 0);
+    });
   });
 
   describe('GET /-/npm/v1/hooks/hook/:id', () => {
