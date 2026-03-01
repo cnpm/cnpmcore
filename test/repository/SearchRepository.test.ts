@@ -252,7 +252,6 @@ describe('test/repository/SearchRepository.test.ts', () => {
     });
 
     it('should not include must_not query when searchFilterDeprecated is disabled (default)', async () => {
-
       // oxlint-disable-next-line typescript-eslint/no-explicit-any
       let capturedBody: any;
       mockES.add(
