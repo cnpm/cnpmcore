@@ -218,7 +218,8 @@ describe('test/repository/SearchRepository.test.ts', () => {
       };
     }
 
-    it('should include must_not exists query for deprecated field by default', async () => {
+    it('should include must_not exists query for deprecated field when enabled', async () => {
+      mock(app.config.cnpmcore, 'searchFilterDeprecated', true);
       // oxlint-disable-next-line typescript-eslint/no-explicit-any
       let capturedBody: any;
       mockES.add(
@@ -250,8 +251,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
       });
     });
 
-    it('should not include must_not query when searchFilterDeprecated is disabled', async () => {
-      mock(app.config.cnpmcore, 'searchFilterDeprecated', false);
+    it('should not include must_not query when searchFilterDeprecated is disabled (default)', async () => {
 
       // oxlint-disable-next-line typescript-eslint/no-explicit-any
       let capturedBody: any;

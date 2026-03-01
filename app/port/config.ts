@@ -172,13 +172,19 @@ export interface CnpmcoreConfig {
    */
   elasticsearchIndex: string;
   /**
-   * filter deprecated packages from search results, default is true
+   * filter deprecated packages from search results, default is false
+   * NOTE: Before enabling, you must update your Elasticsearch index mappings to include the
+   * `package.deprecated` field. See docs/elasticsearch-setup.md and docs/elasticsearch-index.json
+   * for the required mapping configuration.
    * @see https://docs.npmjs.com/searching-for-and-choosing-packages-to-download
    */
   searchFilterDeprecated: boolean;
   /**
    * minimum duration after publish before a package appears in search results
    * supports: '1h', '1d', '1w', '2w' (hours, days, weeks), empty string means no filter
+   * NOTE: Before enabling, you must update your Elasticsearch index mappings to include the
+   * `package.date` field. See docs/elasticsearch-setup.md and docs/elasticsearch-index.json
+   * for the required mapping configuration.
    * @see https://docs.npmjs.com/searching-for-and-choosing-packages-to-download
    */
   searchPublishMinDuration: string;

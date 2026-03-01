@@ -122,7 +122,7 @@ jobs:
           echo "Preparing database..."
           CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
           echo "Starting cnpmcore with Elasticsearch enabled..."
-          CNPMCORE_FORCE_LOCAL_FS=true CNPMCORE_CONFIG_ENABLE_ES=true CNPMCORE_CONFIG_ES_CLIENT_NODE=http://localhost:9200 ut start:foreground &
+          CNPMCORE_FORCE_LOCAL_FS=true CNPMCORE_CONFIG_ENABLE_ES=true CNPMCORE_CONFIG_ES_CLIENT_NODE=http://localhost:9200 CNPMCORE_CONFIG_SEARCH_FILTER_DEPRECATED=true ut start:foreground &
           sleep 5
           echo "Checking cnpmcore is ready..."
 

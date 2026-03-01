@@ -47,7 +47,8 @@ describe('test/core/service/PackageSearchService.test.ts', () => {
   });
 
   describe('searchPackage() with ES mock', () => {
-    it('should filter deprecated packages by default (must_not exists query)', async () => {
+    it('should filter deprecated packages when searchFilterDeprecated is true', async () => {
+      mock(app.config.cnpmcore, 'searchFilterDeprecated', true);
       // oxlint-disable-next-line typescript-eslint/no-explicit-any
       let capturedBody: any;
       mockES.add(
@@ -79,8 +80,7 @@ describe('test/core/service/PackageSearchService.test.ts', () => {
       assert.equal(boolQuery.filter, undefined);
     });
 
-    it('should not add must_not when searchFilterDeprecated is false', async () => {
-      mock(app.config.cnpmcore, 'searchFilterDeprecated', false);
+    it('should not add must_not when searchFilterDeprecated is false (default)', async () => {
       // oxlint-disable-next-line typescript-eslint/no-explicit-any
       let capturedBody: any;
       mockES.add(
