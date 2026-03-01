@@ -73,7 +73,7 @@ export class NwjsBinary extends BucketBinary {
    * Request R2 S3 ListObjectsV2 API with AWS Signature V4 authentication.
    */
   private async requestR2Xml(prefix: string): Promise<string> {
-    const host = this.r2Endpoint.replace('https://', '');
+    const host = new URL(this.r2Endpoint).host;
     const now = new Date();
     const amzDate = now
       .toISOString()
