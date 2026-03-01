@@ -158,7 +158,11 @@ export class DownloadController extends AbstractController {
     return [fromDay, toDay];
   }
 
-  private sumDownloads(entities: Iterable<PackageVersionDownload>, startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): number {
+  private sumDownloads(
+    entities: Iterable<PackageVersionDownload>,
+    startDate: dayjs.Dayjs,
+    endDate: dayjs.Dayjs,
+  ): number {
     let total = 0;
     for (const entity of entities) {
       const [fromDay, toDay] = this.getDayRange(entity.yearMonth, startDate, endDate);
