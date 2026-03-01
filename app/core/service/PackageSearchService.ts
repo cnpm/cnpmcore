@@ -234,7 +234,15 @@ export class PackageSearchService extends AbstractService {
   // Parse duration string like '1h', '1d', '1w', '2w' to milliseconds
   private _parseDuration(duration: string): number {
     const match = duration.match(/^(\d+)(h|d|w)$/);
-    if (!match) return 0;
+    if (!match) {
+      if (duration) {
+        this.logger.warn(
+          '[PackageSearchService._parseDuration] invalid duration format: %s, expected format: 1h, 1d, 1w',
+          duration,
+        );
+      }
+      return 0;
+    }
     const value = parseInt(match[1], 10);
     const unit = match[2];
     switch (unit) {

@@ -123,6 +123,7 @@ jobs:
           echo "🔎 Health check $URL, expect 200 & body contains: $PATTERN"
           deadline=$((SECONDS + TIMEOUT))
           last_status=""
+          health_ok=false
 
           while (( SECONDS < deadline )); do
             last_status="$(curl -sS -o "$TMP" -w '%{http_code}' "$URL" || true)"
@@ -131,13 +132,14 @@ jobs:
             if [[ "$last_status" == "200" ]] && grep -q "$PATTERN" "$TMP"; then
               echo "✅ OK"
               rm -f "$TMP"
+              health_ok=true
               break
             fi
             sleep 1
           done
 
-          if [[ "$last_status" != "200" ]]; then
-            echo "::error::❌ Health check failed: status=$last_status"
+          if [[ "$health_ok" != "true" ]]; then
+            echo "::error::❌ Health check failed: status=$last_status, pattern not matched or timeout"
             echo "---- Response body (last try) ----"
             cat "$TMP" || true
             rm -f "$TMP"
