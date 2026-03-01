@@ -130,7 +130,7 @@ export class DownloadController extends AbstractController {
     };
   }
 
-  private sumDownloads(entities: { [key: string]: unknown }[]): number {
+  private sumDownloads(entities: Iterable<Record<string, unknown>>): number {
     let total = 0;
     for (const entity of entities) {
       for (let i = 1; i <= 31; i++) {
