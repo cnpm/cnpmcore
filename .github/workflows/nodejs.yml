@@ -61,6 +61,10 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
     steps:
       - name: Checkout Git Source
         uses: actions/checkout@v6
