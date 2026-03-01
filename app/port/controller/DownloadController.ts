@@ -3,6 +3,7 @@ import { UnprocessableEntityError } from 'egg/errors';
 
 import dayjs from '../../common/dayjs.ts';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
+import type { PackageVersionDownload } from '../../repository/model/PackageVersionDownload.ts';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
 import { AbstractController } from './AbstractController.ts';
 
@@ -157,14 +158,12 @@ export class DownloadController extends AbstractController {
     return [fromDay, toDay];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private sumDownloads(entities: Iterable<any>, startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): number {
+  private sumDownloads(entities: Iterable<PackageVersionDownload>, startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): number {
     let total = 0;
     for (const entity of entities) {
-      const yearMonth = entity.yearMonth as number;
-      const [fromDay, toDay] = this.getDayRange(yearMonth, startDate, endDate);
+      const [fromDay, toDay] = this.getDayRange(entity.yearMonth, startDate, endDate);
       for (let i = fromDay; i <= toDay; i++) {
-        const field = `d${String(i).padStart(2, '0')}`;
+        const field = `d${String(i).padStart(2, '0')}` as keyof PackageVersionDownload;
         const counter = entity[field] as number;
         if (counter) total += counter;
       }
