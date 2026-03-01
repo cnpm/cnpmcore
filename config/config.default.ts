@@ -60,6 +60,8 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   strictSyncSpecivicVersion: false,
   enableElasticsearch: env('CNPMCORE_CONFIG_ENABLE_ES', 'boolean', false),
   elasticsearchIndex: 'cnpmcore_packages',
+  searchFilterDeprecated: env('CNPMCORE_CONFIG_SEARCH_FILTER_DEPRECATED', 'boolean', false),
+  searchPublishMinDuration: env('CNPMCORE_CONFIG_SEARCH_PUBLISH_MIN_DURATION', 'string', ''),
   strictValidateTarballPkg: false,
   strictValidatePackageDeps: false,
   database: {

@@ -103,6 +103,8 @@ export class PackageSearchService extends AbstractService {
       _npmUser: latestManifest?._npmUser,
       // 最新版本发布信息
       publish_time: latestManifest?.publish_time,
+      // deprecated message of the latest version
+      deprecated: latestManifest?.deprecated as string | undefined,
     };
 
     // http://npmmirror.com/package/npm/files/lib/utils/format-search-stream.js#L147-L148
@@ -137,6 +139,9 @@ export class PackageSearchService extends AbstractService {
       scoreEffect: 0.25,
     });
 
+    const mustNotQueries = this._buildMustNotQueries();
+    const filterQueries = this._buildFilterQueries();
+
     const res = await this.searchRepository.searchPackage({
       body: {
         size,
@@ -148,6 +153,8 @@ export class PackageSearchService extends AbstractService {
               bool: {
                 should: matchQueries,
                 minimum_should_match: matchQueries.length > 0 ? 1 : 0,
+                ...(mustNotQueries.length > 0 ? { must_not: mustNotQueries } : {}),
+                ...(filterQueries.length > 0 ? { filter: filterQueries } : {}),
               },
             },
             script_score: scriptScore,
@@ -184,6 +191,69 @@ export class PackageSearchService extends AbstractService {
         return fullname;
       }
       throw error;
+    }
+  }
+
+  // Build must_not queries for filtering deprecated packages
+  // https://github.com/cnpm/cnpmcore/issues/858
+  private _buildMustNotQueries() {
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
+    const queries: any[] = [];
+    if (this.config.cnpmcore.searchFilterDeprecated) {
+      queries.push({
+        exists: {
+          field: 'package.deprecated',
+        },
+      });
+    }
+    return queries;
+  }
+
+  // Build filter queries for minimum publish duration
+  // https://github.com/cnpm/cnpmcore/issues/858
+  private _buildFilterQueries() {
+    // oxlint-disable-next-line typescript-eslint/no-explicit-any
+    const queries: any[] = [];
+    const minDuration = this.config.cnpmcore.searchPublishMinDuration;
+    if (minDuration) {
+      const ms = this._parseDuration(minDuration);
+      if (ms > 0) {
+        const cutoff = new Date(Date.now() - ms);
+        queries.push({
+          range: {
+            'package.created': {
+              lte: cutoff.toISOString(),
+            },
+          },
+        });
+      }
+    }
+    return queries;
+  }
+
+  // Parse duration string like '1h', '1d', '1w', '2w' to milliseconds
+  private _parseDuration(duration: string): number {
+    const match = duration.match(/^(\d+)(h|d|w)$/);
+    if (!match) {
+      if (duration) {
+        this.logger.warn(
+          '[PackageSearchService._parseDuration] invalid duration format: %s, expected format: 1h, 1d, 1w',
+          duration,
+        );
+      }
+      return 0;
+    }
+    const value = parseInt(match[1], 10);
+    const unit = match[2];
+    switch (unit) {
+      case 'h':
+        return value * 60 * 60 * 1000;
+      case 'd':
+        return value * 24 * 60 * 60 * 1000;
+      case 'w':
+        return value * 7 * 24 * 60 * 60 * 1000;
+      default:
+        return 0;
     }
   }
 

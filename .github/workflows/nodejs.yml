@@ -83,13 +83,46 @@ jobs:
       - name: Install Dependencies
         run: ut
 
+      # https://github.com/elastic/elastic-github-actions/blob/master/elasticsearch/README.md
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@98431b45a60cbb6ace481778827bc8e11f12fd65 # master
+        with:
+          stack-version: 8.18.0
+          security-enabled: false
+
+      - name: Wait for Elasticsearch and create index
+        run: |
+          while ! curl -s http://localhost:9200 | grep -q "elasticsearch"; do
+            echo "Waiting for Elasticsearch to be ready..."
+            sleep 1
+          done
+          echo "✅ Elasticsearch is ready"
+
+          echo "📦 Creating index with proper mappings..."
+          CREATE_RESULT=$(curl -sS -X PUT "http://localhost:9200/cnpmcore_packages" \
+            -H 'content-type: application/json' \
+            -d @docs/elasticsearch-index.json)
+          echo "Create index result: ${CREATE_RESULT}"
+          if ! echo "$CREATE_RESULT" | grep -q '"acknowledged":true'; then
+            echo "::error::Failed to create ES index"
+            exit 1
+          fi
+          echo "✅ ES index created with custom analyzers and mappings"
+
       - name: Test Deployment
         run: |
           ut build
           echo "Preparing database..."
           CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
-          echo "Starting cnpmcore..."
-          CNPMCORE_FORCE_LOCAL_FS=true ut start:foreground &
+          echo "Starting cnpmcore with Elasticsearch enabled..."
+          CNPMCORE_FORCE_LOCAL_FS=true CNPMCORE_CONFIG_ENABLE_ES=true CNPMCORE_CONFIG_ES_CLIENT_NODE=http://localhost:9200 CNPMCORE_CONFIG_SEARCH_FILTER_DEPRECATED=true ut start:foreground &
           sleep 5
           echo "Checking cnpmcore is ready..."
 
@@ -101,6 +134,7 @@ jobs:
           echo "🔎 Health check $URL, expect 200 & body contains: $PATTERN"
           deadline=$((SECONDS + TIMEOUT))
           last_status=""
+          health_ok=false
 
           while (( SECONDS < deadline )); do
             last_status="$(curl -sS -o "$TMP" -w '%{http_code}' "$URL" || true)"
@@ -109,17 +143,210 @@ jobs:
             if [[ "$last_status" == "200" ]] && grep -q "$PATTERN" "$TMP"; then
               echo "✅ OK"
               rm -f "$TMP"
-              npx eggctl stop
-              exit 0
+              health_ok=true
+              break
             fi
             sleep 1
           done
 
-          echo "::error::❌ Health check failed: status=$last_status"
-          echo "---- Response body (last try) ----"
-          cat "$TMP" || true
-          rm -f "$TMP"
-          exit 1
+          if [[ "$health_ok" != "true" ]]; then
+            echo "::error::❌ Health check failed: status=$last_status, pattern not matched or timeout"
+            echo "---- Response body (last try) ----"
+            cat "$TMP" || true
+            rm -f "$TMP"
+            exit 1
+          fi
+
+      - name: Test Search API with Elasticsearch
+        run: |
+          set -Eeuo pipefail
+          BASE_URL="http://127.0.0.1:7001"
+
+          echo "📦 Publishing a test package..."
+          # Login as admin user (admins can register even when allowPublicRegistration is false)
+          NPM_UA="npm/10.0.0 node/v22.0.0 linux x64"
+          TOKEN=$(curl -sS -X PUT "${BASE_URL}/-/user/org.couchdb.user:cnpmcore_admin" \
+            -H 'content-type: application/json' \
+            -H "user-agent: ${NPM_UA}" \
+            -d '{"name":"cnpmcore_admin","password":"testpassword123","email":"admin@cnpmjs.org","type":"user"}' \
+            | node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).token || '')")
+
+          if [ -z "$TOKEN" ]; then
+            echo "::error::Failed to create admin user"
+            exit 1
+          fi
+          echo "✅ Got admin auth token"
+
+          # Publish a test package (using valid tgz data from test fixtures)
+          TGZ_DATA="H4sIAAAAAAAAA+2SsWrDMBCGPfspDg2ZinOyEgeylg6Zu2YR8rVRHEtGkkOg5N0jWaFdujVQAv6W4/7/dHcSGqTq5Ccthxyro7emeDCI2KxWkOKmaaaIdc4TouZQ8FqgwI3AdVMgF8ijho9e5DdGH6SLq/y1T74LfMcn4asEYEb2xLbA+q4O5ENv2/FE7CVZZ3JeW5NcrLDiWW3JK6eHcHey2Es9Zdq0dIkfKau50EcjjYpCmpDKSB0s7Nmbc9ZtwVhIBviBlP7Q1O4ZLBZAFx2As3jyOnWTYzhY9zPzpBUZPy2/e39l5bX87wedmZmZeRJuheTX2wAIAAA="
+          PACKAGE_JSON=$(cat <<EOF
+          {
+            "name": "@cnpm/search-test-pkg",
+            "version": "1.0.0",
+            "description": "A test package for search integration testing",
+            "keywords": ["search", "test", "integration"],
+            "readme": "# search-test-pkg",
+            "_attachments": {
+              "@cnpm/search-test-pkg-1.0.0.tgz": {
+                "content_type": "application/octet-stream",
+                "data": "${TGZ_DATA}",
+                "length": 251
+              }
+            },
+            "dist-tags": {
+              "latest": "1.0.0"
+            },
+            "versions": {
+              "1.0.0": {
+                "name": "@cnpm/search-test-pkg",
+                "version": "1.0.0",
+                "description": "A test package for search integration testing",
+                "keywords": ["search", "test", "integration"]
+              }
+            }
+          }
+          EOF
+          )
+
+          PUBLISH_RESULT=$(curl -sS -X PUT "${BASE_URL}/@cnpm/search-test-pkg" \
+            -H "authorization: Bearer ${TOKEN}" \
+            -H 'content-type: application/json' \
+            -H "user-agent: ${NPM_UA}" \
+            -d "${PACKAGE_JSON}")
+          echo "Publish result: ${PUBLISH_RESULT}"
+
+          if ! echo "$PUBLISH_RESULT" | grep -q '"ok":true'; then
+            echo "::error::Failed to publish test package"
+            exit 1
+          fi
+          echo "✅ Published @cnpm/search-test-pkg@1.0.0"
+
+          # Sync to search index
+          echo "🔄 Syncing package to search index..."
+          SYNC_RESULT=$(curl -sS -X PUT "${BASE_URL}/-/v1/search/sync/@cnpm/search-test-pkg" \
+            -H "authorization: Bearer ${TOKEN}")
+          echo "Sync result: ${SYNC_RESULT}"
+          echo "✅ Synced to search index"
+
+          # Flush ES index to make document searchable immediately
+          curl -sS -X POST "http://localhost:9200/cnpmcore_packages/_refresh"
+          echo ""
+
+          # Verify document exists in ES directly
+          echo "🔍 Checking ES document directly..."
+          ES_DOC=$(curl -sS "http://localhost:9200/cnpmcore_packages/_doc/@cnpm%2Fsearch-test-pkg")
+          echo "ES document: ${ES_DOC}"
+          echo "$ES_DOC" | node -e "
+            const doc = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            if (!doc.found) { console.log('❌ Document not found in ES'); process.exit(1); }
+            const pkg = doc._source.package;
+            if (pkg.deprecated) { console.log('❌ Non-deprecated package should not have deprecated field'); process.exit(1); }
+            console.log('✅ ES document exists, no deprecated field');
+          "
+
+          # Search for the package via cnpmcore search API
+          echo "🔍 Searching for test package via API..."
+          SEARCH_RESULT=$(curl -sS "${BASE_URL}/-/v1/search?text=search-test-pkg&size=10")
+          echo "Search result: ${SEARCH_RESULT}"
+
+          echo "$SEARCH_RESULT" | node -e "
+            const data = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            const found = data.objects && data.objects.some(o => o.package.name === '@cnpm/search-test-pkg');
+            if (found) { console.log('✅ Package found in search results'); process.exit(0); }
+            else { console.log('❌ Package not found in search results'); process.exit(1); }
+          "
+
+          # ---- Test deprecated package filtering ----
+          echo ""
+          echo "========================================="
+          echo "Testing deprecated package search filter"
+          echo "========================================="
+
+          echo "🔄 Deprecating the package..."
+          DEPRECATE_JSON=$(cat <<'EOF'
+          {
+            "name": "@cnpm/search-test-pkg",
+            "versions": {
+              "1.0.0": {
+                "name": "@cnpm/search-test-pkg",
+                "version": "1.0.0",
+                "deprecated": "This package is deprecated for testing"
+              }
+            }
+          }
+          EOF
+          )
+
+          DEPRECATE_RESULT=$(curl -sS -X PUT "${BASE_URL}/@cnpm/search-test-pkg" \
+            -H "authorization: Bearer ${TOKEN}" \
+            -H 'content-type: application/json' \
+            -H "user-agent: ${NPM_UA}" \
+            -d "${DEPRECATE_JSON}")
+          echo "Deprecate result: ${DEPRECATE_RESULT}"
+
+          if ! echo "$DEPRECATE_RESULT" | grep -q '"ok":true'; then
+            echo "::error::Failed to deprecate package"
+            exit 1
+          fi
+          echo "✅ Package deprecated"
+
+          # Re-sync to update search index with deprecated flag
+          echo "🔄 Re-syncing deprecated package to search index..."
+          SYNC_RESULT2=$(curl -sS -X PUT "${BASE_URL}/-/v1/search/sync/@cnpm/search-test-pkg" \
+            -H "authorization: Bearer ${TOKEN}")
+          echo "Sync result: ${SYNC_RESULT2}"
+
+          # Flush ES index
+          curl -sS -X POST "http://localhost:9200/cnpmcore_packages/_refresh"
+          echo ""
+
+          # Verify deprecated field is now in ES document
+          echo "🔍 Checking ES document after deprecation..."
+          ES_DOC2=$(curl -sS "http://localhost:9200/cnpmcore_packages/_doc/@cnpm%2Fsearch-test-pkg")
+          echo "ES document: ${ES_DOC2}"
+          echo "$ES_DOC2" | node -e "
+            const doc = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            if (!doc.found) { console.log('❌ Document not found in ES'); process.exit(1); }
+            const pkg = doc._source.package;
+            if (pkg.deprecated !== 'This package is deprecated for testing') {
+              console.log('❌ Expected deprecated field, got:', pkg.deprecated);
+              process.exit(1);
+            }
+            console.log('✅ ES document has deprecated field:', pkg.deprecated);
+          "
+
+          # Search via cnpmcore API — deprecated package should be filtered out
+          echo "🔍 Searching via API (deprecated should be filtered)..."
+          SEARCH_RESULT2=$(curl -sS "${BASE_URL}/-/v1/search?text=search-test-pkg&size=10")
+          echo "Search result: ${SEARCH_RESULT2}"
+
+          echo "$SEARCH_RESULT2" | node -e "
+            const data = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            const found = data.objects && data.objects.some(o => o.package.name === '@cnpm/search-test-pkg');
+            if (!found) { console.log('✅ Deprecated package correctly filtered from search results'); process.exit(0); }
+            else { console.log('❌ Deprecated package should not appear in search results'); process.exit(1); }
+          "
+
+          # Verify the document still exists in ES directly (just filtered from search)
+          echo "🔍 Verifying package still exists in ES (just filtered from search)..."
+          ES_SEARCH3=$(curl -sS "http://localhost:9200/cnpmcore_packages/_search" \
+            -H 'content-type: application/json' \
+            -d '{"query":{"match_all":{}}}')
+          echo "ES search result: ${ES_SEARCH3}"
+
+          echo "$ES_SEARCH3" | node -e "
+            const data = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            const found = data.hits && data.hits.hits.some(h => h._source.package.name === '@cnpm/search-test-pkg');
+            if (found) { console.log('✅ Deprecated package still exists in ES (just filtered from search)'); process.exit(0); }
+            else { console.log('❌ Package should still exist in ES'); process.exit(1); }
+          "
+
+          echo ""
+          echo "✅ All search integration tests passed"
+
+      - name: Stop cnpmcore
+        if: always()
+        run: npx eggctl stop || true
 
   test-postgresql-fs-nfs:
     strategy:
@@ -184,7 +411,7 @@ jobs:
           sudo sysctl -w vm.max_map_count=262144
 
       - name: Runs Elasticsearch
-        uses: elastic/elastic-github-actions/elasticsearch@master
+        uses: elastic/elastic-github-actions/elasticsearch@98431b45a60cbb6ace481778827bc8e11f12fd65 # master
         with:
           stack-version: 8.18.0
           security-enabled: false
@@ -207,7 +434,7 @@ jobs:
           # The default PostgreSQL port
           POSTGRES_PORT: 5432
           CNPMCORE_CONFIG_ENABLE_ES: true
-          CNPMCORE_CONFIG_ES_CLIENT_NODES: http://localhost:9200
+          CNPMCORE_CONFIG_ES_CLIENT_NODE: http://localhost:9200
 
       - name: Code Coverage
         uses: codecov/codecov-action@v5

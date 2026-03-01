@@ -129,7 +129,7 @@ export class UserRepository extends AbstractRepository {
   }
 
   async listTokens(userId: string): Promise<TokenEntity[]> {
-    const models = await this.Token.find({ userId });
+    const models = await this.Token.find({ userId }).order('id');
     const tokens = models.map((model) => ModelConvertor.convertModelToEntity(model, TokenEntity));
     for (const token of tokens) {
       await this._injectTokenPackages(token);

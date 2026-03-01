@@ -197,4 +197,250 @@ describe('test/repository/SearchRepository.test.ts', () => {
       }
     });
   });
+
+  describe('search with deprecated filter', () => {
+    let packageSearchService: PackageSearchService;
+
+    beforeEach(async () => {
+      packageSearchService = await app.getEggObject(PackageSearchService);
+    });
+
+    function createMockSource(name: string, options?: { deprecated?: string; date?: string }) {
+      return {
+        package: {
+          name,
+          version: '1.0.0',
+          description: `${name} package`,
+          ...(options?.deprecated ? { deprecated: options.deprecated } : {}),
+          date: options?.date || new Date().toISOString(),
+        },
+        downloads: { all: 100 },
+      };
+    }
+
+    it('should include must_not exists query for deprecated field when enabled', async () => {
+      mock(app.config.cnpmcore, 'searchFilterDeprecated', true);
+      // oxlint-disable-next-line typescript-eslint/no-explicit-any
+      let capturedBody: any;
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        (params: { body: unknown }) => {
+          capturedBody = params.body;
+          // Return only non-deprecated package
+          return {
+            hits: {
+              total: { value: 1, relation: 'eq' },
+              hits: [{ _source: createMockSource('active-pkg') }],
+            },
+          };
+        },
+      );
+
+      const result = await packageSearchService.searchPackage('pkg', 0, 10);
+      assert.equal(result.total, 1);
+      assert.equal(result.objects[0]?.package.name, 'active-pkg');
+
+      // Verify the ES query includes must_not for deprecated
+      const boolQuery = capturedBody.query.function_score.query.bool;
+      assert(boolQuery.must_not, 'must_not should be present in ES query');
+      assert.deepEqual(boolQuery.must_not[0], {
+        exists: { field: 'package.deprecated' },
+      });
+    });
+
+    it('should not include must_not query when searchFilterDeprecated is disabled (default)', async () => {
+      // oxlint-disable-next-line typescript-eslint/no-explicit-any
+      let capturedBody: any;
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        (params: { body: unknown }) => {
+          capturedBody = params.body;
+          // Return both deprecated and non-deprecated
+          return {
+            hits: {
+              total: { value: 2, relation: 'eq' },
+              hits: [
+                { _source: createMockSource('active-pkg') },
+                { _source: createMockSource('old-pkg', { deprecated: 'use active-pkg instead' }) },
+              ],
+            },
+          };
+        },
+      );
+
+      const result = await packageSearchService.searchPackage('pkg', 0, 10);
+      assert.equal(result.total, 2);
+
+      // Verify must_not is NOT in the query
+      const boolQuery = capturedBody.query.function_score.query.bool;
+      assert.equal(boolQuery.must_not, undefined, 'must_not should not be present');
+    });
+
+    it('should include range filter on package.created when searchPublishMinDuration is set', async () => {
+      mock(app.config.cnpmcore, 'searchPublishMinDuration', '2w');
+
+      // oxlint-disable-next-line typescript-eslint/no-explicit-any
+      let capturedBody: any;
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        (params: { body: unknown }) => {
+          capturedBody = params.body;
+          return {
+            hits: {
+              total: { value: 1, relation: 'eq' },
+              hits: [
+                {
+                  _source: createMockSource('old-pkg', {
+                    date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+                  }),
+                },
+              ],
+            },
+          };
+        },
+      );
+
+      const before = Date.now();
+      const result = await packageSearchService.searchPackage('pkg', 0, 10);
+      assert.equal(result.total, 1);
+      assert.equal(result.objects[0]?.package.name, 'old-pkg');
+
+      // Verify range filter is in the query
+      const boolQuery = capturedBody.query.function_score.query.bool;
+      assert(boolQuery.filter, 'filter should be present');
+      assert.equal(boolQuery.filter.length, 1);
+      const rangeFilter = boolQuery.filter[0];
+      assert(rangeFilter.range['package.created'], 'should filter on package.created');
+      const cutoff = new Date(rangeFilter.range['package.created'].lte).getTime();
+      const twoWeeksMs = 14 * 24 * 60 * 60 * 1000;
+      assert(Math.abs(cutoff - (before - twoWeeksMs)) < 2000, 'cutoff should be ~2 weeks ago');
+    });
+
+    it('should combine both deprecated and duration filters', async () => {
+      mock(app.config.cnpmcore, 'searchFilterDeprecated', true);
+      mock(app.config.cnpmcore, 'searchPublishMinDuration', '1d');
+
+      // oxlint-disable-next-line typescript-eslint/no-explicit-any
+      let capturedBody: any;
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        (params: { body: unknown }) => {
+          capturedBody = params.body;
+          return {
+            hits: {
+              total: { value: 0, relation: 'eq' },
+              hits: [],
+            },
+          };
+        },
+      );
+
+      await packageSearchService.searchPackage('test', 0, 20);
+
+      const boolQuery = capturedBody.query.function_score.query.bool;
+      // Both must_not and filter should coexist
+      assert(boolQuery.must_not, 'must_not should be present');
+      assert.equal(boolQuery.must_not.length, 1);
+      assert.deepEqual(boolQuery.must_not[0], {
+        exists: { field: 'package.deprecated' },
+      });
+      assert(boolQuery.filter, 'filter should be present');
+      assert.equal(boolQuery.filter.length, 1);
+      assert(boolQuery.filter[0].range['package.created'].lte, 'range lte should be set');
+      // should queries should still work
+      assert(boolQuery.should.length > 0, 'text match queries should still be present');
+      assert.equal(boolQuery.minimum_should_match, 1);
+    });
+
+    it('should sync package with deprecated field into search document', async () => {
+      const { pkg } = await TestUtil.createPackage({ isPrivate: true });
+
+      let upsertedDoc: SearchManifestType | undefined;
+      mock(searchRepository, 'upsertPackage', async (document: SearchManifestType) => {
+        upsertedDoc = document;
+        return document.package.name;
+      });
+
+      await packageSearchService.syncPackage(pkg.name, true);
+      assert(upsertedDoc, 'document should be upserted to ES');
+      assert.equal(upsertedDoc.package.name, pkg.name);
+      // Non-deprecated package should not have deprecated field
+      assert.equal(upsertedDoc.package.deprecated, undefined);
+    });
+
+    it('should handle duration formats: 1h, 7d, 1w', async () => {
+      const cases = [
+        { duration: '1h', expectedMs: 60 * 60 * 1000 },
+        { duration: '7d', expectedMs: 7 * 24 * 60 * 60 * 1000 },
+        { duration: '1w', expectedMs: 7 * 24 * 60 * 60 * 1000 },
+      ];
+
+      for (const { duration, expectedMs } of cases) {
+        mockES.clearAll();
+        mock.restore();
+        mock(app.config.cnpmcore, 'enableElasticsearch', true);
+        mock(app.config.cnpmcore, 'elasticsearchIndex', 'cnpmcore_packages');
+        mock(app.config.cnpmcore, 'searchPublishMinDuration', duration);
+        packageSearchService = await app.getEggObject(PackageSearchService);
+
+        // oxlint-disable-next-line typescript-eslint/no-explicit-any
+        let capturedBody: any;
+        mockES.add(
+          {
+            method: 'POST',
+            path: '/cnpmcore_packages/_search',
+          },
+          (params: { body: unknown }) => {
+            capturedBody = params.body;
+            return {
+              hits: { total: { value: 0, relation: 'eq' }, hits: [] },
+            };
+          },
+        );
+
+        const before = Date.now();
+        await packageSearchService.searchPackage('x', 0, 10);
+        const cutoff = new Date(
+          capturedBody.query.function_score.query.bool.filter[0].range['package.created'].lte,
+        ).getTime();
+        const diff = Math.abs(cutoff - (before - expectedMs));
+        assert(diff < 2000, `${duration}: cutoff diff=${diff}ms should be < 2000ms`);
+      }
+    });
+
+    it('should ignore invalid duration format and not add filter', async () => {
+      mock(app.config.cnpmcore, 'searchPublishMinDuration', 'abc');
+
+      // oxlint-disable-next-line typescript-eslint/no-explicit-any
+      let capturedBody: any;
+      mockES.add(
+        {
+          method: 'POST',
+          path: `/${app.config.cnpmcore.elasticsearchIndex}/_search`,
+        },
+        (params: { body: unknown }) => {
+          capturedBody = params.body;
+          return {
+            hits: { total: { value: 0, relation: 'eq' }, hits: [] },
+          };
+        },
+      );
+
+      await packageSearchService.searchPackage('test', 0, 10);
+      const boolQuery = capturedBody.query.function_score.query.bool;
+      assert.equal(boolQuery.filter, undefined, 'invalid duration should not produce a filter');
+    });
+  });
 });
