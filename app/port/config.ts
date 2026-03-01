@@ -172,6 +172,17 @@ export interface CnpmcoreConfig {
    */
   elasticsearchIndex: string;
   /**
+   * filter deprecated packages from search results, default is true
+   * @see https://docs.npmjs.com/searching-for-and-choosing-packages-to-download
+   */
+  searchFilterDeprecated: boolean;
+  /**
+   * minimum duration after publish before a package appears in search results
+   * supports: '1h', '1d', '1w', '2w' (hours, days, weeks), empty string means no filter
+   * @see https://docs.npmjs.com/searching-for-and-choosing-packages-to-download
+   */
+  searchPublishMinDuration: string;
+  /**
    * strictly enforces/validates manifest and tgz when publish, https://github.com/cnpm/cnpmcore/issues/542
    */
   strictValidateTarballPkg?: boolean;
