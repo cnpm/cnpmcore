@@ -38,6 +38,9 @@ export default function startConfig(appInfo: EggAppInfo): PartialEggConfig {
       port: 6379,
       password: '',
       db: 0,
+      // Skip ready check — ioredis-mock emits 'ready' synchronously
+      // before @eggjs/redis registerBeforeStart listener is attached
+      weakDependent: true,
     },
   };
 
