@@ -375,12 +375,6 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
     });
 
     it('should support last-week period alias', async () => {
-      const res = await app.httpRequest().get('/downloads/point/last-week/@cnpm/koa').expect(404);
-      // package not found since no package created in this test
-      assert.match(res.body.error, /not found/);
-    });
-
-    it('should support last-month period alias for range endpoint', async () => {
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
       await app
         .httpRequest()
@@ -389,27 +383,17 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         .set('user-agent', publisher.ua)
         .send(pkg)
         .expect(201);
-      const res = await app.httpRequest().get('/downloads/range/last-month/@cnpm/koa').expect(200);
+      const res = await app.httpRequest().get('/downloads/point/last-week/@cnpm/koa').expect(200);
       const data = res.body;
-      assert.ok(Array.isArray(data.downloads));
+      assert.equal(typeof data.downloads, 'number');
       assert.equal(data.package, '@cnpm/koa');
       assert.ok(data.start);
       assert.ok(data.end);
     });
 
-    it('should support last-year period alias for range endpoint', async () => {
-      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
-      await app
-        .httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(201);
-      const res = await app.httpRequest().get('/downloads/range/last-year/@cnpm/koa').expect(200);
-      const data = res.body;
-      assert.ok(Array.isArray(data.downloads));
-      assert.equal(data.package, '@cnpm/koa');
+    it('should return 404 for non-existent package', async () => {
+      const res = await app.httpRequest().get('/downloads/point/last-week/@cnpm/non-existent-pkg').expect(404);
+      assert.match(res.body.error, /not found/);
     });
 
     it('should support single date for point endpoint', async () => {
@@ -464,6 +448,40 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       const data = res.body;
       assert.equal(typeof data.downloads, 'number');
       assert.ok(!data.package);
+    });
+  });
+
+  describe('[GET /downloads/range/:range/:fullname] period aliases', () => {
+    it('should support last-month period alias for range endpoint', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      const res = await app.httpRequest().get('/downloads/range/last-month/@cnpm/koa').expect(200);
+      const data = res.body;
+      assert.ok(Array.isArray(data.downloads));
+      assert.equal(data.package, '@cnpm/koa');
+      assert.ok(data.start);
+      assert.ok(data.end);
+    });
+
+    it('should support last-year period alias for range endpoint', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      const res = await app.httpRequest().get('/downloads/range/last-year/@cnpm/koa').expect(200);
+      const data = res.body;
+      assert.ok(Array.isArray(data.downloads));
+      assert.equal(data.package, '@cnpm/koa');
     });
   });
 });

@@ -1,8 +1,8 @@
 import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
-import { NotFoundError, UnprocessableEntityError } from 'egg/errors';
+import { UnprocessableEntityError } from 'egg/errors';
 
 import dayjs from '../../common/dayjs.ts';
-import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.ts';
+import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
 import { AbstractController } from './AbstractController.ts';
 
@@ -21,22 +21,13 @@ export class DownloadController extends AbstractController {
   })
   async showPackageDownloadPoint(@HTTPParam() fullname: string, @HTTPParam() range: string) {
     const [startDate, endDate] = this.checkAndGetRange(range);
-    const [scope, name] = getScopeAndName(fullname);
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) throw new NotFoundError(`${fullname} not found`);
+    const pkg = await this.getPackageEntityByFullname(fullname);
     const entities = await this.packageVersionDownloadRepository.query(
       pkg.packageId,
       startDate.toDate(),
       endDate.toDate(),
     );
-    let total = 0;
-    for (const entity of entities) {
-      for (let i = 1; i <= 31; i++) {
-        const field = `d${String(i).padStart(2, '0')}` as keyof typeof entity;
-        const counter = entity[field] as number;
-        if (counter) total += counter;
-      }
-    }
+    const total = this.sumDownloads(entities);
     return {
       downloads: total,
       start: startDate.format(DATE_FORMAT),
@@ -53,14 +44,7 @@ export class DownloadController extends AbstractController {
   async showTotalDownloadPoint(@HTTPParam() range: string) {
     const [startDate, endDate] = this.checkAndGetRange(range);
     const entities = await this.packageVersionDownloadRepository.query('total', startDate.toDate(), endDate.toDate());
-    let total = 0;
-    for (const entity of entities) {
-      for (let i = 1; i <= 31; i++) {
-        const field = `d${String(i).padStart(2, '0')}` as keyof typeof entity;
-        const counter = entity[field] as number;
-        if (counter) total += counter;
-      }
-    }
+    const total = this.sumDownloads(entities);
     return {
       downloads: total,
       start: startDate.format(DATE_FORMAT),
@@ -74,9 +58,7 @@ export class DownloadController extends AbstractController {
   })
   async showPackageDownloads(@HTTPParam() fullname: string, @HTTPParam() range: string) {
     const [startDate, endDate] = this.checkAndGetRange(range);
-    const [scope, name] = getScopeAndName(fullname);
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) throw new NotFoundError(`${fullname} not found`);
+    const pkg = await this.getPackageEntityByFullname(fullname);
     const entities = await this.packageVersionDownloadRepository.query(
       pkg.packageId,
       startDate.toDate(),
@@ -148,6 +130,18 @@ export class DownloadController extends AbstractController {
     };
   }
 
+  private sumDownloads(entities: { [key: string]: unknown }[]): number {
+    let total = 0;
+    for (const entity of entities) {
+      for (let i = 1; i <= 31; i++) {
+        const field = `d${String(i).padStart(2, '0')}`;
+        const counter = entity[field] as number;
+        if (counter) total += counter;
+      }
+    }
+    return total;
+  }
+
   private checkAndGetRange(range: string) {
     // Support npm-compatible period aliases
     // @see https://github.com/npm/registry/blob/master/docs/download-counts.md
@@ -170,7 +164,9 @@ export class DownloadController extends AbstractController {
     if (singleDateMatch) {
       const date = dayjs(singleDateMatch[1], DATE_FORMAT, true);
       if (!date.isValid()) {
-        throw new UnprocessableEntityError(`range(${range}) format invalid, must be "${DATE_FORMAT}" style`);
+        throw new UnprocessableEntityError(
+          `range(${range}) format invalid, must be "last-day", "last-week", "last-month", "last-year", "${DATE_FORMAT}" or "${DATE_FORMAT}:${DATE_FORMAT}" style`,
+        );
       }
       return [date, date];
     }
