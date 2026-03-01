@@ -415,7 +415,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
     });
   });
 
-  describe('[GET /downloads/point/:range] showTotalDownloadPoint()', () => {
+  describe('[GET /downloads/total/point/:range] showTotalDownloadPoint()', () => {
     it('should get total point downloads', async () => {
       const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
       await app
