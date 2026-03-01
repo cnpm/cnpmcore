@@ -97,13 +97,24 @@ jobs:
           stack-version: 8.18.0
           security-enabled: false
 
-      - name: Wait for Elasticsearch to be ready
+      - name: Wait for Elasticsearch and create index
         run: |
           while ! curl -s http://localhost:9200 | grep -q "elasticsearch"; do
             echo "Waiting for Elasticsearch to be ready..."
             sleep 1
           done
           echo "✅ Elasticsearch is ready"
+
+          echo "📦 Creating index with proper mappings..."
+          CREATE_RESULT=$(curl -sS -X PUT "http://localhost:9200/cnpmcore_packages" \
+            -H 'content-type: application/json' \
+            -d @docs/elasticsearch-index.json)
+          echo "Create index result: ${CREATE_RESULT}"
+          if ! echo "$CREATE_RESULT" | grep -q '"acknowledged":true'; then
+            echo "::error::Failed to create ES index"
+            exit 1
+          fi
+          echo "✅ ES index created with custom analyzers and mappings"
 
       - name: Test Deployment
         run: |
@@ -233,20 +244,16 @@ jobs:
             console.log('✅ ES document exists, no deprecated field');
           "
 
-          # Search for the package via ES directly
-          # Note: cnpmcore search API requires custom ES index mappings (analyzers, script_score)
-          # that aren't set up in this test environment. Query ES directly to validate indexing.
-          echo "🔍 Searching ES directly for test package..."
-          ES_SEARCH=$(curl -sS "http://localhost:9200/cnpmcore_packages/_search" \
-            -H 'content-type: application/json' \
-            -d '{"query":{"bool":{"must_not":[{"exists":{"field":"package.deprecated"}}]}}}')
-          echo "ES search result: ${ES_SEARCH}"
+          # Search for the package via cnpmcore search API
+          echo "🔍 Searching for test package via API..."
+          SEARCH_RESULT=$(curl -sS "${BASE_URL}/-/v1/search?text=search-test-pkg&size=10")
+          echo "Search result: ${SEARCH_RESULT}"
 
-          echo "$ES_SEARCH" | node -e "
+          echo "$SEARCH_RESULT" | node -e "
             const data = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
-            const found = data.hits && data.hits.hits.some(h => h._source.package.name === '@cnpm/search-test-pkg');
-            if (found) { console.log('✅ Package found in ES (not deprecated)'); process.exit(0); }
-            else { console.log('❌ Package not found in ES'); process.exit(1); }
+            const found = data.objects && data.objects.some(o => o.package.name === '@cnpm/search-test-pkg');
+            if (found) { console.log('✅ Package found in search results'); process.exit(0); }
+            else { console.log('❌ Package not found in search results'); process.exit(1); }
           "
 
           # ---- Test deprecated package filtering ----
@@ -308,22 +315,20 @@ jobs:
             console.log('✅ ES document has deprecated field:', pkg.deprecated);
           "
 
-          # Search ES directly with must_not deprecated filter — should return 0 results
-          echo "🔍 Searching ES with deprecated filter (should find nothing)..."
-          ES_SEARCH2=$(curl -sS "http://localhost:9200/cnpmcore_packages/_search" \
-            -H 'content-type: application/json' \
-            -d '{"query":{"bool":{"must_not":[{"exists":{"field":"package.deprecated"}}]}}}')
-          echo "ES search result: ${ES_SEARCH2}"
+          # Search via cnpmcore API — deprecated package should be filtered out
+          echo "🔍 Searching via API (deprecated should be filtered)..."
+          SEARCH_RESULT2=$(curl -sS "${BASE_URL}/-/v1/search?text=search-test-pkg&size=10")
+          echo "Search result: ${SEARCH_RESULT2}"
 
-          echo "$ES_SEARCH2" | node -e "
+          echo "$SEARCH_RESULT2" | node -e "
             const data = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
-            const found = data.hits && data.hits.hits.some(h => h._source.package.name === '@cnpm/search-test-pkg');
-            if (!found) { console.log('✅ Deprecated package correctly filtered by must_not exists query'); process.exit(0); }
-            else { console.log('❌ Deprecated package should be filtered out'); process.exit(1); }
+            const found = data.objects && data.objects.some(o => o.package.name === '@cnpm/search-test-pkg');
+            if (!found) { console.log('✅ Deprecated package correctly filtered from search results'); process.exit(0); }
+            else { console.log('❌ Deprecated package should not appear in search results'); process.exit(1); }
           "
 
-          # Also verify the document still exists when searching WITHOUT the filter
-          echo "🔍 Searching ES without deprecated filter (should still find it)..."
+          # Verify the document still exists in ES directly (just filtered from search)
+          echo "🔍 Verifying package still exists in ES (just filtered from search)..."
           ES_SEARCH3=$(curl -sS "http://localhost:9200/cnpmcore_packages/_search" \
             -H 'content-type: application/json' \
             -d '{"query":{"match_all":{}}}')

@@ -1,0 +1,296 @@
+{
+  "settings": {
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "package": {
+            "filter": ["asciifolding", "split_word", "lowercase", "unique_on_same_position"],
+            "tokenizer": "standard"
+          },
+          "package_autocomplete": {
+            "filter": ["asciifolding", "split_word", "lowercase", "autocomplete", "unique_on_same_position"],
+            "tokenizer": "standard"
+          },
+          "package_autocomplete_highlight": {
+            "filter": ["asciifolding", "non_alfanum_to_space", "lowercase", "trim"],
+            "tokenizer": "autocomplete"
+          },
+          "package_autocomplete_keyword": {
+            "filter": [
+              "asciifolding",
+              "non_alfanum_to_space",
+              "lowercase",
+              "autocomplete",
+              "trim",
+              "unique_on_same_position"
+            ],
+            "tokenizer": "keyword"
+          },
+          "package_autocomplete_keyword_search": {
+            "filter": ["asciifolding", "non_alfanum_to_space", "lowercase", "trim"],
+            "tokenizer": "keyword"
+          },
+          "package_edge_ngram": {
+            "filter": ["asciifolding", "split_word", "lowercase", "edge_ngram", "unique_on_same_position"],
+            "tokenizer": "standard"
+          },
+          "package_english": {
+            "filter": ["asciifolding", "split_word", "lowercase", "kstem", "unique_on_same_position"],
+            "tokenizer": "standard"
+          },
+          "package_english_aggressive": {
+            "filter": ["asciifolding", "split_word", "lowercase", "porter_stem", "unique_on_same_position"],
+            "tokenizer": "standard"
+          },
+          "raw": {
+            "filter": ["asciifolding", "lowercase", "trim"],
+            "tokenizer": "keyword"
+          }
+        },
+        "filter": {
+          "autocomplete": {
+            "max_gram": "15",
+            "min_gram": "1",
+            "type": "edge_ngram"
+          },
+          "edge_ngram": {
+            "max_gram": "15",
+            "min_gram": "4",
+            "type": "edge_ngram"
+          },
+          "non_alfanum_to_space": {
+            "pattern": "(?i)[^a-z0-9]+",
+            "replacement": " ",
+            "type": "pattern_replace"
+          },
+          "split_word": {
+            "catenate_all": "false",
+            "catenate_numbers": "false",
+            "catenate_words": "false",
+            "generate_number_parts": "true",
+            "generate_word_parts": "true",
+            "preserve_original": "true",
+            "split_on_case_change": "true",
+            "split_on_numerics": "true",
+            "stem_english_possessive": "true",
+            "type": "word_delimiter"
+          },
+          "unique_on_same_position": {
+            "only_on_same_position": "false",
+            "type": "unique"
+          }
+        },
+        "normalizer": {
+          "raw": {
+            "filter": ["asciifolding", "lowercase", "trim"],
+            "type": "custom"
+          }
+        },
+        "tokenizer": {
+          "autocomplete": {
+            "max_gram": "15",
+            "min_gram": "1",
+            "token_chars": ["letter", "digit"],
+            "type": "edge_ngram"
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "dynamic": true,
+    "properties": {
+      "downloads": {
+        "properties": {
+          "all": {
+            "type": "long"
+          }
+        }
+      },
+      "package": {
+        "properties": {
+          "_rev": {
+            "index": false,
+            "type": "text"
+          },
+          "author": {
+            "properties": {
+              "email": {
+                "normalizer": "raw",
+                "type": "keyword"
+              },
+              "name": {
+                "normalizer": "raw",
+                "type": "keyword"
+              },
+              "url": {
+                "index": false,
+                "type": "text"
+              },
+              "username": {
+                "normalizer": "raw",
+                "type": "keyword"
+              }
+            }
+          },
+          "created": {
+            "type": "date"
+          },
+          "date": {
+            "type": "date"
+          },
+          "deprecated": {
+            "type": "keyword"
+          },
+          "description": {
+            "fields": {
+              "edge_ngram": {
+                "analyzer": "package_edge_ngram",
+                "search_analyzer": "package",
+                "type": "text"
+              },
+              "english": {
+                "analyzer": "package_english",
+                "type": "text"
+              },
+              "english_aggressive": {
+                "analyzer": "package_english_aggressive",
+                "type": "text"
+              },
+              "standard": {
+                "analyzer": "standard",
+                "type": "text"
+              }
+            },
+            "type": "text"
+          },
+          "dist-tags": {
+            "dynamic": "true",
+            "enabled": false,
+            "type": "object"
+          },
+          "keywords": {
+            "fields": {
+              "edge_ngram": {
+                "analyzer": "package_edge_ngram",
+                "search_analyzer": "package",
+                "type": "text"
+              },
+              "english": {
+                "analyzer": "package_english",
+                "type": "text"
+              },
+              "english_aggressive": {
+                "analyzer": "package_english_aggressive",
+                "type": "text"
+              },
+              "raw": {
+                "analyzer": "raw",
+                "type": "text"
+              },
+              "standard": {
+                "analyzer": "standard",
+                "type": "text"
+              }
+            },
+            "type": "text"
+          },
+          "license": {
+            "type": "keyword"
+          },
+          "maintainers": {
+            "properties": {
+              "email": {
+                "normalizer": "raw",
+                "type": "keyword"
+              },
+              "name": {
+                "normalizer": "raw",
+                "type": "keyword"
+              },
+              "username": {
+                "normalizer": "raw",
+                "type": "keyword"
+              }
+            }
+          },
+          "modified": {
+            "type": "date"
+          },
+          "_source_registry_name": {
+            "type": "text"
+          },
+          "_npmUser": {
+            "properties": {
+              "email": {
+                "normalizer": "raw",
+                "type": "keyword"
+              },
+              "name": {
+                "normalizer": "raw",
+                "type": "keyword"
+              }
+            }
+          },
+          "publish_time": {
+            "type": "long"
+          },
+          "name": {
+            "fields": {
+              "autocomplete": {
+                "analyzer": "package_autocomplete",
+                "search_analyzer": "package",
+                "type": "text"
+              },
+              "autocomplete_highlight": {
+                "analyzer": "package_autocomplete_highlight",
+                "index_options": "offsets",
+                "search_analyzer": "package",
+                "type": "text"
+              },
+              "autocomplete_keyword": {
+                "analyzer": "package_autocomplete_keyword",
+                "search_analyzer": "package_autocomplete_keyword_search",
+                "type": "text"
+              },
+              "edge_ngram": {
+                "analyzer": "package_edge_ngram",
+                "search_analyzer": "package",
+                "type": "text"
+              },
+              "english": {
+                "analyzer": "package_english",
+                "type": "text"
+              },
+              "english_aggressive": {
+                "analyzer": "package_english_aggressive",
+                "type": "text"
+              },
+              "raw": {
+                "normalizer": "raw",
+                "type": "keyword"
+              },
+              "standard": {
+                "analyzer": "standard",
+                "type": "text"
+              }
+            },
+            "type": "text"
+          },
+          "scope": {
+            "normalizer": "raw",
+            "type": "keyword"
+          },
+          "version": {
+            "normalizer": "raw",
+            "type": "keyword"
+          },
+          "versions": {
+            "index": false,
+            "type": "text"
+          }
+        }
+      }
+    }
+  }
+}

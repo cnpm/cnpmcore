@@ -406,6 +406,12 @@ PUT cnpmcore_packages
         "created": {
           "type": "date"
         },
+        "date": {
+          "type": "date"
+        },
+        "deprecated": {
+          "type": "keyword"
+        },
         "description": {
           "fields": {
             "edge_ngram": {
@@ -750,6 +756,12 @@ PUT /cnpmcore_packages
         },
         "created": {
           "type": "date"
+        },
+        "date": {
+          "type": "date"
+        },
+        "deprecated": {
+          "type": "keyword"
         },
         "description": {
           "fields": {
