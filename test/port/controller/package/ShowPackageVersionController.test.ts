@@ -276,6 +276,78 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`);
     });
 
+    it('should prefer latest tag version when it satisfies semver range', async () => {
+      // Scenario: latest=4.1.0, newest=4.2.0, request ^4 should return 4.1.0
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+
+      // Publish 4.1.0 as latest
+      const pkg410 = await TestUtil.getFullPackage({
+        name: 'foo-prefer-latest',
+        version: '4.1.0',
+        versionObject: {
+          description: 'version 4.1.0',
+        },
+      });
+      await app
+        .httpRequest()
+        .put(`/${pkg410.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg410)
+        .expect(201);
+
+      // Publish 4.2.0 with 'next' tag (not updating latest)
+      const pkg420 = await TestUtil.getFullPackage({
+        name: 'foo-prefer-latest',
+        version: '4.2.0',
+        versionObject: {
+          description: 'version 4.2.0',
+        },
+        distTags: {
+          next: '4.2.0',
+        },
+      });
+      await app
+        .httpRequest()
+        .put(`/${pkg420.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg420)
+        .expect(201);
+
+      // Verify latest tag is still 4.1.0
+      let res = await app.httpRequest().get(`/${pkg410.name}/latest`).expect(200);
+      assert.equal(res.body.version, '4.1.0');
+
+      // Request ^4 should return latest tag version 4.1.0, not max version 4.2.0
+      res = await app.httpRequest().get(`/${pkg410.name}/^4`).expect(200);
+      assert.equal(res.body.version, '4.1.0');
+
+      res = await app.httpRequest().get(`/${pkg410.name}/%5E4`).expect(200);
+      assert.equal(res.body.version, '4.1.0');
+
+      // Request ^4.2.0 should return 4.2.0 (latest 4.1.0 doesn't satisfy ^4.2.0)
+      res = await app.httpRequest().get(`/${pkg410.name}/^4.2.0`).expect(200);
+      assert.equal(res.body.version, '4.2.0');
+
+      // Request >=4 should also return latest 4.1.0
+      res = await app.httpRequest().get(`/${pkg410.name}/>=4`).expect(200);
+      assert.equal(res.body.version, '4.1.0');
+
+      // After updating latest tag to 4.2.0, ^4 should return 4.2.0
+      await app
+        .httpRequest()
+        .put(`/-/package/${pkg410.name}/dist-tags/latest`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .set('content-type', 'application/json')
+        .send(JSON.stringify('4.2.0'))
+        .expect(200);
+
+      res = await app.httpRequest().get(`/${pkg410.name}/^4`).expect(200);
+      assert.equal(res.body.version, '4.2.0');
+    });
+
     it('should 404 when version not exists', async () => {
       const pkg = await TestUtil.getFullPackage({
         name: '@cnpm/foo',
