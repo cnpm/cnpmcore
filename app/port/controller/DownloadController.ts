@@ -157,7 +157,8 @@ export class DownloadController extends AbstractController {
     return [fromDay, toDay];
   }
 
-  private sumDownloads(entities: Iterable<Record<string, unknown>>, startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): number {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private sumDownloads(entities: Iterable<any>, startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): number {
     let total = 0;
     for (const entity of entities) {
       const yearMonth = entity.yearMonth as number;
