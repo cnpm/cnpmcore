@@ -234,8 +234,10 @@ jobs:
           "
 
           # Search for the package via API
+          # Note: use empty text query because custom ES analyzers (standard, edge_ngram, etc.)
+          # are not configured in this test environment. Empty text returns all indexed packages.
           echo "🔍 Searching for test package..."
-          SEARCH_RESULT=$(curl -sS "${BASE_URL}/-/v1/search?text=search-test-pkg&size=10")
+          SEARCH_RESULT=$(curl -sS "${BASE_URL}/-/v1/search?text=&size=10")
           echo "Search result: ${SEARCH_RESULT}"
 
           echo "$SEARCH_RESULT" | node -e "
@@ -306,7 +308,7 @@ jobs:
 
           # Search again - deprecated package should be filtered out by must_not exists query
           echo "🔍 Searching again (deprecated should be filtered)..."
-          SEARCH_RESULT2=$(curl -sS "${BASE_URL}/-/v1/search?text=search-test-pkg&size=10")
+          SEARCH_RESULT2=$(curl -sS "${BASE_URL}/-/v1/search?text=&size=10")
           echo "Search result: ${SEARCH_RESULT2}"
 
           echo "$SEARCH_RESULT2" | node -e "
