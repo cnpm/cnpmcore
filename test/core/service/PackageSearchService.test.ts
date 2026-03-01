@@ -133,8 +133,8 @@ describe('test/core/service/PackageSearchService.test.ts', () => {
       assert.equal(boolQuery.filter.length, 1);
       const rangeFilter = boolQuery.filter[0];
       assert(rangeFilter.range, 'should be a range query');
-      assert(rangeFilter.range['package.date'], 'should filter on package.date');
-      const lte = rangeFilter.range['package.date'].lte;
+      assert(rangeFilter.range['package.created'], 'should filter on package.created');
+      const lte = rangeFilter.range['package.created'].lte;
       assert(lte, 'lte should be set');
       // Verify cutoff is approximately 2 weeks ago
       const cutoff = new Date(lte).getTime();
@@ -168,7 +168,7 @@ describe('test/core/service/PackageSearchService.test.ts', () => {
       assert(capturedBody);
       const boolQuery = capturedBody.query.function_score.query.bool;
       assert(boolQuery.filter);
-      const cutoff = new Date(boolQuery.filter[0].range['package.date'].lte).getTime();
+      const cutoff = new Date(boolQuery.filter[0].range['package.created'].lte).getTime();
       const oneHourMs = 60 * 60 * 1000;
       const diff = Math.abs(cutoff - (before - oneHourMs));
       assert(diff < 2000, `cutoff should be ~1 hour ago, diff=${diff}ms`);
@@ -199,7 +199,7 @@ describe('test/core/service/PackageSearchService.test.ts', () => {
       assert(capturedBody);
       const boolQuery = capturedBody.query.function_score.query.bool;
       assert(boolQuery.filter);
-      const cutoff = new Date(boolQuery.filter[0].range['package.date'].lte).getTime();
+      const cutoff = new Date(boolQuery.filter[0].range['package.created'].lte).getTime();
       const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
       const diff = Math.abs(cutoff - (before - sevenDaysMs));
       assert(diff < 2000, `cutoff should be ~7 days ago, diff=${diff}ms`);
@@ -261,7 +261,7 @@ describe('test/core/service/PackageSearchService.test.ts', () => {
         exists: { field: 'package.deprecated' },
       });
       assert(boolQuery.filter, 'filter should be present');
-      assert(boolQuery.filter[0].range['package.date'].lte);
+      assert(boolQuery.filter[0].range['package.created'].lte);
       // should queries (match queries) should still be present
       assert(boolQuery.should.length > 0, 'should queries for text matching should be present');
     });

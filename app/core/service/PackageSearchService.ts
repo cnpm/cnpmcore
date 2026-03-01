@@ -221,7 +221,7 @@ export class PackageSearchService extends AbstractService {
         const cutoff = new Date(Date.now() - ms);
         queries.push({
           range: {
-            'package.date': {
+            'package.created': {
               lte: cutoff.toISOString(),
             },
           },

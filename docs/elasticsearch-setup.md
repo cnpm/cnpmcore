@@ -406,9 +406,6 @@ PUT cnpmcore_packages
         "created": {
           "type": "date"
         },
-        "date": {
-          "type": "date"
-        },
         "deprecated": {
           "type": "keyword"
         },
@@ -755,9 +752,6 @@ PUT /cnpmcore_packages
           }
         },
         "created": {
-          "type": "date"
-        },
-        "date": {
           "type": "date"
         },
         "deprecated": {

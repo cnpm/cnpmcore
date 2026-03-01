@@ -136,9 +136,6 @@
           "created": {
             "type": "date"
           },
-          "date": {
-            "type": "date"
-          },
           "deprecated": {
             "type": "keyword"
           },

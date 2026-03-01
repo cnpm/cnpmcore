@@ -282,7 +282,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
       assert.equal(boolQuery.must_not, undefined, 'must_not should not be present');
     });
 
-    it('should include range filter on package.date when searchPublishMinDuration is set', async () => {
+    it('should include range filter on package.created when searchPublishMinDuration is set', async () => {
       mock(app.config.cnpmcore, 'searchPublishMinDuration', '2w');
 
       // oxlint-disable-next-line typescript-eslint/no-explicit-any
@@ -319,8 +319,8 @@ describe('test/repository/SearchRepository.test.ts', () => {
       assert(boolQuery.filter, 'filter should be present');
       assert.equal(boolQuery.filter.length, 1);
       const rangeFilter = boolQuery.filter[0];
-      assert(rangeFilter.range['package.date'], 'should filter on package.date');
-      const cutoff = new Date(rangeFilter.range['package.date'].lte).getTime();
+      assert(rangeFilter.range['package.created'], 'should filter on package.created');
+      const cutoff = new Date(rangeFilter.range['package.created'].lte).getTime();
       const twoWeeksMs = 14 * 24 * 60 * 60 * 1000;
       assert(Math.abs(cutoff - (before - twoWeeksMs)) < 2000, 'cutoff should be ~2 weeks ago');
     });
@@ -358,7 +358,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
       });
       assert(boolQuery.filter, 'filter should be present');
       assert.equal(boolQuery.filter.length, 1);
-      assert(boolQuery.filter[0].range['package.date'].lte, 'range lte should be set');
+      assert(boolQuery.filter[0].range['package.created'].lte, 'range lte should be set');
       // should queries should still work
       assert(boolQuery.should.length > 0, 'text match queries should still be present');
       assert.equal(boolQuery.minimum_should_match, 1);
@@ -413,7 +413,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
         const before = Date.now();
         await packageSearchService.searchPackage('x', 0, 10);
         const cutoff = new Date(
-          capturedBody.query.function_score.query.bool.filter[0].range['package.date'].lte,
+          capturedBody.query.function_score.query.bool.filter[0].range['package.created'].lte,
         ).getTime();
         const diff = Math.abs(cutoff - (before - expectedMs));
         assert(diff < 2000, `${duration}: cutoff diff=${diff}ms should be < 2000ms`);
