@@ -211,27 +211,40 @@ jobs:
           echo "Sync result: ${SYNC_RESULT}"
           echo "✅ Synced to search index"
 
-          # Wait for ES to index
-          sleep 2
+          # Flush ES index to make document searchable immediately
+          curl -sS -X POST "http://localhost:9200/cnpmcore_packages/_refresh"
+          echo ""
 
-          # Search for the package
+          # Verify document exists in ES directly
+          echo "🔍 Checking ES document directly..."
+          ES_DOC=$(curl -sS "http://localhost:9200/cnpmcore_packages/_doc/@cnpm%2Fsearch-test-pkg")
+          echo "ES document: ${ES_DOC}"
+          echo "$ES_DOC" | node -e "
+            const doc = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            if (!doc.found) { console.log('❌ Document not found in ES'); process.exit(1); }
+            const pkg = doc._source.package;
+            if (pkg.deprecated) { console.log('❌ Non-deprecated package should not have deprecated field'); process.exit(1); }
+            console.log('✅ ES document exists, no deprecated field');
+          "
+
+          # Search for the package via API
           echo "🔍 Searching for test package..."
           SEARCH_RESULT=$(curl -sS "${BASE_URL}/-/v1/search?text=search-test-pkg&size=10")
           echo "Search result: ${SEARCH_RESULT}"
 
-          if echo "$SEARCH_RESULT" | node -e "
+          echo "$SEARCH_RESULT" | node -e "
             const data = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
             const found = data.objects && data.objects.some(o => o.package.name === '@cnpm/search-test-pkg');
             if (found) { console.log('✅ Package found in search results'); process.exit(0); }
             else { console.log('❌ Package not found in search results'); process.exit(1); }
-          "; then
-            echo "✅ Search integration test passed"
-          else
-            echo "::error::Search integration test failed"
-            exit 1
-          fi
+          "
 
-          # Test that deprecated packages are filtered
+          # ---- Test deprecated package filtering ----
+          echo ""
+          echo "========================================="
+          echo "Testing deprecated package search filter"
+          echo "========================================="
+
           echo "🔄 Deprecating the package..."
           DEPRECATE_JSON=$(cat <<'EOF'
           {
@@ -253,16 +266,38 @@ jobs:
             -d "${DEPRECATE_JSON}")
           echo "Deprecate result: ${DEPRECATE_RESULT}"
 
+          if ! echo "$DEPRECATE_RESULT" | grep -q '"ok":true'; then
+            echo "::error::Failed to deprecate package"
+            exit 1
+          fi
+          echo "✅ Package deprecated"
+
           # Re-sync to update search index with deprecated flag
           echo "🔄 Re-syncing deprecated package to search index..."
           SYNC_RESULT2=$(curl -sS -X PUT "${BASE_URL}/-/v1/search/sync/@cnpm/search-test-pkg" \
             -H "authorization: Bearer ${TOKEN}")
           echo "Sync result: ${SYNC_RESULT2}"
 
-          # Wait for ES to re-index
-          sleep 2
+          # Flush ES index
+          curl -sS -X POST "http://localhost:9200/cnpmcore_packages/_refresh"
+          echo ""
 
-          # Search again - deprecated package should be filtered out
+          # Verify deprecated field is now in ES document
+          echo "🔍 Checking ES document after deprecation..."
+          ES_DOC2=$(curl -sS "http://localhost:9200/cnpmcore_packages/_doc/@cnpm%2Fsearch-test-pkg")
+          echo "ES document: ${ES_DOC2}"
+          echo "$ES_DOC2" | node -e "
+            const doc = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            if (!doc.found) { console.log('❌ Document not found in ES'); process.exit(1); }
+            const pkg = doc._source.package;
+            if (pkg.deprecated !== 'This package is deprecated for testing') {
+              console.log('❌ Expected deprecated field, got:', pkg.deprecated);
+              process.exit(1);
+            }
+            console.log('✅ ES document has deprecated field:', pkg.deprecated);
+          "
+
+          # Search again - deprecated package should be filtered out by must_not exists query
           echo "🔍 Searching again (deprecated should be filtered)..."
           SEARCH_RESULT2=$(curl -sS "${BASE_URL}/-/v1/search?text=search-test-pkg&size=10")
           echo "Search result: ${SEARCH_RESULT2}"
@@ -274,6 +309,7 @@ jobs:
             else { console.log('❌ Deprecated package should not appear in search results'); process.exit(1); }
           "
 
+          echo ""
           echo "✅ All search integration tests passed"
 
       - name: Stop cnpmcore
