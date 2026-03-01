@@ -2,6 +2,7 @@ import { join } from 'node:path';
 
 import Mock from '@elastic/elasticsearch-mock';
 import type { PartialEggConfig, EggAppInfo } from 'egg';
+import RedisMock from 'ioredis-mock';
 
 import { database } from './database.ts';
 
@@ -26,6 +27,21 @@ export default function startConfig(appInfo: EggAppInfo): PartialEggConfig {
 
   config.cnpmcore = {
     checkChangesStreamInterval: 10,
+  };
+
+  // Use ioredis-mock for faster tests without a real Redis server
+  config.redis = {
+    Redis: RedisMock,
+    client: {
+      // ioredis-mock ignores these, but they satisfy the config schema
+      host: '127.0.0.1',
+      port: 6379,
+      password: '',
+      db: 0,
+      // Skip ready check — ioredis-mock emits 'ready' synchronously
+      // before @eggjs/redis registerBeforeStart listener is attached
+      weakDependent: true,
+    },
   };
 
   config.elasticsearch = {
