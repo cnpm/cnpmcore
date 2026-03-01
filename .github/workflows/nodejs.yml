@@ -166,8 +166,9 @@ jobs:
           fi
           echo "✅ Got admin auth token"
 
-          # Publish a test package
-          PACKAGE_JSON=$(cat <<'EOF'
+          # Publish a test package (using valid tgz data from test fixtures)
+          TGZ_DATA="H4sIAAAAAAAAA+2SsWrDMBCGPfspDg2ZinOyEgeylg6Zu2YR8rVRHEtGkkOg5N0jWaFdujVQAv6W4/7/dHcSGqTq5Ccthxyro7emeDCI2KxWkOKmaaaIdc4TouZQ8FqgwI3AdVMgF8ijho9e5DdGH6SLq/y1T74LfMcn4asEYEb2xLbA+q4O5ENv2/FE7CVZZ3JeW5NcrLDiWW3JK6eHcHey2Es9Zdq0dIkfKau50EcjjYpCmpDKSB0s7Nmbc9ZtwVhIBviBlP7Q1O4ZLBZAFx2As3jyOnWTYzhY9zPzpBUZPy2/e39l5bX87wedmZmZeRJuheTX2wAIAAA="
+          PACKAGE_JSON=$(cat <<EOF
           {
             "name": "@cnpm/search-test-pkg",
             "version": "1.0.0",
@@ -177,8 +178,8 @@ jobs:
             "_attachments": {
               "@cnpm/search-test-pkg-1.0.0.tgz": {
                 "content_type": "application/octet-stream",
-                "data": "H4sIAAAAAAAAA+3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAAAOBuAj2BJAAEAAAA",
-                "length": 50
+                "data": "${TGZ_DATA}",
+                "length": 251
               }
             },
             "dist-tags": {
