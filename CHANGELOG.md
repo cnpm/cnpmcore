@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.26.0 (2026-03-01)
+
+* feat: implement npm-compatible download counts API (#986) ([de5f074](https://github.com/cnpm/cnpmcore/commit/de5f074)), closes [#986](https://github.com/cnpm/cnpmcore/issues/986) [#516](https://github.com/cnpm/cnpmcore/issues/516) [#516](https://github.com/cnpm/cnpmcore/issues/516)
+
 ## <small>4.25.1 (2026-03-01)</small>
 
 * fix: update NwjsBinary to use Cloudflare R2 S3 API for sub-directory listing (#985) ([04ee636](https://github.com/cnpm/cnpmcore/commit/04ee636)), closes [#985](https://github.com/cnpm/cnpmcore/issues/985) [#891](https://github.com/cnpm/cnpmcore/issues/891) [#891](https://github.com/cnpm/cnpmcore/issues/891)

@@ -1,6 +1,6 @@
 {
   "name": "cnpmcore",
-  "version": "4.25.1",
+  "version": "4.26.0",
   "description": "Private NPM Registry for Enterprise",
   "keywords": [
     "npm",
