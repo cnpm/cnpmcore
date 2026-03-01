@@ -27,7 +27,7 @@ export class DownloadController extends AbstractController {
       startDate.toDate(),
       endDate.toDate(),
     );
-    const total = this.sumDownloads(entities);
+    const total = this.sumDownloads(entities, startDate, endDate);
     return {
       downloads: total,
       start: startDate.format(DATE_FORMAT),
@@ -44,7 +44,7 @@ export class DownloadController extends AbstractController {
   async showTotalDownloadPoint(@HTTPParam() range: string) {
     const [startDate, endDate] = this.checkAndGetRange(range);
     const entities = await this.packageVersionDownloadRepository.query('total', startDate.toDate(), endDate.toDate());
-    const total = this.sumDownloads(entities);
+    const total = this.sumDownloads(entities, startDate, endDate);
     return {
       downloads: total,
       start: startDate.format(DATE_FORMAT),
@@ -67,9 +67,12 @@ export class DownloadController extends AbstractController {
     const days: Record<string, number> = {};
     const versions: Record<string, { day: string; downloads: number }[]> = {};
     for (const entity of entities) {
-      const yearMonth = String(entity.yearMonth);
-      const prefix = `${yearMonth.slice(0, 4)}-${yearMonth.slice(4, 6)}`;
-      for (let i = 1; i <= 31; i++) {
+      const yearMonth = entity.yearMonth as number;
+      const yearStr = String(yearMonth).slice(0, 4);
+      const monthStr = String(yearMonth).slice(4, 6);
+      const prefix = `${yearStr}-${monthStr}`;
+      const [fromDay, toDay] = this.getDayRange(yearMonth, startDate, endDate);
+      for (let i = fromDay; i <= toDay; i++) {
         const day = String(i).padStart(2, '0');
         const field = `d${day}` as keyof typeof entity;
         const counter = entity[field] as number;
@@ -107,9 +110,12 @@ export class DownloadController extends AbstractController {
     const entities = await this.packageVersionDownloadRepository.query(scope, startDate.toDate(), endDate.toDate());
     const days: Record<string, number> = {};
     for (const entity of entities) {
-      const yearMonth = String(entity.yearMonth);
-      const prefix = `${yearMonth.slice(0, 4)}-${yearMonth.slice(4, 6)}`;
-      for (let i = 1; i <= 31; i++) {
+      const yearMonth = entity.yearMonth as number;
+      const yearStr = String(yearMonth).slice(0, 4);
+      const monthStr = String(yearMonth).slice(4, 6);
+      const prefix = `${yearStr}-${monthStr}`;
+      const [fromDay, toDay] = this.getDayRange(yearMonth, startDate, endDate);
+      for (let i = fromDay; i <= toDay; i++) {
         const day = String(i).padStart(2, '0');
         const field = `d${day}` as keyof typeof entity;
         const counter = entity[field] as number;
@@ -130,10 +136,33 @@ export class DownloadController extends AbstractController {
     };
   }
 
-  private sumDownloads(entities: Iterable<Record<string, unknown>>): number {
+  // Get the valid day range [startDay, endDay] for a given entity's yearMonth
+  // considering the requested date range boundaries
+  private getDayRange(yearMonth: number, startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): [number, number] {
+    const year = Math.floor(yearMonth / 100);
+    const month = yearMonth % 100;
+    const startYM = startDate.year() * 100 + startDate.month() + 1;
+    const endYM = endDate.year() * 100 + endDate.month() + 1;
+    const entityYM = year * 100 + month;
+    // Days in this month
+    const daysInMonth = dayjs(`${year}-${String(month).padStart(2, '0')}-01`).daysInMonth();
+    let fromDay = 1;
+    let toDay = daysInMonth;
+    if (entityYM === startYM) {
+      fromDay = startDate.date();
+    }
+    if (entityYM === endYM) {
+      toDay = endDate.date();
+    }
+    return [fromDay, toDay];
+  }
+
+  private sumDownloads(entities: Iterable<Record<string, unknown>>, startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): number {
     let total = 0;
     for (const entity of entities) {
-      for (let i = 1; i <= 31; i++) {
+      const yearMonth = entity.yearMonth as number;
+      const [fromDay, toDay] = this.getDayRange(yearMonth, startDate, endDate);
+      for (let i = fromDay; i <= toDay; i++) {
         const field = `d${String(i).padStart(2, '0')}`;
         const counter = entity[field] as number;
         if (counter) total += counter;
