@@ -153,8 +153,10 @@ jobs:
 
           echo "📦 Publishing a test package..."
           # Login as admin user (admins can register even when allowPublicRegistration is false)
+          NPM_UA="npm/10.0.0 node/v22.0.0 linux x64"
           TOKEN=$(curl -sS -X PUT "${BASE_URL}/-/user/org.couchdb.user:cnpmcore_admin" \
             -H 'content-type: application/json' \
+            -H "user-agent: ${NPM_UA}" \
             -d '{"name":"cnpmcore_admin","password":"testpassword123","email":"admin@cnpmjs.org","type":"user"}' \
             | node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).token || '')")
 
@@ -197,6 +199,7 @@ jobs:
           PUBLISH_RESULT=$(curl -sS -X PUT "${BASE_URL}/@cnpm/search-test-pkg" \
             -H "authorization: Bearer ${TOKEN}" \
             -H 'content-type: application/json' \
+            -H "user-agent: ${NPM_UA}" \
             -d "${PACKAGE_JSON}")
           echo "Publish result: ${PUBLISH_RESULT}"
 
@@ -265,6 +268,7 @@ jobs:
           DEPRECATE_RESULT=$(curl -sS -X PUT "${BASE_URL}/@cnpm/search-test-pkg" \
             -H "authorization: Bearer ${TOKEN}" \
             -H 'content-type: application/json' \
+            -H "user-agent: ${NPM_UA}" \
             -d "${DEPRECATE_JSON}")
           echo "Deprecate result: ${DEPRECATE_RESULT}"
 
