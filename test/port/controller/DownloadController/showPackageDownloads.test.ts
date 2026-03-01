@@ -278,7 +278,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(res.status, 422);
       assert.equal(
         data.error,
-        '[UNPROCESSABLE_ENTITY] range(f:b) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style',
+        '[UNPROCESSABLE_ENTITY] range(f:b) format invalid, must be "last-day", "last-week", "last-month", "last-year", "YYYY-MM-DD" or "YYYY-MM-DD:YYYY-MM-DD" style',
       );
 
       res = await app
@@ -289,7 +289,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(res.status, 422);
       assert.equal(
         data.error,
-        '[UNPROCESSABLE_ENTITY] range(2017-10-1:2017-09-10) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style',
+        '[UNPROCESSABLE_ENTITY] range(2017-10-1:2017-09-10) format invalid, must be "last-day", "last-week", "last-month", "last-year", "YYYY-MM-DD" or "YYYY-MM-DD:YYYY-MM-DD" style',
       );
 
       res = await app
@@ -300,7 +300,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(res.status, 422);
       assert.equal(
         data.error,
-        '[UNPROCESSABLE_ENTITY] range(2017-10-91:2017-09-10) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style',
+        '[UNPROCESSABLE_ENTITY] range(2017-10-91:2017-09-10) format invalid, must be "last-day", "last-week", "last-month", "last-year", "YYYY-MM-DD" or "YYYY-MM-DD:YYYY-MM-DD" style',
       );
 
       res = await app
@@ -311,7 +311,7 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(res.status, 422);
       assert.equal(
         data.error,
-        '[UNPROCESSABLE_ENTITY] range(2017-10-91:2017-00-10) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style',
+        '[UNPROCESSABLE_ENTITY] range(2017-10-91:2017-00-10) format invalid, must be "last-day", "last-week", "last-month", "last-year", "YYYY-MM-DD" or "YYYY-MM-DD:YYYY-MM-DD" style',
       );
 
       res = await app
@@ -322,8 +322,148 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(res.status, 422);
       assert.equal(
         data.error,
-        '[UNPROCESSABLE_ENTITY] range(2017-10-11:2017-09-99) format invalid, must be "YYYY-MM-DD:YYYY-MM-DD" style',
+        '[UNPROCESSABLE_ENTITY] range(2017-10-11:2017-09-99) format invalid, must be "last-day", "last-week", "last-month", "last-year", "YYYY-MM-DD" or "YYYY-MM-DD:YYYY-MM-DD" style',
       );
+    });
+  });
+
+  describe('[GET /downloads/point/:range/:fullname] showPackageDownloadPoint()', () => {
+    it('should get point downloads with date range', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      if (app.config.nfs.client) {
+        await app.httpRequest().get(`/${pkg.name}/-/koa-1.0.0.tgz`).expect(302);
+        await app.httpRequest().get(`/${pkg.name}/-/koa-1.0.0.tgz`).expect(302);
+      } else {
+        await app.httpRequest().get(`/${pkg.name}/-/koa-1.0.0.tgz`).expect(200);
+        await app.httpRequest().get(`/${pkg.name}/-/koa-1.0.0.tgz`).expect(200);
+      }
+      await app.runSchedule(SavePackageVersionDownloadCounterPath);
+
+      const start = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
+      const end = dayjs().add(1, 'day').format('YYYY-MM-DD');
+      const res = await app.httpRequest().get(`/downloads/point/${start}:${end}/@cnpm/koa`).expect(200);
+      const data = res.body;
+      assert.equal(data.downloads, 2);
+      assert.equal(data.package, '@cnpm/koa');
+      assert.equal(data.start, start);
+      assert.equal(data.end, end);
+    });
+
+    it('should support last-day period alias', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      const res = await app.httpRequest().get('/downloads/point/last-day/@cnpm/koa').expect(200);
+      const data = res.body;
+      assert.equal(typeof data.downloads, 'number');
+      assert.equal(data.package, '@cnpm/koa');
+      assert.ok(data.start);
+      assert.ok(data.end);
+      assert.equal(data.start, data.end);
+    });
+
+    it('should support last-week period alias', async () => {
+      const res = await app.httpRequest().get('/downloads/point/last-week/@cnpm/koa').expect(404);
+      // package not found since no package created in this test
+      assert.match(res.body.error, /not found/);
+    });
+
+    it('should support last-month period alias for range endpoint', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      const res = await app.httpRequest().get('/downloads/range/last-month/@cnpm/koa').expect(200);
+      const data = res.body;
+      assert.ok(Array.isArray(data.downloads));
+      assert.equal(data.package, '@cnpm/koa');
+      assert.ok(data.start);
+      assert.ok(data.end);
+    });
+
+    it('should support last-year period alias for range endpoint', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      const res = await app.httpRequest().get('/downloads/range/last-year/@cnpm/koa').expect(200);
+      const data = res.body;
+      assert.ok(Array.isArray(data.downloads));
+      assert.equal(data.package, '@cnpm/koa');
+    });
+
+    it('should support single date for point endpoint', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      const today = dayjs().format('YYYY-MM-DD');
+      const res = await app.httpRequest().get(`/downloads/point/${today}/@cnpm/koa`).expect(200);
+      const data = res.body;
+      assert.equal(typeof data.downloads, 'number');
+      assert.equal(data.start, today);
+      assert.equal(data.end, today);
+      assert.equal(data.package, '@cnpm/koa');
+    });
+  });
+
+  describe('[GET /downloads/point/:range] showTotalDownloadPoint()', () => {
+    it('should get total point downloads', async () => {
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/koa', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg)
+        .expect(201);
+      if (app.config.nfs.client) {
+        await app.httpRequest().get(`/${pkg.name}/-/koa-1.0.0.tgz`).expect(302);
+      } else {
+        await app.httpRequest().get(`/${pkg.name}/-/koa-1.0.0.tgz`).expect(200);
+      }
+      await app.runSchedule(SavePackageVersionDownloadCounterPath);
+
+      const start = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
+      const end = dayjs().add(1, 'day').format('YYYY-MM-DD');
+      const res = await app.httpRequest().get(`/downloads/total/point/${start}:${end}`).expect(200);
+      const data = res.body;
+      assert.equal(typeof data.downloads, 'number');
+      assert.ok(data.downloads >= 0);
+      assert.ok(!data.package);
+      assert.equal(data.start, start);
+      assert.equal(data.end, end);
+    });
+
+    it('should support last-day alias for total point', async () => {
+      const res = await app.httpRequest().get('/downloads/total/point/last-day').expect(200);
+      const data = res.body;
+      assert.equal(typeof data.downloads, 'number');
+      assert.ok(!data.package);
     });
   });
 });

@@ -13,6 +13,61 @@ export class DownloadController extends AbstractController {
   @Inject()
   private packageVersionDownloadRepository: PackageVersionDownloadRepository;
 
+  // npm compatible: /downloads/point/{period}/{package}
+  // @see https://github.com/npm/registry/blob/master/docs/download-counts.md
+  @HTTPMethod({
+    path: `/downloads/point/:range/:fullname(${FULLNAME_REG_STRING})`,
+    method: HTTPMethodEnum.GET,
+  })
+  async showPackageDownloadPoint(@HTTPParam() fullname: string, @HTTPParam() range: string) {
+    const [startDate, endDate] = this.checkAndGetRange(range);
+    const [scope, name] = getScopeAndName(fullname);
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) throw new NotFoundError(`${fullname} not found`);
+    const entities = await this.packageVersionDownloadRepository.query(
+      pkg.packageId,
+      startDate.toDate(),
+      endDate.toDate(),
+    );
+    let total = 0;
+    for (const entity of entities) {
+      for (let i = 1; i <= 31; i++) {
+        const field = `d${String(i).padStart(2, '0')}` as keyof typeof entity;
+        const counter = entity[field] as number;
+        if (counter) total += counter;
+      }
+    }
+    return {
+      downloads: total,
+      start: startDate.format(DATE_FORMAT),
+      end: endDate.format(DATE_FORMAT),
+      package: fullname,
+    };
+  }
+
+  // /downloads/total/point/{period} (all packages, total count)
+  @HTTPMethod({
+    path: '/downloads/total/point/:range',
+    method: HTTPMethodEnum.GET,
+  })
+  async showTotalDownloadPoint(@HTTPParam() range: string) {
+    const [startDate, endDate] = this.checkAndGetRange(range);
+    const entities = await this.packageVersionDownloadRepository.query('total', startDate.toDate(), endDate.toDate());
+    let total = 0;
+    for (const entity of entities) {
+      for (let i = 1; i <= 31; i++) {
+        const field = `d${String(i).padStart(2, '0')}` as keyof typeof entity;
+        const counter = entity[field] as number;
+        if (counter) total += counter;
+      }
+    }
+    return {
+      downloads: total,
+      start: startDate.format(DATE_FORMAT),
+      end: endDate.format(DATE_FORMAT),
+    };
+  }
+
   @HTTPMethod({
     path: `/downloads/range/:range/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.GET,
@@ -54,6 +109,9 @@ export class DownloadController extends AbstractController {
 
     return {
       downloads,
+      start: startDate.format(DATE_FORMAT),
+      end: endDate.format(DATE_FORMAT),
+      package: fullname,
       versions,
     };
   }
@@ -85,14 +143,43 @@ export class DownloadController extends AbstractController {
 
     return {
       downloads,
+      start: startDate.format(DATE_FORMAT),
+      end: endDate.format(DATE_FORMAT),
     };
   }
 
   private checkAndGetRange(range: string) {
+    // Support npm-compatible period aliases
+    // @see https://github.com/npm/registry/blob/master/docs/download-counts.md
+    const today = dayjs();
+    switch (range) {
+      case 'last-day':
+        return [today.subtract(1, 'day'), today.subtract(1, 'day')];
+      case 'last-week':
+        return [today.subtract(7, 'day'), today.subtract(1, 'day')];
+      case 'last-month':
+        return [today.subtract(30, 'day'), today.subtract(1, 'day')];
+      case 'last-year':
+        return [today.subtract(365, 'day'), today.subtract(1, 'day')];
+      default:
+        break;
+    }
+
+    // Support single date: YYYY-MM-DD
+    const singleDateMatch = /^(\d{4}-\d{2}-\d{2})$/.exec(range);
+    if (singleDateMatch) {
+      const date = dayjs(singleDateMatch[1], DATE_FORMAT, true);
+      if (!date.isValid()) {
+        throw new UnprocessableEntityError(`range(${range}) format invalid, must be "${DATE_FORMAT}" style`);
+      }
+      return [date, date];
+    }
+
+    // Support date range: YYYY-MM-DD:YYYY-MM-DD
     const matchs = /^(\d{4}-\d{2}-\d{2}):(\d{4}-\d{2}-\d{2})$/.exec(range);
     if (!matchs) {
       throw new UnprocessableEntityError(
-        `range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`,
+        `range(${range}) format invalid, must be "last-day", "last-week", "last-month", "last-year", "${DATE_FORMAT}" or "${DATE_FORMAT}:${DATE_FORMAT}" style`,
       );
     }
     const start = matchs[1];
@@ -101,7 +188,7 @@ export class DownloadController extends AbstractController {
     let endDate = dayjs(end, DATE_FORMAT, true);
     if (!startDate.isValid() || !endDate.isValid()) {
       throw new UnprocessableEntityError(
-        `range(${range}) format invalid, must be "${DATE_FORMAT}:${DATE_FORMAT}" style`,
+        `range(${range}) format invalid, must be "last-day", "last-week", "last-month", "last-year", "${DATE_FORMAT}" or "${DATE_FORMAT}:${DATE_FORMAT}" style`,
       );
     }
     if (endDate.isBefore(startDate)) {
