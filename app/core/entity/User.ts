@@ -11,6 +11,11 @@ interface UserData extends EntityData {
   ip: string;
   isPrivate: boolean;
   scopes?: string[];
+  fullname?: string;
+  homepage?: string;
+  twitter?: string;
+  github?: string;
+  freenode?: string;
 }
 
 export class User extends Entity {
@@ -23,6 +28,11 @@ export class User extends Entity {
   ip: string;
   isPrivate: boolean;
   scopes?: string[];
+  fullname?: string;
+  homepage?: string;
+  twitter?: string;
+  github?: string;
+  freenode?: string;
 
   constructor(data: UserData) {
     super(data);
@@ -35,6 +45,11 @@ export class User extends Entity {
     this.ip = data.ip;
     this.isPrivate = data.isPrivate;
     this.scopes = data.scopes;
+    this.fullname = data.fullname;
+    this.homepage = data.homepage;
+    this.twitter = data.twitter;
+    this.github = data.github;
+    this.freenode = data.freenode;
   }
 
   static create(data: EasyData<UserData, 'userId'>): User {

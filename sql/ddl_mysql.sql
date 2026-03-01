@@ -412,6 +412,11 @@ CREATE TABLE `users` (
   `ip` varchar(100) COLLATE utf8_unicode_ci NOT NULL COMMENT 'user login request ip',
   `is_private` tinyint NOT NULL DEFAULT '1' COMMENT 'private user or not, 1: true, other: false',
   `scopes` json DEFAULT NULL COMMENT 'white scope list, ["@cnpm", "@foo"]',
+  `fullname` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'user fullname',
+  `homepage` varchar(400) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'user homepage url',
+  `twitter` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'user twitter handle',
+  `github` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'user github handle',
+  `freenode` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'user freenode handle',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_user_id` (`user_id`),
   UNIQUE KEY `uk_name` (`name`)

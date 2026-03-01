@@ -42,4 +42,20 @@ export class User extends Bone {
 
   @Attribute(DataTypes.JSONB, { allowNull: true })
   scopes: string[];
+
+  // Profile fields (npm profile API)
+  @Attribute(DataTypes.STRING(200), { allowNull: true })
+  fullname: string;
+
+  @Attribute(DataTypes.STRING(400), { allowNull: true })
+  homepage: string;
+
+  @Attribute(DataTypes.STRING(100), { allowNull: true })
+  twitter: string;
+
+  @Attribute(DataTypes.STRING(100), { allowNull: true })
+  github: string;
+
+  @Attribute(DataTypes.STRING(100), { allowNull: true })
+  freenode: string;
 }

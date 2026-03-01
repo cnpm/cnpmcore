@@ -7,6 +7,15 @@ import { sha512 } from '../../common/UserUtil.ts';
 import { isGranularToken } from '../../core/entity/Token.ts';
 import { AbstractController } from './AbstractController.ts';
 
+const ProfileUpdateRequestRule = Type.Object({
+  fullname: Type.Optional(Type.String({ maxLength: 200 })),
+  homepage: Type.Optional(Type.String({ maxLength: 400 })),
+  freenode: Type.Optional(Type.String({ maxLength: 100 })),
+  twitter: Type.Optional(Type.String({ maxLength: 100 })),
+  github: Type.Optional(Type.String({ maxLength: 100 })),
+});
+type ProfileUpdateRequest = Static<typeof ProfileUpdateRequestRule>;
+
 // body: {
 //   _id: 'org.couchdb.user:dddd',
 //   name: 'dddd',
@@ -184,36 +193,63 @@ export class UserController extends AbstractController {
   }
 
   // https://github.com/cnpm/cnpmcore/issues/64
+  // https://github.com/npm/registry/blob/master/docs/user/profile.md
   @HTTPMethod({
     path: '/-/npm/v1/user',
     method: HTTPMethodEnum.GET,
   })
   async showProfile(@HTTPContext() ctx: Context) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+    const user = await this.userRepository.findUserByName(authorizedUser.name);
     return {
-      // "tfa": {
-      //   "pending": false,
-      //   "mode": "auth-only"
-      // },
+      tfa: null,
       name: authorizedUser.displayName,
       email: authorizedUser.email,
       email_verified: false,
       created: authorizedUser.createdAt,
       updated: authorizedUser.updatedAt,
-      // fullname: authorizedUser.name,
-      // twitter: '',
-      // github: '',
+      fullname: user?.fullname ?? '',
+      homepage: user?.homepage ?? '',
+      freenode: user?.freenode ?? '',
+      twitter: user?.twitter ?? '',
+      github: user?.github ?? '',
     };
   }
 
-  // https://github.com/cnpm/cnpmcore/issues/64
+  // https://github.com/cnpm/cnpmcore/issues/519
+  // https://github.com/npm/registry/blob/master/docs/user/profile.md
   @HTTPMethod({
     path: '/-/npm/v1/user',
     method: HTTPMethodEnum.POST,
   })
-  async saveProfile() {
-    // Valid properties are: email, password, fullname, homepage, freenode, twitter, github
-    // { email: 'admin@cnpmjs.org', homepage: 'fengmk2' }
-    throw new ForbiddenError('npm profile set is not allowed');
+  async saveProfile(@HTTPContext() ctx: Context, @HTTPBody() body: ProfileUpdateRequest) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
+    const user = await this.userRepository.findUserByName(authorizedUser.name);
+    if (!user) {
+      throw new NotFoundError(`User "${authorizedUser.name}" not found`);
+    }
+
+    // Update profile fields
+    if (body.fullname !== undefined) user.fullname = body.fullname;
+    if (body.homepage !== undefined) user.homepage = body.homepage;
+    if (body.freenode !== undefined) user.freenode = body.freenode;
+    if (body.twitter !== undefined) user.twitter = body.twitter;
+    if (body.github !== undefined) user.github = body.github;
+
+    await this.userRepository.saveUser(user);
+
+    return {
+      tfa: null,
+      name: authorizedUser.displayName,
+      email: authorizedUser.email,
+      email_verified: false,
+      created: authorizedUser.createdAt,
+      updated: user.updatedAt,
+      fullname: user.fullname ?? '',
+      homepage: user.homepage ?? '',
+      freenode: user.freenode ?? '',
+      twitter: user.twitter ?? '',
+      github: user.github ?? '',
+    };
   }
 }

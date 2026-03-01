@@ -17,11 +17,41 @@ describe('test/port/controller/UserController/showProfile.test.ts', () => {
       assert.ok(res.body.error === '[UNAUTHORIZED] Login first');
     });
 
-    it('should 200', async () => {
+    it('should 200 with full profile fields', async () => {
       const { authorization, name } = await TestUtil.createUser();
       const res = await app.httpRequest().get('/-/npm/v1/user').set('authorization', authorization);
-      assert.ok(res.status === 200);
-      assert.ok(res.body.name === name);
+      assert.equal(res.status, 200);
+      assert.equal(res.body.name, name);
+      assert.equal(res.body.tfa, null);
+      assert.equal(res.body.email_verified, false);
+      assert.ok(res.body.created);
+      assert.ok(res.body.updated);
+      assert.equal(res.body.fullname, '');
+      assert.equal(res.body.homepage, '');
+      assert.equal(res.body.freenode, '');
+      assert.equal(res.body.twitter, '');
+      assert.equal(res.body.github, '');
+    });
+
+    it('should return updated profile fields after save', async () => {
+      const { authorization, name } = await TestUtil.createUser();
+
+      // Update profile
+      await app.httpRequest()
+        .post('/-/npm/v1/user')
+        .set('authorization', authorization)
+        .send({ fullname: 'Test User', github: 'testuser', twitter: 'testtwitter' })
+        .expect(200);
+
+      // Verify the profile returns updated data
+      const res = await app.httpRequest().get('/-/npm/v1/user').set('authorization', authorization);
+      assert.equal(res.status, 200);
+      assert.equal(res.body.name, name);
+      assert.equal(res.body.fullname, 'Test User');
+      assert.equal(res.body.github, 'testuser');
+      assert.equal(res.body.twitter, 'testtwitter');
+      assert.equal(res.body.homepage, '');
+      assert.equal(res.body.freenode, '');
     });
   });
 });

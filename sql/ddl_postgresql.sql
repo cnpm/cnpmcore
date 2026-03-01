@@ -660,7 +660,12 @@ CREATE TABLE users (
   password_integrity varchar(512) NOT NULL,
   ip varchar(100) NOT NULL,
   is_private boolean NOT NULL DEFAULT true,
-  scopes json DEFAULT NULL
+  scopes json DEFAULT NULL,
+  fullname varchar(200) DEFAULT NULL,
+  homepage varchar(400) DEFAULT NULL,
+  twitter varchar(100) DEFAULT NULL,
+  github varchar(100) DEFAULT NULL,
+  freenode varchar(100) DEFAULT NULL
 );
 
 CREATE UNIQUE INDEX users_uk_user_id ON users (user_id);
@@ -678,6 +683,11 @@ COMMENT ON COLUMN users.password_integrity IS 'password integrity';
 COMMENT ON COLUMN users.ip IS 'user login request ip';
 COMMENT ON COLUMN users.is_private IS 'private user or not, 1: true, other: false';
 COMMENT ON COLUMN users.scopes IS 'white scope list, ["@cnpm", "@foo"]';
+COMMENT ON COLUMN users.fullname IS 'user fullname';
+COMMENT ON COLUMN users.homepage IS 'user homepage url';
+COMMENT ON COLUMN users.twitter IS 'user twitter handle';
+COMMENT ON COLUMN users.github IS 'user github handle';
+COMMENT ON COLUMN users.freenode IS 'user freenode handle';
 
 
 CREATE TABLE webauthn_credentials (
