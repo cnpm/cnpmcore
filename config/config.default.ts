@@ -57,6 +57,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   enableSyncUnpkgFiles: true,
   enableSyncUnpkgFilesWhiteList: false,
   largePackageVersionSize: Number.MAX_SAFE_INTEGER,
+  localAllowLargePackages: {},
   strictSyncSpecivicVersion: false,
   enableElasticsearch: env('CNPMCORE_CONFIG_ENABLE_ES', 'boolean', false),
   elasticsearchIndex: 'cnpmcore_packages',

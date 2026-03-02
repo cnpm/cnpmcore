@@ -148,6 +148,15 @@ export class PackageVersionFileService extends AbstractService {
     if (this.#unpkgWhiteListAllowLargeScopes.includes(pkgScope)) return true;
 
     const fullname = getFullname(pkgScope, pkgName);
+
+    // check local allow large packages config
+    const localPkgConfig = this.config.cnpmcore.localAllowLargePackages[fullname];
+    if (localPkgConfig?.version) {
+      if (semver.satisfies(pkgVersion, localPkgConfig.version, { includePrerelease: true })) {
+        return true;
+      }
+    }
+
     const pkgConfig = this.#unpkgWhiteListAllowLargePackages[fullname];
     if (!pkgConfig?.version) return false;
     return semver.satisfies(pkgVersion, pkgConfig.version, {
