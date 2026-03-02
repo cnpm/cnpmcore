@@ -1,10 +1,11 @@
-import { HTTPContext, Context, HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
+import { HTTPContext, Context, HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, HTTPQuery, Inject } from 'egg';
+import type { Static } from '@eggjs/typebox-validate/typebox';
 
 import type { HookType } from '../../common/enum/Hook.ts';
 import type { TriggerHookTask } from '../../core/entity/Task.ts';
 import type { HookManageService } from '../../core/service/HookManageService.ts';
 import type { TaskService } from '../../core/service/TaskService.ts';
-import { CreateHookRequestRule, UpdateHookRequestRule } from '../typebox.ts';
+import { CreateHookRequestRule, UpdateHookRequestRule, type ListHookQueryOptions } from '../typebox.ts';
 import type { UserRoleManager } from '../UserRoleManager.ts';
 import { HookConvertor } from './convertor/HookConvertor.ts';
 
@@ -91,21 +92,24 @@ export class HookController {
     path: '/v1/hooks',
     method: HTTPMethodEnum.GET,
   })
-  async listHooks(@HTTPContext() ctx: Context) {
+  async listHooks(
+    @HTTPContext() ctx: Context,
+    @HTTPQuery({ name: 'package' }) packageName: Static<typeof ListHookQueryOptions>['package'],
+    @HTTPQuery() offset: Static<typeof ListHookQueryOptions>['offset'],
+    @HTTPQuery() limit: Static<typeof ListHookQueryOptions>['limit'],
+  ) {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     let hooks = await this.hookManageService.listHooksByOwnerId(user.userId);
 
     // Filter by package name (npm spec: ?package=lodash)
-    const packageFilter = ctx.query.package as string | undefined;
-    if (packageFilter) {
-      hooks = hooks.filter(hook => hook.name === packageFilter);
+    if (packageName) {
+      hooks = hooks.filter(hook => hook.name === packageName);
     }
 
     // Pagination (npm spec: ?limit=N&offset=N)
-    const offsetNum = ctx.query.offset ? parseInt(ctx.query.offset as string, 10) || 0 : 0;
-    const limitNum = ctx.query.limit ? parseInt(ctx.query.limit as string, 10) : undefined;
-    if (offsetNum > 0 || limitNum !== undefined) {
-      hooks = hooks.slice(offsetNum, limitNum !== undefined ? offsetNum + limitNum : undefined);
+    const offsetNum = offset ?? 0;
+    if (offsetNum > 0 || limit !== undefined) {
+      hooks = hooks.slice(offsetNum, limit !== undefined ? offsetNum + limit : undefined);
     }
 
     const tasks = await this.taskService.findTasks(hooks.map((t) => t.latestTaskId).filter((t): t is string => !!t));

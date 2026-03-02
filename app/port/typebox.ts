@@ -178,6 +178,30 @@ export function patchAjv(ajv: Ajv) {
   });
 }
 
+export const ListHookQueryOptions = Type.Object({
+  package: Type.Optional(
+    Type.String({
+      transform: ['trim'],
+      minLength: 1,
+      maxLength: 428,
+    }),
+  ),
+  offset: Type.Optional(
+    Type.Number({
+      transform: ['trim'],
+      minimum: 0,
+      default: 0,
+    }),
+  ),
+  limit: Type.Optional(
+    Type.Number({
+      transform: ['trim'],
+      minimum: 1,
+      maximum: 100,
+    }),
+  ),
+});
+
 export const QueryPageOptions = Type.Object({
   pageSize: Type.Optional(
     Type.Number({
