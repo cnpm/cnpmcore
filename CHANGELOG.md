@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.27.0 (2026-03-02)
+
+* chore(deps): update dependency oxfmt to ^0.36.0 (#968) ([ac56daa](https://github.com/cnpm/cnpmcore/commit/ac56daa)), closes [#968](https://github.com/cnpm/cnpmcore/issues/968)
+* feat: use ioredis-mock in tests for faster CI (#987) ([2e60538](https://github.com/cnpm/cnpmcore/commit/2e60538)), closes [#987](https://github.com/cnpm/cnpmcore/issues/987) [#206](https://github.com/cnpm/cnpmcore/issues/206)
+
 ## 4.26.0 (2026-03-01)
 
 * feat: implement npm-compatible download counts API (#986) ([de5f074](https://github.com/cnpm/cnpmcore/commit/de5f074)), closes [#986](https://github.com/cnpm/cnpmcore/issues/986) [#516](https://github.com/cnpm/cnpmcore/issues/516) [#516](https://github.com/cnpm/cnpmcore/issues/516)
