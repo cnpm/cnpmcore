@@ -2434,6 +2434,43 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
     });
 
+    it('should allow large package version when package is in config allowLargePackages', async () => {
+      app.mockHttpclient('https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
+        data: Buffer.from(
+          JSON.stringify({
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],
+            versions: {
+              '2.0.0': {
+                version: '2.0.0',
+                dist: { tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', size: 100 * 1024 * 1024 + 1 },
+              },
+            },
+          }),
+        ),
+        res: {},
+        headers: {},
+      });
+      mock(app.config.cnpmcore, 'largePackageVersionSize', 100 * 1024 * 1024);
+      const name = 'cnpmcore-test-sync-deprecated';
+      mock(app.config.cnpmcore, 'allowLargePackages', [name]);
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // console.log(log);
+      assert.match(log, /🟢 Synced updated 1 versions, removed 0 versions/);
+      assert.match(log, /Synced version 2.0.0 size: 104857601 too large, it is allowed to sync by unpkg white list/);
+      app.mockAgent().assertNoPendingInterceptors();
+    });
+
     it('should mock downloadTarball status !== 200', async () => {
       app.mockHttpclient('http://foo.com/a.tgz', 'GET', {
         status: 500,

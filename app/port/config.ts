@@ -159,6 +159,16 @@ export interface CnpmcoreConfig {
    */
   largePackageVersionSize: number;
   /**
+   * local allow list for large package scopes, e.g. ['@foo', '@bar']
+   * packages under these scopes are allowed to exceed largePackageVersionSize
+   */
+  allowLargeScopes: string[];
+  /**
+   * local allow list for large packages, e.g. ['openclaw', '@foo/bar']
+   * these packages are allowed to exceed largePackageVersionSize
+   */
+  allowLargePackages: string[];
+  /**
    * enable this would make sync specific version task not append latest version into this task automatically,it would mark the local latest stable version as latest tag.
    * in most cases, you should set to false to keep the same behavior as source registry.
    */

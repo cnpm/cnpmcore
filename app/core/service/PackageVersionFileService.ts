@@ -141,13 +141,21 @@ export class PackageVersionFileService extends AbstractService {
   }
 
   async isLargePackageVersionAllowed(pkgScope: string, pkgName: string, pkgVersion: string) {
+    const fullname = getFullname(pkgScope, pkgName);
+
+    // check local config allow large scopes
+    if (pkgScope && this.config.cnpmcore.allowLargeScopes.includes(pkgScope)) return true;
+
+    // check local config allow large packages
+    if (this.config.cnpmcore.allowLargePackages.includes(fullname)) return true;
+
     if (!this.config.cnpmcore.enableSyncUnpkgFilesWhiteList) return false;
     await this.#updateUnpkgWhiteList();
 
-    // check allow large scopes
+    // check allow large scopes from unpkg-white-list
     if (this.#unpkgWhiteListAllowLargeScopes.includes(pkgScope)) return true;
 
-    const fullname = getFullname(pkgScope, pkgName);
+    // check allow large packages from unpkg-white-list
     const pkgConfig = this.#unpkgWhiteListAllowLargePackages[fullname];
     if (!pkgConfig?.version) return false;
     return semver.satisfies(pkgVersion, pkgConfig.version, {
