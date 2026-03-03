@@ -1578,7 +1578,7 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
     ];
     // check all existing versions for metadata changes like deprecated only when force sync is enabled
     // otherwise only check dist-tag versions for performance
-    // https://github.com/cnpm/cnpmcore/issues/917
+    // https://github.com/cnpm/cnpmcore/issues/994
     const versionsToCheck = force ? existsVersions : Object.values(distTags);
     for (const version of versionsToCheck) {
       // ignore already synced versions
