@@ -187,14 +187,14 @@ export const ListHookQueryOptions = Type.Object({
     }),
   ),
   offset: Type.Optional(
-    Type.Number({
+    Type.Integer({
       transform: ['trim'],
       minimum: 0,
       default: 0,
     }),
   ),
   limit: Type.Optional(
-    Type.Number({
+    Type.Integer({
       transform: ['trim'],
       minimum: 1,
       maximum: 100,

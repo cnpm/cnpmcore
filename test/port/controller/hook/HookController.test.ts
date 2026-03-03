@@ -196,6 +196,15 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
         .set('user-agent', user.ua)
         .expect(200);
       assert.equal(res.body.objects.length, 0);
+
+      // Combined offset and limit
+      res = await app
+        .httpRequest()
+        .get('/-/npm/v1/hooks?offset=1&limit=1')
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .expect(200);
+      assert.equal(res.body.objects.length, 1);
     });
   });
 

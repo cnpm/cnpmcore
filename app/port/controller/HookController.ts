@@ -1,11 +1,21 @@
-import { HTTPContext, Context, HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, HTTPQuery, Inject } from 'egg';
 import type { Static } from '@eggjs/typebox-validate/typebox';
+import {
+  HTTPContext,
+  Context,
+  HTTPBody,
+  HTTPController,
+  HTTPMethod,
+  HTTPMethodEnum,
+  HTTPParam,
+  HTTPQuery,
+  Inject,
+} from 'egg';
 
 import type { HookType } from '../../common/enum/Hook.ts';
 import type { TriggerHookTask } from '../../core/entity/Task.ts';
 import type { HookManageService } from '../../core/service/HookManageService.ts';
 import type { TaskService } from '../../core/service/TaskService.ts';
-import { CreateHookRequestRule, UpdateHookRequestRule, type ListHookQueryOptions } from '../typebox.ts';
+import { CreateHookRequestRule, UpdateHookRequestRule, ListHookQueryOptions } from '../typebox.ts';
 import type { UserRoleManager } from '../UserRoleManager.ts';
 import { HookConvertor } from './convertor/HookConvertor.ts';
 
@@ -103,7 +113,7 @@ export class HookController {
 
     // Filter by package name (npm spec: ?package=lodash)
     if (packageName) {
-      hooks = hooks.filter(hook => hook.name === packageName);
+      hooks = hooks.filter((hook) => hook.name === packageName);
     }
 
     // Pagination (npm spec: ?limit=N&offset=N)
