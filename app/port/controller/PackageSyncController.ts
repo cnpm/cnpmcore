@@ -116,6 +116,7 @@ export class PackageSyncController extends AbstractController {
       skipDependencies: params.skipDependencies,
       syncDownloadData: params.syncDownloadData,
       forceSyncHistory: params.forceSyncHistory,
+      force: isAdmin ? params.force : undefined,
       registryId: registry?.registryId,
       specificVersions: params.specificVersions && JSON.parse(params.specificVersions),
     });
