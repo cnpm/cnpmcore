@@ -42,6 +42,8 @@ export interface SyncPackageTaskOptions {
   syncDownloadData?: boolean;
   // force sync history version
   forceSyncHistory?: boolean;
+  // force check all versions for deprecated metadata changes
+  forceSyncDeprecated?: boolean;
   registryId?: string;
   specificVersions?: string[];
 }
@@ -67,6 +69,7 @@ export interface CreateSyncPackageTaskData extends TaskBaseData {
   skipDependencies?: boolean;
   syncDownloadData?: boolean;
   forceSyncHistory?: boolean;
+  forceSyncDeprecated?: boolean;
   specificVersions?: string[];
 }
 
@@ -159,6 +162,7 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
         skipDependencies: options?.skipDependencies,
         syncDownloadData: options?.syncDownloadData,
         forceSyncHistory: options?.forceSyncHistory,
+        forceSyncDeprecated: options?.forceSyncDeprecated,
         specificVersions: options?.specificVersions,
       },
     };

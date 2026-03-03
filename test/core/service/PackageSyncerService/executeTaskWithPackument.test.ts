@@ -194,7 +194,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       app.mockAgent().assertNoPendingInterceptors();
     });
 
-    it('should sync deprecated property on non-dist-tag version', async () => {
+    it('should sync deprecated property on non-dist-tag version with forceSyncDeprecated', async () => {
       // First sync: 2 versions, no deprecated
       const pkgName = 'cnpmcore-test-sync-deprecated-non-latest';
       const initialData = JSON.stringify({
@@ -291,7 +291,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.equal(res.data.versions['1.0.0']?.deprecated, undefined);
       app.mockAgent().assertNoPendingInterceptors();
 
-      // Second sync: version 0.0.0 (non-latest) gets deprecated
+      // Second sync with forceSyncDeprecated: version 0.0.0 (non-latest) gets deprecated
       const deprecatedData = JSON.parse(initialData);
       deprecatedData.versions['0.0.0'].deprecated = 'this old version is deprecated';
       app.mockHttpclient(`https://registry.npmjs.org/${pkgName}`, 'GET', {
@@ -299,7 +299,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         persist: false,
       });
 
-      await packageSyncerService.createTask(pkgName);
+      await packageSyncerService.createTask(pkgName, { forceSyncDeprecated: true });
       task = await packageSyncerService.findExecuteTask();
       assert.ok(task);
       await packageSyncerService.executeTask(task);

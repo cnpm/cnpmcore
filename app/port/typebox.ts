@@ -100,6 +100,8 @@ export const SyncPackageTaskRule = Type.Object({
   force: Type.Boolean(),
   // sync history version
   forceSyncHistory: Type.Boolean(),
+  // force check all versions for deprecated metadata changes
+  forceSyncDeprecated: Type.Optional(Type.Boolean()),
   // source registry
   registryName: Type.Optional(Type.String()),
 });

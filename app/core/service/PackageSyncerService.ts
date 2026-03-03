@@ -1234,7 +1234,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
   }) {
     let { task, remoteData, pkg, registry, logUrl, remoteUrl, logs } = options;
     const fullname = task.targetName;
-    const { syncDownloadData, skipDependencies, forceSyncHistory } = task.data as SyncPackageTaskOptions;
+    const { syncDownloadData, skipDependencies, forceSyncHistory, forceSyncDeprecated } = task.data as SyncPackageTaskOptions;
     const [scope, name] = getScopeAndName(fullname);
 
     let packument: Packument;
@@ -1576,9 +1576,11 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
       // this field won't change, but this is a bug(#910) on cnpmcore, so we need to check if it is different
       '_npmUser',
     ];
-    // check all existing versions for metadata changes like deprecated
+    // check all existing versions for metadata changes like deprecated only when forceSyncDeprecated is enabled
+    // otherwise only check dist-tag versions for performance
     // https://github.com/cnpm/cnpmcore/issues/917
-    for (const version of existsVersions) {
+    const versionsToCheck = forceSyncDeprecated ? existsVersions : Object.values(distTags);
+    for (const version of versionsToCheck) {
       // ignore already synced versions
       if (updateVersions.includes(version) || diff.removedVersions.includes(version)) {
         continue;

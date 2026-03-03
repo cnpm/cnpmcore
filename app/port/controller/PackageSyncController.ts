@@ -89,6 +89,7 @@ export class PackageSyncController extends AbstractController {
       force: !!data.force,
       // only admin allow to sync history version
       forceSyncHistory: !!data.forceSyncHistory && isAdmin,
+      forceSyncDeprecated: !!data.forceSyncDeprecated,
       specificVersions: data.specificVersions,
     };
     ctx.tValidate(SyncPackageTaskRule, params);
@@ -116,6 +117,7 @@ export class PackageSyncController extends AbstractController {
       skipDependencies: params.skipDependencies,
       syncDownloadData: params.syncDownloadData,
       forceSyncHistory: params.forceSyncHistory,
+      forceSyncDeprecated: params.forceSyncDeprecated,
       registryId: registry?.registryId,
       specificVersions: params.specificVersions && JSON.parse(params.specificVersions),
     });
