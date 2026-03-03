@@ -1576,8 +1576,9 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
       // this field won't change, but this is a bug(#910) on cnpmcore, so we need to check if it is different
       '_npmUser',
     ];
-    // for performance reason, we won't check all versions by default, only check those versions on dist-tags
-    for (const version of Object.values(distTags)) {
+    // check all existing versions for metadata changes like deprecated
+    // https://github.com/cnpm/cnpmcore/issues/917
+    for (const version of existsVersions) {
       // ignore already synced versions
       if (updateVersions.includes(version) || diff.removedVersions.includes(version)) {
         continue;

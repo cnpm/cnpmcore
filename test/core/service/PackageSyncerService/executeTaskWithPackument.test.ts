@@ -194,6 +194,133 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       app.mockAgent().assertNoPendingInterceptors();
     });
 
+    it('should sync deprecated property on non-dist-tag version', async () => {
+      // First sync: 2 versions, no deprecated
+      const pkgName = 'cnpmcore-test-sync-deprecated-non-latest';
+      const initialData = JSON.stringify({
+        _id: pkgName,
+        _rev: '1-abc',
+        name: pkgName,
+        'dist-tags': { latest: '1.0.0' },
+        versions: {
+          '0.0.0': {
+            name: pkgName,
+            version: '0.0.0',
+            description: '',
+            main: 'index.js',
+            scripts: {},
+            author: '',
+            license: 'ISC',
+            dependencies: {},
+            _id: `${pkgName}@0.0.0`,
+            _nodeVersion: '16.13.1',
+            _npmVersion: '8.1.2',
+            dist: {
+              integrity: 'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
+              shasum: 'c73398ff6db39d138a56c04c7a90f35b70d7b78f',
+              tarball: `https://registry.npmjs.org/${pkgName}/-/${pkgName}-0.0.0.tgz`,
+            },
+            _npmUser: { name: 'fengmk2', email: 'fengmk2@gmail.com' },
+            directories: {},
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmail.com' }],
+            _hasShrinkwrap: false,
+          },
+          '1.0.0': {
+            name: pkgName,
+            version: '1.0.0',
+            description: '',
+            main: 'index.js',
+            scripts: {},
+            author: '',
+            license: 'ISC',
+            dependencies: {},
+            _id: `${pkgName}@1.0.0`,
+            _nodeVersion: '16.13.1',
+            _npmVersion: '8.1.2',
+            dist: {
+              integrity: 'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
+              shasum: 'c73398ff6db39d138a56c04c7a90f35b70d7b78f',
+              tarball: `https://registry.npmjs.org/${pkgName}/-/${pkgName}-1.0.0.tgz`,
+            },
+            _npmUser: { name: 'fengmk2', email: 'fengmk2@gmail.com' },
+            directories: {},
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmail.com' }],
+            _hasShrinkwrap: false,
+          },
+        },
+        time: {
+          created: '2021-12-11T18:09:24.624Z',
+          '0.0.0': '2021-12-11T18:09:24.768Z',
+          '1.0.0': '2021-12-12T18:09:24.768Z',
+          modified: '2022-04-12T06:56:55.617Z',
+        },
+        maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmail.com' }],
+        license: 'ISC',
+        readme: 'ERROR: No README data found!',
+        readmeFilename: '',
+      });
+
+      app.mockHttpclient(`https://registry.npmjs.org/${pkgName}`, 'GET', {
+        data: initialData,
+        persist: false,
+      });
+      app.mockHttpclient(
+        `https://registry.npmjs.org/${pkgName}/-/${pkgName}-0.0.0.tgz`,
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        },
+      );
+      app.mockHttpclient(
+        `https://registry.npmjs.org/${pkgName}/-/${pkgName}-1.0.0.tgz`,
+        'GET',
+        {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        },
+      );
+
+      await packageSyncerService.createTask(pkgName);
+      let task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      await packageSyncerService.executeTask(task);
+      let res = await packageManagerService.listPackageFullManifests('', pkgName);
+      assert.ok(res.data?.versions);
+      assert.equal(res.data.versions['0.0.0']?.deprecated, undefined);
+      assert.equal(res.data.versions['1.0.0']?.deprecated, undefined);
+      app.mockAgent().assertNoPendingInterceptors();
+
+      // Second sync: version 0.0.0 (non-latest) gets deprecated
+      const deprecatedData = JSON.parse(initialData);
+      deprecatedData.versions['0.0.0'].deprecated = 'this old version is deprecated';
+      app.mockHttpclient(`https://registry.npmjs.org/${pkgName}`, 'GET', {
+        data: JSON.stringify(deprecatedData),
+        persist: false,
+      });
+
+      await packageSyncerService.createTask(pkgName);
+      task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // Should detect and sync the deprecated change on non-latest version
+      assert.match(log, /🟢 Synced version 0.0.0 success, different meta: {"deprecated":"this old version is deprecated"}/);
+
+      res = await packageManagerService.listPackageFullManifests('', pkgName);
+      assert.ok(res.data?.versions);
+      assert.equal(res.data.versions['0.0.0']?.deprecated, 'this old version is deprecated');
+      assert.equal(res.data.versions['1.0.0']?.deprecated, undefined);
+
+      const abbrRes = await packageManagerService.listPackageAbbreviatedManifests('', pkgName);
+      assert.ok(abbrRes.data);
+      assert.equal((abbrRes.data as any).versions['0.0.0']?.deprecated, 'this old version is deprecated');
+      assert.equal((abbrRes.data as any).versions['1.0.0']?.deprecated, undefined);
+      app.mockAgent().assertNoPendingInterceptors();
+    });
+
     it('should execute "foobar" task', async () => {
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
