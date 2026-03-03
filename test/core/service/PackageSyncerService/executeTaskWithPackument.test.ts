@@ -216,7 +216,8 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
             _nodeVersion: '16.13.1',
             _npmVersion: '8.1.2',
             dist: {
-              integrity: 'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
+              integrity:
+                'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
               shasum: 'c73398ff6db39d138a56c04c7a90f35b70d7b78f',
               tarball: `https://registry.npmjs.org/${pkgName}/-/${pkgName}-0.0.0.tgz`,
             },
@@ -238,7 +239,8 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
             _nodeVersion: '16.13.1',
             _npmVersion: '8.1.2',
             dist: {
-              integrity: 'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
+              integrity:
+                'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
               shasum: 'c73398ff6db39d138a56c04c7a90f35b70d7b78f',
               tarball: `https://registry.npmjs.org/${pkgName}/-/${pkgName}-1.0.0.tgz`,
             },
@@ -264,22 +266,14 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         data: initialData,
         persist: false,
       });
-      app.mockHttpclient(
-        `https://registry.npmjs.org/${pkgName}/-/${pkgName}-0.0.0.tgz`,
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
-          persist: false,
-        },
-      );
-      app.mockHttpclient(
-        `https://registry.npmjs.org/${pkgName}/-/${pkgName}-1.0.0.tgz`,
-        'GET',
-        {
-          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
-          persist: false,
-        },
-      );
+      app.mockHttpclient(`https://registry.npmjs.org/${pkgName}/-/${pkgName}-0.0.0.tgz`, 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      app.mockHttpclient(`https://registry.npmjs.org/${pkgName}/-/${pkgName}-1.0.0.tgz`, 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
 
       await packageSyncerService.createTask(pkgName);
       let task = await packageSyncerService.findExecuteTask();
@@ -307,7 +301,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // Should detect and sync the deprecated change on non-latest version
-      assert.match(log, /🟢 Synced version 0.0.0 success, different meta: {"deprecated":"this old version is deprecated"}/);
+      assert.match(
+        log,
+        /🟢 Synced version 0.0.0 success, different meta: {"deprecated":"this old version is deprecated"}/,
+      );
 
       res = await packageManagerService.listPackageFullManifests('', pkgName);
       assert.ok(res.data?.versions);
