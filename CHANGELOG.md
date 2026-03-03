@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.28.0 (2026-03-03)
+
+* feat: add package/limit/offset query filters to list hooks API (#989) ([28a82b4](https://github.com/cnpm/cnpmcore/commit/28a82b4)), closes [#989](https://github.com/cnpm/cnpmcore/issues/989) [#518](https://github.com/cnpm/cnpmcore/issues/518)
+
 ## 4.27.0 (2026-03-02)
 
 * chore(deps): update dependency oxfmt to ^0.36.0 (#968) ([ac56daa](https://github.com/cnpm/cnpmcore/commit/ac56daa)), closes [#968](https://github.com/cnpm/cnpmcore/issues/968)
