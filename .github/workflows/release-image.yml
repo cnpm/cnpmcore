@@ -71,7 +71,7 @@ jobs:
 
       # Build and test debian image
       - name: Build debian image for testing
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: .docker/debian/Dockerfile
@@ -102,7 +102,7 @@ jobs:
 
       # Build and test alpine image
       - name: Build alpine image for testing
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: .docker/alpine/Dockerfile
@@ -135,7 +135,7 @@ jobs:
       - name: Build and push Docker image
         id: push
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: .docker/debian/Dockerfile
