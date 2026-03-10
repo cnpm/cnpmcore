@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.77.0 (2026-03-10)
+
+* feat: add Org & Team entities, models, repositories and migrations (#1005) ([83aa418](https://github.com/cnpm/cnpmcore/commit/83aa418)), closes [#1005](https://github.com/cnpm/cnpmcore/issues/1005) [#1002](https://github.com/cnpm/cnpmcore/issues/1002)
+
 ## <small>3.76.1 (2025-12-04)</small>
 
 * fix: block version (#909) ([2d1f40d](https://github.com/cnpm/cnpmcore/commit/2d1f40d)), closes [#909](https://github.com/cnpm/cnpmcore/issues/909)
