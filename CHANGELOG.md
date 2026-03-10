@@ -1,5 +1,14 @@
 # Changelog
 
+## <small>4.28.2 (2026-03-10)</small>
+
+* fix: latest range (#954) ([91909e2](https://github.com/cnpm/cnpmcore/commit/91909e2)), closes [#954](https://github.com/cnpm/cnpmcore/issues/954)
+* chore(deps): update dependency oxlint-tsgolint to ^0.16.0 (#996) ([b5d993b](https://github.com/cnpm/cnpmcore/commit/b5d993b)), closes [#996](https://github.com/cnpm/cnpmcore/issues/996)
+* chore(deps): update docker/build-push-action action to v7 (#1000) ([1b7fcca](https://github.com/cnpm/cnpmcore/commit/1b7fcca)), closes [#1000](https://github.com/cnpm/cnpmcore/issues/1000)
+* chore(deps): update docker/login-action action to v4 (#997) ([bcfb34e](https://github.com/cnpm/cnpmcore/commit/bcfb34e)), closes [#997](https://github.com/cnpm/cnpmcore/issues/997)
+* chore(deps): update docker/setup-buildx-action action to v4 (#999) ([d2f578a](https://github.com/cnpm/cnpmcore/commit/d2f578a)), closes [#999](https://github.com/cnpm/cnpmcore/issues/999)
+* chore(deps): update docker/setup-qemu-action action to v4 (#998) ([ed5f6dc](https://github.com/cnpm/cnpmcore/commit/ed5f6dc)), closes [#998](https://github.com/cnpm/cnpmcore/issues/998)
+
 ## <small>4.28.1 (2026-03-03)</small>
 
 * fix: reuse force parameter to check all versions for deprecated metadata in packument sync (#995) ([2f8430b](https://github.com/cnpm/cnpmcore/commit/2f8430b)), closes [#995](https://github.com/cnpm/cnpmcore/issues/995) [cnpm/cnpmcore#994](https://github.com/cnpm/cnpmcore/issues/994)
