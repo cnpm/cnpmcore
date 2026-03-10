@@ -1,12 +1,42 @@
-FROM node:22-alpine
+# Stage 1: Build
+FROM node:22-alpine AS builder
 
-# Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
-COPY . .
+# Copy package files first for better Docker layer caching
+COPY package.json ./
 
-RUN .docker/build.sh
+# Install all dependencies (including devDependencies for tsc build)
+RUN npm install -g npminstall --registry=https://registry.npmmirror.com \
+  && npminstall -c
+
+# Copy source and compile TypeScript (tsc compiles .ts to .js in-place)
+COPY . .
+RUN npm run tsc
+
+# Prune to production dependencies only and clean up
+RUN npmupdate -c --production \
+  && npm cache clean --force
+
+# Stage 2: Production — clean, minimal image
+FROM node:22-alpine
+
+WORKDIR /usr/src/app
+
+# Copy only the built application from builder (owned by node user)
+COPY --from=builder --chown=node:node /usr/src/app/app.js ./
+COPY --from=builder --chown=node:node /usr/src/app/app ./app
+COPY --from=builder --chown=node:node /usr/src/app/config ./config
+COPY --from=builder --chown=node:node /usr/src/app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /usr/src/app/package.json ./
+COPY --from=builder --chown=node:node /usr/src/app/LICENSE ./
+
+# Ensure runtime directories are writable by node user
+RUN mkdir -p /usr/src/app/.cnpmcore /usr/src/app/logs /usr/src/app/run \
+  && chown -R node:node /usr/src/app/.cnpmcore /usr/src/app/logs /usr/src/app/run
+
+# Run as non-root user for security
+USER node
 
 ENV NODE_ENV=production \
   EGG_SERVER_ENV=prod \

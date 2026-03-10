@@ -194,6 +194,130 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       app.mockAgent().assertNoPendingInterceptors();
     });
 
+    it('should sync deprecated property on non-dist-tag version with force', async () => {
+      // First sync: 2 versions, no deprecated
+      const pkgName = 'cnpmcore-test-sync-deprecated-non-latest';
+      const initialData = JSON.stringify({
+        _id: pkgName,
+        _rev: '1-abc',
+        name: pkgName,
+        'dist-tags': { latest: '1.0.0' },
+        versions: {
+          '0.0.0': {
+            name: pkgName,
+            version: '0.0.0',
+            description: '',
+            main: 'index.js',
+            scripts: {},
+            author: '',
+            license: 'ISC',
+            dependencies: {},
+            _id: `${pkgName}@0.0.0`,
+            _nodeVersion: '16.13.1',
+            _npmVersion: '8.1.2',
+            dist: {
+              integrity:
+                'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
+              shasum: 'c73398ff6db39d138a56c04c7a90f35b70d7b78f',
+              tarball: `https://registry.npmjs.org/${pkgName}/-/${pkgName}-0.0.0.tgz`,
+            },
+            _npmUser: { name: 'fengmk2', email: 'fengmk2@gmail.com' },
+            directories: {},
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmail.com' }],
+            _hasShrinkwrap: false,
+          },
+          '1.0.0': {
+            name: pkgName,
+            version: '1.0.0',
+            description: '',
+            main: 'index.js',
+            scripts: {},
+            author: '',
+            license: 'ISC',
+            dependencies: {},
+            _id: `${pkgName}@1.0.0`,
+            _nodeVersion: '16.13.1',
+            _npmVersion: '8.1.2',
+            dist: {
+              integrity:
+                'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
+              shasum: 'c73398ff6db39d138a56c04c7a90f35b70d7b78f',
+              tarball: `https://registry.npmjs.org/${pkgName}/-/${pkgName}-1.0.0.tgz`,
+            },
+            _npmUser: { name: 'fengmk2', email: 'fengmk2@gmail.com' },
+            directories: {},
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmail.com' }],
+            _hasShrinkwrap: false,
+          },
+        },
+        time: {
+          created: '2021-12-11T18:09:24.624Z',
+          '0.0.0': '2021-12-11T18:09:24.768Z',
+          '1.0.0': '2021-12-12T18:09:24.768Z',
+          modified: '2022-04-12T06:56:55.617Z',
+        },
+        maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmail.com' }],
+        license: 'ISC',
+        readme: 'ERROR: No README data found!',
+        readmeFilename: '',
+      });
+
+      app.mockHttpclient(`https://registry.npmjs.org/${pkgName}`, 'GET', {
+        data: initialData,
+        persist: false,
+      });
+      app.mockHttpclient(`https://registry.npmjs.org/${pkgName}/-/${pkgName}-0.0.0.tgz`, 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      app.mockHttpclient(`https://registry.npmjs.org/${pkgName}/-/${pkgName}-1.0.0.tgz`, 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+
+      await packageSyncerService.createTask(pkgName);
+      let task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      await packageSyncerService.executeTask(task);
+      let res = await packageManagerService.listPackageFullManifests('', pkgName);
+      assert.ok(res.data?.versions);
+      assert.equal(res.data.versions['0.0.0']?.deprecated, undefined);
+      assert.equal(res.data.versions['1.0.0']?.deprecated, undefined);
+      app.mockAgent().assertNoPendingInterceptors();
+
+      // Second sync with force: version 0.0.0 (non-latest) gets deprecated
+      const deprecatedData = JSON.parse(initialData);
+      deprecatedData.versions['0.0.0'].deprecated = 'this old version is deprecated';
+      app.mockHttpclient(`https://registry.npmjs.org/${pkgName}`, 'GET', {
+        data: JSON.stringify(deprecatedData),
+        persist: false,
+      });
+
+      await packageSyncerService.createTask(pkgName, { force: true });
+      task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // Should detect and sync the deprecated change on non-latest version
+      assert.match(
+        log,
+        /🟢 Synced version 0.0.0 success, different meta: {"deprecated":"this old version is deprecated"}/,
+      );
+
+      res = await packageManagerService.listPackageFullManifests('', pkgName);
+      assert.ok(res.data?.versions);
+      assert.equal(res.data.versions['0.0.0']?.deprecated, 'this old version is deprecated');
+      assert.equal(res.data.versions['1.0.0']?.deprecated, undefined);
+
+      const abbrRes = await packageManagerService.listPackageAbbreviatedManifests('', pkgName);
+      assert.ok(abbrRes.data);
+      assert.equal((abbrRes.data as any).versions['0.0.0']?.deprecated, 'this old version is deprecated');
+      assert.equal((abbrRes.data as any).versions['1.0.0']?.deprecated, undefined);
+      app.mockAgent().assertNoPendingInterceptors();
+    });
+
     it('should execute "foobar" task', async () => {
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
@@ -1954,6 +2078,84 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.ok(log.includes('📖 Use the latest version(0.0.0) maintainers instead'));
+      assert.ok(log.includes('] 🔗'));
+      app.mockAgent().assertNoPendingInterceptors();
+    });
+
+    it('should use _npmUser as maintainer for OIDC-published packages with empty maintainers', async () => {
+      // Simulates packages published via GitHub Actions OIDC which have empty maintainers but include _npmUser
+      // https://github.com/cnpm/cnpm/pull/489
+      const name = 'cnpmcore-test-oidc-package';
+      app.mockHttpclient(`https://registry.npmjs.org/${name}`, 'GET', {
+        data: JSON.stringify({
+          _id: name,
+          _rev: '1-abc123',
+          name,
+          'dist-tags': { latest: '1.0.0' },
+          versions: {
+            '1.0.0': {
+              name,
+              version: '1.0.0',
+              description: 'Test OIDC package',
+              main: 'index.js',
+              scripts: {},
+              author: '',
+              license: 'MIT',
+              dependencies: {},
+              _id: `${name}@1.0.0`,
+              _nodeVersion: '20.0.0',
+              _npmVersion: '10.0.0',
+              dist: {
+                integrity:
+                  'sha512-ptVWDP7Z39wOBk5EBwi2x8/SKZblEsVcdL0jjIsaI2KdLwVpRRRnezJSKpUsXr982nGf0j7nh6RcHSg4Wlu3AA==',
+                shasum: 'c73398ff6db39d138a56c04c7a90f35b70d7b78f',
+                tarball: `https://registry.npmjs.org/${name}/-/${name}-1.0.0.tgz`,
+                fileCount: 1,
+                unpackedSize: 250,
+              },
+              // OIDC packages have _npmUser but empty maintainers
+              _npmUser: {
+                name: 'GitHub Actions',
+                email: 'npm-oidc-no-reply@github.com',
+                trustedPublisher: {
+                  id: 'github',
+                  oidcConfigId: 'oidc:6bbec7b0-c7d4-4ecb-a63b-d9bddccd5a24',
+                },
+              },
+              maintainers: [],
+            },
+          },
+          time: {
+            created: '2024-01-01T00:00:00.000Z',
+            '1.0.0': '2024-01-01T00:00:00.000Z',
+            modified: '2024-01-01T00:00:00.000Z',
+          },
+          maintainers: [],
+          license: 'MIT',
+          readme: 'Test readme',
+          readmeFilename: 'README.md',
+        }),
+        persist: false,
+      });
+      app.mockHttpclient(`https://registry.npmjs.org/${name}/-/${name}-1.0.0.tgz`, 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      // Verify the _npmUser fallback was used
+      assert.ok(log.includes('📖 Use _npmUser from version 1.0.0 as maintainer (GitHub Actions)'));
+      assert.ok(
+        log.includes('🚧 Syncing maintainers: [{"name":"GitHub Actions","email":"npm-oidc-no-reply@github.com"}]'),
+      );
       assert.ok(log.includes('] 🔗'));
       app.mockAgent().assertNoPendingInterceptors();
     });

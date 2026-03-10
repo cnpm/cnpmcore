@@ -6,6 +6,24 @@ import binaries, { type BinaryName } from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
 import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
+// Mozilla product-details API for listing Firefox versions
+// https://product-details.mozilla.org/1.0/firefox.json
+const PRODUCT_DETAILS_URL = 'https://product-details.mozilla.org/1.0/firefox.json';
+
+interface FirefoxRelease {
+  version: string;
+  category: string;
+  date: string;
+  build_number: number;
+  description: string | null;
+  is_security_driven: boolean;
+  product: string;
+}
+
+interface FirefoxProductDetails {
+  releases: Record<string, FirefoxRelease>;
+}
+
 @SingletonProto()
 @BinaryAdapter(BinaryType.Firefox)
 export class FirefoxBinary extends AbstractBinary {
@@ -16,6 +34,68 @@ export class FirefoxBinary extends AbstractBinary {
 
   // Only fetch Firefox versions >= 100.0.0 to avoid too old versions
   async fetch(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
+    // For root directory, use Mozilla's product-details JSON API
+    // This is more reliable than parsing the large HTML directory listing
+    if (dir === '/') {
+      return await this.#fetchRootDir(binaryName);
+    }
+    return await this.#fetchSubDir(dir, binaryName);
+  }
+
+  // Use Mozilla's product-details JSON API to list Firefox versions
+  async #fetchRootDir(binaryName: BinaryName): Promise<FetchResult | undefined> {
+    const binaryConfig = binaries[binaryName];
+    const data = await this.requestJSON<FirefoxProductDetails>(PRODUCT_DETAILS_URL);
+    const items = this.#parseProductDetails(data, binaryConfig.options?.ignoreDownloadStatuses);
+    return { items, nextParams: null };
+  }
+
+  #parseProductDetails(data: FirefoxProductDetails, ignoreDownloadStatuses?: number[]): BinaryItem[] {
+    const versionSet = new Set<string>();
+    for (const release of Object.values(data.releases)) {
+      const version = release.version;
+      versionSet.add(version);
+    }
+
+    const items: BinaryItem[] = [];
+    for (const version of versionSet) {
+      // Filter out old Firefox versions (< 100.0.0)
+      const match = /^(\d+)/.exec(version);
+      if (match) {
+        const major = Number.parseInt(match[1]);
+        if (major < 100) {
+          continue;
+        }
+      }
+
+      const name = `${version}/`;
+      items.push({
+        name,
+        isDir: true,
+        url: '',
+        size: '-',
+        date: '-',
+        ignoreDownloadStatuses,
+      });
+    }
+
+    // Add special directories
+    for (const special of ['latest/', 'latest-beta/', 'latest-esr/']) {
+      items.push({
+        name: special,
+        isDir: true,
+        url: '',
+        size: '-',
+        date: '-',
+        ignoreDownloadStatuses,
+      });
+    }
+
+    return items;
+  }
+
+  // Parse Mozilla archive HTML directory listing for subdirectories
+  async #fetchSubDir(dir: string, binaryName: BinaryName): Promise<FetchResult | undefined> {
     const binaryConfig = binaries[binaryName];
     const url = `${binaryConfig.distUrl}${dir}`;
     const html = await this.requestXml(url);

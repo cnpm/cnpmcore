@@ -1,5 +1,76 @@
 # Changelog
 
+## <small>4.28.1 (2026-03-03)</small>
+
+* fix: reuse force parameter to check all versions for deprecated metadata in packument sync (#995) ([2f8430b](https://github.com/cnpm/cnpmcore/commit/2f8430b)), closes [#995](https://github.com/cnpm/cnpmcore/issues/995) [cnpm/cnpmcore#994](https://github.com/cnpm/cnpmcore/issues/994)
+
+## 4.28.0 (2026-03-03)
+
+* feat: add package/limit/offset query filters to list hooks API (#989) ([28a82b4](https://github.com/cnpm/cnpmcore/commit/28a82b4)), closes [#989](https://github.com/cnpm/cnpmcore/issues/989) [#518](https://github.com/cnpm/cnpmcore/issues/518)
+
+## 4.27.0 (2026-03-02)
+
+* chore(deps): update dependency oxfmt to ^0.36.0 (#968) ([ac56daa](https://github.com/cnpm/cnpmcore/commit/ac56daa)), closes [#968](https://github.com/cnpm/cnpmcore/issues/968)
+* feat: use ioredis-mock in tests for faster CI (#987) ([2e60538](https://github.com/cnpm/cnpmcore/commit/2e60538)), closes [#987](https://github.com/cnpm/cnpmcore/issues/987) [#206](https://github.com/cnpm/cnpmcore/issues/206)
+
+## 4.26.0 (2026-03-01)
+
+* feat: implement npm-compatible download counts API (#986) ([de5f074](https://github.com/cnpm/cnpmcore/commit/de5f074)), closes [#986](https://github.com/cnpm/cnpmcore/issues/986) [#516](https://github.com/cnpm/cnpmcore/issues/516) [#516](https://github.com/cnpm/cnpmcore/issues/516)
+
+## <small>4.25.1 (2026-03-01)</small>
+
+* fix: update NwjsBinary to use Cloudflare R2 S3 API for sub-directory listing (#985) ([04ee636](https://github.com/cnpm/cnpmcore/commit/04ee636)), closes [#985](https://github.com/cnpm/cnpmcore/issues/985) [#891](https://github.com/cnpm/cnpmcore/issues/891) [#891](https://github.com/cnpm/cnpmcore/issues/891)
+
+## 4.25.0 (2026-03-01)
+
+* feat: filter deprecated and newly published packages from search results (#984) ([434ebac](https://github.com/cnpm/cnpmcore/commit/434ebac)), closes [#984](https://github.com/cnpm/cnpmcore/issues/984) [#858](https://github.com/cnpm/cnpmcore/issues/858)
+* test: add unit tests for ErrorUtil, PaddingSemVer, and isDuplicateKeyError (#983) ([a29a686](https://github.com/cnpm/cnpmcore/commit/a29a686)), closes [#983](https://github.com/cnpm/cnpmcore/issues/983)
+
+## 4.24.0 (2026-02-28)
+
+* feat: reduce docker image size with multi-stage build (#982) ([199aa0e](https://github.com/cnpm/cnpmcore/commit/199aa0e)), closes [#982](https://github.com/cnpm/cnpmcore/issues/982) [#887](https://github.com/cnpm/cnpmcore/issues/887)
+
+## <small>4.23.1 (2026-02-28)</small>
+
+* perf: optimize test database cleanup for faster CI (#981) ([e77620a](https://github.com/cnpm/cnpmcore/commit/e77620a)), closes [#981](https://github.com/cnpm/cnpmcore/issues/981)
+
+## 4.23.0 (2026-02-28)
+
+* feat: add X-Integrity response header for unpkg raw files (#978) ([9c7a11f](https://github.com/cnpm/cnpmcore/commit/9c7a11f)), closes [#978](https://github.com/cnpm/cnpmcore/issues/978) [#634](https://github.com/cnpm/cnpmcore/issues/634)
+* chore(deps): update dependency @types/tar to v7 (#971) ([beb61d9](https://github.com/cnpm/cnpmcore/commit/beb61d9)), closes [#971](https://github.com/cnpm/cnpmcore/issues/971) [#8203](https://github.com/cnpm/cnpmcore/issues/8203)
+* chore(deps): update dependency oxlint-tsgolint to ^0.15.0 (#969) ([d6a7c46](https://github.com/cnpm/cnpmcore/commit/d6a7c46)), closes [#969](https://github.com/cnpm/cnpmcore/issues/969)
+
+## <small>4.22.1 (2026-02-28)</small>
+
+* fix: use Mozilla product-details JSON API for Firefox version listing (#975) ([1427efe](https://github.com/cnpm/cnpmcore/commit/1427efe)), closes [#975](https://github.com/cnpm/cnpmcore/issues/975) [cnpm/cnpmcore#964](https://github.com/cnpm/cnpmcore/issues/964)
+* chore: upgrade oxfmt to ^0.35.0 (#980) ([32ae4b7](https://github.com/cnpm/cnpmcore/commit/32ae4b7)), closes [#980](https://github.com/cnpm/cnpmcore/issues/980)
+* chore(deps): update actions/attest-build-provenance action to v4 (#976) ([6fa5e03](https://github.com/cnpm/cnpmcore/commit/6fa5e03)), closes [#976](https://github.com/cnpm/cnpmcore/issues/976)
+
+## 4.22.0 (2026-02-28)
+
+* feat: add isolated-vm to binary sync list (#977) ([567c7c0](https://github.com/cnpm/cnpmcore/commit/567c7c0)), closes [#977](https://github.com/cnpm/cnpmcore/issues/977)
+* test: migrate to vitest with parallel test execution (#979) ([1126718](https://github.com/cnpm/cnpmcore/commit/1126718)), closes [#979](https://github.com/cnpm/cnpmcore/issues/979)
+* chore(deps): update dependency oxfmt to ^0.28.0 (#966) ([aca7a0d](https://github.com/cnpm/cnpmcore/commit/aca7a0d)), closes [#966](https://github.com/cnpm/cnpmcore/issues/966)
+* chore(deps): update dependency oxlint-tsgolint to ^0.14.2 (#973) ([2f5942f](https://github.com/cnpm/cnpmcore/commit/2f5942f)), closes [#973](https://github.com/cnpm/cnpmcore/issues/973)
+
+## <small>4.21.1 (2026-02-05)</small>
+
+* fix: handle OIDC-published packages with empty maintainers by falling back to _npmUser (#967) ([00c0bdf](https://github.com/cnpm/cnpmcore/commit/00c0bdf)), closes [#967](https://github.com/cnpm/cnpmcore/issues/967)
+* chore(deps): update dependency oxfmt to ^0.27.0 (#963) ([1e78081](https://github.com/cnpm/cnpmcore/commit/1e78081)), closes [#963](https://github.com/cnpm/cnpmcore/issues/963)
+* Fix: Revert SHASUMS256.txt to use GitHub URL (#962) ([79c8e40](https://github.com/cnpm/cnpmcore/commit/79c8e40)), closes [#962](https://github.com/cnpm/cnpmcore/issues/962) [hi#level](https://github.com/hi/issues/level)
+
+## 4.21.0 (2026-01-16)
+
+* feat: Enhance ElectronBinary to support Windows platform directories (#961) ([fbbda8a](https://github.com/cnpm/cnpmcore/commit/fbbda8a)), closes [#961](https://github.com/cnpm/cnpmcore/issues/961) [hi#level](https://github.com/hi/issues/level)
+* chore(deps): update dependency oxfmt to ^0.24.0 (#958) ([854b4c4](https://github.com/cnpm/cnpmcore/commit/854b4c4)), closes [#958](https://github.com/cnpm/cnpmcore/issues/958)
+* chore(deps): update dependency oxlint-tsgolint to ^0.11.0 (#957) ([efdac42](https://github.com/cnpm/cnpmcore/commit/efdac42)), closes [#957](https://github.com/cnpm/cnpmcore/issues/957)
+
+## 4.20.0 (2026-01-08)
+
+* feat: Include headers file in Electron binary version directory (#955) ([1a4da92](https://github.com/cnpm/cnpmcore/commit/1a4da92)), closes [#955](https://github.com/cnpm/cnpmcore/issues/955) [hi#level](https://github.com/hi/issues/level)
+* chore(ci): utoo (#953) ([e5ec277](https://github.com/cnpm/cnpmcore/commit/e5ec277)), closes [#953](https://github.com/cnpm/cnpmcore/issues/953)
+* chore(deps): update dependency oxfmt to ^0.23.0 (#952) ([524512b](https://github.com/cnpm/cnpmcore/commit/524512b)), closes [#952](https://github.com/cnpm/cnpmcore/issues/952)
+
 ## 4.19.0 (2026-01-05)
 
 * feat: Add Cross-Origin-Resource-Policy header to unpkg endpoints (#951) ([c2f6f31](https://github.com/cnpm/cnpmcore/commit/c2f6f31)), closes [#951](https://github.com/cnpm/cnpmcore/issues/951) [cnpm/cnpmcore#950](https://github.com/cnpm/cnpmcore/issues/950)

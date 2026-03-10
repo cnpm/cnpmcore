@@ -1,6 +1,42 @@
-logs
+# Dependencies (rebuilt inside container)
 node_modules
+
+# Build output
+dist
+logs
 run
 typings
-.cnpmcore*
 coverage
+
+# Version control
+.git
+.gitignore
+
+# CI/CD
+.github
+
+# Development files
+.cnpmcore*
+.vscode
+.idea
+.oxfmtrc.json
+.oxlintrc.json
+.eslintrc*
+.husky
+
+# Scripts
+prepare-database-*.sh
+
+# Test
+test
+__snapshots__
+
+# Documentation
+*.md
+
+# Docker (prevent recursive copy)
+docker-compose*.yml
+.dockerignore
+
+# Debug logs
+npm-debug.log*

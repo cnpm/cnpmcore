@@ -31,6 +31,7 @@ export type SearchMappingType = Pick<PackageManifestType, SearchJSONPickKey> &
       username: string;
       email: string;
     };
+    deprecated?: string;
   };
 
 export interface SearchManifestType {

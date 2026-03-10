@@ -45,16 +45,17 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       mock(proxyCacheService, 'getRewrittenManifest', async () => {
         return { name: 'foo remote mock info' };
       });
+      // Use a unique name to avoid race condition with background task from previous test
       await proxyCacheRepository.saveProxyCache(
         ProxyCache.create({
-          fullname: 'foo',
+          fullname: 'foo-cached',
           fileType: DIST_NAMES.FULL_MANIFESTS,
         }),
       );
       mock(nfsAdapter, 'getBytes', async () => {
         return Buffer.from('{"name": "nfs mock info"}');
       });
-      const manifest = await proxyCacheService.getPackageManifest('foo', DIST_NAMES.FULL_MANIFESTS);
+      const manifest = await proxyCacheService.getPackageManifest('foo-cached', DIST_NAMES.FULL_MANIFESTS);
       assert.equal(manifest.name, 'nfs mock info');
     });
   });
@@ -73,9 +74,10 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       mock(proxyCacheService, 'getRewrittenManifest', async () => {
         return { name: 'foo remote mock info' };
       });
+      // Use a unique name to avoid race condition with background task from previous test
       await proxyCacheRepository.saveProxyCache(
         ProxyCache.create({
-          fullname: 'foo',
+          fullname: 'foo-version-cached',
           fileType: DIST_NAMES.MANIFEST,
           version: '1.0.0',
         }),
@@ -83,7 +85,11 @@ describe('test/core/service/ProxyCacheService/index.test.ts', () => {
       mock(nfsAdapter, 'getBytes', async () => {
         return Buffer.from('{"name": "package version nfs mock info"}');
       });
-      const manifest = await proxyCacheService.getPackageVersionManifest('foo', DIST_NAMES.MANIFEST, '1.0.0');
+      const manifest = await proxyCacheService.getPackageVersionManifest(
+        'foo-version-cached',
+        DIST_NAMES.MANIFEST,
+        '1.0.0',
+      );
       assert.equal(manifest.name, 'package version nfs mock info');
     });
 

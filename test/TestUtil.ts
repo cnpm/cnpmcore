@@ -66,6 +66,7 @@ export interface TestUser {
 export class TestUtil {
   private static connection: any;
   private static tables: any;
+  private static truncateSql: string;
   private static _app: any;
   private static ua = 'npm/7.0.0 cnpmcore-unittest/1.0.0';
 
@@ -157,11 +158,21 @@ export class TestUtil {
 
   static async truncateDatabase() {
     const tables = await this.getTableNames();
-    await Promise.all(
-      tables.map(async (table: string) => {
-        await this.query(`TRUNCATE TABLE ${table};`);
-      }),
-    );
+    if (database.type === DATABASE_TYPE.PostgreSQL) {
+      // PostgreSQL: must execute per-table TRUNCATE as separate queries so each gets
+      // its own implicit transaction. Batching into a single query() call causes all
+      // ACCESS EXCLUSIVE locks to be held simultaneously, deadlocking with ORM connections.
+      for (const table of tables) {
+        await this.query(`TRUNCATE TABLE ${table} CASCADE;`);
+      }
+    } else if (database.type === DATABASE_TYPE.MySQL) {
+      // MySQL: batch all TRUNCATE statements into a single query to avoid per-table round-trip overhead
+      if (!this.truncateSql) {
+        const statements = tables.map((table: string) => `TRUNCATE TABLE ${table}`).join('; ');
+        this.truncateSql = `SET FOREIGN_KEY_CHECKS=0; ${statements}; SET FOREIGN_KEY_CHECKS=1;`;
+      }
+      await this.query(this.truncateSql);
+    }
   }
 
   static get app() {

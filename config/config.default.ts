@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 
-import type { Context, EggAppConfig, PartialEggConfig } from 'egg';
+import type { Context, EggAppConfig } from 'egg';
 import OSSClient from 'oss-cnpm';
 import { env } from 'read-env-value';
 import S3Client from 's3-cnpmcore';
@@ -60,6 +60,8 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   strictSyncSpecivicVersion: false,
   enableElasticsearch: env('CNPMCORE_CONFIG_ENABLE_ES', 'boolean', false),
   elasticsearchIndex: 'cnpmcore_packages',
+  searchFilterDeprecated: env('CNPMCORE_CONFIG_SEARCH_FILTER_DEPRECATED', 'boolean', false),
+  searchPublishMinDuration: env('CNPMCORE_CONFIG_SEARCH_PUBLISH_MIN_DURATION', 'string', ''),
   strictValidateTarballPkg: false,
   strictValidatePackageDeps: false,
   database: {
@@ -77,10 +79,8 @@ export interface NFSConfig {
   removeBeforeUpload: boolean;
 }
 
-export type Config = PartialEggConfig & { nfs: NFSConfig };
-
-export default function startConfig(appInfo: EggAppConfig): Config {
-  const config = {} as Config;
+export default function startConfig(appInfo: EggAppConfig) {
+  const config = {} as Record<string, any> & { nfs: NFSConfig };
 
   config.keys = env('CNPMCORE_EGG_KEYS', 'string', randomUUID());
   config.cnpmcore = cnpmcoreConfig;
@@ -111,7 +111,7 @@ export default function startConfig(appInfo: EggAppConfig): Config {
       port: env('CNPMCORE_REDIS_PORT', 'number', 6379),
       host: env('CNPMCORE_REDIS_HOST', 'string', '127.0.0.1'),
       password: env('CNPMCORE_REDIS_PASSWORD', 'string', ''),
-      db: env('CNPMCORE_REDIS_DB', 'number', 0),
+      db: env('CNPMCORE_REDIS_DB', 'number', 0) + Number(env('VITEST_POOL_ID', 'number', 0)),
     },
   };
 

@@ -1,0 +1,2308 @@
+{
+  "releases": {
+    "firefox-3.6": {
+      "version": "3.6",
+      "category": "major",
+      "date": "2010-01-21",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-52.0": {
+      "version": "52.0",
+      "category": "major",
+      "date": "2017-03-07",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-78.0": {
+      "version": "78.0",
+      "category": "major",
+      "date": "2020-06-30",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-99.0": {
+      "version": "99.0",
+      "category": "major",
+      "date": "2022-04-05",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-99.0.1": {
+      "version": "99.0.1",
+      "category": "stability",
+      "date": "2022-04-12",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-100.0": {
+      "version": "100.0",
+      "category": "major",
+      "date": "2022-05-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-100.0.1": {
+      "version": "100.0.1",
+      "category": "stability",
+      "date": "2022-05-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-100.0b1": {
+      "version": "100.0b1",
+      "category": "dev",
+      "date": "2022-05-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-100.0b2": {
+      "version": "100.0b2",
+      "category": "dev",
+      "date": "2022-05-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-100.0b3": {
+      "version": "100.0b3",
+      "category": "dev",
+      "date": "2022-05-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-101.0": {
+      "version": "101.0",
+      "category": "major",
+      "date": "2022-06-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-101.0.1": {
+      "version": "101.0.1",
+      "category": "stability",
+      "date": "2022-06-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-101.0b1": {
+      "version": "101.0b1",
+      "category": "dev",
+      "date": "2022-06-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-101.0b2": {
+      "version": "101.0b2",
+      "category": "dev",
+      "date": "2022-06-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-101.0b3": {
+      "version": "101.0b3",
+      "category": "dev",
+      "date": "2022-06-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-102.0": {
+      "version": "102.0",
+      "category": "major",
+      "date": "2022-07-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-102.0.1": {
+      "version": "102.0.1",
+      "category": "stability",
+      "date": "2022-07-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-102.0b1": {
+      "version": "102.0b1",
+      "category": "dev",
+      "date": "2022-07-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-102.0b2": {
+      "version": "102.0b2",
+      "category": "dev",
+      "date": "2022-07-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-102.0b3": {
+      "version": "102.0b3",
+      "category": "dev",
+      "date": "2022-07-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-103.0": {
+      "version": "103.0",
+      "category": "major",
+      "date": "2022-08-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-103.0.1": {
+      "version": "103.0.1",
+      "category": "stability",
+      "date": "2022-08-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-103.0b1": {
+      "version": "103.0b1",
+      "category": "dev",
+      "date": "2022-08-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-103.0b2": {
+      "version": "103.0b2",
+      "category": "dev",
+      "date": "2022-08-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-103.0b3": {
+      "version": "103.0b3",
+      "category": "dev",
+      "date": "2022-08-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-104.0": {
+      "version": "104.0",
+      "category": "major",
+      "date": "2022-09-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-104.0.1": {
+      "version": "104.0.1",
+      "category": "stability",
+      "date": "2022-09-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-104.0b1": {
+      "version": "104.0b1",
+      "category": "dev",
+      "date": "2022-09-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-104.0b2": {
+      "version": "104.0b2",
+      "category": "dev",
+      "date": "2022-09-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-104.0b3": {
+      "version": "104.0b3",
+      "category": "dev",
+      "date": "2022-09-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-105.0": {
+      "version": "105.0",
+      "category": "major",
+      "date": "2022-10-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-105.0.1": {
+      "version": "105.0.1",
+      "category": "stability",
+      "date": "2022-10-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-105.0b1": {
+      "version": "105.0b1",
+      "category": "dev",
+      "date": "2022-10-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-105.0b2": {
+      "version": "105.0b2",
+      "category": "dev",
+      "date": "2022-10-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-105.0b3": {
+      "version": "105.0b3",
+      "category": "dev",
+      "date": "2022-10-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-106.0": {
+      "version": "106.0",
+      "category": "major",
+      "date": "2022-11-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-106.0.1": {
+      "version": "106.0.1",
+      "category": "stability",
+      "date": "2022-11-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-106.0b1": {
+      "version": "106.0b1",
+      "category": "dev",
+      "date": "2022-11-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-106.0b2": {
+      "version": "106.0b2",
+      "category": "dev",
+      "date": "2022-11-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-106.0b3": {
+      "version": "106.0b3",
+      "category": "dev",
+      "date": "2022-11-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-107.0": {
+      "version": "107.0",
+      "category": "major",
+      "date": "2022-12-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-107.0.1": {
+      "version": "107.0.1",
+      "category": "stability",
+      "date": "2022-12-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-107.0b1": {
+      "version": "107.0b1",
+      "category": "dev",
+      "date": "2022-12-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-107.0b2": {
+      "version": "107.0b2",
+      "category": "dev",
+      "date": "2022-12-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-107.0b3": {
+      "version": "107.0b3",
+      "category": "dev",
+      "date": "2022-12-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-108.0": {
+      "version": "108.0",
+      "category": "major",
+      "date": "2022-01-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-108.0.1": {
+      "version": "108.0.1",
+      "category": "stability",
+      "date": "2022-01-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-108.0b1": {
+      "version": "108.0b1",
+      "category": "dev",
+      "date": "2022-01-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-108.0b2": {
+      "version": "108.0b2",
+      "category": "dev",
+      "date": "2022-01-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-108.0b3": {
+      "version": "108.0b3",
+      "category": "dev",
+      "date": "2022-01-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-109.0": {
+      "version": "109.0",
+      "category": "major",
+      "date": "2022-02-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-109.0.1": {
+      "version": "109.0.1",
+      "category": "stability",
+      "date": "2022-02-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-109.0b1": {
+      "version": "109.0b1",
+      "category": "dev",
+      "date": "2022-02-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-109.0b2": {
+      "version": "109.0b2",
+      "category": "dev",
+      "date": "2022-02-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-109.0b3": {
+      "version": "109.0b3",
+      "category": "dev",
+      "date": "2022-02-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-110.0": {
+      "version": "110.0",
+      "category": "major",
+      "date": "2022-03-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-110.0.1": {
+      "version": "110.0.1",
+      "category": "stability",
+      "date": "2022-03-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-110.0b1": {
+      "version": "110.0b1",
+      "category": "dev",
+      "date": "2022-03-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-110.0b2": {
+      "version": "110.0b2",
+      "category": "dev",
+      "date": "2022-03-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-110.0b3": {
+      "version": "110.0b3",
+      "category": "dev",
+      "date": "2022-03-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-111.0": {
+      "version": "111.0",
+      "category": "major",
+      "date": "2022-04-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-111.0.1": {
+      "version": "111.0.1",
+      "category": "stability",
+      "date": "2022-04-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-111.0b1": {
+      "version": "111.0b1",
+      "category": "dev",
+      "date": "2022-04-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-111.0b2": {
+      "version": "111.0b2",
+      "category": "dev",
+      "date": "2022-04-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-111.0b3": {
+      "version": "111.0b3",
+      "category": "dev",
+      "date": "2022-04-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-112.0": {
+      "version": "112.0",
+      "category": "major",
+      "date": "2022-05-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-112.0.1": {
+      "version": "112.0.1",
+      "category": "stability",
+      "date": "2022-05-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-112.0b1": {
+      "version": "112.0b1",
+      "category": "dev",
+      "date": "2022-05-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-112.0b2": {
+      "version": "112.0b2",
+      "category": "dev",
+      "date": "2022-05-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-112.0b3": {
+      "version": "112.0b3",
+      "category": "dev",
+      "date": "2022-05-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-113.0": {
+      "version": "113.0",
+      "category": "major",
+      "date": "2022-06-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-113.0.1": {
+      "version": "113.0.1",
+      "category": "stability",
+      "date": "2022-06-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-113.0b1": {
+      "version": "113.0b1",
+      "category": "dev",
+      "date": "2022-06-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-113.0b2": {
+      "version": "113.0b2",
+      "category": "dev",
+      "date": "2022-06-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-113.0b3": {
+      "version": "113.0b3",
+      "category": "dev",
+      "date": "2022-06-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-114.0": {
+      "version": "114.0",
+      "category": "major",
+      "date": "2022-07-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-114.0.1": {
+      "version": "114.0.1",
+      "category": "stability",
+      "date": "2022-07-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-114.0b1": {
+      "version": "114.0b1",
+      "category": "dev",
+      "date": "2022-07-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-114.0b2": {
+      "version": "114.0b2",
+      "category": "dev",
+      "date": "2022-07-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-114.0b3": {
+      "version": "114.0b3",
+      "category": "dev",
+      "date": "2022-07-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-115.0": {
+      "version": "115.0",
+      "category": "major",
+      "date": "2022-08-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-115.0.1": {
+      "version": "115.0.1",
+      "category": "stability",
+      "date": "2022-08-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-115.0b1": {
+      "version": "115.0b1",
+      "category": "dev",
+      "date": "2022-08-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-115.0b2": {
+      "version": "115.0b2",
+      "category": "dev",
+      "date": "2022-08-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-115.0b3": {
+      "version": "115.0b3",
+      "category": "dev",
+      "date": "2022-08-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-116.0": {
+      "version": "116.0",
+      "category": "major",
+      "date": "2022-09-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-116.0.1": {
+      "version": "116.0.1",
+      "category": "stability",
+      "date": "2022-09-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-116.0b1": {
+      "version": "116.0b1",
+      "category": "dev",
+      "date": "2022-09-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-116.0b2": {
+      "version": "116.0b2",
+      "category": "dev",
+      "date": "2022-09-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-116.0b3": {
+      "version": "116.0b3",
+      "category": "dev",
+      "date": "2022-09-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-117.0": {
+      "version": "117.0",
+      "category": "major",
+      "date": "2022-10-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-117.0.1": {
+      "version": "117.0.1",
+      "category": "stability",
+      "date": "2022-10-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-117.0b1": {
+      "version": "117.0b1",
+      "category": "dev",
+      "date": "2022-10-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-117.0b2": {
+      "version": "117.0b2",
+      "category": "dev",
+      "date": "2022-10-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-117.0b3": {
+      "version": "117.0b3",
+      "category": "dev",
+      "date": "2022-10-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-118.0": {
+      "version": "118.0",
+      "category": "major",
+      "date": "2022-11-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-118.0.1": {
+      "version": "118.0.1",
+      "category": "stability",
+      "date": "2022-11-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-118.0b1": {
+      "version": "118.0b1",
+      "category": "dev",
+      "date": "2022-11-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-118.0b2": {
+      "version": "118.0b2",
+      "category": "dev",
+      "date": "2022-11-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-118.0b3": {
+      "version": "118.0b3",
+      "category": "dev",
+      "date": "2022-11-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-119.0": {
+      "version": "119.0",
+      "category": "major",
+      "date": "2022-12-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-119.0.1": {
+      "version": "119.0.1",
+      "category": "stability",
+      "date": "2022-12-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-119.0b1": {
+      "version": "119.0b1",
+      "category": "dev",
+      "date": "2022-12-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-119.0b2": {
+      "version": "119.0b2",
+      "category": "dev",
+      "date": "2022-12-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-119.0b3": {
+      "version": "119.0b3",
+      "category": "dev",
+      "date": "2022-12-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-120.0": {
+      "version": "120.0",
+      "category": "major",
+      "date": "2022-01-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-120.0.1": {
+      "version": "120.0.1",
+      "category": "stability",
+      "date": "2022-01-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-120.0b1": {
+      "version": "120.0b1",
+      "category": "dev",
+      "date": "2022-01-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-120.0b2": {
+      "version": "120.0b2",
+      "category": "dev",
+      "date": "2022-01-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-120.0b3": {
+      "version": "120.0b3",
+      "category": "dev",
+      "date": "2022-01-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-121.0": {
+      "version": "121.0",
+      "category": "major",
+      "date": "2022-02-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-121.0.1": {
+      "version": "121.0.1",
+      "category": "stability",
+      "date": "2022-02-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-121.0b1": {
+      "version": "121.0b1",
+      "category": "dev",
+      "date": "2022-02-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-121.0b2": {
+      "version": "121.0b2",
+      "category": "dev",
+      "date": "2022-02-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-121.0b3": {
+      "version": "121.0b3",
+      "category": "dev",
+      "date": "2022-02-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-122.0": {
+      "version": "122.0",
+      "category": "major",
+      "date": "2022-03-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-122.0.1": {
+      "version": "122.0.1",
+      "category": "stability",
+      "date": "2022-03-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-122.0b1": {
+      "version": "122.0b1",
+      "category": "dev",
+      "date": "2022-03-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-122.0b2": {
+      "version": "122.0b2",
+      "category": "dev",
+      "date": "2022-03-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-122.0b3": {
+      "version": "122.0b3",
+      "category": "dev",
+      "date": "2022-03-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-123.0": {
+      "version": "123.0",
+      "category": "major",
+      "date": "2022-04-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-123.0.1": {
+      "version": "123.0.1",
+      "category": "stability",
+      "date": "2022-04-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-123.0b1": {
+      "version": "123.0b1",
+      "category": "dev",
+      "date": "2022-04-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-123.0b2": {
+      "version": "123.0b2",
+      "category": "dev",
+      "date": "2022-04-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-123.0b3": {
+      "version": "123.0b3",
+      "category": "dev",
+      "date": "2022-04-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-124.0": {
+      "version": "124.0",
+      "category": "major",
+      "date": "2022-05-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-124.0.1": {
+      "version": "124.0.1",
+      "category": "stability",
+      "date": "2022-05-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-124.0b1": {
+      "version": "124.0b1",
+      "category": "dev",
+      "date": "2022-05-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-124.0b2": {
+      "version": "124.0b2",
+      "category": "dev",
+      "date": "2022-05-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-124.0b3": {
+      "version": "124.0b3",
+      "category": "dev",
+      "date": "2022-05-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-125.0": {
+      "version": "125.0",
+      "category": "major",
+      "date": "2022-06-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-125.0.1": {
+      "version": "125.0.1",
+      "category": "stability",
+      "date": "2022-06-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-125.0b1": {
+      "version": "125.0b1",
+      "category": "dev",
+      "date": "2022-06-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-125.0b2": {
+      "version": "125.0b2",
+      "category": "dev",
+      "date": "2022-06-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-125.0b3": {
+      "version": "125.0b3",
+      "category": "dev",
+      "date": "2022-06-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-126.0": {
+      "version": "126.0",
+      "category": "major",
+      "date": "2022-07-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-126.0.1": {
+      "version": "126.0.1",
+      "category": "stability",
+      "date": "2022-07-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-126.0b1": {
+      "version": "126.0b1",
+      "category": "dev",
+      "date": "2022-07-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-126.0b2": {
+      "version": "126.0b2",
+      "category": "dev",
+      "date": "2022-07-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-126.0b3": {
+      "version": "126.0b3",
+      "category": "dev",
+      "date": "2022-07-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-127.0": {
+      "version": "127.0",
+      "category": "major",
+      "date": "2022-08-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-127.0.1": {
+      "version": "127.0.1",
+      "category": "stability",
+      "date": "2022-08-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-127.0b1": {
+      "version": "127.0b1",
+      "category": "dev",
+      "date": "2022-08-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-127.0b2": {
+      "version": "127.0b2",
+      "category": "dev",
+      "date": "2022-08-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-127.0b3": {
+      "version": "127.0b3",
+      "category": "dev",
+      "date": "2022-08-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-128.0": {
+      "version": "128.0",
+      "category": "major",
+      "date": "2022-09-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-128.0.1": {
+      "version": "128.0.1",
+      "category": "stability",
+      "date": "2022-09-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-128.0b1": {
+      "version": "128.0b1",
+      "category": "dev",
+      "date": "2022-09-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-128.0b2": {
+      "version": "128.0b2",
+      "category": "dev",
+      "date": "2022-09-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-128.0b3": {
+      "version": "128.0b3",
+      "category": "dev",
+      "date": "2022-09-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-129.0": {
+      "version": "129.0",
+      "category": "major",
+      "date": "2022-10-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-129.0.1": {
+      "version": "129.0.1",
+      "category": "stability",
+      "date": "2022-10-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-129.0b1": {
+      "version": "129.0b1",
+      "category": "dev",
+      "date": "2022-10-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-129.0b2": {
+      "version": "129.0b2",
+      "category": "dev",
+      "date": "2022-10-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-129.0b3": {
+      "version": "129.0b3",
+      "category": "dev",
+      "date": "2022-10-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-130.0": {
+      "version": "130.0",
+      "category": "major",
+      "date": "2022-11-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-130.0.1": {
+      "version": "130.0.1",
+      "category": "stability",
+      "date": "2022-11-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-130.0b1": {
+      "version": "130.0b1",
+      "category": "dev",
+      "date": "2022-11-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-130.0b2": {
+      "version": "130.0b2",
+      "category": "dev",
+      "date": "2022-11-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-130.0b3": {
+      "version": "130.0b3",
+      "category": "dev",
+      "date": "2022-11-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-131.0": {
+      "version": "131.0",
+      "category": "major",
+      "date": "2022-12-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-131.0.1": {
+      "version": "131.0.1",
+      "category": "stability",
+      "date": "2022-12-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-131.0b1": {
+      "version": "131.0b1",
+      "category": "dev",
+      "date": "2022-12-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-131.0b2": {
+      "version": "131.0b2",
+      "category": "dev",
+      "date": "2022-12-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-131.0b3": {
+      "version": "131.0b3",
+      "category": "dev",
+      "date": "2022-12-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-132.0": {
+      "version": "132.0",
+      "category": "major",
+      "date": "2022-01-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-132.0.1": {
+      "version": "132.0.1",
+      "category": "stability",
+      "date": "2022-01-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-132.0b1": {
+      "version": "132.0b1",
+      "category": "dev",
+      "date": "2022-01-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-132.0b2": {
+      "version": "132.0b2",
+      "category": "dev",
+      "date": "2022-01-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-132.0b3": {
+      "version": "132.0b3",
+      "category": "dev",
+      "date": "2022-01-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-133.0": {
+      "version": "133.0",
+      "category": "major",
+      "date": "2022-02-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-133.0.1": {
+      "version": "133.0.1",
+      "category": "stability",
+      "date": "2022-02-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-133.0b1": {
+      "version": "133.0b1",
+      "category": "dev",
+      "date": "2022-02-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-133.0b2": {
+      "version": "133.0b2",
+      "category": "dev",
+      "date": "2022-02-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-133.0b3": {
+      "version": "133.0b3",
+      "category": "dev",
+      "date": "2022-02-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-134.0": {
+      "version": "134.0",
+      "category": "major",
+      "date": "2022-03-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-134.0.1": {
+      "version": "134.0.1",
+      "category": "stability",
+      "date": "2022-03-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-134.0b1": {
+      "version": "134.0b1",
+      "category": "dev",
+      "date": "2022-03-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-134.0b2": {
+      "version": "134.0b2",
+      "category": "dev",
+      "date": "2022-03-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-134.0b3": {
+      "version": "134.0b3",
+      "category": "dev",
+      "date": "2022-03-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-135.0": {
+      "version": "135.0",
+      "category": "major",
+      "date": "2022-04-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-135.0.1": {
+      "version": "135.0.1",
+      "category": "stability",
+      "date": "2022-04-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-135.0b1": {
+      "version": "135.0b1",
+      "category": "dev",
+      "date": "2022-04-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-135.0b2": {
+      "version": "135.0b2",
+      "category": "dev",
+      "date": "2022-04-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-135.0b3": {
+      "version": "135.0b3",
+      "category": "dev",
+      "date": "2022-04-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-136.0": {
+      "version": "136.0",
+      "category": "major",
+      "date": "2022-05-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-136.0.1": {
+      "version": "136.0.1",
+      "category": "stability",
+      "date": "2022-05-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-136.0b1": {
+      "version": "136.0b1",
+      "category": "dev",
+      "date": "2022-05-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-136.0b2": {
+      "version": "136.0b2",
+      "category": "dev",
+      "date": "2022-05-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-136.0b3": {
+      "version": "136.0b3",
+      "category": "dev",
+      "date": "2022-05-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-137.0": {
+      "version": "137.0",
+      "category": "major",
+      "date": "2022-06-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-137.0.1": {
+      "version": "137.0.1",
+      "category": "stability",
+      "date": "2022-06-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-137.0b1": {
+      "version": "137.0b1",
+      "category": "dev",
+      "date": "2022-06-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-137.0b2": {
+      "version": "137.0b2",
+      "category": "dev",
+      "date": "2022-06-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-137.0b3": {
+      "version": "137.0b3",
+      "category": "dev",
+      "date": "2022-06-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-138.0": {
+      "version": "138.0",
+      "category": "major",
+      "date": "2022-07-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-138.0.1": {
+      "version": "138.0.1",
+      "category": "stability",
+      "date": "2022-07-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-138.0b1": {
+      "version": "138.0b1",
+      "category": "dev",
+      "date": "2022-07-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-138.0b2": {
+      "version": "138.0b2",
+      "category": "dev",
+      "date": "2022-07-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-138.0b3": {
+      "version": "138.0b3",
+      "category": "dev",
+      "date": "2022-07-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-139.0": {
+      "version": "139.0",
+      "category": "major",
+      "date": "2022-08-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-139.0.1": {
+      "version": "139.0.1",
+      "category": "stability",
+      "date": "2022-08-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-139.0b1": {
+      "version": "139.0b1",
+      "category": "dev",
+      "date": "2022-08-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-139.0b2": {
+      "version": "139.0b2",
+      "category": "dev",
+      "date": "2022-08-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-139.0b3": {
+      "version": "139.0b3",
+      "category": "dev",
+      "date": "2022-08-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-140.0": {
+      "version": "140.0",
+      "category": "major",
+      "date": "2022-09-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-140.0.1": {
+      "version": "140.0.1",
+      "category": "stability",
+      "date": "2022-09-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-140.0b1": {
+      "version": "140.0b1",
+      "category": "dev",
+      "date": "2022-09-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-140.0b2": {
+      "version": "140.0b2",
+      "category": "dev",
+      "date": "2022-09-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-140.0b3": {
+      "version": "140.0b3",
+      "category": "dev",
+      "date": "2022-09-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-141.0": {
+      "version": "141.0",
+      "category": "major",
+      "date": "2022-10-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-141.0.1": {
+      "version": "141.0.1",
+      "category": "stability",
+      "date": "2022-10-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-141.0b1": {
+      "version": "141.0b1",
+      "category": "dev",
+      "date": "2022-10-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-141.0b2": {
+      "version": "141.0b2",
+      "category": "dev",
+      "date": "2022-10-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-141.0b3": {
+      "version": "141.0b3",
+      "category": "dev",
+      "date": "2022-10-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-142.0": {
+      "version": "142.0",
+      "category": "major",
+      "date": "2022-11-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-142.0.1": {
+      "version": "142.0.1",
+      "category": "stability",
+      "date": "2022-11-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-142.0b1": {
+      "version": "142.0b1",
+      "category": "dev",
+      "date": "2022-11-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-142.0b2": {
+      "version": "142.0b2",
+      "category": "dev",
+      "date": "2022-11-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-142.0b3": {
+      "version": "142.0b3",
+      "category": "dev",
+      "date": "2022-11-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-143.0": {
+      "version": "143.0",
+      "category": "major",
+      "date": "2022-12-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-143.0.1": {
+      "version": "143.0.1",
+      "category": "stability",
+      "date": "2022-12-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-143.0b1": {
+      "version": "143.0b1",
+      "category": "dev",
+      "date": "2022-12-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-143.0b2": {
+      "version": "143.0b2",
+      "category": "dev",
+      "date": "2022-12-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-143.0b3": {
+      "version": "143.0b3",
+      "category": "dev",
+      "date": "2022-12-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-144.0": {
+      "version": "144.0",
+      "category": "major",
+      "date": "2022-01-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-144.0.1": {
+      "version": "144.0.1",
+      "category": "stability",
+      "date": "2022-01-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-144.0b1": {
+      "version": "144.0b1",
+      "category": "dev",
+      "date": "2022-01-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-144.0b2": {
+      "version": "144.0b2",
+      "category": "dev",
+      "date": "2022-01-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-144.0b3": {
+      "version": "144.0b3",
+      "category": "dev",
+      "date": "2022-01-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-145.0": {
+      "version": "145.0",
+      "category": "major",
+      "date": "2022-02-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-145.0.1": {
+      "version": "145.0.1",
+      "category": "stability",
+      "date": "2022-02-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-145.0b1": {
+      "version": "145.0b1",
+      "category": "dev",
+      "date": "2022-02-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-145.0b2": {
+      "version": "145.0b2",
+      "category": "dev",
+      "date": "2022-02-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-145.0b3": {
+      "version": "145.0b3",
+      "category": "dev",
+      "date": "2022-02-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-146.0": {
+      "version": "146.0",
+      "category": "major",
+      "date": "2022-03-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-146.0.1": {
+      "version": "146.0.1",
+      "category": "stability",
+      "date": "2022-03-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-146.0b1": {
+      "version": "146.0b1",
+      "category": "dev",
+      "date": "2022-03-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-146.0b2": {
+      "version": "146.0b2",
+      "category": "dev",
+      "date": "2022-03-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-146.0b3": {
+      "version": "146.0b3",
+      "category": "dev",
+      "date": "2022-03-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-147.0": {
+      "version": "147.0",
+      "category": "major",
+      "date": "2022-04-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-147.0.1": {
+      "version": "147.0.1",
+      "category": "stability",
+      "date": "2022-04-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-147.0b1": {
+      "version": "147.0b1",
+      "category": "dev",
+      "date": "2022-04-02",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-147.0b2": {
+      "version": "147.0b2",
+      "category": "dev",
+      "date": "2022-04-03",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-147.0b3": {
+      "version": "147.0b3",
+      "category": "dev",
+      "date": "2022-04-04",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-115.0.0esr": {
+      "version": "115.0.0esr",
+      "category": "esr",
+      "date": "2024-01-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-115.1.0esr": {
+      "version": "115.1.0esr",
+      "category": "esr",
+      "date": "2024-02-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-115.2.0esr": {
+      "version": "115.2.0esr",
+      "category": "esr",
+      "date": "2024-03-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-115.3.0esr": {
+      "version": "115.3.0esr",
+      "category": "esr",
+      "date": "2024-04-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-115.4.0esr": {
+      "version": "115.4.0esr",
+      "category": "esr",
+      "date": "2024-05-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-128.0.0esr": {
+      "version": "128.0.0esr",
+      "category": "esr",
+      "date": "2024-01-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-128.1.0esr": {
+      "version": "128.1.0esr",
+      "category": "esr",
+      "date": "2024-02-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-128.2.0esr": {
+      "version": "128.2.0esr",
+      "category": "esr",
+      "date": "2024-03-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-128.3.0esr": {
+      "version": "128.3.0esr",
+      "category": "esr",
+      "date": "2024-04-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-128.4.0esr": {
+      "version": "128.4.0esr",
+      "category": "esr",
+      "date": "2024-05-01",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    },
+    "firefox-147.0.4": {
+      "version": "147.0.4",
+      "category": "stability",
+      "date": "2026-02-15",
+      "build_number": 1,
+      "description": null,
+      "is_security_driven": false,
+      "product": "firefox"
+    }
+  }
+}

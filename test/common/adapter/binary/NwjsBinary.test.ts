@@ -32,18 +32,18 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
       assert.ok(matchDir);
     });
 
-    it('should fetch subdir: /v0.59.0/, /v0.59.1/x64/ work', async () => {
-      app.mockHttpclient('https://nwjs2.s3.amazonaws.com/', 'GET', {
+    it('should fetch subdir: /v0.59.0/ via R2 S3 API', async () => {
+      // Mock the R2 endpoint (URL includes bucket name and query params, mockHttpclient matches by prefix)
+      app.mockHttpclient('https://6883a4a09c48918c64df1ec7ddb744ba.r2.cloudflarestorage.com/nwjs', 'GET', {
         data: await TestUtil.readFixturesFile('nwjs2.s3.amazonaws.com/v0.59.0.xml'),
         persist: false,
       });
-      let result = await binary.fetch('/v0.59.0/');
+      const result = await binary.fetch('/v0.59.0/');
       assert.ok(result);
       assert.ok(result.items.length > 0);
       let matchDir = false;
       let matchFile = false;
       for (const item of result.items) {
-        // console.log(item);
         if (item.name === 'x64/') {
           assert.ok(item.date === '-');
           assert.ok(item.isDir === true);
@@ -64,19 +64,19 @@ describe('test/common/adapter/binary/NwjsBinary.test.ts', () => {
       }
       assert.ok(matchDir);
       assert.ok(matchFile);
+    });
 
-      // https://nwjs2.s3.amazonaws.com/?delimiter=/&prefix=v0.59.1%2Fx64%2F
-      app.mockHttpclient('https://nwjs2.s3.amazonaws.com/', 'GET', {
+    it('should fetch subdir: /v0.59.1/x64/ via R2 S3 API', async () => {
+      app.mockHttpclient('https://6883a4a09c48918c64df1ec7ddb744ba.r2.cloudflarestorage.com/nwjs', 'GET', {
         data: await TestUtil.readFixturesFile('nwjs2.s3.amazonaws.com/v0.59.1.xml'),
         persist: false,
       });
-      result = await binary.fetch('/v0.59.1/x64/');
+      const result = await binary.fetch('/v0.59.1/x64/');
       assert.ok(result);
       assert.ok(result.items.length === 2);
       let matchFile1 = false;
       let matchFile2 = false;
       for (const item of result.items) {
-        // console.log(item);
         if (item.name === 'node.lib') {
           assert.ok(item.date === '2021-12-21T22:41:19.000Z');
           assert.ok(item.isDir === false);

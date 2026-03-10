@@ -45,3 +45,18 @@ done
 echo "🎉 prepare database $db_name done"
 # psql $param --dbname=$db_name -c "SELECT * FROM pg_catalog.pg_tables where schemaname = 'public';"
 psql $param --dbname=$db_name -c "\dt"
+
+# Create per-worker databases for vitest parallel execution
+# Default to the number of CPU cores
+cpu_cores=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+max_workers=${CNPMCORE_TEST_WORKERS:-$cpu_cores}
+for i in $(seq 0 $max_workers); do
+  worker_db="${db_name}_${i}"
+  echo "😈 Reset worker database $worker_db"
+  dropdb $param $worker_db 2>/dev/null || true
+  createdb $param --echo --encoding=UTF8 $worker_db
+  for file in $sql_files; do
+    psql $param --dbname=$worker_db --file=$file --quiet
+  done
+done
+echo "🎉 prepare worker databases done"

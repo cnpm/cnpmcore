@@ -28,7 +28,7 @@ describe('test/cli/npm/access.test.ts', () => {
     useLegacyCommands = semver.lt(String(npmVersion), '9.0.0');
     server = app.listen(0);
     await once(server, 'listening');
-    registry = `http://localhost:${(server.address() as AddressInfo).port}`;
+    registry = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
     // console.log(`registry ${registry} ready`);
   });
 

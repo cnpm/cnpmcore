@@ -1,10 +1,21 @@
-import { HTTPContext, Context, HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
+import type { Static } from '@eggjs/typebox-validate/typebox';
+import {
+  HTTPContext,
+  Context,
+  HTTPBody,
+  HTTPController,
+  HTTPMethod,
+  HTTPMethodEnum,
+  HTTPParam,
+  HTTPQuery,
+  Inject,
+} from 'egg';
 
 import type { HookType } from '../../common/enum/Hook.ts';
 import type { TriggerHookTask } from '../../core/entity/Task.ts';
 import type { HookManageService } from '../../core/service/HookManageService.ts';
 import type { TaskService } from '../../core/service/TaskService.ts';
-import { CreateHookRequestRule, UpdateHookRequestRule } from '../typebox.ts';
+import { CreateHookRequestRule, UpdateHookRequestRule, ListHookQueryOptions } from '../typebox.ts';
 import type { UserRoleManager } from '../UserRoleManager.ts';
 import { HookConvertor } from './convertor/HookConvertor.ts';
 
@@ -91,9 +102,26 @@ export class HookController {
     path: '/v1/hooks',
     method: HTTPMethodEnum.GET,
   })
-  async listHooks(@HTTPContext() ctx: Context) {
+  async listHooks(
+    @HTTPContext() ctx: Context,
+    @HTTPQuery({ name: 'package' }) packageName: Static<typeof ListHookQueryOptions>['package'],
+    @HTTPQuery() offset: Static<typeof ListHookQueryOptions>['offset'],
+    @HTTPQuery() limit: Static<typeof ListHookQueryOptions>['limit'],
+  ) {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
-    const hooks = await this.hookManageService.listHooksByOwnerId(user.userId);
+    let hooks = await this.hookManageService.listHooksByOwnerId(user.userId);
+
+    // Filter by package name (npm spec: ?package=lodash)
+    if (packageName) {
+      hooks = hooks.filter((hook) => hook.name === packageName);
+    }
+
+    // Pagination (npm spec: ?limit=N&offset=N)
+    const offsetNum = offset ?? 0;
+    if (offsetNum > 0 || limit !== undefined) {
+      hooks = hooks.slice(offsetNum, limit !== undefined ? offsetNum + limit : undefined);
+    }
+
     const tasks = await this.taskService.findTasks(hooks.map((t) => t.latestTaskId).filter((t): t is string => !!t));
     const res = hooks.map((hook) => {
       const task = tasks.find((t) => t.taskId === hook.latestTaskId) as TriggerHookTask;

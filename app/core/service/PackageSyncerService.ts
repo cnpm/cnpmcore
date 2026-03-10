@@ -682,10 +682,22 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         maintainers = data.maintainers;
       } else {
         // try to use latest tag version's maintainers instead
-        const latestPackageVersion = distTags.latest && versionMap[distTags.latest];
-        if (latestPackageVersion && Array.isArray(latestPackageVersion.maintainers)) {
+        const latestPackageVersion = distTags.latest ? versionMap[distTags.latest] : undefined;
+        if (
+          latestPackageVersion &&
+          Array.isArray(latestPackageVersion.maintainers) &&
+          latestPackageVersion.maintainers.length > 0
+        ) {
           maintainers = latestPackageVersion.maintainers as AuthorType[];
           logs.push(`[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`);
+        } else if (latestPackageVersion?._npmUser?.name && latestPackageVersion._npmUser.email) {
+          // Fallback to _npmUser for OIDC-published packages (e.g., via GitHub Actions)
+          // These packages have empty maintainers but include _npmUser with publisher info
+          // https://github.com/cnpm/cnpm/pull/489
+          maintainers = [{ name: latestPackageVersion._npmUser.name, email: latestPackageVersion._npmUser.email }];
+          logs.push(
+            `[${isoNow()}] 📖 Use _npmUser from version ${latestPackageVersion.version} as maintainer (${latestPackageVersion._npmUser.name})`,
+          );
         }
       }
     }
@@ -1222,7 +1234,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
   }) {
     let { task, remoteData, pkg, registry, logUrl, remoteUrl, logs } = options;
     const fullname = task.targetName;
-    const { syncDownloadData, skipDependencies, forceSyncHistory } = task.data as SyncPackageTaskOptions;
+    const { syncDownloadData, skipDependencies, forceSyncHistory, force } = task.data as SyncPackageTaskOptions;
     const [scope, name] = getScopeAndName(fullname);
 
     let packument: Packument;
@@ -1284,9 +1296,21 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       } else {
         // try to use latest tag version's maintainers instead
         const latestPackageVersion = packument.getLatestVersion();
-        if (latestPackageVersion && Array.isArray(latestPackageVersion.maintainers)) {
+        if (
+          latestPackageVersion &&
+          Array.isArray(latestPackageVersion.maintainers) &&
+          latestPackageVersion.maintainers.length > 0
+        ) {
           maintainers = latestPackageVersion.maintainers as AuthorType[];
           logs.push(`[${isoNow()}] 📖 Use the latest version(${latestPackageVersion.version}) maintainers instead`);
+        } else if (latestPackageVersion?.npmUser?.name && latestPackageVersion.npmUser.email) {
+          // Fallback to npmUser for OIDC-published packages (e.g., via GitHub Actions)
+          // These packages have empty maintainers but include npmUser with publisher info
+          // https://github.com/cnpm/cnpm/pull/489
+          maintainers = [{ name: latestPackageVersion.npmUser.name, email: latestPackageVersion.npmUser.email }];
+          logs.push(
+            `[${isoNow()}] 📖 Use _npmUser from version ${latestPackageVersion.version} as maintainer (${latestPackageVersion.npmUser.name})`,
+          );
         }
       }
     }
@@ -1552,8 +1576,11 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
       // this field won't change, but this is a bug(#910) on cnpmcore, so we need to check if it is different
       '_npmUser',
     ];
-    // for performance reason, we won't check all versions by default, only check those versions on dist-tags
-    for (const version of Object.values(distTags)) {
+    // check all existing versions for metadata changes like deprecated only when force sync is enabled
+    // otherwise only check dist-tag versions for performance
+    // https://github.com/cnpm/cnpmcore/issues/994
+    const versionsToCheck = force ? existsVersions : Object.values(distTags);
+    for (const version of versionsToCheck) {
       // ignore already synced versions
       if (updateVersions.includes(version) || diff.removedVersions.includes(version)) {
         continue;
