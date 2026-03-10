@@ -6,14 +6,16 @@ export function genRSAKeys(): { publicKey: string, privateKey: string } {
   const key = generateKeyPairSync('rsa', {
     modulusLength: 512,
   });
+  // export({ format: 'pem' }) returns string; .toString('base64') is a no-op on string.
+  // Use type assertion to fix TS2554 on Node 18 type definitions.
   const publicKey = key.publicKey.export({
     type: 'pkcs1',
     format: 'pem',
-  }).toString('base64');
+  }) as string;
   const privateKey = key.privateKey.export({
     type: 'pkcs1',
     format: 'pem',
-  }).toString('base64');
+  }) as string;
   return { publicKey, privateKey };
 }
 
