@@ -95,38 +95,27 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
             readmeDistId: 'mock_readme_dist_id_2',
             publishTime: new Date(),
           });
-
-          mock(
-            distRepository,
-            'findPackageVersionManifest',
-            // oxlint-disable-next-line max-nested-callbacks
-            async (_: string, version: string) => {
-              assert.equal(version, '1.1.0');
-              return {
-                name: 'mock_package',
-                version: '1.1.0',
-              };
-            },
-          );
         });
 
         it('should return latest for *', async () => {
+          // Wildcard * satisfies latest tag (1.0.0), so prefer latest
           const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@*'), true);
           assert.ok(manifest);
-          assert.equal(manifest.version, '1.1.0');
+          assert.equal(manifest.version, '1.0.0');
         });
 
         it('should getVersion work without options', async () => {
           const wildVersion = await packageVersionService.getVersion(npa('mock_package@*'));
           const tagVersion = await packageVersionService.getVersion(npa('mock_package@latest'));
-          assert.equal(wildVersion, '1.1.0');
+          // Wildcard * now prefers latest tag version
+          assert.equal(wildVersion, '1.0.0');
           assert.equal(tagVersion, '1.0.0');
         });
 
         it('should return latest for x', async () => {
           const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@*'), true);
           assert.ok(manifest);
-          assert.equal(manifest.version, '1.1.0');
+          assert.equal(manifest.version, '1.0.0');
         });
 
         it('should return latest for compose', async () => {
@@ -136,7 +125,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
             true,
           );
           assert.ok(manifest);
-          assert.equal(manifest.version, '1.1.0');
+          assert.equal(manifest.version, '1.0.0');
         });
       });
     });
