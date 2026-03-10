@@ -9,11 +9,11 @@ export function genRSAKeys(): { publicKey: string, privateKey: string } {
   const publicKey = key.publicKey.export({
     type: 'pkcs1',
     format: 'pem',
-  }).toString('base64');
+  }) as string;
   const privateKey = key.privateKey.export({
     type: 'pkcs1',
     format: 'pem',
-  }).toString('base64');
+  }) as string;
   return { publicKey, privateKey };
 }
 

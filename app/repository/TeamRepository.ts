@@ -1,5 +1,4 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import pMap from 'p-map';
 import { ModelConvertor } from './util/ModelConvertor';
 import { AbstractRepository } from './AbstractRepository';
 import { Team as TeamModel } from './model/Team';
@@ -64,10 +63,8 @@ export class TeamRepository extends AbstractRepository {
     const memberModels = await this.TeamMember.find({ userId });
     if (memberModels.length === 0) return [];
     const teamIds = memberModels.map(m => m.teamId);
-    const models = await pMap(teamIds, teamId => this.Team.findOne({ teamId }), { concurrency: 10 });
-    return models
-      .filter(Boolean)
-      .map(model => ModelConvertor.convertModelToEntity(model!, Team));
+    const models = await this.Team.find({ teamId: { $in: teamIds } });
+    return models.map(model => ModelConvertor.convertModelToEntity(model, Team));
   }
 
   // --- TeamMember ---
@@ -91,9 +88,9 @@ export class TeamRepository extends AbstractRepository {
 
   async removeMemberFromAllTeams(orgId: string, userId: string): Promise<void> {
     const teams = await this.Team.find({ orgId });
-    for (const team of teams) {
-      await this.TeamMember.remove({ teamId: team.teamId, userId });
-    }
+    if (teams.length === 0) return;
+    const teamIds = teams.map(t => t.teamId);
+    await this.TeamMember.remove({ teamId: { $in: teamIds }, userId });
   }
 
   async listMembers(teamId: string): Promise<TeamMember[]> {
@@ -107,9 +104,9 @@ export class TeamRepository extends AbstractRepository {
 
   async removeAllMembersByOrgId(orgId: string): Promise<void> {
     const teams = await this.Team.find({ orgId });
-    for (const team of teams) {
-      await this.TeamMember.remove({ teamId: team.teamId });
-    }
+    if (teams.length === 0) return;
+    const teamIds = teams.map(t => t.teamId);
+    await this.TeamMember.remove({ teamId: { $in: teamIds } });
   }
 
   // --- TeamPackage ---
@@ -142,9 +139,9 @@ export class TeamRepository extends AbstractRepository {
 
   async removeAllPackagesByOrgId(orgId: string): Promise<void> {
     const teams = await this.Team.find({ orgId });
-    for (const team of teams) {
-      await this.TeamPackage.remove({ teamId: team.teamId });
-    }
+    if (teams.length === 0) return;
+    const teamIds = teams.map(t => t.teamId);
+    await this.TeamPackage.remove({ teamId: { $in: teamIds } });
   }
 
   // No JOIN: step 1 find teamIds by packageId, step 2 check membership
@@ -152,10 +149,7 @@ export class TeamRepository extends AbstractRepository {
     const teamPackages = await this.TeamPackage.find({ packageId });
     if (teamPackages.length === 0) return false;
     const teamIds = teamPackages.map(tp => tp.teamId);
-    for (const teamId of teamIds) {
-      const member = await this.TeamMember.findOne({ teamId, userId });
-      if (member) return true;
-    }
-    return false;
+    const member = await this.TeamMember.findOne({ teamId: { $in: teamIds }, userId });
+    return !!member;
   }
 }
