@@ -3,8 +3,13 @@ import { ModelConvertor } from './util/ModelConvertor';
 import { AbstractRepository } from './AbstractRepository';
 import { Org as OrgModel } from './model/Org';
 import { OrgMember as OrgMemberModel } from './model/OrgMember';
+import { Team as TeamModel } from './model/Team';
+import { TeamMember as TeamMemberModel } from './model/TeamMember';
+import { TeamPackage as TeamPackageModel } from './model/TeamPackage';
 import { Org } from '../core/entity/Org';
 import { OrgMember } from '../core/entity/OrgMember';
+import { Team } from '../core/entity/Team';
+import { TeamMember } from '../core/entity/TeamMember';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -15,6 +20,15 @@ export class OrgRepository extends AbstractRepository {
 
   @Inject()
   private readonly OrgMember: typeof OrgMemberModel;
+
+  @Inject()
+  private readonly Team: typeof TeamModel;
+
+  @Inject()
+  private readonly TeamMember: typeof TeamMemberModel;
+
+  @Inject()
+  private readonly TeamPackage: typeof TeamPackageModel;
 
   async findOrgByName(name: string): Promise<Org | null> {
     const model = await this.Org.findOne({ name });
@@ -71,5 +85,28 @@ export class OrgRepository extends AbstractRepository {
 
   async removeAllMembers(orgId: string): Promise<void> {
     await this.OrgMember.remove({ orgId });
+  }
+
+  async createOrgCascade(org: Org, developersTeam: Team, ownerMember: OrgMember, teamMember: TeamMember): Promise<void> {
+    await this.Org.transaction(async ({ connection }) => {
+      await ModelConvertor.convertEntityToModel(org, this.Org, { connection });
+      await ModelConvertor.convertEntityToModel(developersTeam, this.Team, { connection });
+      await ModelConvertor.convertEntityToModel(ownerMember, this.OrgMember, { connection });
+      await ModelConvertor.convertEntityToModel(teamMember, this.TeamMember, { connection });
+    });
+  }
+
+  async removeOrgCascade(orgId: string): Promise<void> {
+    const teams = await this.Team.find({ orgId });
+    const teamIds = teams.map(t => t.teamId);
+    await this.Org.transaction(async ({ connection }) => {
+      if (teamIds.length > 0) {
+        await this.TeamPackage.remove({ teamId: { $in: teamIds } }, true, { connection });
+        await this.TeamMember.remove({ teamId: { $in: teamIds } }, true, { connection });
+      }
+      await this.Team.remove({ orgId }, true, { connection });
+      await this.OrgMember.remove({ orgId }, true, { connection });
+      await this.Org.remove({ orgId }, true, { connection });
+    });
   }
 }

@@ -35,34 +35,26 @@ export class OrgService extends AbstractService {
       throw new ForbiddenError(`Org "${cmd.name}" already exists`);
     }
 
-    // Create org
+    // Create org + developers team + owner + team member in one transaction
     const org = Org.create({
       name: cmd.name,
       description: cmd.description,
     });
-    await this.orgRepository.saveOrg(org);
-
-    // Create developers team
     const developersTeam = Team.create({
       orgId: org.orgId,
       name: DEVELOPERS_TEAM,
       description: 'default team',
     });
-    await this.teamRepository.saveTeam(developersTeam);
-
-    // Creator as owner + add to developers team
     const ownerMember = OrgMember.create({
       orgId: org.orgId,
       userId: cmd.creatorUserId,
       role: 'owner',
     });
-    await this.orgRepository.saveMember(ownerMember);
-
     const teamMember = TeamMember.create({
       teamId: developersTeam.teamId,
       userId: cmd.creatorUserId,
     });
-    await this.teamRepository.addMember(teamMember);
+    await this.orgRepository.createOrgCascade(org, developersTeam, ownerMember, teamMember);
 
     this.logger.info('[OrgService:createOrg] orgId: %s, name: %s, creatorUserId: %s',
       org.orgId, org.name, cmd.creatorUserId);
@@ -70,12 +62,7 @@ export class OrgService extends AbstractService {
   }
 
   async removeOrg(orgId: string): Promise<void> {
-    // Cascade: team_packages → team_members → teams → org_members → org
-    await this.teamRepository.removeAllPackagesByOrgId(orgId);
-    await this.teamRepository.removeAllMembersByOrgId(orgId);
-    await this.teamRepository.removeAllTeamsByOrgId(orgId);
-    await this.orgRepository.removeAllMembers(orgId);
-    await this.orgRepository.removeOrg(orgId);
+    await this.orgRepository.removeOrgCascade(orgId);
     this.logger.info('[OrgService:removeOrg] orgId: %s', orgId);
   }
 

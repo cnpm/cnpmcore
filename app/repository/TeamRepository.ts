@@ -137,6 +137,14 @@ export class TeamRepository extends AbstractRepository {
     await this.TeamPackage.remove({ teamId });
   }
 
+  async removeTeamCascade(teamId: string): Promise<void> {
+    await this.Team.transaction(async ({ connection }) => {
+      await this.TeamPackage.remove({ teamId }, true, { connection });
+      await this.TeamMember.remove({ teamId }, true, { connection });
+      await this.Team.remove({ teamId }, true, { connection });
+    });
+  }
+
   async removeAllPackagesByOrgId(orgId: string): Promise<void> {
     const teams = await this.Team.find({ orgId });
     if (teams.length === 0) return;

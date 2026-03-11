@@ -46,10 +46,8 @@ export class TeamService extends AbstractService {
     if (team.name === DEVELOPERS_TEAM) {
       throw new ForbiddenError('Cannot delete the developers team');
     }
-    // Cascade: remove packages + members
-    await this.teamRepository.removeAllPackagesByTeamId(teamId);
-    await this.teamRepository.removeAllMembersByTeamId(teamId);
-    await this.teamRepository.removeTeam(teamId);
+    // Cascade: remove packages + members + team in one transaction
+    await this.teamRepository.removeTeamCascade(teamId);
     this.logger.info('[TeamService:removeTeam] teamId: %s', teamId);
   }
 
