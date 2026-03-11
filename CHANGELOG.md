@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.78.0 (2026-03-11)
+
+* feat: add OrgService, TeamService and unit tests (#1006) ([2e22b1a](https://github.com/cnpm/cnpmcore/commit/2e22b1a)), closes [#1006](https://github.com/cnpm/cnpmcore/issues/1006) [#1005](https://github.com/cnpm/cnpmcore/issues/1005) [#1002](https://github.com/cnpm/cnpmcore/issues/1002)
+
 ## 3.77.0 (2026-03-10)
 
 * feat: add Org & Team entities, models, repositories and migrations (#1005) ([83aa418](https://github.com/cnpm/cnpmcore/commit/83aa418)), closes [#1005](https://github.com/cnpm/cnpmcore/issues/1005) [#1002](https://github.com/cnpm/cnpmcore/issues/1002)
