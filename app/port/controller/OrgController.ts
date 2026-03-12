@@ -89,7 +89,7 @@ export class OrgController extends AbstractController {
     }
     const members = await this.orgService.listMembers(org.orgId);
     const users = await this.userRepository.findUsersByUserIds(members.map(m => m.userId));
-    const userMap = new Map(users.map(u => [u.userId, u]));
+    const userMap = new Map(users.map(u => [ u.userId, u ]));
     const result: Record<string, string> = {};
     for (const member of members) {
       const user = userMap.get(member.userId);
