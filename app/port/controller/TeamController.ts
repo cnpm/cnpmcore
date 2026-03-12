@@ -9,7 +9,6 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { NotFoundError, UnprocessableEntityError } from 'egg-errors';
-import pMap from 'p-map';
 import { AbstractController } from './AbstractController';
 import { OrgService } from '../../core/service/OrgService';
 import { TeamService } from '../../core/service/TeamService';
@@ -131,8 +130,8 @@ export class TeamController extends AbstractController {
       throw new NotFoundError(`Team "${teamName}" not found`);
     }
     const members = await this.teamService.listMembers(team.teamId);
-    const users = await pMap(members, m => this.userRepository.findUserByUserId(m.userId), { concurrency: 10 });
-    return users.filter(Boolean).map(u => u!.name);
+    const users = await this.userRepository.findUsersByUserIds(members.map(m => m.userId));
+    return users.map(u => u.name);
   }
 
   // PUT /-/org/:orgName/team/:teamName/member
@@ -211,12 +210,10 @@ export class TeamController extends AbstractController {
       throw new NotFoundError(`Team "${teamName}" not found`);
     }
     const teamPackages = await this.teamService.listPackages(team.teamId);
-    const pkgs = await pMap(teamPackages, tp => this.packageRepository.findPackageByPackageId(tp.packageId), { concurrency: 10 });
+    const pkgs = await this.packageRepository.findPackagesByPackageIds(teamPackages.map(tp => tp.packageId));
     const result: Record<string, string> = {};
     for (const pkg of pkgs) {
-      if (pkg) {
-        result[pkg.fullname] = 'read';
-      }
+      result[pkg.fullname] = 'read';
     }
     return result;
   }

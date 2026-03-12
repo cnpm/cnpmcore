@@ -10,7 +10,6 @@ import {
   Middleware,
 } from '@eggjs/tegg';
 import { NotFoundError, UnprocessableEntityError } from 'egg-errors';
-import pMap from 'p-map';
 import { AbstractController } from './AbstractController';
 import { AdminAccess } from '../middleware/AdminAccess';
 import { OrgService } from '../../core/service/OrgService';
@@ -89,12 +88,13 @@ export class OrgController extends AbstractController {
       throw new NotFoundError(`Org "${orgName}" not found`);
     }
     const members = await this.orgService.listMembers(org.orgId);
-    const users = await pMap(members, m => this.userRepository.findUserByUserId(m.userId), { concurrency: 10 });
+    const users = await this.userRepository.findUsersByUserIds(members.map(m => m.userId));
+    const userMap = new Map(users.map(u => [u.userId, u]));
     const result: Record<string, string> = {};
-    for (let i = 0; i < members.length; i++) {
-      const user = users[i];
+    for (const member of members) {
+      const user = userMap.get(member.userId);
       if (user) {
-        result[user.name] = members[i].role;
+        result[user.name] = member.role;
       }
     }
     return result;
@@ -165,8 +165,7 @@ export class OrgController extends AbstractController {
     if (!targetUser) {
       throw new NotFoundError(`User "${username}" not found`);
     }
-    const teams = await this.teamRepository.listTeamsByUserId(targetUser.userId);
-    const orgTeams = teams.filter(t => t.orgId === org.orgId);
-    return orgTeams.map(t => ({ name: t.name, description: t.description }));
+    const teams = await this.teamRepository.listTeamsByUserIdAndOrgId(targetUser.userId, org.orgId);
+    return teams.map(t => ({ name: t.name, description: t.description }));
   }
 }
