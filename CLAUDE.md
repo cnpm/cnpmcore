@@ -284,6 +284,14 @@ Style rules:
 - `TestUtil.getFullPackage(options)` - Get mock package JSON
 - `TestUtil.truncateDatabase()` - Clear all tables between tests
 - `TestUtil.query(sql)` - Execute raw SQL (MySQL/PostgreSQL)
+- `TestUtil.getFixtures(name)` - Get path to shared fixture (read-only access)
+- `TestUtil.copyFixtures(name)` - Copy fixture to temp directory (when test needs to write)
+
+**Test Fixture Access**:
+
+- Use `getFixtures()` for read-only access (reading JSON, tarballs, etc.) — safe for parallel execution
+- Use `copyFixtures()` when the test will write to the fixture directory (e.g., `npm install` creating `node_modules`, writing `.npmrc`) — each test gets an isolated copy
+- Never write files directly into `test/fixtures/` during test execution; always copy to a temp directory first
 
 **Mocking Patterns**:
 
