@@ -31,6 +31,7 @@ describe('test/cli/npm/access.test.ts', () => {
 
   after(async () => {
     server.close();
+    await TestUtil.cleanupFixtures();
   });
 
   beforeEach(async () => {

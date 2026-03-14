@@ -68,6 +68,7 @@ export class TestUtil {
   private static tables: any;
   private static truncateSql: string;
   private static _app: any;
+  private static tmpDirs: string[] = [];
   private static ua = 'npm/7.0.0 cnpmcore-unittest/1.0.0';
 
   static getDatabaseConfig() {
@@ -204,12 +205,18 @@ export class TestUtil {
 
   static async copyFixtures(name: string): Promise<string> {
     const tmpDir = this.mkdtemp();
+    this.tmpDirs.push(tmpDir);
     const dest = path.join(tmpDir, name);
     await fs.cp(this.getFixtures(name), dest, {
       recursive: true,
       filter: (src) => !src.includes('node_modules'),
     });
     return dest;
+  }
+
+  static async cleanupFixtures() {
+    await Promise.all(this.tmpDirs.map((dir) => fs.rm(dir, { recursive: true, force: true })));
+    this.tmpDirs = [];
   }
 
   static async readFixturesFile(name?: string): Promise<Buffer> {

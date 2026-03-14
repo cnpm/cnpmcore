@@ -29,6 +29,7 @@ describe('test/cli/npm/install.test.ts', () => {
 
   after(async () => {
     server.close();
+    await TestUtil.cleanupFixtures();
   });
 
   beforeEach(async () => {
