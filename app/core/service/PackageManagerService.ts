@@ -115,6 +115,11 @@ export class PackageManagerService extends AbstractService {
 
   private static downloadCounters = {};
 
+  // Reset in-memory counters, used by test teardown to prevent cross-test pollution
+  static resetDownloadCounters() {
+    PackageManagerService.downloadCounters = {};
+  }
+
   // support user publish private package and sync worker publish public package
   async publish(cmd: PublishPackageCmd, publisher: User) {
     if (this.config.cnpmcore.strictValidatePackageDeps) {
