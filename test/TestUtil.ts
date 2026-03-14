@@ -207,7 +207,7 @@ export class TestUtil {
     const dest = path.join(tmpDir, name);
     await fs.cp(this.getFixtures(name), dest, {
       recursive: true,
-      filter: src => !src.includes('node_modules'),
+      filter: (src) => !src.includes('node_modules'),
     });
     return dest;
   }
