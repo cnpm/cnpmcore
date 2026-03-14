@@ -202,6 +202,16 @@ export class TestUtil {
     return path.join(__dirname, 'fixtures', name ?? '');
   }
 
+  static async copyFixtures(name: string): Promise<string> {
+    const tmpDir = this.mkdtemp();
+    const dest = path.join(tmpDir, name);
+    await fs.cp(this.getFixtures(name), dest, {
+      recursive: true,
+      filter: src => !src.includes('node_modules'),
+    });
+    return dest;
+  }
+
   static async readFixturesFile(name?: string): Promise<Buffer> {
     return await fs.readFile(this.getFixtures(name));
   }
