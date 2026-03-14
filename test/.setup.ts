@@ -16,8 +16,11 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  await TestUtil.truncateDatabase();
-  // Reset in-memory download counters to prevent cross-test pollution
-  PackageManagerService.resetDownloadCounters();
+  try {
+    await TestUtil.truncateDatabase();
+  } finally {
+    // Reset in-memory download counters to prevent cross-test pollution
+    PackageManagerService.resetDownloadCounters();
+  }
   // mock.restore() handled by @eggjs/mock/setup_vitest
 });
