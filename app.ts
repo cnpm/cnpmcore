@@ -31,8 +31,9 @@ export default class CnpmcoreAppHook implements ILifecycleBoot {
     };
   }
 
-  // https://eggjs.org/zh-cn/basics/app-start.html
-  async didReady() {
+  // Use willReady instead of didReady so that app.ready() awaits completion.
+  // didReady is fire-and-forget in egg lifecycle, causing race conditions in tests.
+  async willReady() {
     // ready binary.html and replace registry
     const filepath = path.join(this.app.baseDir, 'app/port/binary.html');
     const text = await readFile(filepath, 'utf8');
