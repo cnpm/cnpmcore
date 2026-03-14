@@ -1,5 +1,11 @@
 # Changelog
 
+## <small>4.28.3 (2026-03-14)</small>
+
+* fix: reset static downloadCounters between tests (#1009) ([c33fa95](https://github.com/cnpm/cnpmcore/commit/c33fa95)), closes [#1009](https://github.com/cnpm/cnpmcore/issues/1009)
+* chore(deps): update dependency oxfmt to ^0.37.0 (#1003) ([5026443](https://github.com/cnpm/cnpmcore/commit/5026443)), closes [#1003](https://github.com/cnpm/cnpmcore/issues/1003)
+* chore(deps): update docker/metadata-action action to v6 (#1001) ([7c69dbf](https://github.com/cnpm/cnpmcore/commit/7c69dbf)), closes [#1001](https://github.com/cnpm/cnpmcore/issues/1001)
+
 ## <small>4.28.2 (2026-03-10)</small>
 
 * fix: latest range (#954) ([91909e2](https://github.com/cnpm/cnpmcore/commit/91909e2)), closes [#954](https://github.com/cnpm/cnpmcore/issues/954)
