@@ -17,24 +17,19 @@ describe('test/cli/npm/install.test.ts', () => {
   let userconfig: string;
   let cacheDir: string;
   before(async () => {
-    cacheDir = TestUtil.mkdtemp();
+    demoDir = await TestUtil.copyFixtures('demo');
+    cacheDir = path.join(path.dirname(demoDir), 'cache');
+    userconfig = path.join(path.dirname(demoDir), '.npmrc');
     fooPkgDir = TestUtil.getFixtures('@cnpm/foo');
-    demoDir = TestUtil.getFixtures('demo');
-    userconfig = path.join(fooPkgDir, '.npmrc');
-    await TestUtil.rm(userconfig);
-    await TestUtil.rm(path.join(demoDir, 'node_modules'));
 
     server = app.listen(0);
     await once(server, 'listening');
     registry = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-    // console.log(`registry ${registry} ready`);
   });
 
   after(async () => {
-    await TestUtil.rm(userconfig);
-    await TestUtil.rm(cacheDir);
-    await TestUtil.rm(path.join(demoDir, 'node_modules'));
     server.close();
+    await TestUtil.cleanupFixtures();
   });
 
   beforeEach(async () => {
