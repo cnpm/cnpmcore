@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>4.28.4 (2026-03-15)</small>
+
+* fix: isolate CLI test fixtures for parallel test execution (#1010) ([e522887](https://github.com/cnpm/cnpmcore/commit/e522887)), closes [#1010](https://github.com/cnpm/cnpmcore/issues/1010)
+
 ## <small>4.28.3 (2026-03-14)</small>
 
 * fix: reset static downloadCounters between tests (#1009) ([c33fa95](https://github.com/cnpm/cnpmcore/commit/c33fa95)), closes [#1009](https://github.com/cnpm/cnpmcore/issues/1009)
