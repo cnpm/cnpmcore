@@ -26,6 +26,26 @@ export class TeamController extends AbstractController {
   @Inject()
   private readonly teamRepository: TeamRepository;
 
+  private async requireOrgWriteAccess(ctx: EggContext, orgName: string) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
+    const org = await this.orgService.findOrgByName(orgName);
+    if (!org) {
+      throw new NotFoundError(`Org "${orgName}" not found`);
+    }
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
+    await this.orgService.requiredOrgOwnerOrAdmin(org.orgId, authorizedUser.userId, isAdmin);
+    return { org, authorizedUser };
+  }
+
+  private async requireTeamWriteAccess(ctx: EggContext, orgName: string, teamName: string) {
+    const { org, authorizedUser } = await this.requireOrgWriteAccess(ctx, orgName);
+    const team = await this.teamRepository.findTeam(org.orgId, teamName);
+    if (!team) {
+      throw new NotFoundError(`Team "${teamName}" not found`);
+    }
+    return { org, team, authorizedUser };
+  }
+
   // --- Team CRUD ---
 
   // PUT /-/org/:orgName/team — create team
@@ -35,13 +55,7 @@ export class TeamController extends AbstractController {
   })
   async createTeam(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPBody() body: { name: string; description?: string }) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    const org = await this.orgService.findOrgByName(orgName);
-    if (!org) {
-      throw new NotFoundError(`Org "${orgName}" not found`);
-    }
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    await this.orgService.requiredOrgOwnerOrAdmin(org.orgId, authorizedUser.userId, isAdmin);
+    const { org } = await this.requireOrgWriteAccess(ctx, orgName);
 
     if (!body.name) {
       throw new UnprocessableEntityError('name is required');
@@ -95,18 +109,7 @@ export class TeamController extends AbstractController {
   })
   async removeTeam(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    const org = await this.orgService.findOrgByName(orgName);
-    if (!org) {
-      throw new NotFoundError(`Org "${orgName}" not found`);
-    }
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    await this.orgService.requiredOrgOwnerOrAdmin(org.orgId, authorizedUser.userId, isAdmin);
-
-    const team = await this.teamRepository.findTeam(org.orgId, teamName);
-    if (!team) {
-      throw new NotFoundError(`Team "${teamName}" not found`);
-    }
+    const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     await this.teamService.removeTeam(team.teamId);
     return { ok: true };
   }
@@ -141,18 +144,7 @@ export class TeamController extends AbstractController {
   })
   async addTeamMember(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string, @HTTPBody() body: { user: string }) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    const org = await this.orgService.findOrgByName(orgName);
-    if (!org) {
-      throw new NotFoundError(`Org "${orgName}" not found`);
-    }
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    await this.orgService.requiredOrgOwnerOrAdmin(org.orgId, authorizedUser.userId, isAdmin);
-
-    const team = await this.teamRepository.findTeam(org.orgId, teamName);
-    if (!team) {
-      throw new NotFoundError(`Team "${teamName}" not found`);
-    }
+    const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.user) {
       throw new UnprocessableEntityError('user is required');
     }
@@ -171,18 +163,7 @@ export class TeamController extends AbstractController {
   })
   async removeTeamMember(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string, @HTTPParam() username: string) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    const org = await this.orgService.findOrgByName(orgName);
-    if (!org) {
-      throw new NotFoundError(`Org "${orgName}" not found`);
-    }
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    await this.orgService.requiredOrgOwnerOrAdmin(org.orgId, authorizedUser.userId, isAdmin);
-
-    const team = await this.teamRepository.findTeam(org.orgId, teamName);
-    if (!team) {
-      throw new NotFoundError(`Team "${teamName}" not found`);
-    }
+    const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     const targetUser = await this.userRepository.findUserByName(username);
     if (!targetUser) {
       throw new NotFoundError(`User "${username}" not found`);
@@ -225,18 +206,7 @@ export class TeamController extends AbstractController {
   })
   async grantPackageAccess(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string, @HTTPBody() body: { package: string }) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    const org = await this.orgService.findOrgByName(orgName);
-    if (!org) {
-      throw new NotFoundError(`Org "${orgName}" not found`);
-    }
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    await this.orgService.requiredOrgOwnerOrAdmin(org.orgId, authorizedUser.userId, isAdmin);
-
-    const team = await this.teamRepository.findTeam(org.orgId, teamName);
-    if (!team) {
-      throw new NotFoundError(`Team "${teamName}" not found`);
-    }
+    const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.package) {
       throw new UnprocessableEntityError('package is required');
     }
@@ -256,18 +226,7 @@ export class TeamController extends AbstractController {
   })
   async revokePackageAccess(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string, @HTTPParam() scope: string, @HTTPParam() name: string) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
-    const org = await this.orgService.findOrgByName(orgName);
-    if (!org) {
-      throw new NotFoundError(`Org "${orgName}" not found`);
-    }
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    await this.orgService.requiredOrgOwnerOrAdmin(org.orgId, authorizedUser.userId, isAdmin);
-
-    const team = await this.teamRepository.findTeam(org.orgId, teamName);
-    if (!team) {
-      throw new NotFoundError(`Team "${teamName}" not found`);
-    }
+    const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     const fullname = `@${scope}/${name}`;
     const pkg = await this.packageRepository.findPackage(`@${scope}`, name);
     if (!pkg) {
