@@ -67,6 +67,18 @@ export class TeamRepository extends AbstractRepository {
     return models.map(model => ModelConvertor.convertModelToEntity(model, Team));
   }
 
+  async listTeamsByUserIdAndOrgId(userId: string, orgId: string): Promise<Team[]> {
+    const orgTeams = await this.Team.find({ orgId });
+    if (orgTeams.length === 0) return [];
+    const orgTeamIds = orgTeams.map(t => t.teamId);
+    const memberModels = await this.TeamMember.find({ userId, teamId: { $in: orgTeamIds } });
+    if (memberModels.length === 0) return [];
+    const memberTeamIds = new Set(memberModels.map(m => m.teamId));
+    return orgTeams
+      .filter(t => memberTeamIds.has(t.teamId))
+      .map(model => ModelConvertor.convertModelToEntity(model, Team));
+  }
+
   // --- TeamMember ---
 
   async findMember(teamId: string, userId: string): Promise<TeamMember | null> {

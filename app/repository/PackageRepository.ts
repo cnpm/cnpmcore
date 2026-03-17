@@ -220,6 +220,16 @@ export class PackageRepository extends AbstractRepository {
     return await this.#convertPackageModelToEntity(model);
   }
 
+  async findPackagesByPackageIds(packageIds: string[]): Promise<PackageEntity[]> {
+    if (packageIds.length === 0) return [];
+    const models = await this.Package.find({ packageId: packageIds });
+    const entities: PackageEntity[] = [];
+    for (const model of models) {
+      entities.push(await this.#convertPackageModelToEntity(model));
+    }
+    return entities;
+  }
+
   async findPackageId(scope: string, name: string) {
     const model = await this.Package.findOne({ scope, name }).select('packageId');
     if (!model) return null;
