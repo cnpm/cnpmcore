@@ -13,6 +13,7 @@ import { LoginResultCode } from '../../common/enum/User';
 import { integrity, checkIntegrity, randomToken, sha512 } from '../../common/UserUtil';
 import { AbstractService } from '../../common/AbstractService';
 import { RegistryManagerService } from './RegistryManagerService';
+import { OrgService } from './OrgService';
 import { getPrefixedName } from '../../common/PackageUtil';
 import { Registry } from '../entity/Registry';
 
@@ -64,6 +65,8 @@ export class UserService extends AbstractService {
   private readonly userRepository: UserRepository;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
+  @Inject()
+  private readonly orgService: OrgService;
 
   checkPassword(user: UserEntity, password: string): boolean {
     const plain = `${user.passwordSalt}${password}`;
@@ -141,7 +144,24 @@ export class UserService extends AbstractService {
     });
     await this.userRepository.saveUser(userEntity);
     const token = await this.createToken(userEntity.userId);
+    await this.assignToDefaultOrg(userEntity.userId);
     return { user: userEntity, token };
+  }
+
+  private async assignToDefaultOrg(userId: string): Promise<void> {
+    const defaultOrg = this.config.cnpmcore.defaultOrg;
+    if (!defaultOrg) return;
+    try {
+      const org = await this.orgService.findOrgByName(defaultOrg);
+      if (!org) {
+        this.logger.warn('[UserService:assignToDefaultOrg] defaultOrg "%s" not found, skip', defaultOrg);
+        return;
+      }
+      await this.orgService.addMember(org.orgId, userId, 'member');
+      this.logger.info('[UserService:assignToDefaultOrg] userId: %s assigned to org "%s"', userId, defaultOrg);
+    } catch (err) {
+      this.logger.warn('[UserService:assignToDefaultOrg] failed to assign userId: %s to org "%s": %s', userId, defaultOrg, err);
+    }
   }
 
   async saveUser(userPrefix = 'npm:', name: string, email: string): Promise<{ changed: boolean, user: UserEntity }> {

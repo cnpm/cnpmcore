@@ -99,6 +99,7 @@ export class PackageVersionFileController extends AbstractController {
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     ctx.vary(this.config.cnpmcore.cdnVaryHeader);
     const [ scope, name ] = getScopeAndName(fullname);
+    await this.userRoleManager.checkReadAccess(ctx, scope, name);
     const packageVersion = await this.#getPackageVersion(ctx, fullname, scope, name, versionSpec);
     ctx.set('cache-control', META_CACHE_CONTROL);
     const hasMeta = typeof meta === 'string' || ctx.path.endsWith('/files/');
@@ -137,6 +138,7 @@ export class PackageVersionFileController extends AbstractController {
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     ctx.vary(this.config.cnpmcore.cdnVaryHeader);
     const [ scope, name ] = getScopeAndName(fullname);
+    await this.userRoleManager.checkReadAccess(ctx, scope, name);
     path = `/${path}`;
     const packageVersion = await this.#getPackageVersion(ctx, fullname, scope, name, versionSpec);
     if (path.endsWith('/')) {

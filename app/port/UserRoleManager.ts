@@ -7,6 +7,8 @@ import {
 import { EggAppConfig, EggLogger } from 'egg';
 import { UnauthorizedError, ForbiddenError } from 'egg-errors';
 import { PackageRepository } from '../repository/PackageRepository';
+import { OrgRepository } from '../repository/OrgRepository';
+import { TeamRepository } from '../repository/TeamRepository';
 import { Package as PackageEntity } from '../core/entity/Package';
 import { User as UserEntity } from '../core/entity/User';
 import { Token as TokenEntity } from '../core/entity/Token';
@@ -32,6 +34,10 @@ export class UserRoleManager {
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
   private readonly tokenService: TokenService;
+  @Inject()
+  private readonly orgRepository: OrgRepository;
+  @Inject()
+  private readonly teamRepository: TeamRepository;
 
   private handleAuthorized = false;
   private currentAuthorizedUser: UserEntity;
@@ -185,5 +191,24 @@ export class UserRoleManager {
     const { user, token } = authorizedUserAndToken;
     if (token.isReadonly) return false;
     return user.name in this.config.cnpmcore.admins;
+  }
+
+  public async checkReadAccess(ctx: EggContext, scope: string, name: string): Promise<void> {
+    if (!scope || !this.config.cnpmcore.allowScopes.includes(scope)) return;
+
+    const user = await this.requiredAuthorizedUser(ctx, 'read');
+    if (await this.isAdmin(ctx)) return;
+
+    const orgName = scope.replace(/^@/, '');
+    const org = await this.orgRepository.findOrgByName(orgName);
+    if (!org) return; // private scope without org, backward compatible
+
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) return; // let downstream throw 404
+
+    const hasTeamAccess = await this.teamRepository.hasPackageAccess(pkg.packageId, user.userId);
+    if (hasTeamAccess) return;
+
+    throw new ForbiddenError(`"${user.name}" is not authorized to access ${pkg.fullname}`);
   }
 }
