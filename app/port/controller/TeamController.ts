@@ -134,7 +134,7 @@ export class TeamController extends AbstractController {
     }
     const members = await this.teamService.listMembers(team.teamId);
     const users = await this.userRepository.findUsersByUserIds(members.map(m => m.userId));
-    return users.map(u => u.name);
+    return users.map(u => u.displayName);
   }
 
   // PUT /-/org/:orgName/team/:teamName/member

@@ -26,6 +26,14 @@ export class ShowPackageController extends AbstractController {
   @Inject()
   private proxyCacheService: ProxyCacheService;
 
+  private setCacheHeaders(ctx: EggContext, isPrivateScope: string | boolean) {
+    if (isPrivateScope) {
+      ctx.set('cache-control', 'private, no-store');
+    } else {
+      this.setCDNHeaders(ctx);
+    }
+  }
+
   @HTTPMethod({
     // GET /:fullname
     // https://www.npmjs.com/package/path-to-regexp#custom-matching-parameters
@@ -50,11 +58,7 @@ export class ShowPackageController extends AbstractController {
         }
         if (requestEtag === cacheEtag) {
           // make sure CDN cache header set here
-          if (isPrivateScope) {
-            ctx.set('cache-control', 'private, no-store');
-          } else {
-            this.setCDNHeaders(ctx);
-          }
+          this.setCacheHeaders(ctx, isPrivateScope);
           // match etag, set status 304
           ctx.status = 304;
           return;
@@ -64,11 +68,7 @@ export class ShowPackageController extends AbstractController {
         if (cacheBytes && cacheBytes.length > 0) {
           ctx.set('etag', `W/${cacheEtag}`);
           ctx.type = 'json';
-          if (isPrivateScope) {
-            ctx.set('cache-control', 'private, no-store');
-          } else {
-            this.setCDNHeaders(ctx);
-          }
+          this.setCacheHeaders(ctx, isPrivateScope);
           return cacheBytes;
         }
       }
@@ -104,9 +104,7 @@ export class ShowPackageController extends AbstractController {
       throw this.createPackageNotFoundErrorWithRedirect(fullname, undefined, allowSync);
     }
     if (blockReason) {
-      if (!isPrivateScope) {
-        this.setCDNHeaders(ctx);
-      }
+      this.setCacheHeaders(ctx, isPrivateScope);
       throw this.createPackageBlockError(blockReason, fullname);
     }
 
@@ -124,11 +122,7 @@ export class ShowPackageController extends AbstractController {
     // should set weak etag avoid nginx remove it
     ctx.set('etag', `W/${etag}`);
     ctx.type = 'json';
-    if (isPrivateScope) {
-      ctx.set('cache-control', 'private, no-store');
-    } else {
-      this.setCDNHeaders(ctx);
-    }
+    this.setCacheHeaders(ctx, isPrivateScope);
     return cacheBytes;
   }
 }
