@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.79.0 (2026-03-17)
+
+* feat: add OrgController, TeamController and API docs (#1008) ([3f5548e](https://github.com/cnpm/cnpmcore/commit/3f5548e)), closes [#1008](https://github.com/cnpm/cnpmcore/issues/1008) [#1002](https://github.com/cnpm/cnpmcore/issues/1002) [#1005](https://github.com/cnpm/cnpmcore/issues/1005) [#1006](https://github.com/cnpm/cnpmcore/issues/1006) [#1002](https://github.com/cnpm/cnpmcore/issues/1002)
+
 ## 3.78.0 (2026-03-11)
 
 * feat: add OrgService, TeamService and unit tests (#1006) ([2e22b1a](https://github.com/cnpm/cnpmcore/commit/2e22b1a)), closes [#1006](https://github.com/cnpm/cnpmcore/issues/1006) [#1005](https://github.com/cnpm/cnpmcore/issues/1005) [#1002](https://github.com/cnpm/cnpmcore/issues/1002)
