@@ -8,7 +8,7 @@ import {
   HTTPParam,
   Inject,
 } from '@eggjs/tegg';
-import { NotFoundError, UnprocessableEntityError } from 'egg-errors';
+import { NotFoundError, ForbiddenError, UnprocessableEntityError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { OrgService } from '../../core/service/OrgService';
 import { TeamService } from '../../core/service/TeamService';
@@ -26,8 +26,31 @@ export class TeamController extends AbstractController {
   @Inject()
   private readonly teamRepository: TeamRepository;
 
+  private isAllowScopeOrg(orgName: string): boolean {
+    return this.config.cnpmcore.allowScopes.includes(`@${orgName}`);
+  }
+
+  // For allowScopes orgs, auto-ensure; for others, just look up
+  private async findOrg(orgName: string) {
+    if (this.isAllowScopeOrg(orgName)) {
+      return await this.orgService.ensureOrgForScope(`@${orgName}`);
+    }
+    return await this.orgService.findOrgByName(orgName);
+  }
+
   private async requireOrgWriteAccess(ctx: EggContext, orgName: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
+
+    if (this.isAllowScopeOrg(orgName)) {
+      // allowScopes org: any self-registry user can operate, auto-ensure org
+      if (!authorizedUser.isPrivate) {
+        throw new ForbiddenError('Only self-registry users can manage allowScopes org');
+      }
+      const org = await this.orgService.ensureOrgForScope(`@${orgName}`);
+      return { org, authorizedUser };
+    }
+
+    // Non-allowScopes org: admin or org owner only
     const org = await this.orgService.findOrgByName(orgName);
     if (!org) {
       throw new NotFoundError(`Org "${orgName}" not found`);
@@ -71,7 +94,7 @@ export class TeamController extends AbstractController {
   })
   async listTeams(@Context() ctx: EggContext, @HTTPParam() orgName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
-    const org = await this.orgService.findOrgByName(orgName);
+    const org = await this.findOrg(orgName);
     if (!org) {
       throw new NotFoundError(`Org "${orgName}" not found`);
     }
@@ -87,7 +110,7 @@ export class TeamController extends AbstractController {
   async showTeam(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
-    const org = await this.orgService.findOrgByName(orgName);
+    const org = await this.findOrg(orgName);
     if (!org) {
       throw new NotFoundError(`Org "${orgName}" not found`);
     }
@@ -124,7 +147,7 @@ export class TeamController extends AbstractController {
   async listTeamMembers(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
-    const org = await this.orgService.findOrgByName(orgName);
+    const org = await this.findOrg(orgName);
     if (!org) {
       throw new NotFoundError(`Org "${orgName}" not found`);
     }
@@ -182,7 +205,7 @@ export class TeamController extends AbstractController {
   async listTeamPackages(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
-    const org = await this.orgService.findOrgByName(orgName);
+    const org = await this.findOrg(orgName);
     if (!org) {
       throw new NotFoundError(`Org "${orgName}" not found`);
     }
