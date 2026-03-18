@@ -63,7 +63,6 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   strictValidateTarballPkg: false,
   strictValidatePackageDeps: false,
   enableBlockPackageVersion: env('CNPMCORE_CONFIG_ENABLE_BLOCK_PACKAGE_VERSION', 'boolean', false),
-  defaultOrg: '',
   database: {
     type: database.type,
   },

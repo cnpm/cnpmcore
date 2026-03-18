@@ -7,7 +7,6 @@ import {
 import { EggAppConfig, EggLogger } from 'egg';
 import { UnauthorizedError, ForbiddenError } from 'egg-errors';
 import { PackageRepository } from '../repository/PackageRepository';
-import { OrgRepository } from '../repository/OrgRepository';
 import { TeamRepository } from '../repository/TeamRepository';
 import { Package as PackageEntity } from '../core/entity/Package';
 import { User as UserEntity } from '../core/entity/User';
@@ -34,8 +33,6 @@ export class UserRoleManager {
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
   private readonly tokenService: TokenService;
-  @Inject()
-  private readonly orgRepository: OrgRepository;
   @Inject()
   private readonly teamRepository: TeamRepository;
 
@@ -193,21 +190,23 @@ export class UserRoleManager {
     return user.name in this.config.cnpmcore.admins;
   }
 
+  // self scope + no team binding = everyone can read
+  // self scope + team binding = only team members can read
   public async checkReadAccess(ctx: EggContext, scope: string, name: string): Promise<void> {
     if (!scope || !this.config.cnpmcore.allowScopes.includes(scope)) return;
-
-    const user = await this.requiredAuthorizedUser(ctx, 'read');
-    if (await this.isAdmin(ctx)) return;
-
-    const orgName = scope.replace(/^@/, '');
-    const org = await this.orgRepository.findOrgByName(orgName);
-    if (!org) return; // private scope without org, backward compatible
 
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return; // let downstream throw 404
 
-    const hasTeamAccess = await this.teamRepository.hasPackageAccess(pkg.packageId, user.userId);
-    if (hasTeamAccess) return;
+    const hasTeamBinding = await this.teamRepository.hasAnyTeamBinding(pkg.packageId);
+    if (!hasTeamBinding) return; // no team binding, everyone can read
+
+    // team binding exists, require auth
+    const user = await this.requiredAuthorizedUser(ctx, 'read');
+    if (await this.isAdmin(ctx)) return;
+
+    const hasAccess = await this.teamRepository.hasPackageAccess(pkg.packageId, user.userId);
+    if (hasAccess) return;
 
     throw new ForbiddenError(`"${user.name}" is not authorized to access ${pkg.fullname}`);
   }

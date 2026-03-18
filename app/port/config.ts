@@ -186,12 +186,6 @@ export type CnpmcoreConfig = {
   enableBlockPackageVersion?: boolean,
 
   /**
-   * default org name to assign new users to on creation
-   * empty string means disabled
-   */
-  defaultOrg: string,
-
-  /**
    * database config
    */
   database: {
