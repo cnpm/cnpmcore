@@ -94,7 +94,7 @@ export class OrgController extends AbstractController {
     for (const member of members) {
       const user = userMap.get(member.userId);
       if (user) {
-        result[user.name] = member.role;
+        result[user.displayName] = member.role;
       }
     }
     return result;

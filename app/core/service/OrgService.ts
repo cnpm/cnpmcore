@@ -70,6 +70,21 @@ export class OrgService extends AbstractService {
     return await this.orgRepository.findOrgByName(name);
   }
 
+  // Auto-create org for allowScopes if it doesn't exist
+  async ensureOrgForScope(scope: string): Promise<Org> {
+    const orgName = scope.replace(/^@/, '');
+    const existing = await this.orgRepository.findOrgByName(orgName);
+    if (existing) return existing;
+
+    const org = Org.create({
+      name: orgName,
+      description: `Auto-created org for scope ${scope}`,
+    });
+    await this.orgRepository.saveOrg(org);
+    this.logger.info('[OrgService:ensureOrgForScope] orgId: %s, scope: %s', org.orgId, scope);
+    return org;
+  }
+
   async addMember(orgId: string, userId: string, role: 'owner' | 'member' = 'member'): Promise<OrgMember> {
     const org = await this.orgRepository.findOrgByOrgId(orgId);
     if (!org) {

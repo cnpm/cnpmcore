@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { app } from 'egg-mock/bootstrap';
 import { TestUtil } from '../../../TestUtil';
+import { OrgRepository } from '../../../../app/repository/OrgRepository';
 
 describe('test/port/controller/TeamController/index.test.ts', () => {
   let adminUser: any;
@@ -10,7 +11,7 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
     adminUser = await TestUtil.createAdmin();
     normalUser = await TestUtil.createUser({ name: 'team-ctrl-user' });
 
-    // Create org for team tests
+    // Create org for team tests (non-allowScopes org, requires admin)
     await app.httpRequest()
       .put('/-/org')
       .set('authorization', adminUser.authorization)
@@ -216,6 +217,59 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .delete('/-/org/teamorg/team/developers/package/@cnpm/nonexistent-pkg')
         .set('authorization', adminUser.authorization)
         .expect(404);
+    });
+  });
+
+  // @cnpm is in allowScopes — self-registry users can manage teams directly
+  describe('allowScopes org: self-registry user can manage teams', () => {
+    it('should auto-create org and let normal user create team', async () => {
+      // normalUser is self-registry (isPrivate=true), @cnpm is in allowScopes
+      // No need to manually create org first
+      const res = await app.httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .send({ name: 'my-team', description: 'created by normal user' })
+        .expect(200);
+      assert(res.body.ok);
+
+      // Verify org was auto-created
+      const orgRepository = await app.getEggObject(OrgRepository);
+      const org = await orgRepository.findOrgByName('cnpm');
+      assert(org);
+    });
+
+    it('should let normal user add team member without org membership', async () => {
+      const anotherUser = await TestUtil.createUser({ name: 'team-member-user' });
+
+      // Create team
+      await app.httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .send({ name: 'dev-team' })
+        .expect(200);
+
+      // Add member — no org membership required for allowScopes org
+      const res = await app.httpRequest()
+        .put('/-/org/cnpm/team/dev-team/member')
+        .set('authorization', normalUser.authorization)
+        .send({ user: anotherUser.name })
+        .expect(200);
+      assert(res.body.ok);
+    });
+
+    it('should let normal user list teams for allowScopes org', async () => {
+      await app.httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .send({ name: 'list-test-team' })
+        .expect(200);
+
+      const res = await app.httpRequest()
+        .get('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .expect(200);
+      assert(Array.isArray(res.body));
+      assert(res.body.some((t: any) => t.name === 'list-test-team'));
     });
   });
 });

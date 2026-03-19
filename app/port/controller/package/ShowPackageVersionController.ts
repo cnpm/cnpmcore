@@ -40,6 +40,7 @@ export class ShowPackageVersionController extends AbstractController {
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#full-metadata-format
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     const [ scope, name ] = getScopeAndName(fullname);
+    await this.userRoleManager.checkReadAccess(ctx, scope, name);
     const isSync = isSyncWorkerRequest(ctx);
     const isFullManifests =
       ctx.accepts([ 'json', ABBREVIATED_META_TYPE ]) !== ABBREVIATED_META_TYPE;

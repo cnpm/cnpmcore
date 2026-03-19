@@ -176,6 +176,97 @@ npm access revoke @mycompany:frontend @mycompany/ui-lib \
 | Grant / Revoke package access | Admin or Org Owner |
 | View Team packages | Logged-in user |
 
+## 私有包读取鉴权
+
+cnpmcore 对 `allowScopes`（self scope）中的包支持基于 Team-Package 绑定的读取鉴权：
+
+- **self scope + 无 team 绑定** = 所有人可读（无需登录）
+- **self scope + 有 team 绑定** = 仅 team 成员可读
+
+### 鉴权规则
+
+```
+请求 GET /@scope/name（manifest / version / tarball）
+  ↓
+scope 不在 allowScopes → 公开包，无需鉴权
+  ↓
+scope 在 allowScopes（self scope）：
+  1. 查找包是否有 Team-Package 绑定
+  2. 无绑定 → 放行（所有人可读）
+  3. 有绑定：
+     a. 未登录 → 401
+     b. admin 用户 → 放行
+     c. 用户在某个 Team 中且该 Team 被授权访问此包 → 放行
+     d. 都不满足 → 403
+```
+
+> **默认所有 self scope 包都是公开可读的。** 只有通过 Team-Package 绑定后，才会对该包启用读取鉴权。
+
+### 使用流程
+
+以 scope `@mycompany` 为例：
+
+#### 第一步：配置 allowScopes 并创建 Org
+
+```js
+// config/config.prod.ts
+config.cnpmcore = {
+  allowScopes: ['@mycompany'],
+};
+```
+
+```bash
+# 创建 Org（admin）
+curl -X PUT http://localhost:7001/-/org \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "mycompany", "description": "My Company"}'
+```
+
+#### 第二步：发布包
+
+发布后的包默认**所有人可读**，无需任何额外配置。
+
+```bash
+npm publish --registry=http://localhost:7001
+```
+
+#### 第三步：（可选）对需要保护的包绑定 Team
+
+只有绑定了 Team 的包才会启用读取鉴权：
+
+```bash
+# 授权 developers 团队访问包
+npm access grant read-only @mycompany:developers @mycompany/secret-lib \
+  --registry=http://localhost:7001
+```
+
+绑定后，只有 `developers` 团队的成员才能读取 `@mycompany/secret-lib`。其他未绑定 Team 的 `@mycompany/*` 包仍然所有人可读。
+
+#### 精细控制
+
+创建额外的 Team 可以实现更精细的权限控制：
+
+```bash
+# 创建团队
+npm team create @mycompany:frontend --registry=http://localhost:7001
+
+# 将用户加入团队
+curl -X PUT http://localhost:7001/-/org/mycompany/team/frontend/member \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -d '{"user": "bob"}'
+
+# 授权团队访问特定包
+npm access grant read-only @mycompany:frontend @mycompany/secret-lib \
+  --registry=http://localhost:7001
+```
+
+### CDN 缓存行为
+
+- self scope 包的响应头设为 `Cache-Control: private, no-store`，不会被 CDN 缓存
+- 非 self scope 包保持原有 CDN 缓存策略不变
+
 ## API Endpoints
 
 | Method | Path | Description |

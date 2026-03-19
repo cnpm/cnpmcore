@@ -7,6 +7,7 @@ import {
 import { EggAppConfig, EggLogger } from 'egg';
 import { UnauthorizedError, ForbiddenError } from 'egg-errors';
 import { PackageRepository } from '../repository/PackageRepository';
+import { TeamRepository } from '../repository/TeamRepository';
 import { Package as PackageEntity } from '../core/entity/Package';
 import { User as UserEntity } from '../core/entity/User';
 import { Token as TokenEntity } from '../core/entity/Token';
@@ -32,6 +33,8 @@ export class UserRoleManager {
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
   private readonly tokenService: TokenService;
+  @Inject()
+  private readonly teamRepository: TeamRepository;
 
   private handleAuthorized = false;
   private currentAuthorizedUser: UserEntity;
@@ -185,5 +188,27 @@ export class UserRoleManager {
     const { user, token } = authorizedUserAndToken;
     if (token.isReadonly) return false;
     return user.name in this.config.cnpmcore.admins;
+  }
+
+  // self scope + no team binding = everyone can read, returns false
+  // self scope + team binding = only team members can read, returns true
+  // returns true if package is team-bound (private cache needed)
+  public async checkReadAccess(ctx: EggContext, scope: string, name: string): Promise<boolean> {
+    if (!scope || !this.config.cnpmcore.allowScopes.includes(scope)) return false;
+
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) return false; // let downstream throw 404
+
+    const hasTeamBinding = await this.teamRepository.hasAnyTeamBinding(pkg.packageId);
+    if (!hasTeamBinding) return false; // no team binding, everyone can read
+
+    // team binding exists, require auth
+    const user = await this.requiredAuthorizedUser(ctx, 'read');
+    if (await this.isAdmin(ctx)) return true;
+
+    const hasAccess = await this.teamRepository.hasPackageAccess(pkg.packageId, user.userId);
+    if (hasAccess) return true;
+
+    throw new ForbiddenError(`"${user.name}" is not authorized to access ${pkg.fullname}`);
   }
 }
