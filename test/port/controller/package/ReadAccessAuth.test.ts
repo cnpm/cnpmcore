@@ -63,13 +63,12 @@ describe('test/port/controller/package/ReadAccessAuth.test.ts', () => {
       assert(![ 401, 403 ].includes(res.status), `expected no auth error, got ${res.status}`);
     });
 
-    it('should set private cache-control for private scope', async () => {
+    it('should not set private cache-control when no team binding', async () => {
       const res = await app.httpRequest()
         .get('/@cnpm/public-pkg')
         .set('Accept', 'application/json');
-      if (res.headers['cache-control']) {
-        assert.equal(res.headers['cache-control'], 'private, no-store');
-      }
+      // no team binding = normal CDN behavior, not private
+      assert.notEqual(res.headers['cache-control'], 'private, no-store');
     });
   });
 

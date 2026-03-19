@@ -190,23 +190,24 @@ export class UserRoleManager {
     return user.name in this.config.cnpmcore.admins;
   }
 
-  // self scope + no team binding = everyone can read
-  // self scope + team binding = only team members can read
-  public async checkReadAccess(ctx: EggContext, scope: string, name: string): Promise<void> {
-    if (!scope || !this.config.cnpmcore.allowScopes.includes(scope)) return;
+  // self scope + no team binding = everyone can read, returns false
+  // self scope + team binding = only team members can read, returns true
+  // returns true if package is team-bound (private cache needed)
+  public async checkReadAccess(ctx: EggContext, scope: string, name: string): Promise<boolean> {
+    if (!scope || !this.config.cnpmcore.allowScopes.includes(scope)) return false;
 
     const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return; // let downstream throw 404
+    if (!pkg) return false; // let downstream throw 404
 
     const hasTeamBinding = await this.teamRepository.hasAnyTeamBinding(pkg.packageId);
-    if (!hasTeamBinding) return; // no team binding, everyone can read
+    if (!hasTeamBinding) return false; // no team binding, everyone can read
 
     // team binding exists, require auth
     const user = await this.requiredAuthorizedUser(ctx, 'read');
-    if (await this.isAdmin(ctx)) return;
+    if (await this.isAdmin(ctx)) return true;
 
     const hasAccess = await this.teamRepository.hasPackageAccess(pkg.packageId, user.userId);
-    if (hasAccess) return;
+    if (hasAccess) return true;
 
     throw new ForbiddenError(`"${user.name}" is not authorized to access ${pkg.fullname}`);
   }

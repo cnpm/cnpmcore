@@ -246,8 +246,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(pkg._rev);
       assert(versionOne._id);
       assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-1.0.0.tgz`);
-      // allowScopes packages always get private cache-control
-      assert.equal(res.headers['cache-control'], 'private, no-store');
+      assert(!res.headers['cache-control']);
       assert(res.headers.vary === 'Origin');
     });
 
@@ -268,8 +267,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(pkg._rev);
       assert(versionOne._id);
       assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-1.0.0.tgz`);
-      // allowScopes packages always get private cache-control, even with CDN enabled
-      assert.equal(res.headers['cache-control'], 'private, no-store');
+      assert.equal(res.headers['cache-control'], 'public, max-age=300');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
     });
 
     it('should show one package with abbreviated manifests', async () => {
@@ -357,7 +356,7 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(!pkg._id);
       assert(!versionOne._id);
       assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
-      assert.equal(res.headers['cache-control'], 'private, no-store');
+      assert(!res.headers['cache-control']);
       assert(res.headers.vary === 'Origin');
     });
 
@@ -381,7 +380,8 @@ describe('test/port/controller/package/ShowPackageController.test.ts', () => {
       assert(!pkg._id);
       assert(!versionOne._id);
       assert(versionOne.dist.tarball === `https://registry.example.com/${scopedName}/-/${name}-2.0.0.tgz`);
-      assert.equal(res.headers['cache-control'], 'private, no-store');
+      assert.equal(res.headers['cache-control'], 'public, max-age=300');
+      assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
     });
 
     it('should 404 when package not exists on abbreviated manifest', async () => {
