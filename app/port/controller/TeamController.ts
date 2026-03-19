@@ -8,7 +8,7 @@ import {
   HTTPParam,
   Inject,
 } from '@eggjs/tegg';
-import { NotFoundError, ForbiddenError, UnprocessableEntityError } from 'egg-errors';
+import { NotFoundError, UnprocessableEntityError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { OrgService } from '../../core/service/OrgService';
 import { TeamService } from '../../core/service/TeamService';
@@ -42,10 +42,7 @@ export class TeamController extends AbstractController {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
 
     if (this.isAllowScopeOrg(orgName)) {
-      // allowScopes org: any self-registry user can operate, auto-ensure org
-      if (!authorizedUser.isPrivate) {
-        throw new ForbiddenError('Only self-registry users can manage allowScopes org');
-      }
+      // allowScopes org: any authenticated user can operate, auto-ensure org
       const org = await this.orgService.ensureOrgForScope(`@${orgName}`);
       return { org, authorizedUser };
     }
