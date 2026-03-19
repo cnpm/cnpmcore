@@ -96,6 +96,7 @@ export class OrgRepository extends AbstractRepository {
     });
   }
 
+
   async removeOrgCascade(orgId: string): Promise<void> {
     const teams = await this.Team.find({ orgId });
     const teamIds = teams.map(t => t.teamId);

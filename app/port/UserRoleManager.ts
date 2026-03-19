@@ -8,6 +8,7 @@ import type { User as UserEntity } from '../core/entity/User.ts';
 import type { RegistryManagerService } from '../core/service/RegistryManagerService.ts';
 import type { TokenService } from '../core/service/TokenService.ts';
 import type { PackageRepository } from '../repository/PackageRepository.ts';
+import type { TeamRepository } from '../repository/TeamRepository.ts';
 
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
@@ -27,6 +28,8 @@ export class UserRoleManager {
   private readonly registryManagerService: RegistryManagerService;
   @Inject()
   private readonly tokenService: TokenService;
+  @Inject()
+  private readonly teamRepository: TeamRepository;
 
   private handleAuthorized = false;
   private currentAuthorizedUser: UserEntity;
@@ -185,5 +188,27 @@ export class UserRoleManager {
     const { user, token } = authorizedUserAndToken;
     if (token.isReadonly) return false;
     return user.name in this.config.cnpmcore.admins;
+  }
+
+  // self scope + no team binding = everyone can read, returns false
+  // self scope + team binding = only team members can read, returns true
+  // returns true if package is team-bound (private cache needed)
+  public async checkReadAccess(ctx: Context, scope: string, name: string): Promise<boolean> {
+    if (!scope || !this.config.cnpmcore.allowScopes.includes(scope)) return false;
+
+    const pkg = await this.packageRepository.findPackage(scope, name);
+    if (!pkg) return false; // let downstream throw 404
+
+    const hasTeamBinding = await this.teamRepository.hasAnyTeamBinding(pkg.packageId);
+    if (!hasTeamBinding) return false; // no team binding, everyone can read
+
+    // team binding exists, require auth
+    const user = await this.requiredAuthorizedUser(ctx, 'read');
+    if (await this.isAdmin(ctx)) return true;
+
+    const hasAccess = await this.teamRepository.hasPackageAccess(pkg.packageId, user.userId);
+    if (hasAccess) return true;
+
+    throw new ForbiddenError(`"${user.name}" is not authorized to access ${pkg.fullname}`);
   }
 }

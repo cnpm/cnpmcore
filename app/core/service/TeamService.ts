@@ -22,6 +22,7 @@ export class TeamService extends AbstractService {
   @Inject()
   private readonly teamRepository: TeamRepository;
 
+
   async createTeam(orgId: string, name: string, description?: string): Promise<Team> {
     const existing = await this.teamRepository.findTeam(orgId, name);
     if (existing) {
@@ -57,10 +58,14 @@ export class TeamService extends AbstractService {
       throw new NotFoundError('Team not found');
     }
 
-    // Must be an org member
-    const orgMember = await this.orgRepository.findMember(team.orgId, userId);
-    if (!orgMember) {
-      throw new ForbiddenError('User must be an org member before joining a team');
+    // For allowScopes orgs, skip org member check (self-registry users have implicit access)
+    // For other orgs, must be an org member first
+    const org = await this.orgRepository.findOrgByOrgId(team.orgId);
+    if (org && !this.config.cnpmcore.allowScopes.includes(`@${org.name}`)) {
+      const orgMember = await this.orgRepository.findMember(team.orgId, userId);
+      if (!orgMember) {
+        throw new ForbiddenError('User must be an org member before joining a team');
+      }
     }
 
     const existing = await this.teamRepository.findMember(teamId, userId);
