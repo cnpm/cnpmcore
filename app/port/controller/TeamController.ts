@@ -68,7 +68,7 @@ export class TeamController extends AbstractController {
 
   // --- Team CRUD ---
 
-  // PUT /-/org/:orgName/team — create team
+  // npm team create @scope:team → PUT /-/org/:orgName/team
   @HTTPMethod({
     path: '/-/org/:orgName/team',
     method: HTTPMethodEnum.PUT,
@@ -84,7 +84,7 @@ export class TeamController extends AbstractController {
     return { ok: true };
   }
 
-  // GET /-/org/:orgName/team — list teams
+  // npm team ls @scope → GET /-/org/:orgName/team
   @HTTPMethod({
     path: '/-/org/:orgName/team',
     method: HTTPMethodEnum.GET,
@@ -99,9 +99,9 @@ export class TeamController extends AbstractController {
     return teams.map(t => ({ name: t.name, description: t.description }));
   }
 
-  // GET /-/org/:orgName/team/:teamName
+  // GET /-/team/:orgName/:teamName (npm compatible show)
   @HTTPMethod({
-    path: '/-/org/:orgName/team/:teamName',
+    path: '/-/team/:orgName/:teamName',
     method: HTTPMethodEnum.GET,
   })
   async showTeam(@Context() ctx: EggContext, @HTTPParam() orgName: string,
@@ -122,9 +122,9 @@ export class TeamController extends AbstractController {
     };
   }
 
-  // DELETE /-/org/:orgName/team/:teamName
+  // npm team destroy @scope:team → DELETE /-/team/:orgName/:teamName
   @HTTPMethod({
-    path: '/-/org/:orgName/team/:teamName',
+    path: '/-/team/:orgName/:teamName',
     method: HTTPMethodEnum.DELETE,
   })
   async removeTeam(@Context() ctx: EggContext, @HTTPParam() orgName: string,
@@ -134,11 +134,11 @@ export class TeamController extends AbstractController {
     return { ok: true };
   }
 
-  // --- Team Members ---
+  // --- Team Members (npm uses "user") ---
 
-  // GET /-/org/:orgName/team/:teamName/member
+  // npm team ls @scope:team → GET /-/team/:orgName/:teamName/user
   @HTTPMethod({
-    path: '/-/org/:orgName/team/:teamName/member',
+    path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.GET,
   })
   async listTeamMembers(@Context() ctx: EggContext, @HTTPParam() orgName: string,
@@ -157,9 +157,9 @@ export class TeamController extends AbstractController {
     return users.map(u => u.displayName);
   }
 
-  // PUT /-/org/:orgName/team/:teamName/member
+  // npm team add <user> @scope:team → PUT /-/team/:orgName/:teamName/user
   @HTTPMethod({
-    path: '/-/org/:orgName/team/:teamName/member',
+    path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.PUT,
   })
   async addTeamMember(@Context() ctx: EggContext, @HTTPParam() orgName: string,
@@ -176,17 +176,20 @@ export class TeamController extends AbstractController {
     return { ok: true };
   }
 
-  // DELETE /-/org/:orgName/team/:teamName/member/:username
+  // npm team rm <user> @scope:team → DELETE /-/team/:orgName/:teamName/user body:{user}
   @HTTPMethod({
-    path: '/-/org/:orgName/team/:teamName/member/:username',
+    path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.DELETE,
   })
   async removeTeamMember(@Context() ctx: EggContext, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string, @HTTPParam() username: string) {
+    @HTTPParam() teamName: string, @HTTPBody() body: { user: string }) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
-    const targetUser = await this.userRepository.findUserByName(username);
+    if (!body.user) {
+      throw new UnprocessableEntityError('user is required');
+    }
+    const targetUser = await this.userRepository.findUserByName(body.user);
     if (!targetUser) {
-      throw new NotFoundError(`User "${username}" not found`);
+      throw new NotFoundError(`User "${body.user}" not found`);
     }
     await this.teamService.removeMember(team.teamId, targetUser.userId);
     return { ok: true };
@@ -194,9 +197,9 @@ export class TeamController extends AbstractController {
 
   // --- Team Packages ---
 
-  // GET /-/org/:orgName/team/:teamName/package
+  // npm access ls-packages @scope:team → GET /-/team/:orgName/:teamName/package
   @HTTPMethod({
-    path: '/-/org/:orgName/team/:teamName/package',
+    path: '/-/team/:orgName/:teamName/package',
     method: HTTPMethodEnum.GET,
   })
   async listTeamPackages(@Context() ctx: EggContext, @HTTPParam() orgName: string,
@@ -219,9 +222,9 @@ export class TeamController extends AbstractController {
     return result;
   }
 
-  // PUT /-/org/:orgName/team/:teamName/package — grant access
+  // npm access grant read-only @scope:team <pkg> → PUT /-/team/:orgName/:teamName/package
   @HTTPMethod({
-    path: '/-/org/:orgName/team/:teamName/package',
+    path: '/-/team/:orgName/:teamName/package',
     method: HTTPMethodEnum.PUT,
   })
   async grantPackageAccess(@Context() ctx: EggContext, @HTTPParam() orgName: string,
@@ -239,18 +242,21 @@ export class TeamController extends AbstractController {
     return { ok: true };
   }
 
-  // DELETE /-/org/:orgName/team/:teamName/package/@:scope/:name — revoke access
+  // npm access revoke @scope:team <pkg> → DELETE /-/team/:orgName/:teamName/package body:{package}
   @HTTPMethod({
-    path: '/-/org/:orgName/team/:teamName/package/@:scope/:name',
+    path: '/-/team/:orgName/:teamName/package',
     method: HTTPMethodEnum.DELETE,
   })
   async revokePackageAccess(@Context() ctx: EggContext, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string, @HTTPParam() scope: string, @HTTPParam() name: string) {
+    @HTTPParam() teamName: string, @HTTPBody() body: { package: string }) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
-    const fullname = `@${scope}/${name}`;
-    const pkg = await this.packageRepository.findPackage(`@${scope}`, name);
+    if (!body.package) {
+      throw new UnprocessableEntityError('package is required');
+    }
+    const [ scope, name ] = getScopeAndName(body.package);
+    const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) {
-      throw new NotFoundError(`Package "${fullname}" not found`);
+      throw new NotFoundError(`Package "${body.package}" not found`);
     }
     await this.teamService.revokePackageAccess(team.teamId, pkg.packageId);
     return { ok: true };
