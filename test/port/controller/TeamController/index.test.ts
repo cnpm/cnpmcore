@@ -73,14 +73,15 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', normalUser.authorization)
         .expect(200);
       assert(Array.isArray(res.body));
-      assert(res.body.some((t: any) => t.name === 'developers'));
+      assert(res.body.includes('teamorg:developers'));
     });
   });
 
-  describe('[GET /-/org/:orgName/team/:teamName] showTeam()', () => {
+  // npm compatible routes: /-/team/:scope/:team
+  describe('[GET /-/team/:orgName/:teamName] showTeam()', () => {
     it('should 200', async () => {
       const res = await app.httpRequest()
-        .get('/-/org/teamorg/team/developers')
+        .get('/-/team/teamorg/developers')
         .set('authorization', normalUser.authorization)
         .expect(200);
       assert.equal(res.body.name, 'developers');
@@ -88,13 +89,13 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
 
     it('should 404 when team not found', async () => {
       await app.httpRequest()
-        .get('/-/org/teamorg/team/nonexistent')
+        .get('/-/team/teamorg/nonexistent')
         .set('authorization', normalUser.authorization)
         .expect(404);
     });
   });
 
-  describe('[DELETE /-/org/:orgName/team/:teamName] removeTeam()', () => {
+  describe('[DELETE /-/team/:orgName/:teamName] removeTeam()', () => {
     it('should 200 for custom team', async () => {
       await app.httpRequest()
         .put('/-/org/teamorg/team')
@@ -103,7 +104,7 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .expect(200);
 
       const res = await app.httpRequest()
-        .delete('/-/org/teamorg/team/to-delete')
+        .delete('/-/team/teamorg/to-delete')
         .set('authorization', adminUser.authorization)
         .expect(200);
       assert(res.body.ok);
@@ -111,13 +112,13 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
 
     it('should 403 when deleting developers team', async () => {
       await app.httpRequest()
-        .delete('/-/org/teamorg/team/developers')
+        .delete('/-/team/teamorg/developers')
         .set('authorization', adminUser.authorization)
         .expect(403);
     });
   });
 
-  describe('team member management', () => {
+  describe('team member management (/-/team/:scope/:team/user)', () => {
     beforeEach(async () => {
       // Create a custom team
       await app.httpRequest()
@@ -135,36 +136,38 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
     });
 
     it('should add and list team members', async () => {
-      // Add to team
+      // Add to team via npm compatible route
       await app.httpRequest()
-        .put('/-/org/teamorg/team/coreteam/member')
+        .put('/-/team/teamorg/coreteam/user')
         .set('authorization', adminUser.authorization)
         .send({ user: normalUser.name })
         .expect(200);
 
-      // List members
+      // List members via npm compatible route
       const res = await app.httpRequest()
-        .get('/-/org/teamorg/team/coreteam/member')
+        .get('/-/team/teamorg/coreteam/user')
         .set('authorization', normalUser.authorization)
         .expect(200);
       assert(Array.isArray(res.body));
       assert(res.body.includes(normalUser.displayName));
     });
 
-    it('should remove team member', async () => {
+    it('should remove team member via body', async () => {
       await app.httpRequest()
-        .put('/-/org/teamorg/team/coreteam/member')
+        .put('/-/team/teamorg/coreteam/user')
         .set('authorization', adminUser.authorization)
         .send({ user: normalUser.name })
         .expect(200);
 
+      // npm rm sends DELETE with body {user}
       await app.httpRequest()
-        .delete(`/-/org/teamorg/team/coreteam/member/${normalUser.name}`)
+        .delete('/-/team/teamorg/coreteam/user')
         .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
         .expect(200);
 
       const res = await app.httpRequest()
-        .get('/-/org/teamorg/team/coreteam/member')
+        .get('/-/team/teamorg/coreteam/user')
         .set('authorization', normalUser.authorization)
         .expect(200);
       assert(!res.body.includes(normalUser.displayName));
@@ -172,7 +175,7 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
 
     it('should 422 when user is missing', async () => {
       await app.httpRequest()
-        .put('/-/org/teamorg/team/coreteam/member')
+        .put('/-/team/teamorg/coreteam/user')
         .set('authorization', adminUser.authorization)
         .send({})
         .expect(422);
@@ -180,17 +183,17 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
 
     it('should 404 when target user not found', async () => {
       await app.httpRequest()
-        .put('/-/org/teamorg/team/coreteam/member')
+        .put('/-/team/teamorg/coreteam/user')
         .set('authorization', adminUser.authorization)
         .send({ user: 'ghost-user' })
         .expect(404);
     });
   });
 
-  describe('team package management', () => {
+  describe('team package management (/-/team/:scope/:team/package)', () => {
     it('should list empty packages initially', async () => {
       const res = await app.httpRequest()
-        .get('/-/org/teamorg/team/developers/package')
+        .get('/-/team/teamorg/developers/package')
         .set('authorization', normalUser.authorization)
         .expect(200);
       assert.deepEqual(res.body, {});
@@ -198,7 +201,7 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
 
     it('should 422 when package name is missing for grant', async () => {
       await app.httpRequest()
-        .put('/-/org/teamorg/team/developers/package')
+        .put('/-/team/teamorg/developers/package')
         .set('authorization', adminUser.authorization)
         .send({})
         .expect(422);
@@ -206,7 +209,7 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
 
     it('should 404 when package not found for grant', async () => {
       await app.httpRequest()
-        .put('/-/org/teamorg/team/developers/package')
+        .put('/-/team/teamorg/developers/package')
         .set('authorization', adminUser.authorization)
         .send({ package: '@cnpm/nonexistent-pkg' })
         .expect(404);
@@ -214,17 +217,16 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
 
     it('should 404 when package not found for revoke', async () => {
       await app.httpRequest()
-        .delete('/-/org/teamorg/team/developers/package/@cnpm/nonexistent-pkg')
+        .delete('/-/team/teamorg/developers/package')
         .set('authorization', adminUser.authorization)
+        .send({ package: '@cnpm/nonexistent-pkg' })
         .expect(404);
     });
   });
 
-  // @cnpm is in allowScopes — self-registry users can manage teams directly
-  describe('allowScopes org: self-registry user can manage teams', () => {
+  // @cnpm is in allowScopes — any authenticated user can manage teams
+  describe('allowScopes org: authenticated user can manage teams', () => {
     it('should auto-create org and let normal user create team', async () => {
-      // normalUser is self-registry (isPrivate=true), @cnpm is in allowScopes
-      // No need to manually create org first
       const res = await app.httpRequest()
         .put('/-/org/cnpm/team')
         .set('authorization', normalUser.authorization)
@@ -248,9 +250,9 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .send({ name: 'dev-team' })
         .expect(200);
 
-      // Add member — no org membership required for allowScopes org
+      // Add member via npm compatible route
       const res = await app.httpRequest()
-        .put('/-/org/cnpm/team/dev-team/member')
+        .put('/-/team/cnpm/dev-team/user')
         .set('authorization', normalUser.authorization)
         .send({ user: anotherUser.name })
         .expect(200);
@@ -269,7 +271,7 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', normalUser.authorization)
         .expect(200);
       assert(Array.isArray(res.body));
-      assert(res.body.some((t: any) => t.name === 'list-test-team'));
+      assert(res.body.includes('cnpm:list-test-team'));
     });
   });
 });
