@@ -49,7 +49,8 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
         .get(`/${pkg.name}`);
       assert(res.status === 451);
       assert(!res.headers.etag);
-      assert(!res.headers['cache-control']);
+      // allowScopes packages get private cache-control even when blocked
+      assert.equal(res.headers['cache-control'], 'private, no-store');
       assert(res.body.error);
       assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule was blocked, reason: '));
       assert(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
@@ -63,13 +64,13 @@ describe('test/port/controller/PackageBlockController/blockPackage.test.ts', () 
       assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@latest was blocked, reason: '));
       assert(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
 
-      // check cdn cache
+      // check cdn cache — allowScopes packages still get private cache-control
       mock(app.config.cnpmcore, 'enableCDN', true);
       res = await app.httpRequest()
         .get(`/${pkg.name}`);
       assert(res.status === 451);
       assert(!res.headers.etag);
-      assert.equal(res.headers['cache-control'], 'public, max-age=300');
+      assert.equal(res.headers['cache-control'], 'private, no-store');
       assert(res.body.error);
       assert(res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule was blocked, reason: '));
       assert(res.body.error.includes('only for tests again (operator: cnpmcore_admin/'));
