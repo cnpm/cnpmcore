@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.80.0 (2026-03-19)
+
+* feat: Org/Team permission model with private package read auth (#1013) ([e0c7d08](https://github.com/cnpm/cnpmcore/commit/e0c7d08)), closes [#1013](https://github.com/cnpm/cnpmcore/issues/1013)
+
 ## 3.79.0 (2026-03-17)
 
 * feat: add OrgController, TeamController and API docs (#1008) ([3f5548e](https://github.com/cnpm/cnpmcore/commit/3f5548e)), closes [#1008](https://github.com/cnpm/cnpmcore/issues/1008) [#1002](https://github.com/cnpm/cnpmcore/issues/1002) [#1005](https://github.com/cnpm/cnpmcore/issues/1005) [#1006](https://github.com/cnpm/cnpmcore/issues/1006) [#1002](https://github.com/cnpm/cnpmcore/issues/1002)
