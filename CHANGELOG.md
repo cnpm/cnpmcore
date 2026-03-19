@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>3.80.1 (2026-03-19)</small>
+
+* fix: npm CLI compatible routes for team management (#1014) ([0fed89d](https://github.com/cnpm/cnpmcore/commit/0fed89d)), closes [#1014](https://github.com/cnpm/cnpmcore/issues/1014) [#1002](https://github.com/cnpm/cnpmcore/issues/1002)
+
 ## 3.80.0 (2026-03-19)
 
 * feat: Org/Team permission model with private package read auth (#1013) ([e0c7d08](https://github.com/cnpm/cnpmcore/commit/e0c7d08)), closes [#1013](https://github.com/cnpm/cnpmcore/issues/1013)
