@@ -96,8 +96,8 @@ export class TeamController extends AbstractController {
       throw new NotFoundError(`Org "${orgName}" not found`);
     }
     const teams = await this.teamRepository.listTeamsByOrgId(org.orgId);
-    // npm CLI lsTeams expects ["@scope:teamname", ...] format
-    return teams.map(t => `@${orgName}:${t.name}`);
+    // npm CLI adds @ prefix itself, return "scope:teamname" format
+    return teams.map(t => `${orgName}:${t.name}`);
   }
 
   // GET /-/team/:orgName/:teamName (npm compatible show)

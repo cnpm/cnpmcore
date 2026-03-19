@@ -73,7 +73,7 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', normalUser.authorization)
         .expect(200);
       assert(Array.isArray(res.body));
-      assert(res.body.includes('@teamorg:developers'));
+      assert(res.body.includes('teamorg:developers'));
     });
   });
 
@@ -271,7 +271,7 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', normalUser.authorization)
         .expect(200);
       assert(Array.isArray(res.body));
-      assert(res.body.includes('@cnpm:list-test-team'));
+      assert(res.body.includes('cnpm:list-test-team'));
     });
   });
 });
