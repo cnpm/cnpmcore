@@ -1,11 +1,13 @@
-import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
-import { OrgService } from '../../../app/core/service/OrgService';
-import { TeamService } from '../../../app/core/service/TeamService';
-import { TeamRepository } from '../../../app/repository/TeamRepository';
-import { OrgRepository } from '../../../app/repository/OrgRepository';
-import { UserRepository } from '../../../app/repository/UserRepository';
-import { TestUtil } from '../../TestUtil';
+import assert from 'node:assert/strict';
+
+import { app } from '@eggjs/mock/bootstrap';
+
+import { OrgService } from '../../../app/core/service/OrgService.ts';
+import { TeamService } from '../../../app/core/service/TeamService.ts';
+import { OrgRepository } from '../../../app/repository/OrgRepository.ts';
+import { TeamRepository } from '../../../app/repository/TeamRepository.ts';
+import { UserRepository } from '../../../app/repository/UserRepository.ts';
+import { TestUtil } from '../../TestUtil.ts';
 
 describe('test/core/service/OrgService.test.ts', () => {
   let orgService: OrgService;

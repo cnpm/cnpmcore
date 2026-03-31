@@ -1,11 +1,15 @@
+import { once } from 'node:events';
+import type { AddressInfo, Server } from 'node:net';
 import path from 'node:path';
-import { app } from 'egg-mock/bootstrap';
+
+import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
-import { TestUtil } from '../../../test/TestUtil';
-import { npmLogin } from '../CliUtil';
+
+import { TestUtil } from '../../../test/TestUtil.ts';
+import { npmLogin } from '../CliUtil.ts';
 
 describe('test/cli/npm/team.test.ts', () => {
-  let server;
+  let server: Server;
   let registry: string;
   let fooPkgDir: string;
   let demoDir: string;
@@ -18,19 +22,15 @@ describe('test/cli/npm/team.test.ts', () => {
     demoDir = TestUtil.getFixtures('demo');
     userconfig = path.join(fooPkgDir, '.npmrc');
     await TestUtil.rm(userconfig);
-    await new Promise(resolve => {
-      server = app.listen(0, () => {
-        registry = `http://localhost:${server.address().port}`;
-        console.log(`registry ${registry} ready`);
-        resolve(void 0);
-      });
-    });
+    server = app.listen(0);
+    await once(server, 'listening');
+    registry = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   });
 
   after(async () => {
     await TestUtil.rm(userconfig);
     await TestUtil.rm(cacheDir);
-    server && server.close();
+    server?.close();
   });
 
   beforeEach(async () => {

@@ -1,4 +1,4 @@
-import { Attribute, Model } from '@eggjs/tegg/orm';
+import { Attribute, Model } from 'egg/orm';
 import { DataTypes, Bone } from 'leoric';
 
 @Model()

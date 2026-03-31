@@ -1,16 +1,13 @@
-import {
-  AccessLevel,
-  SingletonProto,
-  Inject,
-} from '@eggjs/tegg';
-import { ForbiddenError, NotFoundError } from 'egg-errors';
-import { AbstractService } from '../../common/AbstractService';
-import { DEVELOPERS_TEAM } from '../../common/constants';
-import { OrgRepository } from '../../repository/OrgRepository';
-import { TeamRepository } from '../../repository/TeamRepository';
-import { Team } from '../entity/Team';
-import { TeamMember } from '../entity/TeamMember';
-import { TeamPackage } from '../entity/TeamPackage';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
+import { ForbiddenError, NotFoundError } from 'egg/errors';
+
+import { AbstractService } from '../../common/AbstractService.ts';
+import { DEVELOPERS_TEAM } from '../../common/constants.ts';
+import { Team } from '../entity/Team.ts';
+import { TeamMember } from '../entity/TeamMember.ts';
+import { TeamPackage } from '../entity/TeamPackage.ts';
+import type { OrgRepository } from '../../repository/OrgRepository.ts';
+import type { TeamRepository } from '../../repository/TeamRepository.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

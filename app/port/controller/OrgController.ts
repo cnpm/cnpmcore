@@ -1,19 +1,20 @@
 import {
   Context,
-  EggContext,
   HTTPBody,
+  HTTPContext,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
   Middleware,
-} from '@eggjs/tegg';
-import { NotFoundError, UnprocessableEntityError } from 'egg-errors';
-import { AbstractController } from './AbstractController';
-import { AdminAccess } from '../middleware/AdminAccess';
-import { OrgService } from '../../core/service/OrgService';
-import { TeamRepository } from '../../repository/TeamRepository';
+} from 'egg';
+import { NotFoundError, UnprocessableEntityError } from 'egg/errors';
+
+import type { OrgService } from '../../core/service/OrgService.ts';
+import type { TeamRepository } from '../../repository/TeamRepository.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
+import { AbstractController } from './AbstractController.ts';
 
 @HTTPController()
 export class OrgController extends AbstractController {
@@ -29,7 +30,7 @@ export class OrgController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   @Middleware(AdminAccess)
-  async createOrg(@Context() ctx: EggContext, @HTTPBody() body: { name: string; description?: string }) {
+  async createOrg(@HTTPContext() ctx: Context, @HTTPBody() body: { name: string; description?: string }) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     if (!body.name) {
       throw new UnprocessableEntityError('name is required');
@@ -47,7 +48,7 @@ export class OrgController extends AbstractController {
     path: '/-/org/:orgName',
     method: HTTPMethodEnum.GET,
   })
-  async showOrg(@Context() ctx: EggContext, @HTTPParam() orgName: string) {
+  async showOrg(@HTTPContext() ctx: Context, @HTTPParam() orgName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.orgService.findOrgByName(orgName);
     if (!org) {
@@ -66,7 +67,7 @@ export class OrgController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   @Middleware(AdminAccess)
-  async removeOrg(@Context() ctx: EggContext, @HTTPParam() orgName: string) {
+  async removeOrg(@HTTPContext() ctx: Context, @HTTPParam() orgName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     const org = await this.orgService.findOrgByName(orgName);
     if (!org) {
@@ -81,7 +82,7 @@ export class OrgController extends AbstractController {
     path: '/-/org/:orgName/member',
     method: HTTPMethodEnum.GET,
   })
-  async listMembers(@Context() ctx: EggContext, @HTTPParam() orgName: string) {
+  async listMembers(@HTTPContext() ctx: Context, @HTTPParam() orgName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.orgService.findOrgByName(orgName);
     if (!org) {
@@ -105,7 +106,7 @@ export class OrgController extends AbstractController {
     path: '/-/org/:orgName/member',
     method: HTTPMethodEnum.PUT,
   })
-  async addMember(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async addMember(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPBody() body: { user: string; role?: 'owner' | 'member' }) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     const org = await this.orgService.findOrgByName(orgName);
@@ -131,7 +132,7 @@ export class OrgController extends AbstractController {
     path: '/-/org/:orgName/member/:username',
     method: HTTPMethodEnum.DELETE,
   })
-  async removeMember(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async removeMember(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPParam() username: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     const org = await this.orgService.findOrgByName(orgName);
@@ -154,7 +155,7 @@ export class OrgController extends AbstractController {
     path: '/-/org/:orgName/member/:username/team',
     method: HTTPMethodEnum.GET,
   })
-  async listUserTeams(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async listUserTeams(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPParam() username: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.orgService.findOrgByName(orgName);

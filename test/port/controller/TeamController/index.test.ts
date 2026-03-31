@@ -1,7 +1,9 @@
-import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../TestUtil';
-import { OrgRepository } from '../../../../app/repository/OrgRepository';
+import assert from 'node:assert/strict';
+
+import { app } from '@eggjs/mock/bootstrap';
+
+import { OrgRepository } from '../../../../app/repository/OrgRepository.ts';
+import { TestUtil } from '../../../TestUtil.ts';
 
 describe('test/port/controller/TeamController/index.test.ts', () => {
   let adminUser: any;

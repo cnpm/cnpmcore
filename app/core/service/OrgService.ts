@@ -1,17 +1,14 @@
-import {
-  AccessLevel,
-  SingletonProto,
-  Inject,
-} from '@eggjs/tegg';
-import { ForbiddenError, NotFoundError } from 'egg-errors';
-import { AbstractService } from '../../common/AbstractService';
-import { DEVELOPERS_TEAM } from '../../common/constants';
-import { OrgRepository } from '../../repository/OrgRepository';
-import { TeamRepository } from '../../repository/TeamRepository';
-import { Org } from '../entity/Org';
-import { OrgMember } from '../entity/OrgMember';
-import { Team } from '../entity/Team';
-import { TeamMember } from '../entity/TeamMember';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
+import { ForbiddenError, NotFoundError } from 'egg/errors';
+
+import { AbstractService } from '../../common/AbstractService.ts';
+import { DEVELOPERS_TEAM } from '../../common/constants.ts';
+import { Org } from '../entity/Org.ts';
+import { OrgMember } from '../entity/OrgMember.ts';
+import { Team } from '../entity/Team.ts';
+import { TeamMember } from '../entity/TeamMember.ts';
+import type { OrgRepository } from '../../repository/OrgRepository.ts';
+import type { TeamRepository } from '../../repository/TeamRepository.ts';
 
 export interface CreateOrgCmd {
   name: string;

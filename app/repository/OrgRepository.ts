@@ -1,15 +1,16 @@
-import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { ModelConvertor } from './util/ModelConvertor';
-import { AbstractRepository } from './AbstractRepository';
-import { Org as OrgModel } from './model/Org';
-import { OrgMember as OrgMemberModel } from './model/OrgMember';
-import { Team as TeamModel } from './model/Team';
-import { TeamMember as TeamMemberModel } from './model/TeamMember';
-import { TeamPackage as TeamPackageModel } from './model/TeamPackage';
-import { Org } from '../core/entity/Org';
-import { OrgMember } from '../core/entity/OrgMember';
-import { Team } from '../core/entity/Team';
-import { TeamMember } from '../core/entity/TeamMember';
+import { AccessLevel, Inject, SingletonProto } from 'egg';
+
+import { Org } from '../core/entity/Org.ts';
+import { OrgMember } from '../core/entity/OrgMember.ts';
+import { Team } from '../core/entity/Team.ts';
+import { TeamMember } from '../core/entity/TeamMember.ts';
+import { AbstractRepository } from './AbstractRepository.ts';
+import { Org as OrgModel } from './model/Org.ts';
+import { OrgMember as OrgMemberModel } from './model/OrgMember.ts';
+import { Team as TeamModel } from './model/Team.ts';
+import { TeamMember as TeamMemberModel } from './model/TeamMember.ts';
+import { TeamPackage as TeamPackageModel } from './model/TeamPackage.ts';
+import { ModelConvertor } from './util/ModelConvertor.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

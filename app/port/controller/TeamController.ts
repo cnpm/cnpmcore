@@ -1,19 +1,20 @@
 import {
   Context,
-  EggContext,
   HTTPBody,
+  HTTPContext,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-} from '@eggjs/tegg';
-import { NotFoundError, UnprocessableEntityError } from 'egg-errors';
-import { AbstractController } from './AbstractController';
-import { OrgService } from '../../core/service/OrgService';
-import { TeamService } from '../../core/service/TeamService';
-import { TeamRepository } from '../../repository/TeamRepository';
-import { getScopeAndName } from '../../common/PackageUtil';
+} from 'egg';
+import { NotFoundError, UnprocessableEntityError } from 'egg/errors';
+
+import { getScopeAndName } from '../../common/PackageUtil.ts';
+import type { OrgService } from '../../core/service/OrgService.ts';
+import type { TeamService } from '../../core/service/TeamService.ts';
+import type { TeamRepository } from '../../repository/TeamRepository.ts';
+import { AbstractController } from './AbstractController.ts';
 
 @HTTPController()
 export class TeamController extends AbstractController {
@@ -38,7 +39,7 @@ export class TeamController extends AbstractController {
     return await this.orgService.findOrgByName(orgName);
   }
 
-  private async requireOrgWriteAccess(ctx: EggContext, orgName: string) {
+  private async requireOrgWriteAccess(ctx: Context, orgName: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
 
     if (this.isAllowScopeOrg(orgName)) {
@@ -57,7 +58,7 @@ export class TeamController extends AbstractController {
     return { org, authorizedUser };
   }
 
-  private async requireTeamWriteAccess(ctx: EggContext, orgName: string, teamName: string) {
+  private async requireTeamWriteAccess(ctx: Context, orgName: string, teamName: string) {
     const { org, authorizedUser } = await this.requireOrgWriteAccess(ctx, orgName);
     const team = await this.teamRepository.findTeam(org.orgId, teamName);
     if (!team) {
@@ -73,7 +74,7 @@ export class TeamController extends AbstractController {
     path: '/-/org/:orgName/team',
     method: HTTPMethodEnum.PUT,
   })
-  async createTeam(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async createTeam(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPBody() body: { name: string; description?: string }) {
     const { org } = await this.requireOrgWriteAccess(ctx, orgName);
 
@@ -89,7 +90,7 @@ export class TeamController extends AbstractController {
     path: '/-/org/:orgName/team',
     method: HTTPMethodEnum.GET,
   })
-  async listTeams(@Context() ctx: EggContext, @HTTPParam() orgName: string) {
+  async listTeams(@HTTPContext() ctx: Context, @HTTPParam() orgName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.findOrg(orgName);
     if (!org) {
@@ -105,7 +106,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName',
     method: HTTPMethodEnum.GET,
   })
-  async showTeam(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async showTeam(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.findOrg(orgName);
@@ -128,7 +129,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName',
     method: HTTPMethodEnum.DELETE,
   })
-  async removeTeam(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async removeTeam(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     await this.teamService.removeTeam(team.teamId);
@@ -142,7 +143,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.GET,
   })
-  async listTeamMembers(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async listTeamMembers(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.findOrg(orgName);
@@ -163,7 +164,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.PUT,
   })
-  async addTeamMember(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async addTeamMember(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string, @HTTPBody() body: { user: string }) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.user) {
@@ -182,7 +183,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.DELETE,
   })
-  async removeTeamMember(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async removeTeamMember(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string, @HTTPBody() body: { user: string }) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.user) {
@@ -203,7 +204,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/package',
     method: HTTPMethodEnum.GET,
   })
-  async listTeamPackages(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async listTeamPackages(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.findOrg(orgName);
@@ -228,7 +229,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/package',
     method: HTTPMethodEnum.PUT,
   })
-  async grantPackageAccess(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async grantPackageAccess(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string, @HTTPBody() body: { package: string }) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.package) {
@@ -248,7 +249,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/package',
     method: HTTPMethodEnum.DELETE,
   })
-  async revokePackageAccess(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+  async revokePackageAccess(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string, @HTTPBody() body: { package: string }) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.package) {

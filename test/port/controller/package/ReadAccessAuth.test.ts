@@ -1,15 +1,17 @@
-import { strict as assert } from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
-import { TestUtil } from '../../../TestUtil';
-import { OrgService } from '../../../../app/core/service/OrgService';
-import { OrgRepository } from '../../../../app/repository/OrgRepository';
-import { TeamRepository } from '../../../../app/repository/TeamRepository';
-import { PackageRepository } from '../../../../app/repository/PackageRepository';
-import { UserRepository } from '../../../../app/repository/UserRepository';
-import { Package as PackageEntity } from '../../../../app/core/entity/Package';
-import { DEVELOPERS_TEAM } from '../../../../app/common/constants';
-import { TeamPackage } from '../../../../app/core/entity/TeamPackage';
-import { TeamMember } from '../../../../app/core/entity/TeamMember';
+import assert from 'node:assert/strict';
+
+import { app } from '@eggjs/mock/bootstrap';
+
+import { DEVELOPERS_TEAM } from '../../../../app/common/constants.ts';
+import { Package as PackageEntity } from '../../../../app/core/entity/Package.ts';
+import { TeamMember } from '../../../../app/core/entity/TeamMember.ts';
+import { TeamPackage } from '../../../../app/core/entity/TeamPackage.ts';
+import { OrgService } from '../../../../app/core/service/OrgService.ts';
+import { OrgRepository } from '../../../../app/repository/OrgRepository.ts';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
+import { TeamRepository } from '../../../../app/repository/TeamRepository.ts';
+import { UserRepository } from '../../../../app/repository/UserRepository.ts';
+import { TestUtil } from '../../../TestUtil.ts';
 
 describe('test/port/controller/package/ReadAccessAuth.test.ts', () => {
   let adminUser: any;
