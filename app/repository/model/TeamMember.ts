@@ -1,5 +1,5 @@
 import { Attribute, Model } from 'egg/orm';
-import { DataTypes, Bone } from 'leoric';
+import { DataTypes, Bone } from '../util/leoric.ts';
 
 @Model()
 export class TeamMember extends Bone {
