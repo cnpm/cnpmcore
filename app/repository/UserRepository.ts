@@ -61,7 +61,7 @@ export class UserRepository extends AbstractRepository {
   async findUsersByUserIds(userIds: string[]): Promise<UserEntity[]> {
     if (userIds.length === 0) return [];
     const models = await this.User.find({ userId: userIds });
-    return models.map(model => ModelConvertor.convertModelToEntity(model, UserEntity));
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, UserEntity));
   }
 
   async findUserAndTokenByTokenKey(tokenKey: string) {

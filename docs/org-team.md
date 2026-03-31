@@ -4,12 +4,12 @@ cnpmcore supports an Organization -> Team -> Package permission model for managi
 
 ## Concepts
 
-| Concept | Description |
-|---------|-------------|
-| **Org** | Organization, corresponds to a scope (e.g., org `mycompany` -> `@mycompany`) |
-| **OrgMember** | Org member with role `owner` (can manage) or `member` |
-| **Team** | Permission unit. Each Org auto-creates a `developers` default team |
-| **TeamPackage** | Team's read access grant to a package |
+| Concept         | Description                                                                  |
+| --------------- | ---------------------------------------------------------------------------- |
+| **Org**         | Organization, corresponds to a scope (e.g., org `mycompany` -> `@mycompany`) |
+| **OrgMember**   | Org member with role `owner` (can manage) or `member`                        |
+| **Team**        | Permission unit. Each Org auto-creates a `developers` default team           |
+| **TeamPackage** | Team's read access grant to a package                                        |
 
 ## Org Management (Admin only)
 
@@ -164,17 +164,17 @@ npm access revoke @mycompany:frontend @mycompany/ui-lib \
 
 ## Permission Summary
 
-| Operation | Required Permission |
-|-----------|-------------------|
-| Create / Delete Org | Admin |
-| View Org info | Logged-in user |
-| Add / Remove Org member | Admin or Org Owner |
-| View Org members | Logged-in user |
-| Create / Delete Team | Admin or Org Owner |
-| View Teams / Team info / Team members | Logged-in user |
-| Add / Remove Team member | Admin or Org Owner |
-| Grant / Revoke package access | Admin or Org Owner |
-| View Team packages | Logged-in user |
+| Operation                             | Required Permission |
+| ------------------------------------- | ------------------- |
+| Create / Delete Org                   | Admin               |
+| View Org info                         | Logged-in user      |
+| Add / Remove Org member               | Admin or Org Owner  |
+| View Org members                      | Logged-in user      |
+| Create / Delete Team                  | Admin or Org Owner  |
+| View Teams / Team info / Team members | Logged-in user      |
+| Add / Remove Team member              | Admin or Org Owner  |
+| Grant / Revoke package access         | Admin or Org Owner  |
+| View Team packages                    | Logged-in user      |
 
 ## 私有包读取鉴权
 
@@ -269,22 +269,22 @@ npm access grant read-only @mycompany:frontend @mycompany/secret-lib \
 
 ## API Endpoints
 
-| Method | Path | Description |
-|--------|------|-------------|
-| PUT | `/-/org` | Create org |
-| GET | `/-/org/:orgName` | View org |
-| DELETE | `/-/org/:orgName` | Delete org |
-| GET | `/-/org/:orgName/member` | List org members |
-| PUT | `/-/org/:orgName/member` | Add org member |
-| DELETE | `/-/org/:orgName/member/:username` | Remove org member |
-| GET | `/-/org/:orgName/member/:username/team` | List user's teams in org |
-| PUT | `/-/org/:orgName/team` | Create team |
-| GET | `/-/org/:orgName/team` | List teams |
-| GET | `/-/org/:orgName/team/:teamName` | View team |
-| DELETE | `/-/org/:orgName/team/:teamName` | Delete team |
-| GET | `/-/org/:orgName/team/:teamName/member` | List team members |
-| PUT | `/-/org/:orgName/team/:teamName/member` | Add team member |
-| DELETE | `/-/org/:orgName/team/:teamName/member/:username` | Remove team member |
-| GET | `/-/org/:orgName/team/:teamName/package` | List team packages |
-| PUT | `/-/org/:orgName/team/:teamName/package` | Grant package access |
-| DELETE | `/-/org/:orgName/team/:teamName/package/@:scope/:name` | Revoke package access |
+| Method | Path                                                   | Description              |
+| ------ | ------------------------------------------------------ | ------------------------ |
+| PUT    | `/-/org`                                               | Create org               |
+| GET    | `/-/org/:orgName`                                      | View org                 |
+| DELETE | `/-/org/:orgName`                                      | Delete org               |
+| GET    | `/-/org/:orgName/member`                               | List org members         |
+| PUT    | `/-/org/:orgName/member`                               | Add org member           |
+| DELETE | `/-/org/:orgName/member/:username`                     | Remove org member        |
+| GET    | `/-/org/:orgName/member/:username/team`                | List user's teams in org |
+| PUT    | `/-/org/:orgName/team`                                 | Create team              |
+| GET    | `/-/org/:orgName/team`                                 | List teams               |
+| GET    | `/-/org/:orgName/team/:teamName`                       | View team                |
+| DELETE | `/-/org/:orgName/team/:teamName`                       | Delete team              |
+| GET    | `/-/org/:orgName/team/:teamName/member`                | List team members        |
+| PUT    | `/-/org/:orgName/team/:teamName/member`                | Add team member          |
+| DELETE | `/-/org/:orgName/team/:teamName/member/:username`      | Remove team member       |
+| GET    | `/-/org/:orgName/team/:teamName/package`               | List team packages       |
+| PUT    | `/-/org/:orgName/team/:teamName/package`               | Grant package access     |
+| DELETE | `/-/org/:orgName/team/:teamName/package/@:scope/:name` | Revoke package access    |
