@@ -1,4 +1,5 @@
 import { Attribute, Model } from 'egg/orm';
+
 import { DataTypes, Bone } from '../util/leoric.ts';
 
 @Model()
