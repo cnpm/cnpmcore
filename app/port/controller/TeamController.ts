@@ -1,13 +1,4 @@
-import {
-  Context,
-  HTTPBody,
-  HTTPContext,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPParam,
-  Inject,
-} from 'egg';
+import { Context, HTTPBody, HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
 import { NotFoundError, UnprocessableEntityError } from 'egg/errors';
 
 import { getScopeAndName } from '../../common/PackageUtil.ts';
@@ -74,8 +65,11 @@ export class TeamController extends AbstractController {
     path: '/-/org/:orgName/team',
     method: HTTPMethodEnum.PUT,
   })
-  async createTeam(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPBody() body: { name: string; description?: string }) {
+  async createTeam(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() orgName: string,
+    @HTTPBody() body: { name: string; description?: string },
+  ) {
     const { org } = await this.requireOrgWriteAccess(ctx, orgName);
 
     if (!body.name) {
@@ -98,7 +92,7 @@ export class TeamController extends AbstractController {
     }
     const teams = await this.teamRepository.listTeamsByOrgId(org.orgId);
     // npm CLI adds @ prefix itself, return "scope:teamname" format
-    return teams.map(t => `${orgName}:${t.name}`);
+    return teams.map((t) => `${orgName}:${t.name}`);
   }
 
   // GET /-/team/:orgName/:teamName (npm compatible show)
@@ -106,8 +100,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName',
     method: HTTPMethodEnum.GET,
   })
-  async showTeam(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string) {
+  async showTeam(@HTTPContext() ctx: Context, @HTTPParam() orgName: string, @HTTPParam() teamName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.findOrg(orgName);
     if (!org) {
@@ -129,8 +122,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName',
     method: HTTPMethodEnum.DELETE,
   })
-  async removeTeam(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string) {
+  async removeTeam(@HTTPContext() ctx: Context, @HTTPParam() orgName: string, @HTTPParam() teamName: string) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     await this.teamService.removeTeam(team.teamId);
     return { ok: true };
@@ -143,8 +135,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.GET,
   })
-  async listTeamMembers(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string) {
+  async listTeamMembers(@HTTPContext() ctx: Context, @HTTPParam() orgName: string, @HTTPParam() teamName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.findOrg(orgName);
     if (!org) {
@@ -155,8 +146,8 @@ export class TeamController extends AbstractController {
       throw new NotFoundError(`Team "${teamName}" not found`);
     }
     const members = await this.teamService.listMembers(team.teamId);
-    const users = await this.userRepository.findUsersByUserIds(members.map(m => m.userId));
-    return users.map(u => u.displayName);
+    const users = await this.userRepository.findUsersByUserIds(members.map((m) => m.userId));
+    return users.map((u) => u.displayName);
   }
 
   // npm team add <user> @scope:team → PUT /-/team/:orgName/:teamName/user
@@ -164,8 +155,12 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.PUT,
   })
-  async addTeamMember(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string, @HTTPBody() body: { user: string }) {
+  async addTeamMember(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() orgName: string,
+    @HTTPParam() teamName: string,
+    @HTTPBody() body: { user: string },
+  ) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.user) {
       throw new UnprocessableEntityError('user is required');
@@ -183,8 +178,12 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.DELETE,
   })
-  async removeTeamMember(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string, @HTTPBody() body: { user: string }) {
+  async removeTeamMember(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() orgName: string,
+    @HTTPParam() teamName: string,
+    @HTTPBody() body: { user: string },
+  ) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.user) {
       throw new UnprocessableEntityError('user is required');
@@ -204,8 +203,7 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/package',
     method: HTTPMethodEnum.GET,
   })
-  async listTeamPackages(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string) {
+  async listTeamPackages(@HTTPContext() ctx: Context, @HTTPParam() orgName: string, @HTTPParam() teamName: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.findOrg(orgName);
     if (!org) {
@@ -216,7 +214,7 @@ export class TeamController extends AbstractController {
       throw new NotFoundError(`Team "${teamName}" not found`);
     }
     const teamPackages = await this.teamService.listPackages(team.teamId);
-    const pkgs = await this.packageRepository.findPackagesByPackageIds(teamPackages.map(tp => tp.packageId));
+    const pkgs = await this.packageRepository.findPackagesByPackageIds(teamPackages.map((tp) => tp.packageId));
     const result: Record<string, string> = {};
     for (const pkg of pkgs) {
       result[pkg.fullname] = 'read';
@@ -229,13 +227,17 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/package',
     method: HTTPMethodEnum.PUT,
   })
-  async grantPackageAccess(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string, @HTTPBody() body: { package: string }) {
+  async grantPackageAccess(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() orgName: string,
+    @HTTPParam() teamName: string,
+    @HTTPBody() body: { package: string },
+  ) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.package) {
       throw new UnprocessableEntityError('package is required');
     }
-    const [ scope, name ] = getScopeAndName(body.package);
+    const [scope, name] = getScopeAndName(body.package);
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) {
       throw new NotFoundError(`Package "${body.package}" not found`);
@@ -249,13 +251,17 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/package',
     method: HTTPMethodEnum.DELETE,
   })
-  async revokePackageAccess(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string, @HTTPBody() body: { package: string }) {
+  async revokePackageAccess(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() orgName: string,
+    @HTTPParam() teamName: string,
+    @HTTPBody() body: { package: string },
+  ) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.package) {
       throw new UnprocessableEntityError('package is required');
     }
-    const [ scope, name ] = getScopeAndName(body.package);
+    const [scope, name] = getScopeAndName(body.package);
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) {
       throw new NotFoundError(`Package "${body.package}" not found`);

@@ -38,7 +38,7 @@ export class TeamRepository extends AbstractRepository {
 
   async listTeamsByOrgId(orgId: string): Promise<Team[]> {
     const models = await this.Team.find({ orgId });
-    return models.map(model => ModelConvertor.convertModelToEntity(model, Team));
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, Team));
   }
 
   async saveTeam(team: Team): Promise<void> {
@@ -63,21 +63,21 @@ export class TeamRepository extends AbstractRepository {
   async listTeamsByUserId(userId: string): Promise<Team[]> {
     const memberModels = await this.TeamMember.find({ userId });
     if (memberModels.length === 0) return [];
-    const teamIds = memberModels.map(m => m.teamId);
+    const teamIds = memberModels.map((m) => m.teamId);
     const models = await this.Team.find({ teamId: { $in: teamIds } });
-    return models.map(model => ModelConvertor.convertModelToEntity(model, Team));
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, Team));
   }
 
   async listTeamsByUserIdAndOrgId(userId: string, orgId: string): Promise<Team[]> {
     const orgTeams = await this.Team.find({ orgId });
     if (orgTeams.length === 0) return [];
-    const orgTeamIds = orgTeams.map(t => t.teamId);
+    const orgTeamIds = orgTeams.map((t) => t.teamId);
     const memberModels = await this.TeamMember.find({ userId, teamId: { $in: orgTeamIds } });
     if (memberModels.length === 0) return [];
-    const memberTeamIds = new Set(memberModels.map(m => m.teamId));
+    const memberTeamIds = new Set(memberModels.map((m) => m.teamId));
     return orgTeams
-      .filter(t => memberTeamIds.has(t.teamId))
-      .map(model => ModelConvertor.convertModelToEntity(model, Team));
+      .filter((t) => memberTeamIds.has(t.teamId))
+      .map((model) => ModelConvertor.convertModelToEntity(model, Team));
   }
 
   // --- TeamMember ---
@@ -102,13 +102,13 @@ export class TeamRepository extends AbstractRepository {
   async removeMemberFromAllTeams(orgId: string, userId: string): Promise<void> {
     const teams = await this.Team.find({ orgId });
     if (teams.length === 0) return;
-    const teamIds = teams.map(t => t.teamId);
+    const teamIds = teams.map((t) => t.teamId);
     await this.TeamMember.remove({ teamId: { $in: teamIds }, userId });
   }
 
   async listMembers(teamId: string): Promise<TeamMember[]> {
     const models = await this.TeamMember.find({ teamId });
-    return models.map(model => ModelConvertor.convertModelToEntity(model, TeamMember));
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, TeamMember));
   }
 
   async removeAllMembersByTeamId(teamId: string): Promise<void> {
@@ -118,7 +118,7 @@ export class TeamRepository extends AbstractRepository {
   async removeAllMembersByOrgId(orgId: string): Promise<void> {
     const teams = await this.Team.find({ orgId });
     if (teams.length === 0) return;
-    const teamIds = teams.map(t => t.teamId);
+    const teamIds = teams.map((t) => t.teamId);
     await this.TeamMember.remove({ teamId: { $in: teamIds } });
   }
 
@@ -143,7 +143,7 @@ export class TeamRepository extends AbstractRepository {
 
   async listPackages(teamId: string): Promise<TeamPackage[]> {
     const models = await this.TeamPackage.find({ teamId });
-    return models.map(model => ModelConvertor.convertModelToEntity(model, TeamPackage));
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, TeamPackage));
   }
 
   async removeAllPackagesByTeamId(teamId: string): Promise<void> {
@@ -161,7 +161,7 @@ export class TeamRepository extends AbstractRepository {
   async removeAllPackagesByOrgId(orgId: string): Promise<void> {
     const teams = await this.Team.find({ orgId });
     if (teams.length === 0) return;
-    const teamIds = teams.map(t => t.teamId);
+    const teamIds = teams.map((t) => t.teamId);
     await this.TeamPackage.remove({ teamId: { $in: teamIds } });
   }
 
@@ -174,7 +174,7 @@ export class TeamRepository extends AbstractRepository {
   async hasPackageAccess(packageId: string, userId: string): Promise<boolean> {
     const teamPackages = await this.TeamPackage.find({ packageId });
     if (teamPackages.length === 0) return false;
-    const teamIds = teamPackages.map(tp => tp.teamId);
+    const teamIds = teamPackages.map((tp) => tp.teamId);
     const member = await this.TeamMember.findOne({ teamId: { $in: teamIds }, userId });
     return !!member;
   }

@@ -43,10 +43,7 @@ describe('test/core/service/TeamService.test.ts', () => {
 
     it('should throw if team name already exists', async () => {
       await teamService.createTeam(orgId, 'dup-team');
-      await assert.rejects(
-        teamService.createTeam(orgId, 'dup-team'),
-        /already exists/,
-      );
+      await assert.rejects(teamService.createTeam(orgId, 'dup-team'), /already exists/);
     });
   });
 
@@ -60,10 +57,7 @@ describe('test/core/service/TeamService.test.ts', () => {
     it('should not allow deleting developers team', async () => {
       const devTeam = await teamRepository.findTeam(orgId, 'developers');
       assert(devTeam);
-      await assert.rejects(
-        teamService.removeTeam(devTeam.teamId),
-        /Cannot delete the developers team/,
-      );
+      await assert.rejects(teamService.removeTeam(devTeam.teamId), /Cannot delete the developers team/);
     });
   });
 
@@ -82,10 +76,7 @@ describe('test/core/service/TeamService.test.ts', () => {
       const outsiderEntity = await userRepository.findUserByName(outsider.name);
       assert(outsiderEntity);
 
-      await assert.rejects(
-        teamService.addMember(team.teamId, outsiderEntity.userId),
-        /must be an org member/,
-      );
+      await assert.rejects(teamService.addMember(team.teamId, outsiderEntity.userId), /must be an org member/);
     });
 
     it('should be idempotent', async () => {
@@ -112,7 +103,7 @@ describe('test/core/service/TeamService.test.ts', () => {
         name: '@cnpm/test-pkg',
         version: '1.0.0',
       });
-      const [ scope, name ] = pkg.name.split('/');
+      const [scope, name] = pkg.name.split('/');
       const pkgEntity = await packageRepository.findPackage(scope, name);
       assert(pkgEntity);
 
@@ -149,7 +140,7 @@ describe('test/core/service/TeamService.test.ts', () => {
 
       const members = await teamService.listMembers(team.teamId);
       assert.equal(members.length, 2);
-      const userIds = members.map(m => m.userId);
+      const userIds = members.map((m) => m.userId);
       assert(userIds.includes(creatorUserId));
       assert(userIds.includes(user2Entity.userId));
     });
@@ -160,7 +151,7 @@ describe('test/core/service/TeamService.test.ts', () => {
       // creator is in developers by default
       const teams = await teamRepository.listTeamsByUserId(creatorUserId);
       assert(teams.length >= 1);
-      assert(teams.some(t => t.name === 'developers'));
+      assert(teams.some((t) => t.name === 'developers'));
 
       // add to a custom team
       const customTeam = await teamService.createTeam(orgId, 'custom');
@@ -168,7 +159,7 @@ describe('test/core/service/TeamService.test.ts', () => {
 
       const teams2 = await teamRepository.listTeamsByUserId(creatorUserId);
       assert.equal(teams2.length, 2);
-      const names = teams2.map(t => t.name);
+      const names = teams2.map((t) => t.name);
       assert(names.includes('developers'));
       assert(names.includes('custom'));
     });
@@ -188,7 +179,7 @@ describe('test/core/service/TeamService.test.ts', () => {
         name: '@cnpm/access-pkg',
         version: '1.0.0',
       });
-      const [ scope, name ] = pkg.name.split('/');
+      const [scope, name] = pkg.name.split('/');
       const pkgEntity = await packageRepository.findPackage(scope, name);
       assert(pkgEntity);
 
@@ -205,7 +196,7 @@ describe('test/core/service/TeamService.test.ts', () => {
         name: '@cnpm/noaccess-pkg',
         version: '1.0.0',
       });
-      const [ scope, name ] = pkg.name.split('/');
+      const [scope, name] = pkg.name.split('/');
       const pkgEntity = await packageRepository.findPackage(scope, name);
       assert(pkgEntity);
 

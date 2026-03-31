@@ -57,10 +57,7 @@ describe('test/core/service/OrgService.test.ts', () => {
       assert(creator);
 
       await orgService.createOrg({ name: 'duporg', creatorUserId: creator.userId });
-      await assert.rejects(
-        orgService.createOrg({ name: 'duporg', creatorUserId: creator.userId }),
-        /already exists/,
-      );
+      await assert.rejects(orgService.createOrg({ name: 'duporg', creatorUserId: creator.userId }), /already exists/);
     });
   });
 

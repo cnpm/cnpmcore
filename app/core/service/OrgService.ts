@@ -3,12 +3,12 @@ import { ForbiddenError, NotFoundError } from 'egg/errors';
 
 import { AbstractService } from '../../common/AbstractService.ts';
 import { DEVELOPERS_TEAM } from '../../common/constants.ts';
+import type { OrgRepository } from '../../repository/OrgRepository.ts';
+import type { TeamRepository } from '../../repository/TeamRepository.ts';
 import { Org } from '../entity/Org.ts';
 import { OrgMember } from '../entity/OrgMember.ts';
 import { Team } from '../entity/Team.ts';
 import { TeamMember } from '../entity/TeamMember.ts';
-import type { OrgRepository } from '../../repository/OrgRepository.ts';
-import type { TeamRepository } from '../../repository/TeamRepository.ts';
 
 export interface CreateOrgCmd {
   name: string;
@@ -53,8 +53,12 @@ export class OrgService extends AbstractService {
     });
     await this.orgRepository.createOrgCascade(org, developersTeam, ownerMember, teamMember);
 
-    this.logger.info('[OrgService:createOrg] orgId: %s, name: %s, creatorUserId: %s',
-      org.orgId, org.name, cmd.creatorUserId);
+    this.logger.info(
+      '[OrgService:createOrg] orgId: %s, name: %s, creatorUserId: %s',
+      org.orgId,
+      org.name,
+      cmd.creatorUserId,
+    );
     return org;
   }
 

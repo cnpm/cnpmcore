@@ -3,11 +3,11 @@ import { ForbiddenError, NotFoundError } from 'egg/errors';
 
 import { AbstractService } from '../../common/AbstractService.ts';
 import { DEVELOPERS_TEAM } from '../../common/constants.ts';
+import type { OrgRepository } from '../../repository/OrgRepository.ts';
+import type { TeamRepository } from '../../repository/TeamRepository.ts';
 import { Team } from '../entity/Team.ts';
 import { TeamMember } from '../entity/TeamMember.ts';
 import { TeamPackage } from '../entity/TeamPackage.ts';
-import type { OrgRepository } from '../../repository/OrgRepository.ts';
-import type { TeamRepository } from '../../repository/TeamRepository.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -18,7 +18,6 @@ export class TeamService extends AbstractService {
 
   @Inject()
   private readonly teamRepository: TeamRepository;
-
 
   async createTeam(orgId: string, name: string, description?: string): Promise<Team> {
     const existing = await this.teamRepository.findTeam(orgId, name);

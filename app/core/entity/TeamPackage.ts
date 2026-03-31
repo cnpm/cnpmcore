@@ -1,5 +1,5 @@
-import { Entity, EntityData } from './Entity.ts';
 import { EasyData, EntityUtil } from '../util/EntityUtil.ts';
+import { Entity, EntityData } from './Entity.ts';
 
 interface TeamPackageData extends EntityData {
   teamPackageId: string;

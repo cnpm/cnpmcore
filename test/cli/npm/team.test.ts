@@ -40,12 +40,18 @@ describe('test/cli/npm/team.test.ts', () => {
   describe('npm team', () => {
     it('should create team', async () => {
       await coffee
-        .spawn('npm', [
-          'team', 'create', '@cnpm:test-cli-team',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: demoDir })
+        .spawn(
+          'npm',
+          [
+            'team',
+            'create',
+            '@cnpm:test-cli-team',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+          ],
+          { cwd: demoDir },
+        )
         .debug()
         .expect('code', 0)
         .end();
@@ -54,23 +60,28 @@ describe('test/cli/npm/team.test.ts', () => {
     it('should list teams', async () => {
       // create first
       await coffee
-        .spawn('npm', [
-          'team', 'create', '@cnpm:ls-team',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: demoDir })
+        .spawn(
+          'npm',
+          [
+            'team',
+            'create',
+            '@cnpm:ls-team',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+          ],
+          { cwd: demoDir },
+        )
         .debug()
         .expect('code', 0)
         .end();
 
       await coffee
-        .spawn('npm', [
-          'team', 'ls', '@cnpm',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: demoDir })
+        .spawn(
+          'npm',
+          ['team', 'ls', '@cnpm', `--registry=${registry}`, `--userconfig=${userconfig}`, `--cache=${cacheDir}`],
+          { cwd: demoDir },
+        )
         .debug()
         .expect('stdout', /ls-team/)
         .expect('code', 0)
@@ -79,23 +90,35 @@ describe('test/cli/npm/team.test.ts', () => {
 
     it('should destroy team', async () => {
       await coffee
-        .spawn('npm', [
-          'team', 'create', '@cnpm:to-destroy',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: demoDir })
+        .spawn(
+          'npm',
+          [
+            'team',
+            'create',
+            '@cnpm:to-destroy',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+          ],
+          { cwd: demoDir },
+        )
         .debug()
         .expect('code', 0)
         .end();
 
       await coffee
-        .spawn('npm', [
-          'team', 'destroy', '@cnpm:to-destroy',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: demoDir })
+        .spawn(
+          'npm',
+          [
+            'team',
+            'destroy',
+            '@cnpm:to-destroy',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+          ],
+          { cwd: demoDir },
+        )
         .debug()
         .expect('code', 0)
         .end();
@@ -106,24 +129,27 @@ describe('test/cli/npm/team.test.ts', () => {
     beforeEach(async () => {
       // publish package first
       await coffee
-        .spawn('npm', [
-          'publish',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: fooPkgDir })
+        .spawn('npm', ['publish', `--registry=${registry}`, `--userconfig=${userconfig}`, `--cache=${cacheDir}`], {
+          cwd: fooPkgDir,
+        })
         .debug()
         .expect('code', 0)
         .end();
 
       // create team
       await coffee
-        .spawn('npm', [
-          'team', 'create', '@cnpm:access-team',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: demoDir })
+        .spawn(
+          'npm',
+          [
+            'team',
+            'create',
+            '@cnpm:access-team',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+          ],
+          { cwd: demoDir },
+        )
         .debug()
         .end();
     });
@@ -131,24 +157,39 @@ describe('test/cli/npm/team.test.ts', () => {
     it('should grant and list package access', async () => {
       // grant
       await coffee
-        .spawn('npm', [
-          'access', 'grant', 'read-only', '@cnpm:access-team', '@cnpm/foo',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: demoDir })
+        .spawn(
+          'npm',
+          [
+            'access',
+            'grant',
+            'read-only',
+            '@cnpm:access-team',
+            '@cnpm/foo',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+          ],
+          { cwd: demoDir },
+        )
         .debug()
         .expect('code', 0)
         .end();
 
       // list packages
       await coffee
-        .spawn('npm', [
-          'access', 'list', 'packages', '@cnpm:access-team',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: demoDir })
+        .spawn(
+          'npm',
+          [
+            'access',
+            'list',
+            'packages',
+            '@cnpm:access-team',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+          ],
+          { cwd: demoDir },
+        )
         .debug()
         .expect('stdout', /@cnpm\/foo/)
         .expect('code', 0)
@@ -158,24 +199,39 @@ describe('test/cli/npm/team.test.ts', () => {
     it('should revoke package access', async () => {
       // grant first
       await coffee
-        .spawn('npm', [
-          'access', 'grant', 'read-only', '@cnpm:access-team', '@cnpm/foo',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: demoDir })
+        .spawn(
+          'npm',
+          [
+            'access',
+            'grant',
+            'read-only',
+            '@cnpm:access-team',
+            '@cnpm/foo',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+          ],
+          { cwd: demoDir },
+        )
         .debug()
         .expect('code', 0)
         .end();
 
       // revoke
       await coffee
-        .spawn('npm', [
-          'access', 'revoke', '@cnpm:access-team', '@cnpm/foo',
-          `--registry=${registry}`,
-          `--userconfig=${userconfig}`,
-          `--cache=${cacheDir}`,
-        ], { cwd: demoDir })
+        .spawn(
+          'npm',
+          [
+            'access',
+            'revoke',
+            '@cnpm:access-team',
+            '@cnpm/foo',
+            `--registry=${registry}`,
+            `--userconfig=${userconfig}`,
+            `--cache=${cacheDir}`,
+          ],
+          { cwd: demoDir },
+        )
         .debug()
         .expect('code', 0)
         .end();

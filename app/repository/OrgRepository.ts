@@ -81,14 +81,19 @@ export class OrgRepository extends AbstractRepository {
 
   async listMembers(orgId: string): Promise<OrgMember[]> {
     const models = await this.OrgMember.find({ orgId });
-    return models.map(model => ModelConvertor.convertModelToEntity(model, OrgMember));
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, OrgMember));
   }
 
   async removeAllMembers(orgId: string): Promise<void> {
     await this.OrgMember.remove({ orgId });
   }
 
-  async createOrgCascade(org: Org, developersTeam: Team, ownerMember: OrgMember, teamMember: TeamMember): Promise<void> {
+  async createOrgCascade(
+    org: Org,
+    developersTeam: Team,
+    ownerMember: OrgMember,
+    teamMember: TeamMember,
+  ): Promise<void> {
     await this.Org.transaction(async ({ connection }) => {
       await ModelConvertor.convertEntityToModel(org, this.Org, { connection });
       await ModelConvertor.convertEntityToModel(developersTeam, this.Team, { connection });
@@ -97,10 +102,9 @@ export class OrgRepository extends AbstractRepository {
     });
   }
 
-
   async removeOrgCascade(orgId: string): Promise<void> {
     const teams = await this.Team.find({ orgId });
-    const teamIds = teams.map(t => t.teamId);
+    const teamIds = teams.map((t) => t.teamId);
     await this.Org.transaction(async ({ connection }) => {
       if (teamIds.length > 0) {
         await this.TeamPackage.remove({ teamId: { $in: teamIds } }, true, { connection });

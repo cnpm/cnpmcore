@@ -89,8 +89,8 @@ export class OrgController extends AbstractController {
       throw new NotFoundError(`Org "${orgName}" not found`);
     }
     const members = await this.orgService.listMembers(org.orgId);
-    const users = await this.userRepository.findUsersByUserIds(members.map(m => m.userId));
-    const userMap = new Map(users.map(u => [ u.userId, u ]));
+    const users = await this.userRepository.findUsersByUserIds(members.map((m) => m.userId));
+    const userMap = new Map(users.map((u) => [u.userId, u]));
     const result: Record<string, string> = {};
     for (const member of members) {
       const user = userMap.get(member.userId);
@@ -106,8 +106,11 @@ export class OrgController extends AbstractController {
     path: '/-/org/:orgName/member',
     method: HTTPMethodEnum.PUT,
   })
-  async addMember(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPBody() body: { user: string; role?: 'owner' | 'member' }) {
+  async addMember(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() orgName: string,
+    @HTTPBody() body: { user: string; role?: 'owner' | 'member' },
+  ) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     const org = await this.orgService.findOrgByName(orgName);
     if (!org) {
@@ -132,8 +135,7 @@ export class OrgController extends AbstractController {
     path: '/-/org/:orgName/member/:username',
     method: HTTPMethodEnum.DELETE,
   })
-  async removeMember(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() username: string) {
+  async removeMember(@HTTPContext() ctx: Context, @HTTPParam() orgName: string, @HTTPParam() username: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     const org = await this.orgService.findOrgByName(orgName);
     if (!org) {
@@ -155,8 +157,7 @@ export class OrgController extends AbstractController {
     path: '/-/org/:orgName/member/:username/team',
     method: HTTPMethodEnum.GET,
   })
-  async listUserTeams(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() username: string) {
+  async listUserTeams(@HTTPContext() ctx: Context, @HTTPParam() orgName: string, @HTTPParam() username: string) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.orgService.findOrgByName(orgName);
     if (!org) {
@@ -167,6 +168,6 @@ export class OrgController extends AbstractController {
       throw new NotFoundError(`User "${username}" not found`);
     }
     const teams = await this.teamRepository.listTeamsByUserIdAndOrgId(targetUser.userId, org.orgId);
-    return teams.map(t => ({ name: t.name, description: t.description }));
+    return teams.map((t) => ({ name: t.name, description: t.description }));
   }
 }
