@@ -972,6 +972,13 @@ const binaries = {
     repo: 'KarinJS/FFmpeg-Builds',
     distUrl: 'https://github.com/KarinJS/FFmpeg-Builds/releases',
   },
+  'lark-cli': {
+    category: 'lark-cli',
+    description: 'Lark CLI - Command line interface for Lark/Feishu',
+    type: BinaryType.GitHub,
+    repo: 'larksuite/cli',
+    distUrl: 'https://github.com/larksuite/cli/releases',
+  },
 } as const;
 
 export interface BinaryTaskConfig {
