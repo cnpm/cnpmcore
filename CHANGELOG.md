@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.29.0 (2026-04-01)
+
+* feat: Org/Team permission model with private package support (#1018) ([1729848](https://github.com/cnpm/cnpmcore/commit/1729848)), closes [#1018](https://github.com/cnpm/cnpmcore/issues/1018) [#1005](https://github.com/cnpm/cnpmcore/issues/1005) [#1006](https://github.com/cnpm/cnpmcore/issues/1006) [#1008](https://github.com/cnpm/cnpmcore/issues/1008) [#1013](https://github.com/cnpm/cnpmcore/issues/1013) [#1014](https://github.com/cnpm/cnpmcore/issues/1014)
+
 ## <small>4.28.4 (2026-03-15)</small>
 
 * fix: isolate CLI test fixtures for parallel test execution (#1010) ([e522887](https://github.com/cnpm/cnpmcore/commit/e522887)), closes [#1010](https://github.com/cnpm/cnpmcore/issues/1010)
