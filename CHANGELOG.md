@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.30.0 (2026-04-01)
+
+* feat: add lark-cli binary mirror support (#1019) ([f675552](https://github.com/cnpm/cnpmcore/commit/f675552)), closes [#1019](https://github.com/cnpm/cnpmcore/issues/1019)
+
 ## 4.29.0 (2026-04-01)
 
 * feat: Org/Team permission model with private package support (#1018) ([1729848](https://github.com/cnpm/cnpmcore/commit/1729848)), closes [#1018](https://github.com/cnpm/cnpmcore/issues/1018) [#1005](https://github.com/cnpm/cnpmcore/issues/1005) [#1006](https://github.com/cnpm/cnpmcore/issues/1006) [#1008](https://github.com/cnpm/cnpmcore/issues/1008) [#1013](https://github.com/cnpm/cnpmcore/issues/1013) [#1014](https://github.com/cnpm/cnpmcore/issues/1014)
