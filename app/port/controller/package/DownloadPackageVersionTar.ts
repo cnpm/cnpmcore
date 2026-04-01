@@ -43,6 +43,8 @@ export class DownloadPackageVersionTarController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async download(@HTTPContext() ctx: Context, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+    const [scope, name] = getScopeAndName(fullname);
+    await this.userRoleManager.checkReadAccess(ctx, scope, name);
     // tgz file storeKey: `/packages/${this.fullname}/${version}/${filename}`
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const storeKey = `/packages/${fullname}/${version}/${filenameWithVersion}.tgz`;
