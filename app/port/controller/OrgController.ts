@@ -1,0 +1,173 @@
+import {
+  Context,
+  HTTPBody,
+  HTTPContext,
+  HTTPController,
+  HTTPMethod,
+  HTTPMethodEnum,
+  HTTPParam,
+  Inject,
+  Middleware,
+} from 'egg';
+import { NotFoundError, UnprocessableEntityError } from 'egg/errors';
+
+import type { OrgService } from '../../core/service/OrgService.ts';
+import type { TeamRepository } from '../../repository/TeamRepository.ts';
+import { AdminAccess } from '../middleware/AdminAccess.ts';
+import { AbstractController } from './AbstractController.ts';
+
+@HTTPController()
+export class OrgController extends AbstractController {
+  @Inject()
+  private readonly orgService: OrgService;
+
+  @Inject()
+  private readonly teamRepository: TeamRepository;
+
+  // PUT /-/org — Admin only
+  @HTTPMethod({
+    path: '/-/org',
+    method: HTTPMethodEnum.PUT,
+  })
+  @Middleware(AdminAccess)
+  async createOrg(@HTTPContext() ctx: Context, @HTTPBody() body: { name: string; description?: string }) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
+    if (!body.name) {
+      throw new UnprocessableEntityError('name is required');
+    }
+    await this.orgService.createOrg({
+      name: body.name,
+      description: body.description,
+      creatorUserId: authorizedUser.userId,
+    });
+    return { ok: true };
+  }
+
+  // GET /-/org/:orgName
+  @HTTPMethod({
+    path: '/-/org/:orgName',
+    method: HTTPMethodEnum.GET,
+  })
+  async showOrg(@HTTPContext() ctx: Context, @HTTPParam() orgName: string) {
+    await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+    const org = await this.orgService.findOrgByName(orgName);
+    if (!org) {
+      throw new NotFoundError(`Org "${orgName}" not found`);
+    }
+    return {
+      name: org.name,
+      description: org.description,
+      created: org.createdAt,
+    };
+  }
+
+  // DELETE /-/org/:orgName — Admin only
+  @HTTPMethod({
+    path: '/-/org/:orgName',
+    method: HTTPMethodEnum.DELETE,
+  })
+  @Middleware(AdminAccess)
+  async removeOrg(@HTTPContext() ctx: Context, @HTTPParam() orgName: string) {
+    await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
+    const org = await this.orgService.findOrgByName(orgName);
+    if (!org) {
+      throw new NotFoundError(`Org "${orgName}" not found`);
+    }
+    await this.orgService.removeOrg(org.orgId);
+    return { ok: true };
+  }
+
+  // GET /-/org/:orgName/member — npm org ls
+  @HTTPMethod({
+    path: '/-/org/:orgName/member',
+    method: HTTPMethodEnum.GET,
+  })
+  async listMembers(@HTTPContext() ctx: Context, @HTTPParam() orgName: string) {
+    await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+    const org = await this.orgService.findOrgByName(orgName);
+    if (!org) {
+      throw new NotFoundError(`Org "${orgName}" not found`);
+    }
+    const members = await this.orgService.listMembers(org.orgId);
+    const users = await this.userRepository.findUsersByUserIds(members.map((m) => m.userId));
+    const userMap = new Map(users.map((u) => [u.userId, u]));
+    const result: Record<string, string> = {};
+    for (const member of members) {
+      const user = userMap.get(member.userId);
+      if (user) {
+        result[user.displayName] = member.role;
+      }
+    }
+    return result;
+  }
+
+  // PUT /-/org/:orgName/member — npm org set
+  @HTTPMethod({
+    path: '/-/org/:orgName/member',
+    method: HTTPMethodEnum.PUT,
+  })
+  async addMember(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() orgName: string,
+    @HTTPBody() body: { user: string; role?: 'owner' | 'member' },
+  ) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
+    const org = await this.orgService.findOrgByName(orgName);
+    if (!org) {
+      throw new NotFoundError(`Org "${orgName}" not found`);
+    }
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
+    await this.orgService.requiredOrgOwnerOrAdmin(org.orgId, authorizedUser.userId, isAdmin);
+
+    if (!body.user) {
+      throw new UnprocessableEntityError('user is required');
+    }
+    const targetUser = await this.userRepository.findUserByName(body.user);
+    if (!targetUser) {
+      throw new NotFoundError(`User "${body.user}" not found`);
+    }
+    await this.orgService.addMember(org.orgId, targetUser.userId, body.role || 'member');
+    return { ok: true };
+  }
+
+  // DELETE /-/org/:orgName/member/:username — npm org rm
+  @HTTPMethod({
+    path: '/-/org/:orgName/member/:username',
+    method: HTTPMethodEnum.DELETE,
+  })
+  async removeMember(@HTTPContext() ctx: Context, @HTTPParam() orgName: string, @HTTPParam() username: string) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
+    const org = await this.orgService.findOrgByName(orgName);
+    if (!org) {
+      throw new NotFoundError(`Org "${orgName}" not found`);
+    }
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
+    await this.orgService.requiredOrgOwnerOrAdmin(org.orgId, authorizedUser.userId, isAdmin);
+
+    const targetUser = await this.userRepository.findUserByName(username);
+    if (!targetUser) {
+      throw new NotFoundError(`User "${username}" not found`);
+    }
+    await this.orgService.removeMember(org.orgId, targetUser.userId);
+    return { ok: true };
+  }
+
+  // GET /-/org/:orgName/member/:username/team
+  @HTTPMethod({
+    path: '/-/org/:orgName/member/:username/team',
+    method: HTTPMethodEnum.GET,
+  })
+  async listUserTeams(@HTTPContext() ctx: Context, @HTTPParam() orgName: string, @HTTPParam() username: string) {
+    await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+    const org = await this.orgService.findOrgByName(orgName);
+    if (!org) {
+      throw new NotFoundError(`Org "${orgName}" not found`);
+    }
+    const targetUser = await this.userRepository.findUserByName(username);
+    if (!targetUser) {
+      throw new NotFoundError(`User "${username}" not found`);
+    }
+    const teams = await this.teamRepository.listTeamsByUserIdAndOrgId(targetUser.userId, org.orgId);
+    return teams.map((t) => ({ name: t.name, description: t.description }));
+  }
+}

@@ -1,4 +1,5 @@
 export const BUG_VERSIONS = 'bug-versions';
+export const DEVELOPERS_TEAM = 'developers';
 export const LATEST_TAG = 'latest';
 export const GLOBAL_WORKER = 'GLOBAL_WORKER';
 export const PROXY_CACHE_DIR_NAME = 'proxy-cache-packages';
