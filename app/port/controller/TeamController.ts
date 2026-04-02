@@ -222,6 +222,31 @@ export class TeamController extends AbstractController {
     }));
   }
 
+  // Private API: PATCH /-/team/:orgName/:teamName/member/:username
+  // Update team member role
+  @HTTPMethod({
+    path: '/-/team/:orgName/:teamName/member/:username',
+    method: HTTPMethodEnum.PATCH,
+  })
+  async updateTeamMemberRole(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+    @HTTPParam() teamName: string, @HTTPParam() username: string,
+    @HTTPBody() body: { role: string }) {
+    const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
+    if (!body.role || (body.role !== 'owner' && body.role !== 'member')) {
+      throw new UnprocessableEntityError('role is required and must be "owner" or "member"');
+    }
+    const targetUser = await this.userRepository.findUserByName(username);
+    if (!targetUser) {
+      throw new NotFoundError(`User "${username}" not found`);
+    }
+    const member = await this.teamRepository.findMember(team.teamId, targetUser.userId);
+    if (!member) {
+      throw new NotFoundError(`User "${username}" is not a member of this team`);
+    }
+    await this.teamService.addMember(team.teamId, targetUser.userId, body.role as 'owner' | 'member');
+    return { ok: true };
+  }
+
   // npm team add <user> @scope:team → PUT /-/team/:orgName/:teamName/user
   @HTTPMethod({
     path: '/-/team/:orgName/:teamName/user',

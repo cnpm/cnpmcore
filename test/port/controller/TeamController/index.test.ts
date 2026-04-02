@@ -200,6 +200,88 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
       assert(res.body.some((m: any) => m.user === normalUser.displayName && m.role === 'owner'));
     });
 
+    it('should update team member role via private API', async () => {
+      // Add normalUser as member
+      await app.httpRequest()
+        .put('/-/team/teamorg/coreteam/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(200);
+
+      // Promote to owner
+      const res = await app.httpRequest()
+        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(200);
+      assert(res.body.ok);
+
+      // Verify role changed
+      const members = await app.httpRequest()
+        .get('/-/team/teamorg/coreteam/member')
+        .set('authorization', normalUser.authorization)
+        .expect(200);
+      assert(members.body.some((m: any) => m.user === normalUser.displayName && m.role === 'owner'));
+    });
+
+    it('should demote team member from owner to member', async () => {
+      // Add as owner
+      await app.httpRequest()
+        .put('/-/team/teamorg/coreteam/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name, role: 'owner' })
+        .expect(200);
+
+      // Demote to member
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'member' })
+        .expect(200);
+
+      const members = await app.httpRequest()
+        .get('/-/team/teamorg/coreteam/member')
+        .set('authorization', normalUser.authorization)
+        .expect(200);
+      assert(members.body.some((m: any) => m.user === normalUser.displayName && m.role === 'member'));
+    });
+
+    it('should 422 when role is invalid for update', async () => {
+      await app.httpRequest()
+        .put('/-/team/teamorg/coreteam/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(200);
+
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'admin' })
+        .expect(422);
+    });
+
+    it('should 404 when updating role of non-member', async () => {
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(404);
+    });
+
+    it('should 403 when non-owner tries to update role', async () => {
+      await app.httpRequest()
+        .put('/-/team/teamorg/coreteam/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(200);
+
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
+        .set('authorization', normalUser.authorization)
+        .send({ role: 'owner' })
+        .expect(403);
+    });
+
     it('should 403 when non-owner tries to add member', async () => {
       // normalUser is org member but not team owner
       const anotherUser = await TestUtil.createUser({ name: 'another-user' });

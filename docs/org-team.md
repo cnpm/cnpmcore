@@ -357,6 +357,7 @@ npm access grant read-only @mycompany:frontend @mycompany/secret-lib \
 | Method | Path | Description | Notes |
 |--------|------|-------------|-------|
 | GET | `/-/team/:orgName/:teamName/member` | List team members with role | Returns `[{user, role}]` |
+| PATCH | `/-/team/:orgName/:teamName/member/:username` | Update team member role | Body `{role: "owner"\|"member"}` |
 | GET | `/-/user/:username/team?org=orgName` | List user's teams with role | Returns `[{name, description, role}]` |
 | GET | `/-/org/:orgName/member/:username/team` | List user's teams in org | Returns `[{name, description, role}]` |
 | PUT | `/-/team/:orgName/:teamName/user` body `{user, role}` | Add member with role | `role` field is a private extension (npm CLI ignores it) |
