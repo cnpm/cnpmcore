@@ -159,6 +159,12 @@ export interface CnpmcoreConfig {
    */
   largePackageVersionSize: number;
   /**
+   * When the number of oversized versions exceeds this threshold, the sync task will fail.
+   * Otherwise, oversized versions will be skipped and the rest will still be synced.
+   * default is 3
+   */
+  largePackageVersionBlockThreshold: number;
+  /**
    * enable this would make sync specific version task not append latest version into this task automatically,it would mark the local latest stable version as latest tag.
    * in most cases, you should set to false to keep the same behavior as source registry.
    */
