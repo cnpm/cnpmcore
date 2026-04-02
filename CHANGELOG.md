@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.31.0 (2026-04-02)
+
+* feat: skip oversized versions during sync instead of failing the entire task (#1022) ([b17983e](https://github.com/cnpm/cnpmcore/commit/b17983e)), closes [#1022](https://github.com/cnpm/cnpmcore/issues/1022)
+* chore(deps): update codecov/codecov-action action to v6 (#1017) ([68dfba6](https://github.com/cnpm/cnpmcore/commit/68dfba6)), closes [#1017](https://github.com/cnpm/cnpmcore/issues/1017)
+* chore(deps): update dependency oxfmt to ^0.43.0 (#1020) ([a833241](https://github.com/cnpm/cnpmcore/commit/a833241)), closes [#1020](https://github.com/cnpm/cnpmcore/issues/1020)
+* chore(deps): update dependency oxlint-tsgolint to ^0.19.0 (#1011) ([7d1a6b9](https://github.com/cnpm/cnpmcore/commit/7d1a6b9)), closes [#1011](https://github.com/cnpm/cnpmcore/issues/1011)
+* chore(deps): update dependency typescript to v6 (#1015) ([50b74b3](https://github.com/cnpm/cnpmcore/commit/50b74b3)), closes [#1015](https://github.com/cnpm/cnpmcore/issues/1015)
+
 ## 4.30.0 (2026-04-01)
 
 * feat: add lark-cli binary mirror support (#1019) ([f675552](https://github.com/cnpm/cnpmcore/commit/f675552)), closes [#1019](https://github.com/cnpm/cnpmcore/issues/1019)
