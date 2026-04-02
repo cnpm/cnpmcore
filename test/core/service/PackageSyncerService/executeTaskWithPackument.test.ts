@@ -2469,10 +2469,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.match(log, /❌❌❌❌❌ cnpmcore-test-sync-deprecated ❌❌❌❌❌/);
-      assert.match(
-        log,
-        /too many large versions/,
-      );
+      assert.match(log, /too many large versions/);
     });
 
     it('should mock large package version size allow', async () => {
@@ -2604,10 +2601,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       // large version should be skipped, not fail the task
-      assert.match(
-        log,
-        /Synced version 99.0.0-beta.0 skipped, large package version size: 104857601/,
-      );
+      assert.match(log, /Synced version 99.0.0-beta.0 skipped, large package version size: 104857601/);
       // other versions should be synced successfully
       data = await packageManagerService.listPackageFullManifests('', name);
       assert(data.data?.versions['0.0.0']);

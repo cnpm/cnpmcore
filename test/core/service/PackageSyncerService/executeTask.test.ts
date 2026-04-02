@@ -2437,10 +2437,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.match(log, /❌❌❌❌❌ cnpmcore-test-sync-deprecated ❌❌❌❌❌/);
-      assert.match(
-        log,
-        /too many large versions/,
-      );
+      assert.match(log, /too many large versions/);
     });
 
     it('should mock large package version size allow', async () => {
