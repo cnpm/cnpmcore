@@ -427,7 +427,7 @@ jobs:
           CNPMCORE_CONFIG_ES_CLIENT_NODE: http://localhost:9200
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -476,7 +476,7 @@ jobs:
           CNPMCORE_CONFIG_ENABLE_JSON_BUILDER: ${{ matrix.enableJSONBuilder }}
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -532,7 +532,7 @@ jobs:
           # CNPMCORE_NFS_S3_CLIENT_DISABLE_URL: true
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
