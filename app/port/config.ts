@@ -160,7 +160,8 @@ export interface CnpmcoreConfig {
   largePackageVersionSize: number;
   /**
    * When the number of oversized versions exceeds this threshold, the sync task will fail.
-   * Otherwise, oversized versions will be skipped and the rest will still be synced.
+   * Oversized versions within the threshold will be skipped and the rest will still be synced.
+   * e.g. threshold=3 means up to 3 oversized versions are tolerated (skipped), the 4th will fail the task.
    * default is 3
    */
   largePackageVersionBlockThreshold: number;
