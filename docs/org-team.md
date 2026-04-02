@@ -23,6 +23,69 @@ cnpmcore implements both **npm CLI compatible** endpoints and **private (extende
 
 > **Rule**: npm compatible endpoints never change their response format. Extended fields (like `role`) are only available via private endpoints.
 
+## Team Role Extension (cnpmcore 扩展)
+
+### npm 原始模型的问题
+
+在 npm 原始模型中，`@scope` 对应一个 Org，Org 下的 Team 没有角色信息。Team 成员是扁平的——只有"在"或"不在"两种状态，所有能操作 Team 的人拥有相同权限。
+
+这在企业场景中会产生问题：企业通常只有一个 Org（对应一个 `@scope`），所有员工都是 Org 成员。由于 npm 的 Team 没有角色区分，**任何 Org 成员都可以随意修改任何 Team**——添加/删除成员、授权/撤销包访问——这在实际使用中是不可接受的。
+
+### cnpmcore 的扩展方案
+
+cnpmcore 在保持 npm CLI 完全兼容的前提下，为 Team 成员增加了 `role` 字段：
+
+- **owner** — 可以管理 Team（增删成员、管理包授权、删除 Team）
+- **member** — 普通成员，仅拥有 Team 授权范围内的包读取权限
+
+#### 核心行为
+
+1. **创建 Team 时**，创建者自动成为 Team Owner
+2. **Team 的写操作**（增删成员、管理包、删除 Team）要求操作者是 Team Owner、Org Owner 或 Admin
+3. 普通 Org 成员**无法直接管理其他人的 Team**
+
+#### npm CLI 兼容性
+
+用户仍然可以通过 npm CLI 直接创建和管理自己的 Team：
+
+```bash
+# 创建 Team（创建者自动成为 owner）
+npm team create @mycompany:frontend --registry=http://localhost:7001
+
+# 添加成员（仅 team owner 可操作，通过 npm CLI 添加的成员默认为 member）
+npm team add @mycompany:frontend alice --registry=http://localhost:7001
+
+# 查看成员（返回纯用户名列表，兼容 npm CLI）
+npm team ls @mycompany:frontend --registry=http://localhost:7001
+```
+
+#### 私有接口补充
+
+由于 npm CLI 不支持 Team 角色概念，以下操作需要通过私有接口完成：
+
+- **查看成员角色** — `GET /-/team/:org/:team/member`
+- **修改成员角色** — `PATCH /-/team/:org/:team/member/:username`
+- **添加成员时指定角色** — `PUT /-/team/:org/:team/user` body 中传 `role` 字段
+
+```bash
+# 查看成员（含角色信息）
+curl http://localhost:7001/-/team/mycompany/frontend/member \
+  -H "Authorization: Bearer <token>"
+# Returns: [{"user": "alice", "role": "owner"}, {"user": "bob", "role": "member"}]
+
+# 将成员提升为 team owner
+curl -X PATCH http://localhost:7001/-/team/mycompany/frontend/member/alice \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"role": "owner"}'
+
+# 将成员降为普通 member
+curl -X PATCH http://localhost:7001/-/team/mycompany/frontend/member/alice \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"role": "member"}'
+```
+
 ## Org Management (Admin only)
 
 ### Create Org
