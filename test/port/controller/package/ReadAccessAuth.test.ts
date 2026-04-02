@@ -109,6 +109,7 @@ describe('test/port/controller/package/ReadAccessAuth.test.ts', () => {
       await teamRepository.addMember(TeamMember.create({
         teamId: team.teamId,
         userId: teamMemberEntity.userId,
+        role: 'member',
       }));
     });
 
