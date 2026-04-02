@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.81.0 (2026-04-02)
+
+* feat: add team member role for team-level permission control (#1021) ([3445251](https://github.com/cnpm/cnpmcore/commit/3445251)), closes [#1021](https://github.com/cnpm/cnpmcore/issues/1021)
+
 ## <small>3.80.1 (2026-03-19)</small>
 
 * fix: npm CLI compatible routes for team management (#1014) ([0fed89d](https://github.com/cnpm/cnpmcore/commit/0fed89d)), closes [#1014](https://github.com/cnpm/cnpmcore/issues/1014) [#1002](https://github.com/cnpm/cnpmcore/issues/1002)
