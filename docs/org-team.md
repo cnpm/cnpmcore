@@ -233,17 +233,17 @@ curl http://localhost:7001/-/team/mycompany/frontend/member \
 
 #### Add Member (PUT /-/team/:orgName/:teamName/user)
 
-npm compatible. The `role` field is a **private extension** — npm CLI does not send it, defaults to `member`.
+npm compatible. Members are always added with `member` role. Use the PATCH endpoint to change roles.
 
 ```bash
-# npm CLI (adds as member)
+# npm CLI
 npm team add @mycompany:frontend alice --registry=http://localhost:7001
 
-# HTTP with role (private extension)
+# HTTP
 curl -X PUT http://localhost:7001/-/team/mycompany/frontend/user \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
-  -d '{"user": "alice", "role": "owner"}'
+  -d '{"user": "alice"}'
 ```
 
 #### Remove Member (DELETE /-/team/:orgName/:teamName/user)
@@ -272,16 +272,6 @@ npm access ls-packages @mycompany:frontend --registry=http://localhost:7001
 # Revoke access (npm CLI compatible)
 npm access revoke @mycompany:frontend @mycompany/ui-lib \
   --registry=http://localhost:7001
-```
-
-### List User's Teams — Private (GET /-/user/:username/team?org=orgName)
-
-Returns teams with role info. Only self or admin can access.
-
-```bash
-curl http://localhost:7001/-/user/alice/team?org=mycompany \
-  -H "Authorization: Bearer <token>"
-# Returns: [{"name": "mycompany:frontend", "description": "...", "role": "owner"}, ...]
 ```
 
 ## Permission Summary
@@ -421,6 +411,4 @@ npm access grant read-only @mycompany:frontend @mycompany/secret-lib \
 |--------|------|-------------|-------|
 | GET | `/-/team/:orgName/:teamName/member` | List team members with role | Returns `[{user, role}]` |
 | PATCH | `/-/team/:orgName/:teamName/member/:username` | Update team member role | Body `{role: "owner"\|"member"}` |
-| GET | `/-/user/:username/team?org=orgName` | List user's teams with role | Returns `[{name, description, role}]` |
 | GET | `/-/org/:orgName/member/:username/team` | List user's teams in org | Returns `[{name, description, role}]` |
-| PUT | `/-/team/:orgName/:teamName/user` body `{user, role}` | Add member with role | `role` field is a private extension (npm CLI ignores it) |

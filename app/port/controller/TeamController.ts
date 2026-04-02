@@ -6,7 +6,6 @@ import {
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  HTTPQuery,
   Inject,
 } from '@eggjs/tegg';
 import { NotFoundError, ForbiddenError, UnprocessableEntityError } from 'egg-errors';
@@ -253,17 +252,16 @@ export class TeamController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   async addTeamMember(@Context() ctx: EggContext, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string, @HTTPBody() body: { user: string; role?: string }) {
+    @HTTPParam() teamName: string, @HTTPBody() body: { user: string }) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.user) {
       throw new UnprocessableEntityError('user is required');
     }
-    const role = body.role === 'owner' ? 'owner' : 'member';
     const targetUser = await this.userRepository.findUserByName(body.user);
     if (!targetUser) {
       throw new NotFoundError(`User "${body.user}" not found`);
     }
-    await this.teamService.addMember(team.teamId, targetUser.userId, role);
+    await this.teamService.addMember(team.teamId, targetUser.userId);
     return { ok: true };
   }
 
@@ -353,38 +351,4 @@ export class TeamController extends AbstractController {
     return { ok: true };
   }
 
-  // --- User Teams (private API) ---
-
-  // GET /-/user/:username/team?org=orgName — list teams the user belongs to in the specified org
-  @HTTPMethod({
-    path: '/-/user/:username/team',
-    method: HTTPMethodEnum.GET,
-  })
-  async listUserTeams(@Context() ctx: EggContext, @HTTPParam() username: string,
-    @HTTPQuery() org: string) {
-    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
-
-    // Only self or admin
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    if (authorizedUser.displayName !== username && !isAdmin) {
-      throw new ForbiddenError('Not allowed to view other user\'s teams');
-    }
-
-    if (!org) {
-      throw new UnprocessableEntityError('org query parameter is required');
-    }
-
-    const orgEntity = await this.findOrg(org);
-    if (!orgEntity) {
-      throw new NotFoundError(`Org "${org}" not found`);
-    }
-
-    const targetUser = await this.userRepository.findUserByName(username);
-    if (!targetUser) {
-      throw new NotFoundError(`User "${username}" not found`);
-    }
-
-    const teamResults = await this.teamRepository.listTeamsByUserIdAndOrgId(targetUser.userId, orgEntity.orgId);
-    return teamResults.map(t => ({ name: `${org}:${t.team.name}`, description: t.team.description, role: t.role }));
-  }
 }
